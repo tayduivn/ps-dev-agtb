@@ -391,12 +391,17 @@
      */
     onAddNewItemToGroup: function(linkName, prepopulateData) {
         var relatedModel = app.data.createRelatedBean(this.model, null, linkName);
+        var quoteModel = this.context.get('parentModel');
         var maxPositionModel;
         var position = 0;
         var $relatedRow;
         var moduleName = linkName === 'products' ? 'Products' : 'ProductBundleNotes';
         var modelData;
         var groupLineNumObj;
+        // these quoteModel values will be overwritten if prepopulateData
+        // already has currency_id or base_rate already set
+        var currencyId = quoteModel.get('currency_id');
+        var baseRate = quoteModel.get('base_rate');
 
         prepopulateData = prepopulateData || {};
 
@@ -420,8 +425,8 @@
             _module: moduleName,
             _link: linkName,
             position: position,
-            currency_id: this.model.get('currency_id'),
-            base_rate: this.model.get('base_rate')
+            currency_id: currencyId,
+            base_rate: baseRate
         }, prepopulateData);
 
         relatedModel.module = moduleName;

@@ -80,7 +80,9 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         viewParentContext = app.context.getContext();
         viewParentContext.set({
             module: 'Quotes',
-            create: false
+            create: false,
+            currency_id: 'quote_currency_id',
+            base_rate: '2.0'
         });
         viewParentContext.prepare();
 
@@ -99,6 +101,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         view = SugarTest.createView('base', 'ProductBundles', 'quote-data-group-list',
             viewMeta, viewContext, true, layout);
+
+        view.context.set('parentModel', viewParentContext);
         sinon.collection.stub(view, 'setElement');
     });
 
@@ -545,6 +549,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         var linkName;
         var relatedModel;
         var relatedModelId;
+        var groupModel;
 
         beforeEach(function() {
             linkName = 'products';
@@ -590,8 +595,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             });
 
             it('should add the new relatedModel with proper currency payload', function() {
-                expect(relatedModel.get('currency_id')).toBe('currency_id_1');
-                expect(relatedModel.get('base_rate')).toBe('50.37');
+                expect(relatedModel.get('currency_id')).toBe('quote_currency_id');
+                expect(relatedModel.get('base_rate')).toBe('2.0');
             });
 
             it('should set ignoreUserPrefCurrency on relatedModel so that the values are not overridden', function() {
@@ -637,7 +642,9 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                     account_id: 'newAcctId1',
                     account_name: 'newAcctName1',
                     opportunity_id: 'newOppId1',
-                    opportunity_name: 'newOppName1'
+                    opportunity_name: 'newOppName1',
+                    currency_id: 'prepopulated-data-currency-id',
+                    base_rate: '15'
                 });
                 view.onAddNewItemToGroup(linkName, prepopulateModel.toJSON());
             });
@@ -655,6 +662,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 expect(relatedModel.get('account_name')).toBe('newAcctName1');
                 expect(relatedModel.get('opportunity_id')).toBe('newOppId1');
                 expect(relatedModel.get('opportunity_name')).toBe('newOppName1');
+            });
+
+            it('should populate currency_id and base_rate with passed in data', function() {
+                expect(relatedModel.get('currency_id')).toBe('prepopulated-data-currency-id');
+                expect(relatedModel.get('base_rate')).toBe('15');
             });
         });
     });
