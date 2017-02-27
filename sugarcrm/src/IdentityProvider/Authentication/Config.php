@@ -28,6 +28,11 @@ class Config
     protected $values = [];
 
     /**
+     * @var \Administration
+     */
+    protected $ldapSettings;
+
+    /**
      * @param \SugarConfig $sugarConfig
      */
     public function __construct(\SugarConfig $sugarConfig)
@@ -124,6 +129,98 @@ class Config
             'security' => [
                 'authnRequestsSigned' => (bool)$this->get('SAML_REQUEST_SIGNING_PKEY'),
                 'signatureAlgorithm' => $this->get('SAML_REQUEST_SIGNING_METHOD', \XMLSecurityKey::RSA_SHA256),
+            ],
+        ];
+    }
+
+    /**
+     * returns mapped mango ldap config
+     * @return array
+     */
+    public function getLdapConfig()
+    {
+        if (!$this->isLdapEnabled()) {
+            return [];
+        }
+
+        $ldap = [
+            'adapter_config' => [
+                'host' => $this->getLdapSetting('ldap_hostname', '127.0.0.1'),
+                'port' => $this->getLdapSetting('ldap_port', 389),
+            ],
+            'adapter_connection_protocol_version' => 3,
+            'baseDn' => $this->getLdapSetting('ldap_base_dn', ''),
+            'uidKey' => $this->getLdapSetting('ldap_login_attr', ''),
+            'filter' => '({uid_key}={username})' . $this->getLdapSetting('ldap_login_filter', ''),
+            'dnString' => null,
+            'entryAttribute' => null,
+            'autoCreateUser' => $this->getLdapSetting('ldap_auto_create_users', false),
+        ];
+        if (!empty($this->getLdapSetting('ldap_authentication'))) {
+            $ldap['searchDn'] = $this->getLdapSetting('ldap_admin_user');
+            $ldap['searchPassword'] = $this->getLdapSetting('ldap_admin_password');
+        }
+
+        if (!empty($this->getLdapSetting('ldap_group'))) {
+            $ldap['groupMembership'] = true;
+            $ldap['groupDn'] = sprintf(
+                '%s,%s',
+                $this->getLdapSetting('ldap_group_name'),
+                $this->getLdapSetting('ldap_group_dn')
+            );
+            $ldap['groupAttribute'] = $this->getLdapSetting('ldap_group_attr');
+            $ldap['includeUserDN'] = $this->getLdapSetting('ldap_group_attr_req_dn', false);
+        }
+
+        return array_merge($this->getLdapDefaultConfig(), $ldap);
+    }
+
+    /**
+     * Is LDAP enabled?
+     * @return bool
+     */
+    protected function isLdapEnabled()
+    {
+        $system = \Administration::getSettings('system');
+        return !empty($system->settings['system_ldap_enabled']);
+    }
+
+    /**
+     * return settings value from mango ldap settings
+     * @param $key
+     * @param null $default
+     * @return mixed
+     */
+    protected function getLdapSetting($key, $default = null)
+    {
+        if (!$this->ldapSettings) {
+            $this->ldapSettings = \Administration::getSettings('ldap');
+        }
+        return !empty($this->ldapSettings->settings[$key]) ? $this->ldapSettings->settings[$key] : $default;
+    }
+
+    /**
+     * return default config for ldap
+     * @see modules/Users/authentication/LDAPAuthenticate/LDAPConfigs/default.php
+     * @return array
+     */
+    protected function getLdapDefaultConfig()
+    {
+        return [
+            'user' => [
+                'mapping' => [
+                    'givenName' => 'first_name',
+                    'sn' => 'last_name',
+                    'mail' => 'email1',
+                    'telephoneNumber' => 'phone_work',
+                    'facsimileTelephoneNumber' => 'phone_fax',
+                    'mobile' => 'phone_mobile',
+                    'street' => 'address_street',
+                    'l' => 'address_city',
+                    'st' => 'address_state',
+                    'postalCode' => 'address_postalcode',
+                    'c' => 'address_country',
+                ],
             ],
         ];
     }

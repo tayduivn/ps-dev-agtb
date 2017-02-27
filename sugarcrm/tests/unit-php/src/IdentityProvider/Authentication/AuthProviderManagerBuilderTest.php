@@ -27,16 +27,16 @@ class AuthProviderManagerBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $data = $this->getConfig();
         $config = $this->createMock(Config::class);
-        $config->expects($this->exactly(2))
+        $config->expects($this->once())
             ->method('get')
-            ->withConsecutive(
-                [$this->equalTo('passwordHash'), $this->isEmpty()],
-                [$this->equalTo('auth.ldap')]
-            )
-            ->willReturnOnConsecutiveCalls([[], $data['auth']['ldap']]);
+            ->with($this->equalTo('passwordHash'), $this->isEmpty())
+            ->willReturn([]);
         $config->expects($this->once())
             ->method('getSAMLConfig')
             ->willReturn($data['auth']['saml']);
+        $config->expects($this->once())
+            ->method('getLdapConfig')
+            ->willReturn($data['auth']['ldap']);
         $manager = (new AuthProviderManagerBuilder($config))->buildAuthProviders();
         $this->assertInstanceOf(AuthenticationProviderManager::class, $manager);
     }
@@ -57,6 +57,7 @@ class AuthProviderManagerBuilderTest extends \PHPUnit_Framework_TestCase
             'baseDn' => '',
             'searchDn' => '',
             'searchPassword' => '',
+            'dnString' => '',
             'uidKey' => 'userPrincipalName',
             'filter' => '({uid_key}={username})',
         ];

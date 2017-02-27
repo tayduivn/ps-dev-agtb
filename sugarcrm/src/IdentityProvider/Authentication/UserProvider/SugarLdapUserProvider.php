@@ -13,8 +13,29 @@
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider;
 
 use Sugarcrm\IdentityProvider\Authentication\UserProvider\LdapUserProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Symfony\Component\Ldap\Entry;
+use Symfony\Component\Security\Core\User\User as StandardUser;
 
 class SugarLdapUserProvider extends LdapUserProvider
 {
+    /**
+     * Loads a user from an LDAP entry. Saves LDAP entry as User attribute for further using.
+     *
+     * @param string $username
+     * @param Entry $entry
+     *
+     * @return User
+     */
+    protected function loadUser($username, Entry $entry)
+    {
+        /* @var StandardUser $standardUser */
+        $standardUser = parent::loadUser($username, $entry);
 
+        return new User(
+            $standardUser->getUsername(),
+            $standardUser->getPassword(),
+            ['entry' => $entry]
+        );
+    }
 }

@@ -17,6 +17,8 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
 
 class SugarLocalUserProvider implements UserProviderInterface
 {
@@ -64,14 +66,33 @@ class SugarLocalUserProvider implements UserProviderInterface
         }
         $sugarUser->retrieve($sugarUserId, true, false);
 
-        if (!empty($sugarUser->is_group) || !empty($sugarUser->portal_only) || $sugarUser->status != 'Active') {
-            throw new UsernameNotFoundException();
+        if ($sugarUser->status != User::USER_STATUS_ACTIVE) {
+            throw new InactiveUserException('Inactive user');
         }
+
+        if (!empty($sugarUser->is_group) || !empty($sugarUser->portal_only)) {
+            throw new InvalidUserException('Portal or group user can not log in.');
+        }
+
         $user = new User($username, $sugarUser->user_hash);
         $user->setSugarUser($sugarUser);
 
         return $user;
-   }
+    }
+
+    /**
+     * create
+     * @param $username
+     * @param array $additionalFields
+     * @return \User
+     */
+    public function createUser($username, array $additionalFields = [])
+    {
+        $sugarUser = $this->createUserBean();
+        $sugarUser->populateFromRow(array_merge($additionalFields, ['user_name' => $username]));
+        $sugarUser->save();
+        return $sugarUser;
+    }
 
     /**
      * creates and return empty sugar user bean

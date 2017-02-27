@@ -49,8 +49,6 @@ class IdMSugarAuthenticate extends SugarAuthenticate
         $token->setAttribute('rawPassword', $password);
 
         $token = $authManager->authenticate($token);
-        $isAuth = $token && $token->isAuthenticated();
-
-        return $isAuth;
+        return $token && $token->isAuthenticated();
     }
 }

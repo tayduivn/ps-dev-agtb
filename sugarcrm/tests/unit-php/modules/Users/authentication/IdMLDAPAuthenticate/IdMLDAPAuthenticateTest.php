@@ -1,0 +1,66 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+* terms available at
+* http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+* If you do not agree to all of the applicable terms or do not have the
+* authority to bind the entity as an authorized representative, then do not
+* install or use this SugarCRM file.
+*
+* Copyright (C) SugarCRM Inc. All rights reserved.
+*/
+
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+/**
+ * @coversDefaultClass \IdMLDAPAuthenticate
+ */
+class IdMLDAPAuthenticateTest extends PHPUnit_Framework_TestCase
+{
+    /**
+     * @covers ::loginAuthenticate
+     */
+    public function testLoginAuthenticate()
+    {
+        $auth = $this->getMockBuilder(\IdMLDAPAuthenticate::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAuthProviderBuilder'])
+            ->getMock();
+
+        $builder = $this->createMock(AuthProviderManagerBuilder::class);
+
+        $auth->expects($this->once())
+            ->method('getAuthProviderBuilder')
+            ->with($this->isInstanceOf(Config::class))
+            ->willReturn($builder);
+
+        $manager = $this->createMock(AuthenticationProviderManager::class);
+
+        $builder->expects($this->once())
+            ->method('buildAuthProviders')
+            ->willReturn($manager);
+
+        $token = $this->createMock(UsernamePasswordToken::class);
+
+        $manager->expects($this->once())
+            ->method('authenticate')
+            ->with($this->callback(function ($token) {
+                /** @var UsernamePasswordToken $token */
+                $this->assertInstanceOf(UsernamePasswordToken::class, $token);
+                $this->assertEquals('user', $token->getUsername());
+                $this->assertEquals('pass', $token->getCredentials());
+                $this->assertEquals(AuthProviderManagerBuilder::PROVIDER_KEY_LDAP, $token->getProviderKey());
+
+                return true;
+            }))
+            ->willReturn($token);
+
+        $token->expects($this->once())
+            ->method('isAuthenticated')
+            ->willReturn(true);
+
+        $this->assertTrue($auth->loginAuthenticate('user', 'pass'));
+    }
+}

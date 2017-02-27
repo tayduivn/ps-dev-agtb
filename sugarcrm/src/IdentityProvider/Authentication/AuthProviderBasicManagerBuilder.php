@@ -17,6 +17,7 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 
 use Sugarcrm\IdentityProvider\Encoder\EncoderBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LdapUserChecker;
 use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 
@@ -27,7 +28,6 @@ use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider
 
 use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarSAMLUserProvider;
 
@@ -63,7 +63,7 @@ class AuthProviderBasicManagerBuilder
         if (!empty($this->encoderConfig)) {
             $this->encoderConfig = ['passwordHash' => $this->encoderConfig];
         }
-        $this->ldapConfig = $config->get('auth.ldap');
+        $this->ldapConfig = $config->getLdapConfig();
         $this->samlConfig = $config->getSAMLConfig();
     }
 
@@ -119,6 +119,12 @@ class AuthProviderBasicManagerBuilder
             return null;
         }
 
+        $userChecker =new LdapUserChecker(
+            new Lockout(),
+            new SugarLocalUserProvider(),
+            $this->ldapConfig
+        );
+
         $adapter = new Adapter($this->ldapConfig['adapter_config']);
         if (!empty($this->ldapConfig['adapter_connection_protocol_version'])) {
             $adapter->getConnection()
@@ -139,12 +145,12 @@ class AuthProviderBasicManagerBuilder
 
         return new LdapAuthenticationProvider(
             $userProvider,
-            new SugarUserChecker(new Lockout()),
+            $userChecker,
             self::PROVIDER_KEY_LDAP,
             $ldap,
             $this->ldapConfig['dnString'],
             true,
-            $this->ldapConfig['entryAttribute']
+            $this->ldapConfig
         );
     }
 

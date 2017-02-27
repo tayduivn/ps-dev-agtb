@@ -61,27 +61,48 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException
+     * @covers ::loadUserByUsername
+     */
+    public function testLoadUserByUsernameInactive()
+    {
+        $this->user->expects($this->once())
+            ->method('retrieve_user_id')
+            ->with($this->equalTo($name = 'test'))
+            ->willReturn($id = 'idtest');
+
+        $this->user->expects($this->once())
+            ->method('retrieve')
+            ->with($this->equalTo($id), $this->isTrue(), $this->isFalse())
+            ->willReturn(null);
+
+        $this->user->is_group = 0;
+        $this->user->portal_only = 0;
+        $this->user->status = User::USER_STATUS_INACTIVE;
+
+        $this->userProvider->loadUserByUsername($name);
+    }
+
+    /**
      * @coversNothing
      * @return array
      */
-    public function providerLoadUserByUsernameNotAllowed()
+    public function providerLoadUserByUsernameInvalid()
     {
         return [
-            [1, 0, 'Active'],
-            [0, true, 'Active'],
-            [0, 0, 'Inactive'],
+            [1, 0],
+            [0, 1],
         ];
     }
 
     /**
-     * @dataProvider providerLoadUserByUsernameNotAllowed
-     * @expectedException \Symfony\Component\Security\Core\Exception\UsernameNotFoundException
+     * @dataProvider providerLoadUserByUsernameInvalid
+     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException
      * @covers ::loadUserByUsername
      * @param $isGroup
      * @param $portalOnly
-     * @param $status
      */
-    public function testLoadUserByUsernameNotAllowed($isGroup, $portalOnly, $status)
+    public function testLoadUserByUsernameInvalid($isGroup, $portalOnly)
     {
         $this->user->expects($this->once())
             ->method('retrieve_user_id')
@@ -95,7 +116,7 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->user->is_group = $isGroup;
         $this->user->portal_only = $portalOnly;
-        $this->user->status = $status;
+        $this->user->status = User::USER_STATUS_ACTIVE;
 
         $this->userProvider->loadUserByUsername($name);
     }
@@ -117,7 +138,7 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->user->is_group = 0;
         $this->user->portal_only = 0;
-        $this->user->status = 0;
+        $this->user->status = User::USER_STATUS_ACTIVE;
         $this->user->user_hash = 'user_hash';
 
         /** @var User $newUser */
@@ -171,5 +192,20 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
     public function testSupportsClass()
     {
         $this->assertTrue($this->userProvider->supportsClass(User::class));
+    }
+
+    /**
+     * @covers ::createUser
+     */
+    public function testCreateUser()
+    {
+        $this->user->expects($this->once())
+            ->method('populateFromRow')
+            ->with($this->callback(function ($fields) {
+                $this->assertEquals('user1', $fields['user_name']);
+                return true;
+            }));
+        $this->user->expects($this->once())->method('save');
+        $this->userProvider->createUser('user1');
     }
 }

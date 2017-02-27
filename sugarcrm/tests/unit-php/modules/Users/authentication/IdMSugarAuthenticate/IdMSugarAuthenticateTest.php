@@ -71,19 +71,6 @@ class IdMSugarAuthenticateTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers IdMSugarAuthenticate::loginAuthenticate()
-     * @expectedException \SugarApiExceptionNeedLogin
-     */
-    public function testLoginAuthenticateFailure()
-    {
-        $this->authProviderManager->expects($this->once())
-            ->method('authenticate')
-            ->willThrowException(new \Exception());
-
-        $this->idmLocalAuth->loginAuthenticate('test', 'test', false, ['passwordEncrypted' => false]);
-    }
-
-    /**
-     * @covers IdMSugarAuthenticate::loginAuthenticate()
      */
     public function testLoginAuthenticateSuccess()
     {

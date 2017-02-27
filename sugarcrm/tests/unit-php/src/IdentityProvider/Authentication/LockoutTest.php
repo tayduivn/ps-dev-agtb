@@ -23,7 +23,7 @@ class LockoutTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array
      */
-    protected $originAppStrings = array();
+    protected $originAppStrings;
 
     /**
      * @var array
@@ -350,7 +350,10 @@ class LockoutTest extends \PHPUnit_Framework_TestCase
 
         $this->user->method('getSugarUser')->willReturn($this->sugarUser);
 
-        $this->originAppStrings = $GLOBALS['app_strings'];
+        if (!empty($GLOBALS['app_strings'])) {
+            $this->originAppStrings = $GLOBALS['app_strings'];
+        }
+
         $GLOBALS['app_strings'] = $this->appStrings;
     }
 
@@ -360,6 +363,9 @@ class LockoutTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         parent::tearDown();
-        $GLOBALS['app_strings'] = $this->originAppStrings;
+        unset($GLOBALS['app_strings']);
+        if ($this->originAppStrings) {
+            $GLOBALS['app_strings'] = $this->originAppStrings;
+        }
     }
 }

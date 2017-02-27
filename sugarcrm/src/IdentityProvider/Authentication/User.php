@@ -16,6 +16,9 @@ use Sugarcrm\IdentityProvider\Authentication\User as IdmUser;
 
 class User extends IdmUser
 {
+    const USER_STATUS_ACTIVE = 'Active';
+    const USER_STATUS_INACTIVE = 'Inactive';
+
     // User password generator types
     CONST PASSWORD_TYPE_SYSTEM = 'syst';
     CONST PASSWORD_TYPE_USER = 'user';
