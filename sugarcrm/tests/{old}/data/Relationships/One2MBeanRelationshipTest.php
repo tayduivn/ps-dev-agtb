@@ -12,11 +12,6 @@
 
 class One2MBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected function tearDown()
-    {
-        SugarTestKBContentUtilities::removeAllCreatedBeans();
-    }
-
     public function testProperRhsFieldIsSet()
     {
         $primaryBean = SugarTestKBContentUtilities::createBean(array(
@@ -28,6 +23,8 @@ class One2MBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $primaryBean->localizations->add($relatedBean);
 
         $this->assertEquals($primaryBean->kbdocument_id, $relatedBean->kbdocument_id);
+
+        SugarTestKBContentUtilities::removeAllCreatedBeans();
     }
 
     /**
