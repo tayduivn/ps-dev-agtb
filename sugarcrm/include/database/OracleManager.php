@@ -530,13 +530,18 @@ class OracleManager extends DBManager
         $GLOBALS['log']->info("tableExists: $tableName");
 
         if ($this->getDatabase()){
-            $tableName = strtoupper($tableName);
-            $owner = strtoupper($this->configOptions['db_schema_name']);
-            $sql = 'SELECT COUNT(*) FROM ALL_TABLES'
-                . ' WHERE OWNER = ' . $this->quoted($owner)
-                . ' AND TABLE_NAME = ' . $this->quoted($tableName);
-            $count = $this->getOne($sql);
-            return ($count == 0) ? false : true;
+            $query = 'SELECT TABLE_NAME
+FROM ALL_TABLES
+WHERE OWNER = ?
+    AND TABLE_NAME = ?';
+
+            $result = $this->getConnection()
+                ->executeQuery($query, array(
+                    strtoupper($this->configOptions['db_schema_name']),
+                    strtoupper($tableName),
+                ))->fetchColumn();
+
+            return !empty($result);
         }
 
         return false;
@@ -1347,17 +1352,18 @@ LEFT JOIN all_constraints c
 
         $query_owner = strtoupper($owner);
         $where = array(
-            'i.table_owner = ' . $this->quoted($query_owner),
+            'i.table_owner = ?',
         );
+        $params = array($query_owner);
 
         if ($filterByTable) {
-            $query_table_name = strtoupper($table_name);
-            $where[] = 'i.table_name = ' . $this->quoted($query_table_name);
+            $where[] = 'i.table_name = ?';
+            $params[] = strtoupper($table_name);
         }
 
         if ($filterByIndex) {
-            $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
-            $where[] = 'i.index_name = ' . $this->quoted($query_index_name);
+            $where[] = 'i.index_name = ?';
+            $params[] = strtoupper($this->getValidDBName($index_name, true, 'index'));
         }
 
         $where[] = 'i.index_type IN (\'NORMAL\', \'FUNCTION-BASED NORMAL\')';
@@ -1375,10 +1381,12 @@ LEFT JOIN all_constraints c
         $order[] = 'ic.column_position';
         $query .= ' ORDER BY ' . implode(', ', $order);
 
-        $result = $this->query($query);
+        $stmt = $this
+            ->getConnection()
+            ->executeQuery($query, $params);
 
         $data = array();
-        while ($row = $this->fetchByAssoc($result, false)) {
+        while (($row = $stmt->fetch())) {
             if (!$filterByTable) {
                 $table_name = strtolower($row['table_name']);
             }
@@ -1432,19 +1440,21 @@ LEFT JOIN all_constraints c
             'data_default',
             'nullable'
         );
-        $owner = strtoupper($this->configOptions['db_schema_name']);
-        $tablename = strtoupper($tablename);
 
         $query = "SELECT "
             . implode(',', $columns)
             . ' FROM ALL_TAB_COLUMNS '
-            . ' WHERE OWNER = ' . $this->quoted($owner)
-            . ' AND TABLE_NAME = ' . $this->quoted($tablename);
-        //find all unique indexes and primary keys.
-        $result = $this->query($query);
+            . ' WHERE OWNER = ?'
+            . ' AND TABLE_NAME = ?';
+
+        $stmt = $this->getConnection()
+            ->executeQuery($query, array(
+                strtoupper($this->configOptions['db_schema_name']),
+                strtoupper($tablename),
+            ));
 
         $columns = array();
-        while (($row=$this->fetchByAssoc($result)) !=null) {
+        while (($row = $stmt->fetch())) {
             $name = strtolower($row['column_name']);
             $columns[$name]['name']=$name;
             $columns[$name]['type']=strtolower($row['data_type']);
@@ -1462,7 +1472,6 @@ LEFT JOIN all_constraints c
                 $columns[$name]['len']=strtolower($row['char_length']);
             if ( !empty($row['data_default']) ) {
                 $matches = array();
-                $row['data_default'] = html_entity_decode($row['data_default'],ENT_QUOTES);
                 if ( preg_match("/^'(.*)'$/i",$row['data_default'],$matches) )
                     $columns[$name]['default'] = $matches[1];
             }

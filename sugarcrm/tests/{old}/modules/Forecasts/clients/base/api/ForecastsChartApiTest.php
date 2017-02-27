@@ -21,6 +21,30 @@
  */
 class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
+
+    protected static $users = [
+        ['id' => '6d01426a-99d1-11e6-9836-9801a7ade577', 'createReportUser' => false],
+        ['id' => '6d014904-99d1-11e6-a9d3-9801a7ade577', 'createReportUser' => true],
+    ];
+
+    public static function setUpBeforeClass()
+    {
+        foreach (self::$users as $userData) {
+            if ($userData['createReportUser']) {
+                SugarTestUserUtilities::createAnonymousUser(true, 0, [
+                    'status' => 'Active',
+                    'deleted' => 0,
+                    'reports_to_id' => $userData['id'],
+                ]);
+            }
+        }
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
+
     public function tearDown()
     {
         SugarTestHelper::tearDown();
@@ -59,36 +83,25 @@ FILE;
     }
 
     /**
+     * @param string $userId
      * @param string $_file
      * @param string $_klass
      * @param int $display_manager
-     * @param int $manager_total
      * @covers ForecastsChartApi::chart
      * @dataProvider dataProviderChart
      */
-    public function testChart($_file, $_klass, $display_manager, $manager_total)
+    public function testChart($userId, $_file, $_klass, $display_manager)
     {
         $api = $this->getMockBuilder('ForecastsChartApi')
             ->setMethods(array('getClass'))
-            ->getMock(0);
+            ->getMock();
 
         $user = $this->getMockBuilder('User')
             ->setMethods(array('save'))
             ->disableOriginalConstructor()
             ->getMock();
 
-        $user->id = 'test-id';
-
-        $dbMock = SugarTestHelper::setup('mock_db');
-        $dbMock->addQuerySpy(
-            'auditQuery',
-            '/WHERE reports_to_id =/',
-            array(
-                array(
-                    'total' => $manager_total
-                ),
-            )
-        );
+        $user->id = $userId;
 
         $args = array(
             'timeperiod_id' => 'test-timeperiod-id',
@@ -119,16 +132,16 @@ FILE;
     {
         return array(
             array(
+                self::$users[0]['id'],
                 'include/SugarForecasting/Chart/Individual.php',
                 'SugarForecasting_Chart_Individual',
                 0,
-                0
             ),
             array(
+                self::$users[1]['id'],
                 'include/SugarForecasting/Chart/Manager.php',
                 'SugarForecasting_Chart_Manager',
                 1,
-                10
             ),
         );
     }

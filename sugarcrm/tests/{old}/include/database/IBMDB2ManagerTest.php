@@ -76,23 +76,17 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetIndices()
     {
-        $queries = array();
-        $db = $this->createPartialMock(get_class($this->_db), array('query', 'fetchByAssoc', 'tableExistsExtended'));
-        $db->expects($this->any())->method('tableExistsExtended')->will($this->returnValue(true));
-        $db->expects($this->any())->method('query')->will($this->returnCallback(function($query) use (&$queries) {
-            $queries[] = $query;
-        }));
-        $db->expects($this->any())->method('fetchByAssoc')->will($this->returnValue(array()));
+        $db = $this->createPartialMock('IBMDB2Manager', array(
+            'populate_index_data',
+            'populate_fulltext_index_data',
+        ));
+
+        $db->expects($this->once())
+            ->method('populate_index_data');
+        $db->expects($this->once())
+            ->method('populate_fulltext_index_data');
+
         $db->get_indices('mytable');
-
-        $isFound = false;
-        foreach ($queries as $query) {
-            if (strpos($query, 'SYSIBMTS.TSINDEXES') !== false) {
-                $isFound = true;
-            }
-        }
-
-        $this->assertTrue($isFound, 'FTS indexes were not selected');
     }
 
     /**

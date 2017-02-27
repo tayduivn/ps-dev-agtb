@@ -17,12 +17,14 @@ describe('Dashboards', function() {
         let users = [
             {
                 attributes: {
-                    user_name: 'John'
+                    user_name: 'John',
+                    status: 'Active'
                 }
             },
             {
                 attributes: {
-                    user_name: 'Jane'
+                    user_name: 'Jane',
+                    status: 'Active'
                 }
             }
         ];

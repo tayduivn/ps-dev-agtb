@@ -307,7 +307,9 @@ class OAuthToken extends SugarBean
 	 */
 	public function mark_deleted($id)
 	{
-	    $this->db->query("DELETE from {$this->table_name} WHERE id='".$this->db->quote($id)."'");
+        $query = "DELETE FROM {$this->table_name} WHERE id = ? ";
+        $conn = $this->db->getConnection();
+        $conn->executeQuery($query, array($id));
 	}
 
 	/**

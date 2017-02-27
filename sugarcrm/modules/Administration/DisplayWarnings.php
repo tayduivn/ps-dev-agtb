@@ -36,16 +36,6 @@ if( is_admin($current_user) && SugarAutoLoader::fileExists('include/SugarSearchE
 
 }
 
-
-
-if(isset($_SESSION['rebuild_relationships'])){
-	displayAdminError(translate('MSG_REBUILD_RELATIONSHIPS', 'Administration'));
-}
-
-if(isset($_SESSION['rebuild_extensions'])){
-	displayAdminError(translate('MSG_REBUILD_EXTENSIONS', 'Administration'));
-}
-
 if (empty($license)){
 	$license = Administration::getSettings('license');
 }
@@ -186,13 +176,6 @@ if($smtp_error) {
         //END REQUIRED CODE DO NOT MODIFY
 		//END SUGARCRM lic=sub ONLY
         if(empty($GLOBALS['sugar_config']['admin_access_control'])){
-			if(isset($_SESSION['invalid_versions'])){
-				$invalid_versions = $_SESSION['invalid_versions'];
-				foreach($invalid_versions as $invalid){
-					displayAdminError(translate('WARN_UPGRADE', 'Administration'). $invalid['name'] .translate('WARN_UPGRADE2', 'Administration'));
-				}
-			}
-
 			if (isset($_SESSION['available_version'])){
 				if($_SESSION['available_version'] != $sugar_version)
 				{
@@ -210,5 +193,3 @@ if($smtp_error) {
 
 		unset($_SESSION['administrator_error']);
 }
-
-?>

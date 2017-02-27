@@ -25,13 +25,15 @@ class RecordListFactory
     public static function getRecordList($id, $user = null)
     {
         $data = null;
-        $db = DBManagerFactory::getInstance();
+        $conn = DBManagerFactory::getConnection();
 
         if ($user == null) {
             $user = $GLOBALS['current_user'];
         }
-
-        $row = $db->fetchOne("SELECT * FROM record_list WHERE id = '".$db->quote($id)."' AND assigned_user_id = '".$db->quote($user->id)."'",true, '', false);
+        $row = $conn->executeQuery(
+            'SELECT * FROM record_list WHERE id = ? AND assigned_user_id = ?',
+            [$id, $user->id]
+        )->fetch();
 
         if (!empty($row['records'])) {
             $data = $row;
@@ -98,9 +100,7 @@ class RecordListFactory
      */
     public static function deleteRecordList($recordListId)
     {
-        $db = DBManagerFactory::getInstance();
-        $ret = $db->query("DELETE FROM record_list WHERE id = '".$db->quote($recordListId)."'",true);
-
-        return $ret;
+        return DBManagerFactory::getConnection()
+            ->executeUpdate('DELETE FROM record_list WHERE id = ?', [$recordListId]);
     }
 }

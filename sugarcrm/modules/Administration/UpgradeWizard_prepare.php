@@ -18,8 +18,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 require_once 'modules/Administration/UpgradeWizardCommon.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
-unset($_SESSION['rebuild_relationships']);
-unset($_SESSION['rebuild_extensions']);
 // process commands
 if(empty($_REQUEST['install_file'])){
     die( $mod_strings['LBL_UPGRADE_WIZARD_FILE_NOT_SPEC'] );

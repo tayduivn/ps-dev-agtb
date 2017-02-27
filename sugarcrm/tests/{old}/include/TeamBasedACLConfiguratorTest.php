@@ -43,7 +43,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user');
         $this->tbaConfig = $this->createPartialMock(
             'TeamBasedACLConfigurator',
             array('applyTBA', 'restoreTBA', 'fallbackTBA', 'applyFallback')

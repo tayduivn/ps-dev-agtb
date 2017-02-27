@@ -339,10 +339,10 @@ function set_module_in($arrayList, $module_name){
  * used by SoapPortalUsers.php
  */
 function login_user($portal_auth){
-     $error = new SoapError();
-     $user = User::findUserPassword($portal_auth['user_name'], $portal_auth['password'], "portal_only='1' AND status = 'Active'");
+    $error = new SoapError();
+    $user = User::getUserDataByNameAndPassword($portal_auth['user_name'], $portal_auth['password']);
 
-     if(!empty($user)) {
+    if ($user && $user['portal_only'] == 1) {
             global $current_user;
             $bean = BeanFactory::getBean('Users', $user['id']);
             $current_user = $bean;

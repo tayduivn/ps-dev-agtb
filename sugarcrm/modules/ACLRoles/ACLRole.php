@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\Connection;
+
 class ACLRole extends SugarBean{
     var $module_dir = 'ACLRoles';
     var $object_name = 'ACLRole';
@@ -87,17 +89,17 @@ public function setAction($role_id, $action_id, $access)
 public static function getUserRoles($user_id, $getAsNameArray = true)
 {
         //if we don't have it loaded then lets check against the db
-        $additional_where = '';
         $query = "SELECT acl_roles.* ".
             "FROM acl_roles ".
-            "INNER JOIN acl_roles_users ON acl_roles_users.user_id = '$user_id' ".
+            "INNER JOIN acl_roles_users ON acl_roles_users.user_id = ? ".
                 "AND acl_roles_users.role_id = acl_roles.id AND acl_roles_users.deleted = 0 ".
             "WHERE acl_roles.deleted=0 ";
 
-        $result = $GLOBALS['db']->query($query);
+        $stmt = DBManagerFactory::getConnection()->executeQuery($query, array($user_id));
+
         $user_roles = array();
 
-        while($row = $GLOBALS['db']->fetchByAssoc($result) ){
+        while ($row = $stmt->fetch()) {
             $role = BeanFactory::getBean('ACLRoles');
             $role->populateFromRow($row);
             if($getAsNameArray)
@@ -121,17 +123,17 @@ public static function getUserRoleNames($user_id)
 
         if(!$user_roles){
             //if we don't have it loaded then lets check against the db
-            $additional_where = '';
             $query = "SELECT acl_roles.* ".
                 "FROM acl_roles ".
-                "INNER JOIN acl_roles_users ON acl_roles_users.user_id = '$user_id' ".
+                "INNER JOIN acl_roles_users ON acl_roles_users.user_id = ? ".
                     "AND acl_roles_users.role_id = acl_roles.id AND acl_roles_users.deleted = 0 ".
                 "WHERE acl_roles.deleted=0 ";
 
-            $result = $GLOBALS['db']->query($query);
+            $stmt = DBManagerFactory::getConnection()->executeQuery($query, array($user_id));
+
             $user_roles = array();
 
-            while($row = $GLOBALS['db']->fetchByAssoc($result) ){
+            while ($row = $stmt->fetch()) {
                 $user_roles[] = $row['name'];
             }
 
@@ -150,14 +152,14 @@ public static function getUserRoleNames($user_id)
  */
 public static function getAllRoles($returnAsArray = false)
 {
-        $db = DBManagerFactory::getInstance();
         $query = "SELECT acl_roles.* FROM acl_roles
                     WHERE acl_roles.deleted=0 ORDER BY name";
 
-        $result = $db->query($query);
+        $stmt = DBManagerFactory::getConnection()->executeQuery($query);
+
         $roles = array();
 
-        while($row = $db->fetchByAssoc($result) ){
+        while ($row = $stmt->fetch()) {
             $role = BeanFactory::getBean('ACLRoles');
             $role->populateFromRow($row);
             if($returnAsArray){
@@ -184,23 +186,37 @@ public static function getAllRoles($returnAsArray = false)
     {
         global $beanList;
         //if we don't have it loaded then lets check against the db
-        $additional_where = '';
-        $db = DBManagerFactory::getInstance();
-        $query = "SELECT acl_actions.*";
+
+        $builder = DBManagerFactory::getConnection()->createQueryBuilder();
+
         //only if we have a role id do we need to join the table otherwise lets use the ones defined in acl_actions as the defaults
-        if(!empty($role_id)){
-                $query .=" ,acl_roles_actions.access_override ";
+        $selectFields = ['acl_actions.*'];
+        if (!empty($role_id)) {
+            $selectFields[] = 'ara.access_override';
         }
-        $query .=" FROM acl_actions ";
+
+        $builder->select($selectFields)
+            ->from('acl_actions');
 
         if(!empty($role_id)){
-            $query .=		" LEFT JOIN acl_roles_actions ON acl_roles_actions.role_id = '$role_id' AND  acl_roles_actions.action_id = acl_actions.id AND acl_roles_actions.deleted = 0";
+            $builder->leftJoin(
+                'acl_actions',
+                'acl_roles_actions',
+                'ara',
+                'ara.role_id = :role_id AND ara.action_id = acl_actions.id AND ara.deleted = 0'
+            )
+            ->setParameter('role_id', $role_id);
         }
-        $query .= " WHERE acl_actions.deleted=0 ORDER BY acl_actions.category, acl_actions.name";
-        $result = $db->query($query);
+
+        $builder->where('acl_actions.deleted = 0')
+            ->addOrderBy('acl_actions.category')
+            ->addOrderBy('acl_actions.name');
+
+        $stmt = $builder->execute();
+
         $role_actions = array();
 
-        while($row = $db->fetchByAssoc($result) ){
+        while ($row = $stmt->fetch()) {
             $action = BeanFactory::getBean('ACLActions');
             $action->populateFromRow($row);
             if(!empty($row['access_override'])){
@@ -220,8 +236,6 @@ public static function getAllRoles($returnAsArray = false)
             }
 
             $role_actions[$action->category][$action->acltype][$action->name] = $action->toArray();
-
-
         }
         
         // Sort by translated categories
@@ -249,9 +263,12 @@ public static function getAllRoles($returnAsArray = false)
  */
 function mark_relationships_deleted($id){
         //we need to delete the actions relationship by hand (special case)
-        $date_modified = db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime');
-        $query =  "UPDATE acl_roles_actions SET deleted=1 , date_modified=$date_modified WHERE role_id = '$id' AND deleted=0";
-        $this->db->query($query);
+        $date_modified = TimeDate::getInstance()->nowDb();
+        $query =  "UPDATE acl_roles_actions SET deleted=1 , date_modified=? WHERE role_id = ? AND deleted=0";
+
+        $conn = $this->db->getConnection();
+        $conn->executeQuery($query, array($date_modified, $id));
+
         parent::mark_relationships_deleted($id);
 }
 
@@ -292,34 +309,24 @@ function mark_relationships_deleted($id){
      */
     public function updateUsersACLInfo()
     {
-        $query = sprintf(
-            'SELECT user_id
-             FROM acl_roles_users
-             WHERE deleted = 0
-               AND role_id = %s',
-            $this->db->quoted($this->id)
-        );
-        $result = $this->db->query($query);
-        if (!$result) {
-            return;
-        }
+        $query = "SELECT user_id FROM acl_roles_users WHERE deleted = 0 AND role_id = ?";
+
+        $stmt = DBManagerFactory::getConnection()->executeQuery($query, array($this->id));
 
         $ids = array();
-        while ($row = $this->db->fetchByAssoc($result)) {
-            $ids[] = $this->db->quoted($row['user_id']);
+        while ($row = $stmt->fetch()) {
+            $ids[] = $row['user_id'];
         }
+
         if (empty($ids)) {
             return;
         }
 
-        $query = sprintf(
-            'UPDATE users
-             SET date_modified = %s
-             WHERE deleted = 0
-               AND id IN (%s)',
-            $this->db->now(),
-            implode(',', $ids)
+        $query = "UPDATE users SET date_modified = ? WHERE deleted = 0 AND id IN (?)";
+        $this->db->getConnection()->executeQuery(
+            $query,
+            array($this->db->now(), $ids),
+            array(null, Connection::PARAM_STR_ARRAY)
         );
-        $this->db->query($query);
     }
 }

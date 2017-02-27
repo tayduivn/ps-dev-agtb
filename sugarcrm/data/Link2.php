@@ -166,7 +166,8 @@ class Link2 {
      * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
      * @return string|array query used to load this relationship
      */
-    public function query($params){
+    public function query($params = array())
+    {
         return $this->relationship->load($this, $params);
     }
 
@@ -267,15 +268,16 @@ class Link2 {
      * @return string "LHS" or "RHS" depending on the side of the relationship this link represents
      */
     public function getSide() {
+        $moduleName = ($this->focus->module_name) == 'Employees' ? 'Users' : $this->focus->module_name;
         //First try the relationship
         if ($this->relationship->getLHSLink() == $this->name &&
-            ($this->relationship->getLHSModule() == $this->focus->module_name)
+            ($this->relationship->getLHSModule() == $moduleName)
         ){
             return REL_LHS;
         }
 
         if ($this->relationship->getRHSLink() == $this->name &&
-            ($this->relationship->getRHSModule() == $this->focus->module_name)
+            ($this->relationship->getRHSModule() == $moduleName)
         ){
             return REL_RHS;
         }
@@ -299,6 +301,18 @@ class Link2 {
                 return REL_RHS;
             else if (isset($this->relationship->def['join_key_rhs']) && $this->def['id_name'] == $this->relationship->def['join_key_rhs'])
                 return REL_LHS;
+        }
+
+        // Try to guess it by module name
+        if (($this->relationship->getLHSLink() != $this->name)
+            && ($this->relationship->getRHSLink() != $this->name)
+            && ($this->relationship->getLHSModule() != $this->relationship->getRHSModule())
+        ) {
+            if ($this->relationship->getLHSModule() == $moduleName) {
+                return REL_LHS;
+            } elseif ($this->relationship->getRHSModule() == $moduleName) {
+                return REL_RHS;
+            }
         }
 
         $GLOBALS['log']->error("Unable to get proper side for link {$this->name}");
@@ -361,6 +375,8 @@ class Link2 {
      * @param array $params optional parameters. Possible Values;
      * 'return_as_array': returns the query broken into
      * @return String/Array query to grab just ids for this relationship
+     *
+     * @deprecated Use Link2::query() instead
      */
     function getQuery($params = array())
     {

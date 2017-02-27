@@ -1012,26 +1012,26 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param array $vardef
      * @return bool
      */
-	protected function isNullable($vardef)
-	{
-
-		if(isset($vardef['isnull']) && (strtolower($vardef['isnull']) == 'false' || $vardef['isnull'] === false)
-			&& !empty($vardef['required'])) {
-				/* required + is_null=false => not null */
-			return false;
-		}
+    protected function isNullable($vardef)
+    {
+        if (isset($vardef['isnull']) && (strtolower($vardef['isnull']) == 'false' || $vardef['isnull'] === false)
+            && !empty($vardef['required'])) {
+                /* required + is_null=false => not null */
+            return false;
+        }
         if ((isset($vardef['type']) && $vardef['type'] == 'bool')
             || (isset($vardef['dbType']) && $vardef['dbType'] == 'bool')) {
             return false;
         }
-		if(empty($vardef['auto_increment']) && (empty($vardef['type']) || $vardef['type'] != 'id' || (isset($vardef['required']) && empty($vardef['required'])))
-					&& (empty($vardef['dbType']) || $vardef['dbType'] != 'id' || (isset($vardef['required']) && empty($vardef['required'])))
-					&& (empty($vardef['name']) || ($vardef['name'] != 'id' && $vardef['name'] != 'deleted'))
-		) {
-			return true;
-		}
-		return false;
-	}
+        if (empty($vardef['auto_increment'])
+            && (empty($vardef['type']) || $vardef['type'] != 'id' || empty($vardef['required']))
+            && (empty($vardef['dbType']) || $vardef['dbType'] != 'id' || empty($vardef['required']))
+            && (empty($vardef['name']) || ($vardef['name'] != 'id' && $vardef['name'] != 'deleted'))
+        ) {
+            return true;
+        }
+        return false;
+    }
 
 
 	/**

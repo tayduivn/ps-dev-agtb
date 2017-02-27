@@ -179,7 +179,7 @@ class Monitor implements Trackable {
 
  	/**
  	 * Returns the monitor's metrics/values as an Array
- 	 * @return An Array of data for the monitor's corresponding metrics
+     * @return array Monitor's metrics
  	 */
  	public function toArray() {
  		$to_arr = array();

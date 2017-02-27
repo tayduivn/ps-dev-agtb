@@ -176,13 +176,14 @@ class DynamicField {
     * Returns the widget for a custom field from the fields_meta_data table.
     */
     function getFieldWidget($module, $fieldName) {
+        global $db;
         if (empty($module) || empty($fieldName)){
             sugar_die("Unable to load widget for '$module' : '$fieldName'");
         }
-        $query = "SELECT * FROM fields_meta_data WHERE custom_module='$module' AND name='$fieldName' AND deleted = 0";
-        $result = $GLOBALS['db']->query ( $query );
+        $query = "SELECT * FROM fields_meta_data WHERE custom_module=? AND name=? AND deleted = 0";
+        $stmt = $db->getConnection()->executeQuery($query, array($module, $fieldName));
         require_once 'modules/DynamicFields/FieldCases.php';
-        if ( $row = $GLOBALS['db']->fetchByAssoc ( $result ) ) {
+        if ($row = $stmt->fetch()) {
             $field = get_widget ( $row ['type'] );
             $field->populateFromRow($row);
             return $field;

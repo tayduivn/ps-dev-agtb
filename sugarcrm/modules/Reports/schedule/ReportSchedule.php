@@ -325,8 +325,9 @@ function update_next_run_time($schedule_id, $next_run, $interval){
     }
 
 function mark_deleted($id){
-    $query = "UPDATE {$this->table_name} SET deleted = '1' WHERE id = '{$id}'";
-    $GLOBALS['db']->query($query);
+        $query = "UPDATE {$this->table_name} SET deleted = '1' WHERE id = ?";
+        $conn = $this->db->getConnection();
+        $conn->executeQuery($query, array($id));
 }
 
     /**

@@ -12,6 +12,7 @@
  */
 
 use Doctrine\DBAL\DriverManager as DoctrineDriverManager;
+use Sugarcrm\Sugarcrm\Dbal\Connection;
 use Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger;
 use Doctrine\DBAL\Logging\SQLLogger;
 
@@ -172,7 +173,9 @@ class DBManagerFactory
 
         $conn = DoctrineDriverManager::getConnection(array(
             'driverClass' => $driverMap[$instance->variant],
-            'wrapperClass' => 'Sugarcrm\Sugarcrm\Dbal\Connection',
+            'wrapperClass' => Connection::class,
+            'portability' => Connection::PORTABILITY_FIX_CASE,
+            'fetch_case' => PDO::CASE_LOWER,
             'connection' => $instance->getDatabase(),
         ));
 

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\Query\QueryBuilder;
+
 global $dictionary;
 //Load all relationship metadata
 include_once("modules/TableDictionary.php");
@@ -89,6 +91,8 @@ abstract class SugarRelationship
      * Gets the query to load a link.
      * This is currently public, but should prob be made protected later.
      * See Link2->getQuery
+     *
+     * @deprecated Use SugarRelationship::load() instead
      * @abstract
      *
      * @param  $link Link Object to get query for.
@@ -108,6 +112,7 @@ abstract class SugarRelationship
 
     /**
      * @abstract
+     * @internal
      *
      * @param Link2 $link
      * @param SugarQuery $sugar_query
@@ -217,7 +222,7 @@ abstract class SugarRelationship
     /**
      * @param array $row values to be inserted into the relationship
      *
-     * @return bool|void null if new row was inserted and true if an existing row was updated
+     * @return int The number of affected rows
      */
     protected function addRow(array $row)
     {
@@ -230,47 +235,38 @@ abstract class SugarRelationship
             );
         }
 
-        $values = array();
-        foreach ($this->getFields() as $def) {
-            $field = $def['name'];
-            if (isset($row[$field])) {
-                $values[$field] = "'{$row[$field]}'";
-            }
-        }
-        $columns = implode(',', array_keys($values));
-        $values = implode(',', $values);
-        if (!empty($values)) {
-            $query = "INSERT INTO {$this->getRelationshipTable(
-            )} ($columns) VALUES ($values)";
-            return DBManagerFactory::getInstance()->query($query);
-        }
+        DBManagerFactory::getInstance()->insertParams(
+            $this->getRelationshipTable(),
+            $this->getFields(),
+            $row
+        );
 
-        return false;
+        return true;
     }
 
     /**
-     * @param $id id of row to update
-     * @param $values values to insert into row
+     * @param string $id id of row to update
+     * @param array $values values to insert into row
      *
-     * @return resource result of update satatement
+     * @return int The number of affected rows
      */
-    protected function updateRow($id, $values)
+    protected function updateRow($id, array $values)
     {
-        $newVals = array();
         //Unset the ID since we are using it to update the row
         if (isset($values['id'])) {
             unset($values['id']);
         }
-        foreach ($values as $field => $val) {
-            $newVals[] = "$field='$val'";
-        }
 
-        $newVals = implode(",", $newVals);
+        DBManagerFactory::getInstance()->updateParams(
+            $this->getRelationshipTable(),
+            $this->getFields(),
+            $values,
+            array(
+                'id' => $id,
+            )
+        );
 
-        $query = "UPDATE {$this->getRelationshipTable(
-        )} set $newVals WHERE id='$id'";
-
-        return DBManagerFactory::getInstance()->query($query);
+        return true;
     }
 
     /**
@@ -278,26 +274,25 @@ abstract class SugarRelationship
      *
      * @param $where array of field=>value pairs to match
      *
-     * @return bool|resource
+     * @return int The number of affected rows
      */
     protected function removeRow($where)
     {
         if (empty($where)) {
-            return false;
+            return 0;
         }
 
-        $date_modified = TimeDate::getInstance()->getNow()->asDb();
-        $stringSets = array();
-        foreach ($where as $field => $val) {
-            $stringSets[] = "$field = '$val'";
-        }
-        $whereString = "WHERE " . implode(" AND ", $stringSets);
+        DBManagerFactory::getInstance()->updateParams(
+            $this->getRelationshipTable(),
+            $this->getFields(),
+            array(
+                'deleted' => 1,
+                'date_modified' => TimeDate::getInstance()->nowDb(),
+            ),
+            $where
+        );
 
-        $query = "UPDATE {$this->getRelationshipTable(
-        )} set deleted=1 , date_modified = '$date_modified' $whereString";
-
-        return DBManagerFactory::getInstance()->query($query);
-
+        return true;
     }
 
     /**
@@ -318,18 +313,18 @@ abstract class SugarRelationship
         $leftID = $row[$leftIDName];
         $rightID = $row[$rightIDName];
         //Check the relationship role as well
-        $roleCheck = $this->getRoleWhere('', false, true);
+        $builder = DBManagerFactory::getConnection()->createQueryBuilder();
+        $expr = $builder->expr();
+        $table = $this->getRelationshipTable();
+        $builder->select('*')
+            ->from($table)
+            ->where($expr->eq($leftIDName, $builder->createPositionalParameter($leftID)))
+            ->andWhere($expr->eq($rightIDName, $builder->createPositionalParameter($rightID)))
+            ->andWhere($expr->eq('deleted', 0));
+        $this->applyQueryBuilderFilter($builder, $table, false, true);
 
-        $query = "SELECT * FROM {$this->getRelationshipTable(
-        )} WHERE $leftIDName='$leftID' AND $rightIDName='$rightID' $roleCheck AND deleted=0";
-
-        $db = DBManagerFactory::getInstance();
-        $row = $db->fetchOne($query);
-        if (!empty($row)) {
-            return $row;
-        } else {
-            return false;
-        }
+        $stmt = $builder->execute();
+        return $stmt->fetch();
     }
 
     /**
@@ -345,6 +340,63 @@ abstract class SugarRelationship
             return array($this->def['relationship_role_column'] => $this->def["relationship_role_column_value"]);
         }
         return array();
+    }
+
+    /**
+     * Applies relationship filter to the query
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param string $tableAlias Relationship table alias
+     * @param bool $ignoreRole Whether the role filter needs to be ignored
+     * @param bool $ignorePrimary Whether the filter by primary flag needs to be ignored
+     */
+    protected function applyQueryBuilderFilter(
+        QueryBuilder $builder,
+        $tableAlias,
+        $ignoreRole = false,
+        $ignorePrimary = false
+    ) {
+        if (!$ignoreRole && !$this->ignore_role_filter) {
+            $this->applyQueryBuilderRoleFilter($builder, $tableAlias);
+        }
+
+        if (!$ignorePrimary && !empty($this->primaryOnly)) {
+            $this->applyQueryBuilderPrimaryFilter($builder, $tableAlias);
+        }
+    }
+
+    /**
+     * Applies role-specific relationship filter to the query
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param string $tableAlias Relationship table alias
+     */
+    protected function applyQueryBuilderRoleFilter(QueryBuilder $builder, $tableAlias)
+    {
+        $expr = $builder->expr();
+        foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+            $field = sprintf('%s.%s', $tableAlias, $column);
+            if ($value) {
+                $cond = $expr->eq($field, $builder->createPositionalParameter($value));
+            } else {
+                $cond = $expr->isNull($field);
+            }
+            $builder->andWhere($cond);
+        }
+    }
+
+    /**
+     * Applies primary flag relationship filter to the query
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param string $tableAlias Relationship table alias
+     */
+    protected function applyQueryBuilderPrimaryFilter(QueryBuilder $builder, $tableAlias)
+    {
+        if (!empty($this->def['primary_flag_column'])) {
+            $field = sprintf('%s.%s', $tableAlias, $this->def['primary_flag_column']);
+            $builder->andWhere($builder->expr()->eq($field, 1));
+        }
     }
 
     /**
@@ -389,6 +441,32 @@ abstract class SugarRelationship
 
         return $roleCheck;
     }
+
+    /**
+     * add role where clause to query builder
+     * @param QueryBuilder $query
+     * @param bool $ignoreFilter
+     * @param bool $ignoreFlag
+     */
+    protected function addRoleWhereToQuery(QueryBuilder $query, $ignoreFilter = false, $ignoreFlag = false)
+    {
+        $expr = $query->expr();
+        if (!$ignoreFilter && !$this->ignore_role_filter) {
+            foreach ($this->getRelationshipRoleColumns() as $name => $value) {
+                if (empty($value)) {
+                    $query->andWhere($expr->isNull($name));
+                } else {
+                    $query->andWhere($expr->eq($name, $query->createPositionalParameter($value)));
+                }
+            }
+        }
+
+        if (!empty($this->def['primary_flag_column']) && !empty($this->primaryOnly) && !$ignoreFlag) {
+            $query->andWhere($expr->eq($this->def['primary_flag_column'], 1));
+        }
+
+    }
+
 
     /**
      * Build a Where object for a role in a relationship
@@ -625,17 +703,17 @@ abstract class SugarRelationship
      * @param SugarBean $relatedBean
      * @return string
      */
-    protected function getOptionalWhereClause($optional_array, $whereTable = '', $relatedBean = null)
+    protected function getOptionalWhereClause($optional_array, $whereTable = '', SugarBean $relatedBean = null)
     {
         //lhs_field, operator, and rhs_value must be set in optional_array
         foreach (array("lhs_field", "operator", "rhs_value") as $required) {
             if (empty($optional_array[$required])) {
-                return "";
+                throw new \InvalidArgumentException('lhs_field, operator and rhs_value must be set');
             }
         }
 
         // If there was a related bean passed, use it to get the where table
-        if ($relatedBean instanceof SugarBean) {
+        if ($relatedBean) {
             $whereTable = $this->getWhereTable($whereTable, $relatedBean, $optional_array['lhs_field']);
         }
 
@@ -645,6 +723,71 @@ abstract class SugarRelationship
         }
 
         return $whereTable . $optional_array['lhs_field'] . "" . $optional_array['operator'] . "'" . $optional_array['rhs_value'] . "'";
+    }
+
+
+    /**
+     * Adds optional where clause to the sugar query
+     *
+     * @param SugarQuery $query
+     * @param array $optional_array List of conditionals to apply to a custom where
+     * @param string $whereTable The existing where table to select from
+     * @param SugarBean $relatedBean
+     *
+     * @return bool
+     */
+    protected function buildOptionalQueryWhere(
+        SugarQuery $query,
+        $optional_array,
+        $whereTable = '',
+        SugarBean $relatedBean = null
+    ) {
+        //lhs_field, operator, and rhs_value must be set in optional_array
+        foreach (array('lhs_field', 'operator', 'rhs_value') as $required) {
+            if (empty($optional_array[$required])) {
+                throw new \InvalidArgumentException('lhs_field, operator and rhs_value must be set');
+            }
+        }
+
+        // If there was a related bean passed, use it to get the where table
+        if ($relatedBean) {
+            $whereTable = $this->getWhereTable($whereTable, $relatedBean, $optional_array['lhs_field']);
+        }
+
+        // If $whereTable is not empty, add the dot
+        if ($whereTable) {
+            $whereTable .= '.';
+        }
+
+        $query->where()->condition(
+            $whereTable . $optional_array['lhs_field'],
+            $optional_array['operator'],
+            $optional_array['rhs_value']
+        );
+        return true;
+    }
+
+    /**
+     * Parses string representation of ORDER BY into an array
+     *
+     * @param string $orderBy Order by string
+     *
+     * @return array
+     */
+    protected function getOrderByFields($orderBy)
+    {
+        $parts = explode(',', $orderBy);
+        array_walk($parts, 'trim');
+        $fields = array();
+        foreach ($parts as $part) {
+            $matches = array();
+            if (preg_match('/^(.*)\s+(asc|desc)$/i', $part, $matches)) {
+                $fields[$matches[1]] = $matches[2];
+            } else {
+                $fields[$part] = 'ASC';
+            }
+        }
+        return $fields;
     }
 
     /**

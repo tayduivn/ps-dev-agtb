@@ -166,19 +166,13 @@ class Tag extends Basic
      */
     public function getTagIdsByBeanId($beanId, $beanModule)
     {
-        $tags = array();
-        $sql = sprintf(
-            "SELECT tag_id FROM tag_bean_rel " .
-            "WHERE bean_id = %s AND bean_module = %s AND deleted = 0 ",
-            $this->db->quoted($beanId),
-            $this->db->quoted($beanModule)
-        );
-
-        $result = $this->db->query($sql);
-        while ($data = $this->db->fetchByAssoc($result)) {
-            $tags[] = $data["tag_id"];
-        }
-        return $tags;
+        $query = 'SELECT tag_id
+            FROM tag_bean_rel
+            WHERE bean_id = ?
+                AND bean_module = ?
+                AND deleted = 0';
+        $stmt = $this->db->getConnection()->executeQuery($query, [$beanId, $beanModule]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**
@@ -197,13 +191,13 @@ class Tag extends Basic
     public function mark_deleted($id) {
         //When deleting a tag, also delete the tag relation rows associated with that tag
         $date_modified = $GLOBALS['timedate']->nowDb();
+
         $sql = "UPDATE tag_bean_rel";
-        $sql .= " SET deleted = 1, date_modified = '$date_modified'";
-        $sql .= " WHERE tag_id='$id'";
-
+        $sql .= " SET deleted = 1, date_modified = ? ";
+        $sql .= " WHERE tag_id= ? ";
         $db = DBManagerFactory::getInstance();
-        $db->query($sql);
-
+        $conn = $db->getConnection();
+        $conn->executeQuery(sql, array($date_modified, $id));
         parent::mark_deleted($id);
     }
 

@@ -13,7 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Dbal;
 
 use Doctrine\DBAL\Cache\QueryCacheProfile;
-use Doctrine\DBAL\Connection as BaseConnection;
+use Doctrine\DBAL\Portability\Connection as BaseConnection;
 use Doctrine\DBAL\DBALException;
 use Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder;
 

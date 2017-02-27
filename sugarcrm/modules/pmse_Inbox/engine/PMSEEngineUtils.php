@@ -1688,13 +1688,13 @@ class PMSEEngineUtils
         if (!isset(SugarCache::instance()->{static::getModuleLockedFieldsCacheKey($moduleName)})) {
             $db = DBManagerFactory::getInstance();
 
-            $query = sprintf(
-                "SELECT id FROM locked_field_bean_rel "
-                . "WHERE bean_module='%s' AND deleted = 0",
-                $db->quote($moduleName)
-            );
+            $query = "SELECT id FROM locked_field_bean_rel ";
+            $query .= "WHERE bean_module= ? AND deleted = 0";
             $query = $db->limitQuerySql($query, 0, 1);
-            $result = $db->fetchOne($query);
+
+            $result = $db->getConnection()
+                       ->executeQuery($query, array($moduleName))
+                       ->fetchColumn();
 
             SugarCache::instance()->{static::getModuleLockedFieldsCacheKey($moduleName)} = (bool) $result;
         }

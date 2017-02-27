@@ -22,10 +22,9 @@ class Bug67439Test extends Sugar_PHPUnit_Framework_TestCase
         'cache/modules/Teams/DetailView.tpl',
     );
 
-    public static function setUpBeforeClass()
+    protected function setUp()
     {
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
+        parent::setUp();
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('mod_strings', array('Teams'));
 
@@ -40,15 +39,15 @@ class Bug67439Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['objectList']['Teams'] = 'Team';
     }
 
-    public static function tearDownAfterClass()
+    protected function tearDown()
     {
-        SugarTestHelper::tearDown();
         $GLOBALS['objectList'] = static::$oldObjectList;
         foreach(static::$filesToUnlink as $file) {
             if (file_exists($file)) {
                 unlink($file);
             }
         }
+        parent::tearDown();
     }
 
     /**

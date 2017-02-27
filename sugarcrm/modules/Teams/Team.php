@@ -320,11 +320,9 @@ class Team extends SugarBean
 		}
 
 		// Update team_memberships table and set deleted = 1
-        $query = sprintf(
-            'UPDATE team_memberships SET deleted = 1 WHERE team_id = %s',
-            $this->db->quoted($this->id)
-        );
-		$this->db->query($query,true,"Error deleting memberships while deleting team: ");
+        $query = "UPDATE team_memberships SET deleted = 1 WHERE team_id = ?";
+        $conn = $this->db->getConnection();
+        $conn->executeQuery($query, array($this->id));
 
 		// Update teams and set deleted = 1
 		$this->deleted = 1;
@@ -348,18 +346,20 @@ class Team extends SugarBean
 	 */
 	function complete_team_duplication($original_team_id)
 	{
-		// Collect the full list of team memberships
-        $query = sprintf(
-            'select id, user_id, explicit_assign, implicit_assign, deleted from team_memberships where team_id = %s',
-            $this->db->quoted($original_team_id)
-        );
-		$result = $this->db->query($query,true,"Error finding team memberships: ");
+        $membership = BeanFactory::getBean('TeamMemberships');
+
+        $query = new SugarQuery();
+        $query->from($membership, array(
+            'team_security' => false,
+            'add_deleted' => false,
+        ));
+        $query->select('id', 'user_id', 'explicit_assign', 'implicit_assign', 'deleted');
+        $query->where()->equals('team_id', $original_team_id);
+        $data = $query->execute();
 
        $GLOBALS['log']->debug("About to duplicate team memberships. from team $original_team_id.");
 
-		$membership = BeanFactory::getBean('TeamMemberships');
-		while(($row = $this->db->fetchByAssoc($result)) != false)
-		{
+        foreach ($data as $row) {
 			$membership->retrieve($row['id']);
 			$membership->id=create_guid();
 			$membership->user_id = $row['user_id'];
@@ -612,26 +612,34 @@ class Team extends SugarBean
 	*/
 	function scan_direct_reports_for_access($user_id)
 	{
-		// At this point, we have the manager's ID.  Let's gather the list of their employee's IDs.
-        $query = sprintf(
-            'select id from users where reports_to_id = %s',
-            $this->db->quoted($user_id)
-        );
-		$result = $this->db->getOne($query,true,"Error finding the direct reports for a manager: ");
-		return !empty($result);
+        $query = 'SELECT COUNT(*)
+FROM users
+WHERE reports_to_id = ?
+AND deleted = 0';
+
+        $count = $this->db->getConnection()
+            ->executeQuery($query, array($user_id))
+            ->fetchColumn();
+
+        return $count > 0;
 	}
 
     function scan_direct_reports_team_for_access($user_id)
     {
-        // At this point, we have the manager's ID.  Let's gather the list of their employee's IDs.
-        $query = sprintf(
-            'SELECT users.id FROM users INNER JOIN team_memberships ON users.id = team_memberships.user_id
-            WHERE users.reports_to_id = %s AND team_memberships.team_id = %s AND team_memberships.deleted = 0',
-            $this->db->quoted($user_id),
-            $this->db->quoted($this->id)
-        );
-        $result = $this->db->getOne($query,true,"Error finding the direct reports for a manager: ");
-        return !empty($result);
+        $query = 'SELECT COUNT(users.id)
+FROM users
+INNER JOIN team_memberships
+ON team_memberships.user_id = users.id
+WHERE users.reports_to_id = ?
+AND team_memberships.team_id = ?
+AND users.deleted = 0
+AND team_memberships.deleted = 0';
+
+        $count = $this->db->getConnection()
+            ->executeQuery($query, array($user_id, $this->id))
+            ->fetchColumn();
+
+        return $count > 0;
     }
 
 	/**
@@ -641,6 +649,8 @@ class Team extends SugarBean
 	 */
 	function user_manager_changed($user_id, $old_reports_to_id, $new_reports_to_id)
 	{
+        global $dictionary;
+
 		// Step0: Set the user to the initial focus
 		$user = BeanFactory::getBean('Users', $user_id);
 		$user->reports_to_id = $old_reports_to_id;
@@ -666,78 +676,72 @@ class Team extends SugarBean
 			$team->add_user_to_team($user_id, $user);
 		}
 
-       //make sure the user has same memberships as before. If not, update them accordingly.
-       if (count($this->my_memberships) > 0) {
-            foreach ($this->my_memberships as $team_id=>$before_row) {
-                $query = sprintf(
-                    'select * from team_memberships where user_id = %s and team_id = %s',
-                    $this->db->quoted($user_id),
-                    $this->db->quoted($team_id)
-                );
-                $result = $this->db->query($query,true,"Error finding the full membership list for a user: ");
-                $after_row=$this->db->fetchByAssoc($result);
+        //make sure the user has same memberships as before. If not, update them accordingly.
+        if (count($this->my_memberships) > 0) {
+            $conn = $this->db->getConnection();
+            $query = 'SELECT explicit_assign, implicit_assign
+FROM team_memberships
+WHERE user_id = ?
+AND team_id = ?';
 
-                if  ($after_row['explicit_assign'] != $before_row['explicit_assign'] or $after_row['implicit_assign'] != $before_row['implicit_assign'] ) {
-                    $update_query = sprintf(
-                        'update team_memberships set explicit_assign = %s, implicit_assign = %s where id = %s',
-                        $this->db->quoted($before_row['explicit_assign']),
-                        $this->db->quoted($before_row['implicit_assign']),
-                        $this->db->quoted($after_row['id'])
-                    );
-                    $this->db->query($update_query, true, "Error updating the team sync. ");
+            foreach ($this->my_memberships as $team_id=>$before_row) {
+                $stmt = $conn->executeQuery($query, array($user_id, $team_id));
+                $after_row = $stmt->fetch();
+
+                if ($after_row['explicit_assign'] != $before_row['explicit_assign']
+                    || $after_row['implicit_assign'] != $before_row['implicit_assign']) {
+                    $this->db->updateParams('team_memberships', $dictionary['team_memberships']['fields'], array(
+                        'explicit_assign' => $before_row['explicit_assign'],
+                        'implicit_assign' => $before_row['implicit_assign'],
+                    ), array(
+                        'id' => $after_row['id'],
+                    ));
                 }
             }
-       }
-
+        }
     }
 
 
 	/**
 	 * Return a list of teams that this user belongs to.
+     *
+     * @param string User ID
+     * @return self[]
 	 */
 	function get_teams_for_user($user_id)
 	{
-        // Get the list of ids for the teams (include implicit and explicit)
-        // At this point, we have the manager's ID.  Let's gather the list of their employee's IDs.
-        $query = sprintf(
-            'select * from team_memberships where user_id = %s and deleted = 0',
-            $this->db->quoted($user_id)
-        );
-		$result = $this->db->query($query,true,"Error finding the full membership list for a user: ");
+        $query = new SugarQuery();
+        $query->from($this);
+        $query->where()->equals('user_id', $user_id);
+        $teams = $this->fetchFromQuery($query);
 
-		$team_array = Array();
-		while($row = $this->db->fetchByAssoc($result)) {
-            $this->my_memberships[$row['team_id']]=$row;
-			$team = BeanFactory::getBean('Teams', $row['team_id']);
-			$team_array[] = $team;
-		}
-
-		return $team_array;
+        return $teams;
 	}
 
 	/**
 	 * Return the team id for a team name.
+     *
+     * @param string Team name
+     * @return string
 	 */
 	function retrieve_team_id($team_name) {
-        $query = sprintf(
-            'SELECT id from teams where name = %s OR name_2 = %s',
-            $this->db->quoted($team_name),
-            $this->db->quoted($team_name)
-        );
+        $query = 'SELECT id from teams where name = ? OR name_2 = ?';
+        $params = array($team_name, $team_name);
+
         // Private teams seem to have the name split up, so we need to check for this
         $splitVal = explode(' ',$team_name,2);
         if ( isset($splitVal[1]) && !empty($splitVal[1]) ) {
-            $query .= sprintf(
-                ' OR ( name = %s AND name_2 = %s)',
-                $this->db->quoted($splitVal[0]),
-                $this->db->quoted($splitVal[1])
-            );
+            $query .= ' OR (name = ? AND name_2 = ?)';
+            array_push($params, $splitVal[0], $splitVal[1]);
         }
-        $query .= "AND deleted != 1";
-		$result = $this->db->query($query, false, "Error retrieving user ID: ");
-		$row = $this->db->fetchByAssoc($result);
-		if (!$row) return false;
-		return $row['id'];
+
+        $query .= ' AND deleted = 0';
+
+        $id = $this->db->getConnection()
+            ->executeQuery($query, $params)
+            ->fetchColumn();
+
+        return $id;
 	}
 
 
@@ -752,20 +756,18 @@ class Team extends SugarBean
 	 * @return boolean value indicating whether or not the team instance is assigned as part of a team set in modules
 	 */
 	function has_records_in_modules() {
-        $query = sprintf(
-            'SELECT count(tsm.team_set_id) as total
+        $query =
+            'SELECT count(tsm.team_set_id)
 		    FROM team_sets_modules tsm
 		    inner join team_sets_teams tst
 		    on tsm.team_set_id = tst.team_set_id
-		    where tst.team_id = %s',
-            $this->db->quoted($this->id)
-        );
-		$results = $this->db->query($query);
-		if(!empty($results)) {
-		   $row = $GLOBALS['db']->fetchByAssoc($results);
-		   return $row['total'] == 0 ? false : true;
-		}
-		return false;
+            WHERE tst.team_id = ?';
+
+        $count = $this->db->getConnection()
+            ->executeQuery($query, array($this->id))
+            ->fetchColumn();
+
+        return $count > 0;
 	}
 
 
@@ -779,77 +781,73 @@ class Team extends SugarBean
 	function reassign_team_records($old_teams = array())
 	{
 		$logger = \LoggerManager::getLogger();
+        $conn = $this->db->getConnection();
 
-		$old_team = BeanFactory::getBean('Teams');
 		foreach ($old_teams as $old_team_id) {
-			$old_team->retrieve($old_team_id);
-            $query = sprintf(
-                'SELECT tsm.module_table_name FROM team_sets_modules tsm
-                inner join team_sets_teams tst on tsm.team_set_id = tst.team_set_id where tst.team_id = %s',
-                $this->db->quoted($old_team->id)
-            );
-            $results = $this->db->query($query);
-			$modules_with_team = array();
-			if (!empty($results)) {
-				while ($row = $this->db->fetchByAssoc($results)) {
-					$modules_with_team[] = $row['module_table_name'];
-				}
-			}
+            $query = 'SELECT tsm.module_table_name
+FROM team_sets_modules tsm
+INNER JOIN team_sets_teams tst
+ON tst.team_set_id = tsm.team_set_id
+WHERE tst.team_id = ?';
 
-			if (!empty($modules_with_team)) {
-				$modules_with_team = array_unique($modules_with_team);
-				foreach ($modules_with_team as $module) {
-					// skip users module, will process it below
-					if ($module === 'users') {
-						continue;
-					}
-                    $sql = sprintf(
-                        'UPDATE %s SET team_id = %s WHERE team_id = %s',
-                        $module,
-                        $this->db->quoted($this->id),
-                        $this->db->quoted($old_team->id)
-                    );
-					$logger->info("Updating team_id column values in {$module} table from '{$old_team->id}' to '{$this->id}'");
-					$this->db->query($sql);
+            $modules_with_team = $conn->executeQuery($query, array($old_team_id))
+                ->fetchAll(PDO::FETCH_COLUMN);
+            $modules_with_team = array_unique($modules_with_team);
 
-                    $sql = sprintf(
-                        'UPDATE team_sets_teams SET team_id = %s WHERE team_id = %s',
-                        $this->db->quoted($this->id),
-                        $this->db->quoted($old_team->id)
-                    );
-					$logger->info(sprintf(
-                        "Updating team_id column values in team_sets_teams table from '%s' to '%s'",
-                        $old_team->id,
-                        $this->id
-                    ));
-					$this->db->query($sql);
-				}
-			}
+            foreach ($modules_with_team as $module) {
+                // skip users module, will process it below
+                if ($module === 'users') {
+                    continue;
+                }
 
-			// find affected users
-			$userIds = array();
-			$query = "SELECT id FROM users WHERE default_team = {$this->db->quoted($old_team->id)}";
-			$results = $this->db->query($query);
-			if (!empty($results)) {
-				while ($row = $this->db->fetchByAssoc($results)) {
-					$userIds[] = $row['id'];
-				}
-			}
-			// for User bean team_id is default_team
-			if (!empty($userIds)) {
-				$sql =
-					"UPDATE {$module}
-					 SET default_team = {$this->db->quoted($this->id)}
-					 WHERE default_team = {$this->db->quoted($old_team->id)}";
-				$logger->info("Updating default_team column values in users table from '{$old_team->id}' to '{$this->id}'");
-				$this->db->query($sql);
-				// make sure users are members of the assigned team
-				foreach ($userIds as $userId) {
-					$this->add_user_to_team($userId);
-				}
-			}
+                $logger->info(sprintf(
+                    "Updating team_id column values in %s table from '%s' to '%s'",
+                    $module,
+                    $old_team_id,
+                    $this->id
+                ));
+                $conn->update($module, array(
+                    'team_id' => $this->id,
+                ), array(
+                    'team_id' => $old_team_id,
+                ));
 
-			$old_team->delete_team();
+                $logger->info(sprintf(
+                    "Updating team_id column values in team_sets_teams table from '%s' to '%s'",
+                    $old_team_id,
+                    $this->id
+                ));
+                $conn->update('team_sets_teams', array(
+                    'team_id' => $this->id,
+                ), array(
+                    'team_id' => $old_team_id,
+                ));
+            }
+
+            // find affected users
+            $query = 'SELECT id FROM users WHERE default_team = ?';
+            $userIds = $conn->executeQuery($query, array($old_team_id))
+                ->fetchAll(PDO::FETCH_COLUMN);
+
+            // for User bean team_id is default_team
+            $logger->info(sprintf(
+                "Updating default_team column values in users table from '%s' to '%s'",
+                $old_team_id,
+                $this->id
+            ));
+            $conn->update('users', array(
+                'default_team' => $this->id,
+            ), array(
+                'default_team' => $old_team_id,
+            ));
+
+            // make sure users are members of the assigned team
+            foreach ($userIds as $userId) {
+                $this->add_user_to_team($userId);
+            }
+
+            $old_team = BeanFactory::getBean('Teams', $old_team_id);
+            $old_team->delete_team();
 		}
 	}
 
@@ -946,20 +944,26 @@ class Team extends SugarBean
 
         if ($user->isAdmin()||(!$user->isAdmin() && $user->isAdminForModule('Users'))) {
             $query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1 where t1.deleted = 0 ORDER BY t1.private,t1.name ASC';
+            $params = array();
         } else {
-            $query = sprintf(
-                'SELECT t1.id, t1.name, t1.name_2 FROM teams t1, team_memberships t2
-                where t1.deleted = 0 and t2.deleted = 0 and t1.id=t2.team_id and t2.user_id = %s
-                ORDER BY t1.private,t1.name ASC',
-                $db->quoted($user->id)
-            );
+            $query = 'SELECT t.id, t.name, t.name_2
+FROM teams t
+INNER JOIN team_memberships tm
+ON tm.team_id = t.id 
+AND tm.deleted = 0 
+WHERE tm.user_id = ?
+AND t.deleted = 0
+ORDER BY t.private, t.name';
+            $params = array($user->id);
         }
-        $result = $db->query($query, true, "Error filling in team array: ");
+
+        $stmt = $db->getConnection()
+            ->executeQuery($query, $params);
 
         if ($add_blank)
             $team_array[""] = "";
 
-        while ($row = $db->fetchByAssoc($result)) {
+        while (($row = $stmt->fetch())) {
             if($user->showLastNameFirst())
                 $team_array[$row['id']] = trim($row['name_2'] . ' ' . $row['name']);
             else

@@ -447,22 +447,25 @@ class Email extends SugarBean {
             $this->description = $_REQUEST['sendDescription'];
         }
 
-		if ( $this->isDraftEmail($request) )
-		{
-			if($this->type != 'draft' && $this->status != 'draft') {
-	        	$this->id = create_guid();
-	        	$this->new_with_id = true;
-	        	$this->date_entered = "";
-			} // if
-			$q1 = "update emails_email_addr_rel set deleted = 1 WHERE email_id = '{$this->id}'";
-			$this->db->query($q1);
-		} // if
+        if ($this->isDraftEmail($request)) {
+            if ($this->type != 'draft' && $this->status != 'draft') {
+                $this->id = create_guid();
+                $this->new_with_id = true;
+                $this->date_entered = "";
+            }
+            global $dictionary;
+            $this->db->updateParams(
+                'emails_email_addr_rel',
+                $dictionary['emails_email_addr_rel']['fields'],
+                array('deleted' => 1),
+                array('email_id' => $id)
+            );
+        }
 
-		if ($saveAsDraft) {
-			$this->type = 'draft';
-			$this->status = 'draft';
-		} else {
-
+        if ($saveAsDraft) {
+            $this->type = 'draft';
+            $this->status = 'draft';
+        } else {
             if ($archived) {
                 $this->type = 'archived';
                 $this->status = 'archived';
@@ -1207,22 +1210,36 @@ class Email extends SugarBean {
 		}
 	}
 
-	function linkEmailToAddress($id, $type) {
-		// TODO: make this update?
-		$q1 = "SELECT * FROM emails_email_addr_rel WHERE email_id = '{$this->id}' AND email_address_id = '{$id}' AND address_type = '{$type}' AND deleted = 0";
-		$r1 = $this->db->query($q1);
-		$a1 = $this->db->fetchByAssoc($r1);
+    public function linkEmailToAddress($id, $type)
+    {
+        // TODO: make this update?
+        $query = "SELECT id FROM emails_email_addr_rel " .
+            "WHERE email_id = ? AND email_address_id = ? AND address_type = ? AND deleted = ?";
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($query, array($this->id, $id, $type, 0));
 
-		if(!empty($a1) && !empty($a1['id'])) {
-			return $a1['id'];
-		} else {
-			$guid = create_guid();
-			$q2 = "INSERT INTO emails_email_addr_rel VALUES('{$guid}', '{$this->id}', '{$type}', '{$id}', 0)";
-			$r2 = $this->db->query($q2);
-		}
+        $linkedEmailId = $stmt->fetchColumn();
 
-		return $guid;
-	}
+        if (!empty($linkedEmailId)) {
+            return $linkedEmailId;
+        } else {
+            $guid = create_guid();
+            global $dictionary;
+            $this->db->insertParams(
+                'emails_email_addr_rel',
+                $dictionary['emails_email_addr_rel']['fields'],
+                array(
+                    'id' => $guid,
+                    'email_id' => $this->id,
+                    'address_type' => $type,
+                    'email_address_id' => $id,
+                    'deleted' => 0,
+                )
+            );
+        }
+
+        return $guid;
+    }
 
     protected $email_to_text = array(
         "email_id" => "id",
@@ -1322,58 +1339,60 @@ class Email extends SugarBean {
         }
     }
 
+   /**
+     * Retrieves email addresses from GUIDs
+     */
+    public function retrieveEmailAddresses()
+    {
+        $query = "SELECT email_address, address_type FROM emails_email_addr_rel eam " .
+            "JOIN email_addresses ea ON ea.id = eam.email_address_id " .
+            "WHERE eam.email_id = ? AND eam.deleted = ?";
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($query, array($this->id, 0));
+
+        $return = array();
+        while ($row = $stmt->fetch()) {
+            $return[$row['address_type']][] = $row['email_address'];
+        }
+
+        if (count($return) > 0) {
+            if (isset($return['from'])) {
+                $this->from_addr = implode(", ", $return['from']);
+            }
+            if (isset($return['to'])) {
+                $this->to_addrs = implode(", ", $return['to']);
+            }
+            if (isset($return['cc'])) {
+                $this->cc_addrs = implode(", ", $return['cc']);
+            }
+            if (isset($return['bcc'])) {
+                $this->bcc_addrs = implode(", ", $return['bcc']);
+            }
+        }
+    }
+
     /**
-	 * Retrieves email addresses from GUIDs
-	 */
-	function retrieveEmailAddresses() {
-		$return = array();
-
-		$q = "SELECT email_address, address_type
-				FROM emails_email_addr_rel eam
-				JOIN email_addresses ea ON ea.id = eam.email_address_id
-				WHERE eam.email_id = '{$this->id}' AND eam.deleted=0";
-		$r = $this->db->query($q);
-
-		while($a = $this->db->fetchByAssoc($r)) {
-			if(!isset($return[$a['address_type']])) {
-				$return[$a['address_type']] = array();
-			}
-			$return[$a['address_type']][] = $a['email_address'];
-		}
-
-		if(count($return) > 0) {
-			if(isset($return['from'])) {
-				$this->from_addr = implode(", ", $return['from']);
-			}
-			if(isset($return['to'])) {
-				$this->to_addrs = implode(", ", $return['to']);
-			}
-			if(isset($return['cc'])) {
-				$this->cc_addrs = implode(", ", $return['cc']);
-			}
-			if(isset($return['bcc'])) {
-				$this->bcc_addrs = implode(", ", $return['bcc']);
-			}
-		}
-	}
-
-	/**
-	 * Handles longtext fields
-	 */
-	function retrieveEmailText() {
-		$q = "SELECT from_addr, reply_to_addr, to_addrs, cc_addrs, bcc_addrs, description, description_html, raw_source FROM emails_text WHERE email_id = '{$this->id}'";
-		$r = $this->db->query($q);
-		$a = $this->db->fetchByAssoc($r, false);
-
-		$this->description = $a['description'];
-		$this->description_html = $a['description_html'];
-		$this->raw_source = $a['raw_source'];
-		$this->from_addr_name = $a['from_addr'];
-		$this->reply_to_addr  = $a['reply_to_addr'];
-		$this->to_addrs_names = $a['to_addrs'];
-		$this->cc_addrs_names = $a['cc_addrs'];
-		$this->bcc_addrs_names = $a['bcc_addrs'];
-	}
+     * Handles longtext fields
+     */
+    public function retrieveEmailText()
+    {
+        $query = "SELECT from_addr, reply_to_addr, to_addrs, cc_addrs, bcc_addrs, " .
+            "description, description_html, raw_source " .
+            " FROM emails_text WHERE email_id = ?";
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($query, array($this->id));
+        $row = $stmt->fetch();
+        if (!empty($row)) {
+            $this->description = $row['description'];
+            $this->description_html = $row['description_html'];
+            $this->raw_source = $row['raw_source'];
+            $this->from_addr_name = $row['from_addr'];
+            $this->reply_to_addr = $row['reply_to_addr'];
+            $this->to_addrs_names = $row['to_addrs'];
+            $this->cc_addrs_names = $row['cc_addrs'];
+            $this->bcc_addrs_names = $row['bcc_addrs'];
+        }
+    }
 
     /**
      * @see SugarBean::populateFromRow
@@ -1394,26 +1413,52 @@ class Email extends SugarBean {
      */
     public function mark_deleted($id)
     {
-        $q = "UPDATE emails_text SET deleted = 1 WHERE email_id = '{$id}'";
-        $this->db->query($q);
+        global $dictionary;
+        $this->db->updateParams(
+            'emails_text',
+            $dictionary['emails_text']['fields'],
+            array('deleted' => 1),
+            array('email_id' => $id)
+        );
 
-        $q = "UPDATE folders_rel SET deleted = 1 WHERE polymorphic_id = '{$id}' AND polymorphic_module = 'Emails'";
-        $this->db->query($q);
+        $this->db->updateParams(
+            'folders_rel',
+            $dictionary['folders_rel']['fields'],
+            array('deleted' => 1),
+            array('polymorphic_id' => $id, 'polymorphic_module' => 'Emails')
+        );
 
         parent::mark_deleted($id);
     }
 
-	function delete($id='') {
-		if(empty($id))
-			$id = $this->id;
+    public function delete($id = '')
+    {
+        if (empty($id)) {
+            $id = $this->id;
+        }
 
-		$q  = "UPDATE emails SET deleted = 1 WHERE id = '{$id}'";
-		$qt = "UPDATE emails_text SET deleted = 1 WHERE email_id = '{$id}'";
-		$qf = "UPDATE folders_rel SET deleted = 1 WHERE polymorphic_id = '{$id}' AND polymorphic_module = 'Emails'";
-      	$r  = $this->db->query($q);
-		$rt = $this->db->query($qt);
-		$rf = $this->db->query($qf);
-	}
+        global $dictionary;
+        $this->db->updateParams(
+            'emails',
+            $dictionary['Email']['fields'],
+            array('deleted' => 1),
+            array('id' => $id)
+        );
+
+        $this->db->updateParams(
+            'emails_text',
+            $dictionary['emails_text']['fields'],
+            array('deleted' => 1),
+            array('email_id' => $id)
+        );
+
+        $this->db->updateParams(
+            'folders_rel',
+            $dictionary['folders_rel']['fields'],
+            array('deleted' => 1),
+            array('polymorphic_id' => $id, 'polymorphic_module' => 'Emails')
+        );
+    }
 
 	/**
 	 * creates the standard "Forward" info at the top of the forwarded message
@@ -1441,57 +1486,47 @@ class Email extends SugarBean {
     /**
      * retrieves Notes that belong to this Email and stuffs them into the "attachments" attribute
      */
-    function getNotes($id, $duplicate=false) {
-        if(!class_exists('Note')) {
-
+    protected function getNotes($id, $duplicate = false)
+    {
+        $exRemoved = array();
+        if (isset($_REQUEST['removeAttachment'])) {
+            $exRemoved = explode('::', $_REQUEST['removeAttachment']);
         }
 
-        $exRemoved = array();
-		if(isset($_REQUEST['removeAttachment'])) {
-			$exRemoved = explode('::', $_REQUEST['removeAttachment']);
-		}
-
         $noteArray = array();
-        $q = "SELECT id FROM notes WHERE parent_id = '".$id."'";
-        $r = $this->db->query($q);
+        $query = 'SELECT id FROM notes WHERE parent_id = ?';
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($query, array($id));
 
-        while($a = $this->db->fetchByAssoc($r)) {
-        	if(!in_array($a['id'], $exRemoved)) {
-	            $note = BeanFactory::getBean('Notes', $a['id']);
+        while ($noteId = $stmt->fetchColumn()) {
+            if (!in_array($noteId, $exRemoved)) {
+                $note = BeanFactory::getBean('Notes', $noteId);
 
-	            // duplicate actual file when creating forwards
-		        if($duplicate) {
-		        	if(!class_exists('UploadFile')) {
-		        	}
-
-                    /*--- ????
-		        	// save a brand new Note
-		        	$noteDupe->id = create_guid();
-		        	$noteDupe->new_with_id = true;
-					$noteDupe->parent_id = $this->id;
-					$noteDupe->parent_type = $this->module_dir;
-                    ---- */
+                // duplicate actual file when creating forwards
+                if ($duplicate) {
+                    if (!class_exists('UploadFile')) {
+                    }
 
                     $note->id = create_guid();
 
-					$noteFile = new UploadFile();
-					$noteFile->duplicate_file($a['id'], $note->id, $note->filename);
+                    $noteFile = new UploadFile();
+                    $noteFile->duplicate_file($noteId, $note->id, $note->filename);
 
-					$note->save();
-		        }
-		        // add Note to attachments array
-	            $this->attachments[] = $note;
-        	}
+                    $note->save();
+                }
+                // add Note to attachments array
+                $this->attachments[] = $note;
+            }
         }
     }
 
-	/**
-	 * creates the standard "Reply" info at the top of the forwarded message
-	 * @return string
-	 */
-	function getReplyHeader() {
-		global $mod_strings;
-		global $current_user;
+    /**
+     * creates the standard "Reply" info at the top of the forwarded message
+     * @return string
+     */
+    public function getReplyHeader()
+    {
+        global $mod_strings;
 
 		$from = str_replace(array("&gt;","&lt;", ">","<"), array(")","(",")","("), $this->from_name);
 		$ret  = "<br>{$mod_strings['LBL_REPLY_HEADER_1']} {$this->date_start}, {$this->time_start}, {$from} {$mod_strings['LBL_REPLY_HEADER_2']}";
@@ -1967,10 +2002,16 @@ class Email extends SugarBean {
 
 		///////////////////////////////////////////////////////////////////////////
 		////	REMOVE ATTACHMENTS
+        global $dictionary;
+
         if(isset($_REQUEST['remove_attachment']) && !empty($_REQUEST['remove_attachment'])) {
             foreach($_REQUEST['remove_attachment'] as $noteId) {
-                $q = 'UPDATE notes SET deleted = 1 WHERE id = \''.$noteId.'\'';
-                $this->db->query($q);
+                $this->db->updateParams(
+                    'notes',
+                    $dictionary['Note']['fields'],
+                    array('deleted' => 1),
+                    array('id' => $noteId)
+                );
             }
         }
 
@@ -1978,8 +2019,12 @@ class Email extends SugarBean {
         if(isset($_REQUEST['removeAttachment']) && !empty($_REQUEST['removeAttachment'])) {
             $exRemoved = explode('::', $_REQUEST['removeAttachment']);
             foreach($exRemoved as $noteId) {
-                $q = 'UPDATE notes SET deleted = 1 WHERE id = \''.$noteId.'\'';
-                $this->db->query($q);
+                $this->db->updateParams(
+                    'notes',
+                    $dictionary['Note']['fields'],
+                    array('deleted' => 1),
+                    array('id' => $noteId)
+                );
             }
         }
 		////	END REMOVE ATTACHMENTS
@@ -2256,20 +2301,22 @@ class Email extends SugarBean {
 		return $array_assign;
 	}
 
-	function getSystemDefaultEmail() {
-		$email = array();
+    public function getSystemDefaultEmail()
+    {
+        $email = array();
 
-		$r1 = $this->db->query('SELECT config.value FROM config WHERE name=\'fromaddress\'');
-		$r2 = $this->db->query('SELECT config.value FROM config WHERE name=\'fromname\'');
-		$a1 = $this->db->fetchByAssoc($r1);
-		$a2 = $this->db->fetchByAssoc($r2);
+        $query = 'SELECT config.value FROM config WHERE name = ?';
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($query, array('fromaddress'));
+        $fromAddress = $stmt->fetchColumn();
+        $email['email'] = !empty($fromAddress) ? $fromAddress : '';
 
-		$email['email'] = $a1['value'];
-		$email['name']  = $a2['value'];
+        $stmt = $conn->executeQuery($query, array('fromname'));
+        $fromName = $stmt->fetchColumn();
+        $email['name'] = !empty($fromName) ? $fromName : '';
 
-		return $email;
-	}
-
+        return $email;
+    }
 
     public function create_new_list_query(
         $order_by,
@@ -2341,17 +2388,19 @@ class Email extends SugarBean {
     } // fn
 
 
-	function fill_in_additional_list_fields() {
-		global $timedate, $mod_strings;
-		$this->fill_in_additional_detail_fields();
+    public function fill_in_additional_list_fields()
+    {
+        global $timedate, $mod_strings;
+        $this->fill_in_additional_detail_fields();
 
-		$this->link_action = 'DetailView';
-		///////////////////////////////////////////////////////////////////////
-		//populate attachment_image, used to display attachment icon.
-		$query =  "select 1 from notes where notes.parent_id = '$this->id' and notes.deleted = 0";
-		$result =$this->db->query($query,true," Error filling in additional list fields: ");
+        $this->link_action = 'DetailView';
+        ///////////////////////////////////////////////////////////////////////
+        //populate attachment_image, used to display attachment icon.
+        $query =  "select 1 from notes where notes.parent_id = ? and notes.deleted = ?";
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($query, array($this->id, 0));
 
-		$row = $this->db->fetchByAssoc($result);
+        $row = $stmt->fetchColumn();
         $this->attachment_image = ($row !=null) ? SugarThemeRegistry::current()->getImage('attachment',"","","") : "";
 
 		if ($row !=null) {

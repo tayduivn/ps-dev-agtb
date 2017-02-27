@@ -119,9 +119,10 @@ class Administration extends SugarBean {
         $oe = new OutboundEmail();
         $oe->getSystemMailerSettings();
 
-        foreach($oe->field_defs as $def) {
-            if(strpos($def, "mail_") !== false)
-                $this->settings[$def] = $oe->$def;
+        foreach ($oe->field_defs as $name => $value) {
+            if (strpos($name, "mail_") !== false) {
+                $this->settings[$name] = $oe->$name;
+            }
         }
 
         // At this point, we have built a new array that should be cached.

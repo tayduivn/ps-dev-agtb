@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\Query\QueryBuilder;
+
 /**
  * Relationship between ACL Roles and Users which maintains ACL Role Sets
  */
@@ -28,5 +30,31 @@ class KBUsefulnessRelationship extends M2MRelationship
             return " AND {$table}.{$this->def['primary_flag_column']} = 1";
         }
         return parent::getRoleWhere($table, $ignore_role_filter, $ignore_primary_flag);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function addRoleWhereToQuery(QueryBuilder $query, $ignoreFilter = false, $ignoreFlag = false)
+    {
+        if (!empty($this->primaryOnly)) {
+            $query->andWhere($query->expr()->eq($this->def['primary_flag_column'], 1));
+        } else {
+            parent::addRoleWhereToQuery($query, $ignoreFilter, $ignoreFlag);
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected function applyQueryBuilderFilter(
+        QueryBuilder $builder,
+        $tableAlias,
+        $ignoreRole = false,
+        $ignorePrimary = false
+    ) {
+        if (!empty($this->primaryOnly)) {
+            $this->applyQueryBuilderPrimaryFilter($builder, $tableAlias);
+        } else {
+            parent::applyQueryBuilderFilter($builder, $tableAlias, $ignoreRole, $ignorePrimary);
+        }
     }
 }
