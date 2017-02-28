@@ -5,7 +5,7 @@
   },
   "devDependencies": {
     "@sugarcrm/seedbed": "0.6.23",
-    "@sugarcrm/thorn": "0.4.0-beta.1",
+    "@sugarcrm/thorn": "0.5.0-beta.1",
     "@types/async": "1.4.28",
     "@types/bluebird": "3.0.37",
     "@types/chalk": "0.4.31",
