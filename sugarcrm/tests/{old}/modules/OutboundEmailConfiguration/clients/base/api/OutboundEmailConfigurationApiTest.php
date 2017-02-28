@@ -11,7 +11,6 @@
  */
 
 require_once "tests/{old}/rest/RestTestBase.php";
-require_once "tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
 
 /**
  * @group email

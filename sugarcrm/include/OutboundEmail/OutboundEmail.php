@@ -176,34 +176,55 @@ class OutboundEmail extends SugarBean
         return $email->id ? $email : null;
 	}
 
-	/**
-	 * Duplicate the system account for a user, setting new parameters specific to the user.
-	 *
-	 * @param string $user_id
-	 * @param string $user_name
-	 * @param string $user_pass
+    /**
+     * Duplicate the system account for a user, setting new parameters specific to the user. Simply update and return
+     * the user's system override account if it already exists.
+     *
+     * @param string $user_id
+     * @param string $user_name
+     * @param string $user_pass
      * @return OutboundEmail
-	 */
-	function createUserSystemOverrideAccount($user_id,$user_name = "",$user_pass = "")
-	{
-	    $ob = $this->getSystemMailerSettings();
-	    $ob->id = create_guid();
-	    $ob->new_with_id = TRUE;
-	    $ob->user_id = $user_id;
-        $ob->type = static::TYPE_SYSTEM_OVERRIDE;
-	    $ob->mail_smtpuser = $user_name;
-	    $ob->mail_smtppass = $user_pass;
+     */
+    public function createUserSystemOverrideAccount($user_id, $user_name = '', $user_pass = '')
+    {
+        $ob = $this->getUsersMailerForSystemOverride($user_id);
+        $saveIt = false;
 
-        $user = BeanFactory::retrieveBean('Users', $user_id, ['disable_row_level_security' => true]);
+        if (empty($ob)) {
+            // Create only if this user's system-override account does not already exist.
+            $saveIt = true;
+            $user = BeanFactory::retrieveBean('Users', $user_id, ['disable_row_level_security' => true]);
 
-        if ($user) {
-            $ob->populateFromUser($user);
+            $ob = $this->getSystemMailerSettings();
+            $ob->id = create_guid();
+            $ob->new_with_id = true;
+            $ob->user_id = $user_id;
+            $ob->type = static::TYPE_SYSTEM_OVERRIDE;
+            $ob->mail_smtpuser = $user_name;
+            $ob->mail_smtppass = $user_pass;
+
+            if ($user) {
+                $ob->populateFromUser($user);
+            }
+        } else {
+            // Update the user's existing system-override account.
+            if (!empty($user_name) && $user_name !== $ob->mail_smtpuser) {
+                $ob->mail_smtpuser = $user_name;
+                $saveIt = true;
+            }
+
+            if (!empty($user_pass) && $user_pass !== $ob->mail_smtppass) {
+                $ob->mail_smtppass = $user_pass;
+                $saveIt = true;
+            }
         }
 
-	    $ob->save();
+        if ($saveIt) {
+            $ob->save();
+        }
 
-	    return $ob;
-	}
+        return $ob;
+    }
 
 	/**
 	 * Determines if a user needs to set their user name/password for their system
@@ -580,7 +601,7 @@ class OutboundEmail extends SugarBean
         if ($this->type === static::TYPE_SYSTEM) {
             static::$sysMailerCache = $this;
 
-            if ($this->isAllowUserAccessToSystemDefaultOutbound() && isset($GLOBALS['current_user'])) {
+            if (isset($GLOBALS['current_user']) && $this->isAllowUserAccessToSystemDefaultOutbound()) {
                 $this->populateFromUser($GLOBALS['current_user']);
             }
         }

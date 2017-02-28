@@ -12,8 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
 
-require_once "tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
-
 /**
  * @ticket 23140
  */

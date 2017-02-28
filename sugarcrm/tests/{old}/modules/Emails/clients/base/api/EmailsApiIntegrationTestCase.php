@@ -17,6 +17,7 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
+        OutboundEmailConfigurationTestHelper::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -32,6 +33,7 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        OutboundEmailConfigurationTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
 

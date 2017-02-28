@@ -11,7 +11,6 @@
  */
 
 require_once 'tests/{old}/modules/Emails/clients/base/api/EmailsApiIntegrationTestCase.php';
-require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
 
 /**
  * @coversDefaultClass EmailsApi
@@ -25,8 +24,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-
-        OutboundEmailConfigurationTestHelper::setUp();
         static::$systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
         static::$overrideConfig = OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
             $GLOBALS['current_user']->id
@@ -43,7 +40,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestProspectUtilities::removeAllCreatedProspects();
-        OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
         parent::tearDownAfterClass();
     }
 
@@ -505,7 +501,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         );
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after create');
-        $this->assertEmpty($record['outbound_email_id'], 'No configuration was specified during create');
+        $this->assertTrue(empty($record['outbound_email_id']), 'No configuration was specified during create');
 
         $expected = array(
             array(

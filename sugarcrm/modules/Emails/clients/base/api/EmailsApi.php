@@ -333,7 +333,7 @@ class EmailsApi extends ModuleApi
             }
 
             if (!empty($email->outbound_email_id)) {
-                $oe = BeanFactory::retrieveBean('OutboundEmail', $email->outbound_email_id);
+                $oe = BeanFactory::retrieveBean('OutboundEmail', $email->outbound_email_id, ['use_cache' => false]);
             }
 
             if ($oe) {

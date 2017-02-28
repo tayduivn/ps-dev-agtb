@@ -89,17 +89,25 @@ class OutboundEmailConfigurationTestHelper
             $userId = $GLOBALS["current_user"]->id;
         }
 
-        $name   = "System Override";
+        $oe = new OutboundEmail();
+        $outboundEmail = $oe->getUsersMailerForSystemOverride($userId);
+        if (!empty($outboundEmail)) {
+            $sql = "DELETE FROM outbound_email WHERE type='system-override' AND user_id = '{$userId}'";
+            $GLOBALS['db']->query($sql);
+        }
+
+        $name = 'System Override';
         $configuration = array(
-            "name"       => $name,
-            "type"       => "system-override",
-            "user_id"    => $userId,
-            "from_email" => "{$userId}@unit.net",
-            "from_name"  => $name,
+            'name' => $name,
+            'type' => 'system-override',
+            'user_id' => $userId,
+            'from_email' => "{$userId}@unit.net",
+            'from_name' => $name,
         );
         $configuration = self::mergeOutboundEmailConfigurations($configuration);
+        $outboundEmail = self::createOutboundEmail($configuration);
 
-        return self::createOutboundEmail($configuration);
+        return $outboundEmail;
     }
 
     public static function createUserOutboundEmailConfiguration($userId = "1")

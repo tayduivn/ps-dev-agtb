@@ -147,6 +147,7 @@ require_once 'SugarTestKBContentUtilities.php';
 require_once 'SugarTestSchedulersJobUtilities.php';
 require_once 'SugarTestCategoryUtilities.php';
 require_once 'SugarTestEmailTemplateUtilities.php';
+require_once 'modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
 
 //BEGIN SUGARCRM flav=ent ONLY
 require_once 'SugarTestProcessAuthorUtilities.php';
@@ -203,6 +204,8 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 
     protected function assertPostConditions()
     {
+        SugarRelationship::resaveRelatedBeans();
+
         if (!empty($_REQUEST)) {
             foreach (array_keys($_REQUEST) as $k) {
                 unset($_REQUEST[$k]);

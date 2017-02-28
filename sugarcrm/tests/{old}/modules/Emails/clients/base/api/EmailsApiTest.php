@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
-
 /**
  * @coversDefaultClass EmailsApi
  * @group api
@@ -224,6 +222,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSendEmail_UsesSpecifiedConfiguration()
     {
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
+
         $configId = $this->currentUserConfiguration->id;
 
         $email = $this->createPartialMock('Email', ['sendEmail']);

@@ -97,7 +97,7 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
             SugarAutoLoader::unlink($this->file, true);
         }
 
-
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['mod_strings']);
     }
 

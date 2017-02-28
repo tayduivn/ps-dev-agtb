@@ -25,7 +25,6 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
 	var $campaign_tracker;
 	var	$campaign_log;
 
-
     public function setup()
     {
 		global $current_user;
@@ -63,6 +62,9 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
 			}
 			$type_obj = 'target_'.$type;
 			$bean->save();
+            if ($type === 'User') {
+                SugarTestUserUtilities::setCreatedUser([$bean->id]);
+            }
 			$this->$type_obj = $bean;
 
 			//save email
@@ -125,14 +127,14 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
 			$this->$type_obj->save();
 			$GLOBALS['db']->query('DELETE FROM '.$this->$type_obj->table_name.' WHERE id = \''.$this->$type_obj->id.'\' ');
 			unset($this->$type_obj);
-
 		}
 
 		//delete the campaign logs and campaign tracker
 		$GLOBALS['db']->query('DELETE FROM campaign_log WHERE campaign_id = \''.$this->campaign_id.'\' ');
 		$GLOBALS['db']->query('DELETE FROM campaign_trkrs WHERE id = \''.$this->campaign_tracker->id.'\' ');
 		unset($this->campaign_tracker);
-        unset($this->campaign_log );SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($this->campaign_log);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
 

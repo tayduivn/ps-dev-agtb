@@ -20,6 +20,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
+        OutboundEmailConfigurationTestHelper::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -31,6 +32,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
+        OutboundEmailConfigurationTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
 

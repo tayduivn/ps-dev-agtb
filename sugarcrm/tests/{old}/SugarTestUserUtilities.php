@@ -76,6 +76,7 @@ class SugarTestUserUtilities
             $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id IN ({$in})");
             $GLOBALS['db']->query("DELETE FROM teams WHERE associated_user_id IN ({$in})");
             $GLOBALS['db']->query("DELETE FROM team_memberships WHERE user_id IN ({$in})");
+            $GLOBALS['db']->query("DELETE FROM outbound_email WHERE user_id IN ({$in})");
             // delete any created email address rows
             $GLOBALS['db']->query("DELETE FROM email_addresses WHERE id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module ='Users' AND bean_id IN ({$in}))");
             $GLOBALS['db']->query("DELETE FROM emails_beans WHERE bean_module='Users' AND bean_id IN ({$in})");
@@ -83,7 +84,16 @@ class SugarTestUserUtilities
         }
         self::$_createdUsers = array();
     }
-    
+
+    public static function setCreatedUser($userIds)
+    {
+        foreach ($userIds as $userId) {
+            $user = new User();
+            $user->id = $userId;
+            self::$_createdUsers[] = $user;
+        }
+    }
+
     public static function getCreatedUserIds() 
     {
         $user_ids = array();

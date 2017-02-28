@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
-
 /**
  * Test cases for Bug 30591
  *
@@ -24,7 +22,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 	    global $current_user;
+        parent::setUp();
 
+        OutboundEmailConfigurationTestHelper::setUp();
 	    $current_user = BeanFactory::newBean("Users");
         $current_user->getSystemUser();
 	    $this->email = new Email();
@@ -44,6 +44,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 		// SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		unset($GLOBALS['current_user']);
         OutboundEmailConfigurationTestHelper::tearDown();
+        parent::tearDown();
 	}
 
     public function saveAndSetDateSentProvider()
@@ -209,7 +210,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEmailSend_Success()
     {
-        OutboundEmailConfigurationTestHelper::setUp();
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
         $mockMailer = new MockMailer($config);
         MockMailerFactory::setMailer($mockMailer);
@@ -292,7 +292,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetOutboundEmailDropdown()
     {
-        OutboundEmailConfigurationTestHelper::setUp();
         OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
 
         SugarTestHelper::setUp('current_user');
@@ -793,8 +792,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $td->allow_cache = false;
 
         // Need a configuration to use to send the email, even when faking the send.
-        OutboundEmailConfigurationTestHelper::backupExistingConfigurations();
-        OutboundEmailConfigurationTestHelper::createSystemOutboundEmailConfiguration();
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
 
         // Create a draft that will be sent.

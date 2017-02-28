@@ -57,6 +57,7 @@ class CampaignTrackersTest extends Sugar_PHPUnit_Framework_TestCase
 		unset($this->campaign_tracker);
         unset($this->campaign_log );
         unset($current_user);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 	
 
@@ -85,8 +86,4 @@ class CampaignTrackersTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertSame($this->campaign_tracker->tracker_name, $this->campaign_tracker->get_summary_text(), 'campaign tracker name is not set properly in summary text');
 		
 	}
-
-
-	
-
 }
