@@ -12,8 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success;
 
-require_once 'modules/Versions/CheckVersions.php';
-
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
@@ -29,27 +27,6 @@ class PostLoginAuthListener
         /** @var \User $currentUser */
         $currentUser = $event->getAuthenticationToken()->getUser()->getSugarUser();
         $sugarConfig = \SugarConfig::getInstance();
-
-        //THIS SECTION IS TO ENSURE VERSIONS ARE UP TO DATE
-
-        $invalid_versions = get_invalid_versions();
-        if (!empty($invalid_versions)) {
-            if (isset($invalid_versions['Rebuild Relationships'])) {
-                unset($invalid_versions['Rebuild Relationships']);
-
-                // flag for pickup in DisplayWarnings.php
-                $_SESSION['rebuild_relationships'] = true;
-            }
-
-            if (isset($invalid_versions['Rebuild Extensions'])) {
-                unset($invalid_versions['Rebuild Extensions']);
-
-                // flag for pickup in DisplayWarnings.php
-                $_SESSION['rebuild_extensions'] = true;
-            }
-
-            $_SESSION['invalid_versions'] = $invalid_versions;
-        }
 
         //just do a little house cleaning here
         unset($_SESSION['login_password']);
