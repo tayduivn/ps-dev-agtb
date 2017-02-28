@@ -70,7 +70,7 @@ class Connection extends BaseConnection
     /**
      * {@inheritDoc}
      */
-    public function executeUpdate($query, array $params = array(), $types = array())
+    public function executeUpdate($query, array $params = array(), array $types = array())
     {
         try {
             return parent::executeUpdate($query, $params, $types);
