@@ -1320,7 +1320,7 @@
                  */
                 this.get = function(attr) {
                     return Backbone.Model.prototype.get.call(this, attr);
-                },
+                };
 
                 /**
                  * Defers to {@link BeanOverrides#hasChanged} when the
