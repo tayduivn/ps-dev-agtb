@@ -15,16 +15,10 @@ const {Agent, Fixtures} = require('@sugarcrm/thorn');
 describe('Metadata', function() {
     before(function*() {
         this.url = `${process.env.THORN_SERVER_URL}/rest/v10`;
-        let users = [
-            {
-                attributes: {
-                    user_name: 'John'
-                }
-            }
-        ];
+
+        let users = {attributes: {user_name: 'John'}};
 
         yield Fixtures.create(users, {module: 'Users'});
-        this.john = Agent.as('John');
     });
 
     after(function*() {
@@ -66,7 +60,7 @@ describe('Metadata', function() {
         expect(response).to.have.status(401);
 
         // Make sure we can get the private metadata with a logged in user.
-        response = yield this.john.get(`metadata`);
+        response = yield Agent.as('John').get(`metadata`);
 
         expect(response).to.have.status(200);
         expect(response).to.have.json('full_module_list', function(fullModuleList) {
@@ -98,13 +92,11 @@ describe('Metadata', function() {
 
     it('should get filtered metadata', function*() {
         // Make sure we can filter the metadata by type of data.
-        let response = yield this.john.get('metadata',
-            {
-                qs: {
-                    type_filter: 'full_module_list,config'
-                }
-            }
-        );
+        let response = yield Agent.as('John').get('metadata', {
+            qs: {
+                type_filter: 'full_module_list,config'
+            },
+        });
 
         expect(response).to.have.status(200);
         expect(response).to.have.json('full_module_list', function(fullModuleList) {
@@ -125,13 +117,11 @@ describe('Metadata', function() {
         let module4 = moduleList[Object.keys(moduleList)[3]];
 
         // Make sure we can get specific module metadata.
-        response = yield this.john.get('metadata',
-            {
-                qs: {
-                    module_filter: `${module1},${module2}`
-                }
-            }
-        );
+        response = yield Agent.as('John').get('metadata', {
+            qs: {
+                module_filter: `${module1},${module2}`
+            },
+        });
 
         expect(response).to.have.json('modules', function(modules) {
             expect(modules[module1]).to.not.be.undefined;
