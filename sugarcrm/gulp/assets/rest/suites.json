@@ -1,5 +1,5 @@
 {
     "dashboards": [
-        "modules/Dashboards/tests/rest/**/*.js"
+        "tests/rest/modules/Dashboards/**/*.js"
     ]
 }
