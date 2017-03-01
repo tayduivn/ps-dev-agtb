@@ -31,6 +31,16 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
     protected $userProvider;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $sugarQuery;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $sugarQueryWhere;
+
+    /**
      * @inheritdoc
      */
     protected function setUp()
@@ -38,12 +48,23 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
         $this->user = $this->createMock(\User::class);
 
         $this->userProvider = $this->getMockBuilder(SugarLocalUserProvider::class)
-            ->setMethods(['createUserBean'])
+            ->setMethods(['createUserBean', 'getSugarQuery'])
             ->getMock();
 
         $this->userProvider->expects($this->any())
             ->method('createUserBean')
             ->willReturn($this->user);
+
+        $this->sugarQuery = $this->createMock('SugarQuery');
+        $this->sugarQueryWhere = $this->createMock('SugarQuery_Builder_Where');
+
+        $this->sugarQuery->expects($this->any())
+            ->method('where')
+            ->willReturn($this->sugarQueryWhere);
+
+        $this->userProvider->expects($this->any())
+            ->method('getSugarQuery')
+            ->willReturn($this->sugarQuery);
     }
 
     /**
@@ -52,10 +73,11 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadUserByUsernameNoId()
     {
-        $this->user->expects($this->once())
-            ->method('retrieve_user_id')
-            ->with($this->equalTo($name = 'test'))
-            ->willReturn(null);
+        $this->sugarQueryWhere->expects($this->once())
+            ->method('equals')
+            ->with($this->equalTo('user_name'), $this->equalTo($name = 'test'));
+
+        $this->sugarQuery->expects($this->any())->method('getOne')->willReturn(null);
 
         $this->userProvider->loadUserByUsername($name);
     }
@@ -66,10 +88,11 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadUserByUsernameInactive()
     {
-        $this->user->expects($this->once())
-            ->method('retrieve_user_id')
-            ->with($this->equalTo($name = 'test'))
-            ->willReturn($id = 'idtest');
+        $this->sugarQueryWhere->expects($this->once())
+            ->method('equals')
+            ->with($this->equalTo('user_name'), $this->equalTo($name = 'test'));
+
+        $this->sugarQuery->expects($this->any())->method('getOne')->willReturn($id = 'idtest');
 
         $this->user->expects($this->once())
             ->method('retrieve')
@@ -104,10 +127,11 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadUserByUsernameInvalid($isGroup, $portalOnly)
     {
-        $this->user->expects($this->once())
-            ->method('retrieve_user_id')
-            ->with($this->equalTo($name = 'test'))
-            ->willReturn($id = 'idtest');
+        $this->sugarQueryWhere->expects($this->once())
+            ->method('equals')
+            ->with($this->equalTo('user_name'), $this->equalTo($name = 'test'));
+
+        $this->sugarQuery->expects($this->any())->method('getOne')->willReturn($id = 'idtest');
 
         $this->user->expects($this->once())
             ->method('retrieve')
@@ -126,10 +150,11 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadUserByUsername()
     {
-        $this->user->expects($this->once())
-            ->method('retrieve_user_id')
-            ->with($this->equalTo($name = 'test'))
-            ->willReturn($id = 'idtest');
+        $this->sugarQueryWhere->expects($this->once())
+            ->method('equals')
+            ->with($this->equalTo('user_name'), $this->equalTo($name = 'test'));
+
+        $this->sugarQuery->expects($this->any())->method('getOne')->willReturn($id = 'idtest');
 
         $this->user->expects($this->once())
             ->method('retrieve')
@@ -143,6 +168,73 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
 
         /** @var User $newUser */
         $newUser = $this->userProvider->loadUserByUsername($name);
+
+        $this->assertInstanceOf(User::class, $newUser);
+        $this->assertEquals($this->user->user_hash, $newUser->getPassword());
+    }
+
+    /**
+     * @covers ::loadUserByField
+     */
+    public function testLoadUserByField()
+    {
+        $id = '123';
+        $field = 'last_name';
+        $value = 'Johnson';
+
+        $this->sugarQueryWhere->expects($this->once())
+            ->method('equals')
+            ->with($this->equalTo($field), $this->equalTo($value));
+
+        $this->sugarQuery->expects($this->any())->method('getOne')->willReturn($id);
+
+        $this->user->expects($this->once())
+            ->method('retrieve')
+            ->with($this->equalTo($id), $this->isTrue(), $this->isFalse())
+            ->willReturn(null);
+
+        $this->user->is_group = 0;
+        $this->user->portal_only = 0;
+        $this->user->status = User::USER_STATUS_ACTIVE;
+        $this->user->user_hash = 'user_hash';
+
+        /** @var User $newUser */
+        $newUser = $this->userProvider->loadUserByField($value, $field);
+
+        $this->assertInstanceOf(User::class, $newUser);
+        $this->assertEquals($this->user->user_hash, $newUser->getPassword());
+    }
+
+    /**
+     * @covers ::loadUserByField
+     */
+    public function testLoadUserByFieldEmail()
+    {
+        $id = '123';
+
+        $this->user->expects($this->once())
+            ->method('retrieve_by_email_address')
+            ->with($this->equalTo('test@test.com'))
+            ->will(
+                $this->returnCallback(
+                    function () use ($id) {
+                        $this->user->id = $id;
+                    }
+                )
+            );
+
+        $this->user->expects($this->once())
+            ->method('retrieve')
+            ->with($this->equalTo($id), $this->isTrue(), $this->isFalse())
+            ->willReturn(null);
+
+        $this->user->is_group = 0;
+        $this->user->portal_only = 0;
+        $this->user->status = User::USER_STATUS_ACTIVE;
+        $this->user->user_hash = 'user_hash';
+
+        /** @var User $newUser */
+        $newUser = $this->userProvider->loadUserByField('test@test.com', 'email');
 
         $this->assertInstanceOf(User::class, $newUser);
         $this->assertEquals($this->user->user_hash, $newUser->getPassword());
@@ -168,10 +260,11 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getUsername')
             ->willReturn($name = 'user_name');
 
-        $this->user->expects($this->once())
-            ->method('retrieve_user_id')
-            ->with($this->equalTo($name))
-            ->willReturn($id = 'idtest');
+        $this->sugarQueryWhere->expects($this->once())
+            ->method('equals')
+            ->with($this->equalTo('user_name'), $this->equalTo($name));
+
+        $this->sugarQuery->expects($this->any())->method('getOne')->willReturn($id = 'idtest');
 
         $this->user->expects($this->once())
             ->method('retrieve')
@@ -207,5 +300,19 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
             }));
         $this->user->expects($this->once())->method('save');
         $this->userProvider->createUser('user1');
+    }
+
+    /**
+     * @covers ::createUser
+     */
+    public function testCreateUserWithEmailInAttributes()
+    {
+        $emailAddress = $this->createMock('SugarEmailAddress');
+        $this->user->emailAddress = $emailAddress;
+
+        $emailAddress->expects($this->once())->method('addAddress')->with('test@test.com', true);
+        $emailAddress->expects($this->once())->method('save');
+
+        $this->userProvider->createUser('user1', ['email' => 'test@test.com']);
     }
 }

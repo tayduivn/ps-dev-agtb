@@ -92,6 +92,16 @@ class LdapUserChecker extends SugarUserChecker
                 }
             }
         }
+
+        $fixedAttributes = [
+            'employee_status' => User::USER_EMPLOYEE_STATUS_ACTIVE,
+            'status' => User::USER_STATUS_ACTIVE,
+            'is_admin' => 0,
+            'external_auth_only' => 1,
+        ];
+
+        $result = array_merge($result, $fixedAttributes);
+
         return $result;
     }
 }

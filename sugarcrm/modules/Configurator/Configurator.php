@@ -37,6 +37,7 @@ class Configurator {
         'SAML_X509Cert',
         'SAML_SLO',
         'SAML_SAME_WINDOW',
+        'SAML_provisionUser',
         'dashlet_auto_refresh_min',
         'show_download_tab',
         'enable_action_menu',

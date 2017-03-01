@@ -103,7 +103,13 @@ class LdapUserCheckerTest extends \PHPUnit_Framework_TestCase
             ->willThrowException(new UsernameNotFoundException());
         $this->provider->expects($this->once())
             ->method('createUser')
-            ->with($this->equalTo('user1'),  $this->equalTo(['last_name' => 'user_sn']))
+            ->with($this->equalTo('user1'), $this->equalTo([
+                'last_name' => 'user_sn',
+                'employee_status' => User::USER_EMPLOYEE_STATUS_ACTIVE,
+                'status' => User::USER_STATUS_ACTIVE,
+                'is_admin' => 0,
+                'external_auth_only' => 1,
+            ]))
             ->willReturn($this->sugarUser);
 
         $checker = new LdapUserChecker($this->lockout, $this->provider, [

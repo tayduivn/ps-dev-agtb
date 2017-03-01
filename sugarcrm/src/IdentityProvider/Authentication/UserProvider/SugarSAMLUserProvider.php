@@ -13,24 +13,15 @@
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider;
 
 use Sugarcrm\IdentityProvider\Authentication\UserProvider\SAMLUserProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 class SugarSAMLUserProvider extends SAMLUserProvider
 {
     /**
-     * @var SugarLocalUserProvider
+     * {@inheritdoc}
      */
-    protected $daoUserProvider;
-
-    /**
-     * @param SugarLocalUserProvider $daoUserProvider DAO user provider to be used in conjunction with SAML
-     */
-    public function __construct(SugarLocalUserProvider $daoUserProvider)
+    public function loadUserByUsername($nameIdentifier)
     {
-        $this->daoUserProvider = $daoUserProvider;
-    }
-
-    public function loadUserByUsername($username)
-    {
-        return $this->daoUserProvider->loadUserByUsername($username);
+        return new User($nameIdentifier);
     }
 }

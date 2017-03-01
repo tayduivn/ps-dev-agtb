@@ -839,6 +839,20 @@
 
                             </tr>
                             <tr>
+                                {if isset($config.SAML_provisionUser)}
+                                    {assign var='saml_provision_user' value=$config.SAML_provisionUser}
+                                {else}
+                                    {assign var='saml_provision_user' value=true}
+                                {/if}
+                                <td width='25%' scope="row" valign='top' nowrap>
+                                    {$MOD.LBL_SAML_PROVISION_USER} {sugar_help text=$MOD.LBL_SAML_PROVISION_USER_DESC}
+                                </td>
+                                <td width='25%' align="left" valign='top'>
+                                    <input type="checkbox" name="SAML_provisionUser"
+                                           {if $saml_provision_user}checked="1"{/if}/>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td width='25%' scope="row" valign='top'
                                     nowrap>{$MOD.LBL_SAML_SAME_WINDOW} {sugar_help text=$MOD.LBL_SAML_SAME_WINDOW_DESC}</td>
                                 <td width='25%' align="left" valign='top'><input type="checkbox" name="SAML_SAME_WINDOW" {if $config.SAML_SAME_WINDOW}checked="1"{/if}>

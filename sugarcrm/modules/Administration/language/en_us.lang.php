@@ -1131,6 +1131,8 @@ expressions in the regex. Regular expressions should not include any delimiters.
     'LBL_SAML_LOGOUT_URL' => 'SLO URL',
     'LBL_SAML_SAME_WINDOW' => 'Load login screen in same <br>window to avoid pop-up blocking',
     'LBL_SAML_SAME_WINDOW_DESC' => 'This option will load SAML login screen in the same window',
+    'LBL_SAML_PROVISION_USER' => 'Auto-create user',
+    'LBL_SAML_PROVISION_USER_DESC' => 'Automatically create non-existing user in SugarCRM on the first SAML login',
     'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Full text search will be used to return results for a global search in the desktop application. In order for results to return for a particular module, it must be enabled below. Make sure to perform a full system index after enabling modules for full text search. Individual module fields can be enabled for full text search via <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.<br>
 To enable modules for global searches in SugarCRM Mobile and Sugar Portal, please use the <a href="index.php?module=Administration&action=UnifiedSearchSettings">Legacy Global Search Configuration</a>. <br>
 For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_doc.php?edition=ENT&version=7.7.0.0beta4&lang=en_us&module=FullTextSearch">Search</a> documentation.',

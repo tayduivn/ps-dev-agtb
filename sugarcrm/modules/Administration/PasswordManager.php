@@ -125,7 +125,12 @@ if (!empty($_POST['saveConfig'])) {
                 $_POST['SAML_SAME_WINDOW'] = true;
             } else {
                 $_POST['SAML_SAME_WINDOW'] = false;
-            }            
+            }
+            if (isset($_REQUEST['SAML_provisionUser'])) {
+                $_POST['SAML_provisionUser'] = true;
+            } else {
+                $_POST['SAML_provisionUser'] = false;
+            }
         }
 
 		$configurator->saveConfig();

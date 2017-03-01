@@ -93,7 +93,6 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
         $session['IdPSessionIndex'] = $token->getAttribute('IdPSessionIndex');
         // @todo validate replay protection (in IdM), see BR-5052
         // @todo update custom fields
-        // @todo JIT user creation
         return true;
     }
 

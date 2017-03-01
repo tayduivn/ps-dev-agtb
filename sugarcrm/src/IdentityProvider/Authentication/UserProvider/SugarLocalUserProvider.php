@@ -31,6 +31,18 @@ class SugarLocalUserProvider implements UserProviderInterface
     }
 
     /**
+     * Get user by field value.
+     *
+     * @param string $value
+     * @param string $field
+     * @return User
+     */
+    public function loadUserByField($value, $field)
+    {
+        return $this->getUser($value, $field);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function refreshUser(UserInterface $user)
@@ -51,16 +63,29 @@ class SugarLocalUserProvider implements UserProviderInterface
     }
 
     /**
-     * Returns mango base
+     * Search and return mango base user.
+     * Search can be performed by any User field; 'username' by default.
      *
-     * @param string $username
+     * @param string $nameIdentifier Value to search by.
+     * @param string $field Field name to search by.
      * @return User
      */
-    protected function getUser($username)
+    protected function getUser($nameIdentifier, $field = 'user_name')
     {
         /** @var \User $sugarUser */
         $sugarUser = $this->createUserBean();
-        $sugarUserId = $sugarUser->retrieve_user_id($username);
+
+        if ($field == 'email') {
+            $sugarUser->retrieve_by_email_address($nameIdentifier);
+            $sugarUserId = $sugarUser->id;
+        } else {
+            $query = $this->getSugarQuery();
+            $query->select(['id']);
+            $query->from($sugarUser);
+            $query->where()->equals($field, $nameIdentifier);
+            $sugarUserId = $query->getOne();
+        }
+
         if (!$sugarUserId) {
             throw new UsernameNotFoundException();
         }
@@ -74,15 +99,16 @@ class SugarLocalUserProvider implements UserProviderInterface
             throw new InvalidUserException('Portal or group user can not log in.');
         }
 
-        $user = new User($username, $sugarUser->user_hash);
+        $user = new User($nameIdentifier, $sugarUser->user_hash);
         $user->setSugarUser($sugarUser);
 
         return $user;
     }
 
     /**
-     * create
-     * @param $username
+     * Create Sugar User bean.
+     *
+     * @param string $username
      * @param array $additionalFields
      * @return \User
      */
@@ -91,15 +117,32 @@ class SugarLocalUserProvider implements UserProviderInterface
         $sugarUser = $this->createUserBean();
         $sugarUser->populateFromRow(array_merge($additionalFields, ['user_name' => $username]));
         $sugarUser->save();
+
+        if (isset($additionalFields['email'])) {
+            $sugarUser->emailAddress->addAddress($additionalFields['email'], true);
+            $sugarUser->emailAddress->save($sugarUser->id, $sugarUser->module_dir);
+        }
+
         return $sugarUser;
     }
 
     /**
-     * creates and return empty sugar user bean
+     * Instantiate Sugar User bean.
+     *
      * @return \User|\SugarBean
      */
     protected function createUserBean()
     {
         return \BeanFactory::getBean('Users');
+    }
+
+    /**
+     * Get Sugar Query.
+     *
+     * @return \SugarQuery
+     */
+    protected function getSugarQuery()
+    {
+        return new \SugarQuery();
     }
 }
