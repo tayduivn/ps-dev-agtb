@@ -600,12 +600,17 @@ class OutboundEmail
 
 	/**
 	 * Deletes an instance
+     *
+     * @return bool
 	 */
 	function delete() {
 		if(empty($this->id)) {
 			return false;
 		}
-        return $this->db->getConnection()->delete($this->table_name, array('id' => $this->id));
+
+        $this->db->getConnection()->delete($this->table_name, array('id' => $this->id));
+
+        return true;
 	}
 
 	private function _getOutboundServerDisplay(
