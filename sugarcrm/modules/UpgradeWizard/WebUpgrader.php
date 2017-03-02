@@ -174,29 +174,18 @@ class WebUpgrader extends UpgradeDriver
     }
 
     /**
-     * Get user from state
-     * @see UpgradeDriver::getUser()
+     * {@inheritDoc}
      */
     protected function getUser()
     {
-        //Set globals installing to true to prevent bean_implements check for some modules
-        if (isset($GLOBALS['installing'])) {
-            $installing = $GLOBALS['installing'];
-        }
+        $user = $this->loadUser(array(
+            'id' => $this->state['admin'],
+        ));
 
-        $GLOBALS['installing'] = true;
-
-        $user = BeanFactory::getBean('Users', $this->state['admin']);
-
-        if (isset($installing)) {
-            $GLOBALS['installing'] = $installing;
-        } else {
-            unset($GLOBALS['installing']);
-        }
-
-        if ($user) {
+        if ($user->id) {
             $this->context['admin'] = $user->user_name;
         }
+
         return $user;
     }
 

@@ -1184,11 +1184,30 @@ abstract class UpgradeDriver
     }
 
     /**
-     * Retrieve current user
+     * Returns the user on whose behalf the upgrade should be performed
+     *
      * @return User
      */
     protected function getUser()
     {
+        return $this->loadUser(array(
+            'user_name' => $this->context['admin'],
+        ));
+    }
+
+    /**
+     * Loads user by parameters
+     *
+     * @param array $params
+     * @return User
+     */
+    protected function loadUser(array $params)
+    {
+        if (!$params) {
+            $this->error('Parameters for loading user cannot be empty');
+            return null;
+        }
+
         //Set globals installing to true to prevent bean_implements check for some modules
         if (isset($GLOBALS['installing'])) {
             $installing = $GLOBALS['installing'];
@@ -1204,13 +1223,23 @@ abstract class UpgradeDriver
             unset($GLOBALS['installing']);
         }
 
-        $user_id = $this->db->getOne(
-            "select id from users where deleted=0 AND user_name = " . $this->db->quoted($this->context['admin']),
-            false
-        );
-        // Disable logic hooks.
-        $user->processed = true;
-        $user->retrieve($user_id);
+        $params['deleted'] = 0;
+
+        $where = array();
+        foreach ($params as $param => $value) {
+            $where[] = sprintf('%s = %s', $param, $this->db->quoted($value));
+        }
+
+        // using plain SQL instead of SugarBean::retrieve() as the DB schema
+        // may be inconsistent with vardefs at the beginning of the post stage
+        $query = 'SELECT * FROM users WHERE ' . implode(' AND ', $where);
+
+        $result = $this->db->query($query);
+
+        if (($row = $this->db->fetchRow($result))) {
+            $user->populateFromRow($row);
+        }
+
         return $user;
     }
 
