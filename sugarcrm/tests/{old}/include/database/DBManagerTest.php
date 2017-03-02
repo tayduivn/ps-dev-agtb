@@ -141,7 +141,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
         $bean->id = create_guid();
-        $this->_db->insert($bean);
+
+        $this->assertTrue($this->_db->insert($bean));
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
@@ -153,15 +154,11 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
-        $bean = new Contact();
-        $bean->last_name = 'foobar' . mt_rand();
-        $bean->id = create_guid();
-        $this->_db->insert($bean);
-        $id = $bean->id;
+        list($id) = $this->_createRecords(1);
 
         $bean = new Contact();
         $bean->last_name = 'newfoobar' . mt_rand();
-        $this->_db->update($bean,array('id'=>$id));
+        $this->assertTrue($this->_db->update($bean));
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$id}'");
         $row = $this->_db->fetchByAssoc($result);
@@ -2921,19 +2918,10 @@ SQL;
         $this->assertEquals($isNullable, SugarTestReflection::callProtectedMethod($this->_db, 'isNullable', array($vardef)));
     }
 
-    /*
-     *    Prepared Statement Unit Tests
-     *
-     */
-
-
-    /**
-     * @group preparedStatements
-     */
-    public function setupPreparedStatementsInsertStructure()
+    private function setupInsertStructure()
     {
         // create test table for operational testing
-        $tableName = "testPreparedStatement";
+        $tableName = 'test_insert';
         $params =  array(
             'id' => array (
                 'name' => 'id',
@@ -2971,11 +2959,7 @@ SQL;
                      'params' => $params);
     }
 
-
-    /**
-     * @group preparedStatements
-     */
-    public function providerPreparedStatementsInsert()
+    public function providerInsert()
     {
         return array(
             array(
@@ -2998,18 +2982,15 @@ SQL;
     }
 
     /**
-     * @dataProvider providerPreparedStatementsInsert
-     * @group preparedStatements
+     * @dataProvider providerInsert
      * @param $data
      */
-    public function testPreparedStatementsInsertParams($data)
+    public function testInsertParams($data)
     {
-
-        // turn on prepared statements
-        $dataStructure = $this->setupPreparedStatementsInsertStructure();
+        $dataStructure = $this->setupInsertStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
-        $this->_db->insertParams($tableName, $params, $data);
+        $this->assertTrue($this->_db->insertParams($tableName, $params, $data));
         $resultsCntExpected = 1;
 
         $result = $this->_db->query("SELECT * FROM $tableName");
@@ -3020,15 +3001,9 @@ SQL;
         $this->assertEquals($resultsCnt, $resultsCntExpected, "Incorrect number or records. Found: $resultsCnt Expected: $resultsCntExpected");
     }
 
-
-    /**
-     * @group preparedStatements
-     */
-    public function testPreparedStatementsInsertBlob()
+    public function testInsertBlob()
     {
-
-        // turn on prepared statements
-        $dataStructure = $this->setupPreparedStatementsInsertStructure();
+        $dataStructure = $this->setupInsertStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
         $this->_db->query("DELETE FROM $tableName");
@@ -3039,7 +3014,7 @@ SQL;
         }
 
         $data = array( 'id'=> '1', 'col1' => '10', 'col2' => $blobData);
-        $this->_db->insertParams($tableName, $params, $data);
+        $this->assertTrue($this->_db->insertParams($tableName, $params, $data));
 
         $result = $this->_db->query("SELECT * FROM $tableName");
         $row = $this->_db->fetchByAssoc($result);
@@ -3048,10 +3023,7 @@ SQL;
         $this->assertEquals($row['col2'], $blobData, "Failed test writing blob data. Found: $foundLen chars, Expected: $expectedLen");
     }
 
-    /**
-     * @group preparedStatements
-     */
-    public function testPreparedStatementsBean()
+    public function testInsertUpdateBean()
     {
         // insert test
         $bean = new Contact();
@@ -3078,13 +3050,10 @@ SQL;
         $this->assertEquals($bean->id, $row['id'], 'id failed');
     }
 
-    /**
-     * @group preparedStatements
-     */
-    private function setupPreparedStatementsDataTypesStructure()
+    private function setupDataTypesStructure()
     {
-        // create test table for datatType testing
-        $tableName = "testPreparedStatementTypes";
+        // create test table for data type testing
+        $tableName = 'test_types';
         $params =  array( 'id'                  =>array ('name'=>'id',                  'type'=>'id','required'=>true),
                             'int_param'           =>array ('name'=>'int_param',           'type'=>'int',     'default'=>1),
                             'double_param'        =>array ('name'=>'double_param',        'type'=>'double',  'default'=>1),     //len,precision
@@ -3137,11 +3106,9 @@ SQL;
 
 
     /**
-     * @group preparedStatements
-     *
-     *  Each row is inserted and then read back and checked, including defaults.
+     * Each row is inserted and then read back and checked, including defaults.
      */
-    public function setupPreparedStatementsDataTypesData()
+    private function setupDataTypesData()
     {
         return array(array( 'id'                  => create_guid(),
                         'int_param'           => 1,
@@ -3216,20 +3183,15 @@ SQL;
         );
     }
 
-
-
-    /**
-     * @group preparedStatements
-     */
-    public function testPreparedStatementsDataTypes()
+    public function testDataTypes()
     {
         // create data table
-        $dataStructure = $this->setupPreparedStatementsDataTypesStructure();
+        $dataStructure = $this->setupDataTypesStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
 
         // load and test each data record
-        $dataArray = $this->setupPreparedStatementsDataTypesData();
+        $dataArray = $this->setupDataTypesData();
 
         foreach($dataArray as $data) {  // insert a single row of data and check it column by column
             $this->_db->insertParams($tableName, $params, $data);
@@ -3243,11 +3205,8 @@ SQL;
                             $expected = $params[$colKey]['default'];
                         }
                         $this->assertEquals( $expected, $found, "Failed prepared statement data compare for column $colKey. Found: $found  Expected: $expected");
-
                     }
-
             }
-
         }
     }
 

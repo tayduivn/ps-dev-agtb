@@ -749,8 +749,7 @@ protected function checkQuery($sql, $object_name = false)
      * Implements a generic insert for any bean.
      *
      * @param SugarBean $bean SugarBean instance
-     * @return bool query result
-     *
+     * @return bool
      */
 	public function insert(SugarBean $bean)
 	{
@@ -795,7 +794,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param string $table Table name
 	 * @param array $field_defs Definitions in vardef-like format
 	 * @param array $data Key/value to insert
-     * @return int The number of affected rows
+     * @return bool
      */
     public function insertParams($table, $field_defs, $data)
 	{
@@ -840,14 +839,16 @@ protected function checkQuery($sql, $object_name = false)
             $builder->setValue($field, $expression);
         }
 
-        return $builder->execute();
+        $builder->execute();
+
+        return true;
 	}
 
     /**
      * Implements a generic update for any bean
      *
-     * @param SugarBean $bean Sugarbean instance
-     * @return int The number of affected rows
+     * @param SugarBean $bean SugarBean instance
+     * @return bool
      */
     public function update(SugarBean $bean)
     {
@@ -869,10 +870,6 @@ protected function checkQuery($sql, $object_name = false)
 
             $dataValues[$field] = $bean->$field;
             $dataFields[$field] = $fieldDef;
-        }
-
-        if (empty($dataValues)) {
-            return 0; // no columns set
         }
 
         // build where clause
@@ -2341,7 +2338,7 @@ protected function checkQuery($sql, $object_name = false)
      * @param array $field_defs Definitions in vardef-like format
      * @param array $data Key/value for update
      * @param array $where Key/value for where
-     * @return int The number of affected rows
+     * @return bool
      */
     public function updateParams($table, $field_defs, $data, array $where = array())
     {
@@ -2408,7 +2405,9 @@ protected function checkQuery($sql, $object_name = false)
             call_user_func_array(array($builder, 'where'), $predicates);
         }
 
-        return $builder->execute();
+        $builder->execute();
+
+        return true;
     }
 
     /**
