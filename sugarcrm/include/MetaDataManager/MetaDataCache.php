@@ -39,9 +39,9 @@ class MetaDataCache
     public function set($key, $data)
     {
         if ($data == null) {
-            return $this->removeFromCacheTable($key);
+            $this->removeFromCacheTable($key);
         } else {
-            return $this->storeToCacheTable($key, $data);
+            $this->storeToCacheTable($key, $data);
         }
     }
 
@@ -107,7 +107,7 @@ class MetaDataCache
      * @param String $key key to store data with
      * @param mixed  $data Data to store in the cache table blob
      *
-     * @return bool
+     * @return void
      */
     protected function storeToCacheTable($key, $data)
     {
@@ -117,7 +117,7 @@ class MetaDataCache
             } catch (Exception $e) {
                 $GLOBALS['log']->fatal("Exception when compressing metadata for $key:" . $e->getMessage());
 
-                return false;
+                return;
             }
 
             $id = null;
@@ -141,18 +141,14 @@ class MetaDataCache
             $this->db->commit();
             if (empty($values['id'])) {
                 $values['id'] = create_guid();
-                $return = $this->db->insertParams(static::$cacheTable, $fields, $values);
+                $this->db->insertParams(static::$cacheTable, $fields, $values);
             } else {
-                $return = $this->db->updateParams(static::$cacheTable, $fields, $values, array(
+                $this->db->updateParams(static::$cacheTable, $fields, $values, array(
                     'id' => $values['id'],
                 ));
             }
             $this->db->commit();
-
-            return $return;
         }
-
-        return false;
     }
 
     /**
@@ -188,14 +184,13 @@ class MetaDataCache
      *
      * @param String $key
      *
-     * @return mixed
+     * @return void
      */
     protected function removeFromCacheTable($key)
     {
-        if (!self::$isCacheEnabled) {
-            return true;
+        if (self::$isCacheEnabled) {
+            $this->db->getConnection()->delete(static::$cacheTable, array('type' => $key));
         }
-        return $this->db->getConnection()->delete(static::$cacheTable, array('type' => $key));
     }
 
     /**
