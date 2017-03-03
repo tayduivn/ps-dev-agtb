@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 describe('Emails.Views.Create', function() {
     var app;
     var view;
@@ -8,19 +18,28 @@ describe('Emails.Views.Create', function() {
         var context;
         var viewName = 'create';
         var moduleName = 'Emails';
-        app = SugarTest.app;
-        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop};
+        var metadata = SugarTest.loadFixture('emails-metadata');
 
         SugarTest.testMetadata.init();
-        SugarTest.declareData('base', 'Emails', true, false);
-        SugarTest.loadPlugin('NestedCollection');
-        SugarTest.loadPlugin('VirtualCollection');
+
+        _.each(metadata.modules, function(def, module) {
+            SugarTest.testMetadata.updateModuleMetadata(module, def);
+        });
+
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');
-
         SugarTest.testMetadata.set();
+
+        app = SugarTest.app;
         app.data.declareModels();
-        context = app.context.getContext({module: 'Emails'});
+        app.routing.start();
+        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop};
+
+        context = app.context.getContext({
+            module: moduleName,
+            create: true
+        });
         context.prepare(true);
 
         var meta = {
@@ -168,6 +187,29 @@ describe('Emails.Views.Create', function() {
             expect(bcc.add).toHaveBeenCalledOnce();
         });
 
+        using('prepopulate attachments', ['attachments', 'attachments_collection'], function(fieldName) {
+            it('should add attachments from ' + fieldName, function() {
+                var attachments = view.model.get('attachments_collection');
+                var data = {};
+
+                sandbox.spy(attachments, 'add');
+
+                data[fieldName] = [
+                    app.data.createBean('Notes', {
+                        id: _.uniqueId(),
+                        name: 'attachment 1'
+                    }),
+                    app.data.createBean('Nots', {
+                        id: _.uniqueId(),
+                        name: 'attachment 2'
+                    })
+                ];
+                view.prepopulate(data);
+
+                expect(attachments.add).toHaveBeenCalledOnce();
+            });
+        });
+
         it('should call _populateRelated if related value passed', function() {
             runs(function() {
                 view.prepopulate({related: {id: '123'}});
@@ -305,18 +347,14 @@ describe('Emails.Views.Create', function() {
         var configStub;
         var caseSubjectMacro = '[CASE:%1]';
         var relatedModel;
-        var contacts;
+        var relatedCollection;
 
         beforeEach(function() {
-            var relatedCollection;
-
             configStub = sandbox.stub(app.metadata, 'getConfig', function() {
                 return {
                     'inboundEmailCaseSubjectMacro': caseSubjectMacro
                 };
             });
-
-            view.model.set('to', new app.data.createMixedBeanCollection());
 
             relatedModel = app.data.createBean('Cases', {
                 id: '123',
@@ -325,9 +363,8 @@ describe('Emails.Views.Create', function() {
             });
 
             relatedCollection = app.data.createBeanCollection('Contacts');
-            contacts = [];
             sandbox.stub(relatedCollection, 'fetch', function(params) {
-                params.success({models: contacts});
+                params.success(relatedCollection);
             });
 
             sandbox.stub(relatedModel, 'getRelatedCollection', function() {
@@ -346,10 +383,10 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should populate both the subject and "to" field when cases has related contacts', function() {
-            contacts = [
+            relatedCollection.add([
                 app.data.createBean('Contacts', {email: 'abc@foo.com'}),
                 app.data.createBean('Contacts', {email: 'def@foo.com'})
-            ];
+            ]);
 
             view._populateForCases(relatedModel);
             expect(view.model.get('name')).toEqual('[CASE:100] My Case');
@@ -575,7 +612,7 @@ describe('Emails.Views.Create', function() {
     describe('managing attachments', function() {
         beforeEach(function() {
             // Seed the model with an empty set of attachments.
-            view.model.set('attachments', [], {silent: true});
+            view.model.set('attachments_collection', [], {silent: true});
         });
 
         it(
@@ -584,7 +621,8 @@ describe('Emails.Views.Create', function() {
                 sandbox.spy(view, '_setAttachmentVisibility');
                 sandbox.spy(view, '_checkAttachmentLimit');
 
-                view.model.get('attachments').add({
+                view.model.get('attachments_collection').add({
+                    _module: 'Notes',
                     upload_id: _.uniqueId(),
                     name: 'logo.jpg',
                     filename: 'logo.jpg',
@@ -626,13 +664,13 @@ describe('Emails.Views.Create', function() {
                     isEmpty: $.noop
                 };
 
-                sandbox.stub(view, 'getField').withArgs('attachments').returns(field);
+                sandbox.stub(view, 'getField').withArgs('attachments_collection').returns(field);
             });
 
             it('should show the attachments field', function() {
                 sandbox.stub(field, 'isEmpty').returns(false);
 
-                view.model.trigger('change:attachments');
+                view.model.trigger('change:attachments_collection');
 
                 expect(spyAddClass).toHaveBeenCalledWith('single');
                 expect(spyRemoveClass).toHaveBeenCalledWith('hidden');
@@ -641,7 +679,7 @@ describe('Emails.Views.Create', function() {
             it('should hide the attachments field', function() {
                 sandbox.stub(field, 'isEmpty').returns(true);
 
-                view.model.trigger('change:attachments');
+                view.model.trigger('change:attachments_collection');
 
                 expect(spyAddClass).toHaveBeenCalledWith('hidden');
                 expect(spyRemoveClass).toHaveBeenCalledWith('single');
@@ -654,13 +692,14 @@ describe('Emails.Views.Create', function() {
                 app.config.maxAggregateEmailAttachmentsBytes = 10000000;
 
                 // Seed the model with an empty set of attachments.
-                view.model.set('attachments', [], {silent: true});
+                view.model.set('attachments_collection', [], {silent: true});
             });
 
             using(
                 'attachments over limit',
                 [
                     {
+                        _module: 'Notes',
                         filename_guid: _.uniqueId(),
                         name: 'Disclosure Agreement.pdf',
                         filename: 'Disclosure Agreement.pdf',
@@ -669,6 +708,7 @@ describe('Emails.Views.Create', function() {
                         file_ext: 'pdf'
                     },
                     [{
+                        _module: 'Notes',
                         filename_guid: _.uniqueId(),
                         name: 'Disclosure Agreement.pdf',
                         filename: 'Disclosure Agreement.pdf',
@@ -676,6 +716,7 @@ describe('Emails.Views.Create', function() {
                         file_size: 4000000,
                         file_ext: 'pdf'
                     }, {
+                        _module: 'Notes',
                         upload_id: _.uniqueId(),
                         name: 'logo.jpg',
                         filename: 'logo.jpg',
@@ -684,6 +725,7 @@ describe('Emails.Views.Create', function() {
                         file_source: 'DocumentRevisions',
                         file_ext: 'jpg'
                     }, {
+                        _module: 'Notes',
                         filename_guid: _.uniqueId(),
                         name: 'NDA.pdf',
                         filename: 'NDA.pdf',
@@ -704,7 +746,7 @@ describe('Emails.Views.Create', function() {
                     }
 
                     it('should show warning when the attachments total over 10MB in file size', function() {
-                        view.model.get('attachments').add(attachments);
+                        view.model.get('attachments_collection').add(attachments);
 
                         expect(app.alert.show).toHaveBeenCalledWith('email-attachment-status');
                     });
@@ -715,6 +757,7 @@ describe('Emails.Views.Create', function() {
                 'attachments under limit',
                 [
                     {
+                        _module: 'Notes',
                         filename_guid: _.uniqueId(),
                         name: 'Disclosure Agreement.pdf',
                         filename: 'Disclosure Agreement.pdf',
@@ -723,6 +766,7 @@ describe('Emails.Views.Create', function() {
                         file_ext: 'pdf'
                     },
                     [{
+                        _module: 'Notes',
                         filename_guid: _.uniqueId(),
                         name: 'Disclosure Agreement.pdf',
                         filename: 'Disclosure Agreement.pdf',
@@ -730,6 +774,7 @@ describe('Emails.Views.Create', function() {
                         file_size: 6000000,
                         file_ext: 'pdf'
                     }, {
+                        _module: 'Notes',
                         upload_id: _.uniqueId(),
                         name: 'logo.jpg',
                         filename: 'logo.jpg',
@@ -738,6 +783,7 @@ describe('Emails.Views.Create', function() {
                         file_source: 'DocumentRevisions',
                         file_ext: 'jpg'
                     }, {
+                        _module: 'Notes',
                         filename_guid: _.uniqueId(),
                         name: 'NDA.pdf',
                         filename: 'NDA.pdf',
@@ -758,7 +804,7 @@ describe('Emails.Views.Create', function() {
                     }
 
                     it('should not show warning when the attachments total less than 10MB in file size', function() {
-                        view.model.get('attachments').add(attachments);
+                        view.model.get('attachments_collection').add(attachments);
 
                         expect(app.alert.show).not.toHaveBeenCalledWith('email-attachment-status');
                     });
@@ -768,8 +814,9 @@ describe('Emails.Views.Create', function() {
             it(
                 'should not show warning with multiple attachments totaling over 10MB when one is queued for removal',
                 function() {
-                    var attachments = view.model.get('attachments');
+                    var attachments = view.model.get('attachments_collection');
                     var data = [{
+                        _module: 'Notes',
                         filename_guid: _.uniqueId(),
                         name: 'Disclosure Agreement.pdf',
                         filename: 'Disclosure Agreement.pdf',
@@ -777,6 +824,7 @@ describe('Emails.Views.Create', function() {
                         file_size: 4000000,
                         file_ext: 'pdf'
                     }, {
+                        _module: 'Notes',
                         upload_id: _.uniqueId(),
                         name: 'logo.jpg',
                         filename: 'logo.jpg',
@@ -785,6 +833,7 @@ describe('Emails.Views.Create', function() {
                         file_source: 'DocumentRevisions',
                         file_ext: 'jpg'
                     }, {
+                        _module: 'Notes',
                         filename_guid: _.uniqueId(),
                         name: 'NDA.pdf',
                         filename: 'NDA.pdf',
@@ -1260,25 +1309,27 @@ describe('Emails.Views.Create', function() {
         });
     });
 
-    describe('Toggle action buttons while fetching recipients', function() {
-        it('should disable action buttons', function() {
-            sandbox.spy(view, 'toggleButtons');
-            view.trigger('email-recipients:loading', 'to');
-            expect(view.toggleButtons).toHaveBeenCalledWith(false);
-        });
+    it('should toggle action buttons while loading all recipients', function() {
+        sandbox.spy(view, 'toggleButtons');
 
-        it('should enable action buttons', function() {
-            var recipientsField = view.getFieldMeta('recipients');
-            var num = _.size(recipientsField.fields);
-            sandbox.spy(view, 'toggleButtons');
+        view.trigger('loading_collection_field', 'to');
+        view.trigger('loading_collection_field', 'cc');
+        view.trigger('loading_collection_field', 'bcc');
 
-            _.each(recipientsField.fields, function(field) {
-                expect(view.toggleButtons).not.toHaveBeenCalledWith(true);
-                view.trigger('email-recipients:loaded', field.name);
-            });
+        expect(view.toggleButtons).toHaveBeenCalledThrice();
+        expect(view.toggleButtons.alwaysCalledWithExactly(false)).toBe(true);
 
-            expect(view.toggleButtons).toHaveBeenCalledWith(true);
-        });
+        view.trigger('loaded_collection_field', 'to');
+        expect(view.toggleButtons).toHaveBeenCalledThrice();
+        expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
+
+        view.trigger('loaded_collection_field', 'cc');
+        expect(view.toggleButtons).toHaveBeenCalledThrice();
+        expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
+
+        view.trigger('loaded_collection_field', 'bcc');
+        expect(view.toggleButtons.callCount).toBe(4);
+        expect(view.toggleButtons.lastCall.args[0]).toBe(true);
     });
 
     describe('Render recipients fieldset when one of its fields have changed', function() {
@@ -1292,6 +1343,18 @@ describe('Emails.Views.Create', function() {
                 expect(field.render).toHaveBeenCalled();
             });
         });
+    });
+
+    it('should change the recipients fieldset to detail mode after fields have been toggled to edit mode', function() {
+        // `BaseEmailsRecipientsFieldsetField#setMode` will decide if the mode can actually be changed.
+        var recipientsFieldset = {setMode: $.noop};
+
+        sandbox.spy(recipientsFieldset, 'setMode');
+        sandbox.stub(view, 'getField').withArgs('recipients').returns(recipientsFieldset);
+
+        view.trigger('editable:toggle_fields');
+
+        expect(recipientsFieldset.setMode).toHaveBeenCalledWith('detail');
     });
 
     describe('hasUnsavedChanges', function() {

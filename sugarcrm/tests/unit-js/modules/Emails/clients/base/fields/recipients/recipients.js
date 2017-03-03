@@ -25,7 +25,7 @@ describe("Emails.fields.recipients", function() {
         context = app.context.getContext({
             module: "Emails"
         });
-        context.prepare();
+        context.prepare(true);
         model = context.get('model');
         field = SugarTest.createField('base', 'recipients', 'recipients', 'edit', undefined, context.get('module'), model, context, true);
     });

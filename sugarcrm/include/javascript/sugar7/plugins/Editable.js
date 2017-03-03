@@ -164,8 +164,9 @@
                     return;
                 }
 
-                var viewName = !!isEdit ? 'edit' : this.action,
-                    numOfToggledFields = fields.length;
+                var viewName = !!isEdit ? 'edit' : this.action;
+                var numOfToggledFields = fields.length;
+                var view = this;
 
                 _.each(fields, function(field) {
                     if (field.disposed) {
@@ -193,8 +194,13 @@
                                 .toggleClass('edit', (viewName === 'edit'));
 
                             numOfToggledFields--;
-                            if ((numOfToggledFields === 0) && _.isFunction(callback)) {
-                                callback();
+
+                            if (numOfToggledFields === 0) {
+                                if (_.isFunction(callback)) {
+                                    callback();
+                                }
+
+                                view.trigger('editable:toggle_fields', fields, viewName);
                             }
                         }
                     }, field);

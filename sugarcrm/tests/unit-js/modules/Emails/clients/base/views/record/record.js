@@ -1,28 +1,41 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 describe('Emails.Views.Record', function() {
     var app;
+    var context;
     var view;
     var sandbox;
 
     beforeEach(function() {
-        var context;
         var viewName = 'record';
         var moduleName = 'Emails';
-
-        app = SugarTest.app;
-        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop};
+        var metadata = SugarTest.loadFixture('emails-metadata');
 
         SugarTest.testMetadata.init();
+
+        _.each(metadata.modules, function(def, module) {
+            SugarTest.testMetadata.updateModuleMetadata(module, def);
+        });
+
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadComponent('base', 'view', 'record');
-
         SugarTest.testMetadata.set();
-        SugarTest.app.data.declareModels();
-        context = app.context.getContext();
-        context.set({
-            module: moduleName,
-            create: true
-        });
-        context.prepare();
+
+        app = SugarTest.app;
+        app.data.declareModels();
+        app.routing.start();
+        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop};
+
+        context = app.context.getContext({module: moduleName});
+        context.prepare(true);
 
         var meta = {
             panels: [
@@ -89,39 +102,33 @@ describe('Emails.Views.Record', function() {
         });
 
         it('should alert the user when the model starts with state equal to draft', function() {
-            var context = app.context.getContext();
-
-            context.set({
-                module: 'Emails',
-                create: true
-            });
-            context.prepare();
             context.get('model').set('state', view.STATE_DRAFT);
-
             view = SugarTest.createView('base', 'Emails', 'record', null, context, true);
 
             expect(app.alert.show).toHaveBeenCalled();
         });
 
-        describe('Toggle action buttons while fetching recipients', function() {
-            it('should disable action buttons', function() {
-                sandbox.spy(view, 'toggleButtons');
-                view.trigger('email-recipients:loading', 'to');
-                expect(view.toggleButtons).toHaveBeenCalledWith(false);
-            });
+        it('should toggle action buttons while loading all recipients', function() {
+            sandbox.spy(view, 'toggleButtons');
 
-            it('should enable action buttons', function() {
-                var recipientsField = view.getFieldMeta('recipients');
-                var num = _.size(recipientsField.fields);
-                sandbox.spy(view, 'toggleButtons');
+            view.trigger('loading_collection_field', 'to');
+            view.trigger('loading_collection_field', 'cc');
+            view.trigger('loading_collection_field', 'bcc');
 
-                _.each(recipientsField.fields, function(field) {
-                    expect(view.toggleButtons).not.toHaveBeenCalledWith(true);
-                    view.trigger('email-recipients:loaded', field.name);
-                });
+            expect(view.toggleButtons).toHaveBeenCalledThrice();
+            expect(view.toggleButtons.alwaysCalledWithExactly(false)).toBe(true);
 
-                expect(view.toggleButtons).toHaveBeenCalledWith(true);
-            });
+            view.trigger('loaded_collection_field', 'to');
+            expect(view.toggleButtons).toHaveBeenCalledThrice();
+            expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
+
+            view.trigger('loaded_collection_field', 'cc');
+            expect(view.toggleButtons).toHaveBeenCalledThrice();
+            expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
+
+            view.trigger('loaded_collection_field', 'bcc');
+            expect(view.toggleButtons.callCount).toBe(4);
+            expect(view.toggleButtons.lastCall.args[0]).toBe(true);
         });
 
         describe('Render each recipient field when it has changed', function() {

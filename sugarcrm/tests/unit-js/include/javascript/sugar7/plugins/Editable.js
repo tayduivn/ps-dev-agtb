@@ -145,6 +145,30 @@ describe("Editable Plugin", function() {
         });
     });
 
+    it('should trigger editable:toggle_fields on the view when all fields have been toggled', function() {
+        var spy = sinonSandbox.spy();
+
+        view.on('editable:toggle_fields', spy);
+        view.render();
+        view.model.set({
+            name: 'Name',
+            case_number: 123,
+            description: 'Description'
+        });
+
+        view.toggleFields(_.values(view.fields), true);
+
+        waitsFor(function() {
+            return spy.calledOnce;
+        }, 'The event did not get triggered in time.', 1000);
+
+        runs(function() {
+            _.each(view.fields, function(field) {
+                expect(field.tplName).toBe('edit');
+            });
+        });
+    });
+
     describe("Warning unsaved changes", function() {
         var alertShowStub;
         beforeEach(function() {

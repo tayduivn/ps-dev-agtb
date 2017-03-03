@@ -49,7 +49,7 @@ describe("Emails.Views.Compose", function() {
             module: moduleName,
             create: true
         });
-        context.prepare();
+        context.prepare(true);
 
         view = SugarTest.createView('base', moduleName, viewName, null, context, true);
 

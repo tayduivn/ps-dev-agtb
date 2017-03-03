@@ -18,13 +18,11 @@
 
     STATE_DRAFT: 'Draft',
 
-    _recipientFields: ['to', 'cc', 'bcc'],
-
     /**
      * @inheritdoc
      */
     initialize: function(options) {
-        var num;
+        var loadingRequests = 0;
 
         this._super('initialize', [options]);
 
@@ -47,14 +45,15 @@
             this._renderRecipientsField('bcc');
         });
 
-        this.on('email-recipients:loading', function() {
+        this.on('loading_collection_field', function() {
+            loadingRequests++;
             this.toggleButtons(false);
         }, this);
 
-        num = this._recipientFields.length;
-        this.on('email-recipients:loaded', function() {
-            num--;
-            if (num === 0) {
+        this.on('loaded_collection_field', function() {
+            loadingRequests--;
+
+            if (loadingRequests === 0) {
                 this.toggleButtons(true);
             }
         }, this);

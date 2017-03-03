@@ -120,6 +120,22 @@ fixtures.metadata = {
             lhs_module: 'Emails',
             rhs_module: 'Notes'
         },
+        emails_users_from: {
+            lhs_module: 'Emails',
+            rhs_module: 'Users'
+        },
+        emails_contacts_from: {
+            lhs_module: 'Emails',
+            rhs_module: 'Contacts'
+        },
+        emails_leads_from: {
+            lhs_module: 'Emails',
+            rhs_module: 'Leads'
+        },
+        emails_email_addresses_from: {
+            lhs_module: 'Emails',
+            rhs_module: 'EmailAddresses'
+        },
         emails_users_to: {
             lhs_module: 'Emails',
             rhs_module: 'Users'
@@ -131,6 +147,10 @@ fixtures.metadata = {
         emails_leads_to: {
             lhs_module: 'Emails',
             rhs_module: 'Leads'
+        },
+        emails_email_addresses_to: {
+            lhs_module: 'Emails',
+            rhs_module: 'EmailAddresses'
         },
         emails_users_cc: {
             lhs_module: 'Emails',
@@ -144,6 +164,10 @@ fixtures.metadata = {
             lhs_module: 'Emails',
             rhs_module: 'Leads'
         },
+        emails_email_addresses_cc: {
+            lhs_module: 'Emails',
+            rhs_module: 'EmailAddresses'
+        },
         emails_users_bcc: {
             lhs_module: 'Emails',
             rhs_module: 'Users'
@@ -155,6 +179,10 @@ fixtures.metadata = {
         emails_leads_bcc: {
             lhs_module: 'Emails',
             rhs_module: 'Leads'
+        },
+        emails_email_addresses_bcc: {
+            lhs_module: 'Emails',
+            rhs_module: 'EmailAddresses'
         }
     },
     "currencies": {
@@ -884,247 +912,6 @@ fixtures.metadata = {
                     "name": "name",
                     "type": "name",
                     "required": true
-                }
-            }
-        },
-        "Notes": {
-            "fields": {
-                "name": {
-                    "name": "name",
-                    "vname": "LBL_NOTE_SUBJECT",
-                    "dbType": "varchar",
-                    "type": "name",
-                    "len": "255",
-                    "required": true
-                }
-            }
-        },
-        "EmailAddresses": {
-            "fields": {
-                "id": {
-                    "name": 'id',
-                    "type": 'id',
-                    "vname": 'LBL_EMAIL_ADDRESS_ID',
-                    "required": true
-                },
-                "email_address": {
-                    "name": 'email_address',
-                    "type": 'varchar',
-                    "vname": 'LBL_EMAIL_ADDRESS',
-                    "length": 100,
-                    "required": true
-                },
-                "email_address_caps": {
-                    "name": 'email_address_caps',
-                    "type": 'varchar',
-                    "vname": 'LBL_EMAIL_ADDRESS_CAPS',
-                    "length": 100,
-                    "required": true,
-                    "reportable": false
-                },
-                "invalid_email": {
-                    "name": 'invalid_email',
-                    "type": 'bool',
-                    "default": 0,
-                    "vname": 'LBL_INVALID_EMAIL'
-                },
-                "opt_out": {
-                    "name": 'opt_out',
-                    "type": 'bool',
-                    "default": 0,
-                    "vname": 'LBL_OPT_OUT'
-                },
-                "date_created": {
-                    "name": 'date_created',
-                    "type": 'datetime',
-                    "vname": 'LBL_DATE_CREATE'
-                },
-                "date_modified": {
-                    "name": 'date_modified',
-                    "type": 'datetime',
-                    "vname": 'LBL_DATE_MODIFIED'
-                },
-                "deleted": {
-                    "name": 'deleted',
-                    "type": 'bool',
-                    "default": 0,
-                    "vname": 'LBL_DELETED'
-                }
-            }
-        },
-        "Emails": {
-            "fields": {
-                "name": {
-                    "name": "name",
-                    "vname": "LBL_SUBJECT",
-                    "type": "name",
-                    "dbType": "varchar",
-                    "required": false,
-                    "len": "255"
-                },
-                "to": {
-                    "name": "to",
-                    "links": [
-                        "users_to",
-                        "contacts_to",
-                        "leads_to"
-                    ],
-                    "order_by": "name:asc",
-                    "source": "non-db",
-                    "studio": false,
-                    "type": "collection",
-                    "vname": "LBL_TO"
-                },
-                "users_to": {
-                    "name": "users_to",
-                    "relationship": "emails_users_to",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_TO"
-                },
-                "contacts_to": {
-                    "name": "contacts_to",
-                    "relationship": "emails_contacts_to",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_TO"
-                },
-                "leads_to": {
-                    "name": "leads_to",
-                    "relationship": "emails_leads_to",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_TO"
-                },
-                "cc": {
-                    "name": "cc",
-                    "links": [
-                        "users_cc",
-                        "contacts_cc",
-                        "leads_cc"
-                    ],
-                    "order_by": "name:asc",
-                    "source": "non-db",
-                    "studio": false,
-                    "type": "collection",
-                    "vname": "LBL_CC"
-                },
-                "users_cc": {
-                    "name": "users_cc",
-                    "relationship": "emails_users_cc",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_CC"
-                },
-                "contacts_cc": {
-                    "name": "contacts_cc",
-                    "relationship": "emails_contacts_cc",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_CC"
-                },
-                "leads_cc": {
-                    "name": "leads_cc",
-                    "relationship": "emails_leads_cc",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_CC"
-                },
-                "bcc": {
-                    "name": "bcc",
-                    "links": [
-                        "users_bcc",
-                        "contacts_bcc",
-                        "leads_bcc"
-                    ],
-                    "order_by": "name:asc",
-                    "source": "non-db",
-                    "studio": false,
-                    "type": "collection",
-                    "vname": "LBL_BCC"
-                },
-                "users_bcc": {
-                    "name": "users_bcc",
-                    "relationship": "emails_users_bcc",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_BCC"
-                },
-                "contacts_bcc": {
-                    "name": "contacts_bcc",
-                    "relationship": "emails_contacts_bcc",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_BCC"
-                },
-                "leads_bcc": {
-                    "name": "leads_bcc",
-                    "relationship": "emails_leads_bcc",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_BCC"
-                },
-                "attachments": {
-                    "bean_name": "Note",
-                    "module": "Notes",
-                    "name": "attachments",
-                    "relationship": "emails_attachments",
-                    "source": "non-db",
-                    "type": "link",
-                    "vname": "LBL_ATTACHMENTS"
-                },
-                "description_html": {
-                    "name": "description_html",
-                    "type": "varchar",
-                    "vname": "description_html",
-                    "source": "non-db"
-                },
-                "description": {
-                    "name": "description",
-                    "type": "varchar",
-                    "vname": "LBL_TEXT_BODY",
-                    "source": "non-db",
-                    "full_text_search": {
-                        "enabled": "true",
-                        "searchable": "true",
-                        "type": "text"
-                    }
-                },
-                "reply_to_id": {
-                    "name": "reply_to_id",
-                    "vname": "LBL_EMAIL_REPLY_TO_ID",
-                    "type": "id",
-                    "len": "36",
-                    "reportable": "false",
-                    "duplicate_on_record_copy": "no",
-                    "importable": "false",
-                    "comment": "Identifier of email record that this email was a reply to"
-                }
-            }
-        },
-        "Filters": {
-            "fields": {
-                "filter_definition": {
-                    "required": true,
-                    "name": "filter_definition",
-                    "vname": "LBL_FILTER_DEFINITION",
-                    "dbType": "longtext",
-                    "type": "json"
-                },
-                "filter_template": {
-                    "required": true,
-                    "name": "filter_template",
-                    "vname": "LBL_FILTER_TEMPLATE",
-                    "dbType": "longtext",
-                    "type": "json"
-                },
-                "module_name": {
-                    "required": true,
-                    "name": "module_name",
-                    "vname": "LBL_MODULE_NAME",
-                    "dbType": "varchar",
-                    "len": 100,
-                    "type": "text"
                 }
             }
         }

@@ -1,25 +1,43 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 describe('Emails.Field.ReplyAction', function() {
     var app;
     var field;
     var model;
-    var user;
     var sandbox;
     var context;
 
     beforeEach(function() {
-        app = SugarTest.app;
-        user = SUGAR.App.user;
+        var metadata = SugarTest.loadFixture('emails-metadata');
 
         SugarTest.testMetadata.init();
+
+        _.each(metadata.modules, function(def, module) {
+            SugarTest.testMetadata.updateModuleMetadata(module, def);
+        });
+
         SugarTest.loadHandlebarsTemplate('reply-action', 'field', 'base', 'reply-header-html', 'Emails');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'emailaction');
         SugarTest.testMetadata.set();
 
+        app = SugarTest.app;
+        app.data.declareModels();
+        app.routing.start();
+
         //used by formatDate in the reply header template
-        user.setPreference('datepref', 'Y-m-d');
-        user.setPreference('timepref', 'H:i');
+        app.user.setPreference('datepref', 'Y-m-d');
+        app.user.setPreference('timepref', 'H:i');
+
         context = app.context.getContext({module: 'Emails'});
         context.prepare(true);
         model = context.get('model');
@@ -48,112 +66,104 @@ describe('Emails.Field.ReplyAction', function() {
     });
 
     describe('_getReplyRecipients', function() {
-        var recipients;
-
         beforeEach(function() {
-            recipients = [];
-            for (var i = 0; i < 5; i++) {
-                recipients.push(app.data.createBean('Contacts', {
-                    id: i,
-                    name: 'Name' + i
-                }));
-            }
+            var from = app.data.createBean('Contacts', {
+                _link: 'contacts_from',
+                id: _.uniqueId(),
+                name: 'Ralph Turner'
+            });
+
+            field.model.set('from', from);
         });
 
         it('should return the original sender in the to field if reply', function() {
-            var actual;
-            field.model.set('from', app.data.createMixedBeanCollection([recipients[0]]));
-            actual = field._getReplyRecipients(false);
-            expect(actual).toEqual({
-                to: [
-                    {bean: recipients[0]}
-                ],
+            var actual = field._getReplyRecipients(false);
+            var expected = {
+                to: [{
+                    bean: field.model.get('from').first()
+                }],
                 cc: []
-            });
+            };
+
+            expect(actual).toEqual(expected);
         });
 
         it('should return the original from, to and cc recipients if reply all', function() {
+            var to = [
+                app.data.createBean('Contacts', {
+                    _link: 'contacts_to',
+                    id: _.uniqueId(),
+                    name: 'Georgia Earl',
+                    email_address_used: 'a@b.com'
+                }),
+                app.data.createBean('Contacts', {
+                    _link: 'contacts_to',
+                    id: _.uniqueId(),
+                    name: 'Nancy Holman',
+                    email_address_used: 'b@c.com'
+                })
+            ];
+            var cc = [
+                app.data.createBean('Contacts', {
+                    _link: 'contacts_cc',
+                    id: _.uniqueId(),
+                    name: 'Wally Bibby',
+                    email_address_used: 'c@d.com'
+                })
+            ];
+            var bcc = [
+                app.data.createBean('Contacts', {
+                    _link: 'contacts_bcc',
+                    id: _.uniqueId(),
+                    name: 'Rhonda Withers',
+                    email_address_used: 'e@f.com'
+                })
+            ];
+            var expected;
             var actual;
-            var from = app.data.createMixedBeanCollection([recipients[0]]);
-            var to = app.data.createMixedBeanCollection([
-                recipients[1],
-                recipients[2]
-            ]);
-            var cc = app.data.createMixedBeanCollection([
-                recipients[3],
-                recipients[4]
-            ]);
 
-            field.model.set({
-                from: from,
-                to: to,
-                cc: cc
-            });
+            field.model.set('to', to);
+            field.model.set('cc', cc);
+            field.model.set('bcc', bcc);
 
-            actual = field._getReplyRecipients(true);
-            expect(actual).toEqual({
+            expected = {
                 to: [
-                    {bean: recipients[0]},
-                    {bean: recipients[1]},
-                    {bean: recipients[2]}
+                    {bean: field.model.get('from').first()},
+                    {bean: field.model.get('to').at(0)},
+                    {bean: field.model.get('to').at(1)}
                 ],
-                cc: [
-                    {bean: recipients[3]},
-                    {bean: recipients[4]}
-                ]
-            });
-        });
-
-        it('should ignore original bcc recipients if reply all', function() {
-            var actual;
-            var from = app.data.createMixedBeanCollection([recipients[0]]);
-            var to = app.data.createMixedBeanCollection([recipients[1]]);
-            var cc = app.data.createMixedBeanCollection([recipients[2]]);
-            var bcc = app.data.createMixedBeanCollection([recipients[3]]);
-
-            field.model.set({
-                from: from,
-                to: to,
-                cc: cc,
-                bcc: bcc
-            });
-
+                cc: [{
+                    bean: field.model.get('cc').first()
+                }]
+            };
             actual = field._getReplyRecipients(true);
-            expect(actual).toEqual({
-                to: [
-                    {bean: recipients[0]},
-                    {bean: recipients[1]}
-                ],
-                cc: [
-                    {bean: recipients[2]}
-                ]
-            });
+
+            expect(actual).toEqual(expected);
         });
 
         it('should correctly return email address only recipients during reply all', function() {
+            var to = [
+                app.data.createBean('EmailAddresses', {
+                    _link: 'email_addresses_to',
+                    email_address: 'foo@bar.com',
+                    email_address_used: 'foo@bar.com'
+                })
+            ];
+            var expected;
             var actual;
-            var emailAddressRecipient = app.data.createBean('EmailAddresses', {
-                email_address_used: 'foo@bar.com'
-            });
-            var from = app.data.createMixedBeanCollection([recipients[0]]);
-            var to;
 
-            emailAddressRecipient.module = 'EmailAddresses';
-            to = app.data.createMixedBeanCollection([emailAddressRecipient]);
+            field.model.set('to', to);
 
-            field.model.set({
-                from: from,
-                to: to
-            });
-
-            actual = field._getReplyRecipients(true);
-            expect(actual).toEqual({
+            expected = {
                 to: [
-                    {bean: recipients[0]},
-                    {email: 'foo@bar.com'}
+                    {bean: field.model.get('from').first()},
+                    {bean: field.model.get('to').first()}
                 ],
                 cc: []
-            });
+            };
+            actual = field._getReplyRecipients(true);
+
+            expect(actual).toEqual(expected);
         });
     });
 
@@ -287,18 +297,26 @@ describe('Emails.Field.ReplyAction', function() {
         });
 
         it('should format email list properly', function() {
-            var collection = new Backbone.Collection([
-                {
-                    name: 'Foo Bar',
+            var to = [
+                app.data.createBean('Contacts', {
+                    _link: 'contacts_to',
+                    id: _.uniqueId(),
+                    name: 'Brandon Hunter',
                     email_address_used: 'foo@bar.com'
-                },
-                {
-                    name: null,
+                }),
+                app.data.createBean('EmailAddresses', {
+                    _link: 'email_addresses_to',
+                    id: _.uniqueId(),
+                    email_address: 'bar@foo.com',
                     email_address_used: 'bar@foo.com'
-                }
-            ]);
-            var actual = field._formatEmailList(collection);
-            expect(actual).toEqual('Foo Bar <foo@bar.com>, bar@foo.com');
+                })
+            ];
+            var actual;
+
+            field.model.set('to', to);
+            actual = field._formatEmailList(field.model.get('to'));
+
+            expect(actual).toEqual('Brandon Hunter <foo@bar.com>, bar@foo.com');
         });
     });
 

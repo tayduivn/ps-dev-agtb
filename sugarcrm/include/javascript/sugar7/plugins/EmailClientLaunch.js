@@ -84,13 +84,15 @@
 
                     if (recipient.bean) {
                         validRecipient = recipient.bean.clone();
-                        validRecipient.set('email', this._getEmailAddress(recipient));
+                        validRecipient.set('email_address', this._getEmailAddress(recipient));
                     } else {
                         module = recipient.module || 'EmailAddresses';
+                        recipient.email_address = this._getEmailAddress(recipient);
+                        delete recipient.email;
                         validRecipient = app.data.createBean(module, recipient);
                     }
                     //only push the recipient if we have a valid email to send to
-                    if (validRecipient.get('email')) {
+                    if (validRecipient.get('email_address')) {
                         validRecipients.push(validRecipient);
                     }
                 }, this);
@@ -240,6 +242,7 @@
                     email = recipient.email;
                 } else if (recipient.bean) {
                     email = recipient.bean.get('email_address_used') ||
+                        recipient.bean.get('email_address') ||
                         app.utils.getPrimaryEmailAddress(recipient.bean);
                 }
                 return email;

@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 describe('Emails.BaseEmailAttachmentsField', function() {
     var app;
     var context;
@@ -6,11 +16,14 @@ describe('Emails.BaseEmailAttachmentsField', function() {
     var sandbox;
 
     beforeEach(function() {
-        sandbox = sinon.sandbox.create();
+        var metadata = SugarTest.loadFixture('emails-metadata');
 
         SugarTest.testMetadata.init();
-        SugarTest.declareData('base', 'Emails', true, false);
-        SugarTest.loadPlugin('NestedCollection');
+
+        _.each(metadata.modules, function(def, module) {
+            SugarTest.testMetadata.updateModuleMetadata(module, def);
+        });
+
         SugarTest.loadHandlebarsTemplate('email-attachments', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('email-attachments', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'field', 'email-attachments');
@@ -18,10 +31,13 @@ describe('Emails.BaseEmailAttachmentsField', function() {
 
         app = SugarTest.app;
         app.data.declareModels();
+        app.routing.start();
 
         context = app.context.getContext({module: 'Emails'});
         context.prepare(true);
         model = context.get('model');
+
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
@@ -40,33 +56,36 @@ describe('Emails.BaseEmailAttachmentsField', function() {
         var template;
 
         beforeEach(function() {
-            var data = {
-                next_offset: -1,
-                records: [{
-                    id: _.uniqueId(),
-                    name: 'Disclosure Agreement.pdf',
-                    filename: 'Disclosure Agreement.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_ext: 'pdf'
-                }, {
-                    id: _.uniqueId(),
-                    upload_id: _.uniqueId(),
-                    name: 'logo.jpg',
-                    filename: 'logo.jpg',
-                    file_mime_type: 'image/jpg',
-                    file_size: 158589,
-                    file_source: 'DocumentRevisions',
-                    file_ext: 'jpg'
-                }]
-            };
+            var data = [{
+                _module: 'Notes',
+                _link: 'attachments',
+                id: _.uniqueId(),
+                name: 'Disclosure Agreement.pdf',
+                filename: 'Disclosure Agreement.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: 158589,
+                file_ext: 'pdf'
+            }, {
+                _module: 'Notes',
+                _link: 'attachments',
+                id: _.uniqueId(),
+                upload_id: _.uniqueId(),
+                name: 'logo.jpg',
+                filename: 'logo.jpg',
+                file_mime_type: 'image/jpg',
+                file_size: 158589,
+                file_source: 'DocumentRevisions',
+                file_ext: 'jpg'
+            }];
 
+            // Act as if the model was retrieved from the server.
             model.set('id', _.uniqueId());
-            model.set('attachments', data);
-            attachments = model.get('attachments');
+            model.set('attachments_collection', data);
+            model.trigger('sync');
+            attachments = model.get('attachments_collection');
 
             field = SugarTest.createField({
-                name: 'attachments',
+                name: 'attachments_collection',
                 type: 'email-attachments',
                 viewName: 'edit',
                 module: 'Emails',
@@ -90,6 +109,8 @@ describe('Emails.BaseEmailAttachmentsField', function() {
             // Add an uploaded file and an attachment from a document.
             // These are not yet linked.
             attachments.add([{
+                _module: 'Notes',
+                _link: 'attachments',
                 filename_guid: _.uniqueId(),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
@@ -97,6 +118,8 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_size: 158589,
                 file_ext: 'pdf'
             }, {
+                _module: 'Notes',
+                _link: 'attachments',
                 upload_id: _.uniqueId(),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
@@ -120,6 +143,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
 
                 // Pass the attachments linked to the template.
                 notes.add([{
+                    _module: 'Notes',
                     id: _.uniqueId(),
                     name: 'Disclosure Agreement.pdf',
                     filename: 'Disclosure Agreement.pdf',
@@ -127,6 +151,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_size: 158589,
                     file_ext: 'pdf'
                 }, {
+                    _module: 'Notes',
                     id: _.uniqueId(),
                     name: 'NDA.pdf',
                     filename: 'NDA.pdf',
@@ -134,6 +159,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_size: 158589,
                     file_ext: 'pdf'
                 }, {
+                    _module: 'Notes',
                     id: _.uniqueId(),
                     name: 'logo.jpg',
                     filename: 'logo.jpg',
@@ -153,8 +179,9 @@ describe('Emails.BaseEmailAttachmentsField', function() {
             expect(attachments.length).toBe(7);
 
             json = model.toJSON();
-            expect(json.attachments.create.length).toBe(5);
             expect(json.attachments.create).toEqual([{
+                _module: 'Notes',
+                _link: 'attachments',
                 filename_guid: attachments.at(2).get('filename_guid'),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
@@ -162,6 +189,8 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_size: 158589,
                 file_ext: 'pdf'
             }, {
+                _module: 'Notes',
+                _link: 'attachments',
                 upload_id: attachments.at(3).get('upload_id'),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
@@ -170,6 +199,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_ext: 'pdf',
                 file_source: 'DocumentRevisions'
             }, {
+                _link: 'attachments',
                 upload_id: attachments.at(4).get('upload_id'),
                 name: 'Disclosure Agreement.pdf',
                 filename: 'Disclosure Agreement.pdf',
@@ -178,6 +208,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_ext: 'pdf',
                 file_source: 'EmailTemplates'
             }, {
+                _link: 'attachments',
                 upload_id: attachments.at(5).get('upload_id'),
                 name: 'NDA.pdf',
                 filename: 'NDA.pdf',
@@ -186,6 +217,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_ext: 'pdf',
                 file_source: 'EmailTemplates'
             }, {
+                _link: 'attachments',
                 upload_id: attachments.at(6).get('upload_id'),
                 name: 'logo.jpg',
                 filename: 'logo.jpg',
@@ -194,8 +226,8 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_ext: 'jpg',
                 file_source: 'EmailTemplates'
             }]);
-            expect(json.attachments.add).toBeUndefined();
-            expect(json.attachments.delete).toBeUndefined();
+            expect(json.attachments.add.length).toBe(0);
+            expect(json.attachments.delete.length).toBe(0);
         });
 
         it('should continue to unlink attachments set to be removed', function() {
@@ -220,6 +252,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
 
                 // Pass the attachments linked to the template.
                 notes.add([{
+                    _module: 'Notes',
                     id: _.uniqueId(),
                     name: 'Disclosure Agreement.pdf',
                     filename: 'Disclosure Agreement.pdf',
@@ -227,6 +260,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_size: 158589,
                     file_ext: 'pdf'
                 }, {
+                    _module: 'Notes',
                     id: _.uniqueId(),
                     name: 'NDA.pdf',
                     filename: 'NDA.pdf',
@@ -234,6 +268,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_size: 158589,
                     file_ext: 'pdf'
                 }, {
+                    _module: 'Notes',
                     id: _.uniqueId(),
                     name: 'logo.jpg',
                     filename: 'logo.jpg',
@@ -253,8 +288,8 @@ describe('Emails.BaseEmailAttachmentsField', function() {
             expect(attachments.length).toBe(4);
 
             json = model.toJSON();
-            expect(json.attachments.create.length).toBe(3);
             expect(json.attachments.create).toEqual([{
+                _link: 'attachments',
                 upload_id: attachments.at(1).get('upload_id'),
                 name: 'Disclosure Agreement.pdf',
                 filename: 'Disclosure Agreement.pdf',
@@ -263,6 +298,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_ext: 'pdf',
                 file_source: 'EmailTemplates'
             }, {
+                _link: 'attachments',
                 upload_id: attachments.at(2).get('upload_id'),
                 name: 'NDA.pdf',
                 filename: 'NDA.pdf',
@@ -271,6 +307,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_ext: 'pdf',
                 file_source: 'EmailTemplates'
             }, {
+                _link: 'attachments',
                 upload_id: attachments.at(3).get('upload_id'),
                 name: 'logo.jpg',
                 filename: 'logo.jpg',
@@ -279,8 +316,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_ext: 'jpg',
                 file_source: 'EmailTemplates'
             }]);
-            expect(json.attachments.add).toBeUndefined();
-            expect(json.attachments.delete.length).toBe(1);
+            expect(json.attachments.add.length).toBe(0);
             expect(json.attachments.delete).toEqual([id]);
         });
 
@@ -313,6 +349,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
 
                 // Pass the attachments linked to the template.
                 notes.add([{
+                    _module: 'Notes',
                     id: _.uniqueId(),
                     name: 'Disclosure Agreement.pdf',
                     filename: 'Disclosure Agreement.pdf',
@@ -320,6 +357,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_size: 158589,
                     file_ext: 'pdf'
                 }, {
+                    _module: 'Notes',
                     id: _.uniqueId(),
                     name: 'NDA.pdf',
                     filename: 'NDA.pdf',
@@ -327,6 +365,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_size: 158589,
                     file_ext: 'pdf'
                 }, {
+                    _module: 'Notes',
                     id: _.uniqueId(),
                     name: 'logo.jpg',
                     filename: 'logo.jpg',
@@ -360,6 +399,8 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 // Add a template attachment as if a template had been
                 // selected before.
                 attachments.add({
+                    _module: 'Notes',
+                    _link: 'attachments',
                     upload_id: _.uniqueId(),
                     name: 'Disclosure Agreement.pdf',
                     filename: 'Disclosure Agreement.pdf',
@@ -385,6 +426,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
 
                     // Pass the attachments linked to the template.
                     notes.add([{
+                        _module: 'Notes',
                         id: _.uniqueId(),
                         name: 'NDA.pdf',
                         filename: 'NDA.pdf',
@@ -392,6 +434,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                         file_size: 158589,
                         file_ext: 'pdf'
                     }, {
+                        _module: 'Notes',
                         id: _.uniqueId(),
                         name: 'logo.jpg',
                         filename: 'logo.jpg',
@@ -411,8 +454,8 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 expect(attachments.length).toBe(4);
 
                 json = model.toJSON();
-                expect(json.attachments.create.length).toBe(2);
                 expect(json.attachments.create).toEqual([{
+                    _link: 'attachments',
                     upload_id: attachments.at(2).get('upload_id'),
                     name: 'NDA.pdf',
                     filename: 'NDA.pdf',
@@ -421,6 +464,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_ext: 'pdf',
                     file_source: 'EmailTemplates'
                 }, {
+                    _link: 'attachments',
                     upload_id: attachments.at(3).get('upload_id'),
                     name: 'logo.jpg',
                     filename: 'logo.jpg',
@@ -429,50 +473,55 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_ext: 'jpg',
                     file_source: 'EmailTemplates'
                 }]);
-                expect(json.attachments.add).toBeUndefined();
-                expect(json.attachments.delete).toBeUndefined();
+                expect(json.attachments.add.length).toBe(0);
+                expect(json.attachments.delete.length).toBe(0);
             });
         });
 
         describe('the user changes templates while editing an existing draft', function() {
             beforeEach(function() {
-                var data = {
-                    next_offset: -1,
-                    records: [{
-                        id: _.uniqueId(),
-                        name: 'Disclosure Agreement.pdf',
-                        filename: 'Disclosure Agreement.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 158589,
-                        file_ext: 'pdf'
-                    }, {
-                        id: _.uniqueId(),
-                        upload_id: _.uniqueId(),
-                        name: 'logo.jpg',
-                        filename: 'logo.jpg',
-                        file_mime_type: 'image/jpg',
-                        file_size: 158589,
-                        file_source: 'DocumentRevisions',
-                        file_ext: 'jpg'
-                    }, {
-                        id: _.uniqueId(),
-                        upload_id: _.uniqueId(),
-                        name: 'NDA.pdf',
-                        filename: 'NDA.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 158589,
-                        file_source: 'EmailTemplates',
-                        file_ext: 'pdf'
-                    }]
-                };
+                var data = [{
+                    _module: 'Notes',
+                    _link: 'attachments',
+                    id: _.uniqueId(),
+                    name: 'Disclosure Agreement.pdf',
+                    filename: 'Disclosure Agreement.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_size: 158589,
+                    file_ext: 'pdf'
+                }, {
+                    _module: 'Notes',
+                    _link: 'attachments',
+                    id: _.uniqueId(),
+                    upload_id: _.uniqueId(),
+                    name: 'logo.jpg',
+                    filename: 'logo.jpg',
+                    file_mime_type: 'image/jpg',
+                    file_size: 158589,
+                    file_source: 'DocumentRevisions',
+                    file_ext: 'jpg'
+                }, {
+                    _module: 'Notes',
+                    _link: 'attachments',
+                    id: _.uniqueId(),
+                    upload_id: _.uniqueId(),
+                    name: 'NDA.pdf',
+                    filename: 'NDA.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_size: 158589,
+                    file_source: 'EmailTemplates',
+                    file_ext: 'pdf'
+                }];
 
                 // Reset the attachments with an attachment linked from a
-                // template.
-                model.set('attachments', data);
-                attachments = model.get('attachments');
+                // template. Again, we're acting as if the model was retrieved
+                // from the server.
+                model.set('attachments_collection', data);
+                model.trigger('sync');
+                attachments = model.get('attachments_collection');
 
                 field = SugarTest.createField({
-                    name: 'attachments',
+                    name: 'attachments_collection',
                     type: 'email-attachments',
                     viewName: 'edit',
                     module: 'Emails',
@@ -501,6 +550,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
 
                     // Pass the attachments linked to the template.
                     notes.add([{
+                        _module: 'Notes',
                         id: _.uniqueId(),
                         name: 'Disclosure Agreement.pdf',
                         filename: 'Disclosure Agreement.pdf',
@@ -508,6 +558,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                         file_size: 158589,
                         file_ext: 'pdf'
                     }, {
+                        _module: 'Notes',
                         id: _.uniqueId(),
                         name: 'logo.jpg',
                         filename: 'logo.jpg',
@@ -527,8 +578,8 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 expect(attachments.length).toBe(4);
 
                 json = model.toJSON();
-                expect(json.attachments.create.length).toBe(2);
                 expect(json.attachments.create).toEqual([{
+                    _link: 'attachments',
                     upload_id: attachments.at(2).get('upload_id'),
                     name: 'Disclosure Agreement.pdf',
                     filename: 'Disclosure Agreement.pdf',
@@ -537,6 +588,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_ext: 'pdf',
                     file_source: 'EmailTemplates'
                 }, {
+                    _link: 'attachments',
                     upload_id: attachments.at(3).get('upload_id'),
                     name: 'logo.jpg',
                     filename: 'logo.jpg',
@@ -545,8 +597,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_ext: 'jpg',
                     file_source: 'EmailTemplates'
                 }]);
-                expect(json.attachments.add).toBeUndefined();
-                expect(json.attachments.delete.length).toBe(1);
+                expect(json.attachments.add.length).toBe(0);
                 expect(json.attachments.delete).toEqual([id]);
             });
         });

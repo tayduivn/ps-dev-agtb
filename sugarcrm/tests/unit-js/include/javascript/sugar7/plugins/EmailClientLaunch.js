@@ -136,14 +136,14 @@ describe('EmailClientLaunch Plugin', function() {
             var bean = new Backbone.Model({email: emails});
             var recipients = [{bean: bean}];
             var validRecipients = field._retrieveValidRecipients(recipients);
-            expect(_.first(validRecipients).get('email')).toEqual('foo3@bar.com');
+            expect(_.first(validRecipients).get('email_address')).toEqual('foo3@bar.com');
         });
 
         it('should specify valid email address for bean recipients with email_address_used', function() {
             var bean = new Backbone.Model({email_address_used: 'foo1@bar.com'});
             var recipients = [{bean: bean}];
             var validRecipients = field._retrieveValidRecipients(recipients);
-            expect(_.first(validRecipients).get('email')).toEqual('foo1@bar.com');
+            expect(_.first(validRecipients).get('email_address')).toEqual('foo1@bar.com');
         });
 
         it('should leave bean recipients that have email address specified', function() {
@@ -157,7 +157,7 @@ describe('EmailClientLaunch Plugin', function() {
             }];
             var validRecipients = field._retrieveValidRecipients(recipients);
 
-            expect(_.first(validRecipients).get('email')).toEqual('abc@bar.com');
+            expect(_.first(validRecipients).get('email_address')).toEqual('abc@bar.com');
         });
 
         it('should set EmailAddresses module when just have email address specified', function() {
@@ -170,7 +170,7 @@ describe('EmailClientLaunch Plugin', function() {
             };
             validRecipients = field._retrieveValidRecipients(recipients);
 
-            expect(_.first(validRecipients).get('email')).toEqual('abc@bar.com');
+            expect(_.first(validRecipients).get('email_address')).toEqual('abc@bar.com');
             expect(_.first(validRecipients).module).toEqual('EmailAddresses');
         });
     });

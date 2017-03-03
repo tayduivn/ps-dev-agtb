@@ -144,7 +144,7 @@
     _addCustomEditorEvents: function(editor) {
         editor.on('focus', _.bind(function(e) {
             this._editorFocused = true;
-            this.context.trigger('tinymce:focus');
+            this.view.trigger('tinymce:focus');
             // the user has at least 1 signature
             if (this._numSignatures > 0) {
                 // enable the signature button
@@ -153,7 +153,7 @@
         }, this));
         editor.on('blur', _.bind(function(e) {
             this._editorFocused = false;
-            this.context.trigger('tinymce:blur');
+            this.view.trigger('tinymce:blur');
             // the user has at least 1 signature
             if (this._numSignatures > 0) {
                 // disable the signature button

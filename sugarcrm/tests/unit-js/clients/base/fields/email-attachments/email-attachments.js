@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 describe('BaseEmailAttachmentsField', function() {
     var app;
     var clock;
@@ -8,21 +18,27 @@ describe('BaseEmailAttachmentsField', function() {
     var timestamp;
 
     beforeEach(function() {
-        sandbox = sinon.sandbox.create();
+        var metadata = SugarTest.loadFixture('emails-metadata');
 
         SugarTest.testMetadata.init();
-        SugarTest.declareData('base', 'Emails', true, false);
-        SugarTest.loadPlugin('NestedCollection');
+
+        _.each(metadata.modules, function(def, module) {
+            SugarTest.testMetadata.updateModuleMetadata(module, def);
+        });
+
         SugarTest.loadHandlebarsTemplate('email-attachments', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('email-attachments', 'field', 'base', 'edit');
         SugarTest.testMetadata.set();
 
         app = SugarTest.app;
         app.data.declareModels();
+        app.routing.start();
 
         context = app.context.getContext({module: 'Emails'});
         context.prepare(true);
         model = context.get('model');
+
+        sandbox = sinon.sandbox.create();
 
         // Use a fake timer because there appears to be a bug with PhantomJS
         // that causes the first call to `new Date()` to return the Epoch and
@@ -48,147 +64,41 @@ describe('BaseEmailAttachmentsField', function() {
         Handlebars.templates = {};
     });
 
-    describe('creating the field', function() {
-        describe('creating a new email', function() {
-            it('should initialize an empty attachments collection', function() {
-                field = SugarTest.createField({
-                    name: 'attachments',
-                    type: 'email-attachments',
-                    viewName: 'edit',
-                    module: 'Emails',
-                    model: model,
-                    context: context
-                });
-
-                expect(model.get('attachments').length).toBe(0);
-            });
-        });
-
-        describe('opening an existing email', function() {
-            var data;
-
-            beforeEach(function() {
-                data = {
-                    next_offset: -1,
-                    records: [{
-                        id: _.uniqueId(),
-                        upload_id: '',
-                        name: 'Disclosure Agreement.pdf',
-                        filename: 'Disclosure Agreement.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 158589,
-                        file_source: '',
-                        file_ext: 'pdf'
-                    }, {
-                        id: _.uniqueId(),
-                        upload_id: _.uniqueId(),
-                        name: 'logo.jpg',
-                        filename: 'logo.jpg',
-                        file_mime_type: 'image/jpg',
-                        file_size: 158589,
-                        file_source: 'DocumentRevisions',
-                        file_ext: 'jpg'
-                    }]
-                };
-
-                model.set('id', _.uniqueId());
-
-                sandbox.spy(model, 'once').withArgs('sync');
-            });
-
-            using('view modes', ['detail', 'edit'], function(mode) {
-                it('should fetch all attachments when the field is created', function() {
-                    var attachments;
-
-                    // The data is loaded before the field is created.
-                    model.set('attachments', data);
-                    attachments = model.get('attachments');
-
-                    sandbox.stub(attachments, 'fetch', function(options) {
-                        expect(options.all).toBe(true);
-                    });
-
-                    field = SugarTest.createField({
-                        name: 'attachments',
-                        type: 'email-attachments',
-                        viewName: mode,
-                        module: 'Emails',
-                        model: model,
-                        context: context
-                    });
-
-                    // The next_offset is already -1, so there are no more
-                    // attachments to fetch. But the function call was made.
-                    expect(attachments.length).toBe(2);
-
-                    // Listening to the `sync` event once was not needed.
-                    expect(model.once).not.toHaveBeenCalled();
-                });
-
-                it('should fetch all attachments when the data is loaded', function() {
-                    var attachments;
-
-                    field = SugarTest.createField({
-                        name: 'attachments',
-                        type: 'email-attachments',
-                        viewName: mode,
-                        module: 'Emails',
-                        model: model,
-                        context: context
-                    });
-
-                    // The data is loaded after the field is created.
-                    model.set('attachments', data);
-                    attachments = model.get('attachments');
-
-                    sandbox.stub(attachments, 'fetch', function(options) {
-                        expect(options.all).toBe(true);
-                    });
-
-                    model.trigger('sync', model, data, {});
-
-                    // The next_offset is already -1, so there are no more
-                    // attachments to fetch. But the function call was made.
-                    expect(attachments.length).toBe(2);
-
-                    // Listening to the `sync` event once was needed.
-                    expect(model.once).toHaveBeenCalled();
-                });
-            });
-        });
-    });
-
     describe('editing a draft', function() {
         var attachments;
 
         beforeEach(function() {
-            var data = {
-                next_offset: -1,
-                records: [{
-                    id: _.uniqueId(),
-                    name: 'Disclosure Agreement.pdf',
-                    filename: 'Disclosure Agreement.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_ext: 'pdf'
-                }, {
-                    id: _.uniqueId(),
-                    upload_id: _.uniqueId(),
-                    name: 'logo.jpg',
-                    filename: 'logo.jpg',
-                    file_mime_type: 'image/jpg',
-                    file_size: 158589,
-                    file_source: 'DocumentRevisions',
-                    file_ext: 'jpg'
-                }]
-            };
+            var data = [{
+                _module: 'Notes',
+                _link: 'attachments',
+                id: _.uniqueId(),
+                name: 'Disclosure Agreement.pdf',
+                filename: 'Disclosure Agreement.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: 158589,
+                file_ext: 'pdf'
+            }, {
+                _module: 'Notes',
+                _link: 'attachments',
+                id: _.uniqueId(),
+                upload_id: _.uniqueId(),
+                name: 'logo.jpg',
+                filename: 'logo.jpg',
+                file_mime_type: 'image/jpg',
+                file_size: 158589,
+                file_source: 'DocumentRevisions',
+                file_ext: 'jpg'
+            }];
 
+            // Act as if the model was retrieved from the server.
             model.set('id', _.uniqueId());
-            model.set('attachments', data);
-            attachments = model.get('attachments');
+            model.set('attachments_collection', data);
+            model.trigger('sync');
+            attachments = model.get('attachments_collection');
+            attachments.next_offset = {attachments: -1};
 
             field = SugarTest.createField({
-                name: 'attachments',
+                name: 'attachments_collection',
                 type: 'email-attachments',
                 viewName: 'edit',
                 module: 'Emails',
@@ -205,6 +115,8 @@ describe('BaseEmailAttachmentsField', function() {
 
             // Add some attachments.
             attachments.add([{
+                _module: 'Notes',
+                _link: 'attachments',
                 filename_guid: _.uniqueId(),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
@@ -212,6 +124,8 @@ describe('BaseEmailAttachmentsField', function() {
                 file_size: 158589,
                 file_ext: 'pdf'
             }, {
+                _module: 'Notes',
+                _link: 'attachments',
                 id: _.uniqueId(),
                 upload_id: _.uniqueId(),
                 name: 'quote.pdf',
@@ -221,6 +135,8 @@ describe('BaseEmailAttachmentsField', function() {
                 file_source: 'DocumentRevisions',
                 file_ext: 'pdf'
             }, {
+                _module: 'Notes',
+                _link: 'attachments',
                 id: _.uniqueId(),
                 upload_id: _.uniqueId(),
                 name: 'quote.pdf',
@@ -245,6 +161,8 @@ describe('BaseEmailAttachmentsField', function() {
 
             expected = [{
                 cid: attachments.at(0).cid,
+                _module: 'Notes',
+                _link: 'attachments',
                 id: attachments.at(0).get('id'),
                 name: 'Disclosure Agreement.pdf',
                 filename: 'Disclosure Agreement.pdf',
@@ -254,6 +172,8 @@ describe('BaseEmailAttachmentsField', function() {
                 file_url: app.api.serverUrl + '/Notes/' + attachments.at(0).get('id') + urlEndpoint
             }, {
                 cid: attachments.at(1).cid,
+                _module: 'Notes',
+                _link: 'attachments',
                 filename_guid: attachments.at(1).get('filename_guid'),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
@@ -263,6 +183,8 @@ describe('BaseEmailAttachmentsField', function() {
                 file_url: null
             }, {
                 cid: attachments.at(2).cid,
+                _module: 'Notes',
+                _link: 'attachments',
                 id: attachments.at(2).get('id'),
                 upload_id: attachments.at(2).get('upload_id'),
                 name: 'quote.pdf',
@@ -363,8 +285,8 @@ describe('BaseEmailAttachmentsField', function() {
                 expect(attachment.get('file_source')).toBeUndefined();
 
                 json = model.toJSON();
-                expect(json.attachments.create.length).toBe(1);
                 expect(json.attachments.create).toEqual([{
+                    _link: 'attachments',
                     filename_guid: id,
                     name: fileName,
                     filename: fileName,
@@ -372,8 +294,8 @@ describe('BaseEmailAttachmentsField', function() {
                     file_size: 158589,
                     file_ext: 'pdf'
                 }]);
-                expect(json.attachments.add).toBeUndefined();
-                expect(json.attachments.delete).toBeUndefined();
+                expect(json.attachments.add.length).toBe(0);
+                expect(json.attachments.delete.length).toBe(0);
             });
 
             it('should alert the user when the uploaded file is too large', function() {
@@ -431,6 +353,7 @@ describe('BaseEmailAttachmentsField', function() {
 
         describe('attaching a document', function() {
             it("should add a document's file", function() {
+                var oCreateBean = app.data.createBean;
                 var selection = {
                     id: _.uniqueId(),
                     name: 'Contract',
@@ -449,7 +372,15 @@ describe('BaseEmailAttachmentsField', function() {
                     id: selection.id,
                     name: selection.name
                 });
-                sandbox.stub(app.data, 'createBean').withArgs('Documents').returns(doc);
+                // Only stub `app.data.createBean` for Documents. Call the
+                // original method for all other modules.
+                sandbox.stub(app.data, 'createBean', function(module, attrs, options) {
+                    if (module === 'Documents') {
+                        return doc;
+                    }
+
+                    return oCreateBean(module, attrs, options);
+                });
                 sandbox.stub(doc, 'fetch', function(options) {
                     // The document attachment doesn't yet exist.
                     expect(attachments.length).toBe(2);
@@ -491,8 +422,8 @@ describe('BaseEmailAttachmentsField', function() {
                 expect(attachment.get('file_source')).toBe('DocumentRevisions');
 
                 json = model.toJSON();
-                expect(json.attachments.create.length).toBe(1);
                 expect(json.attachments.create).toEqual([{
+                    _link: 'attachments',
                     upload_id: doc.get('document_revision_id'),
                     name: 'Contract.pdf',
                     filename: 'Contract.pdf',
@@ -501,8 +432,8 @@ describe('BaseEmailAttachmentsField', function() {
                     file_ext: 'pdf',
                     file_source: 'DocumentRevisions'
                 }]);
-                expect(json.attachments.add).toBeUndefined();
-                expect(json.attachments.delete).toBeUndefined();
+                expect(json.attachments.add.length).toBe(0);
+                expect(json.attachments.delete.length).toBe(0);
 
                 app.drawer = null;
             });
@@ -540,8 +471,8 @@ describe('BaseEmailAttachmentsField', function() {
                 expect(attachments.length).toBe(3);
 
                 json = model.toJSON();
-                expect(json.attachments.create.length).toBe(1);
                 expect(json.attachments.create).toEqual([{
+                    _link: 'attachments',
                     filename_guid: attachments.at(2).get('filename_guid'),
                     name: fileName,
                     filename: fileName,
@@ -549,8 +480,7 @@ describe('BaseEmailAttachmentsField', function() {
                     file_size: 158589,
                     file_ext: 'pdf'
                 }]);
-                expect(json.attachments.add).toBeUndefined();
-                expect(json.attachments.delete).toBeUndefined();
+                expect(json.attachments.delete.length).toBe(0);
 
                 field.$(field.fieldTag).trigger($.Event('select2-removed', {val: attachments.at(2).cid}));
 
@@ -575,8 +505,8 @@ describe('BaseEmailAttachmentsField', function() {
                 expect(attachments.length).toBe(1);
 
                 json = model.toJSON();
-                expect(json.attachments.create).toBeUndefined();
-                expect(json.attachments.add).toBeUndefined();
+                expect(json.attachments.create.length).toBe(0);
+                expect(json.attachments.add.length).toBe(0);
                 expect(json.attachments.delete).toEqual([id]);
             });
 
@@ -606,35 +536,38 @@ describe('BaseEmailAttachmentsField', function() {
         var attachments;
 
         beforeEach(function() {
-            var data = {
-                next_offset: -1,
-                records: [{
-                    id: _.uniqueId(),
-                    upload_id: '',
-                    name: 'Disclosure Agreement.pdf',
-                    filename: 'Disclosure Agreement.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: '',
-                    file_ext: 'pdf'
-                }, {
-                    id: _.uniqueId(),
-                    upload_id: _.uniqueId(),
-                    name: 'logo.jpg',
-                    filename: 'logo.jpg',
-                    file_mime_type: 'image/jpg',
-                    file_size: 158589,
-                    file_source: 'DocumentRevisions',
-                    file_ext: 'jpg'
-                }]
-            };
+            var data = [{
+                _module: 'Notes',
+                _link: 'attachments',
+                id: _.uniqueId(),
+                upload_id: '',
+                name: 'Disclosure Agreement.pdf',
+                filename: 'Disclosure Agreement.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: 158589,
+                file_source: '',
+                file_ext: 'pdf'
+            }, {
+                _module: 'Notes',
+                _link: 'attachments',
+                id: _.uniqueId(),
+                upload_id: _.uniqueId(),
+                name: 'logo.jpg',
+                filename: 'logo.jpg',
+                file_mime_type: 'image/jpg',
+                file_size: 158589,
+                file_source: 'DocumentRevisions',
+                file_ext: 'jpg'
+            }];
 
+            // Act as if the model was retrieved from the server.
             model.set('id', _.uniqueId());
-            model.set('attachments', data);
-            attachments = model.get('attachments');
+            model.set('attachments_collection', data);
+            model.trigger('sync');
+            attachments = model.get('attachments_collection');
 
             field = SugarTest.createField({
-                name: 'attachments',
+                name: 'attachments_collection',
                 type: 'email-attachments',
                 viewName: 'detail',
                 module: 'Emails',
@@ -647,6 +580,8 @@ describe('BaseEmailAttachmentsField', function() {
             var urlEndpoint = '/file/filename?force_download=1&' + timestamp + '=1&platform=base';
             var expected = [{
                 cid: attachments.at(0).cid,
+                _module: 'Notes',
+                _link: 'attachments',
                 id: attachments.at(0).get('id'),
                 upload_id: '',
                 name: 'Disclosure Agreement.pdf',
@@ -658,6 +593,8 @@ describe('BaseEmailAttachmentsField', function() {
                 file_url: app.api.serverUrl + '/Notes/' + attachments.at(0).get('id') + urlEndpoint
             }, {
                 cid: attachments.at(1).cid,
+                _module: 'Notes',
+                _link: 'attachments',
                 id: attachments.at(1).get('id'),
                 upload_id: attachments.at(1).get('upload_id'),
                 name: 'logo.jpg',
@@ -692,7 +629,7 @@ describe('BaseEmailAttachmentsField', function() {
     describe('checking if the field is empty', function() {
         beforeEach(function() {
             field = SugarTest.createField({
-                name: 'attachments',
+                name: 'attachments_collection',
                 type: 'email-attachments',
                 viewName: 'edit',
                 module: 'Emails',
@@ -707,7 +644,9 @@ describe('BaseEmailAttachmentsField', function() {
         });
 
         it('should return false', function() {
-            model.get('attachments').add({
+            model.get('attachments_collection').add({
+                _module: 'Notes',
+                _link: 'attachments',
                 filename_guid: _.uniqueId(),
                 name: 'Disclosure Agreement.pdf',
                 filename: 'Disclosure Agreement.pdf',

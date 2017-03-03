@@ -1,752 +1,299 @@
-describe('Emails.fields.email-recipients', function() {
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+describe('Emails.BaseEmailRecipientsField', function() {
     var app;
-    var field;
     var context;
+    var field;
+    var to;
     var model;
     var sandbox;
 
     beforeEach(function() {
-        app = SugarTest.app;
+        var metadata = SugarTest.loadFixture('emails-metadata');
+
         SugarTest.testMetadata.init();
+
+        _.each(metadata.modules, function(def, module) {
+            SugarTest.testMetadata.updateModuleMetadata(module, def);
+        });
+
+        SugarTest.loadPlugin('EmailParticipants');
+        SugarTest.loadHandlebarsTemplate('email-recipients', 'field', 'base', 'detail', 'Emails');
         SugarTest.loadHandlebarsTemplate('email-recipients', 'field', 'base', 'edit', 'Emails');
+        SugarTest.loadHandlebarsTemplate('email-recipients', 'field', 'base', 'select2-result', 'Emails');
         SugarTest.loadHandlebarsTemplate('email-recipients', 'field', 'base', 'select2-selection', 'Emails');
         SugarTest.testMetadata.set();
 
-        context = app.context.getContext({
-            module: 'Emails'
-        });
-        context.prepare();
-        model = context.get('model');
-        model.set('to', new app.MixedBeanCollection());
+        app = SugarTest.app;
+        app.data.declareModels();
+        app.routing.start();
 
-        field = SugarTest.createField({
-            client: 'base',
-            name: 'to',
-            type: 'email-recipients',
-            viewName: 'edit',
-            module: context.get('module'),
-            model: model,
-            context: context,
-            loadFromModule: true
-        });
+        context = app.context.getContext({module: 'Emails'});
+        context.prepare(true);
+        model = context.get('model');
+
+        to = [
+            app.data.createBean('Contacts', {
+                _link: 'contacts_to',
+                id: _.uniqueId(),
+                name: 'Herbert Yates',
+                email_address_used: 'hyates@example.com'
+            }),
+            app.data.createBean('Contacts', {
+                _link: 'contacts_to',
+                id: _.uniqueId(),
+                name: 'Walter Quigley',
+                email_address_used: 'wquigley@example.com'
+            })
+        ];
 
         sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
+        sandbox.restore();
         field.dispose();
-        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
+        SugarTest.testMetadata.dispose();
         Handlebars.templates = {};
     });
 
-    describe('manipulating the value of the field', function() {
-        var recipients;
-
-        beforeEach(function() {
-            recipients = [
-                {id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'},
-                {id: '456', module: 'Leads', email: 'sarah@example.com', name: 'Sarah Example'},
-                {id: '789', module: 'Contacts', email: 'sally@example.com', name: 'Sally Seashell'}
-            ];
-        });
-
-        it('should add recipients to the collection', function() {
-            field.render();
-            // make sure the collection is empty
-            expect(field.model.get(field.name).length).toBe(0);
-            expect(field.$(field.fieldTag).select2('data').length).toBe(0);
-            // now add the recipients
-            field.model.get(field.name).add(recipients);
-            // verify that the field has the correct number of recipients
-            expect(field.model.get(field.name).length).toBe(recipients.length);
-            // verify that the DOM has been updated accordingly
-            expect(field.$(field.fieldTag).select2('data').length).toBe(recipients.length);
-        });
-        it('should remove recipients from the collection', function() {
-            var recipientsToRemove;
-            var expected;
-
-            field.render();
-            // seed the field with a few recipients
-            field.model.get(field.name).add(recipients);
-            expect(field.model.get(field.name).length).toBe(recipients.length);
-            expect(field.$(field.fieldTag).select2('data').length).toBe(recipients.length);
-            // now remove the recipients
-            recipientsToRemove = [
-                field.model.get(field.name).at(0),
-                field.model.get(field.name).at(2)
-            ];
-            expected = recipients.length - recipientsToRemove.length;
-            field.model.get(field.name).remove(recipientsToRemove);
-            // verify that the field has the correct number of recipients
-            expect(field.model.get(field.name).length).toBe(expected);
-            // verify that the DOM has been updated accordingly
-            expect(field.$(field.fieldTag).select2('data').length).toBe(expected);
-        });
-        it('should reset the collection to be empty', function() {
-            field.render();
-            // seed the field with a few recipients
-            field.model.get(field.name).add(recipients);
-            expect(field.model.get(field.name).length).toBe(recipients.length);
-            expect(field.$(field.fieldTag).select2('data').length).toBe(recipients.length);
-            // now reset the collection
-            field.model.get(field.name).reset();
-            // verify that the field has the correct number of recipients
-            expect(field.model.get(field.name).length).toBe(0);
-            // verify that the DOM has been updated accordingly
-            expect(field.$(field.fieldTag).select2('data').length).toBe(0);
-        });
-        it('should reset the collection with a new set of recipients', function() {
-            field.render();
-            // seed the field with a few recipients
-            field.model.get(field.name).add(recipients);
-            expect(field.model.get(field.name).length).toBe(recipients.length);
-            expect(field.$(field.fieldTag).select2('data').length).toBe(recipients.length);
-            // now reset the collection
-            recipients = [
-                field.model.get(field.name).at(0),
-                field.model.get(field.name).at(2)
-            ];
-            field.model.get(field.name).reset(recipients);
-            // verify that the field has the correct number of recipients
-            expect(field.model.get(field.name).length).toBe(recipients.length);
-            // verify that the DOM has been updated accordingly
-            expect(field.$(field.fieldTag).select2('data').length).toBe(recipients.length);
-        });
-    });
-
-    describe('interacting with Select2', function() {
-        describe('search for more recipients', function() {
-            var query;
-            var apiSearchStub;
-            var should;
-
-            beforeEach(function() {
-                jasmine.Clock.useMock();
-                query = {callback: sinon.stub()};
-            });
-
-            afterEach(function() {
-                delete query;
-                apiSearchStub.restore();
-            });
-
-            should = 'Should call the query callback with one record when the api call is successful and returns ' +
-                'one record.';
-            it(should, function() {
-                var records = [{id: '456', module: 'Leads', email: 'sarah@example.com', name: 'Sarah Example'}];
-                var actual;
-
-                apiSearchStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
-                    callbacks.success({records: records});
-                    callbacks.complete();
-                });
-
-                field._loadOptions(query);
-                jasmine.Clock.tick(301);
-
-                actual = query.callback.lastCall.args[0].results.length;
-                expect(actual).toBe(records.length);
-            });
-
-            it('Should call the query callback with no records when the api call results in an error.', function() {
-                var actual;
-
-                apiSearchStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
-                    callbacks.error();
-                    callbacks.complete();
-                });
-
-                field._loadOptions(query);
-                jasmine.Clock.tick(301);
-
-                actual = query.callback.lastCall.args[0].results.length;
-                expect(actual).toBe(0);
-            });
-
-            it('Should make a call to the API.', function() {
-                var actual;
-
-                apiSearchStub = sinon.stub(app.api, 'call');
-
-                field._loadOptions(query);
-                jasmine.Clock.tick(301);
-
-                actual = apiSearchStub.callCount;
-                expect(actual).toBe(1);
-            });
-        });
-
-        describe('create a new recipient option for the user to select', function() {
-            it('Should return undefined when data is not empty.', function() {
-                var data = [{id: 'foo', email_address: 'foo@bar.com'}];
-                var actual = field._createOption('foo', data);
-
-                expect(actual).toBeUndefined();
-            });
-
-            it('Should return a new option as an object when data is empty.', function() {
-                var data = [];
-                var expected = 'foo@bar.com';
-                var actual = field._createOption(expected, data);
-
-                expect(actual.get('email_address')).toEqual(expected);
-            });
-        });
-
-        describe('format the selected recipients', function() {
-            it('Should return the recipient name when it exists.', function() {
-                var recipient = app.data.createBean('Users', {email_address: 'will@example.com', name: 'Will Westin'});
-                var actual = $(field._formatSelection(recipient)).text();
-
-                expect(actual).toEqual(recipient.get('name'));
-            });
-
-            it('Should return the recipient email address when name does not exist.', function() {
-                var recipient = app.data.createBean('Users', {email_address: 'will@example.com'});
-                var actual = $(field._formatSelection(recipient)).text();
-
-                expect(actual).toEqual(recipient.get('email_address'));
-            });
-            it('Should return the selection by wrapping the tooltip elements', function() {
-                var recipient = app.data.createBean('Users', {email_address: 'will@example.com'});
-                var actualPlugin = $(field._formatSelection(recipient)).attr('rel');
-                var actualTitle = $(field._formatSelection(recipient)).data('title');
-
-                expect(actualPlugin).toBe('tooltip');
-                expect(actualTitle).toBe(recipient.get('email_address'));
-            });
-        });
-
-        describe('format options the user can select', function() {
-            beforeEach(function() {
-                field.select2ResultTemplate = sinon.stub();
-            });
-
-            it('Should return the recipient name and email address when they both exist.', function() {
-                var recipient = app.data.createBean(
-                    'Users',
-                    {
-                        email_address: 'will@example.com',
-                        name: 'Will Westin',
-                        module: 'Users'
-                    }
-                );
-
-                field._formatResult(recipient);
-                expect(field.select2ResultTemplate).toHaveBeenCalledWith({
-                    value: '"Will Westin" <will@example.com>',
-                    module: 'Users'
-                });
-            });
-
-            it('Should return the recipient email address when name does not exist.', function() {
-                var recipient = app.data.createBean(
-                    'Users',
-                    {
-                        email_address: 'will@example.com',
-                        module: 'Users'
-                    }
-                );
-
-                field._formatResult(recipient);
-                expect(field.select2ResultTemplate).toHaveBeenCalledWith({
-                    value: recipient.get('email_address'),
-                    module: 'Users'
-                });
-            });
-
-            it('Should pass a blank module when recipient does not have one.', function() {
-                var recipient = app.data.createBean(
-                    'Users',
-                    {
-                        email_address: 'will@example.com'
-                    }
-                );
-
-                field._formatResult(recipient);
-                expect(field.select2ResultTemplate).toHaveBeenCalledWith({
-                    value: recipient.get('email_address'),
-                    module: ''
-                });
-            });
-        });
-
-        describe('respond when the user selects an option from the list', function() {
-            it('Should return false when event.object does not exist.', function() {
-                var event = {};
-                var actual = field._handleEventOnSelected(event);
-                expect(actual).toBeFalsy();
-            });
-
-            it('Should return true when event.object has an id.', function() {
-                var recipient = app.data.createBean('Users', {id: 'abcd', email_address: 'foo@bar.com'});
-                var event = {object: recipient};
-                var actual = field._handleEventOnSelected(event);
-                expect(actual).toBeTruthy();
-            });
-
-            it('Should return true and kick off email validation when ' +
-                'event.object exists and id and email are equal', function() {
-                var validateEmailAddressStub = sinon.stub(field, '_validateEmailAddress');
-                var recipient = app.data.createBean('EmailAddresses', {email: 'foo@bar.com'});
-                var event = {object: recipient};
-                var actual = field._handleEventOnSelected(event);
-                expect(actual).toBeTruthy();
-                expect(validateEmailAddressStub).toHaveBeenCalled();
-                validateEmailAddressStub.restore();
-            });
-        });
-
-        describe('synchronizing the collection on Select2 DOM changes', function() {
-            it('should synchronize the collection with the data in Select2', function() {
-                var recipients = [
-                    app.data.createBean('Users', {id: '123', email_address: 'will@example.com', name: 'Will Westin'}),
-                    app.data.createBean(
-                        'Leads',
-                        {
-                            id: '456',
-                            email_address: 'sarah@example.com',
-                            name: 'Sarah Example'
-                        }
-                    ),
-                    app.data.createBean(
-                        'Contacts',
-                        {
-                            id: '789',
-                            email_address: 'sally@example.com',
-                            name: 'Sally Seashell'
-                        }
-                    )
-                ];
-                field.render();
-                // make sure the collection is empty
-                expect(field.model.get(field.name).length).toBe(0);
-                expect(field.$(field.fieldTag).select2('data').length).toBe(0);
-                // now add the recipients via Select2 and trigger a change event
-                field.$(field.fieldTag).select2('data', recipients).trigger('change');
-                // verify that the field has the correct number of recipients
-                expect(field.model.get(field.name).length).toBe(recipients.length);
-                // verify that the DOM has been updated accordingly
-                expect(field.$(field.fieldTag).select2('data').length).toBe(recipients.length);
-            });
-
-            it('should synchronize with Select2 even when model has data before field initialized', function() {
-                var context;
-                var model;
-                var recipient;
-
-                context = app.context.getContext({
-                    module: 'Emails'
-                });
-                context.prepare();
-
-                recipient = new Backbone.Model({
-                    module: 'Contacts', name: 'Will Westin', email: 'will@example.com'
-                });
-
-                model = context.get('model');
-                model.set('to', new app.MixedBeanCollection([recipient]));
-
-                field = SugarTest.createField({
-                    client: 'base',
-                    name: 'to',
-                    type: 'email-recipients',
-                    viewName: 'edit',
-                    module: context.get('module'),
-                    model: model,
-                    context: context,
-                    loadFromModule: true
-                });
-
-                field.render();
-
-                expect(field.$(field.fieldTag).select2('data').length).toBe(1);
-            });
-        });
-
-        describe('recipient field pills should reflect locked state', function() {
-            afterEach(function() {
-                field.def.readonly = false;
-            });
-            it('should be locked if field is readonly', function() {
-                var recipient;
-                var actual;
-
-                field.def.readonly = true;
-                recipient = new Backbone.Model({
-                    module: 'Contacts',
-                    name: 'Will Westin',
-                    email: 'will@example.com'
-                });
-                actual = field._formatRecipient(recipient);
-                expect(actual.locked).toEqual(true);
-            });
-
-            it('should be unlocked if field is not readonly', function() {
-                var recipient;
-                var actual;
-
-                recipient = new Backbone.Model({
-                    module: 'Contacts', name: 'Will Westin', email: 'will@example.com'
-                });
-                actual = field._formatRecipient(recipient);
-                expect(actual.locked).toEqual(false);
-            });
-        });
-    });
-
-    describe('format recipients to get a consistent object to work with', function() {
-        using('Different Recipient Combos', [
-            {
-                message: 'Should return an array of one recipient when the parameter is a Backbone model.',
-                recipients: new Backbone.Model({
-                    id: '123',
-                    module: 'Users',
-                    email: 'will@example.com',
-                    name: 'Will Westin'
-                }),
-                expected: 1
-            },
-            {
-                message: 'Should return an array of one recipient when the parameter is a standard object.',
-                recipients: {id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'},
-                expected: 1
-            },
-            {
-                message: 'Should return an array of one recipient when the parameter is a Backbone collection ' +
-                    'containing one model.',
-                recipients: new Backbone.Collection([
-                    {id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'}
-                ]),
-                expected: 1
-            },
-            {
-                message: 'Should return an array of three recipients when the parameter is a Backbone collection ' +
-                    'containing three models.',
-                recipients: new Backbone.Collection([
-                    {id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'},
-                    {id: '456', module: 'Leads', email: 'sarah@example.com', name: 'Sarah Example'},
-                    {id: '789', module: 'Contacts', email: 'sally@example.com', name: 'Sally Seashell'}
-                ]),
-                expected: 3
-            },
-            {
-                message: 'Should return an array of three recipients when the parameter is an array containing ' +
-                    'three objects.',
-                recipients: [
-                    {id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'},
-                    {id: '456', module: 'Leads', email: 'sarah@example.com', name: 'Sarah Example'},
-                    {id: '789', module: 'Contacts', email: 'sally@example.com', name: 'Sally Seashell'}
-                ],
-                expected: 3
-            },
-            {
-                message: 'Should return an array of three recipients when the parameter is an array containing ' +
-                    'three Backbone models.',
-                recipients: [
-                    new Backbone.Model({id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'}),
-                    new Backbone.Model({id: '456', module: 'Leads', email: 'sarah@example.com', name: 'Sarah Example'}),
-                    new Backbone.Model({
-                        id: '789',
-                        module: 'Contacts',
-                        email: 'sally@example.com',
-                        name: 'Sally Seashell'
-                    })
-                ],
-                expected: 3
-            },
-            {
-                message: 'Should return an array of zero recipients when the recipient does not have an email address.',
-                recipients: {id: 'abcd', name: 'Will Westin'},
-                expected: 0
-            }
-        ], function(data) {
-            it(data.message, function() {
-                var actual = field.format(data.recipients);
-
-                expect(Array.isArray(actual)).toBe(true);
-                expect(actual.length).toBe(data.expected);
-            });
-        });
-    });
-
-    describe('format a recipient', function() {
-        using('Actions provider.', [
-            {
-                message: 'should return an empty object when the recipient is not a Backbone.Model',
-                recipient: {module: 'Contacts', name: 'Will Westin'},
-                expected: {}
-            },
-            {
-                message: 'should return an object without an email when the recipient has an id and no email',
-                recipient: new Backbone.Model({id: 'abcd', module: 'Contacts', name: 'Will Westin'}),
-                expected: {id: 'abcd', module: 'Contacts', name: 'Will Westin'}
-            },
-            {
-                message: 'should return an object with the invalid property set to true',
-                recipient: new Backbone.Model(
-                    {
-                        module: 'Contacts',
-                        name: 'Will Westin',
-                        email: 'will@example.com',
-                        _invalid: true
-                    }
-                ),
-                expected: {
-                    module: 'Contacts',
-                    name: 'Will Westin',
-                    email_address: 'will@example.com',
-                    _invalid: true
-                }
-            },
-            {
-                message: 'should find the primary email address when the recipient has an more than one email',
-                recipient: new Backbone.Model(
-                    {
-                        id: 'abcd',
-                        module: 'Contacts',
-                        name: 'Will Westin',
-                        email: [
-                            {
-                                email_address: 'will.westin@example.com',
-                                primary_address: false
-                            },
-                            {
-                                email_address: 'will@example.com',
-                                primary_address: true
-                            }
-                        ]
-                    }
-                ),
-                expected: {
-                    id: 'abcd',
-                    module: 'Contacts',
-                    name: 'Will Westin',
-                    email_address: 'will@example.com'
-                }
-            },
-            {
-                message: 'should return an object without an email when the recipient has an more than one email ' +
-                    'but no primary address',
-                recipient: new Backbone.Model(
-                    {
-                        id: 'abcd',
-                        module: 'Contacts',
-                        name: 'Will Westin',
-                        email: [
-                            {
-                                email_address: 'will.westin@example.com',
-                                primary_address: false
-                            },
-                            {
-                                email_address: 'will@example.com',
-                                primary_address: false
-                            }
-                        ]
-                    }
-                ),
-                expected: {
-                    id: 'abcd',
-                    module: 'Contacts',
-                    name: 'Will Westin'
-                }
-            },
-            {
-                message: 'should return an object with all properties when the recipient has an id, module, name, ' +
-                    'and email',
-                recipient: new Backbone.Model(
-                    {
-                        id: 'abcd',
-                        module: 'Contacts',
-                        name: 'Will Westin',
-                        email: 'will@example.com'
-                    }
-                ),
-                expected: {
-                    id: 'abcd',
-                    module: 'Contacts',
-                    name: 'Will Westin',
-                    email_address: 'will@example.com'
-                }
-            },
-            {
-                message: 'should return an object with all properties when the recipient has an id, module, ' +
-                    'full_name, and email',
-                recipient: new Backbone.Model(
-                    {
-                        id: 'abcd',
-                        module: 'Contacts',
-                        full_name: 'Will Westin',
-                        email: 'will@example.com'
-                    }
-                ),
-                expected: {
-                    id: 'abcd',
-                    module: 'Contacts',
-                    name: 'Will Westin',
-                    email_address: 'will@example.com'
-                }
-            },
-            {
-                message: 'should prioritize the recipient attributes when the recipient has a bean',
-                recipient: new Backbone.Model(
-                    {
-                        id: 'abcd',
-                        module: 'Contacts',
-                        name: 'Will Westin',
-                        email: 'will@example.com',
-                        bean: new Backbone.Model(
-                            {
-                                id: 'efgh',
-                                module: 'Leads',
-                                name: 'Sarah Smith',
-                                email: 'sarah@example.com'
-                            }
-                        )
-                    }
-                ),
-                expected: {
-                    id: 'abcd',
-                    module: 'Contacts',
-                    name: 'Will Westin',
-                    email_address: 'will@example.com'
-                }
-            },
-            {
-                message: 'should fall back to the bean attributes when the recipient is lacking any data',
-                recipient: new Backbone.Model(
-                    {
-                        name: 'Will Westin',
-                        email: 'will@example.com',
-                        bean: new Backbone.Model(
-                            {
-                                id: 'efgh',
-                                module: 'Leads',
-                                name: 'Sarah Smith',
-                                email: 'sarah@example.com'
-                            }
-                        )
-                    }
-                ),
-                expected: {
-                    id: 'efgh',
-                    module: 'Leads',
-                    name: 'Will Westin',
-                    email_address: 'will@example.com'
-                }
-            }
-        ], function(data) {
-            it(data.message, function() {
-                var actual = field._formatRecipient(data.recipient);
-                expect(actual.toJSON()).toEqual(data.expected);
-            });
-        });
-    });
-
-    describe('validate an email address', function() {
-        var apiCallStub;
-        var recipient;
-
-        beforeEach(function() {
-            recipient = new Backbone.Model({
-                id: '123',
-                email: 'foo@bar.com'
-            });
-            field.model.get(field.name).add(recipient);
-        });
-
-        afterEach(function() {
-            apiCallStub.restore();
-        });
-
-        it('Should mark recipient as invalid when the api call returns invalid.', function() {
-            var model;
-
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
-                var result = {};
-                result[recipient.email] = false;
-                callbacks.success(result);
-            });
-
-            field._validateEmailAddress(recipient);
-            model = field.model.get(field.name).get(recipient.id);
-            expect(model.get('_invalid')).toEqual(true);
-        });
-
-        it('Should not mark recipient as invalid when the api call returns valid.', function() {
-            var model;
-
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
-                var result = {};
-                result[recipient.email] = true;
-                callbacks.success(result);
-            });
-
-            field._validateEmailAddress(recipient);
-            model = field.model.get(field.name).get(recipient.id);
-            expect(model.get('_invalid')).toBeUndefined();
-        });
-
-        it('Should mark recipient as invalid when the api call returns an error.', function() {
-            var model;
-
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
-                callbacks.error();
-            });
-
-            field._validateEmailAddress(recipient);
-            model = field.model.get(field.name).get(recipient.id);
-            expect(model.get('_invalid')).toEqual(true);
-        });
-    });
-
-    describe('Decorating invalid recipients', function() {
-        it('Should decorate invalid recipients and update the tooltip text', function() {
-            var originalHtml =
-                '<div class="select2-search-choice">' +
-                '<span data-id="1" data-invalid="true" data-title="foo1"></span>' +
-                '</div>' +
-                '<div class="select2-search-choice">' +
-                '<span data-id="2" data-invalid="" data-title="foo2">' +
-                '</span></div>' +
-                '<div class="select2-search-choice">' +
-                '<span data-id="3" data-invalid="true" data-title="foo3">' +
-                '</span></div>';
-            field.$el = $('<div>' + originalHtml + '</div>');
-            field._decorateInvalidRecipients();
-            expect(field.$('.select2-choice-danger').length).toEqual(2);
-            expect(field.$('[data-title="ERR_INVALID_EMAIL_ADDRESS"]').length).toEqual(2);
-        });
-    });
-
-    describe('fetching all recipients when the field is created', function() {
-        it('should trigger view', function() {
-            var collection;
-            var view;
-
-            model.set('id', _.uniqueId());
-            collection = model.get('to');
-            collection.fetchAll = sandbox.stub().yieldsTo('complete');
-
-            view = new app.view.View({name: 'edit', context: context});
-            var def = {name: 'to', type: 'email-recipients'};
-
-            sandbox.spy(view, 'trigger');
-
-            field = app.view.createField({
-                def: def,
-                view: view,
-                context: context,
+    describe('responding to data changes', function() {
+        it('should render the field', function() {
+            field = SugarTest.createField({
+                name: 'to',
+                type: 'email-recipients',
+                viewName: 'detail',
+                module: model.module,
                 model: model,
-                module: context.get('module'),
-                platform: 'base'
+                context: context,
+                loadFromModule: true
             });
-            expect(collection.fetchAll).toHaveBeenCalled();
-            expect(view.trigger).toHaveBeenCalledWith('email-recipients:loading', field.name);
-            expect(view.trigger).toHaveBeenCalledWith('email-recipients:loaded', field.name);
+            field.render();
+
+            sandbox.stub(field, 'render');
+            field.model.set('to', to);
+
+            expect(field.render).toHaveBeenCalledOnce();
         });
+
+        it('should set data on Select2', function() {
+            field = SugarTest.createField({
+                name: 'to',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+            field.render();
+
+            sandbox.stub(field, 'render');
+            sandbox.spy(field, 'getFormattedValue');
+            sandbox.spy(field, '_decorateInvalidRecipients');
+            sandbox.spy(field, '_enableDragDrop');
+            field.model.set('to', to);
+
+            expect(field.render).not.toHaveBeenCalled();
+            expect(field.getFormattedValue).toHaveBeenCalledOnce();
+            expect(field._decorateInvalidRecipients).toHaveBeenCalledOnce();
+            expect(field._enableDragDrop).toHaveBeenCalledOnce();
+            expect(field.$(field.fieldTag).select2('data').length).toBe(to.length);
+        });
+    });
+
+    describe('responding to DOM changes', function() {
+        beforeEach(function() {
+            field = SugarTest.createField({
+                name: 'to',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+            field.render();
+        });
+
+        it('should not complete the selection with an invalid link', function() {
+            var event = new $.Event('select2-selecting');
+
+            sandbox.spy(event, 'preventDefault');
+            event.choice = app.data.createBean('Contacts', {
+                _link: 'contacts_cc',
+                id: _.uniqueId(),
+                name: 'Eugene Kushner',
+                email_address_used: 'ek@example.com'
+            });
+
+            field.$(field.fieldTag).trigger(event);
+
+            expect(event.preventDefault).toHaveBeenCalled();
+            expect(field.model.get('to').length).toBe(0);
+        });
+
+        it('should not complete the selection when it is a duplicate', function() {
+            var event = new $.Event('select2-selecting');
+
+            sandbox.spy(event, 'preventDefault');
+            field.model.set('to', to);
+            event.choice = to[1];
+
+            field.$(field.fieldTag).trigger(event);
+
+            expect(event.preventDefault).toHaveBeenCalled();
+            expect(field.model.get('to').length).toBe(2);
+        });
+
+        it('should add to the collection', function() {
+            var event = new $.Event('change');
+            var actual;
+
+            field.model.set('to', to);
+            event.added = [
+                app.data.createBean('Contacts', {
+                    _link: 'contacts_to',
+                    id: _.uniqueId(),
+                    name: 'Ira Carr',
+                    email_address_used: 'icarr@example.com'
+                })
+            ];
+
+            field.$(field.fieldTag).trigger(event);
+            actual = field.model.get('to');
+
+            expect(actual.length).toBe(3);
+        });
+
+        it('should remove the recipient', function() {
+            var event = new $.Event('change');
+
+            field.model.set('to', to);
+            event.removed = [to[1]];
+
+            field.$(field.fieldTag).trigger(event);
+
+            expect(field.model.get('to').length).toBe(1);
+        });
+    });
+
+    describe('format', function() {
+        beforeEach(function() {
+            field = SugarTest.createField({
+                name: 'to',
+                type: 'email-recipients',
+                viewName: 'detail',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+        });
+
+        it('should format the models in the collection', function() {
+            var actual;
+
+            field.model.set('to', to);
+            actual = field.getFormattedValue();
+
+            expect(actual.length).toBe(to.length);
+            expect(actual[0].name).toBe('Herbert Yates');
+            expect(actual[0].email_address).toBe('hyates@example.com');
+            expect(actual[1].name).toBe('Walter Quigley');
+            expect(actual[1].email_address).toBe('wquigley@example.com');
+        });
+    });
+
+    it('should decorate invalid recipients', function() {
+        var invalid = app.data.createBean('Contacts', {
+            _link: 'contacts_to',
+            id: _.uniqueId(),
+            name: 'Francis Humphrey',
+            email_address_used: 'foo'
+        });
+        var invalidSelector = '.select2-search-choice [data-invalid="true"]';
+
+        field = SugarTest.createField({
+            name: 'to',
+            type: 'email-recipients',
+            viewName: 'edit',
+            module: model.module,
+            model: model,
+            context: context,
+            loadFromModule: true
+        });
+
+        field.model.set('to', to);
+        expect(field.$(invalidSelector).length).toBe(0);
+
+        field.model.get('to').add(invalid);
+        expect(field.$(invalidSelector).length).toBe(1);
+        expect(field.$('.select2-choice-danger').length).toBe(1);
+        expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
+
+        // Make sure it is still decorated after a full render.
+        field.render();
+        expect(field.$(invalidSelector).length).toBe(1);
+        expect(field.$('.select2-choice-danger').length).toBe(1);
+        expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
+    });
+
+    it('should open the address book and add the selected recipients', function() {
+        var recipients = app.data.createMixedBeanCollection([
+            app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                name: 'Aaron Fitzgerald',
+                email: 'afitz@example.com'
+            }),
+            app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                name: 'Isaac Hopper',
+                email: 'ihopper@example.com'
+            }),
+            app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                name: 'Grace Beal',
+                email: 'gbeal@example.com'
+            })
+        ]);
+        var spy = sandbox.spy();
+
+        app.drawer = {
+            open: function(def, onClose) {
+                onClose(recipients);
+            }
+        };
+
+        field = SugarTest.createField({
+            name: 'to',
+            type: 'email-recipients',
+            viewName: 'edit',
+            module: model.module,
+            model: model,
+            context: context,
+            loadFromModule: true
+        });
+        field.view.on('address-book-state', spy);
+        field.model.set('to', to);
+
+        field.$('.btn').click();
+
+        expect(field.model.get('to').length).toBe(5);
+        expect(spy).toHaveBeenCalledTwice();
+        expect(spy).toHaveBeenCalledWith('open');
+        expect(spy).toHaveBeenCalledWith('closed');
+
+        delete app.drawer;
     });
 });

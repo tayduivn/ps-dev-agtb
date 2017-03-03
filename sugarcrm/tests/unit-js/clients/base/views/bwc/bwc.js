@@ -258,12 +258,12 @@ describe('Base.View.Bwc', function() {
             expect(app.drawer.open.args[0][0].context.prepopulate.description_html).toBe(composePackage.body);
             expect(app.drawer.open.args[0][0].context.prepopulate.related).toBe(view.model);
             expect(app.drawer.open.args[0][0].context.prepopulate.attachments.length).toBe(2);
-            expect(app.drawer.open.args[0][0].context.prepopulate.attachments[0]).toEqual({
+            expect(app.drawer.open.args[0][0].context.prepopulate.attachments[0].toJSON()).toEqual({
                 upload_id: 123,
                 name: 'foobar.jpg',
                 filename: 'foobar.jpg'
             });
-            expect(app.drawer.open.args[0][0].context.prepopulate.attachments[1]).toEqual({
+            expect(app.drawer.open.args[0][0].context.prepopulate.attachments[1].toJSON()).toEqual({
                 upload_id: 456,
                 name: 'bizbaz.pdf',
                 filename: 'bizbaz.pdf'

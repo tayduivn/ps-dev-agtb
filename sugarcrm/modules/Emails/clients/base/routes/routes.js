@@ -21,9 +21,7 @@
 
                     model.fetch({
                         view: 'create',
-                        success: onSuccess,
-                        //TODO: Remove after moving to SC collections.
-                        default: true
+                        success: onSuccess
                     });
 
                     function onSuccess(model) {

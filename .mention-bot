@@ -314,6 +314,7 @@
             "sugarcrm/clients/base/fields/duration/**",
             "sugarcrm/clients/base/fields/editrecurrencesbutton/**",
             "sugarcrm/clients/base/fields/emailaction/**",
+            "sugarcrm/clients/base/fields/email-attachments/**",
             "sugarcrm/clients/base/fields/event-status/**",
             "sugarcrm/clients/base/fields/follow/**",
             "sugarcrm/clients/base/fields/htmleditable_tinymce/**",
@@ -366,6 +367,8 @@
             "sugarcrm/include/javascript/sugar7/plugins/ShortcutSession.js",
             "sugarcrm/include/javascript/sugar7/plugins/Tinymce.js",
             "sugarcrm/include/javascript/sugar7/plugins/VirtualCollection.js",
+            "sugarcrm/include/javascript/sugar7/plugins/CollectionFieldLoadAll.js",
+            "sugarcrm/include/javascript/sugar7/plugins/EmailParticipants.js",
 
             "sugarcrm/modules/ActivityStream/**",
             "sugarcrm/modules/Calendar/**",
@@ -392,6 +395,7 @@
             "sugarcrm/tests/clients/base/fields/duration/**",
             "sugarcrm/tests/clients/base/fields/editrecurrencesbutton/**",
             "sugarcrm/tests/clients/base/fields/emailaction/**",
+            "sugarcrm/tests/clients/base/fields/email-attachments/**",
             "sugarcrm/tests/clients/base/fields/event-status/**",
             "sugarcrm/tests/clients/base/fields/follow/**",
             "sugarcrm/tests/clients/base/fields/htmleditable_tinymce/**",
@@ -418,7 +422,6 @@
 
             "sugarcrm/tests/include/javascript/sugar7/shortcuts.js",
             "sugarcrm/tests/include/javascript/sugar7/accessibility/**",
-            "sugarcrm/tests/include/javascript/sugar7/nested-link.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/AddAsInvitee.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/Chart.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/DragdropAttachments.js",
@@ -430,7 +433,8 @@
             "sugarcrm/tests/include/javascript/sugar7/plugins/ShortcutSession.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/Tinymce.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/VirtualCollection.js",
-            "sugarcrm/tests/include/javascript/sugar7/plugins/NestedCollection.js",
+            "sugarcrm/tests/include/javascript/sugar7/plugins/CollectionFieldLoadAll.js",
+            "sugarcrm/tests/include/javascript/sugar7/plugins/EmailParticipants.js",
 
             "sugarcrm/tests/modules/ActivityStream/**",
             "sugarcrm/tests/modules/Calendar/**",

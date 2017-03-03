@@ -10,12 +10,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#each value}}
-    {{#if name}}
-        <span>
-            <a href="#{{buildRoute model=this action='detail'}}" rel="tooltip" data-placement="top" title="{{email_address}}">{{name}}</a>{{#unless @last}}, {{/unless}}
-        </span>
-    {{else}}
-        <span>{{email_address}}{{#unless @last}}, {{/unless}}</span>
-    {{/if}}
-{{/each}}
+{{value}}

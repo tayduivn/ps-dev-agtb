@@ -860,154 +860,54 @@ describe("Record View", function () {
         var collection;
 
         beforeEach(function() {
-            app.drawer = {
-                open: $.noop
+            SugarTest.loadPlugin('VirtualCollection');
+            app.data.declareModelClass(moduleName, app.metadata.getModule(moduleName), app.config.platform, {
+                plugins: ['VirtualCollection']
+            });
+
+            collection = app.data.createBeanCollection(view.model.module, [
+                app.data.createBean(view.model.module, {id: 1, name: 'aaa', status: 'aaa'}),
+                app.data.createBean(view.model.module, {id: 2, name: 'bbb', status: 'bbb'}),
+                app.data.createBean(view.model.module, {id: 3, name: 'ccc', status: 'aaa'})
+            ]);
+            collection.fieldName = 'name';
+            collection.fetchAll = function(options) {
+                options.success(this, options);
             };
+
+            view.model.set(collection.fieldName, collection);
+            view.model.trigger = $.noop;
+
+            sinonSandbox.stub(view, 'getField').returns({
+                def: {
+                    fields: ['name', 'status']
+                }
+            });
         });
 
         afterEach(function() {
-            delete app.drawer;
+            app.data.declareModels();
         });
 
-        describe('fields where type=link', function() {
-            var notes;
-            var target;
+        it('should not call `fetchAll` when `getCollectionFieldNames` does not exist', function() {
+            sinonSandbox.spy(collection, 'fetchAll');
 
-            beforeEach(function() {
-                SugarTest.loadPlugin('NestedCollection');
+            view.duplicateClicked();
 
-                target = app.data.createBean(moduleName);
-                notes = [
-                    {id: _.uniqueId()},
-                    {id: _.uniqueId()},
-                    {id: _.uniqueId()},
-                    {id: _.uniqueId()}
-                ];
-            });
-
-            it('should do nothing when the NestedCollection plugin is not used', function() {
-                view.model.set('notes', new app.NestedLink(notes, {
-                    link: {
-                        bean: view.model,
-                        name: 'notes'
-                    }
-                }));
-
-                view._copyNestedCollections(view.model, target);
-
-                expect(target.get('notes')).toBeUndefined();
-            });
-
-            it('should do a deep copy of the nested collections when the NestedCollection plugin is used', function() {
-                var sourceCollection;
-                var targetCollection;
-
-                // Attach the NestedCollection plugin to the source model.
-                view.model.fields.notes = {
-                    name: 'notes',
-                    type: 'link'
-                };
-                view.model.plugins = view.model.plugins || [];
-                view.model.plugins.push('NestedCollection');
-                app.plugins.attach(view.model, 'model');
-
-                // Attach the NestedCollection plugin to the target model.
-                target.fields.notes = {
-                    name: 'notes',
-                    type: 'link'
-                };
-                target.plugins = target.plugins || [];
-                target.plugins.push('NestedCollection');
-                app.plugins.attach(target, 'model');
-
-                // These are the related fields that will be needed for
-                // fetching the data for all of the related records.
-                sinonSandbox.stub(view, 'getField').returns({
-                    def: {
-                        fields: [
-                            'name',
-                            'description'
-                        ]
-                    }
-                });
-
-                // Set `notes` to a `NestedLink` by way of the plugin.
-                view.model.set('notes', {
-                    next_offset: -1,
-                    records: notes
-                });
-                target.set('notes', []);
-
-                // Copy the nested collections.
-                view._copyNestedCollections(view.model, target);
-
-                sourceCollection = view.model.get('notes');
-                targetCollection = target.get('notes');
-
-                expect(targetCollection).not.toBe(sourceCollection);
-                expect(targetCollection.length).toBe(sourceCollection.length);
-                expect(targetCollection.at(0)).not.toBe(sourceCollection.at(0));
-                expect(targetCollection.at(0).get('id')).toBe(sourceCollection.at(0).get('id'));
-                expect(targetCollection.at(1)).not.toBe(sourceCollection.at(1));
-                expect(targetCollection.at(1).get('id')).toBe(sourceCollection.at(1).get('id'));
-                expect(targetCollection.at(2)).not.toBe(sourceCollection.at(2));
-                expect(targetCollection.at(2).get('id')).toBe(sourceCollection.at(2).get('id'));
-                expect(targetCollection.at(3)).not.toBe(sourceCollection.at(3));
-                expect(targetCollection.at(3).get('id')).toBe(sourceCollection.at(3).get('id'));
-            });
+            expect(collection.fetchAll).not.toHaveBeenCalled();
         });
 
-        describe('fields where type=collection', function() {
-            beforeEach(function() {
-                SugarTest.loadPlugin('VirtualCollection');
-                app.data.declareModelClass(moduleName, app.metadata.getModule(moduleName), app.config.platform, {
-                    plugins: ['VirtualCollection']
-                });
+        it('should copy nested collections', function() {
+            var target = new app.data.createBean(view.model.module, {});
+            target.set(collection.fieldName, new Backbone.Collection());
 
-                collection = app.data.createBeanCollection(view.model.module, [
-                    app.data.createBean(view.model.module, {id: 1, name: 'aaa', status: 'aaa'}),
-                    app.data.createBean(view.model.module, {id: 2, name: 'bbb', status: 'bbb'}),
-                    app.data.createBean(view.model.module, {id: 3, name: 'ccc', status: 'aaa'})
-                ]);
-                collection.fieldName = 'name';
-                collection.fetchAll = function(options) {
-                    options.success(this, options);
-                };
+            view.model.getCollectionFieldNames = function() {
+                return [collection.fieldName];
+            };
 
-                view.model.set(collection.fieldName, collection);
-                view.model.trigger = $.noop;
+            view._copyNestedCollections(view.model, target);
 
-                sinonSandbox.stub(view, 'getField').returns({
-                    def: {
-                        fields: ['name', 'status']
-                    }
-                });
-            });
-
-            afterEach(function() {
-                app.data.declareModels();
-            });
-
-            it('should not call `fetchAll` when `getCollectionFieldNames` does not exist', function() {
-                sinonSandbox.spy(collection, 'fetchAll');
-
-                view.duplicateClicked();
-
-                expect(collection.fetchAll).not.toHaveBeenCalled();
-            });
-
-            it('should copy nested collections', function() {
-                var target = new app.data.createBean(view.model.module, {});
-                target.set(collection.fieldName, new Backbone.Collection());
-
-                view.model.getCollectionFieldNames = function() {
-                    return [collection.fieldName];
-                };
-
-                view._copyNestedCollections(view.model, target);
-
-                expect(target.get(collection.fieldName).length).toBe(collection.length);
-            });
+            expect(target.get(collection.fieldName).length).toBe(collection.length);
         });
     });
 

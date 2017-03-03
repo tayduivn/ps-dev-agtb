@@ -356,11 +356,13 @@
             prepopulate.attachments = [];
 
             _.each(options.attachments, function(attachment) {
-                prepopulate.attachments.push({
+                var bean = app.data.createBean('Notes', {
                     upload_id: attachment.id,
                     name: attachment.filename,
                     filename: attachment.filename
                 });
+
+                prepopulate.attachments.push(bean);
             });
         }
 

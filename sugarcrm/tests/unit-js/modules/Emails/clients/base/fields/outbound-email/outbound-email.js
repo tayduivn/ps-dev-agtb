@@ -6,17 +6,22 @@ describe('Emails.BaseEmailOutboundEmailField', function() {
     var sandbox;
 
     beforeEach(function() {
-        sandbox = sinon.sandbox.create();
+        var metadata = SugarTest.loadFixture('emails-metadata');
 
         SugarTest.testMetadata.init();
-        SugarTest.declareData('base', 'Emails', true, false);
+
+        _.each(metadata.modules, function(def, module) {
+            SugarTest.testMetadata.updateModuleMetadata(module, def);
+        });
+
+        SugarTest.loadPlugin('EmailParticipants');
         SugarTest.loadHandlebarsTemplate('enum', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'field', 'enum');
-        SugarTest.loadComponent('base', 'field', 'outbound-email', 'Emails');
         SugarTest.testMetadata.set();
 
         app = SugarTest.app;
         app.data.declareModels();
+        app.routing.start();
 
         context = app.context.getContext({module: 'Emails'});
         context.prepare(true);
@@ -31,15 +36,15 @@ describe('Emails.BaseEmailOutboundEmailField', function() {
             context: context,
             loadFromModule: true
         });
+
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
         sandbox.restore();
-
         field.dispose();
         app.cache.cutAll();
         app.view.reset();
-
         SugarTest.testMetadata.dispose();
         Handlebars.templates = {};
     });

@@ -60,8 +60,6 @@
      * to add attachments. `email_attachments:file:pick` will launch the file
      * picker dialog. `email_attachments:document:pick` will launch a drawer
      * for selecting a Document.
-     *
-     * Kicks off a fetch of the existing attachments when the model is not new.
      */
     initialize: function(options) {
         var events = {};
@@ -69,7 +67,7 @@
         events['change ' + this._fileTag] = '_uploadFile';
         events['click [data-action=download]'] = '_downloadFile';
         this.events = _.extend({}, this.events, options.def.events, events);
-
+        this.plugins = _.union(this.plugins || [], ['CollectionFieldLoadAll']);
         this._super('initialize', [options]);
 
         // Must wrap listenTo callbacks in anonymous functions for stubbing.
@@ -83,29 +81,6 @@
 
         this._placeholders = app.data.createBeanCollection('Notes');
         this._requests = {};
-
-        if (this.model.isNew()) {
-            // Create a new collection.
-            this.model.set(this.name, []);
-        } else if (this.model.get(this.name) instanceof app.NestedLink) {
-            // The data was fetched before the field was created. Therefore,
-            // the attribute is already a `NestedLink`.
-            this.model.get(this.name).fetch({all: true});
-        } else {
-            // The data was not fetched before the field was created. Wait for
-            // the data to be fetched and the attribute to become a
-            // `NestedLink` before attempting to fetch the remainder of the
-            // attachments. The `sync` event is never silenced, so it is
-            // guaranteed to be received. And the `sync` event is triggered
-            // after the fetched data has been placed on the model, which
-            // guarantees that a `NestedLink` instance has been assigned to
-            // this field's attribute, provided that the field was requested.
-            this.model.once('sync', function() {
-                if (this.model && this.model.get(this.name) instanceof app.NestedLink) {
-                    this.model.get(this.name).fetch({all: true});
-                }
-            }, this);
-        }
     },
 
     /**
@@ -251,6 +226,8 @@
     /**
      * Avoids a full re-rendering when editing. The current value of the field
      * is formatted and passed directly to Select2 when in edit mode.
+     *
+     * @private
      */
     _smartRender: function() {
         var $el = this.$(this.fieldTag);
@@ -285,7 +262,7 @@
      * and placeholders are returned. Each model's `cid` is returned as that is
      * the `id` that Select2 is using. Each model's `file_url` is returned if
      * the attachment has an `id`. The model's `file_size` is returned as a
-     * human- readable string, by way of {@link Utils#getReadableFileSize}.
+     * human-readable string, by way of {@link Utils#getReadableFileSize}.
      */
     format: function(value) {
         var urlAttributes = {
@@ -299,7 +276,7 @@
             forceDownload: true
         };
 
-        value = value instanceof app.NestedLink ? value.models : value;
+        value = value instanceof app.BeanCollection ? value.models : value;
 
         return _.map(_.union(value || [], this._placeholders.models), function(model) {
             var attachment = _.extend({cid: model.cid}, model.toJSON());
@@ -442,14 +419,15 @@
             // Track errors attaching a file.
             app.analytics.trackEvent('email_attachment', 'upload_error', error);
         } else {
-            file = {
+            file = app.data.createBean('Notes', {
+                _link: 'attachments',
                 filename_guid: data.record.id,
                 name: data.record.filename || data.record.name,
                 filename: data.record.filename || data.record.name,
                 file_mime_type: data.record.file_mime_type,
                 file_size: data.record.file_size,
                 file_ext: data.record.file_ext
-            };
+            });
             this.model.get(this.name).add(file, {merge: true});
 
             // Track attaching a file.
@@ -564,7 +542,8 @@
             return;
         }
 
-        file = {
+        file = app.data.createBean('Notes', {
+            _link: 'attachments',
             upload_id: doc.get('document_revision_id'),
             name: doc.get('filename') || doc.get('name'),
             filename: doc.get('filename') || doc.get('name'),
@@ -572,7 +551,7 @@
             file_size: doc.get('latest_revision_file_size'),
             file_ext: doc.get('latest_revision_file_ext'),
             file_source: 'DocumentRevisions'
-        };
+        });
         this.model.get(this.name).add(file, {merge: true});
 
         // Track attaching a document.

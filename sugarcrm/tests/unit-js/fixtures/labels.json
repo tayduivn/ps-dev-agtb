@@ -32,6 +32,14 @@
             "LBL_HELP_CREATE": "My {{revenuelineitems_module}}",
             "_hash": "65155e56846282acf37a51305a6ca9e6"
         },
+        "Emails": {
+          "LBL_SUBJECT": "Subject",
+          "LBL_FROM": "From",
+          "LBL_TO_ADDRS": "To",
+          "LBL_CC": "CC",
+          "LBL_BCC": "BCC",
+          "LBL_ATTACHMENTS": "Attachments"
+        },
         "Opportunities": {
             "LBL_MODULE_NAME": "Opportunities"
         },

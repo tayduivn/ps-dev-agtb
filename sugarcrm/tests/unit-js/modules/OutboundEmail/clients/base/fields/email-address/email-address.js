@@ -6,9 +6,14 @@ describe('OutboundEmail.BaseEmailAddressField', function() {
     var sandbox;
 
     beforeEach(function() {
-        sandbox = sinon.sandbox.create();
+        var metadata = SugarTest.loadFixture('emails-metadata');
 
         SugarTest.testMetadata.init();
+
+        _.each(metadata.modules, function(def, module) {
+            SugarTest.testMetadata.updateModuleMetadata(module, def);
+        });
+
         SugarTest.declareData('base', 'OutboundEmail', true, false);
         SugarTest.declareData('base', 'Filters');
         SugarTest.loadHandlebarsTemplate('relate', 'field', 'base', 'edit');
@@ -19,10 +24,13 @@ describe('OutboundEmail.BaseEmailAddressField', function() {
 
         app = SugarTest.app;
         app.data.declareModels();
+        app.routing.start();
 
         context = app.context.getContext({module: 'OutboundEmail'});
         context.prepare(true);
         model = context.get('model');
+
+        sandbox = sinon.sandbox.create();
 
         field = SugarTest.createField({
             name: 'email_address',

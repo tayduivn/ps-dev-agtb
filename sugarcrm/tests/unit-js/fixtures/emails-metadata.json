@@ -1,0 +1,402 @@
+{
+    "_hash": "all_metadata",
+    "modules": {
+        "Contacts": {
+            "_hash": "contacts_metadata",
+            "nameFormat": {
+                "f": "first_name",
+                "l": "last_name",
+                "s": "salutation",
+                "t": "title"
+            },
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "id"
+                },
+                "first_name": {
+                    "name": "first_name",
+                    "type": "varchar",
+                    "len": 20
+                },
+                "last_name": {
+                    "name": "last_name",
+                    "type": "varchar"
+                },
+                "phone_work": {
+                    "name": "phone_work",
+                    "type": "varchar"
+                },
+                "phone_home": {
+                    "name": "phone_home",
+                    "type": "varchar",
+                    "vname": "LBL_PHONE_HOME"
+                },
+                "email1": {
+                    "name": "email1",
+                    "type": "varchar"
+                },
+                "salutation": {
+                    "name": "salutation",
+                    "type": "enum",
+                    "options": "salutations_dom"
+                },
+                "full_name": {
+                    "name": "full_name",
+                    "type": "varchar",
+                    "concat": [
+                        "first_name",
+                        "last_name"
+                    ]
+                },
+                "address_street": {
+                    "name": "address_street",
+                    "group": "address",
+                    "type": "varchar"
+                },
+                "address_state": {
+                    "name": "address_state",
+                    "group": "address",
+                    "type": "varchar"
+                },
+                "accounts": {
+                    "name": "accounts",
+                    "type": "link",
+                    "relationship": "contacts_accounts"
+                },
+                "account_name": {
+                    "name": "account_name",
+                    "id_name": "account_id",
+                    "type": "relate",
+                    "link": "accounts",
+                    "module": "Accounts",
+                    "vname": "LBL_ACCOUNT_NAME"
+                },
+                "account_id": {
+                    "name": "account_id",
+                    "id_name": "account_id",
+                    "type": "relate",
+                    "module": "Accounts",
+                    "vname": "LBL_ACCOUNT_ID"
+                },
+                "date_modified": {
+                    "name": "date_modified",
+                    "type": "datetime"
+                },
+                "parent_id": {
+                    "group": "parent_name",
+                    "name": "parent_id",
+                    "type": "id"
+                },
+                "parent_name": {
+                    "id_name": "parent_id",
+                    "name": "parent_name",
+                    "type": "parent",
+                    "type_name": "parent_type"
+                },
+                "parent_type": {
+                    "name": "parent_type",
+                    "type": "parent_type"
+                },
+                "modified_by_name": {
+                    "name": "modified_by_name",
+                    "type": "varchar"
+                }
+            }
+        },
+        "EmailAddresses": {
+            "_hash": "email_addresses_metadata",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "id",
+                    "vname": "LBL_EMAIL_ADDRESS_ID",
+                    "required": true
+                },
+                "email_address": {
+                    "name": "email_address",
+                    "type": "varchar",
+                    "vname": "LBL_EMAIL_ADDRESS",
+                    "length": 100,
+                    "required": true
+                },
+                "email_address_caps": {
+                    "name": "email_address_caps",
+                    "type": "varchar",
+                    "vname": "LBL_EMAIL_ADDRESS_CAPS",
+                    "length": 100,
+                    "required": true,
+                    "reportable": false
+                },
+                "invalid_email": {
+                    "name": "invalid_email",
+                    "type": "bool",
+                    "default": 0,
+                    "vname": "LBL_INVALID_EMAIL"
+                },
+                "opt_out": {
+                    "name": "opt_out",
+                    "type": "bool",
+                    "default": 0,
+                    "vname": "LBL_OPT_OUT"
+                },
+                "date_created": {
+                    "name": "date_created",
+                    "type": "datetime",
+                    "vname": "LBL_DATE_CREATE"
+                },
+                "date_modified": {
+                    "name": "date_modified",
+                    "type": "datetime",
+                    "vname": "LBL_DATE_MODIFIED"
+                },
+                "deleted": {
+                    "name": "deleted",
+                    "type": "bool",
+                    "default": 0,
+                    "vname": "LBL_DELETED"
+                }
+            }
+        },
+        "Emails": {
+            "_hash": "emails_metadata",
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "vname": "LBL_SUBJECT",
+                    "type": "name",
+                    "dbType": "varchar",
+                    "required": false,
+                    "len": "255"
+                },
+                "from": {
+                    "name": "from",
+                    "links": [
+                        "users_from",
+                        "contacts_from",
+                        "leads_from",
+                        "email_addresses_from"
+                    ],
+                    "order_by": "name:asc",
+                    "source": "non-db",
+                    "studio": false,
+                    "type": "collection",
+                    "vname": "LBL_FROM"
+                },
+                "users_from": {
+                    "name": "users_from",
+                    "relationship": "emails_users_from",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_FROM"
+                },
+                "contacts_from": {
+                    "name": "contacts_from",
+                    "relationship": "emails_contacts_from",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_FROM"
+                },
+                "leads_from": {
+                    "name": "leads_from",
+                    "relationship": "emails_leads_from",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_FROM"
+                },
+                "email_addresses_from": {
+                    "name": "email_addresses_from",
+                    "relationship": "emails_email_addresses_from",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_FROM"
+                },
+                "to": {
+                    "name": "to",
+                    "links": [
+                        "users_to",
+                        "contacts_to",
+                        "leads_to",
+                        "email_addresses_to"
+                    ],
+                    "order_by": "name:asc",
+                    "source": "non-db",
+                    "studio": false,
+                    "type": "collection",
+                    "vname": "LBL_TO_ADDRS"
+                },
+                "users_to": {
+                    "name": "users_to",
+                    "relationship": "emails_users_to",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_TO_ADDRS"
+                },
+                "contacts_to": {
+                    "name": "contacts_to",
+                    "relationship": "emails_contacts_to",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_TO_ADDRS"
+                },
+                "leads_to": {
+                    "name": "leads_to",
+                    "relationship": "emails_leads_to",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_TO_ADDRS"
+                },
+                "email_addresses_to": {
+                    "name": "email_addresses_to",
+                    "relationship": "emails_email_addresses_to",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_TO_ADDRS"
+                },
+                "cc": {
+                    "name": "cc",
+                    "links": [
+                        "users_cc",
+                        "contacts_cc",
+                        "leads_cc",
+                        "email_addresses_cc"
+                    ],
+                    "order_by": "name:asc",
+                    "source": "non-db",
+                    "studio": false,
+                    "type": "collection",
+                    "vname": "LBL_CC"
+                },
+                "users_cc": {
+                    "name": "users_cc",
+                    "relationship": "emails_users_cc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_CC"
+                },
+                "contacts_cc": {
+                    "name": "contacts_cc",
+                    "relationship": "emails_contacts_cc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_CC"
+                },
+                "leads_cc": {
+                    "name": "leads_cc",
+                    "relationship": "emails_leads_cc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_CC"
+                },
+                "email_addresses_cc": {
+                    "name": "email_addresses_cc",
+                    "relationship": "emails_email_addresses_cc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_CC"
+                },
+                "bcc": {
+                    "name": "bcc",
+                    "links": [
+                        "users_bcc",
+                        "contacts_bcc",
+                        "leads_bcc",
+                        "email_addresses_bcc"
+                    ],
+                    "order_by": "name:asc",
+                    "source": "non-db",
+                    "studio": false,
+                    "type": "collection",
+                    "vname": "LBL_BCC"
+                },
+                "users_bcc": {
+                    "name": "users_bcc",
+                    "relationship": "emails_users_bcc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_BCC"
+                },
+                "contacts_bcc": {
+                    "name": "contacts_bcc",
+                    "relationship": "emails_contacts_bcc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_BCC"
+                },
+                "leads_bcc": {
+                    "name": "leads_bcc",
+                    "relationship": "emails_leads_bcc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_BCC"
+                },
+                "email_addresses_bcc": {
+                    "name": "email_addresses_bcc",
+                    "relationship": "emails_email_addresses_bcc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_BCC"
+                },
+                "attachments": {
+                    "bean_name": "Note",
+                    "module": "Notes",
+                    "name": "attachments",
+                    "relationship": "emails_attachments",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_ATTACHMENTS"
+                },
+                "attachments_collection": {
+                    "name": "attachments_collection",
+                    "links": ["attachments"],
+                    "order_by": "name:asc",
+                    "source": "non-db",
+                    "studio": false,
+                    "type": "collection",
+                    "vname": "LBL_ATTACHMENTS",
+                    "reportable": false
+                },
+                "description_html": {
+                    "name": "description_html",
+                    "type": "varchar",
+                    "vname": "description_html",
+                    "source": "non-db"
+                },
+                "description": {
+                    "name": "description",
+                    "type": "varchar",
+                    "vname": "LBL_TEXT_BODY",
+                    "source": "non-db",
+                    "full_text_search": {
+                        "enabled": "true",
+                        "searchable": "true",
+                        "type": "text"
+                    }
+                },
+                "reply_to_id": {
+                    "name": "reply_to_id",
+                    "vname": "LBL_EMAIL_REPLY_TO_ID",
+                    "type": "id",
+                    "len": "36",
+                    "reportable": "false",
+                    "duplicate_on_record_copy": "no",
+                    "importable": "false",
+                    "comment": "Identifier of email record that this email was a reply to"
+                }
+            }
+        },
+        "Notes": {
+            "_hash": "notes_metadata",
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "vname": "LBL_NOTE_SUBJECT",
+                    "dbType": "varchar",
+                    "type": "name",
+                    "len": "255",
+                    "required": true
+                }
+            }
+        }
+    }
+}

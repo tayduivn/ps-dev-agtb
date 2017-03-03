@@ -135,7 +135,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                 array(
                     'name' => 'to',
                     'type' => 'email-recipients',
-                    'label' => 'LBL_TO',
+                    'label' => 'LBL_TO_ADDRS',
                     'readonly' => true,
                     'fields' => array(
                         'name',
@@ -155,7 +155,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'attachments',
+                    'name' => 'attachments_collection',
                     'type' => 'email-attachments',
                     'label' => 'LBL_ATTACHMENTS',
                     'readonly' => true,

@@ -18,28 +18,30 @@
 ({
     extendsFrom: 'FieldsetField',
 
-    FIELDSET_FIELD_SELECTOR: '.fieldset-field',
-    FIELDSET_GROUP_SELECTOR: '.fieldset-group',
+    _addressBookState: 'closed',
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
-        this._super('initialize', [options]);
-        this.templateName = 'detail';
-        this.addressBookState = 'closed';
         this.events = _.extend({}, this.events, {
-            'click [data-toggle-field]': '_handleRecipientOptionClick',
+            'click [data-toggle-field]': '_handleToggleButtonClick',
             'click .fieldset-field': '_focus'
         });
-        this.context.on('address-book-state', _.bind(function(state) {
-            this.addressBookState = state;
-        }, this), this);
+        this._super('initialize', [options]);
+
+        this.listenTo(this.view, 'address-book-state', function(state) {
+            this._addressBookState = state;
+        });
+        this.listenTo(this.view, 'tinymce:focus', this._blur);
         $(document).on('click.email-recipients', _.bind(this._blur, this));
-        this.context.on('tinymce:focus', _.bind(this._blur, this), this);
     },
 
     /**
+     * Adds the CC and BCC toggle buttons to the From field and sets the
+     * visibility of those fields. Switches the field to edit mode when there
+     * are no recipients and the user is creating an email.
+     *
      * @inheritdoc
      */
     _render: function() {
@@ -47,183 +49,190 @@
         var cc = this.model.get('cc');
         var bcc = this.model.get('bcc');
 
-        // Template name is defined here rather than in _loadTemplate so that we can
-        // use it as a switch to set up the template vars and invoke post render methods.
-        // If no recipient field value has been set, force edit mode.
-        var isRecipientSet = (to && to.length) || (cc && cc.length) || (bcc && bcc.length);
-        this.templateName = isRecipientSet ? this.templateName : 'edit';
-
-        // Construct a string representing all recipients for insertion into detail template
-        if (this.templateName === 'detail') {
-            this._buildRecipientsList();
-        }
-
         this._super('_render');
 
-        // after fieldset fields are rendered, insert the recipients options partial
-        // at the end of the "from" field and toggle the display state
-        // of the "bcc" and "cc" depending on if they have values or not.
-        if (this.templateName === 'edit') {
-            this._addRecipientOptions();
-        }
+        this._addToggleButtons('outbound_email_id');
+        this._toggleFieldVisibility('cc', !!cc.length);
+        this._toggleFieldVisibility('bcc', !!bcc.length);
     },
 
     /**
      * @inheritdoc
+     * @example
+     * // Only the To field has recipients.
+     * a@b.com, b@c.com
+     * @example
+     * // All fields have recipients.
+     * a@b.com; CC: c@d.com; BCC: e@f.com
+     * @example
+     * // CC does not have recipients.
+     * a@b.com; BCC: e@f.com
+     * @example
+     * Only the CC field has recipients.
+     * CC: c@d.com
      */
-    _loadTemplate: function() {
-        this._super('_loadTemplate');
-        // stomp on the default view state
-        this.template = app.template.getField('recipients-fieldset', this.templateName, this.module);
+    format: function(value) {
+        return _.chain(this.fields)
+            // The from field is not used for calculating the value.
+            .where({type: 'email-recipients'})
+            // Construct each field's string from it's formatted value.
+            .reduce(function(fields, field) {
+                var models = field.getFormattedValue();
+                var str = _.map(models, function(model) {
+                    return model.name || model.email_address;
+                }).join(', ');
+
+                if (!_.isEmpty(str)) {
+                    fields[field.name] = str;
+                }
+
+                return fields;
+            }, {})
+            // Add the label for each field's string.
+            .map(function(field, fieldName) {
+                var label = '';
+
+                if (fieldName === 'cc') {
+                    label = app.lang.get('LBL_CC', this.module) + ': ';
+                } else if (fieldName === 'bcc') {
+                    label = app.lang.get('LBL_BCC', this.module) + ': ';
+                }
+
+                return label + field;
+            }, this)
+            .value()
+            // Separate each field's string by a semi-colon.
+            .join('; ');
     },
 
     /**
-     * Event handler for fieldset on click event.
-     * Toggles field view to edit and rerenders.
-     */
-    _focus: function(evt) {
-        // we need to stop event from triggering _blur
-        evt.stopPropagation();
-        // ignore if already in edit mode
-        if (this.templateName === 'edit') {
-            return;
-        }
-        this.templateName = 'edit';
-        this.render();
-    },
-
-    /**
-     * Event handler for outside fieldset on click event.
-     * Toggles field view to detail and rerenders.
-     */
-    _blur: function(evt) {
-        // ignore toggle if the address book is open, the field is disposed or view is already in detail mode
-        if (this.addressBookState === 'open' || this.disposed || this.templateName === 'detail') {
-            return;
-        }
-        this.templateName = 'detail';
-        this.render();
-    },
-
-    /**
-     * Construct a string representing all recipients
-     * with indicators for Cc and Bcc.
-     */
-    _buildRecipientsList: function() {
-        this.recipients = this.fields
-            .filter(function(f) {
-                // reject the from field
-                return f.type === 'email-recipients';
-            }).map(function(f) {
-                // get values from the model, not the field value
-                return {
-                    name: f.name,
-                    values: f.format(f.model.get(f.name)).map(function(n) {
-                        return n.get('name') || n.get('email_address');
-                    })
-                };
-            }).filter(function(f) {
-                // reject the empty fields
-                return f.values.length;
-            }).map(function(f) {
-                // construct string with type indicators
-                var indicator = f.name === 'cc' ? 'Cc: ' :
-                    f.name === 'bcc' ? 'Bcc: ' :
-                    '';
-                return indicator + f.values.join(', ');
-            }).join('; ');
-    },
-
-    /**
-     * Add Cc/Bcc toggle buttons
-     * Initialize whether to show/hide fields and toggle show/hide buttons appropriately
-     */
-    _addRecipientOptions: function() {
-        this._renderRecipientOptions('outbound_email_id');
-        this._initRecipientOption('to');
-        this._initRecipientOption('cc');
-        this._initRecipientOption('bcc');
-    },
-
-    /**
-     * Render the sender option buttons and place them in the given fieldname
+     * Cannot switch to detail mode if in create mode and there are no
+     * recipients. The mode is set to edit.
      *
-     * @param {string} fieldname Name of field that will contain the sender option buttons
+     * @inheritdoc
+     */
+    setMode: function(name) {
+        var to = this.model.get('to');
+        var cc = this.model.get('cc');
+        var bcc = this.model.get('bcc');
+        var hasRecipients = to.length > 0 || cc.length > 0 || bcc.length > 0;
+
+        if (this.view.createMode && name === 'detail' && !hasRecipients) {
+            name = 'edit';
+        }
+
+        this._super('setMode', [name]);
+    },
+
+    /**
+     * Switches the field to edit mode when the user clicks on the fieldset.
+     *
+     * @param {Event} [event]
+     * @public
+     */
+    _focus: function(event) {
+        if (this.disposed) {
+            return;
+        }
+
+        // Stop the event from triggering _blur to be called.
+        if (event) {
+            event.stopPropagation();
+        }
+
+        if (this.action !== 'edit') {
+            this.setMode('edit');
+        }
+    },
+
+    /**
+     * Switches the field to detail mode when the user clicks outside the
+     * fieldset.
+     *
+     * @param {Event} [event]
+     * @public
+     */
+    _blur: function(event) {
+        if (this.disposed) {
+            return;
+        }
+
+        // Don't change modes if the address book is open.
+        if (this._addressBookState === 'open') {
+            return;
+        }
+
+        if (this.action !== 'detail') {
+            this.setMode('detail');
+        }
+    },
+
+    /**
+     * Add CC and BCC toggle buttons to the field.
+     *
+     * @param {string} fieldName The name of the field where the buttons are
+     * added.
      * @private
      */
-    _renderRecipientOptions: function(fieldname) {
-        var field = this.view.getField(fieldname);
+    _addToggleButtons: function(fieldName) {
+        var field = this.view.getField(fieldName);
         var $field;
-        var recipientOptionsTemplate;
+        var template;
+        var html;
 
-        if (field) {
-            $field = field.$el.closest(this.FIELDSET_FIELD_SELECTOR);
-            recipientOptionsTemplate = app.template.getField('recipients-fieldset', 'recipient-options', this.module);
-            $(recipientOptionsTemplate({'module': this.module})).appendTo($field);
+        if (!field) {
+            return;
+        }
+
+        $field = field.$el.closest('.fieldset-field');
+
+        if ($field.length > 0) {
+            template = app.template.getField(this.type, 'recipient-options', this.module);
+            html = template({module: this.module});
+            $(html).appendTo($field);
         }
     },
 
     /**
-     * Check if the given field has a value
-     * Hide the field if there is no value prepopulated
+     * Toggle the visibility of the field associated with the button that was
+     * clicked.
      *
-     * @param {string} fieldName Name of the field to initialize active state on
+     * @param {Event} event
      * @private
      */
-    _initRecipientOption: function(fieldName) {
-        var fieldValue = this.model.get(fieldName) || [];
-
-        this.toggleRecipientOption(fieldName, (fieldName === 'to' || fieldValue.length > 0));
-    },
-
-    /**
-     * Event Handler for toggling the Cc/Bcc options on the page.
-     *
-     * @param {Event} event click event
-     * @private
-     */
-    _handleRecipientOptionClick: function(event) {
+    _handleToggleButtonClick: function(event) {
         var $toggleButton = $(event.currentTarget);
         var fieldName = $toggleButton.data('toggle-field');
 
-        this.toggleRecipientOption(fieldName);
+        this._toggleFieldVisibility(fieldName);
     },
 
     /**
-     * Toggle the state of the given field
-     * Sets toggle button state and visibility of the field
+     * Toggles the visibility of the field and the toggle state of its
+     * associated button.
      *
-     * @param {string} fieldName Name of the field to toggle
-     * @param {boolean} [active] Whether toggle button active and field shown
-     */
-    toggleRecipientOption: function(fieldName, active) {
-        var toggleButtonSelector = '[data-toggle-field="' + fieldName + '"]';
-        var $toggleButton = this.$(toggleButtonSelector);
-
-        // if explicit active state not set, toggle to opposite
-        if (_.isUndefined(active)) {
-            active = !$toggleButton.hasClass('active');
-        }
-
-        $toggleButton.toggleClass('active', active);
-        this._toggleFieldVisibility(fieldName, active);
-    },
-
-    /**
-     * Show/hide a field section on the form
-     *
-     * @param {string} fieldName Name of the field to show/hide
-     * @param {boolean} show Whether to show or hide the field
+     * @param {string} fieldName The name of the field to toggle.
+     * @param {boolean} [show] True when the button should be inactive and the
+     * field should be shown. The toggle is flipped when undefined.
      * @private
      */
     _toggleFieldVisibility: function(fieldName, show) {
+        var toggleButtonSelector = '[data-toggle-field="' + fieldName + '"]';
+        var $toggleButton = this.$(toggleButtonSelector);
         var field = this.view.getField(fieldName);
 
-        if (field) {
-            field.$el.closest(this.FIELDSET_GROUP_SELECTOR).toggleClass('hide', !show);
+        // if explicit active state not set, toggle to opposite
+        if (_.isUndefined(show)) {
+            show = !$toggleButton.hasClass('active');
         }
 
-        this.context.trigger('recipients-email:resize-editor');
+        $toggleButton.toggleClass('active', show);
+
+        if (field) {
+            field.$el.closest('.fieldset-group').toggleClass('hide', !show);
+        }
+
+        this.view.trigger('email-recipients:resize-editor');
     },
 
     /**

@@ -56,35 +56,40 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        var recipientsField;
-        var num;
+        var loadingRequests = 0;
 
         this._super('initialize', [options]);
 
         this.context.on('tinymce:selected_signature:clicked', this._insertSignatureAtCursor, this);
         this.context.on('tinymce:template:clicked', this._launchTemplateDrawer, this);
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
-        this.context.on('recipients-email:resize-editor', this.resizeEditor, this);
-        this.model.on('change:attachments', function() {
+        this.listenTo(this.model, 'change:attachments_collection', function() {
             this._setAttachmentVisibility();
             this._checkAttachmentLimit();
+        });
+        this.on('editable:toggle_fields', function(fields, viewName) {
+            var field = this.getField('recipients');
+
+            if (field) {
+                field.setMode('detail');
+            }
         }, this);
+        this.on('email-recipients:resize-editor', this.resizeEditor, this);
         this.on('more-less:toggled', this.handleMoreLessToggled, this);
         this.on('email_not_configured', this.notifyConfigurationStatus, this);
         this.listenTo(this.model, 'change:to', this._renderRecipientsField);
         this.listenTo(this.model, 'change:cc', this._renderRecipientsField);
         this.listenTo(this.model, 'change:bcc', this._renderRecipientsField);
 
-        recipientsField = this.getFieldMeta('recipients');
-        num = _.size(recipientsField.fields);
-
-        this.on('email-recipients:loading', function() {
+        this.on('loading_collection_field', function() {
+            loadingRequests++;
             this.toggleButtons(false);
         }, this);
 
-        this.on('email-recipients:loaded', function() {
-            num--;
-            if (num === 0) {
+        this.on('loaded_collection_field', function() {
+            loadingRequests--;
+
+            if (loadingRequests === 0) {
                 this.toggleButtons(true);
             }
         }, this);
@@ -221,27 +226,80 @@
     prepopulate: function(values) {
         var self = this;
         var fields = app.metadata.getModule(this.module, 'fields');
-        fields = _.keys(fields);
+        var fieldNames = _.keys(fields);
+
         _.defer(function() {
             _.each(values, function(value, fieldName) {
-                switch (fieldName) {
-                    case 'related':
+                var fieldDefs;
+                var relatedModuleToLinkNameMap;
+
+                // Change it to the collection field.
+                if (fieldName === 'attachments') {
+                    fieldName = 'attachments_collection';
+                }
+
+                fieldDefs = fields[fieldName];
+
+                if (_.isEmpty(fieldDefs)) {
+                    if (fieldName === 'related') {
                         self._populateForModules(value);
                         self._populateRelated(value);
-                        break;
-                    case 'to':
-                    case 'cc':
-                    case 'bcc':
-                    case 'attachments':
-                        self.model.get(fieldName).add(value);
-                        break;
-                    case '_signatureLocation':
+                    } else if (fieldName === '_signatureLocation') {
                         self._signatureLocation = value;
-                        break;
-                    default:
-                        if (_.contains(fields, fieldName)) {
-                            self.model.set(fieldName, value);
-                        }
+                    }
+                } else if (fieldDefs.type === 'collection') {
+                    if (value instanceof app.BeanCollection) {
+                        value = value.models;
+                    }
+
+                    if (!_.isArray(value)) {
+                        value = [value];
+                    }
+
+                    // Each related record must have a valid `_link` attribute.
+                    // That starts with generating a map of related modules to
+                    // link names for the collection field that matches
+                    // `recipientType`.
+                    relatedModuleToLinkNameMap = _.chain(fieldDefs.links)
+                        .map(function(link) {
+                            return _.has(link, 'name') ? link.name : link;
+                        })
+                        .reduce(function(map, link) {
+                            var relatedModule = app.data.getRelatedModule(self.module, link);
+
+                            if (relatedModule) {
+                                map[relatedModule] = link;
+                            }
+
+                            return map;
+                        }, {}, this)
+                        .value();
+
+                    // Assign the appropriate `_link` attribute. Filter out any
+                    // related records that end up with an invalid `_link` for
+                    // the collection field.
+                    value = _.chain(value)
+                        .map(function(model) {
+                            var link;
+
+                            if (!_.contains(relatedModuleToLinkNameMap, model.get('_link'))) {
+                                link = relatedModuleToLinkNameMap[model.module] || '';
+
+                                if (link) {
+                                    model.set('_link', link);
+                                }
+                            }
+
+                            return model;
+                        })
+                        .filter(function(model) {
+                            return _.contains(relatedModuleToLinkNameMap, model.get('_link'));
+                        })
+                        .value();
+
+                    self.model.get(fieldName).add(value);
+                } else if (_.contains(fieldNames, fieldName)) {
+                    self.model.set(fieldName, value);
                 }
             });
 
@@ -290,9 +348,13 @@
             contacts.fetch({
                 relate: true,
                 success: _.bind(function(data) {
-                    if (data.models && data.models.length > 0) {
-                        this.model.get('to').add(data.models);
-                    }
+                    var records = data.map(function(record) {
+                        record.set('_link', 'contacts_to');
+
+                        return record;
+                    });
+
+                    this.model.get('to').add(records);
                 }, this),
                 fields: ['id', 'full_name', 'email']
             });
@@ -551,7 +613,7 @@
                 return false;
             }
             return _.some(recipients.models, function(recipient) {
-                return recipient.get('_invalid');
+                return !!recipient.invalid;
             });
         }, this);
     },
@@ -713,7 +775,7 @@
      * Hide attachment field row if no attachments, show when added
      */
     _setAttachmentVisibility: function() {
-        var field = this.getField('attachments');
+        var field = this.getField('attachments_collection');
         var $el;
         var $row;
 
@@ -743,7 +805,8 @@
      * @private
      */
     _calculateTotalAttachments: function() {
-        return this.model.get('attachments').reduce(function(memo, attachment) {
+        var attachments = this.model.get('attachments_collection');
+        var bytes = attachments.reduce(function(memo, attachment) {
             var fileSize = attachment.get('file_size');
 
             if (!_.isNumber(fileSize)) {
@@ -757,6 +820,8 @@
 
             return memo + fileSize;
         }, 0);
+
+        return bytes;
     },
 
     /**

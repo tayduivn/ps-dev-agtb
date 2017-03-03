@@ -1,7 +1,6 @@
 describe('Emails.Views.Recordlist', function() {
     var app;
     var view;
-    var dataProvider;
     var sandbox;
     var moduleName = 'Emails';
 
@@ -23,7 +22,7 @@ describe('Emails.Views.Recordlist', function() {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
         context = app.context.getContext();
-        context.prepare();
+        context.prepare(true);
 
         sandbox.stub(Backbone.history, 'getFragment').returns('#Emails');
         view = SugarTest.createView('base', moduleName, viewName, null, context, true);

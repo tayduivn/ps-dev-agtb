@@ -92,7 +92,7 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'attachments',
+                    'name' => 'attachments_collection',
                     'type' => 'email-attachments',
                     'dismiss_label' => true,
                     'span' => 12,

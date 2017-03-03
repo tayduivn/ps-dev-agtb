@@ -10,6 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="ellipsis_inline" rel="tooltip" data-placement="bottom" title="{{tooltipText}}">{{#each value}}
-    {{#if @first}}{{#if this.attributes.name}}{{this.attributes.name}}{{else}}{{this.attributes.email_address}}{{/if}}{{/if}}
-{{/each}}</div>
+<div class="ellipsis_inline" rel="tooltip" data-placement="bottom" title="{{tooltipText}}">
+    {{#if value.name}}
+        {{value.name}}
+    {{else}}
+        {{value.email_address}}
+    {{/if}}
+</div>

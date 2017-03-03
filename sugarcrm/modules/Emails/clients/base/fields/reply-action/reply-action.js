@@ -122,11 +122,7 @@
 
         var mapRecipients = function(recipients) {
             return _.map(recipients, function(recipient) {
-                if (recipient.module === 'EmailAddresses') {
-                    return {email: recipient.get('email_address_used')};
-                } else {
-                    return {bean: recipient};
-                }
+                return {bean: recipient};
             });
         };
 
