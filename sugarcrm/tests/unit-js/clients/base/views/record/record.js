@@ -569,18 +569,18 @@ describe("Record View", function () {
             };
 
             hasAccessToModelStub.restore();
-            sinonSandbox.stub(SugarTest.app.acl, "_hasAccessToField", function (action, acls, field) {
-                return field !== 'case_number';
-            });
-            sinonSandbox.stub(SugarTest.app.user, "getAcls", function () {
+            sinonSandbox.stub(SugarTest.app.user, 'getAcls', function () {
                 var acls = {};
                 acls[moduleName] = {
-                    edit: "yes",
+                    edit: 'yes',
                     fields: {
+                        case_number: {
+                            create: 'no',
+                        },
                         name: {
-                            write: "no"
-                        }
-                    }
+                            write: 'no',
+                        },
+                    },
                 };
                 return acls;
             });
@@ -609,8 +609,17 @@ describe("Record View", function () {
             };
 
             hasAccessToModelStub.restore();
-            sinonSandbox.stub(SugarTest.app.acl, "_hasAccessToField", function (action, acls, field) {
-                return field !== 'case_number';
+            sinonSandbox.stub(SugarTest.app.user, 'getAcls', function () {
+                var acls = {};
+                acls[moduleName] = {
+                    edit: 'yes',
+                    fields: {
+                        case_number: {
+                            create: 'no',
+                        },
+                    },
+                };
+                return acls;
             });
 
             view._buildGridsFromPanelsMetadata(meta.panels);
@@ -634,8 +643,17 @@ describe("Record View", function () {
             };
 
             hasAccessToModelStub.restore();
-            sinonSandbox.stub(SugarTest.app.acl, "_hasAccessToField", function (action, acls, field) {
-                return field !== 'case_number';
+            sinonSandbox.stub(SugarTest.app.user, 'getAcls', function () {
+                var acls = {};
+                acls[moduleName] = {
+                    edit: 'yes',
+                    fields: {
+                        case_number: {
+                            create: 'no',
+                        },
+                    },
+                };
+                return acls;
             });
 
             view._buildGridsFromPanelsMetadata(meta.panels);
