@@ -60,6 +60,11 @@
     currentBulkSaveRequests: undefined,
 
     /**
+     * Counter for how many bundles are being saved
+     */
+    bundlesBeingSavedCt: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -68,7 +73,7 @@
         this.groupIds = [];
         this.currentBulkSaveRequests = [];
         this.quoteDataGroupMeta = app.metadata.getLayout('ProductBundles', 'quote-data-group');
-
+        this.bundlesBeingSavedCt = 0;
         this.isCreateView = this.context.get('create') || false;
 
         //Setup the neccesary child context before data is populated so that child views/layouts are correctly linked
@@ -920,9 +925,10 @@
         });
         var newBundle;
 
+        this.bundlesBeingSavedCt++;
         // handle on the off chance that no bundles exist on the quote.
         if (!_.isEmpty(highestPositionBundle)) {
-            nextPosition = parseInt(highestPositionBundle.get('position')) + 1;
+            nextPosition = parseInt(highestPositionBundle.get('position')) + this.bundlesBeingSavedCt;
         }
 
         if (this.isCreateView) {
@@ -960,6 +966,7 @@
      * @private
      */
     _onCreateQuoteGroupSuccess: function(newBundleData) {
+        this.bundlesBeingSavedCt--;
         app.alert.dismiss('adding_bundle_alert');
 
         app.alert.show('added_bundle_alert', {

@@ -1904,6 +1904,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         it('should call app.api.relationships with payload position of 1 when no bundles exist', function() {
             // because default group is 0, any new create could get a position of 1
             layout.model.set('bundles', new Backbone.Collection());
+            layout.bundlesBeingSavedCt = 0;
             layout._onCreateQuoteGroup();
 
             callArgs = app.api.relationships.lastCall;
