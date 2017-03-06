@@ -42,12 +42,19 @@ $linked_id = $_REQUEST['linked_id'];
 
 $projectTaskBean = BeanFactory::getBean('ProjectTask');
 
-$query = "SELECT id FROM project_task WHERE resource_id LIKE '" . $linked_id . "' AND project_id = '" . $record . "'";
+$query = sprintf(
+    'SELECT id FROM project_task WHERE resource_id LIKE %s AND project_id = %s',
+    $projectTaskBean->db->quoted($linked_id),
+    $projectTaskBean->db->quoted($record)
+);
 $result = $projectTaskBean->db->query($query, true, "Unable to select project task id from user project");
 $row = $projectTaskBean->db->fetchByAssoc($result);
 
 while ($row != null){
-	$update_query = "UPDATE project_task SET resource_id = NULL, assigned_user_id = NULL where id = '" . $row['id'] ."'";
+    $update_query = sprintf(
+        'UPDATE project_task SET resource_id = NULL, assigned_user_id = NULL WHERE id = %s',
+        $projectTaskBean->db->quoted($row['id'])
+    );
 	$projectTaskBean->db->query($update_query, true, "Unable to update resource for project task");
 
 	$row = $projectTaskBean->db->fetchByAssoc($result);
@@ -62,4 +69,4 @@ if(empty($_REQUEST['refresh_page'])){
 	handleRedirect();
 }
 exit;
-?>
+
