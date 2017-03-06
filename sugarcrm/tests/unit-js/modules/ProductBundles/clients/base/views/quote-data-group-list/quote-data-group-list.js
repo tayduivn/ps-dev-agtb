@@ -116,9 +116,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
     describe('initialize()', function() {
         var initOptions;
+        var initModel;
 
         afterEach(function() {
             initOptions = null;
+            initModel = null;
         });
 
         it('should have the same model as the layout', function() {
@@ -135,6 +137,53 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         it('should set collection based on product_bundle_items from the model', function() {
             expect(view.collection.length).toBe(3);
+        });
+
+        describe('setting mass_collection on the context', function() {
+            var layoutLayout;
+            var layoutLayoutMassCollection;
+
+            beforeEach(function() {
+                layoutLayoutMassCollection = new Backbone.Collection();
+                layoutLayout = {
+                    getComponent: function() {
+                        return {
+                            massCollection: layoutLayoutMassCollection
+                        };
+                    }
+                };
+                initModel = new Backbone.Model();
+                initModel.fields = {
+                    product_bundle_items: {
+                        link: []
+                    }
+                };
+                initOptions = {
+                    context: viewContext,
+                    meta: {
+                        panels: [{
+                            fields: ['field1', 'field2']
+                        }]
+                    },
+                    layout: {
+                        listColSpan: 2,
+                        layout: layoutLayout
+                    },
+                    model: initModel
+                };
+                sinon.collection.stub(view, 'addMultiSelectionAction', function() {});
+            });
+
+            afterEach(function() {
+                layoutLayoutMassCollection = null;
+                layoutLayout = null;
+            });
+
+            it('should set mass_collection to the layout.layout mass collection', function() {
+                view.initialize(initOptions);
+
+                expect(view.context.get('mass_collection')).toEqual(layoutLayoutMassCollection);
+            });
         });
 
         describe('setting isCreateView and isOppsConvert', function() {
@@ -162,10 +211,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                     model: initModel
                 };
                 collection = new Backbone.Collection();
-            });
-
-            afterEach(function() {
-                initModel = null;
             });
 
             it('should set isCreateView true if create is on parent context', function() {
@@ -198,7 +243,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
 
         describe('setting isEmptyGroup', function() {
-            var initModel;
             var collection;
 
             beforeEach(function() {
@@ -222,10 +266,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                     model: initModel
                 };
                 collection = new Backbone.Collection();
-            });
-
-            afterEach(function() {
-                initModel = null;
             });
 
             it('should set isEmptyGroup true if product_bundle_items collection has no records', function() {
@@ -264,6 +304,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 };
                 sinon.collection.stub(collection, 'on', function() {});
                 sinon.collection.stub(view.layout, 'on', function() {});
+                sinon.collection.stub(view.context.parent, 'on', function() {});
                 view.name = 'viewName';
                 view.initialize({
                     context: viewContext,
@@ -295,16 +336,24 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 expect(view.layout.on.args[3][0]).toBe('quotes:sortable:out');
             });
 
-            it('should add listener on layout for editablelist:cancel', function() {
+            it('should add listener on layout for editablelist:<viewName>:cancel', function() {
                 expect(view.layout.on.args[4][0]).toBe('editablelist:' + view.name + ':cancel');
             });
 
-            it('should add listener on layout for editablelist:save', function() {
+            it('should add listener on layout for editablelist:<viewName>:save', function() {
                 expect(view.layout.on.args[5][0]).toBe('editablelist:' + view.name + ':save');
             });
 
-            it('should add listener on layout for editablelist:saving', function() {
+            it('should add listener on layout for editablelist:<viewName>:saving', function() {
                 expect(view.layout.on.args[6][0]).toBe('editablelist:' + view.name + ':saving');
+            });
+
+            it('should add listener on context.parent for quotes:collections:all:checked', function() {
+                expect(view.context.parent.on.args[0][0]).toBe('quotes:collections:all:checked');
+            });
+
+            it('should add listener on context.parent for quotes:collections:not:all:checked', function() {
+                expect(view.context.parent.on.args[1][0]).toBe('quotes:collections:not:all:checked');
             });
 
             it('should call view.collection.on should be called with "add remove"', function() {

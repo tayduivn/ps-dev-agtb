@@ -148,6 +148,15 @@
         // get the product_bundle_items collection from the model
         options.collection = options.model.get('product_bundle_items');
 
+        // use the same massCollection from the Quotes QuoteDataListHeaderView
+        var quoteDataListHeaderComp;
+        if (options.layout && options.layout.layout) {
+            quoteDataListHeaderComp =  options.layout.layout.getComponent('quote-data-list-header');
+            if (quoteDataListHeaderComp) {
+                options.context.set('mass_collection', quoteDataListHeaderComp.massCollection);
+            }
+        }
+
         this.listColSpan = options.layout.listColSpan;
         this.emptyListColSpan = this.listColSpan + 1;
 

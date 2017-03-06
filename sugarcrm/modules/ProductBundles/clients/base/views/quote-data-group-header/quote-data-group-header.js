@@ -30,7 +30,7 @@
     plugins: [
         'MassCollection',
         'Editable',
-        'ErrorDecoration',
+        'ErrorDecoration'
     ],
 
     /**
@@ -86,6 +86,15 @@
         options.model = options.model || options.layout.model;
 
         this.listColSpan = options.layout.listColSpan;
+
+        // use the same massCollection from the Quotes QuoteDataListHeaderView
+        var quoteDataListHeaderComp;
+        if (options.layout && options.layout.layout) {
+            quoteDataListHeaderComp =  options.layout.layout.getComponent('quote-data-list-header');
+            if (quoteDataListHeaderComp) {
+                options.context.set('mass_collection', quoteDataListHeaderComp.massCollection);
+            }
+        }
 
         this._super('initialize', [options]);
 

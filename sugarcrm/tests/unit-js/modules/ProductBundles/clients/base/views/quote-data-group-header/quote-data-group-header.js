@@ -82,7 +82,18 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
 
         describe('when calling initialize', function() {
             var initOptions;
+            var layoutLayout;
+            var layoutLayoutMassCollection;
+
             beforeEach(function() {
+                layoutLayoutMassCollection = new Backbone.Collection();
+                layoutLayout = {
+                    getComponent: function() {
+                        return {
+                            massCollection: layoutLayoutMassCollection
+                        };
+                    }
+                };
                 initOptions = {
                     context: viewContext,
                     meta: {
@@ -90,37 +101,111 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
                             fields: ['field1', 'field2']
                         }]
                     },
+                    name: 'quote-data-group-header',
                     model: new Backbone.Model(),
                     layout: {
-                        listColSpan: 2
+                        listColSpan: 2,
+                        layout: layoutLayout
                     }
                 };
 
+                sinon.collection.stub(view, 'addMultiSelectionAction', function() {});
                 sinon.collection.stub(view.layout, 'on', function() {});
             });
 
             afterEach(function() {
                 initOptions = null;
+                layoutLayoutMassCollection = null;
+                layoutLayout = null;
+            });
+
+            it('should set mass_collection to the layout.layout mass collection', function() {
+                view.initialize(initOptions);
+
+                expect(view.context.get('mass_collection')).toEqual(layoutLayoutMassCollection);
+            });
+
+            it('should set isCreateView to true for create view', function() {
+                viewParentContext.set('create', true);
+                view.initialize(initOptions);
+
+                expect(view.isFirstRender).toBeTruthy();
+            });
+
+            it('should set isCreateView to false when not create view', function() {
+                viewParentContext.set('create', false);
+                view.initialize(initOptions);
+
+                expect(view.isFirstRender).toBeTruthy();
+            });
+
+            it('should set isFirstRender to true', function() {
+                view.initialize(initOptions);
+
+                expect(view.isFirstRender).toBeTruthy();
+            });
+
+            it('should set viewName and action to list', function() {
+                view.initialize(initOptions);
+
+                expect(view.viewName).toBe('list');
+                expect(view.action).toBe('list');
+            });
+
+            it('should reset vars to empty', function() {
+                view.initialize(initOptions);
+
+                expect(view.toggledModels).toEqual({});
+                expect(view.leftColumns).toEqual([]);
+                expect(view.leftSaveCancelColumn).toEqual([]);
+            });
+
+            it('should call addMultiSelectionAction()', function() {
+                view.initialize(initOptions);
+
+                expect(view.addMultiSelectionAction).toHaveBeenCalled();
             });
 
             it('should call setElement', function() {
                 view.initialize(initOptions);
+
                 expect(view.setElement).toHaveBeenCalled();
             });
 
             it('should set groupSaveCt = 0', function() {
                 view.initialize(initOptions);
+
                 expect(view.groupSaveCt).toBe(0);
             });
 
             it('should call layout.on with quotes:group:save:start', function() {
                 view.initialize(initOptions);
+
                 expect(view.layout.on.args[0][0]).toBe('quotes:group:save:start');
             });
 
             it('should call layout.on with quotes:group:save:stop', function() {
                 view.initialize(initOptions);
+
                 expect(view.layout.on.args[1][0]).toBe('quotes:group:save:stop');
+            });
+
+            it('should call layout.on with editablelist:<viewName>:save', function() {
+                view.initialize(initOptions);
+
+                expect(view.layout.on.args[2][0]).toBe('editablelist:quote-data-group-header:save');
+            });
+
+            it('should call layout.on with editablelist:<viewName>:saving', function() {
+                view.initialize(initOptions);
+
+                expect(view.layout.on.args[3][0]).toBe('editablelist:quote-data-group-header:saving');
+            });
+
+            it('should call layout.on with editablelist:<viewName>:create:cancel', function() {
+                view.initialize(initOptions);
+
+                expect(view.layout.on.args[4][0]).toBe('editablelist:quote-data-group-header:create:cancel');
             });
         });
     });
