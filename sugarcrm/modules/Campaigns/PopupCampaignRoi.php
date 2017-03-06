@@ -42,7 +42,8 @@ $opp_query1  = "select camp.name, camp.actual_cost,camp.budget,camp.expected_rev
                             ROUND((SUM(opp.amount) - SUM(camp.actual_cost))/(SUM(camp.actual_cost)), 2)*100 as ROI";
             $opp_query1 .= " from opportunities opp";
             $opp_query1 .= " right join campaigns camp on camp.id = opp.campaign_id";
-            $opp_query1 .= " where opp.sales_stage = '".Opportunity::STAGE_CLOSED_WON."' and camp.id='$campaign_id'";
+            $opp_query1 .= " where opp.sales_stage = '".Opportunity::STAGE_CLOSED_WON."' and camp.id=" .
+                $campaign->db->quoted($campaign_id);
             $opp_query1 .= " group by camp.name";
             //$opp_query1 .= " and deleted=0";
             $opp_result1=$campaign->db->query($opp_query1);
@@ -50,7 +51,8 @@ $opp_query1  = "select camp.name, camp.actual_cost,camp.budget,camp.expected_rev
  //get the click-throughs
  $query_click = "SELECT count(*) hits ";
 			$query_click.= " FROM campaign_log ";
-			$query_click.= " WHERE campaign_id = '$campaign_id' AND activity_type='link' AND related_type='CampaignTrackers' AND archived=0 AND deleted=0";
+            $query_click.= " WHERE campaign_id = " . $campaign->db->quoted($campaign_id) .
+                " AND activity_type='link' AND related_type='CampaignTrackers' AND archived=0 AND deleted=0";
 
             //if $marketing id is specified, then lets filter the chart by the value
             if (!empty($marketing_id)){
@@ -111,5 +113,3 @@ $chart= new campaign_charts();
 
 $xtpl->parse("main");
 $xtpl->out("main");
-
-?>
