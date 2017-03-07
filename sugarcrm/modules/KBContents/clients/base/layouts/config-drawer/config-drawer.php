@@ -27,7 +27,7 @@ $viewdefs['KBContents']['base']['layout']['config-drawer'] = array(
                             ),
                             'type' => 'simple',
                             'name' => 'main-pane',
-                            'span' => 8,
+                            'css_class' => 'main-pane span8',
                         ),
                     ),
                     array(
