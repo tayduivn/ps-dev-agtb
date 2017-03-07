@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+// FILE SUGARCRM flav=ent ONLY
+
 use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
 use Sugarcrm\Sugarcrm\Security\Password\Hash;
 

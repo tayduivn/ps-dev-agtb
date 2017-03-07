@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+// FILE SUGARCRM flav=ent ONLY
+
 /**
  * Static ACL implementation - ACLs defined per-module
  * Uses ACLController and ACLAction

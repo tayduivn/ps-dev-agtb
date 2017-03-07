@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+// FILE SUGARCRM flav=ent ONLY
+
 /**
  * Portal visibility class replaces the team security restrictions for portal users
  * For non-portal users this class will not modify the query in any way.
@@ -117,9 +119,7 @@ class SupportPortalVisibility extends SugarVisibility
             case 'Bugs':
                 // Bugs: Any bug that has the portal_viewable flag set to true
                 if ( $queryType == 'where' ) {
-                    //BEGIN SUGARCRM flav=ent ONLY
-                        $queryPart = " $table_alias.portal_viewable = 1 ";
-                    //END SUGARCRM flav=ent ONLY
+                    $queryPart = " $table_alias.portal_viewable = 1 ";
                 }
 
                 break;
@@ -134,9 +134,7 @@ class SupportPortalVisibility extends SugarVisibility
                         $caseBean->load_relationship('accounts');
                         
                         $queryPart = $this->bean->cases->getJoin(array('join_table_alias'=>'cases_pv','join_type'=>' LEFT JOIN '));
-                        //BEGIN SUGARCRM flav=ent ONLY
                         $queryPart .= " AND cases_pv.portal_viewable = 1 ";
-                        //ENd SUGARCRM flav=ent ONLY
                         $queryPart .= " ".$caseBean->accounts->getJoin(array('join_table_alias'=>'accounts_cases_pv','right_join_table_alias'=>'cases_pv','join_type' => ' LEFT JOIN '))." AND accounts_cases_pv.id IN $accountIn ";
                     }
                     $this->bean->load_relationship('bugs');
@@ -144,10 +142,7 @@ class SupportPortalVisibility extends SugarVisibility
                     $bugBean = BeanFactory::newBean('Bugs');
 
                     $queryPart .= " ".$this->bean->bugs->getJoin(array('join_table_alias'=>'bugs_pv','join_type'=>' LEFT JOIN '));
-                    //BEGIN SUGARCRM flav=ent ONLY
                     $queryPart .= " AND bugs_pv.portal_viewable = 1 ";
-                    //ENd SUGARCRM flav=ent ONLY
-
                 } elseif ($queryType == 'where') {
                     $KBContentsCondition = "{$table_alias}.parent_type = 'KBContents' "
                                     . "OR {$table_alias}.parent_type = 'KBContentsAttachments'";
@@ -204,9 +199,7 @@ class SupportPortalVisibility extends SugarVisibility
                 if ( $this->bean->module_dir == 'Cases' ) {
                     $portalEnabled = true;
                     $linkName = 'accounts';
-                    //BEGIN SUGARCRM flav=ent ONLY
                     $wherePart = " $table_alias.portal_viewable = 1 ";
-                    //END SUGARCRM flav=ent ONLY
                 } else {
                     $portalEnabled = false;
                 }
@@ -296,9 +289,7 @@ class SupportPortalVisibility extends SugarVisibility
                         $sugarQuery,
                         array('joinTableAlias' => 'cases_pv', 'joinType' => 'LEFT')
                     );
-                    //BEGIN SUGARCRM flav=ent ONLY
                     $join->on()->equals('cases_pv.portal_viewable', 1);
-                    //END SUGARCRM flav=ent ONLY
                     $caseBean = BeanFactory::newBean('Cases');
                     $caseBean->load_relationship('accounts');
                     $join = $caseBean->accounts->buildJoinSugarQuery(
@@ -312,9 +303,7 @@ class SupportPortalVisibility extends SugarVisibility
                     $sugarQuery,
                     array('joinTableAlias' => 'bugs_pv', 'joinType' => 'LEFT')
                 );
-                //BEGIN SUGARCRM flav=ent ONLY
                 $join->on()->equals('bugs_pv.portal_viewable', 1);
-                //END SUGARCRM flav=ent ONLY
                 break;
             case 'Cases':
                 $this->bean->load_relationship('accounts');

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+// FILE SUGARCRM flav=ent ONLY
+
 require_once 'data/visibility/SupportPortalVisibility.php';
 
 /**
