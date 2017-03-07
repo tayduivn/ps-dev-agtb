@@ -89,7 +89,7 @@ class OpportunityViews
             }
         }
         if ($handleSave) {
-            $parser->handleSave(false);
+            $parser->handleSave(false, false);
         }
     }
 
@@ -281,7 +281,7 @@ class OpportunityViews
             foreach ($saveFields as $params) {
                 $listParser->addField($params[0], $params[1]);
             }
-            $listParser->handleSave(false);
+            $listParser->handleSave(false, false);
         }
 
         return $handleSave;
@@ -359,7 +359,7 @@ class OpportunityViews
         if ($handleSave) {
             // when we save it, return what we saved
             $return = $_POST;
-            $listParser->handleSave();
+            $listParser->handleSave(true, false);
         }
         // restore the post variables
         $_POST = $backupPost;

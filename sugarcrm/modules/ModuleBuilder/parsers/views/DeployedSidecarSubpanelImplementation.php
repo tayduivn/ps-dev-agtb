@@ -387,7 +387,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
      * @param array defs Layout definition in the same format as received by the constructor
      */
 
-    public function deploy($defs)
+    public function deploy($defs, $clearCache = true)
     {
         // Make a viewdefs variable for saving
         $varname = "viewdefs['{$this->_moduleName}']['{$this->_viewClient}']['view']['{$this->sidecarSubpanelName}']";
@@ -417,8 +417,10 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         );
 
         $this->saveSidecarSubpanelDefOverride();
-        // clear the cache for this modules only
-        MetaDataManager::refreshModulesCache(array($this->loadedModule, $this->_moduleName));
+        if ($clearCache) {
+            // clear the cache for this modules only
+            MetaDataManager::refreshModulesCache(array($this->loadedModule, $this->_moduleName));
+        }
     }
 
     /**

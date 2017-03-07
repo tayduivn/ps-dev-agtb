@@ -155,7 +155,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      * Deploy the layout
      * @param boolean $populate If true (default), then update the layout first with new layout information from the $_REQUEST array
      */
-    function handleSave ($populate = true)
+    function handleSave ($populate = true, $clearCache = true)
     {
     	$GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->handleSave()" ) ;
 
@@ -165,7 +165,9 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $viewdefs = $this->_viewdefs ;
         $viewdefs [ 'panels' ] = $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ;
         $this->implementation->deploy(MetaDataFiles::mapPathToArray(MetaDataFiles::getViewDefVar($this->_view),$viewdefs));
-        $this->_clearCaches();
+        if ($clearCache) {
+            $this->_clearCaches();
+        }
     }
 
     /*

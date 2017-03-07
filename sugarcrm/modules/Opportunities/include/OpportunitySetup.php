@@ -182,6 +182,8 @@ abstract class OpportunitySetup
      */
     public function doMetadataConvert()
     {
+
+        MetaDataManager::enableCacheRefreshQueue();
         // process the fields so we have all the vardefs changes first
         $this->processFields();
 
@@ -192,7 +194,13 @@ abstract class OpportunitySetup
         $this->fixProductsModule();
 
         // r&r the opp module
-        $this->runRepairAndRebuild(array('Opportunities','Products'));
+        $this->runRepairAndRebuild(
+            array(
+                'Opportunities',
+                'Products',
+                'Forecasts',
+            )
+        );
 
         // regenerate the Opportunity Vardefs
         VardefManager::loadVardef(
@@ -219,6 +227,8 @@ abstract class OpportunitySetup
 
         // r&r the rli + related modules
         $this->runRepairAndRebuild($rnr_modules);
+
+        MetaDataManager::disableCacheRefreshQueue();
 
         register_shutdown_function(array('SugarAutoLoader', 'buildCache'));
     }
@@ -257,7 +267,7 @@ abstract class OpportunitySetup
             }
         }
 
-        $filterDefParser->handleSave(false);
+        $filterDefParser->handleSave(false, false);
     }
 
 
@@ -329,7 +339,8 @@ abstract class OpportunitySetup
         SugarAutoLoader::load('modules/Forecasts/include/ForecastReset.php');
         $forecast_reset = new ForecastReset();
         $forecast_reset->truncateForecastData();
-        $forecast_reset->setDefaultWorksheetColumns($forecast_by);
+        //No need to clear or rebuild the cache here, Opp settings will clear/rebuild at the end of its process
+        $forecast_reset->setDefaultWorksheetColumns($forecast_by, false);
 
         // reload the settings
         Forecast::getSettings(true);
@@ -431,6 +442,9 @@ abstract class OpportunitySetup
 
         // load the Dropdown parser so it can easily be saved
         SugarAutoLoader::load('modules/ModuleBuilder/parsers/ParserFactory.php');
+        /**
+         * @var ParserDropDown $dd_parser
+         */
         $dd_parser = ParserFactory::getParser('dropdown');
 
         foreach ($all_languages as $current_lang => $current_lang_name) {
@@ -474,13 +488,16 @@ abstract class OpportunitySetup
                 $_REQUEST['view_package'] = 'studio';
                 $_REQUEST['dropdown_lang'] = $current_lang;
 
-                $dd_parser->saveDropDown($params);
+                //Save, but wait on clearing/rebuilding the cache until after we have updated all the languages
+                $dd_parser->saveDropDown($params, false);
 
                 // clean up the request object
                 unset($_REQUEST['dropdown_lang']);
                 unset($_REQUEST['view_package']);
             }
         }
+
+        $dd_parser->finalize($all_languages);
 
         $_REQUEST = $old_request;
     }

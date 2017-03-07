@@ -154,7 +154,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
      * @param array defs Layout definition in the same format as received by the constructor
      */
 
-    public function deploy($defs)
+    public function deploy($defs, $clearCache = true)
     {
         // We are saving to the custom file
         $savefile = $this->getMetadataFilename(MB_CUSTOMMETADATALOCATION);
@@ -196,8 +196,10 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
             SugarAutoLoader::unlink($workingFilename);
         }
 
-        // clear the cache for this module
-        MetaDataManager::refreshModulesCache(array($this->_moduleName));
+        if ($clearCache) {
+            // clear the cache for this module
+            MetaDataManager::refreshModulesCache(array($this->_moduleName));
+        }
         return $ret;
     }
 

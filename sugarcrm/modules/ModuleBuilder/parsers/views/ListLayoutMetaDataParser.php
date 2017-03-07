@@ -116,12 +116,14 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      * Deploy the layout
      * @param boolean $populate If true (default), then update the layout first with new layout information from the $_REQUEST array
      */
-    function handleSave($populate = true) {
+    function handleSave($populate = true, $clearCache = true) {
         if ($populate) {
             $this->_populateFromRequest();
         }
-        $this->implementation->deploy($this->_viewdefs); // force the field names back to upper case so the list view will work correctly
-        $this->_clearCaches();
+        $this->implementation->deploy($this->_viewdefs, $clearCache); // force the field names back to upper case so the list view will work correctly
+        if ($clearCache) {
+            $this->_clearCaches();
+        }
     }
 
     function getLayout ()

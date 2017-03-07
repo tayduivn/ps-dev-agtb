@@ -20,9 +20,11 @@ class ParserDropDown extends ModuleBuilderParser
      * Takes in the request params from a save request and processes
      * them for the save.
      *
-     * @param REQUEST params  $params
+     * @param $params $params
+     * @param bool $finalize if false, the changes are not yet deployed.
+     *  Useful when making multiple changes in a single request. finalize() should then be called externally.
      */
-    public function saveDropDown($params)
+    public function saveDropDown($params, $finalize = true)
     {
         global $locale;
 
@@ -121,7 +123,10 @@ class ParserDropDown extends ModuleBuilderParser
                 $this->saveContents($dropdown_name, $contents, $selected_lang);
             }
         }
-        $this->finalize($selected_lang);
+        //If more than one language is being updated this request, allow the caller to finalize
+        if ($finalize) {
+            $this->finalize($selected_lang);
+        }
     }
 
     /**
@@ -166,15 +171,14 @@ class ParserDropDown extends ModuleBuilderParser
      */
     public function finalize($lang)
     {
+        if (!is_array($lang)) {
+            $lang = [$lang => $lang];
+        }
         SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
         $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
         $mi = new $moduleInstallerClass();
         $mi->silent = true;
-        $mi->rebuild_languages(
-            array(
-                $lang => $lang
-            )
-        );
+        $mi->rebuild_languages($lang);
 
         sugar_cache_reset();
         sugar_cache_reset_full();

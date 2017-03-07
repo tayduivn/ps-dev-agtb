@@ -155,7 +155,7 @@ class ForecastReset
      *
      * @param String $forecast_by The Module that we are currently forecasting by
      */
-    public function setDefaultWorksheetColumns($forecast_by)
+    public function setDefaultWorksheetColumns($forecast_by, $rebuild = true)
     {
         SugarAutoLoader::load('modules/Forecasts/ForecastsDefaults.php');
         $edition = ($forecast_by === 'RevenueLineItems') ? 'ent' : 'pro';
@@ -184,7 +184,7 @@ class ForecastReset
 
         // BEGIN SUGARCRM flav=ent ONLY
         // update the metadata
-        $this->updateConfigWorksheetColumnsMetadata($forecast_by);
+        $this->updateConfigWorksheetColumnsMetadata($forecast_by, $rebuild);
         // END SUGARCRM flav=ent ONLY
 
         // now write out the correct list view
@@ -294,7 +294,7 @@ class ForecastReset
      *
      * @param String $forecast_by The Module that we are currently forecasting by
      */
-    public function updateConfigWorksheetColumnsMetadata($forecast_by)
+    public function updateConfigWorksheetColumnsMetadata($forecast_by, $refresh = true)
     {
         if ($forecast_by === 'RevenueLineItems') {
             $contents = "<?php\n\n";
@@ -310,9 +310,11 @@ class ForecastReset
             }
         }
 
-        $this->runRebuildExtensions(array('Forecasts'));
+        if ($refresh) {
+            $this->runRebuildExtensions(array('Forecasts'));
 
-        MetaDataManager::refreshModulesCache('Forecasts');
+            MetaDataManager::refreshModulesCache('Forecasts');
+        }
     }
     // END SUGARCRM flav=ent ONLY
 

@@ -126,11 +126,12 @@ class MetaDataCache
                 $id = $row['id'];
             }
 
+            $now = new DateTime('now', new DateTimeZone('UTC'));
             $values = array(
                 'id' => $id,
                 'type' => $key,
                 'data' => $encoded,
-                'date_modified' => TimeDate::getInstance()->nowDb(),
+                'date_modified' => $now->format(TimeDate::DB_DATETIME_FORMAT),
                 'deleted' => 0,
             );
 
