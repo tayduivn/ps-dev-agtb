@@ -41,13 +41,8 @@ class SugarUserChecker extends UserChecker
     {
         parent::checkPreAuth($user);
 
-        if ($user instanceof User) {
-            if ($this->lockout->isEnabled() && $this->lockout->isUserStillLocked($user)) {
-                $message = $this->lockout->getLockedMessage($user);
-                $ex = new LockedException($message);
-                $ex->setUser($user);
-                throw $ex;
-            }
+        if ($user instanceof User && $this->lockout->isEnabled() && $this->lockout->isUserLocked($user)) {
+            $this->lockout->throwLockoutException($user);
         }
     }
 

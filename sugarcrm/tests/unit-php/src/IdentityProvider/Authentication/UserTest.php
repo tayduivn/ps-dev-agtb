@@ -174,21 +174,16 @@ class IdMUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::lockUser
+     * @covers ::lockout
      */
-    public function testLockUser()
+    public function testLockout()
     {
-        $logoutTime = 'some lock time';
-        $this->timeDate
-            ->method('nowDb')
-            ->willReturn($logoutTime);
-
         $this->sugarUser
             ->expects($this->exactly(3))
             ->method('setPreference')
             ->withConsecutive(
                 ['lockout', '1', 0, 'global'],
-                ['logout_time', $logoutTime, 0, 'global'],
+                ['logout_time', $logoutTime = '2017-02-13 01:01:01', 0, 'global'],
                 ['loginfailed', 0, 0, 'global']
             );
 
@@ -196,7 +191,7 @@ class IdMUserTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('savePreferencesToDB');
 
-        $this->user->lockout();
+        $this->user->lockout($logoutTime);
     }
 
     /**

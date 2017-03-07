@@ -50,6 +50,11 @@ class SugarOnAuthLockoutSubscriberTest extends \PHPUnit_Framework_TestCase
     protected $userProvider = null;
 
     /**
+     * @var \TimeDate|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $timeDate;
+
+    /**
      * @var SugarOnAuthLockoutSubscriber
      */
     protected $subscriber = null;
@@ -66,12 +71,14 @@ class SugarOnAuthLockoutSubscriberTest extends \PHPUnit_Framework_TestCase
                 'method' => 'incrementLoginFailed',
                 'userLoginFailed' => 1,
                 'lockoutExpirationLogin' => 3,
+                'count' => $this->never(),
             ],
             'lockUser' => [
                 'username' => 'userName2',
                 'method' => 'lockout',
                 'userLoginFailed' => 1,
                 'lockoutExpirationLogin' => 2,
+                'count' => $this->exactly(2),
             ],
         ];
     }
@@ -97,12 +104,21 @@ class SugarOnAuthLockoutSubscriberTest extends \PHPUnit_Framework_TestCase
      * @param string $method
      * @param integer $userLoginFailed
      * @param integer $lockoutExpirationLogin
+     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $count
      */
-    public function testHandlingFailure($username, $method, $userLoginFailed, $lockoutExpirationLogin)
+    public function testHandlingFailure($username, $method, $userLoginFailed, $lockoutExpirationLogin, $count)
     {
         $this->lockout
             ->method('isEnabled')
             ->willReturn(true);
+
+        $this->lockout->expects($count)
+            ->method('getTimeDate')
+            ->willReturn($this->timeDate);
+
+        $this->timeDate->expects($count)
+            ->method('nowDb')
+            ->willReturn('2017-02-13 01:01:01');
 
         $this->token
             ->method('getUsername')
@@ -246,6 +262,8 @@ class SugarOnAuthLockoutSubscriberTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
+
+        $this->timeDate = $this->createMock(\TimeDate::class);
 
         $this->userProvider = $this->getMockBuilder(UserProviderInterface::class)
             ->disableOriginalConstructor()

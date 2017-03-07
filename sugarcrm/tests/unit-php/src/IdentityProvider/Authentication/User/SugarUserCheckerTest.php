@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker
  */
 class SugarUserCheckerTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,9 +39,8 @@ class SugarUserCheckerTest extends \PHPUnit_Framework_TestCase
     protected $checker;
 
     /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\LockedException
-     * @expectedExceptionMessage locked message
-     * @covers Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker::checkPreAuth
+     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException
+     * @covers ::checkPreAuth
      */
     public function testLockedUser()
     {
@@ -48,50 +48,13 @@ class SugarUserCheckerTest extends \PHPUnit_Framework_TestCase
             ->method('isEnabled')
             ->willReturn(true);
         $this->lockout
-            ->method('isUserStillLocked')
+            ->method('isUserLocked')
             ->willReturn(true);
 
-        $this->lockout
-            ->method('getLockedMessage')
-            ->willReturn('locked message');
-
-        $this->checker->checkPreAuth($this->user);
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker::checkPreAuth
-     */
-    public function testUnLockedUser()
-    {
-        $this->lockout
-            ->method('isEnabled')
-            ->willReturn(true);
-        $this->lockout
-            ->method('isUserStillLocked')
-            ->willReturn(false);
-
-        $this->lockout
-            ->expects($this->never())
-            ->method('getLockedMessage');
-
-        $this->checker->checkPreAuth($this->user);
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker::checkPreAuth
-     */
-    public function testDisabledLockout()
-    {
-        $this->lockout
-            ->method('isEnabled')
-            ->willReturn(false);
-        $this->lockout
-            ->method('isUserStillLocked')
-            ->willReturn(true);
-
-        $this->lockout
-            ->expects($this->never())
-            ->method('getLockedMessage');
+        $this->lockout->expects($this->once())
+            ->method('throwLockoutException')
+            ->with($this->isInstanceOf(User::class))
+            ->willThrowException(new TemporaryLockedUserException('test'));
 
         $this->checker->checkPreAuth($this->user);
     }

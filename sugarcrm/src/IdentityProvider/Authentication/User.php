@@ -144,13 +144,14 @@ class User extends IdmUser
 
     /**
      * Locking user.
+     * @param $dateTime
      */
-    public function lockout()
+    public function lockout($dateTime)
     {
         /** @var \User $sugarUser */
         $sugarUser = $this->getSugarUser();
         $sugarUser->setPreference('lockout', '1');
-        $sugarUser->setPreference('logout_time', $this->getTimeDate()->nowDb());
+        $sugarUser->setPreference('logout_time', $dateTime);
         $sugarUser->setPreference('loginfailed', 0);
         $sugarUser->savePreferencesToDB();
     }
@@ -165,13 +166,5 @@ class User extends IdmUser
         $sugarUser->setPreference('lockout', '');
         $sugarUser->setPreference('loginfailed', $this->getLoginFailed() + 1);
         $sugarUser->savePreferencesToDB();
-    }
-
-    /**
-     * @return \TimeDate
-     */
-    protected function getTimeDate()
-    {
-        return \TimeDate::getInstance();
     }
 }

@@ -91,7 +91,7 @@ class SugarOnAuthLockoutSubscriber implements EventSubscriberInterface
         }
 
         if (($user->getLoginFailed() + 1) >= $this->lockout->getFailedLoginsCount()) {
-            $user->lockout();
+            $user->lockout($this->lockout->getTimeDate()->nowDb());
         } else {
             $user->incrementLoginFailed();
         }

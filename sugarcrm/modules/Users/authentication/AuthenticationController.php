@@ -10,7 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Symfony\Component\Security\Core\Exception\LockedException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\PermanentLockedUserException;
 
 class AuthenticationController
 {
@@ -108,14 +109,20 @@ class AuthenticationController
 		if(empty($params['noHooks'])) {
 		    LogicHook::initialize()->call_custom_logic('Users', 'before_login');
 		}
-
+        $this->loggedIn = false;
         try {
             $this->loginSuccess = $this->authController->loginAuthenticate($username, $password, false, $params);
             $this->loggedIn = true;
-        } catch (LockedException $e) {
-            throw new SugarApiExceptionNeedLogin($e->getMessage());            
+        } catch (TemporaryLockedUserException $e) {
+            $this->loginSuccess = false;
+            $_SESSION['login_error'] = $e->getMessage();
+        } catch (PermanentLockedUserException $e) {
+            $this->loginSuccess = false;
+            $_SESSION['login_error'] = $e->getMessage();
+            $_SESSION['waiting_error'] = $e->getWaitingErrorMessage();
         } catch (\Exception $e) {
-            throw new SugarApiExceptionNeedLogin($e->getMessage());
+            $this->loginSuccess = false;
+            $_SESSION['login_error'] = $e->getMessage();
         }
 
 		if($this->loginSuccess){

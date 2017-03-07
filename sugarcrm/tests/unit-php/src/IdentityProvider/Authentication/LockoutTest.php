@@ -1,73 +1,160 @@
 <?php
-/*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
+namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication;
 
-namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication;
-
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\PermanentLockedUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Lockout
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout
  */
-class LockoutTest extends \PHPUnit_Framework_TestCase
+class Lockout2Test extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var array
-     */
-    protected $originAppStrings;
 
     /**
-     * @var array
+     * @var \PHPUnit_Framework_MockObject_MockObject|Lockout
      */
-    protected $appStrings = array(
-        'LBL_LOGIN_ATTEMPTS_OVERRUN' => 'Too many failed login attempts.',
-        'LBL_LOGIN_LOGIN_TIME_ALLOWED' => 'You can try logging in again in ',
-        'LBL_LOGIN_LOGIN_TIME_DAYS' => 'days.',
-        'LBL_LOGIN_LOGIN_TIME_HOURS' => 'h.',
-        'LBL_LOGIN_LOGIN_TIME_MINUTES' => 'min.',
-        'LBL_LOGIN_LOGIN_TIME_SECONDS' => 'sec.',
-        'EXCEPTION_UNKNOWN_EXCEPTION' => 'Your request failed due to an unknown exception.'
-    );
+    protected $lockout;
 
     /**
-     * @var User|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|User
      */
-    protected $user = null;
+    protected $user;
 
     /**
-     * @var \User|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|\User
      */
-    protected $sugarUser = null;
+    protected $sugarUser;
 
     /**
-     * @var Lockout
+     * @var \PHPUnit_Framework_MockObject_MockObject|\TimeDate
      */
-    protected $lockout = null;
+    protected $timeDate;
 
     /**
-     * @var \TimeDate|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|\sugarDateTime
      */
-    protected $timeDate = null;
+    protected $sugarDateTime;
 
     /**
-     * @var \SugarDateTime|\PHPUnit_Framework_MockObject_MockObject
+     * @inheritDoc
      */
-    protected $sugarDateTime = null;
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->lockout = $this->getMockBuilder(Lockout::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getConfigValue', 'getAppString', 'getTimeDate'])
+            ->getMock();
+        $this->timeDate = $this->createMock(\TimeDate::class);
+        $this->sugarDateTime = $this->createMock(\SugarDateTime::class);
+
+        $this->lockout->expects($this->any())
+            ->method('getTimeDate')
+            ->willReturn($this->timeDate);
+
+        $this->user = $this->createMock(User::class);
+        $this->sugarUser = $this->createMock(\User::class);
+        $this->user->expects($this->any())
+            ->method('getSugarUser')
+            ->willReturn($this->sugarUser);
+
+    }
 
     /**
-     * @see testLockedMessage
+     * @covers ::isEnabled
+     */
+    public function testIsEnabled()
+    {
+        $this->lockout->expects($this->once())
+            ->method('getConfigValue')
+            ->with($this->equalTo('lockoutexpiration'), $this->equalTo(Lockout::LOCKOUT_DISABLED))
+            ->willReturn(Lockout::LOCK_TYPE_TIME);
+        $this->assertTrue($this->lockout->isEnabled());
+    }
+
+    /**
+     * @covers ::throwLockoutException
+     * @dataProvider providerThrowLockoutExceptionTimeType
+     * @param $logoutTime
+     * @param $config
+     * @param $expireTime
+     * @param $nowTime
+     * @param $exceptionMessage
+     * @param $appStringKey
+     * @param $appStringValue
+     */
+    public function testThrowLockoutExceptionTimeType(
+        $logoutTime,
+        $config,
+        $expireTime,
+        $nowTime,
+        $exceptionMessage,
+        $appStringKey,
+        $appStringValue
+    ) {
+        $this->lockout->expects($this->exactly(3))
+            ->method('getConfigValue')
+            ->withConsecutive(
+                [$this->equalTo('lockoutexpiration'), $this->equalTo(Lockout::LOCKOUT_DISABLED)],
+                [$this->equalTo('lockoutexpirationtime')],
+                [$this->equalTo('lockoutexpirationtype')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                Lockout::LOCK_TYPE_TIME,
+                $config['lockoutexpirationtime'],
+                $config['lockoutexpirationtype']
+            );
+
+        $this->sugarUser->expects($this->once())
+            ->method('getPreference')
+            ->with($this->equalTo('logout_time'))
+            ->willReturn($logoutTime);
+
+        $this->timeDate->expects($this->once())
+            ->method('fromDb')
+            ->with($this->equalTo($logoutTime))
+            ->willReturn($this->sugarDateTime);
+
+        $this->sugarDateTime->expects($this->once())
+            ->method('modify')
+            ->with($this->stringContains('minutes'))
+            ->willReturnSelf();
+
+        $this->sugarDateTime->expects($this->once())
+            ->method('asDb')
+            ->willReturn($expireTime);
+
+        $this->lockout->expects($this->exactly(3))
+            ->method('getAppString')
+            ->withConsecutive(
+                [$this->equalTo('LBL_LOGIN_ATTEMPTS_OVERRUN')],
+                [$this->equalTo('LBL_LOGIN_LOGIN_TIME_ALLOWED')],
+                [$this->equalTo($appStringKey)]
+            )
+            ->willReturnOnConsecutiveCalls(
+                'Too many failed login attempts.',
+                'You can try logging in again in ',
+                $appStringValue
+            );
+
+        $this->timeDate->expects($this->once())
+            ->method('nowDb')
+            ->willReturn($nowTime);
+
+        $this->expectException(TemporaryLockedUserException::class);
+        $this->expectExceptionMessage($exceptionMessage);
+
+        $this->lockout->throwLockoutException($this->user);
+
+    }
+
+    /**
+     * @see testThrowLockoutExceptionTimeType
      * @return array
      */
-    public function lockedMessageProvider()
+    public function providerThrowLockoutExceptionTimeType()
     {
         return [
             'loggingIn2days' => [
@@ -76,13 +163,8 @@ class LockoutTest extends \PHPUnit_Framework_TestCase
                 'expireTime' => '2017-02-15 01:01:01',
                 'nowTime' => '2017-02-13 01:01:01',
                 'expectsMessage' => 'Too many failed login attempts. You can try logging in again in 2days.',
-            ],
-            'loggingIn1day' => [
-                'logoutTime' => '2017-02-13 01:01:01',
-                'config' => ['lockoutexpirationtime' => 1, 'lockoutexpirationtype' => 1440],
-                'expireTime' => '2017-02-14 01:01:01',
-                'nowTime' => '2017-02-13 01:01:01',
-                'expectsMessage' => 'Too many failed login attempts. You can try logging in again in 1days.',
+                'appStringKey' => 'LBL_LOGIN_LOGIN_TIME_DAYS',
+                'appStringValue' => 'days.',
             ],
             'loggingIn2hours' => [
                 'logoutTime' => '2017-02-13 01:01:01',
@@ -90,13 +172,8 @@ class LockoutTest extends \PHPUnit_Framework_TestCase
                 'expireTime' => '2017-02-13 03:01:01',
                 'nowTime' => '2017-02-13 01:01:01',
                 'expectsMessage' => 'Too many failed login attempts. You can try logging in again in 2h.',
-            ],
-            'loggingIn1hours' => [
-                'logoutTime' => '2017-02-13 01:01:01',
-                'config' => ['lockoutexpirationtime' => 1, 'lockoutexpirationtype' => 60],
-                'expireTime' => '2017-02-13 02:01:01',
-                'nowTime' => '2017-02-13 01:01:01',
-                'expectsMessage' => 'Too many failed login attempts. You can try logging in again in 1h.',
+                'appStringKey' => 'LBL_LOGIN_LOGIN_TIME_HOURS',
+                'appStringValue' => 'h.',
             ],
             'loggingIn2minutes' => [
                 'logoutTime' => '2017-02-13 01:01:01',
@@ -104,13 +181,8 @@ class LockoutTest extends \PHPUnit_Framework_TestCase
                 'expireTime' => '2017-02-13 01:03:01',
                 'nowTime' => '2017-02-13 01:01:01',
                 'expectsMessage' => 'Too many failed login attempts. You can try logging in again in 2min.',
-            ],
-            'loggingIn1minute' => [
-                'logoutTime' => '2017-02-13 01:01:01',
-                'config' => ['lockoutexpirationtime' => 1, 'lockoutexpirationtype' => 1],
-                'expireTime' => '2017-02-13 01:02:01',
-                'nowTime' => '2017-02-13 01:01:01',
-                'expectsMessage' => 'Too many failed login attempts. You can try logging in again in 1min.',
+                'appStringKey' => 'LBL_LOGIN_LOGIN_TIME_MINUTES',
+                'appStringValue' => 'min.',
             ],
             'loggingIn20seconds' => [
                 'logoutTime' => '2017-02-13 01:01:01',
@@ -118,254 +190,135 @@ class LockoutTest extends \PHPUnit_Framework_TestCase
                 'expireTime' => '2017-02-13 01:03:01',
                 'nowTime' => '2017-02-13 01:02:41',
                 'expectsMessage' => 'Too many failed login attempts. You can try logging in again in 20sec.',
-            ],
-            'loggingIn10seconds' => [
-                'logoutTime' => '2017-02-13 01:01:01',
-                'config' => ['lockoutexpirationtime' => 2, 'lockoutexpirationtype' => 1],
-                'expireTime' => '2017-02-13 01:03:01',
-                'nowTime' => '2017-02-13 01:02:51',
-                'expectsMessage' => 'Too many failed login attempts. You can try logging in again in 10sec.',
-            ],
-            'unknownException' => [
-                'logoutTime' => '',
-                'config' => ['lockoutexpirationtime' => 2, 'lockoutexpirationtype' => 1],
-                'expireTime' => false,
-                'nowTime' => '2017-02-13 01:02:51',
-                'expectsMessage' => 'Your request failed due to an unknown exception.',
+                'appStringKey' => 'LBL_LOGIN_LOGIN_TIME_SECONDS',
+                'appStringValue' => 'sec.',
             ],
         ];
     }
 
     /**
-     * @see testIsUserStillLocked
-     * @return array
+     * @covers ::throwLockoutException
      */
-    public function isUserStillLockedProvider()
+    public function testThrowLockoutExceptionTimeTypeNoLogOutTime()
     {
-        return [
-            'lockedBy5Hours' => [
-                'logoutTime' => '2017-02-13 01:01:01',
-                'config' => ['lockoutexpirationtime' => 5, 'lockoutexpirationtype' => 60],
-                'expireTime' => '2017-02-13 06:01:01',
-                'nowTime' => '2017-02-13 05:01:01',
-                'expectsLocked' => true,
-            ],
-            'locked10Minutes' => [
-                'logoutTime' => '2017-02-13 01:01:01',
-                'config' => ['lockoutexpirationtime' => 10, 'lockoutexpirationtype' => 1],
-                'expireTime' => '2017-02-13 01:11:01',
-                'nowTime' => '2017-02-13 01:10:01',
-                'expectsLocked' => true,
-            ],
-            'unLocked5Hours' => [
-                'logoutTime' => '2017-02-13 01:01:01',
-                'config' => ['lockoutexpirationtime' => 5, 'lockoutexpirationtype' => 60],
-                'expireTime' => '2017-02-13 06:01:01',
-                'nowTime' => '2017-02-13 07:01:01',
-                'expectsLocked' => false,
-            ],
-            'unLocked10Minutes' => [
-                'logoutTime' => '2017-02-13 01:01:01',
-                'config' => ['lockoutexpirationtime' => 10, 'lockoutexpirationtype' => 1],
-                'expireTime' => '2017-02-13 01:11:01',
-                'nowTime' => '2017-02-13 01:11:01',
-                'expectsLocked' => false,
-            ],
-        ];
-    }
+        $this->lockout->expects($this->once())
+            ->method('getConfigValue')
+            ->with($this->equalTo('lockoutexpiration'), $this->equalTo(Lockout::LOCKOUT_DISABLED))
+            ->willReturn(Lockout::LOCK_TYPE_TIME);
 
-    /**
-     * @see testGetLockoutExpirationLogin
-     * @return array
-     */
-    public function lockoutExpirationLoginProvider()
-    {
-        return [
-            'issetValid' => ['config' => ['lockoutexpirationlogin' => 2], 'expected' => 2],
-            'notConfigured' => ['config' => [], 'expected' => 0],
-            'empty' => ['config' => ['lockoutexpirationlogin' => 0], 'expected' => 0],
-            'null' => ['config' => ['lockoutexpirationlogin' => null], 'expected' => 0],
-            'string' => ['config' => ['lockoutexpirationlogin' => '3'], 'expected' => 3],
-        ];
-    }
-
-    /**
-     * @see testIsEnabled
-     * @return array
-     */
-    public function isEnabledProvider()
-    {
-        return [
-            'enabled' => ['config' => ['lockoutexpiration' => Lockout::ENABLED], 'expected' => true],
-            'disabled' => ['config' => ['lockoutexpiration' => 1], 'expected' => false],
-            'notConfigured' => ['config' => [], 'expected' => false],
-        ];
-    }
-
-    /**
-     * @covers       ::getLockedMessage
-     * @dataProvider lockedMessageProvider
-     * @param $logoutTime
-     * @param $config
-     * @param $expireTime
-     * @param $nowTime
-     * @param $expectsMessage
-     */
-    public function testLockedMessage($logoutTime, $config, $expireTime, $nowTime, $expectsMessage)
-    {
-        $this->sugarUser
+        $this->sugarUser->expects($this->once())
             ->method('getPreference')
-            ->with('logout_time')
-            ->willReturn($logoutTime);
+            ->with($this->equalTo('logout_time'))
+            ->willReturn(null);
 
-        $this->lockout
-            ->method('getPasswordSettings')
-            ->willReturn($config);
+        $this->lockout->expects($this->once())
+            ->method('getAppString')
+            ->with($this->equalTo('LBL_LOGIN_ATTEMPTS_OVERRUN'))
+            ->willReturn('Too many failed login attempts.');
 
-        $this->timeDate->method('nowDb')
-            ->willReturn($nowTime);
-        $this->timeDate->method('fromDb')
-            ->with($logoutTime)
+        $this->expectException(TemporaryLockedUserException::class);
+        $this->expectExceptionMessage('Too many failed login attempts.');
+
+        $this->lockout->throwLockoutException($this->user);
+    }
+
+    /**
+     * @covers ::throwLockoutException
+     */
+    public function testThrowLockoutExceptionPermanentType()
+    {
+        $this->lockout->expects($this->once())
+            ->method('getConfigValue')
+            ->with($this->equalTo('lockoutexpiration'), $this->equalTo(Lockout::LOCKOUT_DISABLED))
+            ->willReturn(Lockout::LOCK_TYPE_PERMANENT);
+
+        $this->lockout->expects($this->exactly(2))
+            ->method('getAppString')
+            ->withConsecutive(
+                [$this->equalTo('LBL_LOGIN_ATTEMPTS_OVERRUN')],
+                [$this->equalTo('LBL_LOGIN_ADMIN_CALL')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                'Too many failed login attempts.',
+                'Test'
+            );
+
+        $this->expectException(PermanentLockedUserException::class);
+        $this->expectExceptionMessage('Too many failed login attempts.');
+
+        $this->lockout->throwLockoutException($this->user);
+    }
+
+    /**
+     * @covers ::isUserLocked
+     */
+    public function testIsUserLockedPermanent()
+    {
+        $this->lockout->expects($this->once())
+            ->method('getConfigValue')
+            ->with($this->equalTo('lockoutexpiration'), $this->equalTo(Lockout::LOCKOUT_DISABLED))
+            ->willReturn(Lockout::LOCK_TYPE_PERMANENT);
+        $this->user->expects($this->once())
+            ->method('getLockout')
+            ->willReturn(true);
+
+        $this->assertTrue($this->lockout->isUserLocked($this->user));
+    }
+
+    /**
+     * @covers ::isUserLocked
+     */
+    public function testIsUserLockedTime()
+    {
+        $this->lockout->expects($this->exactly(3))
+            ->method('getConfigValue')
+            ->withConsecutive(
+                [$this->equalTo('lockoutexpiration'), $this->equalTo(Lockout::LOCKOUT_DISABLED)],
+                [$this->equalTo('lockoutexpirationtime')],
+                [$this->equalTo('lockoutexpirationtype')]
+            )
+            ->willReturnOnConsecutiveCalls(
+                Lockout::LOCK_TYPE_TIME,
+                2,
+                1440
+            );
+
+        $this->sugarUser->expects($this->once())
+            ->method('getPreference')
+            ->with($this->equalTo('logout_time'))
+            ->willReturn('2017-02-13 01:01:01');
+
+        $this->timeDate->expects($this->once())
+            ->method('fromDb')
+            ->with($this->equalTo('2017-02-13 01:01:01'))
             ->willReturn($this->sugarDateTime);
 
-        $this->sugarDateTime->method('modify')
-            ->with($this->callback(function ($modify) use ($logoutTime, $expireTime) {
-                $expireTimeCalculated = (new \DateTime($logoutTime))->modify($modify)->format('Y-m-d H:i:s');
-                $this->assertEquals($expireTime, $expireTimeCalculated, "Expire date doesn't equal modified date.");
-                return true;
-            }))
+        $this->sugarDateTime->expects($this->once())
+            ->method('modify')
+            ->with($this->stringContains('minutes'))
             ->willReturnSelf();
 
-        $this->sugarDateTime->method('asDb')
-            ->willReturn($expireTime);
+        $this->sugarDateTime->expects($this->once())
+            ->method('asDb')
+            ->willReturn('2017-02-15 01:01:01');
 
-        $message = $this->lockout->getLockedMessage($this->user);
-        $this->assertEquals($expectsMessage, $message);
+        $this->timeDate->expects($this->once())
+            ->method('nowDb')
+            ->willReturn('2017-02-13 01:01:01');
+
+        $this->assertTrue($this->lockout->isUserLocked($this->user));
     }
 
     /**
-     * @covers       ::isUserStillLocked
-     * @dataProvider isUserStillLockedProvider
-     * @param $logoutTime
-     * @param $config
-     * @param $expireTime
-     * @param $nowTime
-     * @param $expectsLocked
+     * @covers ::getFailedLoginsCount
      */
-    public function testIsUserStillLocked($logoutTime, $config, $expireTime, $nowTime, $expectsLocked)
+    public function testGetFailedLoginsCount()
     {
-        $this->sugarUser
-            ->method('getPreference')
-            ->with('logout_time')
-            ->willReturn($logoutTime);
+        $this->lockout->expects($this->once())
+            ->method('getConfigValue')
+            ->with($this->equalTo('lockoutexpirationlogin'), $this->identicalTo(0))
+            ->willReturn($count = 3);
 
-        $this->lockout
-            ->method('getPasswordSettings')
-            ->willReturn($config);
-
-        $this->timeDate->method('nowDb')
-            ->willReturn($nowTime);
-        $this->timeDate->method('fromDb')
-            ->with($logoutTime)
-            ->willReturn($this->sugarDateTime);
-
-        $this->sugarDateTime->method('modify')
-            ->with($this->callback(function ($modify) use ($logoutTime, $expireTime) {
-                $expireTimeCalculated = (new \DateTime($logoutTime))
-                    ->modify($modify)
-                    ->format('Y-m-d H:i:s');
-                $this->assertEquals($expireTime, $expireTimeCalculated, "Expire date doesn't equal modified date.");
-                return true;
-            }))
-            ->willReturnSelf();
-
-        $this->sugarDateTime->method('asDb')
-            ->willReturn($expireTime);
-
-        $result = $this->lockout->isUserStillLocked($this->user);
-        $this->assertEquals($expectsLocked, $result);
-    }
-
-    /**
-     * @covers       ::getFailedLoginsCount
-     * @dataProvider lockoutExpirationLoginProvider
-     * @param array $config
-     * @param bool $expected
-     */
-    public function testGetLockoutExpirationLogin($config, $expected)
-    {
-        $this->lockout
-            ->method('getPasswordSettings')
-            ->willReturn($config);
-
-        $result = $this->lockout->getFailedLoginsCount();
-
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * @covers       ::isEnabled
-     * @dataProvider isEnabledProvider
-     * @param array $config
-     * @param bool $expected
-     */
-    public function testIsEnabled($config, $expected)
-    {
-        $this->lockout
-            ->method('getPasswordSettings')
-            ->willReturn($config);
-
-        $result = $this->lockout->isEnabled();
-
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->timeDate = $this->getMockBuilder(\TimeDate::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->sugarDateTime = $this->getMockBuilder(\SugarDateTime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->lockout = $this->getMockBuilder(Lockout::class)
-            ->setMethods(['getPasswordSettings', 'getTimeDate'])
-            ->getMock();
-        $this->lockout->method('getTimeDate')->willReturn($this->timeDate);
-
-        $this->user = $this->getMockBuilder(User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->sugarUser = $this->getMockBuilder(\User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->user->method('getSugarUser')->willReturn($this->sugarUser);
-
-        if (!empty($GLOBALS['app_strings'])) {
-            $this->originAppStrings = $GLOBALS['app_strings'];
-        }
-
-        $GLOBALS['app_strings'] = $this->appStrings;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
-        unset($GLOBALS['app_strings']);
-        if ($this->originAppStrings) {
-            $GLOBALS['app_strings'] = $this->originAppStrings;
-        }
+        $this->assertEquals($count, $this->lockout->getFailedLoginsCount());
     }
 }

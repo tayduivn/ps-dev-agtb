@@ -12,11 +12,20 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\PermanentLockedUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException;
 
 class Lockout
 {
-    const ENABLED = 2;
+    const LOCKOUT_DISABLED = 0;
+    const LOCK_TYPE_PERMANENT = 1;
+    const LOCK_TYPE_TIME = 2;
+
+    /**
+     * password setting config
+     * @var array
+     */
+    protected $config = [];
 
     /**
      * Is enabled lockout.
@@ -24,8 +33,7 @@ class Lockout
      */
     public function isEnabled()
     {
-        $config = $this->getPasswordSettings();
-        return array_key_exists('lockoutexpiration', $config) && $config['lockoutexpiration'] == self::ENABLED;
+        return $this->getLockType() != self::LOCKOUT_DISABLED;
     }
 
     /**
@@ -35,65 +43,94 @@ class Lockout
      */
     protected function calculateExpireTime(User $user)
     {
-        $config = $this->getPasswordSettings();
         $logoutTime = $user->getSugarUser()->getPreference('logout_time');
         if (empty($logoutTime)) {
             return false;
         }
-        $lockoutDurationMins = $config['lockoutexpirationtime'] * $config['lockoutexpirationtype'];
-        $expireTime = $this->getTimeDate()
+        $lockoutDurationMins =
+            $this->getConfigValue('lockoutexpirationtime') * $this->getConfigValue('lockoutexpirationtype');
+        return $this->getTimeDate()
             ->fromDb($logoutTime)
             ->modify("+$lockoutDurationMins minutes")
             ->asDb();
-        return $expireTime;
     }
 
     /**
-     * Generation message of error.
      * @param User $user
-     * @return string
+     * @return TemporaryLockedUserException|PermanentLockedUserException
      */
-    public function getLockedMessage(User $user)
+    public function throwLockoutException(User $user)
+    {
+        if ($this->getLockType() == self::LOCK_TYPE_TIME) {
+            $exception = $this->getTimeLockedException($user);
+        } else {
+            $exception = $this->getPermanentLockedException();
+        }
+        $exception->setUser($user);
+        throw $exception;
+    }
+
+    /**
+     * return exception for lock out by time
+     * @param User $user
+     * @return TemporaryLockedUserException
+     */
+    protected function getTimeLockedException(User $user)
     {
         $expireTime = $this->calculateExpireTime($user);
-        if (!$expireTime) {
-            return $GLOBALS['app_strings']['EXCEPTION_UNKNOWN_EXCEPTION'];
-        }
-        $timeLeft = strtotime($expireTime) - strtotime($this->getTimeDate()->nowDb());
+        $message = trim($this->getAppString('LBL_LOGIN_ATTEMPTS_OVERRUN'));
+        if ($expireTime) {
+            $timeLeft = strtotime($expireTime) - strtotime($this->getTimeDate()->nowDb());
 
-        $message = trim($GLOBALS['app_strings']['LBL_LOGIN_ATTEMPTS_OVERRUN'])
-            . ' ' . trim($GLOBALS['app_strings']['LBL_LOGIN_LOGIN_TIME_ALLOWED'])
-            . ' ';
-        switch (true) {
-            case (floor($timeLeft / 86400) != 0):
-                $message .= floor($timeLeft / 86400) . $GLOBALS['app_strings']['LBL_LOGIN_LOGIN_TIME_DAYS'];
-                break;
-            case (floor($timeLeft / 3600) != 0):
-                $message .= floor($timeLeft / 3600) . $GLOBALS['app_strings']['LBL_LOGIN_LOGIN_TIME_HOURS'];
-                break;
-            case (floor($timeLeft / 60) != 0):
-                $message .= floor($timeLeft / 60) . $GLOBALS['app_strings']['LBL_LOGIN_LOGIN_TIME_MINUTES'];
-                break;
-            case (floor($timeLeft) != 0):
-                $message .= floor($timeLeft) . $GLOBALS['app_strings']['LBL_LOGIN_LOGIN_TIME_SECONDS'];
-                break;
+            $message .= sprintf(' %s ', trim($this->getAppString('LBL_LOGIN_LOGIN_TIME_ALLOWED')));
+
+            switch (true) {
+                case (floor($timeLeft/86400) != 0):
+                    $message .= floor($timeLeft/86400) . $this->getAppString('LBL_LOGIN_LOGIN_TIME_DAYS');
+                    break;
+                case (floor($timeLeft/3600) != 0):
+                    $message .= floor($timeLeft/3600) . $this->getAppString('LBL_LOGIN_LOGIN_TIME_HOURS');
+                    break;
+                case (floor($timeLeft/60) != 0):
+                    $message .= floor($timeLeft/60) . $this->getAppString('LBL_LOGIN_LOGIN_TIME_MINUTES');
+                    break;
+                case (floor($timeLeft) != 0):
+                    $message .= floor($timeLeft) . $this->getAppString('LBL_LOGIN_LOGIN_TIME_SECONDS');
+                    break;
+            }
         }
-        return $message;
+        return new TemporaryLockedUserException($message);
     }
 
     /**
-     * Is user still locked.
+     * return exception for permanent lock out
+     * @return PermanentLockedUserException
+     */
+    protected function getPermanentLockedException()
+    {
+        $exception = new PermanentLockedUserException($this->getAppString('LBL_LOGIN_ATTEMPTS_OVERRUN'));
+        $exception->setWaitingErrorMessage($this->getAppString('LBL_LOGIN_ADMIN_CALL'));
+        return $exception;
+    }
+
+    /**
+     * Is user locked?
      * @param User $user
      * @return bool
      */
-    public function isUserStillLocked(User $user)
+    public function isUserLocked(User $user)
     {
-        $expireTime = $this->calculateExpireTime($user);
-        if (!$expireTime) {
-            return false;
+        $result = false;
+        $lockType = $this->getLockType();
+        if ($lockType == self::LOCK_TYPE_PERMANENT) {
+            $result = $user->getLockout();
+        } elseif ($lockType == self::LOCK_TYPE_TIME) {
+            $expireTime = $this->calculateExpireTime($user);
+            if ($expireTime) {
+                $result = strtotime($this->getTimeDate()->nowDb()) < strtotime($expireTime);
+            }
         }
-        $nowTime = $this->getTimeDate()->nowDb();
-        return $nowTime < $expireTime;
+        return $result;
     }
 
     /**
@@ -102,28 +139,47 @@ class Lockout
      */
     public function getFailedLoginsCount()
     {
-        $config = $this->getPasswordSettings();
-        if (array_key_exists('lockoutexpirationlogin', $config)) {
-            return intval($config['lockoutexpirationlogin']);
-        } else {
-            return 0;
-        }
+        return (int) $this->getConfigValue('lockoutexpirationlogin', 0);
     }
 
     /**
      * @return \TimeDate
      */
-    protected function getTimeDate()
+    public function getTimeDate()
     {
         return \TimeDate::getInstance();
     }
 
     /**
-     * Return password's settings from sugar config.
+     * return password settings config value
+     * @param $key
+     * @param null $default
+     * @return int|mixed
+     */
+    protected function getConfigValue($key, $default = null)
+    {
+        if (!$this->config) {
+            $this->config = \SugarConfig::getInstance()->get('passwordsetting');
+        }
+        return array_key_exists($key, $this->config) ? $this->config[$key] : $default;
+    }
+
+    /**
+     * return lockout type
+     * @return int
+     */
+    protected function getLockType()
+    {
+        return $this->getConfigValue('lockoutexpiration', self::LOCKOUT_DISABLED);
+    }
+
+    /**
+     * return message from global app strings
+     * @param $key
      * @return mixed
      */
-    protected function getPasswordSettings()
+    protected function getAppString($key)
     {
-        return \SugarConfig::getInstance()->get('passwordsetting');
+        return $GLOBALS['app_strings'][$key];
     }
 }
