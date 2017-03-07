@@ -10,27 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
- class ConnectorRecord extends MergeRecord{
-	var $object_name = 'ConnectorRecord';
-    var $module_dir = 'Connector'; 
-
-
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function ConnectorRecord($merge_module = '', $merge_id = '')
-    {
-        self::__construct($merge_module, $merge_id);
-    }
-
-    
-    function __construct($merge_module = '', $merge_id = '') {
-       parent::__construct($merge_module, $merge_id);
-    }
-
- }
-?>
+class ConnectorRecord extends MergeRecord
+{
+    public $object_name = 'ConnectorRecord';
+    public $module_dir = 'Connector';
+}

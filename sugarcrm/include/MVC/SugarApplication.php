@@ -40,15 +40,6 @@ class SugarApplication
     protected $request;
 
     /**
-     * Use __construct
-     * @deprecated
-     */
-    protected function SugarApplication()
-    {
-        self::__construct();
-    }
-
-    /**
      * Ctor
      */
     public function __construct()

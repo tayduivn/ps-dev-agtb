@@ -139,7 +139,10 @@ abstract class AbstractMetaDataParser
 		}
 	}
 
-	abstract static function _trimFieldDefs ( $def ) ;
+    public static function _trimFieldDefs($def)
+    {
+        throw new BadMethodCallException(__METHOD__ . ' is not implemented');
+    }
 
 	public function getRequiredFields(){
 	    $fieldDefs = $this->implementation->getFielddefs();

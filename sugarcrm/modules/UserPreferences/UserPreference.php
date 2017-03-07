@@ -46,17 +46,6 @@ class UserPreference extends SugarBean
 
     protected $_userFocus;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function UserPreference(User $user = null)
-    {
-        self::__construct($user);
-    }
-
     // Do not actually declare, use the functions statically
     public function __construct(User $user = null)
     {

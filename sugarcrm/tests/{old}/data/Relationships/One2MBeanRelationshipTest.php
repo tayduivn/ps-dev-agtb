@@ -12,6 +12,13 @@
 
 class One2MBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected function tearDown()
+    {
+        SugarTestKBContentUtilities::removeAllCreatedBeans();
+
+        parent::tearDown();
+    }
+
     public function testProperRhsFieldIsSet()
     {
         $primaryBean = SugarTestKBContentUtilities::createBean(array(
@@ -23,8 +30,6 @@ class One2MBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $primaryBean->localizations->add($relatedBean);
 
         $this->assertEquals($primaryBean->kbdocument_id, $relatedBean->kbdocument_id);
-
-        SugarTestKBContentUtilities::removeAllCreatedBeans();
     }
 
     /**
@@ -42,31 +47,36 @@ class One2MBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $removeAll_return,
         $result
     ) {
-
-        $additionalFields = array(
-            'return' => $result,
+        $mock = $this->createPartialMock(
+            'One2MRelationship',
+            array('add', 'relationship_exists', 'compareRow', 'isRHSMany', 'removeAll')
         );
 
-        $mock = $this->getMockBuilder('SugarO2mMock')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
+        $mock->method('add')
+            ->willReturn($result);
 
-        $mock->relationshipExists = $relationshipExists;
-        $mock->rowCompared = $rowCompared;
-        $mock->isRHSMany_return = $isRHSMany_return;
-        $mock->removeAll_return = $removeAll_return;
+        $mock->method('relationship_exists')
+            ->willReturn($relationshipExists);
+
+        $mock->method('compareRow')
+            ->willReturn($rowCompared);
+
+        $mock->method('isRHSMany')
+            ->willReturn($isRHSMany_return);
+
+        $mock->method('removeAll')
+            ->willReturn($removeAll_return);
 
         $beanMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $value = $mock->add($beanMock, $beanMock, $additionalFields);
+        $value = $mock->add($beanMock, $beanMock);
 
         $this->assertEquals($result, $value);
     }
 
-    public function addProvider()
+    public static function addProvider()
     {
         return array(
             array(false, false, true, true, true),
@@ -83,53 +93,5 @@ class One2MBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             array(false, true, false, false, false),
             array(true, true, true, true, false),
         );
-    }
-}
-
-/**
- * test class for mocking parents
- */
-class SugarO2mMockParent extends One2MRelationship
-{
-    public function add($lhs, $rhs, $additionalFields = array())
-    {
-        return $additionalFields['return'];
-    }
-}
-
-/**
- * Test class used for exposing/mocking protected methods
- */
-class SugarO2mMock extends SugarO2mMockParent
-{
-    public $rowToInsert = null;
-    public $relationshipExists = null;
-    public $rowCompared = null;
-    public $isRHSMany_return = null;
-    public $removeAll_return = null;
-
-    public function getRowToInsert()
-    {
-        return $this->rowToInsert;
-    }
-
-    public function relationship_exists($lhs, $rhs)
-    {
-        return $this->relationshipExists;
-    }
-
-    public function compareRow()
-    {
-        return $this->rowCompared;
-    }
-
-    public function isRHSMany()
-    {
-        return $this->isRHSMany_return;
-    }
-
-    public function removeAll()
-    {
-        return $this->removeAll_return;
     }
 }

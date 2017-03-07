@@ -40,17 +40,6 @@ class OAuthToken extends SugarBean
     const ACCESS = 2;
     const INVALID = 3;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function OAuthToken($token = '', $secret = '')
-    {
-        self::__construct($token, $secret);
-    }
-
     public function __construct($token='', $secret='')
 	{
 	    parent::__construct();

@@ -49,31 +49,4 @@ class ProjectResource extends SugarBean {
 	var $module_dir = 'ProjectResources';
 	var $new_schema = true;
 	var $table_name = 'project_resources';
-
-	//////////////////////////////////////////////////////////////////
-	// METHODS
-	//////////////////////////////////////////////////////////////////
-
-
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function ProjectResource()
-    {
-        $this->__construct();
-    }
-
-
-	/**
-	 *
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}    
-	
 }
-?>

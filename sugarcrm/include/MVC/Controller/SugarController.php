@@ -147,16 +147,6 @@ class SugarController
     protected $request;
 
     /**
-     * Constructor. This is meant to load up the module, action, record as well
-     * as the mapping arrays.
-     * @deprecated
-     */
-    protected function SugarController()
-    {
-        self::__construct();
-    }
-
-    /**
      * Ctor
      *
      * @param Request $request

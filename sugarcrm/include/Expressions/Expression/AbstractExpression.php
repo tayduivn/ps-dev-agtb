@@ -123,7 +123,10 @@ abstract class AbstractExpression
 	 * Returns the JavaScript equivalent for the evaluate
 	 * function.
 	 */
-	abstract static function getJSEvaluate();
+    public static function getJSEvaluate()
+    {
+        throw new BadMethodCallException(__METHOD__ . ' is not implemented');
+    }
 
 	/**
 	 * Returns a string representation of this expression.
@@ -134,7 +137,10 @@ abstract class AbstractExpression
 	/**
 	 * Defines the required types of each of the individual parameters.
 	 */
-	abstract static function getParameterTypes();
+    public static function getParameterTypes()
+    {
+        throw new BadMethodCallException(__METHOD__ . ' is not implemented');
+    }
 
 	/**
 	 * Validates the parameters and throws an Exception if invalid.

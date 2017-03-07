@@ -44,7 +44,10 @@ abstract class AbstractAction {
 	 *
 	 * @return string javascript.
 	 */
-	abstract static function getJavascriptClass() ;
+    public static function getJavascriptClass()
+    {
+        throw new BadMethodCallException(__METHOD__ . ' is not implemented');
+    }
 
     /**
      * Checks if the Expression Action is allowed for the given action
@@ -85,6 +88,8 @@ abstract class AbstractAction {
 	    );
 	}
 
-	abstract static function getActionName();
-
+    public static function getActionName()
+    {
+        throw new BadMethodCallException(__METHOD__ . ' is not implemented');
+    }
 }
