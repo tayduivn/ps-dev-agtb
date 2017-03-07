@@ -13,8 +13,6 @@
 
 include_once 'modules/Categories/Category.php';
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-
 /**
  * Test for Categories module
  */
@@ -87,7 +85,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $expected = 'TestUpdateCategoryName' . mt_rand();
 
-        TestReflection::callProtectedMethod(
+        SugarTestReflection::callProtectedMethod(
             self::$root,
             'update',
             array(
