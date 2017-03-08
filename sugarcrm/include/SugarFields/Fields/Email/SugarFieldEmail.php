@@ -202,7 +202,7 @@ class SugarFieldEmail extends SugarFieldBase
                 false,
                 $row['invalid_email'],
                 $row['opt_out'],
-                null,
+                $row['id'],
                 false
             );
         }

@@ -374,4 +374,18 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
         $guid = $this->ea->getEmailGUID($address->email_address);
         $this->assertSame($address->id, $guid);
     }
+
+    /**
+     * @covers ::getEmailsQuery
+     */
+    public function testGetEmailsQuery()
+    {
+        $table = 'email_addresses';
+        $q = $this->ea->getEmailsQuery('Contacts');
+        $this->assertTrue($q->select->checkField('id', $table), 'id should be selected');
+        $this->assertTrue($q->select->checkField('email_address', $table), 'email_address should be selected');
+        $this->assertTrue($q->select->checkField('opt_out', $table), 'opt_out should be selected');
+        $this->assertTrue($q->select->checkField('invalid_email', $table), 'invalid_email should be selected');
+        //Note: Not sure how to test that the fields from the join are added to the select clause.
+    }
 }

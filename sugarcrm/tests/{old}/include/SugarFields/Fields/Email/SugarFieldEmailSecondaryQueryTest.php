@@ -88,6 +88,8 @@ class SugarFieldEmailSecondaryQueryTest extends Sugar_PHPUnit_Framework_TestCase
                 } else {
                     $this->assertFalse($addr['primary_address']==true, "Email {$addr['email_address']} is primary for {$bean->id}");                    
                 }
+
+                $this->assertNotEmpty($addr['email_address_id'], 'The ID of the email address is always present');
             }
         }
     }
