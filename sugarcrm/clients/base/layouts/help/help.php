@@ -37,7 +37,7 @@ $viewdefs['base']['layout']['help'] = array(
                                 'community' => array(
                                     'color' => 'green',
                                     'icon' => 'fa-comments-o',
-                                    'url' => 'https://community.sugarcrm.com/',
+                                    'url' => 'https://community.sugarcrm.com/community/end-user',
                                     'link' => 'LBL_LEARNING_RESOURCES_COMMUNITY_LINK',
                                 ),
                                 'support' => array(
