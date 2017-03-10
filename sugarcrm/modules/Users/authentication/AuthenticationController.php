@@ -12,6 +12,10 @@
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\PermanentLockedUserException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Sugarcrm\IdentityProvider\Authentication\Exception\SAMLRequestException;
+use Sugarcrm\IdentityProvider\Authentication\Exception\SAMLResponseException;
 
 class AuthenticationController
 {
@@ -101,6 +105,7 @@ class AuthenticationController
 	 */
 	public function login($username, $password, $params = array())
 	{
+        global $log;
 		//kbrill bug #13225
 		$_SESSION['loginAttempts'] = (isset($_SESSION['loginAttempts']))? $_SESSION['loginAttempts'] + 1: 1;
 		unset($GLOBALS['login_error']);
@@ -110,19 +115,29 @@ class AuthenticationController
 		    LogicHook::initialize()->call_custom_logic('Users', 'before_login');
 		}
         $this->loggedIn = false;
+        $this->loginSuccess = false;
         try {
             $this->loginSuccess = $this->authController->loginAuthenticate($username, $password, false, $params);
             $this->loggedIn = true;
         } catch (TemporaryLockedUserException $e) {
-            $this->loginSuccess = false;
             $_SESSION['login_error'] = $e->getMessage();
         } catch (PermanentLockedUserException $e) {
-            $this->loginSuccess = false;
             $_SESSION['login_error'] = $e->getMessage();
             $_SESSION['waiting_error'] = $e->getWaitingErrorMessage();
-        } catch (\Exception $e) {
-            $this->loginSuccess = false;
+        } catch (BadCredentialsException $e) {
+            $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
+        } catch (SAMLRequestException $e) {
+            $log->error($e->getMessage());
+            $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
+        } catch (SAMLResponseException $e) {
+            $log->error($e->getMessage());
+            $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
+        } catch (AuthenticationException $e) {
+            $log->error($e->getMessage());
             $_SESSION['login_error'] = $e->getMessage();
+        } catch (\Exception $e) {
+            $log->error($e->getMessage());
+            $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
         }
 
 		if($this->loginSuccess){

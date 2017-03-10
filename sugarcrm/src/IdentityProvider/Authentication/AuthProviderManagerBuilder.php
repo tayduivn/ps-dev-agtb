@@ -19,7 +19,6 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UpdateUse
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\PostLoginAuthListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UserPasswordListener;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\SugarOnFailureAuthListener;
 use Symfony\Component\Security\Core\AuthenticationEvents;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
@@ -54,7 +53,6 @@ class AuthProviderManagerBuilder extends AuthProviderBasicManagerBuilder
             [new PostLoginAuthListener(), 'execute']
         );
 
-        $dispatcher->addListener(AuthenticationEvents::AUTHENTICATION_FAILURE, new SugarOnFailureAuthListener());
         $dispatcher->addSubscriber(new SugarOnAuthLockoutSubscriber(new Lockout(), new SugarLocalUserProvider()));
         return $dispatcher;
     }
