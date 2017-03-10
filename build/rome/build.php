@@ -20,6 +20,10 @@ if (!empty($config['ver'])) {
     $rome->setVersion($config['ver']);
 }
 
+if (!empty($config['build_number'])) {
+    $rome->setBuildNumber($config['build_number']);
+}
+
 if (!empty($config['exclude_dirs'])) {
     $rome->setExcludeDirs(explode(",", $config['exclude_dirs']));
 }
@@ -305,6 +309,9 @@ Build options:
     you must specify your project location using —-base_dir
 
     php build.php --ver=6.1.0 --base_dir=/Users/mitani/code/Mango
+    
+--build_number
+    Specify a build number for this build, defaults to 999.
 
 --latin
     Add language files to the build.

@@ -1,0 +1,1 @@
+{"sugar_version":"@_SUGAR_VERSION", "sugar_db_version":"@_SUGAR_VERSION", "sugar_flavor":"@_SUGAR_FLAV", "sugar_build":"@_SUGAR_BUILD_NUMBER", "sugar_timestamp":"@_SUGAR_BUILD_TIME"}

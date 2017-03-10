@@ -32,6 +32,12 @@ class Rome
     protected $buildTagRegex = '/\/\/\s*(BEGIN|END|FILE|ELSE)\s*SUGARCRM\s*(.*) ONLY/i';
 
     /**
+     * The Regex that is used for matching build variables
+     * @var string
+     */
+    protected $buildVarRegex = '/@_SUGAR_/';
+
+    /**
      * Construct that loads the config file
      *
      * @return unknown_type
@@ -187,6 +193,16 @@ class Rome
     {
         $this->config['sugarVariables']['@_SUGAR_VERSION'] = $ver;
 
+    }
+
+    /**
+     * Set the build number to something other than 999
+     *
+     * @param $number
+     */
+    public function setBuildNumber($number)
+    {
+        $this->config['sugarVariables']['@_SUGAR_BUILD_NUMBER'] = $number;
     }
 
     /**
@@ -484,14 +500,15 @@ class Rome
     }
 
     /**
-     * Check if the file contains any SugarCRM Build Tags
+     * Check if the file contains any SugarCRM Build Tags or SugarCRM Build Variables
      *
      * @param string $file
      * @return bool
      */
     protected function hasSugarBuildTag($file)
     {
-        return (preg_match($this->buildTagRegex, file_get_contents($file)) === 1);
+        $contents = file_get_contents($file);
+        return (preg_match($this->buildTagRegex, $contents) === 1 || preg_match($this->buildVarRegex, $contents) === 1);
     }
 
     public function cleanPath($path)
