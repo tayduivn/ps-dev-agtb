@@ -18,13 +18,13 @@ describe('Dashboards', function() {
             {
                 attributes: {
                     user_name: 'John',
-                    status: 'Active'
+                    status: 'Active',
                 }
             },
             {
                 attributes: {
                     user_name: 'Jane',
-                    status: 'Active'
+                    status: 'Active',
                 }
             }
         ];

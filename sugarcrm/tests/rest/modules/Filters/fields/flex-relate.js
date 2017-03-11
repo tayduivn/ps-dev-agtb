@@ -14,7 +14,7 @@ const expect = chakram.expect;
 
 describe('Filters.FlexRelate', function() {
     before(function*() {
-        let records = {attributes: {user_name: 'John'}};
+        let records = {attributes: {user_name: 'John', status: 'Active'}};
 
         records = yield Fixtures.create(records, {module: 'Users'});
 

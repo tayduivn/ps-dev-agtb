@@ -16,7 +16,7 @@ describe('Metadata', function() {
     before(function*() {
         this.url = `${process.env.THORN_SERVER_URL}/rest/v10`;
 
-        let users = {attributes: {user_name: 'John'}};
+        let users = {attributes: {user_name: 'John', status: 'Active'}};
 
         yield Fixtures.create(users, {module: 'Users'});
     });

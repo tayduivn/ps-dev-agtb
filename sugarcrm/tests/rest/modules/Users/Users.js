@@ -35,6 +35,7 @@ describe('Users', function() {
                 'user_name': 'yvan',
                 'last_name': 'leterrible',
                 'user_hash': '123abc',
+                'status': 'Active',
             },
             {
                 headers: {
