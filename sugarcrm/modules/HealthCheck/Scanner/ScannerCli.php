@@ -124,11 +124,6 @@ class HealthCheckScannerCli extends HealthCheckScanner
         require_once('include/entryPoint.php');
         $app_list_strings = return_app_list_strings_language($current_language);
 
-        $GLOBALS['current_user'] = new BlackHole(
-            array('id' => null),
-            array('getPreference' => null)
-        );
-
         return parent::init();
     }
 

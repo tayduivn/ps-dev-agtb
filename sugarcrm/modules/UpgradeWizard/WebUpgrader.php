@@ -415,8 +415,6 @@ class WebUpgrader extends UpgradeDriver
         }
         $scanner->setLogFile($this->context['HealthCheckLog']);
 
-        $this->initSugar();
-
         $scanner->scan();
 
         $logsInfo = $scanner->getLogMeta();

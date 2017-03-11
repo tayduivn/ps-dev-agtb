@@ -1838,6 +1838,7 @@ abstract class UpgradeDriver
             $this->saveState();
             switch ($stage) {
                 case "healthcheck":
+                    $this->initSugar();
                     if (!$this->healthcheck()) {
                         return false;
                     }

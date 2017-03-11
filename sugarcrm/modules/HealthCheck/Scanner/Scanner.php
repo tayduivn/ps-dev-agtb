@@ -4641,6 +4641,24 @@ class BlackHole implements ArrayAccess, Countable, Iterator
  */
 class FileLoaderWrapper extends BlackHole
 {
+    private $nullUser;
+
+    private $currentUser;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->nullUser = new BlackHole(
+            array(
+                'id' => null,
+            ),
+            array(
+                'getPreference' => null,
+            )
+        );
+    }
+
     public function __get($v)
     {
         $this->called = true;
@@ -4655,9 +4673,18 @@ class FileLoaderWrapper extends BlackHole
 
     public function loadFile($deffile, $varname)
     {
+        global $current_user;
+
+        $this->currentUser = $current_user;
+        $current_user = $this->nullUser;
+
         ob_start();
         @include $deffile;
         ob_end_clean();
+
+        $current_user = $this->currentUser;
+        $this->currentUser = null;
+
         if ($this->called) {
             return false;
         }
