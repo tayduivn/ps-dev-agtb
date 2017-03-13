@@ -916,7 +916,9 @@ class HealthCheckScanner
         // Check Advanced Workflow locked fields
         $this->checkPALockedFields();
 
-        $this->scanPhp4ConstructorCalls();
+        if (version_compare($sugar_version, '7.9.0.0', '<')) {
+            $this->scanPhp4ConstructorCalls();
+        }
 
         // Check for quotes customizations, can be removed after 7.9 is the base.
         $this->checkQuotesCustomizations();
