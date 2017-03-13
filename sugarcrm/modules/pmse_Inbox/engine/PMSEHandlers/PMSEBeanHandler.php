@@ -229,7 +229,6 @@ class PMSEBeanHandler
         }
 
         foreach ($replace_array as $name => $replacement_value) {
-            $replacement_value = nl2br($replacement_value);
             $template = str_replace($name, $replacement_value, $template);
         }
         return $template;
