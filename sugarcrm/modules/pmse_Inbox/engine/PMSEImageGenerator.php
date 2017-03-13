@@ -941,7 +941,7 @@ class PMSEImageGenerator
     private function print_text($IMG, $txt, $size, $angle, $color, $font, $x1, $y1, $x2, $y2, $type = '', $stype = '')
     {
         //TODO Create a section to write multi-line text
-        $yy = 0;
+        $yy = 6;
         switch ($type) {
             case 'bpmnActivity':
             case 'bpmnArtifact':
@@ -967,7 +967,7 @@ class PMSEImageGenerator
         $h = count($line) * 16;
         foreach ($line as $value) {
             $w = strlen(trim($value)) * 6;
-            $X = ($x1 + ((($x2 - $x1) - $w) / 2)) - 10;
+            $X = ($x1 + ((($x2 - $x1) - $w) / 2)) - 3;
             if ($type == 'bpmnActivity' && $stype == 'TASK') {
                 $Y = $y1 + (($y2 - $y1) / 2) - floor($h / 2) + $yy;
             } elseif ($type == 'bpmnActivity' && $stype == 'SCRIPTTASK') {
@@ -975,7 +975,9 @@ class PMSEImageGenerator
             } else {
                 $Y = $y1 + $yy + 13;
             }
-            imagestring($IMG, 3, $X, $Y, $value, $color);
+            // imagestring() only supports Latin-2, use imagettftext() to support UTF-8
+            $ttfont = 'themes/default/font/OpenSans-Semibold.ttf';
+            imagettftext($IMG, $size, $angle, $X, $Y, $color, $ttfont, $value);
             $yy += 16;
         }
     }
