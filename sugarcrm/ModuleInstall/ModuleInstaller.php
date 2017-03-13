@@ -2134,9 +2134,6 @@ class ModuleInstaller{
                     $class = $bean['class'];
                     $path = $bean['path'];
 
-                    // Handle the autoloader add first
-                    SugarAutoLoader::$moduleMap[$class] = $path;
-
                     // Handle the globals. This will ultimately be rerun after
                     // several other tasks, but some of the relationship installation
                     // needs this next

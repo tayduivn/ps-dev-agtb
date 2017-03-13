@@ -59,11 +59,6 @@ class SugarAutoLoader
     );
 
     /**
-     * @var array
-     */
-    public static $moduleMap = array();
-
-    /**
      * Class prefixes
      * Classes are loaded by prefix:
      * SugarAclFoo.php => data/acl/SugarACLFoo.php
@@ -356,6 +351,8 @@ class SugarAutoLoader
 	 */
     public static function autoload($class)
 	{
+        global $beanFiles;
+
         // work around for PHP 5.3.0 - 5.3.2 https://bugs.php.net/50731
         $class = ltrim($class, '\\');
 
@@ -387,18 +384,9 @@ class SugarAutoLoader
             return false;
         }
 
-        if (empty(self::$moduleMap)) {
-            if (isset($GLOBALS['beanFiles'])) {
-                self::$moduleMap = $GLOBALS['beanFiles'];
-            } else {
-                include('include/modules.php');
-                self::$moduleMap = $beanFiles;
-            }
-        }
-
         // Try known modules
-        if (!empty(self::$moduleMap[$class])) {
-            require_once self::$moduleMap[$class];
+        if (!empty($beanFiles[$class])) {
+            require_once $beanFiles[$class];
             return true;
         }
 
