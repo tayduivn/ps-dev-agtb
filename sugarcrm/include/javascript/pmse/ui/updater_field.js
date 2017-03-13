@@ -2320,7 +2320,8 @@ NumberUpdaterItem.prototype.evaluateExpression = function (value) {
                             // right hand operand needs to be of a value type
                             if (right.expType == 'CONSTANT' || right.expType == 'VARIABLE') {
                                 // the two operands should be of the same value type
-                                if (left.expSubtype.toLowerCase() != right.expSubtype.toLowerCase()) {
+                                if (left.expSubtype.toLowerCase() != right.expSubtype.toLowerCase() &&
+                                    !(this.checkNumerical(left) && this.checkNumerical(right))) {
                                     return result;
                                 }
                                 val.push(left);
@@ -2348,6 +2349,12 @@ NumberUpdaterItem.prototype.evaluateExpression = function (value) {
         }
     }
     return result;
+};
+
+NumberUpdaterItem.prototype.checkNumerical = function(operand) {
+    var numericalTypes = ['decimal', 'float', 'integer', 'number'];
+    var subtype = operand.expSubtype.toLowerCase();
+    return numericalTypes.indexOf(subtype) != -1;
 };
 
 NumberUpdaterItem.prototype._createControl = function () {
