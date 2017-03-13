@@ -300,6 +300,7 @@ $mod_strings = array(
     'LNK_MY_DRAFTS' => 'My Drafts',
     'LNK_MY_INBOX' => 'My Email',
     'LNK_VIEW_MY_INBOX' => 'View My Email',
+    'LNK_EMAIL_LIST' => 'View Emails',
     'LNK_QUICK_REPLY' => 'Reply',
     'LNK_MY_ARCHIVED_LIST' => 'My Archives',
     'LBL_EMAILS_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
