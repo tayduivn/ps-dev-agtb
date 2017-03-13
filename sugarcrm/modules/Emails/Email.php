@@ -458,7 +458,7 @@ class Email extends SugarBean {
                 'emails_email_addr_rel',
                 $dictionary['emails_email_addr_rel']['fields'],
                 array('deleted' => 1),
-                array('email_id' => $id)
+                array('email_id' => $this->id)
             );
         }
 
