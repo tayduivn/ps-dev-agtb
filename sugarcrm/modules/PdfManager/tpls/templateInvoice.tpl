@@ -70,7 +70,7 @@
 </table>
 <p>&nbsp;</p>
 {literal}{foreach from=$product_bundles item="bundle"}{/literal}
-{literal}{if $bundle.products|@count > 0}{/literal}
+{literal}{if $bundle.products|@count}{/literal}
 <p>&nbsp;</p>
 <h3>{literal}{$bundle.name}{/literal}</h3>
 <table style="width: 100%;" border="0">
