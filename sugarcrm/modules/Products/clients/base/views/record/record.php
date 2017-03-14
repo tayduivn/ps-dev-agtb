@@ -155,6 +155,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 array(
                     'name' => 'quote_name',
                     'label' => 'LBL_QUOTE_NAME',
+                    'readonly' => true,
                     'related_fields' => array('quote_id'),
                 ),
                 array(
