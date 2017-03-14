@@ -16,8 +16,8 @@
  */
 class SugarUpgradeUpgradeRelationshipFields extends UpgradeScript
 {
-    // the script should run before 1_ClearVarDefs in order to make sure existing relationship cache and the extensions
-    // which the new cache can built from are up to date
+    // this script should run before 1_ClearVarDefs in order to make sure all custom relationships are in the proper
+    // format before the new relationship cache is built
     public $order = 1090;
     public $type = self::UPGRADE_CUSTOM;
 
@@ -27,8 +27,6 @@ class SugarUpgradeUpgradeRelationshipFields extends UpgradeScript
         foreach ($files as $file) {
             $this->processFile($file);
         }
-
-        $this->convertRelationshipCache();
     }
 
     protected function getFiles()
@@ -48,6 +46,11 @@ class SugarUpgradeUpgradeRelationshipFields extends UpgradeScript
         return $dictionary[$name];
     }
 
+    protected function saveDefinition($name, $definition, $file)
+    {
+        write_array_to_file('dictionary[\'' . $name . '\']', $definition, $file);
+    }
+
     protected function processFile($file)
     {
         $name = basename($file, 'MetaData.php');
@@ -57,67 +60,8 @@ class SugarUpgradeUpgradeRelationshipFields extends UpgradeScript
             return;
         }
 
-        $converted = $this->convertFields($name, $definition['fields']);
-
-        if (array_keys($definition['fields']) === array_keys($converted)) {
-            $this->log('Field definitions for relationship ' . $name . ' are in correct format');
-            return;
-        }
-
-        $definition['fields'] = $converted;
-        $this->log('Saving converted field definitions for relationship ' . $name);
-        write_array_to_file('dictionary[\'' . $name . '\']', $definition, $file);
-    }
-
-    protected function convertRelationshipCache()
-    {
-        $factory = SugarRelationshipFactory::getInstance();
-        $getCacheFile = new ReflectionMethod($factory, 'getCacheFile');
-        $getCacheFile->setAccessible(true);
-        $file = $getCacheFile->invoke($factory);
-
-        if (!file_exists($file)) {
-            $this->log('Relationship cache file does not exist');
-            return;
-        }
-
-        $saveNeeded = false;
-        $relationships = array();
-        require $file;
-
-        foreach ($relationships as $name => $definition) {
-            if (empty($definition['fields'])) {
-                continue;
-            }
-
-            $converted = $this->convertFields($name, $definition['fields']);
-
-            if (array_keys($definition['fields']) !== array_keys($converted)) {
-                $relationships[$name]['fields'] = $converted;
-                $this->log('Converted field definitions for relationship ' . $name . ' in relationship cache');
-                $saveNeeded = true;
-            }
-        }
-
-        if (!$saveNeeded) {
-            $this->log('No definitions from relationship cache have been converted');
-            return;
-        }
-
-        $this->log('Saving converted relationship cache');
-        write_array_to_file('relationships', $relationships, $file);
-
-        $loadRelationships = new ReflectionMethod($factory, 'loadRelationships');
-        $loadRelationships->setAccessible(true);
-        $this->log('Reloading relationship cache');
-        $loadRelationships->invoke($factory);
-    }
-
-    protected function convertFields($name, array $fields)
-    {
         $converted = array();
-
-        foreach ($fields as $key => $value) {
+        foreach ($definition['fields'] as $key => $value) {
             if (!isset($value['name'])) {
                 $this->log('No field name in relationship ' . $name . ' definition for key ' . $key);
                 $newKey = $key;
@@ -127,6 +71,12 @@ class SugarUpgradeUpgradeRelationshipFields extends UpgradeScript
             $converted[$newKey] = $value;
         }
 
-        return $converted;
+        if (array_keys($definition['fields']) === array_keys($converted)) {
+            $this->log('Field definitions for relationship ' . $name . ' are in correct format');
+        } else {
+            $definition['fields'] = $converted;
+            $this->log('Saving converted field definitions for relationship ' . $name);
+            $this->saveDefinition($name, $definition, $file);
+        }
     }
 }
