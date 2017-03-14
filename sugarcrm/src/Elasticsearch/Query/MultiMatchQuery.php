@@ -12,7 +12,10 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SimpleTermParser;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 
 /**
  *
@@ -57,6 +60,16 @@ class MultiMatchQuery implements QueryInterface
      */
     protected $highlighter;
 
+    /**
+     * default operator for space in elastic search
+     * @var string
+     */
+    protected $defaultOperator;
+
+    public function setOperator($operator)
+    {
+        $this->defaultOperator = strtolower($operator);
+    }
 
     /**
      * Set the search terms.
@@ -95,20 +108,86 @@ class MultiMatchQuery implements QueryInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function build()
+    {
+        try {
+            $parser = new SimpleTermParser();
+            $parser->setDefaultOperator($this->defaultOperator);
+
+            $terms = $parser->parse($this->terms);
+            $query = $this->buildBoolQuery($terms);
+            //for a single word
+            if (is_string($query)) {
+                $query = $this->buildMultiMatchQuery($query);
+            }
+            return $query;
+        } catch (\Exception $ex) {
+            throw new QueryBuilderException("exception in building query: " . $ex->getMessage());
+        }
+    }
+
+    /**
+     * Build the bool query, based on the parsed boolean expression.
+     * @param array $terms the boolean expression from the parser.
+     * @return mixed
+     */
+    public function buildBoolQuery($terms)
+    {
+        if (is_string($terms)) {
+            return $terms;
+        }
+
+        $result = array();
+        foreach ($terms as $operator => $operands) {
+            if (TermParserHelper::isAndOperator($operator) || TermParserHelper::isOrOperator($operator)) {
+                $returnExpr = $this->buildBoolQuery($operands);
+
+                $boolQuery = new \Elastica\Query\Bool();
+                foreach ($returnExpr as $expr) {
+                    //convert a single string to a multi-match query
+                    if (is_string($expr)) {
+                        $expr = $this->buildMultiMatchQuery($expr);
+                    }
+                    if (TermParserHelper::isAndOperator($operator)) {
+                        $boolQuery->addMust($expr);
+                    } else {
+                        $boolQuery->addShould($expr);
+                    }
+                }
+                return $boolQuery;
+            } elseif (TermParserHelper::isNotOperator($operator)) {
+                $query = $this->buildMultiMatchQuery($operands);
+                $boolQuery = new \Elastica\Query\Bool();
+                foreach ($operands as $operand) {
+                    $query = $this->buildMultiMatchQuery($operand);
+                    $boolQuery->addMustNot($query);
+                }
+                return $boolQuery;
+            } else {
+                $expr = $this->buildBoolQuery($operands);
+                array_push($result, $expr);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Create a multi-match query.
      * @return \Elastica\Query\BoolQuery
      */
-    public function build()
+    protected function buildMultiMatchQuery($terms)
     {
         $boolQuery = new \Elastica\Query\BoolQuery();
 
         //create the sub-query with read-acessible fields
         $this->isReadOwnerQuery = false;
-        $this->createReadAccSubQuery($boolQuery);
+        $this->createReadAccSubQuery($boolQuery, $terms);
 
         //create the sub-query with owner-read-only fields
         $this->isReadOwnerQuery = true;
-        $this->createOwnerReadSubQuery($boolQuery);
+        $this->createOwnerReadSubQuery($boolQuery, $terms);
 
         return $boolQuery;
     }
@@ -119,11 +198,11 @@ class MultiMatchQuery implements QueryInterface
      * @param $term string the search term
      * @return \Elastica\Query\MultiMatch
      */
-    protected function createMultiMatchQuery(array $fields)
+    protected function createMultiMatchQuery(array $fields, $terms)
     {
         $query = new \Elastica\Query\MultiMatch();
         $query->setType(\Elastica\Query\MultiMatch::TYPE_CROSS_FIELDS);
-        $query->setQuery($this->terms);
+        $query->setQuery($terms);
         $query->setFields($fields);
         $query->setTieBreaker(1.0); // TODO make configurable
         return $query;
@@ -133,10 +212,10 @@ class MultiMatchQuery implements QueryInterface
      * Create the sub-query for read-accessible fields.
      * @param $parentQuery object the parent query (i.e. bool query) that this sub-query is added to.
      */
-    protected function createReadAccSubQuery($parentQuery)
+    protected function createReadAccSubQuery($parentQuery, $terms)
     {
         $fields = $this->filterSearchFields();
-        $query = $this->createMultiMatchQuery($fields);
+        $query = $this->createMultiMatchQuery($fields, $terms);
         $parentQuery->addShould($query);
     }
 
@@ -144,7 +223,7 @@ class MultiMatchQuery implements QueryInterface
      * Create the sub-query for owner read fields.
      * @param $parentQuery object the parent query (i.e. bool query) that this sub-query is added to.
      */
-    protected function createOwnerReadSubQuery($parentQuery)
+    protected function createOwnerReadSubQuery($parentQuery, $terms)
     {
         $this->hasReadOwnerFields = false;
         $fields = $this->filterSearchFields();
@@ -152,7 +231,7 @@ class MultiMatchQuery implements QueryInterface
         if ($this->hasReadOwnerFields === false) {
             return;
         }
-        $query = $this->createMultiMatchQuery($fields);
+        $query = $this->createMultiMatchQuery($fields, $terms);
 
         //If owner read fields are found, need to add a filtered query with the owner filter.
         $filteredQuery = new \Elastica\Query\Filtered();

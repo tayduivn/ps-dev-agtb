@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\ContainerAwareInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\ContainerAwareTrait;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection;
@@ -65,6 +66,13 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected $supportedTypes = array();
 
     /**
+     * default space operator for globalsearch
+     * current default value is 'AND'
+     * @var string
+     */
+    protected $defaultOperator = TermParserHelper::OPERATOR_AND;
+
+    /**
      * List of supported sugar types for Studio
      * @var array
      */
@@ -97,6 +105,23 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->booster = new Booster();
         $this->handlers = new HandlerCollection($this);
         $this->registerHandlers();
+    }
+
+    /**
+     * to get default operator
+     * @return string
+     */
+    public function getDefaultOperator()
+    {
+        // using config to override the default operator
+        global $sugar_config;
+        if (isset($sugar_config['default_gs_space_operator'])) {
+            $operator = TermParserHelper::getOperator($sugar_config['default_gs_space_operator']);
+            if ($operator) {
+                $this->defaultOperator = $operator;
+            }
+        }
+        return $this->defaultOperator;
     }
 
     /**
@@ -662,6 +687,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     {
         $multiMatch = new MultiMatchQuery();
         $multiMatch->setTerms($this->term);
+        $multiMatch->setOperator($this->getDefaultOperator());
 
         $modules = $this->modules;
         //when searching on a specific module, include tags if necessary
