@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'modules/HealthCheck/Scanner/Scanner.php';
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 
 class HealthCheckScannerCasesTestMock extends HealthCheckScanner
