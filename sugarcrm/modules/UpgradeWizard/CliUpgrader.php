@@ -207,14 +207,17 @@ eoq2;
      */
     public function fixupContext($context)
     {
+        $context['zip_as_dir'] = false;
+
         if (!empty($context['zip'])) {
             $context['zip'] = realpath($context['zip']);
+
+            if (is_dir($context['zip'])) {
+                $context['zip_as_dir'] = true;
+                $this->clean_on_fail = false;
+            }
         }
-        $context['zip_as_dir'] = false;
-        if (is_dir($context['zip'])) {
-            $context['zip_as_dir'] = true;
-            $this->clean_on_fail = false;
-        }
+
         if (!empty($context['source_dir'])) {
             $context['source_dir'] = realpath($context['source_dir']);
         }
