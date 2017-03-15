@@ -198,15 +198,17 @@ class PMSEFieldParser implements PMSEDataParserInterface
         }
 
         // Use the working bean now to get what we are after
-        $fieldType = $workingBean->field_defs[$criteriaToken->expField]['type'];
-
-        if ($fieldType == 'date') {
-            $criteriaToken->expSubtype = 'date';
-        } elseif ($fieldType == 'datetime' || $fieldType =='datetimecombo') {
-            $criteriaToken->expSubtype = 'date';
-        } elseif ($fieldType == 'currency') {
-            $criteriaToken->expValue = $this->setCurrentValueIfCurrency($criteriaToken);
+        if (isset($criteriaToken->expField)) {
+            $fieldType = $this->evaluatedBean->field_defs[$criteriaToken->expField]['type'];
+            if ($fieldType == 'date') {
+                $criteriaToken->expSubtype = 'date';
+            } elseif ($fieldType == 'datetime' || $fieldType =='datetimecombo') {
+                $criteriaToken->expSubtype = 'date';
+            } elseif ($fieldType == 'currency') {
+                $criteriaToken->expValue = $this->setCurrentValueIfCurrency($criteriaToken);
+            }
         }
+
         return $criteriaToken;
     }
 
@@ -242,15 +244,17 @@ class PMSEFieldParser implements PMSEDataParserInterface
         } else {
             $criteriaToken->currentValue = $tokenValue;
         }
-        if (isset($this->evaluatedBean->field_defs[$criteriaToken->expField])) {
-            if ($this->evaluatedBean->field_defs[$criteriaToken->expField]['type'] == 'date') {
-                $criteriaToken->expSubtype = 'date';
-            } elseif ($this->evaluatedBean->field_defs[$criteriaToken->expField]['type'] == 'datetime'
-                || $this->evaluatedBean->field_defs[$criteriaToken->expField]['type'] == 'datetimecombo'
-               ) {
-                $criteriaToken->expSubtype = 'date';
-              }
-         }
+        if (isset($criteriaToken->expField)) {
+            if (isset($this->evaluatedBean->field_defs[$criteriaToken->expField])) {
+                if ($this->evaluatedBean->field_defs[$criteriaToken->expField]['type'] == 'date') {
+                    $criteriaToken->expSubtype = 'date';
+                } elseif ($this->evaluatedBean->field_defs[$criteriaToken->expField]['type'] == 'datetime'
+                    || $this->evaluatedBean->field_defs[$criteriaToken->expField]['type'] == 'datetimecombo'
+                ) {
+                    $criteriaToken->expSubtype = 'date';
+                }
+            }
+        }
         $criteriaToken->expValue = $criteriaToken->currentValue;
         return $criteriaToken;
     }
