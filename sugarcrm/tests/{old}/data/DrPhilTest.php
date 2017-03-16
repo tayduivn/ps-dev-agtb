@@ -67,6 +67,9 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         return $validModules;
     }
 
+    /**
+     * @return SugarBean
+     */
     protected static function getSeedBean($moduleName)
     {
         static $seedBeans = array();
@@ -78,7 +81,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         return $seedBeans[$moduleName];
     }
 
-    public function provideValidModules()
+    public static function provideValidModules()
     {
         static $validModulesDataSet;
 
@@ -111,7 +114,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFieldDefs($moduleName)
     {
-        $bean = $this->getSeedBean($moduleName);
+        $bean = self::getSeedBean($moduleName);
         $this->assertTrue(is_array($bean->field_defs), "No field defs for {$bean->module_dir}");
 
         foreach ($bean->field_defs as $key => $def) {
@@ -219,6 +222,35 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @param array $definition Field definition
+     * @dataProvider rNameLinkFieldDefinitionProvider
+     */
+    public function testRNameLinkFieldDefinition(array $definition)
+    {
+        $this->assertArrayHasKey('source', $definition);
+        $this->assertEquals('non-db', $definition['source']);
+        $this->assertArrayHasKey('link', $definition);
+        $this->assertNotEmpty($definition['link']);
+    }
+
+    public static function rNameLinkFieldDefinitionProvider()
+    {
+        $data = array();
+
+        foreach (self::getValidModules() as $module) {
+            $bean = self::getSeedBean($module);
+
+            foreach ($bean->getFieldDefinitions() as $field => $definition) {
+                if (isset($definition['rname_link'])) {
+                    $data[$module . '#' . $field] = array($definition);
+                }
+            }
+        }
+
+        return $data;
+    }
+
     public static function tableMetadataProvider()
     {
         $dictionary = $data = array();
@@ -268,7 +300,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         return $result;
     }
 
-    public function provideLinkFields()
+    public static function provideLinkFields()
     {
         $moduleList = self::getValidModules();
 
@@ -290,7 +322,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         foreach ( $moduleList as $module ) {
-            $bean = $this->getSeedBean($module);
+            $bean = self::getSeedBean($module);
             if (!is_array($bean->field_defs)) {
                 continue;
             }
@@ -318,7 +350,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLinkFields($moduleName, $linkName)
     {
-        $bean = $this->getSeedBean($moduleName);
+        $bean = self::getSeedBean($moduleName);
 
         $bean->load_relationship($linkName);
         $this->assertNotNull($bean->$linkName,"Could not load link {$bean->module_dir}/{$linkName}");
@@ -326,7 +358,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         $relatedModuleName = $bean->$linkName->getRelatedModuleName();
         $this->assertNotNull($relatedModuleName,"Could not figure out the related module name for link {$bean->module_dir}/{$linkName}");
 
-        $relatedBean = $this->getSeedBean($relatedModuleName);
+        $relatedBean = self::getSeedBean($relatedModuleName);
         $this->assertNotNull($relatedBean,"Could not load related module ({$relatedModuleName}) for link {$bean->module_dir}/{$linkName}");
 
         return;
@@ -515,7 +547,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    public function overriddenSugarBeanFieldsProvider()
+    public static function overriddenSugarBeanFieldsProvider()
     {
         $modules = array();
         $validModules = self::getValidModules();
