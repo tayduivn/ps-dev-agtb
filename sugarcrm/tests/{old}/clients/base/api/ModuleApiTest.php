@@ -13,6 +13,7 @@
 require_once ("tests/{old}/SugarTestRestUtilities.php");
 
 /**
+ * @coversDefaultClass ModuleApi
  * @group ApiTests
  */
 class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
@@ -630,6 +631,27 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'link2' => array('id21'),
             ))
         );
+    }
+
+    /**
+     * @covers ::linkRelatedRecords
+     */
+    public function testLinkRelatedRecordsWithAnEmptySetOfRecords()
+    {
+        /** @var PHPUnit_Framework_MockObject_MockObject $relateRecordApi */
+        $api = $this->getApiWithMockedRelateRecordApi('createRelatedLinks', $relateRecordApi);
+        $bean = $this->getPrimaryBean('primary-module', 'primary-id');
+
+        $relateRecordApi->expects($this->never())->method('createRelatedLinks');
+
+        SugarTestReflection::callProtectedMethod($api, 'linkRelatedRecords', [
+            $this->serviceMock,
+            $bean,
+            [
+                'link1' => [],
+                'link2' => [],
+            ]
+        ]);
     }
 
     public function testUnlinkRelatedRecords()

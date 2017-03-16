@@ -625,12 +625,14 @@ class ModuleApi extends SugarApi {
     ) {
         $api = $this->getRelateRecordApi();
         foreach ($ids as $linkName => $items) {
-            $api->createRelatedLinks($service, array(
-                'module' => $bean->module_name,
-                'record' => $bean->id,
-                'link_name' => $linkName,
-                'ids' => $items,
-            ), $securityTypeLocal, $securityTypeRemote);
+            if (!empty($items)) {
+                $api->createRelatedLinks($service, array(
+                    'module' => $bean->module_name,
+                    'record' => $bean->id,
+                    'link_name' => $linkName,
+                    'ids' => $items,
+                ), $securityTypeLocal, $securityTypeRemote);
+            }
         }
     }
 
