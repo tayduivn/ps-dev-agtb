@@ -351,7 +351,8 @@
      * @private
      */
     _onSelect2Change: function(e) {
-        var plugin = $(e.target).data('select2');
+        var $el = $(e.target);
+        var plugin = $el.data('select2');
         var id = e.val;
 
         if (_.isUndefined(id)) {
@@ -365,7 +366,7 @@
         if (this.def.isMultiSelect) {
             var dataRname = plugin.opts.element.data('rname');
             dataRname = dataRname ? dataRname.split(this._separator) : [];
-            var ids = $(this).select2('val');
+            var ids = $el.select2('val');
 
             if (e.added) {
                 dataRname.push(e.added.text);
@@ -382,7 +383,7 @@
             return;
         }
 
-        var value = (id) ? plugin.selection.find('span').text() : $(this).data('rname');
+        var value = (id) ? plugin.selection.find('span').text() : $el.data('rname');
         var collection = plugin.context;
         var attributes = {};
         if (collection && !_.isEmpty(id)) {
