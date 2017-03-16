@@ -147,10 +147,9 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
      * @param array $config Current composer config
      * @param array $generic Generic config settings
      * @param array $pack Missing packages
-     * @param array $repo Missing repositories
      * @param array $expected
      */
-    public function testCreateProposal(array $config, array $generic, array $pack, array $repo, array $expected)
+    public function testCreateProposal(array $config, array $generic, array $pack, array $expected)
     {
         $sut = $this->getMockSut(array('saveToFile'));
         SugarTestReflection::callProtectedMethod($sut, 'initialize');
@@ -168,7 +167,7 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
         SugarTestReflection::callProtectedMethod(
             $sut,
             'createProposal',
-            array($config, $generic, $pack, $repo)
+            array($config, $generic, $pack)
         );
     }
 
@@ -184,7 +183,6 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
                 array(
                     'name' => 'new',
                 ),
-                array(),
                 array(),
                 array(
                     'name' => 'new',
@@ -202,40 +200,12 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
                     'sugarcrm/modulex' => '1.2.3',
                     'sugarcrm/moduley' => 'v1.0',
                 ),
-                array(),
                 array(
                     'name' => 'foo',
                     'config' => 'bar',
                     'require' => array(
                         'sugarcrm/modulex' => '1.2.3',
                         'sugarcrm/moduley' => 'v1.0',
-                    ),
-                ),
-            ),
-            // Test missing repo
-            array(
-                array(
-                    'name' => 'foo',
-                    'config' => 'bar',
-                ),
-                array(),
-                array(),
-                array(
-                    'http://git.edu/repo1' => 'git',
-                    'http://git.edu/repo2' => 'vcs',
-                ),
-                array(
-                    'name' => 'foo',
-                    'config' => 'bar',
-                    'repositories' => array(
-                        array(
-                            'url' => 'http://git.edu/repo1',
-                            'type' => 'git',
-                        ),
-                        array(
-                            'url' => 'http://git.edu/repo2',
-                            'type' => 'vcs',
-                        ),
                     ),
                 ),
             ),
@@ -246,12 +216,6 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
                     'config' => 'bar',
                     'require' => array(
                         'existing/lib' => '4.5.6',
-                    ),
-                    'repositories' => array(
-                        array(
-                            'url' => 'http://git.edu/repo0',
-                            'type' => 'git',
-                        ),
                     ),
                 ),
                 array(
@@ -267,10 +231,6 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
                     'sugarcrm/moduley' => 'v1.0',
                 ),
                 array(
-                    'http://git.edu/repo1' => 'git',
-                    'http://git.edu/repo2' => 'vcs',
-                ),
-                array(
                     'name' => 'new',
                     'config' => array(
                         'config1' => true,
@@ -281,20 +241,6 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
                         'existing/lib' => '4.5.6',
                         'sugarcrm/modulex' => '1.2.3',
                         'sugarcrm/moduley' => 'v1.0',
-                    ),
-                    'repositories' => array(
-                        array(
-                            'url' => 'http://git.edu/repo0',
-                            'type' => 'git',
-                        ),
-                        array(
-                            'url' => 'http://git.edu/repo1',
-                            'type' => 'git',
-                        ),
-                        array(
-                            'url' => 'http://git.edu/repo2',
-                            'type' => 'vcs',
-                        ),
                     ),
                 ),
             ),
@@ -408,51 +354,6 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
         ->method('isPackageAvailable');
 
         SugarTestReflection::callProtectedMethod($sut, 'getMissingPackages', array($target, array()));
-    }
-
-    /**
-     * @group unit
-     * @covers SugarUpgradeCheckComposerConfig::isRepoAvailable
-     */
-    public function testIsRepoAvailable()
-    {
-        $sut = $this->getMockSut();
-        $lock = array('http://git.edu/repo1' => 'git');
-
-        $this->assertTrue(SugarTestReflection::callProtectedMethod(
-            $sut,
-            'isRepoAvailable',
-            array('http://git.edu/repo1', 'git', $lock)
-        ));
-
-        $this->assertFalse(SugarTestReflection::callProtectedMethod(
-            $sut,
-            'isRepoAvailable',
-            array('http://git.edu/repo1', 'vcs', $lock)
-        ));
-
-        $this->assertFalse(SugarTestReflection::callProtectedMethod(
-            $sut,
-            'isRepoAvailable',
-            array('http://git.edu/repo2', 'git', $lock)
-        ));
-    }
-
-    /**
-     * @group unit
-     * @covers SugarUpgradeCheckComposerConfig::getMissingRepos
-     */
-    public function testGetMissingRepos()
-    {
-        $target = array(
-            'foo' => 'bar'
-        );
-
-        $sut = $this->getMockSut(array('isRepoAvailable'));
-        $sut->expects($this->exactly(count($target)))
-        ->method('isRepoAvailable');
-
-        SugarTestReflection::callProtectedMethod($sut, 'getMissingRepos', array($target, array()));
     }
 
     /**

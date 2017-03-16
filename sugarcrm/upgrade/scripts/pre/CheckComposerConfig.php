@@ -80,12 +80,6 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
     protected $lockPackages = array();
 
     /**
-     * List of registered repositories from lock file
-     * @var unknown
-     */
-    protected $lockRepos = array();
-
-    /**
      * Stock hash file
      * @var string
      */
@@ -129,15 +123,14 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
         $this->log("Custom composer configuration detected");
         $this->loadTargetDefinition();
 
-        // Determine missing packages/repositories.
+        // Determine missing packages.
         $missingPack = $this->getMissingPackages($this->target['packages'], $this->lockPackages);
-        $missingRepo = $this->getMissingRepos($this->target['repositories'], $this->lockRepos);
 
         // Vaiidate generic settings
         $validsettings = $this->validateGenericSettings($this->target, $this->loadFromFile($this->jsonFile));
 
-        // If all packages and repos are satisfied we can still continue the upgrade.
-        if ($validsettings && empty($missingPack) && empty($missingRepo)) {
+        // If all packages are satisfied we can still continue the upgrade.
+        if ($validsettings && empty($missingPack)) {
             $this->log("Custom composer configuration is valid for upgrade");
             $this->useCustomComposerFiles(array($this->jsonFile, $this->lockFile));
             return true;
@@ -156,8 +149,7 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
         $this->createProposal(
             $this->loadFromFile($this->jsonFile),
             $this->target['generic'],
-            $missingPack,
-            $missingRepo
+            $missingPack
         );
 
         // Generate user error
@@ -202,9 +194,8 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
      * @param array $config Current configuration to amend
      * @param array $generic List of generic configuration
      * @param array $missingPack List of missing packages
-     * @param array $missingRepo List of missing repositories
      */
-    protected function createProposal(array $config, array $generic, array $missingPack, array $missingRepo)
+    protected function createProposal(array $config, array $generic, array $missingPack)
     {
         $file = $this->newJsonFile . '.proposal';
         $this->log("Generating proposal file $file");
@@ -217,14 +208,6 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
         // Add mssing packages.
         foreach ($missingPack as $pack => $version) {
             $config['require'][$pack] = $version;
-        }
-
-        // Add missing repositories.
-        foreach ($missingRepo as $repo => $type) {
-            $config['repositories'][] = array(
-                'url' => $repo,
-                'type' => $type,
-            );
         }
 
         $this->saveToFile($file, $config);
@@ -287,18 +270,6 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
     }
 
     /**
-     * Get list of missing repositories
-     * @param array $target List of target repositories
-     * @param array $lock Composer lock repositories
-     * @return array
-     */
-    protected function getMissingRepos(array $target, array $lock)
-    {
-        $callable = array($this, 'isRepoAvailable');
-        return $this->getMissing($callable, $target, $lock);
-    }
-
-    /**
      * Get list of missing items based on callable
      * @param callable $callable
      * @param array $target List of target packages
@@ -326,7 +297,6 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
         $this->target = array(
             'generic' => array(),
             'packages' => array(),
-            'repositories' => array(),
         );
 
         $new = $this->loadFromFile($this->newJsonFile);
@@ -341,15 +311,6 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
         // Parse required packages (we do not really care about dev packages).
         foreach ($new['require'] as $package => $version) {
             $this->target['packages'][$package] = $version;
-        }
-
-        // Parse repositories.
-        if (isset($new['repositories'])) {
-            foreach ($new['repositories'] as $repo) {
-                $url = $repo['url'];
-                $type = $repo['type'];
-                $this->target['repositories'][$url] = $type;
-            }
         }
 
         return $this->target;
@@ -452,11 +413,10 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
         // Set hash
         $this->lockHash = isset($lock['hash']) ? $lock['hash'] : '';
 
-        // Parse packages and repositories.
+        // Parse packages.
         if (isset($lock['packages']) && is_array($lock['packages'])) {
             foreach ($lock['packages'] as $package) {
                 $this->lockPackages[$package['name']] = $package['version'];
-                $this->lockRepos[$package['source']['url']] = $package['source']['type'];
             }
         }
     }
@@ -502,32 +462,6 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
     {
         return (bool) !strpos($package, '/');
     }
-
-    /**
-     * Verify if given repository is avaiable
-     * @param string $repo Repository url
-     * @param string $type Repository type
-     * @param array $lock Composer lock repositories
-     * @return boolean
-     */
-    protected function isRepoAvailable($repo, $type, array $lock)
-    {
-        // Check if repository url is known.
-        if (!isset($lock[$repo])) {
-            $this->log("Repository $repo of type $type is missing");
-            return false;
-        }
-
-        // Check if type matches.
-        if ($lock[$repo] !== $type) {
-            $this->log("Repository $repo defined with invalid type {$lock[$repo]}");
-            return false;
-        }
-
-        $this->log("Found valid repository $repo with type $type");
-        return true;
-    }
-
 
     /**
      * Load JSON from file into an array.

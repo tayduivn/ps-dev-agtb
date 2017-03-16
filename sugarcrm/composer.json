@@ -108,7 +108,7 @@
         "paragonie/random_compat": "v2.0.2",
         "ramsey/uuid": "2.9.0",
         "moontoast/math": "1.1.0",
-        "doctrine/dbal": "2.5.5",
+        "doctrine/dbal": "v2.5.5",
         "vanderlee/php-stable-sort-functions": "2.0.2",
         "php": ">=5.6.0"
     },
@@ -116,11 +116,13 @@
         "phpunit/phpunit": "5.7.2",
         "composer/composer": "1.0.0-alpha9"
     },
-    "repositories": {
-      "packagist": false,
-      "composer": {
-        "type": "composer",
-        "url": "https://satis.sugardev.team"
-      }
-    }
+    "repositories": [
+        {
+            "packagist.org": false
+        },
+        {
+            "type": "composer",
+            "url": "https://satis.sugardev.team"
+        }
+    ]
 }
