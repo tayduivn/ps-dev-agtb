@@ -121,7 +121,7 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
                                           return true;
                                       })
                                   )->willReturn($this->token);
-        $this->token->expects($this->once())->method('getAttribute')->with('ssoUrl');
+        $this->token->expects($this->once())->method('getAttribute')->with('url');
         $this->auth->getLoginUrl(['platform' => $platform]);
     }
 }
