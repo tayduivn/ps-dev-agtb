@@ -38,10 +38,11 @@ class QuoteTest extends Sugar_PHPUnit_Framework_TestCase
         $quote = SugarTestQuoteUtilities::createQuote();
         $pblist = $quote->get_product_bundles();
         $this->assertEquals(0, count($pblist));
-        $prodBundle = SugarTestProductBundleUtilities::createProductBundle();
-        SugarTestQuoteUtilities::relateQuoteToProductBundle($quote->id, $prodBundle->id);
+        $expected = SugarTestProductBundleUtilities::createProductBundle();
+        SugarTestQuoteUtilities::relateQuoteToProductBundle($quote->id, $expected->id);
         $pblist = $quote->get_product_bundles();
-        $this->assertEquals($prodBundle->id, $pblist[0]['id']);
+        $actual = $pblist[0];
+        $this->assertEquals($expected->id, $actual->id, "Unable to get quote related product bundle.");
     }
 
     /*

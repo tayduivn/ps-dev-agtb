@@ -490,9 +490,9 @@ class Quote extends SugarBean
         $join = $query->joinSubpanel($this, 'product_bundles', array('joinType' => 'INNER'));
         $query->orderBy($join->relationshipTableAlias . '.bundle_index', 'ASC');
 
-        $prodBundles = $query->execute();
+        $prodBundles = $prodBundlesBean->fetchFromQuery($query);
 
-        return $prodBundles;
+        return array_values($prodBundles);
     }
 
     public function bean_implements($interface)
