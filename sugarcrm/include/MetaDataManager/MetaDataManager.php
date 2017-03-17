@@ -1200,7 +1200,11 @@ class MetaDataManager
     public static function getPlatformList()
     {
         $platforms = array();
-        foreach (SugarAutoLoader::existingCustom('clients/platforms.php') as $file) {
+        $platformsDefs = SugarAutoLoader::existingCustom('clients/platforms.php');
+        if ($platformExtension = SugarAutoLoader::loadExtension('platforms')) {
+            $platformsDefs[] = $platformExtension;
+        }
+        foreach ($platformsDefs as $file) {
             require $file;
         }
 

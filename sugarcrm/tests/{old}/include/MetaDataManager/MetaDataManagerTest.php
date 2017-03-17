@@ -481,11 +481,21 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 PLATFORMS;
         SugarAutoLoader::put('custom/clients/platforms.php', $contents);
 
+        SugarTestHelper::saveFile('custom/application/Ext/Platforms/platforms.ext.php');
+        SugarAutoLoader::ensureDir('custom/application/Ext/Platforms');
+
+        $contents = <<<PLATFORMS
+<?php
+\$platforms[] = 'extension-platform';
+PLATFORMS;
+        SugarAutoLoader::put('custom/application/Ext/Platforms/platforms.ext.php', $contents);
+
         $platforms = MetaDataManager::getPlatformList();
         $this->assertContains('base', $platforms);
         $this->assertContains('mobile', $platforms);
         $this->assertContains('portal', $platforms);
         $this->assertContains('metadata-manager-test', $platforms);
+        $this->assertContains('extension-platform', $platforms);
     }
 
     /**

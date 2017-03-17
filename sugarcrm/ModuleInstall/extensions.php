@@ -51,9 +51,14 @@
             'file' => 'console.ext.php',
             'module' => 'application'
         ),
+        'platforms' => array(
+            'section' => 'platforms',
+            'extdir' => 'Platforms',
+            'file' => 'platforms.ext.php',
+            'module' => 'application',
+        ),
 );
 if(SugarAutoLoader::existing("custom/application/Ext/Extensions/extensions.ext.php")) {
     include("custom/application/Ext/Extensions/extensions.ext.php");
 }
-
 
