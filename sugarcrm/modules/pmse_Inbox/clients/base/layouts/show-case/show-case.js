@@ -123,6 +123,11 @@
             module: this.recordModule,
             modelId: data.case.flow.cas_sugar_object_id
         });
+
+        // to display due date in browser time zone we need to fix it before
+        // context is set since we're using raw values set in context inside template
+        this.case.flow.cas_due_date = this.fixDateToLocale(this.case.flow.cas_due_date);
+
         context.prepare();
         context.set('case', this.case);
         context.set('layout', 'record');
@@ -162,6 +167,26 @@
         this._super('loadData', loadDataParams);
         this._render();
         this._delegateEvents();
+    },
+
+    /**
+     * Returns a string containing only date and time for a specified date as
+     * per user preferences
+     * @param date A date String
+     * @return String
+     * @private
+     */
+
+    fixDateToLocale: function(date) {
+        // get the browser time for the specified date
+        var casDateUTC = new Date(date + ' UTC');
+        // convert into date() object
+        var dateObj = app.date(casDateUTC);
+        // get date and time based on user preferences
+        var fixedDate = dateObj.format(app.date.convertFormat(app.user.getPreference('datepref')));
+        var fixedTime = dateObj.format(app.date.convertFormat(app.user.getPreference('timepref')));
+
+        return fixedDate + ' ' + fixedTime;
     },
 
     /**

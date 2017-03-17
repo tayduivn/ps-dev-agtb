@@ -16,11 +16,11 @@
             {{#if view.context.attributes.case.title.time.expected_time}}<!--expected-->
                 {{#if view.context.attributes.case.title.time.expected_time_warning}}<!--expectedWarning-->
                     <div style="position: absolute; left:20px; padding-top: 6px;">
-                        <h1><date>{{view.context.attributes.case.title.process}}<!--pTitle--></date>&nbsp;&nbsp;|&nbsp;&nbsp;<date>{{view.context.attributes.case.title.activity}}<!--actName--></date>&nbsp;&nbsp;[&nbsp;<date style="color: rgb(230,23,23);">Overdue</date>&nbsp;<date style="color: rgba(230,23,23,0.98);">{{view.context.attributes.case.title.time.expected_time}}<!--expected--></date>&nbsp;]</h1>
+                        <h1><date>{{view.context.attributes.case.title.process}}<!--pTitle--></date>&nbsp;&nbsp;|&nbsp;&nbsp;<date>{{view.context.attributes.case.title.activity}}<!--actName--></date>&nbsp;&nbsp;[&nbsp;<date style="color: rgb(230,23,23);">Overdue</date>&nbsp;<date style="color: rgba(230,23,23,0.98);">{{view.context.attributes.case.flow.cas_due_date}}<!--expected--></date>&nbsp;]</h1>
                     </div>
                 {{else}}
                     <div style="position: absolute; left:20px; padding-top: 6px;">
-                        <h1><date>{{view.context.attributes.case.title.process}}<!--pTitle--></date>&nbsp;&nbsp;|&nbsp;&nbsp;<date>{{view.context.attributes.case.title.activity}}<!--actName--></date>&nbsp;&nbsp;[&nbsp;Due Date&nbsp;<date style="color: rgba(160,161,163,0.98);">{{view.context.attributes.case.title.time.expected_time}}<!--expected--></date>&nbsp;]</h1>
+                        <h1><date>{{view.context.attributes.case.title.process}}<!--pTitle--></date>&nbsp;&nbsp;|&nbsp;&nbsp;<date>{{view.context.attributes.case.title.activity}}<!--actName--></date>&nbsp;&nbsp;[&nbsp;Due Date&nbsp;<date style="color: rgba(160,161,163,0.98);">{{view.context.attributes.case.flow.cas_due_date}}<!--expected--></date>&nbsp;]</h1>
                     </div>
                 {{/if}}
             {{else}}
