@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
 
 class UserPasswordListener
 {
@@ -26,6 +27,11 @@ class UserPasswordListener
      * @var \TimeDate
      */
     protected $timeDate;
+
+    /**
+     * @var SessionStorage
+     */
+    protected $sessionStorage;
 
     /**
      * check is password expired
@@ -148,6 +154,12 @@ class UserPasswordListener
      */
     protected function setSessionVariable($key, $value)
     {
-        $_SESSION[$key] = $value;
+        if (!$this->sessionStorage) {
+            $this->sessionStorage = SessionStorage::getInstance();
+            if (!$this->sessionStorage->sessionHasId()) {
+                $this->sessionStorage->start();
+            }
+        }
+        $this->sessionStorage[$key] = $value;
     }
 }

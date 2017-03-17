@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success;
 
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
 
 class PostLoginAuthListener
 {
@@ -27,28 +28,33 @@ class PostLoginAuthListener
         /** @var \User $currentUser */
         $currentUser = $event->getAuthenticationToken()->getUser()->getSugarUser();
         $sugarConfig = \SugarConfig::getInstance();
+        /** @var SessionStorage $sessionStorage */
+        $sessionStorage = SessionStorage::getInstance();
+        if (!$sessionStorage->sessionHasId()) {
+            $sessionStorage->start();
+        }
 
         //just do a little house cleaning here
-        unset($_SESSION['login_password']);
-        unset($_SESSION['login_error']);
-        unset($_SESSION['login_user_name']);
-        unset($_SESSION['ACL']);
+        unset($sessionStorage['login_password']);
+        unset($sessionStorage['login_error']);
+        unset($sessionStorage['login_user_name']);
+        unset($sessionStorage['ACL']);
 
         $uniqueKey = $sugarConfig->get('unique_key');
 
         //set the server unique key
         if (!empty($uniqueKey)) {
-            $_SESSION['unique_key'] = $uniqueKey;
+            $sessionStorage['unique_key'] = $uniqueKey;
         }
 
         //set user language
-        $_SESSION['authenticated_user_language'] = InputValidation::getService()->getValidInputRequest(
+        $sessionStorage['authenticated_user_language'] = InputValidation::getService()->getValidInputRequest(
             'login_language',
             'Assert\Language',
             $sugarConfig->get('default_language')
         );
 
-        $log->debug("authenticated_user_language is " . $_SESSION['authenticated_user_language']);
+        $log->debug("authenticated_user_language is " . $sessionStorage['authenticated_user_language']);
 
         // Clear all uploaded import files for this user if it exists
         $tmp_file_name = \ImportCacheFiles::getImportDir() . "/IMPORT_" . $currentUser->id;
