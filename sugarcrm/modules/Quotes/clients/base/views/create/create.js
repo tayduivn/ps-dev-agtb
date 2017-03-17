@@ -115,11 +115,14 @@
         var linkModel;
         var quoteData = {};
         var fieldMap;
+        var relatedAccountId = parentModel.get(parentModelAcctIdFieldName);
 
         this.isConvertFromShippingOrBilling = undefined;
 
         if (ctxModel && parentModel) {
             linkModel = this.createLinkModel(parentModel, options.context.get('fromLink'));
+            ctxModel.link = linkModel.link;
+
             // get the JSON attributes of the linked model
             quoteData = linkModel.toJSON();
 
@@ -155,10 +158,12 @@
                 quoteData[quoteField] = parentModel.get(otherModuleField);
             }, this);
 
-            // make an api call to get related Account data
-            app.api.call('read', app.api.buildURL('Accounts/' + parentModel.get(parentModelAcctIdFieldName)), null, {
-                success: _.bind(this._setAccountInfo, this)
-            });
+            // make an api call to get related Account data, only if it exists
+            if (relatedAccountId) {
+                app.api.call('read', app.api.buildURL('Accounts/' + relatedAccountId), null, {
+                    success: _.bind(this._setAccountInfo, this)
+                });
+            }
 
             // set new quoteData attributes onto the create model
             ctxModel.set(quoteData);
