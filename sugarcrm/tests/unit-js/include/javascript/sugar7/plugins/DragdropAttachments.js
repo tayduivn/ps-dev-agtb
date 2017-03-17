@@ -13,7 +13,7 @@ describe("DragdropAttachments Plugin", function() {
 
     beforeEach(function() {
         SugarTest.loadPlugin('DragdropAttachments');
-        plugin = SugarTest.app.plugins._get('DragdropAttachments', 'view');
+        plugin = SugarTest.app.plugins.plugins.view.DragdropAttachments;
     });
 
     describe("_mapNoteParentAttributes", function() {

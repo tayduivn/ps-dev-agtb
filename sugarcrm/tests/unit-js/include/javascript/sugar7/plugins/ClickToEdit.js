@@ -16,7 +16,7 @@ describe('Plugins.ClickToEdit', function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadPlugin('ClickToEdit');
-        plugin = app.plugins._get('ClickToEdit', 'view');
+        plugin = app.plugins.plugins.view.ClickToEdit;
     });
 
     afterEach(function() {

@@ -13,12 +13,9 @@ describe('Reminder Time Defaults Plugin', function() {
         moduleName = 'Calls';
 
     beforeEach(function() {
-        origPlugins = SugarTest.app.plugins.plugins.view;
-        SugarTest.app.plugins.plugins.view = {};
-
         SugarTest.loadPlugin('ReminderTimeDefaults');
+        plugin = SugarTest.app.plugins.plugins.view.ReminderTimeDefaults;
 
-        plugin = SugarTest.app.plugins._get('ReminderTimeDefaults', 'view');
         plugin.model = SugarTest.app.data.createBean(moduleName);
         plugin.model.setDefault({
             reminder_time: -1,
@@ -27,7 +24,6 @@ describe('Reminder Time Defaults Plugin', function() {
     });
 
     afterEach(function() {
-        SugarTest.app.plugins.plugins.view = origPlugins;
         SugarTest.app.user.unset('preferences');
     });
 

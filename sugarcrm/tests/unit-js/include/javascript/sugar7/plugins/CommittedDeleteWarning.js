@@ -16,7 +16,8 @@ describe('CommittedDeleteWarning Plugin', function () {
 
     beforeEach(function() {
         app = SugarTest.app;
-        plugin = app.plugins._get('CommittedDeleteWarning', 'view');
+        SugarTest.loadPlugin('CommittedDeleteWarning');
+        plugin = app.plugins.plugins.view.CommittedDeleteWarning;
     });
 
     afterEach(function() {

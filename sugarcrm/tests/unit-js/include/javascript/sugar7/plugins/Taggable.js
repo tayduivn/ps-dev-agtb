@@ -15,7 +15,8 @@ describe("Taggable Plugin", function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadPlugin('Taggable');
-        plugin = SugarTest.app.plugins._get('Taggable', 'view');
+        plugin = app.plugins.plugins.view.Taggable;
+
         SugarTest.app.data.declareModels();
         SugarTest.declareData('base', 'Filters');
         filtersBeanPrototype = SugarTest.app.data.getBeanClass('Filters').prototype;
