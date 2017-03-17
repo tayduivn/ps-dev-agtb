@@ -68,23 +68,6 @@ class Config
     public function getSAMLConfig()
     {
         $defaultConfig = $this->getSAMLDefaultConfig();
-
-        $returnQueryVars = $this->get('SAML_returnQueryVars', []);
-        $returnPath = '/index.php';
-        $returnQueryVars['module'] = 'Users';
-        $returnQueryVars['action'] = 'Authenticate';
-        $returnQueryVars['dataOnly'] = 1;
-        if (!empty($returnQueryVars['platform'])
-            && ($returnQueryVars['platform'] == 'base')
-            && !empty($this->get('SAML_SAME_WINDOW'))
-        ) {
-            unset($returnQueryVars['dataOnly']);
-        }
-        if (!empty($returnQueryVars) && is_array($returnQueryVars)) {
-            $returnPath .= '?'.urlencode(http_build_query($returnQueryVars));
-        }
-        $defaultConfig['sp']['assertionConsumerService']['url'] = rtrim($this->get('site_url'), '/') . $returnPath;
-
         return array_replace_recursive($defaultConfig, $this->get('SAML', [])); //update with values from config
     }
 
@@ -95,17 +78,20 @@ class Config
      */
     protected function getSAMLDefaultConfig()
     {
+        $siteUrl = rtrim($this->get('site_url'), '/');
+        $acsUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Authenticate', ENT_XML1));
+        $sloUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Logout', ENT_XML1));
         return [
             'strict' => false,
             'debug' => false,
             'sp' => [
                 'entityId' => $this->get('SAML_issuer', 'php-saml'), // BC mode, this should be an URL to metadata
                 'assertionConsumerService' => [
-                    // url - see below
+                    'url' => $acsUrl,
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
                 ],
                 'singleLogoutService' => [
-                    'url' => rtrim($this->get('site_url'), '/') . '/index.php?module=Users&action=Logout',
+                    'url' => $sloUrl,
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'NameIDFormat' =>\OneLogin_Saml2_Constants::NAMEID_EMAIL_ADDRESS,

@@ -48,9 +48,9 @@ class SAMLAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         $vars = array();
         parse_str(parse_url($login, PHP_URL_QUERY), $vars);
         $this->assertArrayHasKey("SAMLRequest", $vars);
-        $data = gzinflate(base64_decode($vars['SAMLRequest']));
-        $this->assertContains("platform=myplatform", $data);
-        $this->assertContains("other=stuff", $data);
+        $this->assertArrayHasKey("RelayState", $vars);
+        $data = json_decode(base64_decode($vars['RelayState']), true);
+        $this->assertEquals(['platform' => 'myplatform', 'other' => 'stuff', 'dataOnly' => 1], $data);
     }
 
     public function testNeedLogin()

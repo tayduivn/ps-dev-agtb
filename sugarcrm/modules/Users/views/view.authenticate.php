@@ -62,10 +62,23 @@ class UsersViewAuthenticate extends SidecarView
             $GLOBALS['log']->error("Login exception: " . $e->getMessage());
             sugar_die($e->getMessage());
         }
-        if (!empty($_REQUEST['dataOnly'])) {
+
+        $relayState = [];
+
+        if (!empty($_REQUEST['RelayState']) &&
+            filter_var($_REQUEST['RelayState'], FILTER_VALIDATE_URL) === false &&
+            $decodedRelayState = json_decode(base64_decode($_REQUEST['RelayState']), true)
+        ) {
+            $relayState = $decodedRelayState;
+        }
+
+        if (!empty($relayState['dataOnly']) || !empty($_REQUEST['dataOnly'])) {
             $this->dataOnly = true;
         }
-        if (!empty($_REQUEST['platform'])) {
+
+        if (!empty($relayState['platform'])) {
+            $this->platform = $relayState['platform'];
+        } elseif (!empty($_REQUEST['platform'])) {
             $this->platform = $_REQUEST['platform'];
         }
         parent::preDisplay($params);

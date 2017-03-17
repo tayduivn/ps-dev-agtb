@@ -41,12 +41,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             'no override in config' => [
                 [
                     'default' => 'config',
-                    'sp' => [
-                        'assertionConsumerService' => [
-                            'url' =>
-                                'config_site_url/index.php?platform%3Dbase%26module%3DUsers%26action%3DAuthenticate',
-                        ],
-                    ],
                 ],
                 ['default' => 'config'],
                 [],
@@ -62,16 +56,28 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 ['default' => 'config'],
-                ['default' => 'overridden config'],
+                [
+                    'default' => 'overridden config',
+                    'sp' => [
+                        'assertionConsumerService' => [
+                            'url' =>
+                                'config_site_url/index.php?platform%3Dbase%26module%3DUsers%26action%3DAuthenticate',
+                        ],
+                    ],
+                ],
             ],
         ];
     }
 
     /**
+     * @param array $expectedConfig
+     * @param array $defaultConfig
+     * @param array $configValues
+     *
      * @covers ::getSAMLConfig
      * @dataProvider getSAMLConfigDataProvider
      */
-    public function testGetSAMLConfig($expectedConfig, $defaultConfig, $configValues)
+    public function testGetSAMLConfig(array $expectedConfig, array $defaultConfig, array $configValues)
     {
         $config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
@@ -80,15 +86,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->any())
             ->method('get')
             ->withConsecutive(
-                ['SAML_returnQueryVars'],
-                ['SAML_SAME_WINDOW'],
-                ['site_url'],
-                ['SAML']
+                ['SAML', []]
             )
             ->willReturnOnConsecutiveCalls(
-                ['platform' => 'base'],
-                'config_SAML_SAME_WINDOW',
-                'config_site_url',
                 $configValues
             );
         $config->expects($this->once())
