@@ -116,6 +116,9 @@ class SugarLocalUserProvider implements UserProviderInterface
     {
         $sugarUser = $this->createUserBean();
         $sugarUser->populateFromRow(array_merge($additionalFields, ['user_name' => $username]));
+
+        $sugarUser->new_with_id = isset($additionalFields['id']);
+
         $sugarUser->save();
 
         if (isset($additionalFields['email'])) {

@@ -62,7 +62,6 @@ class SugarSAMLUserChecker extends SAMLUserChecker
     protected function loadSugarUser(User $user)
     {
         $nameIdentifier = $user->getUsername();
-        $identityField = $user->getAttribute('identityField');
         $provision = $user->getAttribute('provision');
 
         $fixedAttributes = [
@@ -80,14 +79,16 @@ class SugarSAMLUserChecker extends SAMLUserChecker
         ];
 
         try {
-            $sugarUser = $this->localUserProvider->loadUserByField($nameIdentifier, $identityField)->getSugarUser();
+            $identityField = $user->getAttribute('identityField');
+            $identityValue = $user->getAttribute('identityValue');
+            $sugarUser = $this->localUserProvider->loadUserByField($identityValue, $identityField)->getSugarUser();
         } catch (UsernameNotFoundException $e) {
             if (!$provision) {
                 throw $e;
             }
             $sugarUser = $this->processCustomUserCreate($user);
             if (!$sugarUser) {
-                $userAttributes = array_merge($defaultAttributes, $user->getAttribute('attributes'));
+                $userAttributes = array_merge($defaultAttributes, $user->getAttribute('attributes')['create']);
                 $userAttributes = array_merge($userAttributes, $fixedAttributes);
                 $sugarUser = $this->localUserProvider->createUser($nameIdentifier, $userAttributes);
             }

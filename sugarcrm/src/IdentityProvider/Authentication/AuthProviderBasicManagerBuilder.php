@@ -27,11 +27,11 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLdapUser
 use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider;
 
 use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarSAMLUserProvider;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
@@ -171,7 +171,8 @@ class AuthProviderBasicManagerBuilder
 
         return new SAMLAuthenticationProvider(
             $this->samlConfig,
-            new SugarSAMLUserProvider(new SugarLocalUserProvider()),
+            new SugarSAMLUserProvider(),
+            new SugarSAMLUserChecker(new SugarLocalUserProvider()),
             new SessionProxy(SessionStorage::getInstance()),
             new UserMapping($this->samlConfig)
         );

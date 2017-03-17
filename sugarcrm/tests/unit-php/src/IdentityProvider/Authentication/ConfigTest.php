@@ -41,6 +41,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 ],
                 ['default' => 'config'],
                 [],
+                [],
             ],
             'saml config provided' => [
                 [
@@ -62,6 +63,30 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
+                [],
+            ],
+            'saml config and sugar custom settings provided' => [
+                [
+                    'default' => 'overridden config',
+                    'sp' => [
+                        'foo' => 'bar',
+                        'useXML' => true,
+                        'id' => 'first_name',
+                    ],
+                ],
+                ['default' => 'config'],
+                [
+                    'default' => 'overridden config',
+                    'sp' => [
+                        'foo' => 'bar',
+                    ],
+                ],
+                [
+                    'sp' => [
+                        'useXML' => true,
+                        'id' => 'first_name',
+                    ],
+                ],
             ],
         ];
     }
@@ -70,16 +95,22 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      * @param array $expectedConfig
      * @param array $defaultConfig
      * @param array $configValues
+     * @param array $customSettings
      *
      * @covers ::getSAMLConfig
      * @dataProvider getSAMLConfigDataProvider
      */
-    public function testGetSAMLConfig(array $expectedConfig, array $defaultConfig, array $configValues)
-    {
+    public function testGetSAMLConfig(
+        array $expectedConfig,
+        array $defaultConfig,
+        array $configValues,
+        array $customSettings
+    ) {
         $config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
-            ->setMethods(['get', 'getSAMLDefaultConfig'])
+            ->setMethods(['get', 'getSAMLDefaultConfig', 'getSugarCustomSAMLSettings'])
             ->getMock();
+        $config->method('getSugarCustomSAMLSettings')->willReturn($customSettings);
         $config->expects($this->any())
             ->method('get')
             ->withConsecutive(

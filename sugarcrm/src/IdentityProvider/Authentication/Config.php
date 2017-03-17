@@ -54,6 +54,7 @@ class Config
     public function getSAMLConfig()
     {
         $defaultConfig = $this->getSAMLDefaultConfig();
+        $defaultConfig = array_merge_recursive($defaultConfig, $this->getSugarCustomSAMLSettings());
         return array_replace_recursive($defaultConfig, $this->get('SAML', [])); //update with values from config
     }
 
@@ -84,6 +85,7 @@ class Config
                 'NameIDFormat' =>\OneLogin_Saml2_Constants::NAMEID_EMAIL_ADDRESS,
                 'x509cert' => $this->get('SAML_REQUEST_SIGNING_X509', ''),
                 'privateKey' => $this->get('SAML_REQUEST_SIGNING_PKEY', ''),
+                'provisionUser' => $this->get('SAML_provisionUser', true),
             ],
 
             'idp' => array (
@@ -198,5 +200,31 @@ class Config
                 ],
             ],
         ];
+    }
+
+    /**
+     * Obtain settings that are placed
+     * in 'modules/Users/authentication/SAMLAuthenticate/settings.php' file (custom one as well).
+     * Used for only a specific range of settings:
+     * saml2_settings, id, useXML, customCreateFunction
+     *
+     * @return array
+     */
+    protected function getSugarCustomSAMLSettings()
+    {
+        $result = [];
+        $sugarCustomConfig = \SAMLAuthenticate::loadSettings();
+        $sugarCustomConfigParams = [
+            'saml2_settings',
+            'id',
+            'useXML',
+            'customCreateFunction',
+        ];
+        foreach ($sugarCustomConfigParams as $key) {
+            if (isset($sugarCustomConfig->$key)) {
+                $result[$key] = $sugarCustomConfig->$key;
+            }
+        }
+        return ['sp' => $result];
     }
 }

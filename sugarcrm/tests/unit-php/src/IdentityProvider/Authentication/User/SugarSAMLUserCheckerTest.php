@@ -66,14 +66,15 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'test@test.com';
         $field = 'email';
+        $value = 'test@test.com';
         $provision = false;
 
-        $user = $this->getUserMock($name, $field, $provision);
+        $user = $this->getUserMock($name, $field, $value, $provision);
         $foundUser = $this->createMock(User::class);
 
         $this->localUserProvider->expects($this->once())
             ->method('loadUserByField')
-            ->with($name, $field)
+            ->with($value, $field)
             ->willReturn($foundUser);
 
         $foundUser->expects($this->once())
@@ -95,13 +96,14 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'test@test.com';
         $field = 'email';
+        $value = 'test@test.com';
         $provision = false;
 
-        $user = $this->getUserMock($name, $field, $provision);
+        $user = $this->getUserMock($name, $field, $value, $provision);
 
         $this->localUserProvider->expects($this->once())
             ->method('loadUserByField')
-            ->with($name, $field)
+            ->with($value, $field)
             ->will($this->throwException(new UsernameNotFoundException()));
 
         $this->samlUserChecker->checkPostAuth($user);
@@ -114,14 +116,19 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'test@test.com';
         $field = 'email';
+        $value = 'test@test.com';
         $provision = true;
-        $attributes = ['title' => 'bar'];
+        $attributes = [
+            'create' => [
+                'title' => 'bar',
+            ],
+        ];
 
-        $user = $this->getUserMock($name, $field, $provision, $attributes);
+        $user = $this->getUserMock($name, $field, $value, $provision, $attributes);
 
         $this->localUserProvider->expects($this->once())
             ->method('loadUserByField')
-            ->with($name, $field)
+            ->with($value, $field)
             ->will($this->throwException(new UsernameNotFoundException()));
 
         $this->localUserProvider->expects($this->once())
@@ -144,14 +151,15 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
     public function testCheckPostDoesNothingWhenLocalUserExistsAndIsInactive()
     {
         $name = 'test@test.com';
-        $field = 'email';
+        $field = 'user_name';
+        $value = 'max_jensen';
         $provision = true;
 
-        $user = $this->getUserMock($name, $field, $provision);
+        $user = $this->getUserMock($name, $field, $value, $provision);
 
         $this->localUserProvider->expects($this->once())
             ->method('loadUserByField')
-            ->with($name, $field)
+            ->with($value, $field)
             ->will($this->throwException(new InactiveUserException('Found inactive user')));
 
         $this->localUserProvider->expects($this->never())->method('createUser');
@@ -163,12 +171,46 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::checkPostAuth
      */
-    public function testCheckPostCreatesUserCanNotOverrideFixedSystemAttributes()
+    public function testCheckPostCreatesUserWithUsernameButNotWithSearchIdentityValue()
+    {
+        $name = 'test@test.com';
+        $field = 'user_name';
+        $value = 'max_jensen';
+        $provision = true;
+
+        $user = $this->getUserMock($name, $field, $value, $provision);
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->with($value, $field)
+            ->will($this->throwException(new UsernameNotFoundException()));
+
+        $this->localUserProvider->expects($this->once())
+            ->method('createUser')
+            ->with($this->equalTo($name), $this->anything())
+            ->willReturn($this->sugarUser);
+
+        $user->expects($this->once())
+            ->method('setSugarUser')
+            ->with($this->sugarUser);
+
+        $this->samlUserChecker->checkPostAuth($user);
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     */
+    public function testCheckPostCreatesUserAndCanNotOverrideFixedSystemAttributes()
     {
         $name = 'test@test.com';
         $field = 'email';
+        $value = 'test@test.com';
         $provision = true;
-        $attributes = ['user_name' => 'foo', 'external_auth_only' => 0, 'is_admin' => true];
+        $attributes = [
+            'create' => [
+                'user_name' => 'foo', 'external_auth_only' => 0, 'is_admin' => true,
+            ],
+        ];
 
         $expectedAttributes = [
             'user_name' => 'foo',
@@ -181,11 +223,11 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
             'system_generated_password' => 0,
         ];
 
-        $user = $this->getUserMock($name, $field, $provision, $attributes);
+        $user = $this->getUserMock($name, $field, $value, $provision, $attributes);
 
         $this->localUserProvider->expects($this->once())
             ->method('loadUserByField')
-            ->with($name, $field)
+            ->with($value, $field)
             ->will($this->throwException(new UsernameNotFoundException()));
 
         $this->localUserProvider->expects($this->once())
@@ -203,12 +245,19 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $nameIdentifier
      * @param string $identityField
+     * @param string $identityValue
      * @param bool $provision
      * @param array $attributes
      * @return \PHPUnit_Framework_MockObject_MockObject|User
      */
-    protected function getUserMock($nameIdentifier, $identityField, $provision, $attributes = [])
-    {
+    protected function getUserMock(
+        $nameIdentifier,
+        $identityField,
+        $identityValue,
+        $provision,
+        $attributes = ['create' => [],
+        'update' => []]
+    ) {
         $user = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()
             ->setMethods(['getUsername', 'getAttribute', 'setSugarUser'])
@@ -216,6 +265,7 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
 
         $map = [
             ['identityField',$identityField],
+            ['identityValue',$identityValue],
             ['provision', $provision],
             ['attributes', $attributes],
         ];
