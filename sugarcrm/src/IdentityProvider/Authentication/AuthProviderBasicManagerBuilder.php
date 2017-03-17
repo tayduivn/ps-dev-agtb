@@ -31,6 +31,10 @@ use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarSAMLUserProvider;
 
+use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
+use Sugarcrm\IdentityProvider\App\Authentication\UserMappingService;
+
 class AuthProviderBasicManagerBuilder
 {
     const PROVIDER_KEY_LOCAL = 'SugarLocalProvider';
@@ -166,7 +170,9 @@ class AuthProviderBasicManagerBuilder
 
         return new SAMLAuthenticationProvider(
             $this->samlConfig,
-            new SugarSAMLUserProvider(new SugarLocalUserProvider())
+            new SugarSAMLUserProvider(new SugarLocalUserProvider()),
+            new SessionProxy(SessionStorage::getInstance()),
+            new UserMappingService([])
         );
     }
 

@@ -93,7 +93,7 @@
     "require": {
         "psr/log": "1.0.0",
         "ruflin/elastica" : "2.3.1",
-        "onelogin/php-saml" : "2.10.5",
+        "onelogin/php-saml": "2.10.5",
         "aws/aws-sdk-php": "2.7.7",
         "phpmailer/phpmailer" : "v5.2.22",
         "etechnika/idna-convert" : "1.0.3",

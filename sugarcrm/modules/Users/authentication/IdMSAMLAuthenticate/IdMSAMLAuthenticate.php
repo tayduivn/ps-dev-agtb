@@ -52,7 +52,7 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
 
         $token = $authManager->authenticate($initToken);
 
-        $url = $token->getAttribute('ssoUrl');
+        $url = $token->getAttribute('url');
 
         // @todo This should be moved into IdM, see BR-5052
         if ($config->get('saml.validate_request_id')) {
