@@ -372,6 +372,9 @@ $dictionary['ProductBundle'] = array(
             'studio' => false,
             'vname' => 'LBL_QUOTE_BUNDLE_POSITION',
             'importable' => false,
+            'source' => 'non-db',
+            'link' => 'quotes',
+            'rname_link' => 'bundle_index',
         ),
         'default_group' => array(
             'name' => 'default_group',

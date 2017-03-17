@@ -130,11 +130,12 @@
     _saveRowModel: function() {
         var self = this;
         var oldModelId = this.model.cid;
-        var successCallback = function(model) {
+        var quoteModel = this.context.get('parentModel');
+        var successCallback = function(data, request) {
             self.changed = false;
-            model.modelView = 'list';
+            self.model.modelView = 'list';
             if (self.view.layout) {
-                self.view.layout.trigger('editablelist:' + self.view.name + ':save', model, oldModelId);
+                self.view.layout.trigger('editablelist:' + self.view.name + ':save', self.model, oldModelId);
             }
         };
         var options = {
@@ -174,6 +175,14 @@
         };
 
         options = _.extend({}, options, this.getCustomSaveOptions(options));
-        this.model.save({}, options);
+
+        app.api.relationships('update', 'Quotes', {
+            id: quoteModel.get('id'),
+            link: 'product_bundles',
+            relatedId: this.model.get('id'),
+            related: {
+                name: this.model.get('name')
+            }
+        }, null, options);
     }
 });
