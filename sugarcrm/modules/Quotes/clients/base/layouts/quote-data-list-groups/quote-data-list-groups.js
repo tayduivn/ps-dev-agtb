@@ -65,11 +65,17 @@
     bundlesBeingSavedCt: undefined,
 
     /**
+     * Array that holds any current api requests
+     */
+    saveQueue: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        this.saveQueue = [];
         this.groupIds = [];
         this.currentBulkSaveRequests = [];
         this.quoteDataGroupMeta = app.metadata.getLayout('ProductBundles', 'quote-data-group');
@@ -589,16 +595,91 @@
      * @private
      */
     _callBulkRequests: function(successCallback) {
-        var customSuccessCallbackObj = {
-            success: successCallback
+        var successWrapper = {
+            success: _.bind(this.handleSaveQueueSuccess, this, successCallback)
         };
-        var customSuccess = _.isFunction(successCallback) ? customSuccessCallbackObj : {};
-        app.api.call('create', app.api.buildURL(null, 'bulk'), {
+        var apiCall = app.api.call('create', app.api.buildURL(null, 'bulk'), {
             requests: this.currentBulkSaveRequests
-        }, customSuccess);
+        }, successWrapper);
+        var saveQueueObj = {
+            callReturned: false,
+            customSuccess: {},
+            request: apiCall,
+            responseData: {}
+        };
+
+        this.saveQueue.push(saveQueueObj);
 
         // reset currentBulkSaveRequests
         this.currentBulkSaveRequests = [];
+    },
+
+    /**
+     * Handles all responses that are returned by the save queue
+     *
+     * @param {Function|undefined} customSuccess The custom success handler function that should be called next
+     * @param {Object} responseData The response returned by the server for a call
+     * @param {HttpRequest} httpRequest The HTTP Request that is returning from the api call
+     */
+    handleSaveQueueSuccess: function(customSuccess, responseData, httpRequest) {
+        if (this.saveQueue.length && this.saveQueue[0].request === httpRequest) {
+            // there are items in the save queue and the httpRequest
+            // that was returned exactly matches the next item in the saveQueue
+
+            // removes this.saveQueue[0] from the array, since the request being
+            // processed is the current top of the saveQueue, we don't need to do
+            // anything with it just shift it off the array
+            this.saveQueue.shift();
+
+            if (_.isFunction(customSuccess)) {
+                // if this has been returned in the proper order
+                customSuccess(responseData);
+            }
+
+            // now that the latest request has been processed, check if other
+            // items in the saveQueue need to be processed or not
+            this._processSaveQueue();
+        } else {
+            // the httpRequest being returned does not match the next request that
+            // should be processed, so save it for later
+            _.some(this.saveQueue, function(queueObj) {
+                if (queueObj.request === httpRequest) {
+                    queueObj.callReturned = true;
+                    queueObj.customSuccess = customSuccess;
+                    queueObj.responseData = responseData;
+                    return true;
+                }
+                return false;
+            }, this);
+        }
+    },
+
+    /**
+     * Handles checking if more items in `this.saveQueue` need to be processed and then processes them
+     * calling itself again to make sure any remaining items get checked and processed.
+     *
+     * @private
+     */
+    _processSaveQueue: function() {
+        var saveQueueObj;
+
+        // check if the next first request in the saveQueue has returned
+        // and needs to be processed or not
+        if (this.saveQueue.length && this.saveQueue[0].callReturned) {
+            // there are api calls still in the saveQueue and now
+            // the first one already has response data that needs to be handled
+
+            // removes this.saveQueue[0] from the array and places it into saveQueueObj
+            saveQueueObj = this.saveQueue.shift();
+
+            if (_.isFunction(saveQueueObj.customSuccess)) {
+                // check if this had previously been returned out of order and
+                // is now the first item in saveQueue it will have customSuccess saved
+                saveQueueObj.customSuccess(saveQueueObj.responseData);
+            }
+
+            this._processSaveQueue();
+        }
     },
 
     /**

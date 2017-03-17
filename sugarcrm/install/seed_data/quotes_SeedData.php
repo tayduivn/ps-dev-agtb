@@ -88,6 +88,7 @@ if(!empty($sugar_demodata['quotes_seed_data']['quotes'])) {
 			$pb->bundle_stage = $bundle['bundle_stage'];
 			$pb->name = $bundle['bundle_name'];
             $pb->shipping = '0.00';
+            $pb->position = 1;
 
             $product_bundle_id = $pb->save();
 

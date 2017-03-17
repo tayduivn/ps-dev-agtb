@@ -1160,6 +1160,185 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         it('should empty currentBulkSaveRequests', function() {
             expect(layout.currentBulkSaveRequests.length).toBe(0);
         });
+
+        it('should add the call to this.saveQueue', function() {
+            expect(layout.saveQueue.length).toBe(1);
+        });
+    });
+
+    describe('handleSaveQueueSuccess()', function() {
+        var customSuccessParam;
+        var request1;
+        var request2;
+        var response1;
+        var response2;
+
+        beforeEach(function() {
+            sinon.collection.stub(layout, '_processSaveQueue', function() {});
+            customSuccessParam = sinon.collection.stub();
+            sinon.collection.spy(layout.saveQueue, 'shift');
+            request1 = {
+                callReturned: false,
+                customSuccess: $.noop,
+                request: 'request1',
+                responseData: {
+                    data: 'request1'
+                }
+            };
+            request2 = {
+                callReturned: false,
+                customSuccess: $.noop,
+                request: 'request2',
+                responseData: {
+                    data: 'request2'
+                }
+            };
+            response1 = {
+                data: 'responseData1'
+            };
+            response2 = {
+                data: 'responseData2'
+            };
+        });
+
+        afterEach(function() {
+            customSuccessParam = null;
+            request1 = null;
+            request2 = null;
+            response1 = null;
+            response2 = null;
+        });
+
+        describe('when response comes back in proper order', function() {
+            beforeEach(function() {
+                request1.customSuccess = customSuccessParam;
+                layout.saveQueue.push(request1);
+
+                layout.handleSaveQueueSuccess(customSuccessParam, response1, 'request1');
+            });
+
+            it('should shift the saveQueue item off', function() {
+                expect(layout.saveQueue.shift).toHaveBeenCalled();
+            });
+
+            it('should call the customSuccess function with the response data', function() {
+                expect(customSuccessParam).toHaveBeenCalledWith(response1);
+            });
+
+            it('should call _processSaveQueue to handle any other items', function() {
+                expect(layout._processSaveQueue).toHaveBeenCalled();
+            });
+        });
+
+        describe('when response comes back but other calls need to be processed', function() {
+            beforeEach(function() {
+                request1.customSuccess = customSuccessParam;
+                layout.saveQueue.push(request1);
+                layout.saveQueue.push(request2);
+
+                layout.handleSaveQueueSuccess(customSuccessParam, response2, 'request2');
+            });
+
+            it('should set callReturned to true for second request', function() {
+                expect(request2.callReturned).toBeTruthy();
+            });
+
+            it('should set customSuccess to the passed in function for second request', function() {
+                expect(request2.customSuccess).toBe(customSuccessParam);
+            });
+
+            it('should set callReturned to true for second request', function() {
+                expect(request2.responseData).toBe(response2);
+            });
+        });
+    });
+
+    describe('_processSaveQueue()', function() {
+        var request1;
+        var request2;
+        var request3;
+        var requestSuccess1;
+        var requestSuccess2;
+        var requestSuccess3;
+
+        beforeEach(function() {
+            sinon.collection.spy(layout.saveQueue, 'shift');
+            sinon.collection.spy(layout, '_processSaveQueue');
+            requestSuccess1 = sinon.collection.stub();
+            requestSuccess2 = sinon.collection.stub();
+            requestSuccess3 = sinon.collection.stub();
+            request1 = {
+                callReturned: false,
+                customSuccess: requestSuccess1,
+                request: 'request1',
+                responseData: {
+                    data: 'request1'
+                }
+            };
+            request2 = {
+                callReturned: false,
+                customSuccess: requestSuccess2,
+                request: 'request2',
+                responseData: {
+                    data: 'request2'
+                }
+            };
+            request3 = {
+                callReturned: false,
+                customSuccess: requestSuccess3,
+                request: 'request3',
+                responseData: {
+                    data: 'request3'
+                }
+            };
+        });
+
+        afterEach(function() {
+            request1 = null;
+            request2 = null;
+            request3 = null;
+            requestSuccess1 = null;
+            requestSuccess2 = null;
+            requestSuccess3 = null;
+        });
+
+        it('should do nothing if saveQueue is empty', function() {
+            layout._processSaveQueue();
+
+            expect(layout.saveQueue.shift).not.toHaveBeenCalled();
+        });
+
+        it('should call _processSaveQueue again after processing every item returned in order', function() {
+            request1.callReturned = true;
+            request2.callReturned = true;
+            request3.callReturned = true;
+            layout.saveQueue.push(request1);
+            layout.saveQueue.push(request2);
+            layout.saveQueue.push(request3);
+            layout._processSaveQueue();
+
+            expect(layout._processSaveQueue.callCount).toBe(4);
+        });
+
+        it('should not process any queue items if the first item in queue has not returned', function() {
+            request1.callReturned = false;
+            request2.callReturned = true;
+            request3.callReturned = true;
+            layout.saveQueue.push(request1);
+            layout.saveQueue.push(request2);
+            layout.saveQueue.push(request3);
+            layout._processSaveQueue();
+
+            expect(layout.saveQueue.shift).not.toHaveBeenCalled();
+        });
+
+        it('should call the queue item success function with the response data', function() {
+            request1.callReturned = true;
+            layout.saveQueue.push(request1);
+            layout._processSaveQueue();
+
+            expect(requestSuccess1).toHaveBeenCalledWith(request1.responseData);
+        });
     });
 
     describe('_onSaveUpdatedGroupSuccess()', function() {

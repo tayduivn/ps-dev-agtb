@@ -826,7 +826,6 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_PRODUCT_BUNDLES',
             'links' => array('product_bundles'),
             'source' => 'non-db',
-            'order_by' => 'position:asc',
         ),
         'opportunities' => array(
             'name' => 'opportunities',

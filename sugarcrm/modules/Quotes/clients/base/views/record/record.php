@@ -190,6 +190,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                                 ),
                             ),
                             'max_num' => -1,
+                            'order_by' => 'position:asc',
                         ),
                     ),
                 ),
