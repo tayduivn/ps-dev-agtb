@@ -280,6 +280,7 @@ $mod_strings = array (
     'LBL_MONTH' => 'Month',
     'LBL_YEAR' => 'Year',
     'LBL_QUARTER' => 'Quarter',
+    'LBL_FISCAL' => 'Fiscal',
     'LBL_FISCAL_YEAR' => 'Fiscal Year',
     'LBL_FISCAL_QUARTER' => 'Fiscal Quarter',
 	'LBL_YESTERDAY'=>'Yesterday',

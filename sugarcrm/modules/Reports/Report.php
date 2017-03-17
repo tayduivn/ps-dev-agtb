@@ -379,19 +379,21 @@ class Report
                 }
             }
 
-            $filters = array();
-            $filters['Filter_1'] = array();
-            if (isset($this->report_def['filters_combiner']))
-                $filters['Filter_1']['operator'] = $this->report_def['filters_combiner'];
-            else
-                $filters['Filter_1']['operator'] = 'AND';
-            for ($i = 0; $i < count($this->report_def['filters_def']); $i++) {
-                if ($this->report_def['filters_def'][$i]['table_key'] != 'self') {
-                    $this->report_def['filters_def'][$i]['table_key'] = $upgrade_lookup[$this->report_def['filters_def'][$i]['table_key']];
+            if (empty($this->report_def['filters_def']) || !isset($this->report_def['filters_def']['Filter_1'])) {
+                $filters = array();
+                $filters['Filter_1'] = array();
+                if (isset($this->report_def['filters_combiner']))
+                    $filters['Filter_1']['operator'] = $this->report_def['filters_combiner'];
+                else
+                    $filters['Filter_1']['operator'] = 'AND';
+                for ($i = 0; $i < count($this->report_def['filters_def']); $i++) {
+                    if ($this->report_def['filters_def'][$i]['table_key'] != 'self') {
+                        $this->report_def['filters_def'][$i]['table_key'] = $upgrade_lookup[$this->report_def['filters_def'][$i]['table_key']];
+                    }
+                    array_push($filters['Filter_1'], $this->report_def['filters_def'][$i]);
                 }
-                array_push($filters['Filter_1'], $this->report_def['filters_def'][$i]);
+                $this->report_def['filters_def'] = $filters;
             }
-            $this->report_def['filters_def'] = $filters;
 
             // Re-encode the report definition
             $this->report_def_str = $json->encode($this->report_def);
@@ -2333,11 +2335,12 @@ class Report
                     }
                 } // if
                 
+
                 if (is_array($this->moduleBean->field_defs)) {
                     if (isset($this->moduleBean->field_defs[$display_column['type']])) {
                         if (isset($this->moduleBean->field_defs[$display_column['type']]['options'])) {
                             $trans_options = translate($this->moduleBean->field_defs[$display_column['type']]['options']);
-                                                        
+
                             if (isset($trans_options[$display_column['fields'][$field_name]])) {
                                 $display = $trans_options[$display_column['fields'][$field_name]];
                             }

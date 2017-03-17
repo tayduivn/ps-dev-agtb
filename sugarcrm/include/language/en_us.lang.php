@@ -4885,6 +4885,10 @@ Sincerely, SugarCRM',
 
     'LBL_DASHLET_SAVED_REPORTS_CHART' => 'Saved Reports Chart Dashlet',
     'LBL_DASHLET_SAVED_REPORTS_CHART_DESC' => 'Displays any chart from a saved report.',
+
+    'LBL_DRILLTHROUGH_LIST' => 'Drill Through List',
+    'LBL_DRILLTHROUGH_DASHBOARD' => 'Drill Through Dashboard',
+
     'LBL_QUESTION_MARK' => '?',
 
     'LBL_DASHLET_RELATED_DOCUMENTS' => 'Published Related Articles',
