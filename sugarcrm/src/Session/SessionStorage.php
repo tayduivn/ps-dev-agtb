@@ -134,7 +134,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
     {
         $session_id = $this->getId();
 
-        return empty($session_id) ? true : false;
+        return !empty($session_id);
     }
 
     /**
