@@ -17,12 +17,27 @@ namespace Sugarcrm\SugarcrmTestsUnit\data\Relationships;
  */
 class M2MRelationshipTest extends \PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @var array
+     */
+    protected $def;
+
     protected function setUp()
     {
         parent::setUp();
         $GLOBALS['log'] = $this->getMockBuilder('LoggerManager')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->def = [
+            'join_key_rhs' => 'id-right',
+            'join_key_lhs' => 'id-left',
+            'name' => 'link-test',
+            'lhs_module' => 'LeftModule',
+            'rhs_module' => 'RightModule',
+        ];
+
     }
 
     protected function tearDown()
@@ -99,18 +114,11 @@ class M2MRelationshipTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoad($expected, $queryResults, $linkIsLHS)
     {
-        $def = [
-            'join_key_rhs' => 'id-right',
-            'join_key_lhs' => 'id-left',
-            'name' => 'link-test',
-            'lhs_module' => 'LeftModule',
-            'rhs_module' => 'RightModule',
-        ];
         $relationship = $this->getMockBuilder('M2MRelationship')
             ->setMethods(['getSugarQuery', 'linkIsLHS', 'getLinkedDefForModuleByRelationship'])
-            ->setConstructorArgs([$def])
+            ->setConstructorArgs([$this->def])
             ->getMock();
-        $sugarQuery = $this->getMock('SugarQuery', [], [], '', false);
+        $sugarQuery = $this->createMock('SugarQuery');
         $sugarQuery->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($queryResults));
@@ -120,7 +128,7 @@ class M2MRelationshipTest extends \PHPUnit_Framework_TestCase
         $relationship->expects($this->once())
             ->method('linkIsLHS')
             ->will($this->returnValue($linkIsLHS));
-        $rows = $relationship->load($this->getMock('Link2', [], [], '', false), []);
+        $rows = $relationship->load($this->createMock('Link2'), []);
         $this->assertArrayHasKey('rows', $rows);
         $this->assertEquals($expected, $rows['rows']);
     }
@@ -131,20 +139,42 @@ class M2MRelationshipTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadException()
     {
-        $def = [
-            'join_key_rhs' => 'id-right',
-            'join_key_lhs' => 'id-left',
-            'name' => 'link-test',
-            'lhs_module' => 'LeftModule',
-            'rhs_module' => 'RightModule',
-        ];
         $relationship = $this->getMockBuilder('M2MRelationship')
             ->setMethods(['linkIsLHS', 'getLinkedDefForModuleByRelationship'])
-            ->setConstructorArgs([$def])
+            ->setConstructorArgs([$this->def])
             ->getMock();
         $relationship->expects($this->once())
             ->method('linkIsLHS')
             ->will($this->returnValue(true));
-        $relationship->load($this->getMock('Link2', [], [], '', false), []);
+        $relationship->load($this->createMock('Link2'), []);
+    }
+
+    /**
+     * @covers ::setNewPrimary
+     */
+    public function testSetNewPrimaryFlagDoesNotSet()
+    {
+        /** @var \M2MRelationship|\PHPUnit_Framework_MockObject_MockObject $relationship */
+        $relationship = $this->getMockBuilder(\M2MRelationship::class)
+            ->setMethods(['getLinkedDefForModuleByRelationship', 'removeRow'])
+            ->setConstructorArgs([$this->def])
+            ->getMock();
+
+        $relationship->expects($this->once())
+            ->method('removeRow');
+
+        $lhs = $this->createMock(\SugarBean::class);
+        $lhs->expects($this->once())
+            ->method('load_relationship')
+            ->willReturn(true);
+
+        $rhs = $this->createMock(\SugarBean::class);
+        $rhs->expects($this->once())
+            ->method('load_relationship')
+            ->willReturn(true);
+
+        $result = $relationship->remove($lhs, $rhs);
+
+        $this->assertTrue($result);
     }
 }

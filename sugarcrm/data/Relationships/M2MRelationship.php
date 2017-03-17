@@ -364,7 +364,7 @@ class M2MRelationship extends SugarRelationship
         if (empty($this->def['primary_flag_column'])
             || empty($this->def['primary_flag_default'])) {
             // No primary flag, don't need to worry about a new primary record
-            return false;
+            return true;
         }
 
         $conn = DBManagerFactory::getInstance()->getConnection();
