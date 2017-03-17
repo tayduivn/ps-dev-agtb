@@ -119,7 +119,7 @@
     buildVariablesString: function(recipients) {
         var result = '' , newExpression = '', currentValue, i, aux, aux2;
         _.each(recipients.models, function(model) {
-            newExpression += '{::'+ App.lang.getModuleName(model.attributes.rhs_module, {plural: true}) +'::'+model.attributes.id+'::}'
+            newExpression += '{::' + model.attributes.rhs_module + '::' + model.attributes.id + '::}';
         });
 
         var bm = this._htmleditor.selection.getBookmark();
@@ -152,7 +152,7 @@
                 if (_.isUndefined(field)) {
                     return;
                 }
-                var link = '{::href_link::' + App.lang.getModuleName(baseModule, {plural: true});
+                var link = '{::href_link::' + baseModule;
 
                 //Target module doesn't need second part of variable
                 //The second part is for related modules
