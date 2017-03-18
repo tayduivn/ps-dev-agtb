@@ -11,37 +11,38 @@
 ({
     // dashboard dashlets
     _renderHtml: function() {
-        var self = this;
-
         this._super('_renderHtml');
 
         // define event listeners
-        app.events.on('preview:close', function() {
-            console.log('previewClose');
-            self.toggleSidebar(false);
-        });
-        app.events.on('app:dashletPreview:close', function() {
-            self.toggleSidebar(false);
-        });
-        app.events.on('app:dashletPreview:open', function() {
-            self.toggleSidebar(true);
-        });
+        app.events.on('preview:close', _.bind(function() {
+            this.toggleSidebar(false);
+        }, this));
+        app.events.on('app:dashletPreview:close', _.bind(function() {
+            this.toggleSidebar(false);
+        }, this));
+        app.events.on('app:dashletPreview:open', _.bind(function() {
+            this.toggleSidebar(true);
+        }, this));
 
-        this.$('.dashlet-example').on('click.styleguide', function() {
-            if ($(this).hasClass('active')) {
-                self.toggleSidebar(false);
+        this.$('.dashlet-example').on('click.styleguide', _.bind(function(event) {
+            var button = this.$(event.currentTarget);
+            var dashlet;
+            var module;
+            var metadata;
+            if (button.hasClass('active')) {
+                this.toggleSidebar(false);
                 return;
             }
-            self.$('.dashlet-example').removeClass('active');
-            $(this).addClass('active');
+            this.$('.dashlet-example').removeClass('active');
+            button.addClass('active');
             app.events.trigger('app:dashletPreview:open');
-            var dashlet = $(this).data('dashlet'),
-                module = $(this).data('module') || 'Styleguide',
-                metadata = app.metadata.getView(module, dashlet).dashlets[0];
+            dashlet = button.data('dashlet');
+            module = button.data('module') || 'Styleguide';
+            metadata = app.metadata.getView(module, dashlet).dashlets[0];
             metadata.type = dashlet;
             metadata.component = dashlet;
-            self.previewDashlet(metadata);
-        });
+            this.previewDashlet(metadata);
+        }, this));
     },
 
     _dispose: function() {
@@ -55,7 +56,7 @@
             defaultLayout.trigger('sidebar:toggle', state);
         }
         if (!state) {
-            self.$('.dashlet-example').removeClass('active');
+            this.$('.dashlet-example').removeClass('active');
         }
     },
 
@@ -65,68 +66,75 @@
      * @param {Object} metadata Preview metadata.
      */
     previewDashlet: function(metadata) {
-        var layout = this.layout,
-            previewLayout;
+        var layout = this.layout.getComponent('sidebar');
+        var previewLayout;
+        var previousComponent;
+        var index;
+        var contextDef;
+        var component;
 
         while (layout) {
             if (layout.getComponent('preview-pane')) {
                 previewLayout = layout.getComponent('preview-pane').getComponent('dashlet-preview');
-                //previewLayout.showPreviewPanel();
                 break;
             }
             layout = layout.layout;
         }
 
-        if (previewLayout) {
-            // If there is no preview property, use the config property
-            if (!metadata.preview) {
-                metadata.preview = metadata.config;
-            }
-            var previousComponent = _.last(previewLayout._components);
-
-            if (previousComponent.name !== 'dashlet-preview' && previousComponent.name !== 'preview-header') {
-                var index = previewLayout._components.length - 1;
-                previewLayout._components[index].dispose();
-                previewLayout.removeComponent(index);
-            }
-
-            var contextDef,
-                component = {
-                    label: app.lang.get(metadata.label, metadata.preview.module),
-                    type: metadata.type,
-                    preview: true
-                };
-            if (metadata.preview.module || metadata.preview.link) {
-                contextDef = {
-                    skipFetch: false,
-                    forceNew: true,
-                    module: metadata.preview.module,
-                    link: metadata.preview.link
-                };
-            } else if (metadata.module) {
-                contextDef = {
-                    module: metadata.module
-                };
-            }
-
-            component.view = _.extend({module: metadata.module}, metadata.preview, component);
-            if (contextDef) {
-                component.context = contextDef;
-            }
-
-            previewLayout.initComponents([{
-                layout: {
-                    type: 'dashlet',
-                    label: app.lang.get(metadata.preview.label || metadata.label, metadata.preview.module),
-                    preview: true,
-                    components: [
-                        component
-                    ]
-                }
-            }], this.context.parent);
-
-            previewLayout.loadData();
-            previewLayout.render();
+        if (!previewLayout) {
+            return;
         }
+
+        previewLayout.showPreviewPanel();
+
+        // If there is no preview property, use the config property
+        if (!metadata.preview) {
+            metadata.preview = metadata.config;
+        }
+        previousComponent = _.last(previewLayout._components);
+
+        if (previousComponent.name !== 'dashlet-preview' && previousComponent.name !== 'preview-header') {
+            index = previewLayout._components.length - 1;
+            previewLayout._components[index].dispose();
+            previewLayout.removeComponent(index);
+        }
+
+        component = {
+            label: app.lang.get(metadata.label, metadata.preview.module),
+            type: metadata.type,
+            preview: true
+        };
+
+        if (metadata.preview.module || metadata.preview.link) {
+            contextDef = {
+                skipFetch: false,
+                forceNew: true,
+                module: metadata.preview.module,
+                link: metadata.preview.link
+            };
+        } else if (metadata.module) {
+            contextDef = {
+                module: metadata.module
+            };
+        }
+
+        component.view = _.extend({module: metadata.module}, metadata.preview, component);
+        if (contextDef) {
+            component.context = contextDef;
+        }
+
+        previewLayout.initComponents([{
+            layout: {
+                type: 'dashlet',
+                label: app.lang.get(metadata.preview.label || metadata.label, metadata.preview.module),
+                preview: true,
+                components: [
+                    component
+                ]
+            }
+        }], this.context);
+
+        previewLayout.loadData();
+        previewLayout.render();
     }
 })

@@ -18,17 +18,15 @@
                 page_details: {},
                 parent_link: '',
                 view: 'index'
-            },
-            chapter_name,
-            content_name,
-            chapter,
-            section,
-            page;
+            };
+        var chapterName;
+        var contentName;
+        var chapter;
+        var section;
+        var page;
 
-        this._super('initialize', [options]);
-
-        chapter_name = this.context.get('chapter_name');
-        content_name = this.context.get('content_name');
+        chapterName = options.context.get('chapter_name');
+        contentName = options.context.get('content_name');
 
         // load up the styleguide css if not already loaded
         //TODO: cleanup styleguide.css and add to main file
@@ -45,11 +43,11 @@
         document.title = $('<span/>').html('Styleguide &#187; SugarCRM').text();
 
         // request.page_data = this.meta.metadata.page_data;
-        request.page_data = app.metadata.getLayout(this.module, 'styleguide').metadata.chapters;
+        request.page_data = app.metadata.getLayout(options.module, 'styleguide').metadata.chapters;
 
-        request.keys = [chapter_name];
-        if (!_.isUndefined(content_name) && !_.isEmpty(content_name)) {
-            Array.prototype.push.apply(request.keys, content_name.split('-'));
+        request.keys = [chapterName];
+        if (!_.isUndefined(contentName) && !_.isEmpty(contentName)) {
+            Array.prototype.push.apply(request.keys, contentName.split('-'));
         }
 
         chapter = request.page_data[request.keys[0]];
@@ -70,7 +68,7 @@
                     description: page.description,
                     url: page.url
                 };
-                request.view = content_name;
+                request.view = contentName;
                 request.parent_link = '-' + request.keys[0][request.keys[1]];
                 window.prettyPrint && prettyPrint();
             } else {
@@ -82,6 +80,8 @@
 
         request.page_details.css_class = 'container-fluid';
 
-        this.context.set('request', request);
+        options.context.set('request', request);
+
+        this._super('initialize', [options]);
     }
 })
