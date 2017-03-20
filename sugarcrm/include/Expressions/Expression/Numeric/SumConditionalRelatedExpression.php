@@ -100,8 +100,9 @@ class SumConditionalRelatedExpression extends NumericExpression
                 condition_values = [condition_values];
             }
 
-        var model = this.context.relatedModel || this.context.model,  // the model
+        var model = this.context.relatedModel || App.data.createRelatedBean(this.context.model, null, relationship),
             model_id = model.id || model.cid,
+            precision = model.fields[rel_field].precision || 6,
             // has the model been removed from it's collection
             hasModelBeenRemoved = this.context.isRemoveEvent || false,
             // is this being fired for the condition field or the rel_field?
@@ -113,76 +114,45 @@ class SumConditionalRelatedExpression extends NumericExpression
         if (conditionValid || conditionChanged) {
             var isCurrency = (model.fields[rel_field].type === 'currency'),
                 current_value = this.context.getRelatedField(relationship, 'rollupConditionalSum', rel_field) || '0',
-                context_previous_values = this.context.previous_values || {},
-                previous_value = context_previous_values[rel_field + '--' + model_id] || model.previous(rel_field) || '0',
-                new_value = model.get(rel_field) || '0',
-                value_changed = !_.isEqual(new_value, previous_value),
-                rollup_value = undefined;
+                related_collection = this.context.model.getRelatedCollection(relationship),
+                rollup_value = '0';
 
-            // if the new_value is not a number, set it to '0'
-            if (!_.isFinite(new_value)) {
-                new_value = '0';
-            }
 
-            // if the previous_value is not a number set it to '0'
-            if (!_.isFinite(previous_value)) {
-                previous_value = '0';
-            }
-
-            if (isCurrency) {
-                previous_value = App.currency.convertWithRate(
-                    previous_value,
-                    model.get('base_rate'),
-                    this.context.model.get('base_rate')
-                );
-                new_value = App.currency.convertWithRate(
-                    new_value,
-                    model.get('base_rate'),
-                    this.context.model.get('base_rate')
+            if (!_.isUndefined(this.context.relatedModel)) {
+                this.context.updateRelatedCollectionValues(
+                    this.context.model,
+                    relationship,
+                    'rollupConditionalSum',
+                    rel_field,
+                    model,
+                    (hasModelBeenRemoved ? 'remove' : 'add')
                 );
             }
 
-            // they are the same value and the model has not been removed,
-            if (previous_value === new_value && !hasModelBeenRemoved) {
-                // if the condition didn't change or it's not the current field
-                if (!(conditionChanged && currentFieldIsConditionField)) {
-                    // no math is needed
-                    return;
+            var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'rollupConditionalSum', rel_field) || {};
+
+            if (_.size(all_values) > 0) {
+                rollup_value = _.reduce(all_values, function(memo, number, key) {
+                    // Check the condition against the live model value
+                    // or assume the model is valid if the server included it.
+                    var rel_model = related_collection.get(key);
+                    if (!rel_model || _.contains(condition_values, rel_model.get(condition_field))) {
+                        return App.math.add(memo, number, precision, true);
+                    }
+
+                    return memo;
+                }, '0');
+
+                if (isCurrency) {
+                    rollup_value = App.currency.convertFromBase(
+                        rollup_value,
+                        this.context.model.get('currency_id')
+                    );
                 }
             }
 
-            // store the new_value on the context for the rel_field
-            // this allows multiple different formulas to change the rel_field while
-            // maintaining the correct previous_value since it's not updated on the models previous_attributes
-            // every time the model.set() is called before the initial set() completes
-            this.context.previous_values = this.context.previous_values || {};
-            // while this is icky, i believe it's needed for now
-            if (this.context.previous_values[rel_field + '--' + model.cid] && model_id != model.cid) {
-                delete this.context.previous_values[rel_field + '--' + model.cid]
-            }
-            this.context.previous_values[rel_field + '--' + model_id] = new_value;
-
-            if (conditionValid && !hasModelBeenRemoved) {
-                // if the condition is valid and the condition field changed, check if the previous value
-                // was an invalid condition, if it was, the `new_value` just needs to be added back
-                if (conditionChanged && !_.contains(condition_values, model.previous(condition_field))) {
-                    rollup_value = App.math.add(current_value, new_value, 6, true);
-                } else if (value_changed && !currentFieldIsConditionField) {
-                    // the condition might have changed, but it's still evaluating to true and we are not on the event
-                    // being fired by the condition field. so remove the `previous_value` and add
-                    // the `new_value` from `current_value`
-                    rollup_value = App.math.add(App.math.sub(current_value, previous_value, 6, true), new_value, 6, true);
-                }
-            } else if ((conditionChanged && currentFieldIsConditionField) || hasModelBeenRemoved) {
-                // when just the condition changes and the currentField is the condition field or
-                // the model has been removed, subtract the value.
-                rollup_value = App.math.sub(current_value, previous_value, 6, true);
-            }
-            // rollup_value won't exist if we didnt do any math, so just ignore this
-            if (!_.isUndefined(rollup_value) && _.isFinite(rollup_value)) {
-                // update the model
+            if (!_.isEqual(rollup_value, current_value)) {
                 this.context.model.set(target, rollup_value);
-                // update the relationship defs on the model
                 this.context.updateRelatedFieldValue(
                     relationship,
                     'rollupConditionalSum',
@@ -191,6 +161,8 @@ class SumConditionalRelatedExpression extends NumericExpression
                     this.context.model.isNew()
                 );
             }
+
+            return rollup_value;
         }
 JS;
 

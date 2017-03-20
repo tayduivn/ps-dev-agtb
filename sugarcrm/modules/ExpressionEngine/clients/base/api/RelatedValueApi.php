@@ -208,6 +208,7 @@ class RelatedValueApi extends SugarApi
                     break;
                 case "rollupConditionalSum":
                     $ret[$link][$type][$rField] = '0';
+                    $values = [];
 
                     if ($focus->load_relationship($link)) {
                         if (preg_match('/^[a-zA-Z0-9_\-$]+\(.*\)$/', $rfDef['condition_expr'])) {
@@ -235,10 +236,12 @@ class RelatedValueApi extends SugarApi
                                     $sum = SugarMath::init($sum)->add(
                                         $value
                                     )->result();
+                                    $values[$bean->id] = $value;
                                 }
                             }
                         }
                         $ret[$link][$type][$rField] = $sum;
+                        $ret[$link][$type][$rField . '_values'] = $values;
                     }
                     break;
                 case 'maxRelatedDate':
