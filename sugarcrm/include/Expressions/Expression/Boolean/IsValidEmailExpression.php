@@ -64,7 +64,9 @@ class IsValidEmailExpression extends BooleanExpression {
 		for (var i = 0; i < emailArr.length; i++) {
 			var emailAddress = emailArr[i];
 			emailAddress = emailAddress.replace(/^\s+|\s+$/g,"");
-            if (emailAddress != '' && !/^.+@.+$/ig.test(emailAddress)) {
+            if (emailAddress != '' &&
+                !/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@\S+$/.test(emailAddress)
+            ) {
                 return SUGAR.expressions.Expression.FALSE;
             }
 		}
