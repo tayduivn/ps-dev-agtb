@@ -285,7 +285,7 @@ class AuthenticationController
 
 	/**
 	 * Get URL for external login
-	 * @return string
+     * @return string|array
 	 */
 	public function getLogoutUrl()
 	{

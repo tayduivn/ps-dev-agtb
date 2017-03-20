@@ -10,10 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\IdentityProvider\Authentication\Token\SAML\InitiateToken;
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\AcsToken;
+use Sugarcrm\IdentityProvider\Authentication\Token\SAML\InitiateLogoutToken;
+use Sugarcrm\IdentityProvider\Authentication\Token\SAML\InitiateToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
+use Symfony\Component\HttpFoundation\Request;
 
 class IdMSAMLAuthenticate extends SAMLAuthenticate
 {
@@ -82,23 +85,62 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
         $authManager = $this->getAuthProviderBuilder($this->getConfig())->buildAuthProviders();
         $token = $authManager->authenticate($acsToken);
 
-        if ($token->isAuthenticated()) {
-            // @todo validate replay protection (in IdM), see BR-5052
-            // @todo update custom fields
-            // @todo JIT user creation
-            return true;
+        if (!$token->isAuthenticated()) {
+            return false;
         }
-        return false;
+
+        $session = $this->getSession();
+        $session['IdPSessionIndex'] = $token->getAttribute('IdPSessionIndex');
+        // @todo validate replay protection (in IdM), see BR-5052
+        // @todo update custom fields
+        // @todo JIT user creation
+        return true;
+    }
+
+    /**
+     * Get URL to follow to get logged out
+     * @return string|array
+     */
+    public function getLogoutUrl()
+    {
+        $session = $this->getSession();
+        $logoutToken = new InitiateLogoutToken();
+        $logoutToken->setAttribute('nameId', $GLOBALS['current_user']->user_name);
+        if (array_key_exists('IdPSessionIndex', $session)) {
+            $logoutToken->setAttribute('sessionIndex', $session['IdPSessionIndex']);
+        }
+        $authManager = $this->getAuthProviderBasicBuilder($this->getConfig())->buildAuthProviders();
+
+        $resultToken = $authManager->authenticate($logoutToken);
+        switch ($resultToken->getAttribute('method')) {
+            case Request::METHOD_POST:
+                $params = [
+                    'url' => $resultToken->getAttribute('url'),
+                    'method' => $resultToken->getAttribute('method'),
+                    'params' => $resultToken->getAttribute('parameters'),
+                ];
+                return $params;
+            default:
+                return $resultToken->getAttribute('url');
+        }
     }
 
     /**
      * Get idm configuration instance.
      *
-     * @return Config
+     * @return \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config
      */
     protected function getConfig()
     {
         return new Config(\SugarConfig::getInstance());
+    }
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Session\SessionStorageInterface
+     */
+    protected function getSession()
+    {
+        return SessionStorage::getInstance();
     }
 
     /**

@@ -622,14 +622,29 @@
     app.events.on("app:logout:success", function(data) {
         if (app.config && app.config.externalLogin && data && data.url) {
             if (!$('#logoutframe').length) {
-                $("#sugarcrm").append('<iframe id="logoutframe" />');
+                $('#sugarcrm').append('<iframe id="logoutframe" name="logoutframe" />');
                 $('#logoutframe').hide();
             }
             $('#logoutframe').load(function() {
                 $('#logoutframe').off('load');
                 $('#logoutframe').attr('src','');
+                app.events.trigger('app:logout:external:complete');
             });
-            $('#logoutframe').attr('src',data.url);
+
+            if (typeof data.url == 'string') { // HTTP-Redirect binding
+                $('#logoutframe').attr('src',data.url);
+            } else if (typeof data.url == 'object') { // HTTP-POST binding
+                var formHTML = '<form id="externalLogoutForm" method="POST" target="logoutframe" action="' +
+                    data.url.url + '">';
+                _.each(data.url.params, function(value, key, list) {
+                    formHTML += '<input type="hidden" name="' + _.escape(key) + '" value="' + _.escape(value) + '" />';
+                });
+                formHTML += '</form>' +
+                    '<script type="text/javascript">document.getElementById("externalLogoutForm").submit();</script>';
+
+                $('#sugarcrm').append(formHTML);
+            }
+
         }
     });
 

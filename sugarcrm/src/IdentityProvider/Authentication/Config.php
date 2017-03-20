@@ -64,6 +64,7 @@ class Config
      */
     protected function getSAMLDefaultConfig()
     {
+        $isSPPrivateKeySet = (bool)$this->get('SAML_REQUEST_SIGNING_PKEY');
         $siteUrl = rtrim($this->get('site_url'), '/');
         $acsUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Authenticate', ENT_XML1));
         $sloUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Logout', ENT_XML1));
@@ -99,7 +100,9 @@ class Config
             ),
 
             'security' => [
-                'authnRequestsSigned' => (bool)$this->get('SAML_REQUEST_SIGNING_PKEY'),
+                'authnRequestsSigned' => $isSPPrivateKeySet,
+                'logoutRequestSigned' => $isSPPrivateKeySet,
+                'logoutResponseSigned' => $isSPPrivateKeySet,
                 'signatureAlgorithm' => $this->get('SAML_REQUEST_SIGNING_METHOD', \XMLSecurityKey::RSA_SHA256),
             ],
         ];

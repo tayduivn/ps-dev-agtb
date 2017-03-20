@@ -57,7 +57,7 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
 
         $this->auth = $this->getMockBuilder(\IdMSAMLAuthenticate::class)
-                           ->setMethods(['getConfig', 'getAuthProviderBasicBuilder'])
+                           ->setMethods(['getConfig', 'getAuthProviderBasicBuilder', 'getAuthProviderBuilder'])
                            ->getMock();
         $this->config = $this->createMock(Config::class);
         $this->authProviderBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
@@ -66,6 +66,7 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
 
         $this->auth->method('getConfig')->willReturn($this->config);
         $this->auth->method('getAuthProviderBasicBuilder')->willReturn($this->authProviderBuilder);
+        $this->auth->method('getAuthProviderBuilder')->willReturn($this->authProviderBuilder);
         $this->authProviderBuilder->method('buildAuthProviders')->willReturn($this->authProviderManager);
     }
 
@@ -123,5 +124,72 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
                                   )->willReturn($this->token);
         $this->token->expects($this->once())->method('getAttribute')->with('url');
         $this->auth->getLoginUrl(['platform' => $platform]);
+    }
+
+    public function loginAuthenticateDataProvider()
+    {
+        return [
+            [false, false],
+            [true, true],
+        ];
+    }
+
+    /**
+     * @dataProvider loginAuthenticateDataProvider
+     * @covers ::loginAuthenticate()
+     */
+    public function testLoginAuthenticate($expected, $tokenAuthenticated)
+    {
+        $_POST['SAMLResponse'] = '<SAMLResponse>';
+
+        $this->token->expects($this->once())
+            ->method('isAuthenticated')
+            ->willReturn($tokenAuthenticated);
+        $this->authProviderManager->expects($this->once())
+            ->method('authenticate')
+            ->willReturn($this->token);
+        $this->assertEquals($expected, $this->auth->loginAuthenticate('', ''));
+
+        unset($_POST['SAMLResponse']);
+    }
+
+    public function getLogoutUrlDataProvider()
+    {
+        return [
+            'redirect binding' => [
+                'http://test.com/saml/logout',
+                [
+                    ['url', 'http://test.com/saml/logout'],
+                    ['method', 'GET'],
+                ],
+            ],
+            'post binding' => [
+                [
+                    'url' => 'http://test.com/saml/logout',
+                    'method' => 'POST',
+                    'params' => ['SAMLRequest' => 'some-saml-request'],
+                ],
+                [
+                    ['url', 'http://test.com/saml/logout'],
+                    ['method', 'POST'],
+                    ['parameters', ['SAMLRequest' => 'some-saml-request']],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getLogoutUrlDataProvider
+     * @covers ::getLogoutUrl()
+     */
+    public function testGetLogoutUrl($expected, $attributesMap)
+    {
+        $this->token->expects($this->any())
+            ->method('getAttribute')
+            ->willReturnMap($attributesMap);
+        $this->authProviderManager->expects($this->once())
+            ->method('authenticate')
+            ->willReturn($this->token);
+        $this->assertEquals($expected, $this->auth->getLogoutUrl());
     }
 }
