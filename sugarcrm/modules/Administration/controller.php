@@ -12,7 +12,10 @@
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
-
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
@@ -367,6 +370,55 @@ class AdministrationController extends SugarController
     public function action_UpgradeWizard_map_roles()
     {
         $this->view = 'maproles';
+    }
+
+    /**
+     * send SAML metadata
+     */
+    public function action_exportMetaDataFile()
+    {
+        $settings = $this->getSamlSettings();
+        $metadata = [];
+        try {
+            $metadata = $settings->getSPMetadata();
+            $errors = $settings->validateMetadata($metadata);
+        } catch (\Exception $e) {
+            $errors = [$e->getMessage()];
+        }
+
+        if (!empty($errors)) {
+            $this->addErrorLogMessage($errors);
+            $response = new RedirectResponse('index.php?module=Administration&action=PasswordManager');
+        } else {
+            $response = new Response($metadata);
+            $disposition = $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                'metadata.xml'
+            );
+            $response->headers->set('Content-Disposition', $disposition);
+        }
+        $response->send();
+    }
+
+    /**
+     * add error log message
+     * @param array $errors
+     */
+    protected function addErrorLogMessage(array $errors)
+    {
+        global $log;
+        $log->error('Export SAML metadata errors: ' . implode(', ', $errors));
+    }
+
+    /**
+     * create OneLogin_Saml2_Settings with predefined config
+     * @return \OneLogin_Saml2_Settings
+     */
+    protected function getSamlSettings()
+    {
+        return new \OneLogin_Saml2_Settings(
+            (new Config(\SugarConfig::getInstance()))->getSAMLConfig()
+        );
     }
 
     /**

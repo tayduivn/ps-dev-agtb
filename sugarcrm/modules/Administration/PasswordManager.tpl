@@ -26,6 +26,9 @@
             &nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}" id="btn_cancel"
                          onclick="document.location.href='index.php?module=Administration&action=index'" class="button"
                          type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
+            <input title="{$MOD.LBL_EXPORT_METADATA_BUTTON_TITLE}" id="btn_export_metadata" class="button"
+                         onclick="document.location.href='index.php?module=Administration&action=exportMetaDataFile'"
+                         type="button" name="export_metadata" value="{$MOD.LBL_EXPORT_METADATA_BUTTON_LABEL}">
         </td>
     </tr>
 </table>
@@ -861,6 +864,9 @@
     &nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"
                  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"
                  type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"/>
+    <input title="{$MOD.LBL_EXPORT_METADATA_BUTTON_TITLE}" id="btn_export_metadata" class="button"
+           onclick="document.location.href='index.php?module=Administration&action=exportMetaDataFile'"
+           type="button" name="export_metadata" value="{$MOD.LBL_EXPORT_METADATA_BUTTON_LABEL}">
 </div>
 </td>
 </tr>
