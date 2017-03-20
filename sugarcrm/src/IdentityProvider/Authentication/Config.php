@@ -23,11 +23,6 @@ class Config
     protected $sugarConfig;
 
     /**
-     * @var array
-     */
-    protected $values = [];
-
-    /**
      * @var \Administration
      */
     protected $ldapSettings;
@@ -48,16 +43,7 @@ class Config
      */
     public function get($key, $default = null)
     {
-        return array_key_exists($key, $this->values) ? $this->values[$key] : $this->sugarConfig->get($key, $default);
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     */
-    public function set($key, $value)
-    {
-        $this->values[$key] = $value;
+        return $this->sugarConfig->get($key, $default);
     }
 
     /**

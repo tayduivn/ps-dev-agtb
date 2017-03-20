@@ -30,9 +30,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             ->willReturn('sugar_config_value');
         $config = new Config($sugarConfig);
         $this->assertEquals('sugar_config_value', $config->get('some_key'), 'Proxying to sugar config');
-
-        $config->set('key', 'idm_value');
-        $this->assertEquals('idm_value', $config->get('key'), 'Overridden value');
     }
 
     public function getSAMLConfigDataProvider()
