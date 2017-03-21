@@ -684,9 +684,18 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
         },
 
         translateDataToD3: function(json, params, chartConfig) {
-            var data = [],
-                value = 0,
-                strUndefined = SUGAR.charts.translateString('LBL_CHART_UNDEFINED');
+            var data = [];
+            var value = 0;
+            var strUndefined = SUGAR.charts.translateString('LBL_CHART_UNDEFINED');
+            var hasValues = json.values.filter(function(d) {
+                    return Array.isArray(d.values) && d.values.length;
+                }).length;
+            var isGroupedBarType;
+            var isDiscreteData = hasValues &&
+                    Array.isArray(json.label) && json.label.length === json.values.length &&
+                    json.values.reduce(function(a, b) {
+                        return a && Array.isArray(b.values) && b.values.length === 1;
+                    }, true);
 
             function sumValues(values) {
                 return values.reduce(function(a, b) { return parseFloat(a) + parseFloat(b); }, 0); // 0 is default value if reducing an empty list
@@ -697,12 +706,14 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 return l ? l : strUndefined;
             }
 
-            if (json.values.filter(function(d) { return d.values && d.values.length; }).length) {
-
+            if (hasValues) {
                 switch (chartConfig['chartType']) {
 
                     case 'barChart':
-                        data = chartConfig.barType === 'stacked' || chartConfig.barType === 'grouped' ?
+                        isGroupedBarType = chartConfig.barType === 'stacked' || chartConfig.barType === 'grouped';
+
+                        data = isGroupedBarType && !isDiscreteData ?
+                            // is grouped bar type on grouped data
                             json.label.map(function(d, i) {
                                 return {
                                     'key': pickLabel(d),
@@ -717,20 +728,36 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                                     })
                                 };
                             }) :
-                            json.values.map(function(d, i) {
-                                return {
-                                    'key': d.values.length > 1 ? d.label : pickLabel(d.label),
+                            (isGroupedBarType && isDiscreteData) || (!isGroupedBarType && !isDiscreteData) ?
+                                // is grouped bar type on discrete data OR basic bar type on grouped data
+                                json.values.map(function(d, i) {
+                                    return {
+                                        'key': d.values.length > 1 ? d.label : pickLabel(d.label),
+                                        'type': 'bar',
+                                        'values': json.values.map(function(e, j) {
+                                            return {
+                                                'series': i,
+                                                'x': j + 1,
+                                                'y': i === j ? sumValues(e.values) : 0,
+                                                'y0': 0
+                                            };
+                                        })
+                                    };
+                                }) :
+                                // is basic bar type on discrete data
+                                [{
+                                    'key': params.module,
                                     'type': 'bar',
                                     'values': json.values.map(function(e, j) {
                                         return {
-                                          'series': i,
-                                          'x': j + 1,
-                                          'y': i === j ? sumValues(e.values) : 0,
-                                          'y0': 0
+                                            'series': j,
+                                            'x': j + 1,
+                                            'y': sumValues(e.values),
+                                            'y0': 0
                                         };
                                     })
-                                };
-                            });
+                                }];
+
                         break;
 
                     case 'pieChart':
@@ -765,14 +792,10 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                         break;
 
                     case 'lineChart':
-                        var discreteValues = d3.max(json.values, function(d) {
-                                  return d.values.length;
-                                }) === 1;
-
                         data = json.values.map(function(d, i) {
                             return {
                                 'key': pickLabel(d.label),
-                                'values': discreteValues ?
+                                'values': isDiscreteData ?
                                     d.values.map(function(e, j) {
                                         return [i, parseFloat(e)];
                                     }) :
@@ -810,7 +833,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                                 'l': pickLabel(d)
                             };
                         }) :
-                        json.values.filter(function(d) { return d.values.length; }).length ?
+                        hasValues ?
                             json.values.map(function(d, i) {
                                 return {
                                     'group': i + 1,
@@ -820,7 +843,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                             [],
                     'values': chartConfig['chartType'] === 'gaugeChart' ?
                         [{'group' : 1, 't': value}] :
-                        json.values.filter(function(d) { return d.values.length; }).length ?
+                        hasValues ?
                             json.values.map(function(d, i) {
                                 return {
                                     'group': i + 1,
