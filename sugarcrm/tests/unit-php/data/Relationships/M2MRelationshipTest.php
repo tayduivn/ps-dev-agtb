@@ -56,7 +56,7 @@ class M2MRelationshipTest extends \PHPUnit_Framework_TestCase
                 [['field' => 'field-1'], ['field' => 'field-2']],
                 true,
             ],
-            'no ids in relationship rows - left side' => [
+            'no ids in relationship rows - right side' => [
                 [],
                 [['field' => 'field-1'], ['field' => 'field-2']],
                 false,

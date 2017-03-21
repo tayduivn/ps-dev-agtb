@@ -204,14 +204,13 @@ class M2MRelationship extends SugarRelationship
 
     protected function getRowToInsert($lhs, $rhs, $additionalFields = array())
     {
-        $row = array(
-            "id" => create_guid(),
+        $row = array_merge($additionalFields, array(
+            'id' => create_guid(),
             $this->def['join_key_lhs'] => $lhs->id,
             $this->def['join_key_rhs'] => $rhs->id,
             'date_modified' => TimeDate::getInstance()->nowDb(),
             'deleted' => 0,
-        );
-
+        ));
 
         if (!$this->ignore_role_filter) {
             foreach ($this->getRelationshipRoleColumns() as $column => $value) {
@@ -239,10 +238,6 @@ class M2MRelationship extends SugarRelationship
             } else {
                 $row[$this->def['primary_flag_column']] = $additionalFields[$this->def['primary_flag_column']];
             }
-        }
-        if (!empty($additionalFields))
-        {
-            $row = array_merge($row, $additionalFields);
         }
 
         return $row;
