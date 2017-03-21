@@ -67,8 +67,10 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
             'missing response attributes' => [
                 [
                     'sp' => [
-                        'saml2_settings' => [
-                            'create' => ['user_name' => 'attr1', 'last_name' => 'attr2'],
+                        'sugarCustom' => [
+                            'saml2_settings' => [
+                                'create' => ['user_name' => 'attr1', 'last_name' => 'attr2'],
+                            ],
                         ],
                     ],
                 ],
@@ -81,11 +83,13 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
             'config and response attributes are present' => [
                 [
                     'sp' => [
-                        'saml2_settings' => [
-                            'create' => [
-                                'user_name' => 'attr1',
-                                'first_name' => 'attr2',
-                                'last_name' => 'attr4',
+                        'sugarCustom' => [
+                            'saml2_settings' => [
+                                'create' => [
+                                    'user_name' => 'attr1',
+                                    'first_name' => 'attr2',
+                                    'last_name' => 'attr4',
+                                ],
                             ],
                         ],
                     ],
@@ -131,10 +135,12 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
     {
         $config = [
             'sp' => [
-                'useXML' => true,
-                'saml2_settings' => [
-                    'create' => [
-                        'user_name' => '//some/path',
+                'sugarCustom' => [
+                    'useXML' => true,
+                    'saml2_settings' => [
+                        'create' => [
+                            'user_name' => '//some/path',
+                        ],
                     ],
                 ],
             ],
@@ -170,7 +176,9 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
             'id is set in custom settings' => [
                 [
                     'sp' => [
-                        'id' => 'last_name',
+                        'sugarCustom' => [
+                            'id' => 'last_name',
+                        ],
                     ],
                 ],
                 'last_name',
@@ -215,9 +223,11 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
             'attributes do not contain search field' => [
                 [
                     'sp' => [
-                        'saml2_settings' => [
-                            'check' => [
-                                'user_name' => 'attr2',
+                        'sugarCustom' => [
+                            'saml2_settings' => [
+                                'check' => [
+                                    'user_name' => 'attr2',
+                                ],
                             ],
                         ],
                     ],
@@ -229,9 +239,11 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
             'attributes contain search field' => [
                 [
                     'sp' => [
-                        'saml2_settings' => [
-                            'check' => [
-                                'user_name' => 'attr2',
+                        'sugarCustom' => [
+                            'saml2_settings' => [
+                                'check' => [
+                                    'user_name' => 'attr2',
+                                ],
                             ],
                         ],
                     ],

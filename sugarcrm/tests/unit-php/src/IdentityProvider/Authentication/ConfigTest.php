@@ -70,8 +70,10 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'default' => 'overridden config',
                     'sp' => [
                         'foo' => 'bar',
-                        'useXML' => true,
-                        'id' => 'first_name',
+                        'sugarCustom' => [
+                            'useXML' => true,
+                            'id' => 'first_name',
+                        ],
                     ],
                 ],
                 ['default' => 'config'],
@@ -83,8 +85,10 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'sp' => [
-                        'useXML' => true,
-                        'id' => 'first_name',
+                        'sugarCustom' => [
+                            'useXML' => true,
+                            'id' => 'first_name',
+                        ],
                     ],
                 ],
             ],

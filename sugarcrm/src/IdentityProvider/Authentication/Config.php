@@ -225,6 +225,10 @@ class Config
                 $result[$key] = $sugarCustomConfig->$key;
             }
         }
-        return ['sp' => $result];
+        return [
+            'sp' => [
+                'sugarCustom' => $result,
+            ],
+        ];
     }
 }

@@ -88,8 +88,11 @@ class SugarSAMLUserChecker extends SAMLUserChecker
             }
             $sugarUser = $this->processCustomUserCreate($user);
             if (!$sugarUser) {
-                $userAttributes = array_merge($defaultAttributes, $user->getAttribute('attributes')['create']);
-                $userAttributes = array_merge($userAttributes, $fixedAttributes);
+                $userAttributes = array_merge(
+                    $defaultAttributes,
+                    $user->getAttribute('attributes')['create'],
+                    $fixedAttributes
+                );
                 $sugarUser = $this->localUserProvider->createUser($nameIdentifier, $userAttributes);
             }
         }

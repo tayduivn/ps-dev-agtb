@@ -66,6 +66,9 @@ class UserMapping implements MappingInterface
     public function mapIdentity(OneLogin_Saml2_Response $response)
     {
         $fields = $this->getCustomFields('check');
+
+        $field = isset($this->config['sp']['sugarCustom']['id']) ? $this->config['sp']['sugarCustom']['id'] : 'email';
+
         if (isset($fields['user_name']) && $this->hasAttribute($response, $fields['user_name'])) {
             $value = $this->getAttribute($response, $fields['user_name']);
         } else {
@@ -73,7 +76,7 @@ class UserMapping implements MappingInterface
         }
 
         return [
-            'field' => isset($this->config['sp']['id']) ? $this->config['sp']['id'] : 'email',
+            'field' => $field,
             'value' => $value,
         ];
     }
@@ -86,8 +89,8 @@ class UserMapping implements MappingInterface
      */
     protected function getCustomFields($type)
     {
-        if (isset($this->config['sp']['saml2_settings'][$type])) {
-            return $this->config['sp']['saml2_settings'][$type];
+        if (isset($this->config['sp']['sugarCustom']['saml2_settings'][$type])) {
+            return $this->config['sp']['sugarCustom']['saml2_settings'][$type];
         } else {
             return [];
         }
@@ -102,7 +105,7 @@ class UserMapping implements MappingInterface
      */
     protected function getAttribute(OneLogin_Saml2_Response $response, $name)
     {
-        if (!empty($this->config['sp']['useXML'])) {
+        if (!empty($this->config['sp']['sugarCustom']['useXML'])) {
             $xpath = $this->getDOMXPath($response->getXMLDocument());
             $xmlNodes = $xpath->query($name);
             if ($xmlNodes === false || $xmlNodes->length == 0) {
