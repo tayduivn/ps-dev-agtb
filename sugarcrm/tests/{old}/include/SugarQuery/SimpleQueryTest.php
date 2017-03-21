@@ -513,4 +513,27 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         ), $data);
     }
+
+    public function testSelectAssignedUserNameOwner()
+    {
+        global $current_user;
+
+        $owner = SugarTestUserUtilities::createAnonymousUser();
+        $account = SugarTestAccountUtilities::createAccount(null, array(
+            'assigned_user_id' => $owner->id,
+        ));
+
+        $query = new SugarQuery();
+        $query->from($account, array(
+            'team_security' => false,
+        ));
+        $query->select('assigned_user_name');
+        $query->where()->equals('id', $account->id);
+
+        $accounts = $account->fetchFromQuery($query);
+        $this->assertCount(1, $accounts);
+
+        $account = array_shift($accounts);
+        $this->assertEquals($current_user->id, $account->assigned_user_name_owner);
+    }
 }

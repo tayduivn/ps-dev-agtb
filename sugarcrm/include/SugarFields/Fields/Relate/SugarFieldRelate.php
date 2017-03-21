@@ -295,12 +295,16 @@ class SugarFieldRelate extends SugarFieldBase {
             if (isset($properties['module'])) {
                 // trying to reconstruct relate bean from the fetched data
                 $relate = BeanFactory::getBean($properties['module']);
-                $relate->id = $bean->{$properties['id_name']};
+                $row = array('id' => $bean->{$properties['id_name']});
+
                 $ownerField = $relate->getOwnerField();
                 $ownerAlias = $fieldName . '_owner';
                 if ($ownerField && isset($bean->$ownerAlias)) {
-                    $relate->$ownerField = $bean->$ownerAlias;
+                    $row[$ownerField] = $bean->$ownerAlias;
                 }
+
+                // make sure fetched row is populated as SugarACLStatic::beanACL() may use it
+                $relate->fetched_row = $relate->populateFromRow($row);
 
                 $mm = MetaDataManager::getManager($service->platform);
                 $data[$link]['_acl'] = $mm->getAclForModule($relate->module_dir, $service->user, $relate);

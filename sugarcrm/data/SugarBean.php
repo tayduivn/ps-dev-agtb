@@ -3551,12 +3551,13 @@ class SugarBean
                     $row[$field] = $this->convertField($row[$field], $field_value);
                 }
                 $this->$field = $row[$field];
-                $owner = $field . '_owner';
-                if(!empty($row[$owner])){
-                    $this->$owner = $row[$owner];
-                }
             } else {
                 $this->$field = '';
+            }
+
+            $owner = $field . '_owner';
+            if (isset($row[$owner])) {
+                $this->$owner = $row[$owner];
             }
 
             // check if relate field refers field of "fullname" type

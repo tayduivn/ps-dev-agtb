@@ -232,10 +232,13 @@ class SugarFieldParent extends SugarFieldRelate {
                 return;
             }
 
-            $parent->id = $bean->parent_id;
+            $row = array('id' => $bean->parent_id);
             if (isset($bean->parent_name_owner)) {
-                $parent->assigned_user_id = $bean->parent_name_owner;
+                $row['assigned_user_id'] = $bean->parent_name_owner;
             }
+
+            // make sure fetched row is populated as SugarACLStatic::beanACL() may use it
+            $parent->fetched_row = $parent->populateFromRow($row);
 
             $mm = MetaDataManager::getManager($service->platform);
             $data['parent'] = array(

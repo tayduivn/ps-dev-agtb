@@ -175,13 +175,16 @@ class SugarACLStatic extends SugarACLStrategy
                 return ACLController::checkAccessInternal($module, $action, $is_owner, $aclType);
             case 'edit':
                 if(!isset($context['owner_override']) && !empty($bean->id)) {
-                    if(!empty($bean->fetched_row) && !empty($bean->fetched_row['id']) && !empty($bean->fetched_row['assigned_user_id']) && !empty($bean->fetched_row['created_by'])){
+                    if (!empty($bean->fetched_row['id']) && (
+                        !empty($bean->fetched_row['assigned_user_id']) || !empty($bean->fetched_row['created_by'])
+                    )) {
                         $temp = BeanFactory::newBean($bean->module_dir);
                         $temp->populateFromRow($bean->fetched_row);
                     }else{
                         if($bean->new_with_id) {
                             $is_owner = true;
                         } else {
+                            $GLOBALS['log']->warn('The bean does not have owner fields populated. Re-retrieving');
                             $temp = BeanFactory::getBean($bean->module_dir, $bean->id);
                         }
                     }
