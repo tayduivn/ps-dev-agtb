@@ -65,12 +65,31 @@
      */
     setViewContent: function(value){
         var editable = this._getHtmlEditableField();
+        var styleExists = false;
+        var styleSrc = 'styleguide/assets/css/iframe-sugar.css';
+
         if (!editable) {
             return;
         }
         if (!_.isUndefined(editable.get(0)) && !_.isEmpty(editable.get(0).contentDocument)) {
             if (editable.contents().find('body').length > 0) {
                 editable.contents().find('body').html(value);
+
+                // Only add the stylesheet that is sugar-specific while making sure not to add any duplicates
+                editable.contents().find('link[rel="stylesheet"]').each(function() {
+                    if ($(this).attr('href') === styleSrc) {
+                        styleExists = true;
+                    }
+                });
+
+                if (!styleExists) {
+                    // Add the tinyMCE specific stylesheet to the iframe
+                    editable.contents().find('head').append($('<link/>', {
+                        rel: 'stylesheet',
+                        href: styleSrc,
+                        type: 'text/css'
+                    }));
+                }
             }
         } else {
             editable.html(value);

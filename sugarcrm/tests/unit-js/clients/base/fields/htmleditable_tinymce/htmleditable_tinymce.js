@@ -15,16 +15,17 @@ describe('htmleditable_tinymce', function() {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'htmleditable_tinymce');
         SugarTest.testMetadata.set();
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
         SugarTest.testMetadata.dispose();
+        sandbox.restore();
     });
 
     describe('edit view', function() {
         beforeEach(function() {
             var $textarea = $('<textarea class="htmleditable"></textarea>');
-            sandbox = sinon.sandbox.create();
             field = SugarTest.createField('base', 'html_email', 'htmleditable_tinymce', 'edit');
             sandbox.stub(field, '_getHtmlEditableField', function() {
                 return $textarea;
@@ -36,7 +37,6 @@ describe('htmleditable_tinymce', function() {
 
         afterEach(function() {
             field.dispose();
-            sandbox.restore();
             tinymce = $.fn.tinymce;
         });
 
@@ -120,7 +120,6 @@ describe('htmleditable_tinymce', function() {
     describe('readonly view', function() {
         beforeEach(function() {
             var $textarea = $('<iframe class="htmleditable" frameborder="0"></iframe>');
-            sandbox = sinon.sandbox.create();
             field = SugarTest.createField('base', 'html_email', 'htmleditable_tinymce', 'detail');
             sandbox.stub(field, '_getHtmlEditableField', function() {
                 return $textarea;
@@ -130,7 +129,6 @@ describe('htmleditable_tinymce', function() {
 
         afterEach(function() {
             field.dispose();
-            sandbox.restore();
         });
 
         it('should render read view not edit view', function() {
@@ -163,6 +161,59 @@ describe('htmleditable_tinymce', function() {
             field.model.set(field.name, expectedValue);
 
             mock.verify();
+        });
+    });
+
+    describe('readonly view from a preview pane', function() {
+        var $textarea;
+        var appendStub;
+
+        beforeEach(function() {
+            $textarea = $('<iframe class="htmleditable" frameborder="0"></iframe>');
+            field = SugarTest.createField('base', 'html_email', 'htmleditable_tinymce', 'detail');
+
+            $(document.body).append($textarea);
+            appendStub = sandbox.stub();
+
+            sandbox.stub($textarea, 'contents', function() {
+                return {
+                    find: function(elem) {
+                        if (elem === 'body') {
+                            return {
+                                length: 1,
+                                html: $.noop
+                            };
+                        } else if (elem === 'link[rel="stylesheet"]') {
+                            return {
+                                each: $.noop
+                            };
+                        } else if (elem === 'head') {
+                            return {
+                                append: appendStub
+                            };
+                        }
+                    }
+                };
+            });
+
+            sandbox.stub(field, '_getHtmlEditableField', function() {
+                return $textarea;
+            });
+
+            sandbox.stub(field, 'destroyTinyMCEEditor', $.noop());
+        });
+
+        afterEach(function() {
+            $textarea.remove();
+            appendStub = null;
+            field.dispose();
+        });
+
+        it('should insert the tinyMCE CSS file into the iframe', function() {
+            field.model.set(field.name, 'Test 123');
+            field.render();
+
+            expect(appendStub).toHaveBeenCalled();
         });
     });
 });
