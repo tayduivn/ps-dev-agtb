@@ -49,6 +49,9 @@ $viewdefs['Quotes']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name'    => 'total',
+                    'related_fields' => array(
+                        'currency_id',
+                    ),
                 ),
                 array(
                     'label'   => 'LBL_LIST_AMOUNT_USDOLLAR',
