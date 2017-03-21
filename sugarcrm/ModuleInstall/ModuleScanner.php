@@ -503,7 +503,7 @@ class ModuleScanner{
         while ($e = $d->read()) {
             $next = $path . '/' . $e;
             if (is_dir($next)) {
-                if (substr($e, 0, 1) == '.') {
+                if (empty($e) || $e == '.' || $e == '..') {
                     continue;
                 }
                 $this->scanDir($next, $sugarFileAllowed);
