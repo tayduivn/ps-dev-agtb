@@ -243,11 +243,69 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::checkPostAuth
+     */
+    public function testCheckPostUpdatesUserCustomFieldsIfAnyUpdateFieldsExist()
+    {
+        $this->sugarUser->title = 'Manager';
+        $this->sugarUser->department = 'Production';
+
+        $attributes = [
+            'create' => [],
+            'update' => [
+                'title' => 'Manager Updated',
+                'department' => 'Production Updated',
+                'missing_field' => 'some value here',
+            ],
+        ];
+        $user = $this->getUserMock('john', 'email', 'john@test.com', false, $attributes);
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->willReturn($user);
+
+        $this->sugarUser->expects($this->once())->method('save');
+
+        $updatedSugarUser = clone($this->sugarUser);
+        $updatedSugarUser->title = 'Manager Updated';
+        $updatedSugarUser->department = 'Production Updated';
+
+        $user->expects($this->once())->method('setSugarUser')->with($updatedSugarUser);
+
+        $this->samlUserChecker->checkPostAuth($user);
+    }
+
+    /**
+     * @covers ::checkPostAuth
+     */
+    public function testCheckPostDoesNotUpdateUserCustomFieldsIfNoUpdateFields()
+    {
+        $this->sugarUser->title = 'Manager';
+        $this->sugarUser->department = 'Production';
+
+        $attributes = [
+            'create' => [],
+            'update' => [],
+        ];
+        $user = $this->getUserMock('john', 'email', 'john@test.com', false, $attributes);
+
+        $this->localUserProvider->expects($this->once())
+            ->method('loadUserByField')
+            ->willReturn($user);
+
+        $this->sugarUser->expects($this->never())->method('save');
+        $user->expects($this->once())->method('setSugarUser')->with($this->sugarUser);
+
+        $this->samlUserChecker->checkPostAuth($user);
+    }
+
+    /**
      * @param string $nameIdentifier
      * @param string $identityField
      * @param string $identityValue
      * @param bool $provision
      * @param array $attributes
+     * @param array $sugarUser
      * @return \PHPUnit_Framework_MockObject_MockObject|User
      */
     protected function getUserMock(
@@ -255,12 +313,15 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
         $identityField,
         $identityValue,
         $provision,
-        $attributes = ['create' => [],
-        'update' => []]
+        $attributes = [
+        'create' => [],
+        'update' => [],
+        ],
+        $sugarUser = null
     ) {
         $user = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getUsername', 'getAttribute', 'setSugarUser'])
+            ->setMethods(['getUsername', 'getAttribute', 'setSugarUser', 'getSugarUser'])
             ->getMock();
 
         $map = [
@@ -269,6 +330,9 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
             ['provision', $provision],
             ['attributes', $attributes],
         ];
+
+        $sugarUser = $sugarUser ?: $this->sugarUser;
+        $user->method('getSugarUser')->willReturn($sugarUser);
 
         $user->method('getUsername')->willReturn($nameIdentifier);
         $user->method('getAttribute')->will($this->returnValueMap($map));

@@ -92,7 +92,6 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
         $session = $this->getSession();
         $session['IdPSessionIndex'] = $token->getAttribute('IdPSessionIndex');
         // @todo validate replay protection (in IdM), see BR-5052
-        // @todo update custom fields
         return true;
     }
 

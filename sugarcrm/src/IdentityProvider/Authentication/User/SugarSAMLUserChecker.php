@@ -82,6 +82,7 @@ class SugarSAMLUserChecker extends SAMLUserChecker
             $identityField = $user->getAttribute('identityField');
             $identityValue = $user->getAttribute('identityValue');
             $sugarUser = $this->localUserProvider->loadUserByField($identityValue, $identityField)->getSugarUser();
+            $this->updateUserCustomFields($sugarUser, $user->getAttribute('attributes')['update']);
         } catch (UsernameNotFoundException $e) {
             if (!$provision) {
                 throw $e;
@@ -97,6 +98,32 @@ class SugarSAMLUserChecker extends SAMLUserChecker
             }
         }
         $user->setSugarUser($sugarUser);
+    }
+
+    /**
+     * Update custom fields of Sugar User.
+     *
+     * @param \User $sugarUser
+     * @param array $customFields
+     */
+    protected function updateUserCustomFields($sugarUser, $customFields = [])
+    {
+        $updated = false;
+
+        foreach ($customFields as $field => $value) {
+            if (!property_exists($sugarUser, $field)) {
+                continue;
+            }
+
+            if ($sugarUser->$field != $value) {
+                $sugarUser->$field = $value;
+                $updated = true;
+            }
+        }
+
+        if ($updated) {
+            $sugarUser->save();
+        }
     }
 
     /**
