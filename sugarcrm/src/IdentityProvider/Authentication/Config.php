@@ -70,6 +70,7 @@ class Config
         $siteUrl = rtrim($this->get('site_url'), '/');
         $acsUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Authenticate', ENT_XML1));
         $sloUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Logout', ENT_XML1));
+        $idpSsoUrl = $this->get('SAML_loginurl');
         return [
             'strict' => false,
             'debug' => false,
@@ -89,10 +90,10 @@ class Config
                 'provisionUser' => $this->get('SAML_provisionUser', true),
             ],
 
-            'idp' => array (
-                'entityId' => $this->get('SAML_loginurl'), // BC mode, this should be an URL to metadata
+            'idp' => [
+                'entityId' => $this->get('SAML_idp_entityId', $idpSsoUrl),
                 'singleSignOnService' => [
-                    'url' => $this->get('SAML_loginurl'),
+                    'url' => $idpSsoUrl,
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'singleLogoutService' => [
@@ -100,7 +101,7 @@ class Config
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'x509cert' => $this->get('SAML_X509Cert'),
-            ),
+            ],
 
             'security' => [
                 'authnRequestsSigned' => $isSPPrivateKeyCertSet && $this->get('SAML_sign_authn', false),

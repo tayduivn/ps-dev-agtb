@@ -435,6 +435,7 @@ To configure additional system settings, click <a href="index.php?module=Adminis
 // Password settings
     'ERR_EMPTY_SAML_LOGIN' => 'SAML Login URL can not be empty',
     'ERR_EMPTY_SAML_CERT' => 'SAML certificate can not be empty',
+    'ERR_EMPTY_SAML_IDP_ENTITY_ID' => 'SAML Entity ID cannot be empty',
     'ERR_SAML_LOGIN_URL' => 'SAML Login URL is not valid',
     'ERR_SAML_SLO_URL' => 'SAML SLO URL is not valid',
     'ERR_SAML_REQUEST_SIGNING_CERT_NO_PRIVATE_KEY' => 'PEM file should contain private key',

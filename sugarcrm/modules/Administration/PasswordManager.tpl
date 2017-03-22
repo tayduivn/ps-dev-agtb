@@ -831,6 +831,16 @@
 
                             </tr>
                             <tr>
+                                <td scope="row" valign='middle'
+                                    nowrap>{$MOD.LBL_SAML_IDP_ENTITY_ID}
+                                    {sugar_help text=$MOD.LBL_SAML_IDP_ENTITY_ID_DESC}
+                                    <span class="required">*</span>
+                                </td>
+                                <td align="left" valign='middle'>
+                                    <input name="SAML_idp_entityId" size='35' type="text" value="{$config.SAML_idp_entityId}">
+                                </td>
+                            </tr>
+                            <tr>
                                 <td width='25%' scope="row" valign='top'
                                     nowrap>{$MOD.LBL_SAML_CERT} {sugar_help text=$MOD.LBL_SAML_CERT_DESC}<span class="required">*</span></td>
                                 <td width='25%' align="left" valign='top'><textarea style='height:200px;width:600px'

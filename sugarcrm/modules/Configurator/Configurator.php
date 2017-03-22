@@ -34,6 +34,7 @@ class Configurator {
         'default_module_favicon',
         'authenticationClass',
         'SAML_loginurl',
+        'SAML_idp_entityId',
         'SAML_X509Cert',
         'SAML_SLO',
         'SAML_SAME_WINDOW',

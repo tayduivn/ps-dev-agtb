@@ -131,6 +131,85 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Checks default config when it created from SugarCRM config values.
+     *
+     * @covers ::getSAMLConfig
+     */
+    public function testGetSAMLDefaultConfig()
+    {
+        $expectedConfig = [
+            'strict' => false,
+            'debug' => false,
+            'sp' => [
+                'entityId' => 'SAML_issuer',
+                'assertionConsumerService' => [
+                    'url' => 'site_url/index.php?module=Users&amp;action=Authenticate',
+                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
+                ],
+                'singleLogoutService' => [
+                    'url' => 'site_url/index.php?module=Users&amp;action=Logout',
+                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
+                ],
+                'NameIDFormat' => \OneLogin_Saml2_Constants::NAMEID_EMAIL_ADDRESS,
+                'x509cert' => 'SAML_REQUEST_SIGNING_X509',
+                'privateKey' => 'SAML_REQUEST_SIGNING_PKEY',
+                'provisionUser' => 'SAML_provisionUser',
+            ],
+
+            'idp' => [
+                'entityId' => 'SAML_idp_entityId',
+                'singleSignOnService' => [
+                    'url' => 'SAML_loginurl',
+                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
+                ],
+                'singleLogoutService' => [
+                    'url' => 'SAML_SLO',
+                    'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
+                ],
+                'x509cert' => 'SAML_X509Cert',
+            ],
+
+            'security' => [
+                'authnRequestsSigned' => true,
+                'logoutRequestSigned' => true,
+                'logoutResponseSigned' => true,
+                'signatureAlgorithm' => 'SAML_REQUEST_SIGNING_METHOD',
+            ],
+        ];
+        $config = $this->getMockBuilder(Config::class)
+                       ->disableOriginalConstructor()
+                       ->setMethods(['get', 'getSugarCustomSAMLSettings'])
+                       ->getMock();
+        $config->method('getSugarCustomSAMLSettings')->willReturn([]);
+        $config->method('get')
+               ->willReturnMap(
+                   [
+                       ['SAML_request_signing_pkey', null, 'SAML_REQUEST_SIGNING_PKEY'],
+                       ['site_url', null, 'site_url'],
+                       ['SAML_loginurl', null, 'SAML_loginurl'],
+                       ['SAML_issuer', 'php-saml', 'SAML_issuer'],
+                       ['SAML_request_signing_x509', '', 'SAML_REQUEST_SIGNING_X509'],
+                       ['SAML_request_signing_x509', null, 'SAML_REQUEST_SIGNING_X509'],
+                       ['SAML_request_signing_pkey', '', 'SAML_REQUEST_SIGNING_PKEY'],
+                       ['SAML_provisionUser', true, 'SAML_provisionUser'],
+                       ['SAML_idp_entityId', 'SAML_loginurl', 'SAML_idp_entityId'],
+                       ['SAML_SLO', null, 'SAML_SLO'],
+                       ['SAML_X509Cert', null, 'SAML_X509Cert'],
+                       [
+                           'SAML_request_signing_method',
+                           \XMLSecurityKey::RSA_SHA256,
+                           'SAML_REQUEST_SIGNING_METHOD',
+                       ],
+                       ['SAML', [], []],
+                       ['SAML_sign_authn', false, true],
+                       ['SAML_sign_logout_request', false, true],
+                       ['SAML_sign_logout_response', false, true],
+                   ]
+               );
+        $this->assertEquals($expectedConfig, $config->getSAMLConfig());
+    }
+
+    /**
      * @covers ::getLdapConfig
      */
     public function testGetLdapConfigNoLdap()

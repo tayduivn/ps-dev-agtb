@@ -116,6 +116,10 @@ if (!empty($_POST['saveConfig'])) {
                     break;
                 }
             }
+            if (empty($_POST['SAML_idp_entityId'])) {
+                $configurator->addError($config_strings['ERR_EMPTY_SAML_IDP_ENTITY_ID']);
+                break;
+            }
             if (!empty($_POST['SAML_SLO'])) {
                 $_POST['SAML_SLO'] = trim($_POST['SAML_SLO']);
                 if (!filter_var($_POST['SAML_SLO'], FILTER_VALIDATE_URL)) {
