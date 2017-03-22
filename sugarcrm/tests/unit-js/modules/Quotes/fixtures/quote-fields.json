@@ -921,30 +921,6 @@
       "vname":"LBL_PRODUCTS",
       "source":"non-db"
    },
-   "qlis":{
-      "name":"qlis",
-      "type":"link",
-      "relationship":"quote_quoted_line_item",
-      "vname":"LBL_PRODUCTS",
-      "source":"non-db",
-      "rel_fields":{
-         "quote_index":{
-            "type":"integer"
-         }
-      }
-   },
-   "product_bundle_notes":{
-      "name":"product_bundle_notes",
-      "type":"link",
-      "relationship":"quote_product_bundle_note",
-      "vname":"LBL_PRODUCT_BUNDLE_NOTES",
-      "source":"non-db",
-      "rel_fields":{
-         "quote_index":{
-            "type":"integer"
-         }
-      }
-   },
    "revenuelineitems":{
       "name":"revenuelineitems",
       "type":"link",

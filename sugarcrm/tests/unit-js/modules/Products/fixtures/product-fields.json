@@ -835,32 +835,6 @@
       "vname":"LBL_QUOTE",
       "source":"non-db"
    },
-   "parentquote":{
-      "name":"parentquote",
-      "type":"link",
-      "relationship":"quote_quoted_line_item",
-      "vname":"LBL_QUOTE",
-      "source":"non-db",
-      "rel_fields":{
-         "quote_index":{
-            "type":"integer"
-         }
-      },
-      "relationship_fields":{
-         "quote_index":"quote_index"
-      }
-   },
-   "quote_position":{
-      "massupdate":false,
-      "name":"quote_position",
-      "type":"integer",
-      "studio":false,
-      "source":"non-db",
-      "vname":"LBL_PRODUCT_POSITION",
-      "importable":false,
-      "link":"parentquote",
-      "rname_link":"quote_index"
-   },
    "revenuelineitems":{
       "name":"revenuelineitems",
       "type":"link",
