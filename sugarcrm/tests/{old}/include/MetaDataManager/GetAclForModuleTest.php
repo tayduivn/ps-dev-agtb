@@ -280,4 +280,33 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($expected_result, $acls);
         }
     }
+
+    public function testCreateCanBeNoWhenEditIsYesWhenCustomACLStrategiesDistinguishBetweenThoseActions()
+    {
+        SugarConfig::getInstance()->clearCache('disable_user_email_config');
+        $oConfig = null;
+
+        // Back up the configuration.
+        if (isset($GLOBALS['sugar_config']['disable_user_email_config'])) {
+            $oConfig = $GLOBALS['sugar_config']['disable_user_email_config'];
+        }
+
+        $user = $this->createPartialMock('User', ['isAdminForModule']);
+        $user->method('isAdminForModule')->willReturn(false);
+
+        $GLOBALS['sugar_config']['disable_user_email_config'] = true;
+
+        $mm = MetaDataManager::getManager();
+        $acls = $mm->getAclForModule('OutboundEmail', $user, false, true);
+
+        // Restore the configuration. We do this before the assertion so that it can be restored even if the test fails.
+        if (isset($oConfig)) {
+            $GLOBALS['sugar_config']['disable_user_email_config'] = $oConfig;
+        }
+
+        SugarConfig::getInstance()->clearCache('disable_user_email_config');
+
+        $this->assertSame('no', $acls['create'], 'The user should not have create access');
+        $this->assertSame('yes', $acls['edit'], 'The user should have edit access');
+    }
 }

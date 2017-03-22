@@ -1015,6 +1015,17 @@ class MetaDataManager implements LoggerAwareInterface
                 // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
                 $outputAcl['create'] = $outputAcl['edit'];
 
+                // Custom ACL strategies may have special rules around "create". Try to respect them.
+                if ($outputAcl['edit'] === 'yes') {
+                    $createAcl = SugarACL::getUserAccess($module, ['create' => true], $context);
+
+                    // Only change it if we're taking the permission away. Otherwise, the permission for "edit" is a
+                    // reasonable default.
+                    if (!$createAcl['create']) {
+                        $outputAcl['create'] = 'no';
+                    }
+                }
+
                 if ($bean === false) {
                     $bean = BeanFactory::newBean($module);
                 }
