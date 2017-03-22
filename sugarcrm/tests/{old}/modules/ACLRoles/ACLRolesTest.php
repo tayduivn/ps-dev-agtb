@@ -39,6 +39,8 @@ class ACLRolesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
+        SugarTestHelper::setUp('timedate');
+
         $this->user = SugarTestUserUtilities::createAnonymousUser();
 
         $this->role = SugarTestACLUtilities::createRole('test-role', array('Accounts'), array('access'));
@@ -96,5 +98,19 @@ class ACLRolesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->role->save();
         $value = $this->cache->retrieve($this->user->id, 'test');
         $this->assertNull($value, 'The cached ACL data for user should be cleared');
+    }
+
+    public function testRoleUsersAreModifiedWhenRoleIsSaved()
+    {
+        global $timedate;
+        global $disable_date_format;
+
+        $disable_date_format = true;
+
+        $timedate->setNow($timedate->fromString('2017-01-01 00:00:00'));
+        $this->role->updateUsersACLInfo();
+
+        $this->user->retrieve();
+        $this->assertEquals('2017-01-01 00:00:00', $this->user->date_modified);
     }
 }

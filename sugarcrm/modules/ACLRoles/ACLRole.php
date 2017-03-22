@@ -309,24 +309,13 @@ function mark_relationships_deleted($id){
      */
     public function updateUsersACLInfo()
     {
-        $query = "SELECT user_id FROM acl_roles_users WHERE deleted = 0 AND role_id = ?";
+        $query = 'UPDATE users SET date_modified = ? WHERE id IN ('
+            . 'SELECT user_id FROM acl_roles_users WHERE role_id = ? AND deleted = 0'
+            . ') AND deleted = 0';
 
-        $stmt = DBManagerFactory::getConnection()->executeQuery($query, array($this->id));
-
-        $ids = array();
-        while ($row = $stmt->fetch()) {
-            $ids[] = $row['user_id'];
-        }
-
-        if (empty($ids)) {
-            return;
-        }
-
-        $query = "UPDATE users SET date_modified = ? WHERE deleted = 0 AND id IN (?)";
-        $this->db->getConnection()->executeQuery(
-            $query,
-            array($this->db->now(), $ids),
-            array(null, Connection::PARAM_STR_ARRAY)
-        );
+        $this->db->getConnection()->executeUpdate($query, array(
+            TimeDate::getInstance()->nowDb(),
+            $this->id,
+        ));
     }
 }
