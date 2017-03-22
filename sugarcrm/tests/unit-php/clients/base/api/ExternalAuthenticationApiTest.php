@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\clients\base\api;
 
-require 'include/utils.php';
+require_once 'include/utils.php';
 
 /**
  * Class ExternalAuthenticationApiTest

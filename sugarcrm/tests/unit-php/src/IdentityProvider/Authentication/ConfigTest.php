@@ -174,6 +174,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'logoutRequestSigned' => true,
                 'logoutResponseSigned' => true,
                 'signatureAlgorithm' => 'SAML_REQUEST_SIGNING_METHOD',
+                'validateRequestId' => true,
             ],
         ];
         $config = $this->getMockBuilder(Config::class)
@@ -204,6 +205,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                        ['SAML_sign_authn', false, true],
                        ['SAML_sign_logout_request', false, true],
                        ['SAML_sign_logout_response', false, true],
+                       ['saml.validate_request_id', false, true],
                    ]
                );
         $this->assertEquals($expectedConfig, $config->getSAMLConfig());
