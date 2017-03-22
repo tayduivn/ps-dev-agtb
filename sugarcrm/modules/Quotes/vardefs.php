@@ -754,13 +754,6 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_PRODUCTS',
             'source' => 'non-db',
         ),
-        'qlis' => array(
-            'name' => 'qlis',
-            'type' => 'link',
-            'relationship' => 'quote_qlis',
-            'vname' => 'LBL_PRODUCTS',
-            'source' => 'non-db',
-        ),
         'revenuelineitems' => array(
             'name' => 'revenuelineitems',
             'type' => 'link',
@@ -981,15 +974,6 @@ $dictionary['Quote'] = array(
             'rhs_table' => 'products',
             'rhs_key' => 'quote_id',
             'relationship_type' => 'one-to-many'
-        ),
-        'quote_qlis' => array(
-            'lhs_module' => 'Quotes',
-            'lhs_table' => 'quotes',
-            'lhs_key' => 'id',
-            'rhs_module' => 'Products',
-            'rhs_table' => 'products',
-            'rhs_key' => 'parentquote_id',
-            'relationship_type' => 'one-to-many',
         ),
         'quote_revenuelineitems' => array(
             'lhs_module' => 'Quotes',

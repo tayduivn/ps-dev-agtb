@@ -188,14 +188,6 @@ $dictionary['Product'] = array(
             'reportable' => false,
             'comment' => 'If product created via Quote, this is quote ID',
         ),
-        'parentquote_id' => array(
-            'name' => 'parentquote_id',
-            'type' => 'id',
-            'vname' => 'LBL_QUOTE_ID',
-            'required' => false,
-            'reportable' => false,
-            'comment' => 'ID of the parent quote for this QLI',
-        ),
         'manufacturer_id' => array(
             'name' => 'manufacturer_id',
             'vname' => 'LBL_MANUFACTURER',
@@ -637,13 +629,6 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_QUOTE',
             'source' => 'non-db',
         ),
-            'parentquote' => array(
-                'name' => 'parentquote',
-                'type' => 'link',
-                'relationship' => 'quote_qlis',
-                'vname' => 'LBL_QUOTE',
-                'source' => 'non-db',
-            ),
         'revenuelineitems' => array(
             'name' => 'revenuelineitems',
             'type' => 'link',
