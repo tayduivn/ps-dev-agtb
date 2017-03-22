@@ -23,17 +23,22 @@ class SugarACLOutboundEmail extends SugarACLStrategy
             return true;
         }
 
-        if (!isset($context['bean'])) {
-            return true;
-        }
-
-        $bean = $context['bean'];
         $currentUser = $this->getCurrentUser($context);
 
         if (!$currentUser) {
             return false;
         }
 
+        // Normal users cannot create new user records unless the admin allows them.
+        if ($view === 'create') {
+            return $this->isUserAllowedToConfigureEmailAccounts($currentUser);
+        }
+
+        if (!isset($context['bean'])) {
+            return true;
+        }
+
+        $bean = $context['bean'];
         $systemIsAllowed = $bean->isAllowUserAccessToSystemDefaultOutbound();
 
         // The system-override record is not accessible when the admin has allowed the system record to be used.
@@ -91,5 +96,18 @@ class SugarACLOutboundEmail extends SugarACLStrategy
 
         // No one can see a non-system record they don't own.
         return false;
+    }
+
+    /**
+     * Determines if the user is allowed to create user email accounts.
+     *
+     * @param User $user
+     * @return bool
+     */
+    protected function isUserAllowedToConfigureEmailAccounts(User $user)
+    {
+        $oe = BeanFactory::newBean('OutboundEmail');
+
+        return $oe->isUserAllowedToConfigureEmailAccounts($user);
     }
 }

@@ -443,6 +443,19 @@ class OutboundEmail extends SugarBean
 	}
 
     /**
+     * Determine whether a user is allowed to create new 'user' Outbound Email records.
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function isUserAllowedToConfigureEmailAccounts(User $user)
+    {
+        $config = SugarConfig::getInstance();
+
+        return $user->isAdminForModule('Emails') || !$config->get('disable_user_email_config', false);
+    }
+
+    /**
      * Retrieves the system's Outbound options
      *
      * @param bool $create Lazy create the system account when true.

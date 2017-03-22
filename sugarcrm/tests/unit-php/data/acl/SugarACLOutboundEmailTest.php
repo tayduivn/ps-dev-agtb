@@ -10,32 +10,19 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/**
- * @coversDefaultClass SugarACLOutboundEmail
- */
-class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
-{
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-        SugarTestHelper::setUp('current_user');
-    }
+namespace Sugarcrm\SugarcrmTestsUnit\data\acl;
 
+/**
+ * @coversDefaultClass \SugarACLOutboundEmail
+ */
+class SugarACLOutboundEmailTest extends \PHPUnit_Framework_TestCase
+{
     public function checkModuleAccessProvider()
     {
         return [
-            [
-                'access',
-                'All users should have module access',
-            ],
-            [
-                'team_security',
-                'Allow other modules to decide',
-            ],
-            [
-                'list',
-                'All users should have access when no bean is in context',
-            ],
+            'All users should have module access' => ['access'],
+            'Allow other modules to decide' => ['team_security'],
+            'All users should have access when no bean is in context' => ['list'],
         ];
     }
 
@@ -43,79 +30,73 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::checkAccess
      * @dataProvider checkModuleAccessProvider
      */
-    public function testCheckModuleAccess($view, $message)
+    public function testCheckModuleAccess($view)
     {
-        $acl = new SugarACLOutboundEmail();
-        $actual = $acl->checkAccess('OutboundEmail', $view, []);
-        $this->assertTrue($actual, $message);
+        $user = $this->createMock('\\User');
+
+        $acl = new \SugarACLOutboundEmail();
+        $actual = $acl->checkAccess('OutboundEmail', $view, ['user' => $user]);
+        $this->assertTrue($actual);
     }
 
     public function checkBeanAccessProvider()
     {
         return [
-            [
+            'Users should have read access to records they own' => [
                 ['view', 'list'],
                 ['user', 'system-override', 'system'],
                 true,
                 false,
                 true,
-                'Users should have read access to records they own',
             ],
-            [
+            'Users should have write access to records they own' => [
                 ['edit'],
                 ['user', 'system-override', 'system'],
                 true,
                 false,
                 true,
-                'Users should have write access to records they own',
             ],
-            [
+            'Users should not have read access to records they do not own' => [
                 ['view', 'list'],
                 ['user', 'system-override', 'system'],
                 false,
                 false,
                 false,
-                'Users should not have read access to records they do not own',
             ],
-            [
+            'Users should not have write access to records they do not own' => [
                 ['edit', 'delete'],
                 ['user', 'system-override', 'system'],
                 false,
                 false,
                 false,
-                'Users should not have write access to records they do not own',
             ],
-            [
+            'Users should have delete access to user records they own' => [
                 ['delete'],
                 ['user'],
                 true,
                 false,
                 true,
-                'Users should have delete access to user records they own',
             ],
-            [
+            'Users should not have delete access to the system and system-override records (not even the admin)' => [
                 ['delete'],
                 ['system-override', 'system'],
                 true,
                 false,
                 false,
-                'Users should not have delete access to the system and system-override records (not even the admin)',
             ],
-            [
+            'Users should have read access to the system record when allowed' => [
                 ['view', 'list'],
                 ['system'],
                 true,
                 true,
                 true,
-                'Users should have read access to the system record when allowed',
             ],
-            [
+            'Users should not have any access to the system-override records when the system record is allowed' => [
                 ['view', 'list', 'edit', 'delete'],
                 ['system-override'],
                 true,
                 true,
                 false,
-                'Users should not have any access to the system-override records when the system record is allowed',
             ],
         ];
     }
@@ -124,21 +105,26 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::checkAccess
      * @dataProvider checkBeanAccessProvider
      */
-    public function testCheckBeanAccess($views, $types, $isOwner, $isAllowed, $expected, $message)
+    public function testCheckBeanAccess($views, $types, $isOwner, $isAllowed, $expected)
     {
-        $acl = new SugarACLOutboundEmail();
+        $acl = new \SugarACLOutboundEmail();
 
-        $bean = $this->getMockBuilder('OutboundEmail')
-            ->setMethods(['isOwner', 'isAllowUserAccessToSystemDefaultOutbound'])
-            ->getMock();
+        $bean = $this->createPartialMock('OutboundEmail', ['isOwner', 'isAllowUserAccessToSystemDefaultOutbound']);
         $bean->method('isOwner')->willReturn($isOwner);
         $bean->method('isAllowUserAccessToSystemDefaultOutbound')->willReturn($isAllowed);
+
+        $user = $this->createMock('\\User');
+
+        $context = [
+            'user' => $user,
+            'bean' => $bean,
+        ];
 
         foreach ($views as $view) {
             foreach ($types as $type) {
                 $bean->type = $type;
-                $actual = $acl->checkAccess('OutboundEmail', $view, ['bean' => $bean]);
-                $this->assertSame($expected, $actual, "{$message}: view={$view}, type={$type}");
+                $actual = $acl->checkAccess('OutboundEmail', $view, $context);
+                $this->assertSame($expected, $actual, "view={$view}, type={$type}");
             }
         }
     }
@@ -146,7 +132,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
     public function checkFieldAccessProvider()
     {
         return [
-            [
+            'Users should have read access to all fields for any record they can access' => [
                 [
                     'id',
                     'name',
@@ -168,9 +154,8 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 false,
                 false,
                 true,
-                'Users should have read access to all fields for any record they can access',
             ],
-            [
+            'Users should not have write access to any fields for a record they do not own' => [
                 [
                     'id',
                     'name',
@@ -192,9 +177,8 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 false,
                 false,
                 false,
-                'Users should not have write access to any fields for a record they do not own',
             ],
-            [
+            'Users should have write access to all fields for any user record they own' => [
                 [
                     // Note: `id` is a readonly field, but it must be editable for the user to update a record.
                     'id',
@@ -221,9 +205,8 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 true,
                 false,
                 true,
-                'Users should have write access to all fields for any user record they own',
             ],
-            [
+            'Users should have write access to only id, mail_smtpuser, and mail_smtppass for their system-override record' => [
                 [
                     // Note: `id` is a readonly field, but it must be editable for the user to update a record.
                     'id',
@@ -235,10 +218,8 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 true,
                 false,
                 true,
-                'Users should have write access to only id, mail_smtpuser, and mail_smtppass for their ' .
-                'system-override record',
             ],
-            [
+            'Users should not have write access to fields other than id, mail_smtpuser, and mail_smtppass for their system-override record' => [
                 [
                     'name',
                     'email_address_id',
@@ -254,10 +235,8 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 true,
                 false,
                 false,
-                'Users should not have write access to fields other than id, mail_smtpuser, and mail_smtppass for ' .
-                'their system-override record',
             ],
-            [
+            'The admin should have write access to all fields except name for the system record' => [
                 [
                     // Note: `id` is a readonly field, but it must be editable for the user to update a record.
                     'id',
@@ -276,18 +255,16 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 true,
                 false,
                 true,
-                'The admin should have write access to all fields except name for the system record',
             ],
-            [
+            'The admin should not have write access to the name field for the system record' => [
                 ['name'],
                 ['edit'],
                 ['system'],
                 true,
                 false,
                 false,
-                'The admin should not have write access to the name field for the system record',
             ],
-            [
+            'Users should not have access to any fields for their system-override record when the system record is allowed' => [
                 [
                     'id',
                     'name',
@@ -309,8 +286,6 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 true,
                 true,
                 false,
-                'Users should not have access to any fields for their system-override record when the system record ' .
-                'is allowed',
             ],
         ];
     }
@@ -319,30 +294,62 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::checkAccess
      * @dataProvider checkFieldAccessProvider
      */
-    public function testCheckFieldAccess($fields, $actions, $types, $isOwner, $isAllowed, $expected, $message)
+    public function testCheckFieldAccess($fields, $actions, $types, $isOwner, $isAllowed, $expected)
     {
-        $acl = new SugarACLOutboundEmail();
+        $acl = new \SugarACLOutboundEmail();
 
-        $bean = $this->getMockBuilder('OutboundEmail')
-            ->setMethods(['isOwner', 'isAllowUserAccessToSystemDefaultOutbound'])
-            ->getMock();
+        $bean = $this->createPartialMock('OutboundEmail', ['isOwner', 'isAllowUserAccessToSystemDefaultOutbound']);
         $bean->method('isOwner')->willReturn($isOwner);
         $bean->method('isAllowUserAccessToSystemDefaultOutbound')->willReturn($isAllowed);
+
+        $user = $this->createMock('\\User');
+
+        $context = [
+            'user' => $user,
+            'bean' => $bean,
+        ];
 
         foreach ($actions as $action) {
             foreach ($types as $type) {
                 $bean->type = $type;
-                $context = [
-                    'action' => $action,
-                    'bean' => $bean,
-                ];
+                $context['action'] = $action;
 
                 foreach ($fields as $field) {
                     $context['field'] = $field;
                     $actual = $acl->checkAccess('OutboundEmail', 'field', $context);
-                    $this->assertSame($expected, $actual, "{$message}: field={$field}, action={$action}");
+                    $this->assertSame($expected, $actual, "field={$field}, action={$action}");
                 }
             }
         }
+    }
+
+    public function checkCreateAccessProvider()
+    {
+        return [
+            'Should be able to create a user account' => [
+                true,
+                true,
+            ],
+            'Should not be able to create a user account' => [
+                false,
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::checkAccess
+     * @dataProvider checkCreateAccessProvider
+     */
+    public function testCheckCreateAccess($isAllowed, $expected)
+    {
+        $acl = $this->createPartialMock('\\SugarACLOutboundEmail', ['isUserAllowedToConfigureEmailAccounts']);
+        $acl->method('isUserAllowedToConfigureEmailAccounts')->willReturn($isAllowed);
+
+        $user = $this->createMock('\\User');
+
+        $actual = $acl->checkAccess('OutboundEmail', 'create', ['user' => $user]);
+
+        $this->assertSame($expected, $actual);
     }
 }

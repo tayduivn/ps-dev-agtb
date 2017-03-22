@@ -168,4 +168,61 @@ class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = $GLOBALS['db']->getOne("SELECT COUNT(id) FROM outbound_email WHERE id='{$bean->id}'");
         $this->assertEquals(0, $actual, 'Should have deleted the specified row');
     }
+
+    public function isUserAllowedToConfigureEmailAccountsProvider()
+    {
+        return [
+            'Admin user should have ability to create a user Outbound Email record' => [
+                true,
+                false,
+                true,
+            ],
+            'Admin user should have ability to create a user Outbound Email record even if option not enabled' => [
+                true,
+                true,
+                true,
+            ],
+            'Non-Admin user should have ability to create a user Outbound Email record if option enabled' => [
+                false,
+                false,
+                true,
+            ],
+            'Non-Admin user should not have ability to create a user Outbound Email record if option not enabled' => [
+                false,
+                true,
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::isUserAllowedToConfigureEmailAccounts
+     * @dataProvider isUserAllowedToConfigureEmailAccountsProvider
+     */
+    public function testIsUserAllowedToConfigureEmailAccounts($userIsAdmin, $configOptionIsDisabled, $expected)
+    {
+        SugarConfig::getInstance()->clearCache('disable_user_email_config');
+        $oConfig = null;
+
+        // Back up the configuration.
+        if (isset($GLOBALS['sugar_config']['disable_user_email_config'])) {
+            $oConfig = $GLOBALS['sugar_config']['disable_user_email_config'];
+        }
+
+        $user = $this->createPartialMock('User', ['isAdminForModule']);
+        $user->method('isAdminForModule')->willReturn($userIsAdmin);
+
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $GLOBALS['sugar_config']['disable_user_email_config'] = $configOptionIsDisabled;
+        $actual = $oe->isUserAllowedToConfigureEmailAccounts($user);
+
+        // Restore the configuration. We do this before the assertion so that it can be restored even if the test fails.
+        if (isset($oConfig)) {
+            $GLOBALS['sugar_config']['disable_user_email_config'] = $oConfig;
+        }
+
+        SugarConfig::getInstance()->clearCache('disable_user_email_config');
+
+        $this->assertSame($expected, $actual);
+    }
 }
