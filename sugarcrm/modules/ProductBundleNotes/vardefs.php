@@ -102,28 +102,7 @@ $dictionary['ProductBundleNote'] = array(
             'link' => 'product_bundles',
             'rname_link' => 'note_index',
         ),
-        'parentquote' => array(
-            'name' => 'parentquote',
-            'type' => 'link',
-            'relationship' => 'quote_product_bundle_note',
-            'vname' => 'LBL_QUOTE',
-            'source' => 'non-db',
-            'rel_fields' => array('quote_index' => array('type' => 'integer')),
-            'relationship_fields' => array(
-                'quote_index' => 'quote_index',
-            ),
-        ),
-        'quote_position' => array(
-            'massupdate' => false,
-            'name' => 'quote_position',
-            'type' => 'integer',
-            'studio' => false,
-            'source' => 'non-db',
-            'vname' => 'LBL_BUNDLE_NOTE_POSITION',
-            'importable' => false,
-            'link' => 'parentquote',
-            'rname_link' => 'quote_index',
-        ),
+
     ),
     'indices' => array(
         array('name' => 'procuct_bundle_notespk', 'type' => 'primary', 'fields' => array('id')),
