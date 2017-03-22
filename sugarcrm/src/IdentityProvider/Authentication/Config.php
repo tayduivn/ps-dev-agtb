@@ -108,6 +108,7 @@ class Config
                 'logoutRequestSigned' => $isSPPrivateKeyCertSet && $this->get('SAML_sign_logout_request', false),
                 'logoutResponseSigned' => $isSPPrivateKeyCertSet && $this->get('SAML_sign_logout_response', false),
                 'signatureAlgorithm' => $this->get('SAML_request_signing_method', \XMLSecurityKey::RSA_SHA256),
+                'validateRequestId' => $this->get('saml.validate_request_id', false),
             ],
         ];
     }
