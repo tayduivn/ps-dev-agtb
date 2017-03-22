@@ -27,6 +27,8 @@ function clearPasswordSettings() {
 }
 
 require_once('modules/Administration/Forms.php');
+require_once 'include/upload_file.php';
+
 echo getClassicModuleTitle(
         "Administration",
         array(
@@ -41,6 +43,10 @@ $focus = BeanFactory::newBean('Administration');
 $configurator->parseLoggerSettings();
 $config_strings = return_module_language($GLOBALS['current_language'], 'Configurator');
 $valid_public_key = true;
+$samlSigningAlgos = [
+    XMLSecurityKey::RSA_SHA256 => 'RSA-SHA256',
+    XMLSecurityKey::RSA_SHA512 => 'RSA-SHA512',
+];
 if (!empty($_POST['saveConfig'])) {
     do {
         if ($_POST['captcha_on'] == '1') {
@@ -131,6 +137,57 @@ if (!empty($_POST['saveConfig'])) {
             } else {
                 $_POST['SAML_provisionUser'] = false;
             }
+
+            // try to read PEM file with private key
+            $pkey = null;
+            if (!empty($_FILES['SAML_request_signing_pkey_file'])) {
+                $keyUpload = new \UploadFile('SAML_request_signing_pkey_file');
+                if ($keyUpload->confirm_upload()) {
+                    $pemContents = $keyUpload->get_file_contents();
+
+                    $privateKey = openssl_get_privatekey($pemContents);
+                    if (!$privateKey) {
+                        $configurator->addError($config_strings['ERR_SAML_REQUEST_SIGNING_CERT_NO_PRIVATE_KEY']);
+                        break;
+                    }
+                    openssl_pkey_export($privateKey, $pkey);
+
+                    $_POST['SAML_request_signing_pkey_name'] = $keyUpload->original_file_name;
+                    $_POST['SAML_request_signing_pkey'] = $pkey;
+                }
+            }
+
+            // try to read PEM file with x509 certificate
+            if (!empty($_FILES['SAML_request_signing_cert_file'])) {
+                $keyUpload = new \UploadFile('SAML_request_signing_cert_file');
+                if ($keyUpload->confirm_upload()) {
+                    $pemContents = $keyUpload->get_file_contents();
+
+                    $x509CertRes = @openssl_x509_read($pemContents);
+                    if (!$x509CertRes) {
+                        $configurator->addError($config_strings['ERR_SAML_REQUEST_SIGNING_CERT_NO_X509_CERTIFICATE']);
+                        break;
+                    }
+                    openssl_x509_export($x509CertRes, $x509cert);
+                    $certData = openssl_x509_parse($x509cert);
+
+                    if (openssl_x509_check_private_key(
+                        $certData,
+                        $pkey ?: $sugarConfig->get('SAML_request_signing_pkey')
+                    )) {
+                        $configurator->addError($config_strings['ERR_SAML_REQUEST_SIGNING_CERT_X509_DOESNT_MATCH']);
+                        break;
+                    }
+
+                    // everything is fine
+                    $_POST['SAML_request_signing_cert_name'] = $certData['name'] ?: $keyUpload->original_file_name;
+                    $_POST['SAML_request_signing_x509'] = $x509cert;
+                }
+            }
+
+            foreach (['SAML_sign_authn', 'SAML_sign_logout_request', 'SAML_sign_logout_response'] as $signOption) {
+                $_POST[$signOption] = isset($_REQUEST[$signOption]);
+            }
         }
 
 		$configurator->saveConfig();
@@ -173,6 +230,7 @@ $sugar_smarty->assign('LANGUAGES', get_languages());
 $sugar_smarty->assign("settings", $focus->settings);
 
 $sugar_smarty->assign('saml_enabled_checked', false);
+$sugar_smarty->assign('SAML_AVAILABLE_SIGNING_ALGOS', $samlSigningAlgos);
 
 if (!extension_loaded('mcrypt')) {
 	$sugar_smarty->assign("LDAP_ENC_KEY_READONLY", 'readonly');

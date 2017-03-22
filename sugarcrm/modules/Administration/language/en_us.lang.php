@@ -1133,6 +1133,18 @@ expressions in the regex. Regular expressions should not include any delimiters.
     'LBL_SAML_SAME_WINDOW_DESC' => 'This option will load SAML login screen in the same window',
     'LBL_SAML_PROVISION_USER' => 'Auto-create user',
     'LBL_SAML_PROVISION_USER_DESC' => 'Automatically create non-existing user in SugarCRM on the first SAML login',
+    'LBL_SAML_REQUEST_SIGNING_PKEY' => 'Request Signing Private Key',
+    'LBL_SAML_REQUEST_SIGNING_PKEY_DESC' => 'Upload PEM file containing private key to be used for AuthN/Logout request signing',
+    'LBL_SAML_REQUEST_SIGNING_CERT' => 'Request Signing Certificate',
+    'LBL_SAML_REQUEST_SIGNING_CERT_DESC' => 'Upload PEM file containing x.509 certificate to be used for AuthN/Logout request signing. Certificate should match uploaded private key',
+    'LBL_SAML_REQUEST_SIGNING_METHOD' => 'Request Signing method',
+    'LBL_SAML_REQUEST_SIGNING_METHOD_DESC' => 'Select signing method, RSA-SHA1 and RSA-SHA256 are recommended',
+    'LBL_SAML_SIGN_AUTHN' => 'Sign AuthN Request',
+    'LBL_SAML_SIGN_AUTHN_DESC' => 'AuthN Requests will be signed with provided private key',
+    'LBL_SAML_SIGN_LOGOUT_REQUEST' => 'Sign Logout Request',
+    'LBL_SAML_SIGN_LOGOUT_REQUEST_DESC' => 'Logout Requests will be signed with provided private key',
+    'LBL_SAML_SIGN_LOGOUT_RESPONSE' => 'Sign Logout Response',
+    'LBL_SAML_SIGN_LOGOUT_RESPONSE_DESC' => 'Logout Responses will be signed with provided private key',
     'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Full text search will be used to return results for a global search in the desktop application. In order for results to return for a particular module, it must be enabled below. Make sure to perform a full system index after enabling modules for full text search. Individual module fields can be enabled for full text search via <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.<br>
 To enable modules for global searches in SugarCRM Mobile and Sugar Portal, please use the <a href="index.php?module=Administration&action=UnifiedSearchSettings">Legacy Global Search Configuration</a>. <br>
 For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_doc.php?edition=ENT&version=7.7.0.0beta4&lang=en_us&module=FullTextSearch">Search</a> documentation.',

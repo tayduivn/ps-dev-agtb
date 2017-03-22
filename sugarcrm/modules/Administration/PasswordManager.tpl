@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 *}
-<form name="ConfigurePasswordSettings" method="POST" action="index.php">
+<form name="ConfigurePasswordSettings" method="POST" action="index.php" enctype="multipart/form-data">
 {sugar_csrf_form_token}
 <input type='hidden' name='action' value='PasswordManager'/>
 <input type='hidden' name='module' value='Administration'/>
@@ -807,7 +807,7 @@
                         <input name="authenticationClass" id="system_saml_enabled" class="checkbox"
                                value="SAMLAuthenticate" type="checkbox"
                                {if $saml_enabled_checked}checked="1"{/if}
-                               onclick='toggleDisplay("saml_display");enableDisablePasswordTable("system_saml_enabled");'>
+                               onclick='toggleDisplay("saml_display");toggleDisplay("saml_advanced");enableDisablePasswordTable("system_saml_enabled");'>
                     </td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
@@ -864,6 +864,62 @@
                         </table>
 
 
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <table cellspacing="0" cellpadding="1" id="saml_advanced" style="display:{$saml_display}" width="100%">
+                            <tr>
+                                <td scope="row" valign="middle" nowrap>
+                                    {$MOD.LBL_SAML_REQUEST_SIGNING_PKEY} {sugar_help text=$MOD.LBL_SAML_REQUEST_SIGNING_PKEY_DESC}
+                                </td>
+                                <td align="left" valign="middle">
+                                    <input name="SAML_request_signing_pkey_file" type="file" />
+                                    {$config.SAML_request_signing_pkey_name}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row" valign="middle" nowrap>
+                                    {$MOD.LBL_SAML_REQUEST_SIGNING_CERT} {sugar_help text=$MOD.LBL_SAML_REQUEST_SIGNING_CERT_DESC}
+                                </td>
+                                <td align="left" valign="middle">
+                                    <input name="SAML_request_signing_cert_file" type="file" />
+                                    {$config.SAML_request_signing_cert_name}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row" valign="middle" nowrap>
+                                    {$MOD.LBL_SAML_REQUEST_SIGNING_METHOD} {sugar_help text=$MOD.LBL_SAML_REQUEST_SIGNING_METHOD_DESC}
+                                </td>
+                                <td align="left" valign="middle">
+                                    {html_options name=SAML_request_signing_method options=$SAML_AVAILABLE_SIGNING_ALGOS selected=$config.SAML_request_signing_method}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row" valign="middle" nowrap>
+                                    {$MOD.LBL_SAML_SIGN_AUTHN} {sugar_help text=$MOD.LBL_SAML_SIGN_AUTHN_DESC}
+                                </td>
+                                <td align="left" valign="middle">
+                                    <input type="checkbox" name="SAML_sign_authn" {if $config.SAML_sign_authn}checked="checked"{/if} />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row" valign="middle" nowrap>
+                                    {$MOD.LBL_SAML_SIGN_LOGOUT_REQUEST} {sugar_help text=$MOD.LBL_SAML_SIGN_LOGOUT_REQUEST_DESC}
+                                </td>
+                                <td align="left" valign="middle">
+                                    <input type="checkbox" name="SAML_sign_logout_request" {if $config.SAML_sign_logout_request}checked="checked"{/if} />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row" valign="middle" nowrap>
+                                    {$MOD.LBL_SAML_SIGN_LOGOUT_RESPONSE} {sugar_help text=$MOD.LBL_SAML_SIGN_LOGOUT_RESPONSE_DESC}
+                                </td>
+                                <td align="left" valign="middle">
+                                    <input type="checkbox" name="SAML_sign_logout_response" {if $config.SAML_sign_logout_response}checked="checked"{/if} />
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>

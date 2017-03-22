@@ -437,6 +437,9 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'ERR_EMPTY_SAML_CERT' => 'SAML certificate can not be empty',
     'ERR_SAML_LOGIN_URL' => 'SAML Login URL is not valid',
     'ERR_SAML_SLO_URL' => 'SAML SLO URL is not valid',
+    'ERR_SAML_REQUEST_SIGNING_CERT_NO_PRIVATE_KEY' => 'PEM file should contain private key',
+    'ERR_SAML_REQUEST_SIGNING_CERT_NO_X509_CERTIFICATE' => 'PEM file should contain x.509 certificate',
+    'ERR_SAML_REQUEST_SIGNING_CERT_X509_DOESNT_MATCH' => 'Provided x.509 certificate doesn\'t match private key',
 );
 
 

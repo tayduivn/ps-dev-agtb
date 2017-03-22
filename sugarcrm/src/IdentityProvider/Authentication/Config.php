@@ -65,7 +65,8 @@ class Config
      */
     protected function getSAMLDefaultConfig()
     {
-        $isSPPrivateKeySet = (bool)$this->get('SAML_REQUEST_SIGNING_PKEY');
+        $isSPPrivateKeyCertSet = (bool)$this->get('SAML_request_signing_pkey')
+            && (bool)$this->get('SAML_request_signing_x509');
         $siteUrl = rtrim($this->get('site_url'), '/');
         $acsUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Authenticate', ENT_XML1));
         $sloUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Logout', ENT_XML1));
@@ -83,8 +84,8 @@ class Config
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'NameIDFormat' =>\OneLogin_Saml2_Constants::NAMEID_EMAIL_ADDRESS,
-                'x509cert' => $this->get('SAML_REQUEST_SIGNING_X509', ''),
-                'privateKey' => $this->get('SAML_REQUEST_SIGNING_PKEY', ''),
+                'x509cert' => $this->get('SAML_request_signing_x509', ''),
+                'privateKey' => $this->get('SAML_request_signing_pkey', ''),
                 'provisionUser' => $this->get('SAML_provisionUser', true),
             ],
 
@@ -102,10 +103,10 @@ class Config
             ),
 
             'security' => [
-                'authnRequestsSigned' => $isSPPrivateKeySet,
-                'logoutRequestSigned' => $isSPPrivateKeySet,
-                'logoutResponseSigned' => $isSPPrivateKeySet,
-                'signatureAlgorithm' => $this->get('SAML_REQUEST_SIGNING_METHOD', \XMLSecurityKey::RSA_SHA256),
+                'authnRequestsSigned' => $isSPPrivateKeyCertSet && $this->get('SAML_sign_authn', false),
+                'logoutRequestSigned' => $isSPPrivateKeyCertSet && $this->get('SAML_sign_logout_request', false),
+                'logoutResponseSigned' => $isSPPrivateKeyCertSet && $this->get('SAML_sign_logout_response', false),
+                'signatureAlgorithm' => $this->get('SAML_request_signing_method', \XMLSecurityKey::RSA_SHA256),
             ],
         ];
     }

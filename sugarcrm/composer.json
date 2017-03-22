@@ -114,6 +114,7 @@
         "tedivm/jshrink": "v1.1.0",
         "vanderlee/php-stable-sort-functions": "2.0.2",
         "sugarcrm/identity-provider": "dev-master",
+        "ext-openssl": "*",
         "php": ">=5.6.0"
     },
     "require-dev": {
