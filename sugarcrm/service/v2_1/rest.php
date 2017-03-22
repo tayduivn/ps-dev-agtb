@@ -15,6 +15,7 @@
  * This is a rest entry point for rest version 3.1
  */
 chdir('../..');
+require 'include/entryPoint.php';
 require_once 'service/v2_1/SugarWebServiceImplv2_1.php';
 $webservice_class = 'SugarRestService';
 $webservice_path = 'service/core/SugarRestService.php';

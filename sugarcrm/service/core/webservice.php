@@ -18,7 +18,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ob_start();
 chdir(dirname(__FILE__).'/../../');
 define('ENTRY_POINT_TYPE', 'api');
-require('include/entryPoint.php');
 require_once 'service/core/SoapHelperWebService.php';
 require_once($webservice_path);
 require_once($registry_path);
