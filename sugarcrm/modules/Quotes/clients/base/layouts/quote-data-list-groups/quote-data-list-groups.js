@@ -1017,6 +1017,8 @@
             newBundle = this._createNewProductBundleBean(undefined, nextPosition, false);
             // set the _justSaved flag so the new bundle header starts in edit mode
             newBundle.set('_justSaved', true);
+            // ignore preferred currency so that we keep the selected currency.
+            newBundle.ignoreUserPrefCurrency = true;
             // add the new bundle which will add it to the layout and groupIds
             bundles.add(newBundle);
         } else {
