@@ -12,6 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
+use Elastica\Query\MoreLikeThis;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+
 /**
  *
  * The Knowledge Base specific filter query using More_Like_This this query.
@@ -73,7 +76,7 @@ class KBFilterQuery implements QueryInterface
      */
     public function build()
     {
-        $boolQuery = new \Elastica\Query\BoolQuery();
+        $boolQuery = ElasticaFactory::createNewInstance('Bool');
         if (isset($this->fields['kbdocument_body'])) {
             if (isset($this->term['$contains'])) {
                 $mltBody =
@@ -97,9 +100,9 @@ class KBFilterQuery implements QueryInterface
      */
     public function createFilter()
     {
-        $mainFilter = new \Elastica\Query\BoolQuery();
+        $mainFilter = ElasticaFactory::createNewInstance('Bool');
 
-        $activeRevFilter = new \Elastica\Query\Term();
+        $activeRevFilter = ElasticaFactory::createNewInstance('Term');
         $activeRevFilter->setTerm('active_rev', 1);
         $mainFilter->addMust($activeRevFilter);
 
@@ -110,13 +113,13 @@ class KBFilterQuery implements QueryInterface
      * Create a more_like_this query.
      * @param $fields array the searchable fields
      * @param $text string the like text
-     * @return \Elastica\Query\MoreLikeThis
+     * @return MoreLikeThis
      */
     protected function createQuery(array $fields, $text)
     {
-        $mlt = new \Elastica\Query\MoreLikeThis();
+        $mlt = new MoreLikeThis();
         $mlt->setFields($fields);
-        $mlt->setLikeText($text);
+        $mlt->setLike($text);
         $mlt->setMinTermFrequency(1);
         $mlt->setMinDocFrequency(1);
         return $mlt;

@@ -21,6 +21,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter\FilterInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -96,12 +97,12 @@ class Visibility extends AbstractProvider implements ContainerAwareInterface
     public function buildVisibilityFilters(QueryBuilder $builder, array $modules)
     {
         // main filter object
-        $main = new \Elastica\Query\BoolQuery();
+        $main = ElasticaFactory::createNewInstance('Bool');
 
         foreach ($modules as $module) {
 
             // main module filter
-            $modFilter = new \Elastica\Query\BoolQuery();
+            $modFilter = ElasticaFactory::createNewInstance('Bool');
             $modFilter->addMust($this->createFilter('Type', array('module' => $module)));
 
             // now add filters from different strategies
@@ -119,7 +120,7 @@ class Visibility extends AbstractProvider implements ContainerAwareInterface
      * Create filter
      * @param string $name
      * @param array $options
-     * @return \Elastica\Query\AbstractQuery
+     * @return mixed
      */
     public function createFilter($name, array $options = array())
     {
@@ -148,10 +149,10 @@ class Visibility extends AbstractProvider implements ContainerAwareInterface
     /**
      * Add visibility filters on top of given filter
      * @param \User $user User context
-     * @param \Elastica\Query\BoolQuery $filter
+     * @param mixed $filter
      * @param string $module
      */
-    protected function addVisibilityFilters(\User $user, \Elastica\Query\BoolQuery $filter, $module)
+    protected function addVisibilityFilters(\User $user, $filter, $module)
     {
         foreach ($this->getModuleStrategies($module) as $strategy) {
             $strategy->elasticAddFilters($user, $filter, $this);

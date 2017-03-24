@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
+use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\ConnectionException;
 use Elastica\Client as BaseClient;
 use Elastica\Connection;
@@ -47,23 +48,27 @@ class Client extends BaseClient
     const VERSION_UNKNOWN = 'unknown';
 
     /**
+     * @var string, current installed elastic version
+     */
+    protected $version;
+
+    /**
      * Return allowed versions array
      * @var array
      */
-    protected $allowedVersions = [
-        '1.4',
-        '1.7',
+    protected $allowedVersions = array(
         '5.0',
         '5.1',
-    ];
+    );
 
     /**
-     * Return ES version checks for version_compare
+     * Return ES version checks ES 5.x
      * @var array
      */
-    protected $supportedVersionsCheck = [
-        ['version' => '5.2.0', 'operator' => '<'],
-    ];
+    protected static $supportedVersion5x = array(
+        array('version' =>'5.0.0', 'operator' => '>='),
+        array('version' => '5.2.0', 'operator' => '<'),
+    );
 
     /**
      * List of supported $sugar_config Elastic configuration options
@@ -98,7 +103,15 @@ class Client extends BaseClient
     {
         $this->setLogger($logger);
         $config = $this->parseConfig($config);
-        parent::__construct($config, array($this, 'onConnectionFailure'));
+        parent::__construct($config, array($this, 'onConnectionFailure'), $logger);
+    }
+
+    /**
+     * @return string elasticsearch version
+     */
+    public function getVersion()
+    {
+        return $this->version;
     }
 
     /**
@@ -133,7 +146,8 @@ class Client extends BaseClient
             $status = self::CONN_NO_VERSION_AVAILABLE;
             $this->_logger->critical("Elasticsearch verify conn: No valid version string available");
         } else {
-            if ($this->isVersionCompatible($data['version']['number'])) {
+            $this->version = $data['version']['number'];
+            if ($this->checkEsVersion($data['version']['number'])) {
                 $status = self::CONN_SUCCESS;
             } else {
                 $status = self::CONN_VERSION_NOT_SUPPORTED;
@@ -149,7 +163,7 @@ class Client extends BaseClient
      * called during install/upgrade and the search admin section. The usage
      * of `$this->isAvailable` is preferred.
      *
-     * @param boolean Update cached availability flag
+     * @param boolean $updateAvailability, Update cached availability flag
      * @return integer Connection status, see declared CONN_ constants
      */
     public function verifyConnectivity($updateAvailability = true)
@@ -213,13 +227,47 @@ class Client extends BaseClient
      * @param array $version Elasticsearch version array
      * @return boolean
      */
-    protected function isVersionCompatible($version)
+    protected function checkEsVersion($version)
+    {
+        return self::isEsVersion5x($version);
+    }
+
+    /**
+     * check if the Elasticsearch version is supported 5x
+     * @param string $version
+     * @return bool
+     */
+    public static function isEsVersion5x($version)
     {
         $result = true;
-        foreach ($this->supportedVersionsCheck as $check) {
+        // verify supported 5.x versions
+        foreach (self::$supportedVersion5x as $check) {
             $result = $result && version_compare($version, $check['version'], $check['operator']);
         }
         return $result;
+    }
+
+    /**
+     * to get Elasticsearch version from config file
+     * @return string
+     */
+    public static function getEsVersion()
+    {
+        global $sugar_config;
+        if (empty($sugar_config['es_version'])) {
+            // to query elasticsearch server again
+            $engine = SearchEngine::getInstance();
+            $ftsStatus = $engine->verifyConnectivity(false);
+            if ($ftsStatus === Client::CONN_SUCCESS) {
+                // write running es version to config
+                $sugar_config['es_version'] = $engine->getEsVersion();
+                // save to config.php
+                write_array_to_file( "sugar_config", $sugar_config, "config.php");
+            } else {
+                throw new \Exception("Elasticsearch server is not available.");
+            }
+        }
+        return $sugar_config['es_version'];
     }
 
     /**
@@ -326,12 +374,10 @@ class Client extends BaseClient
                 throw new \Elastica\Exception\ConnectionException('HTTP 502 Bad gateway');
             }
 
-            //$this->_logger->onRequestSuccess($this->_lastRequest, $this->_lastResponse);
+            $this->_logger->onRequestSuccess($this->_lastRequest, $this->_lastResponse);
 
         } catch (\Exception $e) {
-            _ppl($e->getMessage());
-            
-            //$this->_logger->onRequestFailure($this->getConnection(), $e, $path, $method, $data);
+            $this->_logger->onRequestFailure($this->getConnection(), $e, $path, $method, $data);
 
             // On connection issues flag Elasticsearch as unavailable
             if ($e instanceof \Elastica\Exception\ConnectionException) {

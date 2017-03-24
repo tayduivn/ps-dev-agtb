@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\MappingFactory;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
@@ -107,146 +108,6 @@ class MultiFieldHandler extends AbstractHandler implements
     );
 
     /**
-     * Multi field definitions
-     * @var array
-     */
-    protected $multiFieldDefs = array(
-
-        /*
-         * This is a special analyzer to be able to use fields with
-         * not_analyzed values only. This is part of the multi field
-         * definition as every multi field is not_analyzed by default.
-         */
-        'not_analyzed' => array(),
-
-        /*
-         * Default string analyzer with full word matching base ond
-         * the standard analyzer. This will generate hits on the full
-         * words tokenized by the standard analyzer.
-         */
-        'gs_string' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_string',
-            'store' => true,
-        ),
-
-        /*
-         * String analyzer using ngrams for wildcard matching. The
-         * weighting of the hits on this mapping are less than full
-         * matches using the default string mapping.
-         */
-        'gs_string_wildcard' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_string_ngram',
-            'search_analyzer' => 'gs_analyzer_string',
-            'store' => true,
-        ),
-
-        /*
-         * Wildcard analyzer for text fields. Because they can become
-         * big we use a text_ngram definition.
-         */
-        'gs_text_wildcard' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_text_ngram',
-            'search_analyzer' => 'gs_analyzer_string',
-            'store' => true,
-        ),
-
-        /*
-         * Date field mapping. Date fields are not searchable but are
-         * needed to be returned as part of the dataset and to be able
-         * to perform facets on. Note that the index cannot be 'no' to
-         * return the fields of 'gs_datetime' type in the facets.
-         */
-        'gs_datetime' => array(
-            'type' => 'date',
-            'format' => 'YYYY-MM-dd HH:mm:ss',
-            'store' => false,
-        ),
-        'gs_date' => array(
-            'type' => 'date',
-            'format' => 'YYYY-MM-dd',
-            'store' => false,
-        ),
-
-        /*
-         * Integer mapping.
-         */
-        'gs_integer' => array(
-            'type' => 'integer',
-            'index' => false,
-            'store' => false,
-        ),
-
-        /*
-         * Phone mapping. The analyzer supports partial matches using
-         * ngrams and transforms every phone number in pure numbers
-         * only to be able to search for different formats and still
-         * get hits. For example the data source for +32 (475)61.64.28
-         * will be stored and analyzed as 32475616428 including ngrams
-         * based on this result. When phone number fields are included
-         * in the search matching will happen when searching for:
-         *      +32 475 61.64.28
-         *      (32)475-61-64-28
-         *      ...
-         */
-        'gs_phone_wildcard' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_phone_ngram',
-            'search_analyzer' => 'gs_analyzer_phone',
-            'store' => true,
-        ),
-
-        /*
-         * URL analyzer
-         */
-        'gs_url' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_url',
-            'store' => false,
-        ),
-
-        /*
-         * Wildcard matching for URLs.
-         */
-        'gs_url_wildcard' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_url_ngram',
-            'search_analyzer' => 'gs_analyzer_url',
-            'store' => false,
-        ),
-
-        /*
-         * String analyzer with full word matching base ond
-         * the whitespace analyzer. This will generate hits on the full
-         * words tokenized by the whitespace analyzer.
-         */
-        'gs_string_exact' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_string_exact',
-            'store' => true,
-        ),
-
-        /*
-         * Analyzer for html
-         */
-        'gs_string_html' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_string_html',
-            'store' => true,
-        ),
-    );
-
-    /**
      * Weighted boost definition
      * @var array
      */
@@ -269,6 +130,168 @@ class MultiFieldHandler extends AbstractHandler implements
         '*.gs_text_wildcard' => array(),
         '*.gs_phone_wildcard' => array(),
     );
+
+    /**
+     * Multi field definitions
+     * @var array
+     */
+    protected $multiFieldDefs = array();
+
+    /**
+     * to create MultiFieldDefs
+     * @return array
+     */
+    protected function createMultiFieldDefs()
+    {
+        return array(
+
+            /*
+             * This is a special analyzer to be able to use fields with
+             * not_analyzed values only. This is part of the multi field
+             * definition as every multi field is not_analyzed by default.
+             */
+            'not_analyzed' => array(),
+
+            /*
+             * Default string analyzer with full word matching base ond
+             * the standard analyzer. This will generate hits on the full
+             * words tokenized by the standard analyzer.
+             */
+            'gs_string' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_string',
+                null
+            ),
+
+            /*
+             * String analyzer using ngrams for wildcard matching. The
+             * weighting of the hits on this mapping are less than full
+             * matches using the default string mapping.
+             */
+            'gs_string_wildcard' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_string_ngram',
+                'gs_analyzer_string'
+            ),
+
+            /*
+             * Wildcard analyzer for text fields. Because they can become
+             * big we use a text_ngram definition.
+             */
+            'gs_text_wildcard' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_text_ngram',
+                'gs_analyzer_string'
+            ),
+
+            /*
+             * Date field mapping. Date fields are not searchable but are
+             * needed to be returned as part of the dataset and to be able
+             * to perform facets on. Note that the index cannot be 'no' to
+             * return the fields of 'gs_datetime' type in the facets.
+             */
+            'gs_datetime' => MappingFactory::createMappingDef(
+                'date',
+                null,
+                null,
+                null,
+                false,
+                'YYYY-MM-dd HH:mm:ss'
+            ),
+
+            'gs_date' => MappingFactory::createMappingDef(
+                'date',
+                null,
+                null,
+                null,
+                false,
+                'YYYY-MM-dd'
+            ),
+
+            /*
+             * Integer mapping.
+             */
+            'gs_integer' => MappingFactory::createMappingDef(
+                'integer',
+                MappingFactory::INDEX_FALSE,
+                null,
+                null,
+                false
+            ),
+
+            /*
+             * Phone mapping. The analyzer supports partial matches using
+             * ngrams and transforms every phone number in pure numbers
+             * only to be able to search for different formats and still
+             * get hits. For example the data source for +32 (475)61.64.28
+             * will be stored and analyzed as 32475616428 including ngrams
+             * based on this result. When phone number fields are included
+             * in the search matching will happen when searching for:
+             *      +32 475 61.64.28
+             *      (32)475-61-64-28
+             *      ...
+             */
+            'gs_phone_wildcard' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_phone_ngram',
+                'gs_analyzer_phone'
+            ),
+
+            /*
+             * URL analyzer
+             */
+            'gs_url' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_url',
+                null,
+                false
+            ),
+
+            /*
+             * Wildcard matching for URLs.
+             */
+            'gs_url_wildcard' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_url_ngram',
+                'gs_analyzer_url',
+                false
+            ),
+
+            /*
+             * String analyzer with full word matching base ond
+             * the whitespace analyzer. This will generate hits on the full
+             * words tokenized by the whitespace analyzer.
+             */
+            'gs_string_exact' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_string_exact'
+            ),
+
+            /*
+             * Analyzer for html
+             */
+            'gs_string_html' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_string_html'
+            ),
+        );
+    }
+
+    /**
+     * ctor, to create multi-field defs
+     */
+    public function __construct()
+    {
+        $this->multiFieldDefs = $this->createMultiFieldDefs();
+    }
 
     /**
      * {@inheritdoc}
@@ -532,7 +555,7 @@ class MultiFieldHandler extends AbstractHandler implements
         }
 
         $defs = $this->multiFieldDefs[$multiFieldDef];
-        if (isset($defs['type']) && $defs['type'] === 'text') {
+        if (isset($defs['type']) && MappingFactory::isStringType($defs['type'])) {
             return true;
         }
 

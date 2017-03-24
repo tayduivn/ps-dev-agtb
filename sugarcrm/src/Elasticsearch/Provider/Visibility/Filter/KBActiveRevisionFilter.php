@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -28,7 +29,7 @@ class KBActiveRevisionFilter implements FilterInterface
      */
     public function buildFilter(array $options = array())
     {
-        $filter = new \Elastica\Query\Term();
+        $filter = ElasticaFactory::createNewInstance('Term');
         $filter->setTerm('active_rev', 1);
         return $filter;
     }

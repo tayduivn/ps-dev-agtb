@@ -15,6 +15,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  * Team security visibility
@@ -412,7 +413,7 @@ SQL;
     /**
      * {@inheritdoc}
      */
-    public function elasticAddFilters(\User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider)
+    public function elasticAddFilters(\User $user, $filter, Visibility $provider)
     {
         if ($this->isTeamSecurityApplicable()) {
             $filter->addMust($provider->createFilter('TeamSet', array('user' => $user)));

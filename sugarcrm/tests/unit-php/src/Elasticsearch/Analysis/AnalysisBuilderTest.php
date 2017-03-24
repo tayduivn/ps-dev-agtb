@@ -22,7 +22,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
  */
 class AnalysisBuilderTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @covers ::addCustomAnalyzer
      * @covers ::addAnalysis

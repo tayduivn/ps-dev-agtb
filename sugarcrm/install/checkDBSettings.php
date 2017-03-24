@@ -19,6 +19,8 @@ function checkDBSettings($silent=false) {
 
     installLog("Begin DB Check Process *************");
     global $mod_strings;
+    global $sugar_config;
+
     $errors = array();
     copyInputsIntoSession();
 
@@ -200,6 +202,11 @@ function checkDBSettings($silent=false) {
                         implode(', ', $engine->getContainer()->client->getAllowedVersions())
                     );
                     installLog("ERROR:: Unsupported version of Elastic search." . $_SESSION['setup_fts_type']);
+                    break;
+                case Client::CONN_SUCCESS:
+                    // write running es version to config
+                    $esVersion = $engine->getEsVersion();
+                    $sugar_config['es_version'] = $esVersion;
                     break;
             }
             installLog("FTS connection results: $ftsStatus");

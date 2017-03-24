@@ -76,6 +76,12 @@ interface EngineInterface
     public function verifyConnectivity($updateAvailability = true);
 
     /**
+     * the version of running Elasticsearch server
+     * @return string
+     */
+    public function getEsVersion();
+
+    /**
      * Schedule indexing
      *
      * @param array $modules

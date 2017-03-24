@@ -27,7 +27,7 @@ class MultiFieldBasePropertyTest extends \PHPUnit_Framework_TestCase
      * @var array
      */
     protected $defaultMapping = array(
-        'type' => 'text',
+        'type' => 'keyword',
         'index' => true,
     );
 
@@ -64,7 +64,7 @@ class MultiFieldBasePropertyTest extends \PHPUnit_Framework_TestCase
                     'name' => new MultiFieldProperty(),
                 ),
                 array(
-                    'type' => 'text',
+                    'type' => 'keyword',
                     'index' => true,
                     'fields' => array(
                         'name' => array(
@@ -81,7 +81,7 @@ class MultiFieldBasePropertyTest extends \PHPUnit_Framework_TestCase
                     'descr' => new MultiFieldProperty(),
                 ),
                 array(
-                    'type' => 'text',
+                    'type' => 'keyword',
                     'index' => true,
                     'fields' => array(
                         'name' => array(

@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+
 /**
  *
  * The implementation class for MyItems Aggregation based on
@@ -25,7 +27,7 @@ class MyItemsAggregation extends FilterAggregation
      */
     protected function getAggFilter($field)
     {
-        $termFilter = new \Elastica\Query\Terms();
+        $termFilter = ElasticaFactory::createNewInstance('Terms');
         $termFilter->setTerms($field, array($this->user->id));
         return $termFilter;
     }

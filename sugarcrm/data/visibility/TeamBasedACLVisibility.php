@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  * Class TeamBasedACLVisibility
@@ -168,10 +169,10 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
     /**
      * {@inheritdoc}
      */
-    public function elasticAddFilters(\User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider)
+    public function elasticAddFilters(\User $user, $filter, Visibility $provider)
     {
         if ($this->isApplicable()) {
-            $combo = new \Elastica\Query\BoolQuery();
+            $combo = ElasticaFactory::createNewInstance('Bool');
             $combo->addFilter(
                 $provider->createFilter('TeamSet', array('user' => $user, 'field' => 'acl_team_set_id'))
             );

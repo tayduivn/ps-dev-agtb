@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -55,9 +56,9 @@ interface StrategyInterface
 
     /**
      * Add visibility filters
-     * @param \Elastica\Query\BoolQuery $filter
+     * @param $filter
      * @param Visibility $provider
-     * @return \Elastica\Query\AbstractQuery
+     * @return mixed
      */
-    public function elasticAddFilters(\User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider);
+    public function elasticAddFilters(\User $user, $filter, Visibility $provider);
 }

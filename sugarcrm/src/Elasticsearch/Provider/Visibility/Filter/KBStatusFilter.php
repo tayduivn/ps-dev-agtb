@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -28,6 +29,6 @@ class KBStatusFilter implements FilterInterface
      */
     public function buildFilter(array $options = array())
     {
-        return new \Elastica\Query\Terms('status', $options['published_statuses']);
+        return ElasticaFactory::createNewInstance('Terms', 'status', $options['published_statuses']);
     }
 }

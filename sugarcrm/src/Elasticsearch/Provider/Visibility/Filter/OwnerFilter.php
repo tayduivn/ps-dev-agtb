@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -29,7 +30,7 @@ class OwnerFilter implements FilterInterface
     public function buildFilter(array $options = array())
     {
         $ownerField = $this->getOwnerField($options['bean']);
-        $filter = new \Elastica\Query\Term();
+        $filter = ElasticaFactory::createNewInstance('Term');
         $filter->setTerm($ownerField, $options['user']->id);
         return $filter;
     }

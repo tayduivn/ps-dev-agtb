@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\MappingFactory;
 
 /**
  *
@@ -26,32 +27,18 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
 class MultiFieldProperty extends RawProperty implements PropertyInterface
 {
     /**
-     * Allowed elastic type supported by multi field
-     * @var array
-     */
-    protected $allowedTypes = array(
-        'text',
-        'float',
-        'double',
-        'byte',
-        'short',
-        'integer',
-        'long',
-        'token_count',
-        'date',
-        'boolean',
-    );
-
-    /**
      * @var string Core type
      */
-    protected $type = 'text';
+    protected $type;
 
     /**
      * {@inheritdoc}
      */
     public function getMapping()
     {
+        if (empty($this->type)) {
+            $this->type = MappingFactory::getBaseStringType();
+        }
         return array_merge(
             $this->mapping,
             array('type' => $this->type)
@@ -65,7 +52,7 @@ class MultiFieldProperty extends RawProperty implements PropertyInterface
      */
     public function setType($type)
     {
-        if (!in_array($type, $this->allowedTypes)) {
+        if (!in_array($type, MappingFactory::getAllowedTypes())) {
             throw new MappingException("Invalid type '{$type}' for MultiFieldProperty");
         }
         $this->type = $type;

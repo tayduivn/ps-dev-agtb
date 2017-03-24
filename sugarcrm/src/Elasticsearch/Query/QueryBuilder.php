@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
+use Elastica\Query as Query;
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationInterface;
@@ -19,6 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationStack;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -83,13 +85,13 @@ class QueryBuilder
 
     /**
      * List of query filters
-     * @var \Elastica\Query\AbstractQuery[]
+     * @var array
      */
     protected $filters = array();
 
     /**
      * List of post filters
-     * @var \Elastica\Query\AbstractQuery[]
+     * @var array
      */
     protected $postFilters = array();
 
@@ -140,7 +142,7 @@ class QueryBuilder
 
     /**
      * Get user context
-     * @return User
+     * @return \User
      */
     public function getUser()
     {
@@ -220,10 +222,10 @@ class QueryBuilder
 
     /**
      * Add query filter
-     * @param \Elastica\Query\AbstractQuery $filter
+     * @param $filter
      * @return QueryBuilder
      */
-    public function addFilter(\Elastica\Query\AbstractQuery $filter)
+    public function addFilter($filter)
     {
         $this->filters[] = $filter;
         return $this;
@@ -231,10 +233,10 @@ class QueryBuilder
 
     /**
      * Add query filter
-     * @param \Elastica\Query\AbstractQueryr $postFilter
+     * @param $postFilter
      * @return QueryBuilder
      */
-    public function addPostFilter(\Elastica\Query\AbstractQuery $postFilter)
+    public function addPostFilter($postFilter)
     {
         $this->postFilters[] = $postFilter;
         return $this;
@@ -332,12 +334,12 @@ class QueryBuilder
 
     /**
      * Build query
-     * @return \Elastica\Query
+     * @return Query
      */
     public function build()
     {
         // Wrap query in a filtered query
-        $query = new \Elastica\Query\BoolQuery();
+        $query = ElasticaFactory::createNewInstance('Bool');
         $query->addMust($this->query->build());
 
         // Apply visibility filtering
@@ -385,22 +387,6 @@ class QueryBuilder
     }
 
     /**
-     * Build module filter
-     * @param array $modules
-     * @return \Elastica\Query\BoolQuery
-     */
-    protected function buildModuleFilter(array $modules)
-    {
-        $modules = new \Elastica\Query\BoolQuery();
-        foreach ($this->modules as $module) {
-            $filter = new \Elastica\Query\Term();
-            $filter->setTerm('_type', $module);
-            $modules->addShould($filter);
-        }
-        return $modules;
-    }
-
-    /**
      * Prepare result set
      * @param \Elastica\ResultSet $resultSet
      * @return ResultSet
@@ -439,7 +425,7 @@ class QueryBuilder
      */
     protected function buildFilters(array $filters)
     {
-        $result = new \Elastica\Query\BoolQuery();
+        $result = ElasticaFactory::createNewInstance('Bool');
         foreach ($filters as $filter) {
             $result->addMust($filter);
         }
@@ -452,7 +438,7 @@ class QueryBuilder
      */
     protected function buildPostFilters(array $postFilters)
     {
-        $result = new \Elastica\Query\BoolQuery();
+        $result = ElasticaFactory::createNewInstance('Bool');
         foreach ($postFilters as $postFilter) {
             $result->addMust($postFilter);
         }
@@ -461,11 +447,11 @@ class QueryBuilder
 
     /**
      * Build aggregations
-     * @param \Elastica\Query $query
+     * @param Query $query
      * @param AggregationStack $stack
      * @param array $filterDefs
      */
-    protected function buildAggregations(\Elastica\Query $query, AggregationStack $stack, array $filterDefs)
+    protected function buildAggregations(Query $query, AggregationStack $stack, array $filterDefs)
     {
         // build the aggregations from the stack
         foreach ($stack->buildAggregations($filterDefs) as $agg) {
@@ -480,12 +466,12 @@ class QueryBuilder
 
     /**
      * Build main query object
-     * @param \Elastica\Query\AbstractQuery $query
-     * @return \Elastica\Query
+     * @param $query
+     * @return Query
      */
-    protected function buildQuery(\Elastica\Query\AbstractQuery $query)
+    protected function buildQuery($query)
     {
-        return new \Elastica\Query($query);
+        return new Query($query);
     }
 
     /**

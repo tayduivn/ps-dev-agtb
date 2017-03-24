@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+
 /**
  *
  * The implementation class for Range Aggregation.
@@ -40,7 +42,7 @@ class RangeAggregation extends AbstractAggregation
      */
     public function build($id, array $filters)
     {
-        $range = new \Elastica\Aggregation\Range($id);
+        $range = ElasticaFactory::createNewInstance('AggRange', $id);
         $range->setField($this->options['field']);
 
         // apply range definitions
@@ -64,7 +66,7 @@ class RangeAggregation extends AbstractAggregation
             return false;
         }
 
-        $filter = new \Elastica\Query\BoolQuery();
+        $filter = ElasticaFactory::createNewInstance('Bool');
         foreach ($filterDefs as $rangeId) {
 
             if (!isset($this->options['ranges'])) {
@@ -72,7 +74,7 @@ class RangeAggregation extends AbstractAggregation
             }
 
             // create range filter
-            $rangeFilter = new \Elastica\Query\Range();
+            $rangeFilter = ElasticaFactory::createNewInstance('Range');
             $rangeOptions = array_intersect_key(
                 $this->options['ranges'][$rangeId],
                 array_flip($this->acceptedRangeOptions)

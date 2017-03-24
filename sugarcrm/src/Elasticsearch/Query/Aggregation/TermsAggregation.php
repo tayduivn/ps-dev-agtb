@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+
 /**
  *
  * Generic terms aggregation
@@ -41,7 +43,7 @@ class TermsAggregation extends AbstractAggregation
      */
     public function build($id, array $filters)
     {
-        $terms = new \Elastica\Aggregation\Terms($id);
+        $terms = ElasticaFactory::createNewInstance('AggTerms', $id);
         $this->applyOptions($terms, $this->options);
 
         if (empty($filters)) {
@@ -60,7 +62,7 @@ class TermsAggregation extends AbstractAggregation
             return false;
         }
 
-        $filter = new \Elastica\Query\Terms();
+        $filter = ElasticaFactory::createNewInstance('Terms');
         $filter->setTerms($this->options['field'], $filterDefs);
         return $filter;
     }

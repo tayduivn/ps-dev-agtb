@@ -13,9 +13,11 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
+use Elastica\Query\MultiMatch;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SimpleTermParser;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -145,7 +147,7 @@ class MultiMatchQuery implements QueryInterface
             if (TermParserHelper::isAndOperator($operator) || TermParserHelper::isOrOperator($operator)) {
                 $returnExpr = $this->buildBoolQuery($operands);
 
-                $boolQuery = new \Elastica\Query\BoolQuery();
+                $boolQuery = ElasticaFactory::createNewInstance('Bool');
                 foreach ($returnExpr as $expr) {
                     //convert a single string to a multi-match query
                     if (is_string($expr)) {
@@ -159,8 +161,7 @@ class MultiMatchQuery implements QueryInterface
                 }
                 return $boolQuery;
             } elseif (TermParserHelper::isNotOperator($operator)) {
-                $query = $this->buildMultiMatchQuery($operands);
-                $boolQuery = new \Elastica\Query\BoolQuery();
+                $boolQuery = ElasticaFactory::createNewInstance('Bool');
                 foreach ($operands as $operand) {
                     $query = $this->buildMultiMatchQuery($operand);
                     $boolQuery->addMustNot($query);
@@ -180,7 +181,7 @@ class MultiMatchQuery implements QueryInterface
      */
     protected function buildMultiMatchQuery($terms)
     {
-        $boolQuery = new \Elastica\Query\BoolQuery();
+        $boolQuery = ElasticaFactory::createNewInstance('Bool');
 
         //create the sub-query with read-acessible fields
         $this->isReadOwnerQuery = false;
@@ -197,12 +198,12 @@ class MultiMatchQuery implements QueryInterface
      * Create a multi-match query.
      * @param $fields array the searchable fields
      * @param $term string the search term
-     * @return \Elastica\Query\MultiMatch
+     * @return MultiMatch
      */
     protected function createMultiMatchQuery(array $fields, $terms)
     {
-        $query = new \Elastica\Query\MultiMatch();
-        $query->setType(\Elastica\Query\MultiMatch::TYPE_CROSS_FIELDS);
+        $query = new MultiMatch();
+        $query->setType(MultiMatch::TYPE_CROSS_FIELDS);
         $query->setQuery($terms);
         $query->setFields($fields);
         $query->setTieBreaker(1.0); // TODO make configurable
@@ -235,22 +236,23 @@ class MultiMatchQuery implements QueryInterface
         $query = $this->createMultiMatchQuery($fields, $terms);
 
         //If owner read fields are found, need to add a filtered query with the owner filter.
-        $filteredQuery = new \Elastica\Query\Filtered();
-        $filteredQuery->setQuery($query);
+        $filteredQuery = ElasticaFactory::createNewInstance('Bool');
+        $filteredQuery->addMust($query);
 
         // Add the owner filter to query
-        $filteredQuery->setFilter($this->addOwnerFilter());
+        $filteredQuery->addFilter($this->addOwnerFilter());
+
 
         $parentQuery->addShould($filteredQuery);
     }
 
     /**
      * Create the filter for the ownerId.
-     * @return \Elastica\Filter\Terms
+     * @return \Elastica\Query\Terms
      */
     protected function addOwnerFilter()
     {
-        $filter = new \Elastica\Filter\Terms();
+        $filter = ElasticaFactory::createNewInstance('Terms');
         $filter->setTerms("owner_id", array($this->userId));
         return $filter;
     }

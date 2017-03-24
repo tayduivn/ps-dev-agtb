@@ -169,7 +169,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                         'include_in_all' => false,
                         'properties' => array(
                             'primary' => array(
-                                'type' => 'text',
+                                'type' => 'keyword',
                                 'index' => true,
                                 'fields' => array(
                                     'gs_email' => array(
@@ -188,7 +188,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                                 ),
                             ),
                             'secondary' => array(
-                                'type' => 'text',
+                                'type' => 'keyword',
                                 'index' => true,
                                 'fields' => array(
                                     'gs_email' => array(

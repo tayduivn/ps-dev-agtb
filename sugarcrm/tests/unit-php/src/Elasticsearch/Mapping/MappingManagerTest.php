@@ -21,7 +21,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
  */
 class MappingManagerTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @covers ::buildMapping
      * @dataProvider providerTestBuildMapping

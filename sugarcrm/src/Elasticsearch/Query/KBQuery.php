@@ -12,6 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
+use Elastica\Query\MoreLikeThis;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+
 /**
  *
  * The Knowledge Base specific query using More_Like_This this query.
@@ -59,7 +62,7 @@ class KBQuery implements QueryInterface
      */
     public function build()
     {
-        $boolQuery = new \Elastica\Query\BoolQuery();
+        $boolQuery = ElasticaFactory::createNewInstance('Bool');
         $mltName = $this->createMltQuery($this->fields['name'], $this->bean->name);
         $mltBody = $this->createMltQuery($this->fields['kbdocument_body'], $this->bean->kbdocument_body);
         $boolQuery->addShould($mltName); // And, addMust() for OR.
@@ -74,25 +77,25 @@ class KBQuery implements QueryInterface
      */
     public function createFilter($addLangFilter)
     {
-        $mainFilter = new \Elastica\Query\BoolQuery();
+        $mainFilter = ElasticaFactory::createNewInstance('Bool');
 
-        $currentIdFilter = new \Elastica\Query\Term();
+        $currentIdFilter = ElasticaFactory::createNewInstance('Term');
         $currentIdFilter->setTerm('_id', $this->bean->id);
         $mainFilter->addMustNot($currentIdFilter);
 
-        $activeRevFilter = new \Elastica\Query\Term();
+        $activeRevFilter = ElasticaFactory::createNewInstance('Term');
         $activeRevFilter->setTerm('active_rev', 1);
         $mainFilter->addMust($activeRevFilter);
 
         if ($addLangFilter === true) {
-            $langFilter = new \Elastica\Query\Term();
+            $langFilter = ElasticaFactory::createNewInstance('Term');
             $langFilter->setTerm('language', $this->bean->language);
             $mainFilter->addMust($langFilter);
         }
 
-        $statusFilterOr = new \Elastica\Query\BoolQuery();
+        $statusFilterOr = ElasticaFactory::createNewInstance('Bool');
         foreach ($this->bean->getPublishedStatuses() as $status) {
-            $statusFilterOr->addFilter(new \Elastica\Query\Term(array('status' => $status)));
+            $statusFilterOr->addFilter(ElasticaFactory::createNewInstance('Term', array('status' => $status)));
         }
         $mainFilter->addMust($statusFilterOr);
         return $mainFilter;
@@ -102,13 +105,13 @@ class KBQuery implements QueryInterface
      * Create a more_like_this query.
      * @param $fields array the searchable fields
      * @param $text string the like text
-     * @return \Elastica\Query\MoreLikeThis
+     * @return MoreLikeThis
      */
     protected function createMltQuery(array $fields, $text)
     {
-        $mlt = new \Elastica\Query\MoreLikeThis();
+        $mlt = new MoreLikeThis();
         $mlt->setFields($fields);
-        $mlt->setLikeText($text);
+        $mlt->setLike($text);
         $mlt->setMinTermFrequency(1);
         $mlt->setMinDocFrequency(1);
         return $mlt;

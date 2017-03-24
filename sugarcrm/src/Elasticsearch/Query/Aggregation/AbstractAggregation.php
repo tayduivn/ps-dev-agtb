@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -122,12 +123,12 @@ abstract class AbstractAggregation implements AggregationInterface
 
     /**
      * Build boolean filter for given filters
-     * @param \Elastica\Query\AbstractQuery[] $filters
+     * @param array $filters
      * @return \Elastica\Query\BoolQuery
      */
     protected function buildFilters(array $filters)
     {
-        $result = new \Elastica\Query\BoolQuery();
+        $result = ElasticaFactory::createNewInstance('Bool');
         foreach ($filters as $filter) {
             $result->addMust($filter);
         }
@@ -144,7 +145,7 @@ abstract class AbstractAggregation implements AggregationInterface
     protected function wrapFilter($id, \Elastica\Aggregation\AbstractAggregation $agg, array $filters)
     {
         $this->filtered = true;
-        $filterAgg = new \Elastica\Aggregation\Filter($id);
+        $filterAgg = ElasticaFactory::createNewInstance('AggFilter', $id);
         $filterAgg->setFilter($this->buildFilters($filters));
         $filterAgg->addAggregation($agg);
         return $filterAgg;

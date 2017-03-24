@@ -13,6 +13,7 @@
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 
 /**
@@ -84,9 +85,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 return null;
             }
 
-            $filters[] = new \Elastica\Query\Terms(array(
-                'owner_id' => $current_user->id,
-            ));
+            $filters[] = ElasticaFactory::createNewInstance(
+                'Terms', array('owner_id' => $current_user->id)
+            );
         }
 
         // TODO - range filter
@@ -98,9 +99,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 return null;
             }
 
-            $filters[] = new \Elastica\Query\Terms(array(
-                'user_favorites' => $current_user->id,
-            ));
+            $filters[] = ElasticaFactory::createNewInstance(
+                'Terms',
+                array('user_favorites' => $current_user->id)
+            );
         }
 
         // TODO - sort options

@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implemen
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Factory\MappingFactory;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty;
@@ -38,26 +39,6 @@ class EmailAddressHandler extends AbstractHandler implements
     SearchFieldsHandlerInterface,
     ProcessDocumentHandlerInterface
 {
-    /**
-     * Multi field definitions
-     * @var array
-     */
-    protected $multiFieldDefs = array(
-        'gs_email' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_email',
-            'store' => true,
-        ),
-        'gs_email_wildcard' => array(
-            'type' => 'text',
-            'index' => true,
-            'analyzer' => 'gs_analyzer_email_ngram',
-            'search_analyzer' => 'gs_analyzer_email',
-            'store' => true,
-        ),
-    );
-
     /**
      * Weighted boost definition
      * @var array
@@ -147,7 +128,25 @@ class EmailAddressHandler extends AbstractHandler implements
 
         // Prepare multifield
         $email = new MultiFieldBaseProperty();
-        foreach ($this->multiFieldDefs as $multiField => $defs) {
+        /**
+         * Multi field definitions
+         * @var array
+         */
+        $multiFieldDefs = array(
+            'gs_email' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_email'
+            ),
+            'gs_email_wildcard' => MappingFactory::createMappingDef(
+                MappingFactory::TEXT_TYPE,
+                MappingFactory::INDEX_TRUE,
+                'gs_analyzer_email_ngram',
+                'gs_analyzer_email'
+            ),
+        );
+
+        foreach ($multiFieldDefs as $multiField => $defs) {
             $multiFieldProp = new MultiFieldProperty();
             $multiFieldProp->setMapping($defs);
             $email->addField($multiField, $multiFieldProp);
