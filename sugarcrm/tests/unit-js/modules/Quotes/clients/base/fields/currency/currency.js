@@ -20,7 +20,7 @@ describe('Quotes.Base.Fields.Currency', function() {
 
         var def = {
             name: 'deal_tot',
-            type: 'currency',
+            type: 'currency'
         };
 
         layout = SugarTest.createLayout('base', 'Quotes', 'record', {});
@@ -47,10 +47,19 @@ describe('Quotes.Base.Fields.Currency', function() {
         app = null;
     });
 
-    describe('format()', function() {
+    describe('bindDataChange()', function() {
+        it('should set a field change listener for deal_tot_discount_percentage', function() {
+            sinon.collection.spy(field.model, 'on');
+            field.view.name = 'quote-data-grand-totals-header';
+            field.bindDataChange();
+
+            expect(field.model.on).toHaveBeenCalledWith('change:deal_tot_discount_percentage');
+        });
+    });
+
+    describe('_updateDiscountPercent()', function() {
         it('should leave valuePercent undefined if deal_tot_discount_percentage is undefined', function() {
             field.model.set('deal_tot_discount_percentage', undefined);
-            field.format(30);
 
             expect(field.valuePercent).toBeUndefined();
         });
@@ -58,18 +67,14 @@ describe('Quotes.Base.Fields.Currency', function() {
         it('should leave valuePercent undefined if field name is not deal_tot', function() {
             field.view.name = 'quote-data-grand-totals-header';
             field.name = 'testField';
-
             field.model.set('deal_tot_discount_percentage', 10);
-            field.format(30);
 
             expect(field.valuePercent).toBeUndefined();
         });
 
         it('should leave valuePercent undefined if field view name is not quote-data-grand-totals-header', function() {
             field.name = 'deal_tot';
-
             field.model.set('deal_tot_discount_percentage', 10);
-            field.format(30);
 
             expect(field.valuePercent).toBeUndefined();
         });
@@ -79,7 +84,7 @@ describe('Quotes.Base.Fields.Currency', function() {
             beforeEach(function() {
                 field.name = 'deal_tot';
                 field.view.name = 'quote-data-grand-totals-header';
-                field.model.set('deal_tot_discount_percentage', 0.1);
+                field.bindDataChange();
                 oldLangDir = app.lang.direction;
             });
 
@@ -90,14 +95,14 @@ describe('Quotes.Base.Fields.Currency', function() {
 
             it('should set valuePercent using deal_tot_discount_percentage in LTR', function() {
                 app.lang.direction = 'ltr';
-                field.format(30);
+                field.model.set('deal_tot_discount_percentage', 0.1);
 
                 expect(field.valuePercent).toBe('10%');
             });
 
             it('should set valuePercent using deal_tot_discount_percentage in RTL', function() {
                 app.lang.direction = 'rtl';
-                field.format(30);
+                field.model.set('deal_tot_discount_percentage', 0.1);
 
                 expect(field.valuePercent).toBe('%10');
             });

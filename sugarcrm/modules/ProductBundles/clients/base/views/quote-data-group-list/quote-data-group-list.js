@@ -683,7 +683,7 @@
      */
     toggleRow: function(rowModule, rowModelId, isEdit) {
         var toggleModel;
-        var row;
+        var $row;
 
         this.context.parent.trigger('quotes:item:toggle', isEdit, rowModelId);
 
@@ -706,23 +706,24 @@
             delete this.toggledModels[rowModelId];
         }
 
-        row = this.$('tr[name=' + rowModule + '_' + rowModelId + ']');
-        row.toggleClass('tr-inline-edit', isEdit);
+        $row = this.$('tr[name=' + rowModule + '_' + rowModelId + ']');
+        $row.toggleClass('tr-inline-edit', isEdit);
         this.toggleFields(this.rowFields[rowModelId], isEdit);
 
         if (isEdit) {
             //disable drag/drop for this row
-            row.addClass('not-sortable');
-            row.parent().sortable({
+            $row.addClass('not-sortable');
+            $row.parent().sortable({
                 cancel: '.not-sortable'
             });
+            $row.removeClass('ui-sortable');
 
             //trigger sugarlogic
             this.context.trigger('list:editrow:fire', toggleModel);
-        } else if (row.hasClass('not-sortable')) {
+        } else if ($row.hasClass('not-sortable')) {
             // if this is not edit mode and row still has not-sortable (from being a brand new row)
             // then remove the not-sortable and add the sortable classes
-            row
+            $row
                 .removeClass('not-sortable')
                 .addClass('sortable ui-sortable');
         }

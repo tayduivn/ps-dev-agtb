@@ -370,7 +370,6 @@
             var record = response.contents.record;
             var relatedRecord = response.contents.related_record;
             var newGroup = this._getComponentByGroupId(record.id);
-            var relatedRecordSubset = _.pick(relatedRecord, 'date_modified', 'position');
             var model;
 
             if (newGroup) {
@@ -380,7 +379,7 @@
                 }
                 // check if the related_record is in the newGroup
                 model = newGroup.collection.get(relatedRecord.id);
-                this._updateModelWithRecord(model, relatedRecordSubset);
+                this._updateModelWithRecord(model, relatedRecord);
             }
         }, this);
     },
@@ -394,6 +393,11 @@
      */
     _updateModelWithRecord: function(model, record) {
         if (model) {
+            // remove any empty product_Bundle_items data
+            if (record.hasOwnProperty('product_bundle_items') && _.isEmpty(record.product_bundle_items)) {
+                delete record.product_bundle_items;
+            }
+
             model.setSyncedAttributes(record);
             model.set(record);
         }
@@ -446,14 +450,13 @@
 
         linkName = rowModel.module === 'Products' ? 'products' : 'product_bundle_notes';
         url = app.api.buildURL('ProductBundles/' + newGroupModelId + '/link/' + linkName + '/' + itemModelId);
-
         bulkMoveRequest = {
             url: url.substr(4),
             method: 'POST',
             data: {
-                id: newGroupId,
+                id: newGroupModelId,
                 link: linkName,
-                relatedId: rowModel.get('id'),
+                relatedId: itemModelId,
                 related: {
                     position: newPosition
                 }
@@ -731,8 +734,8 @@
             var record = data.contents.record;
             var relatedRecord = data.contents.related_record;
             var model;
-            // get a subset of the relatedRecord changes with just date_modified and position
-            var relatedRecordSubset = _.pick(relatedRecord, 'date_modified', 'position');
+            // remove position and line_num fields if they exist
+            relatedRecord = _.omit(relatedRecord, 'position', 'line_num');
 
             // on Delete record and relatedRecord will both be missing
             if (record && relatedRecord) {
@@ -744,7 +747,9 @@
                     }
                     // if oldGroup exists, check if the related_record is in the oldGroup
                     model = oldGroup.collection.get(relatedRecord.id);
-                    this._updateModelWithRecord(model, relatedRecordSubset);
+                    if (model) {
+                        this._updateModelWithRecord(model, relatedRecord);
+                    }
                 }
                 if (newGroup) {
                     // check if record is the one on this collection
@@ -753,7 +758,9 @@
                     }
                     // check if the related_record is in the newGroup
                     model = newGroup.collection.get(relatedRecord.id);
-                    this._updateModelWithRecord(model, relatedRecordSubset);
+                    if (model) {
+                        this._updateModelWithRecord(model, relatedRecord);
+                    }
                 }
             }
         }, this, oldGroup, newGroup), this);

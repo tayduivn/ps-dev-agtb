@@ -24,23 +24,35 @@
     /**
      * @inheritdoc
      */
-    format: function(value) {
-        var percent;
+    bindDataChange: function() {
+        this._super('bindDataChange');
+
         if (this.name === 'deal_tot' && this.view.name === 'quote-data-grand-totals-header') {
-            // get the deal total discount percent, if undefined, use 0
-            percent = this.model.get('deal_tot_discount_percentage');
-
-            if (!_.isUndefined(percent)) {
-                percent = app.math.mul(percent, 100, app.user.getPreference('decimal_precision'));
-
-                if (app.lang.direction === 'rtl') {
-                    this.valuePercent = '%' + percent;
-                } else {
-                    this.valuePercent =  percent + '%';
-                }
-            }
+            this.model.on('change:deal_tot_discount_percentage', function() {
+                this._updateDiscountPercent();
+            }, this);
         }
+    },
 
-        return this._super('format', [value]);
+    /**
+     * Updates `this.valuePercent` for the deal_tot field in the quote-data-grand-totals-header view.
+     *
+     * @private
+     */
+    _updateDiscountPercent: function() {
+        var percent = this.model.get('deal_tot_discount_percentage');
+
+        if (!_.isUndefined(percent)) {
+            percent = app.math.mul(percent, 100, app.user.getPreference('decimal_precision'));
+
+            if (app.lang.direction === 'rtl') {
+                this.valuePercent = '%' + percent;
+            } else {
+                this.valuePercent =  percent + '%';
+            }
+
+            // re-render after update
+            this.render();
+        }
     }
 });

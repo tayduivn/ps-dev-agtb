@@ -610,7 +610,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
             rowModel = app.data.createBean('Products', {
                 id: 'modelId1',
-                position: '1',
+                position: 1,
                 date_modified: '50'
             });
             groupCollection.add(rowModel);
@@ -1353,7 +1353,6 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var bulkResponses;
         var bulkOldModelUpdate;
         var bulkNewModelUpdate;
-        var oldProductGroupModel;
         var bundleItem1;
         var bundleItem2;
         var bundles;
@@ -1367,54 +1366,54 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             };
 
             bundleItem1 = app.data.createBean('Products', {
-                id: 'bundleItem1'
+                id: 'product1',
+                name: 'product1_original'
             });
             bundleItem1.link = {
                 bean: {}
             };
             bundleItem2 = app.data.createBean('Products', {
-                id: 'bundleItem2'
+                id: 'product2',
+                name: 'product2_original'
             });
             bundleItem2.link = {
                 bean: {}
             };
-            oldProductGroupModel = app.data.createBean('ProductBundles', {
-                id: 'oldProductGroupModelId',
-                product_bundle_items: new Backbone.Collection(bundleItem1)
-            });
-            sinon.collection.spy(oldProductGroupModel, 'setSyncedAttributes');
 
             oldGroupId = 'oldGroupId1';
             oldGroupModel = app.data.createBean('Products', {
                 id: 'oldGroupModelId1',
                 name: 'oldGroupModelName_original',
-                position: 0
+                position: 0,
+                product_bundle_items: new Backbone.Collection(bundleItem1)
             });
             sinon.collection.spy(oldGroupModel, 'setSyncedAttributes');
 
             oldGroup = {
                 groupId: oldGroupId,
-                model: oldProductGroupModel,
                 collection: app.data.createMixedBeanCollection(),
                 trigger: oldGroupTriggerSpy,
-                dispose: $.noop
+                dispose: $.noop,
+                model: oldGroupModel
             };
 
-            newGroupId = 'newGroupId1';
+            newGroupId = 'newGroupModelId1';
             newGroupModel = app.data.createBean('ProductBundles', {
-                id: 'newGroupModelId1',
+                id: newGroupId,
                 name: 'newGroupModelName_original',
+                position: 2,
                 product_bundle_items: new Backbone.Collection(bundleItem2)
             });
             sinon.collection.spy(newGroupModel, 'setSyncedAttributes');
             newGroup = {
                 groupId: newGroupId,
                 collection: app.data.createMixedBeanCollection(),
-                trigger: newGroupTriggerSpy
+                trigger: newGroupTriggerSpy,
+                model: newGroupModel
             };
 
             oldGroup.collection.add(oldGroupModel);
-            newGroup.collection.add(newGroupModel);
+            newGroup.collection.add(bundleItem2);
 
             sinon.collection.stub(layout, '_getComponentByGroupId', function(id) {
                 if (id === oldGroupId) {
@@ -1427,22 +1426,27 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             bulkOldModelUpdate = {
                 contents: {
                     record: {
-                        id: 'oldProductGroupModelId'
-                    },
-                    related_record: {
                         id: 'oldGroupModelId1',
                         name: 'oldGroupModelName_new',
+                        position: 1
+                    },
+                    related_record: {
+                        id: 'product1',
+                        name: 'product1_new',
                         position: 1
                     }
                 }
             };
             bulkNewModelUpdate = {
                 contents: {
-                    record: {},
-                    related_record: {
+                    record: {
                         id: 'newGroupModelId1',
                         name: 'newGroupModelName_new',
                         position: 1
+                    },
+                    related_record: {
+                        id: 'product2',
+                        name: 'product2_new'
                     }
                 }
             };
@@ -1488,13 +1492,16 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             it('should not update old group', function() {
                 expect(oldGroupModel.get('name')).toBe('oldGroupModelName_original');
                 expect(oldGroupModel.setSyncedAttributes).not.toHaveBeenCalled();
-                expect(oldProductGroupModel.setSyncedAttributes).not.toHaveBeenCalled();
             });
 
             it('should update the new group record position', function() {
-                expect(newGroupModel.get('name')).toBe('newGroupModelName_original');
+                expect(newGroupModel.get('name')).toBe('newGroupModelName_new');
                 expect(newGroupModel.get('position')).toBe(1);
                 expect(newGroupModel.setSyncedAttributes).toHaveBeenCalled();
+            });
+
+            it('should update the new group bundle item with response data', function() {
+                expect(bundleItem2.get('name')).toBe('product2_new');
             });
         });
 
@@ -1512,16 +1519,19 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             });
 
             it('should update the old group position', function() {
-                expect(oldGroupModel.get('name')).toBe('oldGroupModelName_original');
+                expect(oldGroupModel.get('name')).toBe('oldGroupModelName_new');
                 expect(oldGroupModel.get('position')).toBe(1);
                 expect(oldGroupModel.setSyncedAttributes).toHaveBeenCalled();
-                expect(oldProductGroupModel.setSyncedAttributes).toHaveBeenCalled();
             });
 
             it('should update the new group record position', function() {
-                expect(newGroupModel.get('name')).toBe('newGroupModelName_original');
+                expect(newGroupModel.get('name')).toBe('newGroupModelName_new');
                 expect(newGroupModel.get('position')).toBe(1);
                 expect(newGroupModel.setSyncedAttributes).toHaveBeenCalled();
+            });
+
+            it('should update the new group bundle item with response data', function() {
+                expect(bundleItem2.get('name')).toBe('product2_new');
             });
         });
 

@@ -1326,6 +1326,10 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         var rowModel;
         var rowModule;
         var rowModelId;
+        var sortableStub;
+        var addClassStub;
+        var removeClassStub;
+        var jqueryStub;
 
         beforeEach(function() {
             view.toggledModels = {};
@@ -1342,13 +1346,15 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             toggleClassStub = sinon.collection.stub();
             sortableStub = sinon.collection.stub();
             addClassStub = sinon.collection.stub();
+            removeClassStub = sinon.collection.stub();
             jqueryStub = {
                 toggleClass: toggleClassStub,
                 hasClass: function() {
                     return false;
                 },
                 parent: function() {},
-                addClass: addClassStub
+                addClass: addClassStub,
+                removeClass: removeClassStub
             };
 
             sinon.collection.stub(view, '$', function() {
@@ -1370,6 +1376,10 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         afterEach(function() {
             toggleClassStub = null;
+            sortableStub = null;
+            addClassStub = null;
+            removeClassStub = null;
+            jqueryStub = null;
             rowModel = null;
             rowModule = null;
             rowModelId = null;
@@ -1388,16 +1398,20 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 expect(view.context.parent.trigger).toHaveBeenCalledWith('quotes:item:toggle', true, rowModelId);
             });
 
-            it('should have called view.context.trigger with list:editrow:fire, toggleModel', function() {
-                expect(view.context.trigger).toHaveBeenCalledWith('list:editrow:fire', rowModel);
-            });
-
             it('should have called addClass with not-sortable', function() {
                 expect(addClassStub).toHaveBeenCalledWith('not-sortable');
             });
 
             it('should call sortable with a cancel structure', function() {
                 expect(sortableStub).toHaveBeenCalledWith({cancel: '.not-sortable'});
+            });
+
+            it('should have called removeClass with not-sortable', function() {
+                expect(removeClassStub).toHaveBeenCalledWith('ui-sortable');
+            });
+
+            it('should have called view.context.trigger with list:editrow:fire, toggleModel', function() {
+                expect(view.context.trigger).toHaveBeenCalledWith('list:editrow:fire', rowModel);
             });
         });
 
