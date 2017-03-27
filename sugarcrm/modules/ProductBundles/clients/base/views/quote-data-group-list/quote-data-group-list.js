@@ -435,8 +435,7 @@
             _link: linkName,
             position: position,
             currency_id: currencyId,
-            base_rate: baseRate,
-            quote_id: quoteModel.get('id')
+            base_rate: baseRate
         }, prepopulateData);
 
         relatedModel.module = moduleName;
