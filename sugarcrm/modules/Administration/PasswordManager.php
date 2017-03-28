@@ -236,6 +236,8 @@ $sugar_smarty->assign("settings", $focus->settings);
 $sugar_smarty->assign('saml_enabled_checked', false);
 $sugar_smarty->assign('SAML_AVAILABLE_SIGNING_ALGOS', $samlSigningAlgos);
 
+$sugar_smarty->assign('csrf_field_name', \Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator::FORM_TOKEN_FIELD);
+
 if (!extension_loaded('mcrypt')) {
 	$sugar_smarty->assign("LDAP_ENC_KEY_READONLY", 'readonly');
 	$sugar_smarty->assign("LDAP_ENC_KEY_DESC", $config_strings['LDAP_ENC_KEY_NO_FUNC_DESC']);

@@ -50,11 +50,22 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
     protected $token = null;
 
     /**
+     * @var \User
+     */
+    protected $currentUserBackUp;
+
+    /**
      * @inheritdoc
      */
     protected function setUp()
     {
         parent::setUp();
+
+        if (!empty($GLOBALS['current_user'])) {
+            $this->currentUserBackUp = $GLOBALS['current_user'];
+        }
+        $GLOBALS['current_user'] = $this->createMock(\User::class);
+        $GLOBALS['current_user']->user_name = 'dump_user_name';
 
         $this->auth = $this->getMockBuilder(\IdMSAMLAuthenticate::class)
                            ->setMethods(['getConfig', 'getAuthProviderBasicBuilder', 'getAuthProviderBuilder'])
@@ -68,6 +79,18 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
         $this->auth->method('getAuthProviderBasicBuilder')->willReturn($this->authProviderBuilder);
         $this->auth->method('getAuthProviderBuilder')->willReturn($this->authProviderBuilder);
         $this->authProviderBuilder->method('buildAuthProviders')->willReturn($this->authProviderManager);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function tearDown()
+    {
+        if ($this->currentUserBackUp) {
+            $GLOBALS['current_user'] = $this->currentUserBackUp;
+        } else {
+            unset($GLOBALS['current_user']);
+        }
     }
 
     /**

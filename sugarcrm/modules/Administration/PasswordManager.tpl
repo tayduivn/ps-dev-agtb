@@ -10,6 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 *}
+<div style="position: absolute;display:none;">
+    <input id="import_metadata_file" type="file">
+</div>
+{if !empty($config.authenticationClass) && $config.authenticationClass == 'SAMLAuthenticate'}
+    {assign var='saml_enabled_checked' value='CHECKED'}
+    {assign var='saml_display' value='inline'}
+{else}
+    {assign var='saml_enabled_checked' value=''}
+    {assign var='saml_display' value='none'}
+{/if}
+
 <form name="ConfigurePasswordSettings" method="POST" action="index.php" enctype="multipart/form-data">
 {sugar_csrf_form_token}
 <input type='hidden' name='action' value='PasswordManager'/>
@@ -26,9 +37,15 @@
             &nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}" id="btn_cancel"
                          onclick="document.location.href='index.php?module=Administration&action=index'" class="button"
                          type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
-            <input title="{$MOD.LBL_EXPORT_METADATA_BUTTON_TITLE}" id="btn_export_metadata" class="button"
-                         onclick="document.location.href='index.php?module=Administration&action=exportMetaDataFile'"
-                         type="button" name="export_metadata" value="{$MOD.LBL_EXPORT_METADATA_BUTTON_LABEL}">
+            <div style="display: inline-block;">
+                <div id="saml_top_buttons" style='display:{$saml_display}'>
+                    <input title="{$MOD.LBL_EXPORT_METADATA_BUTTON_TITLE}" class="button btn_export_metadata"
+                             onclick="document.location.href='index.php?module=Administration&action=exportMetaDataFile'"
+                             type="button" name="export_metadata" value="{$MOD.LBL_EXPORT_METADATA_BUTTON_LABEL}">
+                    &nbsp;<input title="{$MOD.LBL_IMPORT_METADATA_BUTTON_TITLE}" class="button btn_import_metadata" href="#"
+                             type="button" name="export_metadata" value="{$MOD.LBL_IMPORT_METADATA_BUTTON_LABEL}">
+                </div>
+            </div>
         </td>
     </tr>
 </table>
@@ -783,13 +800,6 @@
 </table>
 
 <!-- start SAML -->
-{if !empty($config.authenticationClass) && $config.authenticationClass == 'SAMLAuthenticate'}
-    {assign var='saml_enabled_checked' value='CHECKED'}
-    {assign var='saml_display' value='inline'}
-{else}
-    {assign var='saml_enabled_checked' value=''}
-    {assign var='saml_display' value='none'}
-{/if}
 
 <table id='saml_table' width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
     <tr>
@@ -807,7 +817,11 @@
                         <input name="authenticationClass" id="system_saml_enabled" class="checkbox"
                                value="SAMLAuthenticate" type="checkbox"
                                {if $saml_enabled_checked}checked="1"{/if}
-                               onclick='toggleDisplay("saml_display");toggleDisplay("saml_advanced");enableDisablePasswordTable("system_saml_enabled");'>
+                               onclick='toggleDisplay("saml_top_buttons");
+                               toggleDisplay("saml_bottom_buttons");
+                               toggleDisplay("saml_display");
+                               toggleDisplay("saml_advanced");
+                               enableDisablePasswordTable("system_saml_enabled");'>
                     </td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
@@ -944,9 +958,15 @@
     &nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"
                  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"
                  type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"/>
-    <input title="{$MOD.LBL_EXPORT_METADATA_BUTTON_TITLE}" id="btn_export_metadata" class="button"
-           onclick="document.location.href='index.php?module=Administration&action=exportMetaDataFile'"
-           type="button" name="export_metadata" value="{$MOD.LBL_EXPORT_METADATA_BUTTON_LABEL}">
+    <div style="display: inline-block;">
+        <div id="saml_bottom_buttons" style='display:{$saml_display}'>
+            <input title="{$MOD.LBL_EXPORT_METADATA_BUTTON_TITLE}" class="button btn_export_metadata"
+                   onclick="document.location.href='index.php?module=Administration&action=exportMetaDataFile'"
+                   type="button" name="export_metadata" value="{$MOD.LBL_EXPORT_METADATA_BUTTON_LABEL}">
+            &nbsp;<input title="{$MOD.LBL_IMPORT_METADATA_BUTTON_TITLE}" class="button btn_import_metadata" href="#"
+                   type="button" name="export_metadata" value="{$MOD.LBL_IMPORT_METADATA_BUTTON_LABEL}">
+        </div>
+    </div>
 </div>
 </td>
 </tr>
@@ -1191,4 +1211,56 @@ if (document.getElementById('system_ldap_enabled').checked)enableDisablePassword
 clickToEditPassword('#ldap_admin_password', '::PASSWORD::');
 </script>
 
+{/literal}
+{literal}
+<script>
+    var wrongImportFileTitle = '{/literal}{$MOD.WRONG_IMPORT_XML_TITLE}{literal}',
+        wrongImportFileTypeError = '{/literal}{$MOD.WRONG_IMPORT_FILE_TYPE_ERROR}{literal}',
+        csrfFieldName = '{/literal}{$csrf_field_name}{literal}';
+    $('.btn_import_metadata').on('click', function () {
+        $('#import_metadata_file').click();
+        return false;
+    });
+    $('#import_metadata_file').change(function(event) {
+        var file = event.target.files[0],
+            data = new FormData();
+        if (typeof file !== 'object') {
+            event.stopPropagation();
+            return false;
+        }
+        // check file type
+        if (file.type !== 'text/xml') {
+            app.alert.show('import_metadata_file_wrong_format', {
+                level: 'error',
+                title: wrongImportFileTitle,
+                messages: wrongImportFileTypeError,
+                autoclose: true
+            });
+        }
+        data.append('import_metadata_file', file);
+        data.append('OAuth-Token', window.parent.App.api.getOAuthToken());
+        data.append(csrfFieldName, $("[name='" + csrfFieldName + "']").val());
+
+        $.ajax({
+            method: 'POST',
+            url: 'index.php?module=Administration&action=parseImportSamlXmlFile',
+            data: data,
+            processData: false,
+            contentType: false
+        }).done(function (data) {
+            $.each(data, function (name, value) {
+                $("[name='" + name + "']").val(value);
+            });
+        }).fail(function (response) {
+            app.alert.show('import_metadata_file_wrong_format', {
+                level: 'error',
+                title: wrongImportFileTitle,
+                messages: response.responseJSON.error,
+                autoclose: true
+            });
+        });
+        $(event.target).val('');
+        return true;
+    });
+</script>
 {/literal}

@@ -10,12 +10,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'include/utils.php';
+
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\FileBag;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Parser\XmlIdpMetadataParser;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
@@ -398,6 +404,76 @@ class AdministrationController extends SugarController
             $response->headers->set('Content-Disposition', $disposition);
         }
         $response->send();
+        $this->terminate();
+    }
+
+    /**
+     * parse import saml xml file
+     */
+    public function action_parseImportSamlXmlFile()
+    {
+        $response = new JsonResponse([
+            'error' => $this->translateModuleError('WRONG_IMPORT_FILE_NOT_FOUND_ERROR'),
+        ], Response::HTTP_BAD_REQUEST);
+
+        if ($file = $this->getUploadedMetadataFile()) {
+            $parser = $this->getXmlMetadataParser();
+            if ($parser->loadFromFile((string) $file)) {
+                $response->setStatusCode(Response::HTTP_OK);
+                $response->setData([
+                    'SAML_loginurl' => $parser->getSsoUrl(),
+                    'SAML_login_binding' => $parser->getSsoBinding(),
+                    'SAML_SLO' => $parser->getSloUrl(),
+                    'SAML_SLO_binding' => $parser->getSloBinding(),
+                    'SAML_idp_entityId' => $parser->getEntityId(),
+                    'SAML_X509Cert' => $parser->getX509CertPem(),
+                ]);
+            } else {
+                $response->setData(['error' => implode(', ', $parser->getErrors())]);
+            }
+        }
+
+        $response->send();
+        $this->terminate();
+    }
+
+    /**
+     * @return UploadedFile|null
+     */
+    protected function getUploadedMetadataFile()
+    {
+        $files = new FileBag($_FILES);
+        if ($files->has('import_metadata_file') && $files->get('import_metadata_file')->isValid()) {
+            return $files->get('import_metadata_file');
+        }
+        return null;
+    }
+
+    /**
+     * return XmlIdpMetadataParser
+     * @return XmlIdpMetadataParser
+     */
+    protected function getXmlMetadataParser()
+    {
+        return new XmlIdpMetadataParser();
+    }
+
+    /**
+     * stop sugar workflow and send response
+     */
+    protected function terminate()
+    {
+        exit();
+    }
+
+    /**
+     * Translate error
+     * @param $key
+     * @return string
+     */
+    protected function translateModuleError($key)
+    {
+        return translate($key, 'Administration');
     }
 
     /**
