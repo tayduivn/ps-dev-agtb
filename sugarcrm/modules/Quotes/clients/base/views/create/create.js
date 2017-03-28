@@ -77,11 +77,13 @@
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['QuotesViewSaveHelper', 'LinkedModel']);
+        var fromSubpanel = options.context.get('fromSubpanel');
 
         this._super('initialize', [options]);
-
-        if (options.context.get('convert')) {
+        if (options.context.get('convert') && !fromSubpanel) {
             this._prepopulateQuote(options);
+        } else if (fromSubpanel) {
+            options.context.get('model').link = options.context.get('subpanelLink');
         }
 
         this.moduleFieldsMeta = {};

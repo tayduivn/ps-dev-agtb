@@ -133,7 +133,9 @@
                         action: 'edit',
                         convert: true,
                         create: true,
-                        relatedRecords: qliModels
+                        relatedRecords: qliModels,
+                        fromSubpanel: massQuote.fromSubpanel || false,
+                        subpanelLink: massQuote.link
                     };
 
                     // for Opps->RLI subpanel, context.parent model contains the Opps record model

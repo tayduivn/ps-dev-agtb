@@ -29,6 +29,9 @@
         var massCollection = this.context.get('mass_collection');
         if (!massCollection) {
             massCollection = this.context.get('collection').clone();
+            if (this.context.parent.get('module') !== 'Accounts') {
+                massCollection.fromSubpanel = true;
+            }
             this.context.set('mass_collection', massCollection);
         }
         this.layout.trigger('list:massquote:fire');

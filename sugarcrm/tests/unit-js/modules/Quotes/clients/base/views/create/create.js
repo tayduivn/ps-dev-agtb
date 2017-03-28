@@ -131,6 +131,24 @@ describe('Quotes.Base.Views.Create', function() {
 
         });
 
+        it('should not call _prepopulateQuote if convert and fromSubpanel is on the context', function() {
+            options.context.set('convert', true);
+            options.context.set('fromSubpanel', true);
+            view.initialize(options);
+
+            expect(view._prepopulateQuote).not.toHaveBeenCalled();
+
+        });
+
+        it('should set the model link to match the subpanelLink on the context if fromSubpanel is set', function() {
+            options.context.set('fromSubpanel', true);
+            options.context.set('subpanelLink', 'foo');
+            view.initialize(options);
+
+            expect(options.context.get('model').link).toBe('foo');
+
+        });
+
         it('should not call _prepopulateQuote if convert is not on the context', function() {
             view.initialize(options);
 

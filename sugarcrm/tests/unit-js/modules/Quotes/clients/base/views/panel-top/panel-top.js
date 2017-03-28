@@ -63,20 +63,35 @@ describe('Quotes.Base.Views.PanelTop', function() {
             contextCollection = new Backbone.Collection();
             view.context.set('collection', contextCollection);
             sinon.collection.stub(view.layout, 'trigger', function() {});
-
-            view.createRelatedClicked({});
         });
 
         afterEach(function() {
             contextCollection = null;
         });
 
-        it('should add MassQuote to this.plugins', function() {
-            expect(view.context.get('mass_collection')).toEqual(contextCollection);
+        describe('things that can execute the function in beforeEach', function() {
+            beforeEach(function() {
+                view.createRelatedClicked({});
+            });
+            it('should add MassQuote to this.plugins', function() {
+                expect(view.context.get('mass_collection')).toEqual(contextCollection);
+            });
+
+            it('should trigger list:massquote:fire on view layout', function() {
+                expect(view.layout.trigger).toHaveBeenCalledWith('list:massquote:fire');
+            });
+
+            it('should not have fromSubpanel set', function() {
+                expect(view.context.get('mass_collection').fromSubpanel).toBeFalsy();
+            });
         });
 
-        it('should trigger list:massquote:fire on view layout', function() {
-            expect(view.layout.trigger).toHaveBeenCalledWith('list:massquote:fire');
+        describe('things that cannot execute the function in beforeEach', function() {
+            it('should have fromSubpanelset', function() {
+                view.context.parent.set('module', 'Foo');
+                view.createRelatedClicked({});
+                expect(view.context.get('mass_collection').fromSubpanel).toBeTruthy();
+            });
         });
     });
 });
