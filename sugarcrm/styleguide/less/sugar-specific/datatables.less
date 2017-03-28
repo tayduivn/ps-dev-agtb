@@ -582,6 +582,9 @@ FLEXLIST GENERIC */
         display: inline-block;
         vertical-align: top;
       }
+      .btn {
+        margin-left: 0;
+      }
       > .list:first-child {
         position: absolute;
         width: 55px;
@@ -595,6 +598,7 @@ FLEXLIST GENERIC */
     // row action buttons
     .fieldset-field .btn {
       margin-left: 0;
+      max-width: 80px;
       + .btn {
         margin-left: -1px;
       }
@@ -785,9 +789,6 @@ FLEXLIST GENERIC */
 
     /*create record dup check*/
     &.duplicates-selectedit {
-      tr {
-        border-bottom: 1px solid @warningBorder;
-      }
       th,
       td {
         &:first-child {
@@ -801,24 +802,26 @@ FLEXLIST GENERIC */
           padding-left: 4px;
         }
       }
+      th:last-child {
+        .dropdown {
+          width: 119px;
+        }
+        .dropdown-menu {
+          right: 52px;
+        }
+      }
       td:last-child {
         > .list {
           width: 125px;
           padding-left: 2px;
-          border-bottom: 1px solid @warningBorder;
-          > .list {
-            width: auto;
-            position: relative;
-            right: auto;
-          }
+          border-bottom: 1px solid lighten(@warningBorder, 5%);
         }
       }
     }
+    &.duplicates-selectedit,
     /*convert lead dup check*/
     &.duplicates-singleselect {
-      tr:last-child {
-        border-bottom-width: 0;
-      }
+      border-bottom: 1px solid lighten(@warningBorder, 5%);
     }
     /*record view find duplicates*/
     &.duplicates-multiselect {
