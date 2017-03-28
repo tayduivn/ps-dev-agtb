@@ -819,6 +819,14 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             it('should call quotes:line_nums:reset on newGroup', function() {
                 expect(newGroupTriggerSpy).toHaveBeenCalledWith('quotes:line_nums:reset');
             });
+
+            it('should call GET for the old group', function() {
+                var oldGroupUrl = app.api.buildURL('ProductBundles/' + oldGroupId);
+                var lastRequest = _.last(layout.currentBulkSaveRequests);
+                oldGroupUrl = oldGroupUrl.substr(4);
+
+                expect(lastRequest.url).toBe(oldGroupUrl);
+            });
         });
 
         describe('when newPosition is passed in', function() {

@@ -366,20 +366,31 @@
      * @private
      */
     _onSaveUpdatedMassCollectionItemsSuccess: function(bulkResponses) {
-        _.each(bulkResponses, function(response) {
-            var record = response.contents.record;
-            var relatedRecord = response.contents.related_record;
-            var newGroup = this._getComponentByGroupId(record.id);
+        _.each(bulkResponses, function(data) {
+            var record = data.contents.record;
+            var relatedRecord = data.contents.related_record;
+            var newGroup;
             var model;
 
+            // if data.contents.record was empty but contents has an id (old group GET request)
+            if (_.isUndefined(record) && (data.contents.id && data.contents.hasOwnProperty('date_modified'))) {
+                // this is a GET request
+                record = data.contents;
+            }
+
+            newGroup = this._getComponentByGroupId(record.id);
             if (newGroup) {
                 // check if record is the one on this collection
                 if (newGroup.model && record && newGroup.model.get('id') === record.id) {
                     this._updateModelWithRecord(newGroup.model, record);
                 }
-                // check if the related_record is in the newGroup
-                model = newGroup.collection.get(relatedRecord.id);
-                this._updateModelWithRecord(model, relatedRecord);
+                if (relatedRecord) {
+                    // check if the related_record is in the newGroup
+                    model = newGroup.collection.get(relatedRecord.id);
+                    if (model) {
+                        this._updateModelWithRecord(model, relatedRecord);
+                    }
+                }
             }
         }, this);
     },
@@ -421,6 +432,7 @@
         var url;
         var linkName;
         var bulkMoveRequest;
+        var oldGroupModelId = oldGroup.model.id;
         var newGroupModelId = newGroup.model.id;
         var itemModelId = rowModel.id;
 
@@ -448,6 +460,7 @@
         this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(oldGroup));
         this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(newGroup));
 
+        // move the item to the new group
         linkName = rowModel.module === 'Products' ? 'products' : 'product_bundle_notes';
         url = app.api.buildURL('ProductBundles/' + newGroupModelId + '/link/' + linkName + '/' + itemModelId);
         bulkMoveRequest = {
@@ -466,6 +479,14 @@
         // add the group switching call to the newPosition element of the bulk requests
         // so position "0" will be the 0th element in currentBulkSaveRequests
         this.currentBulkSaveRequests.splice(newPosition, 0, bulkMoveRequest);
+
+        // get the new totals after everything has happened for the old group
+        url = app.api.buildURL('ProductBundles/' + oldGroupModelId);
+        bulkMoveRequest = {
+            url: url.substr(4),
+            method: 'GET'
+        };
+        this.currentBulkSaveRequests.push(bulkMoveRequest);
 
         // update the line numbers in the groups
         oldGroup.trigger('quotes:line_nums:reset', oldGroup.groupId, oldGroup.collection);
@@ -695,7 +716,7 @@
      */
     _onSaveUpdatedGroupSuccess: function(oldGroup, newGroup, bulkResponses) {
         var deleteResponse = _.find(bulkResponses, function(resp) {
-            return resp.contents.id;
+            return resp.contents.id && !resp.contents.hasOwnProperty('date_modified');
         });
         var deletedGroupId = deleteResponse && deleteResponse.contents.id;
         var deletedGroup;
@@ -734,11 +755,21 @@
             var record = data.contents.record;
             var relatedRecord = data.contents.related_record;
             var model;
+            var isGetRequest = false;
             // remove position and line_num fields if they exist
             relatedRecord = _.omit(relatedRecord, 'position', 'line_num');
 
-            // on Delete record and relatedRecord will both be missing
-            if (record && relatedRecord) {
+            // if data.contents.record was empty but contents has an id (DELETE and GET) and date_modified (only GET)
+            if (_.isUndefined(record) && (data.contents.id && data.contents.hasOwnProperty('date_modified'))) {
+                // this is a GET request
+                isGetRequest = true;
+                record = data.contents;
+            }
+
+            // on DELETE record and relatedRecord will both be missing
+            // on GET ProductBundles relatedRecord will not exist but isGetRequest should be set above
+            // on any other request, relatedRecord will be set
+            if (record && (relatedRecord || isGetRequest)) {
                 // only update if there are new records to update with
                 if (oldGroup && !oldGroup.disposed) {
                     // check if record is the one on this collection
