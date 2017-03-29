@@ -36,6 +36,7 @@
     <testsuites>
         <testsuite name="all">
             <directory>./</directory>
+            <directory>modules/</directory>
         </testsuite>
     </testsuites>
     <filter>

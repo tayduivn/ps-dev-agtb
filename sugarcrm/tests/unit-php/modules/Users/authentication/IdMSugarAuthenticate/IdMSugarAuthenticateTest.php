@@ -16,7 +16,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
-require 'include/utils.php';
+require_once 'include/utils.php';
 
 /**
  * @coversDefaultClass \IdMSugarAuthenticate

@@ -374,7 +374,7 @@ EOF;
         if(!empty($this->controller->allowed_actions)) {
             $allowed_actions =  $this->controller->allowed_actions;
         } else {
-            $allowed_actions = array('Authenticate', 'Login', 'LoggedOut');
+            $allowed_actions = ['Authenticate', 'Login', 'Logout', 'LoggedOut'];
         }
 
         if (($user_unique_key != $server_unique_key) && (!in_array($this->controller->action, $allowed_actions))
@@ -861,6 +861,9 @@ EOF;
         $sess = SessionStorage::getInstance();
         $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
         if (can_start_session()) {
+            if ($sessionIdCookie) {
+                $sess->setId($sessionIdCookie);
+            }
             $sess->start();
         }
 

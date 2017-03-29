@@ -9,29 +9,38 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*********************************************************************************
 
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-
-
-// record the last theme the user used
-$current_user->setPreference('lastTheme',$theme);
 $GLOBALS['current_user']->call_custom_logic('before_logout');
 
-// submitted by Tim Scott from SugarCRM forums
-foreach($_SESSION as $key => $val) {
-	$_SESSION[$key] = ''; // cannot just overwrite session data, causes segfaults in some versions of PHP	
+// code from REST logout
+if (isset($_SESSION['oauth2']) && !empty($_SESSION['oauth2']['refresh_token'])) {
+    $oauth2Server = SugarOAuth2Server::getOAuth2Server();
+    $oauth2Server->unsetRefreshToken($_SESSION['oauth2']['refresh_token']);
 }
-if(isset($_COOKIE[session_name()])) {
-	setcookie(session_name(), '', time()-42000, '/');
+
+if (isset($_SESSION['platform'])) {
+    setcookie(
+        RestService::DOWNLOAD_COOKIE . '_' . $_SESSION['platform'],
+        false,
+        -1,
+        ini_get('session.cookie_path'),
+        ini_get('session.cookie_domain'),
+        ini_get('session.cookie_secure'),
+        true
+    );
 }
 
 SugarApplication::endSession();
+$_SESSION = array();
+setcookie(
+    session_name(),
+    '',
+    time() - 3600,
+    ini_get('session.cookie_path'),
+    ini_get('session.cookie_domain'),
+    ini_get('session.cookie_secure'),
+    ini_get('session.cookie_httponly')
+);
 
 LogicHook::initialize();
 $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');

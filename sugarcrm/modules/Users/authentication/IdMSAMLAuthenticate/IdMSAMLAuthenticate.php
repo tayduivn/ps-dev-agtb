@@ -11,11 +11,15 @@
  */
 
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\AcsToken;
+use Sugarcrm\IdentityProvider\Authentication\Token\SAML\ConsumeLogoutToken;
+use Sugarcrm\IdentityProvider\Authentication\Token\SAML\IdpLogoutToken;
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\InitiateLogoutToken;
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\InitiateToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class IdMSAMLAuthenticate extends SAMLAuthenticate
@@ -124,6 +128,41 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
     }
 
     /**
+     * Called when a user requests to logout
+     *
+     * Override default behavior. Redirect user to special "Logged Out" page in
+     * order to prevent automatic logging in.
+     */
+    public function logout()
+    {
+        $request = $this->getRequest();
+        $requestRelayState = $request->getValidInputRequest('RelayState');
+        $samlResponse = $request->getValidInputRequest('SAMLResponse');
+        $samlRequest = $request->getValidInputRequest('SAMLRequest');
+        if ($samlResponse) {
+            $logoutToken = new ConsumeLogoutToken($samlResponse);
+        } elseif ($samlRequest) {
+            $logoutToken = new IdpLogoutToken($samlRequest);
+            if ($requestRelayState) {
+                $logoutToken->setAttribute('RelayState', $requestRelayState);
+            }
+        } else {
+            return;
+        }
+        $logoutToken->setAuthenticated(true);
+
+        $authManager = $this->getAuthProviderBasicBuilder($this->getConfig())->buildAuthProviders();
+        $resultToken = $authManager->authenticate($logoutToken);
+        if (!$resultToken->isAuthenticated()) {
+            $url = $resultToken->hasAttribute('url') ? $resultToken->getAttribute('url') : $requestRelayState;
+            if ($url) {
+                $this->redirect($url);
+            }
+            $this->terminate();
+        }
+    }
+
+    /**
      * Get idm configuration instance.
      *
      * @return \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config
@@ -139,6 +178,34 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
     protected function getSession()
     {
         return SessionStorage::getInstance();
+    }
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Security\InputValidation\Request
+     */
+    protected function getRequest()
+    {
+        return InputValidation::getService();
+    }
+
+    /**
+     * Redirect to the specified url
+     *
+     * @param string $url
+     */
+    protected function redirect($url)
+    {
+        ob_clean();
+        RedirectResponse::create($url)->send();
+        $this->terminate();
+    }
+
+    /**
+     * Terminate execution
+     */
+    protected function terminate()
+    {
+        exit;
     }
 
     /**

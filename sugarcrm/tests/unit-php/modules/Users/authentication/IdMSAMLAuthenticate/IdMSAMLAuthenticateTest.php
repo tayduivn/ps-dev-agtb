@@ -15,6 +15,7 @@ use Sugarcrm\IdentityProvider\Authentication\Token\SAML\ResultToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 /**
  * Class IdMSAMLAuthenticateTest
@@ -68,7 +69,16 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->user_name = 'dump_user_name';
 
         $this->auth = $this->getMockBuilder(\IdMSAMLAuthenticate::class)
-                           ->setMethods(['getConfig', 'getAuthProviderBasicBuilder', 'getAuthProviderBuilder'])
+                           ->setMethods(
+                               [
+                                   'getConfig',
+                                   'getAuthProviderBasicBuilder',
+                                   'getAuthProviderBuilder',
+                                   'getRequest',
+                                   'redirect',
+                                   'terminate',
+                               ]
+                           )
                            ->getMock();
         $this->config = $this->createMock(Config::class);
         $this->authProviderBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
@@ -214,5 +224,32 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
             ->method('authenticate')
             ->willReturn($this->token);
         $this->assertEquals($expected, $this->auth->getLogoutUrl());
+    }
+
+    /**
+     * @covers ::logout()
+     */
+    public function testLogout()
+    {
+        $request = $this->createMock(Request::class);
+        $this->authProviderManager->expects($this->once())
+            ->method('authenticate')
+            ->willReturn($this->token);
+        $this->auth->expects($this->once())
+            ->method('getRequest')
+            ->willReturn($request);
+        $request->expects($this->exactly(3))
+            ->method('getValidInputRequest')
+            ->willReturnOnConsecutiveCalls('RelayState', null, 'SAMLRequest');
+        $this->token->expects($this->once())
+            ->method('isAuthenticated')
+            ->willReturn(false);
+        $this->auth->expects($this->once())
+            ->method('redirect')
+            ->with('RelayState');
+        $this->auth->expects($this->once())
+            ->method('terminate');
+
+        $this->auth->logout();
     }
 }
