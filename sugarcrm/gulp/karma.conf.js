@@ -36,6 +36,9 @@ module.exports = function(config) {
         frameworks: [
             'jasmine'
         ],
+        specReporter: {
+            suppressSkipped: true,
+        },
         plugins: [
             'karma-chrome-launcher',
             'karma-coverage',
@@ -44,6 +47,7 @@ module.exports = function(config) {
             'karma-junit-reporter',
             'karma-phantomjs-launcher',
             'karma-sauce-launcher',
+            'karma-spec-reporter',
             'karma-safari-launcher'
         ],
         proxies: {

@@ -58,6 +58,7 @@ gulp.task('karma', function(done) {
         .option('-d, --dev', 'Set Karma options for debugging')
         .option('--coverage', 'Enable code coverage')
         .option('--ci', 'Enable CI specific options')
+        .option('--verbose', 'Show the running tests specifications')
         .option('--path <path>', 'Set base output path')
         .option('--manual', 'Start Karma and wait for browser to connect (manual tests)')
         .option('--team <name>', 'Filter by specified team', splitByCommas)
@@ -138,6 +139,10 @@ gulp.task('karma', function(done) {
 
     if (commander.browsers) {
         karmaOptions.browsers = commander.browsers;
+    }
+
+    if (commander.verbose) {
+        karmaOptions.reporters = ['spec'];
     }
 
     if (commander.coverage) {
