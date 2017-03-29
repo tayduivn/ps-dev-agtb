@@ -230,11 +230,6 @@ function renderProject (prjCode) {
         ]
     });
 
-    project.addMetadata("teams_details", {
-        dataURL: 'Teams',
-        dataRoot: 'records'
-    });
-
     canvas = new AdamCanvas({
         name : 'Adam',
         id: "jcore_designer",

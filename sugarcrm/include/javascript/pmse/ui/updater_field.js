@@ -1378,26 +1378,35 @@ TeamUpdaterItem.prototype._getValueFromControl = function () {
     return value;
 };
 
-TeamUpdaterItem.prototype._getTeamName = function (value) {
-    var teams = (project && project.getMetadata("teams_details")) || [],
-        i;
-
-    for(i = 0; i < teams.length; i += 1) {
-        if (teams[i].id === value) {
-            return jQuery.trim(teams[i].name + " " + teams[i].name_2);
+TeamUpdaterItem.prototype._getTeamName = function(value, callback) {
+    var proxy = new SugarProxy();
+    proxy.url = 'Teams?filter[0][id][$equals]=' + value;
+    proxy.getData(null, {
+        success: function(data) {
+            var teamName = jQuery.trim(data.records[0].name + ' ' + data.records[0].name_2);
+            callback({
+                id: value,
+                text: teamName
+            });
+        },
+        error: function() {
+            return value;
         }
-    }
-    return value;
+    });
 };
 
 TeamUpdaterItem.prototype._initSelection = function () {
     var that = this;
     return function (element, callback) {
         var value = element.val();
-        callback({
-            id: value,
-            text: that._getTeamName(value)
-        });
+        if (!_.isEmpty(value)) {
+            that._getTeamName(value, callback);
+        } else {
+            callback({
+                id: value,
+                text: value
+            });
+        }
     };
 };
 
