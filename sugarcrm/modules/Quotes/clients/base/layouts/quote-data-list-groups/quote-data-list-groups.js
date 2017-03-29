@@ -452,7 +452,9 @@
         if (updateLinkBean) {
             // update the link on all the models in the new group collection to be the newGroup's model
             _.each(newGroup.collection.models, function(newGroupCollectionModel) {
-                newGroupCollectionModel.link.bean = newGroup.model;
+                newGroupCollectionModel.link = {
+                    bean: newGroup.model
+                };
             }, this);
         }
 
@@ -747,7 +749,9 @@
             // add the deleted group's models to the new group
             _.each(deletedGroupBundle.models, function(model) {
                 newGroupBundle.add(model);
-                model.link.bean = newGroup.model;
+                model.link = {
+                    bean: newGroup.model
+                };
             }, this);
         }
 
