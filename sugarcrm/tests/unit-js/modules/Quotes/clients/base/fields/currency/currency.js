@@ -95,14 +95,14 @@ describe('Quotes.Base.Fields.Currency', function() {
 
             it('should set valuePercent using deal_tot_discount_percentage in LTR', function() {
                 app.lang.direction = 'ltr';
-                field.model.set('deal_tot_discount_percentage', 0.1);
+                field.model.set('deal_tot_discount_percentage', 10);
 
                 expect(field.valuePercent).toBe('10%');
             });
 
             it('should set valuePercent using deal_tot_discount_percentage in RTL', function() {
                 app.lang.direction = 'rtl';
-                field.model.set('deal_tot_discount_percentage', 0.1);
+                field.model.set('deal_tot_discount_percentage', 10);
 
                 expect(field.valuePercent).toBe('%10');
             });

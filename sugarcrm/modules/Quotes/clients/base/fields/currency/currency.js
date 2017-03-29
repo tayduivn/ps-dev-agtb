@@ -43,7 +43,8 @@
         var percent = this.model.get('deal_tot_discount_percentage');
 
         if (!_.isUndefined(percent)) {
-            percent = app.math.mul(percent, 100, app.user.getPreference('decimal_precision'));
+            //clean up precision
+            percent = app.utils.formatNumber(percent);
 
             if (app.lang.direction === 'rtl') {
                 this.valuePercent = '%' + percent;
