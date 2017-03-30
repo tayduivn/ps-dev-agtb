@@ -62,6 +62,18 @@ class Note extends SugarBean
     );
 
     /**
+     * Assignment notification emails are not sent when the note is an email attachment
+     *
+     * {@inheritdoc}
+     */
+    public function send_assignment_notifications($notify_user, $admin)
+    {
+        if (empty($this->email_id)) {
+            parent::send_assignment_notifications($notify_user, $admin);
+        }
+    }
+
+    /**
      * Get and save file size if note represents and email file attachment
      *
      * {@inheritdoc}
