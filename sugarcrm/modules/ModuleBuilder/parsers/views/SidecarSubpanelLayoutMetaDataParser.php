@@ -125,6 +125,15 @@ class SidecarSubpanelLayoutMetaDataParser extends SidecarListLayoutMetaDataParse
     }
 
     /**
+     * Subpanel doesn't support this.
+     * {@inheritDoc}
+     */
+    protected function isAdditionalField(array $field)
+    {
+        return false;
+    }
+
+    /**
      * Returns the name of the relationship corresponding to the given field
      *
      * @param array $def

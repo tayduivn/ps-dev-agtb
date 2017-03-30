@@ -47,6 +47,17 @@
                         filterOptions: filterOptions ? filterOptions.format() : null
                     });
                 }
+            },
+            // This will be removed once we move Reports record view into sidecar
+            // For now, let's just catch all the edge cases that link to sidecar record view
+            // and reroute them
+            {
+                name: 'ReportsRecord',
+                route: 'Reports/:id(/:action)',
+                callback: function(id, action) {
+                    var route = app.bwc.buildRoute('Reports', id);
+                    app.router.redirect(route);
+                }
             }
         ];
 

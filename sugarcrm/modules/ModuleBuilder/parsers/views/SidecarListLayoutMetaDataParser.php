@@ -193,7 +193,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
             if ($this->isValidField($key, $def)) {
                 if (!$this->panelHasField($key)) {
                     $availableFields[$key] = self::_trimFieldDefs($this->_fielddefs[$key]);
-                } elseif (isset($def['default']) && !$def['default']) {
+                } elseif (isset($def['default']) && !$def['default'] && !$this->isAdditionalField($def)) {
                     // if the panel has the field, but it's not displayed by default,
                     // add it to the list of available field and keep the effective definition
                     $availableFields[$key] = $def;

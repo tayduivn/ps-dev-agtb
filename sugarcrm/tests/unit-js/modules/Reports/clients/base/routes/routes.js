@@ -12,6 +12,7 @@ describe('Reports.Routes', function() {
     var app;
     var loadViewStub;
     var filterOptionsSpy;
+    var redirectSpy;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -26,7 +27,8 @@ describe('Reports.Routes', function() {
         sinon.collection.stub(app.router, 'hasAccessToModule').returns(true);
         sinon.collection.stub(app.api, 'isAuthenticated').returns(true);
         sinon.collection.stub(app, 'sync');
-        filterOptionsSpy = sinon.collection.spy(app.utils, 'FilterOptions')
+        filterOptionsSpy = sinon.collection.spy(app.utils, 'FilterOptions');
+        redirectSpy = sinon.collection.spy(app.router, 'redirect');
         sinon.collection.stub(app.lang, 'get', function(key) {
             return 'Accounts';
         });
@@ -67,5 +69,11 @@ describe('Reports.Routes', function() {
                 stickiness: false
             }
         });
+    });
+
+    it('should reroute sidecar record view to bwc detail view', function() {
+        app.router.navigate('Reports/1234', {trigger: true});
+        var bwcRoute = 'bwc/index.php?module=Reports&action=DetailView&record=1234';
+        expect(redirectSpy).toHaveBeenCalledWith(bwcRoute);
     });
 });

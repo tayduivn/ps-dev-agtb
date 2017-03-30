@@ -55,6 +55,11 @@ class SugarUpgradeUpgradeCustomViews extends UpgradeScript
             $this->fixRecordListIcons();
             $this->fixQuickCreateIcons();
         }
+
+        // Only run when coming from a version lower than 7.9.
+        if (version_compare($this->from_version, '7.9.0.0', '<')) {
+            $this->fixSubpanelIcons();
+        }
     }
 
     /**
@@ -127,6 +132,51 @@ class SugarUpgradeUpgradeCustomViews extends UpgradeScript
                 $defs,
                 $customQuickCreateFile
             );
+        }
+    }
+
+    /**
+     * Fix icons for subpanels, because 7.6 changed the icon names
+     */
+    private function fixSubpanelIcons()
+    {
+        global $moduleList;
+
+        $iconMap = array(
+            'icon-eye-open' => 'fa-eye',
+        );
+
+        foreach ($moduleList as $module) {
+            $customSubpanelFiles = glob("custom/modules/$module/clients/base/views/subpanel*/subpanel*.php");
+
+            foreach ($customSubpanelFiles as $subpanelFile) {
+                if (!file_exists($subpanelFile)) {
+                    continue;
+                }
+
+                require $subpanelFile;
+                $defs = $viewdefs[$module]['base']['view'];
+                foreach ($defs as $k => $contents) {
+                    if (!empty($contents['rowactions']['actions'])) {
+                        $fileChanged = false;
+                        foreach ($contents['rowactions']['actions'] as $key => $action) {
+                            if (!empty($action['icon'])) {
+                                if (in_array($action['icon'], array_keys($iconMap))) {
+                                    $contents['rowactions']['actions'][$key]['icon'] = $iconMap[$action['icon']];
+                                    $fileChanged = true;
+                                }
+                            }
+                        }
+                        if ($fileChanged === true) {
+                            write_array_to_file(
+                                "viewdefs['$module']['base']['view']['" . $k . "']",
+                                $contents,
+                                $subpanelFile
+                            );
+                        }
+                    }
+                }
+            }
         }
     }
 

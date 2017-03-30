@@ -64,7 +64,6 @@ $dictionary['KBContent'] = array(
             'studio' => true,
             'duplicate_on_record_copy' => 'no',
             'massupdate' => false,
-            'default' => '',
             'validation' => array(
                 'type' => 'isbefore',
                 'compareto' => 'exp_date',
@@ -78,7 +77,6 @@ $dictionary['KBContent'] = array(
             'sortable' => true,
             'duplicate_on_record_copy' => 'no',
             'studio' => true,
-            'default' => '',
         ),
         'approved' => array(
             'name' => 'approved',

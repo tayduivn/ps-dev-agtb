@@ -1196,7 +1196,7 @@ function return_module_language($language, $module, $refresh=false)
     }
 
     if (!$refresh) {
-        $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
+        $cache_key = "return_mod_lang_{$module}_{$language}";
         // Check for cached value
         $cache_entry = sugar_cache_retrieve($cache_key);
         if (!empty($cache_entry) && is_array($cache_entry)) {
@@ -1272,7 +1272,7 @@ function return_module_language($language, $module, $refresh=false)
     } else
         $mod_strings = $temp_mod_strings;
 
-    $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
+    $cache_key = "return_mod_lang_{$module}_{$language}";
     sugar_cache_put($cache_key, $return_value);
 
     return $return_value;

@@ -131,7 +131,6 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
     return $return;
 }
 
-
 /**
  * sugar_file_put_contents_atomic
  * This is an atomic version of sugar_file_put_contents.  It attempts to circumvent the shortcomings of file_put_contents
@@ -149,7 +148,11 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
     $dir = dirname($filename);
     $temp = tempnam($dir, 'temp');
 
-    if (!($f = @fopen($temp, $mode))) {
+    if ($temp === false || !($f = @fopen($temp, $mode))) {
+        // delete the file created by tempnam
+        if ($temp) {
+            @unlink($temp);
+        }
         $temp =  $dir . DIRECTORY_SEPARATOR . uniqid('temp');
         if (!($f = @fopen($temp, $mode))) {
             trigger_error("sugar_file_put_contents_atomic() : error writing temporary file '$temp'", E_USER_WARNING);

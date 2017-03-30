@@ -710,9 +710,12 @@ AND team_id = ?';
 	 */
 	function get_teams_for_user($user_id)
 	{
+        $user = BeanFactory::newBean('Users');
+        $user->id = $user_id;
+
         $query = new SugarQuery();
         $query->from($this);
-        $query->where()->equals('user_id', $user_id);
+        $query->joinSubpanel($user, 'team_memberships');
         $teams = $this->fetchFromQuery($query);
 
         return $teams;

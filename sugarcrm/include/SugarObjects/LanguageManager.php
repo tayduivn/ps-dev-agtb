@@ -147,6 +147,8 @@ class LanguageManager
 				unlink($file);
 				$key = self::getLanguageCacheKey($module_dir,$lang);
 				sugar_cache_clear($key);
+                $key = "return_mod_lang_{$module_dir}_{$lang}";
+                sugar_cache_clear($key);
 			}
 		}
 	}

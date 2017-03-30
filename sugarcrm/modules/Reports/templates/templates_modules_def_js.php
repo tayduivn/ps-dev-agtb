@@ -219,8 +219,7 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <
 
 				echo "{".implode(",",$js_defs_array)."};";
 
-				if(isset($field_def['options']))
-				{
+if (!empty($field_def['options'])) {
 ?>
 var option_arr_<?php echo $module_name; ?> = new Array();
 

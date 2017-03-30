@@ -194,17 +194,16 @@ class TreeApi extends FilterApi
     protected function retrieveBean($module, $id = null)
     {
         $bean = BeanFactory::retrieveBean($module, $id);
-        
+
+        if (null === $bean) {
+            throw new SugarApiExceptionNotFound('Could not find record in module: ' . $module);
+        }
         if (false === ($bean instanceof NestedBeanInterface)) {
             throw new SugarApiExceptionInvalidParameter(
                 'Requested module "' . $module . '" should be instance of NestedBeanInterface'
             );
         }
-        
-        if (null === $bean) {
-            throw new SugarApiExceptionNotFound('Could not find record in module: ' . $module);
-        }
-        
+
         return $bean;
     }
 

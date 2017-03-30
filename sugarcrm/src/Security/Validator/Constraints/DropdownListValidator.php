@@ -56,7 +56,8 @@ class DropdownListValidator extends ConstraintValidator
     private function checkArrayKeysValidityRecursively($array)
     {
         foreach ($array as $key => $value) {
-            $keyValid = preg_match('/^[a-zA-Z\_0-9]*$/', $key) || $key == '';
+            // allow white spaces in middle
+            $keyValid = preg_match('/^[a-zA-Z\_0-9]+(\s+[a-zA-Z\_0-9]+)*$/', $key) || $key == '';
             if (!$keyValid || (is_array($value) && !$this->checkArrayKeysValidityRecursively($value))) {
                 return false;
             }

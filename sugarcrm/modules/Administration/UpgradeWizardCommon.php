@@ -70,6 +70,9 @@ class UpgradeWizardCommon
         if (empty($base_tmp_upgrade_dir)) {
             $base_tmp_upgrade_dir = sugar_cached("upgrades/temp");
         }
+        if (!file_exists($base_tmp_upgrade_dir)) {
+            mkdir_recursive($base_tmp_upgrade_dir, true);
+        }
         $my_zip_dir = mk_temp_dir($base_tmp_upgrade_dir);
         register_shutdown_function('rmdir_recursive', $my_zip_dir);
         unzip_file($zip_file, $file_in_zip, $my_zip_dir);

@@ -84,8 +84,9 @@ class SupportPortalVisibility extends SugarVisibility
         // The Portal Rules Of Visibility:
         switch ($this->bean->module_dir) {
             case 'Categories':
-                if ($query == '' && $queryType == 'where') {
-                    $queryPart = " $table_alias.is_external=1 ";
+                if ($queryType == 'where') {
+                    // the root category (lvl=0) should be visible to portal users
+                    $queryPart = " $table_alias.is_external=1 OR $table_alias.lvl=0 ";
                 }
                 break;
             case 'KBContents':

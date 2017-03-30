@@ -225,6 +225,8 @@ class ModuleBuilderController extends SugarController
         $load = $this->request->getValidInputRequest('package', 'Assert\ComponentName');
         $message = $GLOBALS ['mod_strings'] ['LBL_MODULE_DEPLOYED'];
         if (!empty ($load)) {
+            // there may be temp files left over for unknown reason
+            $this->removeTempFiles($load);
             $zip = $mb->getPackage($load);
             $pm = new PackageManager ();
             $info = $mb->packages [$load]->build(false);
@@ -1222,6 +1224,24 @@ class ModuleBuilderController extends SugarController
             $add  = '<br><br><b>' . StudioModule::$bwcIndicator . '</b>';
             $add .= $mod_strings['help']['studioWizard']['studioBCHelp'];
             $mod_strings['help']['studioWizard']['studioHelp'] .= $add;
+        }
+    }
+
+    /**
+     * Remove temp files created by modulebuilder.
+     * @param string $name package name
+     */
+    protected function removeTempFiles($name)
+    {
+        $path = MB_PACKAGE_PATH . '/' . $name;
+        // tempnam() allows ony three characeters on windows for file name prefix
+        $prefix = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? 'tem' : 'temp';
+        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+        foreach ($files as $filePath => $info) {
+            if (preg_match('/^' . $prefix . '[a-zA-Z0-9]+$/', $info->getFilename())) {
+                @unlink($filePath);
+                $GLOBALS['log']->warning('ModuleBuilder deleted a temp file: ' . $filePath);
+            }
         }
     }
 }
