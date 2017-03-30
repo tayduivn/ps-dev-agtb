@@ -1139,6 +1139,11 @@ class Email extends SugarBean {
                 $this->team_set_id = '1';
             }
 
+            // Set assigned user.
+            if ($this->state === static::STATE_DRAFT && empty($this->assigned_user_id)) {
+                $this->assigned_user_id = $GLOBALS['current_user']->id;
+            }
+
             // Set date_sent.
             if ($this->state === static::STATE_DRAFT) {
                 // Always update the timestamp when saving a draft.

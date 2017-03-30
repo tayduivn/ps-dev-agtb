@@ -618,6 +618,122 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('draft', $email->status, 'Draft Email does not have draft status');
     }
 
+    /**
+     * @covers ::save
+     */
+    public function testSave_CreateDraftEmail_AssignedUserIsEmpty_CurrentUserAssigned()
+    {
+        $data = array(
+            'state' => Email::STATE_DRAFT,
+            'assigned_user_id' => '',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $this->assertSame($GLOBALS['current_user']->id, $email->assigned_user_id, 'Assigned User Not Current User');
+    }
+
+    /**
+     * @covers ::save
+     */
+    public function testSave_UpdateDraftEmail_AssignedUserIsEmpty_CurrentUserAssigned()
+    {
+        $data = array(
+            'state' => Email::STATE_DRAFT,
+            'assigned_user_id' => 'USER-ID',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+
+        $email->assigned_user_id = '';
+        $email->save(false);
+        $this->assertSame($GLOBALS['current_user']->id, $email->assigned_user_id, 'Assigned User Not Current User');
+    }
+
+    /**
+     * @covers ::save
+     */
+    public function testSave_CreateDraftEmail_AssignedUserIsSet_AssignedUserAccepted()
+    {
+        $data = array(
+            'state' => Email::STATE_DRAFT,
+            'assigned_user_id' => 'USER-ID',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $this->assertSame('USER-ID', $email->assigned_user_id, 'Assigned User Not Accepted');
+    }
+
+    /**
+     * @covers ::save
+     */
+    public function testSave_UpdateDraftEmail_AssignedUserIsSet_AssignedUserAccepted()
+    {
+        $data = array(
+            'state' => Email::STATE_DRAFT,
+            'assigned_user_id' => '',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+
+        $email->assigned_user_id = 'USER-ID';
+        $email->save(false);
+        $this->assertSame('USER-ID', $email->assigned_user_id, 'Assigned User Not Accepted');
+    }
+
+    /**
+     * @covers ::save
+     */
+    public function testSave_CreateArchivedEmail_AssignedUserIsEmpty_EmptyAssigneeAccepted()
+    {
+        $data = array(
+            'state' => Email::STATE_ARCHIVED,
+            'assigned_user_id' => '',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $this->assertEmpty($email->assigned_user_id, 'Expected Assigned User to be Empty');
+    }
+
+    /**
+     * @covers ::save
+     */
+    public function testSave_UpdateArchivedEmail_AssignedUserIsEmpty_EmptyAssigneeAccepted()
+    {
+        $data = array(
+            'state' => Email::STATE_ARCHIVED,
+            'assigned_user_id' => 'USER-ID',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+
+        $email->assigned_user_id = '';
+        $email->save(false);
+        $this->assertEmpty($email->assigned_user_id, 'Expected Assigned User to be Empty');
+    }
+
+    /**
+     * @covers ::save
+     */
+    public function testSave_CreateArchivedEmail_AssignedUserIsSet_AssignedUserAccepted()
+    {
+        $data = array(
+            'state' => Email::STATE_ARCHIVED,
+            'assigned_user_id' => 'USER-ID',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $this->assertSame('USER-ID', $email->assigned_user_id, 'Assigned User was not accepted');
+    }
+
+    /**
+     * @covers ::save
+     */
+    public function testSave_UpdateArchivedEmail_AssignedUserIsSet_AssignedUserAccepted()
+    {
+        $data = array(
+            'state' => Email::STATE_ARCHIVED,
+            'assigned_user_id' => '',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+
+        $email->assigned_user_id = 'USER-ID';
+        $email->save(false);
+        $this->assertSame('USER-ID', $email->assigned_user_id, 'Assigned User was not accepted');
+    }
+
     public function willCalculateHtmlBodyProvider()
     {
         return array(
