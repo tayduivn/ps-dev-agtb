@@ -11,10 +11,10 @@
 import {BaseField} from '@sugarcrm/seedbed';
 
 /**
- * @class TextField
+ * @class TextareaField
  * @extends BaseField
  */
-export default class TextField extends BaseField {
+export default class TextareaField extends BaseField {
 
     constructor(options) {
         super(options);
@@ -22,31 +22,17 @@ export default class TextField extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}]',
             field: {
-                selector: 'input'
+                selector: 'textarea'
             }
         });
     }
 }
 
 
-export const Edit = TextField;
+export const Edit = TextareaField;
 
 
-export class Detail extends TextField {
-
-    constructor(options) {
-        super(options);
-
-        this.selectors = this.mergeSelectors({
-            field: {
-                selector: 'div'
-            }
-        });
-
-    }
-};
-
-export class List extends TextField {
+export class Detail extends TextareaField {
 
     constructor(options) {
         super(options);
@@ -58,7 +44,6 @@ export class List extends TextField {
         });
 
     }
-
 };
 
 export const Preview = Detail;

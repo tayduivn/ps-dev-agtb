@@ -13,6 +13,7 @@ import {BaseView, seedbed, BaseField} from '@sugarcrm/seedbed';
 
 import * as _ from 'lodash';
 import * as TextField from '../fields/text-field';
+import * as TextareaField from '../fields/textarea-field';
 import * as NameField from '../fields/name-field';
 
 const classify = name => _.upperFirst(_.camelCase(name));
@@ -75,6 +76,7 @@ export default class extends BaseView {
         switch (type) {
             case 'name': Clazz = NameField[templateName]; break;
             case 'text': Clazz = TextField[templateName]; break;
+            case 'textarea': Clazz = TextareaField[templateName]; break;
         }
 
         if (!Clazz) {
