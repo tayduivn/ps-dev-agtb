@@ -30,7 +30,7 @@ $service->registerClass($registry_class);
 $service->register();
 $service->registerImplClass($webservice_impl_class);
 
-SugarMetric_Manager::getInstance()->setTransactionName('soap_' . $_REQUEST['method']);
+SugarMetric_Manager::getInstance()->setTransactionName('soap_' . (isset($_REQUEST['method'])? $_REQUEST['method'] : ""));
 
 // set the service object in the global scope so that any error, if happens, can be set on this object
 global $service_object;

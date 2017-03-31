@@ -5298,7 +5298,7 @@ class nusoap_server extends nusoap_base {
 		}
 		if(empty($delim) && isset($this->registeredClass)){
 			$class  = $this->registeredClass;
-			$delim = '..';
+			$delim = '.';
 			$method = $this->methodname;
 		}
 
@@ -7628,7 +7628,10 @@ class wsdl extends nusoap_base {
 				$rows = sizeof($value);
 				$contents = '';
 				foreach($value as $k => $v) {
-					$this->debug("serializing array element: $k, $v of type: $typeDef[arrayType]");
+					if ($this->debugLevel > 0) {
+						$msg = "serializing array element: $k, " . var_export($v, true) . " of type: $typeDef[arrayType]";
+						$this->debug($msg);
+					}
 					//if (strpos($typeDef['arrayType'], ':') ) {
 					if (!in_array($typeDef['arrayType'],$this->typemap['http://www.w3.org/2001/XMLSchema'])) {
 					    $contents .= $this->serializeType('item', $typeDef['arrayType'], $v, $use);
