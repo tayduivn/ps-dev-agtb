@@ -111,7 +111,7 @@
         this.globalCBControl = new ExpressionControl({
             matchOwnerWidth: false,
             width: 250,
-            allowInput: false,
+            allowInput: true,
             itemContainerHeight: 70,
             dateFormat: this._dateFormat,
             timeFormat: this._timeFormat,

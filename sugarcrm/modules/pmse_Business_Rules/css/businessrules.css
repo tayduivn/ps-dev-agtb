@@ -856,3 +856,25 @@ table.decision-table-index span {
 .close-list-item {
   text-align: center;
 }
+
+.adam.single-item:hover {
+  background: #DFEAFA;
+}
+
+.adam.single-item.pill-placeholder {
+  background: #999999;
+}
+
+.adam.single-item.ui-sortable-helper {
+  -ms-transform: rotate(2deg);
+  -webkit-transform: rotate(2deg);
+  transform: rotate(2deg);
+}
+
+.adam.single-item:hover span {
+  color: #555555;
+}
+
+.adam.single-item:hover .single-item-remove {
+  color: #555555;
+}
