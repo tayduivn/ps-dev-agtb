@@ -141,10 +141,10 @@ $dictionary['ProductBundle'] = array(
                 'tax',
                 'shipping',
             ),
+            //left currencyAdd here as a placeholder for when we do per group tax/shipping.
             'formula' => 'currencyAdd(
                 $new_sub,
-                ifElse(isNumeric($tax), $tax, "0"),
-                ifElse(isNumeric($shipping), $shipping, "0")
+                "0"
             )',
             'calculated' => true,
             'enforced' => true,

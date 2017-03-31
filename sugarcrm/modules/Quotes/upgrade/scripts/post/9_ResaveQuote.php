@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class SugarUpgradeResaveQuotes extends UpgradeScript
+class SugarUpgradeResaveQuote extends UpgradeScript
 {
     public $order = 9000;
     public $type = self::UPGRADE_CUSTOM;
@@ -30,27 +30,29 @@ class SugarUpgradeResaveQuotes extends UpgradeScript
      */
     public function resaveQuotes()
     {
+        //load all product bundles and resave for sugarlogic to do magic.
+        $sq = $this->getSugarQuery();
+        $sq->select(array('id'));
+        $sq->from($this->getBean('ProductBundles'));
+        $pbRows = $sq->execute();
+        foreach ($pbRows as $pbRow) {
+            $bundle = $this->getBean('ProductBundles', $pbRow['id']);
+            $bundle->save();
+        }
+
+        // iterate over all the quotes, add taxrate_value, and resave for sugarlogic magic
         $sq = $this->getSugarQuery();
         $sq->select(array('id'));
         $sq->from($this->getBean('Quotes'));
         $rows = $sq->execute();
-        // iterate over all the quotes, add taxrate_value, and resave them.
         foreach ($rows as $row) {
-            //load the quote's product bundles and resave for sugarlogic to do magic.
-            $sq = $this->getSugarQuery();
-            $sq->select(array('id'));
-            $sq->from($this->getBean('ProductBundles'));
-            $pbRows = $sq->execute();
-            foreach ($pbRows as $pbRow) {
-                $bundle = $this->getBean('ProductBundles', $pbRow['id']);
-                $bundle->save();
-            }
             //set tax rate and save quote.
             $bean = $this->getBean('Quotes', $row['id']);
             if (!empty($bean->taxrate_id)) {
                 $taxrate = $this->getBean('TaxRates', $bean->taxrate_id);
                 $bean->taxrate_value = $taxrate->value;
             }
+
             $bean->save();
         }
     }

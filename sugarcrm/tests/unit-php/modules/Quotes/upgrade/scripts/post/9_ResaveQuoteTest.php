@@ -14,13 +14,13 @@ namespace Sugarcrm\SugarcrmTestUnit\modules\upgrade\scripts\post;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- * @coversDefaultClass \SugarUpgradeResaveQuotes
+ * @coversDefaultClass \SugarUpgradeResaveQuote
  */
-class ResaveQuotesTest extends \PHPUnit_Framework_TestCase
+class ResaveQuoteTest extends \PHPUnit_Framework_TestCase
 {
     public function setup()
     {
-        \SugarAutoLoader::load('../../modules/Quotes/upgrade/scripts/post/9_ResaveQuotes.php');
+        \SugarAutoLoader::load('../../modules/Quotes/upgrade/scripts/post/9_ResaveQuote.php');
         parent::setup();
     }
 
@@ -29,7 +29,7 @@ class ResaveQuotesTest extends \PHPUnit_Framework_TestCase
      */
     public function testRun()
     {
-        $mock = $this->getMockBuilder('\SugarUpgradeResaveQuotes')
+        $mock = $this->getMockBuilder('\SugarUpgradeResaveQuote')
             ->setMethods(['resaveQuotes'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -52,7 +52,7 @@ class ResaveQuotesTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $beanMock->taxrate_id = 'bar';
         $beanMock->value = 'val';
-        $mock = $this->getMockBuilder('\SugarUpgradeResaveQuotes')
+        $mock = $this->getMockBuilder('\SugarUpgradeResaveQuote')
             ->setMethods(['getSugarQuery', 'getBean'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -62,9 +62,9 @@ class ResaveQuotesTest extends \PHPUnit_Framework_TestCase
         $mock->expects($this->exactly(5))
             ->method('getBean')
             ->withConsecutive(
-                ['Quotes'],
                 ['ProductBundles'],
                 ['ProductBundles', 'foo'],
+                ['Quotes'],
                 ['Quotes', 'foo'],
                 ['TaxRates', 'bar']
             )
