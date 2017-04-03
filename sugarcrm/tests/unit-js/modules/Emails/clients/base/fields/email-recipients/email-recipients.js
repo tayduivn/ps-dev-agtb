@@ -292,4 +292,24 @@ describe('Emails.BaseEmailRecipientsField', function() {
 
         delete app.drawer;
     });
+
+    describe('rendering in disabled mode', function() {
+        it('should disable the select2 element', function() {
+            field = SugarTest.createField({
+                name: 'to',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+
+            field.render();
+            expect(field.$(field.fieldTag).select2('container').hasClass('select2-container-disabled')).toBe(false);
+
+            field.setDisabled();
+            expect(field.$(field.fieldTag).select2('container').hasClass('select2-container-disabled')).toBe(true);
+        });
+    });
 });

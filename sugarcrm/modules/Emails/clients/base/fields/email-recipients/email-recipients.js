@@ -186,7 +186,7 @@
             });
             $el.select2(options).select2('val', []);
 
-            if (!!this.def.disabled) {
+            if (this.isDisabled()) {
                 $el.select2('disable');
             }
 
