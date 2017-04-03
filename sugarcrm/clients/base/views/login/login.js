@@ -329,6 +329,7 @@
      */
     login_form: function() {
         app.config.externalLogin = false;
+        app.api.setExternalLogin(false);
         app.controller.loadView({
             module: "Login",
             layout: "login",
