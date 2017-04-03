@@ -684,4 +684,23 @@ describe('BaseEmailAttachmentsField', function() {
             });
         });
     });
+
+    describe('rendering in disabled mode', function() {
+        it('should disable the select2 element', function() {
+            field = SugarTest.createField({
+                name: 'attachments_collection',
+                type: 'email-attachments',
+                viewName: 'edit',
+                module: 'Emails',
+                model: model,
+                context: context
+            });
+
+            field.render();
+            expect(field.$(field.fieldTag).select2('container').hasClass('select2-container-disabled')).toBe(false);
+
+            field.setDisabled();
+            expect(field.$(field.fieldTag).select2('container').hasClass('select2-container-disabled')).toBe(true);
+        });
+    });
 });

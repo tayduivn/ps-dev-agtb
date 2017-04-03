@@ -139,6 +139,7 @@
      * and backspace keys in the Select2 input field.
      */
     _render: function() {
+        var $el;
         var select2Input;
 
         /**
@@ -154,70 +155,78 @@
 
         this._super('_render');
 
-        this.$(this.fieldTag).select2({
-            multiple: true,
-            data: this.getFormattedValue(),
-            initSelection: _.bind(function(element, callback) {
-                callback(this.getFormattedValue());
-            }, this),
-            containerCssClass: 'select2-choices-pills-close',
-            containerCss: {
-                width: '100%'
-            },
-            width: 'off',
-            /**
-             * Use `cid` as a choice's ID. Some models are not yet synchronized
-             * and can only be identified by their `cid`. All models have a
-             * `cid`.
-             *
-             * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
-             *
-             * @param {Object} choice
-             * @return {null|string|number}
-             */
-            id: function(choice) {
-                return _.isEmpty(choice) ? null : choice.cid;
-            },
-            /**
-             * Formats an attachment object for rendering.
-             *
-             * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
-             *
-             * @param {Object} choice
-             * @return {string}
-             */
-            formatSelection: _.bind(function(choice) {
-                var $selection = '<span class="ellipsis-value ellipsis_inline">' + choice.name + '</span>';
+        $el = this.$(this.fieldTag);
 
-                if (this._placeholders.get(choice.cid)) {
-                    $selection += '<span class="ellipsis-extra"><i class="fa fa-refresh fa-spin"></i></span>';
-                } else {
-                    $selection += '<span class="ellipsis-extra">(' + choice.file_size + ')</span>';
+        if ($el.length > 0) {
+            $el.select2({
+                multiple: true,
+                data: this.getFormattedValue(),
+                initSelection: _.bind(function(element, callback) {
+                    callback(this.getFormattedValue());
+                }, this),
+                containerCssClass: 'select2-choices-pills-close',
+                containerCss: {
+                    width: '100%'
+                },
+                width: 'off',
+                /**
+                 * Use `cid` as a choice's ID. Some models are not yet synchronized
+                 * and can only be identified by their `cid`. All models have a
+                 * `cid`.
+                 *
+                 * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
+                 *
+                 * @param {Object} choice
+                 * @return {null|string|number}
+                 */
+                id: function(choice) {
+                    return _.isEmpty(choice) ? null : choice.cid;
+                },
+                /**
+                 * Formats an attachment object for rendering.
+                 *
+                 * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
+                 *
+                 * @param {Object} choice
+                 * @return {string}
+                 */
+                formatSelection: _.bind(function(choice) {
+                    var $selection = '<span class="ellipsis-value ellipsis_inline">' + choice.name + '</span>';
+
+                    if (this._placeholders.get(choice.cid)) {
+                        $selection += '<span class="ellipsis-extra"><i class="fa fa-refresh fa-spin"></i></span>';
+                    } else {
+                        $selection += '<span class="ellipsis-extra">(' + choice.file_size + ')</span>';
+                    }
+
+                    $selection = '<span data-id="' + choice.cid + '">' + $selection + '</span>';
+
+                    return $selection;
+                }, this),
+                /**
+                 * Don't escape a choice's markup since we built the HTML.
+                 *
+                 * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
+                 *
+                 * @param {string} markup
+                 * @return {string}
+                 */
+                escapeMarkup: function(markup) {
+                    return markup;
                 }
+            }).select2('val', []);
 
-                $selection = '<span data-id="' + choice.cid + '">' + $selection + '</span>';
+            select2Input = this.$('.select2-input');
 
-                return $selection;
-            }, this),
-            /**
-             * Don't escape a choice's markup since we built the HTML.
-             *
-             * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
-             *
-             * @param {string} markup
-             * @return {string}
-             */
-            escapeMarkup: function(markup) {
-                return markup;
+            if (select2Input) {
+                select2Input.keypress(isDeleteKey);
+                select2Input.keyup(isDeleteKey);
+                select2Input.keydown(isDeleteKey);
             }
-        }).select2('val', []);
 
-        select2Input = this.$('.select2-input');
-
-        if (select2Input) {
-            select2Input.keypress(isDeleteKey);
-            select2Input.keyup(isDeleteKey);
-            select2Input.keydown(isDeleteKey);
+            if (this.isDisabled()) {
+                $el.select2('disable');
+            }
         }
 
         return this;
