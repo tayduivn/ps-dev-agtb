@@ -277,8 +277,7 @@
         };
 
         value = value instanceof app.BeanCollection ? value.models : value;
-
-        return _.map(_.union(value || [], this._placeholders.models), function(model) {
+        value = _.map(_.union(value || [], this._placeholders.models), function(model) {
             var attachment = _.extend({cid: model.cid}, model.toJSON());
 
             attachment.file_url = attachment.id ?
@@ -288,6 +287,10 @@
 
             return attachment;
         });
+
+        this.tooltip = _.pluck(value, 'name').join(', ');
+
+        return value;
     },
 
     /**

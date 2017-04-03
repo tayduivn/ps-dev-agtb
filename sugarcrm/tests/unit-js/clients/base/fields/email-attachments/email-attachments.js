@@ -202,6 +202,7 @@ describe('BaseEmailAttachmentsField', function() {
             }];
 
             expect(field.getFormattedValue()).toEqual(expected);
+            expect(field.tooltip).toBe('Disclosure Agreement.pdf, quote.pdf, quote.pdf, quote.pdf');
         });
 
         it('should not allow the dropdown to open', function() {
@@ -607,6 +608,7 @@ describe('BaseEmailAttachmentsField', function() {
             }];
 
             expect(field.getFormattedValue()).toEqual(expected);
+            expect(field.tooltip).toBe('Disclosure Agreement.pdf, logo.jpg');
         });
 
         it('should download an attachment', function() {
