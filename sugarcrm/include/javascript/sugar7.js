@@ -628,7 +628,6 @@
             $('#logoutframe').load(function() {
                 $('#logoutframe').off('load');
                 $('#logoutframe').attr('src','');
-                app.events.trigger('app:logout:external:complete');
             });
 
             if (typeof data.url == 'string') { // HTTP-Redirect binding

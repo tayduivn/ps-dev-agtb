@@ -217,6 +217,16 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetLogoutUrl($expected, $attributesMap)
     {
+        $this->config->method('getSAMLConfig')->willReturn(
+            [
+                'idp' => [
+                    'singleLogoutService' => [
+                        'url' => 'http://test.com/saml/logout',
+                        'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
+                    ],
+                ],
+            ]
+        );
         $this->token->expects($this->any())
             ->method('getAttribute')
             ->willReturnMap($attributesMap);
@@ -224,6 +234,25 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
             ->method('authenticate')
             ->willReturn($this->token);
         $this->assertEquals($expected, $this->auth->getLogoutUrl());
+    }
+
+    /**
+     * @covers ::getLogoutUrl()
+     */
+    public function testGetLogoutUrlWhenItEmptyOnConfig()
+    {
+        $this->config->method('getSAMLConfig')->willReturn(
+            [
+                'idp' => [
+                    'singleLogoutService' => [
+                        'url' => '',
+                        'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
+                    ],
+                ],
+            ]
+        );
+        $this->authProviderManager->expects($this->never())->method('authenticate');
+        $this->assertEquals('', $this->auth->getLogoutUrl());
     }
 
     /**

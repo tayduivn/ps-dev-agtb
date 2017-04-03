@@ -92,6 +92,13 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
     public function getLogoutUrl()
     {
         global $current_user;
+
+        $config = $this->getConfig();
+        $samlConfig = $config->getSAMLConfig();
+        if (empty($samlConfig['idp']['singleLogoutService']['url'])) {
+            return '';
+        }
+
         $session = $this->getSession();
         $logoutToken = new InitiateLogoutToken();
         $user = new User();
@@ -100,7 +107,7 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
         if (array_key_exists('IdPSessionIndex', $session)) {
             $logoutToken->setAttribute('sessionIndex', $session['IdPSessionIndex']);
         }
-        $authManager = $this->getAuthProviderBasicBuilder($this->getConfig())->buildAuthProviders();
+        $authManager = $this->getAuthProviderBasicBuilder($config)->buildAuthProviders();
 
         $resultToken = $authManager->authenticate($logoutToken);
         switch ($resultToken->getAttribute('method')) {
