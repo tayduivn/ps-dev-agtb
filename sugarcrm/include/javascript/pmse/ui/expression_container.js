@@ -456,7 +456,7 @@ ExpressionContainer.prototype.handleUserList = function (globalParent, parentVar
             data = e.added,
             value = [{
                 expType: 'CONSTANT',
-                expSubType: 'string',
+                expSubtype: 'string',
                 expLabel: data.text,
                 expValue: data.value
             }];
@@ -514,7 +514,7 @@ ExpressionContainer.prototype.handleDropDownBuilder = function (globalParent, pa
             } else {
                 value = [{
                     expType: "CONSTANT",
-                    expSubType: "string",
+                    expSubtype: 'string',
                     expLabel: obj.text,
                     expValue: obj.value
                 }];

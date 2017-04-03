@@ -34,9 +34,17 @@ class PMSEBusinessRuleConversor
 
     protected $pmseRelatedModule;
 
+    /**
+     * The bean handler manages operations related to the Sugar Beans
+     *
+     * @var PMSEBeanHandler $beanHandler
+     */
+    protected $beanHandler;
+
     public function __construct()
     {
         $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
+        $this->beanHandler = ProcessManager\Factory::getPMSEObject('PMSEBeanHandler');
     }
 
     /**
@@ -145,52 +153,9 @@ class PMSEBusinessRuleConversor
      */
     public function processValueExpression($businessRuleValueToken)
     {
-        global $beanList;
         $response = new stdClass();
-        $dataEval = array();
-        foreach ($businessRuleValueToken as $token) {
-            if ($token->expType != 'VARIABLE') {
-                switch (strtoupper($token->expSubtype)) {
-                    case 'INT':
-                        $dataEval[] = (int)$token->expValue;
-                        break;
-                    case 'FLOAT':
-                        $dataEval[] = (float)$token->expValue;
-                        break;
-                    case 'DOUBLE':
-                        $dataEval[] = (double)$token->expValue;
-                        break;
-                    case 'BOOL':
-                    case 'BOOLEAN':
-                        $dataEval[] = $token->expValue == 'TRUE' ? true : false;
-                        break;
-                    default :
-                        $dataEval[] = $token->expValue;
-                        break;
-                }
-            } else {
-                $field = $token->expValue;
-                if (isset($beanList[$token->expModule])) {
-                    $newBean = $this->evaluatedBean;
-                } else {
-                    $newBean = $this->pmseRelatedModule->getRelatedModule($this->evaluatedBean, $token->expModule);
-                }
-                if (!empty($newBean) && is_object($newBean)) {
-                    $value = $this->pmseRelatedModule->getFieldValue($newBean, $field);
-                } else {
-                    $value = '';
-                }
-                $dataEval[] = $value;
-            }
-        }
-        if (count($dataEval) > 1) {
-            $evaluator = ProcessManager\Factory::getPMSEObject('PMSEEvaluator');
-            $response->value = $evaluator->evaluateExpression(json_encode($dataEval), $this->evaluatedBean);
-            $response->type = gettype($response->value);
-        } else {
-            $response->value = $dataEval[0];
-            $response->type = $token->expSubtype;
-        }
+        $response->value = $this->beanHandler->processValueExpression($businessRuleValueToken, $this->evaluatedBean);
+        $response->type = gettype($response->value);
         return $response;
     }
 
@@ -266,6 +231,20 @@ class PMSEBusinessRuleConversor
             foreach ($conclusions as $conclusion) {
                 if ($conclusion->conclusion_type == 'variable') {
                     $valueToken = $this->processValueExpression($conclusion->value);
+                    $type = $this->evaluatedBean->field_defs[$conclusion->conclusion_value]['type'];
+                    switch ($type) {
+                        case 'currency':
+                            $currencyFields = json_decode($valueToken->value);
+                            if (!empty($currencyFields) && (!empty($currencyFields->expField)) && (!empty($currencyFields->expValue))) {
+                                $valueToken->value = $currencyFields->expValue;
+                            }
+                            break;
+                        case 'date':
+                        case 'datetimecombo':
+                            $valueToken->value = $this->processDateValue($type, $valueToken->value);
+                            break;
+                        default:
+                    }
                     $appData[$conclusion->conclusion_value] = $valueToken->value;
                 }
             }
@@ -274,20 +253,40 @@ class PMSEBusinessRuleConversor
     }
 
     /**
+     * Converts a date/datetime string to the corresponding object
+     * @param string $type The type of the input string
+     * @param string $value The input date/datetime string
+     * @return DateTime
+     */
+    private function processDateValue($type, $value)
+    {
+        $field = new stdClass();
+        switch ($type) {
+            case 'date':
+                $field->type = 'Date';
+                break;
+            case 'datetimecombo':
+                $field->type = 'Datetime';
+                break;
+            default:
+                return null;
+        }
+        $task = ProcessManager\Factory::getPMSEObject('PMSEScriptTask');
+        return $task->getDBDate($field, $value);
+    }
+
+    /**
      * Converts the conclusion to a string
-     * @param array $conclusions
+     * @param array $conclusions DEPRECATED AS OF 7.9 AND WILL BE REMOVED IN A FUTURE RELEASE
      * @param array $appData
      * @return string
      */
-    public function processConditionResult($conclusions, $appData = array())
+    public function processConditionResult($conclusions = array(), $appData = array())
     {
         $result = '';
-        if (isset($conclusions)) {
-            $appData = $this->processAppData($conclusions, $appData);
-            foreach ($appData as $key => $value) {
-                $value = is_string($value) ? "'" . $value . "'" : $value;
-                $result .= "{::" . $this->baseModule . "::" . $key . "::} = " . $value . ";";
-            }
+        foreach ($appData as $key => $value) {
+            $value = is_string($value) ? "'" . $value . "'" : $value;
+            $result .= "{::" . $this->baseModule . "::" . $key . "::} = " . $value . ";";
         }
         return $result;
     }

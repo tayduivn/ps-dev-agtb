@@ -115,6 +115,7 @@ class PMSEEvaluator
      * @param json $expression expression to evaluate
      * @param object $evaluatedBean this is the bean object
      * @param array $params if additional parameters
+     * @param bool $returnToken DEPRECATED AS OF 7.9 AND WILL BE REMOVED IN A FUTURE RELEASE
      * @return bool
      */
     public function evaluateExpression($expression, $evaluatedBean, $params = array(), $returnToken = false)
@@ -150,12 +151,31 @@ class PMSEEvaluator
             // so return true is correct.
             $result = true;
         } else {
-            $result = array_pop($resultArray);
-            if (strtolower($result->expSubtype) == 'currency') {
-                $result = json_encode($result);
-            } else {
-                if (!$returnToken) {
-                    $result = $result->expValue;
+            $result = $resultArray[0];
+            if (isset($result->expSubtype)) {
+                $type = strtolower($result->expSubtype);
+                switch ($type) {
+                    case 'currency':
+                        $result = json_encode($result);
+                        break;
+                    case 'email':
+                    case 'html':
+                    case 'phone':
+                    case 'string':
+                    case 'textarea':
+                    case 'textfield':
+                    case 'url':
+                        if (count($resultArray) > 1) {
+                            $result = '';
+                            foreach ($resultArray as $item) {
+                                $result .= $item->expValue;
+                            }
+                        } else {
+                            $result = $result->expValue;
+                        }
+                        break;
+                    default:
+                        $result = $result->expValue;
                 }
             }
         }

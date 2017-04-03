@@ -118,14 +118,11 @@ class PMSEBusinessRuleReader
      */
     public function parseRuleSetJSON($sugarModule, $ruleSetJSON, $type = 'single')
     {
-        
         $res = '';
         $evaluatedBean = BeanFactory::getBean($sugarModule, $this->appDataVar['id']);
         $ruleSet = json_decode($ruleSetJSON);
         $appData = array();
-        $newAppData = array();
         $successReturn = "";
-        $evaluationResult = true;
         $this->businessRuleConversor->setBaseModule($ruleSet->base_module);
         foreach ($ruleSet->ruleset as $key => $rule) {
             $this->businessRuleConversor->setEvaluatedBean($evaluatedBean);
@@ -134,31 +131,17 @@ class PMSEBusinessRuleReader
             $evaluationResult = $this->evaluator->evaluateExpression($transformedCondition, $evaluatedBean);
             if ($evaluationResult) {
                 $successReturn = $this->businessRuleConversor->getReturnValue($rule->conclusions);
-                $newAppData = array_merge($newAppData,
-                    $this->businessRuleConversor->processAppData($rule->conclusions, $appData));
-                $res .= $this->businessRuleConversor->processConditionResult($rule->conclusions, $appData);
+                $appData = $this->businessRuleConversor->processAppData($rule->conclusions, $appData);
             }
             if ($type == 'single' && $evaluationResult) {
                 break;
             }
         }
-        /*
-        foreach ($this->appDataVar as $key => $value) {
-            if ($value != $appData[$key])) {
-                $newAppData[$key] = $appData[$key];
-            }
+        if (count($appData)) {
+            $res .= $this->businessRuleConversor->processConditionResult(array(), $appData);
         }
-        */
-        //$successReturn = "ANOTHER_ZONE";
-
-        //$newAppData = array(
-        //    "description" => "POTENTIAL SALE",
-        //    "probability" => 0.16
-        //);
-
-        //$res = "{::Opportunities::description::} = 'POTENTIAL CONTACT';{::Opportunities::probability::} = 0.06;";
         $log = "The following condition: \n" . $transformedCondition . " has returned: \n" . json_encode($successReturn);
-        $resultArray = array('log' => $log, 'return' => $successReturn, 'result' => $res, 'newAppData' => $newAppData);
+        $resultArray = array('log' => $log, 'return' => $successReturn, 'result' => $res, 'newAppData' => $appData);
         return $resultArray;
     }
 }
