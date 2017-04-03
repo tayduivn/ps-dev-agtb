@@ -27,4 +27,6 @@ $mod_strings = array(
         'to send emails to your customers.',
     'EXCEPTION_CREATE_SYSTEM_ACCOUNT_NOT_AUTHORIZED' => 'Not allowed to create records of type "{type}" for {module}',
     'LBL_SYSTEM_ACCOUNT' => 'This is the system account.',
+    'LBL_EMAIL_ADDRESS_ID' => 'Email Address ID',
+    'LBL_TYPE' => 'Type',
 );

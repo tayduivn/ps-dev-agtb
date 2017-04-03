@@ -156,6 +156,7 @@ $mod_strings = array(
     'LBL_TEXT_BODY' => 'Text Body',
     'LBL_TIME' => 'Time Sent:',
     'LBL_TO_ADDRS' => 'To',
+    'LBL_TOTAL_ATTACHMENTS' => 'Number of Attachments',
     'LBL_UPLOAD_ATTACHMENT' => 'Upload New',
     'LBL_USE_TEMPLATE' => 'Use Template:',
     'LBL_USERS_SUBPANEL_TITLE' => 'Users',
