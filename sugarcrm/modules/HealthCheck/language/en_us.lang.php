@@ -99,6 +99,7 @@ $mod_strings = array(
     'LBL_SCAN_551_LOG' => 'Use of removed Sidecar Bean APIs in %s',
     'LBL_SCAN_560_LOG' => 'custom/modules/Quotes/quotes.js MAY contain customizations that are not compatible with new Quotes.',
     'LBL_SCAN_561_LOG' => 'custom/modules/Quotes/EditView.js MAY contain customizations that are not compatible with new Quotes.',
+    'LBL_SCAN_562_LOG' => 'Use of removed Sidecar app.view.invokeParent method in %s',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',

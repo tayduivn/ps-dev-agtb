@@ -612,7 +612,13 @@ class HealthCheckScannerMeta
             'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Customizations_Incompatible_New_Quotes/index.html',
             //@codingStandardsIgnoreEnd
         ),
-
+        562 => array(
+            'report' => 'useOfAppViewInvokeParent',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_Of_App_View_InvokeParent/',
+            //@codingStandardsIgnoreEnd
+        ),
         // Bucket G
         901 => array(
             'report' => 'alreadyUpgraded',

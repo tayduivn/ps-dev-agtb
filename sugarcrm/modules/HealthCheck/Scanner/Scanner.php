@@ -385,6 +385,8 @@ class HealthCheckScanner
         '/\.([gs]etDefaultAttribute)\W/' => 'removedSidecarAPI_Bean_fixable',
         '/\.(removeDefaultAttribute)\W/' => 'removedSidecarAPI_Bean',
         '/([Aa]pp\.date\.(compareDates|isDate(After|Before|On|Between)))\s*\(/' => 'removedSidecarAPI_app_date',
+        // Removed in 7.9
+        '/([Aa]pp\.view\.invokeParent)/' => 'useOfAppViewInvokeParent',
     );
 
     //Removed in 7.8
