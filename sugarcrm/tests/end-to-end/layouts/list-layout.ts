@@ -12,6 +12,7 @@
 import {BaseView} from '@sugarcrm/seedbed';
 import ListView from '../views/list-view';
 import FilterView from '../views/filter-view';
+import HeaderView from '../views/header-view';
 
 /**
  * Represents List page layout.
@@ -25,6 +26,7 @@ export default class ListLayout extends BaseView {
     public FilterView: FilterView;
     public ListView: ListView;
     public defaultView: ListView;
+    public HeaderView: HeaderView;
 
     constructor(options) {
         super(options);
@@ -34,6 +36,7 @@ export default class ListLayout extends BaseView {
         });
 
         this.FilterView = this.createComponent<FilterView>(FilterView, { module: options.module });
+        this.HeaderView = this.createComponent<HeaderView>(HeaderView);
         this.defaultView = this.ListView = this.createComponent<ListView>(ListView, { module: options.module, default: true });
 
     }
