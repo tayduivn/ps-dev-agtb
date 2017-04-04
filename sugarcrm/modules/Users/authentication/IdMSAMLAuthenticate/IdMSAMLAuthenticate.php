@@ -21,6 +21,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 class IdMSAMLAuthenticate extends SAMLAuthenticate
 {
@@ -91,8 +92,10 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
     public function getLogoutUrl()
     {
         $session = $this->getSession();
+        $user = new User($GLOBALS['current_user']->user_name);
+        $user->setSugarUser($GLOBALS['current_user']);
         $logoutToken = new InitiateLogoutToken();
-        $logoutToken->setAttribute('nameId', $GLOBALS['current_user']->user_name);
+        $logoutToken->setAttribute('user', $user);
         if (array_key_exists('IdPSessionIndex', $session)) {
             $logoutToken->setAttribute('sessionIndex', $session['IdPSessionIndex']);
         }

@@ -170,4 +170,20 @@ class User extends IdmUser
         $sugarUser->setPreference('loginfailed', $this->getLoginFailed() + 1);
         $sugarUser->savePreferencesToDB();
     }
+
+    public function hasAttribute($name)
+    {
+        if ($name == 'email') {
+            return true;
+        }
+        return isset($this->sugarUser->$name) || parent::hasAttribute($name);
+    }
+
+    public function getAttribute($name)
+    {
+        if ($name == 'email') {
+            return $this->sugarUser->emailAddress->getPrimaryAddress($this->sugarUser);
+        }
+        return isset($this->sugarUser->$name) ? $this->sugarUser->$name : parent::getAttribute($name);
+    }
 }

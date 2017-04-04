@@ -12,13 +12,14 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
-use Sugarcrm\IdentityProvider\Authentication\UserMapping\MappingInterface;
+use Sugarcrm\IdentityProvider\App\Authentication\UserMappingService;
+use Sugarcrm\IdentityProvider\Authentication\User;
 use OneLogin_Saml2_Response;
 
 /**
  * Class for getting proper mappings of NameID field and possible custom fields for User create/update.
  */
-class UserMapping implements MappingInterface
+class UserMapping extends UserMappingService
 {
     /**
      * Sugar SAML config.
@@ -67,7 +68,7 @@ class UserMapping implements MappingInterface
     {
         $fields = $this->getCustomFields('check');
 
-        $field = isset($this->config['sp']['sugarCustom']['id']) ? $this->config['sp']['sugarCustom']['id'] : 'email';
+        $field = $this->getIdentityField();
 
         if (isset($fields['user_name']) && $this->hasAttribute($response, $fields['user_name'])) {
             $value = $this->getAttribute($response, $fields['user_name']);
@@ -79,6 +80,16 @@ class UserMapping implements MappingInterface
             'field' => $field,
             'value' => $value,
         ];
+    }
+
+    /**
+     * Get SP identity field, email by default
+     *
+     * @inheritDoc
+     */
+    protected function getIdentityField()
+    {
+        return !empty($this->config['sp']['sugarCustom']['id']) ? $this->config['sp']['sugarCustom']['id'] : 'email';
     }
 
     /**
