@@ -36,7 +36,7 @@ FieldPanelButtonGroup.prototype.init = function(settings) {
 
     this._closeButton = {
         text: 'x',
-        value: 'x',
+        value: 'close',
         html: null
     };
 };

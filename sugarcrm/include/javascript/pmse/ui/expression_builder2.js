@@ -1089,7 +1089,7 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
         if (parent.id !== 'variables-list') {
             switch (subpanel.id) {
                 case "button-panel-operators":
-                    if (data.value == 'x') {
+                    if (data.value == 'close') {
                         that._closeParentPanels();
                     } else {
                         itemData = {
