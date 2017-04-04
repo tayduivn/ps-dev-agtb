@@ -67,7 +67,7 @@
         events['change ' + this._fileTag] = '_uploadFile';
         events['click [data-action=download]'] = '_downloadFile';
         this.events = _.extend({}, this.events, options.def.events, events);
-        this.plugins = _.union(this.plugins || [], ['CollectionFieldLoadAll']);
+        this.plugins = _.union(this.plugins || [], ['CollectionFieldLoadAll', 'ListEditable']);
         this._super('initialize', [options]);
 
         // Must wrap listenTo callbacks in anonymous functions for stubbing.
