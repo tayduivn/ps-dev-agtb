@@ -1065,10 +1065,14 @@ ExpressionControl.prototype._getOperatorType = function(operator) {
 };
 
 ExpressionControl.prototype._closeParentPanels = function() {
-    if (this._parent instanceof CriteriaField) {
-        this._parent.closePanel();
-    } else if (this._parent instanceof UpdaterField) {
-        this._parent.closePanels();
+    if (this._parent) {
+        if (this._parent instanceof CriteriaField) {
+            this._parent.closePanel();
+        } else if (this._parent instanceof UpdaterField) {
+            this._parent.closePanels();
+        }
+    } else {
+        this.close();
     }
 };
 
