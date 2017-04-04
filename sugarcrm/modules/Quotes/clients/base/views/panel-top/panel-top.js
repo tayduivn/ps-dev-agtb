@@ -27,9 +27,10 @@
      */
     createRelatedClicked: function(event) {
         var massCollection = this.context.get('mass_collection');
+        var module = this.context.parent.get('module');
         if (!massCollection) {
             massCollection = this.context.get('collection').clone();
-            if (this.context.parent.get('module') !== 'Accounts') {
+            if (!_.contains(['Accounts', 'Opportunities', 'Contacts'], module)) {
                 massCollection.fromSubpanel = true;
             }
             this.context.set('mass_collection', massCollection);

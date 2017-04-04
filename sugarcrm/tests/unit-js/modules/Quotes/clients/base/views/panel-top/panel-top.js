@@ -80,10 +80,6 @@ describe('Quotes.Base.Views.PanelTop', function() {
             it('should trigger list:massquote:fire on view layout', function() {
                 expect(view.layout.trigger).toHaveBeenCalledWith('list:massquote:fire');
             });
-
-            it('should not have fromSubpanel set', function() {
-                expect(view.context.get('mass_collection').fromSubpanel).toBeFalsy();
-            });
         });
 
         describe('things that cannot execute the function in beforeEach', function() {
@@ -91,6 +87,21 @@ describe('Quotes.Base.Views.PanelTop', function() {
                 view.context.parent.set('module', 'Foo');
                 view.createRelatedClicked({});
                 expect(view.context.get('mass_collection').fromSubpanel).toBeTruthy();
+            });
+            it('should not have fromSubpanel set coming from accounts', function() {
+                view.context.parent.set('module', 'Accounts');
+                view.createRelatedClicked({});
+                expect(view.context.get('mass_collection').fromSubpanel).toBeFalsy();
+            });
+            it('should not have fromSubpanel set coming from opportunities', function() {
+                view.context.parent.set('module', 'Opportunities');
+                view.createRelatedClicked({});
+                expect(view.context.get('mass_collection').fromSubpanel).toBeFalsy();
+            });
+            it('should not have fromSubpanel set coming from opportunities', function() {
+                view.context.parent.set('module', 'Contacts');
+                view.createRelatedClicked({});
+                expect(view.context.get('mass_collection').fromSubpanel).toBeFalsy();
             });
         });
     });
