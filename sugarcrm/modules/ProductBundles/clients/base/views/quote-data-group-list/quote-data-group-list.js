@@ -359,10 +359,51 @@
     onSaveRowEdit: function(rowModel) {
         var modelId = rowModel.cid;
         var modelModule = rowModel.module;
+        var quoteId = rowModel.get('quote_id');
+        var productId = rowModel.get('id');
+        var quoteModel;
 
         this.toggleCancelButton(false, rowModel.cid);
         this.toggleRow(modelModule, modelId, false);
         this.onNewItemChanged();
+
+        // when a new row is added if it does not have quote_id already, set it
+        if (rowModel.module === 'Products' && _.isUndefined(quoteId)) {
+            quoteModel = this.context.get('parentModel');
+
+            if (quoteModel) {
+                quoteId = quoteModel.get('id');
+
+                app.api.relationships('create', 'Products', {
+                    id: productId,
+                    link: 'quotes',
+                    relatedId: quoteId,
+                    related: {
+                        quote_id: quoteId
+                    }
+                }, null, {
+                    success: _.bind(function(response) {
+                        var record = response.record;
+                        var relatedRecord = response.related_record;
+                        var pbItems = this.model.get('product_bundle_items');
+                        var quoteModel = this.context.get('parentModel');
+
+                        _.each(pbItems.models, function(itemModel) {
+                            if (itemModel.get('id') === record.id) {
+                                itemModel.setSyncedAttributes(record);
+                                itemModel.set(record);
+                            }
+                        }, this);
+
+                        if (quoteModel) {
+                            quoteModel.setSyncedAttributes(relatedRecord);
+                            quoteModel.set(relatedRecord);
+                        }
+
+                    }, this)
+                });
+            }
+        }
     },
 
     /**

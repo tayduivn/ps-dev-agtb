@@ -356,5 +356,85 @@
      */
     hasUnsavedChanges: function() {
         return this.hasUnsavedQuoteChanges();
+    },
+
+    /**
+     * @inheritdoc
+     */
+    getCustomSaveOptions: function(options) {
+        var parentSuccessCallback;
+        var config = app.metadata.getModule('Opportunities', 'config');
+        var bundles = this.model.get('bundles');
+        var isConvert = this.context.get('convert');
+        var hasItems = 0;
+
+        if (isConvert) {
+            _.each(bundles.models, function(bundle) {
+                var pbItems = bundle.get('product_bundle_items');
+                _.each(pbItems.models, function(itemModel) {
+                    if (itemModel.module === 'Products' && itemModel.get('revenuelineitem_id')) {
+                        hasItems++;
+                    }
+                }, this);
+            }, this);
+        }
+
+        if (config && config.opps_view_by === 'RevenueLineItems' && isConvert && hasItems) {
+            parentSuccessCallback = options.success;
+            options.success = _.bind(this._customQuotesCreateSave, this, parentSuccessCallback);
+        }
+
+        return options;
+    },
+
+    /**
+     * Checks all Products in bundles to make sure each Product has quote_id set
+     * then calls the main success function that was passed in from base Create view
+     *
+     * @private
+     */
+    _customQuotesCreateSave: function(parentSuccessCallback, model) {
+        var quoteId = model.get('id');
+        var bundles = model.get('bundles');
+        var rliId;
+        var pbItems;
+        var bulkRequest;
+        var bulkUrl;
+        var bulkCalls = [];
+
+        _.each(bundles.models, function(pbModel) {
+            pbItems = pbModel.get('product_bundle_items');
+
+            _.each(pbItems.models, function(itemModel) {
+                if (itemModel.module === 'Products') {
+                    rliId = itemModel.get('revenuelineitem_id');
+
+                    if (rliId) {
+                        bulkUrl = app.api.buildURL('RevenueLineItems/' + rliId + '/link/quotes/' + quoteId);
+                        bulkRequest = {
+                            url: bulkUrl.substr(4),
+                            method: 'POST',
+                            data: {
+                                id: rliId,
+                                link: 'quotes',
+                                relatedId: quoteId,
+                                related: {
+                                    quote_id: quoteId
+                                }
+                            }
+                        };
+                        bulkCalls.push(bulkRequest);
+                    }
+                }
+            }, this);
+        }, this);
+
+        if (bulkCalls.length) {
+            app.api.call('create', app.api.buildURL(null, 'bulk'), {
+                requests: bulkCalls
+            }, {
+                success: parentSuccessCallback
+            });
+        }
     }
 })

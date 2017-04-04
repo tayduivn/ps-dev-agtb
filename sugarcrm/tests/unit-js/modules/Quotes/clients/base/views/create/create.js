@@ -491,4 +491,128 @@ describe('Quotes.Base.Views.Create', function() {
             });
         });
     });
+
+    describe('getCustomSaveOptions()', function() {
+        var optionSuccess;
+        var result;
+
+        it('should do nothing when opps_view_by is Opps', function() {
+            optionSuccess = $.noop;
+            app.metadata.getModule.restore();
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    opps_view_by: 'Opportunities'
+                };
+            });
+            result = view.getCustomSaveOptions({
+                success: optionSuccess
+            });
+
+            expect(result.success).toEqual(optionSuccess);
+        });
+
+        it('should do nothing when not converting from another module', function() {
+            optionSuccess = $.noop;
+            app.metadata.getModule.restore();
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    opps_view_by: 'RevenueLineItems'
+                };
+            });
+            result = view.getCustomSaveOptions({
+                success: optionSuccess
+            });
+
+            expect(result.success).toEqual(optionSuccess);
+        });
+
+        it('should wrap the passed-in successs function when opps_view_by is RLIs and from convert', function() {
+            var bundles = view.model.get('bundles');
+            var productModel = app.data.createBean('Products', {
+                revenuelineitem_id: 'rli1'
+            });
+            var bundleModel = app.data.createBean('ProductBundles', {
+                product_bundle_items: [productModel]
+            });
+            bundles.add(bundleModel);
+            view.model.set({
+                id: 'quote1',
+                bundles: bundles
+            });
+
+            view.context.set('convert', true);
+
+            optionSuccess = $.noop;
+            app.metadata.getModule.restore();
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    opps_view_by: 'RevenueLineItems'
+                };
+            });
+            result = view.getCustomSaveOptions({
+                success: optionSuccess
+            });
+
+            expect(result.success).not.toEqual(optionSuccess);
+        });
+    });
+
+    describe('_customQuotesCreateSave()', function() {
+        var bundles;
+        var bundleModel;
+        var productModel;
+        var callback;
+        var lastCallArgs;
+
+        beforeEach(function() {
+            bundles = view.model.get('bundles');
+            productModel = app.data.createBean('Products', {
+                revenuelineitem_id: 'rli1'
+            });
+            bundleModel = app.data.createBean('ProductBundles', {
+                product_bundle_items: [productModel]
+            });
+
+            bundles.add(bundleModel);
+            view.model.set({
+                id: 'quote1',
+                bundles: bundles
+            });
+            sinon.collection.stub(app.api, 'call', function() {});
+            callback = sinon.collection.stub();
+
+            view._customQuotesCreateSave(callback, view.model);
+            lastCallArgs = app.api.call.lastCall.args;
+        });
+
+        afterEach(function() {
+            bundles = null;
+            bundleModel = null;
+            productModel = null;
+            callback = null;
+            lastCallArgs = null;
+        });
+
+        describe('when app.api.call is used with correct params', function() {
+            it('should use create call type', function() {
+                expect(lastCallArgs[0]).toBe('create');
+            });
+
+            it('should use bulk URL', function() {
+                expect(lastCallArgs[1]).toBe(app.api.buildURL(null, 'bulk'));
+            });
+
+            it('should use bulk requests', function() {
+                var request = lastCallArgs[2].requests[0];
+                var url = app.api.buildURL('RevenueLineItems/rli1/link/quotes/quote1');
+
+                expect(request.url).toBe(url.substr(4));
+                expect(request.method).toBe('POST');
+                expect(request.data.id).toBe('rli1');
+                expect(request.data.link).toBe('quotes');
+                expect(request.data.related.quote_id).toBe('quote1');
+                expect(request.data.relatedId).toBe('quote1');
+            });
+        });
+    });
 });

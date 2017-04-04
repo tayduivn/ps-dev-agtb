@@ -31,6 +31,11 @@
             this.model.on('change:deal_tot_discount_percentage', function() {
                 this._updateDiscountPercent();
             }, this);
+
+            if (this.context.get('create')) {
+                // if this is deal_tot and on the create view, update the discount percent
+                this._updateDiscountPercent();
+            }
         }
     },
 
@@ -44,7 +49,7 @@
 
         if (!_.isUndefined(percent)) {
             //clean up precision
-            percent = app.utils.formatNumber(percent);
+            percent = app.utils.formatNumber(percent, false, app.user.getPreference('decimal_precision'));
 
             if (app.lang.direction === 'rtl') {
                 this.valuePercent = '%' + percent;

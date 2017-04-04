@@ -81,7 +81,11 @@ describe('Quotes.Base.Fields.Currency', function() {
 
         describe('when field name is deal_tot and field view name is header view', function() {
             var oldLangDir;
+            var percent;
             beforeEach(function() {
+                sinon.collection.stub(app.user, 'getPreference', function() {
+                    return 2;
+                });
                 field.name = 'deal_tot';
                 field.view.name = 'quote-data-grand-totals-header';
                 field.bindDataChange();
@@ -96,15 +100,17 @@ describe('Quotes.Base.Fields.Currency', function() {
             it('should set valuePercent using deal_tot_discount_percentage in LTR', function() {
                 app.lang.direction = 'ltr';
                 field.model.set('deal_tot_discount_percentage', 10);
+                percent = app.utils.formatNumber(10, false, app.user.getPreference('decimal_separator'));
 
-                expect(field.valuePercent).toBe('10%');
+                expect(field.valuePercent).toBe(percent + '%');
             });
 
             it('should set valuePercent using deal_tot_discount_percentage in RTL', function() {
                 app.lang.direction = 'rtl';
                 field.model.set('deal_tot_discount_percentage', 10);
+                percent = app.utils.formatNumber(10, false, app.user.getPreference('decimal_separator'));
 
-                expect(field.valuePercent).toBe('%10');
+                expect(field.valuePercent).toBe('%' + percent);
             });
         });
     });

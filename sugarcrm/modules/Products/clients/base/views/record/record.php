@@ -150,11 +150,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 array(
                     'name' => 'account_name',
                     'label' => 'LBL_ACCOUNT_NAME',
+                    'readonly' => true,
                     'related_fields' => array('account_id'),
                 ),
                 array(
                     'name' => 'quote_name',
                     'label' => 'LBL_QUOTE_NAME',
+                    'readonly' => true,
                     'related_fields' => array('quote_id'),
                 ),
                 array(

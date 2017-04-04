@@ -169,6 +169,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                                     'name' => 'product_bundle_items',
                                     'fields' => array(
                                         'name',
+                                        'quote_id',
                                         'description',
                                         'quantity',
                                         'product_template_name',

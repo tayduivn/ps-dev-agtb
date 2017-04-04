@@ -108,10 +108,83 @@
             this._onProductBundleChange(this.model.get('bundles'));
         } else {
             this.model.once('sync', function(model) {
-                if (model.get('bundles').length == 0) {
-                    this._onProductBundleChange(this.model.get('bundles'));
+                var bundles = this.model.get('bundles');
+                this._checkProductsQuoteLink();
+
+                if (bundles.length == 0) {
+                    this._onProductBundleChange(bundles);
                 }
             }, this);
+        }
+    },
+
+    /**
+     * Checks all Products in bundles to make sure each Product has quote_id set
+     *
+     * @private
+     */
+    _checkProductsQuoteLink: function() {
+        var quoteId = this.model.get('id');
+        var bundles = this.model.get('bundles');
+        var prodId;
+        var pbItems;
+        var bulkRequest;
+        var bulkUrl;
+        var bulkCalls = [];
+
+        _.each(bundles.models, function(pbModel) {
+            pbItems = pbModel.get('product_bundle_items');
+
+            _.each(pbItems.models, function(itemModel) {
+                if (itemModel.module === 'Products') {
+                    prodId = itemModel.get('id');
+
+                    // if the product exists but doesn't have a quote ID saved, save it
+                    if (prodId && _.isEmpty(itemModel.get('quote_id'))) {
+                        bulkUrl = app.api.buildURL('Products/' + prodId + '/link/quotes/' + quoteId);
+                        bulkRequest = {
+                            url: bulkUrl.substr(4),
+                            method: 'POST',
+                            data: {
+                                id: prodId,
+                                link: 'quotes',
+                                relatedId: quoteId,
+                                related: {
+                                    quote_id: quoteId
+                                }
+                            }
+                        };
+                        bulkCalls.push(bulkRequest);
+                    }
+                }
+            }, this);
+        }, this);
+
+        if (bulkCalls.length) {
+            app.api.call('create', app.api.buildURL(null, 'bulk'), {
+                requests: bulkCalls
+            }, null, {
+                success: _.bind(function(bulkResponses) {
+                    _.each(bulkResponses, function(response) {
+                        var record = response.contents.record;
+                        var relatedRecord = response.contents.related_record;
+                        var bundles = this.model.get('bundles');
+
+                        _.each(bundles.models, function(pbModel) {
+                            var pbItems = pbModel.get('product_bundle_items');
+                            _.each(pbItems.models, function(itemModel) {
+                                if (itemModel.get('id') === record.id) {
+                                    // update the product model
+                                    this._updateModelWithRecord(itemModel, record);
+                                }
+                            }, this);
+                        }, this);
+
+                        // update the quote model
+                        this._updateModelWithRecord(this.model, relatedRecord);
+                    }, this);
+                }, this)
+            });
         }
     },
 

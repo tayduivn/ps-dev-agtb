@@ -77,38 +77,178 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
     });
 
     describe('bindDataChange()', function() {
+        var bundles;
+
         beforeEach(function() {
             sinon.collection.spy(layout.context, 'on');
             sinon.collection.spy(layout.model, 'on');
-            layout.bindDataChange();
+            sinon.collection.stub(layout, '_onProductBundleChange', function() {});
+            sinon.collection.stub(layout, '_checkProductsQuoteLink', function() {});
         });
 
-        it('should listen on layout.model for change:show_line_nums', function() {
-            expect(layout.model.on).toHaveBeenCalledWith('change:show_line_nums');
+        afterEach(function() {
+            bundles = null;
         });
 
-        it('should listen on layout.model for change:bundles', function() {
-            expect(layout.model.on).toHaveBeenCalledWith('change:bundles');
+        describe('when setting event listeners', function() {
+            beforeEach(function() {
+                layout.bindDataChange();
+            });
+
+            it('should listen on layout.model for change:show_line_nums', function() {
+                expect(layout.model.on).toHaveBeenCalledWith('change:show_line_nums');
+            });
+
+            it('should listen on layout.model for change:bundles', function() {
+                expect(layout.model.on).toHaveBeenCalledWith('change:bundles');
+            });
+
+            it('should listen on layout.context for quotes:group:create', function() {
+                expect(layout.context.on).toHaveBeenCalledWith('quotes:group:create');
+            });
+
+            it('should listen on layout.context for quotes:group:delete', function() {
+                expect(layout.context.on).toHaveBeenCalledWith('quotes:group:delete');
+            });
+
+            it('should listen on layout.context for quotes:selected:delete', function() {
+                expect(layout.context.on).toHaveBeenCalledWith('quotes:selected:delete');
+            });
+
+            it('should listen on layout.context for quotes:defaultGroup:create', function() {
+                expect(layout.context.on).toHaveBeenCalledWith('quotes:defaultGroup:create');
+            });
+
+            it('should listen on layout.context for quotes:defaultGroup:save', function() {
+                expect(layout.context.on).toHaveBeenCalledWith('quotes:defaultGroup:save');
+            });
         });
 
-        it('should listen on layout.context for quotes:group:create', function() {
-            expect(layout.context.on).toHaveBeenCalledWith('quotes:group:create');
+        describe('when in create view', function() {
+            beforeEach(function() {
+                layout.isCreateView = true;
+                bundles = $.noop;
+                layout.model.set({
+                    bundles: bundles
+                }, {
+                    silent: true
+                });
+            });
+
+            it('should call _onProductBundleChange with bundles', function() {
+                layout.bindDataChange();
+
+                expect(layout._onProductBundleChange).toHaveBeenCalledWith(bundles);
+            });
         });
 
-        it('should listen on layout.context for quotes:group:delete', function() {
-            expect(layout.context.on).toHaveBeenCalledWith('quotes:group:delete');
+        describe('when not in create view - on model sync', function() {
+            beforeEach(function() {
+                layout.isCreateView = false;
+                bundles = new Backbone.Collection();
+            });
+
+            it('should call _checkProductsQuoteLink', function() {
+                layout.model.set({
+                    bundles: bundles
+                }, {
+                    silent: true
+                });
+                layout.bindDataChange();
+                layout.model.trigger('sync', layout.model);
+
+                expect(layout._checkProductsQuoteLink).toHaveBeenCalled();
+            });
+
+            it('should not call _onProductBundleChange when bundles is more than 0', function() {
+                var bundleModel = app.data.createBean('ProductBundles', {
+                    id: 'bundle1'
+                });
+                bundles.add(bundleModel);
+                layout.model.set({
+                    bundles: bundles
+                }, {
+                    silent: true
+                });
+                layout.bindDataChange();
+                layout.model.trigger('sync', layout.model);
+
+                expect(layout._onProductBundleChange).not.toHaveBeenCalled();
+            });
+
+            it('should call _onProductBundleChange', function() {
+                layout.model.set({
+                    bundles: bundles
+                }, {
+                    silent: true
+                });
+                layout.bindDataChange();
+                layout.model.trigger('sync', layout.model);
+
+                expect(layout._checkProductsQuoteLink).toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('_checkProductsQuoteLink()', function() {
+        var bundles;
+        var bundleModel;
+        var productModel;
+        var lastCallArgs;
+        var pbItems;
+
+        beforeEach(function() {
+            productModel = app.data.createBean('Products', {
+                id: 'product1'
+            });
+            productModel.module = 'Products';
+            pbItems = new Backbone.Collection(productModel);
+            bundleModel = app.data.createBean('ProductBundles', {
+                product_bundle_items: pbItems
+            });
+            layout.model.set({
+                id: 'quote1',
+                bundles: {
+                    models: [bundleModel]
+                }
+            }, {
+                silent: true
+            });
+
+            sinon.collection.stub(app.api, 'call', function() {});
+
+            layout._checkProductsQuoteLink();
+            lastCallArgs = app.api.call.lastCall.args;
         });
 
-        it('should listen on layout.context for quotes:selected:delete', function() {
-            expect(layout.context.on).toHaveBeenCalledWith('quotes:selected:delete');
+        afterEach(function() {
+            bundles = null;
+            bundleModel = null;
+            productModel = null;
+            lastCallArgs = null;
+            pbItems = null;
         });
 
-        it('should listen on layout.context for quotes:defaultGroup:create', function() {
-            expect(layout.context.on).toHaveBeenCalledWith('quotes:defaultGroup:create');
-        });
+        describe('when app.api.call is used with correct params', function() {
+            it('should use create call type', function() {
+                expect(lastCallArgs[0]).toBe('create');
+            });
 
-        it('should listen on layout.context for quotes:defaultGroup:save', function() {
-            expect(layout.context.on).toHaveBeenCalledWith('quotes:defaultGroup:save');
+            it('should use bulk URL', function() {
+                expect(lastCallArgs[1]).toBe(app.api.buildURL(null, 'bulk'));
+            });
+
+            it('should use bulk requests', function() {
+                var request = lastCallArgs[2].requests[0];
+                var url = app.api.buildURL('Products/product1/link/quotes/quote1');
+
+                expect(request.url).toBe(url.substr(4));
+                expect(request.method).toBe('POST');
+                expect(request.data.id).toBe('product1');
+                expect(request.data.link).toBe('quotes');
+                expect(request.data.related.quote_id).toBe('quote1');
+                expect(request.data.relatedId).toBe('quote1');
+            });
         });
     });
 
@@ -263,7 +403,6 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 position: 2
             });
             rowModelId = rowModel.cid;
-            //rowModel.module = rowModelModule;
 
             oldGroupModel = app.data.createBean('ProductBundles', {
                 id: oldGroupId,
