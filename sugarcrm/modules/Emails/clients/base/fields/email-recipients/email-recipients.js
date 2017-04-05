@@ -36,7 +36,8 @@
         var plugins = [
             'CollectionFieldLoadAll',
             'EmailParticipants',
-            'DragdropSelect2'
+            'DragdropSelect2',
+            'ListEditable'
         ];
 
         this.plugins = _.union(this.plugins || [], plugins);
