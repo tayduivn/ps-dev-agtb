@@ -40,7 +40,10 @@ class FeatureContext extends MinkContext
      */
     public function switchBwc()
     {
-        $this->getSession()->getDriver()->switchToIFrame('bwc-frame');
+        $this->spin(function (FeatureContext $context) {
+            $context->getSession()->getDriver()->switchToIFrame('bwc-frame');
+            return boolval($context->getSession()->getPage()->findById('main'));
+        });
     }
 
     /**
