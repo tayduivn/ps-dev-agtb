@@ -254,8 +254,14 @@ class AuthenticationController
 	 */
 	public function logout()
 	{
+        global $log;
 		$GLOBALS['current_user']->call_custom_logic('before_logout');
-		$this->authController->logout();
+        try {
+            $this->authController->logout();
+        } catch (SAMLResponseException $e) {
+            $log->error($e->getMessage());
+            throw $e;
+        }
 		LogicHook::initialize();
 		$GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
 	}
