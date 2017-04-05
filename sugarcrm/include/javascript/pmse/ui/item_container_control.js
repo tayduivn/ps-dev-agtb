@@ -246,6 +246,7 @@ ItemContainer.prototype.clearItems = function () {
 	jQuery(this.html).empty();
 	this._items.clear();
 	this._textInputs.clear();
+    this._selectedIndex = 0;
 	if (this._textInputMode !== this.textInputMode.NONE) {
 		this._addInputText();
 	}
@@ -257,7 +258,6 @@ ItemContainer.prototype.isParentOf = function (item) {
 };
 
 ItemContainer.prototype._paintItem = function (item, index) {
-	var referenceItem;
 	if (this.html) {
 		if(this.isParentOf(item)) {
 			if (typeof index === 'number') {
@@ -335,8 +335,10 @@ ItemContainer.prototype.addItem = function(item, index, noFocusNext, skipCallbac
 
 	if (typeof index === 'number' && index >= 0) {
 		this._items.insertAt(item, index);
+        this._selectedIndex = index + 1;
 	} else {
 		this._items.insert(item);
+        this._selectedIndex = this._items.getSize();
 	}
 
 	if (!this._massiveAction) {
