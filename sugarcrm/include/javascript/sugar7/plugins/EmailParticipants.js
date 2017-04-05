@@ -130,6 +130,23 @@
                 };
 
                 /**
+                 * Returns a string representing the email participant in the
+                 * format that would be used for an address in an email address
+                 * header. Note that the name is not surrounded by quotes.
+                 *
+                 * @example
+                 * // With name and email address.
+                 * Will Westin <will@example.com>
+                 * @example
+                 * // Without name.
+                 * will@example.com
+                 * @param {Data.Bean} model
+                 */
+                this.formatForHeader = function(model) {
+                    return _.isEmpty(model.name) ? model.email_address : model.name + ' <' + model.email_address + '>';
+                };
+
+                /**
                  * Get the base options for initializing Select2.
                  *
                  * @return {Object}

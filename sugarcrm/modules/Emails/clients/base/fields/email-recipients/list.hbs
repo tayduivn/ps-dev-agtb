@@ -10,10 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="ellipsis_inline" rel="tooltip" data-placement="bottom" title="{{tooltip}}">
-    {{#if value.name}}
-        {{value.name}}
+{{#if ellipsis}}
+    <div class="ellipsis_inline" data-placement="bottom"{{#if dir}} dir="{{dir}}"{{/if}} title="{{tooltip}}">
+{{/if}}
+{{#each value}}
+    {{#if name}}
+        <a href="#{{buildRoute model=this action='detail'}}" >{{name}}</a>
     {{else}}
-        {{value.email_address}}
+        {{email_address}}
     {{/if}}
-</div>
+    {{#unless @last}}, {{/unless}}
+{{/each}}
+{{#if ellipsis}}
+    </div>
+{{/if~}}

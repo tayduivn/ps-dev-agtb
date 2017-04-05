@@ -160,42 +160,24 @@ describe('Emails.BaseFromField', function() {
         });
     });
 
-    describe('format', function() {
-        beforeEach(function() {
-            field = SugarTest.createField({
-                name: 'from',
-                type: 'from',
-                viewName: 'detail',
-                module: model.module,
-                model: model,
-                context: context,
-                loadFromModule: true
-            });
+    it('should format the model in the collection', function() {
+        var field = SugarTest.createField({
+            name: 'from',
+            type: 'from',
+            viewName: 'detail',
+            module: model.module,
+            model: model,
+            context: context,
+            loadFromModule: true
         });
+        var actual;
 
-        it('should format the model in the collection and set the tooltip text', function() {
-            var actual;
+        field.model.set('from', from);
+        actual = field.getFormattedValue();
 
-            field.model.set('from', from);
-            actual = field.getFormattedValue();
-
-            expect(actual).toBe(from);
-            expect(actual.name).toBe('Harry Vickers');
-            expect(actual.email_address).toBe('hvickers@example.com');
-            expect(field.tooltipText).toBe('Harry Vickers <hvickers@example.com>');
-        });
-
-        it('should set the tooltip text with only the email address', function() {
-            var actual;
-
-            from.unset('name');
-            field.model.set('from', from);
-            actual = field.getFormattedValue();
-
-            expect(actual).toBe(from);
-            expect(_.isEmpty(actual.name)).toBe(true);
-            expect(actual.email_address).toBe('hvickers@example.com');
-            expect(field.tooltipText).toBe('hvickers@example.com');
-        });
+        expect(actual).toBe(from);
+        expect(actual.name).toBe('Harry Vickers');
+        expect(actual.email_address).toBe('hvickers@example.com');
+        expect(field.tooltip).toBe('Harry Vickers <hvickers@example.com>');
     });
 });

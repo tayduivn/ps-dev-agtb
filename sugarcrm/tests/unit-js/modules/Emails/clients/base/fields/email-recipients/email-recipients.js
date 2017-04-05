@@ -188,31 +188,27 @@ describe('Emails.BaseEmailRecipientsField', function() {
         });
     });
 
-    describe('format', function() {
-        beforeEach(function() {
-            field = SugarTest.createField({
-                name: 'to',
-                type: 'email-recipients',
-                viewName: 'detail',
-                module: model.module,
-                model: model,
-                context: context,
-                loadFromModule: true
-            });
+    it('should format the models in the collection', function() {
+        var field = SugarTest.createField({
+            name: 'to',
+            type: 'email-recipients',
+            viewName: 'detail',
+            module: model.module,
+            model: model,
+            context: context,
+            loadFromModule: true
         });
+        var actual;
 
-        it('should format the models in the collection', function() {
-            var actual;
+        field.model.set('to', to);
+        actual = field.getFormattedValue();
 
-            field.model.set('to', to);
-            actual = field.getFormattedValue();
-
-            expect(actual.length).toBe(to.length);
-            expect(actual[0].name).toBe('Herbert Yates');
-            expect(actual[0].email_address).toBe('hyates@example.com');
-            expect(actual[1].name).toBe('Walter Quigley');
-            expect(actual[1].email_address).toBe('wquigley@example.com');
-        });
+        expect(actual.length).toBe(to.length);
+        expect(actual[0].name).toBe('Herbert Yates');
+        expect(actual[0].email_address).toBe('hyates@example.com');
+        expect(actual[1].name).toBe('Walter Quigley');
+        expect(actual[1].email_address).toBe('wquigley@example.com');
+        expect(field.tooltip).toBe('Herbert Yates <hyates@example.com>, Walter Quigley <wquigley@example.com>');
     });
 
     it('should decorate invalid recipients', function() {

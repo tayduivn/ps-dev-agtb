@@ -191,6 +191,40 @@ describe('Plugins.EmailParticipants', function() {
         });
     });
 
+    describe('formatting a model for email headers', function() {
+        it('should return just an email address', function() {
+            var bean = app.data.createBean('EmailAddresses', {
+                id: _.uniqueId(),
+                email_address: 'rhodes@example.com'
+            });
+            var actual;
+
+            field.prepareModel(bean);
+            actual = field.formatForHeader(bean);
+
+            expect(actual).toBe('rhodes@example.com');
+        });
+
+        it('should return a name and email address', function() {
+            var bean = app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                name: 'Haley Rhodes',
+                email: [{
+                    email_address: 'hrhodes@example.com',
+                    primary_address: true,
+                    invalid_email: false,
+                    opt_out: false
+                }]
+            });
+            var actual;
+
+            field.prepareModel(bean);
+            actual = field.formatForHeader(bean);
+
+            expect(actual).toBe('Haley Rhodes <hrhodes@example.com>');
+        });
+    });
+
     describe('searching for participants', function() {
         var options;
 

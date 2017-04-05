@@ -190,22 +190,8 @@
      * @return {Data.Bean}
      */
     format: function(value) {
-        /**
-         * Get the tooltip text, which will include the name -- if it exists --
-         * and the email address.
-         *
-         * When a name exists, it is displayed and the email address is in the
-         * tooltip. The name will be ellipsified if it is too long, which is
-         * why we have the name in the tooltip, too.
-         *
-         * @param {Data.Bean} from
-         */
-        function tooltip(from) {
-            return _.isEmpty(from.name) ? from.email_address : from.name + ' <' + from.email_address + '>';
-        }
-
-        // Reset the value.
-        this.tooltipText = '';
+        // Reset the tooltip.
+        this.tooltip = '';
 
         if (value instanceof app.BeanCollection) {
             value = value.first();
@@ -215,7 +201,7 @@
             }
 
             if (value) {
-                this.tooltipText = tooltip(value);
+                this.tooltip = this.formatForHeader(value);
             }
         }
 

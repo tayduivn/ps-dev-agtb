@@ -199,7 +199,15 @@
      * @return {Array}
      */
     format: function(value) {
-        return (value instanceof app.BeanCollection) ? value.map(this.prepareModel, this) : value;
+        // Reset the tooltip.
+        this.tooltip = '';
+
+        if (value instanceof app.BeanCollection) {
+            value = value.map(this.prepareModel, this);
+            this.tooltip = _.map(value, this.formatForHeader).join(', ');
+        }
+
+        return value;
     },
 
     /**
