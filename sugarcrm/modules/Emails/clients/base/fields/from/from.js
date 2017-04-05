@@ -33,7 +33,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], ['EmailParticipants']);
+        this.plugins = _.union(this.plugins || [], ['EmailParticipants', 'ListEditable']);
         this._super('initialize', [options]);
     },
 
