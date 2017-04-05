@@ -19,8 +19,8 @@ describe('Resolve Conflicts Headerpane View', function() {
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
 
-        appLangGetStub = sinon.stub(app.lang, '_get', function(type, key, module, context) {
-            return Handlebars.compile('foo {{name}}')(context)
+        appLangGetStub = sinon.stub(app.lang, 'get', function(key, module, context) {
+            return Handlebars.compile('foo {{name}}')(context);
         });
 
         context = app.context.getContext();
