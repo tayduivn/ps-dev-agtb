@@ -247,7 +247,8 @@
                  * @return {string}
                  */
                 formatSelection: _.bind(function(choice) {
-                    var $selection = '<span class="ellipsis-value ellipsis_inline">' + choice.name + '</span>';
+                    var $selection = '<span class="ellipsis-value ellipsis_inline" title="' + choice.name + '">' +
+                        choice.name + '</span>';
 
                     if (this._placeholders.get(choice.cid)) {
                         $selection += '<span class="ellipsis-extra"><i class="fa fa-refresh fa-spin"></i></span>';

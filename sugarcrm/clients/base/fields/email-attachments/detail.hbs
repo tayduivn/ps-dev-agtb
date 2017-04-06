@@ -14,12 +14,12 @@
     <div class="square-pill">
         {{#if file_url}}
             <a href="javascript:void(0);" data-url="{{file_url}}" data-action="download">
-                <span class="ellipsis-value ellipsis_inline">{{name}}</span>
+                <span class="ellipsis-value ellipsis_inline" title="{{name}}">{{name}}</span>
                 <span class="ellipsis-extra">({{file_size}})</span>
             </a>
         {{else}}
-            <div rel="tooltip" title="{{str 'ERR_NO_SUCH_FILE'}}">
-                <span class="ellipsis-value ellipsis_inline">{{name}}</span>
+            <div rel="tooltip" title="{{str 'ERR_NO_SUCH_FILE' ../module}}">
+                <span class="ellipsis-value ellipsis_inline" title="{{name}}">{{name}}</span>
                 <span class="ellipsis-extra">({{file_size}})</span>
             </div>
         {{/if}}
