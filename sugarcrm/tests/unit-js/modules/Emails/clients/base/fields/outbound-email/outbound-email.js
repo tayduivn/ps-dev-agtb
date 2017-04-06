@@ -49,6 +49,25 @@ describe('Emails.BaseEmailOutboundEmailField', function() {
         Handlebars.templates = {};
     });
 
+    it('should populate the help attribute if user is an admin', function() {
+        sandbox.stub(app.user, 'get');
+        app.user.get.withArgs('type').returns('admin');
+        field = SugarTest.createField({
+            name: 'outbound_email_id',
+            type: 'outbound-email',
+            viewName: 'edit',
+            module: 'Emails',
+            model: model,
+            context: context,
+            loadFromModule: true
+        });
+        expect(field.def.help).not.toBeEmpty();
+    });
+
+    it('should not populate the help attribute if user is not an admin', function() {
+        expect(field.def.help).not.toBeDefined();
+    });
+
     it('should show a warning to the user when a not_authorized error is returned', function() {
         var callback = sandbox.spy();
         var onError = sandbox.spy();
