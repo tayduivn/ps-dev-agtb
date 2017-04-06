@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 //session_destroy();
 if (version_compare(phpversion(),'5.4.0') < 0) {
 	$msg = 'Minimum PHP version required is 5.4.0.  You are using PHP version  '. phpversion();
@@ -697,6 +700,6 @@ $the_file = clean_string($the_file, 'FILE');
 installerHook('pre_installFileRequire', array('the_file' => $the_file));
 
 // change to require to get a good file load error message if the file is not available.
-require('install/' . $the_file);
+require FileLoader::validateFilePath('install/' . $the_file);
 
 installerHook('post_installFileRequire', array('the_file' => $the_file));

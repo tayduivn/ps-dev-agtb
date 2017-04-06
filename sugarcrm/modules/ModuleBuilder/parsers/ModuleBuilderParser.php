@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 class ModuleBuilderParser
 {
@@ -59,7 +60,7 @@ class ModuleBuilderParser
         }
 
         $GLOBALS['log']->info('ModuleBuilderParser->_loadFromFile(): file='.$file);        
-        require $file; // loads in a $viewdefs
+        require FileLoader::validateFilePath($file); // loads in a $viewdefs
 
         // Check to see if we have the module name set as a variable rather than embedded in the $viewdef array
         // If we do, then we have to preserve the module variable when we write the file back out

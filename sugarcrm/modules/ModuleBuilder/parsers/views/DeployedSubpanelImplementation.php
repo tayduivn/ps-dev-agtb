@@ -15,6 +15,7 @@
  * For subpanels we must make use of the SubPanelDefinitions class to do this; this also means that the history mechanism,
  * which tracks files, not objects, needs us to create an intermediate file representation of the definition that it can manage and restore
  */
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
@@ -72,7 +73,7 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
                 {
                     // load in the subpanelDefOverride from the history file
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": loading from history" ) ;
-                    require $this->historyPathname ;
+                    require FileLoader::validateFilePath($this->historyPathname);
                     $this->_viewdefs = $layout_defs;
                 } else
                 {

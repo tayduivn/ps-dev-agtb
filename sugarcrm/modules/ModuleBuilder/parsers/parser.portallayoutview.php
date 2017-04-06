@@ -11,6 +11,7 @@
  */
 //FILE SUGARCRM flav=ent ONLY
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 class ParserPortalLayoutView extends ParserModifyLayoutView
 {
@@ -177,7 +178,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         $origFieldDefs = array();
         if (file_exists($this->_sourceFile))
         {
-            include ($this->_sourceFile);
+            include FileLoader::validateFilePath($this->_sourceFile);
             $origdefs = $viewdefs [$this->_module] [$this->_view]['panels'];
             foreach ($origdefs as $row)
             {

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 require_once 'modules/ModuleBuilder/parsers/constants.php';
 
 class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
@@ -73,7 +75,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
         $this->setUpSubpanelViewDefFileInfo();
 
-        include $this->loadedSubpanelFileName;
+        include FileLoader::validateFilePath($this->loadedSubpanelFileName);
 
         if ($this->originalDefsFileName) {
             $this->loadOriginalViewDefs();
@@ -87,7 +89,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         if (file_exists($this->historyPathname)) {
             // load in the subpanelDefOverride from the history file
             $GLOBALS['log']->debug(get_class($this) . ": loading from history");
-            require $this->historyPathname;
+            require FileLoader::validateFilePath($this->historyPathname);
         }
         $this->_history = new History($this->historyPathname);
 

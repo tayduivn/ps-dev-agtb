@@ -12,6 +12,8 @@
 
 require_once 'modules/ModuleBuilder/parsers/constants.php';
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {
     /**
@@ -244,7 +246,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
         foreach ($types as $type) {
             $file = $this->getMetadataFilename($type);
             if (file_exists($file)) {
-                require $file;
+                require FileLoader::validateFilePath($file);
                 if (!empty($viewdefs)) {
                     $this->$marker = $file;
                     break;
@@ -343,7 +345,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
         // Loop and set
         foreach ($files as $file) {
             if (file_exists($file)) {
-                require $file;
+                require FileLoader::validateFilePath($file);
                 if (!empty($viewdefs)) {
                     // This needs to be done in the event we have a SugarObject template file in use
                     $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($this->bean, $viewdefs);
