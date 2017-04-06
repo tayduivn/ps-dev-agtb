@@ -24,6 +24,10 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        if (app.user.get('type') === 'admin') {
+            options.def.help = app.lang.get('LBL_OUTBOUND_EMAIL_ID_HELP', options.module);
+        }
+
         this._super('initialize', [options]);
         this.type = 'enum';
     },

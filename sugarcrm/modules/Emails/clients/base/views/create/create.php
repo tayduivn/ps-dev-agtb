@@ -65,7 +65,6 @@ $viewdefs['Emails']['base']['view']['create'] = array(
                             'span' => 12,
                             'css_class' => 'inherit-width',
                             'searchBarThreshold' => -1,
-                            'help' => 'LBL_OUTBOUND_EMAIL_ID_HELP',
                         ),
                         array(
                             'name' => 'to',
