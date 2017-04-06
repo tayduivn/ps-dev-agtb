@@ -77,7 +77,7 @@ $viewdefs['Emails']['base']['view']['preview'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'attachments-collection',
+                    'name' => 'attachments_collection',
                     'type' => 'email-attachments',
                     'label' => 'LBL_ATTACHMENTS',
                     'readonly' => true,
