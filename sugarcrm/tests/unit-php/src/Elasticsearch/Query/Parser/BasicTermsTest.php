@@ -28,6 +28,8 @@ class BasicTermsTest extends \PHPUnit_Framework_TestCase
      * @covers ::getOperator
      * @covers ::addTerm
      * @covers ::toArray
+     * @covers ::hasTerm
+     *
      * @dataProvider providerBasicTermsTest
      *
      */

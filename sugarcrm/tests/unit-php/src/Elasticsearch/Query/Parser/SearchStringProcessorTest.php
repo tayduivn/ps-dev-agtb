@@ -23,6 +23,8 @@ class SearchStringProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::parse
+     * @covers ::getSubString
+     *
      * @dataProvider providerParseTest
      *
      */

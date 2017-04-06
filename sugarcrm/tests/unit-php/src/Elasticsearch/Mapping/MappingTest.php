@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
@@ -36,6 +37,21 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $mapping->excludeFromSource('field2');
         $mapping->excludeFromSource('field1');
         $this->assertSame(array('field1', 'field2'), $mapping->getSourceExcludes());
+    }
+
+    /**
+     * @covers ::__construct
+     */
+    public function testConstructor()
+    {
+        $module = 'FooBar';
+        $expectedMulitFieldBase = array('type' => 'keyword', 'index' => true, 'include_in_all' => false);
+        $expectedNotIndexedBase = array('type' => 'text', 'index' => false, 'include_in_all' => false);
+
+        $mapping = new Mapping($module);
+        $this->assertSame($module, TestReflection::getProtectedValue($mapping, 'module'));
+        $this->assertSame($expectedMulitFieldBase, TestReflection::getProtectedValue($mapping, 'multiFieldBase'));
+        $this->assertSame($expectedNotIndexedBase, TestReflection::getProtectedValue($mapping, 'notIndexedBase'));
     }
 
     /**

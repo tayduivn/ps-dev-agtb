@@ -66,8 +66,8 @@ class Client extends BaseClient
      * @var array
      */
     protected static $supportedVersion5x = array(
-        array('version' =>'5.0.0', 'operator' => '>='),
-        array('version' => '5.2.0', 'operator' => '<'),
+        array('version' =>'5.0', 'operator' => '>='),
+        array('version' => '5.2', 'operator' => '<'),
     );
 
     /**
@@ -289,8 +289,7 @@ class Client extends BaseClient
         $currentStatus = $this->loadAvailability();
 
         if ($status !== $currentStatus) {
-            $admin = \BeanFactory::newBean('Administration');
-            $admin->saveSetting(self::STATUS_CATEGORY, self::STATUS_KEY, ($status ? 0 : 1));
+            $this->saveAdminStatus($status);
             $this->available = $status;
             if ($status) {
                 $this->_logger->info("Elasticsearch promoted as available");
@@ -302,16 +301,35 @@ class Client extends BaseClient
     }
 
     /**
+     * save status for Administration
+     * @param boolean $status
+     */
+    protected function saveAdminStatus($status)
+    {
+        $admin = \BeanFactory::getBean('Administration');
+        $admin->saveSetting(self::STATUS_CATEGORY, self::STATUS_KEY, ($status ? 0 : 1));
+    }
+
+    /**
      * Load the current availability
      * @return boolean
      */
     protected function loadAvailability()
     {
         if ($this->available === null) {
-            $settings = \Administration::getSettings();
-            $this->available = empty($settings->settings['info_fts_down']);
+            $this->available = empty($this->getFtsInfoFromAdminSettings());
         }
         return $this->available;
+    }
+
+    /**
+     * get Administration settings for key=info_fts_down
+     * @return mixed
+     */
+    protected function getFtsInfoFromAdminSettings()
+    {
+        $settings = \Administration::getSettings();
+        return $settings->settings['info_fts_down'];
     }
 
     /**

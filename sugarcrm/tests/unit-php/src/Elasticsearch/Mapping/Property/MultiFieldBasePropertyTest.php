@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Mapping\Property;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
@@ -32,6 +33,7 @@ class MultiFieldBasePropertyTest extends \PHPUnit_Framework_TestCase
     );
 
     /**
+     * @covers ::__construct
      * @covers ::getMapping
      */
     public function testGetMapping()

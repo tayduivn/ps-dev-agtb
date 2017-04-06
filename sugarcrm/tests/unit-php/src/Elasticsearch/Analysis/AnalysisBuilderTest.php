@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\TestsUnit\Elasticsearch\Analysis;
 
+use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 
@@ -155,6 +156,31 @@ class AnalysisBuilderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @covers ::__construct
+     * @covers ::init
+     * @covers ::compile
+     */
+    public function testConstructor()
+    {
+        $analysisBuilderMock = TestMockHelper::getObjectMock(
+            $this,
+            'Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder',
+            null,
+            false
+        );
+        $expected = array(
+            AnalysisBuilder::ANALYZER => array(),
+            AnalysisBuilder::TOKENIZER => array(),
+            AnalysisBuilder::TOKENFILTER => array(),
+            AnalysisBuilder::CHARFILTER => array(),
+        );
+
+        $this->assertSame($expected, TestReflection::getProtectedValue($analysisBuilderMock, 'analysis'));
+
+        $analysisBuilderMock->compile();
+        $this->assertSame(array(AnalysisBuilder::ANALYSIS => $expected), $analysisBuilderMock->compile());
+    }
 
     /**
      * Get AnalysisBuilderTest Mock

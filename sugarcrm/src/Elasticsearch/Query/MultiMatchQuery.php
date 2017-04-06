@@ -68,6 +68,11 @@ class MultiMatchQuery implements QueryInterface
      */
     protected $defaultOperator;
 
+    /**
+     * set default search logic operator for space
+     * @param string $operator
+     * @return string|false
+     */
     public function setOperator($operator)
     {
         $this->defaultOperator = TermParserHelper::getOperator($operator);

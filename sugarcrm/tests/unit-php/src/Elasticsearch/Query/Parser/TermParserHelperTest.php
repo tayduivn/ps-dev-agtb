@@ -48,6 +48,7 @@ class TermParserHelperTest extends \PHPUnit_Framework_TestCase
             array('And', false),
             array('Or', false),
             array('Not', false),
+            array(array('a'), false),
         );
     }
 
@@ -117,6 +118,34 @@ class TermParserHelperTest extends \PHPUnit_Framework_TestCase
             array('&', false),
             array('-', true),
             array('', false),
+        );
+    }
+
+    /**
+     * @covers ::getOperator
+     * @dataProvider providerGetOperatorTest
+     *
+     */
+    public function testGetOperator($operaor, $expectecd)
+    {
+        $this->assertSame(TermParserHelper::getOperator($operaor), $expectecd);
+    }
+
+    public function providerGetOperatorTest()
+    {
+        return array(
+            array('AND', 'AND'),
+            array('OR', 'OR'),
+            array('NOT', 'NOT'),
+            array('|', 'OR'),
+            array('&', 'AND'),
+            array('-', 'NOT'),
+            // empty string
+            array('', false),
+            // operator is case-sensitive
+            array('and', false),
+            array('or', false),
+            array('not', false),
         );
     }
 }

@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
@@ -129,6 +130,44 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                 'GlobalSearch',
                 '\Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch',
             ),
+        );
+    }
+
+    /**
+     * @covers ::getInstance
+     *
+     */
+    public function testGetInstance()
+    {
+        $this->assertInstanceOf(
+            'Sugarcrm\Sugarcrm\Elasticsearch\Container',
+            Container::getInstance()
+        );
+    }
+
+    /**
+     * @covers ::create
+     *
+     */
+    public function testCreate()
+    {
+        $this->assertInstanceOf(
+            'Sugarcrm\Sugarcrm\Elasticsearch\Container',
+            Container::create()
+        );
+    }
+
+    /**
+     * @covers ::initLogger
+     */
+    public function testInitLogger()
+    {
+        $container = $this->getContainerMock();
+        TestReflection::callProtectedMethod($container, 'initLogger');
+
+        $this->assertInstanceOf(
+            '\Sugarcrm\Sugarcrm\Elasticsearch\Logger',
+            TestReflection::getProtectedValue($container, 'logger')
         );
     }
 

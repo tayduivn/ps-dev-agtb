@@ -47,12 +47,12 @@ class Container
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Logger
      */
-    private $logger;
+    protected $logger;
 
     /**
      * @var \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
      */
-    private $metaDataHelper;
+    protected $metaDataHelper;
 
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Queue\QueueManager
