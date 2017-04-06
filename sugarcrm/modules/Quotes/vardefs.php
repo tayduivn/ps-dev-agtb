@@ -594,9 +594,15 @@ $dictionary['Quote'] = array(
         ),
         'shipping_account_id' => array(
             'name' => 'shipping_account_id',
-            'type' => 'id',
+            'type' => 'relate',
             'vname' => 'LBL_SHIPPING_ACCOUNT_ID',
             'source' => 'non-db',
+            'link' => 'shipping_accounts',
+            'rname' => 'id',
+            'massupdate' => false,
+            'module' => 'Accounts',
+            'studio' => 'false',
+            'id_name' => 'account_id',
         ),
         'shipping_contact_name' => array(
             'name' => 'shipping_contact_name',
@@ -676,9 +682,15 @@ $dictionary['Quote'] = array(
         ),
         'billing_account_id' => array(
             'name' => 'billing_account_id',
-            'type' => 'id',
+            'type' => 'relate',
             'vname' => 'LBL_BILLING_ACCOUNT_ID',
             'source' => 'non-db',
+            'link' => 'billing_accounts',
+            'rname' => 'id',
+            'massupdate' => false,
+            'module' => 'Accounts',
+            'studio' => 'false',
+            'id_name' => 'account_id',
         ),
         'billing_contact_name' => array(
             'name' => 'billing_contact_name',
