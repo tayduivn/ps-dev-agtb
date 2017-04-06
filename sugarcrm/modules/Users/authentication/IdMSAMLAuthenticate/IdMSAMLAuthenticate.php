@@ -91,10 +91,11 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
      */
     public function getLogoutUrl()
     {
+        global $current_user;
         $session = $this->getSession();
-        $user = new User($GLOBALS['current_user']->user_name);
-        $user->setSugarUser($GLOBALS['current_user']);
         $logoutToken = new InitiateLogoutToken();
+        $user = new User();
+        $user->setSugarUser($current_user);
         $logoutToken->setAttribute('user', $user);
         if (array_key_exists('IdPSessionIndex', $session)) {
             $logoutToken->setAttribute('sessionIndex', $session['IdPSessionIndex']);
