@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 /**
@@ -349,7 +351,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetGuid_EmailAddressDoesNotExist()
     {
-        $actual = $this->ea->getGuid('address-' . create_guid() . '@example.com');
+        $actual = $this->ea->getGuid('address-' . Uuid::uuid1() . '@example.com');
         $this->assertSame('', $actual);
     }
 
@@ -359,7 +361,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetEmailGUID_CreatesNewEmailAddress()
     {
-        $guid = $this->ea->getEmailGUID('address-' . create_guid() . '@example.com');
+        $guid = $this->ea->getEmailGUID('address-' . Uuid::uuid1() . '@example.com');
         SugarTestEmailAddressUtilities::setCreatedEmailAddress($guid);
         $this->assertNotEmpty($guid);
     }

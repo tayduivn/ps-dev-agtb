@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 class QuotesViewSugarpdf extends ViewSugarpdf{
 
@@ -144,7 +145,7 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
 
         //Handle PDF Attachment
         $note = BeanFactory::newBean('Notes');
-        $note->id = create_guid();
+        $note->id = Uuid::uuid1();
         $note->new_with_id = true;
         $note->filename = $file_name;
         $note->team_id = "";

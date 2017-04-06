@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 class SugarFieldFileTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $origNote;
@@ -69,13 +71,13 @@ class SugarFieldFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testApiSave_ReusesExistingFile()
     {
         $this->newNote = BeanFactory::getBean('Notes');
-        $this->newNote->id = create_guid();
+        $this->newNote->id = Uuid::uuid1();
         $submittedData = array(
             'name' => 'new note',
             'filename' => 'test.txt',
             'filename_duplicateBeanId' => $this->origNote->id,
             'email_type' => 'Emails',
-            'email_id' => create_guid(),
+            'email_id' => Uuid::uuid1(),
         );
 
         $sfh = new SugarFieldHandler();

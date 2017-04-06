@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 /**
  * @coversDefaultClass EmailAddressesApi
  */
@@ -70,7 +72,7 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateBean_CreateNewEmailAddress()
     {
-        $address = 'address-' . create_guid() . '@example.com';
+        $address = 'address-' . Uuid::uuid1() . '@example.com';
 
         $ea = new SugarEmailAddress();
         $this->assertEmpty($ea->getGuid($address), "{$address} should not already exist");

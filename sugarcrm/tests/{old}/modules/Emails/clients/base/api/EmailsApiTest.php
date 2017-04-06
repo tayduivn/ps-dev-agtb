@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 /**
  * @coversDefaultClass EmailsApi
  * @group api
@@ -246,7 +248,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->getMock();
         $email->expects($this->never())
             ->method('sendEmail');
-        $email->outbound_email_id = create_guid();
+        $email->outbound_email_id = Uuid::uuid1();
 
         $api = new EmailsApi();
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 require_once 'tests/{old}/modules/Emails/clients/base/api/EmailsApiIntegrationTestCase.php';
 
 /**
@@ -32,10 +34,10 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
      */
     public function testCreateRecord()
     {
-        $uploadId = create_guid();
+        $uploadId = Uuid::uuid1();
         file_put_contents("upload://tmp/{$uploadId}", 'test');
 
-        $docRevisionId = create_guid();
+        $docRevisionId = Uuid::uuid1();
         file_put_contents("upload://{$docRevisionId}", 'test');
 
         $args = array(
@@ -80,10 +82,10 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
      */
     public function testUpdateRecord()
     {
-        $uploadId = create_guid();
+        $uploadId = Uuid::uuid1();
         file_put_contents("upload://tmp/{$uploadId}", 'test');
 
-        $templateId = create_guid();
+        $templateId = Uuid::uuid1();
         file_put_contents("upload://{$templateId}", 'test');
 
         $attachment1 = SugarTestNoteUtilities::createNote();
@@ -157,10 +159,10 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
      */
     public function testDeleteRecord()
     {
-        $uploadId = create_guid();
+        $uploadId = Uuid::uuid1();
         file_put_contents("upload://tmp/{$uploadId}", 'test');
 
-        $docId = create_guid();
+        $docId = Uuid::uuid1();
         file_put_contents("upload://{$docId}", 'test');
 
         $args = array(

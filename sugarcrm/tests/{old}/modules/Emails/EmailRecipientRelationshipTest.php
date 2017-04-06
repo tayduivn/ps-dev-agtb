@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 require_once 'modules/Emails/EmailRecipientRelationship.php';
 
 /**
@@ -138,7 +140,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
         $email = SugarTestEmailUtilities::createEmail();
         $contact = SugarTestContactUtilities::createContact();
-        $address = 'address-' . create_guid() . '@example.com';
+        $address = 'address-' . Uuid::uuid1() . '@example.com';
 
         $additionalFields = array(
             'email_address' => $address,

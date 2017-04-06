@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 /**
  * @coversDefaultClass EmailsVisibility
  */
@@ -22,7 +24,7 @@ class EmailsVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
         parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
 
-        static::$subject = 'subject: ' . create_guid();
+        static::$subject = 'subject: ' . Uuid::uuid1();
 
         $data = array(
             'name' => static::$subject,
@@ -34,7 +36,7 @@ class EmailsVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
         $data = array(
             'name' => static::$subject,
             'state' => Email::STATE_DRAFT,
-            'assigned_user_id' => create_guid(),
+            'assigned_user_id' => Uuid::uuid1(),
         );
         SugarTestEmailUtilities::createEmail('', $data);
 
@@ -48,7 +50,7 @@ class EmailsVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
         $data = array(
             'name' => static::$subject,
             'state' => Email::STATE_ARCHIVED,
-            'assigned_user_id' => create_guid(),
+            'assigned_user_id' => Uuid::uuid1(),
         );
         SugarTestEmailUtilities::createEmail('', $data);
     }

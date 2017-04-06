@@ -106,7 +106,7 @@ function email_layout ($layout) {
 	//Handle PDF Attachment
 	$file_name = get_quote_pdf($layout);
 	$note = BeanFactory::newBean('Notes');
-    $note->id = create_guid();
+    $note->id = \Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
     $note->new_with_id = true;
 	$note->filename = $file_name;
 	$note->team_id = "";

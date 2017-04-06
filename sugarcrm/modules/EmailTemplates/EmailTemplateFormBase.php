@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 class EmailTemplateFormBase
 {
 
@@ -268,7 +270,7 @@ EOQ;
 			$docRev = BeanFactory::retrieveBean('DocumentRevisions', $doc->document_revision_id);
 			if(empty($docRev)) continue;
 			$docNote = BeanFactory::newBean('Notes');
-            $docNote->id = create_guid();
+            $docNote->id = Uuid::uuid1();
             $docNote->new_with_id = true;
 
 			array_push($focus->saved_attachments, $docRev);

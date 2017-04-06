@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 class DocumentRevisionTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private static $docs = array();
@@ -30,7 +32,7 @@ class DocumentRevisionTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSave_FileSizeIsSaved()
     {
-        $filename = create_guid();
+        $filename = Uuid::uuid1();
         $file = "upload://{$filename}";
         file_put_contents($file, $filename);
         $filesize = filesize($file);
@@ -47,7 +49,7 @@ class DocumentRevisionTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSave_FileSizeIsZero()
     {
         $doc = BeanFactory::newBean('DocumentRevisions');
-        $doc->id = create_guid();
+        $doc->id = Uuid::uuid1();
         $doc->new_with_id = true;
         $doc->save(false);
         static::$docs[] = $doc;

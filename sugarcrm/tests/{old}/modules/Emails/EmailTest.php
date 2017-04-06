@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 /**
  * Test cases for Bug 30591
  *
@@ -424,7 +426,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $email->state = Email::STATE_DRAFT;
         $email->assigned_user_id = $GLOBALS['current_user']->id;
         $email->team_id = 'East';
-        $email->team_set_id = create_guid();
+        $email->team_set_id = Uuid::uuid1();
         //BEGIN SUGARCRM flav=ent ONLY
         $email->team_set_selected_id = 'East';
         //END SUGARCRM flav=ent ONLY
@@ -444,8 +446,8 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUpdateAttachmentVisibility_EmailIsADraft_NoAssignedUser()
     {
-        $assignedUserId = create_guid();
-        $teamSetId = create_guid();
+        $assignedUserId = Uuid::uuid1();
+        $teamSetId = Uuid::uuid1();
         $note = $this->getMockBuilder('Note')
             ->disableOriginalConstructor()
             ->setMethods(array('save'))
@@ -462,7 +464,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $email->state = Email::STATE_DRAFT;
         $email->assigned_user_id = null;
         $email->team_id = 'East';
-        $email->team_set_id = create_guid();
+        $email->team_set_id = Uuid::uuid1();
         //BEGIN SUGARCRM flav=ent ONLY
         $email->team_set_selected_id = 'East';
         //END SUGARCRM flav=ent ONLY
@@ -1072,7 +1074,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         // The email address is invalid.
         $this->assertEmpty(
-            $email->linkEmailToAddress(create_guid(), 'to'),
+            $email->linkEmailToAddress(Uuid::uuid1(), 'to'),
             'Should not have been able to load the email address'
         );
 

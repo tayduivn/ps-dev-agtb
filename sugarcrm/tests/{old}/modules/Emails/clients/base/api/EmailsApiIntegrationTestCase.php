@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $service;
@@ -53,7 +55,7 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
     protected function createRecord(array $args)
     {
         $args['module'] = 'Emails';
-        $args['name'] = 'Sugar Email' . create_guid();
+        $args['name'] = 'Sugar Email' . Uuid::uuid1();
         $args['description'] = 'blah blah blah';
         $args['description_html'] = 'blah <b>blah</b> <i>blah</i>';
         $api = new EmailsApi();

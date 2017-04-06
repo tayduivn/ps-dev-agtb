@@ -9,7 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @coversDefaultClass Note
@@ -80,7 +81,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSave_FileFoundAtUploadId_FileMetadataIsSaved()
     {
         $note = SugarTestNoteUtilities::createNote();
-        $note->upload_id = create_guid();
+        $note->upload_id = Uuid::uuid1();
 
         $file = "upload://{$note->upload_id}";
         file_put_contents($file, $note->upload_id);
@@ -97,7 +98,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSave_FileFoundInTemporaryLocation_FileMetadataIsSaved()
     {
-        $filename = create_guid();
+        $filename = Uuid::uuid1();
         $file = "upload://tmp/{$filename}";
         file_put_contents($file, $filename);
         $filesize = filesize($file);

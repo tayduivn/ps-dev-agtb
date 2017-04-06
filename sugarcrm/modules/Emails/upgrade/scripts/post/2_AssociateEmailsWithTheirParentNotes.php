@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 class SugarUpgradeAssociateEmailsWithTheirParentNotes extends UpgradeScript
 {
     public $order = 2000;
@@ -86,7 +88,7 @@ class SugarUpgradeAssociateEmailsWithTheirParentNotes extends UpgradeScript
 
     /**
      * Returns a single set of values formatted in SQL for inserting a row into the emails_beans table.
-     *
+     *'
      * @param string $emailId
      * @param string $noteId
      * @return string
@@ -96,6 +98,6 @@ class SugarUpgradeAssociateEmailsWithTheirParentNotes extends UpgradeScript
         $now = TimeDate::getInstance()->nowDb();
         $values = "('%s', '%s', '%s', 'Notes', '{$now}')";
 
-        return sprintf($values, create_guid(), $emailId, $noteId);
+        return sprintf($values, Uuid::uuid1(), $emailId, $noteId);
     }
 }

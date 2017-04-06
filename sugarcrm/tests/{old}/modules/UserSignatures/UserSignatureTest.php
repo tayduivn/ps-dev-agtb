@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 class UserSignatureTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private static $createdSignatures = array();
@@ -68,7 +70,7 @@ class UserSignatureTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSyncSignatureDefault_NewDefault_UpdatesUserPref()
     {
         global $current_user;
-        $id = create_guid();
+        $id = Uuid::uuid1();
         $current_user->setPreference('signature_default', 'not_my_id');
         $signature = BeanFactory::newBean('UserSignatures');
         $signature->id = $id;
@@ -80,7 +82,7 @@ class UserSignatureTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSyncSignatureDefault_RemoveDefault_UpdatesUserPref()
     {
         global $current_user;
-        $id = create_guid();
+        $id = Uuid::uuid1();
         $current_user->setPreference('signature_default', $id);
         $signature = BeanFactory::newBean('UserSignatures');
         $signature->id = $id;
@@ -92,7 +94,7 @@ class UserSignatureTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSyncSignatureDefault_NotDefault_LeaveUserPrefAlone()
     {
         global $current_user;
-        $id = create_guid();
+        $id = Uuid::uuid1();
         $current_user->setPreference('signature_default', 'not_my_id');
         $signature = BeanFactory::newBean('UserSignatures');
         $signature->id = $id;

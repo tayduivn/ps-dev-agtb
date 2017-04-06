@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 class UserSignaturesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $bean;
@@ -20,7 +22,7 @@ class UserSignaturesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
 
         $this->bean = BeanFactory::newBean('UserSignatures');
-        $this->bean->id = create_guid();
+        $this->bean->id = Uuid::uuid1();
     }
 
     public function tearDown()

@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 class SugarpdfPdfmanager extends SugarpdfSmarty
 {
@@ -302,7 +302,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
 
         //Handle PDF Attachment
         $note = BeanFactory::newBean("Notes");
-        $note->id = create_guid();
+        $note->id = Uuid::uuid1();
         $note->new_with_id = true;
         $note->filename = $file_name;
         $note->file_mime_type = $email_object->email2GetMime('upload://'.$file_name);

@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 class SugarTestEmailAddressUtilities
 {
@@ -21,7 +22,7 @@ class SugarTestEmailAddressUtilities
     {
         if (null === $address)
         {
-            $address = 'address-' . create_guid() . '@example.com';
+            $address = 'address-' . Uuid::uuid1() . '@example.com';
         }
 
         $email_address = new EmailAddress();

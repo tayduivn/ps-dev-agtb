@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 class Email extends SugarBean {
 
     const STATE_READY = 'Ready';
@@ -2144,7 +2146,7 @@ class Email extends SugarBean {
             // Duplicate the attachments.
             foreach ($attachmentsFromForwards as $attachment) {
                 $note = BeanFactory::getBean($attachment->getModuleName(), $attachment->id);
-                $note->id = create_guid();
+                $note->id = Uuid::uuid1();
                 $note->new_with_id = true;
 
                 // Duplicate the file before saving so that the file size is captured during save.
@@ -2285,7 +2287,7 @@ class Email extends SugarBean {
 				$doc = BeanFactory::newBean('Documents');
 				$docRev = BeanFactory::newBean('DocumentRevisions');
 				$docNote = BeanFactory::newBean('Notes');
-                $docNote->id = create_guid();
+                $docNote->id = Uuid::uuid1();
                 $docNote->new_with_id = true;
 
 				$doc->retrieve($_REQUEST['documentId'.$i]);
