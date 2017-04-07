@@ -9,6 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
+
 /**
  * Check that the Sugar FTS Engine configuration is valid
  */
@@ -31,79 +35,14 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
             $this->error('Access Full Text Search configuration under Administration > Search.');
         } else {
             // Test Elastic FTS connection
-            $searchEngine = SugarSearchEngineFactory::getInstance('Elastic', $ftsConfig['Elastic']);
-            $status = $this->getServerStatusElastic($searchEngine, $ftsConfig['Elastic']);
+            $searchEngine = SearchEngine::newEngine('Elastic', $ftsConfig['Elastic']);
+            $ftsStatus = $searchEngine->verifyConnectivity(false);
 
-            if (!$status['valid']) {
+            if ($ftsStatus != Client::CONN_SUCCESS) {
                 $this->error('Connection test for Elastic Full Text Search engine failed.  Check your FTS configuration.');
                 $this->error('Access Full Text Search configuration under Administration > Search.');
             }
         }
     }
 
-    /**
-     * The older versions of getServerStatus may be broken, so we need to re-implement this to have it pass
-     *
-     * @return array
-     */
-    protected function getServerStatusElastic($searchEngine, $config)
-    {
-        $this->_client = $this->getElasticaClient($config);
-        global $app_strings;
-        $isValid = false;
-        try {
-            $results = $this->_client->request('', $this->getElasticaRequestConstant('GET'))->getData();
-            if (!empty($results['status']) && $results['status'] === 200) {
-                $isValid = true;
-                $displayText = $app_strings['LBL_EMAIL_SUCCESS'];
-            } else {
-                $displayText = $app_strings['ERR_ELASTIC_TEST_FAILED'];
-            }
-        } catch (Exception $e) {
-            $displayText = $e->getMessage();
-            $this->error("Unable to get server status: $displayText");
-        }
-
-        return array('valid' => $isValid, 'status' => $displayText);
-    }
-
-    /**
-     * Wrapper to instantiate Elastica Client object
-     *
-     * @param array $config
-     * @return mixed \Elastica\Client|Elastica_Client
-     */
-    protected function getElasticaClient($config)
-    {
-        $class = $this->getElasticaFQClassName('Client');
-        return new $class($config);
-    }
-
-    /**
-     * Wrapper to get constant values from Elastica Request
-     *
-     * @param string $name
-     * @return string
-     */
-    protected function getElasticaRequestConstant($name)
-    {
-        $class = $this->getElasticaFQClassName('Request');
-        return constant($class.'::'.$name);
-    }
-
-    /**
-     * Get fully qualified Elastica class name based on the available Elastica library
-     *
-     * @param string $class Base Elastica class name (i.e. Client, Request, ...)
-     * @return string
-     */
-    protected function getElasticaFQClassName($class)
-    {
-        if (class_exists('Elastica_'.$class)) {
-            $prefix =  'Elastica_';
-        } else {
-            $prefix = '\\Elastica\\';
-        }
-        return $prefix.$class;
-    }
 }
