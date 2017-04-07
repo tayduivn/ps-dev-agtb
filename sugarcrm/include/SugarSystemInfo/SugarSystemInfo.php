@@ -233,7 +233,7 @@ class SugarSystemInfo
     public function getClientInfo()
     {
         $info = array();
-        $system = BeanFactory::getBean('System');
+        $system = BeanFactory::newBean('System');
         if ($system) {
             $info['oc_active_30_days'] = $system->getClientsActiveInLast30Days();
             $info['oc_active'] = $system->getEnabledOfflineClients(
@@ -373,7 +373,7 @@ class SugarSystemInfo
      */
     protected function getSettings()
     {
-        return BeanFactory::getBean('Administration')->retrieveSettings()->settings;
+        return BeanFactory::newBean('Administration')->retrieveSettings()->settings;
     }
     
     /**

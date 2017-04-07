@@ -61,7 +61,7 @@ class Bug58089Test extends Sugar_PHPUnit_Framework_TestCase
         // Get the current module and subpanel settings
         $this->_tabController = new TabController();
         $this->_currentTabs = $this->_tabController->get_system_tabs();
-        $this->_subPanelDefinitions = new SubPanelDefinitions(BeanFactory::getBean('Calls'));
+        $this->_subPanelDefinitions = new SubPanelDefinitions(BeanFactory::newBean('Calls'));
         $subpanels = $this->_subPanelDefinitions->get_all_subpanels();
         $subpanels_hidden = $this->_subPanelDefinitions->get_hidden_subpanels();
 
@@ -129,7 +129,7 @@ class Bug58089Test extends Sugar_PHPUnit_Framework_TestCase
      * @group Bug58089
      */
     public function testNotesSubpanelOnAccountsAllowedOnDefaultInstallation() {
-        $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::getBean('Accounts'));
+        $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::newBean('Accounts'));
         $this->assertArrayHasKey('notes', $subpanel->sub_subpanels, "Notes module not found in History subpanel's Notes subpanel");
     }
     
@@ -149,7 +149,7 @@ class Bug58089Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_subPanelDefinitions->get_all_subpanels(true);
         $this->_subPanelDefinitions->get_hidden_subpanels();
         
-        $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::getBean('Accounts'));
+        $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::newBean('Accounts'));
         $this->assertEmpty($subpanel->sub_subpanels, "History subpanel's subpanel should be empty after Notes removed from subpanel module list");
     }
 }

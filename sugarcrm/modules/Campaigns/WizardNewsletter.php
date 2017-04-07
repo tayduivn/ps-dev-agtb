@@ -23,7 +23,7 @@ global $sugar_version, $sugar_config;
 
 /*************** GENERAL SETUP WORK **********/
 
-$focus = BeanFactory::getBean('Campaigns');
+$focus = BeanFactory::newBean('Campaigns');
 if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
@@ -575,7 +575,7 @@ function create_wiz_step_divs($steps,$ss){
 
 //Assign the Teamset field
 $teamSetField = new SugarFieldTeamset('Teamset');
-$focus = BeanFactory::getBean('Campaigns');
+$focus = BeanFactory::newBean('Campaigns');
 $code = $teamSetField->getClassicView($focus->field_defs, 'wizform');
 $ss->assign("TEAM_SET_FIELD", $code);
     $step_html = '';

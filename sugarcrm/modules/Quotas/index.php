@@ -32,7 +32,7 @@ global $current_user;
 global $sugar_config;
 
 $db = DBManagerFactory::getInstance();
-$focus = BeanFactory::getBean('Quotas');
+$focus = BeanFactory::newBean('Quotas');
 $currency = new ListCurrency();
 $params = array();
 $params[] = "<a href='index.php?module=Forecasts&action=index'>{$mod_strings['LBL_MODULE_FORECASTS_NAME']}</a>";

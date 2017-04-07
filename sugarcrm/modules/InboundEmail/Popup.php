@@ -83,7 +83,7 @@ if(isset($_REQUEST['ssl']) && ($_REQUEST['ssl'] == "true" || $_REQUEST['ssl'] ==
 }
 
 
-$ie = BeanFactory::getBean('InboundEmail');
+$ie = BeanFactory::newBean('InboundEmail');
 if(!empty($_REQUEST['ie_id'])) {
     $ie->disable_row_level_security = true;
     $ie->retrieve($_REQUEST['ie_id']);

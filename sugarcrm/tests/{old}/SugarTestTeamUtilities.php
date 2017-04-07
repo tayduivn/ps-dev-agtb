@@ -25,7 +25,7 @@ class SugarTestTeamUtilities
 
     public static function createAnonymousTeam($id = '', array $attributes = array())
     {
-        $team = BeanFactory::getBean('Teams');
+        $team = BeanFactory::newBean('Teams');
         $team->name = 'Test Team - ' . mt_rand();
         if(!empty($id))
         {

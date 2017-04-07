@@ -18,7 +18,7 @@ $selObjs = urldecode($_POST['selected_objects_def']);
 $item_ids = array();
 parse_str($selObjs,$item_ids);
 
-$seed = BeanFactory::getBean($module);
+$seed = BeanFactory::newBean($module);
 $fields =  get_field_list($seed);
 
 $document = BeanFactory::getBean('Documents', $document_id);

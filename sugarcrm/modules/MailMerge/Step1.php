@@ -51,7 +51,7 @@ else if(isset($_REQUEST['uid'])) {
 }
 else if(isset($_REQUEST['entire']) && $_REQUEST['entire'] == 'true') {
 	// do entire list
-	$focus = BeanFactory::getBean( $_SESSION['MAILMERGE_MODULE']);
+	$focus = BeanFactory::newBean( $_SESSION['MAILMERGE_MODULE']);
 
 	if(isset($_SESSION['export_where']) && !empty($_SESSION['export_where'])) { // bug 4679
 		$where = $_SESSION['export_where'];
@@ -103,13 +103,13 @@ if(isset($_SESSION['MAILMERGE_RECORD']))
 	$_SESSION['MAILMERGE_MODULE'] = $rModule;
 	if(!empty($rModule) && $rModule != "MailMerge")
 	{
-	    $seed = BeanFactory::getBean($rModule);
+	    $seed = BeanFactory::newBean($rModule);
 	    $selected_objects = '';
     	foreach($_SESSION['MAILMERGE_RECORD'] as $record_id)
     	{
     		if($rModule == 'Campaigns'){
 
-    			$prospect = BeanFactory::getBean('Prospects');
+    			$prospect = BeanFactory::newBean('Prospects');
     			$prospect_module_list = array('leads', 'contacts', 'prospects', 'users');
     			foreach($prospect_module_list as $mname){
                     $query = sprintf(
@@ -194,7 +194,7 @@ $xtpl->out("main");
 
 function getDocumentRevisions()
 {
-	$document = BeanFactory::getBean('Documents');
+	$document = BeanFactory::newBean('Documents');
 
 	$currentDate = $document->db->now();
 	$empty_date = $document->db->emptyValue("date");

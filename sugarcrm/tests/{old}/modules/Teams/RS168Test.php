@@ -66,7 +66,7 @@ class RS168Test extends Sugar_PHPUnit_Framework_TestCase
         $team1 = SugarTestTeamUtilities::createAnonymousTeam();
         $team2 = SugarTestTeamUtilities::createAnonymousTeam();
         $team2->reassign_team_records(array($team1->id));
-        $team = BeanFactory::getBean('Teams');
+        $team = BeanFactory::newBean('Teams');
         $team->retrieve($team1->id, true, false);
         $this->assertEquals(1, $team->deleted);
     }

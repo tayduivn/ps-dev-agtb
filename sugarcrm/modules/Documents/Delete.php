@@ -34,7 +34,7 @@ if(!$focus->ACLAccess('Delete')){
 }
 if (isset($_REQUEST['object']) && $_REQUEST['object']="documentrevision") {
 	//delete document revision.
-	$focus = BeanFactory::getBean('DocumentRevisions');
+	$focus = BeanFactory::newBean('DocumentRevisions');
 	UploadFile::unlink_file($_REQUEST['revision_id'],$_REQUEST['filename']);
 } else {
 	//delete document and its revisions.

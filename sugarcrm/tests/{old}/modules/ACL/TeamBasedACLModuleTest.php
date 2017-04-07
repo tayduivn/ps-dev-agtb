@@ -71,13 +71,13 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $team1 = SugarTestTeamUtilities::createAnonymousTeam();
         $team2 = SugarTestTeamUtilities::createAnonymousTeam();
 
-        $this->teamSetT1 = BeanFactory::getBean('TeamSets');
+        $this->teamSetT1 = BeanFactory::newBean('TeamSets');
         $this->teamSetT1->addTeams(array($team1->id));
 
-        $this->teamSetT2 = BeanFactory::getBean('TeamSets');
+        $this->teamSetT2 = BeanFactory::newBean('TeamSets');
         $this->teamSetT2->addTeams(array($team2->id));
 
-        $this->teamSetT1T2 = BeanFactory::getBean('TeamSets');
+        $this->teamSetT1T2 = BeanFactory::newBean('TeamSets');
         $this->teamSetT1T2->addTeams(array($team1->id, $team2->id));
 
         $this->user = SugarTestUserUtilities::createAnonymousUser();

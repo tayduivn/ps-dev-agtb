@@ -622,7 +622,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     {
         static $teamBean;
         if ( !isset($teamBean) ) {
-            $teamBean = BeanFactory::getBean('Teams');
+            $teamBean = BeanFactory::newBean('Teams');
         }
 
     	if(!is_array($value)){
@@ -649,7 +649,7 @@ class SugarFieldTeamset extends SugarFieldBase {
                     continue;
                 }
                 //3) ok we did not find the id, so we need to create a team.
-                $newbean = BeanFactory::getBean('Teams');
+                $newbean = BeanFactory::newBean('Teams');
                  if ( $newbean->ACLAccess('save') ) {
                     $newbean->{$vardef['rname']} = $val;
 
@@ -679,7 +679,7 @@ class SugarFieldTeamset extends SugarFieldBase {
                 $focus->teams->replace($team_ids, array(), true);
                 $focus->team_id = $team_ids[0];
             } else {
-                $teamSet = BeanFactory::getBean('TeamSets');
+                $teamSet = BeanFactory::newBean('TeamSets');
                 $selectedTeamSet = Team::$nameTeamsetMapping[$vardef['name']];
                 $focus->$selectedTeamSet = $teamSet->addTeams($team_ids);
             }
@@ -690,7 +690,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     }
 
     private function _isTeamId($value, $module){
-    	$checkfocus = BeanFactory::getBean($module);
+    	$checkfocus = BeanFactory::newBean($module);
         if ( $checkfocus && is_null($checkfocus->retrieve($value)) ){
         	return false;
         }
@@ -793,7 +793,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         //BEGIN SUGARCRM flav=ent ONLY
         // Handle MassUpdate "replace". (see MassUpdateApi::handleTypeAdjustments())
         if (!empty($selectedTeamIds)) {
-            $teamSet = BeanFactory::getBean('TeamSets');
+            $teamSet = BeanFactory::newBean('TeamSets');
             $bean->acl_team_set_id = $teamSet->addTeams($selectedTeamIds);
         } else {
             $bean->acl_team_set_id = '';
@@ -824,7 +824,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         //BEGIN SUGARCRM flav=ent ONLY
         // Handle "add" case. (see MassUpdateApi::handleTypeAdjustments())
         if (!empty($selectedTeamIds)) {
-            $teamSet = BeanFactory::getBean('TeamSets');
+            $teamSet = BeanFactory::newBean('TeamSets');
             $currentSelectedIds = $teamSet->getTeamIds($bean->acl_team_set_id);
             $bean->acl_team_set_id = $teamSet->addTeams(array_unique(
                 array_merge($currentSelectedIds, $selectedTeamIds)

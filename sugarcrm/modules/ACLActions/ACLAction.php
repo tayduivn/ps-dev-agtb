@@ -43,7 +43,7 @@ class ACLAction  extends SugarBean
         if(isset($ACLActions[$type])){
             foreach($ACLActions[$type]['actions'] as $action_name =>$action_def){
 
-                $action = BeanFactory::getBean('ACLActions');
+                $action = BeanFactory::newBean('ACLActions');
                 $query = "SELECT * FROM " . $action->table_name . " WHERE name='$action_name' AND category = '$category' AND acltype='$type' AND deleted=0 ";
                 $row = $db->fetchOne($query);
                 //only add if an action with that name and category don't exist
@@ -77,7 +77,7 @@ class ACLAction  extends SugarBean
         if(isset($ACLActions[$type])){
             foreach($ACLActions[$type]['actions'] as $action_name =>$action_def){
 
-                $action = BeanFactory::getBean('ACLActions');
+                $action = BeanFactory::newBean('ACLActions');
                 $query = "SELECT * FROM " . $action->table_name . " WHERE name='$action_name' AND category = '$category' AND acltype='$type' and deleted=0";
                 $result = $db->query($query);
                 //only add if an action with that name and category don't exist
@@ -182,7 +182,7 @@ class ACLAction  extends SugarBean
         $result = $db->query($query);
         $default_actions = array();
         while($row = $db->fetchByAssoc($result) ){
-            $acl = BeanFactory::getBean('ACLActions');
+            $acl = BeanFactory::newBean('ACLActions');
             $acl->populateFromRow($row);
             $default_actions[] = $acl;
         }

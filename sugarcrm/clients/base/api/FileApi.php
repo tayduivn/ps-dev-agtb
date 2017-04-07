@@ -468,7 +468,7 @@ class FileApi extends SugarApi {
             throw new SugarApiExceptionNotFound('Could not find a relationship named: ' . $args['link_name']);
         }
         $linkModuleName = $record->$linkName->getRelatedModuleName();
-        $linkSeed = BeanFactory::getBean($linkModuleName);
+        $linkSeed = BeanFactory::newBean($linkModuleName);
 
         if (empty($linkSeed)) {
             throw new SugarApiExceptionInvalidParameter("Cannot use condition against $linkName - unknown module");

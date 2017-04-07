@@ -185,7 +185,7 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     public function testExportSanitize()
     {
         global $sugar_config;
-        $obj = BeanFactory::getBean('Opportunities');
+        $obj = BeanFactory::newBean('Opportunities');
         $obj->amount = '1000';
         $obj->base_rate = 1;
         $obj->currency_id = '-99';
@@ -220,7 +220,7 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     public function testExportSanitizeConvertToBase()
     {
         global $sugar_config;
-        $obj = BeanFactory::getBean('Opportunities');
+        $obj = BeanFactory::newBean('Opportunities');
         $obj->amount = '1000';
         $obj->base_rate = self::$currency2->conversion_rate;
         $obj->currency_id = self::$currency2->id;

@@ -22,7 +22,7 @@ class SugarTestNotificationUtilities
     public static function createNotification($id = '')
     {
         $time = mt_rand();
-        $notification = BeanFactory::getBean('Notifications');
+        $notification = BeanFactory::newBean('Notifications');
         $notification->name = 'SugarNotification' . $time;
         $notification->save();
         self::$_createdNotifications[] = $notification;

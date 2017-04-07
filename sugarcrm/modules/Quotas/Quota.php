@@ -101,7 +101,7 @@ class Quota extends SugarBean
 
         $ret_array['from'] = " FROM users, quotas ";
 
-        $us = BeanFactory::getBean('Users');
+        $us = BeanFactory::newBean('Users');
         $us->addVisibilityFrom($ret_array['from'], array('where_condition' => true));
         $us->addVisibilityFrom($where, array('where_condition' => true));
 
@@ -423,7 +423,7 @@ class Quota extends SugarBean
 
         $sq = new SugarQuery();
         $sq->select(array('quotas.currency_id', 'quotas.amount'));
-        $sq->from(BeanFactory::getBean('Quotas'));
+        $sq->from(BeanFactory::newBean('Quotas'));
         $sq->where()
             ->equals('user_id', $user_id)
             ->equals('quota_type', ($should_rollup) ? 'Rollup' : 'Direct')

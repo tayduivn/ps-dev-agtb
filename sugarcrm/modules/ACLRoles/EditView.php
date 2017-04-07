@@ -23,7 +23,7 @@ $sugar_smarty->assign('ISDUPLICATE', '');
 $duplicateString='';
 //mass localization
 $sugar_smarty->assign('APP_LIST', $app_list_strings);
-$role = BeanFactory::getBean('ACLRoles');
+$role = BeanFactory::newBean('ACLRoles');
 $role_name = '';
 $return= array('module'=>'ACLRoles', 'action'=>'index', 'record'=>'');
 $request = InputValidation::getService();

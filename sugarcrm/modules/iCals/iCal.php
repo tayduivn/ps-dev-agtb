@@ -228,7 +228,7 @@ class iCal extends vCal {
                     $ical_array[] = array("LOCATION", $event->location);
                     $eventUsers = $event->get_meeting_users();
                     $query = "SELECT contact_id as id from meetings_contacts where meeting_id='$event->id' AND deleted=0";
-                    $eventContacts = $event->build_related_list($query, BeanFactory::getBean('Contacts'));
+                    $eventContacts = $event->build_related_list($query, BeanFactory::newBean('Contacts'));
                     $eventAttendees = array_merge($eventUsers, $eventContacts);
                     if (is_array($eventAttendees))
                     {
@@ -316,7 +316,7 @@ class iCal extends vCal {
         $where = "project_task.assigned_user_id='{$user_bean->id}' ".
             "AND (project_task.status IS NULL OR (project_task.status!='Deferred')) ".
             "AND (project_task.date_start IS NULL OR " . CalendarActivity::get_occurs_within_where_clause('project_task', '', $start_date_time, $end_date_time, 'date_start', 'month') . ")";
-        $seedProjectTask = BeanFactory::getBean('ProjectTask');
+        $seedProjectTask = BeanFactory::newBean('ProjectTask');
         $projectTaskList = $seedProjectTask->get_full_list("", $where);
         if (is_array($projectTaskList))
         {
@@ -330,7 +330,7 @@ class iCal extends vCal {
             $where = "tasks.assigned_user_id='{$user_bean->id}' ".
                 "AND (tasks.status IS NULL OR (tasks.status!='Deferred')) ".
                 "AND (tasks.date_start IS NULL OR " . CalendarActivity::get_occurs_within_where_clause('tasks', '', $start_date_time, $end_date_time, 'date_start', 'month') . ")";
-            $seedTask = BeanFactory::getBean('Tasks');
+            $seedTask = BeanFactory::newBean('Tasks');
             $taskList = $seedTask->get_full_list("", $where);
             if (is_array($taskList))
             {

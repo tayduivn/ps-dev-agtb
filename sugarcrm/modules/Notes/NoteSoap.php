@@ -23,7 +23,7 @@ class NoteSoap
     {
         global $sugar_config;
 
-        $focus = BeanFactory::getBean('Notes');
+        $focus = BeanFactory::newBean('Notes');
 
                 if($portal){
                         $focus->disable_row_level_security = true;
@@ -65,7 +65,7 @@ class NoteSoap
     function newSaveFile($note, $portal = false){
         global $sugar_config;
 
-        $focus = BeanFactory::getBean('Notes');
+        $focus = BeanFactory::newBean('Notes');
 
         if($portal){
         	$focus->disable_row_level_security = true;

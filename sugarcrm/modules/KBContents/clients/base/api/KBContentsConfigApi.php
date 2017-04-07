@@ -53,7 +53,7 @@ class KBContentsConfigApi extends ConfigModuleApi
     protected function save(ServiceBase $api, $params, $module)
     {
         /** @var Administration $admin */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $deletedLanguages = array();
         if (isset($params['deleted_languages'])) {
@@ -115,7 +115,7 @@ class KBContentsConfigApi extends ConfigModuleApi
     protected function updateDocuments($values, $lang)
     {
         $db = DBManagerFactory::getInstance();
-        $bean = BeanFactory::getBean('KBContents');
+        $bean = BeanFactory::newBean('KBContents');
 
         if (!empty($lang) && !empty($values)) {
             $inString = implode(',', array_map(array($db, 'quoted'), $lang));

@@ -163,7 +163,7 @@ class SugarUpgradeNullifyEmptyDurationMinutes extends UpgradeScript
     protected function getFielddefsFromBean()
     {
         // Start with the Meetings bean so we can get the vardef
-        $bean = BeanFactory::getBean('Meetings');
+        $bean = BeanFactory::newBean('Meetings');
         return $bean->field_defs;
     }
 

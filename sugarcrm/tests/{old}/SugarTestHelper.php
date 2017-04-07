@@ -870,7 +870,7 @@ class SugarTestHelper
             $field->{$param} = $value;
         }
 
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
         if (!$bean) {
             throw new SugarTestHelperException(sprintf(
                 '%s is not a valid module name',
@@ -1033,7 +1033,7 @@ class SugarTestHelper
 
     protected static function setUp_ACLStatic()
     {
-        self::$aclAction = BeanFactory::getBean('ACLActions');
+        self::$aclAction = BeanFactory::newBean('ACLActions');
     }
 
     protected static function tearDown_ACLStatic()

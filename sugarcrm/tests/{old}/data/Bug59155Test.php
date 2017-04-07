@@ -69,7 +69,7 @@ class Bug59155Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCaseCalcFieldIsConsidered()
     {
-        $account = BeanFactory::getBean('Accounts');
+        $account = BeanFactory::newBean('Accounts');
         $fields = SugarTestReflection::callProtectedMethod(
             $account,
             'get_fields_influencing_linked_bean_calc_fields',

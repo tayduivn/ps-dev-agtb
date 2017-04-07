@@ -54,7 +54,7 @@ class ProjectTaskViewList extends ViewList
 
         if(!empty($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
             if(empty($_REQUEST['button']) && (empty($_REQUEST['clear_query']) || $_REQUEST['clear_query']!='true')) {
-                $this->saved_search = BeanFactory::getBean('SavedSearch');
+                $this->saved_search = BeanFactory::newBean('SavedSearch');
                 $this->saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
                 $this->saved_search->populateRequest();
             } elseif(!empty($_REQUEST['button'])) { // click the search button, after retrieving from saved_search
@@ -190,7 +190,7 @@ class ProjectTaskViewList extends ViewList
             $seed->parent_module_dir = 'Project';
         }
 
-        $project = BeanFactory::getBean('Project');
+        $project = BeanFactory::newBean('Project');
         $project_query = new SugarQuery();
         $project_query->from($project);
         $project_list = $project->fetchFromQuery($project_query);

@@ -49,7 +49,7 @@ class Popup_Picker
     {
         global $mod_strings, $app_strings, $currentModule,
                $seed_object, $sugar_version, $sugar_config;
-        $focus = BeanFactory::getBean('ProductCategories');
+        $focus = BeanFactory::newBean('ProductCategories');
 
         if (!isset($_REQUEST['html'])) {
             $xtpl =new XTemplate ('modules/ProductCategories/Popup_picker.html');

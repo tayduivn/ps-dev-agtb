@@ -36,7 +36,7 @@ global $app_strings;
 // global $cal_codes;
 
 
-$workflow_object = BeanFactory::getBean('WorkFlow');
+$workflow_object = BeanFactory::newBean('WorkFlow');
 if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['workflow_id'])) {
     $workflow_object->retrieve($_REQUEST['workflow_id']);
 } else {
@@ -44,7 +44,7 @@ if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['workflow_id'])) {
 }
 
 
-$focus = BeanFactory::getBean('WorkFlowAlertShells');
+$focus = BeanFactory::newBean('WorkFlowAlertShells');
 
 if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);

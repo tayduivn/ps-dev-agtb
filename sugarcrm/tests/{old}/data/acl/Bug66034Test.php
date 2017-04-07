@@ -75,7 +75,7 @@ class Bug66034Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAclAccess($module, $aclModule, $action, $role, $result, $message)
     {
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
 
         if (!empty($role)) {
             $method = 'set'.$role.'ForModule';

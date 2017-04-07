@@ -32,7 +32,7 @@ class Bug43202Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testExportQuery()
     {
-        $focus = BeanFactory::getBean('Accounts');
+        $focus = BeanFactory::newBean('Accounts');
         //use join name for teams as defined in team security vardefs ('tj')
         $query = $focus->create_export_query('', 'tj.name IS NOT NULL');
         $this->assertTrue($focus->db->validateQuery($query));

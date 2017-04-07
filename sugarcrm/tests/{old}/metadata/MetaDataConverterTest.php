@@ -167,7 +167,7 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
             'target_record_key' => true,
         );
         $converter = new MetaDataConverter();
-        $bean = BeanFactory::getBean('Users');
+        $bean = BeanFactory::newBean('Users');
 
         $spDefs = new SubPanelDefinitions($bean);
         $layout_defs = $spDefs->layout_defs;

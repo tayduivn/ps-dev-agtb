@@ -74,7 +74,7 @@ class SoapHelperWebServices {
 		} //if
 
 		if($value->module_dir == 'Bugs'){
-			$seedRelease = BeanFactory::getBean('Releases');
+			$seedRelease = BeanFactory::newBean('Releases');
 			$options = $seedRelease->get_releases(TRUE, "Active");
 			$options_ret = array();
 			foreach($options as $name=>$value){
@@ -135,7 +135,7 @@ class SoapHelperWebServices {
 function validate_user($user_name, $password){
 	$GLOBALS['log']->info('Begin: SoapHelperWebServices->validate_user');
 	global $server, $current_user, $sugar_config;
-	$user = BeanFactory::getBean('Users');
+	$user = BeanFactory::newBean('Users');
 	$user->user_name = $user_name;
 	$authController = AuthenticationController::getInstance();
 	// Check to see if the user name and password are consistent.
@@ -736,7 +736,7 @@ function validate_user($user_name, $password){
 		$count = 1;
 		$total = sizeof($name_value_lists);
 		foreach($name_value_lists as $name_value_list){
-			$seed = BeanFactory::getBean($module_name);
+			$seed = BeanFactory::newBean($module_name);
 			$seed->update_vcal = false;
 			foreach($name_value_list as $value){
 				if($value['name'] == 'id'){
@@ -1017,7 +1017,7 @@ function validate_user($user_name, $password){
 		$assigned_user_id = $current_user->id;
 
 		// check if it already exists
-	    $focus = BeanFactory::getBean('Accounts');
+	    $focus = BeanFactory::newBean('Accounts');
 	    if($focus->ACLAccess('Save')) {
 			if ( empty($account_name) && empty($account_id)) {
 				return;

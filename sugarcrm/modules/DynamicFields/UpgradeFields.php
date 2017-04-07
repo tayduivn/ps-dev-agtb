@@ -34,7 +34,7 @@ $modules = array();
 
  foreach($modules as $the_module=>$fields){
  	echo "<br><br>".$mod_strings['LBL_SCAN_MODULE']." $the_module <br>";
- 	    $mod = BeanFactory::getBean($the_module);
+ 	    $mod = BeanFactory::newBean($the_module);
 
 		if(!$db->tableExists($mod->table_name . "_cstm")){
 			$mod->custom_fields = new DynamicField();

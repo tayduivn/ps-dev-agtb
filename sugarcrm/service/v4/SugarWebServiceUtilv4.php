@@ -144,7 +144,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	 */
 	function metdataAclParserWirelessEdit($module_name, $metadata)
 	{
-	    $seed = BeanFactory::getBean($module_name);
+	    $seed = BeanFactory::newBean($module_name);
 
 	    $results = array();
 	    $results['templateMeta'] = $metadata['templateMeta'];
@@ -196,7 +196,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	 */
 	function metdataAclParserWirelessList($module_name, $metadata)
 	{
-	    $seed = BeanFactory::getBean($module_name);
+	    $seed = BeanFactory::newBean($module_name);
 
 	    $results = array();
 	    foreach ($metadata as $field_name => $entry)
@@ -318,7 +318,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		}
 
 		if($value->module_dir == 'Bugs'){
-			$seedRelease = BeanFactory::getBean('Releases');
+			$seedRelease = BeanFactory::newBean('Releases');
 			$options = $seedRelease->get_releases(TRUE, "Active");
 			$options_ret = array();
 			foreach($options as $name=>$value){
@@ -374,7 +374,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		$count = 1;
 		$total = sizeof($name_value_lists);
 		foreach($name_value_lists as $name_value_list){
-			$seed = BeanFactory::getBean($module_name);
+			$seed = BeanFactory::newBean($module_name);
 
 			$seed->update_vcal = false;
 			foreach($name_value_list as $name => $value){
@@ -630,7 +630,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	    foreach ($layout_defs[$module]['subpanel_setup'] as $subpanel => $subpaneldefs)
 	    {
 	        $moduleToCheck = $subpaneldefs['module'];
-	        $bean = BeanFactory::getBean($moduleToCheck);
+	        $bean = BeanFactory::newBean($moduleToCheck);
 	        if(empty($bean)) continue;
 
 	        if($bean->ACLAccess('list'))

@@ -209,7 +209,7 @@ class Report
         }
         if (!empty($this->report_def['module'])) {
             $this->module = $this->report_def['module'];
-            $this->moduleBean = BeanFactory::getBean($this->module);
+            $this->moduleBean = BeanFactory::newBean($this->module);
         }
         if (!empty($this->report_def['report_type'])) {
             $this->report_type = $this->report_def['report_type'];
@@ -267,7 +267,7 @@ class Report
         global $beanFiles;
         // START: Dynamically convert ancient versions to 5.1 version of content string.
         if (!empty($this->report_def['links_def'])) {
-            $tmpBean = BeanFactory::getBean($this->full_table_list['self']['module']);
+            $tmpBean = BeanFactory::newBean($this->full_table_list['self']['module']);
             $linked_fields = $tmpBean->get_linked_fields();
 
             foreach ($this->report_def['links_def'] as $old_link)
@@ -429,7 +429,7 @@ class Report
                 $beanLabel = $table_data['module'];
             }
 
-            $bean = BeanFactory::getBean($beanLabel);
+            $bean = BeanFactory::newBean($beanLabel);
 
             if (empty($bean)) {
                 $GLOBALS['log']->warn("$beanLabel doesn't exist.");
@@ -653,7 +653,7 @@ class Report
                     $field_def['real_table'] .= '_cstm';
                 }
                 if ($field_def['type'] == 'relate' && !empty($field_def['ext2'])) {
-                    $joinFocus = BeanFactory::getBean($field_def['ext2']);
+                    $joinFocus = BeanFactory::newBean($field_def['ext2']);
                     $field_def['secondary_table'] = $joinFocus->table_name;
                     if(isset($table_data['link_def']) && isset($table_data['link_def']['module']) && isset($table_data['module'])
                         && $table_data['link_def']['module'] == $table_data['module'])
@@ -671,7 +671,7 @@ class Report
 
     function _load_currency()
     {
-        $this->currency_obj = BeanFactory::getBean('Currencies')->getUserCurrency();
+        $this->currency_obj = BeanFactory::newBean('Currencies')->getUserCurrency();
         $this->currency_symbol = $this->currency_obj->symbol;
     }
 
@@ -956,7 +956,7 @@ class Report
             foreach ($this->report_def['full_table_list'] as $k => $v) {
                 if (!empty($v['link_def']['name'])) {
                     $relModule = $v['parent'] == 'self' ? $this->module : $v['parent'];
-                    $bean = BeanFactory::getBean($relModule);
+                    $bean = BeanFactory::newBean($relModule);
                     if (!empty($bean) && empty($bean->field_defs[$v['link_def']['name']])) {
                         //Invalid link found
                         $ret[$k] = $v['name'];
@@ -2430,7 +2430,7 @@ class Report
         global $current_user;
         $saved_vars = array();
 
-        $saved_report = BeanFactory::getBean('Reports');
+        $saved_report = BeanFactory::newBean('Reports');
         $report_type = 'tabular';
         $chart_type = 'none';
 
@@ -2552,7 +2552,7 @@ class Report
     {
         $modules = array();
         $modules_hash[$report_def['module']] = 1;
-        $focus = BeanFactory::getBean($report_def['module']);
+        $focus = BeanFactory::newBean($report_def['module']);
         $linked_fields = $focus->get_linked_fields();
 
         foreach ($report_def['links_def'] as $name) {
@@ -2597,7 +2597,7 @@ class Report
      */
     private function getExt2FieldDefSelectPiece($field_def, $add_alias = true)
     {
-        $extModule = BeanFactory::getBean($field_def['ext2']);
+        $extModule = BeanFactory::newBean($field_def['ext2']);
         $secondaryTableAlias = $field_def['secondary_table'];
         if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['rep_rel_name']])) {
             $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['rep_rel_name']]['join_table_alias'];

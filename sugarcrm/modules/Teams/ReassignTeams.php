@@ -38,7 +38,7 @@ if(isset($_REQUEST['team_id']) && isset($_REQUEST['teams'])) {
 }
 	
 $teams = array();
-$focus = BeanFactory::getBean('Teams');
+$focus = BeanFactory::newBean('Teams');
 
 if (isset($_SESSION['REASSIGN_TEAMS'])) {
     foreach ($_SESSION['REASSIGN_TEAMS'] as $team_id) {

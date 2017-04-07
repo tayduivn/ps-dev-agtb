@@ -100,7 +100,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
     		if (sizeof($list) > 0) {
     			// get the related module name and instantiate a bean for that
     			$submodulename = $mod->$link_field_name->getRelatedModuleName();
-                $submoduletemp = BeanFactory::getBean($submodulename);
+                $submoduletemp = BeanFactory::newBean($submodulename);
 
     			foreach($list as $row) {
     				$submoduleobject = @clone($submoduletemp);

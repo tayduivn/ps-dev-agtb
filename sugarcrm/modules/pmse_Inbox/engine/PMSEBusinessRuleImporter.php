@@ -24,7 +24,7 @@ class PMSEBusinessRuleImporter extends PMSEImporter
 
     public function __construct()
     {
-        $this->bean = BeanFactory::getBean('pmse_Business_Rules'); //new BpmRuleSet();
+        $this->bean = BeanFactory::newBean('pmse_Business_Rules'); //new BpmRuleSet();
         $this->name = 'name';
         $this->id = 'rst_id';
         $this->suffix = 'rst_';

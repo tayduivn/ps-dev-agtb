@@ -24,7 +24,7 @@ global $current_language,$beanList,$beanFiles;
 $current_module_strings = return_module_language($current_language, 'Activities');
 
 // history_list is the means of passing data to a SubPanelView.
-$focus = BeanFactory::getBean($_REQUEST['module_name']);
+$focus = BeanFactory::newBean($_REQUEST['module_name']);
 
 class Popup_Picker
 {
@@ -262,7 +262,7 @@ class Popup_Picker
             }
             $query .= $queryArray['join'];
             $query .= $queryArray['where'];
-            $emails = BeanFactory::getBean('Emails');
+            $emails = BeanFactory::newBean('Emails');
             $focus_unlinked_emails_list = $emails->process_list_query($query, 0);
             $focus_unlinked_emails_list = $focus_unlinked_emails_list['list'];
             foreach ($focus_unlinked_emails_list as $email)

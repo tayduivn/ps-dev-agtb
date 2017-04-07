@@ -99,7 +99,7 @@
                     }
 
                 } elseif(!isset($current_users_currency)) { // else use current user's
-                    $currency = $current_users_currency = BeanFactory::getBean('Currencies')->getUserCurrency();
+                    $currency = $current_users_currency = BeanFactory::newBean('Currencies')->getUserCurrency();
                 }
         }
         if(!empty($params['convert']) && $params['convert']) {

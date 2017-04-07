@@ -85,7 +85,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $job->runnable_data = '';
         $job->runJob();
 
-        $updated_opp = BeanFactory::getBean('Opportunities');
+        $updated_opp = BeanFactory::newBean('Opportunities');
         $updated_opp->retrieve($opp->id);
         $this->assertNotEmpty($updated_opp->commit_stage, "Updated opportunity's commit stage should not be empty");
 
@@ -108,7 +108,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
         // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         // this only pertains to Pro and Corp, not End and Ult
-        $product = BeanFactory::getBean('Products');
+        $product = BeanFactory::newBean('Products');
         $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
 
         $act_product = array('name' => $product->name,

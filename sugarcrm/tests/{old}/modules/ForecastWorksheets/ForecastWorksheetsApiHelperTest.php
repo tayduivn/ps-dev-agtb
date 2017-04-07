@@ -69,7 +69,7 @@ class ForecastWorksheetsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         /* @var $forecast_worksheet ForecastWorksheet */
-        $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $forecast_worksheet = BeanFactory::newBean('ForecastWorksheets');
         $forecast_worksheet->parent_type = 'Products';
         $forecast_worksheet->parent_id = $product_id;
         $forecast_worksheet->name = 'Test Product';

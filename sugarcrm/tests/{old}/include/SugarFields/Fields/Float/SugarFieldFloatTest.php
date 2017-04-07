@@ -170,7 +170,7 @@ class SugarFieldFloatTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFixForFilterForFloats($op, $value, $query_op)
     {
-        $bean = BeanFactory::getBean('RevenueLineItems');
+        $bean = BeanFactory::newBean('RevenueLineItems');
 
         /* @var $where SugarQuery_Builder_Where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')
@@ -217,7 +217,7 @@ class SugarFieldFloatTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFixForFilterForWholeNumbers($op, $value)
     {
-        $bean = BeanFactory::getBean('RevenueLineItems');
+        $bean = BeanFactory::newBean('RevenueLineItems');
 
         /* @var $where SugarQuery_Builder_Where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')

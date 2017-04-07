@@ -27,7 +27,6 @@ set_include_path(
 
 require_once 'include/SugarObjects/SugarConfig.php';
 require_once 'include/utils/array_utils.php';
-require_once 'jssource/Minifier.php';
 
 $minifyUtils = null;
 

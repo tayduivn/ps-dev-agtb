@@ -42,7 +42,7 @@ class Bug67170Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testListQuery()
     {
-        $bean = BeanFactory::getBean('Contacts');
+        $bean = BeanFactory::newBean('Contacts');
         //simulate call from export_utils to retrieve export query
         $query = $bean->create_export_query('', 'contacts.deleted id = 0');
 

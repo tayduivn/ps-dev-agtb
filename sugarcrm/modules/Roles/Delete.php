@@ -21,7 +21,7 @@
 
 
 
-$focus = BeanFactory::getBean('Roles');
+$focus = BeanFactory::newBean('Roles');
 
 if(!isset($_REQUEST['record']))
 	sugar_die("A record number must be specified to delete the role.");

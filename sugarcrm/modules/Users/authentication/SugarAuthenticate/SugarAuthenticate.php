@@ -47,7 +47,7 @@ class SugarAuthenticate{
 		global $app_strings;
 		unset($_SESSION['login_error']);
 		$res = $GLOBALS['sugar_config']['passwordsetting'];
-        $usr = BeanFactory::getBean('Users');
+        $usr = BeanFactory::newBean('Users');
         $usr->retrieve_by_string_fields(array('user_name'=>$username));
 		$_SESSION['login_error']='';
 		$_SESSION['waiting_error']='';

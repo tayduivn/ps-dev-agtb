@@ -294,7 +294,7 @@ class SugarFieldRelate extends SugarFieldBase {
             // check if the ACL metadata has been already populated by another relate field
             if (isset($properties['module'])) {
                 // trying to reconstruct relate bean from the fetched data
-                $relate = BeanFactory::getBean($properties['module']);
+                $relate = BeanFactory::newBean($properties['module']);
                 $row = array('id' => $bean->{$properties['id_name']});
 
                 $ownerField = $relate->getOwnerField();
@@ -324,7 +324,7 @@ class SugarFieldRelate extends SugarFieldBase {
     {
         if ( !isset($vardef['module']) )
             return false;
-        $newbean = BeanFactory::getBean($vardef['module']);
+        $newbean = BeanFactory::newBean($vardef['module']);
 
         // Bug 32869 - Assumed related field name is 'name' if it is not specified
         if ( !isset($vardef['rname']) )
@@ -347,7 +347,7 @@ class SugarFieldRelate extends SugarFieldBase {
 
             // Bug 24075 - clear out id field value if it is invalid
             if ( isset($focus->$idField) ) {
-                $checkfocus = BeanFactory::getBean($vardef['module']);
+                $checkfocus = BeanFactory::newBean($vardef['module']);
                 if ( $checkfocus && is_null($checkfocus->retrieve($focus->$idField)) )
                     $focus->$idField = '';
             }

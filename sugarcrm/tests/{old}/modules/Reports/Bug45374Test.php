@@ -48,7 +48,7 @@ class Bug45374Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user', array(true, 1));
 
         //Add user to his private tean set
-        $this->team_set = BeanFactory::getBean('TeamSets');
+        $this->team_set = BeanFactory::newBean('TeamSets');
         $this->team_set->addTeams($GLOBALS['current_user']->getPrivateTeamID());
 
         //Create teams list according to list

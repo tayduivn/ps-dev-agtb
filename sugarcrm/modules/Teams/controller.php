@@ -46,7 +46,7 @@ class TeamsController extends SugarController {
 
 	public function action_AddTeamToHierarchy(){
 		if(!empty($_POST['team_id'])){
-			$teamH = BeanFactory::getBean('TeamHierarchy');
+			$teamH = BeanFactory::newBean('TeamHierarchy');
 			if(!empty($_POST['parent_id']))
 				$teamH->parent_id = $_POST['parent_id'];
 			$teamH->team_id = $_POST['team_id'];
@@ -58,7 +58,7 @@ class TeamsController extends SugarController {
 
 	public function action_AddTheUserToTeam(){
 		if(!empty($_POST['user_id']) && !empty($_POST['user_parent_id'])){
-			$teamH = BeanFactory::getBean('TeamHierarchy');
+			$teamH = BeanFactory::newBean('TeamHierarchy');
 			$teamH->addUserToTeam($_POST['user_id'], $_POST['user_parent_id']);
 		}
 		$this->view = 'tree';
@@ -142,7 +142,7 @@ class TeamsController extends SugarController {
                 // remove TBA values from disabled modules
                 foreach ($disabledModules as $moduleName) {
                     // $moduleBean might be null, e.g. custom module is disabled
-                    $moduleBean = BeanFactory::getBean($moduleName);
+                    $moduleBean = BeanFactory::newBean($moduleName);
                     if ($moduleBean) {
                         $tbaConfigurator->removeAllTBAValuesFromBean($moduleBean);
                     }

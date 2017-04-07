@@ -143,7 +143,7 @@ class Team extends SugarBean
         $name_2 = '',
         $associated_user_id = null
     ) {
-		$team = BeanFactory::getBean('Teams');
+		$team = BeanFactory::newBean('Teams');
 
 		if(isset($team_id)) {
 			$team->id = $team_id;
@@ -212,7 +212,7 @@ class Team extends SugarBean
 
 			//add the global team to the teamset
 			$user_team_ids = array($team->id);
-			$teamSet = BeanFactory::getBean('TeamSets');
+			$teamSet = BeanFactory::newBean('TeamSets');
 			$su->team_set_id = $teamSet->addTeams($user_team_ids);
 
 		} else {
@@ -237,7 +237,7 @@ class Team extends SugarBean
         $filter = is_string($filter) && !empty($filter) ? $filter : null;
 
         // Get the list of members
-        $member = BeanFactory::getBean('TeamMemberships');
+        $member = BeanFactory::newBean('TeamMemberships');
         $member_list = $member->get_full_list("", $where);
 
 		$user_list = Array();
@@ -334,7 +334,7 @@ class Team extends SugarBean
 		TeamSetManager::removeTeamFromSets($this->id);
 
 	    // Take the item off the recently viewed lists
-	    $tracker = BeanFactory::getBean('Trackers');
+	    $tracker = BeanFactory::newBean('Trackers');
 	    $tracker->makeInvisibleForAll($this->id);
 	}
 
@@ -346,7 +346,7 @@ class Team extends SugarBean
 	 */
 	function complete_team_duplication($original_team_id)
 	{
-        $membership = BeanFactory::getBean('TeamMemberships');
+        $membership = BeanFactory::newBean('TeamMemberships');
 
         $query = new SugarQuery();
         $query->from($membership, array(
@@ -392,7 +392,7 @@ class Team extends SugarBean
      */
     public function add_user_to_team($user_id, User $user_override = null)
     {
-		$membership = BeanFactory::getBean('TeamMemberships');
+		$membership = BeanFactory::newBean('TeamMemberships');
 		$result = $membership->retrieve_by_user_and_team($user_id, $this->id);
         $membershipExists = false;
 
@@ -429,7 +429,7 @@ class Team extends SugarBean
 
         if (!$membershipExists)
         {
-            $membership = BeanFactory::getBean('TeamMemberships');
+            $membership = BeanFactory::newBean('TeamMemberships');
             $membership->user_id = $user_id;
             $membership->team_id = $this->id;
             $membership->explicit_assign = 1;
@@ -457,7 +457,7 @@ class Team extends SugarBean
     public function addManagerToTeam($manager_id)
     {
         $manager = BeanFactory::getBean('Users', $manager_id);
-        $managers_membership = BeanFactory::getBean('TeamMemberships');
+        $managers_membership = BeanFactory::newBean('TeamMemberships');
         $result = $managers_membership->retrieve_by_user_and_team($manager->id, $this->id);
 
         if($result)
@@ -485,7 +485,7 @@ class Team extends SugarBean
         else
         {
             // This user does not have an implict assign already, add it.
-            $managers_membership = BeanFactory::getBean('TeamMemberships');
+            $managers_membership = BeanFactory::newBean('TeamMemberships');
             $managers_membership->user_id = $manager->id;
             $managers_membership->implicit_assign = true;
             $managers_membership->team_id = $this->id;
@@ -525,7 +525,7 @@ class Team extends SugarBean
 		$visited_users = array();
 
 		// Step0: Set the user to the initial focus
-		$focus = BeanFactory::getBean('Users');
+		$focus = BeanFactory::newBean('Users');
 
 		if(isset($user_override))
 		{
@@ -548,7 +548,7 @@ class Team extends SugarBean
 		$visited_users[$focus->id] = $focus->user_name;
 
 		// Step2: Set explicit to false
-		$membership = BeanFactory::getBean('TeamMemberships');
+		$membership = BeanFactory::newBean('TeamMemberships');
 		$result = $membership->retrieve_by_user_and_team($user_id, $this->id);
  		if($result)
 		{
@@ -577,7 +577,7 @@ class Team extends SugarBean
                 //             0     0
                 $this->users->delete($this->id,$user_id);
             }
-            $manager = BeanFactory::getBean('Users');
+            $manager = BeanFactory::newBean('Users');
             $manager->reports_to_id = $focus->reports_to_id;
             while (!empty($manager->reports_to_id)
                 && $manager->reports_to_id != $manager->id

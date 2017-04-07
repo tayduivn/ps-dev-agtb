@@ -29,7 +29,7 @@ global $app_strings;
 global $app_list_strings;
 global $mod_strings;
 
-$focus = BeanFactory::getBean('TimePeriods');
+$focus = BeanFactory::newBean('TimePeriods');
 
 if (!isset($_REQUEST['record'])) $_REQUEST['record'] = "";
 

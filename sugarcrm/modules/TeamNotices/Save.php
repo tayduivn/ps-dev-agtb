@@ -18,7 +18,7 @@
  ********************************************************************************/
 if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 
-$focus = BeanFactory::getBean('TeamNotices');
+$focus = BeanFactory::newBean('TeamNotices');
 
 require_once('include/formbase.php');
 $focus = populateFromPost('', $focus);	

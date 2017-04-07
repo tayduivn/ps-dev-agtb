@@ -25,7 +25,7 @@ class ParserModifyListView extends ModuleBuilderParser
 		global $app_list_strings ;
 		$this->module_name = $module_name ;
 		$mod_strings = return_module_language ( $GLOBALS [ 'current_language' ], $this->module_name ) ; // needed solely so that listviewdefs that reference this can be included without error
-		$this->module = BeanFactory::getBean($this->module_name);
+		$this->module = BeanFactory::newBean($this->module_name);
 
 		$loaded = $this->_loadFromFile('ListView','modules/' . $this->module_name . '/metadata/listviewdefs.php',$this->module_name);
 		$this->originalListViewDefs = $loaded['viewdefs'] [ $this->module_name ] ;

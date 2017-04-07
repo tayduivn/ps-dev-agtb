@@ -24,7 +24,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	PREPROCESS BEAN DATA FOR DISPLAY
-$focus = BeanFactory::getBean('Emails');
+$focus = BeanFactory::newBean('Emails');
 $email_type = 'archived';
 
 $request = InputValidation::getService();
@@ -57,7 +57,7 @@ if(!empty($_REQUEST['load_id']) && !empty($beanList[$_REQUEST['load_module']])) 
         //Retrieve the email address.
         //If Opportunity or Case then Oppurtinity/Case->Accounts->(email_addr_bean_rel->email_addresses)
         //If Contacts, Leads etc.. then Contact->(email_addr_bean_rel->email_addresses)
-    	$sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
+    	$sugarEmailAddress = BeanFactory::newBean('EmailAddresses');
     	if($contact->object_name == 'Opportunity' || $contact->object_name == 'aCase'){
     	    if(!empty($contact->account_id)) {
     		    $account = BeanFactory::retrieveBean('Accounts', $contact->account_id);
@@ -599,7 +599,7 @@ if(!empty($focus->id) || (!empty($_REQUEST['record']) && $_REQUEST['type'] == 'f
 	$ids = '';
 
         $focusId = empty($focus->id) ? $recordId : $focus->id;
-        $note = BeanFactory::getBean('Notes');
+        $note = BeanFactory::newBean('Notes');
         $where = sprintf('notes.parent_id = %s AND notes.filename IS NOT NULL', $focus->db->quoted($focusId));
         $notes_list = $note->get_full_list("", $where, true);
 
@@ -678,7 +678,7 @@ if($parse_open) {
 ///////////////////////////////////////////////////////////////////////////////
 ////	EMAIL TEMPLATES
 if(ACLController::checkAccess('EmailTemplates', 'list', true) && ACLController::checkAccess('EmailTemplates', 'view', true)) {
-	$et = BeanFactory::getBean('EmailTemplates');
+	$et = BeanFactory::newBean('EmailTemplates');
 	$etResult = $focus->db->query($et->create_new_list_query('','',array(),array(),''));
 	$email_templates_arr[] = '';
 	while($etA = $focus->db->fetchByAssoc($etResult)) {

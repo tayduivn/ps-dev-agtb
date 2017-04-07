@@ -128,7 +128,10 @@ class One2OneBeanRelationship extends One2MBeanRelationship
 
         $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $joinParams = array('joinType' => $join_type, 'bean' => BeanFactory::newBean($targetModule));
+        $joinParams = array(
+            'joinType' => $join_type,
+            'bean' => BeanFactory::getDefinition($targetModule),
+        );
         $jta = $targetTable;
         if (!empty($options['joinTableAlias'])) {
             $jta = $joinParams['alias'] = $options['joinTableAlias'];

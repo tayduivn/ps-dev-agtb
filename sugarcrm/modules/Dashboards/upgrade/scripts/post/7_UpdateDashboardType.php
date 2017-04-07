@@ -20,7 +20,7 @@ class SugarUpgradeUpdateDashboardType extends UpgradeScript
         if (version_compare($this->from_version, '7.9', '<') &&
             version_compare($this->from_version, '7.2', '>')
         ) {
-            $bean = BeanFactory::getBean('Dashboards');
+            $bean = BeanFactory::newBean('Dashboards');
             $this->db->deleteColumn(
                 $bean,
                 array(

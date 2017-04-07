@@ -43,7 +43,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->snip->importEmail($email);
 
 		// get the email object if it imported correctly
-		$e = BeanFactory::getBean('Emails');
+		$e = BeanFactory::newBean('Emails');
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
 		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
 		$this->email_id = $e->id;
@@ -52,7 +52,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
         $e->retrieve($e->id);
 
 		// get the meeting
-		$meeting = BeanFactory::getBean('Meetings');
+		$meeting = BeanFactory::newBean('Meetings');
         $this->assertTrue(is_a($meeting,'SugarBean'));
 		$meeting->retrieve_by_string_fields(array('parent_id' => $e->id, 'parent_type' => $e->module_dir));
 		$this->assertTrue(isset($meeting->id) && !empty($meeting->id), 'Unable to retrieve meeting object');
@@ -87,7 +87,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->snip->importEmail($email);
 
 		// get the email object if it imported correctly
-		$e = BeanFactory::getBean('Emails');
+		$e = BeanFactory::newBean('Emails');
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
 		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
 		$this->email_id = $e->id;
@@ -125,7 +125,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
         $sd = strip_tags($email['message']['description_html']);
 
 		// get the email object if it imported correctly
-		$e = BeanFactory::getBean('Emails');
+		$e = BeanFactory::newBean('Emails');
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
 		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
 		$this->email_id = $e->id;
@@ -167,7 +167,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->snip->importEmail($a_email);
 
 		// now, get the email with the mesage id '2002'
-		$e = BeanFactory::getBean('Emails');
+		$e = BeanFactory::newBean('Emails');
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
 		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
 		$this->email_id = $e->id;
@@ -213,7 +213,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->snip->importEmail($email);
 
 		// get the email object if it imported correctly
-		$e = BeanFactory::getBean('Emails');
+		$e = BeanFactory::newBean('Emails');
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
 		$this->assertTrue(isset($e->id) && !empty($e->id), 'Unable to retrieve email object');
 		$this->email_id = $e->id;

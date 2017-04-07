@@ -46,7 +46,7 @@ class ImportViewConfirm extends ImportView
         $importSource = $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => self::getImportSourceOptions())), 'csv');
 
         // Clear out this user's last import
-        $seedUsersLastImport = BeanFactory::getBean('Import_2');
+        $seedUsersLastImport = BeanFactory::newBean('Import_2');
         $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
         ImportCacheFiles::clearCacheFiles();
 

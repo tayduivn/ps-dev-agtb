@@ -131,7 +131,7 @@ class SugarWidgetSubPanelTopCreateNoteButton extends SugarWidgetSubPanelTopButto
 
     public function display(array $defines, $additionalFormFields = array())
 	{
-	    $focus = BeanFactory::getBean('Notes');
+	    $focus = BeanFactory::newBean('Notes');
 		if ( !$focus->ACLAccess('EditView') ) {
 		    return '';
 	    }

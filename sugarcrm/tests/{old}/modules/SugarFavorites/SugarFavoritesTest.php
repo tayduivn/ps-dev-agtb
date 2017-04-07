@@ -118,7 +118,7 @@ class SugarFavoritesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testToggleExistingFavorite_DeletedIsNot0Or1_ReturnsFalse()
     {
-        $fav    = BeanFactory::getBean("SugarFavorites");
+        $fav    = BeanFactory::newBean("SugarFavorites");
         $actual = $fav->toggleExistingFavorite("123", 5);
         $this->assertFalse($actual, "Should abort and return false when the deleted parameter is neither 0 or 1.");
     }

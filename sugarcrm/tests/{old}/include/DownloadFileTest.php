@@ -49,7 +49,7 @@ class DownloadFileTest extends Sugar_PHPUnit_Framework_TestCase
         $map = array();
         $beans = array();
         foreach ($data as $info) {
-            $bean = BeanFactory::getBean('Accounts');
+            $bean = BeanFactory::newBean('Accounts');
             $bean->name = $info['name'];
             array_push($beans, $bean);
             array_push($map, array($bean, 'somefield', $info));

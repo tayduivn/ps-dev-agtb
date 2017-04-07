@@ -20,7 +20,7 @@ class SugarFieldFileTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        $this->origNote = BeanFactory::getBean('Notes');
+        $this->origNote = BeanFactory::newBean('Notes');
         $this->origNote->name = 'test note';
         $this->origNote->file_mime_type = 'plain/text';
         $this->origNote->filename = 'test.txt';
@@ -50,7 +50,7 @@ class SugarFieldFileTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testApiSave()
     {
-        $this->newNote = BeanFactory::getBean('Notes');
+        $this->newNote = BeanFactory::newBean('Notes');
         $this->newNote->id = create_guid();
 
         $submittedData = array(

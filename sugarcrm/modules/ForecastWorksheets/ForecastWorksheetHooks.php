@@ -143,7 +143,7 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
      */
     public static function getNotificationBean()
     {
-        return BeanFactory::getBean('Notifications');
+        return BeanFactory::newBean('Notifications');
     }
 
     /**

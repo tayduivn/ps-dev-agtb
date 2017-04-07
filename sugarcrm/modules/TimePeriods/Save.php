@@ -25,7 +25,7 @@ if (!is_admin($current_user)&& !is_admin_for_module($current_user,'Forecasts')) 
     sugar_die("Unauthorized access to administration.");
 }
 
-$focus = BeanFactory::getBean('TimePeriods');
+$focus = BeanFactory::newBean('TimePeriods');
 
 if ($_POST['isDuplicate'] != 1) {
 	$focus->retrieve($_POST['record']);

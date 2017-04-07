@@ -33,7 +33,7 @@ if ((empty($record) && empty($records)) || empty($user_id)) {
 
     sugar_die($mod_strings['ERR_ADD_RECORD']);
 } else {
-    $focus = BeanFactory::getBean('Teams');
+    $focus = BeanFactory::newBean('Teams');
 
     if (!is_array($records)) {
         $records = array();

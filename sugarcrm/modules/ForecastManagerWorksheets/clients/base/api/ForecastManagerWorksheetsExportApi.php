@@ -35,7 +35,7 @@ class ForecastManagerWorksheetsExportApi extends ExportApi
     {
         ob_start();
         // Load up a seed bean
-        $seed = BeanFactory::getBean('ForecastManagerWorksheets');
+        $seed = BeanFactory::newBean('ForecastManagerWorksheets');
 
         if (!$seed->ACLAccess('list')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $seed->object_name);

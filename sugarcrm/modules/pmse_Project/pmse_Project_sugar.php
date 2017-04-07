@@ -76,7 +76,7 @@ class pmse_Project_sugar extends Basic
     public function saveRelatedBeans()
     {
         //Create a Diagram row
-        $diagramBean =  BeanFactory::getBean('pmse_BpmnDiagram')
+        $diagramBean =  BeanFactory::newBean('pmse_BpmnDiagram')
             ->retrieve_by_string_fields(array('prj_id' => $this->id));
 
         if (empty($diagramBean)) {
@@ -90,7 +90,7 @@ class pmse_Project_sugar extends Basic
         $dia_id = $diagramBean->save();
 
         //Create a Process row
-        $processBean = BeanFactory::getBean('pmse_BpmnProcess')
+        $processBean = BeanFactory::newBean('pmse_BpmnProcess')
             ->retrieve_by_string_fields(array('prj_id' => $this->id));
 
         if (empty($processBean)) {
@@ -105,7 +105,7 @@ class pmse_Project_sugar extends Basic
         $pro_id = $processBean->save();
 
         //Create a ProcessDefinition row
-        $processDefinitionBean = BeanFactory::getBean('pmse_BpmProcessDefinition')
+        $processDefinitionBean = BeanFactory::newBean('pmse_BpmProcessDefinition')
             ->retrieve_by_string_fields(array('prj_id' => $this->id));
 
         if (empty($processDefinitionBean)) {
@@ -120,7 +120,7 @@ class pmse_Project_sugar extends Basic
         $processDefinitionBean->save();
 
         $relDepStatus = $this->prj_status == 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-        while ($relatedDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency')
+        while ($relatedDepBean = BeanFactory::newBean('pmse_BpmRelatedDependency')
             ->retrieve_by_string_fields(array('pro_id'=>$pro_id, 'pro_status'=>$relDepStatus))
         ) {
             $relatedDepBean->pro_status = $this->prj_status;
@@ -128,7 +128,7 @@ class pmse_Project_sugar extends Basic
         }
 
         $keysArray = array('prj_id' => $this->id, 'pro_id' => $pro_id);
-        $dynaF = BeanFactory::getBean('pmse_BpmDynaForm')
+        $dynaF = BeanFactory::newBean('pmse_BpmDynaForm')
             ->retrieve_by_string_fields(array('prj_id' => $this->id, 'pro_id' => $pro_id, 'name' => 'Default'));
         $editDyna = !empty($dynaF);
         $dynaForm = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');

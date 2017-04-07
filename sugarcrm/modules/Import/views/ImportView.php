@@ -172,7 +172,7 @@ class ImportView extends SugarView
     protected function getSavedImportSourceOptions($published = true)
     {
         $results = array();
-        $import_map_seed = BeanFactory::getBean('Import_1');
+        $import_map_seed = BeanFactory::newBean('Import_1');
         $publishedImportOptions = $import_map_seed->retrieve_all_by_string_fields(array(
             'is_published' => $published ? 'yes' : 'no',
             'module' => $this->importModule

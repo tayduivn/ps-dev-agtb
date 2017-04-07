@@ -162,8 +162,11 @@ $dictionary['Task'] = array(
         ),
         'contact_phone' => array(
             'name' => 'contact_phone',
-            'type' => 'phone',
+            'type' => 'relate',
             'source' => 'non-db',
+            'link' => 'contacts',
+            'id_name' => 'contact_id',
+            'rname' => 'phone_work',
             'vname' => 'LBL_CONTACT_PHONE',
             'studio' => array('listview' => true),
             'readonly' => true,

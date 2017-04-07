@@ -323,7 +323,7 @@ class DynamicField {
             return false;
         }
 
-        $rel_mod = BeanFactory::getBean($field_def['module']);
+        $rel_mod = BeanFactory::newBean($field_def['module']);
         if(empty($rel_mod)) {
             return false;
         }
@@ -386,7 +386,7 @@ class DynamicField {
                 $name = $field['name'];
                 if (empty($this->bean->$name)) { //Don't load the relationship twice
                     $id_name = $field['id_name'];
-                    $mod = BeanFactory::getBean($related_module);
+                    $mod = BeanFactory::newBean($related_module);
 
                     if(!empty($mod) && isset($this->bean->$name)){
                             $mod->relDepth = $this->bean->relDepth + 1;
@@ -545,7 +545,7 @@ class DynamicField {
         $object_name = $this->module;
         $db_name = $field->name;
 
-        $fmd = BeanFactory::getBean('EditCustomFields');
+        $fmd = BeanFactory::newBean('EditCustomFields');
         $id =  $fmd->retrieve($object_name.$db_name,true, false);
         $is_update = false;
         $label = strtoupper( $field->label );

@@ -198,7 +198,7 @@ class UnifiedSearchAdvanced {
 
 		if(!empty($this->query_string)) {
 			foreach($modules_to_search as $moduleName => $beanName) {
-			    $seed = BeanFactory::getBean($moduleName);
+			    $seed = BeanFactory::newBean($moduleName);
 
                 $lv = new ListViewSmarty();
                 $lv->lvd->additionalDetails = false;

@@ -40,7 +40,7 @@ class StrategyCollection extends \SplObjectStorage
     public function addModuleStrategies(array $modules)
     {
         foreach ($modules as $module) {
-            $this->addBeanStrategies(\BeanFactory::getBean($module));
+            $this->addBeanStrategies(\BeanFactory::newBean($module));
         }
     }
 

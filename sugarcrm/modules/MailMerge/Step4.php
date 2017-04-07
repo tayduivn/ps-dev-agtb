@@ -57,7 +57,7 @@ if(count($relArray) > 0)
     $_SESSION['MAILMERGE_RELATED_CONTACTS'] = $relArray;
 
     $relModule = $_SESSION['MAILMERGE_CONTAINS_CONTACT_INFO'];
-	$seed = BeanFactory::getBean($relModule);
+	$seed = BeanFactory::newBean($relModule);
 	foreach($sel_obj as $key=>$value)
 	{
 		$builtArray[$key] = $value;

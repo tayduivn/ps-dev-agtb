@@ -26,7 +26,7 @@ class FieldUtilsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAdvancedActionValueCalc($operation, $operationValue, $field, $fieldValue, $expected)
     {
-        $bean = BeanFactory::getBean('Accounts');
+        $bean = BeanFactory::newBean('Accounts');
 
         $metaArray = array(
             'adv_type' => 'value_calc',

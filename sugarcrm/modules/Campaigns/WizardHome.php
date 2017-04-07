@@ -22,7 +22,7 @@
 
 require_once('modules/Campaigns/utils.php');
 
-$focus = BeanFactory::getBean('Campaigns');
+$focus = BeanFactory::newBean('Campaigns');
 if(isset($_REQUEST['record']) &&  !empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 
@@ -257,7 +257,7 @@ function create_marketing_summary  ($focus){
     $mrkt_tbl .= "<tr  class='listViewHRS1'><td scope='col' width='15%'><b>".$mod_strings['LBL_MRKT_NAME']."</b></td><td width='15%' scope='col'><b>".$mod_strings['LBL_FROM_MAILBOX_NAME']."</b></td><td width='15%' scope='col'><b>".$mod_strings['LBL_STATUS_TEXT']."</b></td><td scope='col' colspan=2>&nbsp;</td></tr>";
 
     if(count($mrkt_lists)>0){
-            $mrkt_focus = BeanFactory::getBean('EmailMarketing');
+            $mrkt_focus = BeanFactory::newBean('EmailMarketing');
             foreach($mrkt_lists as $mrkt_id){
                 $mrkt_focus->retrieve($mrkt_id);
 
@@ -344,7 +344,7 @@ function create_target_summary  ($focus){
     if(count($pl_lists)>0){
 
             
-            $pl_focus = BeanFactory::getBean('ProspectLists');
+            $pl_focus = BeanFactory::newBean('ProspectLists');
             foreach($pl_lists as $pl_id){
 
              if( $colorclass== "class='evenListRowS1'"){

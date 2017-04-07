@@ -449,6 +449,14 @@ class SugarBean
         'pmse_htmleditable_tinymce',
     );
 
+    /**
+     * Controls whether or not to invoke the getLocalFormatttedName method with
+     * title and salutation
+     *
+     * @var bool
+     */
+    public $createLocaleFormattedName = true;
+
     // FIXME: this will be removed, needed for ensuring BeanFactory is always used
     protected function checkBacktrace()
     {
@@ -1228,7 +1236,7 @@ class SugarBean
                 $RelationshipDefs = $dictionary[$key]['relationships'];
                 foreach ($RelationshipDefs as $rel_name => $rel_data)
                 {
-                    $relationship = BeanFactory::getBean('Relationships');
+                    $relationship = BeanFactory::newBean('Relationships');
                     $relationship->delete($rel_name,$db);
                 }
             }
@@ -2259,7 +2267,7 @@ class SugarBean
 
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
-            $notification = BeanFactory::getBean('Notifications');
+            $notification = BeanFactory::newBean('Notifications');
             $notification->name = $subject;
             $notification->description = $textBody;
             $notification->assigned_user_id = $notify_user->id;
@@ -4508,7 +4516,7 @@ class SugarBean
                     if (!empty($data['custom_module'])) {
                         $localTable .= '_cstm';
                     }
-                    $rel_mod = BeanFactory::getBean($joinModule);
+                    $rel_mod = BeanFactory::newBean($joinModule);
                     $nameField = "$joinTableAlias.name";
                     if (isset($rel_mod->field_defs['name']))
                     {
@@ -4674,7 +4682,7 @@ class SugarBean
                         if(!$table_joined)
                         {
                             $ret_array['from'] .= ' ' . $join['join']. ' AND ' . $params['join_table_alias'].'.deleted=0';
-                            $rel_mod = BeanFactory::getBean($rel_module);
+                            $rel_mod = BeanFactory::newBean($rel_module);
                             // TODO: The SC-2127 has been created to separate SugaBean and export feature.
                             if(!empty($rel_mod) && !$ifListForExport)
                             {
@@ -4843,7 +4851,7 @@ class SugarBean
                         if ($child_info['parent_type'] == 'test') {
                             continue;
                         }
-                        $parent_bean = BeanFactory::getBean($child_info['parent_type']);
+                        $parent_bean = BeanFactory::newBean($child_info['parent_type']);
                         if (empty($parent_bean)) {
                             $GLOBALS['log']->error($this->object_name."::retrieve_parent_fields() - cannot load bean of type {$child_info['parent_type']}, skip loading.");
                             continue;
@@ -5339,7 +5347,7 @@ class SugarBean
                 $src_subpanel = $src_subpanel->sub_subpanels[$row['panel_name']];
             }
 
-            $bean = BeanFactory::getBean($src_subpanel->template_instance->module_name);
+            $bean = BeanFactory::newBean($src_subpanel->template_instance->module_name);
 
             $function_fields = array();
             foreach ($bean->field_defs as $field => $value) {
@@ -5690,7 +5698,7 @@ class SugarBean
                         $fields = isset($field['additionalFields']) ? $field['additionalFields'] : array();
 
                         $is_full_name_relate = false;
-                        $rel_bean = BeanFactory::getBean($field['module']);
+                        $rel_bean = BeanFactory::newBean($field['module']);
                         $rname = 'name';
                         if ($rel_bean) {
                             if (isset($field['rname'])) {
@@ -5835,7 +5843,7 @@ class SugarBean
             }
 
             // Take the item off the recently viewed lists
-            $tracker = BeanFactory::getBean('Trackers');
+            $tracker = BeanFactory::newBean('Trackers');
             $tracker->makeInvisibleForAll($id);
 
             SugarRelationship::resaveRelatedBeans();
@@ -7552,7 +7560,7 @@ class SugarBean
 	 */
 	public function getCleanCopy()
 	{
-        $bean =  BeanFactory::getBean($this->module_name);
+        $bean =  BeanFactory::newBean($this->module_name);
         /**
          * If not a common bean, we can create a new instance the old fashioned way.
          */
@@ -7645,7 +7653,7 @@ class SugarBean
             return $result;
         }
 
-        $relatedBean = BeanFactory::getBean($relatedModuleName);
+        $relatedBean = BeanFactory::newBean($relatedModuleName);
         if (!$relatedBean) {
             $GLOBALS['log']->fatal("Cannot create instance of $relatedModuleName");
             return $result;
@@ -7711,7 +7719,7 @@ class SugarBean
            if(empty($this->$link)) {
                $this->related_beans[$link] = false;
            } else {
-               $this->related_beans[$link] = BeanFactory::getBean($this->$link->getRelatedModuleName());
+               $this->related_beans[$link] = BeanFactory::newBean($this->$link->getRelatedModuleName());
            }
        }
        return $this->related_beans[$link];

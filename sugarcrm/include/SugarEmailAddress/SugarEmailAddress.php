@@ -1351,7 +1351,7 @@ class SugarEmailAddress extends SugarBean
  */
 function getEmailAddressWidget($focus, $field, $value, $view, $tabindex = '0')
 {
-    $sea = BeanFactory::getBean('EmailAddresses');
+    $sea = BeanFactory::newBean('EmailAddresses');
     $sea->setView($view);
 
     if ($focus->ACLFieldAccess($field, "edit")) {

@@ -85,7 +85,7 @@ class UsersController extends SugarController
             // This will only be deleted if no user is assigned to the team.
             $t->delete_team();
 
-            $eapm = BeanFactory::getBean('EAPM');
+            $eapm = BeanFactory::newBean('EAPM');
             $eapm->delete_user_accounts($_REQUEST['record']);
             $GLOBALS['log']->info("Removing user's External Accounts");
             $u->mark_deleted($u->id);

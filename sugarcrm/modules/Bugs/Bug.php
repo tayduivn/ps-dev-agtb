@@ -310,7 +310,7 @@ class Bug extends SugarBean {
 function getReleaseDropDown(){
 	static $releases = null;
 	if(!$releases){
-		$seedRelease = BeanFactory::getBean('Releases');
+		$seedRelease = BeanFactory::newBean('Releases');
 		$releases = $seedRelease->get_releases(TRUE, "Active");
 	}
 	return $releases;

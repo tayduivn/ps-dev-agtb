@@ -37,7 +37,7 @@ global $app_strings;
 // global $default_language;
 // global $cal_codes;
 
-$focus = BeanFactory::getBean('WorkFlow');
+$focus = BeanFactory::newBean('WorkFlow');
 
 if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);

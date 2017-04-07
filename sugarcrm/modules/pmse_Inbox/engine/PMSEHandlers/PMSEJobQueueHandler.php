@@ -65,7 +65,7 @@ class PMSEJobQueueHandler extends PMSEAbstractRequestHandler
      */
     public function getSchedulersJob()
     {
-        return BeanFactory::getBean('SchedulersJobs');
+        return BeanFactory::newBean('SchedulersJobs');
     }
 
     /**

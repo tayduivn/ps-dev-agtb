@@ -48,13 +48,13 @@ if($module == 'CampaignProspects'){
     	campaign_log_mail_merge($_SESSION['MAILMERGE_CAMPAIGN_ID'],$targets);
     }
 }
-$seed = BeanFactory::getBean($module);
+$seed = BeanFactory::newBean($module);
 $fields =  get_field_list($seed);
 
 $document = BeanFactory::getBean('DocumentRevisions', $document_id);
 
 if(!empty($relModule)){
-    $rel_seed = BeanFactory::getBean($relModule);
+    $rel_seed = BeanFactory::newBean($relModule);
 }
 
 global $sugar_config;

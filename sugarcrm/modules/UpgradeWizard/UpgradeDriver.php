@@ -1215,7 +1215,7 @@ abstract class UpgradeDriver
 
         $GLOBALS['installing'] = true;
 
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
 
         if (isset($installing)) {
             $GLOBALS['installing'] = $installing;

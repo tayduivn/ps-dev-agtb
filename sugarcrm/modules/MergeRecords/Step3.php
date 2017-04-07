@@ -69,7 +69,7 @@ if (isset($_REQUEST['change_parent']) && $_REQUEST['change_parent']=='1') {
         $merge_ids_array[] = $id;
      }
 }
-$focus = BeanFactory::getBean('MergeRecords');
+$focus = BeanFactory::newBean('MergeRecords');
 $focus->load_merge_bean($_REQUEST['merge_module'], true, $base_id);
 $params = array();
 $params[] = "<a href='index.php?module={$focus->merge_bean->module_dir}&action=index'>{$GLOBALS['app_list_strings']['moduleList'][$focus->merge_bean->module_dir]}</a>";
@@ -482,7 +482,7 @@ function get_related_name($field_def,$id_value) {
             $col_name = $field_def['rname'];
             //if this module is non db and has a module set, then check to see if this field should be concatenated
             if (!empty($field_def['module']) && $field_def['source'] == 'non-db'){
-                  $focus = BeanFactory::getBean($field_def['module']);
+                  $focus = BeanFactory::newBean($field_def['module']);
                   if(!empty( $focus->field_defs[$field_def['rname']])){
 	                $related_def = $focus->field_defs[$field_def['rname']];
 	                //if field defs has concat field array set, then concatenate values

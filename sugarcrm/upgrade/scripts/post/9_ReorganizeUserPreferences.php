@@ -27,7 +27,7 @@ class SugarUpgradeReorganizeUserPreferences extends UpgradeScript
         $qty = 100;
         $chunk = 0;
 
-        $bean = BeanFactory::getBean('UserPreferences');
+        $bean = BeanFactory::newBean('UserPreferences');
 
         do {
             $fetchCount = 0;

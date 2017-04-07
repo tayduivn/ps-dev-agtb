@@ -27,7 +27,7 @@ class SugarUpgradePopulateEmailLinkTypePreference extends UpgradeScript
             return;
         }
 
-        $user  = BeanFactory::getBean('Users');
+        $user  = BeanFactory::newBean('Users');
         $users = get_user_array(false);
 
         foreach ($users as $userId => $userName) {

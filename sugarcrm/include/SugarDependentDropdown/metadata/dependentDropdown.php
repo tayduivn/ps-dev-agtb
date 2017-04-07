@@ -14,7 +14,7 @@ global $current_user;
 
 
 
-$ie = BeanFactory::getBean('InboundEmail');
+$ie = BeanFactory::newBean('InboundEmail');
 $rules = new SugarRouting($ie, $current_user);
 $actions = $rules->getActionsDOM();
 

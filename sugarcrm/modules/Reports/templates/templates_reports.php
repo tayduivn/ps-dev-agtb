@@ -416,7 +416,7 @@ EOD
     $smarty->assign('summaryAndGroupDefData', $summaryAndGroupDefData);
 
     // Set fiscal start date
-    $admin = BeanFactory::getBean('Administration');
+    $admin = BeanFactory::newBean('Administration');
     $config = $admin->getConfigForModule('Forecasts', 'base');
     if (!empty($config['is_setup']) && !empty($config['timeperiod_start_date'])) {
         $smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
@@ -807,7 +807,7 @@ function template_reports_report(&$reporter,&$args) {
 	$smarty->assign('cache_path', sugar_cached(''));
 
     // Set fiscal start date
-    $admin = BeanFactory::getBean('Administration');
+    $admin = BeanFactory::newBean('Administration');
     $config = $admin->getConfigForModule('Forecasts', 'base');
     if (!empty($config['is_setup']) && !empty($config['timeperiod_start_date'])) {
         $smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
@@ -1082,7 +1082,7 @@ function template_reports_tables(&$smarty, &$args) {
 	if (! empty($reporter->saved_report)) {
 		$focus = & $reporter->saved_report;
 	} else {
-		$focus = BeanFactory::getBean('Reports');
+		$focus = BeanFactory::newBean('Reports');
 		$focus->assigned_user_name = (empty($_REQUEST['assigned_user_name']) ? '' : $_REQUEST['assigned_user_name']);
 		$focus->assigned_user_id = (empty($_REQUEST['assigned_user_id']) ? '' : $_REQUEST['assigned_user_id']);
 		$focus->team_name = (empty($_REQUEST['team_name']) ? '' : $_REQUEST['team_name']);

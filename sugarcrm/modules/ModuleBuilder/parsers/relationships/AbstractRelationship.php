@@ -509,7 +509,7 @@ class AbstractRelationship
 
         switch (strtolower($sourceModule)) {
             case 'prospects':
-                $bean = BeanFactory::getBean($this->definition['rhs_module']);
+                $bean = BeanFactory::newBean($this->definition['rhs_module']);
                 $fields = array_keys($bean->field_defs);
                 if (in_array('name', $fields)) {
                     $vardef['rname'] = 'name';
@@ -530,7 +530,7 @@ class AbstractRelationship
         }
 
         if ($module) {
-            $class = BeanFactory::getBean($module);
+            $class = BeanFactory::newBean($module);
             $tplconfig = array();
 
             if (!$class) {
@@ -799,7 +799,7 @@ class AbstractRelationship
      */
     protected function getTablename ($moduleName)
     {
-        $module = BeanFactory::getBean($moduleName);
+        $module = BeanFactory::newBean($moduleName);
         if(!empty($module)) {
             return $module->table_name ;
         }

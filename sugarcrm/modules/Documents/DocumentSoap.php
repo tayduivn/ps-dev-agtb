@@ -22,7 +22,7 @@ class DocumentSoap{
 	function saveFile($document, $portal = false){
         global $sugar_config;
 
-        $focus = BeanFactory::getBean('Documents');
+        $focus = BeanFactory::newBean('Documents');
 
                 if($portal){
                         $focus->disable_row_level_security = true;
@@ -49,7 +49,7 @@ class DocumentSoap{
                         $this->upload_file->file_ext = "txt";
                 }
 
-                $revision = BeanFactory::getBean('DocumentRevisions');
+                $revision = BeanFactory::newBean('DocumentRevisions');
 				$revision->filename = $this->upload_file->get_stored_file_name();
           		$revision->file_mime_type = $this->upload_file->getMimeSoap($revision->filename);
 				$revision->file_ext = $this->upload_file->file_ext;

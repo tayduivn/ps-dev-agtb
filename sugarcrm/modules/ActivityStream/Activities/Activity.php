@@ -50,7 +50,7 @@ class Activity extends Basic
     public function __construct()
     {
         parent::__construct();
-        $this->last_comment_bean = BeanFactory::getBean('Comments');
+        $this->last_comment_bean = BeanFactory::newBean('Comments');
     }
 
     /**
@@ -192,7 +192,7 @@ class Activity extends Basic
         }
 
         if (empty($this->parent_id)) {
-            return BeanFactory::getBean($this->parent_type);
+            return BeanFactory::newBean($this->parent_type);
         }
 
         $ignoreDeleted = true;

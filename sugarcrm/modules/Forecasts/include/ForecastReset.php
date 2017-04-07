@@ -118,7 +118,7 @@ class ForecastReset
         }
 
         // truncate the forecast_manager_worksheets_audit table if it exists
-        $fmw = BeanFactory::getBean('ForecastManagerWorksheets');
+        $fmw = BeanFactory::newBean('ForecastManagerWorksheets');
         $audit_table = $fmw->get_audit_table_name();
         if ($db->tableExists($audit_table)) {
             $db->commit();
@@ -179,7 +179,7 @@ class ForecastReset
         }
 
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'worksheet_columns', $columns, 'base');
 
         // BEGIN SUGARCRM flav=ent ONLY
@@ -208,7 +208,7 @@ class ForecastReset
         $fields = $views['config-worksheet-columns']['meta']['panels'][0]['fields'];
 
         /* @var $forecastWorksheet ForecastWorksheet */
-        $forecastWorksheet = BeanFactory::getBean('ForecastWorksheets');
+        $forecastWorksheet = BeanFactory::newBean('ForecastWorksheets');
 
         // sort the fields correctly
         usort(

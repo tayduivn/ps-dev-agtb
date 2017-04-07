@@ -28,7 +28,7 @@ class MyOpportunitiesDashlet extends DashletGeneric {
         $this->searchFields = $dashletData['MyOpportunitiesDashlet']['searchFields'];
         $this->columns = $dashletData['MyOpportunitiesDashlet']['columns'];
         
-        $this->seedBean = BeanFactory::getBean('Opportunities');        
+        $this->seedBean = BeanFactory::newBean('Opportunities');        
     }
     
     //4.5.0g fix for upgrade issue where user_preferences table still refer to column as 'amount'

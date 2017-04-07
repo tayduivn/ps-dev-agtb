@@ -220,7 +220,7 @@ class PdfManagerHelper
         }
         //First, create a dummy bean to access the relationship info
         if (empty($mbModule)) {
-            $relatedBean = BeanFactory::getBean($relatedModule);
+            $relatedBean = BeanFactory::newBean($relatedModule);
             $field_defs = $relatedBean->field_defs;
         } else {
             $field_defs = $mbModule->getVardefs(false);
@@ -479,7 +479,7 @@ class PdfManagerHelper
                 count($module_instance->$name->get()) == 1
                ) {
                 $related_module = $module_instance->$name->getRelatedModuleName();
-                $related_instance = BeanFactory::getBean($related_module);
+                $related_instance = BeanFactory::newBean($related_module);
                 $related_instance_id = $module_instance->$name->get();
                 if ($related_instance->retrieve($related_instance_id[0]) === null) {
                     $GLOBALS['log']->fatal(__FILE__ . ' Failed loading module ' . $related_module . ' with id ' . $related_instance_id[0]);

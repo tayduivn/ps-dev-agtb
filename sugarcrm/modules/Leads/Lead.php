@@ -267,7 +267,7 @@ class Lead extends Person {
 
 		if(!empty($this->campaign_id)){
 
-			$camp = BeanFactory::getBean('Campaigns');
+			$camp = BeanFactory::newBean('Campaigns');
 			$where = "campaigns.id='$this->campaign_id'";
 			$campaign_list = $camp->get_full_list("campaigns.name", $where, true);
 			if(!empty($campaign_list))

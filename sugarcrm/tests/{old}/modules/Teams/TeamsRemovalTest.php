@@ -56,11 +56,11 @@ class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_contact2->contacts_users_id = $this->_user->id;
         $this->_contact2Id = $this->_contact2->save();        
         
-        $this->_teamA = BeanFactory::getBean('Teams');
+        $this->_teamA = BeanFactory::newBean('Teams');
         $this->_teamA->name = 'Team A';
         $this->_teamAId = $this->_teamA->save();
         
-        $this->_teamB = BeanFactory::getBean('Teams');
+        $this->_teamB = BeanFactory::newBean('Teams');
         $this->_teamB->name = 'Team B';
         $this->_teamBId = $this->_teamB->save();        
     }    

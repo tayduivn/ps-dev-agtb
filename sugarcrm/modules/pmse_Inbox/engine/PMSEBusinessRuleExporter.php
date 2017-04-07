@@ -29,7 +29,7 @@ class PMSEBusinessRuleExporter extends PMSEExporter
 
     public function __construct()
     {
-        $this->bean = BeanFactory::getBean('pmse_Business_Rules'); //new BpmRuleSet();
+        $this->bean = BeanFactory::newBean('pmse_Business_Rules'); //new BpmRuleSet();
         $this->uid = 'id';
         $this->name = 'name';
         $this->extension = 'pbr';

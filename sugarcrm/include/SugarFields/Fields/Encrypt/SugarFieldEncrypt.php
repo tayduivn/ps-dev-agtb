@@ -27,7 +27,7 @@ class SugarFieldEncrypt extends SugarFieldBase
     {
         if ($this->allowRead($vardef)) {
             // Uncrypt the value
-            $account = BeanFactory::getBean('Empty');
+            $account = BeanFactory::newBean('Empty');
 
             return $account->decrypt_after_retrieve($inputField);
         }

@@ -49,7 +49,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::setBeanClass('Contacts');
 
         if ( !empty($this->contacts) ) {
-            $bean = BeanFactory::getBean('Contacts');
+            $bean = BeanFactory::newBean('Contacts');
             $contactList = array();
             foreach ( $this->contacts as $contact ) {
                 $contactList[] = $this->_db->quoted($contact->id);
@@ -67,7 +67,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
             foreach ( $this->accounts as $account ) {
                 $accountList[] = $this->_db->quoted($account->id);
             }
-            $bean = BeanFactory::getBean('Accounts');
+            $bean = BeanFactory::newBean('Accounts');
             $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $accountList) . ")");
             if ($bean->hasCustomFields()) {
                 $this->_db->query(
@@ -81,7 +81,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
             foreach ( $this->cases as $case ) {
                 $casesList[] = $this->_db->quoted($case->id);
             }
-            $bean = BeanFactory::getBean('Cases');
+            $bean = BeanFactory::newBean('Cases');
             $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $casesList) . ")");
             if ($bean->hasCustomFields()) {
                 $this->_db->query(
@@ -95,7 +95,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
             foreach ( $this->notes as $note) {
                 $notesList[] = $this->_db->quoted($note->id);
             }
-            $bean = BeanFactory::getBean('Notes');
+            $bean = BeanFactory::newBean('Notes');
             $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $notesList) . ")");
             if ($bean->hasCustomFields()) {
                 $this->_db->query(
@@ -295,7 +295,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
         $sq->select(array("id", "notARealField"));
-        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->from(BeanFactory::newBean('Contacts'));
         $sq->where()->equals("noWhere", "nonYaBusiness");
         $sq->orderBy('yesIAmCertainlyAField');
         $sql = $sq->compile()->getSQL();
@@ -309,7 +309,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
         $sq->select(array('*', array('id', 'superAwesomeField')));
-        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->from(BeanFactory::newBean('Contacts'));
         $sq->where()->equals("id", "2");
         $sql = $sq->compile()->getSQL();
         $this->assertcontains('id superAwesomeField', $sql);
@@ -321,7 +321,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCustomFields()
     {
         BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
-        $contact = BeanFactory::getBean("Contacts");
+        $contact = BeanFactory::newBean("Contacts");
         $this->assertArrayHasKey("report_to_bigname", $contact->field_defs);
         $this->assertTrue($contact->hasCustomFields());
 
@@ -345,7 +345,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
 
-        $contact = BeanFactory::getBean("Contacts");
+        $contact = BeanFactory::newBean("Contacts");
         // regular query
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
@@ -376,7 +376,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
 
         // self-link
-        $acc = BeanFactory::getBean('Accounts');
+        $acc = BeanFactory::newBean('Accounts');
         $sq = new SugarQuery();
         $sq->select(array("id", "name"));
         $sq->from($acc);
@@ -385,7 +385,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
         // custom field
         BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
-        $contact = BeanFactory::getBean("Contacts");
+        $contact = BeanFactory::newBean("Contacts");
         $GLOBALS['dictionary']['Contact']['fields'] = $contact->field_defs;
         $this->assertArrayHasKey("report_to_bigname", $contact->field_defs);
         $this->assertTrue($contact->hasCustomFields());
@@ -425,7 +425,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRnameExists()
     {
-        $contact = BeanFactory::getBean("Contacts");
+        $contact = BeanFactory::newBean("Contacts");
         // will throw because name is composite
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name", "account_name"));
@@ -442,7 +442,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testBadRelateConditions()
     {
-        $contact = BeanFactory::getBean("Contacts");
+        $contact = BeanFactory::newBean("Contacts");
         // will throw because name is composite
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name", "account_name"));
@@ -457,7 +457,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRelatedOrderBy()
     {
         BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
-        $contact = BeanFactory::getBean("Contacts");
+        $contact = BeanFactory::newBean("Contacts");
         $this->assertArrayHasKey("report_to_bigname", $contact->field_defs);
         $this->assertTrue($contact->hasCustomFields());
 
@@ -494,7 +494,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
-        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->from(BeanFactory::newBean('Contacts'));
         $sq->orderByRaw("last_name+1", 'DESC');
         $sql = $sq->compile()->getSQL();
         $this->assertContains("ORDER BY last_name+1 DESC", $sql);
@@ -504,7 +504,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
-        $sq->from(BeanFactory::getBean("Contacts"));
+        $sq->from(BeanFactory::newBean("Contacts"));
         $sq->groupByRaw("last_name is awesome");
         $sql = $sq->compile()->getSQL();
         $this->assertContains("GROUP BY last_name is awesome", $sql);
@@ -514,7 +514,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
-        $sq->from(BeanFactory::getBean("Contacts"));
+        $sq->from(BeanFactory::newBean("Contacts"));
         $sq->havingRaw("last_name > 55");
         $sql = $sq->compile()->getSQL();
         $this->assertContains("HAVING last_name > 55", $sql);
@@ -524,7 +524,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
         $sq->select(array("id","last_name"));
-        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->from(BeanFactory::newBean('Contacts'));
         $accounts = $sq->join('accounts');
         $opportunities = $accounts->join('opportunities');
         $opportunities->join('contacts');
@@ -539,7 +539,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sq = new SugarQuery();
         $sq->select(array("id","last_name", "opportunity_role"));
-        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->from(BeanFactory::newBean('Contacts'));
         $sq->setJoinOn(array('baseBeanId' => 'test_opp_id'));
         $sql = $sq->compileSql();
         $this->assertcontains("opportunity_id = 'test_opp_id'", $sql);
@@ -548,7 +548,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testLongAlias()
     {
-        $contact = BeanFactory::getBean('Contacts');
+        $contact = BeanFactory::newBean('Contacts');
         $contact->first_name = 'Test';
         $contact->last_name = 'McTester';
         $contact->save();
@@ -557,7 +557,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
             "alias_longer_than_128_characters_that_should_normally_fail_on_not_mysql_stacks";
         $sq = new SugarQuery();
         $sq->select(array("id", array("last_name", $longAlias)));
-        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->from(BeanFactory::newBean('Contacts'));
         $sq->where()->equals("last_name", "McTester");
         $data = $sq->execute();
         $this->assertEquals($contact->last_name, $data[0][$longAlias]);

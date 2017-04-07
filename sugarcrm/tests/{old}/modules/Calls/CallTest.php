@@ -141,7 +141,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
     public function testLoadFromRow()
     {
         /** @var Call $call */
-        $call = BeanFactory::getBean('Calls');
+        $call = BeanFactory::newBean('Calls');
         $this->assertEmpty($call->reminder_checked);
         $this->assertEmpty($call->email_reminder_checked);
 

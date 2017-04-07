@@ -111,7 +111,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact = '', $portal 
 	}
 
 	//Retrieve Email address and set email1, email2
-	$sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
+	$sugarEmailAddress = BeanFactory::newBean('EmailAddresses');
 	$sugarEmailAddress->handleLegacyRetrieve($contact);
   	if(!isset($contact->email1)){
     	$contact->email1 = '';
@@ -526,7 +526,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 			}
 
 
-			$emailAddress = BeanFactory::getBean('EmailAddresses');
+			$emailAddress = BeanFactory::newBean('EmailAddresses');
 			$get .= $emailAddress->getFormBaseURL($focus);
 
 			$get .= get_teams_url('Contacts');
@@ -689,7 +689,7 @@ function handleRedirect($return_id){
     */
     protected function getContact()
     {
-        return BeanFactory::getBean('Contacts');
+        return BeanFactory::newBean('Contacts');
     }
 }
 

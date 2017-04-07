@@ -102,7 +102,7 @@ class SugarJobUpdateOpportunities extends JobNotification implements RunnableSch
     {
         $sq = new SugarQuery();
         $sq->select(array('id'));
-        $sq->from(BeanFactory::getBean('Opportunities'));
+        $sq->from(BeanFactory::newBean('Opportunities'));
         $sq->orderBy('date_closed');
 
         $rows = $sq->execute();
@@ -148,7 +148,7 @@ class SugarJobUpdateOpportunities extends JobNotification implements RunnableSch
         global $current_user;
 
         /* @var $job SchedulersJob */
-        $job = BeanFactory::getBean('SchedulersJobs');
+        $job = BeanFactory::newBean('SchedulersJobs');
         $job->name = "Update Old Opportunities";
         $job->target = "class::SugarJobUpdateOpportunities";
         $job->data = json_encode($data);

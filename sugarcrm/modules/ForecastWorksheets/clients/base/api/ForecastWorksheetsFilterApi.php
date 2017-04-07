@@ -331,7 +331,7 @@ class ForecastWorksheetsFilterApi extends FilterApi
         if (empty($parent_type)) {
             // get the forecast_by setting
             /* @var $admin Administration */
-            $admin = BeanFactory::getBean('Administration');
+            $admin = BeanFactory::newBean('Administration');
             $settings = $admin->getConfigForModule('Forecasts', $api->platform);
             $parent_type = $settings['forecast_by'];
         }

@@ -454,7 +454,7 @@ class DataSet extends SugarBean {
 		$app_strings = return_application_language($current_language);
 		//$symbol = $app_strings['LBL_CURRENCY_SYMBOL'];
 
-		$currency = BeanFactory::getBean('Currencies');
+		$currency = BeanFactory::newBean('Currencies');
 		if($current_user->getPreference('currency') ){
 			$currency->retrieve($current_user->getPreference('currency'));
 			$symbol = $currency->symbol;

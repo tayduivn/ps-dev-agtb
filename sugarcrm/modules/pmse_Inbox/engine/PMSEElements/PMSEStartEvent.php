@@ -157,7 +157,7 @@ class PMSEStartEvent extends PMSEEvent
         }
 
         //create a ProcessMaker row
-        $case = BeanFactory::getBean('pmse_Inbox'); //new BpmInbox();
+        $case = BeanFactory::newBean('pmse_Inbox'); //new BpmInbox();
         $case->name = $cas_title;
         $case->cas_parent = 0;
         $case->cas_status = 'IN PROGRESS';

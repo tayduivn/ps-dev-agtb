@@ -22,7 +22,7 @@
 
 
 $current_module_strings = return_module_language($current_language, "Opportunities");
-$seedOpportunity = BeanFactory::getBean('Opportunities');
+$seedOpportunity = BeanFactory::newBean('Opportunities');
 	
 //build top 5 opportunity list
 $where = "opportunities.sales_stage <> '".$seedOpportunity::STAGE_CLOSED_LOST."' AND opportunities.sales_stage <> '".$seedOpportunity::STAGE_CLOSED_WON."' AND opportunities.assigned_user_id='".$current_user->id."'";

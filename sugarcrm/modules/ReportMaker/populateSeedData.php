@@ -16,7 +16,7 @@
 
 
 //Create new Custom Queries
-$query_object1 = BeanFactory::getBean('CustomQueries');
+$query_object1 = BeanFactory::newBean('CustomQueries');
 $query_object1->name = "Opportunity Query 1";
 $query_object1->description = "Opportunities by Type";
 $query_object1->query_locked = "off";
@@ -83,7 +83,7 @@ WHERE opportunities.date_closed <= $m_date5 AND  opportunities.date_closed >= $t
 $query_object1->save();
 
 
-$query_object2 = BeanFactory::getBean('CustomQueries');
+$query_object2 = BeanFactory::newBean('CustomQueries');
 $query_object2->name = "Opportunity Query 2";
 $query_object2->description = "Opportunities by Account";
 $query_object2->query_locked = "off";
@@ -113,7 +113,7 @@ $query_id1 = $query_object1->id;
 $query_id2 = $query_object2->id;
 
 //Create new Report
-$report_object = BeanFactory::getBean('ReportMaker');
+$report_object = BeanFactory::newBean('ReportMaker');
 $report_object->name ="6 month Sales Pipeline Report";
 $report_object->title ="6 month Sales Pipeline Report";
 $report_object->description ="Opportunities over the next 6 months broken down by month and type";
@@ -127,7 +127,7 @@ $report_id = $report_object->id;
 
 //Create the data sets for the two custom queries
 
-$format_object = BeanFactory::getBean('DataSets');
+$format_object = BeanFactory::newBean('DataSets');
 
 $format_object->name = "Opportunity Data Set 1";
 $format_object->description = "This is where you can change the look and feel of the custom query";
@@ -155,7 +155,7 @@ $format_object->body_text_color = "blue";
 
 /////////////Second Data Set
 
-$format_object2 = BeanFactory::getBean('DataSets');
+$format_object2 = BeanFactory::newBean('DataSets');
 
 $format_object2->name = "Opportunity Data Set 2";
 $format_object2->description = "This query will be stacked below the first query in the report";

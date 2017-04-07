@@ -100,7 +100,7 @@ public static function getUserRoles($user_id, $getAsNameArray = true)
         $user_roles = array();
 
         while ($row = $stmt->fetch()) {
-            $role = BeanFactory::getBean('ACLRoles');
+            $role = BeanFactory::newBean('ACLRoles');
             $role->populateFromRow($row);
             if($getAsNameArray)
                 $user_roles[] = $role->name;
@@ -160,7 +160,7 @@ public static function getAllRoles($returnAsArray = false)
         $roles = array();
 
         while ($row = $stmt->fetch()) {
-            $role = BeanFactory::getBean('ACLRoles');
+            $role = BeanFactory::newBean('ACLRoles');
             $role->populateFromRow($row);
             if($returnAsArray){
                 $roles[] = $role->toArray();
@@ -217,7 +217,7 @@ public static function getAllRoles($returnAsArray = false)
         $role_actions = array();
 
         while ($row = $stmt->fetch()) {
-            $action = BeanFactory::getBean('ACLActions');
+            $action = BeanFactory::newBean('ACLActions');
             $action->populateFromRow($row);
             if(!empty($row['access_override'])){
                 $action->aclaccess = $row['access_override'];

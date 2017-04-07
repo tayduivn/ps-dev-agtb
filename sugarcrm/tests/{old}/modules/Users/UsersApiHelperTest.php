@@ -69,7 +69,7 @@ class UsersApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testPopulateFromApi_newBean()
     {
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $user->new_with_id = true;
         $user->id = '';
 

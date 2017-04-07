@@ -118,7 +118,7 @@ if(document.DetailView != null &&
         	if (!class_exists('Relationship')) {
         		require('modules/Relationships/Relationship.php');
         	}
-        	$rel = BeanFactory::getBean('Relationships');
+        	$rel = BeanFactory::newBean('Relationships');
 	        $rel->load_relationship_meta();
         }
 

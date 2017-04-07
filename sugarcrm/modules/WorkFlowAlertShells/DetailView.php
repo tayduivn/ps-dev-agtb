@@ -25,9 +25,9 @@ global $app_list_strings;
 global $focus;
 global $workflow_object;
 global $focus_alertcomp_list;
-$workflow_object = BeanFactory::getBean('WorkFlow');
+$workflow_object = BeanFactory::newBean('WorkFlow');
 
-$focus = BeanFactory::getBean('WorkFlowAlertShells');
+$focus = BeanFactory::newBean('WorkFlowAlertShells');
 if(!empty($_REQUEST['record'])) {
     $result = $focus->retrieve($_REQUEST['record']);
     if($result == null){

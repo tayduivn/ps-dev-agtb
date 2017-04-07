@@ -52,7 +52,7 @@ class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob
 
         $args = json_decode(html_entity_decode($data), true);
         $this->job->runnable_ran = true;
-        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastWorksheets');
 
         // use the processWorksheetDataChunk to run the code.
         $worksheet->processWorksheetDataChunk($args['forecast_by'], $args['data']);

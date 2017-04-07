@@ -49,7 +49,7 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
         $query->select(array('language'));
         $query->distinct(true);
         $fromOptions = array('team_security' => false);
-        $query->from(BeanFactory::getBean('KBContents'), $fromOptions);
+        $query->from(BeanFactory::newBean('KBContents'), $fromOptions);
         $query->where()
             ->equals('kbdocument_id', $bean->kbdocument_id);
         

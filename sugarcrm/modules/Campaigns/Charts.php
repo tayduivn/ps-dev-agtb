@@ -39,7 +39,7 @@ class campaign_charts {
 			$GLOBALS['log']->debug("user_id is: ");
 			$GLOBALS['log']->debug("cache_file_name is: $xmlFile");
 
-			$focus = BeanFactory::getBean('Campaigns');
+			$focus = BeanFactory::newBean('Campaigns');
 
 			$query = "SELECT activity_type,target_type, count(*) hits ";
 			$query.= " FROM campaign_log ";

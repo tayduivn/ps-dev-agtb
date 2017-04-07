@@ -49,7 +49,7 @@ class SugarUpgradeRemoveEmailWithPasswordInfo extends UpgradeScript
             " AND parent_type = 'User' AND status = 'sent' AND " .
             " name IN " . '(\'' . implode("', '", $subjects) . '\')';
 
-        $tableName = BeanFactory::getBean('Emails')->table_name;
+        $tableName = BeanFactory::newBean('Emails')->table_name;
 
         // select all the email beans matching password email
         $selectQuery = "SELECT id FROM " . $tableName . $whereClause;
@@ -80,7 +80,7 @@ class SugarUpgradeRemoveEmailWithPasswordInfo extends UpgradeScript
     {
         $id = $this->config['passwordsetting'][$pwdSetting];
         if (!empty($id)) {
-            $emailTemplate = BeanFactory::getBean('EmailTemplates');
+            $emailTemplate = BeanFactory::newBean('EmailTemplates');
             $emailTemplate->disable_row_level_security = true;
 
             if ($emailTemplate->retrieve($id) != '') {

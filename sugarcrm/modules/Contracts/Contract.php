@@ -273,7 +273,7 @@ class Contract extends SugarBean
 
         $types = get_bean_select_array(true, 'ContractType', 'name', 'deleted=0', 'list_order');
         $this->type_options = get_select_options_with_id($types, $this->type);
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
 
         if (isset($this->currency_id) && !empty($this->currency_id)) {
             $currency->retrieve($this->currency_id);
@@ -444,7 +444,7 @@ function getContractTypesDropDown($searchID='')
 {
     static $contractTypes = null;
     if (!$contractTypes) {
-        $seedContractTypes = BeanFactory::getBean('ContractTypes');
+        $seedContractTypes = BeanFactory::newBean('ContractTypes');
         $contractTypes = $seedContractTypes->get_contractTypes(true);
     }
 

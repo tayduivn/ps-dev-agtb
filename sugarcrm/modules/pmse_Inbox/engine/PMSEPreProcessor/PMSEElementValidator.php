@@ -41,7 +41,7 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
     public function __construct()
     {
         $this->sugarQueryObject = new SugarQuery();
-        $this->beanFlow = BeanFactory::getBean('pmse_BpmFlow');
+        $this->beanFlow = BeanFactory::newBean('pmse_BpmFlow');
         parent::__construct();
     }
 

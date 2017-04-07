@@ -122,7 +122,7 @@ class Bug50768_02Test extends Sugar_PHPUnit_Framework_TestCase
     public function testCurrencyIdType()
     {
         $cType = '';
-        $bean = BeanFactory::getBean($this->targetModule);
+        $bean = BeanFactory::newBean($this->targetModule);
         if(!empty($bean))
         {
             $fieldDefs = $bean->field_defs;

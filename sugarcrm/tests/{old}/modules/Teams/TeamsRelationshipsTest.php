@@ -76,7 +76,7 @@ class TeamsRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
 		$result = $this->_soapClient->call('set_relationship',array('session'=>$this->_sessionId,'module_name'=>'Contacts', 'module_id'=>$this->_contactId, 'link_field_name' => 'teams', 'related_ids' => array('1', 'East', 'West', $this->_contact->team_id)));
 		$this->assertEquals($result['created'],1,'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response); 
 		
-		$contact = BeanFactory::getBean('Contacts');
+		$contact = BeanFactory::newBean('Contacts');
 		$contact = $contact->retrieve($this->_contactId);
 		
 		$result = $GLOBALS['db']->query("SELECT count(team_id) as total FROM team_sets_teams WHERE team_set_id = '{$contact->team_set_id}'");     
@@ -90,7 +90,7 @@ class TeamsRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
     }
    
     public function testRegularRelationshipCalls() {
-    	$contact = BeanFactory::getBean('Contacts');
+    	$contact = BeanFactory::newBean('Contacts');
     	$contact = $contact->retrieve($this->_contactId);
 	    $teams = array('East', 'West', '1');
 		$contact->load_relationship('teams');
@@ -118,7 +118,7 @@ class TeamsRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
     }
    
     public function testDeleteRelationshipCall(){
-    	$contact = BeanFactory::getBean('Contacts');
+    	$contact = BeanFactory::newBean('Contacts');
     	$contact = $contact->retrieve($this->_contactId);
     	$contact->load_relationship('teams');
 		$contact->teams->replace(array('East', 'West', $contact->team_id));
@@ -126,7 +126,7 @@ class TeamsRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
     	$contact->teams->delete($contact->id, 'West');
     	$contact->retrieve($contact->id);
     	
-    	$teamSet = BeanFactory::getBean('TeamSets');
+    	$teamSet = BeanFactory::newBean('TeamSets');
     	$team_ids = $teamSet->getTeamIds($contact->team_set_id);
 
     	$this->assertNotContains('West', $team_ids, 'The list of associated teams still contains West.');

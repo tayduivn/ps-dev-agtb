@@ -187,7 +187,9 @@ class Link2 {
      * @return string name of table for the relationship of this link
      */
     public function getRelatedTableName() {
-        return BeanFactory::getBean($this->getRelatedModuleName())->table_name;
+        return BeanFactory::getDefinition(
+            $this->getRelatedModuleName()
+        )->getTableName();
     }
 
     /**
@@ -449,7 +451,7 @@ class Link2 {
 
             //If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
             //fields in the related module
-            $relBean = BeanFactory::getBean($rel_module);
+            $relBean = BeanFactory::getDefinition($rel_module);
             if ($relBean) {
                 $relationshipFields = $this->getRelationshipFields($relBean);
             }

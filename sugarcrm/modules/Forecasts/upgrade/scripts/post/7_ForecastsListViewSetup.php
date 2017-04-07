@@ -40,7 +40,7 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
         $this->client = new ForecastsConfigApi();
 
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $config = $admin->getConfigForModule('Forecasts');
 
         // Check if we're upgrading from 6 to 7 and if-so run the column schema converter.

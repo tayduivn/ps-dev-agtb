@@ -23,7 +23,7 @@
 class ProductsViewDetail extends ViewDetail {
  	function display() {
 	    
-	    $currency = BeanFactory::getBean('Currencies');
+	    $currency = BeanFactory::newBean('Currencies');
 	    if(isset($this->bean->currency_id) && !empty($this->bean->currency_id))
 	    {
 	    	$currency->retrieve($this->bean->currency_id);

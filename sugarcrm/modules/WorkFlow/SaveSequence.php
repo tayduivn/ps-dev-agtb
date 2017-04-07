@@ -19,7 +19,7 @@
 
 $local_log =& LoggerManager::getLogger('index');
 
-$focus = BeanFactory::getBean('WorkFlow');
+$focus = BeanFactory::newBean('WorkFlow');
 $controller = new Controller();
 
 	

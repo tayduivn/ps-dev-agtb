@@ -29,7 +29,7 @@ if(empty($workflow_object)) {
 	sugar_die("You shouldn't be here");
 }
 
-$focus = BeanFactory::getBean('WorkFlowTriggerShells');
+$focus = BeanFactory::newBean('WorkFlowTriggerShells');
 
 if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
@@ -81,7 +81,7 @@ if(empty($focus->parent_id)){
 		$meta_array_type = "time_trigger";
 	}
 
-	$temp_module = BeanFactory::getBean($workflow_object->base_module);
+	$temp_module = BeanFactory::newBean($workflow_object->base_module);
 	$temp_module->call_vardef_handler($meta_array_type);
 	$field_array = $temp_module->vardef_handler->get_vardef_array();
 

@@ -72,7 +72,7 @@ class ViewConvertLead extends SugarView
         $qsd = QuickSearchDefaults::getQuickSearchDefaults();
         $qsd->setFormName("ConvertLead");
 
-        $this->contact = BeanFactory::getBean('Contacts');
+        $this->contact = BeanFactory::newBean('Contacts');
         // Bug #50126 We have to fill account_name & add ability to select account from popup with pre populated name
         
         /*
@@ -146,7 +146,7 @@ class ViewConvertLead extends SugarView
 
         foreach($this->defs as $module => $vdef)
         {
-            $focus = BeanFactory::getBean($module);
+            $focus = BeanFactory::newBean($module);
 
             // skip if we aren't allowed to save this bean
             if (empty($focus) || !$focus->ACLAccess('save'))
@@ -222,7 +222,7 @@ class ViewConvertLead extends SugarView
 
     protected function getRecord()
     {
-    	$this->focus = BeanFactory::getBean('Leads');
+    	$this->focus = BeanFactory::newBean('Leads');
     	if (isset($_REQUEST['record']))
     	{
     		$this->focus->retrieve($_REQUEST['record']);
@@ -339,7 +339,7 @@ class ViewConvertLead extends SugarView
         $selectedBeans = array();
         $selects = array();
         //Make sure the contact object is availible for relationships.
-        $beans['Contacts'] = BeanFactory::getBean('Contacts');
+        $beans['Contacts'] = BeanFactory::newBean('Contacts');
         $beans['Contacts']->id = create_guid();
         $beans['Contacts']->new_with_id = true;
 
@@ -393,7 +393,7 @@ class ViewConvertLead extends SugarView
             {
                 //Save the new record
 	            if (empty($beans[$module]))
-	            	$beans[$module] = BeanFactory::getBean($module);
+	            	$beans[$module] = BeanFactory::newBean($module);
 
             	$this->populateNewBean($module, $beans[$module], $beans['Contacts'], $lead);
 

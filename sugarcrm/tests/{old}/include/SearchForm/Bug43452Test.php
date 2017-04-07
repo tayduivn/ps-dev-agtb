@@ -45,7 +45,7 @@ class Bug43452Test extends Sugar_PHPUnit_Framework_TestCase
         $searchdefs = array();
         require "modules/Leads/metadata/searchdefs.php";
         
-        $bean = BeanFactory::getBean('Leads');
+        $bean = BeanFactory::newBean('Leads');
         $popup = new PopupSmarty($bean, "Leads");
         $popup->searchForm->searchdefs =  $searchdefs['Leads'];
         $popup->searchForm->searchFields = $_searchFields['Leads'];

@@ -20,7 +20,7 @@ class Company extends Basic
     public function __construct()
  	{
  		parent::__construct();
- 		$this->emailAddress = BeanFactory::getBean('EmailAddresses');
+ 		$this->emailAddress = BeanFactory::newBean('EmailAddresses');
  	}
 
     /**

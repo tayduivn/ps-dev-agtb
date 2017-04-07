@@ -36,7 +36,7 @@ class Popup_Picker
 			$workflow = BeanFactory::getBean('WorkFlow', $_REQUEST['workflow_id']);
 			//TODO GET ALL ALERTS HERE
 			//$focus_alerts_list = $workflow->get_linked_beans('wf_alerts','WorkFlowAlertShell');
-			$alerts = BeanFactory::getBean('WorkFlowAlertShells');
+			$alerts = BeanFactory::newBean('WorkFlowAlertShells');
 
 			$current_module_strings = return_module_language($current_language, $alerts->module_dir);
 			insert_popup_header($theme);

@@ -199,7 +199,7 @@ class ImportMap extends SugarBean
         global $current_user;
 
         if ( !is_admin($current_user) ) {
-            $other_map = BeanFactory::getBean('Import_1');
+            $other_map = BeanFactory::newBean('Import_1');
             $other_map->retrieve_by_string_fields(array('id'=> $id), false);
 
             if ( $other_map->assigned_user_id != $current_user->id )
@@ -245,7 +245,7 @@ class ImportMap extends SugarBean
                 'is_published'     => 'no'
                 );
         }
-        $other_map = BeanFactory::getBean('Import_1');
+        $other_map = BeanFactory::newBean('Import_1');
         $other_map->retrieve_by_string_fields($query_arr, false);
 
         // if we find this other map, quit
@@ -281,7 +281,7 @@ class ImportMap extends SugarBean
         $obj_arr = array();
 
         while ($row = $this->db->fetchByAssoc($result,true) ) {
-            $focus = BeanFactory::getBean('Import_1');
+            $focus = BeanFactory::newBean('Import_1');
 
             foreach($this->column_fields as $field) {
                 if(isset($row[$field])) {

@@ -15,7 +15,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 global $current_user;
 
-$focus = BeanFactory::getBean('InboundEmail');
+$focus = BeanFactory::newBean('InboundEmail');
 $focus->disable_row_level_security = true;
 if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);

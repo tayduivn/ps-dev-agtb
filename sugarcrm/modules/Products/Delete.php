@@ -19,7 +19,7 @@ global $mod_strings;
 
 
 
-$focus = BeanFactory::getBean('Products');
+$focus = BeanFactory::newBean('Products');
 
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);

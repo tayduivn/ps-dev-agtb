@@ -16,7 +16,7 @@
 
 
 
-$sugarbean = BeanFactory::getBean('Project');
+$sugarbean = BeanFactory::newBean('Project');
 
 // perform the delete if given a record to delete
 

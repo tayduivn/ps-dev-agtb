@@ -12,7 +12,7 @@
 
 
 //_ppd($_REQUEST);
-$focus = BeanFactory::getBean('Groups');
+$focus = BeanFactory::newBean('Groups');
 
 // New user
 	// track the current reports to id to be able to use it if it has changed

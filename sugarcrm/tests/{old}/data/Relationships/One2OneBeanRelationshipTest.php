@@ -43,7 +43,7 @@ class One2OneBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('getFocus');
         $sq = new SugarQuery();
         $sq->select('id');
-        $sq->from(BeanFactory::getBean('RevenueLineItems'));
+        $sq->from(BeanFactory::newBean('RevenueLineItems'));
 
         /** @var Link2 $link2 */
         $ret = $rel->buildJoinSugarQuery($link2, $sq, array('ignoreRole' => true));

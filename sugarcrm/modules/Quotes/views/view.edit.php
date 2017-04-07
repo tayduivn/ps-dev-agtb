@@ -33,7 +33,7 @@ class QuotesViewEdit extends ViewEdit
 		global $timedate;
 		global $locale;
 
-		$original_quote = BeanFactory::getBean('Quotes');
+		$original_quote = BeanFactory::newBean('Quotes');
 		if($this->ev->isDuplicate)
 		{
 			$this->bean->id = "";
@@ -147,12 +147,12 @@ class QuotesViewEdit extends ViewEdit
 
 		$this->ss->assign('USER_DATEFORMAT', '('. $timedate->get_user_date_format().')');
 		$this->ss->assign('CALENDAR_DATEFORMAT', $timedate->get_cal_date_format());
-		$taxrate = BeanFactory::getBean('TaxRates');
+		$taxrate = BeanFactory::newBean('TaxRates');
 		$this->ss->assign('TAXRATE_OPTIONS', get_select_options_with_id($taxrate->get_taxrates(false), $this->bean->taxrate_id));
 		if (empty($this->bean->taxrate_value)) { $this->ss->assign('TAXRATE_VALUE', $taxrate->get_default_taxrate_value() / 100); }
 		else { $this->ss->assign('TAXRATE_VALUE', $this->bean->taxrate_value / 100); }
 
-		$shipper = BeanFactory::getBean('Shippers');
+		$shipper = BeanFactory::newBean('Shippers');
 		$this->ss->assign('SHIPPER_OPTIONS', get_select_options_with_id($shipper->get_shippers(true), $this->bean->shipper_id));
 
 		if (empty($this->bean->assigned_user_id) && empty($this->bean->id))  $this->bean->assigned_user_id = $current_user->id;

@@ -21,7 +21,7 @@ global $mod_strings;
 global $urlPrefix;
 global $currentModule;
 
-$seed_object = BeanFactory::getBean('DataSets');
+$seed_object = BeanFactory::newBean('DataSets');
 
 if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $seed_object->retrieve($_REQUEST['record']);

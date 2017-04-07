@@ -57,7 +57,7 @@ class ProductBundlesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
         // get the conversion rate
         $sq = new SugarQuery();
         $sq->select(array('conversion_rate'));
-        $sq->from(BeanFactory::getBean('Currencies'));
+        $sq->from(BeanFactory::newBean('Currencies'));
         $sq->where()
             ->equals('id', $currencyId);
 
@@ -139,7 +139,7 @@ class ProductBundlesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
 
     protected function getProductsWithNonClosedQuote()
     {
-        $product_bundles = BeanFactory::getBean('ProductBundles');
+        $product_bundles = BeanFactory::newBean('ProductBundles');
 
         $sq = new SugarQuery();
         $sq->select(array('id'));
@@ -148,7 +148,7 @@ class ProductBundlesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
         $product_bundles->load_relationship('quotes');
         $product_bundles->quotes->buildJoinSugarQuery($sq, array('joinType' => 'LEFT'));
 
-        $quote = BeanFactory::getBean('Quotes');
+        $quote = BeanFactory::newBean('Quotes');
 
         $sq->where()
             ->queryOr()

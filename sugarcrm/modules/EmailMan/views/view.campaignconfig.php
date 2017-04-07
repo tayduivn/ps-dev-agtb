@@ -94,7 +94,7 @@ class ViewCampaignconfig extends SugarView
             $this->ss->assign("no_checked", "checked='checked'");
         }
         
-        $email = BeanFactory::getBean('Emails');
+        $email = BeanFactory::newBean('Emails');
         $this->ss->assign('ROLLOVER', $email->rolloverStyle);
         
         $this->ss->assign("JAVASCRIPT",get_validate_record_js());

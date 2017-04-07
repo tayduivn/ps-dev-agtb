@@ -132,7 +132,7 @@ function create_default_reports($is_upgrade = false, $reportlist = array())
             continue;
         }
 
-        $saved_report = BeanFactory::getBean('Reports');
+        $saved_report = BeanFactory::newBean('Reports');
 		if ($is_upgrade) {
 			$report_id = $saved_report->retrieveReportIdByName($report[1]);
 	        if (!empty ($report_id))

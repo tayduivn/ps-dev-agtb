@@ -31,7 +31,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
 		if(empty($report_def_str['assigned_user_id'])) return null;
 
-		$this->assigned_user = BeanFactory::getBean('Users');
+		$this->assigned_user = BeanFactory::newBean('Users');
 		$this->assigned_user->retrieve($report_def_str['assigned_user_id']);
 		return $this->assigned_user;
 	}
@@ -654,7 +654,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     private function getFiscalStartDate()
     {
         // Pick fiscal start date
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $config = $admin->getConfigForModule('Forecasts', 'base');
 
         $timedate = TimeDate::getInstance();

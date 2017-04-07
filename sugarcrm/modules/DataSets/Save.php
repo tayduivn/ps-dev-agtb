@@ -41,7 +41,7 @@ $custom_layout = false;
 
 
 
-$focus = BeanFactory::getBean('DataSets');
+$focus = BeanFactory::newBean('DataSets');
 $controller = new Controller();
 
 if(!empty($_POST['data_set_id'])){

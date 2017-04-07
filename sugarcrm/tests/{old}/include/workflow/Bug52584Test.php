@@ -29,12 +29,12 @@ class Bug52584Test extends Sugar_PHPUnit_Framework_TestCase
         $this->field = 'a';
         $this->value = 'test';
 
-        $workflow = BeanFactory::getBean('WorkFlow');
+        $workflow = BeanFactory::newBean('WorkFlow');
         $workflow->base_module = 'Opportunities';
         $workflow->save();
         $this->toClean['workflow'] = $workflow->id;
 
-        $workflowShell = BeanFactory::getBean('WorkFlowTriggerShells');
+        $workflowShell = BeanFactory::newBean('WorkFlowTriggerShells');
         $workflowShell->parent_id = $workflow->id;
         $workflowShell->field = $this->field;
         $workflowShell->save();

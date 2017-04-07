@@ -25,14 +25,14 @@ class SugarUpgradeRebuildDefaultSchedulers extends UpgradeScript
     public function run()
     {
         /** @var Scheduler $scheduler */
-        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler = BeanFactory::newBean('Schedulers');
         $this->stockSchedulers = $scheduler->getDefaultSystemSchedulers();
 
         $this->existingSchedulers = array();
         $query = new SugarQuery();
         $query->select(array('id', 'job', 'name'));
         // to get all records, including deleted
-        foreach ($query->from(BeanFactory::getBean('Schedulers'), array('add_deleted' => false))->execute() as $data) {
+        foreach ($query->from(BeanFactory::newBean('Schedulers'), array('add_deleted' => false))->execute() as $data) {
             $this->existingSchedulers[$data['job']] = array(
                 'id' => $data['id'],
                 'name' => $data['name']

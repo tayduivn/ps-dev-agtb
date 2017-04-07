@@ -43,7 +43,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->login');
         global $sugar_config;
         $error = new SoapError();
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $success = false;
         if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN')
         {
@@ -198,7 +198,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
                 continue;
             }
 
-            $seed = BeanFactory::getBean($module_name);
+            $seed = BeanFactory::newBean($module_name);
 
             foreach ($a_view as $view)
             {
@@ -304,7 +304,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
             }
 
             if($module == 'Home') $module = '';
-    	    $tracker = BeanFactory::getBean('Trackers');
+    	    $tracker = BeanFactory::newBean('Trackers');
             $entryList = $tracker->get_recently_viewed($GLOBALS['current_user']->id, $module);
             foreach ($entryList as $entry)
                 $results[] = $entry;
@@ -400,7 +400,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     				$unifiedSearchFields[$name] [ $field ]['value'] = $search_string;
     			}
 
-    			$seed = BeanFactory::getBean($name);
+    			$seed = BeanFactory::newBean($name);
     			require_once 'include/SearchForm/SearchForm2.php' ;
     			if ($beanName == "User"
     			    || $beanName == "ProjectTask"
@@ -577,7 +577,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     			$submodulename = $mod->$link_field_name->getRelatedModuleName();
 
     			foreach($list as $row) {
-    				$submoduleobject = BeanFactory::getBean($submodulename);
+    				$submoduleobject = BeanFactory::newBean($submodulename);
     				// set all the database data to this object
     				foreach ($filterFields as $field) {
     					$submoduleobject->$field = $row[$field];

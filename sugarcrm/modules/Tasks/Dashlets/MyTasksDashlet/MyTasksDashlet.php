@@ -28,6 +28,6 @@ class MyTasksDashlet extends DashletGeneric {
         $this->searchFields = $dashletData['MyTasksDashlet']['searchFields'];
         $this->columns = $dashletData['MyTasksDashlet']['columns'];
                 
-        $this->seedBean = BeanFactory::getBean('Tasks');        
+        $this->seedBean = BeanFactory::newBean('Tasks');        
     }    
 }

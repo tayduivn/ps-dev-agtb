@@ -78,7 +78,7 @@ function pollMonitoredInboxes() {
 
 
 
-	$ie = BeanFactory::getBean('InboundEmail');
+	$ie = BeanFactory::newBean('InboundEmail');
 	$emailUI = new EmailUI();
 	$r = $ie->db->query('SELECT id, name FROM inbound_email WHERE is_personal = 0 AND deleted=0 AND status=\'Active\' AND mailbox_type != \'bounce\'');
 	$GLOBALS['log']->debug('Just got Result from get all Inbounds of Inbound Emails');
@@ -129,7 +129,7 @@ function pollMonitoredInboxes() {
 					if ($ieX->isMailBoxTypeCreateCase()) {
 						$users[] = $sugarFolder->assign_to_id;
 						$GLOBALS['log']->debug('Getting users for teamset');
-						$teamSet = BeanFactory::getBean('TeamSets');
+						$teamSet = BeanFactory::newBean('TeamSets');
 						$usersList = $teamSet->getTeamSetUsers($sugarFolder->team_set_id, true);
 						$GLOBALS['log']->debug('Done Getting users for teamset');
 						$users = array();
@@ -209,7 +209,7 @@ function pollMonitoredInboxes() {
 									/*If the group folder doesn't exist then download only those messages
 									 which has caseid in message*/
 									$ieX->getMessagesInEmailCache($msgNo, $uid);
-									$email = BeanFactory::getBean('Emails');
+									$email = BeanFactory::newBean('Emails');
 									$header = imap_headerinfo($ieX->conn, $msgNo);
 									$email->name = $ieX->handleMimeHeaderDecode($header->subject);
 									$email->from_addr = $ieX->convertImapToSugarEmailAddress($header->from);
@@ -224,7 +224,7 @@ function pollMonitoredInboxes() {
 										if(!class_exists('aCase')) {
 
 										}
-										$c = BeanFactory::getBean('Cases');
+										$c = BeanFactory::newBean('Cases');
 										$GLOBALS['log']->debug('looking for a case for '.$email->name);
 										if ($ieX->getCaseIdFromCaseNumber($email->name, $c)) {
 											$ieX->importOneEmail($msgNo, $uid);
@@ -372,7 +372,7 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 	global $dictionary;
 
 
-	$ie = BeanFactory::getBean('InboundEmail');
+	$ie = BeanFactory::newBean('InboundEmail');
 	$r = $ie->db->query('SELECT id FROM inbound_email WHERE deleted=0 AND status=\'Active\' AND mailbox_type=\'bounce\'');
 
 	while($a = $ie->db->fetchByAssoc($r)) {
@@ -476,7 +476,7 @@ function cleanOldRecordLists() {
 function testEmail() {
 	// dev only, sends incrementally named emails to agent1/2@sugarcrm.com
 
-	$e = BeanFactory::getBean('Emails');
+	$e = BeanFactory::newBean('Emails');
 	$r = $e->db->query('SELECT count(*) AS c FROM emails WHERE deleted=0 AND type="inbound"');
 	$a = $e->db->fetchByAssoc($r);
 	$e->name = 'Email '.($a['c'] + 1);

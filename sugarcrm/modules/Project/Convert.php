@@ -19,7 +19,7 @@ global $app_list_strings;
 global $current_language;
 global $current_user;
 global $sugar_version, $sugar_config;
-$focus = BeanFactory::getBean('Project');
+$focus = BeanFactory::newBean('Project');
 
 
 

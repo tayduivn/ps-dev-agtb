@@ -69,7 +69,7 @@ function get_field_list($value, $translate=true){
 
 	if($value->module_dir == 'Bugs'){
 
-		$seedRelease = BeanFactory::getBean('Releases');
+		$seedRelease = BeanFactory::newBean('Releases');
 		$options = $seedRelease->get_releases(TRUE, "Active");
 		$options_ret = array();
 		foreach($options as $name=>$value){
@@ -187,7 +187,7 @@ function new_get_field_list($value, $translate=true) {
 
 	if($value->module_dir == 'Bugs'){
 
-		$seedRelease = BeanFactory::getBean('Releases');
+		$seedRelease = BeanFactory::newBean('Releases');
 		$options = $seedRelease->get_releases(TRUE, "Active");
 		$options_ret = array();
 		foreach($options as $name=>$value){
@@ -502,7 +502,7 @@ function getRelationshipResults($bean, $link_field_name, $link_module_fields) {
 		// get the related module name and instantiate a bean for that.
 		$submodulename = $bean->$link_field_name->getRelatedModuleName();
 
-		$submodule = BeanFactory::getBean($submodulename);
+		$submodule = BeanFactory::newBean($submodulename);
 		$filterFields = filter_fields($submodule, $link_module_fields);
 		$relFields = $bean->$link_field_name->getRelatedFields();
 		$roleSelect = '';
@@ -611,7 +611,7 @@ function new_handle_set_entries($module_name, $name_value_lists, $select_fields 
 	$count = 1;
 	$total = sizeof($name_value_lists);
 	foreach($name_value_lists as $name_value_list){
-		$seed = BeanFactory::getBean($module_name);
+		$seed = BeanFactory::newBean($module_name);
 
 		$seed->update_vcal = false;
 		foreach($name_value_list as $value){
@@ -656,7 +656,7 @@ function new_handle_set_entries($module_name, $name_value_lists, $select_fields 
 			else{
 				//since we found a duplicate we should set the sync flag
 				if( $seed->ACLAccess('Save')){
-					$seed = BeanFactory::getBean($module_name);
+					$seed = BeanFactory::newBean($module_name);
 					$seed->id = $duplicate_id;
 					$seed->contacts_users_id = $current_user->id;
 					$seed->save();
@@ -917,7 +917,7 @@ function add_create_account($seed)
 	$assigned_user_id = $current_user->id;
 
 	// check if it already exists
-    $focus = BeanFactory::getBean('Accounts');
+    $focus = BeanFactory::newBean('Accounts');
     if( $focus->ACLAccess('Save')){
 		$temp = BeanFactory::getBean($seed->module_dir, $seed->id);
 		if ((! isset($account_name) || $account_name == ''))

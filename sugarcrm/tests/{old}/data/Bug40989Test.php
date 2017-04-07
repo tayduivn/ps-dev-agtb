@@ -33,7 +33,7 @@ class Bug40989Test extends Sugar_PHPUnit_Framework_TestCase
             'last_name' => 'Bug40989Test',
         ));
 
-        $loadedContact = BeanFactory::getBean('Contacts');
+        $loadedContact = BeanFactory::newBean('Contacts');
         $loadedContact = $loadedContact->retrieve_by_string_fields(array(
             'last_name' => $contact->last_name,
         ));

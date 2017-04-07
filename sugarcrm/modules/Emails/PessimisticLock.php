@@ -21,7 +21,7 @@ if(isset($_REQUEST['user'])) {
 // NEXT FREE
 if(isset($_REQUEST['next_free']) && $_REQUEST['next_free'] == true) {
 	
-	$next = BeanFactory::getBean('Emails');
+	$next = BeanFactory::newBean('Emails');
 	$rG = $next->db->query('SELECT count(id) AS c FROM users WHERE deleted = 0 AND users.is_group = 1');
 	$aG = $next->db->fetchByAssoc($rG);
 	if($rG['c'] > 0) {

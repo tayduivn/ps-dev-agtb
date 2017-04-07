@@ -66,7 +66,7 @@ class SugarTestCampaignUtilities
 
     public static function createCampaignLog($campaignId, $activityType, $relatedBean, $extraData = array())
     {
-        $campaignLog                = BeanFactory::getBean("CampaignLog");
+        $campaignLog                = BeanFactory::newBean("CampaignLog");
         $campaignLog->campaign_id   = $campaignId;
         $campaignLog->related_id    = $relatedBean->id;
         $campaignLog->related_type  = $relatedBean->module_dir;
@@ -111,7 +111,7 @@ class SugarTestCampaignUtilities
         if ($url == '') {
             $url = 'http://www.foo.com/'.$time;
         }
-        $campaignTracker = BeanFactory::getBean("CampaignTrackers");
+        $campaignTracker = BeanFactory::newBean("CampaignTrackers");
         $campaignTracker->campaign_id   = $campaignId;
         $campaignTracker->tracker_name    = $name;
         $campaignTracker->tracker_url  = $url;

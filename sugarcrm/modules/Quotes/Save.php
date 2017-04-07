@@ -14,7 +14,7 @@ require_once('include/formbase.php');
 require_once('modules/Quotes/config.php');
 Activity::disable();
 /* @var $focus Quote */
-$focus = BeanFactory::getBean('Quotes');
+$focus = BeanFactory::newBean('Quotes');
 $focus = populateFromPost('', $focus);
 
 if (!$focus->ACLAccess('Save')) {
@@ -107,7 +107,7 @@ unset($_REQUEST['relate_to']);
 
 $product_bundels = array();
 for ($k = 0; $k < sizeof($total_keys); $k++) {
-    $pb = BeanFactory::getBean('ProductBundles');
+    $pb = BeanFactory::newBean('ProductBundles');
 
     if (substr_count($total_keys[$k], 'group_') == 0) {
         $pb->retrieve($total_keys[$k]);
@@ -151,7 +151,7 @@ if (isset($_POST['delete_table'])) {
 $focus->process_save_dates = true;
 
 /* @var $pb ProductBundle */
-$pb = BeanFactory::getBean('ProductBundles');
+$pb = BeanFactory::newBean('ProductBundles');
 for ($i = 0; $i < $product_count; $i++) {
 
     if ((isset($_POST['delete'][$i]) && $_POST['delete'][$i] != '1')) {
@@ -172,7 +172,7 @@ for ($i = 0; $i < $product_count; $i++) {
         } else {
             // insert/update a product into products table
             if (!empty($_POST['product_name'][$i]) && !empty($_POST['parent_group'][$i])) {
-                $product = BeanFactory::getBean('Products');
+                $product = BeanFactory::newBean('Products');
                 $the_product_template_id = '-1';
                 if (!empty($_POST['product_id'][$i])) {
                     $product->retrieve($_POST['product_id'][$i]);
@@ -231,7 +231,7 @@ for ($i = 0; $i < $product_count; $i++) {
             } else {
                 // insert comment row
                 if (!empty($_POST['comment_index'][$i]) && !empty($_POST['parent_group'][$i])) {
-                    $product_bundle_note = BeanFactory::getBean('ProductBundleNotes');
+                    $product_bundle_note = BeanFactory::newBean('ProductBundleNotes');
                     if (!empty($_POST['comment_id'][$i]) && !isset($_REQUEST['duplicateSave'])) {
                         $product_bundle_note->id = $_POST['comment_id'][$i];
                     }

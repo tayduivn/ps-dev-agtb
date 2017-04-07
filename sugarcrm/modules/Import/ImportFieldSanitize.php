@@ -149,7 +149,7 @@ class ImportFieldSanitize
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_user instanceof User) ) {
 
-            $focus_user = BeanFactory::getBean('Users');
+            $focus_user = BeanFactory::newBean('Users');
         }
 
         static $focus_team;
@@ -157,7 +157,7 @@ class ImportFieldSanitize
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_team instanceof Team) ) {
 
-            $focus_team = BeanFactory::getBean('Teams');
+            $focus_team = BeanFactory::newBean('Teams');
         }
 
         if ( !empty($value) && strtolower($value) != "all" ) {

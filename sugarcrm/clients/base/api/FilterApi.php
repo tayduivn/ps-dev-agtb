@@ -617,7 +617,7 @@ class FilterApi extends SugarApi
                 if (!empty($fieldDef['link'])) {
                     $rbean = $bean->getRelatedBean($fieldDef['link']);
                 } else {
-                    $rbean = BeanFactory::getBean($fieldDef['module']);
+                    $rbean = BeanFactory::newBean($fieldDef['module']);
                 }
 
                 if (empty($rbean)) {
@@ -777,10 +777,10 @@ class FilterApi extends SugarApi
 
         foreach ($options['relate_collections'] as $name => $def) {
             // Parent bean
-            $bean = BeanFactory::getBean($options['module']);
+            $bean = BeanFactory::newBean($options['module']);
 
             // Related bean
-            $relate_bean = BeanFactory::getBean($def['module']);
+            $relate_bean = BeanFactory::newBean($def['module']);
 
             // If the related bean has the necessary method to get related records
             // then call it
@@ -857,7 +857,7 @@ class FilterApi extends SugarApi
                 $bean = $q->getTableBean($linkName);
             }
             if (empty($bean) && $q->getFromBean() && $q->getFromBean()->$linkName) {
-                $bean = BeanFactory::getBean($q->getFromBean()->$linkName->getRelatedModuleName());
+                $bean = BeanFactory::newBean($q->getFromBean()->$linkName->getRelatedModuleName());
             }
             if (empty($bean)) {
                 throw new SugarApiExceptionInvalidParameter("Cannot use condition against $linkName - unknown module");

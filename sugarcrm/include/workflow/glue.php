@@ -644,7 +644,7 @@ include_once("include/workflow/alert_utils.php");
 
 		//Check to see if this action is new meeting or new call and add the appropriate bridge id
 
-		$action_shell = BeanFactory::getBean('WorkFlowActionShells');
+		$action_shell = BeanFactory::newBean('WorkFlowActionShells');
 		$action_shell_array .= $action_shell->check_for_invitee_bridge_meta($action_array);
 
 		return $action_shell_array;

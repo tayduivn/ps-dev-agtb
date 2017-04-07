@@ -84,7 +84,7 @@ class Bug61859_p2Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
 
         self::$dynamicField = new DynamicField(self::$module);
-        self::$dynamicField->setup(BeanFactory::getBean(self::$module));
+        self::$dynamicField->setup(BeanFactory::newBean(self::$module));
 
     }
 

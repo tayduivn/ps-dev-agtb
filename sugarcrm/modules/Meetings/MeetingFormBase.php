@@ -86,7 +86,7 @@ EOF;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(BeanFactory::getBean('Meetings'));
+$javascript->setSugarBean(BeanFactory::newBean('Meetings'));
 $javascript->addRequiredFields($prefix);
 $form .=$javascript->getScript();
 $mod_strings = $temp_strings;
@@ -152,7 +152,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	global $current_user;
 	global $timedate;
 
-	$focus = BeanFactory::getBean('Meetings');
+	$focus = BeanFactory::newBean('Meetings');
 
 	if($useRequired && !checkRequired($prefix, array_keys($focus->required_fields))) {
 		return null;

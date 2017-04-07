@@ -270,7 +270,7 @@ function exportFromApi($args, $sample = false)
         $result = $db->query($query, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
     }
 
-    $tagBean = BeanFactory::getBean("Tags");
+    $tagBean = BeanFactory::newBean("Tags");
     $relTags = $tagBean->getRelatedModuleRecords($focus, $records);
     if (isset($relTags)) {
         $options['relTags'] = $relTags;
@@ -1242,7 +1242,7 @@ function get_field_order_mapping($name = '', $reorderArr = '', $exclude = true, 
             }
 
             // get an instance of the bean
-            $focus = BeanFactory::getBean($_REQUEST['module']);
+            $focus = BeanFactory::newBean($_REQUEST['module']);
 
             // set the name based on the module type. default to basic ('notes')
             if ($focus instanceof Person) {
@@ -1508,7 +1508,7 @@ function get_field_order_mapping2($name, $reorderArr = '', $exclude = true, $for
             }
 
             // get an instance of the bean
-            $focus = BeanFactory::getBean($name);
+            $focus = BeanFactory::newBean($name);
 
             // set the name based on the module type. default to basic ('notes')
             if ($focus instanceof Person) {
@@ -1591,7 +1591,7 @@ function formatRealNameField(SugarBean $focus, $fields_array, $key, $value)
         !empty($focus->field_defs[$fields_array[$key]]['rname']) &&
         $focus->field_defs[$fields_array[$key]]['rname'] == 'full_name'
     ) {
-        $userFocus = BeanFactory::getBean('Users');
+        $userFocus = BeanFactory::newBean('Users');
         $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
         if (!empty($userFocus->id)) {
             $value = $locale->formatName($userFocus);

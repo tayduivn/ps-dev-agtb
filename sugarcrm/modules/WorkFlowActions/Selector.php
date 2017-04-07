@@ -45,7 +45,7 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = BeanFactory::getBean('WorkFlowActionShells');
+$focus = BeanFactory::newBean('WorkFlowActionShells');
 
 
 
@@ -57,7 +57,7 @@ $focus = BeanFactory::getBean('WorkFlowActionShells');
 
 //////////////////////////////////////////////////////////////////
 
-	$action_object = BeanFactory::getBean('WorkFlowActions');
+	$action_object = BeanFactory::newBean('WorkFlowActions');
 
 	if(!empty($_REQUEST['action_id'])){
 		$action_object->retrieve($_REQUEST['action_id']);
@@ -121,7 +121,7 @@ $form->out("embeded");
 $form->parse("main");
 $form->out("main");
 	//rsmith
-	$temp_module = BeanFactory::getBean($_REQUEST['target_module']);
+	$temp_module = BeanFactory::newBean($_REQUEST['target_module']);
 	global $mod_strings, $current_language;
 	$mod_strings = return_module_language($current_language, $temp_module->module_dir);
 	$field_num = $_REQUEST['field_num'];

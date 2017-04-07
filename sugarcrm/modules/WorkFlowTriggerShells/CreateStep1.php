@@ -40,7 +40,7 @@ if(empty($workflow_object)) {
 	sugar_die("You shouldn't be here");
 }
 
-$focus = BeanFactory::getBean('WorkFlowTriggerShells');
+$focus = BeanFactory::newBean('WorkFlowTriggerShells');
 
 if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);

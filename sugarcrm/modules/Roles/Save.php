@@ -16,7 +16,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 
 
-$focus = BeanFactory::getBean('Roles');
+$focus = BeanFactory::newBean('Roles');
 
 $tabs_def = urldecode($_REQUEST['display_tabs_def']);
 $tabs_hide = urldecode($_REQUEST['hide_tabs_def']);

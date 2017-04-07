@@ -91,7 +91,7 @@ function is_expected_version($expected_version){
 function mark_upgraded($name, $dbVersion, $fileVersion){
 	$query = "DELETE FROM versions WHERE name='$name'";
 	$GLOBALS['db']->query($query);
-	$version = BeanFactory::getBean('Versions');
+	$version = BeanFactory::newBean('Versions');
 	$version->name = $name;
 	$version->file_version = $fileVersion;
 	$version->db_version = $dbVersion;

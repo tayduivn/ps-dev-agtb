@@ -172,7 +172,7 @@ class PMSEImporter
 
         $lockedFields = json_decode($lockedFields);
         if ($lockedFields) {
-            $bean = BeanFactory::getBean($project[$this->module]);
+            $bean = BeanFactory::newBean($project[$this->module]);
             // tally the locked fields in each group
             $locked = [];
             foreach ($lockedFields as $lockedField) {

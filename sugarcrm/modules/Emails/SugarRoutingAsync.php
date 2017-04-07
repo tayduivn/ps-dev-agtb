@@ -11,7 +11,7 @@
  */
 
 
-$ie = BeanFactory::getBean('InboundEmail');
+$ie = BeanFactory::newBean('InboundEmail');
 $ie->disable_row_level_security = true;
 $json = getJSONobj();
 $rules = new SugarRouting($ie, $current_user);
@@ -42,7 +42,7 @@ switch($_REQUEST['routingAction']) {
 	case "getRule":
 		$ret = '';
 		if(isset($_REQUEST['rule_id']) && !empty($_REQUEST['rule_id']) && isset($_REQUEST['bean']) && !empty($_REQUEST['bean'])) {
-		    $bean = BeanFactory::getBean($_REQUEST['bean']);
+		    $bean = BeanFactory::newBean($_REQUEST['bean']);
             if(!empty($bean)) {
 				$rule = $rules->getRule($_REQUEST['rule_id'], $bean);
 
@@ -52,7 +52,7 @@ switch($_REQUEST['routingAction']) {
 				);
 			}
 		} else {
-			$bean = BeanFactory::getBean('Empty');
+			$bean = BeanFactory::newBean('Empty');
 			$rule = $rules->getRule('', $bean);
 
 			$ret = array(

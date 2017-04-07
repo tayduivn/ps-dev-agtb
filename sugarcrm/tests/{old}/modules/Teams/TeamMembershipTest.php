@@ -44,10 +44,10 @@ class TeamMembershipTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function isUserPartOfTeam($user, $team_name, $explicit) 
     {
-        $teamFactory = BeanFactory::getBean('Teams');
+        $teamFactory = BeanFactory::newBean('Teams');
         $team = $teamFactory->retrieve($teamFactory->retrieve_team_id($team_name));
         
-        $teamMembership = BeanFactory::getBean('TeamMemberships');
+        $teamMembership = BeanFactory::newBean('TeamMemberships');
         $teamMembership->retrieve_by_user_and_team($user->id, $team->id);
 		
         return $explicit ? $teamMembership->explicit_assign == 1 : $teamMembership->implicit_assign == 1;

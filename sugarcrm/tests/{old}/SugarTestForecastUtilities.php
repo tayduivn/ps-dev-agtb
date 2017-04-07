@@ -203,7 +203,7 @@ class SugarTestForecastUtilities
                  * setting it up.
                  */
                 /* @var $rli RevenueLineItem */
-                $rli = BeanFactory::getBean('RevenueLineItems');
+                $rli = BeanFactory::newBean('RevenueLineItems');
                 $rli->retrieve_by_string_fields(array('opportunity_id'=>$opp->id));
                 $rli->name = $opp->name;
                 $rli->best_case = $opp->best_case;
@@ -232,7 +232,7 @@ class SugarTestForecastUtilities
                     $return['included_opps_totals']['base_rate'] = $opp->base_rate;
 
                     if ($config['createWorksheet'] === true) {
-                        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+                        $worksheet = BeanFactory::newBean('ForecastWorksheets');
                         $worksheet->retrieve_by_string_fields(
                             array(
                                 'parent_id' => $opp->id,
@@ -297,7 +297,7 @@ class SugarTestForecastUtilities
 
                 // roll forecast up to manager
                 /* @var $mgr_worksheet ForecastManagerWorksheet */
-                $mgr_worksheet = BeanFactory::getBean("ForecastManagerWorksheets");
+                $mgr_worksheet = BeanFactory::newBean("ForecastManagerWorksheets");
                 $mgr_worksheet->reporteeForecastRollUp($user, $forecast->toArray());
 
                 $return['forecast'] = $forecast;
@@ -371,7 +371,7 @@ class SugarTestForecastUtilities
 
         // roll forecast up to manager
         /* @var $mgr_worksheet ForecastManagerWorksheet */
-        $mgr_worksheet = BeanFactory::getBean("ForecastManagerWorksheets");
+        $mgr_worksheet = BeanFactory::newBean("ForecastManagerWorksheets");
         $mgr_worksheet->reporteeForecastRollUp($manager['user'], $tmpForecast->toArray());
 
         return $tmpForecast;

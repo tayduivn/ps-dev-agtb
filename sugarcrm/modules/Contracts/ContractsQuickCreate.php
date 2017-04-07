@@ -33,7 +33,7 @@ class ContractsQuickCreate extends QuickCreate {
         $this->javascript = new javascript();
         $this->javascript->setFormName('contractsQuickCreate');
         
-        $focus = BeanFactory::getBean('Contracts');
+        $focus = BeanFactory::newBean('Contracts');
         $this->javascript->setSugarBean($focus);
         $this->javascript->addAllFields('');
 

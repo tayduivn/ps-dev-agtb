@@ -21,7 +21,7 @@
 
 global $mod_strings;
 
-$focus = BeanFactory::getBean('EmailMarketing');
+$focus = BeanFactory::newBean('EmailMarketing');
 
 if(!isset($_REQUEST['record'])) {
 	sugar_die($mod_strings['LBL_SPECIFY_RECORD_NUM']);

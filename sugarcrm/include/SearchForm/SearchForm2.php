@@ -279,14 +279,14 @@ class SearchForm
 
      function displaySavedSearch()
      {
-        $savedSearch = BeanFactory::getBean('SavedSearch');
+        $savedSearch = BeanFactory::newBean('SavedSearch');
         $savedSearch->init($this->listViewDefs[$this->module], $this->lv->data['pageData']['ordering']['orderBy'], $this->lv->data['pageData']['ordering']['sortOrder']);
         return $savedSearch->getForm($this->module, false);
     }
 
 
   function displaySavedSearchSelect(){
-        $savedSearch = BeanFactory::getBean('SavedSearch');
+        $savedSearch = BeanFactory::newBean('SavedSearch');
         $savedSearch->init($this->listViewDefs[$this->module], $this->lv->data['pageData']['ordering']['orderBy'], $this->lv->data['pageData']['ordering']['sortOrder']);
         return $savedSearch->getSelect($this->module);
     }
@@ -303,7 +303,7 @@ class SearchForm
     function _displayTabs($currentKey)
     {
         if(isset($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
-            $saved_search=BeanFactory::getBean('SavedSearch');
+            $saved_search=BeanFactory::newBean('SavedSearch');
             $saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
         } else {
             $saved_search = null;
@@ -418,7 +418,7 @@ class SearchForm
 					}else{
 
                         if (isset($this->fieldDefs[$fvName]['function_bean'])) {
-                            $funcBean =  BeanFactory::getBean($this->fieldDefs[$fvName]['function_bean']);
+                            $funcBean =  BeanFactory::newBean($this->fieldDefs[$fvName]['function_bean']);
                             if (method_exists($funcBean, $function_name)) {
                                 $function_name = array($funcBean, $function_name);
                             }
@@ -865,7 +865,7 @@ class SearchForm
                                  if (!empty($this->searchFields['parent_type'])) {
                                      $parentType = $this->searchFields['parent_type'];
                                      $rel_module = $parentType['value'];
-                                     $rel_seed = BeanFactory::getBean($rel_module);
+                                     $rel_seed = BeanFactory::newBean($rel_module);
                                      if(!empty($rel_seed)) {
                                          $db_field = 'parent_' . $rel_module . '_' . $rel_seed->table_name . '.name';
                                      }

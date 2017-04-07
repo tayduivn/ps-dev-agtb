@@ -74,7 +74,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument
         global $current_user;
         $bean = EAPM::getLoginInfo('Google');
         if (!$bean) {
-            $bean = BeanFactory::getBean('EAPM');
+            $bean = BeanFactory::newBean('EAPM');
             $bean->assigned_user_id = $current_user->id;
             $bean->application = 'Google';
             $bean->validated = true;

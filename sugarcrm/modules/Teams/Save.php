@@ -27,7 +27,7 @@ if(isset($_POST['user_id'])){
 
 if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
-$focus = BeanFactory::getBean('Teams');
+$focus = BeanFactory::newBean('Teams');
 
 if ($_POST['isDuplicate'] != 1) {
 	$focus->retrieve($_POST['record']);

@@ -60,7 +60,7 @@ $ss->assign("DEC_SEP", $seps[1]);
 //$campaign_focus->load_relationship('emailmarketing');
 //$mrkt_ids = $campaign_focus->emailmarketing->get();
 
-$mrkt_focus = BeanFactory::getBean('EmailMarketing');
+$mrkt_focus = BeanFactory::newBean('EmailMarketing');
 
 //if record param exists and it is not empty, then retrieve this bean
 if(isset($_REQUEST['record']) and !empty($_REQUEST['record'])){

@@ -25,7 +25,7 @@ class SugarUpgradeOpportunityFixSalesStageDefault extends UpgradeScript
         require_once('modules/DynamicFields/FieldCases.php');
 
         // we are working with opportunities
-        $bean = BeanFactory::getBean('Opportunities');
+        $bean = BeanFactory::newBean('Opportunities');
 
         // get the field defs
         $field_defs = $bean->getFieldDefinition('sales_stage');

@@ -119,7 +119,7 @@ class Mapping implements MappingInterface
     {
         // lazy load bean
         if ($this->bean === null) {
-            $this->bean = \BeanFactory::getBean($this->module);
+            $this->bean = \BeanFactory::newBean($this->module);
         }
         return $this->bean;
     }

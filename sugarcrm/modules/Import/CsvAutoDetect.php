@@ -233,7 +233,7 @@ class CsvAutoDetect {
             return false;
         }
 
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
         if(empty($bean)) {
             return false;
         }

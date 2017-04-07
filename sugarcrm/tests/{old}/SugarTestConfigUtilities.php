@@ -33,7 +33,7 @@ class SugarTestConfigUtilities
     public static function setConfig($category, $key, $value, $platform = 'base')
     {
         if (!(self::$admin instanceof Administration)) {
-            self::$admin = BeanFactory::getBean('Administration');
+            self::$admin = BeanFactory::newBean('Administration');
         }
         if (empty(self::$orgConfig)) {
             self::$orgConfig = self::$admin->getAllSettings();

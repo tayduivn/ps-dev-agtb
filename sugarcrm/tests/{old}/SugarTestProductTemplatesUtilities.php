@@ -26,7 +26,7 @@ class SugarTestProductTemplatesUtilities
         $time = mt_rand();
         $name = 'SugarProductTemplate';
         /* @var $product_template ProductTemplate */
-        $product_template = BeanFactory::getBean('ProductTemplates');
+        $product_template = BeanFactory::newBean('ProductTemplates');
         $product_template->name = $name . $time;
         if (!empty($id)) {
             $product_template->new_with_id = true;

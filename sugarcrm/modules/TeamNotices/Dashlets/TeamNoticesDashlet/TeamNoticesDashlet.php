@@ -34,7 +34,7 @@ class TeamNoticesDashlet extends Dashlet
         $ss = new Sugar_Smarty();
 
 
-        $focus = BeanFactory::getBean('TeamNotices');
+        $focus = BeanFactory::newBean('TeamNotices');
 
         $today = db_convert("'".TimeDate::getInstance()->nowDbDate()."'", 'date');
         $query = $focus->create_new_list_query("date_start",$focus->table_name.".date_start <= $today and ".$focus->table_name.".date_end >= $today and ".$focus->table_name.'.status=\'Visible\'');

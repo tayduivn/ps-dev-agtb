@@ -66,7 +66,7 @@ class SugarFieldEmail extends SugarFieldBase
         }
 
         if (!isset($bean->emailAddress)) {
-            $bean->emailAddress = BeanFactory::getBean('EmailAddresses');
+            $bean->emailAddress = BeanFactory::newBean('EmailAddresses');
         }
         if (empty($bean->emailAddress->addresses) 
             && !isset($bean->emailAddress->hasFetched)) {
@@ -162,7 +162,7 @@ class SugarFieldEmail extends SugarFieldBase
         }
 
         if (!isset($seed->emailAddress)) {
-            $seed->emailAddress = BeanFactory::getBean('EmailAddresses');
+            $seed->emailAddress = BeanFactory::newBean('EmailAddresses');
         }
         
         $query = $seed->emailAddress->getEmailsQuery($seed->module_name);
@@ -174,7 +174,7 @@ class SugarFieldEmail extends SugarFieldBase
 
         foreach ($beans as $bean) {
             if (!isset($bean->emailAddress)) {
-                $bean->emailAddress = BeanFactory::getBean('EmailAddresses');
+                $bean->emailAddress = BeanFactory::newBean('EmailAddresses');
             }
             // This way if there are no email addresses attached to a bean we don't double-fetch
             $bean->emailAddress->hasFetched = true;

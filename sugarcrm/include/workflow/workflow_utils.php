@@ -39,7 +39,7 @@ function get_column_select($base_module, $drop_down_module="", $exclusion_array=
 		$column_module = $base_module;
 	}
 
-	$temp_focus = BeanFactory::getBean($column_module);
+	$temp_focus = BeanFactory::newBean($column_module);
 	add_to_column_select($column_options, $temp_focus, $column_module, $exclusion_array, $inclusion_array, $include_none);
 	return $column_options;
 
@@ -148,7 +148,7 @@ function compare_type($value_array, $exclusion_array, $inclusion_array){
 function translate_label_from_module($target_module, $target_element){
 		global $current_language;
 
-		$temp_module = BeanFactory::getBean($target_module);
+		$temp_module = BeanFactory::newBean($target_module);
 		$temp_module_strings = return_module_language($current_language, $temp_module->module_dir);
 		$target_element_label = $temp_module->field_defs[$target_element]['vname'];
 		return get_label($target_element_label, $temp_module_strings);
@@ -169,7 +169,7 @@ function translate_option_name_from_bean(& $target_bean, $target_element, $targe
 
         // If we have function_bean defined, use it
         if (!empty($target_bean->field_defs[$target_element]['function_bean'])) {
-            $functionBean = BeanFactory::getBean($target_bean->field_defs[$target_element]['function_bean']);
+            $functionBean = BeanFactory::newBean($target_bean->field_defs[$target_element]['function_bean']);
             $return = $functionBean->$function();
         } else {
             $return = $function();
@@ -282,7 +282,7 @@ function get_rel_module_name($base_module, $relationship_name, & $db){
 	global $beanList;
 	global $dictionary;
 
-		$rel_bean = BeanFactory::getBean('Relationships');
+		$rel_bean = BeanFactory::newBean('Relationships');
 		$rel_module = $rel_bean->get_other_module($relationship_name, $base_module, $db);
 		return $rel_module;
 

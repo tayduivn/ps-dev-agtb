@@ -283,7 +283,7 @@ class Opportunity extends SugarBean
             'opportunity_role',
             'opportunity_rel_id'
         );
-        return $this->build_related_list2($query, BeanFactory::getBean('Contacts'), $temp);
+        return $this->build_related_list2($query, BeanFactory::newBean('Contacts'), $temp);
     }
 
 
@@ -582,7 +582,7 @@ class Opportunity extends SugarBean
         // For now, get them from forecasting.
         static $stages;
         if (!isset($stages)) {
-            $admin = BeanFactory::getBean('Administration');
+            $admin = BeanFactory::newBean('Administration');
             $settings = $admin->getConfigForModule('Forecasts');
 
             // get all possible closed stages
@@ -610,7 +610,7 @@ class Opportunity extends SugarBean
     {
         /* @var $admin Administration */
         if (empty(static::$settings) || $reload === true) {
-            $admin = BeanFactory::getBean('Administration');
+            $admin = BeanFactory::newBean('Administration');
             static::$settings = $admin->getConfigForModule('Opportunities');
         }
 

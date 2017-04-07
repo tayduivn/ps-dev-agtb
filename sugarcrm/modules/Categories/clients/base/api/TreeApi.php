@@ -416,7 +416,7 @@ class TreeApi extends FilterApi
         $api->action = 'list';
         $this->requireArgs($args, array('module', 'root'));
         // Load up a seed bean
-        $seed = BeanFactory::getBean($args['module']);
+        $seed = BeanFactory::newBean($args['module']);
         if (!$seed->ACLAccess($api->action)) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
@@ -602,7 +602,7 @@ class TreeApi extends FilterApi
         if ($linkModuleName != $record->module_name) {
             throw new SugarApiExceptionNotFound('Could not find self referencing in relationship named: ' . $linkName);
         }
-        $linkSeed = BeanFactory::getBean($linkModuleName);
+        $linkSeed = BeanFactory::newBean($linkModuleName);
         if (!$linkSeed->ACLAccess('list')) {
             throw new SugarApiExceptionNotAuthorized('No access to list records for module: ' . $linkModuleName);
         }
@@ -657,7 +657,7 @@ class TreeApi extends FilterApi
     {
         $this->requireArgs($args, array('module', 'link_name'));
         // Load up a seed bean
-        $seed = BeanFactory::getBean($args['module']);
+        $seed = BeanFactory::newBean($args['module']);
         if (!$seed->ACLAccess('list')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }

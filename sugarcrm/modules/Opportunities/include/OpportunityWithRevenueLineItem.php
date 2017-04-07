@@ -304,7 +304,7 @@ EOL;
      */
     protected function sendNotification()
     {
-        $notification = BeanFactory::getBean('Notifications');
+        $notification = BeanFactory::newBean('Notifications');
         $notification->assigned_user_id = $GLOBALS['current_user']->id;
         $notification->name = $GLOBALS['app_strings']['LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_SUBJECT'];
         $notification->description = $GLOBALS['app_strings']['LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_SUBJECT'];
@@ -358,7 +358,7 @@ EOL;
     protected function createRevenueLineItemJob(array $data, $job_group)
     {
         /* @var $job SchedulersJob */
-        $job = BeanFactory::getBean('SchedulersJobs');
+        $job = BeanFactory::newBean('SchedulersJobs');
         $job->name = "Create RevenueLineItems for Opportunities";
         $job->target = "class::SugarJobCreateRevenueLineItems";
         $job->data = json_encode(array('data' => $data));
@@ -389,7 +389,7 @@ EOL;
             $opp = BeanFactory::getBean('Opportunities', $db_opp['id']);
             if ($opp->id === $db_opp['id']) {
                 /* @var $rli RevenueLineItem */
-                $rli = BeanFactory::getBean('RevenueLineItems');
+                $rli = BeanFactory::newBean('RevenueLineItems');
                 $rli->update_modified_by = false;
                 $rli->set_created_by = false;
                 $rli->name = $opp->name;

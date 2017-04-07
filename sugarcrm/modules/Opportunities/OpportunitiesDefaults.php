@@ -19,7 +19,7 @@ class OpportunitiesDefaults
      */
     public static function setupOpportunitiesSettings()
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $oppsConfig = self::getDefaults();
 
         foreach ($oppsConfig as $name => $value) {

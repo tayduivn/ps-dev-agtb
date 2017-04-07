@@ -99,7 +99,7 @@ class RelationshipHandler
 	*/
 	function build_info($build_rel2=false){
 		if($this->base_bean == null){
-			$this->base_bean = BeanFactory::getBean($this->base_module);
+			$this->base_bean = BeanFactory::newBean($this->base_module);
 		}
 
 		if(empty($this->rel1_bean)){
@@ -120,10 +120,10 @@ class RelationshipHandler
 
     function build_rel1_info()
     {
-        $bean = BeanFactory::getBean($this->base_module);
+        $bean = BeanFactory::newBean($this->base_module);
         $rel_attribute1_name = $bean->field_defs[strtolower($this->base_vardef_field)]['relationship'];
         $rel_module1 = $this->relationship->get_other_module($rel_attribute1_name, $this->base_module);
-        $this->rel1_bean = BeanFactory::getBean($rel_module1);
+        $this->rel1_bean = BeanFactory::newBean($rel_module1);
     }
 
     function build_rel2_info()
@@ -138,7 +138,7 @@ class RelationshipHandler
         } else {
             $rel_attribute2_name = $this->rel1_bean->field_defs[strtolower($this->rel1_vardef_field)]['relationship'];
             $rel_module2 = $this->relationship->get_other_module($rel_attribute2_name, $this->rel1_bean->module_dir);
-            $this->rel2_bean = BeanFactory::getBean($rel_module2);
+            $this->rel2_bean = BeanFactory::newBean($rel_module2);
         }
     }
 
@@ -384,7 +384,7 @@ function process_by_rel_bean($rel1_module){
         $this->db
     );
 	$this->rel1_module = $rel1_module;
-	$this->rel1_bean = BeanFactory::getBean($this->rel1_module);
+	$this->rel1_bean = BeanFactory::newBean($this->rel1_module);
 
 //end function process_by_rel_bean
 }

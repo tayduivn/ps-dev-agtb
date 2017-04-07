@@ -113,7 +113,7 @@ class SugarFieldCollection extends SugarFieldBase {
             foreach($link_field as $k=>$v){
                 $save = false;
                 $update_fields = array();
-                $obj = BeanFactory::getBean($module);
+                $obj = BeanFactory::newBean($module);
                 if(!isset($link_field[$k]['name']) || empty($link_field[$k]['name'])){
                     // There is no name so it is an empty record -> ignore it!
                     unset($link_field[$k]);

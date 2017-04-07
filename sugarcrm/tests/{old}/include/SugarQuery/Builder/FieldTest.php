@@ -27,7 +27,7 @@ class FieldTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetJoinRecursion()
     {
-        $contact = BeanFactory::getBean('Contacts');
+        $contact = BeanFactory::newBean('Contacts');
 
         // create field definition which refers itself as id_name and doesn't have link attribute
         $contact->field_defs['account_name']['id_name'] = 'account_name';
@@ -104,7 +104,7 @@ class FieldTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetFieldDef()
     {
-        $account = BeanFactory::getBean('Accounts');
+        $account = BeanFactory::newBean('Accounts');
         // create custom field defs
         $account->field_defs['my_field_c'] = array(
             'labelValue' => 'my field',

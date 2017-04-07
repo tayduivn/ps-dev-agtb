@@ -143,7 +143,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveManagerDraft()
     {
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $ret = $worksheet->reporteeForecastRollUp(self::$user, self::$forecast->toArray());
 
         // make sure that true was returned
@@ -187,7 +187,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveManagerDraftDoesNotCreateCommittedVersion()
     {
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $ret = $worksheet->reporteeForecastRollUp(self::$user, self::$forecast->toArray());
 
         // make sure that true was returned
@@ -214,7 +214,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     public function testAdjustedCaseValuesEqualStandardCaseValues($field, $adjusted_field)
     {
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
             array(
                 'assigned_user_id' => self::$manager->id,
@@ -244,7 +244,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     public function testQuotaWasPulledFromQuotasTable()
     {
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
             array(
                 'assigned_user_id' => self::$manager->id,
@@ -266,7 +266,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCommitManagerHasCommittedUserRow()
     {
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->commitManagerForecast(self::$manager, self::$timeperiod->id);
 
 
@@ -296,7 +296,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // get the direct quota for the manager
         /* @var $quota Quota */
-        $quota = BeanFactory::getBean('Quotas');
+        $quota = BeanFactory::newBean('Quotas');
         $quota->retrieve_by_string_fields(
             array(
                 'timeperiod_id' => self::$timeperiod->id,
@@ -321,7 +321,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         sleep(2); // we need to wait 2 seconds to get the off set that we need.
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $forecast = self::$forecast->toArray();
         $forecast['best_case'] += 100;
         $ret = $worksheet->reporteeForecastRollUp(self::$user, $forecast);
@@ -356,7 +356,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // load up the draft record for the manager
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
             array(
                 'assigned_user_id' => $GLOBALS['current_user']->id,
@@ -378,13 +378,13 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // commit the manager
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->commitManagerForecast(self::$manager, self::$timeperiod->id);
 
         // change an adjust column on the draft record
         // load up the draft record for the manager
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
             array(
                 'assigned_user_id' => self::$manager->id,
@@ -400,7 +400,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         // get the draft record again
         // load up the draft record for the manager
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
             array(
                 'assigned_user_id' => self::$manager->id,
@@ -420,7 +420,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCommitManagerForecastReturnsFalseWhenUserNotAManager()
     {
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $return = $worksheet->commitManagerForecast(self::$user, self::$timeperiod->id);
 
         $this->assertFalse($return);
@@ -434,7 +434,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // from the data created when the class was started, the manager had a rollup quota of 2000, direct 1000, 
         // and the user had a quota of 600, so, it should return 1400 as that is the difference
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
 
         $new_mgr_quota = SugarTestReflection::callProtectedMethod(
             $worksheet,
@@ -457,7 +457,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         // from the data created when the class was started, the manager had a quota of 1000
         // and the user had a quota of 600. We are going to set the manager direct to 4000, so
         // that the total is 4600 (2600 over the Rollup of 2000).  It should NOT recalc at that point.
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         self::$manager_quota->amount = 4000;
         self::$manager_quota->save();
         $new_mgr_quota = SugarTestReflection::callProtectedMethod(

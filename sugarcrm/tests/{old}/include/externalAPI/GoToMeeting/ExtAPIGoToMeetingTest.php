@@ -34,7 +34,7 @@ class ExtAPIGoToMeetingTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
 
-        $this->eapm = BeanFactory::getBean('EAPM');
+        $this->eapm = BeanFactory::newBean('EAPM');
         $this->eapm->validated = 1;
         $this->eapm->oauth_token = 'something';
         $this->eapm->save();

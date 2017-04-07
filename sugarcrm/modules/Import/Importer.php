@@ -193,7 +193,7 @@ class Importer
     {
         global $sugar_config, $mod_strings, $current_user, $current_language;
 
-        $focus = BeanFactory::getBean($this->bean->module_dir);
+        $focus = BeanFactory::newBean($this->bean->module_dir);
         $focus->unPopulateDefaultValues();
         $focus->save_from_post = false;
         $focus->team_id = null;
@@ -869,7 +869,7 @@ class Importer
             array('Assert\PhpSerialized' => array('base64Encoded' => true))
         );
         $mappingValsArr = $this->importColumns;
-        $mapping_file = BeanFactory::getBean('Import_1');
+        $mapping_file = BeanFactory::newBean('Import_1');
         $mapping_file->delimiter = $_REQUEST['custom_delimiter'];
         $mapping_file->enclosure = html_entity_decode($_REQUEST['custom_enclosure'], ENT_QUOTES);
 
@@ -1040,7 +1040,7 @@ class Importer
      */
     protected function _undoCreatedBeans( array $ids )
     {
-        $focus = BeanFactory::getBean('Import_2');
+        $focus = BeanFactory::newBean('Import_2');
         foreach ($ids as $id)
             $focus->undoById($id);
     }
@@ -1098,7 +1098,7 @@ class Importer
         $importableModules = array();
         foreach ($beanList as $moduleName => $beanName)
         {
-            $tmp = BeanFactory::getBean($moduleName);
+            $tmp = BeanFactory::newBean($moduleName);
             if( !empty($tmp->importable))
             {
                 $label = isset($GLOBALS['app_list_strings']['moduleList'][$moduleName]) ? $GLOBALS['app_list_strings']['moduleList'][$moduleName] : $moduleName;

@@ -76,7 +76,7 @@ class RelateApi extends FilterApi {
             throw new SugarApiExceptionNotFound('Could not find a relationship named: ' . $args['link_name']);
         }
         $linkModuleName = $record->$linkName->getRelatedModuleName();
-        $linkSeed = BeanFactory::getBean($linkModuleName);
+        $linkSeed = BeanFactory::newBean($linkModuleName);
         if (!$linkSeed->ACLAccess('list')) {
             throw new SugarApiExceptionNotAuthorized('No access to list records for module: ' . $linkModuleName);
         }

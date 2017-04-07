@@ -37,7 +37,7 @@ class SugarTestJobQueueUtilities
      */
     public static function createAndRunJob($name, $target, $data, $user)
     {
-        $job = BeanFactory::getBean('SchedulersJobs');
+        $job = BeanFactory::newBean('SchedulersJobs');
         $job->name = $name;
         $job->target = $target;
         $job->data = $data;

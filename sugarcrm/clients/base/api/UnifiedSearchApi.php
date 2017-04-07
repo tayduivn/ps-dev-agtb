@@ -413,7 +413,7 @@ class UnifiedSearchApi extends SugarListApi {
         if (!empty($options['searchFields'])) {
             $customWhere = array();
             foreach ($options['moduleList'] as $module) {
-                $seed = BeanFactory::getBean($module);
+                $seed = BeanFactory::newBean($module);
                 $fields = array_keys($seed->field_defs);
                 $existingfields = array_intersect($fields, $options['searchFields']);
                 if (!empty($existingfields)) {

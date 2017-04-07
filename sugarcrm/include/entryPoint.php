@@ -194,7 +194,7 @@ if (!isset ($_SERVER['REQUEST_URI'])) {
 	$_SERVER['REQUEST_URI'] = '';
 }
 
-$current_user = BeanFactory::getBean('Users');
+$current_user = BeanFactory::newBean('Users');
 $current_entity = null;
 $system_config = Administration::getSettings();
 

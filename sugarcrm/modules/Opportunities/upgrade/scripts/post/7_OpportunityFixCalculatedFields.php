@@ -34,7 +34,7 @@ class SugarUpgradeOpportunityFixCalculatedFields extends UpgradeScript
 
         // we are working with opportunities
         $module = 'Opportunities';
-        $bean = BeanFactory::getBean('Opportunities');
+        $bean = BeanFactory::newBean('Opportunities');
 
         // the field set we need
         $fields = array(

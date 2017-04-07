@@ -18,7 +18,7 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$focus = BeanFactory::getBean('EmailTemplates');
+$focus = BeanFactory::newBean('EmailTemplates');
 require_once('include/formbase.php');
 $focus = populateFromPost('', $focus);
 

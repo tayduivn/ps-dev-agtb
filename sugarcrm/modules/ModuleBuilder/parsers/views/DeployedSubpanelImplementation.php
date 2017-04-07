@@ -40,7 +40,7 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
         $this->_subpanelName = $subpanelName ;
         $this->_moduleName = $moduleName ;
 
-        $module = BeanFactory::getBean($moduleName);
+        $module = BeanFactory::newBean($moduleName);
         // BEGIN ASSERTIONS
         if (empty($module))
         {

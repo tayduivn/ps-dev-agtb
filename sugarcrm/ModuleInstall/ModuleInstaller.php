@@ -681,7 +681,7 @@ class ModuleInstaller{
             return true;
         }
 
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $users = get_user_array();
         $unified_search_modules_display = array();
         require('custom/modules/unified_search_modules_display.php');
@@ -743,7 +743,7 @@ class ModuleInstaller{
             $modules[] = $definition['module'];
         }
 
-        $filter = BeanFactory::getBean('Filters');
+        $filter = BeanFactory::newBean('Filters');
         $query = new SugarQuery();
         $query->select('id');
         $query->from($filter)->where()->in('module_name', $modules);
@@ -1326,7 +1326,7 @@ class ModuleInstaller{
                     }
                 }
 
-                $mod = BeanFactory::getBean($field['module']);
+                $mod = BeanFactory::newBean($field['module']);
 
                 if(!empty($mod)){
                     $installed = true;
@@ -1346,7 +1346,7 @@ class ModuleInstaller{
         $dyField = new DynamicField();
 
         foreach($fields as $field){
-            $mod = BeanFactory::getBean($field['module']);
+            $mod = BeanFactory::newBean($field['module']);
             if(!empty($mod)) {
                 $dyField->bean = $mod;
                 $dyField->module = $field['module'];
@@ -1683,7 +1683,7 @@ class ModuleInstaller{
                                     $studioMod = new StudioModule ( $mod );
                                     $studioMod->removeFieldFromLayouts( $field );
                                     if (isset($def['custom_module'])) {
-                                        $seed = BeanFactory::getBean($mod);
+                                        $seed = BeanFactory::newBean($mod);
                                         $df = new DynamicField ( $mod ) ;
                                         $df->setup ( $seed ) ;
                                         //Need to load the entire field_meta_data for some field types
@@ -2182,7 +2182,7 @@ class ModuleInstaller{
             $_SESSION['developerMode'] = true;
 
             $this->log( translate('LBL_MI_IN_BEAN') . " $bean");
-            $mod = BeanFactory::getBean($bean);
+            $mod = BeanFactory::newBean($bean);
             if(!empty($mod) && $mod instanceof SugarBean && empty($mod->disable_vardefs)) { //#30273
                 $GLOBALS['log']->debug( "Creating Tables Bean : $bean");
                 $mod->create_tables();
@@ -2197,7 +2197,7 @@ class ModuleInstaller{
     function uninstall_beans($beans){
         foreach($beans as $bean){
             $this->log( translate('LBL_MI_UN_BEAN') . " $bean");
-            $mod = BeanFactory::getBean($bean);
+            $mod = BeanFactory::newBean($bean);
             if(!empty($mod) && $mod instanceof SugarBean) {
                 $GLOBALS['log']->debug( "Drop Tables : $bean");
                 if(isset($GLOBALS['mi_remove_tables']) && $GLOBALS['mi_remove_tables']) {

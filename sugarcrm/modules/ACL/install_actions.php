@@ -64,7 +64,7 @@ if(is_admin($current_user)){
 $installActions = false;
 $missingAclRolesActions = false;
 
-$role1 = BeanFactory::getBean('ACLRoles');
+$role1 = BeanFactory::newBean('ACLRoles');
 
 $role_id = $GLOBALS['db']->fetchOne("SELECT id FROM acl_roles where name = 'Tracker'");
 
@@ -112,7 +112,7 @@ $installActions = false;
 $missingAclRolesActions = false;
 
 
-$role1 = BeanFactory::getBean('ACLRoles');
+$role1 = BeanFactory::newBean('ACLRoles');
 
 $result = $GLOBALS['db']->query("SELECT id FROM acl_roles where name = 'Sales Administrator'");
 $role_id = $GLOBALS['db']->fetchByAssoc($result, true, true);
@@ -161,7 +161,7 @@ if($installActions || $missingAclRolesActions) {
 
 
     foreach($mlaRoles as $roleName=>$role){
-        $role1 = BeanFactory::getBean('ACLRoles');
+        $role1 = BeanFactory::newBean('ACLRoles');
         $role1->name = $roleName;
         $role1->description = $roleName." Role";
         $role1_id=$role1->save();

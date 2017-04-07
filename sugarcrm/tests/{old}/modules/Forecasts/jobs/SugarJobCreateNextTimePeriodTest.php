@@ -58,7 +58,7 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //Run rebuildForecastingTimePeriods which takes care of creating the TimePeriods based on the configuration data
         $timePeriod = TimePeriod::getByType($timePeriodType);
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
 
         $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
@@ -90,7 +90,7 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSugarJobCreateNextTimePeriodJobForAnnualParent()
     {
         global $current_user;
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $config = $admin->getConfigForModule('Forecasts', 'base');
 
         $timeperiodInterval = $config['timeperiod_interval'];

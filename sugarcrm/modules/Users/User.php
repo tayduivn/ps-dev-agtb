@@ -252,7 +252,7 @@ class User extends Person {
 	 */
 	public function hasPersonalEmail()
 	{
-	    $focus = BeanFactory::getBean('InboundEmail');
+	    $focus = BeanFactory::newBean('InboundEmail');
         $focus->disable_row_level_security = true;
 	    $focus->retrieve_by_string_fields(array('group_id' => $this->id));
 
@@ -660,7 +660,7 @@ class User extends Person {
             if (!$isUpdate) {
                 // If this is a new user, make sure to add them to the appriate default teams
                 if (!$this->team_exists) {
-                    $team = BeanFactory::getBean('Teams');
+                    $team = BeanFactory::newBean('Teams');
                     $team->new_user_created($this);
                 }
             } else if (empty($GLOBALS['sugar_config']['noPrivateTeamUpdate'])) {
@@ -1143,7 +1143,7 @@ class User extends Person {
 
 	public function retrieve_user_id($user_name)
 	{
-	    $userFocus = BeanFactory::getBean('Users');
+	    $userFocus = BeanFactory::newBean('Users');
 	    $userFocus->retrieve_by_string_fields(array('user_name'=>$user_name));
 	    if ( empty($userFocus->id) )
 	        return false;
@@ -1322,7 +1322,7 @@ class User extends Person {
         $x = 0;
         while ($row = $stmt->fetch()) {
 			if ($return_obj) {
-				$out[$x] = BeanFactory::getBean('Teams');
+				$out[$x] = BeanFactory::newBean('Teams');
 				$out[$x]->retrieve($row['team_id']);
 				$out[$x++]->implicit_assign = $row['implicit_assign'];
 			} else {
@@ -1352,7 +1352,7 @@ class User extends Person {
 	 */
 	function update_team_memberships($old_reports_to_id) {
 
-		$team = BeanFactory::getBean('Teams');
+		$team = BeanFactory::newBean('Teams');
 		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
 	}
 
@@ -1381,12 +1381,12 @@ class User extends Person {
 	function get_meetings() {
 		// First, get the list of IDs.
 		$query = "SELECT meeting_id as id from meetings_users where user_id='$this->id' AND deleted=0";
-		return $this->build_related_list($query, BeanFactory::getBean('Meetings'));
+		return $this->build_related_list($query, BeanFactory::newBean('Meetings'));
 	}
 	function get_calls() {
 		// First, get the list of IDs.
 		$query = "SELECT call_id as id from calls_users where user_id='$this->id' AND deleted=0";
-		return $this->build_related_list($query, BeanFactory::getBean('Calls'));
+		return $this->build_related_list($query, BeanFactory::newBean('Calls'));
 	}
 
 	/**
@@ -1480,7 +1480,7 @@ class User extends Person {
 
 	function getSystemDefaultNameAndEmail() {
 
-		$email = BeanFactory::getBean('Emails');
+		$email = BeanFactory::newBean('Emails');
 		$return = $email->getSystemDefaultEmail();
 		$prefAddr = $return['email'];
 		$fullName = $return['name'];
@@ -1803,7 +1803,7 @@ class User extends Person {
             // in $GLOBALS['ACLActions'] that we need to account for.
             // TODO: In the future these should be migrated to a custom ACL strategy for those modules.
             if (in_array($module, array('Tracker', 'TrackerPerfs', 'TrackerQueries', 'TrackerSessions'))) {
-                $focus = BeanFactory::getBean($module);
+                $focus = BeanFactory::newBean($module);
                 if ($focus instanceOf SugarBean) {
                     $key = $focus->acltype;
                 }
@@ -2188,7 +2188,7 @@ class User extends Person {
             'message' => ''
         );
 
-        $emailTemplate                             = BeanFactory::getBean('EmailTemplates');
+        $emailTemplate                             = BeanFactory::newBean('EmailTemplates');
         $emailTemplate->disable_row_level_security = true;
 
         if ($emailTemplate->retrieve($templateId) == '') {
@@ -2623,7 +2623,7 @@ class User extends Person {
             $params[] = $status;
         }
 
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $options = array('action' => 'list');
         $user->addVisibilityFrom($query, $options);
         $query .= " WHERE $where ";

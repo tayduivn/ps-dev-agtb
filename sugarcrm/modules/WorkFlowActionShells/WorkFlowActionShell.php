@@ -123,7 +123,7 @@ class WorkFlowActionShell extends SugarBean {
         {
             $actions = $this->get_actions($this->id);
             $workflow_object = $this->get_workflow_object();
-            $temp_module = BeanFactory::getBean($workflow_object->base_module);
+            $temp_module = BeanFactory::newBean($workflow_object->base_module);
             $temp_module->call_vardef_handler("action_filter");
             $field_array = $temp_module->vardef_handler->get_vardef_array();
             foreach($actions as $action)
@@ -421,7 +421,7 @@ function copy($parent_id){
 				
 				
 			//Build bridging workflow object
-			$bridge_object = BeanFactory::getBean('WorkFlow');	
+			$bridge_object = BeanFactory::newBean('WorkFlow');	
 			$bridge_object->parent_id = $this->id;
 			$bridge_object->name = 'Meeting/Call Bridging Object';
 			$bridge_object->status = 'on';
@@ -436,7 +436,7 @@ function copy($parent_id){
 			
 			
 			//Predefine AlertShell Object
-			$alert_shell_object = BeanFactory::getBean('WorkFlowAlertShells');
+			$alert_shell_object = BeanFactory::newBean('WorkFlowAlertShells');
 			$alert_shell_object->name = 'Invite People';
 			$alert_shell_object->alert_type = 'Invite';
 			$alert_shell_object->source_type = 'System Default';

@@ -33,7 +33,7 @@ class Bug44680Test extends SOAPTestCase
 
         $this->testTeam = SugarTestTeamUtilities::createAnonymousTeam();
 
-        $this->teamSet = BeanFactory::getBean('TeamSets');
+        $this->teamSet = BeanFactory::newBean('TeamSets');
         $this->teamSet->addTeams(array($this->testTeam->id, $this->testUser->getPrivateTeamID()));
 
 
@@ -65,7 +65,7 @@ class Bug44680Test extends SOAPTestCase
 
     public function testSetEntryNoAccess()
     {
-        $teamSet = BeanFactory::getBean('TeamSets');
+        $teamSet = BeanFactory::newBean('TeamSets');
         $teamSet->addTeams(array($this->testTeam->id));
         $this->testAccount->team_id = $this->testTeam->id;
 		$this->testAccount->team_set_id = $teamSet->id;

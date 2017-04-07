@@ -144,7 +144,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
     protected function getUserQuota()
     {
         /* @var $quota_bean Quota */
-        $quota_bean = BeanFactory::getBean('Quotas');
+        $quota_bean = BeanFactory::newBean('Quotas');
         $quota = $quota_bean->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'));
 
         return SugarCurrency::convertAmountToBase($quota['amount'], $quota['currency_id']);

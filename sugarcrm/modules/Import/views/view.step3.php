@@ -37,7 +37,7 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         // attempt to lookup a preexisting field map
         // use the custom one if specfied to do so in step 1
-        $mapping_file = BeanFactory::getBean('Import_1');
+        $mapping_file = BeanFactory::newBean('Import_1');
         $field_map = $mapping_file->set_get_import_wizard_fields();
         $default_values = array();
 		$ignored_fields = array();

@@ -42,7 +42,7 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedTime = $timedate->to_display_date_time($db->fromConvert($dbDatetime, 'datetime'));
         $expectedTime = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $expectedTime);
 
-        $obj = BeanFactory::getBean('Opportunities');
+        $obj = BeanFactory::newBean('Opportunities');
         $obj->date_modified = $isoDate;
 
         $vardef = $obj->field_defs['date_modified'];
@@ -99,7 +99,7 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
         $field = SugarFieldHandler::getSugarField('datetime');
         $q = new SugarQuery();
         $w = new SugarQuery_Builder_Andwhere($q);
-        $field->fixForFilter($date, 'date_entered', BeanFactory::getBean('Accounts'), $q, $w, $op);
+        $field->fixForFilter($date, 'date_entered', BeanFactory::newBean('Accounts'), $q, $w, $op);
         $this->assertEquals($fixedDate, $date);
     }
 

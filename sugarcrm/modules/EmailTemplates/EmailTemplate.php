@@ -102,10 +102,10 @@ class EmailTemplate extends SugarBean {
 	function generateFieldDefsJS() {
 		global $current_user;
 
-		$contact = BeanFactory::getBean('Contacts');
-		$account = BeanFactory::getBean('Accounts');
-		$lead = BeanFactory::getBean('Leads');
-		$prospect = BeanFactory::getBean('Prospects');
+		$contact = BeanFactory::newBean('Contacts');
+		$account = BeanFactory::newBean('Accounts');
+		$lead = BeanFactory::newBean('Leads');
+		$prospect = BeanFactory::newBean('Prospects');
 
 		$loopControl = array(
 			'Contacts' => array(
@@ -294,7 +294,7 @@ class EmailTemplate extends SugarBean {
 		global $beanFiles, $beanList, $app_list_strings;
 
 		// generate User instance that owns this "Contact" for contact_user_* macros
-		$user = BeanFactory::getBean('Users');
+		$user = BeanFactory::newBean('Users');
         if(!empty($focus->assigned_user_id)){
 		  $user->retrieve($focus->assigned_user_id);
         }
@@ -429,11 +429,11 @@ class EmailTemplate extends SugarBean {
 		$repl_arr = array();
 
 		// cn: bug 9277 - create a replace array with empty strings to blank-out invalid vars
-		$acct = BeanFactory::getBean('Accounts');
-		$contact = BeanFactory::getBean('Contacts');
+		$acct = BeanFactory::newBean('Accounts');
+		$contact = BeanFactory::newBean('Contacts');
 		//BEGIN SUGARCRM flav!=sales ONLY
-		$lead = BeanFactory::getBean('Leads');
-		$prospect = BeanFactory::getBean('Prospects');
+		$lead = BeanFactory::newBean('Leads');
+		$prospect = BeanFactory::newBean('Prospects');
 		//END SUGARCRM flav!=sales ONLY
 
 		foreach($lead->field_defs as $field_def) {
@@ -660,7 +660,7 @@ class EmailTemplate extends SugarBean {
 	}
 
     static function getTypeOptionsForSearch(){
-        $template = BeanFactory::getBean('EmailTemplates');
+        $template = BeanFactory::newBean('EmailTemplates');
         $optionKey = $template->field_defs['type']['options'];
         $options = $GLOBALS['app_list_strings'][$optionKey];
         if( ! is_admin($GLOBALS['current_user']) && isset($options['workflow']))

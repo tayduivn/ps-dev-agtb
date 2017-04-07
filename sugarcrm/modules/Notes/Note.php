@@ -160,7 +160,7 @@ class Note extends SugarBean
             array('name'=>'contact_name', 'phone_work'=>'contact_phone')
         );
         if (!empty($this->contact_name)) {
-            $emailAddress = BeanFactory::getBean('EmailAddresses');
+            $emailAddress = BeanFactory::newBean('EmailAddresses');
             $this->contact_email = $emailAddress->getPrimaryAddress(false, $this->contact_id, 'Contacts');
         }
 

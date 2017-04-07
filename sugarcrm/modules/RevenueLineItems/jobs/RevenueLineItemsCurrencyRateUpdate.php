@@ -178,7 +178,7 @@ class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
                 $chunks = array_chunk($queries, self::CHUNK_SIZE);
                 global $timedate, $current_user;
                 foreach ($chunks as $chunk) {
-                    $job = BeanFactory::getBean('SchedulersJobs');
+                    $job = BeanFactory::newBean('SchedulersJobs');
                     $job->name = "SugarJobSQLRunner: " . $timedate->getNow()->asDb();
                     $job->target = "class::SugarJobSQLRunner";
                     $job->data = serialize($chunk);
@@ -206,7 +206,7 @@ class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
     {
         static $rli;
         if (!isset($rli)) {
-            $rli = BeanFactory::getBean('RevenueLineItems');
+            $rli = BeanFactory::newBean('RevenueLineItems');
         }
         return $rli->getClosedStages();
     }

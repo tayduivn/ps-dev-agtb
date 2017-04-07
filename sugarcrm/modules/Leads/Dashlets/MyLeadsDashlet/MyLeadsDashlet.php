@@ -27,6 +27,6 @@ class MyLeadsDashlet extends DashletGeneric {
         
         $this->searchFields = $dashletData['MyLeadsDashlet']['searchFields'];
         $this->columns = $dashletData['MyLeadsDashlet']['columns'];
-        $this->seedBean = BeanFactory::getBean('Leads');        
+        $this->seedBean = BeanFactory::newBean('Leads');        
     }
 }

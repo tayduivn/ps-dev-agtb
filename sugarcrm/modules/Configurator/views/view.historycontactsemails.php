@@ -24,7 +24,7 @@ class ConfiguratorViewHistoryContactsEmails extends SugarView
     {
         $modules = array();
         foreach ($GLOBALS['beanList'] as $moduleName => $objectName) {
-            $bean = BeanFactory::getBean($moduleName);
+            $bean = BeanFactory::newBean($moduleName);
 
             if (!($bean instanceof SugarBean)) {
                 continue;

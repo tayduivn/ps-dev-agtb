@@ -94,7 +94,7 @@ class PMSECasesListApi extends FilterApi
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $q = new SugarQuery();
-        $inboxBean = BeanFactory::getBean('pmse_Inbox');
+        $inboxBean = BeanFactory::newBean('pmse_Inbox');
         if ($args['order_by'] == 'cas_due_date:asc') {
             $args['order_by'] = 'cas_create_date:asc';
         }
@@ -230,7 +230,7 @@ class PMSECasesListApi extends FilterApi
                 $list[$key]['prj_user_id_full_name'] = $prjUsersBean->full_name;
 
                 $qA = new SugarQuery();
-                $flowBean = BeanFactory::getBean('pmse_BpmFlow');
+                $flowBean = BeanFactory::newBean('pmse_BpmFlow');
                 $qA->select->fieldRaw('*');
                 $qA->from($flowBean);
                 $qA->where()->equals('cas_id', $list[$key]['cas_id']);
@@ -321,7 +321,7 @@ class PMSECasesListApi extends FilterApi
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $q = new SugarQuery();
-        $configLogBean = BeanFactory::getBean('pmse_BpmConfig');
+        $configLogBean = BeanFactory::newBean('pmse_BpmConfig');
         $fields = array(
             'c.cfg_value'
         );
@@ -352,7 +352,7 @@ class PMSECasesListApi extends FilterApi
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $data = $args['cfg_value'];
-        $bean = BeanFactory::getBean('pmse_BpmConfig')
+        $bean = BeanFactory::newBean('pmse_BpmConfig')
             ->retrieve_by_string_fields(array('cfg_status' => 'ACTIVE', 'name' => 'logger_level'));
         $bean->cfg_value = $data;
         $bean->save();

@@ -29,7 +29,7 @@ if(empty($workflow_object)) {
 	sugar_die("You shouldn't be here");
 }
 
-$focus = BeanFactory::getBean('WorkFlowTriggerShells');
+$focus = BeanFactory::newBean('WorkFlowTriggerShells');
 
 if(!empty($_REQUEST['record']) ) {
     $focus->retrieve($_REQUEST['record']);
@@ -138,7 +138,7 @@ $form->out("embeded");
 
 //////////////////BEGIN 1st Filter Object	/////////////////////////////////
 
-		$filter1_object = BeanFactory::getBean('Expressions');
+		$filter1_object = BeanFactory::newBean('Expressions');
 		//only try to retrieve if there is a base object set
 		if(isset($focus->id) && $focus->id!="") {
 			$filter_list = $focus->get_linked_beans('expressions','Expression');

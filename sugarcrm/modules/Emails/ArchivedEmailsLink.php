@@ -269,7 +269,7 @@ SQL;
         }
 
         if (!empty($params['enforce_teams'])) {
-            $seed = BeanFactory::getBean($this->getRelatedModuleName());
+            $seed = BeanFactory::newBean($this->getRelatedModuleName());
             $seed->addVisibilityFrom($query_array['join']);
             $seed->addVisibilityWhere($query_array['where']);
         }

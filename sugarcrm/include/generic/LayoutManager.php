@@ -297,7 +297,7 @@ class LayoutManager
         static $beanCache;
 		if(!empty($widget_def['module']) &&!empty($GLOBALS['beanList'][$widget_def['module']]) && !empty($GLOBALS['beanFiles'][$GLOBALS['beanList'][$widget_def['module']]])){
             if (!isset($beanCache[$widget_def['module']])){
-                $beanCache[$widget_def['module']] = BeanFactory::getBean($widget_def['module']);
+                $beanCache[$widget_def['module']] = BeanFactory::newBean($widget_def['module']);
             }
             $bean = $beanCache[$widget_def['module']];
             if (!empty($widget_def['name'])

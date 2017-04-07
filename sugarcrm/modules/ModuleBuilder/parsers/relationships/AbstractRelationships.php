@@ -716,7 +716,7 @@ class AbstractRelationships
 
         foreach ( $vardefs as $moduleName => $definitions )
         {
-            $module = BeanFactory::getBean($moduleName);
+            $module = BeanFactory::newBean($moduleName);
             if(!empty($module)) {
             	$object = $module->object_name ;
             } else {

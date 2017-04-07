@@ -78,7 +78,7 @@ class EmployeesViewListTest extends Sugar_PHPUnit_Framework_TestCase
             $sugar_config[$key] = $value;
         }
         /** @var Employee $bean */
-        $bean = BeanFactory::getBean('Employees');
+        $bean = BeanFactory::newBean('Employees');
         $searchForm = new SearchForm($bean, 'Employees');
 
         /** @var ListViewSmarty|PHPUnit_Framework_MockObject_MockObject $lvMock */

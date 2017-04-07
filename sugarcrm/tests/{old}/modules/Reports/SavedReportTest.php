@@ -80,7 +80,7 @@ class SavedReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLastRunDate()
     {
-        $bean = BeanFactory::getBean('Reports');
+        $bean = BeanFactory::newBean('Reports');
         $this->assertArrayHasKey('last_run_date', $bean->field_defs);
     }
 
@@ -89,7 +89,7 @@ class SavedReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNextRun()
     {
-        $bean = BeanFactory::getBean('Reports');
+        $bean = BeanFactory::newBean('Reports');
         $this->assertArrayHasKey('next_run', $bean->field_defs);
     }
 

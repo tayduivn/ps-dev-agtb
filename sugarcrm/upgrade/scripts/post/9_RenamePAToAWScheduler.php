@@ -22,7 +22,7 @@ class SugarUpgradeRenamePAToAWScheduler extends UpgradeScript
 
     public function run()
     {
-        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler = BeanFactory::newBean('Schedulers');
         $table = $scheduler->getTableName();
         // update name in Schedulers table
         $this->updateAWFScheduledJobsName($table);

@@ -211,7 +211,7 @@ class SugarUpgradeAddTagFieldToViews extends UpgradeScript
         if (isModuleBWC($module) || isset($this->skipModules[$module])) {
             return false;
         }
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
         if (isset($bean->field_defs['tag'])) {
             return true;
         }

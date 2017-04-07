@@ -60,7 +60,7 @@ class BaseTest extends \Sugar_PHPUnit_Framework_TestCase
     public function hasChangedProvider()
     {
         // Simple bean setup to cover all test cases
-        $bean = \BeanFactory::getBean('Bugs');
+        $bean = \BeanFactory::newBean('Bugs');
         $bean->test1 = 'foo';
         $bean->test3 = 'bar';
         $bean->test4 = 'bar';
@@ -108,7 +108,7 @@ class BaseTest extends \Sugar_PHPUnit_Framework_TestCase
     public function isEmptyProvider()
     {
         // Simple bean setup to cover all test cases
-        $bean = \BeanFactory::getBean('Bugs');
+        $bean = \BeanFactory::newBean('Bugs');
         $bean->test2 = null;
         $bean->test3 = '';
         $bean->test4 = ' ';

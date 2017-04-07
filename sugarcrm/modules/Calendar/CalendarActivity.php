@@ -125,7 +125,7 @@ class CalendarActivity {
     public static function get_freebusy_activities($user_focus, $start_date_time, $end_date_time)
     {
 		$act_list = array();
-		$vcal_focus = BeanFactory::getBean('vCals');
+		$vcal_focus = BeanFactory::newBean('vCals');
 		$vcal_str = $vcal_focus->get_vcal_freebusy($user_focus);
 
 		$lines = explode("\n",$vcal_str);
@@ -166,7 +166,7 @@ class CalendarActivity {
 
 		// get all upcoming meetings, tasks due, and calls for a user
 		if(ACLController::checkAccess('Meetings', 'list', $current_user->id == $user_id)) {
-			$meeting = BeanFactory::getBean('Meetings');
+			$meeting = BeanFactory::newBean('Meetings');
 
 			if($current_user->id  == $user_id) {
 				$meeting->disable_row_level_security = true;
@@ -191,7 +191,7 @@ class CalendarActivity {
 
 		if($show_calls){
 			if(ACLController::checkAccess('Calls', 'list',$current_user->id  == $user_id)) {
-				$call = BeanFactory::getBean('Calls');
+				$call = BeanFactory::newBean('Calls');
 
 				if($current_user->id  == $user_id) {
 					$call->disable_row_level_security = true;
@@ -218,7 +218,7 @@ class CalendarActivity {
 
 		if($show_tasks){
 			if(ACLController::checkAccess('Tasks', 'list',$current_user->id == $user_id)) {
-				$task = BeanFactory::getBean('Tasks');
+				$task = BeanFactory::newBean('Tasks');
 
 				$where = CalendarActivity::get_occurs_within_where_clause('tasks', '', $view_start_time, $view_end_time, 'date_due', $view);
 				$where .= " AND tasks.assigned_user_id='$user_id' ";

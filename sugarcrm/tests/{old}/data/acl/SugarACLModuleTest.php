@@ -40,7 +40,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
     {
         static $aclAction;
         if ( !isset($aclAction) ) {
-            $aclAction = BeanFactory::getBean('ACLActions');
+            $aclAction = BeanFactory::newBean('ACLActions');
         }
         return $aclAction;
     }

@@ -83,7 +83,7 @@ class ForecastManagerWorksheet extends SugarBean
 
         while ($row = $db->fetchByAssoc($results)) {
             /* @var $worksheet ForecastManagerWorksheet */
-            $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+            $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
 
             $worksheet->retrieve_by_string_fields(
                 array(
@@ -246,7 +246,7 @@ class ForecastManagerWorksheet extends SugarBean
         if (empty($this->id)) {
             if (!isset($data['quota']) || empty($data['quota'])) {
                 // we need to get a fresh bean to store the quota if one exists
-                $quotaSeed = BeanFactory::getBean('Quotas');
+                $quotaSeed = BeanFactory::newBean('Quotas');
 
                 // check if we need to get the roll up amount
                 $getRollupQuota = ($this->isUserManager($reportee->id)
@@ -547,7 +547,7 @@ class ForecastManagerWorksheet extends SugarBean
         // see if the value should show the commitLog Button
         $sq = new SugarQuery();
         $sq->select('date_modified');
-        $sq->from(BeanFactory::getBean($this->module_name))->where()
+        $sq->from(BeanFactory::newBean($this->module_name))->where()
             ->equals('assigned_user_id', $this->assigned_user_id)
             ->equals('user_id', $this->user_id)
             ->equals('draft', 0)
@@ -580,7 +580,7 @@ class ForecastManagerWorksheet extends SugarBean
 
                     // get the setting for which fields to compare on
                     /* @var $admin Administration */
-                    $admin = BeanFactory::getBean('Administration');
+                    $admin = BeanFactory::newBean('Administration');
                     $settings = $admin->getConfigForModule('Forecasts', 'base');
 
                     while ($row = $this->db->fetchByAssoc($results)) {

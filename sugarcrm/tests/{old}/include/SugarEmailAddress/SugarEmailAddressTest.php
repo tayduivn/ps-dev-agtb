@@ -58,7 +58,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->ea = BeanFactory::getBean('EmailAddresses');
+        $this->ea = BeanFactory::newBean('EmailAddresses');
     }
 
     public static function tearDownAfterClass()
@@ -126,7 +126,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testEmail1SavesWhenEmailIsEmpty()
     {
-        $bean = BeanFactory::getBean('Accounts');
+        $bean = BeanFactory::newBean('Accounts');
         $bean->email1 = 'a@a.com';
         $this->ea->handleLegacySave($bean);
 
@@ -145,7 +145,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
             array('email_address' => 'c@c.com'),
             array('email_address' => 'd@d.com'),
         );
-        $bean = BeanFactory::getBean('Accounts');
+        $bean = BeanFactory::newBean('Accounts');
         $bean->email = $addresses;
         $this->ea->handleLegacySave($bean);
 
@@ -211,7 +211,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Setup the test case
         $this->ea->fetchedAddresses = $this->ea->addresses = $test;
-        $bean = BeanFactory::getBean('Contacts');
+        $bean = BeanFactory::newBean('Contacts');
         $bean->email = $test;
         $bean->email1 = 'z@z.com';
         $bean->email2 = '';

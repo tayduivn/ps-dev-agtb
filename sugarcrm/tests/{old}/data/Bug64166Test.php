@@ -38,7 +38,7 @@ class Bug64166Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testEmptyRelateFieldIsRegistered()
     {
-        $contact = BeanFactory::getBean('Contacts');
+        $contact = BeanFactory::newBean('Contacts');
         $contact->retrieve($this->contact->id);
         $this->assertEmpty($contact->account_name);
         $this->assertArrayHasKey('account_name', $contact->fetched_rel_row);

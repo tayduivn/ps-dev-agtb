@@ -227,7 +227,7 @@ class HistoryApi extends RelateApi
         foreach ($filters as $filter) {
             $order_by = explode(':', $filter);
             foreach ($this->moduleList as $module_name) {
-                $seed = BeanFactory::getBean($module_name);
+                $seed = BeanFactory::newBean($module_name);
                 if (!isset($seed->field_defs[$order_by[0]])) {
                     $args['placeholder_fields'][$module_name][$order_by[0]] = $order_by[0];
                 } else {
@@ -243,7 +243,7 @@ class HistoryApi extends RelateApi
         $fields = !empty($args['fields']) ? explode(',', $args['fields']) : array();
         foreach ($fields as $key => $field) {
             foreach ($this->moduleList as $module_name) {
-                $seed = BeanFactory::getBean($module_name);
+                $seed = BeanFactory::newBean($module_name);
                 if (!isset($seed->field_defs[$field])) {
                     $args['placeholder_fields'][$module_name][$field] = $field;
                 }
@@ -260,7 +260,7 @@ class HistoryApi extends RelateApi
 
         foreach ($q->execute() as $row) {
             /** @var SugarBean $bean */
-            $bean = BeanFactory::getBean($row['module']);
+            $bean = BeanFactory::newBean($row['module']);
             $bean->populateFromRow($row);
             if ($bean->ACLAccess('list')) {
                 $beans[$row['id']] = $bean;
@@ -301,7 +301,7 @@ class HistoryApi extends RelateApi
                 /* @var $q SugarQuery */
                 $q = new SugarQuery();
                 $q->select(array('description', 'from_addr', 'to_addrs'));
-                $q->from(BeanFactory::getBean('EmailText'));
+                $q->from(BeanFactory::newBean('EmailText'));
                 $q->where()->equals('email_id', $data['records'][$id]['id']);
                 foreach ($q->execute() as $row) {
                     $data['records'][$id]['description'] = $row['description'];

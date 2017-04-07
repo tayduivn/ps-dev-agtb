@@ -535,27 +535,27 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     {
         $this->_doReassign('sarah', 'sally');
 
-        $objJim = BeanFactory::getBean('Users');
+        $objJim = BeanFactory::newBean('Users');
         $objJim->retrieve($this->_users['jim']->id);
         $this->assertEmpty($objJim->reports_to_id, 'Jim report_to_id is not empty');
 
-        $objSarah = BeanFactory::getBean('Users');
+        $objSarah = BeanFactory::newBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEmpty($objSarah->reports_to_id, 'Sarah report_to_id is not empty');
 
-        $objSally = BeanFactory::getBean('Users');
+        $objSally = BeanFactory::newBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEquals($this->_users['jim']->id, $objSally->reports_to_id, 'Sally does not report to Jim');
 
-        $objMax = BeanFactory::getBean('Users');
+        $objMax = BeanFactory::newBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['sally']->id, $objMax->reports_to_id, 'Max does not report to Sally');
 
-        $objWill = BeanFactory::getBean('Users');
+        $objWill = BeanFactory::newBean('Users');
         $objWill->retrieve($this->_users['will']->id);
         $this->assertEquals($this->_users['jim']->id, $objWill->reports_to_id, 'Will does not report to Jim');
 
-        $objChris = BeanFactory::getBean('Users');
+        $objChris = BeanFactory::newBean('Users');
         $objChris->retrieve($this->_users['chris']->id);
         $this->assertEquals($this->_users['will']->id, $objChris->reports_to_id, 'Chris does not report to Will');
         // this is to suppress output. Need to fix properly with a good unit test.
@@ -573,27 +573,27 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     {
         $this->_doReassign('jim', 'sally');
 
-        $objJim = BeanFactory::getBean('Users');
+        $objJim = BeanFactory::newBean('Users');
         $objJim->retrieve($this->_users['jim']->id);
         $this->assertEmpty($objJim->reports_to_id, 'Jim report_to_id is not empty');
 
-        $objSally = BeanFactory::getBean('Users');
+        $objSally = BeanFactory::newBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEmpty($objSally->reports_to_id, 'Sally report_to_id is not empty');
 
-        $objSarah = BeanFactory::getBean('Users');
+        $objSarah = BeanFactory::newBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEquals($this->_users['sally']->id, $objSarah->reports_to_id, 'Sarah does not report to Sally');
 
-        $objMax = BeanFactory::getBean('Users');
+        $objMax = BeanFactory::newBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['sarah']->id, $objMax->reports_to_id, 'Max does not report to Sarah');
 
-        $objWill = BeanFactory::getBean('Users');
+        $objWill = BeanFactory::newBean('Users');
         $objWill->retrieve($this->_users['will']->id);
         $this->assertEquals($this->_users['sally']->id, $objWill->reports_to_id, 'Will does not report to Sally');
 
-        $objChris = BeanFactory::getBean('Users');
+        $objChris = BeanFactory::newBean('Users');
         $objChris->retrieve($this->_users['chris']->id);
         $this->assertEquals($this->_users['will']->id, $objChris->reports_to_id, 'Chris does not report to Will');
         // this is to suppress output. Need to fix properly with a good unit test.
@@ -609,23 +609,23 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     {
         $this->_doReassign('sally', 'chris');
 
-        $objSally = BeanFactory::getBean('Users');
+        $objSally = BeanFactory::newBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEmpty($objSally->reports_to_id, 'Sally report_to_id is not empty');
 
-        $objChris = BeanFactory::getBean('Users');
+        $objChris = BeanFactory::newBean('Users');
         $objChris->retrieve($this->_users['chris']->id);
         $this->assertEquals($this->_users['will']->id, $objChris->reports_to_id, 'Chris does not report to Will');
 
-        $objWill = BeanFactory::getBean('Users');
+        $objWill = BeanFactory::newBean('Users');
         $objWill->retrieve($this->_users['will']->id);
         $this->assertEquals($this->_users['jim']->id, $objWill->reports_to_id, 'Will does not report to Jim');
 
-        $objMax = BeanFactory::getBean('Users');
+        $objMax = BeanFactory::newBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['sarah']->id, $objMax->reports_to_id, 'Max does not report to Sarah');
 
-        $objSarah = BeanFactory::getBean('Users');
+        $objSarah = BeanFactory::newBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEquals($this->_users['jim']->id, $objSarah->reports_to_id, 'Sarah does not report to Jim');
         // this is to suppress output. Need to fix properly with a good unit test.
@@ -642,19 +642,19 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $this->_doReassign('sarah', 'sally');
         $this->_doReassign('jim', 'sally');
 
-        $objSarah = BeanFactory::getBean('Users');
+        $objSarah = BeanFactory::newBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEmpty($objSarah->reports_to_id, 'Sarah report_to_id is not empty');
 
-        $objJim = BeanFactory::getBean('Users');
+        $objJim = BeanFactory::newBean('Users');
         $objJim->retrieve($this->_users['jim']->id);
         $this->assertEmpty($objJim->reports_to_id, 'Jim report_to_id is not empty');
 
-        $objSally = BeanFactory::getBean('Users');
+        $objSally = BeanFactory::newBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEmpty($objSally->reports_to_id, 'Sally report_to_id is not empty');
 
-        $objMax = BeanFactory::getBean('Users');
+        $objMax = BeanFactory::newBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['sally']->id, $objMax->reports_to_id, 'Max does not report to Sally');
         // this is to suppress output. Need to fix properly with a good unit test.
@@ -671,23 +671,23 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     {
         $this->_doReassign('sarah', 'will');
 
-        $objSarah = BeanFactory::getBean('Users');
+        $objSarah = BeanFactory::newBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEmpty($objSarah->reports_to_id, 'Sarah report_to_id is not empty');
 
-        $objSally = BeanFactory::getBean('Users');
+        $objSally = BeanFactory::newBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEquals($this->_users['will']->id, $objSally->reports_to_id, 'Sally does not report to Will');
 
-        $objMax = BeanFactory::getBean('Users');
+        $objMax = BeanFactory::newBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['will']->id, $objMax->reports_to_id, 'Sally does not report to Will');
 
-        $objChris = BeanFactory::getBean('Users');
+        $objChris = BeanFactory::newBean('Users');
         $objChris->retrieve($this->_users['chris']->id);
         $this->assertEquals($this->_users['will']->id, $objChris->reports_to_id, 'Chris does not report to Will');
 
-        $objWill = BeanFactory::getBean('Users');
+        $objWill = BeanFactory::newBean('Users');
         $objWill->retrieve($this->_users['will']->id);
         $this->assertEquals($this->_users['jim']->id, $objWill->reports_to_id, 'Will does not report to Jim');
         // this is to suppress output. Need to fix properly with a good unit test.

@@ -12,7 +12,7 @@
 
 if(!empty($_REQUEST['grabbed'])) {
 	
-	$focus = BeanFactory::getBean('Emails');
+	$focus = BeanFactory::newBean('Emails');
 	
 	$emailIds = array();
 	// CHECKED ONLY:

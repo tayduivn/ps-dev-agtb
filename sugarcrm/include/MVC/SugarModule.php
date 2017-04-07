@@ -61,6 +61,6 @@ class SugarModule
      */
     public function loadBean($beanList = null, $beanFiles = null, $returnObject = true)
     {
-        return BeanFactory::getBean($this->_moduleName);
+        return BeanFactory::newBean($this->_moduleName);
     }
 }

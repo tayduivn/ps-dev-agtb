@@ -101,7 +101,7 @@ if(trim($admin->settings['mail_smtpserver']) == '' && !$sendMailEnabled) {
         $smtp_error = true;
     }
     else {
-        $workflow = BeanFactory::getBean('WorkFlow');
+        $workflow = BeanFactory::newBean('WorkFlow');
         if($workflow->getActiveWorkFlowCount()>0) {
             $smtp_error = true;
         }

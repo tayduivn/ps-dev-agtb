@@ -38,7 +38,7 @@ class ViewEditFormula extends SugarView
  				$defs = $pak->modules[$module]->getVardefs();
                 $fields = FormulaHelper::cleanFields(array_merge($pak->modules[$module]->getLinkFields(), $defs['fields']));
  			} else {
- 			    $seed = BeanFactory::getBean($module);
+ 			    $seed = BeanFactory::newBean($module);
 	        	$fields = FormulaHelper::cleanFields($seed->field_defs);
  			}
         	$smarty->assign('Field_Array', $json->encode($fields));

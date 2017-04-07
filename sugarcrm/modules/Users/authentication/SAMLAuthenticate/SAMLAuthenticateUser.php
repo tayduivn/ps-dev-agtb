@@ -236,7 +236,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
             return '';
         }
         $GLOBALS['log']->debug("Called createUser");
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $user->user_name = $name;
         $user->email1 = $name;
         $user->last_name = $name;
@@ -339,7 +339,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
      */
     protected function fetch_user($id, $field = null)
     {
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
 
         if (null !== $field) {
             switch ($field) {

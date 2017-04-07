@@ -37,7 +37,7 @@ class BugsQuickCreate extends QuickCreate {
         $this->javascript = new javascript();
         $this->javascript->setFormName('bugsQuickCreate');
         
-        $focus = BeanFactory::getBean('Bugs');
+        $focus = BeanFactory::newBean('Bugs');
         $this->javascript->setSugarBean($focus);
         $this->javascript->addAllFields('');
 

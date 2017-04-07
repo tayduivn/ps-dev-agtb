@@ -91,7 +91,7 @@ class SugarJobCreateRevenueLineItemNotes extends JobNotification implements Runn
             /* @var $opp Opportunity */
             $opp = BeanFactory::getBean('Opportunities', $opp_id);
             /* @var $note Note */
-            $note = BeanFactory::getBean('Notes');
+            $note = BeanFactory::newBean('Notes');
 
             $note->parent_id = $opp_id;
             $note->parent_type = 'Opportunities';

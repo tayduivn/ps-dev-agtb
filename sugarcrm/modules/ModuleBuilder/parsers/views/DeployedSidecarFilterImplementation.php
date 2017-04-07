@@ -50,7 +50,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
      */
     public function __construct($loadedModule, $client = 'base')
     {
-        $this->bean = BeanFactory::getBean($loadedModule);
+        $this->bean = BeanFactory::newBean($loadedModule);
         if (empty($this->bean)) {
             throw new Exception("Bean was not provided");
         }

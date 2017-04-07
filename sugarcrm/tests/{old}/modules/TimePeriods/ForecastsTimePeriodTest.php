@@ -164,7 +164,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetShownDifference($previous, $current, $key, $expected)
     {
-        $timePeriod = BeanFactory::getBean('TimePeriods');
+        $timePeriod = BeanFactory::newBean('TimePeriods');
 
         $admin = BeanFactory::newBean('Administration');
         $priorForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
@@ -187,7 +187,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function testIsTargetDateDifferentFromPrevious()
     {
         $timedate = TimeDate::getInstance();
-        $timeperiod = BeanFactory::getBean('TimePeriods');
+        $timeperiod = BeanFactory::newBean('TimePeriods');
 
         //First let's check what happens when we pass the same start month and day
         $targetStartDate = $timedate->getNow();
@@ -224,7 +224,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testIsTargetIntervalDifferent()
     {
-        $timeperiod = BeanFactory::getBean('TimePeriods');
+        $timeperiod = BeanFactory::newBean('TimePeriods');
         $admin = BeanFactory::newBean('Administration');
         $priorForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
         $currentForecastSettings = $priorForecastSettings;
@@ -717,7 +717,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $currentSettings['timeperiod_shown_forward'] = $shownForward;
 
         //Save the altered admin settings
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         foreach($currentSettings as $key=>$value) {
             $admin->saveSetting('Forecasts', $key, $value, 'base');
         }
@@ -790,7 +790,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedQuarterTimePeriodName, $currentQuarterTimePeriod->name);
 
         //Test without passing any arguments
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $config = $admin->getConfigForModule('Forecasts', 'base');
         $type = $config['timeperiod_leaf_interval'];
         $currentTimePeriod = TimePeriod::getCurrentTimePeriod($type);

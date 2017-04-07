@@ -35,7 +35,7 @@ echo getClassicModuleTitle(
 
 if($current_user->is_admin){
 
-$focus = BeanFactory::getBean('Currencies');
+$focus = BeanFactory::newBean('Currencies');
 $lc = new ListCurrency();
 $lc->handleAdd();
 
@@ -50,13 +50,13 @@ if(isset($_REQUEST['domerge'])){
 	$currencies = $_REQUEST['mergecur'];
 	
 	
-	$opp = BeanFactory::getBean('Opportunities');
+	$opp = BeanFactory::newBean('Opportunities');
 	$opp->update_currency_id($currencies, $_REQUEST['mergeTo'] );
 	
-	$product = BeanFactory::getBean('ProductTemplates');
+	$product = BeanFactory::newBean('ProductTemplates');
 	$product->update_currency_id($currencies, $_REQUEST['mergeTo'] );
 
-	$quote = BeanFactory::getBean('Quotes');
+	$quote = BeanFactory::newBean('Quotes');
 	$quote->update_currency_id($currencies, $_REQUEST['mergeTo'] );
 	foreach($currencies as $cur){
 		if($cur != $_REQUEST['mergeTo'])

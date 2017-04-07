@@ -212,7 +212,7 @@ class Expression extends SugarBean {
 		}
 
 		if($type=='field'){
-		    $temp_module = BeanFactory::getBean($dom_name);
+		    $temp_module = BeanFactory::newBean($dom_name);
 		    if ( !is_object($temp_module) ) {
 		        $GLOBALS['log']->fatal("get_selector_array: Unknown module: $dom_name");
 		        return null;
@@ -244,7 +244,7 @@ class Expression extends SugarBean {
 		if($type=='module_list'){
 			if($only_related_modules){
 					global $beanList;
-					$temp_module = BeanFactory::getBean($dom_name);
+					$temp_module = BeanFactory::newBean($dom_name);
 					$temp_module->call_vardef_handler("rel_filter");
 
                     $select_array = $temp_module->vardef_handler->get_vardef_array(true, true, true, true, true);
@@ -279,7 +279,7 @@ class Expression extends SugarBean {
 	function build_field_filter($base_module, $target_field, $enum_multi=false){
 
 			////Begin - New Code call to workflow_utils
-		$temp_module = BeanFactory::getBean($base_module);
+		$temp_module = BeanFactory::newBean($base_module);
 		//Build Selector Array
 		$selector_array = array(
 							'value' => $this->rhs_value,
@@ -311,9 +311,9 @@ class Expression extends SugarBean {
 	//you can either build using lhs_module or override with your own
 
 		if($target_module==""){
-			$target_bean = BeanFactory::getBean($this->lhs_module);
+			$target_bean = BeanFactory::newBean($this->lhs_module);
 		} else {
-			$target_bean = BeanFactory::getBean($target_module);
+			$target_bean = BeanFactory::newBean($target_module);
 		}
 
 		return $this->get_display_array($target_bean);

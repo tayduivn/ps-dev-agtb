@@ -940,7 +940,7 @@ eoq;
             if ($beanOrModuleName == 'Users' && $current_user) {
                 $bean = $current_user;
             } else {
-                $bean = BeanFactory::getBean($beanOrModuleName);
+                $bean = BeanFactory::getDefinition($beanOrModuleName);
             }
         } elseif ($beanOrModuleName instanceof SugarBean) {
             $bean = $beanOrModuleName;

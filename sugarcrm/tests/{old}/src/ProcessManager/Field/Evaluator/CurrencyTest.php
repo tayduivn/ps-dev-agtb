@@ -46,7 +46,7 @@ class CurrencyTest extends \Sugar_PHPUnit_Framework_TestCase
     public function hasChangedProvider()
     {
         // Simple bean setup to cover all test cases
-        $bean = \BeanFactory::getBean('Bugs');
+        $bean = \BeanFactory::newBean('Bugs');
         $bean->currency_id = 'test_currency_id';
         $bean->test1 = '120.000000';
         $bean->test3 = '321.000000';

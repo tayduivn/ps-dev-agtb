@@ -181,7 +181,7 @@ class SugarQuery_Builder_Field
                 $def = $defs[$this->field];
             }
             if ((isset($def['source']) && $def['source'] == 'custom_fields') || $this->field == 'id_c') {
-                $bean = empty($bean) ? BeanFactory::getBean($this->moduleName) : $bean;
+                $bean = empty($bean) ? BeanFactory::getDefinition($this->moduleName) : $bean;
                 $this->custom = true;
                 $this->custom_bean_table = $bean->get_custom_table_name();
                 $this->bean_table = $bean->getTableName();
@@ -228,7 +228,7 @@ class SugarQuery_Builder_Field
                 }
                 // we may need to put on our detective hat and see if we can
                 // hunt down a relationship
-                $farBean = BeanFactory::newBean($this->def['module']);
+                $farBean = BeanFactory::getDefinition($this->def['module']);
 
                 // check if relate field refers some other field as id_name, otherwise we may get infinite recursion
                 if ($this->def['id_name'] != $this->def['name']
@@ -337,5 +337,4 @@ class SugarQuery_Builder_Field
         $parts = explode('.', $field);
         return $parts[1];
     }
-
 }

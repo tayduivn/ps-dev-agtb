@@ -44,7 +44,7 @@ class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
             // this is to handle the case where the manager saves draft before the reportee can commit
             $sq = new SugarQuery();
             $sq->select('id');
-            $sq->from(BeanFactory::getBean('ForecastWorksheets'))->where()
+            $sq->from(BeanFactory::newBean('ForecastWorksheets'))->where()
                 ->equals('assigned_user_id', $bean->user_id)
                 ->equals('draft', 0)
                 ->queryAnd()
@@ -76,7 +76,7 @@ class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
 
                     // get the setting for which fields to compare on
                     /* @var $admin Administration */
-                    $admin = BeanFactory::getBean('Administration');
+                    $admin = BeanFactory::newBean('Administration');
                     $settings = $admin->getConfigForModule('Forecasts', 'base');
 
                     while ($row = $db->fetchByAssoc($results)) {

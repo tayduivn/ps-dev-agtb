@@ -98,7 +98,7 @@ class SugarUpgradeFixAddressStreetFields extends UpgradeScript
             $fieldDefs = VardefManager::getFieldDefs($module);
             if (!empty($fieldDefs)) {
                 //Set up vardef extension save mechanism
-                $bean = BeanFactory::getBean($module);
+                $bean = BeanFactory::newBean($module);
                 if (empty($bean)) {
                     continue;
                 }

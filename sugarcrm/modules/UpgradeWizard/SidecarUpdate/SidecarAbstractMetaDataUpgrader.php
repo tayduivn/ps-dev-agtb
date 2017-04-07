@@ -368,7 +368,7 @@ abstract class SidecarAbstractMetaDataUpgrader
     protected function getFieldDefs()
     {
         if(is_null($this->field_defs)) {
-            $bean = BeanFactory::getBean($this->module);
+            $bean = BeanFactory::newBean($this->module);
             if (empty($bean)) {
                 // broken state, don't try again
                 $this->field_defs = array();

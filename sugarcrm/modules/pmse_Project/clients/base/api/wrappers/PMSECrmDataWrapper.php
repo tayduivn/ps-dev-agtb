@@ -176,8 +176,8 @@ class PMSECrmDataWrapper implements PMSEObservable
         global $db;
 
         $this->defaultDynaform = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');
-        $this->teamsBean = BeanFactory::getBean('Teams');
-        $this->usersBean = BeanFactory::getBean('Users');
+        $this->teamsBean = BeanFactory::newBean('Teams');
+        $this->usersBean = BeanFactory::newBean('Users');
         $this->sugarQueryObject = new SugarQuery();
         $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
 
@@ -244,7 +244,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function getModuleFilter($newModuleFilter)
     {
-        return BeanFactory::getBean($newModuleFilter);
+        return BeanFactory::newBean($newModuleFilter);
     }
 
     /**
@@ -342,7 +342,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function getDynaformBean()
     {
         if (!isset($this->dynaformBean) || empty($this->dynaformBean)) {
-            $this->dynaformBean = BeanFactory::getBean('pmse_BpmDynaForm'); //new BpmDynaForm();
+            $this->dynaformBean = BeanFactory::newBean('pmse_BpmDynaForm'); //new BpmDynaForm();
         }
         return $this->dynaformBean;
     }
@@ -366,7 +366,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function getProjectBean()
     {
         if (!isset($this->projectBean) || empty($this->projectBean)) {
-            $this->projectBean = BeanFactory::getBean('pmse_Project'); //new BpmnProject();
+            $this->projectBean = BeanFactory::newBean('pmse_Project'); //new BpmnProject();
         }
         return $this->projectBean;
     }
@@ -390,7 +390,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function getProcessBean()
     {
         if (!isset($this->processBean) || empty($this->processBean)) {
-            $this->processBean = BeanFactory::getBean('pmse_BpmnProcess'); //new BpmnProcess();
+            $this->processBean = BeanFactory::newBean('pmse_BpmnProcess'); //new BpmnProcess();
         }
         return $this->processBean;
     }
@@ -414,7 +414,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function getActivityBean()
     {
         if (!isset($this->activityBean) || empty($this->activityBean)) {
-            $this->activityBean = BeanFactory::getBean('pmse_BpmnActivity'); //new BpmnActivity();
+            $this->activityBean = BeanFactory::newBean('pmse_BpmnActivity'); //new BpmnActivity();
         }
         return $this->activityBean;
     }
@@ -438,7 +438,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function getProcessDefinition()
     {
         if (!isset($this->processDefinition) || empty($this->processDefinition)) {
-            $this->processDefinition = BeanFactory::getBean(
+            $this->processDefinition = BeanFactory::newBean(
                 'pmse_BpmProcessDefinition'
             ); //new BpmProcessDefinition();
         }
@@ -464,7 +464,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function getActivityDefinitionBean()
     {
         if (!isset($this->activityDefinitionBean) || empty($this->activityDefinitionBean)) {
-            $this->activityDefinitionBean = BeanFactory::getBean(
+            $this->activityDefinitionBean = BeanFactory::newBean(
                 'pmse_BpmActivityDefinition'
             ); //new BpmActivityDefinition();
         }
@@ -490,7 +490,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function getRuleSetBean()
     {
         if (!isset($this->ruleSetBean) || empty($this->ruleSetBean)) {
-            $this->ruleSetBean = BeanFactory::getBean('pmse_Business_Rules'); //new BpmRuleSet();
+            $this->ruleSetBean = BeanFactory::newBean('pmse_Business_Rules'); //new BpmRuleSet();
         }
         return $this->ruleSetBean;
     }
@@ -514,7 +514,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function getEmailTemplateBean()
     {
         if (!isset($this->emailTemplateBean) || empty($this->emailTemplateBean)) {
-            $this->emailTemplateBean = BeanFactory::getBean('pmse_Emails_Templates'); //new BpmEmailTemplate();
+            $this->emailTemplateBean = BeanFactory::newBean('pmse_Emails_Templates'); //new BpmEmailTemplate();
         }
         return $this->emailTemplateBean;
     }
@@ -538,7 +538,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function getInboxBean()
     {
         if (!isset($this->inboxBean) || empty($this->inboxBean)) {
-            $this->inboxBean = BeanFactory::getBean('pmse_Inbox'); //new BpmInbox();
+            $this->inboxBean = BeanFactory::newBean('pmse_Inbox'); //new BpmInbox();
         }
         return $this->inboxBean;
     }
@@ -2339,7 +2339,7 @@ class PMSECrmDataWrapper implements PMSEObservable
 
         $q = $this->sugarQueryObject;
         $q->select(array('id'));
-        $q->from(BeanFactory::getBean('pmse_BpmnEvent'));
+        $q->from(BeanFactory::newBean('pmse_BpmnEvent'));
         $q->where()->equals('evn_uid', $eventUid);
         $result = $q->execute();
 
@@ -2370,7 +2370,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $groupFieldsArray = array();
         $newLockedFieldsStr = '';
 
-        $moduleBean = BeanFactory::getBean($module);
+        $moduleBean = BeanFactory::newBean($module);
         $fieldsDataArray = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
         $lockedVarsArray = json_decode($proLockedVariables);
         foreach ($fieldsDataArray as $key => $fieldsArray) {

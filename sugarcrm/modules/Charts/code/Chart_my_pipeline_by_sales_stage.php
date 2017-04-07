@@ -249,7 +249,7 @@ echo get_validate_chart_js();
 			$GLOBALS['log']->debug("user_id is: ");
 			$GLOBALS['log']->debug($user_id);
 			$GLOBALS['log']->debug("cache_file_name is: $cache_file_name");
-			$opp = BeanFactory::getBean('Opportunities');
+			$opp = BeanFactory::newBean('Opportunities');
             $db = $opp->db;
 			$where="";
 			//build the where clause for the query that matches $user
@@ -439,7 +439,7 @@ echo get_validate_chart_js();
 
 		$user_id = array($current_user->id);
 
-		$opp = BeanFactory::getBean('Opportunities');
+		$opp = BeanFactory::newBean('Opportunities');
         $db = $opp->db;
 		$where="";
 		//build the where clause for the query that matches $user

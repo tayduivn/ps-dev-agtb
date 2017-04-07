@@ -31,7 +31,7 @@ if (!isset($where)) $where = "assigned_user_id = {$current_user->id}";
 
 echo '<br />' .get_form_header($mod_strings['LBL_LIST_FORM_TITLE'], '', false);
 
-$savedSearch = BeanFactory::getBean('SavedSearch');
+$savedSearch = BeanFactory::newBean('SavedSearch');
 $lv = new ListViewSmarty();
 require SugarAutoLoader::loadWithMetafiles('SavedSearch', 'listviewdefs');
 

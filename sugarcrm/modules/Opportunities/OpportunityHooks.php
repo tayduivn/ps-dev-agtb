@@ -34,7 +34,7 @@ class OpportunityHooks extends AbstractForecastHooks
     {
         if (static::isForecastSetup() && !static::useRevenueLineItems()) {
             /* @var $worksheet ForecastWorksheet */
-            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $worksheet = BeanFactory::newBean('ForecastWorksheets');
             $worksheet->saveRelatedOpportunity($bean);
             return true;
         }

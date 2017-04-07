@@ -233,7 +233,7 @@ class Client extends BaseClient
         $currentStatus = $this->loadAvailability();
 
         if ($status !== $currentStatus) {
-            $admin = \BeanFactory::getBean('Administration');
+            $admin = \BeanFactory::newBean('Administration');
             $admin->saveSetting(self::STATUS_CATEGORY, self::STATUS_KEY, ($status ? 0 : 1));
             $this->available = $status;
             if ($status) {

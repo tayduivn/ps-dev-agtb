@@ -46,7 +46,7 @@ class ImportController extends SugarController
 
         $this->importModule = $_REQUEST['import_module'];
 
-        $this->bean = BeanFactory::getBean($this->importModule);
+        $this->bean = BeanFactory::newBean($this->importModule);
         if ( $this->bean ) {
             if ( !$this->bean->importable )
                 $this->bean = false;

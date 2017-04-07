@@ -36,7 +36,7 @@ class ParserPortalListView extends ParserModifyListView
 
 
         // get our bean
-		$this->module = BeanFactory::getBean($this->module_name);
+		$this->module = BeanFactory::newBean($this->module_name);
 
         // Set our def file
         $defFile = 'modules/' . $this->module_name . '/metadata/portal.listviewdefs.php';

@@ -19,7 +19,7 @@
 
 
 
-$focus = BeanFactory::getBean('WorkFlow');
+$focus = BeanFactory::newBean('WorkFlow');
 
 if(isset($_POST['record']) && $_POST['record']!=""){
 	$focus->retrieve($_POST['record']);

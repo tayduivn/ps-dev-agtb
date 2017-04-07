@@ -37,7 +37,7 @@ class PMSEDynaForm
      */
     public function __construct()
     {
-        $this->dynaform = BeanFactory::getBean('pmse_BpmDynaForm'); //new BpmDynaForm();
+        $this->dynaform = BeanFactory::newBean('pmse_BpmDynaForm'); //new BpmDynaForm();
     }
 
     /**

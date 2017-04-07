@@ -41,7 +41,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
     
     private function _loadBean($module)
     {
-        return BeanFactory::getBean($module);
+        return BeanFactory::newBean($module);
     }
     
     private function _addImportedRecords()

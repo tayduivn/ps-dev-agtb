@@ -28,10 +28,10 @@ if (!$current_user->isAdminForModule("InboundEmail")) {
     sugar_die(translate('ERR_NOT_ADMIN'));
 }
 
-$focus = BeanFactory::getBean('InboundEmail');
+$focus = BeanFactory::newBean('InboundEmail');
 $focus->checkImap();
 $javascript = new javascript();
-$email = BeanFactory::getBean('Emails');
+$email = BeanFactory::newBean('Emails');
 /* Start standard EditView setup logic */
 
 $domMailBoxType = $app_list_strings['dom_mailbox_type'];

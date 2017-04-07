@@ -76,18 +76,18 @@ class Bug44928Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         // create new private team
-        $this->team = BeanFactory::getBean('Teams');
+        $this->team = BeanFactory::newBean('Teams');
         $this->team->private = true;
         $this->team->save();
 
         // create new campaign associated with the team
-        $this->campaign = BeanFactory::getBean('Campaigns');
+        $this->campaign = BeanFactory::newBean('Campaigns');
         $this->campaign->team_id = $this->team->id;
         $this->campaign->name = $this->campaign_name;
         $this->campaign->save();
 
         // create new lead associated with the campaign
-        $this->lead = BeanFactory::getBean('Leads');
+        $this->lead = BeanFactory::newBean('Leads');
         $this->lead->campaign_id = $this->campaign->id;
         $this->lead->save();
 

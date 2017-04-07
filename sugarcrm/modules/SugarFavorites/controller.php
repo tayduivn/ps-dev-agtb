@@ -15,7 +15,7 @@ class SugarFavoritesController extends SugarController {
 	}
 	public function loadBean(){
 		if(empty($this->record))$this->record = SugarFavorites::generateGUID($_REQUEST['fav_module'], $_REQUEST['fav_id']);
-		$this->bean = BeanFactory::getBean('SugarFavorites');
+		$this->bean = BeanFactory::newBean('SugarFavorites');
 	}
 	public function pre_save(){
 	    global $current_user;

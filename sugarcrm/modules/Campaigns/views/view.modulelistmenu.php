@@ -16,7 +16,7 @@ class CampaignsViewModulelistmenu extends ViewModulelistmenu
 {
  	public function display()
  	{
- 	    $tracker = BeanFactory::getBean('Trackers');
+ 	    $tracker = BeanFactory::newBean('Trackers');
         $history = $tracker->get_recently_viewed($GLOBALS['current_user']->id, array('Campaigns','ProspectLists','Prospects'));
         foreach ( $history as $key => $row ) {
             $history[$key]['item_summary_short'] = getTrackerSubstring($row['item_summary']);

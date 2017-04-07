@@ -33,7 +33,7 @@ global $currentModule;
 global $theme;
 global $focus_list; // focus_list is the means of passing data to a ListView.
 
-$focus = BeanFactory::getBean('Emails');
+$focus = BeanFactory::newBean('Emails');
 $header_text		= '';
 $where				= '';
 $type				= '';

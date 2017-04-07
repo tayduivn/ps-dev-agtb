@@ -51,7 +51,7 @@ class TeamBasedACLImportTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user', array(true, false));
 
         $team = SugarTestTeamUtilities::createAnonymousTeam();
-        $this->teamSet = BeanFactory::getBean('TeamSets');
+        $this->teamSet = BeanFactory::newBean('TeamSets');
         $this->teamSet->addTeams(array($team->id));
 
         $this->beanToExport = SugarTestAccountUtilities::createAccount();

@@ -92,7 +92,7 @@ class vCal extends SugarBean {
 
 		// First, get the list of IDs.
 		$query = "SELECT id from vcals where user_id='{$user_bean->id}' AND type='vfb' AND deleted=0";
-		$vcal_arr = $this->build_related_list($query, BeanFactory::getBean('vCals'));
+		$vcal_arr = $this->build_related_list($query, BeanFactory::newBean('vCals'));
 
 		foreach ($vcal_arr as $focus)
 		{
@@ -250,7 +250,7 @@ class vCal extends SugarBean {
             return; // VCal FreeBusy Cache Not Enabled - No Updates to vcals table will Occur
         }
 
-        $focus = BeanFactory::getBean('vCals');
+        $focus = BeanFactory::newBean('vCals');
 
         if (static::$backtrace_log_enabled == 'cache' || static::$backtrace_log_enabled == 'all') {
             $trace = $focus->getBackTrace("VCAL:CACHE - ");

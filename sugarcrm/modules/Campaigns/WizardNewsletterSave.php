@@ -14,7 +14,7 @@ require_once('include/formbase.php');
 global $mod_strings;
 
     //create new campaign bean and populate
-    $campaign_focus = BeanFactory::getBean('Campaigns');
+    $campaign_focus = BeanFactory::newBean('Campaigns');
     if(isset($_REQUEST['record'])) {
         $campaign_focus->retrieve($_REQUEST['record']);
     }
@@ -90,7 +90,7 @@ global $mod_strings;
                 }else{
 
                     //this is a new target, as the id is not populated, need to create and link
-                    $trgt_focus = BeanFactory::getBean('ProspectLists');
+                    $trgt_focus = BeanFactory::newBean('ProspectLists');
                     $trgt_focus->name = $target_values[1];
                     $trgt_focus->list_type = $target_values[2];
                     $trgt_focus->save();
@@ -151,7 +151,7 @@ global $mod_strings;
         foreach($tracker_strings as $trkr_string){
             $tracker_values = explode("@@", $trkr_string);
             if(count($tracker_values)==3){
-                $ct_focus = BeanFactory::getBean('CampaignTrackers');
+                $ct_focus = BeanFactory::newBean('CampaignTrackers');
                 $ct_focus->tracker_name = $tracker_values[0];
                 $ct_focus->is_optout = $tracker_values[1];
                 $ct_focus->tracker_url = $tracker_values[2];
@@ -218,7 +218,7 @@ function process_subscriptions_from_request($campaign_name){
 
     //process default target list
     $create_new = true;
-    $pl_subs = BeanFactory::getBean('ProspectLists');
+    $pl_subs = BeanFactory::newBean('ProspectLists');
     if(!empty($_REQUEST['wiz_step3_subscription_list_id'])){
         //if subscription list is specified then attach
         $pl_subs->retrieve($_REQUEST['wiz_step3_subscription_list_id']);
@@ -246,7 +246,7 @@ function process_subscriptions_from_request($campaign_name){
 
     //process exempt target list
     $create_new = true;
-    $pl_un_subs = BeanFactory::getBean('ProspectLists');
+    $pl_un_subs = BeanFactory::newBean('ProspectLists');
     if(!empty($_REQUEST['wiz_step3_unsubscription_list_id'])){
         //if unsubscription list is specified then attach
         $pl_un_subs->retrieve($_REQUEST['wiz_step3_unsubscription_list_id']);
@@ -273,7 +273,7 @@ function process_subscriptions_from_request($campaign_name){
     }
 
     //process test target list
-    $pl_test = BeanFactory::getBean('ProspectLists');
+    $pl_test = BeanFactory::newBean('ProspectLists');
     $create_new = true;
     if(!empty($_REQUEST['wiz_step3_test_list_id'])){
         //if test list is specified then attach

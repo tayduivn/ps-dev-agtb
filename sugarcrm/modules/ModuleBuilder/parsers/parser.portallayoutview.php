@@ -60,7 +60,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         }
 
         // Get the fieldDefs from the bean
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
         $this->_fieldDefs = &$bean->field_defs;
 
         // This will load up the view defs into this parser

@@ -85,7 +85,7 @@ class ViewList extends SugarView{
                 }
             }
             else if(empty($_REQUEST['button']) && (empty($_REQUEST['clear_query']) || $_REQUEST['clear_query']!='true')) {
-                $this->saved_search = BeanFactory::getBean('SavedSearch');
+                $this->saved_search = BeanFactory::newBean('SavedSearch');
                 $this->saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
                 $this->saved_search->populateRequest();
             }

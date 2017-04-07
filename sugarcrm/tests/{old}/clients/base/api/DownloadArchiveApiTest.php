@@ -45,7 +45,7 @@ class DownloadArchiveApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->account->load_relationship('notes');
 
-        $bean = BeanFactory::getBean('Notes');
+        $bean = BeanFactory::newBean('Notes');
         $sfh = new SugarFieldHandler();
         $def = $bean->field_defs['filename'];
         /* @var $sf SugarFieldFile */

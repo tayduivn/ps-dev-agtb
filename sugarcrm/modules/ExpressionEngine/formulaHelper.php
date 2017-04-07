@@ -203,7 +203,7 @@ class FormulaHelper
             $mbModule = $package->getModuleByFullName($relatedModule);
         //First, create a dummy bean to access the relationship info
         if (empty($mbModule)) {
-            $relatedBean = BeanFactory::getBean($relatedModule);
+            $relatedBean = BeanFactory::newBean($relatedModule);
             $field_defs = $relatedBean->field_defs;
         } else {
             $field_defs = $mbModule->getVardefs(false);

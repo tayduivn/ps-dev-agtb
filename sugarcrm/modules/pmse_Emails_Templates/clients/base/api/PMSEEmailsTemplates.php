@@ -154,7 +154,7 @@ class PMSEEmailsTemplates extends vCardApi
         }
 
         $output = array();
-        $moduleBean = BeanFactory::getBean($newModuleFilter);
+        $moduleBean = BeanFactory::newBean($newModuleFilter);
         $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
         foreach ($fieldsData as $field) {
             //$retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
@@ -206,7 +206,7 @@ class PMSEEmailsTemplates extends vCardApi
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $this->requireArgs($args, array('module'));
 
-        $bean = BeanFactory::getBean($args['module']);
+        $bean = BeanFactory::newBean($args['module']);
         if (!$bean->ACLAccess('save') || !$bean->ACLAccess('import')) {
             $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
             PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());

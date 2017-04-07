@@ -20,7 +20,7 @@ global $urlPrefix;
 global $currentModule;
 global $sugar_version, $sugar_config;
 
-$focus = BeanFactory::getBean('Expressions');
+$focus = BeanFactory::newBean('Expressions');
 
 if(!empty($_REQUEST['type'])) {
     $type = $_REQUEST['type'];

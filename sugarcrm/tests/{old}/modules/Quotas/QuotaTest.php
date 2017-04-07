@@ -70,7 +70,7 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
         $test_tp_id = create_guid();
 
         /* @var $quota Quota */
-        $quota = BeanFactory::getBean('Quotas');
+        $quota = BeanFactory::newBean('Quotas');
 
         $db = DBManagerFactory::getInstance();
         $db->addQuerySpy(

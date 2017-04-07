@@ -3265,7 +3265,7 @@ SQL;
 
     public function testCreateTableSQLParams()
     {
-        $bean = BeanFactory::getBean('Contacts');
+        $bean = BeanFactory::newBean('Contacts');
 
         $sql = $this->_db->createTableSQLParams(
             $bean->getTableName(),
@@ -3322,7 +3322,7 @@ SQL;
     }
     public function testGetAutoIncrement()
     {
-        $case = BeanFactory::getBean('Cases');
+        $case = BeanFactory::newBean('Cases');
         $case->name = "foo";
         $case->save();
         $case->retrieve($case->id);
@@ -3346,7 +3346,7 @@ SQL;
     //END SUGARCRM flav=ent ONLY
     public function testSetAutoIncrementStart()
     {
-        $case = BeanFactory::getBean('Cases');
+        $case = BeanFactory::newBean('Cases');
         $case->name = "foo";
         $case->save();
         $case->retrieve($case->id);
@@ -3355,7 +3355,7 @@ SQL;
         $case->save();
         $newAuto = $lastAuto + 5;
         $this->_db->setAutoIncrementStart("cases", "case_number", $newAuto);
-        $case2 = BeanFactory::getBean('Cases');
+        $case2 = BeanFactory::newBean('Cases');
         $case2->name = "foo2";
         $case2->save();
         $case2->retrieve($case2->id);

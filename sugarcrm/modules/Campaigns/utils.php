@@ -267,7 +267,7 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
 
                 //populate the primary email address into the more_info field
                 if (!empty($row['target_id']) && !empty($row['target_type'])) {
-                    $sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
+                    $sugarEmailAddress = BeanFactory::newBean('EmailAddresses');
                     $primeEmail = $sugarEmailAddress->getPrimaryAddress(null, $row['target_id'], $row['target_type']);
                     if (!empty($primeEmail)) {
                         $data['more_information'] =  "'" . $primeEmail . "'";
@@ -326,7 +326,7 @@ function campaign_log_lead_or_contact_entry($campaign_id, $parent_bean,$child_be
     //create campaign tracker id and retrieve related bio bean
      $tracker_id = create_guid();
     //create new campaign log record.
-    $campaign_log = BeanFactory::getBean('CampaignLog');
+    $campaign_log = BeanFactory::newBean('CampaignLog');
     $campaign_log->campaign_id = $campaign_id;
     $campaign_log->target_tracker_key = $tracker_id;
     $campaign_log->related_id = $parent_bean->id;
@@ -367,7 +367,7 @@ function get_subscription_lists_query($focus, $additional_fields = null) {
 
     // We need to confirm that the user is a member of the team of the item.
     global $current_user;
-    $bean = BeanFactory::getBean('Campaigns');
+    $bean = BeanFactory::newBean('Campaigns');
 
     //BEGIN SUGARCRM flav=ent ONLY
     //In the event of portal user, retrieve subscriptions with Global team access
@@ -619,7 +619,7 @@ function process_subscriptions($subscription_string_to_parse) {
                         //--if we are in here then user is subscribing to a list in which they are exempt.
                         // we need to remove the user from this unsubscription list.
                         //Begin by retrieving unsubscription prospect list
-                        $exempt_subscription_list = BeanFactory::getBean('ProspectLists');
+                        $exempt_subscription_list = BeanFactory::newBean('ProspectLists');
 
                         //BEGIN SUGARCRM flav=ent ONLY
 		                if($GLOBALS['current_user']->portal_only) {
@@ -653,7 +653,7 @@ function process_subscriptions($subscription_string_to_parse) {
                 //do nothing, user is already subscribed
             }else{
                 //user is not subscribed already, so add to subscription list
-                $subscription_list = BeanFactory::getBean('ProspectLists');
+                $subscription_list = BeanFactory::newBean('ProspectLists');
                 //BEGIN SUGARCRM flav=ent ONLY
                 if($GLOBALS['current_user']->portal_only) {
                    $subscription_list->disable_row_level_security = true;
@@ -986,7 +986,7 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
                      $rel_bean->retrieve($id);
 
                     //create new campaign log record.
-                    $campaign_log = BeanFactory::getBean('CampaignLog');
+                    $campaign_log = BeanFactory::newBean('CampaignLog');
                     $campaign_log->campaign_id = $campaign_id;
                     $campaign_log->target_tracker_key = $tracker_id;
                     $campaign_log->target_id = $rel_bean->id;

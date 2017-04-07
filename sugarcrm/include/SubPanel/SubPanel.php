@@ -219,7 +219,7 @@ class SubPanel
 
   public static function getModuleSubpanels($module)
   {
-  	$mod = BeanFactory::getBean($module);
+  	$mod = BeanFactory::newBean($module);
   	if(empty($mod)) {
 		return array();
 	}

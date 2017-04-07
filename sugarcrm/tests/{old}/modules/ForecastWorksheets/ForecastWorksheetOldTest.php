@@ -70,13 +70,13 @@ class ForecastWorksheetOldTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCommitWorksheetDoesNotCreateAnyJobsAndHasTenCommittedRecords()
     {
         /* @var $bean ForecastWorksheet */
-        $bean = BeanFactory::getBean('ForecastWorksheets');
+        $bean = BeanFactory::newBean('ForecastWorksheets');
         $bean->commitWorksheet(self::$user->id, self::$timeperiod->id);
 
         // query for jobs based on name
         $sq = new SugarQuery();
         $sq->select(array('id'));
-        $sq->from(BeanFactory::getBean('SchedulersJobs'))->where()
+        $sq->from(BeanFactory::newBean('SchedulersJobs'))->where()
             ->equals('target', 'class::SugarJobUpdateForecastWorksheets');
         $results = $sq->execute();
 
@@ -100,13 +100,13 @@ class ForecastWorksheetOldTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCommitWorksheetsCreatesOneJobAndHasFiveCommittedRecords()
     {
         /* @var $bean ForecastWorksheet */
-        $bean = BeanFactory::getBean('ForecastWorksheets');
+        $bean = BeanFactory::newBean('ForecastWorksheets');
         $bean->commitWorksheet(self::$user->id, self::$timeperiod->id, 5);
 
         // query for jobs based on name
         $sq = new SugarQuery();
         $sq->select(array('id'));
-        $sq->from(BeanFactory::getBean('SchedulersJobs'))->where()
+        $sq->from(BeanFactory::newBean('SchedulersJobs'))->where()
             ->equals('target', 'class::SugarJobUpdateForecastWorksheets');
         $results = $sq->execute();
 
@@ -148,7 +148,7 @@ class ForecastWorksheetOldTest extends Sugar_PHPUnit_Framework_TestCase
 
         // test to make sure opp was updated
         /* @var $oppBean Opportunity */
-        $oppBean = BeanFactory::getBean($opp->module_name);
+        $oppBean = BeanFactory::newBean($opp->module_name);
         $oppBean->retrieve($opp->id);
 
         // test the db formatted version
@@ -168,7 +168,7 @@ class ForecastWorksheetOldTest extends Sugar_PHPUnit_Framework_TestCase
 
         // get the product and make sure it was updated
         /* @var $prodBean Product */
-        $prodBean = BeanFactory::getBean($product->module_name);
+        $prodBean = BeanFactory::newBean($product->module_name);
         $prodBean->retrieve($product->id);
 
         // test the db formatted version
@@ -177,7 +177,7 @@ class ForecastWorksheetOldTest extends Sugar_PHPUnit_Framework_TestCase
         // test the the opp to make sure it's updated as well
         unset($oppBean);
         /* @var $oppBean Opportunity */
-        $oppBean = BeanFactory::getBean($opp->module_name);
+        $oppBean = BeanFactory::newBean($opp->module_name);
         $oppBean->retrieve($opp->id);
 
         // test the db formatted version
@@ -204,7 +204,7 @@ class ForecastWorksheetOldTest extends Sugar_PHPUnit_Framework_TestCase
         $worksheet->saveWorksheet();
 
         //load the product and test to see if it's the updated value
-        $prodBean = BeanFactory::getBean($product->module_name);
+        $prodBean = BeanFactory::newBean($product->module_name);
         $prodBean->retrieve($product->id);
 
         $this->assertEquals($updated_value, $prodBean->fetched_row[$field]);
@@ -241,7 +241,7 @@ class ForecastWorksheetOldTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
         $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');
-        $worksheet = BeanFactory::getBean("ForecastWorksheets");                    
+        $worksheet = BeanFactory::newBean("ForecastWorksheets");                    
         
         $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array($date1, $date2));
         $this->assertEquals($expectedReturn, $hasMigrated);        

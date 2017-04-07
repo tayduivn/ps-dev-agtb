@@ -60,7 +60,7 @@ class OutboundEmailConfigurationPeer
     public static function getSystemDefaultMailConfiguration(Localization $locale = null, $charset = null)
     {
         global $app_strings;
-        $systemUser = BeanFactory::getBean("Users");
+        $systemUser = BeanFactory::newBean("Users");
         $systemUser->getSystemUser();
 
         $systemMailerConfiguration = static::loadOutboundEmail();
@@ -345,7 +345,7 @@ class OutboundEmailConfigurationPeer
             }
         }
 
-        $systemUser = BeanFactory::getBean("Users");
+        $systemUser = BeanFactory::newBean("Users");
         $systemUser->getSystemUser();
 
         $oe                        = static::loadOutboundEmail();
@@ -436,7 +436,7 @@ class OutboundEmailConfigurationPeer
         }
 
 
-        $systemUser = BeanFactory::getBean("Users");
+        $systemUser = BeanFactory::newBean("Users");
         $systemUser->getSystemUser();
 
         $oe                        = static::loadOutboundEmail();

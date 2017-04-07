@@ -80,7 +80,7 @@ class StudioModule
         $this->name = isset($moduleNames[strtolower($module)]) ? $moduleNames[strtolower($module)] : strtolower($module);
         $this->module = $module;
         if (!$seed) {
-            $this->seed = BeanFactory::getBean($this->module);
+            $this->seed = BeanFactory::newBean($this->module);
         } else {
             $this->seed = $seed;
         }
@@ -193,7 +193,7 @@ class StudioModule
         // If a custom module, then its type is determined by the parent SugarObject that it extends
         if (!$this->seed)
         {
-            $seed = BeanFactory::getBean($this->module);
+            $seed = BeanFactory::newBean($this->module);
         } else {
             $seed = $this->seed;
         }
@@ -637,7 +637,7 @@ class StudioModule
         $spd_arr = array();
         //iterate through modules and build subpanel array
         foreach ($modules_to_check as $mod_name) {
-            $bean = BeanFactory::getBean($mod_name);
+            $bean = BeanFactory::newBean($mod_name);
             if(empty($bean)) continue;
 
             //create new subpanel definition instance and get list of tabs
@@ -797,7 +797,7 @@ class StudioModule
      */
     public function removeCustomFields()
     {
-        $seed = BeanFactory::getBean($this->module);
+        $seed = BeanFactory::newBean($this->module);
         $df = new DynamicField($this->module) ;
         $df->setup($seed) ;
 

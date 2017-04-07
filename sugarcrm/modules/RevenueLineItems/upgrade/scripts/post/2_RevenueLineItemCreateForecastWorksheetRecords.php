@@ -64,7 +64,7 @@ class SugarUpgradeRevenueLineItemCreateForecastWorksheetRecords extends UpgradeS
                         draft) values";
 
         /* @var $fw ForecastWorksheets */
-        $fw = BeanFactory::getBean('ForecastWorksheets');
+        $fw = BeanFactory::newBean('ForecastWorksheets');
 
         while ($row = $this->db->fetchByAssoc($results)) {
             $row['id'] = create_guid();

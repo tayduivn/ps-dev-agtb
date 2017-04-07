@@ -31,7 +31,7 @@ $server->register(
 
 function portal_login($portal_auth, $user_name, $application_name){
     $error = new SoapError();
-    $contact = BeanFactory::getBean('Contacts');
+    $contact = BeanFactory::newBean('Contacts');
     $result = login_user($portal_auth);
 
     if($result == 'fail' || $result == 'sessions_exceeded'){
@@ -106,7 +106,7 @@ $server->register(
 function portal_login_contact($portal_auth, $contact_portal_auth, $application_name){
 
     $error = new SoapError();
-    $contact = BeanFactory::getBean('Contacts');
+    $contact = BeanFactory::newBean('Contacts');
     $result = login_user($portal_auth);
 
     if($result == 'fail' || $result == 'sessions_exceeded'){
@@ -279,13 +279,13 @@ function portal_get_entry_list_filter($session, $module_name, $order_by, $select
 
     $sugar = null;
     if($module_name == 'Cases'){
-        $sugar = BeanFactory::getBean('Cases');
+        $sugar = BeanFactory::newBean('Cases');
     }else if($module_name == 'Contacts'){
-        $sugar = BeanFactory::getBean('Contacts');
+        $sugar = BeanFactory::newBean('Contacts');
     }else if($module_name == 'Accounts'){
-        $sugar = BeanFactory::getBean('Accounts');
+        $sugar = BeanFactory::newBean('Accounts');
     } else if($module_name == 'Bugs'){
-        $sugar = BeanFactory::getBean('Bugs');
+        $sugar = BeanFactory::newBean('Bugs');
     } else {
         $error->set_error('no_module_support');
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
@@ -399,7 +399,7 @@ function portal_set_entry($session,$module_name, $name_value_list){
         $error->set_error('invalid_session');
         return array('id'=>-1,  'error'=>$error->get_soap_array());
     }
-    $seed = BeanFactory::getBean($module_name);
+    $seed = BeanFactory::newBean($module_name);
 
     if(empty($seed)){
         $error->set_error('no_module');
@@ -601,7 +601,7 @@ function portal_relate_note_to_module($session,$note_id, $module_name, $module_i
         return $error->get_soap_array();
     }
 
-    $seed = BeanFactory::getBean($module_name);
+    $seed = BeanFactory::newBean($module_name);
 
     if(empty($seed)){
         $error->set_error('no_module');
@@ -740,7 +740,7 @@ function portal_get_module_fields($session, $module_name){
         return array('module_name'=>$module_name, 'module_fields'=>$module_fields, 'error'=>$error->get_soap_array());
     }
 
-    $seed = BeanFactory::getBean($module_name);
+    $seed = BeanFactory::newBean($module_name);
 
     if(empty($seed)){
         $error->set_error('no_module');
@@ -779,7 +779,7 @@ function portal_get_subscription_lists($session){
 
     require_once('modules/Campaigns/utils.php');
 
-    $contact = BeanFactory::getBean('Contacts');
+    $contact = BeanFactory::newBean('Contacts');
     $contact->disable_row_level_security = true;
     $contact->retrieve($_SESSION['user_id']);
 
@@ -821,7 +821,7 @@ function portal_set_newsletters($session, $subscribe_ids, $unsubscribe_ids){
 
     require_once('modules/Campaigns/utils.php');
 
-    $contact = BeanFactory::getBean('Contacts');
+    $contact = BeanFactory::newBean('Contacts');
     $contact->disable_row_level_security = true;
     $contact->retrieve($_SESSION['user_id']);
 

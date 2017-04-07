@@ -1011,7 +1011,7 @@ class PMSEEngineUtils
     {
         $replaced = false;
         if ($field_uid != '') {
-            $beanAux = BeanFactory::getBean($bean->object_name);
+            $beanAux = BeanFactory::newBean($bean->object_name);
             $rows = $beanAux->retrieve_by_string_fields(array($field_uid => $bean->{$field_uid}));
             if ($rows) {
                 $bean->{$field_uid} = self::generateUniqueID();
@@ -1355,7 +1355,7 @@ class PMSEEngineUtils
     public static function getProperProcessBean($tModule, $aModule)
     {
         // Start with the target module
-        $bean = BeanFactory::getBean($tModule);
+        $bean = BeanFactory::newBean($tModule);
 
         // If there is a field on the target module that matches the action module
         // but is different from the target module...
@@ -1368,14 +1368,14 @@ class PMSEEngineUtils
                 // If the relationship loaded, get the related bean for it
                 if ($bean->$aModule) {
                     $rModule = $bean->$aModule->getRelatedModuleName();
-                    return BeanFactory::getBean($rModule);
+                    return BeanFactory::newBean($rModule);
                 } else {
                     PMSELogger::getInstance()->warning("Could not load relationship for link field $aModule on {$bean->module_dir}");
                 }
             } elseif (isset($bean->field_defs[$aModule]['module'])) {
                 // If we are a relate field, see if we have a module on that def
                 $rModule = $bean->field_defs[$aModule]['module'];
-                return BeanFactory::getBean($rModule);
+                return BeanFactory::newBean($rModule);
             }
         }
 
@@ -1480,7 +1480,7 @@ class PMSEEngineUtils
      */
     public static function getRelatedLinkName($flowData)
     {
-        $bean = BeanFactory::getBean($flowData['rel_process_module']);
+        $bean = BeanFactory::newBean($flowData['rel_process_module']);
         $relName = $flowData['rel_element_relationship'];
         $bean->load_relationship($relName);
         if ($bean->$relName) {

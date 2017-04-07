@@ -23,7 +23,7 @@ class ForecastsDefaults
     public static function setupForecastSettings($isUpgrade = false, $currentVersion = "670", $targetVersion = "670")
     {
         $isSetup = false;
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $forecastConfig = self::getDefaults();
         // set is_upgrade

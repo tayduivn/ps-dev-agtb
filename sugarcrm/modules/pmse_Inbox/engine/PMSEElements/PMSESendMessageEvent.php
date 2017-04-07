@@ -36,7 +36,7 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
 
         global $locale;
         $this->locale = $locale;
-        $this->eventDefinitionBean = BeanFactory::getBean('pmse_BpmEventDefinition');
+        $this->eventDefinitionBean = BeanFactory::newBean('pmse_BpmEventDefinition');
         parent::__construct();
 
     }

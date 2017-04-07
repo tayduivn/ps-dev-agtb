@@ -61,7 +61,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($result['testSetting'], "My voice is my passport, verify me");
 
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Contacts', 'base');
 
@@ -76,7 +76,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testReadConfig() {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Contacts', 'testSetting', 'My voice is my passport, verify me', 'base');
 
         $api = new RestService();
@@ -100,7 +100,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUpdateConfig() {
         $testSetting = 'My voice is my passport, verify me';
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Contacts', 'testSetting', $testSetting, 'base');
 
         $api = new RestService();
@@ -146,7 +146,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $apiClass->configSave($api, $args);
 
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Contacts', 'base');
 
@@ -158,7 +158,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testResaveConfig()
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
         $apiClass = new ConfigModuleApi();

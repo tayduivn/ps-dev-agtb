@@ -33,7 +33,7 @@ class AccountsQuickCreate extends QuickCreate {
         $this->javascript = new javascript();
         $this->javascript->setFormName('accountsQuickCreate');
         
-        $focus = BeanFactory::getBean('Accounts');
+        $focus = BeanFactory::newBean('Accounts');
         $this->javascript->setSugarBean($focus);
         $this->javascript->addAllFields('');
 

@@ -441,7 +441,7 @@ class ModuleBuilderController extends SugarController
                     $module = 'Users';
                 }
 
-                $bean = BeanFactory::getBean($module);
+                $bean = BeanFactory::newBean($module);
                 if (!empty($bean)) {
                     $field_defs = $bean->field_defs;
                     if (isset($field_defs[$field->name . '_c'])) {
@@ -451,7 +451,7 @@ class ModuleBuilderController extends SugarController
                 }
 
                 $df = new DynamicField ($module);
-                $mod = BeanFactory::getBean($module);
+                $mod = BeanFactory::newBean($module);
                 $obj = BeanFactory::getObjectName($module);
                 $df->setup($mod);
 
@@ -526,7 +526,7 @@ class ModuleBuilderController extends SugarController
         $module = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
 
         $df = new StandardField ($module);
-        $mod = BeanFactory::getBean($module);
+        $mod = BeanFactory::newBean($module);
         $obj = BeanFactory::getObjectName($module);
         $df->setup($mod);
 
@@ -733,7 +733,7 @@ class ModuleBuilderController extends SugarController
                 if ($moduleName == 'Employees')
                     $moduleName = 'Users';
 
-                $seed = BeanFactory::getBean($moduleName);
+                $seed = BeanFactory::newBean($moduleName);
                 $df = new DynamicField ($moduleName);
                 $df->setup($seed);
                 //Need to load the entire field_meta_data for some field types

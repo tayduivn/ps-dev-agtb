@@ -152,7 +152,7 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
     protected function shouldCheckVisibility()
     {
         $currentUser = $GLOBALS['current_user'];
-        $portalUserId = BeanFactory::getBean('Users')->retrieve_user_id('SugarCustomerSupportPortalUser');
+        $portalUserId = BeanFactory::newBean('Users')->retrieve_user_id('SugarCustomerSupportPortalUser');
         return $currentUser->id == $portalUserId;
     }
 }

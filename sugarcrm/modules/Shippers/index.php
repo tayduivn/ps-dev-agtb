@@ -28,7 +28,7 @@ if((!is_admin($GLOBALS['current_user']) && (!is_admin_for_module($GLOBALS['curre
    sugar_die("Unauthorized access to administration.");
 }
 
-$focus = BeanFactory::getBean('Shippers');
+$focus = BeanFactory::newBean('Shippers');
 echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_TITLE']), true); 
 $is_edit = false;
 if(!empty($_REQUEST['record'])) {

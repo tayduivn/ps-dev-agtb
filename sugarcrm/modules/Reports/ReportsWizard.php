@@ -97,7 +97,7 @@ $sugar_smarty->assign("js_custom_version", $sugar_config['js_custom_version']);
 $sugar_smarty->assign("sugar_version", $sugar_version);
 
 // Set fiscal start date
-$admin = BeanFactory::getBean('Administration');
+$admin = BeanFactory::newBean('Administration');
 $config = $admin->getConfigForModule('Forecasts', 'base');
 if (!empty($config['is_setup']) && !empty($config['timeperiod_start_date'])) {
     $sugar_smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
@@ -215,7 +215,7 @@ else if ($saveReport !== null && ($saveReport == 'on')) {
 	}
 
 	if (!empty($id)) {
-		$saved_report_seed = BeanFactory::getBean('Reports');
+		$saved_report_seed = BeanFactory::newBean('Reports');
 		$saved_report_seed->disable_row_level_security = true;
 		$saved_report_seed->retrieve($id, false);
 	   	$args['reporter'] =  new Report($report_def, $filters_def, $panels_def);
@@ -292,7 +292,7 @@ else if ($isDelete !== null && ($isDelete == '1')) {
 
 }
 else if (!empty($id)) {
-	$saved_report_seed = BeanFactory::getBean('Reports');
+	$saved_report_seed = BeanFactory::newBean('Reports');
 	$saved_report_seed->disable_row_level_security = true;
 	$saved_report_seed->retrieve($id, false);
 	$args['reporter'] = new Report($saved_report_seed->content);

@@ -365,7 +365,7 @@ class SugarQuery
         // FIXME: it's really not good we have a special case here
         if (!empty($options['favorites']) || $link_name == 'favorites') {
             $sfOptions = $options;
-            $sf = BeanFactory::getBean('SugarFavorites');
+            $sf = BeanFactory::getDefinition('SugarFavorites');
             $options['alias'] = $sf->addToSugarQuery($this, $sfOptions);
         } else {
             $this->loadBeans($link_name, $options);
@@ -949,7 +949,7 @@ class SugarQuery
                 'ignoreRole' => $ignoreRole,
             )
         );
-        $joined = BeanFactory::newBean($bean->$join->getRelatedModuleName());
+        $joined = BeanFactory::getDefinition($bean->$join->getRelatedModuleName());
         if ($team_security === true) {
             $options['table_alias'] = $alias;
             $options['as_condition'] = true;
@@ -998,9 +998,9 @@ class SugarQuery
             $link_name = $this->join[$table_name]->linkName;
             if ($link_name == 'favorites') {
                 // FIXME: special case, should eliminate it
-                $bean = BeanFactory::getBean('SugarFavorites');
+                $bean = BeanFactory::getDefinition('SugarFavorites');
             } elseif ($link_name == 'tracker') {
-                $bean = BeanFactory::getBean('Trackers');
+                $bean = BeanFactory::getDefinition('Trackers');
             } else {
                 $bean = $this->join[$table_name]->bean;
             }

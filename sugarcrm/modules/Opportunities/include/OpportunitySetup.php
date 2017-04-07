@@ -93,7 +93,7 @@ abstract class OpportunitySetup
 
     public function __construct()
     {
-        $this->bean = BeanFactory::getBean('Opportunities');
+        $this->bean = BeanFactory::newBean('Opportunities');
     }
 
     /**
@@ -212,7 +212,7 @@ abstract class OpportunitySetup
 
         $this->bean->clearLoadedDef($this->bean->object_name);
 
-        $this->bean = BeanFactory::getBean('Opportunities');
+        $this->bean = BeanFactory::newBean('Opportunities');
 
         $rnr_modules = $this->fixRevenueLineItemModule();
         SugarBean::clearLoadedDef('RevenueLineItem');
@@ -333,7 +333,7 @@ abstract class OpportunitySetup
      */
     protected function resetForecastData($forecast_by)
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'forecast_by', $forecast_by, 'base');
 
         SugarAutoLoader::load('modules/Forecasts/include/ForecastReset.php');
@@ -428,7 +428,7 @@ abstract class OpportunitySetup
      */
     protected function setRevenueLineItemInParentRelateDropDown($add = true)
     {
-        $rli = BeanFactory::getBean('RevenueLineItems');
+        $rli = BeanFactory::newBean('RevenueLineItems');
         $all_languages = get_languages();
         $old_request = $_REQUEST;
 
@@ -544,7 +544,7 @@ abstract class OpportunitySetup
 
         // mark all WorkFlows with their base of opportunities as status '0' (Inactive)
         /* @var $workFlow WorkFlow */
-        $workFlow = BeanFactory::getBean('WorkFlow');
+        $workFlow = BeanFactory::newBean('WorkFlow');
         $sq = new SugarQuery();
         $sq->select(array('id'));
         $sq->from($workFlow);
@@ -571,7 +571,7 @@ abstract class OpportunitySetup
     private function markWorkFlowsWithOppActionShellsInactive()
     {
         // get the action shells
-        $actionShells = BeanFactory::getBean('WorkFlowActionShells');
+        $actionShells = BeanFactory::newBean('WorkFlowActionShells');
 
         $sq = new SugarQuery();
         $sq->select(array('id', 'parent_id'));
@@ -600,7 +600,7 @@ abstract class OpportunitySetup
     private function markWorkFlowsWithOppTriggerShellsInactive()
     {
         // get the action shells
-        $triggerShells = BeanFactory::getBean('WorkFlowTriggerShells');
+        $triggerShells = BeanFactory::newBean('WorkFlowTriggerShells');
 
         $sq = new SugarQuery();
         $sq->select(array('id', 'parent_id'));
@@ -623,14 +623,14 @@ abstract class OpportunitySetup
     {
         // make sure all the links are visible in workflows
         /* @var $rli_bean = RevenueLineItem */
-        $rli_bean  = BeanFactory::getBean('RevenueLineItems');
+        $rli_bean  = BeanFactory::newBean('RevenueLineItems');
         $rli_links = $rli_bean->get_linked_fields();
 
         $rnr_modules = array();
 
         foreach($rli_links as $name => $link) {
             if ($rli_bean->load_relationship($name) && $rli_bean->$name instanceof Link2) {
-                $bean = BeanFactory::getBean($rli_bean->$name->getRelatedModuleName());
+                $bean = BeanFactory::newBean($rli_bean->$name->getRelatedModuleName());
                 $rel_name = $rli_bean->$name->getRelatedModuleLinkName();
 
                 // if for some reason we didn't find a rli_name on the other side of the link
@@ -734,7 +734,7 @@ EOL;
      */
     protected function fixProductsModuleField($field, $attribute, $value)
     {
-        $products = BeanFactory::getBean('Products');
+        $products = BeanFactory::newBean('Products');
         $field_defs = $products->getFieldDefinition($field);
 
         // get the get_widget helper and the StandardField Helper

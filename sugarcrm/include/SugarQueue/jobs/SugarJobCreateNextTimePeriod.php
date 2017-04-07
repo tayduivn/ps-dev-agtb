@@ -48,7 +48,7 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
         global $app_strings, $language;
         $app_strings = return_application_language($language);
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $config = $admin->getConfigForModule('Forecasts', 'base');
 
         $timeperiodInterval = $config['timeperiod_interval'];

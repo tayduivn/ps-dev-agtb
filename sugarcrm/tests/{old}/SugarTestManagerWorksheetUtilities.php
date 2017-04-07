@@ -75,7 +75,7 @@ class SugarTestManagerWorksheetUtilities
     public static function getManagerWorksheetForUserAndTimePeriod($user_id, $timeperiod_id, $isCommit = false)
     {
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
             array(
                 'user_id' => $user_id,

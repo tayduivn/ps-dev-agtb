@@ -131,7 +131,7 @@ class SugarUpgradeUpdateNameOnListViewForPersonClasses extends UpgradeScript
      */
     public function extendsPerson($module)
     {
-        $class = BeanFactory::getBean($module);
+        $class = BeanFactory::newBean($module);
         return is_subclass_of($class, 'Person');
     }
 }

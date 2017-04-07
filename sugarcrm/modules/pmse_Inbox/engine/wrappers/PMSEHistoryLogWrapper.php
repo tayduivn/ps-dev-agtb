@@ -73,11 +73,11 @@ class PMSEHistoryLogWrapper
     {
         $this->case_id = $caseId;
         ///$this->formAction = new BpmFormAction();
-        $this->formAction = BeanFactory::getBean('pmse_BpmFormAction');
+        $this->formAction = BeanFactory::newBean('pmse_BpmFormAction');
         //$this->flowItself = new BpmnFlow();
-        $this->flowItself = BeanFactory::getBean('pmse_BpmnFlow');
+        $this->flowItself = BeanFactory::newBean('pmse_BpmnFlow');
         //$this->flow = new BpmFlow();
-        $this->flow = BeanFactory::getBean('pmse_BpmFlow');
+        $this->flow = BeanFactory::newBean('pmse_BpmFlow');
         $this->data = new stdClass();
         $this->currentUser = new User();
         global $db;
@@ -165,7 +165,7 @@ class PMSEHistoryLogWrapper
     {
         $entries = array();
         $queryOptions = array('add_deleted' => true);
-        $beanFlow = BeanFactory::getBean('pmse_BpmFlow');
+        $beanFlow = BeanFactory::newBean('pmse_BpmFlow');
         $fields = array(
             'id',
             'date_entered',

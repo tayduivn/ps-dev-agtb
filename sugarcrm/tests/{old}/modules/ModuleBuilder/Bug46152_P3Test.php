@@ -50,7 +50,7 @@ class Bug46152_P3Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
 
         $this->dynamicField = new DynamicField($this->module);
-        $this->dynamicField->setup(BeanFactory::getBean($this->module));
+        $this->dynamicField->setup(BeanFactory::newBean($this->module));
 
         parent::setUp();
     }

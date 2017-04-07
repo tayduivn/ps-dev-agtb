@@ -62,7 +62,7 @@ class CommentsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSave_WithoutParentPost_ReturnsFalse()
     {
-        $comment = BeanFactory::getBean('Comments');
+        $comment = BeanFactory::newBean('Comments');
         $id = $comment->save();
         $this->assertFalse($id);
     }
@@ -72,7 +72,7 @@ class CommentsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessCommentTags_NoTagsOnComment_ProcessTagsNotCalled()
     {
-        $comment = BeanFactory::getBean('Comments');
+        $comment = BeanFactory::newBean('Comments');
         $comment->data = '{}';
 
         $activity = $this->createPartialMock('Activity', array('processTags'));
@@ -86,7 +86,7 @@ class CommentsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessCommentTags_TagsOnComment_ProcessTagsCalled()
     {
-        $comment = BeanFactory::getBean('Comments');
+        $comment = BeanFactory::newBean('Comments');
         $comment->data = '{"tags":[{"module":"Foo","id":"123"}]}';
 
         $activity = $this->createPartialMock('Activity', array('processTags'));

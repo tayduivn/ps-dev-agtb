@@ -79,7 +79,7 @@ class SugarJobKBContentUpdateArticles implements RunnableSchedulerJob
     {
         $sq = new SugarQuery();
         $sq->select(array('id'));
-        $sq->from(BeanFactory::getBean('KBContents'));
+        $sq->from(BeanFactory::newBean('KBContents'));
         $sq->where()
             ->in('status', KBContent::getPublishedStatuses())
             ->lte('exp_date', $this->td->nowDbDate());
@@ -95,7 +95,7 @@ class SugarJobKBContentUpdateArticles implements RunnableSchedulerJob
     {
         $sq = new SugarQuery();
         $sq->select(array('id'));
-        $sq->from(BeanFactory::getBean('KBContents'));
+        $sq->from(BeanFactory::newBean('KBContents'));
         $sq->where()
             ->equals('status', KBContent::ST_APPROVED)
             ->lte('active_date', $this->td->nowDbDate());

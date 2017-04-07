@@ -31,7 +31,7 @@ class MyEmailsDashlet extends DashletGeneric {
 
         $this->columns = $dashletData['MyEmailsDashlet']['columns'];
 
-        $this->seedBean = BeanFactory::getBean('Emails');
+        $this->seedBean = BeanFactory::newBean('Emails');
     }
 
     public function process($lvsParams = array())

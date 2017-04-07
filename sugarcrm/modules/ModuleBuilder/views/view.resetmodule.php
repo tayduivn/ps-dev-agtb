@@ -112,7 +112,7 @@ class ViewResetmodule extends SugarView
     function removeCustomFields()
     {
         $moduleName = $this->module;
-        $seed = BeanFactory::getBean($moduleName);
+        $seed = BeanFactory::newBean($moduleName);
         $df = new DynamicField ( $moduleName ) ;
         $df->setup ( $seed ) ;
 

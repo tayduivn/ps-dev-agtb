@@ -49,7 +49,7 @@ class KBContent extends SugarBean {
      */
     public function getCategoryRoot()
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $config = $admin->getConfigForModule('KBContents');
         $category = BeanFactory::newBean('Categories');
 
@@ -117,7 +117,7 @@ class KBContent extends SugarBean {
      */
     public function getLanguages()
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $config = $admin->getConfigForModule('KBContents');
         return isset($config['languages']) ? $config['languages'] : array();
     }
@@ -193,7 +193,7 @@ class KBContent extends SugarBean {
         $doc = $article = null;
         $this->load_relationship('kbdocuments_kbcontents');
         if (empty($this->kbdocument_id)) {
-            $doc = BeanFactory::getBean('KBDocuments');
+            $doc = BeanFactory::newBean('KBDocuments');
             $doc->new_with_id = true;
             $doc->id = create_guid();
             $doc->name = $this->name;
@@ -209,7 +209,7 @@ class KBContent extends SugarBean {
         }
 
         if (empty($this->kbarticle_id)) {
-            $article = BeanFactory::getBean('KBArticles');
+            $article = BeanFactory::newBean('KBArticles');
             $article->new_with_id = true;
             $article->id = create_guid();
             $article->name = $this->name;
@@ -244,7 +244,7 @@ class KBContent extends SugarBean {
                 $this->revision = 1;
                 if (!empty($this->kbdocument_id) && !empty($this->kbarticle_id)) {
                     $query = new SugarQuery();
-                    $query->from(BeanFactory::getBean('KBContents'));
+                    $query->from(BeanFactory::newBean('KBContents'));
                     $query->select()->fieldRaw('MAX(revision)', 'max_revision');
                     $query->where()
                         ->equals('kbdocument_id', $this->kbdocument_id)
@@ -357,7 +357,7 @@ class KBContent extends SugarBean {
         $query = new SugarQuery();
         $query->select(array('language'));
         $query->distinct(true);
-        $query->from(BeanFactory::getBean('KBContents'));
+        $query->from(BeanFactory::newBean('KBContents'));
         $query->where()->equals('kbdocument_id', $this->kbdocument_id);
         $languages = $query->execute();
 
@@ -410,7 +410,7 @@ class KBContent extends SugarBean {
         $deletedBean = BeanFactory::getBean('KBContents', $id);
         if ($this->active_rev == 1) {
             $query = new SugarQuery();
-            $query->from(BeanFactory::getBean('KBContents'));
+            $query->from(BeanFactory::newBean('KBContents'));
             $query->select(array('id'));
             $whereAnd = $query->where();
             if ($this->id) {
@@ -504,7 +504,7 @@ class KBContent extends SugarBean {
     {
         if ($this->kbdocument_id && $this->kbarticle_id) {
             $query = new SugarQuery();
-            $query->from(BeanFactory::getBean('KBContents'));
+            $query->from(BeanFactory::newBean('KBContents'));
             $query->select(array('id', 'status'));
             $whereAnd = $query->where();
             if ($this->id) {
@@ -629,7 +629,7 @@ class KBContent extends SugarBean {
      */
     function get_notification_recipients()
     {
-        $notify_user = BeanFactory::getBean('Users');
+        $notify_user = BeanFactory::newBean('Users');
         if ($this->status == self::ST_IN_REVIEW) {
             $notify_user->retrieve($this->kbsapprover_id);
         } else {

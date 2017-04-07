@@ -46,14 +46,14 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	    //adding the client ip address
 	    $_POST['client_id_address'] = query_client_ip();
 		$campaign_id=$_POST['campaign_id'];
-		$campaign = BeanFactory::getBean('Campaigns');
+		$campaign = BeanFactory::newBean('Campaigns');
         $camp_query  = 'SELECT name, id FROM campaigns WHERE id = ' . $campaign->db->quoted($campaign_id);
 		$camp_query .= " and deleted=0";
         $camp_result=$campaign->db->query($camp_query);
         $camp_data = $campaign->db->fetchByAssoc($camp_result);
         // Bug 41292 - have to select marketing_id for new lead
         $db = DBManagerFactory::getInstance();
-        $marketing = BeanFactory::getBean('EmailMarketing');
+        $marketing = BeanFactory::newBean('EmailMarketing');
         $marketing_query = $marketing->create_new_list_query(
             'date_start DESC, date_modified DESC',
             'campaign_id = ' . $campaign->db->quoted($campaign_id) .' AND status = \'active\' AND date_start < '
@@ -69,7 +69,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 
 	    if(isset($camp_data) && $camp_data != null ){
 			$leadForm = new LeadFormBase();
-            $lead = BeanFactory::getBean('Leads');
+            $lead = BeanFactory::newBean('Leads');
 			$prefix = '';
 			if(!empty($_POST['prefix'])){
 				$prefix = $_POST['prefix'];
@@ -101,7 +101,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 			if(!empty($lead)){
 				
 	            //create campaign log
-	            $camplog = BeanFactory::getBean('CampaignLog');
+	            $camplog = BeanFactory::newBean('CampaignLog');
 	            $camplog->campaign_id  = $_POST['campaign_id'];
 	            $camplog->related_id   = $lead->id;
 	            $camplog->related_type = $lead->module_dir;
@@ -151,11 +151,11 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
             if(isset($_POST['webtolead_email_opt_out']) || isset($_POST['email_opt_out'])){
                     
                 if(isset ($lead->email1) && !empty($lead->email1)){
-                    $sea = BeanFactory::getBean('EmailAddresses');
+                    $sea = BeanFactory::newBean('EmailAddresses');
                     $sea->AddUpdateEmailAddress($lead->email1,0,1);
                 }   
                 if(isset ($lead->email2) && !empty($lead->email2)){
-                    $sea = BeanFactory::getBean('EmailAddresses');
+                    $sea = BeanFactory::newBean('EmailAddresses');
                     $sea->AddUpdateEmailAddress($lead->email2,0,1);
                     
                 }

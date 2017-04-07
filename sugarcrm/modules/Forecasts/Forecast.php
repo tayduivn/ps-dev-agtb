@@ -73,7 +73,7 @@ class Forecast extends SugarBean
 		$this->setupCustomFields('Forecasts'); //parameter is module name
 		$this->disable_row_level_security = true;
 
-		$this->currency = BeanFactory::getBean('Currencies');
+		$this->currency = BeanFactory::newBean('Currencies');
 		if ( isset($current_user) ) {
 			$this->currency->retrieve($current_user->getPreference('currency'));
 		}
@@ -276,7 +276,7 @@ class Forecast extends SugarBean
     public function getCommitStageDropdown()
     {
         if (is_null(static::$commitStageDropdownCache)) {
-            $adminBean = BeanFactory::getBean('Administration');
+            $adminBean = BeanFactory::newBean('Administration');
             $config = $adminBean->getConfigForModule($this->module_name);
             static::$commitStageDropdownCache = $config['buckets_dom'];
         }
@@ -293,7 +293,7 @@ class Forecast extends SugarBean
     {
         /* @var $admin Administration */
         if (empty(static::$settings) || $reload === true) {
-            $admin = BeanFactory::getBean('Administration');
+            $admin = BeanFactory::newBean('Administration');
             static::$settings = $admin->getConfigForModule('Forecasts');
         }
 

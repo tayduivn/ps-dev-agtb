@@ -100,7 +100,7 @@ class LegacyJsonServer
         }
 
         foreach ($args['modules'] as $module) {
-            $focus = BeanFactory::getBean($module);
+            $focus = BeanFactory::newBean($module);
 
             $query_orderby = '';
             if (!empty($args['order'])) {

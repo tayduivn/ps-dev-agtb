@@ -18,7 +18,7 @@ if (!$current_user->isAdminForModule("InboundEmail")) {
     sugar_die(translate('ERR_NOT_ADMIN'));
 }
 
-$focus = BeanFactory::getBean('InboundEmail');
+$focus = BeanFactory::newBean('InboundEmail');
 $focus->checkImap();
 
 ///////////////////////////////////////////////////////////////////////////////

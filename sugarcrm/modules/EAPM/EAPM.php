@@ -56,7 +56,7 @@ class EAPM extends Basic {
    {
        global $current_user;
 
-       $eapmBean = BeanFactory::getBean('EAPM');
+       $eapmBean = BeanFactory::newBean('EAPM');
 
        if ( isset($_SESSION['EAPM'][$application]) && !$includeInactive ) {
            if ( ArrayFunctions::is_array_access($_SESSION['EAPM'][$application]) ) {

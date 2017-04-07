@@ -181,7 +181,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 		} //if
 
 		if($value->module_dir == 'Bugs'){
-			$seedRelease = BeanFactory::getBean('Releases');
+			$seedRelease = BeanFactory::newBean('Releases');
 			$options = $seedRelease->get_releases(TRUE, "Active");
 			$options_ret = array();
 			foreach($options as $name=>$value){
@@ -255,7 +255,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	    foreach ($layout_defs[$module]['subpanel_setup'] as $subpanel => $subpaneldefs)
 	    {
 	        $moduleToCheck = $subpaneldefs['module'];
-	        $bean = BeanFactory::getBean($moduleToCheck);
+	        $bean = BeanFactory::newBean($moduleToCheck);
 	        if(empty($bean)) continue;
 	        if($bean->ACLAccess('list'))
 	            $results[$subpanel] = $subpaneldefs;
@@ -351,7 +351,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                 continue;
             }
 
-	        $seed = BeanFactory::getBean($module);
+	        $seed = BeanFactory::newBean($module);
             $query = $this->generateUpcomingActivitiesWhereClause($seed, $meta);
 
             $response = $seed->get_list(/* Order by date field */"{$meta['date_field']} ASC",  /*Where clause */$query, /* No Offset */ 0,

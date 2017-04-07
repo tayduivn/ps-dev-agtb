@@ -57,7 +57,7 @@ class MailMergeController extends SugarController{
                     $where .= " AND related_type = #".$lmodule."#";
             }
 
-            $seed = BeanFactory::getBean($module);
+            $seed = BeanFactory::newBean($module);
 
             if($using_cp){
                 $fields = array('id', 'first_name', 'last_name');

@@ -124,8 +124,6 @@ class TemplateRelatedTextField extends TemplateText{
         ),
         );
 
-        //$GLOBALS['log']->fatal($this->bean);
-
         $json = getJSONobj();
         $encoded_contact_popup_request_data = $json->encode($popup_request_data);
         $returnXTPL['ENCODED_'.strtoupper($id).'_POPUP_REQUEST_DATA'] = $encoded_contact_popup_request_data;
@@ -308,7 +306,7 @@ class TemplateRelatedTextField extends TemplateText{
         $viewPackage = isset($df->package)?$df->package:null;
 
         $idLabelValue = string_format(
-            $GLOBALS['mod_strings']['LBL_RELATED_FIELD_ID_NAME_LABEL'],
+            translate('LBL_RELATED_FIELD_ID_NAME_LABEL', 'ModuleBuilder'),
             array($this->label_value, $GLOBALS['app_list_strings']['moduleListSingular'][$this->ext2])
         );
 

@@ -25,6 +25,6 @@ class MyCasesDashlet extends DashletGeneric {
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_CASES', 'Cases');
         $this->searchFields = $dashletData['MyCasesDashlet']['searchFields'];
         $this->columns = $dashletData['MyCasesDashlet']['columns'];
-        $this->seedBean = BeanFactory::getBean('Cases');        
+        $this->seedBean = BeanFactory::newBean('Cases');        
     }
 }

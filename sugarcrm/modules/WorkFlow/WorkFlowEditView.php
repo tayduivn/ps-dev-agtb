@@ -33,7 +33,7 @@ global $app_strings;
 global $app_list_strings;
 global $mod_strings;
 
-$focus = BeanFactory::getBean('EmailTemplates');
+$focus = BeanFactory::newBean('EmailTemplates');
 
 if(isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
@@ -115,7 +115,7 @@ if (!empty($focus->id)) {
     $etid = $old_id;
 }
 if(!empty($etid)) {
-    $note = BeanFactory::getBean('Notes');
+    $note = BeanFactory::newBean('Notes');
     $notes_list = $note->get_full_list("", "notes.parent_id=" . $GLOBALS['db']->quoted($etid) . " AND notes.filename IS NOT NULL", true);
     if (!empty($notes_list)) {
         for ($i = 0; $i < count($notes_list); $i++) {

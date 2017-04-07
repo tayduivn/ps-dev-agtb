@@ -40,7 +40,7 @@ class ViewShowDuplicates extends SugarView
         }
         unset($_SESSION['SHOW_DUPLICATES']);
 
-        $lead = BeanFactory::getBean('Leads');
+        $lead = BeanFactory::newBean('Leads');
         $leadForm = new LeadFormBase();
         $GLOBALS['check_notify'] = FALSE;
 
@@ -94,7 +94,7 @@ class ViewShowDuplicates extends SugarView
 
         $input .= get_teams_hidden_inputs('Leads');
 
-        $emailAddress = BeanFactory::getBean('EmailAddresses');
+        $emailAddress = BeanFactory::newBean('EmailAddresses');
         $input .= $emailAddress->getEmailAddressWidgetDuplicatesView($lead);
 
         $this->ss->assign('RETURN_MODULE', $this->request->getValidInputPost('return_module', 'Assert\Mvc\ModuleName'));

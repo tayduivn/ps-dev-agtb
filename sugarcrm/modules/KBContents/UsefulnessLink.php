@@ -68,7 +68,7 @@ class UsefulnessLink extends Link2
      */
     public function isValidSugarUser($user)
     {
-        $portalUserId = BeanFactory::getBean('Users')->retrieve_user_id('SugarCustomerSupportPortalUser');
+        $portalUserId = BeanFactory::newBean('Users')->retrieve_user_id('SugarCustomerSupportPortalUser');
         return $user->id !== $portalUserId;
     }
 

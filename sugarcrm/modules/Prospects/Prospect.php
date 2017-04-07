@@ -181,7 +181,7 @@ class Prospect extends Person {
         }
 
         $module_name = ucfirst($module_name);
-        $seed = BeanFactory::getBean($module_name);
+        $seed = BeanFactory::newBean($module_name);
         if(empty($sel_fields)){
             $sel_fields = $seed->table_name.'.*';
         }

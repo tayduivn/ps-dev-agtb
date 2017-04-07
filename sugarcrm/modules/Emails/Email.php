@@ -142,7 +142,7 @@ class Email extends SugarBean {
 		parent::__construct();
 		$this->team_id = 1; // make the item globally accessible
 
-		$this->emailAddress = BeanFactory::getBean('EmailAddresses');
+		$this->emailAddress = BeanFactory::newBean('EmailAddresses');
 
 		$this->imagePrefix = rtrim($GLOBALS['sugar_config']['site_url'], "/")."/cache/images/";
 	}
@@ -474,7 +474,7 @@ class Email extends SugarBean {
 			/* Apply Email Templates */
 			// do not parse email templates if the email is being saved as draft....
 		    $toAddresses = $this->email2ParseAddresses($_REQUEST['sendTo']);
-	        $sea = BeanFactory::getBean('EmailAddresses');
+	        $sea = BeanFactory::newBean('EmailAddresses');
 	        $object_arr = array();
 
 			if( !empty($_REQUEST['parent_type']) && !empty($_REQUEST['parent_id']) &&
@@ -884,7 +884,7 @@ class Email extends SugarBean {
 			$this->bcc_addrs_names = $_REQUEST['sendBcc'];
 			$this->team_id = (!empty($_REQUEST['primaryteam']) ?  $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
 			/* @var TeamSet $teamSet */
-			$teamSet = BeanFactory::getBean('TeamSets');
+			$teamSet = BeanFactory::newBean('TeamSets');
 			$teamIdsArray = (!empty($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
 			$this->team_set_id = $teamSet->addTeams($teamIdsArray);
             //BEGIN SUGARCRM flav=ent ONLY
@@ -932,8 +932,8 @@ class Email extends SugarBean {
 					} // if
 
 				} else {
-                    $c = BeanFactory::getBean('Cases');
-                    $ie = BeanFactory::getBean('InboundEmail');
+                    $c = BeanFactory::newBean('Cases');
+                    $ie = BeanFactory::newBean('InboundEmail');
                     if ($caseId = $ie->getCaseIdFromCaseNumber($subject, $c)) {
                         $c->retrieve($caseId);
                         $c->load_relationship('emails');
@@ -997,7 +997,7 @@ class Email extends SugarBean {
 		global $locale;
         $result = array();
 		global $db;
-		$table = BeanFactory::getBean($module)->table_name;
+		$table = BeanFactory::newBean($module)->table_name;
 		$returndata = array();
 		$idsString = "";
 		foreach($idsArray as $id) {
@@ -1133,7 +1133,7 @@ class Email extends SugarBean {
 	 */
 	function saveTempNoteAttachments($filename,$fileLocation, $mimeType, $uploadId = null)
 	{
-	    $tmpNote = BeanFactory::getBean('Notes');
+	    $tmpNote = BeanFactory::newBean('Notes');
 	    $tmpNote->id = create_guid();
 	    $tmpNote->new_with_id = true;
 	    $tmpNote->parent_id = $this->id;
@@ -1275,7 +1275,7 @@ class Email extends SugarBean {
 
 	protected function saveEmailText()
 	{
-        $text = BeanFactory::getBean("EmailText");
+        $text = BeanFactory::newBean("EmailText");
         foreach($this->email_to_text as $textfield=>$mailfield) {
             $text->$textfield = $this->$mailfield;
         }
@@ -1903,7 +1903,7 @@ class Email extends SugarBean {
         if($this->status != "draft") {
     		$notes_list = array();
     		if(!empty($this->id) && !$this->new_with_id) {
-    			$note = BeanFactory::getBean('Notes');
+    			$note = BeanFactory::newBean('Notes');
     			$where = "notes.parent_id='{$this->id}'";
     			$notes_list = $note->get_full_list("", $where, true);
     		}
@@ -1932,7 +1932,7 @@ class Email extends SugarBean {
 				continue;
 			}
 
-			$note = BeanFactory::getBean('Notes');
+			$note = BeanFactory::newBean('Notes');
 			$note->parent_id = $this->id;
 			$note->parent_type = $this->module_dir;
 			$upload_file = new UploadFile('email_attachment'.$i);
@@ -1974,9 +1974,9 @@ class Email extends SugarBean {
 		////	ATTACHMENTS FROM DOCUMENTS
 		for($i=0; $i<10; $i++) {
 			if(isset($_REQUEST['documentId'.$i]) && !empty($_REQUEST['documentId'.$i])) {
-				$doc = BeanFactory::getBean('Documents');
-				$docRev = BeanFactory::getBean('DocumentRevisions');
-				$docNote = BeanFactory::getBean('Notes');
+				$doc = BeanFactory::newBean('Documents');
+				$docRev = BeanFactory::newBean('DocumentRevisions');
+				$docNote = BeanFactory::newBean('Notes');
 				$noteFile = new UploadFile();
 
 				$doc->retrieve($_REQUEST['documentId'.$i]);
@@ -2651,7 +2651,7 @@ class Email extends SugarBean {
 			if( empty($temp['from']) || empty($temp['to_addrs']) )
 			{
     			//Retrieve email addresses seperatly.
-    			$tmpEmail = BeanFactory::getBean('Emails');
+    			$tmpEmail = BeanFactory::newBean('Emails');
     			$tmpEmail->id = $a['id'];
     			$tmpEmail->retrieveEmailAddresses();
     			$temp['from'] = $tmpEmail->from_addr;

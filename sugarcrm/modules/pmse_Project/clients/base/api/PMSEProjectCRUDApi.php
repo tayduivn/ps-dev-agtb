@@ -49,19 +49,19 @@ class PMSEProjectCRUDApi extends ModuleApi
         $projectBean->prj_status = 'INACTIVE';
         $projectBean->save();
 
-        $diagramBean =  BeanFactory::getBean('pmse_BpmnDiagram')->retrieve_by_string_fields(array('prj_id'=>$args['record']));
+        $diagramBean =  BeanFactory::newBean('pmse_BpmnDiagram')->retrieve_by_string_fields(array('prj_id'=>$args['record']));
         $diagramBean->deleted = 1;
         $diagramBean->save();
 
-        $processBean = BeanFactory::getBean('pmse_BpmnProcess')->retrieve_by_string_fields(array('prj_id'=>$args['record']));
+        $processBean = BeanFactory::newBean('pmse_BpmnProcess')->retrieve_by_string_fields(array('prj_id'=>$args['record']));
         $processBean->deleted = 1;
         $processBean->save();
 
-        $processDefinitionBean = BeanFactory::getBean('pmse_BpmProcessDefinition')->retrieve_by_string_fields(array('prj_id'=>$args['record']));
+        $processDefinitionBean = BeanFactory::newBean('pmse_BpmProcessDefinition')->retrieve_by_string_fields(array('prj_id'=>$args['record']));
         $processDefinitionBean->deleted = 1;
         $processDefinitionBean->save();
 
-        while($relatedDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency')->retrieve_by_string_fields(array('prj_id'=>$args['record'], 'deleted'=>0))) {
+        while($relatedDepBean = BeanFactory::newBean('pmse_BpmRelatedDependency')->retrieve_by_string_fields(array('prj_id'=>$args['record'], 'deleted'=>0))) {
             $relatedDepBean->deleted = 1;
             $relatedDepBean->save();
         }

@@ -32,7 +32,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$seed_object = BeanFactory::getBean('WorkFlow');
+$seed_object = BeanFactory::newBean('WorkFlow');
 
 if(!empty($_REQUEST['workflow_id']) && $_REQUEST['workflow_id']!="") {
     $seed_object->retrieve($_REQUEST['workflow_id']);
@@ -59,7 +59,7 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = BeanFactory::getBean('WorkFlowActionShells');
+$focus = BeanFactory::newBean('WorkFlowActionShells');
 //Add When Expressions Object is availabe
 //$exp_object = new Expressions();
 

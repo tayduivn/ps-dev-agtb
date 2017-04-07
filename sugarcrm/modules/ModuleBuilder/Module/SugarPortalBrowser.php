@@ -96,7 +96,7 @@ class SugarPortalBrowser
         global $dictionary;
         
         // Grab the bean to make sure this is a legit module
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
         
         // Do some simple sanity checking before checking portal status
         if (is_object($bean) && !empty($bean->object_name) && isset($dictionary[$bean->object_name])) {

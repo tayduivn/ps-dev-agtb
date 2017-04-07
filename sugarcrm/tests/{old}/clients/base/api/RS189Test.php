@@ -81,7 +81,7 @@ class RS189Test extends Sugar_PHPUnit_Framework_TestCase
             )
         );
         $this->assertEquals('done', $result['status']);
-        $account = BeanFactory::getBean('Accounts');
+        $account = BeanFactory::newBean('Accounts');
         $account->retrieve($id, true, false);
         $this->assertEquals(1, $account->deleted);
     }

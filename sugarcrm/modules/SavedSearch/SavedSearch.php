@@ -231,7 +231,7 @@ class SavedSearch extends SugarBean {
 
 		global $current_user, $timedate;
 
-		$focus = BeanFactory::getBean('SavedSearch');
+		$focus = BeanFactory::newBean('SavedSearch');
 		if($id) $focus->retrieve($id);
 
 		if($useRequired && !checkRequired($prefix, array_keys($focus->required_fields))) {
@@ -341,7 +341,7 @@ class SavedSearch extends SugarBean {
 
         if(isset($this->contents['search_module']))
         {
-           $searchModuleBean = BeanFactory::getBean($this->contents['search_module']);
+           $searchModuleBean = BeanFactory::newBean($this->contents['search_module']);
         }
 
         foreach($this->contents as $key=>$val){

@@ -258,7 +258,7 @@ class pmse_InboxViewShowCase extends SugarView
         $cas_index = $beanFlow->cas_index;
 
         $query = new SugarQuery();
-        $query->from(BeanFactory::getBean('pmse_Inbox'));
+        $query->from(BeanFactory::newBean('pmse_Inbox'));
         $query->joinTable('pmse_bpm_flow', array('alias' => 'bpmFlow', 'joinType' => 'LEFT', 'linkingTable' => true))
             ->on()
             ->equalsField('bpmFlow.cas_id', 'pmse_inbox.cas_id');

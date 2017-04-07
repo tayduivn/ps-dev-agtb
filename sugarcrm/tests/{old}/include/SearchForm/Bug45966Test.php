@@ -43,7 +43,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         require "modules/".$this->module."/metadata/SearchFields.php";
         require "modules/".$this->module."/metadata/listviewdefs.php";
 
-        $this->seed = BeanFactory::getBean($this->module);
+        $this->seed = BeanFactory::newBean($this->module);
         $this->form = new SearchForm($this->seed, $this->module, $this->action);
         $this->form->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl', "advanced_search", $listViewDefs);
 

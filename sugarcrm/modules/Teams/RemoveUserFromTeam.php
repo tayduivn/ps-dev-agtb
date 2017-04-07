@@ -26,7 +26,7 @@ global $current_user;
 
 if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
-$focus = BeanFactory::getBean('Teams');
+$focus = BeanFactory::newBean('Teams');
 
 if(!isset($_REQUEST['team_record']) || !isset($_REQUEST['record'])) {
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);

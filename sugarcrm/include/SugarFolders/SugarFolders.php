@@ -94,7 +94,7 @@ class SugarFolder {
     public function __construct()
     {
 		$this->db = DBManagerFactory::getInstance();
-        $this->emailBean = BeanFactory::getBean('Emails');
+        $this->emailBean = BeanFactory::newBean('Emails');
         $dictionary = [];
         require 'metadata/foldersMetaData.php';
         $this->table = $dictionary['folders']['table'];
@@ -422,7 +422,7 @@ ENDW;
 
 		$return = array();
 
-		$email = BeanFactory::getBean('Emails'); //Needed for email specific functions.
+		$email = BeanFactory::newBean('Emails'); //Needed for email specific functions.
 
 		while($a = $this->db->fetchByAssoc($r)) {
 

@@ -38,7 +38,7 @@ class SugarUpgradeFixDuplicateFields extends UpgradeScript
         global $beanList;
         $this->init();
         foreach ($beanList as $module => $_) {
-            if (BeanFactory::getBean($module) instanceof SugarBean && !isModuleBWC($module)) {
+            if (BeanFactory::newBean($module) instanceof SugarBean && !isModuleBWC($module)) {
                 $this->checkRecordView($module);
             }
         }

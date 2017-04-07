@@ -48,7 +48,7 @@ EOQ;
     public function testFindCustomHelper()
     {
         $api = new RestService();
-        $bean = BeanFactory::getBean('Campaigns');
+        $bean = BeanFactory::newBean('Campaigns');
         $helper = ApiHelper::getHelper($api,$bean);
         $this->assertEquals('CustomSugarBeanApiHelper',get_class($helper));
     }

@@ -87,7 +87,7 @@ class TeamSet extends SugarBean{
         $teams = array();
 
         while ($row = $stmt->fetch()) {
-            $team = BeanFactory::getBean('Teams');
+            $team = BeanFactory::newBean('Teams');
             $team->populateFromRow($row, true);
             $teams[$team->id] = $team;
         }
@@ -323,7 +323,7 @@ class TeamSet extends SugarBean{
         $teamIds = $this->getTeamIds($team_set_id);
         if(!empty($teamIds)) {
             foreach($teamIds as $team_id) {
-                $team = BeanFactory::getBean('Teams');
+                $team = BeanFactory::newBean('Teams');
                 $team->id = $team_id;
                 $usersList = $team->get_team_members($only_active_users);
                 if (!empty($usersList)) {

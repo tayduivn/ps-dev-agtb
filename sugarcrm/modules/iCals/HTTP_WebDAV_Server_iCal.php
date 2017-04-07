@@ -30,7 +30,7 @@
         public function __construct()
         {
            $this->vcal_focus = new iCal();
-           $this->user_focus = BeanFactory::getBean('Users');
+           $this->user_focus = BeanFactory::newBean('Users');
         }
 
         /**

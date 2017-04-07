@@ -56,7 +56,7 @@ if (isset($_REQUEST['campaign_id']) && !empty($_REQUEST['campaign_id'])) {
 
 $db = DBManagerFactory::getInstance();
 $timedate = TimeDate::getInstance();
-$emailman = BeanFactory::getBean('EmailMan');
+$emailman = BeanFactory::newBean('EmailMan');
 
     if($test){
         //if this is in test mode, then
@@ -103,7 +103,7 @@ do {
 	if(isset($current_user)){
 		$temp_user = $current_user;
 	}
-	$current_user = BeanFactory::getBean('Users');
+	$current_user = BeanFactory::newBean('Users');
 	$startTime = microtime(true);
 
 	while(($row = $db->fetchByAssoc($result))!= null){

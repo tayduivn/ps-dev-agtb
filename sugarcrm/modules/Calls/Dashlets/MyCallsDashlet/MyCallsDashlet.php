@@ -37,7 +37,7 @@ class MyCallsDashlet extends DashletGeneric {
                                               'sortable' => false,
                                               'related_fields' => array('status'),
                                               'default' => 'true');*/
-        $this->seedBean = BeanFactory::getBean('Calls');
+        $this->seedBean = BeanFactory::newBean('Calls');
         $this->seedBean->disable_row_level_security = true;
     }
     

@@ -46,7 +46,7 @@ $form->assign("ASSOCIATED_WITH", $mod_strings['LBL_ASSOCIATED_WITH']);
 
 if($_REQUEST['type']=='new_rel') {
 
-	$temp_module = BeanFactory::getBean($workflow_object->base_module);
+	$temp_module = BeanFactory::newBean($workflow_object->base_module);
 	$temp_module->call_vardef_handler("rel_filter");
 	$temp_module->vardef_handler->start_none=true;
 	$temp_module->vardef_handler->start_none_lbl = $mod_strings['LBL_PLEASE_SELECT'];
@@ -74,7 +74,7 @@ if($_REQUEST['type']=='new_rel') {
 			$rel_module2 = "";
 		}
 
-		$temp_module2 = BeanFactory::getBean($rel_module);
+		$temp_module2 = BeanFactory::newBean($rel_module);
 		$temp_module2->call_vardef_handler("rel_filter");
 		$temp_module2->vardef_handler->start_none=true;
 		$temp_module2->vardef_handler->start_none_lbl = $mod_strings['LBL_PLEASE_SELECT'];

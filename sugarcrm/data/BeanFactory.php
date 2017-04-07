@@ -17,6 +17,7 @@
  */
 class BeanFactory {
     protected static $loadedBeans = array();
+    protected static $definitions = array();
     protected static $maxLoaded = 100;
     protected static $total = 0;
     protected static $loadOrder = array();
@@ -44,12 +45,14 @@ class BeanFactory {
      */
     public static function getBean($module, $id = null, $params = array(), $deleted = true)
     {
+        if (!$id) {
+            return self::newBean($module);
+        }
 
     	// Check if params is an array, if not use old arguments
     	if (isset($params) && !is_array($params)) {
     		$params = array('encode' => $params);
     	}
-
 
         // Pull values from $params array
         if (defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
@@ -71,75 +74,90 @@ class BeanFactory {
             self::$touched[$module] = array();
         }
 
-        $beanClass = self::getBeanClass($module);
+        if (!$can_cache || empty(self::$loadedBeans[$module][$id])) {
+            $bean = self::newBean($module);
 
-        if (empty($beanClass) || !class_exists($beanClass)) return null;
-
-        if (!empty($id))
-        {
-            if (!$can_cache || empty(self::$loadedBeans[$module][$id]))
-            {
-                // $bean = new $beanClass();
-                $bean = SugarBean::_createBean($beanClass);
-                // Pro+ versions, to disable team check if we have rights
-                // to change the parent bean, but not the related (e.g. change Account Name of Opportunity)
-                if (!empty($params['disable_row_level_security'])) {
-                    $bean->disable_row_level_security = true;
-                }
-                $result = $bean->retrieve($id, $encode, $deleted);
-
-                if(empty($result)) {
-                    if(empty($params['strict_retrieve'])) {
-                        return $bean;
-                    } else {
-                        return null;
-                    }
-                } else if ($can_cache) {
-                    self::registerBean($bean);
-                }
-            } else {
-                $bean = self::$loadedBeans[$module][$id];
-
-                // check if cached bean is deleted
-                if ($deleted && !empty($bean->deleted)) { 
-                    if(empty($params['strict_retrieve'])) {
-                        return SugarBean::_createBean($beanClass);
-                    } else {
-                        return null;
-                    }
-                }
-
-                // cached bean was retrieved with team security disabled
-                if (empty($params['disable_row_level_security']) && !empty($bean->disable_row_level_security)) {
-                    $newBean = SugarBean::_createBean($beanClass);
-                    
-                    if (isset($params['disable_row_level_security'])) { // false
-                        $newBean->disable_row_level_security = false;
-                    }
-
-                    if (empty($newBean->disable_row_level_security)) {
-                        // retireve with team security enabled
-                        $result = $newBean->retrieve($id, $encode, $deleted);
-                        if (empty($result)) {
-                            if(empty($params['strict_retrieve'])) {
-                                return $bean;
-                            } else {
-                                return null;
-                            }
-                        }
-                        else {
-                            // save new bean in cache
-                            self::$loadedBeans[$module][$id] = $newBean;
-                            return $newBean;
-                        }
-                    }
-                }
-
-                self::$hits++;
-                self::$touched[$module][$id]++;
+            if (!$bean) {
+                return $bean;
             }
-        } else {
-            $bean = SugarBean::_createBean($beanClass);
+
+            // Pro+ versions, to disable team check if we have rights
+            // to change the parent bean, but not the related (e.g. change Account Name of Opportunity)
+            if (!empty($params['disable_row_level_security'])) {
+                $bean->disable_row_level_security = true;
+            }
+
+            if (!$bean->retrieve($id, $encode, $deleted)) {
+                if (empty($params['strict_retrieve'])) {
+                    return $bean;
+                }
+
+                return null;
+            } elseif ($can_cache) {
+                self::registerBean($bean);
+            }
+
+            return $bean;
+        }
+
+        $bean = self::$loadedBeans[$module][$id];
+
+        // check if cached bean is deleted
+        if ($deleted && !empty($bean->deleted)) {
+            if (empty($params['strict_retrieve'])) {
+                return self::newBean($module);
+            } else {
+                return null;
+            }
+        }
+
+        // cached bean was retrieved with team security disabled
+        if (empty($params['disable_row_level_security']) && !empty($bean->disable_row_level_security)) {
+            $newBean = self::newBean($module);
+            if (isset($params['disable_row_level_security'])) { // false
+                $newBean->disable_row_level_security = false;
+            }
+
+            if (empty($newBean->disable_row_level_security)) {
+                // retireve with team security enabled
+                if (!$newBean->retrieve($id, $encode, $deleted)) {
+                    if (empty($params['strict_retrieve'])) {
+                        return $bean;
+                    }
+
+                    return null;
+                }
+
+                // save new bean in cache
+                self::$loadedBeans[$module][$id] = $newBean;
+                return $newBean;
+            }
+        }
+
+        return $bean;
+    }
+
+    /**
+     * Returns bean definition for the given module
+     *
+     * Currently this method returns a shared SugarBean instance, but in the future it may return an object
+     * implementing only the definition-related part of the SugarBean's methods and not implementing
+     * the record-related part. Use it only for definition-specific logic (obtaining field and table definition,
+     * building queries, etc).
+     *
+     * @param string $module
+     * @return SugarBean|null
+     */
+    public static function getDefinition($module)
+    {
+        if (isset(self::$definitions[$module])) {
+            return self::$definitions[$module];
+        }
+
+        $bean = self::newBean($module);
+
+        if ($bean) {
+            self::$definitions[$module] = $bean;
         }
 
         return $bean;
@@ -187,18 +205,30 @@ class BeanFactory {
     public static function clearCache()
     {
         self::$loadedBeans = array();
+        self::$definitions = array();
         self::$total = 0;
         self::$hits = 0;
     }
 
     /**
      * Create new empty bean
-     * @param string $module
-     * @return SugarBean
+     *
+     * @param string $module Module name
+     * @return SugarBean|null
      */
     public static function newBean($module)
     {
-        return self::getBean($module);
+        $beanClass = self::getBeanClass($module);
+
+        if (!$beanClass) {
+            return null;
+        }
+
+        if (!class_exists($beanClass)) {
+            return null;
+        }
+
+        return new $beanClass();
     }
 
     /**
@@ -445,6 +475,7 @@ class BeanFactory {
                 $objectList[$module] = $beanList[$module];
             }
             self::$bean_classes[$module] = $klass;
+            unset(self::$definitions[$module]);
         }
     }
 
@@ -457,8 +488,10 @@ class BeanFactory {
     {
         if ($module) {
             unset(self::$bean_classes[$module]);
+            unset(self::$definitions[$module]);
         } else {
             self::$bean_classes = array();
+            self::$definitions = array();
         }
     }
 }

@@ -77,7 +77,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
     {
         ForecastsDefaults::setupForecastSettings();
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $adminConfig = $admin->getConfigForModule('Forecasts');
 
         // On fresh install, is_setup should be 0 in the DB
@@ -101,12 +101,12 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
             'timeperiod_type' => $timeperiodType
         );
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $this->saveConfig($setupConfig, $admin);
 
         ForecastsDefaults::setupForecastSettings(true);
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $adminConfig = $admin->getConfigForModule('Forecasts');
 
         $defaultConfig = ForecastsDefaults::getDefaults();
@@ -136,7 +136,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
             'timeperiod_type' => $timeperiodType
         );
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $this->saveConfig($setupConfig, $admin);
 
         ForecastsDefaults::setupForecastSettings(true);
@@ -196,7 +196,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testOpportunitySaves()
     {
         $db = DBManagerFactory::getInstance();
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
         $admin->saveSetting('Forecasts', 'sales_stage_won', '[]', 'base');
         $admin->saveSetting('Forecasts', 'timeperiod_leaf_interval', TimePeriod::QUARTER_TYPE, 'base');

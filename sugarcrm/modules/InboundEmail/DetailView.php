@@ -73,7 +73,7 @@ if(!empty($focus->service)) {
 }
 
 // FROM NAME FROM ADDRESS STRINGS
-$email = BeanFactory::getBean('Emails');
+$email = BeanFactory::newBean('Emails');
 $from = $email->getSystemDefaultEmail();
 $default_from_name = $from['name'];
 $default_from_addr = $from['email'];

@@ -134,7 +134,7 @@ include_once('include/workflow/expression_utils.php');
 						}
 					}
                     if (isset($target_field_array['function_bean'])) {
-                        $funcBean =  BeanFactory::getBean($target_field_array['function_bean']);
+                        $funcBean =  BeanFactory::newBean($target_field_array['function_bean']);
                         if (method_exists($funcBean, $function)) {
                             $function = array($funcBean, $function);
                         }
@@ -580,7 +580,7 @@ include_once('include/workflow/expression_utils.php');
 function get_username_by_id($userid)
 {
     if(empty($userid)) return false;
-    $user = BeanFactory::getBean('Users');
+    $user = BeanFactory::newBean('Users');
     $user->retrieve($userid);
     if($userid != $user->id) {
         return false;

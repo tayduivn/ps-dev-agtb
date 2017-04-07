@@ -26,13 +26,13 @@ class ForecastsSeedData
 
         global $timedate, $current_user, $app_list_strings;
 
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $comm = new Common();
         $commit_order = $comm->get_forecast_commit_order();
 
         // get what we are forecasting on
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
         $forecast_by = $settings['forecast_by'];
@@ -49,7 +49,7 @@ class ForecastsSeedData
                     $commitUserId = $commit_type_array[0];
                     // get the worksheet total for a given user
                     /* @var $worksheet ForecastWorksheet */
-                    $worksheet = BeanFactory::getBean('ForecastWorksheets');
+                    $worksheet = BeanFactory::newBean('ForecastWorksheets');
                     $totals = $worksheet->worksheetTotals($timeperiod_id, $commitUserId, $forecast_by, true);
 
                     if ($totals['total_opp_count'] == 0) {
@@ -60,7 +60,7 @@ class ForecastsSeedData
                     echo '.';
 
                     /* @var $quota Quota */
-                    $quota = BeanFactory::getBean('Quotas');
+                    $quota = BeanFactory::newBean('Quotas');
                     $quota->timeperiod_id = $timeperiod_id;
                     $quota->user_id = $commitUserId;
                     $quota->quota_type = 'Direct';
@@ -91,7 +91,7 @@ class ForecastsSeedData
 
                     if (!$user->isManager($commitUserId)) {
                         /* @var $quotaRollup Quota */
-                        $quotaRollup = BeanFactory::getBean('Quotas');
+                        $quotaRollup = BeanFactory::newBean('Quotas');
                         $quotaRollup->timeperiod_id = $timeperiod_id;
                         $quotaRollup->user_id = $commitUserId;
                         $quotaRollup->quota_type = 'Rollup';
@@ -122,7 +122,7 @@ class ForecastsSeedData
 
                     // create a previous forecast to simulate a change
                     /* @var $forecast Forecast */
-                    $forecast = BeanFactory::getBean('Forecasts');
+                    $forecast = BeanFactory::newBean('Forecasts');
                     $forecast->timeperiod_id = $timeperiod_id;
                     $forecast->user_id = $commitUserId;
                     $forecast->opp_count = $totals['included_opp_count'];
@@ -151,7 +151,7 @@ class ForecastsSeedData
 
                     // create the current forecast
                     /* @var $forecast2 Forecast */
-                    $forecast2 = BeanFactory::getBean('Forecasts');
+                    $forecast2 = BeanFactory::newBean('Forecasts');
                     $forecast2->timeperiod_id = $timeperiod_id;
                     $forecast2->user_id = $commitUserId;
                     $forecast2->opp_count = $totals['included_opp_count'];
@@ -179,7 +179,7 @@ class ForecastsSeedData
                 } else {
 
                     /* @var $mgr_worksheet ForecastManagerWorksheet */
-                    $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+                    $mgr_worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
                     $totals = $mgr_worksheet->worksheetTotals($commit_type_array[0], $timeperiod_id, true);
 
                     if ($totals['included_opp_count'] == 0) {
@@ -190,7 +190,7 @@ class ForecastsSeedData
                     echo '.';
 
                     /* @var $quota Quota */
-                    $quota = BeanFactory::getBean('Quotas');
+                    $quota = BeanFactory::newBean('Quotas');
                     $quota->timeperiod_id = $timeperiod_id;
                     $quota->user_id = $commit_type_array[0];
                     $quota->quota_type = 'Rollup';
@@ -201,7 +201,7 @@ class ForecastsSeedData
                     $quota->save();
 
                     /* @var $forecast Forecast */
-                    $forecast = BeanFactory::getBean('Forecasts');
+                    $forecast = BeanFactory::newBean('Forecasts');
                     $forecast->timeperiod_id = $timeperiod_id;
                     $forecast->user_id = $commit_type_array[0];
                     $forecast->opp_count = $totals['included_opp_count'];
@@ -238,7 +238,7 @@ class ForecastsSeedData
                 /* @var $user User */
                 $user = BeanFactory::getBean('Users', $manager);
                 /* @var $worksheet ForecastManagerWorksheet */
-                $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+                $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
                 // set the current_user->id to the manager
                 $current_user->id = $manager;
                 $worksheet->commitManagerForecast($user, $timeperiod_id);
@@ -247,7 +247,7 @@ class ForecastsSeedData
         }
 
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
 
         // TODO-sfa - remove this once the ability to map buckets when they get changed is implemented (SFA-215).
@@ -260,7 +260,7 @@ class ForecastsSeedData
         /* @var $user User */
         $user = BeanFactory::getBean('Users', $user_id);
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         if ($data["forecast_type"] == "Rollup") {
             $data["likely_adjusted"] = $data["likely_case"];
             $data["best_adjusted"] = $data["best_case"];
@@ -275,7 +275,7 @@ class ForecastsSeedData
         /* @var $tp TimePeriod */
         $tp = BeanFactory::getBean('TimePeriods', $timeperiod);
 
-        $bean = BeanFactory::getBean($forecast_by);
+        $bean = BeanFactory::newBean($forecast_by);
         $sq = new SugarQuery();
         $sq->select(array('forecast_by.*'));
         $sq->from($bean, array('alias' => 'forecast_by'))->where()
@@ -295,11 +295,11 @@ class ForecastsSeedData
 
         foreach ($beans as $bean) {
             /* @var $obj Opportunity|Product */
-            $obj = BeanFactory::getBean($forecast_by);
+            $obj = BeanFactory::newBean($forecast_by);
             $obj->loadFromRow($bean);
 
             /* @var $opp_wkst ForecastWorksheet */
-            $opp_wkst = BeanFactory::getBean('ForecastWorksheets');
+            $opp_wkst = BeanFactory::newBean('ForecastWorksheets');
             if ($forecast_by == 'Opportunities') {
                 $opp_wkst->saveRelatedOpportunity($obj, true);
             } else {

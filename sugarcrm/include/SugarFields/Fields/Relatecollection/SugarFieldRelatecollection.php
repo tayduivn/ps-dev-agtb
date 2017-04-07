@@ -131,7 +131,7 @@ class SugarFieldRelatecollection extends SugarFieldBase
     protected function createNewBeanBeforeLink(SugarBean $parent, $relName, array $record)
     {
         $relSeed = $this->getRelatedSeedBean($parent, $relName);
-        $new = BeanFactory::getBean($relSeed->module_name);
+        $new = BeanFactory::newBean($relSeed->module_name);
         $new->fromArray($record);
         $new->save();
         return $new;
@@ -230,7 +230,7 @@ class SugarFieldRelatecollection extends SugarFieldBase
     protected function getRelatedSeedBean(SugarBean $bean, $rel)
     {
         if ($bean->load_relationship($rel)) {
-            return BeanFactory::getBean($bean->$rel->getRelatedModuleName());
+            return BeanFactory::newBean($bean->$rel->getRelatedModuleName());
         }
     }
 

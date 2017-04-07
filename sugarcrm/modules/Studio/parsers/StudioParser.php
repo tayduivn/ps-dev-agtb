@@ -437,7 +437,7 @@ EOQ;
 
 				global $current_language;
 				$mods = return_module_language($current_language, 'DynamicLayout');
-				$mod = BeanFactory::getBean($module);
+				$mod = BeanFactory::newBean($module);
 
 				$this->populateRequestFromBuffer($file);
 				$mod->assign_display_fields($module);

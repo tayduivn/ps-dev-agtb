@@ -41,7 +41,7 @@ class SugarUpgradeLockedFieldsToRelateCollectionTest extends UpgradeTestCase
     public function testGetLogMessage()
     {
         // Create our empty SugarBean that is needed for passing into the method
-        $bean = BeanFactory::getBean('Empty');
+        $bean = BeanFactory::newBean('Empty');
         $bean->id = '123-456';
 
         // Get our upgrade object

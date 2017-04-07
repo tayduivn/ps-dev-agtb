@@ -487,7 +487,7 @@ class ProcessView {
 
         if($option_array['type']=="dropdown"){
 
-            $expression_object = BeanFactory::getBean('Expressions');
+            $expression_object = BeanFactory::newBean('Expressions');
 
             $select_options = $expression_object->get_selector_array('dom_array', $this->target_bean->{$option_array['value']}, $option_array['dom_name'], false);
             return "<select id='".$option_array['value']."' name='".$option_array['value']."' tabindex='1'>".$select_options."</select>";
@@ -595,7 +595,7 @@ class ProcessView {
         }
 
         if($type=="special_exp"){
-            $expression_object = BeanFactory::getBean('Expressions');
+            $expression_object = BeanFactory::newBean('Expressions');
 
             $text_array = $expression_object->get_selector_array($exp_type, "", $dom_name, true);
 
@@ -657,7 +657,7 @@ class ProcessView {
 
     function build_filter_output($prefix, $vardef_name){
 
-        $filter_object = BeanFactory::getBean('Expressions');
+        $filter_object = BeanFactory::newBean('Expressions');
         //only try to retrieve if there is a base object set
         if(isset($this->target_bean->id) && $this->target_bean->id!="") {
             $filter_list = $this->target_bean->get_linked_beans($vardef_name,'Expression');
@@ -702,20 +702,20 @@ class ProcessView {
 
         $workflow_object = $action_shell->get_workflow_object();
         if($action_shell->action_type=="update"){
-            $temp_module = BeanFactory::getBean($workflow_object->base_module);
+            $temp_module = BeanFactory::newBean($workflow_object->base_module);
             $meta_filter = "action_filter";
             $action_processed = true;
         }
         if($action_shell->action_type=="update_rel"){
             $rel_module = $workflow_object->get_rel_module($action_shell->rel_module);
-            $temp_module = BeanFactory::getBean($rel_module);
+            $temp_module = BeanFactory::newBean($rel_module);
             $meta_filter = "action_filter";
             $action_processed = true;
         }
 
         if($action_shell->action_type=="new"){
             $rel_module = $workflow_object->get_rel_module($action_shell->action_module);
-            $temp_module = BeanFactory::getBean($rel_module);
+            $temp_module = BeanFactory::newBean($rel_module);
             $meta_filter = "action_filter";
             $action_processed = true;
         }
@@ -871,8 +871,8 @@ class ProcessView {
     function get_list_display_text_compare_specific($trigger_shell)
     {
         global $app_list_strings;
-        $temp_module = BeanFactory::getBean($this->workflow_object->base_module);
-        $future_object = BeanFactory::getBean('Expressions');
+        $temp_module = BeanFactory::newBean($this->workflow_object->base_module);
+        $future_object = BeanFactory::newBean('Expressions');
         $future_list = $trigger_shell->get_linked_beans('future_triggers','Expression');
         if(!empty($future_list[0])) {
             $future_id = $future_list[0]->id;
@@ -921,7 +921,7 @@ class ProcessView {
         $tmp_mod_strings=return_module_language($current_language,'workflow');
         if(isset($trigger_shell->id) && $trigger_shell->id!="")
         {
-            $filter1_object = BeanFactory::getBean('Expressions');
+            $filter1_object = BeanFactory::newBean('Expressions');
             $filter_list = $trigger_shell->get_linked_beans('expressions','Expression');
             if(isset($filter_list[0]) && $filter_list[0]!= null)
             {
@@ -934,9 +934,9 @@ class ProcessView {
                 //Check if a relate object id is
                 if ($filter1_object->exp_type == 'relate')
                 {
-                	$wfseed = BeanFactory::getBean($filter1_object->lhs_module);
+                	$wfseed = BeanFactory::newBean($filter1_object->lhs_module);
                 	$field_def = $wfseed->field_defs[$filter1_object->lhs_field];
-                	$rel_seed = BeanFactory::getBean($field_def['module']);
+                	$rel_seed = BeanFactory::newBean($field_def['module']);
                 	$rel_seed->retrieve($filter1_object->rhs_value);
                 	if (empty($rel_seed->id))
                 	{

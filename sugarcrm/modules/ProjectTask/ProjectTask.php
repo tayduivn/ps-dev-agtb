@@ -646,7 +646,7 @@ class ProjectTask extends SugarBean {
         // updating data in database for changed tasks
         foreach($changed as $k => &$v)
         {
-            $task = BeanFactory::getBean('ProjectTask');
+            $task = BeanFactory::newBean('ProjectTask');
             $task->populateFromRow($list[$v]);
             $task->skipParentUpdate();
             $task->save(false);

@@ -37,7 +37,7 @@ class MyClosedOpportunitiesDashlet extends Dashlet
         
         if(isset($def['autoRefresh'])) $this->autoRefresh = $def['autoRefresh'];
         
-        $this->seedBean = BeanFactory::getBean('Opportunities');      
+        $this->seedBean = BeanFactory::newBean('Opportunities');      
 
         $qry = "SELECT * from opportunities WHERE assigned_user_id = '" . $current_user->id . "' AND deleted=0";
 		$result = $this->seedBean->db->query($this->seedBean->create_list_count_query($qry));	

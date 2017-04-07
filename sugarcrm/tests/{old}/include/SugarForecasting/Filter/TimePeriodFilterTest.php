@@ -20,7 +20,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
      */
     public static function setUpBeforeClass()
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts', 'base');
         $settingsToRestore = array('timeperod_interval', 'timeperiod_leaf_interval', 'timeperiod_start_date', 'timeperiod_shown_forward', 'timeperiod_shown_backward');
         foreach($settingsToRestore as $id) {
@@ -92,7 +92,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
 
         self::updateForecastSettings($forecastConfigSettings);
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings =  $admin->getConfigForModule('Forecasts', 'base');
 
         $timePeriod = TimePeriod::getByType($parentType);
@@ -116,7 +116,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
 
     private static function updateForecastSettings($settings)
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         foreach($settings as $id=>$value) {
             $admin->saveSetting('Forecasts', $id, $value, 'base');
         }

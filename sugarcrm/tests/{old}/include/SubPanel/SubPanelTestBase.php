@@ -39,7 +39,7 @@ class SubPanelTestBase extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['moduleList'][$key]);
         
         // Setup the test bean
-        $this->_testBean = BeanFactory::getBean($this->_testModule);
+        $this->_testBean = BeanFactory::newBean($this->_testModule);
         // Get the current module and subpanel settings
         $this->_tabController = new TabController();
         $this->_currentTabs = $this->_tabController->get_system_tabs();

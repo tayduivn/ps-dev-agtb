@@ -24,7 +24,7 @@ $future_object = "";
 $past_remove = false;
 
 
-$focus = BeanFactory::getBean('WorkFlowTriggerShells');
+$focus = BeanFactory::newBean('WorkFlowTriggerShells');
 
 
 if(!empty($_POST['record']) && $_POST['record']!=""){
@@ -77,7 +77,7 @@ if(!empty($_REQUEST['type']) && $_REQUEST['type']=="compare_specific"){
 		$past_id = "";
 	}
 
-	$past_object = BeanFactory::getBean('Expressions');
+	$past_object = BeanFactory::newBean('Expressions');
 
 	//Is there past to capture
 	if($focus->show_past==1){
@@ -104,7 +104,7 @@ if(!empty($_REQUEST['type']) && $_REQUEST['type']=="compare_specific"){
 		//Do we need to remove the past, if we don't need it anymore
 		if(!empty($past_id) && $past_id!=""){
 			$past_object->mark_deleted($past_id);
-			$past_object = BeanFactory::getBean('Expressions');
+			$past_object = BeanFactory::newBean('Expressions');
 		}
 
 		//end if else past is on or off
@@ -122,7 +122,7 @@ if(!empty($_REQUEST['type']) && $_REQUEST['type']=="compare_specific"){
 	} else {
 		$future_id = "";
 	}
-	$future_object = BeanFactory::getBean('Expressions');
+	$future_object = BeanFactory::newBean('Expressions');
 
 	if(!empty($future_id) && $future_id!=""){
 		$future_object->retrieve($future_id);

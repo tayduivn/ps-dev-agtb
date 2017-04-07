@@ -33,12 +33,12 @@ class Bug64669Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('mod_strings', array('Contacts'));
         SugarTestHelper::setUp('current_user', array(true, 1));
 
-        $camp = BeanFactory::getBean('Campaigns');
+        $camp = BeanFactory::newBean('Campaigns');
         $camp->name = $this->campaign_name;
         $camp->save();
         $this->createdBeans[] = $camp;
 
-        $bean = BeanFactory::getBean('Contacts');
+        $bean = BeanFactory::newBean('Contacts');
         $bean->last_name = 'last64669';
         $bean->campaign_id = $camp->id;
         $bean->save();

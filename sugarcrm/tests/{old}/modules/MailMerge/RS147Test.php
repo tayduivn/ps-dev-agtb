@@ -52,7 +52,7 @@ class RS147Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSearch()
     {
-        $bean = BeanFactory::getBean('Contacts');
+        $bean = BeanFactory::newBean('Contacts');
         $bean->first_name = 'RS147Test';
         $bean->save(false);
         array_push(self::$createdBeans, $bean);
@@ -67,9 +67,9 @@ class RS147Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testModulesMerge()
     {
-        $bean = BeanFactory::getBean('Contacts');
+        $bean = BeanFactory::newBean('Contacts');
         $bean->save(false);
-        $merge = BeanFactory::getBean('Notes');
+        $merge = BeanFactory::newBean('Notes');
         $merge->save(false);
         $bean->load_relationship('notes');
         $bean->notes->add($merge);
@@ -93,12 +93,12 @@ class RS147Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMerge($to, $from, $fieldsTo, $fieldsFrom, $rel)
     {
-        $bean = BeanFactory::getBean($to);
+        $bean = BeanFactory::newBean($to);
         foreach ($fieldsTo as $field => $value) {
             $bean->$field = $value;
         }
         $bean->save(false);
-        $merge = BeanFactory::getBean($from);
+        $merge = BeanFactory::newBean($from);
         foreach ($fieldsFrom as $field => $value) {
             $merge->$field = $value;
         }

@@ -24,7 +24,7 @@ global $current_language;
 global $current_user;
 global $hilite_bg;
 global $sugar_version, $sugar_config;
-$focus = BeanFactory::getBean('Project');
+$focus = BeanFactory::newBean('Project');
 
 $request = InputValidation::getService();
 
@@ -55,10 +55,10 @@ $sugar_smarty->assign("ID", $focus->id);
 $sugar_smarty->assign("NAME", $focus->name);
 $sugar_smarty->assign("IS_TEMPLATE", $focus->is_template);
 
-$userBean = BeanFactory::getBean('Users');
+$userBean = BeanFactory::newBean('Users');
 $focus->load_relationship("user_resources");
 $users = $focus->user_resources->getBeans($userBean);
-$contactBean = BeanFactory::getBean('Contacts');
+$contactBean = BeanFactory::newBean('Contacts');
 $focus->load_relationship("contact_resources");
 $contacts = $focus->contact_resources->getBeans($contactBean);
 
@@ -74,7 +74,7 @@ $sugar_smarty->assign("RESOURCES", $resources);
 
 // Get resource holidays ////////////////////////////////////////////////
 
-$holidayBean = BeanFactory::getBean('Holidays');
+$holidayBean = BeanFactory::newBean('Holidays');
 $holidays = array();
 
 if (count($resources) > 0){
@@ -132,7 +132,7 @@ if (isset($_REQUEST["view_filter_resource"]))
 
 
 
-$projectTaskBean = BeanFactory::getBean('ProjectTask');
+$projectTaskBean = BeanFactory::newBean('ProjectTask');
 $projectTasks = array();
 
 $queryPart = '';
@@ -371,7 +371,7 @@ $GLOBALS['log']->debug('EditGridView.php: Getting list of teams to determine acc
 $list_of_teams = array();
 
 if (isset($focus->team_set_id)) {
-    $teamSet = BeanFactory::getBean('TeamSets');
+    $teamSet = BeanFactory::newBean('TeamSets');
     $list_of_teams  = $teamSet->getTeamIds($focus->team_set_id);
 } else { // since no team_set_id exists, we can just use the current team id
     $list_of_teams[] = $focus->team_id;

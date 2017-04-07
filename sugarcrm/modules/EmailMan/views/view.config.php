@@ -142,7 +142,7 @@ class ViewConfig extends SugarView
         ////	END EMAIL SECURITY
         ///////////////////////////////////////////////////////////////////////////////
 
-        $email = BeanFactory::getBean('Emails');
+        $email = BeanFactory::newBean('Emails');
         $this->ss->assign('ROLLOVER', $email->rolloverStyle);
         $this->ss->assign('THEME', $GLOBALS['theme']);
 

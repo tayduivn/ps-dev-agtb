@@ -33,7 +33,7 @@ require_once('include/workflow/workflow_utils.php');
 //base_fields	
 
 	if($iframe_type=="rel_mod"){
-		$temp_module = BeanFactory::getBean($target_module);
+		$temp_module = BeanFactory::newBean($target_module);
 		$temp_module->call_vardef_handler("template_rel_filter");
 		$temp_module->vardef_handler->start_none=true;
 		$temp_module->vardef_handler->start_none_lbl = $GLOBALS['mod_strings']['LBL_PLEASE_SELECT'];
@@ -45,7 +45,7 @@ require_once('include/workflow/workflow_utils.php');
 	}
 	if($iframe_type=="rel_mod_fields"){
 		
-		$temp_module = BeanFactory::getBean($base_module);
+		$temp_module = BeanFactory::newBean($base_module);
 		$rel_attribute_name = "";
 		//First, see if there is a link field with the name of the related module
 		if (!empty($temp_module->field_defs[$target_module]) 
@@ -71,7 +71,7 @@ require_once('include/workflow/workflow_utils.php');
 			}
 		}
 		$rel_module = get_rel_module_name($base_module, $rel_attribute_name, $temp_module->db);
-		$temp_module = BeanFactory::getBean($rel_module);
+		$temp_module = BeanFactory::newBean($rel_module);
 		$temp_module->call_vardef_handler("template_filter");
 		$temp_module->vardef_handler->extra_array['href_link'] = $GLOBALS['mod_strings']['LBL_LINK_RECORD'];
 		$target_dropdown = get_select_options_with_id($temp_module->vardef_handler->get_vardef_array(true),"");
@@ -80,7 +80,7 @@ require_once('include/workflow/workflow_utils.php');
 		$on_start ="window.parent.copy_text('fields_iframe', 'variable_text');";
 	}
 	if($iframe_type=="base_fields"){
-		$temp_module = BeanFactory::getBean($target_module);
+		$temp_module = BeanFactory::newBean($target_module);
 		$temp_module->call_vardef_handler("template_filter");
 		$temp_module->vardef_handler->extra_array['href_link'] = $GLOBALS['mod_strings']['LBL_LINK_RECORD'];
 		if($target_module=="Meetings" || $target_module=="Calls" || $target_module=="meetings" || $target_module=="calls"){

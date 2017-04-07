@@ -43,7 +43,7 @@ function get_worksheet_defintion($user_id, $forecast_type, $timeperiod_id, $allo
 	$hhelper->set_current_user($user_id);
 	$hhelper->setup();
 
-	$seedForecastOpportunities = BeanFactory::getBean('ForecastOpportunities');
+	$seedForecastOpportunities = BeanFactory::newBean('ForecastOpportunities');
 	if (strtolower($forecast_type) == 'direct') {
 
 		$lv = new ListViewSmarty();
@@ -346,7 +346,7 @@ function upsert_worksheet_record($owner_id, $timeperiod_id, $forecast_type, $wk_
 
     if ($convert_to_basecurrency) {
         
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         if (isset($current_user)) {
            $currency->retrieve($current_user->getPreference('currency'));
         }else{
@@ -366,7 +366,7 @@ function upsert_worksheet_record($owner_id, $timeperiod_id, $forecast_type, $wk_
 	$row = $GLOBALS['db']->fetchByAssoc($resource);
 	if (empty ($row)) {
 		//_pp('inserting');
-		$wk = BeanFactory::getBean('Worksheet');
+		$wk = BeanFactory::newBean('Worksheet');
 
 		$wk->user_id = $owner_id;
 		$wk->timeperiod_id = $timeperiod_id;

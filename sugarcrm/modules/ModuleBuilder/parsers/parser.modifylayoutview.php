@@ -80,7 +80,7 @@ class ParserModifyLayoutView extends ModuleBuilderParser
         }
 
         // get the fieldDefs from the bean
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
         $this->_fieldDefs = & $bean->field_defs;
 
         $this->loadModule($this->_module, $this->_sourceView);

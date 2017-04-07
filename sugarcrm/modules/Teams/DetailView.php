@@ -27,7 +27,7 @@ global $current_user;
 
 if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
-$focus = BeanFactory::getBean('Teams');
+$focus = BeanFactory::newBean('Teams');
 
 $detailView = new DetailView();
 $offset=0;

@@ -125,7 +125,7 @@ class Bug52063Test extends Sugar_PHPUnit_Framework_TestCase
         $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
         return;
         $cType = '';
-        $bean = BeanFactory::getBean($this->targetModule);
+        $bean = BeanFactory::newBean($this->targetModule);
         if(!empty($bean))
         {
             $fieldDefs = $bean->field_defs;

@@ -57,7 +57,7 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
 
         // now that we have the product bundle, lets create the quote
         /* @var $quote Quote */
-        $quote = BeanFactory::getBean('Quotes');
+        $quote = BeanFactory::newBean('Quotes');
         $quote->id = create_guid();
         $quote->new_with_id = true;
         $quote->name = $opp->name;
@@ -116,7 +116,7 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
 
         // now that we have the product bundle, lets create the quote
         /* @var $quote Quote */
-        $quote = BeanFactory::getBean('Quotes');
+        $quote = BeanFactory::newBean('Quotes');
         $quote->id = create_guid();
         $quote->new_with_id = true;
         $quote->name = $opp->name;
@@ -180,7 +180,7 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
         }
 
         /* @var $product_bundle ProductBundle */
-        $product_bundle = BeanFactory::getBean('ProductBundles');
+        $product_bundle = BeanFactory::newBean('ProductBundles');
         $product_bundle->id = create_guid();
         $product_bundle->new_with_id = true;
 

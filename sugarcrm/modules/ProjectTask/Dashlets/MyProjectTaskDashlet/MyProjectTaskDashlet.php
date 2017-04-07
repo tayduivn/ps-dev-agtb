@@ -28,7 +28,7 @@ class MyProjectTaskDashlet extends DashletGeneric {
         $this->searchFields = $dashletData['MyProjectTaskDashlet']['searchFields'];
         $this->columns = $dashletData['MyProjectTaskDashlet']['columns'];
         
-        $this->seedBean = BeanFactory::getBean('ProjectTask');        
+        $this->seedBean = BeanFactory::newBean('ProjectTask');        
     }
     
     function buildWhere()

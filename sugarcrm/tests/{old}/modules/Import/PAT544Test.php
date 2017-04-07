@@ -49,7 +49,7 @@ class BugPAT544Test extends Sugar_PHPUnit_Framework_TestCase
 
         $importSource = new ImportFile($file, ',', '"');
 
-        $bean = BeanFactory::getBean('Accounts');
+        $bean = BeanFactory::newBean('Accounts');
 
         $_REQUEST['columncount'] = 2;
         $_REQUEST['colnum_0'] = 'id';

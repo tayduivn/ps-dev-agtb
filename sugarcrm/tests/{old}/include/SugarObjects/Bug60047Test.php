@@ -58,7 +58,7 @@ class Bug60047Test extends Sugar_PHPUnit_Framework_TestCase
         foreach(glob("cache/modules/Forecasts/*vardefs.php") as $file) {
             @unlink($file);
         }
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
         $this->assertNotEmpty($bean);
         $this->assertTrue(empty($GLOBALS['dictionary'][$bean->object_name]['acls']));
     }

@@ -89,8 +89,8 @@ function testPopulateSeedData()
     $this->markTestIncomplete("DB Failure on Strict Mode");
     global $app_list_strings, $current_user;
     $total = 200;
-    $account = BeanFactory::getBean('Accounts');
-    $product = BeanFactory::getBean('Products');
+    $account = BeanFactory::newBean('Accounts');
+    $product = BeanFactory::newBean('Products');
     $user = new User();
     $account->disable_row_level_security = true;
     $product->disable_row_level_security = true;

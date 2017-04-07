@@ -68,7 +68,7 @@ class ConfigModuleApi extends ModuleApi
     {
         $this->requireArgs($args, array('module'));
         $seed = BeanFactory::newBean($args['module']);
-        $adminBean = BeanFactory::getBean("Administration");
+        $adminBean = BeanFactory::newBean("Administration");
 
         //acl check
         if (!$seed->ACLAccess('access')) {
@@ -137,7 +137,7 @@ class ConfigModuleApi extends ModuleApi
             MetaDataManager::refreshModulesCache(array($module));
         }
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         return $admin->getConfigForModule($module, $api->platform, true);
     }
 
@@ -150,7 +150,7 @@ class ConfigModuleApi extends ModuleApi
      */
     protected function save(ServiceBase $api, $params, $module)
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         
         $platform = $this->getPlatform($api->platform);
 

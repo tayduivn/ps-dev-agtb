@@ -236,7 +236,7 @@ class PMSEEngineApi extends SugarApi
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
 
-        $notesBean = BeanFactory::getBean('pmse_BpmNotes');
+        $notesBean = BeanFactory::newBean('pmse_BpmNotes');
         $queryOptions = array('add_deleted' => true);
         $fields = array(
             'id',
@@ -341,7 +341,7 @@ class PMSEEngineApi extends SugarApi
         $cas_id = $args['cas_id'];
         $cas_index = $args['cas_index'];
 
-        $flowBean = BeanFactory::getBean('pmse_BpmFlow');
+        $flowBean = BeanFactory::newBean('pmse_BpmFlow');
         $flowBean->retrieve_by_string_fields(array(
             'cas_id' => $cas_id,
             'cas_index' => $cas_index,
@@ -555,7 +555,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function getFormDataAdhoc($args)
     {
-        $bpmFlow = BeanFactory::getBean('pmse_BpmFlow'); //new BpmFlow();
+        $bpmFlow = BeanFactory::newBean('pmse_BpmFlow'); //new BpmFlow();
         $orderBy = '';
         $where = "cas_id='{$args['cas_id']}' AND cas_index='{$args['cas_index']}'";
         $joinedTables = array(
@@ -673,7 +673,7 @@ class PMSEEngineApi extends SugarApi
                 $cas_index = $value['cas_index'];
                 //$cas_index = $value['cas_index'];
 
-                $flowBean = BeanFactory::getBean('pmse_BpmFlow'); //new BpmFlow();
+                $flowBean = BeanFactory::newBean('pmse_BpmFlow'); //new BpmFlow();
                 //$flows = $flowBean->getSelectRows('', "cas_id = '$cas_id' and cas_index = '$cas_index'");
                 $flows = $this->wrapper->getSelectRows($flowBean, '', "cas_id = '$cas_id' and cas_index = '$cas_index'",
                     0, -1, -1);
@@ -685,7 +685,7 @@ class PMSEEngineApi extends SugarApi
                 $result = $db->Query($query);
                 $row = $db->fetchByAssoc($result);
                 //create a BpmFlow row
-                $flow = BeanFactory::getBean('pmse_BpmFlow'); //new BpmFlow();
+                $flow = BeanFactory::newBean('pmse_BpmFlow'); //new BpmFlow();
                 $flow->cas_id = $cas_id;
                 $flow->cas_index = $row['cas_index'] + 1;
                 $flow->cas_previous = $flows['rowList'][0]['bpmn_id'];
@@ -949,7 +949,7 @@ class PMSEEngineApi extends SugarApi
         // Get unauthorized cases based on module access
         $arrayUnauthorizedCases = $this->getUnauthorizedCasesByFlow();
         //Get Cases IN TODO
-        $beanInbox = BeanFactory::getBean('pmse_Inbox');
+        $beanInbox = BeanFactory::newBean('pmse_Inbox');
         $fields = array(
             'id',
             'assigned_user_id',
@@ -1043,7 +1043,7 @@ class PMSEEngineApi extends SugarApi
         $queryOptions = array('add_deleted' => true);
 
         //GET CASES ID WITH INACTIVE USERS
-        $beanFlow = BeanFactory::getBean('pmse_BpmFlow');
+        $beanFlow = BeanFactory::newBean('pmse_BpmFlow');
         $q = new SugarQuery();
         $q->from($beanFlow, $queryOptions);
         $q->distinct(true);
@@ -1079,7 +1079,7 @@ class PMSEEngineApi extends SugarApi
     {
         $queryOptions = array('add_deleted' => true);
 
-        $beanFlow = BeanFactory::getBean('pmse_BpmFlow');
+        $beanFlow = BeanFactory::newBean('pmse_BpmFlow');
         $q = new SugarQuery();
         $q->from($beanFlow, $queryOptions);
         $q->distinct(true);
@@ -1113,7 +1113,7 @@ class PMSEEngineApi extends SugarApi
 
         $activity = BeanFactory::getBean('pmse_BpmActivityDefinition', $bpmFlow->bpmn_id);
         if ($api->user->id != $bpmFlow->cas_user_id) {
-            $teamsBean = BeanFactory::getBean('Teams');
+            $teamsBean = BeanFactory::newBean('Teams');
             $teamArray = $teamsBean->getArrayAllAvailable(false, $api->user);
             if (($activity->act_assignment_method == 'selfservice' && empty($teamArray[$bpmFlow->cas_user_id]))
                 || $activity->act_assignment_method == 'static'

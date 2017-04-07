@@ -43,7 +43,7 @@ class RS219Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateNewListQuery($beanName, $filter, $needed)
     {
-        $bean = BeanFactory::getBean($beanName);
+        $bean = BeanFactory::newBean($beanName);
         $query = $bean->create_new_list_query('', '', $filter, array(), 0, '', true);
         $this->assertEquals(substr_count($query['select'], $needed), 1);
     }

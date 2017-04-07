@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $past_remove = false;
-$focus = BeanFactory::getBean('WorkFlowTriggerShells');
+$focus = BeanFactory::newBean('WorkFlowTriggerShells');
 
 if(!empty($_POST['record'])){
 	$focus->retrieve($_POST['record']);
@@ -54,7 +54,7 @@ foreach($focus->additional_column_fields as $field)
 			$base_id = "";
 		}
 
-		$base_object = BeanFactory::getBean('Expressions');
+		$base_object = BeanFactory::newBean('Expressions');
 
 		if(!empty($base_id)){
 			$base_object->retrieve($base_id);
@@ -84,7 +84,7 @@ foreach($focus->additional_column_fields as $field)
 
 ///////////////////////////////////HANDLE THE COUNT COMPONENTS (FILTER1) & (FILTER2)
 
-	$filter1_object = BeanFactory::getBean('Expressions');
+	$filter1_object = BeanFactory::newBean('Expressions');
 	if(!empty($_POST['trigger3_exp_id'])){
 		$filter1_id = $_POST['trigger3_exp_id'];
 		$filter1_object->retrieve($filter1_id);
@@ -113,7 +113,7 @@ foreach($focus->additional_column_fields as $field)
 		//Do we need to remove the filter1, if we don't need it anymore
 		if(!empty($filter1_id)){
 			$filter1_object->mark_deleted($filter1_id);
-			$filter1_object = BeanFactory::getBean('Expressions');
+			$filter1_object = BeanFactory::newBean('Expressions');
 		}
 
 		//end if else past is on or off
@@ -122,7 +122,7 @@ foreach($focus->additional_column_fields as $field)
 
 ////////////////////////////////////////////////////////////////////////////
 
-	$filter2_object = BeanFactory::getBean('Expressions');
+	$filter2_object = BeanFactory::newBean('Expressions');
 	if(!empty($_POST['trigger4_exp_id'])){
 		$filter2_id = $_POST['trigger4_exp_id'];
 		$filter2_object->retrieve($filter2_id);
@@ -150,7 +150,7 @@ foreach($focus->additional_column_fields as $field)
 		//Do we need to remove the filter2, if we don't need it anymore
 		if(!empty($filter2_id)){
 			$filter2_object->mark_deleted($filter2_id);
-			$filter2_object = BeanFactory::getBean('Expressions');
+			$filter2_object = BeanFactory::newBean('Expressions');
 		}
 
 		//end if else past is on or off

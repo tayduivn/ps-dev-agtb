@@ -110,7 +110,7 @@ class PMSECaseFlowHandler
     public function getBpmFlow()
     {
         if (is_null($this->bpmFlow)) {
-            $this->bpmFlow = BeanFactory::getBean('pmse_BpmFlow');
+            $this->bpmFlow = BeanFactory::newBean('pmse_BpmFlow');
         }
         return $this->bpmFlow;
     }
@@ -123,7 +123,7 @@ class PMSECaseFlowHandler
     public function getBpmnFlow()
     {
         if (is_null($this->bpmnFlow)) {
-            $this->bpmnFlow = BeanFactory::getBean('pmse_BpmnFlow');
+            $this->bpmnFlow = BeanFactory::newBean('pmse_BpmnFlow');
         }
         return $this->bpmnFlow;
     }

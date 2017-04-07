@@ -333,7 +333,7 @@ class SugarUpgradeUpdateEmailFieldOnSidecarListViews extends UpgradeScript
     protected function isSidecarCompanyModule($module)
     {
         if (!isModuleBWC($module)) {
-            $bean = BeanFactory::getBean($module);
+            $bean = BeanFactory::newBean($module);
             if ($bean instanceof Company) {
                 return true;
             }

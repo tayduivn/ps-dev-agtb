@@ -49,7 +49,7 @@ class Bug44607Test extends Sugar_PHPUnit_Framework_TestCase
         //Create a fake reports_to_id
         $this->testUser->reports_to_id = md5($this->testUser->id);    	
 
-		$team = BeanFactory::getBean('Teams');
+		$team = BeanFactory::newBean('Teams');
 		$team->add_user_to_team($this->testUser->id);
 
 		$results = $GLOBALS['db']->query("SELECT count(*) as total FROM team_memberships WHERE user_id = '{$this->testUser->reports_to_id}'");
@@ -60,7 +60,7 @@ class Bug44607Test extends Sugar_PHPUnit_Framework_TestCase
 		}
 		
         $this->testUser->reports_to_id = $this->testUser2->id; 
-        $team = BeanFactory::getBean('Teams');  	
+        $team = BeanFactory::newBean('Teams');  	
 		$team->add_user_to_team($this->testUser->id);
 		
     	$results = $GLOBALS['db']->query("SELECT count(*) as total FROM team_memberships WHERE user_id = '{$this->testUser->reports_to_id}'");

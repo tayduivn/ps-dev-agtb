@@ -126,7 +126,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', array('applyTBA'));
         $this->tbaConfig->setForModule($module, true);
         $action = 'view';
-        $aclType = BeanFactory::getBean($module)->acltype;
+        $aclType = BeanFactory::newBean($module)->acltype;
         $aclField = new ACLField();
         $roleActions = $this->role->getRoleActions($this->role->id);
         $fallbackFieldAccess = $this->tbaConfig->getFallbackByAccess(constant('ACL_SELECTED_TEAMS_READ_WRITE'));

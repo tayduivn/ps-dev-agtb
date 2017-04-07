@@ -760,7 +760,7 @@ abstract class MssqlManager extends DBManager
         //the module string exists in bean list, then process bean for correct table name
         //note that we exempt the reports module from this, as queries from reporting module should be parsed for
         //correct table name.
-        $module_bean = BeanFactory::getBean($module_str);
+        $module_bean = BeanFactory::newBean($module_str);
         if (($module_str != 'Reports' && $module_str != 'SavedReport') && !empty($module_bean)){
             //get table name from bean
             $tbl_name = $module_bean->table_name;

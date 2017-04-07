@@ -27,7 +27,7 @@ global $app_strings;
 global $app_list_strings;
 
 
-$focus = BeanFactory::getBean('ReportMaker');
+$focus = BeanFactory::newBean('ReportMaker');
 if(!empty($_REQUEST['record'])) {
     $result = $focus->retrieve($_REQUEST['record']);
     if($result == null)

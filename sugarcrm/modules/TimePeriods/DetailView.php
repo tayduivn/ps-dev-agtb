@@ -30,7 +30,7 @@ global $current_user;
 if (!is_admin($current_user) && !is_admin_for_module($current_user,'Forecasts')) sugar_die("Unauthorized access to administration.");
 
 global $focus;
-$focus = BeanFactory::getBean('TimePeriods');
+$focus = BeanFactory::newBean('TimePeriods');
 
 $GLOBALS['log']->info("in detail view");
 

@@ -37,7 +37,7 @@ class Bug49959Test extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         self::$auth = new SAMLAuthenticateUserTest;
-        $user = self::$user = BeanFactory::getBean('Users');
+        $user = self::$user = BeanFactory::newBean('Users');
 
         $user->user_name = self::$user_name;
         $user->email1    = self::$user_email;

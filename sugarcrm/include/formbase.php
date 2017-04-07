@@ -399,7 +399,7 @@ function get_teams_hidden_inputs($module='') {
 
 function add_prospects_to_prospect_list($parent_id,$child_id)
 {
-    $focus=BeanFactory::getBean('Prospects');
+    $focus=BeanFactory::newBean('Prospects');
     if(is_array($child_id)){
         $uids = $child_id;
     }

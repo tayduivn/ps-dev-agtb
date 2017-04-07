@@ -170,7 +170,7 @@ class PMSECaseWrapper //extends FilterApi
         $userLogged = $current_user->id;
 
         //Current teams
-        $team = BeanFactory::getBean('Teams');
+        $team = BeanFactory::newBean('Teams');
         $teamsForThisUser = $team->get_teams_for_user($userLogged);
         $inTeams = "(";
         foreach ($teamsForThisUser as $key => $teamRow) {
@@ -183,8 +183,8 @@ class PMSECaseWrapper //extends FilterApi
         $inTeams .= ")";
 
         // Init the pmse_BpmFlow bean
-        $flowBean = BeanFactory::getBean('pmse_BpmFlow');
-        $inboxBean = BeanFactory::getBean('pmse_Inbox');
+        $flowBean = BeanFactory::newBean('pmse_BpmFlow');
+        $inboxBean = BeanFactory::newBean('pmse_Inbox');
 
         $options = self::parseArguments($api, $args, $inboxBean);
         if (empty($options['select'])) {

@@ -325,7 +325,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
                          ->setMethods(null)
                          ->getMock();
 
-        $adminBean = BeanFactory::getBean('Administration');
+        $adminBean = BeanFactory::newBean('Administration');
         $config = $adminBean->getConfigForModule($forecast->module_name);
 
         $result = $forecast->getCommitStageDropdown();
@@ -342,7 +342,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
                          ->setMethods(null)
                          ->getMock();
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
         $result = $forecast->getSettings();

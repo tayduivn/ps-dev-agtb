@@ -91,7 +91,7 @@ class ActivitiesApi extends FilterApi
     public function getModuleActivities(ServiceBase $api, array $args)
     {
         $params = $this->parseArguments($api, $args);
-        $record = BeanFactory::getBean($args['module']);
+        $record = BeanFactory::newBean($args['module']);
         if (!$record->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
@@ -218,7 +218,7 @@ class ActivitiesApi extends FilterApi
         if (isset(self::$beanList[$module])) {
             $bean = self::$beanList[$module];
         } else {
-            $bean = BeanFactory::getBean($module);
+            $bean = BeanFactory::newBean($module);
             if (!is_null($bean)) {
                 self::$beanList[$module] = $bean;
             }
@@ -232,7 +232,7 @@ class ActivitiesApi extends FilterApi
         ServiceBase $api = null,
         $homeActivities = false
     ) {
-        $seed = BeanFactory::getBean('Activities');
+        $seed = BeanFactory::newBean('Activities');
         $query = new SugarQuery();
         $query->from($seed);
 

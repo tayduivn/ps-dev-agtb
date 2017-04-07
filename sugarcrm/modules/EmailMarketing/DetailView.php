@@ -31,7 +31,7 @@ global $current_user;
 // global $default_language;
 // global $cal_codes;
 
-$focus = BeanFactory::getBean('EmailMarketing');
+$focus = BeanFactory::newBean('EmailMarketing');
 
 if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);

@@ -33,7 +33,7 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users');
+        $GLOBALS['current_user'] = BeanFactory::newBean('Users');
         self::$db = SugarTestHelper::setUp('mock_db');
     }
 
@@ -50,7 +50,7 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('moduleList');
 
-        $this->bean = BeanFactory::getBean('Leads');
+        $this->bean = BeanFactory::newBean('Leads');
         $this->bean->name = 'Test';
         $this->bean->id = '1';
     }
@@ -89,7 +89,7 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             )
         );
-        $audit = BeanFactory::getBean('Audit');
+        $audit = BeanFactory::newBean('Audit');
         $data = $audit->getAuditLog($this->bean);
         $dateCreated = $timedate->fromDbType($dateCreated, "datetime");
         $expectedDateCreated = $timedate->asIso($dateCreated);
@@ -143,7 +143,7 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             )
         );
-        $audit = BeanFactory::getBean('Audit');
+        $audit = BeanFactory::newBean('Audit');
         $data = $audit->getAuditLog($this->bean);
         $dateCreated = $timedate->fromDbType($dateCreated, "datetime");
         $expectedDateCreated = $timedate->asIso($dateCreated);
@@ -206,7 +206,7 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
                 'id_name' => 'user_id_c',
                 'module' => 'Users')
         );
-        $audit = BeanFactory::getBean('Audit');
+        $audit = BeanFactory::newBean('Audit');
         SugarTestReflection::callProtectedMethod($audit, 'handleRelateField', array($bean, &$row));
         $this->assertEquals($expected, $row, "Expected Result was incorrect for relate field");
     }

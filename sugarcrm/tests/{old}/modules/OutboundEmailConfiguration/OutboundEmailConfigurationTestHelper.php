@@ -180,7 +180,7 @@ class OutboundEmailConfigurationTestHelper
             $userId = $GLOBALS["current_user"]->id;
         }
 
-        $inboundEmail                 = BeanFactory::getBean("InboundEmail");
+        $inboundEmail                 = BeanFactory::newBean("InboundEmail");
         $inboundEmail->new_with_id    = true;
         $inboundEmail->id             = create_guid();
         $inboundEmail->name           = "For User {$userId}";

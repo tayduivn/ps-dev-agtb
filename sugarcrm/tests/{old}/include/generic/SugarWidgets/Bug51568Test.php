@@ -60,7 +60,7 @@ class Bug51568Test extends Sugar_PHPUnit_Framework_TestCase
         $this->currency_51568->conversion_rate = 0.5;
         $this->currency_51568->save(false);
         
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         $currency->retrieve(-99);
         $this->backupSymbol = $currency->symbol;
         $currency->symbol = '¥';
@@ -183,7 +183,7 @@ class Bug51568Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         global $sugar_config;
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         $currency->retrieve(-99);
         $currency->symbol = $this->backupSymbol;
         $currency->save(false);

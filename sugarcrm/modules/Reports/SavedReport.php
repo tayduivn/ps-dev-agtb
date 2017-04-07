@@ -177,7 +177,7 @@ class SavedReport extends Basic
 
 		while ($row = $this->db->fetchByAssoc($result,FALSE) )
 		{
-			$focus = BeanFactory::getBean('Reports');
+			$focus = BeanFactory::newBean('Reports');
 
 			foreach($this->column_fields as $field)
 			{
@@ -453,7 +453,7 @@ function getACLAllowedModules($ignoreSessionCache = false) {
      $report_modules = getAllowedReportModules($modListHeader);
 
      foreach($report_modules as $module=>$class_name) {
-         $seed = BeanFactory::getBean($module);
+         $seed = BeanFactory::newBean($module);
 
          if(empty($seed) || !$seed->ACLAccess('DetailView')) {
                 unset($report_modules[$module]);
@@ -478,7 +478,7 @@ function getACLAllowedModules($ignoreSessionCache = false) {
 
 	 $unallowed_modules = array();
      foreach($report_modules as $module=>$class_name) {
-         $seed = BeanFactory::getBean($module);
+         $seed = BeanFactory::newBean($module);
          if(empty($seed) || !$seed->ACLAccess('DetailView')) {
                 $unallowed_modules[$module] = $class_name;
         }

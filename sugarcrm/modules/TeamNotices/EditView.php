@@ -19,7 +19,7 @@ $_REQUEST['edit']='true';
 
 
 
-$focus = BeanFactory::getBean('TeamNotices');
+$focus = BeanFactory::newBean('TeamNotices');
 if(!empty($_REQUEST['record'])) $focus->retrieve($_REQUEST['record']);
 
 $GLOBALS['log']->info("Team Notice edit view");

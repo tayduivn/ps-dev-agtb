@@ -86,7 +86,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($result['testSetting'], "testValue");
 
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
@@ -169,7 +169,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testReadConfig() {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'testSetting', 'testValue', 'base');
 
         $api = new RestService();
@@ -193,7 +193,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUpdateConfig() {
         $testSetting = 'testValue';
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'testSetting', $testSetting, 'base');
 
         $api = new RestService();
@@ -229,7 +229,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $testSetting = 'testValue';
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'testSetting', $testSetting, 'base');
 
         $api = new RestService();
@@ -279,7 +279,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $apiClass->forecastsConfigSave($api, $args);
 
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
@@ -294,7 +294,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveConfigTimePeriodSettingsChangedCalled() {
         $testSetting = 'testValue';
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'testSetting', $testSetting, 'base');
 
         $priorSettings = $admin->getConfigForModule('Forecasts', 'base');

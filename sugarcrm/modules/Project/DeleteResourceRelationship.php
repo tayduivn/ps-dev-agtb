@@ -30,7 +30,7 @@ ARGS:
 
 require_once('include/formbase.php');
 
-$focus = BeanFactory::getBean($_REQUEST['module']);
+$focus = BeanFactory::newBean($_REQUEST['module']);
 if (  empty($_REQUEST['linked_id']) || empty($_REQUEST['linked_field'])  || empty($_REQUEST['record']))
 {
 	die("need linked_field, linked_id and record fields");
@@ -40,7 +40,7 @@ $record = $_REQUEST['record'];
 $linked_id = $_REQUEST['linked_id'];
 
 
-$projectTaskBean = BeanFactory::getBean('ProjectTask');
+$projectTaskBean = BeanFactory::newBean('ProjectTask');
 
 $query = sprintf(
     'SELECT id FROM project_task WHERE resource_id LIKE %s AND project_id = %s',

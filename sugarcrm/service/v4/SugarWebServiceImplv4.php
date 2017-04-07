@@ -44,7 +44,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $GLOBALS['log']->info("Begin: SugarWebServiceImpl->login({$user_auth['user_name']}, $application, ". print_r($name_value_list, true) .")");
         global $sugar_config;
         $error = new SoapError();
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $success = false;
         $authController = AuthenticationController::getInstance();
 
@@ -271,7 +271,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             $sugar_config['list_max_entries_per_page'] = $max_results;
         } // if
 
-        $seed = BeanFactory::getBean($module_name);
+        $seed = BeanFactory::newBean($module_name);
 
         if (!self::$helperObject->checkACLAccess($seed, 'list', $error, 'no_access')) {
             $GLOBALS['log']->error('End: SugarWebServiceImpl->get_entry_list - FAILED on checkACLAccess');
@@ -360,7 +360,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             if( empty($module_name) )
                 continue;
 
-            $seed = BeanFactory::getBean($module_name);
+            $seed = BeanFactory::newBean($module_name);
             if( empty($seed) )
             	continue;
 
@@ -465,7 +465,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     				$unifiedSearchFields[$name] [ $field ]['value'] = $search_string;
     			}
 
-    			$seed = BeanFactory::getBean($name);
+    			$seed = BeanFactory::newBean($name);
     			require_once 'include/SearchForm/SearchForm2.php' ;
     			if ($beanName == "User"
     			    || $beanName == "ProjectTask"
@@ -790,7 +790,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
 
         }
 
-        $seed = BeanFactory::getBean('Users');
+        $seed = BeanFactory::newBean('Users');
         $res = $seed->db->query($query);
         $emails = array();
         while($row = $seed->db->fetchByAssoc($res)) {

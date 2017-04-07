@@ -27,7 +27,7 @@ class DBManager_WriteClobTest extends Sugar_PHPUnit_Framework_TestCase
     public function testInsert()
     {
         /** @var Account $account */
-        $account = BeanFactory::getBean('Accounts');
+        $account = BeanFactory::newBean('Accounts');
         $account->id = create_guid();
         $account->new_with_id = true;
         SugarTestAccountUtilities::setCreatedAccount(array($account->id));

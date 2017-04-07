@@ -48,7 +48,7 @@ if (empty($timeStartRequest)) {
 
 $record = $request->getValidInputPost('record', 'Assert\Guid');
 
-$marketing = BeanFactory::getBean('EmailMarketing');
+$marketing = BeanFactory::newBean('EmailMarketing');
 if (!empty($record)) {
 	$marketing->retrieve($record);
 }

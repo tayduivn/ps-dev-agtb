@@ -170,7 +170,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     protected function getAdministrationBean()
     {
-        return BeanFactory::getBean('Administration');
+        return BeanFactory::newBean('Administration');
     }
 
     /**
@@ -181,7 +181,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         // Try to retrieve the portal user. If exists, check for
         // corresponding oauth2 and mark deleted.
         $portalUserName = "SugarCustomerSupportPortalUser";
-        $id = BeanFactory::getBean('Users')->retrieve_user_id($portalUserName);
+        $id = BeanFactory::newBean('Users')->retrieve_user_id($portalUserName);
         if ($id) {
             $clientSeed = BeanFactory::newBean('OAuthKeys');
             $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
@@ -199,9 +199,9 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     public function getPortalUser()
     {
         $portalUserName = "SugarCustomerSupportPortalUser";
-        $id = BeanFactory::getBean('Users')->retrieve_user_id($portalUserName);
+        $id = BeanFactory::newBean('Users')->retrieve_user_id($portalUserName);
         if (!$id) {
-            $user = BeanFactory::getBean('Users');
+            $user = BeanFactory::newBean('Users');
             $user->user_name = $portalUserName;
             $user->title = 'Sugar Customer Support Portal User';
             $user->description = $user->title;
@@ -256,7 +256,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         global $mod_strings;
         $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBContents', 'Contacts');
         $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
-        $role = BeanFactory::getBean('ACLRoles');
+        $role = BeanFactory::newBean('ACLRoles');
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
         if (empty($role->id)) {
             $role->name = "Customer Self-Service Portal Role";

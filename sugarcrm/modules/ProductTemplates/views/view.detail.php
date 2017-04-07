@@ -15,7 +15,7 @@ class ProductTemplatesViewDetail extends ViewDetail {
 
  	function display() {
 
-	    $currency = BeanFactory::getBean('Currencies');
+	    $currency = BeanFactory::newBean('Currencies');
 	    if(!empty($this->bean->currency_id))
 	    {
 	    	$currency->retrieve($this->bean->currency_id);

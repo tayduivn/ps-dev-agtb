@@ -37,7 +37,7 @@ class SugarFieldMultienumTest extends Sugar_PHPUnit_Framework_TestCase
             'c' => 'C'
         );
 
-        $obj = BeanFactory::getBean('Opportunities');
+        $obj = BeanFactory::newBean('Opportunities');
         $vardef = $obj->field_defs['sales_stage'];
         $vardef['options'] = 'multienum_test';
 

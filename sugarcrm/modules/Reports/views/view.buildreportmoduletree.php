@@ -53,7 +53,7 @@ class ReportsViewBuildreportmoduletree extends SugarView
         $ACLAllowedModules = getACLAllowedModules();
         $module_array = array();
 
-        $module = BeanFactory::getBean($_REQUEST['report_module']);
+        $module = BeanFactory::newBean($_REQUEST['report_module']);
         $bean_name = $module->object_name;
         $linked_fields = $module->get_linked_fields();
 

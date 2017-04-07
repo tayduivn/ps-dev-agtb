@@ -60,7 +60,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
             // Save the logos
             $error=$this->checkUploadImage();
             if(empty($error)){
-                $focus = BeanFactory::getBean('Administration');
+                $focus = BeanFactory::newBean('Administration');
                 foreach($SugarpdfSettings as $k=>$v){
                     if($v['type'] == 'password'){
                         if(isset($_POST[$k])){
@@ -80,7 +80,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
         }
 
         if(!empty($_POST['restore'])){
-            $focus = BeanFactory::getBean('Administration');
+            $focus = BeanFactory::newBean('Administration');
             foreach($_POST as $key => $val) {
                 $prefix = $focus->get_config_prefix($key);
                 if(in_array($prefix[0], $focus->config_categories)) {

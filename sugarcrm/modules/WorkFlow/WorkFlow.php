@@ -315,7 +315,7 @@ function filter_base_modules(){
 					 where $this->rel_dataset.report_id='$this->id'
 					 AND $this->rel_dataset.deleted=0 ".$orderBy;
 
-		return $this->build_related_list($query, BeanFactory::getBean('DataSets'));
+		return $this->build_related_list($query, BeanFactory::newBean('DataSets'));
 	}
 
 
@@ -383,14 +383,14 @@ function filter_base_modules(){
 		//expand this function to return other types of module information based on the name
 
 		//Get dictionary and focus data for module
-		return BeanFactory::getBean($module_name);
+		return BeanFactory::newBean($module_name);
 
 	//end function get_module_info
 	}
 
 	function get_field_table($module, $field){
 
-		$seed_object = BeanFactory::getBean($module);
+		$seed_object = BeanFactory::newBean($module);
 		$field_table = $this->determine_field_type($seed_object, $field);
 
 	return $field_table;
@@ -643,7 +643,7 @@ $alert_file_contents = "";
 
 
 			if($row['type']=='Time'){
-				$trigger_object = BeanFactory::getBean('WorkFlowTriggerShells');
+				$trigger_object = BeanFactory::newBean('WorkFlowTriggerShells');
 
 				$time_interval_array = $trigger_object->get_time_int($row['triggershell_id']);
 
@@ -744,7 +744,7 @@ $alert_file_contents = "";
                 $additionalEval = array();
                 $additionalEvalRelated = array();
                 $relatedTriggers = '';
-                $bean = BeanFactory::getBean($this->base_module);
+                $bean = BeanFactory::newBean($this->base_module);
                 $dateTypeFields = array('date', 'datetime', 'datetimecombo');
                 if ($row['trigger_type'] != 'compare_any_time'
                 	&& !($row['trigger_type'] == 'compare_specific'
@@ -1113,7 +1113,7 @@ function get_action_contents($workflow_id, $trigger_count, $action_module_name, 
 			if($row['action_type']=="new" && ($row['action_module']=="Calls" || $row['action_module']=="Meetings" || $row['action_module']=="calls" || $row['action_module']=="meetings")){
 
 
-				$actionshell_object = BeanFactory::getBean('WorkFlowActionShells');
+				$actionshell_object = BeanFactory::newBean('WorkFlowActionShells');
 				$process = $actionshell_object->check_for_child_invitee($row['id']);
 
 
@@ -1252,7 +1252,7 @@ function get_rel_module($var_rel_name, $get_rel_name = false){
 
 	//get the vardef fields relationship name
 	//get the base_module bean
-	$module_bean = BeanFactory::getBean($this->base_module);
+	$module_bean = BeanFactory::newBean($this->base_module);
     if (!empty($module_bean->field_defs[$var_rel_name]['type'])
         && $module_bean->field_defs[$var_rel_name]['type'] == "link"
         && $module_bean->load_relationship($var_rel_name)
@@ -1324,13 +1324,13 @@ check_logic_hook_file($module_name, $event, $action_array);
         $triggerList = $this->get_linked_beans('triggers', 'WorkFlowTriggerShell');
         if (!empty($triggerList)) {
             foreach ($triggerList as $trigger) {
-                $futureTrigger = BeanFactory::getBean('Expressions');
+                $futureTrigger = BeanFactory::newBean('Expressions');
                 $futureTriggers = $trigger->get_linked_beans('future_triggers', 'Expression');
                 if (!empty($futureTriggers)) {
                     $futureTrigger = $futureTriggers[0];
                 }
 
-                $pastTrigger = BeanFactory::getBean('Expressions');
+                $pastTrigger = BeanFactory::newBean('Expressions');
                 $pastTriggers = $trigger->get_linked_beans('past_triggers', 'Expression');
                 if (!empty($pastTriggers)) {
                     $pastTrigger = $pastTriggers[0];

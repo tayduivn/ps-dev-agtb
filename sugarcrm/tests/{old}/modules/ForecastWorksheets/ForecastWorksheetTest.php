@@ -762,7 +762,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $forecast_worksheet = BeanFactory::newBean('ForecastWorksheets');
         $return = SugarTestReflection::callProtectedMethod(
             $forecast_worksheet,
             'getRelatedName',
@@ -790,7 +790,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $forecast_worksheet = BeanFactory::newBean('ForecastWorksheets');
         $return = SugarTestReflection::callProtectedMethod(
             $forecast_worksheet,
             'getRelatedName',

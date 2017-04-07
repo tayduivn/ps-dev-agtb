@@ -71,7 +71,7 @@ class SugarACLForecastWorksheets extends SugarACLStrategy
     {
         if (!(static::$forecastByBean instanceof SugarBean)) {
             /* @var $admin Administration */
-            $admin = BeanFactory::getBean('Administration');
+            $admin = BeanFactory::newBean('Administration');
             $settings = $admin->getConfigForModule('Forecasts');
 
             // if we don't have the forecast_by from the db, grab the defaults that we use on set.
@@ -81,7 +81,7 @@ class SugarACLForecastWorksheets extends SugarACLStrategy
 
             $bean = $settings['forecast_by'];
 
-            static::$forecastByBean = BeanFactory::getBean($bean);
+            static::$forecastByBean = BeanFactory::newBean($bean);
         }
 
         return static::$forecastByBean;

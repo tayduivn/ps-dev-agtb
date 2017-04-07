@@ -623,7 +623,7 @@ class PMSEUserAssignmentHandler
     {
         $q = new SugarQuery();
         $q->select(array('id'));
-        $q->from(BeanFactory::getBean('Users'));
+        $q->from(BeanFactory::newBean('Users'));
 
         $q->joinTable('team_memberships', array('alias' => 'membership'))->on()
             ->equals('membership.team_id', $teamId)
@@ -716,7 +716,7 @@ class PMSEUserAssignmentHandler
         }
 
         // Get the list of members
-        $membersBean = BeanFactory::getBean('TeamMemberships');
+        $membersBean = BeanFactory::newBean('TeamMemberships');
 
         $fields = array(
             'user_id'

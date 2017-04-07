@@ -16,13 +16,6 @@ class Person extends Basic
     public $picture;
 
     /**
-     * Controls whether or not to invoke the getLocalFormatttedName method with
-     * title and salutation
-     * @var bool
-     */
-    public $createLocaleFormattedName = true;
-
-    /**
      * Email address relationship
      * @var Link2
      */
@@ -31,7 +24,7 @@ class Person extends Basic
     public function __construct()
     {
         parent::__construct();
-        $this->emailAddress = BeanFactory::getBean('EmailAddresses');
+        $this->emailAddress = BeanFactory::newBean('EmailAddresses');
     }
 
     /**
@@ -229,7 +222,7 @@ class Person extends Basic
         //--- Explicit config can be used to force use of vCal Cache instead of RealTime Search
         $useFreeBusyCache = !empty($sugar_config['freebusy_use_vcal_cache']);
 
-        $vcalBean = BeanFactory::getBean('vCals');
+        $vcalBean = BeanFactory::newBean('vCals');
         if (!$useFreeBusyCache && !empty($options['start']) && !empty($options['end'])) {
             $sugarDateTimeStart = $timedate->fromIso($options['start']);
             $sugarDateTimeEnd = $timedate->fromIso($options['end']);

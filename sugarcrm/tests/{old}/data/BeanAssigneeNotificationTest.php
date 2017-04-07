@@ -64,7 +64,7 @@ class BeanAssigneeNotificationTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testAssigneeForNonBWCModule()
     {
-        $bean = BeanFactory::getBean('Contacts');
+        $bean = BeanFactory::newBean('Contacts');
         $templateName = SugarTestReflection::callProtectedMethod($bean, 'getTemplateNameForNotificationEmail');
         $template = SugarTestReflection::callProtectedMethod(
             $bean,

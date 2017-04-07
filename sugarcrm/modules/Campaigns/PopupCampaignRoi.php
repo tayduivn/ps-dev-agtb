@@ -37,7 +37,7 @@ $GLOBALS['log']->info("Campaign detail view");
 $xtpl=new XTemplate ('modules/Campaigns/PopupCampaignRoi.html');
 
 $campaign_id=$_REQUEST['id'];
-$campaign = BeanFactory::getBean('Campaigns');
+$campaign = BeanFactory::newBean('Campaigns');
 $opp_query1  = "select camp.name, camp.actual_cost,camp.budget,camp.expected_revenue,count(*) opp_count,SUM(opp.amount) as Revenue, SUM(camp.actual_cost) as Investment,
                             ROUND((SUM(opp.amount) - SUM(camp.actual_cost))/(SUM(camp.actual_cost)), 2)*100 as ROI";
             $opp_query1 .= " from opportunities opp";
@@ -72,7 +72,7 @@ $opp_query1  = "select camp.name, camp.actual_cost,camp.budget,camp.expected_rev
 
 
 
-	$currency = BeanFactory::getBean('Currencies');
+	$currency = BeanFactory::newBean('Currencies');
 if(isset($focus->currency_id) && !empty($focus->currency_id))
 {
 	$currency->retrieve($focus->currency_id);

@@ -43,7 +43,7 @@ class ACLField extends SugarBean
         static $modulesAvailableFields = array();
         if(!isset($modulesAvailableFields[$module])){
             if(empty($GLOBALS['dictionary'][$object]['fields'])){
-                $mod = BeanFactory::getBean($module);
+                $mod = BeanFactory::newBean($module);
                 if(empty($mod->acl_fields)) return array();
                 $fieldDefs = $mod->field_defs;
             }else{
@@ -401,7 +401,7 @@ AND deleted = 0';
      */
     protected static function generateIsOwnerCondition(SugarQuery $query, $module, User $user)
     {
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
         if (!$bean) {
             return null;
         }

@@ -100,7 +100,7 @@ class RelateRecordApi extends SugarApi
         }
         // Figure out what is on the other side of this relationship, check permissions
         $linkModuleName = $primaryBean->$linkName->getRelatedModuleName();
-        $linkSeed = BeanFactory::getBean($linkModuleName);
+        $linkSeed = BeanFactory::newBean($linkModuleName);
 
         // FIXME: No create ACL yet
         if ( $securityTypeRemote == 'create' ) { $securityTypeRemote = 'edit'; }

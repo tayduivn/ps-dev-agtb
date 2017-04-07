@@ -21,7 +21,7 @@ $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);
 //mass localization
 $sugar_smarty->assign('APP_LIST', $app_list_strings);
-$role = BeanFactory::getBean('ACLRoles');
+$role = BeanFactory::newBean('ACLRoles');
 $role_name = '';
 $return= array('module'=>'ACLRoles', 'action'=>'index', 'record'=>'');
 

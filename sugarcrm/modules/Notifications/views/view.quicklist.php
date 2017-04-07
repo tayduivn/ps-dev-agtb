@@ -17,9 +17,9 @@ class ViewQuickList extends SugarView
 		global $current_user;
 		
 	    $query_fields = array('is_read' => 0,'assigned_user_id' => $current_user->id);
-	    $n = BeanFactory::getBean('Notifications');
+	    $n = BeanFactory::newBean('Notifications');
 	    $where = "is_read = '0'";
-	   $n1 = BeanFactory::getBean('Notifications');
+	   $n1 = BeanFactory::newBean('Notifications');
 	   $n1->name = 'Roger';
 	   $data['list'][] = $n1;
 		echo $this->_formatNotificationsForQuickDisplay($data['list'], "modules/Notifications/tpls/quickView.tpl");

@@ -239,7 +239,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testPrepareChanges_FieldChangesIncludeActivityDisabledField_OnlyNonDisabledFieldsReturned()
     {
-        $contact = BeanFactory::getBean('Contacts');
+        $contact = BeanFactory::newBean('Contacts');
 
         //mock out field defs
         $originalFieldDefs = $contact->field_defs;
@@ -467,7 +467,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'link',
             'unlink',
         );
-        $contact     = BeanFactory::getBean('Contacts');
+        $contact     = BeanFactory::newBean('Contacts');
         $contact->id = create_guid();
 
         $save_enabled = Activity::$enabled;
@@ -550,7 +550,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAssignmentChanged($auditedChanges, $allDataChanges, $expected, $assertMessage)
     {
-        $bean = BeanFactory::getBean('Contacts');
+        $bean = BeanFactory::newBean('Contacts');
 
         //mock out db manager
         $dbManagerClass = get_class($bean->db);

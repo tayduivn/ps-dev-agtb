@@ -25,8 +25,8 @@ if(isset($globalteam->name)){
 $results = $GLOBALS['db']->query("SELECT id, user_name FROM users WHERE default_team != '' AND default_team IS NOT NULL
     AND user_name NOT IN (" . $GLOBALS['db']->quoted(SugarSNIP::SNIP_USER) . ", 'SugarCustomerSupportPortalUser')");
 
-$team = BeanFactory::getBean('Teams');
-$user = BeanFactory::getBean('Users');
+$team = BeanFactory::newBean('Teams');
+$user = BeanFactory::newBean('Users');
 while($row = $GLOBALS['db']->fetchByAssoc($results)) {
 	$results2 = $GLOBALS['db']->query("SELECT id, name FROM teams WHERE associated_user_id = '" . $row['id'] . "'");
 	$row2 = $GLOBALS['db']->fetchByAssoc($results2);

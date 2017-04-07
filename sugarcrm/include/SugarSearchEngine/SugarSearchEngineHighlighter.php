@@ -114,6 +114,6 @@ class SugarSearchEngineHighlighter
      */
     protected function getFieldDefs($module)
     {
-        return BeanFactory::getBean($module)->field_defs;
+        return BeanFactory::newBean($module)->field_defs;
     }
 }

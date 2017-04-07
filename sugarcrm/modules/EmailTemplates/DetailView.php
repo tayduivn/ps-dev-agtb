@@ -27,7 +27,7 @@ if(isset($_SESSION['EMAILTEMPLATE_FROM_LIST_VIEW']))
 global $app_strings;
 global $mod_strings;
 
-$focus = BeanFactory::getBean('EmailTemplates');
+$focus = BeanFactory::newBean('EmailTemplates');
 
 $detailView = new DetailView();
 $offset=0;
@@ -141,7 +141,7 @@ $xtpl->assign("PUBLISHED","CHECKED");
 ///////////////////////////////////////////////////////////////////////////////
 ////	NOTES (attachements, etc.)
 ///////////////////////////////////////////////////////////////////////////////
-$note = BeanFactory::getBean('Notes');
+$note = BeanFactory::newBean('Notes');
 $where = "notes.parent_id='{$focus->id}'";
 $notes_list = $note->get_full_list("notes.name", $where,true);
 

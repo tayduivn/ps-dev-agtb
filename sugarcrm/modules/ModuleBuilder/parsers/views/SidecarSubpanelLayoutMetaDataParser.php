@@ -158,7 +158,7 @@ class SidecarSubpanelLayoutMetaDataParser extends SidecarListLayoutMetaDataParse
         $linkName = $this->implementation->getLinkName();
         if ($linkName) {
             $moduleName = $this->implementation->getPrimaryModuleName();
-            $bean = BeanFactory::getBean($moduleName);
+            $bean = BeanFactory::newBean($moduleName);
             $def = $bean->getFieldDefinition($linkName);
             if (isset($def['relationship'])) {
                 return $def['relationship'];

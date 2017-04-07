@@ -70,7 +70,7 @@ class ReportVisibility extends SugarVisibility
         }
         $this->disallowed_modules = array();
         foreach($GLOBALS['report_modules'] as $module => $name) {
-            $seed = BeanFactory::getBean($module);
+            $seed = BeanFactory::newBean($module);
             if(empty($seed) || !$seed->ACLAccess("view")) {
                 $this->disallowed_modules[] = $module;
             }

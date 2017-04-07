@@ -96,7 +96,7 @@ class TabController
     public static function getPortalTabs()
     {
         $modules = array();
-        $administration = BeanFactory::getBean('Administration');
+        $administration = BeanFactory::newBean('Administration');
         // TODO: Refactor this to use the method provided to select `portal`
         // settings.
         $q = "SELECT value FROM config WHERE category='MySettings' AND name = 'tab' AND platform = 'portal'";
@@ -119,7 +119,7 @@ class TabController
      */
     public static function setPortalTabs($modules)
     {
-        $administration = BeanFactory::getBean('Administration');
+        $administration = BeanFactory::newBean('Administration');
         $administration->saveSetting('MySettings', 'tab', $modules, 'portal');
     }
 
@@ -152,7 +152,7 @@ class TabController
 
     public function set_system_tabs($tabs)
     {
-        $administration = BeanFactory::getBean('Administration');
+        $administration = BeanFactory::newBean('Administration');
         // TODO: encode in JSON rather than base64
         $serialized = base64_encode(serialize($tabs));
         $administration->saveSetting('MySettings', 'tab', $serialized);
@@ -175,7 +175,7 @@ class TabController
     {
         global $current_user;
         if (is_admin($current_user)) {
-            $administration = BeanFactory::getBean('Administration');
+            $administration = BeanFactory::newBean('Administration');
             if ($boolean) {
                 $administration->saveSetting('MySettings', 'disable_useredit', 'no');
             } else {

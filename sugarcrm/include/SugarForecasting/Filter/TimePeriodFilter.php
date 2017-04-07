@@ -21,7 +21,7 @@ class SugarForecasting_Filter_TimePeriodFilter extends SugarForecasting_Abstract
      */
     public function process()
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts', 'base');
         $forward = $settings['timeperiod_shown_forward'];
         $backward = $settings['timeperiod_shown_backward'];
@@ -55,7 +55,7 @@ class SugarForecasting_Filter_TimePeriodFilter extends SugarForecasting_Abstract
 
         $db = DBManagerFactory::getInstance();
         $sq = new SugarQuery();
-        $sq->from(BeanFactory::getBean('TimePeriods'));
+        $sq->from(BeanFactory::newBean('TimePeriods'));
         $sq->select(array('id', 'name'));
         $sq->where()
             ->notNull('parent_id')

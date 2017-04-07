@@ -73,7 +73,7 @@ function upgrade_custom_relationships($modules = array())
 						$filePath = "custom/Extension/modules/$module/Ext/Layoutdefs/$file";
 						include($filePath);
 
-						$bean = BeanFactory::getBean($module);
+						$bean = BeanFactory::newBean($module);
 						$fields = $bean->getFieldDefinitions();
 
 						foreach ($layout_defs[$module]["subpanel_setup"] as $key => $subDef) {

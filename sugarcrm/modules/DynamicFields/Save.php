@@ -17,7 +17,7 @@ $request = InputValidation::getService();
 $module = $request->getValidInputRequest('module_name', 'Assert\Mvc\ModuleName');
 $custom_fields = new DynamicField($module);
 if(!empty($module)){
-    $mod = BeanFactory::getBean($module);
+    $mod = BeanFactory::newBean($module);
 	$custom_fields->setup($mod);
 }else{
 	echo "\n".$mod_strings['ERR_NO_MODULE_INCLUDED'];

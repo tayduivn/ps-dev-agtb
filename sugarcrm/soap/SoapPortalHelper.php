@@ -37,7 +37,7 @@ function get_bugs_in_contacts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
 
-        $sugar = BeanFactory::getBean('Contacts');
+        $sugar = BeanFactory::newBean('Contacts');
         $sugar->disable_row_level_security = true;
         set_module_in($sugar->build_related_in($query), 'Bugs');
     }
@@ -59,7 +59,7 @@ function get_bugs_in_accounts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
 
-        $sugar = BeanFactory::getBean('Accounts');
+        $sugar = BeanFactory::newBean('Accounts');
         $sugar->disable_row_level_security = true;
 
         set_module_in($sugar->build_related_in($query), 'Bugs');
@@ -86,7 +86,7 @@ function get_cases_in_contacts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
 
-        $sugar = BeanFactory::getBean('Contacts');
+        $sugar = BeanFactory::newBean('Contacts');
         $sugar->disable_row_level_security = true;
         set_module_in($sugar->build_related_in($query), 'Cases');
     }
@@ -110,7 +110,7 @@ function get_cases_in_accounts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
 
-        $sugar = BeanFactory::getBean('Accounts');
+        $sugar = BeanFactory::newBean('Accounts');
         $sugar->disable_row_level_security = true;
         set_module_in($sugar->build_related_in($query), 'Cases');
     }
@@ -132,9 +132,9 @@ function get_notes_in_contacts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
 
-        $contact = BeanFactory::getBean('Contacts');
+        $contact = BeanFactory::newBean('Contacts');
         $contact->disable_row_level_security = true;
-        $note = BeanFactory::getBean('Notes');
+        $note = BeanFactory::newBean('Notes');
         $note->disable_row_level_security = true;
         return $contact->build_related_list($query, $note);
     }
@@ -149,25 +149,25 @@ function get_notes_in_module($in, $module, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
 
-        $sugar = BeanFactory::getBean($module);
+        $sugar = BeanFactory::newBean($module);
         if(empty($sugar)) {
             return array();
         }
 
         $sugar->disable_row_level_security = true;
-        $note = BeanFactory::getBean('Notes');
+        $note = BeanFactory::newBean('Notes');
         $note->disable_row_level_security = true;
         return $sugar->build_related_list($query, $note);
     }
 
     function get_related_in_module($in, $module, $rel_module, $orderBy = '', $row_offset = 0, $limit= -1)
     {
-        $rel = BeanFactory::getBean($rel_module);
+        $rel = BeanFactory::newBean($rel_module);
         if(empty($rel)) {
         	return array();
         }
 
-        $sugar = BeanFactory::getBean($module);
+        $sugar = BeanFactory::newBean($module);
         if(empty($sugar)) {
         	return array();
         }
@@ -217,7 +217,7 @@ function get_accounts_from_contact($contact_id, $orderBy = '')
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        $sugar = BeanFactory::getBean('Contacts');
+        $sugar = BeanFactory::newBean('Contacts');
         $sugar->disable_row_level_security = true;
         set_module_in($sugar->build_related_in($query), 'Accounts');
     }
@@ -229,7 +229,7 @@ function get_contacts_from_account($account_id, $orderBy = '')
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        $sugar = BeanFactory::getBean('Accounts');
+        $sugar = BeanFactory::newBean('Accounts');
         $sugar->disable_row_level_security = true;
         set_module_in($sugar->build_related_in($query), 'Contacts');
     }
@@ -389,21 +389,21 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
            if(!empty($a)) { get_cases_in_accounts($a);}
         }
 
-        $sugar = BeanFactory::getBean('Cases');
+        $sugar = BeanFactory::newBean('Cases');
 
         $list = array();
         //if no Cases have been loaded into the session as viewable, then do not issue query, just return empty list
         //issuing a query with no cases loaded in session will return ALL the Cases, which is not a good thing
         if(!empty($_SESSION['viewable'][$module_name])){
-            $list =  get_related_list(get_module_in($module_name), BeanFactory::getBean('Cases'), $where,$order_by, $row_offset, $limit);
+            $list =  get_related_list(get_module_in($module_name), BeanFactory::newBean('Cases'), $where,$order_by, $row_offset, $limit);
         }
 
     }else if($module_name == 'Contacts'){
-            $sugar = BeanFactory::getBean('Contacts');
-            $list =  get_related_list(get_module_in($module_name), BeanFactory::getBean('Contacts'), $where,$order_by);
+            $sugar = BeanFactory::newBean('Contacts');
+            $list =  get_related_list(get_module_in($module_name), BeanFactory::newBean('Contacts'), $where,$order_by);
     }else if($module_name == 'Accounts'){
-            $sugar = BeanFactory::getBean('Accounts');
-            $list =  get_related_list(get_module_in($module_name), BeanFactory::getBean('Accounts'), $where,$order_by);
+            $sugar = BeanFactory::newBean('Accounts');
+            $list =  get_related_list(get_module_in($module_name), BeanFactory::newBean('Accounts'), $where,$order_by);
     }else if($module_name == 'Bugs'){
 
         //if the related bugs have not yet been loaded into the session object,
@@ -420,7 +420,7 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
         //if no Bugs have been loaded into the session as viewable, then do not issue query, just return empty list
         //issuing a query with no bugs loaded in session will return ALL the Bugs, which is not a good thing
         if(!empty($_SESSION['viewable'][$module_name])){
-            $list = get_related_list(get_module_in($module_name), BeanFactory::getBean('Bugs'), $where, $order_by, $row_offset, $limit);
+            $list = get_related_list(get_module_in($module_name), BeanFactory::newBean('Bugs'), $where, $order_by, $row_offset, $limit);
         }
     } else{
         $error->set_error('no_module_support');

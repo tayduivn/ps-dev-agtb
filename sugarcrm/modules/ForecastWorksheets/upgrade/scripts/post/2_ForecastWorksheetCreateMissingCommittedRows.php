@@ -169,7 +169,7 @@ class SugarUpgradeForecastWorksheetCreateMissingCommittedRows extends UpgradeScr
         $insertSQL = 'INSERT INTO forecast_worksheets ';
 
         /* @var $fw ForecastWorksheet */
-        $fw = BeanFactory::getBean('ForecastWorksheets');
+        $fw = BeanFactory::newBean('ForecastWorksheets');
 
         while ($row = $this->db->fetchByAssoc($results)) {
             $row['id'] = create_guid();

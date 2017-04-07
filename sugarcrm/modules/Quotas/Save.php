@@ -16,7 +16,7 @@
 
 
 
-$focus = BeanFactory::getBean('Quotas');
+$focus = BeanFactory::newBean('Quotas');
 
 require_once('include/formbase.php');
 $focus = populateFromPost('', $focus);
@@ -52,7 +52,7 @@ else
 
 // Check to see if current user is a top level manager
 if ($focus->isTopLevelManager()){
-	$topLevelFocus = BeanFactory::getBean('Quotas');
+	$topLevelFocus = BeanFactory::newBean('Quotas');
 	
 	$topLevelFocus->timeperiod_id = $_REQUEST['timeperiod_id'];
 	$topLevelFocus->user_id = $current_user->id;

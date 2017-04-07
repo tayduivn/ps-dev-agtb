@@ -42,7 +42,7 @@ class ActivityQueueManager
     public function eventDispatcher(SugarBean $bean, $event, $args)
     {
         if (Activity::isEnabled()) {
-            $activity       = BeanFactory::getBean('Activities');
+            $activity       = BeanFactory::newBean('Activities');
             $eventTriggered = false;
             if ($event == 'after_save' && self::isEnabledForModule($bean->getModuleName())) {
                 $eventTriggered = $this->createOrUpdate($bean, $args, $activity);
@@ -79,7 +79,7 @@ class ActivityQueueManager
             return true;
         }
 
-        $bean = BeanFactory::getBean($moduleName);
+        $bean = BeanFactory::newBean($moduleName);
         return ($bean instanceof SugarBean) && $bean->isActivityEnabled() && $bean->is_AuditEnabled();
     }
 

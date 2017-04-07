@@ -31,7 +31,7 @@ if(in_array($cal->view,array('day','week','month'))){
 }else if($cal->view == 'shared'){
 	$cal->init_shared();	
 	global $shared_user;				
-	$shared_user = BeanFactory::getBean('Users');	
+	$shared_user = BeanFactory::newBean('Users');	
 	foreach($cal->shared_ids as $member){
 		$shared_user->retrieve($member);
         $cal->loadActivitiesForUser($shared_user);

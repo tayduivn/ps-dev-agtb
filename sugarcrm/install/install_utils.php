@@ -2401,7 +2401,7 @@ function handleMissingSmtpServerSettingsNotifications()
         return;
     }
 
-    $user = \BeanFactory::getBean('Users');
+    $user = \BeanFactory::newBean('Users');
     $user->getSystemUser();
 
     if (empty($user)) {
@@ -2421,7 +2421,7 @@ function handleMissingSmtpServerSettingsNotifications()
         $app_strings['TPL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_DESCRIPTION']
     );
 
-    $notification = \BeanFactory::getBean('Notifications');
+    $notification = \BeanFactory::newBean('Notifications');
     $notification->name = $app_strings['LBL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_SUBJECT'];
     $notification->description = $description;
     $notification->severity = 'warning';

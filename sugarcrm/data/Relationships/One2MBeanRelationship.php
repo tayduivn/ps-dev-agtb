@@ -226,7 +226,7 @@ class One2MBeanRelationship extends One2MRelationship
 
             //Add any optional where clause
             if (!empty($params['where'])) {
-                $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+                $relatedSeed = BeanFactory::getDefinition($this->getRHSModule());
                 $add_where = is_string($params['where']) ?
                              $params['where'] :
                              $this->getOptionalWhereClause($params['where'], $rhsTable, $relatedSeed);
@@ -240,7 +240,7 @@ class One2MBeanRelationship extends One2MRelationship
             if (!empty($params['enforce_teams'])) {
                 // This may have been set already
                 if (empty($relatedSeed)) {
-                    $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+                    $relatedSeed = BeanFactory::getDefinition($this->getRHSModule());
                 }
                 if ($this->def['rhs_table'] != $relatedSeed->table_name) {
                     $from .= ", $relatedSeed->table_name";
@@ -286,7 +286,7 @@ class One2MBeanRelationship extends One2MRelationship
         $rhsTable = $this->def['rhs_table'];
         $rhsTableKey = "{$rhsTable}.{$this->def['rhs_key']}";
         $deleted = !empty($params['deleted']) ? 1 : 0;
-        $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+        $relatedSeed = BeanFactory::getDefinition($this->getRHSModule());
 
         $query = new SugarQuery();
         $query->from(
@@ -397,7 +397,10 @@ class One2MBeanRelationship extends One2MRelationship
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
         $join_type = isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $joinParams = array('joinType' => $join_type, 'bean' => BeanFactory::newBean($targetModule));
+        $joinParams = array(
+            'joinType' => $join_type,
+            'bean' => BeanFactory::getDefinition($targetModule),
+        );
         $jta = $targetTable;
         if (!empty($options['joinTableAlias'])) {
             $jta = $joinParams['alias'] = $options['joinTableAlias'];

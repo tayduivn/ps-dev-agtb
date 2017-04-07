@@ -134,7 +134,7 @@ class Result implements ResultInterface
         if ($retrieve) {
             $bean = \BeanFactory::getBean($this->getModule(), $this->getId());
         } else {
-            $bean = \BeanFactory::getBean($this->getModule());
+            $bean = \BeanFactory::newBean($this->getModule());
             $bean->populateFromRow($this->getData(), true);
             $bean->id = $this->getId();
         }

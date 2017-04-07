@@ -125,7 +125,7 @@ function reply($action, $bean, $ie) {
 		)
 	);
 
-	$ea = BeanFactory::getBean('EmailAddresses');
+	$ea = BeanFactory::newBean('EmailAddresses');
 	$ie->email->from_name = $current_user->full_name;
 	$ie->email->from_addr = $ea->getReplyToAddress($current_user);
 

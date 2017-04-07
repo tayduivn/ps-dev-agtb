@@ -141,7 +141,7 @@ class PMSEHookHandler extends PMSEAbstractRequestHandler
                     ' AND cas_flow_status = ' . $db->quoted('SLEEPING') .
                     ' AND cas_due_date <= ' . $db->quoted($today);
 
-        $bean = BeanFactory::getBean('pmse_BpmFlow');
+        $bean = BeanFactory::newBean('pmse_BpmFlow');
         $flows = $bean->get_full_list('', $addedSQL);
 
         // If there were flows to process, handle that

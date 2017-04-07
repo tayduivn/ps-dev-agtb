@@ -67,7 +67,7 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->tbaConfig->setForModule($this->module, true);
 
         $this->team = SugarTestTeamUtilities::createAnonymousTeam();
-        $this->teamSet = BeanFactory::getBean('TeamSets');
+        $this->teamSet = BeanFactory::newBean('TeamSets');
         $this->teamSet->addTeams(array($this->team->id));
 
         $this->user = SugarTestUserUtilities::createAnonymousUser();
@@ -122,7 +122,7 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
     public function testImplicitTeamMembership()
     {
         $newUser = SugarTestUserUtilities::createAnonymousUser();
-        $privateTeamSet = BeanFactory::getBean('TeamSets');
+        $privateTeamSet = BeanFactory::newBean('TeamSets');
         $privateTeamSet->addTeams(array($newUser->getPrivateTeamID()));
 
         $this->bean->acl_team_set_id = $privateTeamSet->id;

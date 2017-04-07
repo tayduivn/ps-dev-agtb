@@ -83,7 +83,7 @@ class ListApi extends SugarListApi {
         $this->requireArgs($args,array('module'));
 
         // Load up a seed bean
-        $seed = BeanFactory::getBean($args['module']);
+        $seed = BeanFactory::newBean($args['module']);
         if ( ! $seed->ACLAccess('list') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }

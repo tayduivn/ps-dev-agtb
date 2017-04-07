@@ -189,7 +189,7 @@ class SugarSNIP
      */
     public function setSnipEmail($email)
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('snip', 'email', $email);
         $admin->saveSetting('snip', 'key', $this->getKey());
         return $this;
@@ -370,7 +370,7 @@ class SugarSNIP
         $consumer = OAuthKey::fetchKey(self::OAUTH_KEY);
         if(empty($consumer)) {
             $provider = new Zend_Oauth_Provider();
-            $consumer = BeanFactory::getBean('OAuthKeys');
+            $consumer = BeanFactory::newBean('OAuthKeys');
             $consumer->c_key = self::OAUTH_KEY;
             $consumer->c_secret = bin2hex($provider->generateToken(16));
             $consumer->name = self::OAUTH_KEY;
@@ -430,7 +430,7 @@ class SugarSNIP
      */
     protected function createSnipUser()
     {
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $user->user_name = self::SNIP_USER;
         $user->title = translate('LBL_SNIP_USER_DESC', 'SNIP');
         $user->description = $user->title;
@@ -462,7 +462,7 @@ class SugarSNIP
         }
 
         /** @var User $user */
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $id = $user->retrieve_user_id(self::SNIP_USER);
 
         if (!$id) {
@@ -484,7 +484,7 @@ class SugarSNIP
      */
     protected function assignUser($email, $username = null)
     {
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         // if sugar_config['snip']['assign_ignore_email'] is set, assign everything to one user
         // which will be specified below
         if(empty($GLOBALS['sugar_config']['snip']['assign_ignore_email'])) {
@@ -512,7 +512,7 @@ class SugarSNIP
             $GLOBALS['log']->error("SNIP: message has no ID, can't import");
             return;
         }
-        $e = BeanFactory::getBean('Emails');
+        $e = BeanFactory::newBean('Emails');
         $e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
         if(!empty($e->id)) {
             $GLOBALS['log']->debug("SNIP: Duplicate ID {$email['message']['message_id']} - not importing");
@@ -654,7 +654,7 @@ class SugarSNIP
 			}
 			foreach($createdef[$cleanaddr] as $module => $data) {
 				//
-				$obj = BeanFactory::getBean($module);
+				$obj = BeanFactory::newBean($module);
 				if(!$obj) {
 					$GLOBALS['log']->error("Unable to create bean for module $module");
 					continue;
@@ -734,7 +734,7 @@ class SugarSNIP
         $ext_pos = strrpos($upload_file->stored_file_name, ".");
         $upload_file->file_ext = substr($upload_file->stored_file_name, $ext_pos + 1);
 
-        $note = BeanFactory::getBean('Notes');
+        $note = BeanFactory::newBean('Notes');
         $note->id = create_guid();
         $note->new_with_id = true;
         if (in_array($upload_file->file_ext, $this->config['upload_badext'])) {
@@ -767,7 +767,7 @@ class SugarSNIP
     protected function relateRecords($e)
     {
         // relate a case
-        $case = BeanFactory::getBean('Cases');
+        $case = BeanFactory::newBean('Cases');
         $subj = str_replace("%1", '(\d+)', preg_quote($case->getEmailSubjectMacro(), "#"));
         if(preg_match("#$subj#", $e->subject, $match) && !empty($match[1])) {
             $caseid = $match[1];

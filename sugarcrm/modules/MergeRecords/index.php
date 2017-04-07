@@ -16,8 +16,8 @@ $request = InputValidation::getService();
 if (isset($_REQUEST['uid'])) {
     $merge_ids = explode(',', $request->getValidInputRequest('uid'));
 	// Bug 18852 - Check to make sure we have ACL Edit privledges on both records involved in the merge before proceeding
-	if ( ($bean1 = BeanFactory::getBean($_REQUEST['action_module'])) != null
-    	    && ($bean2 = BeanFactory::getBean($_REQUEST['action_module'])) != null ) {
+	if ( ($bean1 = BeanFactory::newBean($_REQUEST['action_module'])) != null
+    	    && ($bean2 = BeanFactory::newBean($_REQUEST['action_module'])) != null ) {
         $bean1->retrieve($merge_ids[0]);
         $bean2->retrieve($merge_ids[1]);
         if ( !$bean1->ACLAccess('edit') || !$bean2->ACLAccess('edit') ) {
@@ -34,7 +34,7 @@ if (isset($_REQUEST['uid'])) {
 }
 else {
 	$merge_ids = array();
-	$focus = BeanFactory::getBean($_REQUEST['return_module']);
+	$focus = BeanFactory::newBean($_REQUEST['return_module']);
 
 	if(isset($_SESSION['export_where']) && !empty($_SESSION['export_where'])) { // bug 4679
 		$where = $_SESSION['export_where'];

@@ -76,7 +76,7 @@ class PMSEProjectImportExportApi extends vCardApi
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $this->requireArgs($args, array('module'));
 
-        $bean = BeanFactory::getBean($args['module']);
+        $bean = BeanFactory::newBean($args['module']);
         if (!$bean->ACLAccess('save') || !$bean->ACLAccess('import')) {
             $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
             PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());

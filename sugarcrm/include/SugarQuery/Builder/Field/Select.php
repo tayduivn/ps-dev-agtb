@@ -108,7 +108,7 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
             $field = array("{$this->jta}.{$this->def['rname']}", $this->def['name']);
             $this->addToSelect(array($field));
             if (isset($this->def['module'])) {
-                $rBean = BeanFactory::getBean($this->def['module']);
+                $rBean = BeanFactory::getDefinition($this->def['module']);
                 $ownerField = $rBean->getOwnerField();
                 if ($ownerField) {
                     $this->query->select->addField($this->jta . '.' . $ownerField, array(

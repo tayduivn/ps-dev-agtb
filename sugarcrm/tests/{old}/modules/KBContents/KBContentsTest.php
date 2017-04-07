@@ -108,14 +108,14 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDocumentRelationship()
     {
-        $doc = BeanFactory::getBean('KBDocuments');
+        $doc = BeanFactory::newBean('KBDocuments');
         $doc->fetch($this->bean->kbdocument_id);
         $this->assertEquals($this->bean->name, $doc->name);
     }
 
     public function testArticleRelationship()
     {
-        $article = BeanFactory::getBean('KBArticles');
+        $article = BeanFactory::newBean('KBArticles');
         $article->fetch($this->bean->kbarticle_id);
         $this->assertEquals($this->bean->name, $article->name);
     }

@@ -154,7 +154,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 
 	    if( ! empty($focus->team_set_id) )
 	    {
-    	    $ts = BeanFactory::getBean('TeamSets');
+    	    $ts = BeanFactory::newBean('TeamSets');
     	    $teams = $ts->getTeams($focus->team_set_id);
 	    }
 	    else
@@ -612,7 +612,7 @@ function compile_rel_user_info($target_object, $user_meta_array, &$address_array
 /////////////////////////////////////////Parsing Custom Templates//////////
 
 function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $notify_user_id = "", $alert_user_array = array()) {
-    $template = BeanFactory::getBean('EmailTemplates');
+    $template = BeanFactory::newBean('EmailTemplates');
     $template->disable_row_level_security = true;
 
     if (isset($template_id) && $template_id != "") {
@@ -652,7 +652,7 @@ function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $
 
     $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id, $alert_user_array));
     // Adding attachments if they exist
-    $note = BeanFactory::getBean('Notes');
+    $note = BeanFactory::newBean('Notes');
     $notes = $note->get_full_list("notes.name", "notes.parent_id=" . $GLOBALS['db']->quoted($template_id), true);
     handle_email_attachments($mail_object, $notes);
     return false; // false=no errors
@@ -797,7 +797,7 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
                     $rel_handler->rel1_relationship_name = $focus->field_defs[$module_name]['relationship'];
                     $rel_module = get_rel_module_name($focus->module_dir, $rel_handler->rel1_relationship_name, $focus->db);
                     $rel_handler->rel1_module = $rel_module;
-                    $rel_handler->rel1_bean = BeanFactory::getBean($rel_module);
+                    $rel_handler->rel1_bean = BeanFactory::newBean($rel_module);
                 }
                 else {
                     $rel_handler->process_by_rel_bean($module_name);

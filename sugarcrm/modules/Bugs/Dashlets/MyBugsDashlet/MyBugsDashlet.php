@@ -26,14 +26,14 @@ class MyBugsDashlet extends DashletGeneric {
         $this->columns = $dashletData['MyBugsDashlet']['columns'];
         
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_BUGS', 'Bugs');
-        $this->seedBean = BeanFactory::getBean('Bugs');        
+        $this->seedBean = BeanFactory::newBean('Bugs');        
     }
     
     function displayOptions() {
         
         $this->processDisplayOptions();
         
-        $seedRelease = BeanFactory::getBean('Releases');
+        $seedRelease = BeanFactory::newBean('Releases');
         
         if(!empty($this->searchFields['fixed_in_release'])) {
 	        $this->currentSearchFields['fixed_in_release']['input'] = '<select multiple="true" size="3" name="fixed_in_release[]">' 

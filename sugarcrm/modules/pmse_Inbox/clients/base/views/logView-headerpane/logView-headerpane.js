@@ -79,21 +79,7 @@
             }
         });
     },
-    /*getLogConfig : function() {
-        *//**
-         * Callback to add recipients, from a closing drawer, to the target Recipients field.
-         * @param {undefined|Backbone.Collection} recipients
-         *//*
-        app.drawer.open(
-            {
-                layout:  "config-log",
-                context: {
-                    module: "pmse_Inbox",
-                    mixed:  true
-                }
-            }
-        );
-    },*/
+
     getLog: function(data) {
         $("textarea").val(data);
         app.alert.dismiss('data:sync:process');

@@ -87,7 +87,7 @@ $xtpl->assign("STEP3_HEADER", "Set ".get_singular_bean_name($relModule)." Associ
 
 
 $select = "Select id, name from contacts";
-$seed = BeanFactory::getBean($relModule);
+$seed = BeanFactory::newBean($relModule);
 
 if(isset($_SESSION['MAILMERGE_SKIP_REL']) && $_SESSION['MAILMERGE_SKIP_REL'])
 {

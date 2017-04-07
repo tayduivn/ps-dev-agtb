@@ -172,7 +172,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     public function testCreateRelatedNote() {
-        $contact = BeanFactory::getBean("Contacts");
+        $contact = BeanFactory::newBean("Contacts");
         $contact->last_name = "Related Record Unit Test Contact";
         $contact->save();
         // Get the real data that is in the system, not the partial data we have saved
@@ -218,7 +218,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Notes']['module']['access']['aclaccess'] = 90;
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Notes']['module']['edit']['aclaccess'] = 90;
         // create a record
-        $contact = BeanFactory::getBean("Contacts");
+        $contact = BeanFactory::newBean("Contacts");
         $contact->last_name = "Related Record Unit Test Contact";
         $contact->save();
         // Get the real data that is in the system, not the partial data we have saved

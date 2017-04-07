@@ -58,7 +58,7 @@ class Bug67378Test extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $relate_query = $user->getRelateFieldQuery($data, 'whatever');
 
         // key should exist

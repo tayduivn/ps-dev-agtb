@@ -28,9 +28,9 @@ class PMSEEventDefinition
     public function __construct()
     {
         global $db;
-        $this->relDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency'); //new BpmRelatedDependency();
-        $this->event = BeanFactory::getBean('pmse_BpmnEvent'); //new BpmnEvent();
-        $this->definition = BeanFactory::getBean('pmse_BpmEventDefinition'); //new BpmEventDefinition();
+        $this->relDepBean = BeanFactory::newBean('pmse_BpmRelatedDependency'); //new BpmRelatedDependency();
+        $this->event = BeanFactory::newBean('pmse_BpmnEvent'); //new BpmnEvent();
+        $this->definition = BeanFactory::newBean('pmse_BpmEventDefinition'); //new BpmEventDefinition();
         $this->db = $db;
     }
 
@@ -98,7 +98,7 @@ class PMSEEventDefinition
     {
         foreach ($resultArray as $object) {
             //$relObject = new BpmRelatedDependency();
-            $relObject = BeanFactory::getBean('pmse_BpmRelatedDependency');
+            $relObject = BeanFactory::newBean('pmse_BpmRelatedDependency');
             foreach ($object as $attrib => $value) {
                 $relObject->$attrib = $value;
             }

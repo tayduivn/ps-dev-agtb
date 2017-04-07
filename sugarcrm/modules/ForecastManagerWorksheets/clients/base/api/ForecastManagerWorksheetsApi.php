@@ -51,6 +51,6 @@ class ForecastManagerWorksheetsApi extends SugarApi
      */
     protected function getBean($module)
     {
-        return BeanFactory::getBean($module);
+        return BeanFactory::newBean($module);
     }
 }

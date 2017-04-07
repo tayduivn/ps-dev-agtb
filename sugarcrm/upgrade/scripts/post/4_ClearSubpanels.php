@@ -30,7 +30,7 @@ class SugarUpgradeClearSubpanels extends UpgradeScript
     {
         global $beanList;
         foreach ($beanList as $bean => $class) {
-            $seed = BeanFactory::getBean($bean);
+            $seed = BeanFactory::newBean($bean);
             if ($seed instanceof SugarBean) {
                 $this->checkBean($seed);
             }

@@ -763,7 +763,7 @@ function get_team_array($add_blank = false)
             . "'" . $current_user->id . "'";
     }
 
-    $team = BeanFactory::getBean('Teams');
+    $team = BeanFactory::newBean('Teams');
     $team->addVisibilityFrom($query);
     $query .= " WHERE $where ";
     $team->addVisibilityWhere($query);
@@ -820,7 +820,7 @@ function get_user_name($id)
 function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true, $order_by = array())
 {
     $GLOBALS['log']->deprecated('get_user_array() is deprecated');
-    return BeanFactory::getBean('Users')->getUserArray(
+    return BeanFactory::newBean('Users')->getUserArray(
         $add_blank,
         $status,
         $user_id,
@@ -1208,7 +1208,7 @@ function return_module_language($language, $module, $refresh=false)
     $loaded_mod_strings = array();
     $language_used = $language;
     $default_language = !empty($sugar_config['default_language']) ? $sugar_config['default_language'] : $language;
-    $bean = BeanFactory::getBean($module);
+    $bean = BeanFactory::newBean($module);
 
     if (empty($language)) {
         $language = $default_language;
@@ -3756,7 +3756,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
 
     foreach ($focus->relationship_fields as $rel_key => $rel_value) {
         if ($rel_value == $relationship_name) {
-            $temp_bean = BeanFactory::getBean($tar_rel_module);
+            $temp_bean = BeanFactory::newBean($tar_rel_module);
             $temp_bean->disable_row_level_security = true;
             $temp_bean->retrieve($focus->$rel_key);
             if ($temp_bean->id!="") {
@@ -3775,7 +3775,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         && !empty($focus->field_defs[$field_def['id_name']]['relationship'])
         && $focus->field_defs[$field_def['id_name']]['relationship'] == $relationship_name)
         {
-            $temp_bean = BeanFactory::getBean($tar_rel_module);
+            $temp_bean = BeanFactory::newBean($tar_rel_module);
             $temp_bean->disable_row_level_security = true;
             $temp_bean->retrieve($focus->{$field_def['id_name']});
             if ($temp_bean->id!="") {
@@ -3786,7 +3786,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
             }
         //Check if the relationship_name matches a "link" in a relate field
         } elseif (!empty($rel_value['link']) && !empty($rel_value['id_name']) && $rel_value['link'] == $relationship_name) {
-            $temp_bean = BeanFactory::getBean($tar_rel_module);
+            $temp_bean = BeanFactory::newBean($tar_rel_module);
             $temp_bean->disable_row_level_security = true;
             $temp_bean->retrieve($focus->{$rel_value['id_name']});
             if ($temp_bean->id!="") {
@@ -3803,7 +3803,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
     }
     // special case for unlisted parent-type relationships
     if ( !empty($focus->parent_type) && $focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
-        $temp_bean = BeanFactory::getBean($tar_rel_module);
+        $temp_bean = BeanFactory::newBean($tar_rel_module);
         $temp_bean->disable_row_level_security = true;
         $temp_bean->retrieve($focus->parent_id);
         if ($temp_bean->id!="") {
@@ -3826,7 +3826,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
  */
 function get_module_info($module_name)
 {
-    return BeanFactory::getBean($module_name);
+    return BeanFactory::newBean($module_name);
 }
 
 /**
@@ -4428,7 +4428,7 @@ function array_depth($array, $depth_count=-1, $depth_array=array())
  */
 function createGroupUser($name)
 {
-    $group = BeanFactory::getBean('Users');
+    $group = BeanFactory::newBean('Users');
     $group->user_name	= $name;
     $group->last_name	= $name;
     $group->is_group	= 1;
@@ -4644,7 +4644,7 @@ function getAbsolutePath(
  */
 function loadBean($module)
 {
-    return BeanFactory::getBean($module);
+    return BeanFactory::newBean($module);
 }
 
 /**
@@ -4768,6 +4768,7 @@ function load_link_class($properties)
 {
     $class = 'Link2';
     if (!empty($properties['link_class']) && !empty($properties['link_file'])) {
+        require_once $properties['link_file'];
         $class = $properties['link_class'];
     }
 
@@ -4889,7 +4890,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where)
 
         return $ret_array;
     }
-    $seed = BeanFactory::getBean($module);
+    $seed = BeanFactory::newBean($module);
     foreach ($seed->field_defs as $name=>$field) {
 
         if ( $field['type'] == 'relate' && isset($field['link']) && !empty($searchFields[$name]['value']) ) {
@@ -5696,7 +5697,7 @@ function get_js_version_key()
 function getFunctionValue($bean, $function, $args = array())
 {
     if (is_string($bean) && !empty($bean)) {
-        $bean = BeanFactory::getBean($bean);
+        $bean = BeanFactory::newBean($bean);
     }
 
     if (is_array($function)) {

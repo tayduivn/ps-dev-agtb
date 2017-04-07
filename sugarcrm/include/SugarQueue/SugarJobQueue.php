@@ -43,7 +43,7 @@ class SugarJobQueue
     public function __construct()
     {
         $this->db = DBManagerFactory::getInstance();
-        $job = BeanFactory::getBean('SchedulersJobs');
+        $job = BeanFactory::newBean('SchedulersJobs');
         $this->job_queue_table = $job->table_name;
         if(!empty($GLOBALS['sugar_config']['jobs']['max_retries'])) {
             $this->jobTries = $GLOBALS['sugar_config']['jobs']['max_retries'];
@@ -200,7 +200,7 @@ class SugarJobQueue
      */
     public function runSchedulers()
     {
-        $sched = BeanFactory::getBean('Schedulers');
+        $sched = BeanFactory::newBean('Schedulers');
         $sched->checkPendingJobs($this);
     }
 }

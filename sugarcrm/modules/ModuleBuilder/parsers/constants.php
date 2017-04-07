@@ -58,6 +58,8 @@ define('MB_RECORDVIEW', 'recordview');
 define('MB_FILTERVIEW', 'filter');
 define('MB_BWCFILTERVIEW', 'searchfields');
 define('MB_DROPDOWN', 'dropdown');
+define('MB_PACKAGE_PATH', 'custom/modulebuilder/packages');
+define('MB_PACKAGE_BUILD', 'custom/modulebuilder/builds');
 
 class MBConstants
 {

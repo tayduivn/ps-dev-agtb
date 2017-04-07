@@ -148,7 +148,7 @@ EOQ;
 		$form->reset('main.SearchHeader');
 
 		// create the listview
-		$seed_bean = BeanFactory::getBean('Contacts');
+		$seed_bean = BeanFactory::newBean('Contacts');
 		$ListView = new ListView();
 		$ListView->show_export_button = false;
 		$ListView->process_for_popups = true;
@@ -270,7 +270,7 @@ EOJS;
 		$form->reset('main.SearchHeader');
 
 		// create the listview
-		$seed_bean = BeanFactory::getBean('Contacts');
+		$seed_bean = BeanFactory::newBean('Contacts');
 		$ListView = new ListView();
 		$ListView->display_header_and_footer=false;
 		$ListView->show_export_button = false;
@@ -295,7 +295,7 @@ EOJS;
 			$list = Array();
 				while(($row = $seed_bean->db->fetchByAssoc($result)) != null)
 			    	{
-						$seed_bean = BeanFactory::getBean('Contacts');
+						$seed_bean = BeanFactory::newBean('Contacts');
 						foreach($seed_bean->field_defs as $field=>$value)
 						{
 							if (isset($row[$field]))

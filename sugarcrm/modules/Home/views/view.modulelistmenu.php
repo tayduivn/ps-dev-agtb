@@ -16,7 +16,7 @@ class HomeViewModulelistmenu extends ViewModulelistmenu
 {
  	public function display()
  	{
- 	    $tracker = BeanFactory::getBean('Trackers');
+ 	    $tracker = BeanFactory::newBean('Trackers');
         $history = $tracker->get_recently_viewed($GLOBALS['current_user']->id);
 
         foreach ( $history as $key => $row ) {

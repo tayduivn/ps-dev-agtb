@@ -327,7 +327,7 @@ class TeamBasedACLConfigurator
     protected function applyTBA($module = null)
     {
         if ($module) {
-            $bean = BeanFactory::getBean($module);
+            $bean = BeanFactory::newBean($module);
             VardefManager::clearVardef($bean->module_dir, $bean->object_name);
         } else {
             VardefManager::clearVardef();
@@ -352,7 +352,7 @@ class TeamBasedACLConfigurator
                 if (!in_array($aclKey, $modules)) {
                     continue;
                 }
-                $aclType = BeanFactory::getBean($aclKey)->acltype;
+                $aclType = BeanFactory::newBean($aclKey)->acltype;
                 foreach ($aclModule[$aclType] as $action) {
                     if (in_array($action['aclaccess'], $this->getModuleOptions())) {
                         $this->fallbackModule($aclKey, $role->id, $action['id'], $action['aclaccess']);
@@ -396,7 +396,7 @@ class TeamBasedACLConfigurator
             if (!in_array($moduleName, $modules)) {
                 continue;
             }
-            $aclType = BeanFactory::getBean($moduleName)->acltype;
+            $aclType = BeanFactory::newBean($moduleName)->acltype;
             if (isset($moduleActions[$aclType])) {
                 foreach ($moduleActions[$aclType] as $moduleRow) {
                     $accessOverride = $aclRole->retrieve_relationships(
@@ -432,7 +432,7 @@ class TeamBasedACLConfigurator
             }
             unset($savedActions[$moduleName]);
         }
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting(self::CONFIG_KEY, 'fallback', json_encode($savedActions), 'base');
         // Calls ACLAction::clearACLCache.
         $aclField->clearACLCache();
@@ -444,7 +444,7 @@ class TeamBasedACLConfigurator
      */
     protected function getSavedAffectedRows()
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         // Uses json_decode().
         $settings = $admin->getConfigForModule(self::CONFIG_KEY, 'base', true);
         return isset($settings['fallback']) ? $settings['fallback'] : null;
@@ -473,7 +473,7 @@ class TeamBasedACLConfigurator
      */
     protected function fallbackModule($module, $role, $action, $access)
     {
-        $aclType = BeanFactory::getBean($module)->acltype;
+        $aclType = BeanFactory::newBean($module)->acltype;
         $arrObj = new ArrayObject($this->affectedRows);
         $arrObj[$module][$aclType][] = array('role' => $role, 'action' => $action, 'access' => $access);
         $this->affectedRows = $arrObj->getArrayCopy();
@@ -488,7 +488,7 @@ class TeamBasedACLConfigurator
         $aclField = new ACLField();
 
         foreach ($this->affectedRows as $moduleName => $data) {
-            $aclType = BeanFactory::getBean($moduleName)->acltype;
+            $aclType = BeanFactory::newBean($moduleName)->acltype;
             if (isset($data[$aclType])) {
                 foreach ($data[$aclType] as $moduleRow) {
                     $fallbackAccess = $this->getFallbackByAccess($moduleRow['access']);
@@ -521,7 +521,7 @@ class TeamBasedACLConfigurator
         if ($actions) {
             $this->affectedRows = array_merge($actions, $this->affectedRows);
         }
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting(self::CONFIG_KEY, 'fallback', json_encode($this->affectedRows), 'base');
         $this->affectedRows = array();
         // Calls ACLAction::clearACLCache.
@@ -564,7 +564,7 @@ class TeamBasedACLConfigurator
     public static function implementsTBA($module)
     {
         if (!isset(self::$implementationCache[$module])) {
-            $bean = BeanFactory::getBean($module);
+            $bean = BeanFactory::newBean($module);
             // need to check if $bean is instance of SugarBean
             // because of DynamicFields module and DynamicField class which is not a SugarBean
             self::$implementationCache[$module] =

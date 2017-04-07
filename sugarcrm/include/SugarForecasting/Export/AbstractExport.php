@@ -145,7 +145,7 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
      */
     public function getFilename()
     {
-        $timePeriod = BeanFactory::getBean('TimePeriods');
+        $timePeriod = BeanFactory::newBean('TimePeriods');
         $timePeriod->retrieve($this->args['timeperiod_id']);
         return str_replace(' ', '_', $timePeriod->name);
     }

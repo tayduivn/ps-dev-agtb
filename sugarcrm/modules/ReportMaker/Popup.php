@@ -30,7 +30,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$seed_object = BeanFactory::getBean('DataSets');
+$seed_object = BeanFactory::newBean('DataSets');
 
 
 $where = "";

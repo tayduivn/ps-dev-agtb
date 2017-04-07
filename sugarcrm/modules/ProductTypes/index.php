@@ -28,7 +28,7 @@ if (!is_admin($current_user) && (!is_admin_for_module($GLOBALS['current_user'],'
    sugar_die("Unauthorized access to administration.");
 }
 
-$focus = BeanFactory::getBean('ProductTypes');
+$focus = BeanFactory::newBean('ProductTypes');
 echo getClassicModuleTitle($focus->module_dir, array($mod_strings['LBL_MODULE_NAME']), true);
 
 $is_edit = false;

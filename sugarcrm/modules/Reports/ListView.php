@@ -23,7 +23,7 @@ global $mod_strings;
 global $module_map;
 global $report_modules;
 
-$savedReportsSeed = BeanFactory::getBean('Reports');
+$savedReportsSeed = BeanFactory::newBean('Reports');
 $lv = new ListViewReports();
 
 
@@ -61,7 +61,7 @@ if(isset($_REQUEST['Reports2_SAVEDREPORT_offset'])) {//if you click the paginati
 
 if(!empty($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
     if(empty($_REQUEST['button']) && (empty($_REQUEST['clear_query']) || $_REQUEST['clear_query']!='true')) {
-        $saved_search = BeanFactory::getBean('SavedSearch');
+        $saved_search = BeanFactory::newBean('SavedSearch');
         $saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
         $saved_search->populateRequest();
     }
@@ -212,7 +212,7 @@ $params = array('massupdate' => true, 'handleMassupdate' => false);
 // handle add to favorites request
 $favoritesText = '';
 if((!empty($_POST['addtofavorites']) || !empty($_POST['delete'])) && !empty($_POST['mass'])) {
-    $report = BeanFactory::getBean('Reports');
+    $report = BeanFactory::newBean('Reports');
     if(isset($_POST['Delete'])) {
        	$couldNotDelete = 0;
         foreach($_POST['mass'] as $id) {

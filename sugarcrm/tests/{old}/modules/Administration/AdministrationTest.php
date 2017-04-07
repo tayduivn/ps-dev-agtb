@@ -30,7 +30,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config where name = 'AdministrationTest'");
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         foreach($this->configs as $config){
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
@@ -46,7 +46,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRetrieveSettingsByInvalidModuleReturnsEmptyArray()
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('InvalidModule', 'base');
 
@@ -56,7 +56,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRetrieveSettingsByValidModuleWithPlatformReturnsOneRow()
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
@@ -66,7 +66,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRetrieveSettingsByValidModuleWithPlatformOverRidesBasePlatform()
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Forecasts', 'portal');
 
@@ -76,7 +76,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCacheExist()
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
@@ -86,7 +86,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCacheSameAsReturn()
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
@@ -96,7 +96,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCacheClearedAfterSave()
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
@@ -108,7 +108,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testJsonValueIsArray()
     {
          /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         $results = $admin->getConfigForModule('Forecasts', 'json');
 
@@ -121,7 +121,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testConfigValueIntegrity($value, $expected)
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('PHPUnit', 'Test', $value, 'base');
         $config = $admin->getConfigForModule('PHPUnit', 'base', true);
         $this->assertSame($expected, $config['Test']);

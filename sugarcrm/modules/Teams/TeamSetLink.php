@@ -43,7 +43,7 @@ class TeamSetLink extends Link2 {
 
 	public function __construct($linkName, $bean, $linkDef = false){
 		parent::__construct($linkName, $bean, $linkDef);
-        $this->_teamSet = BeanFactory::getBean('TeamSets');
+        $this->_teamSet = BeanFactory::newBean('TeamSets');
 		$this->_teamList = array();
 	}
 

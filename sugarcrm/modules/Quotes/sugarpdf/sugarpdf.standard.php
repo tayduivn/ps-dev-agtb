@@ -159,7 +159,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
         $this->writeHTMLTable($addressBS, false, $this->addressOptions);
 
         require_once('modules/Currencies/Currency.php');
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         ////    settings
         $format_number_array = array(
             'currency_symbol' => true,

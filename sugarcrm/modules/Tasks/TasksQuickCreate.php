@@ -27,7 +27,7 @@ class TasksQuickCreate extends QuickCreate {
         $this->ss->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['task_status_dom'], $app_list_strings['task_status_default']));
 		$this->ss->assign("TIME_FORMAT", '('. $timedate->get_user_time_format().')');
         
-        $focus = BeanFactory::getBean('Tasks');
+        $focus = BeanFactory::newBean('Tasks');
         $time_start_hour = intval(substr($focus->time_start, 0, 2));
 	    $time_start_minutes = substr($focus->time_start, 3, 5);
 		if($time_start_minutes > 45) {
@@ -61,7 +61,7 @@ class TasksQuickCreate extends QuickCreate {
         $this->javascript = new javascript();
         $this->javascript->setFormName('tasksQuickCreate');
         
-        $focus = BeanFactory::getBean('Tasks');
+        $focus = BeanFactory::newBean('Tasks');
         $this->javascript->setSugarBean($focus);
         $this->javascript->addAllFields('');
 

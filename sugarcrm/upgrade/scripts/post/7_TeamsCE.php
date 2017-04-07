@@ -84,7 +84,7 @@ class SugarUpgradeTeamsCE extends UpgradeScript
         } //foreach
 
         //Upgrade users table
-        $bean = BeanFactory::getBean('Users');
+        $bean = BeanFactory::newBean('Users');
         $this->upgradeTeamColumn($bean, 'default_team');
         $result = $this->db->query("SELECT id FROM teams where deleted=0");
         while($row = $this->db->fetchByAssoc($result)) {

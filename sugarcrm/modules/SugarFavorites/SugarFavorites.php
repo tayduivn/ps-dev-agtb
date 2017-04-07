@@ -89,7 +89,7 @@ class SugarFavorites extends Basic
             	$where .= " AND sugarfavorites.module = '$module' ";
             }
         }
-        $focus = BeanFactory::getBean('SugarFavorites');
+        $focus = BeanFactory::newBean('SugarFavorites');
 		$response = $focus->get_list($orderBy,$where,0,$limit);
 
 	    return $response['list'];
@@ -111,7 +111,7 @@ class SugarFavorites extends Basic
 
         $where .= " AND sugarfavorites.record_id = '{$id}'";
 
-        $focus = BeanFactory::getBean('SugarFavorites');
+        $focus = BeanFactory::newBean('SugarFavorites');
 		$response = $focus->get_list($orderBy,$where,0,$limit);
 
 	    return $response['list'];
@@ -164,7 +164,7 @@ class SugarFavorites extends Basic
 
     public static function markRecordDeletedInFavorites($record_id, $date_modified, $modified_user_id = "")
     {
-        $focus = BeanFactory::getBean('SugarFavorites');
+        $focus = BeanFactory::newBean('SugarFavorites');
         $focus->mark_records_deleted_in_favorites($record_id, $date_modified, $modified_user_id);
     }
 
@@ -186,7 +186,7 @@ class SugarFavorites extends Basic
 	{
 	    parent::fill_in_additional_list_fields();
 
-	    $focus = BeanFactory::getBean($this->module);
+	    $focus = BeanFactory::newBean($this->module);
 	    if ( $focus instanceOf SugarBean ) {
 	        $focus->retrieve($this->record_id);
 	        if ( !empty($focus->id) )

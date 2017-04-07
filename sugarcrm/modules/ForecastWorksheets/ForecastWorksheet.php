@@ -243,7 +243,7 @@ class ForecastWorksheet extends SugarBean
         /* @var $product Product */
         foreach ($revenuelineitems as $revenuelineitem) {
             /* @var $product_wkst ForecastWorksheet */
-            $product_wkst = BeanFactory::getBean('ForecastWorksheets');
+            $product_wkst = BeanFactory::newBean('ForecastWorksheets');
             $product_wkst->saveRelatedProduct($revenuelineitem, $isCommit);
             unset($product_wkst); // clear the cache
         }
@@ -346,7 +346,7 @@ class ForecastWorksheet extends SugarBean
         $returnValue = '';
         $sugar_query = new SugarQuery();
         $sugar_query->select('name');
-        $sugar_query->from(BeanFactory::getBean($module))->where()->equals('id', $id);
+        $sugar_query->from(BeanFactory::newBean($module))->where()->equals('id', $id);
         $item = $sugar_query->execute();
 
         if (!empty($item)) {
@@ -656,7 +656,7 @@ class ForecastWorksheet extends SugarBean
         $db = DBManagerFactory::getInstance();
 
         // reassign Opportunities
-        $_object = BeanFactory::getBean('Opportunities');
+        $_object = BeanFactory::newBean('Opportunities');
         $_query = "update {$_object->table_name} set " .
             "assigned_user_id = '{$toUserId}', " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
@@ -668,7 +668,7 @@ class ForecastWorksheet extends SugarBean
         // Products
         // reassign only products that have related opportunity - products created from opportunity::save()
         // other products will be reassigned if module Product is selected by user
-        $_object = BeanFactory::getBean('RevenueLineItems');
+        $_object = BeanFactory::newBean('RevenueLineItems');
         $_query = "update {$_object->table_name} set " .
             "assigned_user_id = '{$toUserId}', " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
@@ -678,7 +678,7 @@ class ForecastWorksheet extends SugarBean
         $affected_rows += $db->getAffectedRowCount($res);
 
         // delete Forecasts
-        $_object = BeanFactory::getBean('Forecasts');
+        $_object = BeanFactory::newBean('Forecasts');
         $_query = "update {$_object->table_name} set " .
             "deleted = 1, " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "' " .
@@ -687,7 +687,7 @@ class ForecastWorksheet extends SugarBean
         $affected_rows += $db->getAffectedRowCount($res);
 
         // delete Quotas
-        $_object = BeanFactory::getBean('Quotas');
+        $_object = BeanFactory::newBean('Quotas');
         $_query = "update {$_object->table_name} set " .
             "deleted = 1, " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "' " .
@@ -703,13 +703,13 @@ class ForecastWorksheet extends SugarBean
 
         if (User::isManager($fromUserId)) {
             // setup report_to for user
-            $objToUserId = BeanFactory::getBean('Users');
+            $objToUserId = BeanFactory::newBean('Users');
             $objToUserId->retrieve($toUserId);
             $objToUserId->reports_to_id = $fromUserReportsTo;
             $objToUserId->save();
 
             // reassign users (reportees)
-            $_object = BeanFactory::getBean('Users');
+            $_object = BeanFactory::newBean('Users');
             $_query = "update {$_object->table_name} set " .
                 "reports_to_id = '{$toUserId}', " .
                 "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
@@ -721,7 +721,7 @@ class ForecastWorksheet extends SugarBean
 
         // ForecastWorksheets
         // reassign entries in forecast_worksheets for the draft rows
-        $_object = BeanFactory::getBean('ForecastWorksheets');
+        $_object = BeanFactory::newBean('ForecastWorksheets');
         $_query = "update {$_object->table_name} set " .
             "assigned_user_id = '{$toUserId}', " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
@@ -744,7 +744,7 @@ class ForecastWorksheet extends SugarBean
         // ForecastManagerWorksheets
 
         // reassign entries in forecast_manager_worksheets
-        $_object = BeanFactory::getBean('ForecastManagerWorksheets');
+        $_object = BeanFactory::newBean('ForecastManagerWorksheets');
 
         // delete all manager worksheets for the user we are migrating away from
         $_query = "update {$_object->table_name} set " .

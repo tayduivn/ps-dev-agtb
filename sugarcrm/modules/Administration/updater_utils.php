@@ -201,7 +201,7 @@ function compareVersions($ver1, $ver2)
 function set_CheckUpdates_config_setting($value) {
 
 
-	$admin = BeanFactory::getBean('Administration');
+	$admin = BeanFactory::newBean('Administration');
 	$admin->saveSetting('Update','CheckUpdates',$value);
 }
 /* return's value for the 'CheckUpdates' config setting
@@ -224,7 +224,7 @@ function get_CheckUpdates_config_setting() {
 function set_last_check_version_config_setting($value) {
 
 
-	$admin = BeanFactory::getBean('Administration');
+	$admin = BeanFactory::newBean('Administration');
 	$admin->saveSetting('Update','last_check_version',$value);
 }
 function get_last_check_version_config_setting() {
@@ -243,7 +243,7 @@ function get_last_check_version_config_setting() {
 function set_last_check_date_config_setting($value) {
 
 
-	$admin = BeanFactory::getBean('Administration');
+	$admin = BeanFactory::newBean('Administration');
 	$admin->saveSetting('Update','last_check_date',$value);
 }
 function get_last_check_date_config_setting() {

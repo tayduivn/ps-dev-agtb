@@ -37,7 +37,7 @@ class LeadsQuickCreate extends QuickCreate {
         $this->javascript = new javascript();
         $this->javascript->setFormName('leadsQuickCreate');
         
-        $focus = BeanFactory::getBean('Leads');
+        $focus = BeanFactory::newBean('Leads');
         $this->javascript->setSugarBean($focus);
         $this->javascript->addAllFields('');
 

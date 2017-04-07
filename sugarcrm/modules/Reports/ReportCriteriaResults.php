@@ -29,7 +29,7 @@ $reporterName = InputValidation::getService()->getValidInputRequest('save_report
 $args = array();
 $jsonObj = getJSONobj();
 if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
-	$saved_report_seed = BeanFactory::getBean('Reports');
+	$saved_report_seed = BeanFactory::newBean('Reports');
 	$saved_report_seed->disable_row_level_security = true;
 	$saved_report_seed->retrieve($_REQUEST['id'], false);
 
@@ -78,7 +78,7 @@ if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
 	$args['reportCache'] = $reportCache;
 }
 else if (isset($_REQUEST['record'])){
-    $saved_report_seed = BeanFactory::getBean('Reports');
+    $saved_report_seed = BeanFactory::newBean('Reports');
     $saved_report_seed->disable_row_level_security = true;
     $saved_report_seed->retrieve($_REQUEST['record'], false);
 

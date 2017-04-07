@@ -81,7 +81,7 @@ function create_category($parent_id){
 	$last_name_array = $sugar_demodata['last_name_array'];
 	$last_name_count = count($sugar_demodata['last_name_array']) - 1;
 	$last_name_max = $last_name_count - 1;
-	$category = BeanFactory::getBean('ProductCategories');
+	$category = BeanFactory::newBean('ProductCategories');
 	$category->name = $last_name_array[mt_rand(0,$last_name_max)] ." Widgets";
 	$category->parent_id = $parent_id;
     $key = array_rand($sugar_demodata['users']);
@@ -105,7 +105,7 @@ global $dollar_id;
 global $tekkyware_id;
 $first_name_max = $first_name_count - 1;
 
-	$template = BeanFactory::getBean('ProductTemplates');
+	$template = BeanFactory::newBean('ProductTemplates');
 	$template->name = $first_name_array[mt_rand(0,$first_name_max)] ." Gadget";
 	$template->tax_class = "Taxable";
 	$template->manufacturer_id = $tekkyware_id;

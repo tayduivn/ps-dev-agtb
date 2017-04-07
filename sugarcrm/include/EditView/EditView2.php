@@ -143,7 +143,7 @@ class EditView
     {
         if(!$this->focus )
         {
-           $this->focus = BeanFactory::getBean($this->module);
+           $this->focus = BeanFactory::newBean($this->module);
            if(empty($this->focus)) return;
         }
 

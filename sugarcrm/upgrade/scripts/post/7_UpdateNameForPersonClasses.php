@@ -59,7 +59,7 @@ class SugarUpgradeUpdateNameForPersonClasses extends UpgradeScript
         if (isset($dictionary[$module]['fields'][$field])) { // if the _name field of this relationship is set
             $fieldDef = $dictionary[$module]['fields'][$field];
             if (isset($fieldDef['module']) && // and there is a module set
-                is_subclass_of(BeanFactory::getBean($fieldDef['module']), 'Person') && // and it is a subclass of Person
+                is_subclass_of(BeanFactory::newBean($fieldDef['module']), 'Person') && // and it is a subclass of Person
                 isset($fieldDef['db_concat_fields']) && // and db_concat_fields are set
                 $fieldDef['rname'] == 'name' && // and rname is set to name
                 $fieldDef['type'] == 'relate') { // and its type is relate

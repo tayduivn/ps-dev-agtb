@@ -50,9 +50,9 @@ class PMSEActivityDefinitionWrapper
      */
     public function __construct()
     {
-        $this->activity = BeanFactory::getBean('pmse_BpmnActivity');
-        $this->activityDefinition = BeanFactory::getBean('pmse_BpmActivityDefinition');
-        $this->processDefinition = BeanFactory::getBean('pmse_BpmProcessDefinition');
+        $this->activity = BeanFactory::newBean('pmse_BpmnActivity');
+        $this->activityDefinition = BeanFactory::newBean('pmse_BpmActivityDefinition');
+        $this->processDefinition = BeanFactory::newBean('pmse_BpmProcessDefinition');
         $this->factory = new BeanFactory();
     }
 

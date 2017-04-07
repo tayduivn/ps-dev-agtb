@@ -49,7 +49,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
         $needClearCache = false;
         foreach ($beanList as $bean => $class) {
             VardefManager::refreshVardefs($bean, $class);
-            $seed = BeanFactory::getBean($bean);
+            $seed = BeanFactory::newBean($bean);
             if ($seed instanceof SugarBean) {
                 if (!$this->checkBean($seed)) {
                     SugarRelationshipFactory::rebuildCache();
@@ -212,11 +212,11 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
      */
     protected function getBean($module)
     {
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
         if (!$bean) {
             $module = strtolower($module);
             if (!empty($this->modules[$module])) {
-                $bean = BeanFactory::getBean($this->modules[$module]);
+                $bean = BeanFactory::newBean($this->modules[$module]);
             }
         }
         return $bean;
@@ -670,7 +670,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     {
         $base_path = "custom/Extension/modules/{$mod}/Ext/Vardefs";
         $fn = "{$base_path}/sugarfield_{$def['name']}.php";
-        $seed = BeanFactory::getBean($mod);
+        $seed = BeanFactory::newBean($mod);
         $this->removeField($seed, $def['name']);
 
         $vBean = ($mod == "aCase") ? "Case" : $mod;

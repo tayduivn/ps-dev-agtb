@@ -51,7 +51,7 @@ class SugarUpgradeMigrateKBDocumentsReports extends UpgradeScript
 
         $sq = new SugarQuery();
         $sq->select(['id']);
-        $sq->from(BeanFactory::getBean('Reports'));
+        $sq->from(BeanFactory::newBean('Reports'));
         $sq->where()
             ->equals('module', self::OLD_MODULE_NAME);
         $resultOldReports = $sq->execute();

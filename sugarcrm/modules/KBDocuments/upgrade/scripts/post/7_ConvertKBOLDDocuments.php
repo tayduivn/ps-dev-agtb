@@ -56,7 +56,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         $_SESSION['disable_workflow'] = true;
 
         //Setup category root
-        $KBContent = BeanFactory::getBean('KBContents');
+        $KBContent = BeanFactory::newBean('KBContents');
         $KBContent->setupCategoryRoot();
         //Setup primary language
         $KBContent->setupPrimaryLanguage();
@@ -69,7 +69,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 $this->log("Convert the KBOLDDocument {$row['id']} to a KBContent.");
 
                 /** @var $KBBean KBContent */
-                $KBContent = BeanFactory::getBean('KBContents');
+                $KBContent = BeanFactory::newBean('KBContents');
 
                 $data = $row;
                 unset($data['id']);
@@ -174,7 +174,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                     $this->log("Embedded file {$matches[1][$key]} doesn't exist");
                     continue;
                 }
-                $ef = BeanFactory::getBean('EmbeddedFiles');
+                $ef = BeanFactory::newBean('EmbeddedFiles');
                 $ef->file_mime_type = get_file_mime_type($file);
                 $ef->id = create_guid();
                 $ef->new_with_id = true;
@@ -237,7 +237,7 @@ EOF;
         if (isset($this->convertedTagsTag[$tag['id']])) {
             return $this->convertedTagsTag[$tag['id']];
         }
-        $tagBean = BeanFactory::getBean('Tags');
+        $tagBean = BeanFactory::newBean('Tags');
         $tagName = trim($tag['tag_name']);
         if (empty($tagName)) {
             return null;
@@ -290,7 +290,7 @@ EOF;
         }
         //END SUGARCRM flav=ent ONLY
         //Check KBDocuments in hidden subpanels.
-        $focus = BeanFactory::getBean('KBContents');
+        $focus = BeanFactory::newBean('KBContents');
         $subpanel = new SubPanelDefinitions($focus);
         $panels = $subpanel->get_hidden_subpanels();
         if (in_array('kbdocuments', $panels)) {
@@ -347,7 +347,7 @@ EOF;
                 $this->log("Attachment file {$fileLocation} doesn't exist");
                 continue;
             }
-            $note = BeanFactory::getBean('Notes');
+            $note = BeanFactory::newBean('Notes');
             $note->id = create_guid();
             $note->new_with_id = true;
             $note->name = $row['filename'];
@@ -416,7 +416,7 @@ EOF;
                 $parentCategory->append($category);
             }
         } else {
-            $KBContent = BeanFactory::getBean('KBContents');
+            $KBContent = BeanFactory::newBean('KBContents');
             $rootCategory = BeanFactory::getBean(
                 'Categories',
                 $KBContent->getCategoryRoot(),
@@ -456,7 +456,7 @@ EOF;
      */
     protected function updateWorkflow()
     {
-        $focus = BeanFactory::getBean('WorkFlow');
+        $focus = BeanFactory::newBean('WorkFlow');
         if ($focus) {
             $desc = "THIS WORKFLOW WAS DEACTIVATED AUTOMATICALLY BY THE UPGRADE TO INCOMPATIBILITY.";
             $desc = $desc . " PLEASE DELETE ALL CONDITIONS ON THE WORKFLOW AND RECREATE THEM.";

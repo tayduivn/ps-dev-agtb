@@ -44,7 +44,7 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->user = SugarTestUserUtilities::createAnonymousUser();
 
         $this->team = SugarTestTeamUtilities::createAnonymousTeam();
-        $this->teamSet = BeanFactory::getBean('TeamSets');
+        $this->teamSet = BeanFactory::newBean('TeamSets');
         $this->teamSet->addTeams(array($this->team->id));
 
         $this->bean = $this->getMockBuilder('Account')
@@ -53,7 +53,7 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
             ->getMock();
 
         $beanVisibility = new BeanVisibility(
-            BeanFactory::getBean($this->module),
+            BeanFactory::newBean($this->module),
             // The ACLVisibility is added in constructor.
             array()
         );

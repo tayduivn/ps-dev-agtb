@@ -116,7 +116,7 @@ echo get_select_options_with_id($all_users, isset($_SESSION['reassignRecords']['
 
 <?php
 $teamSetField = new SugarFieldTeamset('Teamset');
-$lead = BeanFactory::getBean('Leads');
+$lead = BeanFactory::newBean('Leads');
 $teamSetField->initClassicView($lead->field_defs, 'EditView');
 $sqs_objects = $teamSetField->getClassicViewQS();
 
@@ -142,7 +142,7 @@ if(!isset($_SESSION['reassignRecords']['assignedModuleListCache'])){
         if (empty($beanFiles[$p])) {
             unset($beanListDup[$m]);
         } else {
-            $obj = BeanFactory::getBean($m);
+            $obj = BeanFactory::newBean($m);
             if (!isset($obj->field_defs['assigned_user_id']) || (
                     isset($obj->field_defs['assigned_user_id']) &&
                     isset($obj->field_defs['assigned_user_id']['source']) &&
@@ -276,7 +276,7 @@ else if(!isset($_GET['execute'])){
     $teams = $sugarFieldTeamSet->getTeamsFromRequest('team_name');
 	$team_ids = array_keys($teams);
     $team_id = SugarFieldTeamset::getPrimaryTeamIdFromRequest('team_name', $_REQUEST);
-	$teamSet = BeanFactory::getBean('TeamSets');
+	$teamSet = BeanFactory::newBean('TeamSets');
 	$team_set_id = $teamSet->addTeams($team_ids);
     $teamSetSelectedId = null;
 
@@ -312,7 +312,7 @@ else if(!isset($_GET['execute'])){
 			continue;
 		}
 
-        $object = BeanFactory::getBean($module);
+        $object = BeanFactory::newBean($module);
 
         if(empty($object->table_name)){
 			continue;

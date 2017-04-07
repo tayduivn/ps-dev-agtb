@@ -265,7 +265,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
      */
     protected function deleteRevenueLineItems()
     {
-        $rli = BeanFactory::getBean('RevenueLineItems');
+        $rli = BeanFactory::newBean('RevenueLineItems');
         /* @var $db DBManager */
         $db = DBManagerFactory::getInstance();
         $db->commit();
@@ -283,7 +283,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     protected function queueRevenueLineItemsForNotesOnOpportunities()
     {
         /* @var $rli RevenueLineItem */
-        $rli = BeanFactory::getBean('RevenueLineItems');
+        $rli = BeanFactory::newBean('RevenueLineItems');
 
         $labels = array();
 
@@ -356,7 +356,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     private function scheduleOpportunityRevenueLineItemNoteCreate(array $labels, array $chunk, $job_group)
     {
         /* @var $job SchedulersJob */
-        $job = BeanFactory::getBean('SchedulersJobs');
+        $job = BeanFactory::newBean('SchedulersJobs');
         $job->name = "Create Revenue Line Items Note On Opportunities";
         $job->target = "class::SugarJobCreateRevenueLineItemNotes";
         $job->data = json_encode(array('chunk' => $chunk, 'labels' => $labels));
@@ -386,7 +386,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
         // get the sales_stage from the RLI module
         /* @var $rli RevenueLineItem */
-        $rli = BeanFactory::getBean('RevenueLineItems');
+        $rli = BeanFactory::newBean('RevenueLineItems');
         $def = $rli->getFieldDefinition('sales_stage');
 
         $db = DBManagerFactory::getInstance();
@@ -514,7 +514,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     private function deleteRevenueLineItemsWorkFlows()
     {
         /* @var $workFlow WorkFlow */
-        $workFlow = BeanFactory::getBean('WorkFlow');
+        $workFlow = BeanFactory::newBean('WorkFlow');
 
         $sq = new SugarQuery();
         $sq->select(array('id'));
@@ -540,7 +540,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     private function deleteRevenueLineItemsRelatedActions()
     {
         // get the action shells
-        $actionShells = BeanFactory::getBean('WorkFlowActionShells');
+        $actionShells = BeanFactory::newBean('WorkFlowActionShells');
 
         $sq = new SugarQuery();
         $sq->select(array('id', 'parent_id'));
@@ -571,7 +571,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     private function deleteRevenueLineItemsRelatedTriggers()
     {
         // get the action shells
-        $triggerShells = BeanFactory::getBean('WorkFlowTriggerShells');
+        $triggerShells = BeanFactory::newBean('WorkFlowTriggerShells');
 
         $sq = new SugarQuery();
         $sq->select(array('id', 'parent_id'));
@@ -604,7 +604,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
      */
     private function disableRevenueLineItemsProcessDefinitions()
     {
-        $projectBean = BeanFactory::getBean('pmse_Project');
+        $projectBean = BeanFactory::newBean('pmse_Project');
         $q = new SugarQuery();
         $q->select(array('id'));
         $q->from($projectBean);
@@ -616,7 +616,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         }, $results);
 
         /* @var $job SchedulersJob */
-        $job = BeanFactory::getBean('SchedulersJobs');
+        $job = BeanFactory::newBean('SchedulersJobs');
         $job->name = "Mass Enable/Disable Process Definitions";
         $job->target = "class::SugarJobUpdatePdStatus";
         $job->data = json_encode(array('ids' => $ids, 'status' => 'INACTIVE'));

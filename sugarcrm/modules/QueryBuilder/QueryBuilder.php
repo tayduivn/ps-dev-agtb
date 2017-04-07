@@ -232,7 +232,7 @@ class QueryBuilder extends SugarBean {
                     where $this->rel_dataset.report_id='$this->id'
                     AND $this->rel_dataset.deleted=0 ".$orderBy;
 
-        return $this->build_related_list($query, BeanFactory::getBean('DataSets'));
+        return $this->build_related_list($query, BeanFactory::newBean('DataSets'));
     }
 
 
@@ -308,12 +308,12 @@ class QueryBuilder extends SugarBean {
      */
     function get_module_info($module_name)
     {
-        return BeanFactory::getBean($module_name);
+        return BeanFactory::newBean($module_name);
     }
 
     function get_field_table($module, $field){
 
-        $seed_object = BeanFactory::getBean($module);
+        $seed_object = BeanFactory::newBean($module);
         $field_table = $this->determine_field_type($seed_object, $field);
 
         return $field_table;

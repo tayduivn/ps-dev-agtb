@@ -126,7 +126,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
         foreach($ids as $id)
         {
-            $seed = BeanFactory::getBean($module_name);
+            $seed = BeanFactory::newBean($module_name);
             if($using_cp)
                 $seed = $seed->retrieveTarget($id);
             else
@@ -186,7 +186,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
             return;
         } // if
-        $seed = BeanFactory::getBean($module_name);
+        $seed = BeanFactory::newBean($module_name);
         foreach($name_value_list as $name=>$value){
             if(is_array($value) &&  $value['name'] == 'id'){
                 $seed->retrieve($value['value']);
@@ -290,7 +290,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->login');
         global $sugar_config;
         $error = new SoapError();
-        $user = BeanFactory::getBean('Users');
+        $user = BeanFactory::newBean('Users');
         $success = false;
         $authController = AuthenticationController::getInstance();
 
@@ -611,7 +611,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
                 continue;
             }
 
-            $seed = BeanFactory::getBean($module_name);
+            $seed = BeanFactory::newBean($module_name);
 
             foreach ($a_view as $view)
             {
@@ -691,7 +691,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $sugar_config['list_max_entries_per_page'] = $max_results;
         } // if
 
-        $seed = BeanFactory::getBean($module_name);
+        $seed = BeanFactory::newBean($module_name);
 
         if (!self::$helperObject->checkACLAccess($seed, 'Export', $error, 'no_access')) {
             $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
@@ -835,7 +835,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     				$unifiedSearchFields[$name] [ $field ]['value'] = $search_string;
     			}
 
-    			$seed = BeanFactory::getBean($name);
+    			$seed = BeanFactory::newBean($name);
     			require_once 'include/SearchForm/SearchForm2.php' ;
     			if ($beanName == "User"
     			    || $beanName == "ProjectTask"

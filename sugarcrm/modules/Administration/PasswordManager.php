@@ -36,7 +36,7 @@ echo getClassicModuleTitle(
         );
 $configurator = new Configurator();
 $sugarConfig = SugarConfig::getInstance();
-$focus = BeanFactory::getBean('Administration');
+$focus = BeanFactory::newBean('Administration');
 $configurator->parseLoggerSettings();
 $config_strings = return_module_language($GLOBALS['current_language'], 'Configurator');
 $valid_public_key = true;
@@ -195,7 +195,7 @@ $outboundMailConfig = OutboundEmailConfigurationPeer::getSystemDefaultMailConfig
 $smtpServerIsSet    = (OutboundEmailConfigurationPeer::isMailConfigurationValid($outboundMailConfig)) ? "0" : "1";
 $sugar_smarty->assign("SMTP_SERVER_NOT_SET", $smtpServerIsSet);
 
-$focus = BeanFactory::getBean('InboundEmail');
+$focus = BeanFactory::newBean('InboundEmail');
 $focus->checkImap();
 $storedOptions = Serialized::unserialize($focus->stored_options, array(), true);
 $email_templates_arr = get_bean_select_array(true, 'EmailTemplate','name', '','name',true);

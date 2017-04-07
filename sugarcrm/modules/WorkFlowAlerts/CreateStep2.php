@@ -33,7 +33,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$focus = BeanFactory::getBean('WorkFlowAlerts');
+$focus = BeanFactory::newBean('WorkFlowAlerts');
 
 if(!empty($_REQUEST['record']) && $_REQUEST['record']!="") {
 	$focus->retrieve($_REQUEST['record']);
@@ -206,7 +206,7 @@ if(		$focus->user_type=="rel_user_custom"){
 //end if user_type is rel_user_custom
 }elseif($focus->user_type=="trig_user_custom"){
 
-		$target_module = BeanFactory::getBean($focus->base_module);
+		$target_module = BeanFactory::newBean($focus->base_module);
 
 
 	$target_module_name = $target_module->module_dir;

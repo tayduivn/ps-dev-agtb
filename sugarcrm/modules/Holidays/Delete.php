@@ -19,7 +19,7 @@
 
 
 
-$focus = BeanFactory::getBean('Holidays');
+$focus = BeanFactory::newBean('Holidays');
 
 if(!isset($_REQUEST['record']))
 	sugar_die("A record number must be specified to delete this holiday.");

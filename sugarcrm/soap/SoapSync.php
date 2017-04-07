@@ -38,7 +38,7 @@ function sync_get_entries($session, $module_name,$from_date,$to_date,$offset, $m
 		$sugar_config['list_max_entries_per_page'] = $max_results;
 	}
 
-	$seed = BeanFactory::getBean($module_name);
+	$seed = BeanFactory::newBean($module_name);
 	if(empty($seed)){
 		$error->set_error('no_module');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
@@ -168,7 +168,7 @@ function sync_set_entries($session, $module_name,$from_date, $to_date, $sync_ent
 	$field_list = array();
 	if(!empty($in)){
 		$in .=')';
-		$seed = BeanFactory::getBean($module_name);
+		$seed = BeanFactory::newBean($module_name);
 		$table_name = $seed->table_name;
 		//query for any of the records that have been modified after the fact
 		$response = $seed->get_list('', "$table_name.date_modified > ".db_convert("'".$GLOBALS['db']->quote($from_date)."'",'datetime')." AND $table_name.date_modified <= ".db_convert("'".$GLOBALS['db']->quote($to_date)."'",'datetime')." AND $table_name.id IN $in ",0,-1,-1, (int)$deleted);
@@ -321,7 +321,7 @@ function sudo_user($session, $user_name){
 	}
 	global $current_user;
 	if(is_admin($current_user)){
-		$new_user = BeanFactory::getBean('Users');
+		$new_user = BeanFactory::newBean('Users');
 		$new_id = $new_user->retrieve_user_id($user_name);
 		if($new_id){
 			$new_user->retrieve($new_id);
@@ -453,7 +453,7 @@ function get_quick_sync_data($session, $module_name, $related_module_name, $star
 		return array('result'=>"",  'result_count'=> 0, 'error'=>$error->get_soap_array());
 	}
 
-	$seed = BeanFactory::getBean($module_name);
+	$seed = BeanFactory::newBean($module_name);
 	if(empty($seed)){
 		$error->set_error('no_module');
 		return array('result'=>"",  'result_count'=> 0, 'error'=>$error->get_soap_array());

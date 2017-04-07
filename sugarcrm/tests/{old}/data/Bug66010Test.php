@@ -28,7 +28,7 @@ class Bug66010Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCreateNewListQuery()
     {
-        $bean = BeanFactory::getBean('Accounts');
+        $bean = BeanFactory::newBean('Accounts');
         $query = $bean->create_new_list_query("","",array('create_by_name','modified_by_name'),array(),0,"",true);
         $this->assertEquals(1, substr_count($query['select'], 'accounts.created_by'));
         $this->assertEquals(1, substr_count($query['select'], 'accounts.modified_user_id'));

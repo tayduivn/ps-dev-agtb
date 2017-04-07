@@ -19,7 +19,7 @@ class Bug46448TeamsTest extends Sugar_PHPUnit_Framework_TestCase
     {
         require_once('modules/Teams/TeamSetManager.php');
 
-        $team = BeanFactory::getBean('Teams');
+        $team = BeanFactory::newBean('Teams');
         $globalTeamId = $team->global_team;
         $this->assertEquals(
             TeamSetManager::getCommaDelimitedTeams('', $globalTeamId),

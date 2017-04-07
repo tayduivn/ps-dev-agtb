@@ -21,7 +21,7 @@
 
 
 
-$focus = BeanFactory::getBean('ProspectLists');
+$focus = BeanFactory::newBean('ProspectLists');
 
 if(!isset($_REQUEST['record']))
 	sugar_die("A record number must be specified to delete the prospect list.");

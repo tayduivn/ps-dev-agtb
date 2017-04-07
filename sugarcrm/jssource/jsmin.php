@@ -58,8 +58,7 @@ class SugarMin {
         }
 
         //If the JSMIn extension is loaded, use that as it can be as much as 1000x faster than JShrink
-        if (extension_loaded("jsmin"))
-        {
+        if (self::isJSMinExtAvailable()) {
             return @jsmin($this->text);
         }
 
@@ -83,9 +82,18 @@ class SugarMin {
 	}
 
     /**
+     * @return bool true if native jsmin extension that works exists on the system.
+     */
+    protected static function isJSMinExtAvailable()
+    {
+        // at present latest jsmin extension 2.0.0 and 2.0.1 are incompatible
+        return extension_loaded('jsmin') && version_compare(phpversion('jsmin'), '2.0.0', '<');
+    }
+
+    /**
      * @return bool true if a more native js minifier exists on the system.
      */
     public static function isMinifyFast() {
-        return extension_loaded("jsmin") || !empty($GLOBALS['sugar_config']['uglify']);
+        return self::isJSMinExtAvailable()  || !empty($GLOBALS['sugar_config']['uglify']);
     }
 }

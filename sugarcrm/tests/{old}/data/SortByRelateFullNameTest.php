@@ -17,7 +17,7 @@ class SortByRelateFullNameTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testSortByRelateFullName()
     {
-        $contact = BeanFactory::getBean('Notes');
+        $contact = BeanFactory::newBean('Notes');
         $query = $contact->create_new_list_query('contact_name', null, array(), array(), 0, '', true);
 
         $order_by = $query['order_by'];

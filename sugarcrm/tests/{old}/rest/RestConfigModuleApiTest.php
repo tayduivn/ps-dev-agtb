@@ -28,7 +28,7 @@ class RestConfigModuleApiTest extends RestTestBase {
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config where name = 'AdministrationTest'");
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         foreach($this->configs as $config){
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }

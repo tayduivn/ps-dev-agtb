@@ -30,7 +30,7 @@ class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_Te
 	{
 	    $account = SugarTestAccountUtilities::createAccount();
 
-	    $email = BeanFactory::getBean('Emails');
+	    $email = BeanFactory::newBean('Emails');
 	    $this->assertEquals(
 	        "{$account->name} <{$account->email1}>",
 	        $email->getNamePlusEmailAddressesForCompose('Accounts',array($account->id))
@@ -44,7 +44,7 @@ class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_Te
 	    $account2 = SugarTestAccountUtilities::createAccount();
 	    $account3 = SugarTestAccountUtilities::createAccount();
 
-	    $email = BeanFactory::getBean('Emails');
+	    $email = BeanFactory::newBean('Emails');
 	    $addressString = $email->getNamePlusEmailAddressesForCompose('Accounts',array($account1->id,$account2->id,$account3->id));
 	    $this->assertContains("{$account1->name} <{$account1->email1}>",$addressString);
 	    $this->assertContains("{$account2->name} <{$account2->email1}>",$addressString);
@@ -56,7 +56,7 @@ class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_Te
 	{
 	    $contact = SugarTestContactUtilities::createContact();
 
-	    $email = BeanFactory::getBean('Emails');
+	    $email = BeanFactory::newBean('Emails');
 	    $this->assertEquals(
 	        $GLOBALS['locale']->formatName($contact) . " <{$contact->email1}>",
 	        $email->getNamePlusEmailAddressesForCompose('Contacts',array($contact->id))
@@ -70,7 +70,7 @@ class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_Te
 	    $user->email1 = 'foo@bar.com';
 	    $user->save();
 
-	    $email = BeanFactory::getBean('Emails');
+	    $email = BeanFactory::newBean('Emails');
 	    $this->assertEquals(
 	        $GLOBALS['locale']->formatName($user) . " <{$user->email1}>",
 	        $email->getNamePlusEmailAddressesForCompose('Users',array($user->id))

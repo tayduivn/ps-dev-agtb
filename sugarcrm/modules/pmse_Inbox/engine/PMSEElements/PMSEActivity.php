@@ -31,7 +31,7 @@ class PMSEActivity extends PMSEShape
      */
     public function __construct()
     {
-        $this->definitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition');
+        $this->definitionBean = BeanFactory::newBean('pmse_BpmActivityDefinition');
         parent::__construct();
     }
 

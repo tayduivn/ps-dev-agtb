@@ -18,7 +18,7 @@ class OpportunityFormBase{
 function checkForDuplicates($prefix){
 	require_once('include/formbase.php');
 	
-	$focus = BeanFactory::getBean('Opportunities');
+	$focus = BeanFactory::newBean('Opportunities');
 	$query = '';
 	$baseQuery = 'select id, name, sales_stage,amount, date_closed  from opportunities where deleted!=1 and (';
 
@@ -141,7 +141,7 @@ function getWideFormBody($prefix, $mod='Opportunities', $formname='', $lead='', 
 		return '';
 	}
 	if(empty($lead)){
-		$lead = BeanFactory::getBean('Leads');
+		$lead = BeanFactory::newBean('Leads');
 	}
 global $mod_strings, $sugar_config;
 $showaccount = $showaccount && $sugar_config['require_accounts'];
@@ -264,7 +264,7 @@ $the_form .= <<<EOQ
 </tr>
 EOQ;
 //carry forward custom lead fields to opportunities during Lead Conversion
-	$tempOpp = BeanFactory::getBean('Opportunities');
+	$tempOpp = BeanFactory::newBean('Opportunities');
 	if (method_exists($lead, 'convertCustomFieldsForm')) $lead->convertCustomFieldsForm($the_form, $tempOpp, $prefix);
 	unset($tempOpp);
 
@@ -285,7 +285,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(BeanFactory::getBean('Opportunities'));
+$javascript->setSugarBean(BeanFactory::newBean('Opportunities'));
 $javascript->addRequiredFields($prefix);
 $the_form .=$javascript->getScript();
 $mod_strings = $temp_strings;
@@ -395,7 +395,7 @@ $the_form .= $quicksearch_js;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(BeanFactory::getBean('Opportunities'));
+$javascript->setSugarBean(BeanFactory::newBean('Opportunities'));
 $javascript->addRequiredFields($prefix);
 $the_form .=$javascript->getScript();
 
@@ -411,7 +411,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 	
 	require_once('include/formbase.php');
 	
-	$focus = BeanFactory::getBean('Opportunities');
+	$focus = BeanFactory::newBean('Opportunities');
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}

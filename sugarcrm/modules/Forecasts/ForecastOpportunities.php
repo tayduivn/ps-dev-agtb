@@ -51,7 +51,7 @@ class ForecastOpportunities extends SugarBean {
         parent::__construct();
         $this->disable_row_level_security =true;
 
-        $this->currency = BeanFactory::getBean('Currencies')->getUserCurrency();
+        $this->currency = BeanFactory::newBean('Currencies')->getUserCurrency();
         $this->currencysymbol= $this->currency->symbol;
     }
 
@@ -126,7 +126,7 @@ class ForecastOpportunities extends SugarBean {
         if (strpos($order_by, 'date_entered') !== false) {
             $order_by = str_replace('date_entered', 'opportunities.date_entered', $order_by);
         }
-        $opp = BeanFactory::getBean('Opportunities');
+        $opp = BeanFactory::newBean('Opportunities');
         $ret_array=array();
         $ret_array['select'] = "SELECT  opportunities.id, opportunities.name ,opportunities.assigned_user_id opportunity_owner, opportunities.amount_usdollar as revenue,  ((opportunities.amount_usdollar * opportunities.probability)/100) as weighted_value, opportunities.probability,opportunities.description, opportunities.next_step,opportunities.opportunity_type";
         $ret_array['select'] .=" ,worksheet.id worksheet_id, opportunities.best_case,opportunities.worst_case ";

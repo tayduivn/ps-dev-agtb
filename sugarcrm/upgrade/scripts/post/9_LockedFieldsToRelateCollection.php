@@ -123,7 +123,7 @@ class SugarUpgradeLockedFieldsToRelateCollection extends UpgradeScript
      */
     public function setPD($beanName = 'pmse_BpmProcessDefinition')
     {
-        $this->pd = \BeanFactory::getBean($beanName);
+        $this->pd = \BeanFactory::newBean($beanName);
     }
 
     /**

@@ -44,7 +44,7 @@ class UsersApiHelper extends SugarBeanApiHelper
      */
     protected function checkUserAccess(SugarBean $user, $module, $recordId)
     {
-        $record = BeanFactory::getBean($module);
+        $record = BeanFactory::newBean($module);
         $record->id = $recordId;
         return $record->checkUserAccess($user);
     }

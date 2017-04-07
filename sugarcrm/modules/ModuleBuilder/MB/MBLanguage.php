@@ -12,6 +12,8 @@
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
+require_once 'modules/ModuleBuilder/parsers/constants.php';
+
 class MBLanguage{
 		var $iTemplates = array();
 		var $templates = array();

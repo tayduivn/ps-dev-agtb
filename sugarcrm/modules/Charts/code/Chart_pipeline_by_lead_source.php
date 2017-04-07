@@ -190,7 +190,7 @@ global $timedate;
 			$GLOBALS['log']->debug($user_id);
 			$GLOBALS['log']->debug("cache_file_name is: $cache_file_name");
 
-			$opp = BeanFactory::getBean('Opportunities');
+			$opp = BeanFactory::newBean('Opportunities');
 			//Now do the db queries
 			//query for opportunity data that matches $legends and $user
 			$where="";
@@ -358,7 +358,7 @@ global $timedate;
 
 		$user_id = $ids;
 
-		$opp = BeanFactory::getBean('Opportunities');
+		$opp = BeanFactory::newBean('Opportunities');
 		//Now do the db queries
 		//query for opportunity data that matches $legends and $user
 		$where="";

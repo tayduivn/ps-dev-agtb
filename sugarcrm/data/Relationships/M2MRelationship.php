@@ -426,7 +426,7 @@ class M2MRelationship extends SugarRelationship
         if ($this->linkIsLHS($link)) {
             $knownKey = $this->def['join_key_lhs'];
             $targetKey = $this->def['join_key_rhs'];
-            $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+            $relatedSeed = BeanFactory::getDefinition($this->getRHSModule());
             $relatedSeedKey = $this->def['rhs_key'];
             $whereTable = "";
             if (empty($params['right_join_table_alias'])){
@@ -441,7 +441,7 @@ class M2MRelationship extends SugarRelationship
         {
             $knownKey = $this->def['join_key_rhs'];
             $targetKey = $this->def['join_key_lhs'];
-            $relatedSeed = BeanFactory::getBean($this->getLHSModule());
+            $relatedSeed = BeanFactory::getDefinition($this->getLHSModule());
             $relatedSeedKey = $this->def['lhs_key'];
             $whereTable = "";
             if (empty($params['left_join_table_alias'])){
@@ -524,7 +524,7 @@ class M2MRelationship extends SugarRelationship
         if ($this->linkIsLHS($link)) {
             $knownKey = $this->def['join_key_lhs'];
             $targetKey = $this->def['join_key_rhs'];
-            $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+            $relatedSeed = BeanFactory::getDefinition($this->getRHSModule());
             if (empty($params['right_join_table_alias'])) {
                 if (!empty($relatedSeed)) {
                     $whereTable = $relatedSeed->table_name;
@@ -535,7 +535,7 @@ class M2MRelationship extends SugarRelationship
         } else {
             $knownKey = $this->def['join_key_rhs'];
             $targetKey = $this->def['join_key_lhs'];
-            $relatedSeed = BeanFactory::getBean($this->getLHSModule());
+            $relatedSeed = BeanFactory::getDefinition($this->getLHSModule());
             if (empty($params['left_join_table_alias'])) {
                 if (!empty($relatedSeed)) {
                     $whereTable = $relatedSeed->table_name;
@@ -722,7 +722,11 @@ class M2MRelationship extends SugarRelationship
             ->on()->equalsField("{$startingTable}.{$startingKey}","{$joinTable_alias}.{$startingJoinKey}")
             ->equals("{$joinTable_alias}.deleted","0");
 
-        $targetTableJoin = $sugar_query->joinTable($targetTable, array('alias' => $targetTable_alias, 'joinType' => $join_type, 'bean' => BeanFactory::newBean($targetModule)))
+        $targetTableJoin = $sugar_query->joinTable($targetTable, array(
+            'alias' => $targetTable_alias,
+            'joinType' => $join_type,
+            'bean' => BeanFactory::getDefinition($targetModule),
+        ))
             ->on()->equalsField("{$targetTable_alias}.{$targetKey}", "{$joinTable_alias}.{$joinKey}")
             ->equals("{$targetTable_alias}.deleted","0");
 
@@ -739,7 +743,9 @@ class M2MRelationship extends SugarRelationship
 
     protected function addCustomToSugarQuery($sugar_query, $options, $linkIsLHS, $targetTable_alias ) {
         if (!empty($options['includeCustom'])) {
-            $bean = BeanFactory::getBean($linkIsLHS ? $this->def['rhs_module'] : $this->def['lhs_module']);
+            $bean = BeanFactory::getDefinition(
+                $linkIsLHS ? $this->def['rhs_module'] : $this->def['lhs_module']
+            );
             if (!empty($bean) && $bean->hasCustomFields()) {
                 $table_cstm = $bean->get_custom_table_name();
                 $alias_cstm = "{$targetTable_alias}_cstm";

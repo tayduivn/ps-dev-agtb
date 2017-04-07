@@ -129,7 +129,7 @@ class Bug56423Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testListQuery()
     {
-        $bean = BeanFactory::getBean('Accounts');
+        $bean = BeanFactory::newBean('Accounts');
         $query = $bean->create_new_list_query(
             "accounts.name",
             "(accounts.name like 'A%')",

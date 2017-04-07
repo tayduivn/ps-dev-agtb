@@ -51,7 +51,7 @@ class ReportsDashletsApi extends SugarApi
         $fieldList = array('id', 'name', 'module', 'report_type', 'content', 'chart_type', 'assigned_user_id');
 
         $sq = new SugarQuery();
-        $sq->from(BeanFactory::getBean('Reports'));
+        $sq->from(BeanFactory::newBean('Reports'));
         $sq->select($fieldList);
         $sq->orderBy('name', 'asc');
 
@@ -164,7 +164,7 @@ class ReportsDashletsApi extends SugarApi
      */
     protected function getSavedReportFromData($row)
     {
-        $savedReport = BeanFactory::getBean('Reports');
+        $savedReport = BeanFactory::newBean('Reports');
         $savedReport->populateFromRow($row);
         return $savedReport;
     }

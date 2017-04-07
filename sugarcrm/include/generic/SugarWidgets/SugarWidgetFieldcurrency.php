@@ -20,7 +20,7 @@ function get_currency()
         global $global_currency_obj;
         if (empty($global_currency_obj))
         {
-            $global_currency_obj = BeanFactory::getBean('Currencies')->getUserCurrency();
+            $global_currency_obj = BeanFactory::newBean('Currencies')->getUserCurrency();
         }
         return $global_currency_obj;
 }

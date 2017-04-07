@@ -21,7 +21,7 @@ $newIds = array();
 for ($i = 1; $i <= $_REQUEST['numRowsToSave']; $i++) {
     // don't save any blank rows
     if (isset($_REQUEST["duration_" . $i]) && ($_REQUEST["duration_" . $i] != "")) {
-        $projectTask = BeanFactory::getBean('ProjectTask');
+        $projectTask = BeanFactory::newBean('ProjectTask');
         $projectTask->skipParentUpdate();
         if (isset($_REQUEST["obj_id_" . $i])) {
             //$projectTask->id = $_REQUEST["obj_id_" . $i];
@@ -78,7 +78,7 @@ for ($i = 1; $i <= $_REQUEST['numRowsToSave']; $i++) {
 }
 // get random ProjectTask from current project
 $ind = rand(1, $_REQUEST['numRowsToSave']);
-$projectTask = BeanFactory::getBean('ProjectTask');
+$projectTask = BeanFactory::newBean('ProjectTask');
 $projectTask->skipParentUpdate();
 if(isset($_REQUEST["obj_id_" . $ind]) && !empty($_REQUEST["obj_id_" . $ind]))
 {

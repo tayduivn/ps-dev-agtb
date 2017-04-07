@@ -173,7 +173,7 @@ function buildTableForm($rows)
 function checkForDuplicates($prefix='')
 {
 	require_once('include/formbase.php');
-    $focus = BeanFactory::getBean($this->moduleName);
+    $focus = BeanFactory::newBean($this->moduleName);
 
 	$query = $this->getDuplicateQuery($focus, $prefix);
 

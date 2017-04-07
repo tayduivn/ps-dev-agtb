@@ -91,7 +91,7 @@ class ProductTemplate extends SugarBean {
 		parent::__construct();
 		$this->disable_row_level_security =true;
 
-		$currency = BeanFactory::getBean('Currencies');
+		$currency = BeanFactory::newBean('Currencies');
 		$this->default_currency_symbol = $currency->getDefaultCurrencySymbol();
 	}
 

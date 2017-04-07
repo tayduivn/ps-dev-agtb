@@ -224,7 +224,7 @@ class DataSet_Layout extends SugarBean {
 			while (($row = $this->db->fetchByAssoc($result)) != null) {
 				//Get head attribute information
 				$head_attribute_id = $this->get_attribute_id("Head", $row['id']);
-				$head_att_object = BeanFactory::getBean('DataSet_Attribute');
+				$head_att_object = BeanFactory::newBean('DataSet_Attribute');
 				if(!empty($head_attribute_id) && $head_attribute_id!=""){
 					$head_att_object->retrieve($head_attribute_id);
 ////////////////Head Specific Information
@@ -247,7 +247,7 @@ class DataSet_Layout extends SugarBean {
 
                 //Get body attribute information
                 $body_attribute_id = $this->get_attribute_id("Body", $row['id']);
-                $body_att_object = BeanFactory::getBean('DataSet_Attribute');
+                $body_att_object = BeanFactory::newBean('DataSet_Attribute');
                 if(!empty($body_attribute_id) && $body_attribute_id!=""){
                     $body_att_object->retrieve($body_attribute_id);
 

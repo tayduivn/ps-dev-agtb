@@ -73,7 +73,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		global $current_user;
         global $locale;
         /** @var Meeting $meeting */
-		$meeting = \BeanFactory::getBean('Meetings');
+		$meeting = \BeanFactory::newBean('Meetings');
 		$meeting->id = create_guid();
 		$meeting->new_with_id = false;
 		$meeting->processed = true;

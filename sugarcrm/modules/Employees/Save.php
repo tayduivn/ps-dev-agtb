@@ -50,7 +50,7 @@ $focus->save();
 
 // Set default team for Employee as 'Global'
 if ($new === true) {
-    $team = BeanFactory::getBean('Teams');
+    $team = BeanFactory::newBean('Teams');
     $team->new_user_created($focus);
 }
 

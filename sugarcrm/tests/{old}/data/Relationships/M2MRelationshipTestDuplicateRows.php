@@ -53,9 +53,9 @@ class M2MRelationshipTestDuplicateRows extends Sugar_PHPUnit_Framework_TestCase
         $this->db->addQuerySpy('searchForExisting', '/SELECT.*FROM.*accounts_contacts/i', array($row));
 
         $m2mRelationship = new TestDuplicateM2MRel($this->def);
-        $account = BeanFactory::getBean("Accounts");
+        $account = BeanFactory::newBean("Accounts");
         $account->id = $accId;
-        $contact = BeanFactory::getBean("Contacts");
+        $contact = BeanFactory::newBean("Contacts");
         $contact->id = $conId;
 
         $m2mRelationship->add($account, $contact);

@@ -161,7 +161,7 @@ class WorkFlowAction extends SugarBean {
 
 	function build_field_selector($field_num, $base_module, $workflow_type="", $action_type=""){
 		////Begin - New Code call to workflow_utils
-		$temp_module = BeanFactory::getBean($base_module);
+		$temp_module = BeanFactory::newBean($base_module);
 		//Build Selector Array
 		$selector_array = array(
 							'value' => $this->value,

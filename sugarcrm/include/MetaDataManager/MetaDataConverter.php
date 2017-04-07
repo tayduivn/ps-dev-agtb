@@ -189,7 +189,7 @@ class MetaDataConverter
         $viewdefs['panels'][0]['label'] = 'LBL_PANEL_1';
 
         $viewdefs['panels'][0]['fields'] = array();
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
 
         foreach ($defs['list_fields'] as $fieldName => $details) {
             if (isset($details['vname'])) {

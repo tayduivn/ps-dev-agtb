@@ -27,7 +27,7 @@ if(empty($workflow_object)) {
 	sugar_die("You shouldn't be here");
 }
 
-$focus = BeanFactory::getBean('WorkFlowTriggerShells');
+$focus = BeanFactory::newBean('WorkFlowTriggerShells');
 if(!empty($_REQUEST['record']) ) {
     $focus->retrieve($_REQUEST['record']);
 
@@ -98,7 +98,7 @@ $form->out("embeded");
 
 ////////Middle Items/////////////////////////////
 
-	$temp_module = BeanFactory::getBean($workflow_object->base_module);
+	$temp_module = BeanFactory::newBean($workflow_object->base_module);
 	$display_field_name = $temp_module->field_defs[$focus->field]['vname'];
 	$current_module_strings = return_module_language($current_language, $workflow_object->base_module);
 	$display_field_name = "<i><b>\" ".get_label($display_field_name, $current_module_strings)." \"</i></b>";
@@ -123,7 +123,7 @@ $form->out("embeded");
 
 //////////////////BEGIN Future Object	/////////////////////////////////
 
-		$future_object = BeanFactory::getBean('Expressions');
+		$future_object = BeanFactory::newBean('Expressions');
 		$future_list = $focus->get_linked_beans('future_triggers','Expression');
 		if(!empty($future_list[0])) {
 			$future_id = $future_list[0]->id;
@@ -195,7 +195,7 @@ if($workflow_object->type=="Normal"){
 		}
 
 
-		$past_object = BeanFactory::getBean('Expressions');
+		$past_object = BeanFactory::newBean('Expressions');
 		$past_list = $focus->get_linked_beans('past_triggers','Expression');
 		if(isset($past_list[0]) && $past_list[0]!='') {
 			$past_id = $past_list[0]->id;

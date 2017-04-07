@@ -37,7 +37,7 @@ class SugarTestCurrencyUtilities
      */
     public static function createCurrency($name, $symbol, $iso4217, $conversion_rate, $id = null)
     {
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         $currency->name = $name;
         $currency->symbol = $symbol;
         $currency->iso4217 = $iso4217;
@@ -65,7 +65,7 @@ class SugarTestCurrencyUtilities
      */
     public static function getCurrencyByISO($iso4217)
     {
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         $currency->retrieve($currency->retrieveIDByISO($iso4217));
         return $currency;
     }

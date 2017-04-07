@@ -40,7 +40,7 @@ class Bug42279Test extends Sugar_PHPUnit_Framework_TestCase
      * @group bug42279
      */
     public function testEmailAddressInFetchedRow() {
-        $sea = BeanFactory::getBean('EmailAddresses');
+        $sea = BeanFactory::newBean('EmailAddresses');
 
         // this will populate contact->email1
         $sea->populateLegacyFields($this->contact);

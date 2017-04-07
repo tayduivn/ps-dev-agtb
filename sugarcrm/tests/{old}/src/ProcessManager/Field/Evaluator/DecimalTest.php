@@ -46,7 +46,7 @@ class DecimalTest extends \Sugar_PHPUnit_Framework_TestCase
     public function hasChangedProvider()
     {
         // Simple bean setup to cover all test cases
-        $bean = \BeanFactory::getBean('Bugs');
+        $bean = \BeanFactory::newBean('Bugs');
         $bean->test1 = '1.00000000';
         $bean->test3 = '12.02500000';
         $bean->test4 = '9552.00595000';

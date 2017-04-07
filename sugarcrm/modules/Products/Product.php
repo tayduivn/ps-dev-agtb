@@ -152,7 +152,7 @@ class Product extends SugarBean
 
         $this->team_id = 1; // make the item globally accessible
 
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         $this->default_currency_symbol = $currency->getDefaultCurrencySymbol();
     }
 
@@ -447,7 +447,7 @@ class Product extends SugarBean
     public function convertToRevenueLineItem()
     {
         /* @var $rli RevenueLineItem */
-        $rli = BeanFactory::getBean('RevenueLineItems');
+        $rli = BeanFactory::newBean('RevenueLineItems');
         $rli->id = create_guid();
         $rli->new_with_id = true;
         $rli->fetched_row = array();

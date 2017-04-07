@@ -43,7 +43,7 @@ class SubpanelQuickCreate{
 		$this->ev->view = $this->viewType;
 		$this->ev->ss = new Sugar_Smarty();
 
-		$bean = BeanFactory::getBean($module);
+		$bean = BeanFactory::newBean($module);
         if($bean && !empty($_REQUEST['record'])) {
             $bean->retrieve($_REQUEST['record']);
         }
@@ -85,7 +85,7 @@ class SubpanelQuickCreate{
 
 		            $view->ev = $this->ev;
 		            $view->ss = $this->ev->ss;
-		            $view->bean = BeanFactory::getBean($module);
+		            $view->bean = BeanFactory::newBean($module);
 					$this->ev->formName = 'form_Subpanel'.$this->ev->view .'_'.$module;
 					$view->showTitle = false; // Do not show title since this is for subpanel
 		            $view->display();

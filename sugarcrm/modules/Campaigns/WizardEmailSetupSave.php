@@ -23,7 +23,7 @@ global $mod_strings;
 
 
 //get new administration bean for setup
-$focus = BeanFactory::getBean('Administration');
+$focus = BeanFactory::newBean('Administration');
 $camp_steps[] = 'wiz_step_';
 $camp_steps[] = 'wiz_step1_';
 $camp_steps[] = 'wiz_step2_';

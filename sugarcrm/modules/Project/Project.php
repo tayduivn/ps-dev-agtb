@@ -227,8 +227,8 @@ class Project extends SugarBean {
 	}
 	/* helper function for UserHoliday subpanel -- display javascript that cannot be achieved through AJAX call */
 	function resourceSelectJS(){
-       	$userBean = BeanFactory::getBean('Users');
-    	$contactBean = BeanFactory::getBean('Contacts');
+       	$userBean = BeanFactory::newBean('Users');
+    	$contactBean = BeanFactory::newBean('Contacts');
 
     	$this->load_relationship("user_resources");
     	$userResources = $this->user_resources->getBeans($userBean);

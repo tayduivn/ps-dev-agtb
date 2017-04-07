@@ -14,6 +14,8 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
+require_once 'modules/ModuleBuilder/parsers/constants.php';
+
 class MBPackage{
     var $name;
     var $is_uninstallable = true;
@@ -668,7 +670,7 @@ function buildInstall($path){
     //return an array which contain the name of fields_meta_data table's columns
     function getColumnsName(){
 
-        $meta = BeanFactory::getBean('EditCustomFields');
+        $meta = BeanFactory::newBean('EditCustomFields');
         $arr = array();
          foreach($meta->getFieldDefinitions() as $key=>$value) {
             $arr[] = $key;
@@ -821,7 +823,7 @@ function buildInstall($path){
         $options = array();
         foreach($modules as $module)
         {
-            $bean = BeanFactory::getBean($module);
+            $bean = BeanFactory::newBean($module);
             if (!empty($bean))
             {
                 foreach($bean->field_defs as $field => $def)
@@ -984,7 +986,7 @@ function buildInstall($path){
 // END SUGARCRM flav=ent ONLY
         ) {
             foreach ($beanList as $module => $_) {
-                $bean = BeanFactory::getBean($module);
+                $bean = BeanFactory::newBean($module);
                 if (!isset($bean->field_defs) || !is_array($bean->field_defs)) {
                     continue;
                 }

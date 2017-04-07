@@ -17,7 +17,7 @@ $notices = array(
 
 
 foreach($notices as $notice){
-	$teamNotice = BeanFactory::getBean('TeamNotices');
+	$teamNotice = BeanFactory::newBean('TeamNotices');
 	$teamNotice->name = $notice['name'];
 	$teamNotice->description = $notice['description'];
 	if(!empty($notice['url'])){

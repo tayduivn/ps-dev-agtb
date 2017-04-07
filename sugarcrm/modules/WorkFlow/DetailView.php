@@ -23,7 +23,7 @@ global $mod_strings;
 global $app_strings;
 global $app_list_strings;
 global $focus, $support_coming_due, $support_expired;
-$focus = BeanFactory::getBean('WorkFlow');
+$focus = BeanFactory::newBean('WorkFlow');
 $detailView = new DetailView();
 $offset=0;
 if (isset($_REQUEST['offset']) or isset($_REQUEST['record'])) {

@@ -33,7 +33,7 @@ class StoreQuery{
 		global $current_user, $timedate;
 		if(isset($this->query['module']))
 		{
-		   $bean = BeanFactory::getBean($this->query['module']);
+		   $bean = BeanFactory::newBean($this->query['module']);
 		   if(!empty($bean))
 		   {
 		   	  foreach($this->query as $key=>$value)
@@ -108,7 +108,7 @@ class StoreQuery{
 		
 		if(isset($this->query['module']))
 		{
-		   $bean = BeanFactory::getBean($this->query['module']);
+		   $bean = BeanFactory::newBean($this->query['module']);
 		}
 
 

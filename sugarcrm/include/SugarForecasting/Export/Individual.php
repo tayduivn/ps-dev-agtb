@@ -53,7 +53,7 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
             'probability' => 'probability',
         );
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
         if ($settings['show_worksheet_best']) {
@@ -68,7 +68,7 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
             $fields_array['worst_case'] = 'worst_case';
         }
 
-        $seed = BeanFactory::getBean('ForecastWorksheets');
+        $seed = BeanFactory::newBean('ForecastWorksheets');
 
         return $this->getContent($data['records'], $seed, $fields_array, 'commit_stage', $this->getArg('filters'));
     }

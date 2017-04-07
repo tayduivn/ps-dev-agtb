@@ -238,7 +238,7 @@ class ForecastWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         /* @var $worksheetBean ForecastWorksheet */
         $GLOBALS['current_user'] = self::$reportee['user'];
-        $worksheetBean = BeanFactory::getBean('ForecastWorksheets');
+        $worksheetBean = BeanFactory::newBean('ForecastWorksheets');
         $commit = $worksheetBean->commitWorksheet(self::$reportee['user']->id, self::$timeperiod->id);
 
         $this->assertTrue($commit);

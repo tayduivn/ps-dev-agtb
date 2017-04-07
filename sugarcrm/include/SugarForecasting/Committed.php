@@ -41,9 +41,9 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $commit_type = strtolower($this->getArg('commit_type'));
 
         /* @var $mgr_worksheet ForecastManagerWorksheet */
-        $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $mgr_worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         /* @var $worksheet ForecastWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastWorksheets');
 
         $field_ext = '_case';
 
@@ -63,7 +63,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         }
         
         /* @var $forecast Forecast */
-        $forecast = BeanFactory::getBean('Forecasts');
+        $forecast = BeanFactory::newBean('Forecasts');
         $forecast->user_id = $current_user->id;
         $forecast->timeperiod_id = $args['timeperiod_id'];
         $forecast->best_case = $worksheet_totals['best' . $field_ext];
@@ -111,7 +111,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         }
 
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');

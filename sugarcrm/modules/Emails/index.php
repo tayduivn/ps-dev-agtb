@@ -11,7 +11,7 @@
  */
 
 
-$focus = BeanFactory::getBean('Emails');
+$focus = BeanFactory::newBean('Emails');
 if (!$focus->ACLAccess('view')) {
       ACLController::displayNoAccess(true);
       sugar_cleanup(true);

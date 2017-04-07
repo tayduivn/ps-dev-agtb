@@ -366,7 +366,7 @@ class Administration extends SugarBean {
      */
     public static function getSettings($category = false, $clean=false)
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->retrieveSettings($category, $clean);
         return $admin;
     }

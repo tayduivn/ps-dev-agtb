@@ -97,7 +97,7 @@ class DownloadArchiveTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetArchive($fileCounts, $outputName, $expectedOutputName)
     {
-        $bean = BeanFactory::getBean('Notes');
+        $bean = BeanFactory::newBean('Notes');
         $sfh = new SugarFieldHandler();
         $def = $bean->field_defs['filename'];
         /* @var $sf SugarFieldFile */

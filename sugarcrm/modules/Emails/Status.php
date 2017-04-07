@@ -21,7 +21,7 @@
 global $mod_strings;
 global $app_strings;
 
-$focus = BeanFactory::getBean('Emails');
+$focus = BeanFactory::newBean('Emails');
 
 if(!empty($_REQUEST['record'])) {
     $result = $focus->retrieve($_REQUEST['record']);

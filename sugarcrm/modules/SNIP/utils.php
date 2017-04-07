@@ -65,7 +65,7 @@ function get_beans_by_email_addr($module_dir)
 {
     $bean = $GLOBALS['app']->controller->bean;
     $module_dir = $module_dir['module'];
-    $module = BeanFactory::getBean($module_dir);
+    $module = BeanFactory::newBean($module_dir);
     $return_array['select'] = "SELECT DISTINCT {$module->table_name}.id ";
     $return_array['from'] = "FROM {$module->table_name} ";
     $return_array['join'] = " JOIN emails_email_addr_rel eear ON eear.email_id = '$bean->id' AND eear.deleted=0

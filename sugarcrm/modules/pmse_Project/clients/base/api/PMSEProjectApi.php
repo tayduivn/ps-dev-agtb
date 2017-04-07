@@ -336,8 +336,8 @@ class PMSEProjectApi extends ModuleApi
         if (empty($args['baseModule'])) {
             $projectBean = BeanFactory::getBean($args['module'], $args['record'],
                 array('strict_retrieve' => true, 'disable_row_level_security' => true));
-            $processBean = BeanFactory::getBean('pmse_BpmnProcess')->retrieve_by_string_fields(array("prj_id" => $projectBean->id));
-            $casesBean = BeanFactory::getBean('pmse_Inbox');
+            $processBean = BeanFactory::newBean('pmse_BpmnProcess')->retrieve_by_string_fields(array("prj_id" => $projectBean->id));
+            $casesBean = BeanFactory::newBean('pmse_Inbox');
             $sql = new SugarQuery();
             $sql->select('id');
             $sql->from($casesBean);
@@ -353,11 +353,11 @@ class PMSEProjectApi extends ModuleApi
         } else {
             switch ($args['baseModule']) {
                 case 'pmse_Business_Rules':
-                    $bean = BeanFactory::getBean('pmse_BpmActivityDefinition');
+                    $bean = BeanFactory::newBean('pmse_BpmActivityDefinition');
                     $where = 'act_fields';
                     break;
                 case 'pmse_Emails_Templates':
-                    $bean = BeanFactory::getBean('pmse_BpmEventDefinition');
+                    $bean = BeanFactory::newBean('pmse_BpmEventDefinition');
                     $where = 'evn_criteria';
                     break;
                 default:

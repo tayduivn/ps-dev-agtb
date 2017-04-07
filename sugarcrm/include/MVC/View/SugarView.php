@@ -423,7 +423,7 @@ class SugarView
             $ss->assign("CURRENT_USER_ID", $current_user->id);
 
             // get the last viewed records
-            $tracker = BeanFactory::getBean('Trackers');
+            $tracker = BeanFactory::newBean('Trackers');
             $history = $tracker->get_recently_viewed($current_user->id);
             $ss->assign("recentRecords",$this->processRecentRecords($history));
         }

@@ -29,7 +29,7 @@ class Bug61859Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('dictionary');
 
-        $leadBean = $bean = BeanFactory::getBean('Leads');
+        $leadBean = $bean = BeanFactory::newBean('Leads');
         $this->dynamicFields = new DynamicField('Leads');
         $this->dynamicFields->setup($leadBean);
 

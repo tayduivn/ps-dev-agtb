@@ -38,7 +38,7 @@ class SugarFieldDatetimecomboTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedTime = $timedate->to_display_date_time($db->fromConvert($dbDatetime, 'datetime'));
         $expectedTime = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $expectedTime);
 
-        $obj = BeanFactory::getBean('Opportunities');
+        $obj = BeanFactory::newBean('Opportunities');
         $obj->date_modified = $isoDate;
 
         $vardef = $obj->field_defs['date_modified'];

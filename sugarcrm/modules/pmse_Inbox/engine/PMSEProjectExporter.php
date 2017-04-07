@@ -24,7 +24,7 @@ class PMSEProjectExporter extends PMSEExporter
 
     public function __construct()
     {
-        $this->bean = BeanFactory::getBean('pmse_Project'); //new BpmEmailTemplate();
+        $this->bean = BeanFactory::newBean('pmse_Project'); //new BpmEmailTemplate();
         $this->uid = 'id';
         $this->name = 'name';
         $this->extension = 'bpm';
@@ -60,7 +60,7 @@ class PMSEProjectExporter extends PMSEExporter
      */
     public function getProjectProcess($prjID)
     {
-        $processBean = BeanFactory::getBean('pmse_BpmnProcess');
+        $processBean = BeanFactory::newBean('pmse_BpmnProcess');
         $processData = array();
         $processBean->retrieve_by_string_fields(array("prj_id" => $prjID));
         if (!empty($processBean->fetched_row)) {
@@ -77,7 +77,7 @@ class PMSEProjectExporter extends PMSEExporter
      */
     public function getProjectDiagram($prjID)
     {
-        $diagramBean = BeanFactory::getBean('pmse_BpmnDiagram'); //new BpmnDiagram();
+        $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram'); //new BpmnDiagram();
         $diagramData = array();
 
         if ($diagramBean->retrieve_by_string_fields(array("prj_id" => $prjID))) {
@@ -109,7 +109,7 @@ class PMSEProjectExporter extends PMSEExporter
             return array();
         }
 
-        $activityBean = BeanFactory::getBean($definition['element']['module']);
+        $activityBean = BeanFactory::newBean($definition['element']['module']);
 
         $q = new SugarQuery();
         $q->from($activityBean, array('add_deleted' => true));
@@ -141,7 +141,7 @@ class PMSEProjectExporter extends PMSEExporter
 
     private function getArtifactData($prjID)
     {
-        $artifactBean = BeanFactory::getBean('pmse_BpmnArtifact');
+        $artifactBean = BeanFactory::newBean('pmse_BpmnArtifact');
 
         $q = new SugarQuery();
         $q->from($artifactBean, array('add_deleted' => true));
@@ -166,7 +166,7 @@ class PMSEProjectExporter extends PMSEExporter
 
     private function getFlowData($prjID)
     {
-        $flowBean = BeanFactory::getBean('pmse_BpmnFlow');
+        $flowBean = BeanFactory::newBean('pmse_BpmnFlow');
 
         $q = new SugarQuery();
         $q->from($flowBean, array('add_deleted' => true));
@@ -187,7 +187,7 @@ class PMSEProjectExporter extends PMSEExporter
      */
     public function getProcessDefinition($prjID)
     {
-        $definitionBean = BeanFactory::getBean('pmse_BpmProcessDefinition');
+        $definitionBean = BeanFactory::newBean('pmse_BpmProcessDefinition');
         $definitionData = array();
         $definitionBean->retrieve_by_string_fields(array("prj_id" => $prjID));
         if (!empty($definitionBean->fetched_row)) {
@@ -204,7 +204,7 @@ class PMSEProjectExporter extends PMSEExporter
      */
     public function getDynaForms($prjID)
     {
-        $dynaFormBean = BeanFactory::getBean('pmse_BpmDynaForm');
+        $dynaFormBean = BeanFactory::newBean('pmse_BpmDynaForm');
 
         $q = new SugarQuery();
         $q->from($dynaFormBean, array('add_deleted' => true));

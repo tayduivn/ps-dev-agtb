@@ -46,7 +46,7 @@ function setUp()
 	      $GLOBALS['db']->query("DELETE FROM team_sets WHERE id = '{$id}'");
 	}
 	
-	$bean = BeanFactory::getBean($this->module);
+	$bean = BeanFactory::newBean($this->module);
 	$GLOBALS['db']->deleteColumn($bean, $bean->field_defs['team_set_id']);
 }
 

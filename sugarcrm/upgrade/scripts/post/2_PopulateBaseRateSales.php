@@ -33,7 +33,7 @@ class SugarUpgradePopulateBaseRateSales extends UpgradeScript
 
         // update all the custom sales module's base_rate fields
         foreach ($beanList as $moduleName => $bean) {
-            $module = BeanFactory::getBean($moduleName);
+            $module = BeanFactory::newBean($moduleName);
             if ($module instanceof Sale) {
                 $this->updateBaseRate($module->table_name);
             }

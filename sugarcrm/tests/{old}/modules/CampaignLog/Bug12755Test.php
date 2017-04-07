@@ -37,7 +37,7 @@ class Bug12755Test extends Sugar_PHPUnit_Framework_TestCase
     {
         markEmailAddressInvalid($this->emailAddress);
 
-        $sea = BeanFactory::getBean('EmailAddresses');
+        $sea = BeanFactory::newBean('EmailAddresses');
         $rs = $sea->retrieve_by_string_fields( array('email_address_caps' => trim(strtoupper($this->emailAddress))) );
         $this->assertTrue( (bool) $rs->invalid_email);
     }

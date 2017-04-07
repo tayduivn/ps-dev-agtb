@@ -55,7 +55,7 @@ class TeamSetManager {
 	 *
 	 */
 	public static function cleanUp(){
-		$teamSetModule = BeanFactory::getBean('TeamSetModules');
+		$teamSetModule = BeanFactory::newBean('TeamSetModules');
 		//maintain a list of the team set ids we would like to remove
 		$setsToRemove = array();
 		$setsToKeep = array();
@@ -136,7 +136,7 @@ class TeamSetManager {
         if (!isset($GLOBALS['sugar_config']['enable_team_module_save'])
             || !empty($GLOBALS['sugar_config']['enable_team_module_save'])) {
 			foreach(self::$_setHash as $team_set_id => $table_names){
-				$teamSetModule = BeanFactory::getBean('TeamSetModules');
+				$teamSetModule = BeanFactory::newBean('TeamSetModules');
 				$teamSetModule->team_set_id = $team_set_id;
 
 				foreach($table_names as $table_name){
@@ -208,7 +208,7 @@ class TeamSetManager {
 		//and modules in the team_set_modules table
         if (!isset($GLOBALS['sugar_config']['enable_team_module_save'])
             || !empty($GLOBALS['sugar_config']['enable_team_module_save'])) {
-			$teamSetModule = BeanFactory::getBean('TeamSetModules');
+			$teamSetModule = BeanFactory::newBean('TeamSetModules');
 			$teamSetModule->team_set_id = $teamSetId;
 			$teamSetModule->module_table_name = $tableName;
 			$teamSetModule->save();
@@ -312,7 +312,7 @@ class TeamSetManager {
         }
 
 
-		$teamSet = BeanFactory::getBean('TeamSets');
+		$teamSet = BeanFactory::newBean('TeamSets');
 		$teams = $teamSet->getTeams($team_set_id);
 		$team_names = array();
 		foreach($teams as $id => $team){
@@ -488,7 +488,7 @@ WHERE tst.team_id = ?';
     		  $team_set_id_modules[$row['team_set_id']][] = $row['module_table_name'];
     	}
 
-        $teamSet = BeanFactory::getBean('TeamSets');
+        $teamSet = BeanFactory::newBean('TeamSets');
 
         foreach ($team_set_id_modules as $team_set_id => $tables) {
             $teamSet->id = $team_set_id;

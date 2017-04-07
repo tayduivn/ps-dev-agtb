@@ -131,7 +131,7 @@ class ImportDuplicateCheck
         foreach($fieldList as $field)
         {
             if ($field == 'email' || $field == 'email2') {
-                $emailAddress = BeanFactory::getBean('EmailAddresses');
+                $emailAddress = BeanFactory::newBean('EmailAddresses');
                 $email = $field;
                 $isEmail = $field == 'email';
                 if ($emailAddress->getCountEmailAddressByBean($this->_focus->$email, $this->_focus, $isEmail) > 0) {
@@ -155,7 +155,7 @@ class ImportDuplicateCheck
                 if ( count($index_fields) <= 1 )
                     continue;
 
-                $newfocus = BeanFactory::getBean($this->_focus->module_dir);
+                $newfocus = BeanFactory::newBean($this->_focus->module_dir);
                 $result = $newfocus->retrieve_by_string_fields($index_fields,true);
 
                 if ( !is_null($result) )
@@ -217,7 +217,7 @@ class ImportDuplicateCheck
         //if full_name is set, then manually search on the first and last name fields before iterating through rest of fields
         //this is a special handling of the name fields on people objects, the rest of the fields are checked individually
         if(in_array('full_name',$indexlist)){
-            $newfocus = BeanFactory::getBean($this->_focus->module_dir);
+            $newfocus = BeanFactory::newBean($this->_focus->module_dir);
             $result = $newfocus->retrieve_by_string_fields(array('deleted' =>'0', 'first_name'=>$this->_focus->first_name, 'last_name'=>$this->_focus->last_name),true);
 
             if ( !is_null($result) ){
@@ -237,7 +237,7 @@ class ImportDuplicateCheck
 
             // This handles the special case of duplicate email checking
             if ($index['name'] == 'special_idx_email' || $index['name'] == 'special_idx_email2') {
-                $emailAddress = BeanFactory::getBean('EmailAddresses');
+                $emailAddress = BeanFactory::newBean('EmailAddresses');
                 $email = $index['fields'][0];
                 $isEmail = $index['name'] == 'special_idx_email';
                 if ($emailAddress->getCountEmailAddressByBean($this->_focus->$email, $this->_focus, $isEmail) > 0) {
@@ -269,7 +269,7 @@ class ImportDuplicateCheck
                 if ( count($index_fields) <= 1 )
                     continue;
 
-                $newfocus = BeanFactory::getBean($this->_focus->module_dir);
+                $newfocus = BeanFactory::newBean($this->_focus->module_dir);
                 $result = $newfocus->retrieve_by_string_fields($index_fields,true);
 
                 if ( !is_null($result) ){

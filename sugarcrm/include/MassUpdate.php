@@ -105,7 +105,7 @@ class MassUpdate
 
         $module = $this->request->getValidInputRequest('module', 'Assert\Bean\ModuleName');
         $action = $this->request->getValidInputRequest('action');
-        $bean = BeanFactory::getBean($module);
+        $bean = BeanFactory::newBean($module);
        $order_by_name = $bean->module_dir.'2_'.strtoupper($bean->object_name).'_ORDER_BY' ;
         $lvso = $this->request->getValidInputRequest('lvso');
         $request_order_by_name = $this->request->getValidInputRequest($order_by_name, 'Assert\Sql\OrderBy');
@@ -1363,7 +1363,7 @@ EOQ;
 	}
 
     function generateSearchWhere($module, $query) {//this function is similar with function prepareSearchForm() in view.list.php
-        $seed = BeanFactory::getBean($module);
+        $seed = BeanFactory::newBean($module);
         $this->use_old_search = true;
         if(SugarAutoLoader::existing('modules/'.$module.'/SearchForm.html')){
             if(SugarAutoLoader::existing('modules/' . $module . '/metadata/SearchFields.php')) {

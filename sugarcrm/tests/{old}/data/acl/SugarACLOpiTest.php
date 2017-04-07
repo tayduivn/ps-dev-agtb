@@ -29,7 +29,7 @@ class SugarACLOpiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCheckRecurringSource()
     {
-        $bean = BeanFactory::getBean('Meetings');
+        $bean = BeanFactory::newBean('Meetings');
 
         $canEdit = $bean->ACLAccess('edit');
         $this->assertTrue($canEdit);

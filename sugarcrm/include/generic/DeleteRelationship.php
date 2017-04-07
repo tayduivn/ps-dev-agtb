@@ -28,7 +28,7 @@ ARGS:
 
 require_once('include/formbase.php');
 
- $focus = BeanFactory::getBean($_REQUEST['module']);
+ $focus = BeanFactory::newBean($_REQUEST['module']);
  if (  empty($_REQUEST['linked_id']) || empty($_REQUEST['linked_field'])  || empty($_REQUEST['record']))
  {
 	die("need linked_field, linked_id and record fields");

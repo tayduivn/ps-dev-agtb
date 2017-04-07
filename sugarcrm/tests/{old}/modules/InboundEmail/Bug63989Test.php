@@ -23,7 +23,7 @@ class Bug63989Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('beanList');
-        $this->case = BeanFactory::getBean('Cases');
+        $this->case = BeanFactory::newBean('Cases');
     }
 
     public function tearDown()

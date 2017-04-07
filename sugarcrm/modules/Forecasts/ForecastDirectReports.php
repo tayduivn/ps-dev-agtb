@@ -73,7 +73,7 @@ class ForecastDirectReports extends SugarBean {
         parent::__construct();
         $this->disable_row_level_security =true;
 
-        $this->currency = BeanFactory::getBean('Currencies')->getUserCurrency();
+        $this->currency = BeanFactory::newBean('Currencies')->getUserCurrency();
         $this->currencysymbol= $this->currency->symbol;
 
     }
@@ -274,7 +274,7 @@ class ForecastDirectReports extends SugarBean {
         $ret_array=array();
         $ret_array['select'] = "SELECT id, users.first_name ,users.last_name, users.id as user_id";
         $ret_array['from'] = " FROM users  ";
-        $us = BeanFactory::getBean('Users');
+        $us = BeanFactory::newBean('Users');
         $us->addVisibilityFrom($ret_array['from'], array('where_condition' => true));
         $ret_array['where'] = " where $where AND users.status = 'Active'";
         $us->addVisibilityFrom($ret_array['where'], array('where_condition' => true));

@@ -114,7 +114,7 @@ class ViewStep2 extends SugarView
 		    }
 
 		    $merge_fields = array();
-            $focusBean = BeanFactory::getBean($module);
+            $focusBean = BeanFactory::newBean($module);
 		    foreach($viewdefs['Connector']['MergeView'][$module] as $field){
 		    	    if($focusBean->field_defs[$field]['type'] == 'relate') {
 		    	       continue;

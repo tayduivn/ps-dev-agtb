@@ -59,7 +59,7 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
 
         if (!empty($this->def['module'])) {
             $this->moduleName = $this->def['module'];
-            $bean = BeanFactory::newBean($this->moduleName);
+            $bean = BeanFactory::getDefinition($this->moduleName);
             if (isset($bean->field_defs[$this->field])) {
                 $this->def = $bean->field_defs[$this->field];
             }

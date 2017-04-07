@@ -36,7 +36,7 @@ if (!empty($_REQUEST['wiz_home_next_step'])) {
 
 
 $prefix = 'wiz_step3_';
-$marketing = BeanFactory::getBean('EmailMarketing');
+$marketing = BeanFactory::newBean('EmailMarketing');
 if (!empty($_REQUEST['record'])) {
     $marketing->retrieve($_REQUEST['record']);
 }

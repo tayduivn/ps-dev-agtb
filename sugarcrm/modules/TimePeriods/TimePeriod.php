@@ -319,7 +319,7 @@ class TimePeriod extends SugarBean
     public static function getCurrentName($type = '')
     {
         if (empty($type)) {
-            $admin = BeanFactory::getBean('Administration');
+            $admin = BeanFactory::newBean('Administration');
             $config = $admin->getConfigForModule('Forecasts', 'base');
             $type = $config['timeperiod_leaf_interval'];
         }
@@ -371,14 +371,14 @@ class TimePeriod extends SugarBean
         $retVal = false;
 
         if (empty($type)) {
-            $admin = BeanFactory::getBean("Administration");
+            $admin = BeanFactory::newBean("Administration");
             $config = $admin->getConfigForModule("Forecasts", "base");
             $type = $config["timeperiod_leaf_interval"];
         }
 
         $sq = new SugarQuery();
         $sq->select(array('id'));
-        $sq->from(BeanFactory::getBean('TimePeriods'))->where()
+        $sq->from(BeanFactory::newBean('TimePeriods'))->where()
             ->equals('type', $type)
             ->lte('start_date_timestamp', $timestamp)
             ->gte('end_date_timestamp', $timestamp);
@@ -386,7 +386,7 @@ class TimePeriod extends SugarBean
         $timeperiod_id = $sq->getOne();
 
         if (!empty($timeperiod_id)) {
-            $tp = BeanFactory::getBean('TimePeriods');
+            $tp = BeanFactory::newBean('TimePeriods');
             $tp->retrieve($timeperiod_id);
 
             $retVal = $tp;
@@ -546,7 +546,7 @@ AND deleted = 0';
 
         $updated = 0;
         while (($id = $stmt->fetchColumn())) {
-            $tp = BeanFactory::getBean('TimePeriods');
+            $tp = BeanFactory::newBean('TimePeriods');
             $tp->retrieve($id);
             $tp->save();
 
@@ -1150,7 +1150,7 @@ AND deleted = 0';
     public static function getByType($type, $id = '')
     {
         if (empty($id)) {
-            return BeanFactory::getBean("{$type}TimePeriods");
+            return BeanFactory::newBean("{$type}TimePeriods");
         }
         return BeanFactory::getBean("{$type}TimePeriods", $id);
     }
@@ -1166,7 +1166,7 @@ AND deleted = 0';
         if (is_null($type)) {
             // fetch the type
             /* @var $admin Administration */
-            $admin = BeanFactory::getBean('Administration');
+            $admin = BeanFactory::newBean('Administration');
             $settings = $admin->getConfigForModule('Forecasts', 'base');
             $type = $settings['timeperiod_leaf_interval'];
             unset($admin, $settings);
@@ -1174,7 +1174,7 @@ AND deleted = 0';
 
         $sq = new SugarQuery();
         $sq->select(array('id'));
-        $sq->from(BeanFactory::getBean('TimePeriods'))->where()
+        $sq->from(BeanFactory::newBean('TimePeriods'))->where()
             ->equals('is_fiscal_year', 0)
             ->equals('type', $type)
             ->lte('start_date_timestamp', $timestamp)

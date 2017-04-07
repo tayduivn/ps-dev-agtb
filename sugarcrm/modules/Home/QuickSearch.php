@@ -370,7 +370,7 @@ class QuickSearchQuery
         $data    = array();
 
         foreach ($args['modules'] as $module) {
-            $focus = BeanFactory::getBean($module);
+            $focus = BeanFactory::newBean($module);
 
             $orderBy = $focus->db->getValidDBName(($args['order_by_name'] && $focus instanceof Person && $args['order'] == 'name') ? 'last_name' : $orderBy);
 

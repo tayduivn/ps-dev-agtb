@@ -607,7 +607,7 @@ class MetaDataFiles
             // We need to preserve state on $module since we'll fall back to it if
             // there is no bean for this module. This can happen when upgrading
             // views for undeployed modules
-            $mod = BeanFactory::getBean($module);
+            $mod = BeanFactory::newBean($module);
 
             if ($mod === null) {
                 // No Bean for this $module, so use the module name
@@ -837,7 +837,7 @@ class MetaDataFiles
             $context = new MetaDataContextDefault();
         }
         foreach ($modules as $module) {
-            $seed = BeanFactory::getBean($module);
+            $seed = BeanFactory::newBean($module);
             $fileList = self::getClientFiles($platforms, $type, $module, $context, $seed);
             $moduleResults = self::getClientFileContents($fileList, $type, $module, $seed);
 
@@ -918,7 +918,7 @@ class MetaDataFiles
                 // is no longer a template file, but a real file.
                 // Use the module_dir if available to support submodules
                 if (!$bean) {
-                    $bean = BeanFactory::getBean($module);
+                    $bean = BeanFactory::newBean($module);
                 }
                 $module_path  = isset($bean->module_dir) ? $bean->module_dir : $module;
                 $checkPaths['custom/modules/'.$module_path.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
@@ -1115,7 +1115,7 @@ class MetaDataFiles
                         // This is a template file, not a real one.
                         require $fileInfo['path'];
                         if (!$bean) {
-                            $bean = BeanFactory::getBean($module);
+                            $bean = BeanFactory::newBean($module);
                         }
                         if ( !is_a($bean,'SugarBean') ) {
                             // I'm not sure what this is, but it's not something we can template

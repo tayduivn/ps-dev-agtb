@@ -241,7 +241,7 @@ class SOAPAPI4Test extends SOAPTestCase
             $this->assertTrue( isset($tmpModEntry['module_key']) );
 
 
-            $mod = BeanFactory::getBean($tmpModEntry['module_key']);
+            $mod = BeanFactory::newBean($tmpModEntry['module_key']);
             $this->assertEquals( $mod->isFavoritesEnabled(), $tmpModEntry['favorite_enabled']);
         }
     }

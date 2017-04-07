@@ -43,7 +43,7 @@ class PMSERelatedDependencyWrapper
     public function __construct()
     {
         $this->logger = PMSELogger::getInstance();
-        $this->relationship = BeanFactory::getBean('Relationships');
+        $this->relationship = BeanFactory::newBean('Relationships');
         $this->relatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
     }
 

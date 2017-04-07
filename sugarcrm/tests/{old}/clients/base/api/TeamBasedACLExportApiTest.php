@@ -79,12 +79,12 @@ class TeamBasedACLExportApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->teamUserIn = SugarTestTeamUtilities::createAnonymousTeam();
         $this->teamUserIn->add_user_to_team($GLOBALS['current_user']->id);
 
-        $this->teamSetUserIn = BeanFactory::getBean('TeamSets');
+        $this->teamSetUserIn = BeanFactory::newBean('TeamSets');
         $this->teamSetUserIn->addTeams(array($this->teamUserIn->id));
 
         $teamUserNot = SugarTestTeamUtilities::createAnonymousTeam();
 
-        $this->teamSetUserNot = BeanFactory::getBean('TeamSets');
+        $this->teamSetUserNot = BeanFactory::newBean('TeamSets');
         $this->teamSetUserNot->addTeams(array($teamUserNot->id));
 
         $this->beanTBA = SugarTestAccountUtilities::createAccount();

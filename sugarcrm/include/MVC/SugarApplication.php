@@ -405,7 +405,7 @@ EOF;
         }
 
 		$authController = AuthenticationController::getInstance();
-		$GLOBALS['current_user'] = BeanFactory::getBean('Users');
+		$GLOBALS['current_user'] = BeanFactory::newBean('Users');
 		if(isset($_SESSION['authenticated_user_id'])){
 			// set in modules/Users/Authenticate.php
 			if(!$authController->sessionAuthenticate()){

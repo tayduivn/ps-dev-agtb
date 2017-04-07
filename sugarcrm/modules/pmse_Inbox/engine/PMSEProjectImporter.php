@@ -72,7 +72,7 @@ class PMSEProjectImporter extends PMSEImporter
      */
     public function __construct()
     {
-        $this->bean = BeanFactory::getBean('pmse_Project');
+        $this->bean = BeanFactory::newBean('pmse_Project');
         $this->dependenciesWrapper = ProcessManager\Factory::getPMSEObject('PMSERelatedDependencyWrapper');
         $this->name = 'name';
         $this->id = 'prj_id';
@@ -317,9 +317,9 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectActivitiesData($activitiesData, $keysArray)
     {
         foreach ($activitiesData as $element) {
-            $activityBean = BeanFactory::getBean('pmse_BpmnActivity');
-            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
-            $definitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition');
+            $activityBean = BeanFactory::newBean('pmse_BpmnActivity');
+            $boundBean = BeanFactory::newBean('pmse_BpmnBound');
+            $definitionBean = BeanFactory::newBean('pmse_BpmActivityDefinition');
 
             list($element, $definition, $bound) = $this->getElementDefinition($element);
 
@@ -389,9 +389,9 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectEventsData($eventsData, $keysArray)
     {
         foreach ($eventsData as $element) {
-            $eventBean = BeanFactory::getBean('pmse_BpmnEvent');
-            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
-            $definitionBean = BeanFactory::getBean('pmse_BpmEventDefinition');
+            $eventBean = BeanFactory::newBean('pmse_BpmnEvent');
+            $boundBean = BeanFactory::newBean('pmse_BpmnBound');
+            $definitionBean = BeanFactory::newBean('pmse_BpmEventDefinition');
 
             list($element, $definition, $bound) = $this->getElementDefinition($element);
 
@@ -461,9 +461,9 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectGatewaysData($gatewaysData, $keysArray)
     {
         foreach ($gatewaysData as $element) {
-            $gatewayBean = BeanFactory::getBean('pmse_BpmnGateway');
-            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
-            $definitionBean = BeanFactory::getBean('pmse_BpmGatewayDefinition');
+            $gatewayBean = BeanFactory::newBean('pmse_BpmnGateway');
+            $boundBean = BeanFactory::newBean('pmse_BpmnBound');
+            $definitionBean = BeanFactory::newBean('pmse_BpmGatewayDefinition');
 
             list($element, $definition, $bound) = $this->getElementDefinition($element);
 
@@ -525,8 +525,8 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectArtifactsData($gatewaysData, $keysArray)
     {
         foreach ($gatewaysData as $element) {
-            $artifactBean = BeanFactory::getBean('pmse_BpmnArtifact');
-            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
+            $artifactBean = BeanFactory::newBean('pmse_BpmnArtifact');
+            $boundBean = BeanFactory::newBean('pmse_BpmnBound');
 
             list($element, $definition, $bound) = $this->getElementDefinition($element);
 
@@ -574,7 +574,7 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectFlowsData($flowsData, $keysArray)
     {
         foreach ($flowsData as $element) {
-            $flowBean = BeanFactory::getBean('pmse_BpmnFlow');
+            $flowBean = BeanFactory::newBean('pmse_BpmnFlow');
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
             $element['dia_id'] = $keysArray['dia_id'];
@@ -647,7 +647,7 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectDynaFormsData($dynaFormsData, $keysArray)
     {
         foreach ($dynaFormsData as $element) {
-            $dynaFormsBean = BeanFactory::getBean('pmse_BpmDynaForm');
+            $dynaFormsBean = BeanFactory::newBean('pmse_BpmDynaForm');
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
             $element['dia_id'] = $keysArray['dia_id'];
@@ -690,8 +690,8 @@ class PMSEProjectImporter extends PMSEImporter
         $field_uid = ''
     ) {
          foreach ($elementsData as $element) {
-            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
-            $elementBean = BeanFactory::getBean($beanType);
+            $boundBean = BeanFactory::newBean('pmse_BpmnBound');
+            $elementBean = BeanFactory::newBean($beanType);
 
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];

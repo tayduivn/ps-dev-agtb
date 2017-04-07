@@ -387,7 +387,7 @@ class PMSEPreProcessor
      */
     protected function getModuleRelatedDependencies($module)
     {
-        $key = BeanFactory::getBean('pmse_BpmRelatedDependency')->getModuleRelatedDependenciesCacheKey($module);
+        $key = BeanFactory::newBean('pmse_BpmRelatedDependency')->getModuleRelatedDependenciesCacheKey($module);
         if (!isset(SugarCache::instance()->$key)) {
             $db = DBManagerFactory::getInstance();
             $result = $db->query("SELECT *
@@ -543,7 +543,7 @@ class PMSEPreProcessor
 
     public function getFlowByCasIdCasIndex($arguments)
     {
-        $tmpBean = BeanFactory::getBean('pmse_BpmFlow');
+        $tmpBean = BeanFactory::newBean('pmse_BpmFlow');
         $q = new SugarQuery();
         $q->select(array('cas_sugar_module', 'cas_sugar_object_id', 'id'));
         $q->from($tmpBean);

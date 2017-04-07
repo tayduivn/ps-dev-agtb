@@ -13,7 +13,7 @@
 // $Id: Save.php 49350 2009-07-08 16:37:37Z eddy $
 
 
-$project = BeanFactory::getBean('ProjectTask');
+$project = BeanFactory::newBean('ProjectTask');
 if(!empty($_POST['record']))
 {
 	$project->retrieve($_POST['record']);

@@ -46,7 +46,7 @@ class SugarJobUpdateRevenueLineItems implements RunnableSchedulerJob
 
         foreach ($keys as $key) {
             /* @var $opp RevenueLineItem */
-            $opp = BeanFactory::getBean('RevenueLineItems');
+            $opp = BeanFactory::newBean('RevenueLineItems');
             $opp->retrieve($key);
             $opp->save(false);
         }
@@ -105,7 +105,7 @@ class SugarJobUpdateRevenueLineItems implements RunnableSchedulerJob
 
         //Create an entry in the job queue to run UpdateOppsJob which handles updating all opportunities
         /* @var $job SchedulersJob */
-        $job = BeanFactory::getBean('SchedulersJobs');
+        $job = BeanFactory::newBean('SchedulersJobs');
         $job->name = "Resave All RevenueLineItems";
         $job->target = "class::SugarJobUpdateRevenueLineItems";
         $job->data = json_encode($data);

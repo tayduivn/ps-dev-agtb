@@ -11,7 +11,7 @@
  */
 require_once('include/formbase.php');
 
-$focus = BeanFactory::getBean('Schedulers');
+$focus = BeanFactory::newBean('Schedulers');
 $focus = populateFromPost('', $focus);
 
 ///////////////////////////////////////////////////////////////////////////////

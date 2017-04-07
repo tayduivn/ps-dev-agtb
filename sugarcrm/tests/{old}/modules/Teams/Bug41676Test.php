@@ -27,7 +27,7 @@ class Bug41676Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->testAccount = SugarTestAccountUtilities::createAccount();        
         $this->testUser->is_admin = false; // ensure non-admin user
 
-        $this->teamSet = BeanFactory::getBean('TeamSets');
+        $this->teamSet = BeanFactory::newBean('TeamSets');
         $this->teamSet->addTeams($this->testUser->getPrivateTeamID());
         
 
@@ -50,7 +50,7 @@ class Bug41676Test extends Sugar_PHPUnit_Framework_TestCase
         $this->testUser->deleted = 1;
         $this->testUser->employee_status = 'Terminated';
         $this->testUser->save();
-        $eapm = BeanFactory::getBean('EAPM');
+        $eapm = BeanFactory::newBean('EAPM');
         $eapm->delete_user_accounts($this->testUser->id); 
         
         //Simulate deleting the team

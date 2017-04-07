@@ -90,7 +90,7 @@ class SugarTestWorksheetUtilities
 
         /* @var $worksheet ForecastWorksheet */
         foreach($ids as $id) {
-            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $worksheet = BeanFactory::newBean('ForecastWorksheets');
             $worksheet->retrieve_by_string_fields(
                 array(
                     'parent_type' => $bean,
@@ -121,7 +121,7 @@ class SugarTestWorksheetUtilities
     public static function loadWorksheetForBean($bean, $isCommit = false, $isDeleted = false)
     {
         /* @var $worksheet ForecastWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $worksheet = BeanFactory::newBean('ForecastWorksheets');
         $worksheet->retrieve_by_string_fields(
             array(
                 'parent_type' => $bean->module_name,

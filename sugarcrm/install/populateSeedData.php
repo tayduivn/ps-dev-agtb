@@ -149,7 +149,7 @@ function createTags($tags_array)
 {
     $tag_ids = array();
     for ($i = 0, $j = count($tags_array); $i < $j; $i++) {
-        $tagBean = BeanFactory::getBean('Tags');
+        $tagBean = BeanFactory::newBean('Tags');
         $tagBean->name = $tags_array[$i];
         $tagBean->save();
         $tag_ids[$tagBean->id] = $tagBean;
@@ -799,7 +799,7 @@ foreach ($sugar_demodata['kbcategories_array'] as $name => $v) {
     $kbCategory = BeanFactory::newBean('Categories');
     $kbCategory->name = $name;
 
-    $KBContent = BeanFactory::getBean('KBContents');
+    $KBContent = BeanFactory::newBean('KBContents');
     $rootCategory = BeanFactory::getBean(
         'Categories',
         $KBContent->getCategoryRoot(),
@@ -814,7 +814,7 @@ foreach ($sugar_demodata['kbcategories_array'] as $name => $v) {
             $kbSubCategory = BeanFactory::newBean('Categories');
             $kbSubCategory->name = $subname;
 
-            $KBSubContent = BeanFactory::getBean('KBContents');
+            $KBSubContent = BeanFactory::newBean('KBContents');
             $rootSubCategory = BeanFactory::getBean(
                 'Categories',
                 $idCategory,

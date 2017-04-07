@@ -118,7 +118,7 @@ class Task extends SugarBean {
 		$this->parent_name = '';
 		global $app_strings, $locale;
 
-		$parent = BeanFactory::getBean($this->parent_type);
+		$parent = BeanFactory::newBean($this->parent_type);
 		if ( empty($parent))
 		{
 			return;

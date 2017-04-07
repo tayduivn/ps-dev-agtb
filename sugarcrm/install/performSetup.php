@@ -514,7 +514,7 @@ require_once('install/createSnipUser.php');
 
 //BEGIN SUGARCRM flav=ent ONLY
 installLog("Converting Opportunities to use RevenueLineItems");
-$admin = BeanFactory::getBean('Administration');
+$admin = BeanFactory::newBean('Administration');
 $admin->saveSetting('Opportunities', 'opps_view_by', 'RevenueLineItems', 'base');
 
 $converter = new OpportunityWithRevenueLineItem();

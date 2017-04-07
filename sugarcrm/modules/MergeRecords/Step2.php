@@ -30,7 +30,7 @@ global $theme;
 $current_module_strings = return_module_language($current_language, 'MergeRecords');
 
 
-$focus = BeanFactory::getBean('MergeRecords');
+$focus = BeanFactory::newBean('MergeRecords');
 $focus->load_merge_bean($_REQUEST['merge_module'], true, $_REQUEST['record']);
 
 $this->bean = $focus->merge_bean;

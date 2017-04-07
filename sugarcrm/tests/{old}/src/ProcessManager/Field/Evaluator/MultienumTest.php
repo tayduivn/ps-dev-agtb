@@ -46,7 +46,7 @@ class MultienumTest extends \Sugar_PHPUnit_Framework_TestCase
     public function hasChangedProvider()
     {
         // Simple bean setup to cover all test cases
-        $bean = \BeanFactory::getBean('Bugs');
+        $bean = \BeanFactory::newBean('Bugs');
         $bean->test1 = '^Test1^,^Test2^,^Test4^';
         $bean->test3 = '^Test1^,^Test2^,^Test4^';
         $bean->test4 = '^Test9^,^Test7^,^Test3^';

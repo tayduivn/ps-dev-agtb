@@ -51,7 +51,7 @@ class SugarFieldPasswordTest extends Sugar_PHPUnit_Framework_TestCase
             'user_hash' => 'this-is-my-password',
         );
 
-        $bean = BeanFactory::getBean('Users');
+        $bean = BeanFactory::newBean('Users');
         $args = array();
         $fieldName = 'user_hash';
         $properties = array();
@@ -74,7 +74,7 @@ class SugarFieldPasswordTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testApiSave()
     {
-        $contactBean = BeanFactory::getBean('Contacts');
+        $contactBean = BeanFactory::newBean('Contacts');
         $contactBean->portal_password = User::getPasswordHash('awesome');
         $currentPassword = $contactBean->portal_password;
 

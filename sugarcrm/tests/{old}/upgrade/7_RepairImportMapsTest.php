@@ -43,7 +43,7 @@ class RepairImportMapsTest extends Sugar_PHPUnit_Framework_TestCase
         $reflectionMethod = $reflectionClass->getMethod('repairImportMap');
         $reflectionMethod->setAccessible(true);
 
-        $importMap = BeanFactory::getBean('Import_1');
+        $importMap = BeanFactory::newBean('Import_1');
 
         $importMap->content = $content;
         $importMap->save(

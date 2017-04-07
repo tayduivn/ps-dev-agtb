@@ -224,7 +224,7 @@ class MetaDataHelper
         // Not filtering the module list here because we are able to add our own
         // checks inside the loop
         foreach ($this->getAllEnabledModules(false) as $module) {
-            $seed = \BeanFactory::getBean($module);
+            $seed = \BeanFactory::newBean($module);
             if ($seed->ACLAccess('ListView', array('user' => $user, 'source' =>
                 'search_engine'))) {
                 $list[] = $module;

@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$role = BeanFactory::getBean('ACLRoles');
+$role = BeanFactory::newBean('ACLRoles');
 if(isset($_REQUEST['record'])){
 	$role->mark_deleted($_REQUEST['record']);
 }

@@ -296,7 +296,7 @@ class SchedulerDaemon extends SugarBean
 
 		while($a = $this->db->fetchByAssoc($r)) {
 			
-			$job = BeanFactory::getBean('SchedulersJobs');
+			$job = BeanFactory::newBean('SchedulersJobs');
 			
 			$paramJob = $a['scheduler_id'];
 			$job->fire($sugar_config['site_url'].'/index.php?entryPoint=schedulers&type=job&job_id='.$paramJob.'&record='.$a['id']);

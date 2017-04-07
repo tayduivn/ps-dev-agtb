@@ -48,7 +48,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
      */
     public function loadConfigArgs() {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
         // decode and json decode the settings from the administration to set the sales stages for closed won and closed lost
@@ -78,7 +78,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $getTargetQuota = (bool)$this->getArg('target_quota');
 
         /* @var $mgr_worksheet ForecastManagerWorksheet */
-        $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $mgr_worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $totals = $mgr_worksheet->worksheetTotals($user_id, $timeperiod_id);
 
         // pull the quota from the worksheet data since we need the draft records if they exist
@@ -88,7 +88,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         // add the target quota to the return data if passed target_quota=true as a param
         if($getTargetQuota) {
             /* @var $quotaBean Quota */
-            $quotaBean = BeanFactory::getBean('Quotas');
+            $quotaBean = BeanFactory::newBean('Quotas');
             $quota = $quotaBean->getRollupQuota($timeperiod_id, $user_id, true);
             $totals['target_quota_amount'] = $quota['amount'];
         }
@@ -149,7 +149,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $repIds = User::getReporteeReps($user_id);
         $mgrIds = User::getReporteeManagers($user_id);
         $arrayLen = 0;
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
         
         $tableName = strtolower($settings['forecast_by']);

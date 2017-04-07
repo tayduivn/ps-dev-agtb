@@ -16,7 +16,7 @@
 
 global $mod_strings;
 
-$focus = BeanFactory::getBean('WorkFlowTriggerShells');
+$focus = BeanFactory::newBean('WorkFlowTriggerShells');
 
 if (empty($_REQUEST['record']))
 {

@@ -1134,7 +1134,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         /** @var SugarQuery $query */
         $query = SugarTestReflection::callProtectedMethod('FilterApi', 'getQueryObject', array(
-            BeanFactory::getBean('Accounts'),
+            BeanFactory::newBean('Accounts'),
             array(
                 'select' => array('name', 'contacts'),
                 'order_by' => array(),
@@ -1202,7 +1202,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetQueryObjectDoesNotSelectLinkFields()
     {
-        $seed = BeanFactory::getBean('Accounts');
+        $seed = BeanFactory::newBean('Accounts');
         /** @var SugarQuery $query */
         $query = SugarTestReflection::callProtectedMethod('FilterApi', 'getQueryObject', array(
             $seed,

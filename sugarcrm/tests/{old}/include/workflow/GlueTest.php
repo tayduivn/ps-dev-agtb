@@ -73,12 +73,12 @@ class GlueTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetCompareText($field, $is_equal, $expected)
     {
-        $workflow = BeanFactory::getBean('WorkFlow');
+        $workflow = BeanFactory::newBean('WorkFlow');
         $workflow->base_module = 'Opportunities';
         $workflow->save();
         $this->toClean['workflow'] = $workflow->id;
 
-        $workflowShell = BeanFactory::getBean('WorkFlowTriggerShells');
+        $workflowShell = BeanFactory::newBean('WorkFlowTriggerShells');
         $workflowShell->parent_id = $workflow->id;
         $workflowShell->field = $field;
         $workflowShell->save();

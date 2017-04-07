@@ -34,7 +34,7 @@ class PMSEEndSendMessageEvent extends PMSEEndEvent
      */
     public function __construct()
     {
-        $this->definitionBean = BeanFactory::getBean('pmse_BpmEventDefinition');
+        $this->definitionBean = BeanFactory::newBean('pmse_BpmEventDefinition');
         parent::__construct();
 
     }

@@ -19,7 +19,7 @@
 
 
 
-$focus = BeanFactory::getBean('CustomQueries');
+$focus = BeanFactory::newBean('CustomQueries');
 
 if(!empty($_REQUEST['record']) && $_REQUEST['record']!=""){
 	$focus->retrieve($_REQUEST['record']);

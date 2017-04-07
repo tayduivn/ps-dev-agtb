@@ -29,7 +29,7 @@ class ForecastWorksheetsApiHelper extends SugarBeanApiHelper
         if ($bean->draft == 0) {
             $sq = new SugarQuery();
             $sq->select('id');
-            $sq->from(BeanFactory::getBean($bean->parent_type))->where()
+            $sq->from(BeanFactory::newBean($bean->parent_type))->where()
                 ->equals('id', $bean->parent_id);
             $beans = $sq->execute();
             if (empty($beans)) {

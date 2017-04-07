@@ -235,7 +235,7 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
 	 */
 	function createUser($name){
 
-			$user = BeanFactory::getBean('Users');
+			$user = BeanFactory::newBean('Users');
 			$user->user_name = $name;
 			foreach($this->ldapUserInfo as $key=>$value){
 				$user->$key = $value;

@@ -96,7 +96,7 @@ if(isset($current_user))
 }
 	
 
-$saved_reports_seed = BeanFactory::getBean('Reports');
+$saved_reports_seed = BeanFactory::newBean('Reports');
 
 //determine the where query for the published reports
 	if (isset($_REQUEST['view']) && $_REQUEST['view']!="all"){
@@ -217,7 +217,7 @@ function schedulePOPUP(id){
 
 <?php
 
-$saved_reports_seed = BeanFactory::getBean('Reports');
+$saved_reports_seed = BeanFactory::newBean('Reports');
 
 $custom_reports_arr = $saved_reports_seed->retrieve_all_by_string_fields($query_arr,$order_by);
 $shownRows = false;

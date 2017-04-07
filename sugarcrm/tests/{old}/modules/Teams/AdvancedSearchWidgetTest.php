@@ -40,7 +40,7 @@ class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->_params['fieldSpan'] = '';
     	$this->_params['formName'] = 'search_form';
     	$this->_params['displayParams'] = array('formName'=>'');
-		$team = BeanFactory::getBean('Accounts');
+		$team = BeanFactory::newBean('Accounts');
 		$fieldDefs = $team->field_defs;
 		$fieldDefs['team_name_advanced'] = $fieldDefs['team_name'];
 		$fieldDefs['team_name_advanced']['name'] = 'team_name_advanced';

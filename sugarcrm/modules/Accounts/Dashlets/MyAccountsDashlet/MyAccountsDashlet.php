@@ -28,7 +28,7 @@ class MyAccountsDashlet extends DashletGeneric {
         $this->searchFields = $dashletData['MyAccountsDashlet']['searchFields'];
         $this->columns = $dashletData['MyAccountsDashlet']['columns'];
 
-        $this->seedBean = BeanFactory::getBean('Accounts');        
+        $this->seedBean = BeanFactory::newBean('Accounts');        
     }
     
     /**

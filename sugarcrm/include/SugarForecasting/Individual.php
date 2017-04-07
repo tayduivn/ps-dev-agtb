@@ -51,7 +51,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
     public function save()
     {
         /* @var $seed ForecastWorksheet */
-        $seed = BeanFactory::getBean("ForecastWorksheets");
+        $seed = BeanFactory::newBean("ForecastWorksheets");
         $seed->loadFromRow($this->args);
         $sfh = new SugarFieldHandler();
 

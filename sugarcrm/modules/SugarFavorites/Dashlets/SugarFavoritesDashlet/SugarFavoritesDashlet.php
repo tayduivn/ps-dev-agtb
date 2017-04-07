@@ -35,7 +35,7 @@ class SugarFavoritesDashlet extends DashletGeneric
         $this->searchFields = $dashletData['SugarFavoritesDashlet']['searchFields'];
         $this->columns = $dashletData['SugarFavoritesDashlet']['columns'];
         $this->isConfigurable = true;
-        $this->seedBean = BeanFactory::getBean('SugarFavorites');   
+        $this->seedBean = BeanFactory::newBean('SugarFavorites');   
         $this->filters = array();
     }
 

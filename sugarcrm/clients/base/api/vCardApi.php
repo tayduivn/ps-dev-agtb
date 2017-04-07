@@ -97,7 +97,7 @@ class vCardApi extends SugarApi
     {
         $this->requireArgs($args, array('module'));
 
-        $bean = BeanFactory::getBean($args['module']);
+        $bean = BeanFactory::newBean($args['module']);
         if (!$bean->ACLAccess('save') || !$bean->ACLAccess('import')) {
             throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
         }

@@ -46,7 +46,7 @@ class RelateTest extends \Sugar_PHPUnit_Framework_TestCase
     protected function getPreparedBean()
     {
         // Simple bean setup to cover all test cases
-        $bean = \BeanFactory::getBean('Bugs');
+        $bean = \BeanFactory::newBean('Bugs');
 
         // Create a mock set of vardefs for this bean
         $defs = array(

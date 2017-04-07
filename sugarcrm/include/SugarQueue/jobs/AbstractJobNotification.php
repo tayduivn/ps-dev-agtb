@@ -71,7 +71,7 @@ abstract class JobNotification
         $sq->select(array('job_group'))
             ->fieldRaw('count(0)', 'total_jobs')
             ->fieldRaw('sum(case when status = \'done\' AND resolution = \'success\' then 1 else 0 END)', 'total_done');
-        $sq->from(BeanFactory::getBean('SchedulersJobs'));
+        $sq->from(BeanFactory::newBean('SchedulersJobs'));
         $sq->where()
             ->equals('job_group', $this->job->job_group);
         $sq->groupBy('job_group');
@@ -133,7 +133,7 @@ abstract class JobNotification
     {
         // create the notification
         /* @var $notification Notifications */
-        $notification = BeanFactory::getBean('Notifications');
+        $notification = BeanFactory::newBean('Notifications');
         $notification->assigned_user_id = $this->job->assigned_user_id;
         $notification->name = $subject;
         $notification->description = $body;

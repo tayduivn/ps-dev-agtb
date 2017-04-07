@@ -167,7 +167,7 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
     public function getForecastConfig()
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         return $admin->getConfigForModule('Forecasts', 'base');
     }
 

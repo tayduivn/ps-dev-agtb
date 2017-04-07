@@ -19,7 +19,7 @@
 
 global $mod_strings;
 
-$focus = BeanFactory::getBean('Emails');
+$focus = BeanFactory::newBean('Emails');
 
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_RCD_NUM_TO_DEL']);

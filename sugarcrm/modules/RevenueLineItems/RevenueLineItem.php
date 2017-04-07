@@ -132,7 +132,7 @@ class RevenueLineItem extends SugarBean
             $this->team_id = 1; // make the item globally accessible
         }
 
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         $this->default_currency_symbol = $currency->getDefaultCurrencySymbol();
     }
 
@@ -291,7 +291,7 @@ class RevenueLineItem extends SugarBean
         if ($settings['is_setup'] && $settings['forecast_by'] === $this->module_name) {
             // save the a draft of each product
             /* @var $worksheet ForecastWorksheet */
-            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $worksheet = BeanFactory::newBean('ForecastWorksheets');
             $worksheet->saveRelatedProduct($this);
             return true;
         }
@@ -426,7 +426,7 @@ class RevenueLineItem extends SugarBean
     public function convertToQuotedLineItem()
     {
         /* @var $product Product */
-        $product = BeanFactory::getBean('Products');
+        $product = BeanFactory::newBean('Products');
         $product->id = create_guid();
         $product->new_with_id = true;
         foreach ($this->getFieldDefinitions() as $field) {

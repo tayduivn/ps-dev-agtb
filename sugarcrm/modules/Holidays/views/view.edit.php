@@ -37,8 +37,8 @@ class HolidaysViewEdit extends ViewEdit
 			
         	$projectBean = BeanFactory::getBean('Project', $_REQUEST['return_id']);
         	
-        	$userBean = BeanFactory::getBean('Users');
-        	$contactBean = BeanFactory::getBean('Contacts');
+        	$userBean = BeanFactory::newBean('Users');
+        	$contactBean = BeanFactory::newBean('Contacts');
         	
         	$projectBean->load_relationship("user_resources");
         	$userResources = $projectBean->user_resources->getBeans($userBean);

@@ -138,7 +138,7 @@ class LogicHook{
 	function call_custom_logic($module_dir, $event, $arguments = array()){
         $origBean = $this->bean;
         if ($origBean === null) {
-            $bean = BeanFactory::getBean($module_dir);
+            $bean = BeanFactory::newBean($module_dir);
             if ($bean instanceOf SugarBean) {
                 $this->setBean($bean);
             }

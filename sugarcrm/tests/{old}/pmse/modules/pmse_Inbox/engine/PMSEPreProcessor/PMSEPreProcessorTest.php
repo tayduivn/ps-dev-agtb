@@ -70,7 +70,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
         $request->setArguments($arguments);
         $request->setType('hook');
 
-        $bean = BeanFactory::getBean('Accounts');
+        $bean = BeanFactory::newBean('Accounts');
         $request->setBean($bean);
 
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
@@ -162,7 +162,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
     public function testGetAllEvents($relatedDependencies, $flows, $expectedCount)
     {
         /** @var pmse_BpmRelatedDependency $relatedDependencyBean */
-        $relatedDependencyBean = BeanFactory::getBean('pmse_BpmRelatedDependency');
+        $relatedDependencyBean = BeanFactory::newBean('pmse_BpmRelatedDependency');
         $relatedDependencyBean->evn_module = 'Accounts';
         $relatedDependencyBean->resetModuleRelatedDependenciesCache();
 
@@ -172,7 +172,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
         $db->addQuerySpy('flows', '/FROM pmse_bpm_flow/i', $flows);
 
         $preProcessor = PMSEPreProcessor::getInstance();
-        $result = $preProcessor->getAllEvents(BeanFactory::getBean('Accounts'));
+        $result = $preProcessor->getAllEvents(BeanFactory::newBean('Accounts'));
 
         $this->assertEquals($expectedCount, count($result));
     }

@@ -27,7 +27,7 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->account = BeanFactory::getBean('Accounts');
+        $this->account = BeanFactory::newBean('Accounts');
     }
 
     public function testSelectFieldsByDefault()
@@ -367,7 +367,7 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
             'in-sub-query' => array(
                 function (SugarQuery_Builder_Where $where) {
                     $subQuery = new SugarQuery();
-                    $subQuery->from(BeanFactory::getBean('Accounts'), array(
+                    $subQuery->from(BeanFactory::newBean('Accounts'), array(
                         'add_deleted' => false,
                         'team_security' => false,
                     ));

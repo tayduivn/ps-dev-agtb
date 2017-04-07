@@ -20,7 +20,7 @@
 
 
 
-$focus = BeanFactory::getBean('Tasks');
+$focus = BeanFactory::newBean('Tasks');
 if (!isset($prefix)) $prefix='';
 
 global $timedate;

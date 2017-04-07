@@ -275,7 +275,7 @@ class Campaign extends SugarBean {
         }
 
 		//get select query from email man
-		$man = BeanFactory::getBean('EmailMan');
+		$man = BeanFactory::newBean('EmailMan');
 		$listquery= $man->create_queue_items_query('',str_replace(array("WHERE","where"),"",$query_array['where']),null,$query_array);
 		return $listquery;
 

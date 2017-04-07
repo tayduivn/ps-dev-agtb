@@ -92,7 +92,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(BeanFactory::getBean('Leads'));
+$javascript->setSugarBean(BeanFactory::newBean('Leads'));
 $javascript->addField('email1','false',$prefix);
 $javascript->addField('email2','false',$prefix);
 $javascript->addRequiredFields($prefix);
@@ -138,7 +138,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(BeanFactory::getBean('Leads'));
+$javascript->setSugarBean(BeanFactory::newBean('Leads'));
 $javascript->addField('email1','false',$prefix);
 $javascript->addField('email2','false',$prefix);
 $javascript->addRequiredFields($prefix);
@@ -198,7 +198,7 @@ return $the_form;
         require_once('include/formbase.php');
 
         if(empty($exist_lead)) {
-            $focus = BeanFactory::getBean('Leads');
+            $focus = BeanFactory::newBean('Leads');
         }
         else {
             $focus = $exist_lead;
@@ -264,7 +264,7 @@ return $the_form;
                 }
 
 
-                $emailAddress = BeanFactory::getBean('EmailAddresses');
+                $emailAddress = BeanFactory::newBean('EmailAddresses');
                 $get .= $emailAddress->getFormBaseURL($focus);
 
                 $get .= get_teams_url('Leads');

@@ -37,7 +37,7 @@ class SugarWidgetReportFieldTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user', array(true, false));
         parent::setUp();
 
-        $this->bean = BeanFactory::getBean('Contacts');
+        $this->bean = BeanFactory::newBean('Contacts');
         $this->bean->id = create_guid();
         $this->bean->new_with_id = true;
         $this->bean->save();

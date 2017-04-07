@@ -20,7 +20,7 @@
 $past_remove = false;
 
 
-$focus = BeanFactory::getBean('WorkFlowTriggerShells');
+$focus = BeanFactory::newBean('WorkFlowTriggerShells');
 
 
 if(!empty($_POST['record']) && $_POST['record']!=""){
@@ -65,7 +65,7 @@ foreach($focus->additional_column_fields as $field)
 			$base_id = "";	
 		}
 
-		$base_object = BeanFactory::getBean('Expressions');
+		$base_object = BeanFactory::newBean('Expressions');
 				
 		if(!empty($base_id) && $base_id!=""){
 			$base_object->retrieve($base_id);

@@ -50,7 +50,7 @@ class QuotesRepairQuoteAndProductBundlesTest extends UpgradeTestCase
      */
     public function testFixQuotesAndProductBundles($productData, $shippingValue, $expected)
     {
-        $this->taxRate = BeanFactory::getBean('TaxRates');
+        $this->taxRate = BeanFactory::newBean('TaxRates');
         $this->taxRate->name = 'Bug66795Test TaxRate';
         $this->taxRate->value = 10;
         $this->taxRate->save();

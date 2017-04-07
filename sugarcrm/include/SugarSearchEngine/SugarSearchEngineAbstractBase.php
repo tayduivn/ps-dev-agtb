@@ -59,7 +59,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      */
     public static function markSearchEngineStatus($isDown = true)
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('info', 'fts_down', $isDown? 1: 0);
     }
 }

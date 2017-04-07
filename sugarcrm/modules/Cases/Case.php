@@ -182,7 +182,7 @@ class aCase extends Basic
             $query.=' '.$qstring;
         }
         $temp = array('id', 'first_name', 'last_name', 'title', 'email1', 'phone_work', 'case_role', 'case_rel_id');
-        return $this->build_related_list2($query, BeanFactory::getBean('Contacts'), $temp);
+        return $this->build_related_list2($query, BeanFactory::newBean('Contacts'), $temp);
     }
 
     function get_list_view_data()

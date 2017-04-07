@@ -42,7 +42,7 @@ class MyMeetingsDashlet extends DashletGeneric {
                                               'related_fields' => array('status'));*/
         $this->hasScript = true;  // dashlet has javascript attached to it                
 
-        $this->seedBean = BeanFactory::getBean('Meetings');
+        $this->seedBean = BeanFactory::newBean('Meetings');
         $this->seedBean->disable_row_level_security = true;
     }
 

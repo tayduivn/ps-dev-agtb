@@ -91,7 +91,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
         $timezone
     ) {
         // Setup Fiscal Start Date
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'timeperiod_start_date', $startDate, 'base');
 
 
@@ -125,7 +125,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
     public function testDateFiscalQueryGroupBy($startDate, $timezone, $expected, $reportDef)
     {
         // Setup Fiscal Start Date
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'timeperiod_start_date', $startDate, 'base');
 
         $GLOBALS['current_user']->setPreference('timezone', $timezone);
@@ -164,7 +164,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
     public function testDateTimeFiscalQueryGroupBy($startDate, $timezone, $expected, $reportDef)
     {
         // Setup Fiscal Start Date
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'timeperiod_start_date', $startDate, 'base');
 
         $GLOBALS['current_user']->setPreference('timezone', $timezone);

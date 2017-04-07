@@ -59,7 +59,7 @@ class ViewSugarFieldCollection{
      * call retrieve values()
      */
     function setup(){
-        $rel = BeanFactory::getBean('Relationships');
+        $rel = BeanFactory::newBean('Relationships');
         if(!empty($this->vardef['relationship'])){
         	$rel->retrieve_by_name($this->vardef['relationship']);
         }

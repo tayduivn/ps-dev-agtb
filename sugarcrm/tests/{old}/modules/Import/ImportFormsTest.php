@@ -136,7 +136,7 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $html = getControl('Opportunities','currency_id');
 
-        $focus = BeanFactory::getBean('Opportunities');
+        $focus = BeanFactory::newBean('Opportunities');
 
 
         $string = str_ireplace('</select>','<option value="">'.$app_strings['LBL_NONE'].'</option></select>',getCurrencyDropDown($focus, 'currency_id', '', 'EditView'));

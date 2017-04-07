@@ -14,7 +14,7 @@
 global $current_user;
 
 
-$focus = BeanFactory::getBean('Emails');
+$focus = BeanFactory::newBean('Emails');
 // Get Group User IDs
 $groupUserQuery = 'SELECT name, group_id FROM inbound_email ie INNER JOIN users u ON (ie.group_id = u.id AND u.is_group = 1)';
 $groupUserQuery = 'SELECT group_id FROM inbound_email ie';

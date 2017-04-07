@@ -36,8 +36,8 @@ class HTTP_WebDAV_Server_vCal extends HTTP_WebDAV_Server
 
     public function __construct()
         {
-           $this->vcal_focus = BeanFactory::getBean('vCals');
-           $this->user_focus = BeanFactory::getBean('Users');
+           $this->vcal_focus = BeanFactory::newBean('vCals');
+           $this->user_focus = BeanFactory::newBean('Users');
         }
 
 

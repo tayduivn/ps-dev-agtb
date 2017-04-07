@@ -19,7 +19,7 @@ function perform_save($focus)
     $app_list_strings = return_app_list_strings_language($current_language);
 
     /* @var $admin Administration */
-    $admin = BeanFactory::getBean('Administration');
+    $admin = BeanFactory::newBean('Administration');
     $settings = $admin->getConfigForModule('Forecasts');
 
     // if any of the case fields are NULL or an empty string set it to the amount from the main opportunity

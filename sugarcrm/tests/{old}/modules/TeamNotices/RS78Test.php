@@ -28,7 +28,7 @@ class RS78Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user', array(true, false));
 
-        $this->bean = BeanFactory::getBean('TeamNotices');
+        $this->bean = BeanFactory::newBean('TeamNotices');
         $this->bean->name = 'RS78Test';
         $this->bean->description = 'RS78TestDesc';
         $this->bean->save();

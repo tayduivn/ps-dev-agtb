@@ -116,7 +116,7 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
     public function hasValidRelationship($bean, $flowData)
     {
         // We don't need the entire retrieved bean for this operation...
-        $seedBean = BeanFactory::getBean($flowData['cas_sugar_module']);
+        $seedBean = BeanFactory::newBean($flowData['cas_sugar_module']);
 
         // We just need the ID to be able to check relationships
         $seedBean->id = $flowData['cas_sugar_object_id'];

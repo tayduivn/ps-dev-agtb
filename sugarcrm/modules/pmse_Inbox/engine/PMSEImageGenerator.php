@@ -156,7 +156,7 @@ class PMSEImageGenerator
     private function get_project_diagrams($prj_id, $show_deleted = 0)
     {
         if (!empty($prj_id)) {
-            $diagramBean = BeanFactory::getBean('pmse_BpmnDiagram');
+            $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram');
             $rows = $diagramBean->get_full_list("", "prj_id = '{$prj_id}'", false, $show_deleted);
             $response = array();
             //Retrieve Shapes of diagrams
@@ -310,7 +310,7 @@ class PMSEImageGenerator
 
     private function get_project_flow($prj_id, $dia_id)
     {
-        $flowBean = BeanFactory::getBean('pmse_BpmnFlow');
+        $flowBean = BeanFactory::newBean('pmse_BpmnFlow');
         $rows = $flowBean->get_full_list("", "prj_id = '{$prj_id}' AND dia_id = '{$dia_id}'");
         $data = array();
         foreach ($rows as $row) {

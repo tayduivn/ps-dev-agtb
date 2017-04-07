@@ -281,7 +281,7 @@ class SugarSpot
                 continue;
             }
 
-            $seed = BeanFactory::getBean($moduleName);
+            $seed = BeanFactory::newBean($moduleName);
             if(!$seed->ACLAccess('ListView')) continue;
 
             foreach ($searchFields[$moduleName] as $k => $v) 

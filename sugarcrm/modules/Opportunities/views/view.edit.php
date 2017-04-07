@@ -39,7 +39,7 @@ class OpportunitiesViewEdit extends ViewEdit
             $prePopProb = 'document.getElementsByName(\'sales_stage\')[0].onchange();';
         }
 
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
         $wonStages = $json->encode($settings['sales_stage_won']);
 

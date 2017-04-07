@@ -192,7 +192,7 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
     public function testSetACL()
     {
-        $acct = BeanFactory::getBean('Accounts');
+        $acct = BeanFactory::newBean('Accounts');
         $this->assertTrue($acct->ACLAccess('edit'));
 
         $rejectacl = $this->createMock('SugarACLStatic');

@@ -129,7 +129,7 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
     {
         static $opp;
         if (!isset($opp)) {
-            $opp = BeanFactory::getBean('Opportunities');
+            $opp = BeanFactory::newBean('Opportunities');
         }
         return $opp->getClosedStages();
     }

@@ -39,7 +39,7 @@ switch($_REQUEST['adminAction']) {
 			}
 
 			foreach($options as $module) {
-			    $bean = BeanFactory::getBean($module);
+			    $bean = BeanFactory::newBean($module);
 			    if(empty($bean)) continue;
 
 				$q = "SELECT count(*) as count FROM {$bean->table_name}";
@@ -58,7 +58,7 @@ switch($_REQUEST['adminAction']) {
 				$toRepair[$module] = $ids;
 			}
 		} elseif(in_array($target, $moduleList)) {
-		    $bean = BeanFactory::getBean($target);
+		    $bean = BeanFactory::newBean($target);
 			$q = "SELECT count(*) as count FROM {$bean->table_name}";
 			$r = $bean->db->query($q);
 			$a = $bean->db->fetchByAssoc($r);

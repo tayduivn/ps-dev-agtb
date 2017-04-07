@@ -46,7 +46,7 @@ class SugarUpgradeOpportunityWithRevenueLineItems extends UpgradeScript
             // the new hotness
             $this->fixRollupFormulas();
 
-            $admin = BeanFactory::getBean('Administration');
+            $admin = BeanFactory::newBean('Administration');
             $admin->saveSetting('Opportunities', 'opps_view_by', 'RevenueLineItems', 'base');
             Opportunity::getSettings(true);
         }
@@ -69,7 +69,7 @@ class SugarUpgradeOpportunityWithRevenueLineItems extends UpgradeScript
         SugarAutoLoader::load('modules/ModuleBuilder/parsers/StandardField.php');
 
         // we are working with opportunities
-        $bean = BeanFactory::getBean('Opportunities');
+        $bean = BeanFactory::newBean('Opportunities');
 
         // loop over each field
         foreach ($fields as $field => $rollup_field) {

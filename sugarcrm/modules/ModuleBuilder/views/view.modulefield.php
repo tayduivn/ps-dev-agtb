@@ -102,7 +102,7 @@ class ViewModulefield extends SugarView
         if(empty($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
             $moduleName = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
             $objectName = BeanFactory::getObjectName($moduleName);
-            $module = BeanFactory::getBean($moduleName);
+            $module = BeanFactory::newBean($moduleName);
 
             VardefManager::loadVardef($moduleName, $objectName,true);
             global $dictionary;

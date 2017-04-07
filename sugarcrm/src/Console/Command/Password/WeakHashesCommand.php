@@ -116,7 +116,7 @@ class WeakHashesCommand extends Command implements InstanceModeInterface
     protected function getUserHashes()
     {
         $q = new SugarQuery();
-        $q->from(BeanFactory::getBean('Users'));
+        $q->from(BeanFactory::newBean('Users'));
         $q->select(array(
             'id',
             'user_name',

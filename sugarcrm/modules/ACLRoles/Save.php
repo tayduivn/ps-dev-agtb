@@ -13,7 +13,7 @@
 
 
 /** @var ACLRole $role */
-$role = BeanFactory::getBean('ACLRoles');
+$role = BeanFactory::newBean('ACLRoles');
 //BEGIN SUGARCRM flav=ent ONLY
 $tbaConfigurator = new TeamBasedACLConfigurator();
 //END SUGARCRM flav=ent ONLY

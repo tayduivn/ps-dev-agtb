@@ -45,7 +45,7 @@ class TimePeriodsCurrentApiTest extends Sugar_PHPUnit_Framework_TestCase
         $db->query('UPDATE timeperiods SET deleted = 1');
 
         //setup forecast admin settings for timeperiods to be able to play nice in the suite
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         self::$forecastConfigSettings[3]['timeperiod_start_date']['value'] = TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1)->asDbDate(false);
         foreach(self::$forecastConfigSettings as $config)

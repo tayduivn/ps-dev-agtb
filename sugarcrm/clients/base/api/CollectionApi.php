@@ -517,7 +517,7 @@ abstract class CollectionApi extends SugarApi
         $sourceData = array();
         foreach ($definition->getSources() as $source) {
             $moduleName = $definition->getSourceModuleName($source);
-            $bean = BeanFactory::getBean($moduleName);
+            $bean = BeanFactory::newBean($moduleName);
             if ($definition->hasFieldMap($source)) {
                 $fieldMap = $definition->getFieldMap($source);
             } else {

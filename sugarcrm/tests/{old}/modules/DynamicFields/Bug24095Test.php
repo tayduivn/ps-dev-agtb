@@ -37,7 +37,7 @@ class Bug24095Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testDynamicFieldsRetrieveWorks()
     {
-        $bean = BeanFactory::getBean('Accounts');
+        $bean = BeanFactory::newBean('Accounts');
         $bean->id = '12345';
         $bean->custom_fields->retrieve();
         $this->assertEquals($bean->foo_c, '67890');

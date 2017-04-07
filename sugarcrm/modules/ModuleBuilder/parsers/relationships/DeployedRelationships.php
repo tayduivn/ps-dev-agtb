@@ -172,7 +172,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
      */
     protected function identifySubpanel($thisModuleName, $sourceModuleName)
     {
-        $bean = BeanFactory::getBean($thisModuleName);
+        $bean = BeanFactory::newBean($thisModuleName);
         if (empty($bean)) {
             return null;
         }
@@ -208,7 +208,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
 
     static private function identifyRelateField ($thisModuleName , $sourceModuleName)
     {
-        $module = BeanFactory::getBean($thisModuleName);
+        $module = BeanFactory::newBean($thisModuleName);
         if(empty($module)) {
             return null;
         }

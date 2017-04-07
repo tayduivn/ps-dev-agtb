@@ -485,7 +485,7 @@ class aSubPanel
 		$module_name = $this->get_module_name () ;
 		if (! empty ( $module_name ))
 		{
-		    $this->template_instance = BeanFactory::getBean($module_name);
+		    $this->template_instance = BeanFactory::newBean($module_name);
 		    if(empty($this->template_instance)) {
 		        $GLOBALS['log']->fatal("Bad module name for subpanel: $module_name");
 		        return null;
@@ -839,7 +839,7 @@ class SubPanelDefinitions
 		//iterate through modules and build subpanel array
 		foreach($modules_to_check as $mod_name){
 
-		    $bean_class = BeanFactory::getBean($mod_name);
+		    $bean_class = BeanFactory::newBean($mod_name);
             if(empty($bean_class)) continue;
 
 			//create new subpanel definition instance and get list of tabs
@@ -871,7 +871,7 @@ class SubPanelDefinitions
 	 */
     public static function set_hidden_subpanels($panels)
     {
-		$administration = BeanFactory::getBean('Administration');
+		$administration = BeanFactory::newBean('Administration');
 		$serialized = base64_encode(serialize($panels));
 		$administration->saveSetting('MySettings', 'hide_subpanels', $serialized);
         // Allow the hidden subpanel cache to refresh

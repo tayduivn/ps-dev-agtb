@@ -79,11 +79,11 @@ class CreateDefaultTeamsTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
 	public function providerTeamName(){
-		$team1 = BeanFactory::getBean('Teams');
+		$team1 = BeanFactory::newBean('Teams');
     	$team1->name = 'Will';
     	$team1->name_2 = 'Westin';
     	
-    	$team2 = BeanFactory::getBean('Teams');
+    	$team2 = BeanFactory::newBean('Teams');
     	$team2->name = 'Will';
  		
         return array(

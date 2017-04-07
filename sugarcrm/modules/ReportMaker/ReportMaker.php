@@ -189,7 +189,7 @@ class ReportMaker extends SugarBean {
 					 where $this->rel_dataset.report_id='$this->id'
 					 AND $this->rel_dataset.deleted=0 ".$orderBy;
 
-		return $this->build_related_list($query, BeanFactory::getBean('DataSets'));
+		return $this->build_related_list($query, BeanFactory::newBean('DataSets'));
 	//end get_data_sets
 	}
 

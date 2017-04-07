@@ -40,7 +40,7 @@ class ResaveRelatedBeansTest extends Sugar_PHPUnit_Framework_TestCase
         SugarRelationship::addToResaveList($account);
 
         // Now update some data for the account
-        $account = BeanFactory::getBean('Accounts');
+        $account = BeanFactory::newBean('Accounts');
         $account->id = $this->id;
         $account->name = 'New Name';
         $account->save();

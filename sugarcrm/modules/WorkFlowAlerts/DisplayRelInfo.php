@@ -16,7 +16,7 @@ global $beanList;
 
 
 
-$seed_object = BeanFactory::getBean('WorkFlowAlertShells');
+$seed_object = BeanFactory::newBean('WorkFlowAlertShells');
 
 if(!empty($_REQUEST['parent_id']) && $_REQUEST['parent_id']!="") {
     $seed_object->retrieve($_REQUEST['parent_id']);
@@ -26,7 +26,7 @@ if(!empty($_REQUEST['parent_id']) && $_REQUEST['parent_id']!="") {
 	sugar_die("You shouldn't be here");	
 }
 
-$focus = BeanFactory::getBean('WorkFlowAlerts');
+$focus = BeanFactory::newBean('WorkFlowAlerts');
 if(!empty($_REQUEST['record']) && $_REQUEST['record']!="") {
 	$focus->retrieve($_REQUEST['record']);
 }	

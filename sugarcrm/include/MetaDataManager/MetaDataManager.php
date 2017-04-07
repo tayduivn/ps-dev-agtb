@@ -552,7 +552,7 @@ class MetaDataManager
      */
     public function getSubpanelDefs($moduleName)
     {
-        $parent_bean = BeanFactory::getBean($moduleName);
+        $parent_bean = BeanFactory::newBean($moduleName);
         //Hack to allow the SubPanelDefinitions class to check the correct module dir
         if (!$parent_bean) {
             $parent_bean = (object) array('module_dir' => $moduleName);
@@ -846,7 +846,7 @@ class MetaDataManager
     public function getModuleConfig($moduleName)
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
 
         return $admin->getConfigForModule($moduleName, $this->platforms[0]);
     }
@@ -2076,7 +2076,7 @@ class MetaDataManager
             $configs['analytics'] = array('enabled' => false);
         }
 
-        $caseBean = BeanFactory::getBean('Cases');
+        $caseBean = BeanFactory::newBean('Cases');
         if(!empty($caseBean)) {
             $configs['inboundEmailCaseSubjectMacro'] = $caseBean->getEmailSubjectMacro();
         }
@@ -2494,7 +2494,7 @@ class MetaDataManager
         // construct time, so hand it an admin bean. This returns a list of
         // hidden subpanels in lowercase module name form:
         // array('accounts', 'bugs', 'contacts');
-        $spd = new SubPanelDefinitions(BeanFactory::getBean('Administration'));
+        $spd = new SubPanelDefinitions(BeanFactory::newBean('Administration'));
         return array_values($spd->get_hidden_subpanels());
     }
 
@@ -4043,7 +4043,7 @@ class MetaDataManager
             return array();
         }
 
-        $roleSet = BeanFactory::getBean('ACLRoleSets');
+        $roleSet = BeanFactory::newBean('ACLRoleSets');
         $query = new SugarQuery();
         $query->distinct(true);
         $query->from($roleSet);
@@ -4063,7 +4063,7 @@ class MetaDataManager
      */
     protected static function getAllRoleSets()
     {
-        $roleSet = BeanFactory::getBean('ACLRoleSets');
+        $roleSet = BeanFactory::newBean('ACLRoleSets');
         //Verify that rolesets are operable before attempting to use them.
         if (empty($roleSet)) {
             return array();

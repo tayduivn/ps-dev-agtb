@@ -53,7 +53,7 @@ class Bug64650Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testFavorite()
     {
-        $bean = BeanFactory::getBean('Accounts');
+        $bean = BeanFactory::newBean('Accounts');
 
         $where = $bean->table_name . ".id = '{$this->account->id}'";
         $query = $bean->create_new_list_query('id', $where, array(), array(

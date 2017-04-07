@@ -467,7 +467,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_ifs->default_locale_name_format = 'l f';
 
-        $focus = BeanFactory::getBean('Contacts');
+        $focus = BeanFactory::newBean('Contacts');
 
         $this->_ifs->fullname('Bar Foo',array(),$focus);
 
@@ -479,7 +479,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_ifs->default_locale_name_format = 'f l';
 
-        $focus = BeanFactory::getBean('Contacts');
+        $focus = BeanFactory::newBean('Contacts');
 
         $this->_ifs->fullname('Bar Foo',array(),$focus);
 
@@ -542,12 +542,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testParent()
     {
         $account_name = 'test case account'.date("YmdHis");
-        $focus = BeanFactory::getBean('Accounts');
+        $focus = BeanFactory::newBean('Accounts');
         $focus->name = $account_name;
         $focus->save();
         $account_id = $focus->id;
 
-        $focus = BeanFactory::getBean('Contacts');
+        $focus = BeanFactory::newBean('Contacts');
         $vardef = array(
           'required' => false,
           'source' => 'non-db',
@@ -586,12 +586,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRelate()
     {
         $account_name = 'test case account'.date("YmdHis");
-        $focus = BeanFactory::getBean('Accounts');
+        $focus = BeanFactory::newBean('Accounts');
         $focus->name = $account_name;
         $focus->save();
         $account_id = $focus->id;
 
-        $focus = BeanFactory::getBean('Contacts');
+        $focus = BeanFactory::newBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
 			'rname' => 'name',
@@ -623,7 +623,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $account_name = 'test case account'.date("YmdHis");
 
-        $focus = BeanFactory::getBean('Contacts');
+        $focus = BeanFactory::newBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
 			'rname' => 'name',
@@ -670,7 +670,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $account_name = 'test case account'.date("YmdHis");
 
-        $focus = BeanFactory::getBean('Contacts');
+        $focus = BeanFactory::newBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
 			'rname' => 'name',
@@ -716,7 +716,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $account_name = 'test case account'.date("YmdHis");
 
-        $focus = BeanFactory::getBean('Contacts');
+        $focus = BeanFactory::newBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
 			'id_name' => 'account_id',
@@ -812,7 +812,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRelateDoNotCreateRecordIfRelatedModuleIsUsers()
     {
         $account_name = 'test case account'.date("YmdHis");
-        $focus = BeanFactory::getBean('Users');
+        $focus = BeanFactory::newBean('Users');
         $vardef = array (
             'name' => 'account_name',
             'rname' => 'name',
@@ -904,7 +904,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $account_name = 'test case account'.date("YmdHis");
 
-        $focus = BeanFactory::getBean('Contacts');
+        $focus = BeanFactory::newBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
 			'rname' => 'name',

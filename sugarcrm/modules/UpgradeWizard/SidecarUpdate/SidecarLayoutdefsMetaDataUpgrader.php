@@ -203,7 +203,7 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             return true;
         }
 
-        $bean = BeanFactory::getBean($this->module);
+        $bean = BeanFactory::newBean($this->module);
         $newdefs = array();
         $allNewDefs = array();
 

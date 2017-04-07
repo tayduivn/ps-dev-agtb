@@ -18,7 +18,7 @@
 
 
 
-$workflow = BeanFactory::getBean('WorkFlow');
+$workflow = BeanFactory::newBean('WorkFlow');
 if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['record_id']))
 {
 	$alert_shell = BeanFactory::getBean('WorkFlowAlertShells', $_REQUEST['record_id']);

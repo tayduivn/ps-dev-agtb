@@ -990,7 +990,7 @@ class HealthCheckScanner
         while ($row = $this->db->fetchByAssoc($result, false)) {
             $lockedFields = json_decode(html_entity_decode($row['pro_locked_variables']));
             if ($lockedFields) {
-                $bean = BeanFactory::getBean($row['pro_module']);
+                $bean = BeanFactory::newBean($row['pro_module']);
                 $checkDuration = in_array($row['pro_module'], $durationModules);
                 // tally the locked fields in each group
                 $locked = [];
@@ -1532,7 +1532,7 @@ class HealthCheckScanner
         // but is different from the target module...
         if ($tModule != $aModule) {
             // Start with the target module bean
-            $bean = BeanFactory::getBean($tModule);
+            $bean = BeanFactory::newBean($tModule);
 
             // See if there is a corresponding field for this module
             if (isset($bean->field_defs[$aModule])) {
@@ -1550,7 +1550,7 @@ class HealthCheckScanner
                             return $rModule;
                         }
 
-                        return BeanFactory::getBean($rModule);
+                        return BeanFactory::newBean($rModule);
                     } else {
                         $this->log("Could not load relationship for link field $aModule on {$bean->module_dir}");
                     }
@@ -1563,7 +1563,7 @@ class HealthCheckScanner
                         return $rModule;
                     }
 
-                    return BeanFactory::getBean($rModule);
+                    return BeanFactory::newBean($rModule);
                 }
             }
         }
@@ -1580,7 +1580,7 @@ class HealthCheckScanner
         }
 
         // If we didn't make it into the conditional, build the bean here
-        return BeanFactory::getBean($tModule);
+        return BeanFactory::newBean($tModule);
     }
 
     /**
@@ -1878,7 +1878,7 @@ class HealthCheckScanner
             $data = $this->getParsedBusinessRuleData($row['definition']);
             foreach ($data['scan'] as $type => $rows) {
                 foreach ($rows as $row) {
-                    $bean = BeanFactory::getBean($row['module']);
+                    $bean = BeanFactory::newBean($row['module']);
                     $field = $row['field'];
                     if ($bean) {
                         if (isset($bean->field_defs[$field])) {
@@ -2030,7 +2030,7 @@ class HealthCheckScanner
         );
 
         // We are going to need the bean for the target module, so get that
-        $bean = BeanFactory::getBean($data['base_module']);
+        $bean = BeanFactory::newBean($data['base_module']);
 
         // Since we are going to be checking read and write ops, we need to
         // make sure we have both of these values
@@ -2254,7 +2254,7 @@ class HealthCheckScanner
             return false;
         }
 
-        $seed = BeanFactory::getBean($module);
+        $seed = BeanFactory::newBean($module);
         if (empty($seed)) {
             $this->log("Failed to instantiate bean for $module, not checking table");
             return false;
@@ -4093,7 +4093,7 @@ ENDP;
             $this->log("Failed to load vardefs for $module:$object");
             return true;
         }
-        $seed = BeanFactory::getBean($module);
+        $seed = BeanFactory::newBean($module);
         if (empty($seed)) {
             $this->log("Failed to instantiate bean for $module, not checking vardefs");
             return true;

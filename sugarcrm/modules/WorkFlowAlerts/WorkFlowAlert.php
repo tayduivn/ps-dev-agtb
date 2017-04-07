@@ -233,7 +233,7 @@ function get_rel_module($base_module, $var_rel_name){
 	
 	//get the vardef fields relationship name
 	//get the base_module bean
-	$module_bean = BeanFactory::getBean($base_module);
+	$module_bean = BeanFactory::newBean($base_module);
 	$rel_name = Relationship::retrieve_by_modules($var_rel_name, $this->base_module, $GLOBALS['db']);
 	if(!empty($module_bean->field_defs[$rel_name])){
 		$var_rel_name = $rel_name;
@@ -271,7 +271,7 @@ function handleFilterSave($prefix, $target_vardef_field, $target_rel_type){
 	} else {
 		$rel_filter_id = "";
 	}
-	$rel_object = BeanFactory::getBean('Expressions');
+	$rel_object = BeanFactory::newBean('Expressions');
 
 	//Checked if there is an advanced filter
 	if($this->$target_rel_type!="filter"){

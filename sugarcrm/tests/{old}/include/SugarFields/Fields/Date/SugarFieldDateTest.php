@@ -37,7 +37,7 @@ class SugarFieldDateTest extends Sugar_PHPUnit_Framework_TestCase
         $dbDate = $timedate->asDbDate($now);
 
         $expectedTime = $timedate->to_display_date($db->fromConvert($dbDate, 'date'));
-        $obj = BeanFactory::getBean('Opportunities');
+        $obj = BeanFactory::newBean('Opportunities');
         $obj->date_closed = $isoDate;
 
         $vardef = $obj->field_defs['date_closed'];

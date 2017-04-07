@@ -24,8 +24,8 @@ class AddTeamsTest extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function setUp()
 	{
-		$this->teamSets = BeanFactory::getBean('TeamSets');
-		$this->anotherTeamSets = BeanFactory::getBean('TeamSets');
+		$this->teamSets = BeanFactory::newBean('TeamSets');
+		$this->anotherTeamSets = BeanFactory::newBean('TeamSets');
 		$this->teamIds[] = '8744c7d9-9e4b-2338-cb76-4ab0a3d0a65f';
 		$this->teamIds[] = '8749a110-1d85-4562-fa23-4ab0a3c65e16';
 		$this->teamIds[] = '874c1242-4645-898d-238a-4ab0a3f7e7c1';

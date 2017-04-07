@@ -133,7 +133,7 @@ class ConnectorsController extends SugarController {
 		    require_once('include/connectors/utils/ConnectorUtils.php');
             $searchdefs = ConnectorUtils::getSearchDefs();
 			$merge_module = $this->request->getValidInputRequest('merge_module', 'Assert\Mvc\ModuleName', '');
-			$seed = BeanFactory::getBean($merge_module);
+			$seed = BeanFactory::newBean($merge_module);
 			$_searchDefs = isset($searchdefs) ? $searchdefs : array();
 			$_trueFields = array();
 			$source = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');

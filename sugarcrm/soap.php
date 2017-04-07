@@ -15,6 +15,7 @@ require_once('include/entryPoint.php');
 require_once('include/utils/file_utils.php');
 ob_start();
 
+require 'soap/SoapErrorDefinitions.php';
 require_once('vendor/nusoap//nusoap.php');
 //ignore notices
 error_reporting(E_ALL ^ E_NOTICE);

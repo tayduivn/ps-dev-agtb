@@ -27,7 +27,7 @@ global $import_file_name, $theme;$app_list_strings;
 if (!empty($_REQUEST['lead_id'])) {
     $lead = BeanFactory::getBean('Leads',$_REQUEST['lead_id']);
 } else {
-    $lead = BeanFactory::getBean('Leads');
+    $lead = BeanFactory::newBean('Leads');
 }
 $fields = array();
 
@@ -226,7 +226,7 @@ $xtpl->assign("ASSIGNED_USER_ID", $lead->assigned_user_id );
 $xtpl->assign("REDIRECT_URL_DEFAULT",'http://');
 
 //required fields on Webtolead form
-$campaign = BeanFactory::getBean('Campaigns');
+$campaign = BeanFactory::newBean('Campaigns');
 
 $javascript = new javascript();
 $javascript->setFormName('WebToLeadCreation');

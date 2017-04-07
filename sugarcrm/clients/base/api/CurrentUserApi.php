@@ -484,7 +484,7 @@ class CurrentUserApi extends SugarApi
     {
         global $locale;
         
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         $currency_id = $user->getPreference('currency', $category);
         $currency->retrieve($currency_id);
         $return['currency_id'] = $currency->id;

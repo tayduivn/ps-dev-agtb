@@ -39,7 +39,7 @@ if(!empty($_REQUEST['clear_query']) && $_REQUEST['clear_query'] == 'true')
 
 $json = getJSONobj();
 
-$seedProject = BeanFactory::getBean('Project'); // seed bean
+$seedProject = BeanFactory::newBean('Project'); // seed bean
 $searchForm = new SearchForm('Project', $seedProject); // new searchform instance
 
 // setup listview smarty

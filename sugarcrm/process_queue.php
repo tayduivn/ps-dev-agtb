@@ -44,7 +44,7 @@ global $report_modules,
 
 $queue = new SugarJobQueue();
 foreach ($reportsToEmail as $scheduleInfo) {
-    $job = BeanFactory::getBean('SchedulersJobs');
+    $job = BeanFactory::newBean('SchedulersJobs');
     $job->name = 'Send Scheduled Report ' . $scheduleInfo['report_id'];
     $job->assigned_user_id = $scheduleInfo['user_id'];
     $job->target = 'class::SugarJobSendScheduledReport';

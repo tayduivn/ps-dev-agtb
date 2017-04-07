@@ -32,7 +32,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$focus = BeanFactory::getBean('WorkFlowAlerts');
+$focus = BeanFactory::newBean('WorkFlowAlerts');
 
 if(!empty($_REQUEST['parent_id']) && $_REQUEST['parent_id']!="") {
 	$focus->parent_id = $_REQUEST['parent_id'];

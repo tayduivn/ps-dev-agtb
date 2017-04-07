@@ -22,7 +22,7 @@ class RestTestMetadataModuleConfig extends RestTestBase {
         SugarTestHelper::setUp('beanList');
 
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
+        $admin = BeanFactory::newBean('Administration');
         foreach($this->configs as $config){
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }

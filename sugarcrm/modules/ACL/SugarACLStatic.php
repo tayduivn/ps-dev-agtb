@@ -179,6 +179,7 @@ class SugarACLStatic extends SugarACLStrategy
                         !empty($bean->fetched_row['assigned_user_id']) || !empty($bean->fetched_row['created_by'])
                     )) {
                         $temp = BeanFactory::newBean($bean->module_dir);
+                        $temp->createLocaleFormattedName = false;
                         $temp->populateFromRow($bean->fetched_row);
                     }else{
                         if($bean->new_with_id) {

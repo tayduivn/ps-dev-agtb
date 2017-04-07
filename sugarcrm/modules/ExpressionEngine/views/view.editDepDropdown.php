@@ -46,7 +46,7 @@ class ViewEditDepDropdown extends SugarView
             $this->module->mblanguage->generateAppStrings(false) ;
             $my_list_strings = array_merge( $my_list_strings, $this->module->mblanguage->appListStrings[$selected_lang.'.lang.php'] );
         } else {
-            $vardef = BeanFactory::getBean($_REQUEST['view_module'])->field_defs;
+            $vardef = BeanFactory::newBean($_REQUEST['view_module'])->field_defs;
         }
 
         foreach($my_list_strings as $key=>$value){

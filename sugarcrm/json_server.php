@@ -69,7 +69,7 @@ function authenticate() {
 		return null;
 	}
 
-	$current_user = BeanFactory::getBean('Users');
+	$current_user = BeanFactory::newBean('Users');
 
 	$result = $current_user->retrieve($_SESSION['authenticated_user_id']);
 	$GLOBALS['log']->debug("JSON_SERVER: retrieved user from SESSION");

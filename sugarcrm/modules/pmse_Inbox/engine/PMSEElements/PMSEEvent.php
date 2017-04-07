@@ -30,7 +30,7 @@ class PMSEEvent extends PMSEShape
     public function __construct()
     {
         $this->evaluator = ProcessManager\Factory::getPMSEObject('PMSEEvaluator');
-        $this->definitionBean = BeanFactory::getBean('pmse_BpmEventDefinition');
+        $this->definitionBean = BeanFactory::newBean('pmse_BpmEventDefinition');
         parent::__construct();
     }
 

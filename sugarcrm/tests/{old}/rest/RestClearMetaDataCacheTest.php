@@ -142,7 +142,7 @@ class RestClearMetadataCacheTest extends RestTestBase
         $mb = new ModuleBuilderController();
         $mb->action_SaveField();
 
-        $testBean = BeanFactory::getBean('Accounts');
+        $testBean = BeanFactory::newBean('Accounts');
         $this->assertArrayHasKey('unit_testy_c',$testBean->field_defs,"The Accounts module doesn't think it has a test field.");
         
         // Add the teardown method to the teardown stack in case of failure

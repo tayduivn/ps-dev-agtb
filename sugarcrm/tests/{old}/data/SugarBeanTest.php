@@ -97,7 +97,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = new SugarBean();
 
         $query = "select id FROM " . $account->table_name . " where id = '" . $account->id . "'";
-        $relatedList = $bean->build_related_list($query, BeanFactory::getBean('Accounts'));
+        $relatedList = $bean->build_related_list($query, BeanFactory::newBean('Accounts'));
         $return = array_shift($relatedList);
 
         $this->assertEquals($account->id, $return->id);
@@ -255,7 +255,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $newInstance = $mock->getCleanCopy();
         $this->assertNotNull($newInstance, "New instance of SugarBean should not be null");
 
-        $mock = BeanFactory::getBean('Accounts');
+        $mock = BeanFactory::newBean('Accounts');
         $newInstance = $mock->getCleanCopy();
         $this->assertNotNull($newInstance, "New instance of Accounts SugarBean should not be null");
         $this->assertEquals('Accounts', $newInstance->module_name);
@@ -598,7 +598,14 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = $this->getMockBuilder('SugarBean')
             ->setMethods(array('call_custom_logic', 'logDistinctMismatch', 'getCleanCopy'))
             ->getMock();
-        $bean->field_defs = array('id' => 'id', 'name' => 'name');
+        $bean->field_defs = array(
+            'id' => array(
+                'type' => 'id',
+            ),
+            'name' => array(
+                'type' => 'name',
+            ),
+        );
         //Setup the beans returned by cleanCopy to be clones of the mock rather than real beans
         $bean->method('getCleanCopy')->will($this->returnCallback(
             function () use ($bean) { return clone $bean; }
@@ -704,7 +711,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateNewListQuery()
     {
-        $bean = BeanFactory::getBean("Contacts");
+        $bean = BeanFactory::newBean("Contacts");
         $filter = array(
             "account_id",
             "opportunity_role_fields",
@@ -722,7 +729,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotContains("opportunity_role_fields", $query["secondary_select"], "secondary_select should not contain fields with relationship_fields defined (e.g. opportunity_role_fields).");
         $this->assertContains("opportunity_role_id", $query["secondary_select"], "secondary_select should contain the fields that's defined in relationship_fields (e.g. opportunity_role_id).");
 
-        $bean = BeanFactory::getBean("Contacts");
+        $bean = BeanFactory::newBean("Contacts");
         $filter = array(
             "account_name",
             "account_id"
@@ -736,7 +743,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, substr_count($query["secondary_select"], " account_id"), "secondary_select should not contain duplicate alias names.");
 
-        $bean = BeanFactory::getBean('Calls');
+        $bean = BeanFactory::newBean('Calls');
         $query = $bean->create_new_list_query('', '', array('contact_name', 'contact_id'), array(), 0, '', true);
 
         $this->assertContains("contact_id", $query["secondary_select"], "secondary_select should contain rel_key field (e.g. contact_id).");

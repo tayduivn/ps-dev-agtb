@@ -26,13 +26,13 @@ $request = InputValidation::getService();
 
 
 
-  $email = BeanFactory::getBean('Emails');
+  $email = BeanFactory::newBean('Emails');
   if (!$email->ACLAccess('view')) {
       ACLController::displayNoAccess(true);
       sugar_cleanup(true);
   }
   $email->email2init();
-  $ie = BeanFactory::getBean('InboundEmail');
+  $ie = BeanFactory::newBean('InboundEmail');
   $ie->disable_row_level_security = true;
   $ie->email = $email;
   $json = getJSONobj();
@@ -277,7 +277,7 @@ $request = InputValidation::getService();
 
             $where = "parent_id='{$_REQUEST['parent_id']}'";
             $order = "";
-            $seed = BeanFactory::getBean('Notes');
+            $seed = BeanFactory::newBean('Notes');
             $fullList = $seed->get_full_list($order, $where, '');
             $all_fields = array_merge($seed->column_fields, $seed->additional_column_fields);
 
@@ -1280,7 +1280,7 @@ eoq;
    		global $current_user;
     	$GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: saveDefaultOutbound");
     	$outbound_id = empty($_REQUEST['id']) ? "" : $_REQUEST['id'];
-    	$ie = BeanFactory::getBean('InboundEmail');
+    	$ie = BeanFactory::newBean('InboundEmail');
         $ie->disable_row_level_security = true;
    		$ie->setUsersDefaultOutboundServerId($current_user, $outbound_id);
     	break;

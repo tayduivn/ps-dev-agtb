@@ -21,7 +21,7 @@ global $app_strings;
 global $current_user;
 
 if(empty($_REQUEST['action']) || $_REQUEST['action']=="index") $_REQUEST['action'] = "ListView";
-$focus = BeanFactory::getBean('CustomQueries');
+$focus = BeanFactory::newBean('CustomQueries');
 echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_TITLE']), true); 
 $is_edit = false;
 if(!empty($_REQUEST['record'])) {

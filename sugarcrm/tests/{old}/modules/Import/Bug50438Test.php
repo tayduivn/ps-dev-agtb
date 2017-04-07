@@ -65,7 +65,7 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
 
         $importSource = new ImportFile($file, ',', '"');
 
-        $bean = BeanFactory::getBean('Calls');
+        $bean = BeanFactory::newBean('Calls');
         $bean->date_start = TimeDate::getInstance()->getNow()->asDb();
 
         $_REQUEST['columncount'] = 5;

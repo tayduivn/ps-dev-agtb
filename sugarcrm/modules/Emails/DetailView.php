@@ -31,7 +31,7 @@ global $app_strings;
 global $focus;
 
 // SETTING DEFAULTS
-$focus = BeanFactory::getBean('Emails');
+$focus = BeanFactory::newBean('Emails');
 $detailView	= new DetailView();
 $offset		= 0;
 $email_type	= 'archived';
@@ -441,7 +441,7 @@ if ($do_open) {
 ////	NOTES (attachements, etc.)
 ///////////////////////////////////////////////////////////////////////////////
 
-$note = BeanFactory::getBean('Notes');
+$note = BeanFactory::newBean('Notes');
 $where = "notes.parent_id='{$focus->id}'";
 //take in account if this is from campaign and the template id is stored in the macros.
 

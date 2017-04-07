@@ -23,7 +23,7 @@ class AccountFormBase{
 function checkForDuplicates($prefix){
 	require_once('include/formbase.php');
 
-	$focus = BeanFactory::getBean('Accounts');
+	$focus = BeanFactory::newBean('Accounts');
 	$query = '';
 	$baseQuery = 'select id, name, website, billing_address_city  from accounts where deleted!=1 and ';
 	if(!empty($_POST[$prefix.'name'])){
@@ -267,7 +267,7 @@ $form .='</p>';
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(BeanFactory::getBean('Accounts'));
+$javascript->setSugarBean(BeanFactory::newBean('Accounts'));
 $javascript->addRequiredFields($prefix);
 $form .=$javascript->getScript();
 $mod_strings = $temp_strings;
@@ -282,7 +282,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact=''){
 	}
 
 	if(empty($contact)){
-		$contact = BeanFactory::getBean('Contacts');
+		$contact = BeanFactory::newBean('Contacts');
 	}
 global $mod_strings;
 $temp_strings = $mod_strings;
@@ -292,7 +292,7 @@ if(!empty($mod)){
 }
 global $app_strings;
 global $current_user;
-$account = BeanFactory::getBean('Accounts');
+$account = BeanFactory::newBean('Accounts');
 
 $lbl_required_symbol = $app_strings['LBL_REQUIRED_SYMBOL'];
 $lbl_account_name = $mod_strings['LBL_ACCOUNT_NAME'];
@@ -305,7 +305,7 @@ if (isset($contact->assigned_user_id)) {
 }
 
 	//Retrieve Email address and set email1, email2
-	$sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
+	$sugarEmailAddress = BeanFactory::newBean('EmailAddresses');
 	$sugarEmailAddress->handleLegacyRetrieve($contact);
  	 if(!isset($contact->email1)){
     	$contact->email1 = '';
@@ -361,7 +361,7 @@ if (isset($contact->team_id)) {
 		</tr>
 EOQ;
 	//carry forward custom lead fields common to accounts during Lead Conversion
-	$tempAccount = BeanFactory::getBean('Accounts');
+	$tempAccount = BeanFactory::newBean('Accounts');
 	if (method_exists($contact, 'convertCustomFieldsForm')) $contact->convertCustomFieldsForm($form, $tempAccount, $prefix);
 	unset($tempAccount);
 $form .= <<<EOQ
@@ -371,7 +371,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(BeanFactory::getBean('Accounts'));
+$javascript->setSugarBean(BeanFactory::newBean('Accounts'));
 $javascript->addRequiredFields($prefix);
 $form .=$javascript->getScript();
 $mod_strings = $temp_strings;
@@ -384,7 +384,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 
 	require_once('include/formbase.php');
 
-	$focus = BeanFactory::getBean('Accounts');
+	$focus = BeanFactory::newBean('Accounts');
 
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
@@ -441,7 +441,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 
 
 
-			$emailAddress = BeanFactory::getBean('EmailAddresses');
+			$emailAddress = BeanFactory::newBean('EmailAddresses');
 			$get .= $emailAddress->getFormBaseURL($focus);
 
 			$get .= get_teams_url('Accounts');

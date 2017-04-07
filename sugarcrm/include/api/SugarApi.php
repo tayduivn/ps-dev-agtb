@@ -257,7 +257,7 @@ abstract class SugarApi {
         }
 
         elseif($favorite && empty($fav->id)) {
-            $fav = BeanFactory::getBean('SugarFavorites');
+            $fav = BeanFactory::newBean('SugarFavorites');
             $fav->id = $fav_id;
             $fav->new_with_id = true;
             $fav->module = $module;

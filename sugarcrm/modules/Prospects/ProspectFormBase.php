@@ -23,7 +23,7 @@ function checkForDuplicates($prefix){
 	global $local_log;
 	require_once('include/formbase.php');
         $db = DBManagerFactory::getInstance();
-	$focus = BeanFactory::getBean('Prospects');
+	$focus = BeanFactory::newBean('Prospects');
 	if(!checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}
@@ -150,7 +150,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $prospect = ''){
 	}
 	
 	if(empty($prospect)){
-		$prospect = BeanFactory::getBean('Prospects');
+		$prospect = BeanFactory::newBean('Prospects');
 	}
 	global $mod_strings;
 $temp_strings = $mod_strings;
@@ -266,7 +266,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(BeanFactory::getBean('Prospects'));
+$javascript->setSugarBean(BeanFactory::newBean('Prospects'));
 $javascript->addField('email1','false',$prefix);
 $javascript->addField('email2','false',$prefix);
 $javascript->addRequiredFields($prefix);
@@ -330,7 +330,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(BeanFactory::getBean('Prospects'));
+$javascript->setSugarBean(BeanFactory::newBean('Prospects'));
 $javascript->addField('email1','false',$prefix);
 $javascript->addRequiredFields($prefix);
 
@@ -387,7 +387,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 	global $timedate;
 	
 	
-	$focus = BeanFactory::getBean('Prospects');
+	$focus = BeanFactory::newBean('Prospects');
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}

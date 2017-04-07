@@ -37,7 +37,7 @@ if (!isset ($_REQUEST['run'])) {
 
 foreach ($modules as $the_module => $fields) {
 	echo "<br><br>".$mod_strings['LBL_UPGRADE_FIELDS_SCANNING']." $the_module <br>";
-    $mod = BeanFactory::getBean($the_module);
+    $mod = BeanFactory::newBean($the_module);
 	if (!$db->tableExists($mod->table_name."_cstm")) {
 		$mod->custom_fields = new DynamicField();
 		$mod->custom_fields->setup($mod);

@@ -148,7 +148,7 @@ abstract class ImportDataSource implements Iterator
      */
     public static function writeRowToLastImport($import_module, $module, $id)
     {
-        $last_import = BeanFactory::getBean('Import_2');
+        $last_import = BeanFactory::newBean('Import_2');
 
         $last_import->assigned_user_id = $GLOBALS['current_user']->id;
         $last_import->import_module = $import_module;

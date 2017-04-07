@@ -195,7 +195,7 @@ class TemplateEnum extends TemplateText{
      */
     function delete($df){
         //If a dropdown uses the field that is being delted as a parent dropdown, we need to remove that dependency
-        $seed = BeanFactory::getBean($df->getModuleName());
+        $seed = BeanFactory::newBean($df->getModuleName());
         if ($seed)
         {
             $fields = $seed->field_defs;

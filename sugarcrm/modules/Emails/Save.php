@@ -12,7 +12,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	EMAIL SEND/SAVE SETUP
-$focus = BeanFactory::getBean('Emails');
+$focus = BeanFactory::newBean('Emails');
 
 if(!isset($prefix)) {
 	$prefix = '';

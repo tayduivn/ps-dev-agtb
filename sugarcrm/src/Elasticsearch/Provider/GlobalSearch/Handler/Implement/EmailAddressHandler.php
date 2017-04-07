@@ -259,6 +259,6 @@ class EmailAddressHandler extends AbstractHandler implements
      */
     protected function fetchEmailAddressesFromDatabase(\SugarBean $bean)
     {
-        return \BeanFactory::getBean('EmailAddresses')->getAddressesByGUID($bean->id, $bean->module_name);
+        return \BeanFactory::newBean('EmailAddresses')->getAddressesByGUID($bean->id, $bean->module_name);
     }
 }

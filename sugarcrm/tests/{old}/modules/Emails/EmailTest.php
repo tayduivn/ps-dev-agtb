@@ -23,7 +23,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    global $current_user;
 
-	    $current_user = BeanFactory::getBean("Users");
+	    $current_user = BeanFactory::newBean("Users");
         $current_user->getSystemUser();
 	    $this->email = new Email();
 	    $this->email->email2init();

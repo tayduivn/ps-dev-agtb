@@ -168,7 +168,7 @@ class DashletsDialog {
     	$chartsList = array();
         require_once('modules/Reports/SavedReport.php');
         $sq = new SugarQuery();
-        $savedReportBean = BeanFactory::getBean('Reports');
+        $savedReportBean = BeanFactory::newBean('Reports');
         $sq->from($savedReportBean);
 
         // Make sure the user isn't seeing reports they don't have access to
@@ -210,7 +210,7 @@ class DashletsDialog {
 
 		    case 'myFavorites':
                 global $current_user;
-                $sugaFav = BeanFactory::getBean('SugarFavorites');
+                $sugaFav = BeanFactory::newBean('SugarFavorites');
                 $current_favorites_beans = $sugaFav->getUserFavoritesByModule('Reports', $current_user);
                 $current_favorites = array();
                 foreach ((array)$current_favorites_beans as $key=>$val) {

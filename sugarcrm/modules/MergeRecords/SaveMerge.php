@@ -15,7 +15,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 $record = InputValidation::getService()->getValidInputRequest('record', 'Assert\Guid');
 $module = InputValidation::getService()->getValidInputRequest('merge_module', 'Assert\Mvc\ModuleName');
 
-$focus = BeanFactory::getBean('MergeRecords');
+$focus = BeanFactory::newBean('MergeRecords');
 $focus->load_merge_bean($module, true, $record);
 
 foreach($focus->merge_bean->column_fields as $field)

@@ -28,10 +28,10 @@ class PMSEEventDefinitionWrapper implements PMSEObservable
      */
     public function __construct()
     {
-        $this->event = BeanFactory::getBean('pmse_BpmnEvent');
-        $this->relationship = BeanFactory::getBean('Relationships');
-        $this->eventDefinition = BeanFactory::getBean('pmse_BpmEventDefinition');
-        $this->processDefinition = BeanFactory::getBean('pmse_BpmProcessDefinition');
+        $this->event = BeanFactory::newBean('pmse_BpmnEvent');
+        $this->relationship = BeanFactory::newBean('Relationships');
+        $this->eventDefinition = BeanFactory::newBean('pmse_BpmEventDefinition');
+        $this->processDefinition = BeanFactory::newBean('pmse_BpmProcessDefinition');
         $this->crmDataWrapper = ProcessManager\Factory::getPMSEObject('PMSECrmDataWrapper');
     }
 

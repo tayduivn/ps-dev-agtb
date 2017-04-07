@@ -193,7 +193,7 @@ global  $timedate;
 			$GLOBALS['log']->debug("user_id is: ");
 			$GLOBALS['log']->debug($user_id);
 			$GLOBALS['log']->debug("cache_file_name is: $cache_file_name");
-			$opp = BeanFactory::getBean('Opportunities');
+			$opp = BeanFactory::newBean('Opportunities');
 			$where="";
 			//build the where clause for the query that matches $user
 			$count = count($user_id);
@@ -378,7 +378,7 @@ global  $timedate;
 
 		$user_id = $ids;
 
-		$opp = BeanFactory::getBean('Opportunities');
+		$opp = BeanFactory::newBean('Opportunities');
 		$where="";
 		//build the where clause for the query that matches $user
 		$count = count($user_id);

@@ -44,7 +44,7 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = BeanFactory::getBean('WorkFlowActionShells');
+$focus = BeanFactory::newBean('WorkFlowActionShells');
 //Add When Expressions Object is availabe
 //$exp_object = new Expressions();
 

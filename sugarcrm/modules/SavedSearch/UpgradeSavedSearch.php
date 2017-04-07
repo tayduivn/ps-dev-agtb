@@ -34,7 +34,7 @@ class UpgradeSavedSearch {
 			  	 	$field_map = $searchFields[$module];
 			  	 } else {
 				  	
-				  	$bean = BeanFactory::getBean($module);
+				  	$bean = BeanFactory::newBean($module);
                     $field_map = $bean->field_defs;
 			  	 }
 

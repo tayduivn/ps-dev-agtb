@@ -20,7 +20,7 @@ global $current_language;
 global $current_user;
 global $sugar_version, $sugar_config;
 global $locale;
-$focus = BeanFactory::getBean('Project');
+$focus = BeanFactory::newBean('Project');
 
 if(!empty($_REQUEST['record']))
 {
@@ -62,10 +62,10 @@ $mpx .= "40,Unique ID,ID,Name\n";
  
 // (50) Resource Information
 $resources = array();
-$userBean = BeanFactory::getBean('Users');
+$userBean = BeanFactory::newBean('Users');
 $focus->load_relationship("user_resources");
 $users = $focus->user_resources->getBeans($userBean);
-$contactBean = BeanFactory::getBean('Contacts');
+$contactBean = BeanFactory::newBean('Contacts');
 $focus->load_relationship("contact_resources");
 $contacts = $focus->contact_resources->getBeans($contactBean);
 

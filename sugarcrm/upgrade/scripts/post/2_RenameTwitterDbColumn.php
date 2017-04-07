@@ -28,7 +28,7 @@ class SugarUpgradeRenameTwitterDbColumn extends UpgradeScript
         global $moduleList;
 
         foreach ($moduleList as $module) {
-            $focus = BeanFactory::getBean($module);
+            $focus = BeanFactory::newBean($module);
                 
             if (!empty($focus) && (($focus instanceOf Company) || ($focus instanceOf Person)) && !empty($focus->table_name)
                     && $focus->table_name != 'users' && $focus->table_name != 'styleguide') { // there are exceptions, eg, Employees, Styleguide

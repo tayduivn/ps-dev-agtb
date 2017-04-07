@@ -27,7 +27,7 @@ if (!is_admin($current_user) && empty($workflow_modules))
    sugar_die("Unauthorized access to WorkFlow.");
 }
 
-$workflow_object = BeanFactory::getBean('WorkFlow');
+$workflow_object = BeanFactory::newBean('WorkFlow');
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;

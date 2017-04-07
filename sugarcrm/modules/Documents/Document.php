@@ -92,7 +92,7 @@ class Document extends SugarBean {
      */
     public function createRevisionBean()
     {
-        $Revision = BeanFactory::getBean('DocumentRevisions');
+        $Revision = BeanFactory::newBean('DocumentRevisions');
         //save revision.
         $Revision->in_workflow = true;
         $Revision->not_use_rel_in_req = true;

@@ -63,7 +63,7 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         global $current_user;
 
         //First Create e-mail draft
-        $email_object = BeanFactory::getBean('Emails');
+        $email_object = BeanFactory::newBean('Emails');
         // set the id for relationships
         $email_object->id = create_guid();
         $email_object->new_with_id = true;
@@ -143,7 +143,7 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         $email_id = $email_object->id;
 
         //Handle PDF Attachment
-        $note = BeanFactory::getBean('Notes');
+        $note = BeanFactory::newBean('Notes');
         $note->filename = $file_name;
         $note->team_id = "";
         $note->file_mime_type = "application/pdf";

@@ -84,7 +84,7 @@ class EmailUI {
 		global $server_unique_key;
 
 		$this->preflightUserCache();
-		$ie = BeanFactory::getBean('InboundEmail');
+		$ie = BeanFactory::newBean('InboundEmail');
         $ie->disable_row_level_security = true;
 
 		// focus listView
@@ -328,7 +328,7 @@ eoq;
         }
 
         foreach($QCModules as $module) {
-            $seed = BeanFactory::getBean($module);
+            $seed = BeanFactory::newBean($module);
             if ( ( $seed instanceOf SugarBean ) && $seed->ACLAccess('edit') ) {
                 $QCAvailableModules[] = $module;
             }
@@ -454,7 +454,7 @@ eoq;
         $this->smarty->assign('lang', $lang);
         $this->smarty->assign('app_strings', $app_strings);
 		$this->smarty->assign('mod_strings', $email_mod_strings);
-        $ie1 = BeanFactory::getBean('InboundEmail');
+        $ie1 = BeanFactory::newBean('InboundEmail');
         $ie1->disable_row_level_security = true;
 		$ie1->team_id = empty($current_user->default_team) ? $current_user->team_id : $current_user->default_team;
 		$ie1->team_set_id = $current_user->team_set_id;
@@ -462,7 +462,7 @@ eoq;
         $ie1->acl_team_set_id = $current_user->acl_team_set_id;
         //END SUGARCRM flav=ent ONLY
         // need this bean to generate correct teamset field
-        $emailsBean = BeanFactory::getBean('Emails');
+        $emailsBean = BeanFactory::newBean('Emails');
         $emailsBean->disable_row_level_security = true;
         $emailsBean->team_id = $ie1->team_id;
         $emailsBean->team_set_id = $ie1->team_set_id;
@@ -505,7 +505,7 @@ eoq;
 		$filterPeopleTables['LBL_DROPDOWN_LIST_ALL'] = $app_strings['LBL_DROPDOWN_LIST_ALL'];
 		foreach($peopleTables as $table) {
 			$module = ucfirst($table);
-            $person = BeanFactory::getBean($module);
+            $person = BeanFactory::newBean($module);
 
             if (!$person->ACLAccess('list')) continue;
             $filterPeopleTables[$person->table_name] = $app_list_strings['moduleList'][$person->module_dir];
@@ -522,7 +522,7 @@ eoq;
 		$emailSettings = $e2UserPreferences['emailSettings'];
 		$return = array();
 
-		$ie1 = BeanFactory::getBean('InboundEmail');
+		$ie1 = BeanFactory::newBean('InboundEmail');
         $ie1->disable_row_level_security = true;
 		$ie1->team_set_id = '';
 		$teamSetField = new EmailSugarFieldTeamsetCollection($ie1, $ie1->field_defs, '', 'Distribute');
@@ -659,7 +659,7 @@ eoq;
 			$this->smarty->assign("contact_strings", return_module_language($_SESSION['authenticated_user_language'], 'Contacts'));
 			$this->smarty->assign("contact", $contactMeta);
 
-			$ea = BeanFactory::getBean('EmailAddresses');
+			$ea = BeanFactory::newBean('EmailAddresses');
 			$newEmail = $ea->getEmailAddressWidgetEditView($id, $module, true);
 			$this->smarty->assign("emailWidget", $newEmail['html']);
 
@@ -827,7 +827,7 @@ eoq;
 			$user = $current_user;
 		}
 
-		$emailAddress = BeanFactory::getBean('EmailAddresses');
+		$emailAddress = BeanFactory::newBean('EmailAddresses');
 		$ret = array();
 
 		$union = '';
@@ -1112,7 +1112,7 @@ eoq;
 		$tree->tree_style= getVersionedPath('vendor/ytree/TreeView/css/check/tree.css');
 
 		$nodes = array();
-		$ie = BeanFactory::getBean('InboundEmail');
+		$ie = BeanFactory::newBean('InboundEmail');
         $ie->disable_row_level_security = true;
 		$refreshOffset = $this->cacheTimeouts['folders']; // 5 mins.  this will be set via user prefs
 
@@ -1400,7 +1400,7 @@ eoq;
 
 		//Setup the current module languge
 		$mod_strings = return_module_language($current_language, $module);
-        $focus = BeanFactory::getBean($module);
+        $focus = BeanFactory::newBean($module);
 
 		$people = array(
 		'Contact'
@@ -1712,7 +1712,7 @@ EOQ;
 		////	NOTES (attachements, etc.)
 		///////////////////////////////////////////////////////////////////////////////
 
-		$note = BeanFactory::getBean('Notes');
+		$note = BeanFactory::newBean('Notes');
 		$where = "notes.parent_id='{$focus->id}'";
 		//take in account if this is from campaign and the template id is stored in the macros.
 
@@ -1842,7 +1842,7 @@ EOQ;
 			global $ie; // provided by EmailUIAjax.php
 			if(empty($ie)) {
 
-				$ie = BeanFactory::getBean('InboundEmail');
+				$ie = BeanFactory::newBean('InboundEmail');
                 $ie->disable_row_level_security = true;
 			}
 			$ie->retrieve($ieId);
@@ -1941,7 +1941,7 @@ function getTeams() {
 	if (!empty($_REQUEST['team_ids'])) {
 		$teamInfo['primaryTeamId'] = $_REQUEST['primary_team_id'];
 		$teamIds = explode(",", $_REQUEST['team_ids']);
-		$teamSet = BeanFactory::getBean('TeamSets');
+		$teamSet = BeanFactory::newBean('TeamSets');
 		$teamInfo['teamSetId'] = $teamSet->addTeams($teamIds);
 	} // if
 	return $teamInfo;
@@ -2235,7 +2235,7 @@ eoq;
 		global $current_user;
 
 
-		$ea = BeanFactory::getBean('EmailAddresses');
+		$ea = BeanFactory::newBean('EmailAddresses');
 
 		if(!empty($email)) {
 		    $email->cids2Links();
@@ -2403,7 +2403,7 @@ eoq;
 
 		foreach($peopleTables as $table) {
 			$module = ucfirst($table);
-			$person = BeanFactory::getBean($module);
+			$person = BeanFactory::newBean($module);
 			if (!$person->ACLAccess('list')) {
 				continue;
 			} // if
@@ -2529,7 +2529,7 @@ eoq;
 
         $table = $beanType;
         $module = ucfirst($table);
-        $person = BeanFactory::getBean($module);
+        $person = BeanFactory::newBean($module);
         $personACLAccessList = $person->ACLAccess('list');
         $requireOwner = ACLController::requireOwner($module, 'list');
         if ($personACLAccessList) { // build query
@@ -2677,7 +2677,7 @@ eoq;
 				$folder->is_dynamic = 1;
 				$folder->folder_type = "inbound";
 				$folder->dynamic_query = $this->generateDynamicFolderQuery('inbound', $user->id);
-				$teamSet = BeanFactory::getBean('TeamSets');
+				$teamSet = BeanFactory::newBean('TeamSets');
 				$team_set_id = $teamSet->addTeams($privateTeam);
 				$folder->team_id = $privateTeam;
 				$folder->team_set_id = $team_set_id;
@@ -2797,7 +2797,7 @@ eoq;
 		global $app_strings;
 
 		if(ACLController::checkAccess('EmailTemplates', 'list', true) && ACLController::checkAccess('EmailTemplates', 'view', true)) {
-			$et = BeanFactory::getBean('EmailTemplates');
+			$et = BeanFactory::newBean('EmailTemplates');
             $etResult = $et->db->query($et->create_new_list_query('',"(type IS NULL OR type='' OR type='email')",array(),array(),''));
 			$email_templates_arr = array('' => $app_strings['LBL_NONE']);
 			while($etA = $et->db->fetchByAssoc($etResult)) {

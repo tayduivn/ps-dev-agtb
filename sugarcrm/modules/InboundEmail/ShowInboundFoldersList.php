@@ -88,7 +88,7 @@ if (!empty($searchField)) {
 } // else
 
 
-$ie = BeanFactory::getBean('InboundEmail');
+$ie = BeanFactory::newBean('InboundEmail');
 if(!empty($_REQUEST['ie_id'])) {
     $ie->disable_row_level_security = true;
     $ie->retrieve($_REQUEST['ie_id']);

@@ -18,7 +18,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 $detailView = new DetailView();
 
-$focus = BeanFactory::getBean($_REQUEST['loadModule']);
+$focus = BeanFactory::newBean($_REQUEST['loadModule']);
 $focus->id = $_REQUEST['record'];
 
 $loadModule = InputValidation::getService()->getValidInputRequest('loadModule', 'Assert\Mvc\ModuleName');

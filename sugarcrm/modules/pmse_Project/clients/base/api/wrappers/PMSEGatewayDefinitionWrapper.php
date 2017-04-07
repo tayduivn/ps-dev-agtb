@@ -23,9 +23,9 @@ class PMSEGatewayDefinitionWrapper
      */
     public function __construct()
     {
-        $this->gateway = BeanFactory::getBean('pmse_BpmnGateway');
-        $this->gatewayDefinition = BeanFactory::getBean("pmse_BpmGatewayDefinition");
-        $this->flowBean = BeanFactory::getBean('pmse_BpmnFlow');
+        $this->gateway = BeanFactory::newBean('pmse_BpmnGateway');
+        $this->gatewayDefinition = BeanFactory::newBean("pmse_BpmGatewayDefinition");
+        $this->flowBean = BeanFactory::newBean('pmse_BpmnFlow');
 
     }
 

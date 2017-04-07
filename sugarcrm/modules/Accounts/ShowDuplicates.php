@@ -47,7 +47,7 @@ if ($error_msg != '')
 if((isset($_REQUEST['popup']) && $_REQUEST['popup'] == 'true') ||(isset($_POST['popup']) && $_POST['popup']==true)) insert_popup_header($theme);
 
 
-$account = BeanFactory::getBean('Accounts');
+$account = BeanFactory::newBean('Accounts');
 $accountForm = new AccountFormBase();
 $GLOBALS['check_notify'] = FALSE;
 
@@ -105,7 +105,7 @@ if(!empty($_POST['Contactsrelate_id'])) {
 
 $input .= get_teams_hidden_inputs('Accounts');
 
-$emailAddress = BeanFactory::getBean('EmailAddresses');
+$emailAddress = BeanFactory::newBean('EmailAddresses');
 $input .= $emailAddress->getEmailAddressWidgetDuplicatesView($account);
 
 $get = '';

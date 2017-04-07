@@ -138,7 +138,7 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
     public function testLoadFromRow()
     {
         /** @var Meeting $meeting */
-        $meeting = BeanFactory::getBean('Meetings');
+        $meeting = BeanFactory::newBean('Meetings');
         $this->assertEmpty($meeting->reminder_checked);
         $this->assertEmpty($meeting->email_reminder_checked);
 

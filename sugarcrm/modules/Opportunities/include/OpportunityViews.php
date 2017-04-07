@@ -25,7 +25,7 @@ class OpportunityViews
     public function __construct()
     {
         SugarAutoLoader::load('modules/ModuleBuilder/parsers/ParserFactory.php');
-        $this->bean = BeanFactory::getBean('Opportunities');
+        $this->bean = BeanFactory::newBean('Opportunities');
     }
 
     /**

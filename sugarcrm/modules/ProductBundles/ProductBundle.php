@@ -418,7 +418,7 @@ class ProductBundle extends SugarBean
 
         global $current_user;
 
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = BeanFactory::newBean('Currencies');
         if ($current_user->getPreference('currency')) {
             $currency->retrieve($current_user->getPreference('currency'));
             $symbol = $currency->symbol;
