@@ -152,13 +152,6 @@ beforeEach(function(){
 
     SugarTest.seedApp();
     SugarTest.resetWaitFlag();
-
-    // Prevents 'cannot call method x of undefined' errors for Backbone.history.
-    // See http://tinnedfruit.com/2011/04/26/testing-backbone-apps-with-jasmine-sinon-3.html
-    SUGAR.App.routing.setRoutes([{
-        route: "",
-        name: "index"
-    }]);
 });
 
 /**
