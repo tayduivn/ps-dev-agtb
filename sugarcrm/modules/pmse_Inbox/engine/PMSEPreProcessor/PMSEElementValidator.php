@@ -36,16 +36,6 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
     protected $beanFlow;
 
     /**
-     * @codeCoverageIgnore
-     */
-    public function __construct()
-    {
-        $this->sugarQueryObject = new SugarQuery();
-        $this->beanFlow = BeanFactory::newBean('pmse_BpmFlow');
-        parent::__construct();
-    }
-
-    /**
      *
      * @return type
      * @codeCoverageIgnore
@@ -60,14 +50,18 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function getSugarQueryObject()
     {
-        return $this->sugarQueryObject;
+        return new SugarQuery();
     }
 
     /**
-     * @return null|SugarBean
+     * @return SugarBean
      */
     public function getBeanFlow()
     {
+        if (empty($this->beanFlow)) {
+            $this->beanFlow = BeanFactory::newBean('pmse_BpmFlow');
+        }
+
         return $this->beanFlow;
     }
 
@@ -87,10 +81,21 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
     }
 
     /**
+     * Sets the SugarObject onto this object
+     *
+     * NOTE: THIS METHOD IS DEPRECATED AS OF 7.9.1.0 AND WILL BE REMOVED IN A
+     * FUTURE RELEASE
+     *
      * @param $sugarQueryObject
      */
     public function setSugarQueryObject($sugarQueryObject)
     {
+        $msg = sprintf(
+            '%s::%s is deprecated and will be removed in a future release.',
+            __CLASS__,
+            __METHOD__
+        );
+        LoggerManager::getLogger()->deprecated($msg);
         $this->sugarQueryObject = $sugarQueryObject;
     }
 
@@ -102,11 +107,14 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function validateRequest(PMSERequest $request)
     {
-        $this->logger->info("Validate Request " . get_class($this));
-        $this->logger->debug(array("Request data:", $request));
+        // This should be done right away
+        $bean = $request->getBean();
+        if (empty($bean)) {
+            $request->invalidate();
+            return $request;
+        }
 
         $flowData = $request->getFlowData();
-        $bean = $request->getBean();
         $request->setExternalAction($this->processExternalAction($flowData));
         $request->setCreateThread($this->processCreateThread($flowData));
 
@@ -119,18 +127,21 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
             }
         }
 
-        switch ($flowData['evn_type']) {
-            case 'START':
-                $this->logger->info("Validate Start Event.");
-                $this->validateStartEvent($bean, $flowData, $request);
-                break;
-            case 'INTERMEDIATE':
-                $this->logger->info("Validate Intermediate Event.");
-                $this->validateIntermediateEvent($bean, $flowData, $request);
-                break;
-            default:
-                break;
+        // If this is a start event or intermediate event, handle that
+        if ($flowData['evn_type'] === 'START' || $flowData['evn_type'] === 'INTERMEDIATE') {
+            // Get our type string
+            $type = ucfirst(strtolower($flowData['evn_type']));
+
+            // Get the method name that we will run
+            $method = 'validate' . $type . 'Event';
+
+            // Log the method to be run
+            $this->getLogger()->info("Validate $type Event.");
+
+            // Run the method
+            $this->{$method}($bean, $flowData, $request);
         }
+
         return $request;
     }
 
@@ -208,12 +219,11 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function isCaseDuplicated($bean, $flowData, $processFinished = false)
     {
-        $beanFlow = $this->getBeanFlow();
         $fields = array(
             'pro_id',
         );
         $q = $this->getSugarQueryObject();
-        $q->from($beanFlow, array('add_deleted' => true));
+        $q->from($this->getBeanFlow(), array('add_deleted' => true));
         $q->distinct(true);
         $q->where()
             ->equals('cas_sugar_object_id', $bean->id)
@@ -234,7 +244,7 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
 
         if (!empty($rows)) {
             if (!$processFinished) {
-                $this->logger->debug("Start Event {$bean->id} already exists");
+                $this->getLogger()->debug("Start Event {$bean->id} already exists");
             }
             return true;
         } else {
@@ -260,7 +270,7 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
         if (strpos($url, 'pmse') === false) {
             return false;
         } else {
-            $this->logger->debug("Start Event {$bean->id} can not be triggered by PMSE modules.");
+            $this->getLogger()->debug("Start Event {$bean->id} can not be triggered by PMSE modules.");
             return true;
         }
     }

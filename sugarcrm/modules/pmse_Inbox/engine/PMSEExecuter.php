@@ -533,7 +533,7 @@ class PMSEExecuter
         }
         $remain = $this->executionTime > $maxExecutionTime;
         if ($remain) {
-            throw ProcessManager\Factory::getException('Execution', "Script execution is taking too much time", 0);
+            throw ProcessManager\Factory::getException('Execution', "Script execution is taking too much time", 1);
         } else {
             return $this->executionTime;
         }

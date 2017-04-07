@@ -26,6 +26,13 @@ interface RegistryInterface
     public function set($key, $value, $override = false);
 
     /**
+     * Adds a value to a key that already exists in the registry
+     * @param string $key The name of the key to set
+     * @param mixed $value The value to associate to the key
+     */
+    public function append($key, $value);
+
+    /**
      * Gets a value for a key from the registry. Will return the default value
      * if the key is not found.
      * @param string $key The name of the key to get the value for

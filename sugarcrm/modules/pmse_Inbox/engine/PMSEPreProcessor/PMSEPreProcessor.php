@@ -194,11 +194,30 @@ class PMSEPreProcessor
             foreach ($flowDataList as $flowData) {
                 // Process the flow data and also the bean object data
                 $request->setFlowData($this->processFlowData($flowData));
-                $request->setBean($this->processBean($request->getBean(), $request->getFlowData()));
-                $request->getBean()->load_relationships();
-                // is essential that the request should be initialized as valid for the next flow
+
+                // Make sure we have a bean to work with
+                $bean = $request->getBean();
+                if (!$bean) {
+                    // Try to get the bean from the flow data since we don't have
+                    // one on the request
+                    $bean = $this->processBean($bean, $flowData);
+                    if (!$bean) {
+                        // This should maybe mark the flow as completed or something
+                        // since this flow will now live on in perpetuity. For now
+                        // this is ok as realistically, this should never be the case
+                        continue;
+                    }
+                }
+
+                // Set the bean back onto the request for use in the validators
+                $request->setBean($bean);
+
+                // It's essential that the request should be initialized as valid
+                // for the next flow. This does not actually validate anything,
+                // it simply marks the request as valid to begin.
                 $request->validate();
-                // validatind the request with the initial Data
+
+                // This does the actual validation of the flow data and request
                 $validatedRequest = $this->validator->validateRequest($request);
 
                 if ($validatedRequest->isValid()) {
@@ -253,6 +272,10 @@ class PMSEPreProcessor
                     $result = $this->terminateCaseByBeanAndProcess($request->getBean(), $data);
                 }
             }
+
+            // Clear validator caches AFTER the loop completes so that the cache
+            // is clear for future iterations
+            $this->validator->clearValidatorCaches();
         }
 
         return $result;
@@ -327,92 +350,166 @@ class PMSEPreProcessor
     }
 
     /**
+     * Gets a list of valid links for a module name. This is used to filter the
+     * flow list of unnecessary relationships
+     * @param string $module The name of the module to get links for
+     * @return array
+     */
+    public function getValidLinks($module)
+    {
+        // Default the return
+        $return = [];
+
+        // Get our related link names/module names
+        $sql = "
+            SELECT
+                DISTINCT rel_element_relationship, rel_element_module, pro_module
+            FROM
+                pmse_bpm_related_dependency rd
+            LEFT JOIN
+                pmse_bpm_flow flow ON rd.rel_element_id = flow.bpmn_id AND
+                (flow.cas_flow_status IS NULL OR flow.cas_flow_status='WAITING')
+            WHERE
+                rd.deleted = 0 AND rd.pro_status != 'INACTIVE' AND
+                rd.rel_element_relationship <> '' AND rd.rel_element_relationship IS NOT NULL AND
+                (rd.pro_module = :module OR rd.rel_element_module = :module)
+        ";
+
+        // Execute
+        $stmt = DBManagerFactory::getInstance()
+                ->getConnection()
+                ->executeQuery($sql, [':module' => $module]);
+
+        // Loop and compare
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if ($row['rel_element_relationship'] != $module) {
+                $seed = BeanFactory::newBean($row['pro_module']);
+                $linkName = $row['rel_element_relationship'];
+                if ($seed->load_relationship($linkName)) {
+                    // Linkname should not be used as an index since there is a
+                    // chance that link names are not unique across modules
+                    $return[] = $seed->$linkName->getLinkForOtherSide();
+                }
+            }
+        }
+
+        return $return;
+    }
+
+
+    /**
+     * Gets a list of related object ids based on a bean and a list of link names.
+     * Optionally, will wrap the ids in DB quotes when needed
+     * @param SugarBean $bean The primary bean
+     * @param array $links Array of link names to load for the bean
+     * @param boolean $quoted Whether to DB escape the results
+     * @return array
+     */
+    protected function buildLinkedObjectIdList(SugarBean $bean, array $links = array(), $quoted = true)
+    {
+        // The bean will always be in the list of linked objects
+        $list = [$bean->id];
+
+        // Now loop over the link array and see if we need to add linked ids to
+        // the list
+        foreach ($links as $link) {
+            if ($bean->load_relationship($link)) {
+                $list = array_merge($list, $bean->$link->get());
+            }
+        }
+
+        // For DB comparisons, we need to quote our values
+        if ($quoted) {
+            $db = DBManagerFactory::getInstance();
+            $list = implode(",", array_map(
+                function ($val) use ($db) {
+                    return $db->quoted($val);
+                },
+                $list
+            ));
+        }
+
+        return $list;
+    }
+
+    /**
      * Optimized version of get all events method.
      * @param SugarBean $bean
      * @return array
      */
     public function getAllEvents(SugarBean $bean)
     {
-        $db = DBManagerFactory::getInstance();
-        $dependencies = $this->getModuleRelatedDependencies($bean->getModuleName());
-
-        $relElementIds = array_reduce($dependencies, function ($carry, $item) use ($db) {
-            $carry[] = $db->quoted($item['rel_element_id']);
-            return $carry;
-        }, []);
-
-        $flowFields = ['id', 'cas_id', 'cas_index', 'bpmn_id', 'bpmn_type', 'cas_user_id',
-            'cas_thread', 'cas_sugar_module', 'cas_sugar_object_id', 'cas_flow_status'];
-
-        $flows = [];
-        if ($relElementIds) {
-            $result = $db->query("SELECT " . implode(',', $flowFields) . "
-                FROM pmse_bpm_flow
-                WHERE bpmn_id IN (" . implode(',', $relElementIds) . ")
-                    AND (cas_flow_status IS NULL OR cas_flow_status='WAITING')");
-
-            while ($row = $db->fetchByAssoc($result)) {
-                $flows[] = $row;
-            }
+        // If the bean is not a bean at this point, just return an array
+        if (empty($bean)) {
+            return array();
         }
 
-        $events = [];
-        foreach ($dependencies as $dependency) {
-            $relatedFlows = array_filter($flows, function ($flow) use ($dependency) {
-                return $flow['bpmn_id'] == $dependency['rel_element_id'];
-            });
+        // We'll need this for a few things here
+        $moduleName = $bean->getModuleName();
 
-            if (!$relatedFlows) {
-                $relatedFlows = [array_combine($flowFields, array_pad([], count($flowFields), null))];
-            }
+        // Get our list of links to filter our flows by
+        $links = $this->getValidLinks($moduleName);
 
-            foreach ($relatedFlows as $relatedFlow) {
-                if ($dependency['evn_type'] == 'START'
-                    || $dependency['evn_type'] == 'GLOBAL_TERMINATE' && !$relatedFlow['cas_flow_status']
-                    || $dependency['evn_type'] == 'INTERMEDIATE' && $relatedFlow['cas_flow_status'] == 'WAITING'
-                ) {
-                    $events[] = array_merge($dependency, $relatedFlow);
-                }
-            }
-        }
+        // Build a list of object ids that will work for our flows
+        $objectIds = $this->buildLinkedObjectIdList($bean, $links);
 
-        return $events;
-    }
-
-    /**
-     * Get module related dependencies
-     *
-     * @param $module
-     * @return array
-     */
-    protected function getModuleRelatedDependencies($module)
-    {
-        $key = BeanFactory::newBean('pmse_BpmRelatedDependency')->getModuleRelatedDependenciesCacheKey($module);
-        if (!isset(SugarCache::instance()->$key)) {
-            $db = DBManagerFactory::getInstance();
-            $result = $db->query("SELECT *
-                FROM pmse_bpm_related_dependency
-                WHERE deleted = 0
-                    AND pro_status != 'INACTIVE'
-                    AND(
-                        evn_type = 'START' AND evn_module = '$module'
-                        OR evn_type = 'GLOBAL_TERMINATE' AND rel_element_module = '$module'
-                        OR evn_type = 'INTERMEDIATE'
-                            AND evn_marker = 'MESSAGE'
-                            AND evn_behavior = 'CATCH'
-                            AND rel_element_module = '$module'
+        $sql = "
+        SELECT
+            rd.evn_id, rd.evn_uid, rd.prj_id, rd.pro_id, rd.evn_type,
+            rd.evn_marker, rd.evn_is_interrupting, rd.evn_attached_to,
+            rd.evn_cancel_activity, rd.evn_activity_ref,
+            rd.evn_wait_for_completion, rd.evn_error_name,
+            rd.evn_error_code, rd.evn_escalation_name,
+            rd.evn_escalation_code, rd.evn_condition, rd.evn_message,
+            rd.evn_operation_name, rd.evn_operation_implementation,
+            rd.evn_time_date, rd.evn_time_cycle, rd.evn_time_duration,
+            rd.evn_behavior, rd.evn_status, rd.evn_module,
+            rd.evn_criteria, rd.evn_params, rd.evn_script,
+            rd.rel_process_module, rd.rel_element_relationship,
+            rd.rel_element_module, rd.pro_module, rd.pro_status,
+            rd.pro_locked_variables, rd.pro_terminate_variables, rd.date_entered,
+            flow.id, flow.cas_id, flow.cas_index, flow.bpmn_id, flow.bpmn_type,
+            flow.cas_user_id, flow.cas_thread, flow.cas_sugar_module,
+            flow.cas_sugar_object_id, flow.cas_flow_status
+        FROM
+            pmse_bpm_related_dependency rd
+        LEFT JOIN
+            pmse_bpm_flow flow ON rd.rel_element_id = flow.bpmn_id AND
+            (flow.cas_flow_status IS NULL OR flow.cas_flow_status='WAITING')
+        WHERE
+            rd.deleted = 0 AND rd.pro_status != 'INACTIVE' AND (
+                (
+                    (rd.evn_type = 'START' AND rd.evn_module = :module) OR
+                    (
+                        rd.evn_type = 'GLOBAL_TERMINATE' AND
+                        (flow.cas_flow_status IS NULL OR flow.cas_flow_status != 'WAITING') AND
+                        rd.rel_element_module = :module AND
+                        (flow.cas_sugar_object_id IS NULL OR flow.cas_sugar_object_id IN ($objectIds))
+                    ) OR
+                    (
+                        rd.evn_type = 'INTERMEDIATE' AND
+                        rd.evn_marker = 'MESSAGE' AND
+                        rd.evn_behavior = 'CATCH' AND
+                        flow.cas_flow_status = 'WAITING' AND
+                        rd.rel_element_module = :module AND
+                        (flow.cas_sugar_object_id IS NULL OR flow.cas_sugar_object_id IN ($objectIds))
                     )
-            ");
+                )
+            )
+            ORDER BY (
+                CASE rd.evn_params
+                WHEN 'new' THEN 1
+                WHEN 'updated' THEN 2
+                ELSE 3
+                END
+            ) ASC, rd.date_entered ASC
+        ";
 
-            $dependencies = array();
-            while ($row = $db->fetchByAssoc($result)) {
-                $dependencies[] = $row;
-            }
-
-            SugarCache::instance()->$key = $dependencies;
-        }
-
-        return SugarCache::instance()->$key;
+        // Execute the query and get our results
+        $stmt = DBManagerFactory::getInstance()
+                ->getConnection()
+                ->executeQuery($sql, [':module' => $moduleName]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -428,53 +525,39 @@ class PMSEPreProcessor
     }
 
     /**
-     *
-     * @param type $data
-     * @return type
+     * Gets flows by case id. This particular method only gets ERROR state flows.
+     * @param int $casId
+     * @return array
      */
     public function getFlowsByCasId($casId)
     {
-        $flow = $this->retrieveBean('pmse_BpmFlow');
-        $q = $this->retrieveSugarQuery();
-        $fields = array(
-            'id',
-            'deleted',
-            'assigned_user_id',
-            'cas_id',
-            'cas_index',
-            'pro_id',
-            'pcas_previous',
-            'cas_reassign_level',
-            'bpmn_id',
-            'bpmn_type',
-            'cas_user_id',
-            'cas_thread',
-            'cas_flow_status',
-            'cas_sugar_module',
-            'cas_sugar_object_id',
-            'cas_sugar_action',
-            'cas_adhoc_type',
-            'cas_task_start_date',
-            'cas_delegate_date',
-            'cas_start_date',
-            'cas_finish_date',
-            'cas_due_date',
-            'cas_queue_duration',
-            'cas_duration',
-            'cas_delay_duration',
-            'cas_started',
-            'cas_finished',
-            'cas_delayed'
-        );
-        $q->select($fields);
-        $q->from($flow);
-        $q->where()->queryAnd()->addRaw("pmse_bpm_flow.cas_id=$casId AND pmse_bpm_flow.cas_flow_status='ERROR'");
-        $start = microtime(true);
-        $result = $q->execute();
-        $time = (microtime(true) - $start) * 1000;
-        $this->logger->debug('Query in order to retrieve all valid start and receive message events in '
-            . $time . ' milliseconds');
-        return $result;
+        // Set our fields to select
+        $select = [
+            'id', 'deleted', 'assigned_user_id', 'cas_id', 'cas_index', 'pro_id',
+            'pcas_previous', 'cas_reassign_level', 'bpmn_id', 'bpmn_type',
+            'cas_user_id', 'cas_thread', 'cas_flow_status', 'cas_sugar_module',
+            'cas_sugar_object_id', 'cas_sugar_action', 'cas_adhoc_type',
+            'cas_task_start_date', 'cas_delegate_date', 'cas_start_date',
+            'cas_finish_date', 'cas_due_date', 'cas_queue_duration', 'cas_duration',
+            'cas_delay_duration', 'cas_started', 'cas_finished', 'cas_delayed',
+        ];
+
+        // Set up SugarQuery
+        $q = new SugarQuery();
+        $q->select($select);
+        $q->from(BeanFactory::getBean('pmse_BpmFlow'));
+
+        // Ensure proper order of data returned
+        $q->orderBy('date_entered', 'ASC');
+
+        // Handle the filtering
+        $q->where()
+          ->queryAnd()
+          ->equals('cas_id', $casId)
+          ->equals('cas_flow_status', 'ERROR');
+
+        // Return the result
+        return $q->execute();
     }
 
     /**
@@ -514,30 +597,6 @@ class PMSEPreProcessor
                 break;
         }
 
-//      Sort flows
-        usort($flows, function ($a, $b) {
-            $valueA = $a["evn_params"] == 'new' ? 1 : ($a["evn_params"] == 'updated' ? 2 : 3);
-            $valueB = $b["evn_params"] == 'new' ? 1 : ($b["evn_params"] == 'updated' ? 2 : 3);
-            if ($valueA == $valueB) {
-                if (!empty($a["date_entered"]) && !empty($b["date_entered"])) {
-                    $timedate = TimeDate::getInstance();
-                    $date_a = $timedate->fromString($a["date_entered"]);
-                    $date_b = $timedate->fromString($b["date_entered"]);
-                    if ($date_a < $date_b) {
-                        return -1;
-                    } else if ($date_a > $date_b) {
-                        return 1;
-                    }
-                }
-                return 0;
-            }
-            if ($valueA < $valueB) {
-                return -1;
-            } else {
-                return 1;
-            }
-        });
-
         return $flows;
     }
 
@@ -570,22 +629,19 @@ class PMSEPreProcessor
     }
 
     /**
-     *
-     * @param type $bean
-     * @param type $flowData
-     * @return type
+     * Instantiates the correct bean if a bean is not presented and the necessary
+     * data exists on the flow data row
+     * @param SugarBean $bean The SugarBean object... could be null
+     * @param array $flowData
+     * @return SugarBean|null
      * @codeCoverageIgnore
      */
     public function processBean($bean, $flowData)
     {
-        if (is_null($bean)) {
-            if (isset($flowData['cas_sugar_module']) && isset($flowData['cas_sugar_object_id'])) {
-                $bean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
-            }
-            if (isset($flowData['cas_id']) && isset($flowData['cas_index'])) {
-
-            }
+        if (is_null($bean) && isset($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id'])) {
+            $bean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
         }
+
         return $bean;
     }
 

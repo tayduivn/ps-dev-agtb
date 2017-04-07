@@ -11,9 +11,6 @@
  */
 
 
-use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
-use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-
 /**
  * Description of PMSEConcurrencyValidator
  * The concurrency validator class purpose is to filter duplicate requests
@@ -31,12 +28,9 @@ class PMSEConcurrencyValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function validateRequest(PMSERequest $request)
     {
-        $this->logger->info("Validate Request " . get_class($this));
-        $this->logger->debug(array("Request data:", $request));
-
         $args = $request->getArguments();
         $flowId = isset($args['idFlow']) ? $args['idFlow'] : (isset($args['flow_id']) ? $args['flow_id'] : '0');
-        $flows = Registry\Registry::getInstance()->get('locked_flows', array());
+        $flows = $this->getRegistry()->get('locked_flows', array());
         if (!isset($flows[$flowId])) {
             $request->validate();
         } else {

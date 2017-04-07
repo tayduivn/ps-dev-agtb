@@ -24,10 +24,14 @@ class PMSETerminateValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function validateRequest(PMSERequest $request)
     {
-        $this->logger->info("Validate Request " . get_class($this));
-        $this->logger->debug(array("Request data:", $request));
-        $flowData = $request->getFlowData();
+        // This should be done right away
         $bean = $request->getBean();
+        if (empty($bean)) {
+            $request->invalidate();
+            return $request;
+        }
+
+        $flowData = $request->getFlowData();
         if ($flowData['evn_id'] == 'TERMINATE') {
             $paramsRelated = $this->validateParamsRelated($bean, $flowData);
             $this->validateExpression($bean, $flowData, $request, $paramsRelated);
@@ -45,12 +49,19 @@ class PMSETerminateValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function validateExpression($bean, $flowData, $request, $paramsRelated = array())
     {
-        $terminate = $this->evaluator->evaluateExpression(trim($flowData['evn_criteria']), $bean, $paramsRelated);
-        if ($flowData['evn_criteria'] != '' && $flowData['evn_criteria'] != '[]' && $terminate) {
+        // Start with trimming our criteria for evaluation
+        $criteria = trim($flowData['evn_criteria']);
+
+        // If the expression evaluates to terminate, handle that
+        $valid = $criteria !== '' && $criteria !== '[]';
+        if ($valid && $this->getEvaluator()->evaluateExpression($criteria, $bean, $paramsRelated)) {
             $request->setResult('TERMINATE_CASE');
         }
-        $condition = $this->evaluator->condition();
-        $this->logger->debug("Eval: $condition returned " . ($request->isValid()));
+
+        // Used for logging
+        $condition = $this->getEvaluator()->condition();
+        $this->getLogger()->debug("Eval: $condition returned " . ($request->isValid()));
+
         return $request;
     }
 
@@ -72,7 +83,7 @@ class PMSETerminateValidator extends PMSEBaseValidator implements PMSEValidate
             );
         }
 
-        $this->logger->debug("Parameters related returned :" . print_r($paramsRelated, true));
+        $this->getLogger()->debug("Parameters related returned :" . print_r($paramsRelated, true));
         return $paramsRelated;
     }
 }

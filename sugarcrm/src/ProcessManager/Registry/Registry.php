@@ -90,6 +90,29 @@ class Registry implements RegistryInterface
     /**
      * @inheritDoc
      */
+    public function append($key, $value)
+    {
+        if (!$this->has($key)) {
+            $this->data[$key] = $value;
+        } else {
+            // Get our current data value for this key
+            $data = $this->data[$key];
+
+            // If it is not an array, make it one
+            if (!is_array($data)) {
+                $data = [$data];
+            }
+
+            // Add the new value to it
+            $data[] = $value;
+            $this->addChange($key, $data);
+            $this->data[$key] = $data;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function get($key, $default = null)
     {
         if ($this->has($key)) {

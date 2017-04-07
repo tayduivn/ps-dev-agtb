@@ -673,6 +673,13 @@ $dictionary['pmse_BpmFlow'] = array(
             ),
         ),
         array(
+            'name' => 'idx_pmse_bpm_flow_cas_sugar_object_id',
+            'type' => 'index',
+            'fields' => array(
+                'cas_sugar_object_id',
+            ),
+        ),
+        array(
             'name' => 'idx_pmse_bpm_flow_parent',
             'type' => 'index',
             'fields' => array(

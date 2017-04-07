@@ -24,17 +24,21 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function validateRequest(PMSERequest $request)
     {
-        $this->logger->info("Validate Request " . get_class($this));
-        $this->logger->debug(array("Request data:", $request));
+        // This can't be valid without a bean
+        $bean = $request->getBean();
+        if (empty($bean)) {
+            $request->invalidate();
+            return $request;
+        }
 
         $flowData = $request->getFlowData();
-        $bean = $request->getBean();
         if ($flowData['evn_id'] != 'TERMINATE') {
             $paramsRelated = $this->validateParamsRelated($bean, $flowData, $request);
             if ($request->isValid()) {
                 $this->validateExpression($bean, $flowData, $request, $paramsRelated);
             }
         }
+
         return $request;
     }
 
@@ -48,15 +52,18 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function validateExpression($bean, $flowData, $request, $paramsRelated = array())
     {
-        $conditionResult = $this->evaluator->evaluateExpression(trim($flowData['evn_criteria']), $bean, $paramsRelated);
-        if ($flowData['evn_criteria'] == '' || $flowData['evn_criteria'] == '[]' || $conditionResult) {
+        // Empty criteria is valid
+        $valid = $flowData['evn_criteria'] === '' || $flowData['evn_criteria'] === '[]';
+
+        // Now check if the evaluation is valid as well
+        if ($valid || $this->getEvaluator()->evaluateExpression(trim($flowData['evn_criteria']), $bean, $paramsRelated)) {
             $request->validate();
         } else {
             $request->invalidate();
         }
 
-        $condition = $this->evaluator->condition();
-        $this->logger->debug("Eval: $condition returned " . ($request->isValid()));
+        $condition = $this->getEvaluator()->condition();
+        $this->getLogger()->debug("Eval: $condition returned " . ($request->isValid()));
         return $request;
     }
 
@@ -102,7 +109,7 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
             }
         }
 
-        $this->logger->debug("Parameters related returned :" . print_r($paramsRelated, true));
+        $this->getLogger()->debug("Parameters related returned :" . print_r($paramsRelated, true));
         return $paramsRelated;
     }
 
@@ -115,6 +122,19 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function hasValidRelationship($bean, $flowData)
     {
+        // Check the cache for this first
+        $cacheKey = sprintf(
+            '%s:%s:%s',
+            $flowData['cas_sugar_module'],
+            $flowData['cas_sugar_object_id'],
+            $flowData['rel_element_relationship']
+        );
+
+        // If we have a cached value, send it back
+        if ($this->hasCacheValue($cacheKey)) {
+            return $this->getCacheValue($cacheKey);
+        }
+
         // We don't need the entire retrieved bean for this operation...
         $seedBean = BeanFactory::newBean($flowData['cas_sugar_module']);
 
@@ -144,10 +164,14 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
             $row = $db->fetchOne($query);
 
             // And verify that the relationship is actually valid record to record
-            return $row && $row['id'] == $bean->id;
+            $return = $row && $row['id'] == $bean->id;
+        } else {
+            // Otherwise just return whether there is a relationship
+            $return = $hasRel;
         }
 
-        // Otherwise just return whether there is a relationship
-        return $hasRel;
+        // Set the cache and return the value
+        $this->addCacheValue($cacheKey, $return);
+        return $return;
     }
 }

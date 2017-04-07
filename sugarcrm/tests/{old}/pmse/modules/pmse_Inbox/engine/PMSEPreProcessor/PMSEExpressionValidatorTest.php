@@ -76,7 +76,9 @@ class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
 
         $expressionValidatorMock = $this->getMockBuilder('PMSEExpressionValidator')
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->setMethods([
+                'getLogger',
+            ])
             ->getMock();
         $expressionValidatorMock->setLevel(1);
 
@@ -85,7 +87,9 @@ class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
             ->setMethods(array('evaluateExpression', 'condition'))
             ->getMock();
 
-        $expressionValidatorMock->setLogger($this->loggerMock);
+        $expressionValidatorMock->expects($this->any())
+            ->method('getLogger')
+            ->will($this->returnValue($this->loggerMock));
         $expressionValidatorMock->setEvaluator($expressionEvaluatorMock);
 
         $expressionValidatorMock->validateExpression($beanMock, $flowDataMock, $request);

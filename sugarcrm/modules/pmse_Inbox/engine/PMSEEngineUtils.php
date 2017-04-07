@@ -181,6 +181,13 @@ class PMSEEngineUtils
     ];
 
     /**
+     * Internal cache to store parent fetches to prevent incessant hits against
+     * the database
+     * @var array
+     */
+    protected static $parentBeanCache = [];
+
+    /**
      * Method get key fields
      * @param type $pattern
      * @param type $array
@@ -1568,8 +1575,6 @@ class PMSEEngineUtils
      */
     public static function getParentBean($flowData, $bean, $isCacheEnabled = true)
     {
-        $cache = SugarCache::instance();
-
         try {
             $linkName = self::getRelatedLinkName($flowData);
         } catch (\Exception $e) {
@@ -1600,18 +1605,33 @@ class PMSEEngineUtils
             return null;
         }
 
-        // Generate and set the data here into $cache->$cacheKey
-        if (!isset($cache->$cacheKey) || !$isCacheEnabled) {
-            $parentBean = $bean->$linkName->getBeans(array('limit' => 1));
-            if (empty($parentBean)) {
+        // Generate and set the data here into the cache
+        if (empty(static::$parentBeanCache[$cacheKey]) || !$isCacheEnabled) {
+            $parentBeans = $bean->$linkName->getBeans(array('limit' => 1));
+            if (empty($parentBeans)) {
                 // Parent Bean not found
-                PMSELogger::getInstance()->warning('No parent bean found for ' . $mName);
+                PMSELogger::getInstance()->warning('No parent beans found for ' . $mName);
                 return null;
             }
-            $cache->$cacheKey = current($parentBean);
+
+            // Get the single bean from the bean query result
+            $parentBean = current($parentBeans);
+
+            // Set the bean data into the cache so that we are not holding beans
+            // NOTE: BeanFactory does this for us anyway
+            static::$parentBeanCache[$cacheKey] = [
+                'module' => $parentBean->getModuleName(),
+                'id' => $parentBean->id,
+            ];
+
+            // Since we have the bean, return it
+            return $parentBean;
         }
 
-        return $cache->$cacheKey;
+        // If we got here, we have what we need so send back the bean for the
+        // relevant data
+        $beanData = static::$parentBeanCache[$cacheKey];
+        return BeanFactory::getBean($beanData['module'], $beanData['id']);
     }
 
     /*

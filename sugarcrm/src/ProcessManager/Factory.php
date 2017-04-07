@@ -92,17 +92,17 @@ class Factory
 
 
     /**
-     * Gets an Advanced Workflow object. This expects a mapping of file basename to
+     * Gets an Advanced Workflow class. This expects a mapping of file basename to
      * class name. This method allows for extending an Advanced Workflow class using
      * the 'Custom' prefix on a classname OR overriding an Advanced Workflow class
      * completely by reusing the name of the class/file. Priority is given to
      * Custom classes before overrides.
      *
-     * @param string $name Name of the element to get the object for
+     * @param string $name Name of the element to get the class for
      * @param string $prefix Prefix to inject into the class name
-     * @return PMSE* Object
+     * @return string
      */
-    public static function getPMSEObject($name, $prefix = '')
+    public static function getPMSEClass($name, $prefix = '')
     {
         // Default variable for our classname
         $class = '';
@@ -152,8 +152,34 @@ class Factory
             throw $exception;
         }
 
+        // Send back the class name
+        return $class;
+    }
+
+    /**
+     * Gets an Advanced Workflow object. This expects a mapping of file basename to
+     * class name. This method allows for extending an Advanced Workflow class using
+     * the 'Custom' prefix on a classname OR overriding an Advanced Workflow class
+     * completely by reusing the name of the class/file. Priority is given to
+     * Custom classes before overrides.
+     *
+     * @param string $name Name of the element to get the object for
+     * @param string $prefix Prefix to inject into the class name
+     * @param boolean $noCache Flag to tell this method not to cache
+     * @return PMSE* Object
+     */
+    public static function getPMSEObject($name, $prefix = '', $noCache = false)
+    {
+        // If there is no current cached class name, get it and cache it
+        $key = $name . $prefix;
+        if (empty(static::$cache['classes'][$key]) || $noCache) {
+            // Get the class name for this object and cache it so we don't have
+            // to continually find the class name
+            static::$cache['classes'][$key] = static::getPMSEClass($name, $prefix);
+        }
+
         // Get new object. Argument passing will take place in other methods.
-        return new $class;
+        return new static::$cache['classes'][$key];
     }
 
     /**
