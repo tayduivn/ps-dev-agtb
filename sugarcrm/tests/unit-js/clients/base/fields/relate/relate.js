@@ -56,7 +56,7 @@ describe('Base.Field.Relate', function() {
         app.view.reset();
         Handlebars.templates = {};
         fieldDef = null;
-        app.routing.stop();
+        app.router.stop();
     });
 
     describe('_getPopulateMetadata', function() {

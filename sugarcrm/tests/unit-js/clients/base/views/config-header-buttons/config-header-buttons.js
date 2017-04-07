@@ -26,7 +26,7 @@ describe('Base.View.ConfigHeaderButtons', function() {
     afterEach(function() {
         sinon.collection.restore();
         view = null;
-        app.routing.stop();
+        app.router.stop();
     });
 
     it('will have custom module name in moduleLangObj', function() {

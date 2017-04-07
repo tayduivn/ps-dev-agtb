@@ -25,7 +25,7 @@ describe("Base.Field.Button", function() {
         field._loadTemplate = null;
         field = null;
         Address = null;
-        app.routing.stop();
+        app.router.stop();
     });
 
     it("should setDisabled with CSS 'disabled'", function() {

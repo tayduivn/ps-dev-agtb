@@ -33,7 +33,7 @@ describe('Dashboards.Base.Layout.Dashboard', function() {
         layout.dispose();
         layout.context = null;
         layout = null;
-        app.routing.stop();
+        app.router.stop();
     });
 
     describe('Home Dashboard', function() {

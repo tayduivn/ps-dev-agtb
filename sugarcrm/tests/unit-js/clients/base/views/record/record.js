@@ -148,7 +148,7 @@ describe("Record View", function () {
         sinonSandbox.restore();
         sinon.collection.restore();
         buildGridsFromPanelsMetadataStub.restore();
-        app.routing.stop();
+        app.router.stop();
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
         app.data.reset();

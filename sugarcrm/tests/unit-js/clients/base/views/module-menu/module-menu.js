@@ -32,7 +32,7 @@ describe('Module Menu', function() {
         view.dispose();
         Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
-        app.routing.stop();
+        app.router.stop();
     });
 
     it('should populate recently viewed and favorites on menu open', function() {

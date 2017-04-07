@@ -42,7 +42,7 @@ describe("Editable Plugin", function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         view = null;
-        app.routing.stop();
+        app.router.stop();
     });
 
     it("Should toggle a single field to edit modes", function() {

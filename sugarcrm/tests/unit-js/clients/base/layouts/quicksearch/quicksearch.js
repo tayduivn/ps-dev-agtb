@@ -50,7 +50,7 @@ describe('View.Layouts.Base.QuicksearchLayout', function() {
         app.shortcuts._savedSessions = [];
         app.shortcuts._globalShortcuts = {};
         layout = viewA = viewB = viewC = viewAisFocusable = viewBisFocusable = viewCisFocusable = null;
-        app.routing.stop();
+        app.router.stop();
     });
 
     describe('firing navigation events on components', function() {

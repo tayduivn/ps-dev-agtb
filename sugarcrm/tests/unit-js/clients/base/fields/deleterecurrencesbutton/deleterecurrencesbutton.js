@@ -42,7 +42,7 @@ describe('Delete Recurrences Field', function() {
         sinon.collection.restore();
         field.model = null;
         field = null;
-        app.routing.stop();
+        app.router.stop();
     });
 
     it('should show the button if the meeting is a recurring meeting', function() {

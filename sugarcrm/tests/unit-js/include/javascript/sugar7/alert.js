@@ -43,7 +43,7 @@ describe('Sugar7 sync alerts', function() {
         delete app.drawer;
         alertStubs.show.restore();
         alertStubs.dismiss.restore();
-        app.routing.stop();
+        app.router.stop();
         sinonSandbox.restore();
     });
 
