@@ -79,6 +79,7 @@
     "tests/docker/Thorn.Dockerfile",
     "tests/docker/Thorn.Entrypoint.sh",
     "tests/end-to-end/features/crud/accounts.feature",
+    "tests/end-to-end/features/crud/reports.feature",
     "tests/{old}/HealthCheck/cases/433_1/sugarcrm/custom/include/SugarSearchEngine/Elastic/Facets/FacetBar.php",
     "tests/{old}/HealthCheck/cases/433_1/sugarcrm/custom/include/SugarSearchEngine/Elastic/Facets/FacetFoo.php",
     "tests/{old}/HealthCheck/cases/433_1/sugarcrm/custom/include/SugarSearchEngine/Elastic/SugarSearchEngineElastic.php",
