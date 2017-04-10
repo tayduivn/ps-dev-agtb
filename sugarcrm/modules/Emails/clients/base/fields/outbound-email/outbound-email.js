@@ -21,11 +21,13 @@
      * loaded. This is necessary when extending a field and using a
      * different name without any custom templates.
      *
+     * Adds help text (LBL_OUTBOUND_EMAIL_ID_HELP) for admins.
+     *
      * @inheritdoc
      */
     initialize: function(options) {
         if (app.user.get('type') === 'admin') {
-            options.def.help = app.lang.get('LBL_OUTBOUND_EMAIL_ID_HELP', options.module);
+            options.def.help = 'LBL_OUTBOUND_EMAIL_ID_HELP';
         }
 
         this._super('initialize', [options]);

@@ -264,9 +264,11 @@
              * Default implementation for field helper
              */
             decorateHelper: function() {
+                var title = app.lang.get(this.def.help, this.module);
+
                 this.$el.closest('.record-cell').attr({
                     'rel': 'tooltip',
-                    'data-title': this.def['help'],
+                    'data-title': title,
                     'data-placement': 'bottom'
                 });
             },
