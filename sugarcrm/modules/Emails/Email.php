@@ -355,7 +355,7 @@ class Email extends SugarBean {
         $smtppassword,
         $fromaddress,
         $toaddress,
-        $mail_sendtype = 'smtp',
+        $mail_sendtype = 'SMTP',
         $fromname = ''
     ) {
 		global $current_user,

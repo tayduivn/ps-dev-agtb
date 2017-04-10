@@ -91,7 +91,7 @@ $dictionary['OutboundEmail'] = array (
 			'type' => 'varchar',
 			'len' => 8,
 			'required' => true,
-			'default' => 'smtp',
+            'default' => 'SMTP',
 			'reportable' => false,
 		),
 		'mail_smtptype' => array(

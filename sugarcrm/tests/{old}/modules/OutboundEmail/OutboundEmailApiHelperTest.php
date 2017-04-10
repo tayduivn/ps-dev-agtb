@@ -30,7 +30,7 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name' => 'system',
                     'type' => 'system',
-                    'mail_sendtype' => 'smtp',
+                    'mail_sendtype' => 'SMTP',
                     'mail_smtptype' => 'exchange',
                     'mail_smtpserver' => 'smtp.sugarcrm.com',
                     'mail_smtpuser' => 'foo',
@@ -69,7 +69,7 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name' => 'system',
                     'type' => 'system-override',
-                    'mail_sendtype' => 'smtp',
+                    'mail_sendtype' => 'SMTP',
                     'mail_smtptype' => 'exchange',
                     'mail_smtpserver' => 'smtp.sugarcrm.com',
                     'mail_smtpuser' => 'foo',
@@ -94,7 +94,7 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name' => 'system',
                     'type' => 'system-override',
-                    'mail_sendtype' => 'smtp',
+                    'mail_sendtype' => 'SMTP',
                     'mail_smtptype' => 'exchange',
                     'mail_smtpserver' => 'smtp.sugarcrm.com',
                     'mail_smtpuser' => 'biz',
@@ -108,7 +108,7 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name' => 'foo',
                     'type' => 'user',
-                    'mail_sendtype' => 'smtp',
+                    'mail_sendtype' => 'SMTP',
                     'mail_smtptype' => 'exchange',
                     'mail_smtpserver' => 'smtp.sugarcrm.com',
                     'mail_smtpuser' => 'foo',
@@ -177,7 +177,7 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name' => 'foo',
                     'type' => 'user',
-                    'mail_sendtype' => 'smtp',
+                    'mail_sendtype' => 'SMTP',
                     'mail_smtptype' => 'exchange',
                     'mail_smtpserver' => 'smtp.sugarcrm.com',
                     'mail_smtpuser' => 'foo',
@@ -199,7 +199,7 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name' => 'foo',
                     'type' => 'user',
-                    'mail_sendtype' => 'smtp',
+                    'mail_sendtype' => 'SMTP',
                     'mail_smtptype' => 'exchange',
                     'mail_smtpserver' => 'smtp.sugarcrm.com',
                     'mail_smtpuser' => 'foo',
@@ -221,7 +221,7 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name' => 'foo',
                     'type' => 'user',
-                    'mail_sendtype' => 'smtp',
+                    'mail_sendtype' => 'SMTP',
                     'mail_smtptype' => 'exchange',
                     'mail_smtpserver' => 'smtp.sugarcrm.com',
                     'mail_smtpuser' => 'foo',
@@ -247,7 +247,7 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name' => 'foo',
                     'type' => 'user',
-                    'mail_sendtype' => 'smtp',
+                    'mail_sendtype' => 'SMTP',
                     'mail_smtptype' => 'exchange',
                     'mail_smtpserver' => 'smtp.sugarcrm.com',
                     'mail_smtpuser' => 'foo',
