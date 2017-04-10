@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -16,17 +17,6 @@ class SugarUpgradeFixPMSEUserEmailSendEmail extends UpgradeScript
 {
     public $order = 9012;
     public $type = self::UPGRADE_CUSTOM;
-
-    /**
-     * @var $db DBManager
-     */
-    protected $db;
-
-    public function __construct($upgrader)
-    {
-        $this->db = DBManagerFactory::getInstance();
-        parent::__construct($upgrader);
-    }
 
     /**
      * Returns an updated JSON array
