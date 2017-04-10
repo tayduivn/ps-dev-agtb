@@ -12,8 +12,11 @@
 --}}
 {{#if value}}
 <div class="ellipsis_inline" data-placement="bottom" title="{{value}}">
-    {{#eq this.model.attributes.type 'system'}}<i class="fa fa-lock" aria-hidden="true" rel="tooltip" title="{{str "LBL_SYSTEM_ACCOUNT" module}}"></i>{{/eq}}
-    {{#if def.link}}<a href="{{#if def.events}}javascript:void(0);{{else}}{{href}}{{/if}}">{{value}}</a>{{else}}{{value}}{{/if}}
+    {{#if def.link}}
+        <a href="{{#if def.events}}javascript:void(0);{{else}}{{href}}{{/if}}">{{value}}</a>
+    {{else}}
+        {{value}}
+    {{/if}}
 </div>
 {{/if}}
-
+{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}

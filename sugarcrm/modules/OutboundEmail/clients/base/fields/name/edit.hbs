@@ -10,6 +10,5 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-        {{#eq this.model.attributes.type 'system'}}<i class="fa fa-lock" aria-hidden="true" rel="tooltip" title="{{str "LBL_SYSTEM_ACCOUNT" module}}"></i>{{/eq}}
         <input type="text" name="{{name}}" value="{{value}}"{{#if def.len}} maxlength="{{def.len}}"{{/if}}{{#if def.placeholder}} placeholder="{{str def.placeholder module}}"{{/if}} class="inherit-width">
         {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}

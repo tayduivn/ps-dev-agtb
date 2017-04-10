@@ -11,11 +11,17 @@
  */
 --}}
 {{#if value}}
+    {{#if def.help}}
+        <span class="add-on" rel="tooltip" title="{{str def.help module}}">*</span>
+    {{/if}}
     {{#if ../ellipsis}}
         <div class="ellipsis_inline" data-placement="bottom" title="{{value}}">
     {{/if}}
-    {{#eq this.model.attributes.type 'system'}}<i class="fa fa-lock" aria-hidden="true" rel="tooltip" title="{{str "LBL_SYSTEM_ACCOUNT" module}}"></i>{{/eq}}
-    {{#if href}}<a href="{{#if def.events}}javascript:void(0);{{else}}{{href}}{{/if}}">{{value}}</a>{{else}}{{value}}{{/if}}
+    {{#if href}}
+            <a href="{{#if def.events}}javascript:void(0);{{else}}{{href}}{{/if}}">{{value}}</a>
+    {{else}}
+        {{value}}
+    {{/if}}
     {{#if ../ellipsis}}
         </div>
     {{/if}}
