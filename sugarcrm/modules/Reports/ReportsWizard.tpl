@@ -373,7 +373,7 @@ function stopEnterKey(evt) {
 var users_array = new Array();
 users_array[0]={literal}{text{/literal}:'{$MOD.LBL_CURRENT_USER}',value:'Current User'{literal}}{/literal};
 {foreach from=$users_array key=user_id item=user_name}
-	users_array[users_array.length] = {literal}{text{/literal}:'{$user_name}',value:'{$user_id}'{literal}}{/literal};
+	users_array[users_array.length] = {literal}{text{/literal}:'{$user_name|escape}',value:'{$user_id}'{literal}}{/literal};
 {/foreach}
 
 {literal}

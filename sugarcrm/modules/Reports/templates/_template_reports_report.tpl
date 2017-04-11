@@ -222,7 +222,7 @@ for(var i in report_def.links_def) {
 } // for
 {/literal}
 {foreach from=$user_array key=user_id item=user_name}
-{literal}users_array[users_array.length] = {text:{/literal}'{$user_name}',value:'{$user_id}'};
+{literal}users_array[users_array.length] = {text:{/literal}'{$user_name|escape}',value:'{$user_id}'};
 {/foreach}
 </script>
 <br/>

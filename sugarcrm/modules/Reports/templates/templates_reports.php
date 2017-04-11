@@ -1019,8 +1019,8 @@ function get_select_related_html(&$args)
 
   $request_data = $global_json->encode($popup_request_data);
 
-
-  $content = "<input class='sqsEnabled' autocomplete='off' id='{$args['parent_name']}' name='{$args['parent_name']}' type='text' value='{$args['parent_name_value']}'>&nbsp;<input id='{$args['parent_id']}' name='{$args['parent_id']}' type='hidden' value='{$args['parent_id_value']}'/></slot>";
+    $sanitizedParentNameValue = htmlentities($args['parent_name_value'], ENT_QUOTES);
+    $content = "<input class='sqsEnabled' autocomplete='off' id='{$args['parent_name']}' name='{$args['parent_name']}' type='text' value='{$sanitizedParentNameValue}'>&nbsp;<input id='{$args['parent_id']}' name='{$args['parent_id']}' type='hidden' value='{$args['parent_id_value']}'/></slot>";
   $content .= "<input title='{$app_strings['LBL_SELECT_BUTTON_TITLE']}' type='button' class='button' value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name=btn1 ";
 
   if ( isset($args['tabindex']))
