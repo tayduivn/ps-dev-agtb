@@ -112,6 +112,21 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * Wait until element is appear on the page
+     * @When /^I wait for element "([^"]*)"$/
+     * @And /^I wait for element "([^"]*)"$/
+     * Example: I wait for element "ul.megamenu li button"
+     */
+    public function waitForElement($css)
+    {
+        $css = $this->fixStepArgument($css);
+        $this->spin(function (FeatureContext $context) use ($css) {
+            $element = $context->getSession()->getPage()->find('css', $css);
+            return !is_null($element);
+        }, 20);
+    }
+
+    /**
      * Spin wrapper for long test.
      * @param \Closure $lambda will call until not return true or time out
      * @param int $wait

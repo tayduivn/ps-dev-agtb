@@ -1,5 +1,34 @@
 #!/usr/bin/env bash
 
+while :
+do
+    case "$1" in
+        -u)
+            INSTANCE_URL="$2"
+            shift 2
+            ;;
+        -s)
+            BEHAT_SUITE="$2"
+            shift 2
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if [[ -z ${INSTANCE_URL} ]]
+then
+    printf "Please set up sugar url: -u http://sugar.url \n\n"
+    exit
+fi
+
+if [[ -z ${BEHAT_SUITE} ]]
+then
+    printf "Please set up behat suite: -s saml \n\n"
+    exit
+fi
+
 if [[ -z $TMPDIR ]]
 then
 TMPDIR="/tmp"
@@ -57,4 +86,6 @@ fi
 
 cd $INSTANCE_PATH
 
-./vendor/bin/behat
+export BEHAT_PARAMS="{\"extensions\" : {\"Behat\\\\MinkExtension\" : {\"base_url\" : \"${INSTANCE_URL}\"}}}"
+
+./vendor/bin/behat -s ${BEHAT_SUITE}

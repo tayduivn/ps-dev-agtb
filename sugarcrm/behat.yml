@@ -5,8 +5,14 @@ default:
   suites:
     default:
       paths:
-        features: %paths.base%/tests/behat
-      contexts: [Sugarcrm\SugarcrmTests\Bootstrap\FeatureContext]
+        features: %paths.base%/tests/behat/Default
+      contexts:
+        - Sugarcrm\SugarcrmTests\Bootstrap\FeatureContext
+    saml:
+      paths:
+        features: %paths.base%/tests/behat/Saml
+      contexts:
+        - Sugarcrm\SugarcrmTests\Bootstrap\SamlFeatureContext
 
   extensions:
     Behat\MinkExtension:
@@ -14,7 +20,6 @@ default:
       default_session: selenium2
       selenium2:
         wd_host: "http://127.0.0.1:4444/wd/hub"
-      base_url: --Sugar crm instanse url--
       sessions:
         default:
           goutte: ~
