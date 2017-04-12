@@ -492,9 +492,15 @@ class AdministrationController extends SugarController
      */
     protected function getSamlSettings()
     {
-        return new \OneLogin_Saml2_Settings(
-            (new Config(\SugarConfig::getInstance()))->getSAMLConfig()
-        );
+        $config = (new Config(\SugarConfig::getInstance()))->getSAMLConfig();
+        // Need to fill up some IdP settings with dummy values to allow export of SP metadata when SAML isn't set up.
+        if (empty($config['idp']['entityId'])) {
+            $config['idp']['entityId'] = $config['sp']['entityId'];
+        }
+        if (empty($config['idp']['singleLogoutService']['url'])) {
+            $config['idp']['singleSignOnService']['url'] = $config['sp']['assertionConsumerService']['url'];
+        }
+        return new \OneLogin_Saml2_Settings($config);
     }
 
     /**
