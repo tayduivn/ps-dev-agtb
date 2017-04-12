@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 class ViewModulefields extends SugarView
 {
     var $mbModule;
@@ -121,7 +123,7 @@ class ViewModulefields extends SugarView
 
             if(file_exists($this->mbModule->path. '/language/'.$current_language.'.lang.php'))
             {
-                include($this->mbModule->path .'/language/'.$current_language.'.lang.php');
+                include FileLoader::validateFilePath($this->mbModule->path .'/language/'.$current_language.'.lang.php');
                 $this->mbModule->setModStrings($current_language,$mod_strings);
             }elseif(file_exists($this->mbModule->path. '/language/en_us.lang.php')){
                 include($this->mbModule->path .'/language/en_us.lang.php');
