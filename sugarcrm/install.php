@@ -127,7 +127,7 @@ if(isset($_POST['language'])) {
 $current_language = isset($_SESSION['language']) ? $_SESSION['language'] : $default_lang;
 
 if(file_exists("install/language/{$current_language}.lang.php")) {
-	require_once("install/language/{$current_language}.lang.php");
+    require_once FileLoader::validateFilePath("install/language/{$current_language}.lang.php");
 } else {
 	require_once("install/language/{$default_lang}.lang.php");
 }
