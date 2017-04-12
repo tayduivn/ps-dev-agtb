@@ -893,7 +893,7 @@ function getModuleLanguagePack($lang, $module) {
 
         if (file_exists($langPack))
         {
-            include($langPack);
+            include FileLoader::validateFilePath($langPack);
         }
         elseif (file_exists($langPackEn))
         {
