@@ -103,7 +103,7 @@ class ExternalAPIFactory
         foreach ( $apiFullList as $apiName => $apiOpts ) {
             require_once FileLoader::validateFilePath($apiOpts['file']);
             if ( !empty($apiOpts['file_cstm']) ) {
-                require_once($apiOpts['file_cstm']);
+                require_once FileLoader::validateFilePath($apiOpts['file_cstm']);
             }
             $className = $apiOpts['className'];
             $apiClass = new $className();
