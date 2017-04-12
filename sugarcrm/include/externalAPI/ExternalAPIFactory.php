@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 /**
  * Provides a factory to list, discover and create external API calls
  *
@@ -99,7 +101,7 @@ class ExternalAPIFactory
 
         $optionList = array('supportedModules','useAuth','requireAuth','supportMeetingPassword','docSearch', 'authMethod', 'oauthFixed','needsUrl','canInvite','sendsInvites','sharingOptions','connector', 'oauthParams','restrictUploadsByExtension');
         foreach ( $apiFullList as $apiName => $apiOpts ) {
-            require_once($apiOpts['file']);
+            require_once FileLoader::validateFilePath($apiOpts['file']);
             if ( !empty($apiOpts['file_cstm']) ) {
                 require_once($apiOpts['file_cstm']);
             }
