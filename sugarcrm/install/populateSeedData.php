@@ -15,8 +15,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // load the correct demo data and main application language file depending upon the installer language selected; if
 // it's not found fall back on en_us
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 if(file_exists("include/language/{$current_language}.lang.php")){
-    require_once("include/language/{$current_language}.lang.php");
+    require_once FileLoader::validateFilePath("include/language/{$current_language}.lang.php");
 }
 else {
     require_once("include/language/en_us.lang.php");
@@ -27,7 +30,7 @@ require_once('install/TeamDemoData.php');
 
 global $sugar_demodata;
 if(file_exists("install/demoData.{$current_language}.php")){
-   require_once("install/demoData.{$current_language}.php");
+    require_once FileLoader::validateFilePath("install/demoData.{$current_language}.php");
 }
 else {
    require_once("install/demoData.en_us.php");
