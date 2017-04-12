@@ -174,7 +174,7 @@ class ExternalAPIFactory
         }
 
         $myApi = $apiList[$apiName];
-        require_once($myApi['file']);
+        require_once FileLoader::validateFilePath($myApi['file']);
         if ( !empty($myApi['file_cstm']) ) {
             require_once FileLoader::validateFilePath($myApi['file_cstm']);
         }
