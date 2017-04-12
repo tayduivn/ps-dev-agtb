@@ -1022,11 +1022,13 @@ EOF;
      */
     public function filterRequestVars($prefix, $request, $add_empty = true) {
         $vars = array();
+        $decode = SugarConfig::getInstance()->get('validation.compat_mode', true);
 
         foreach ($request as $key => $value) {
             if (strpos($key, $prefix) === 0) {
                 if ($value !== '' || $add_empty) {
-                    $vars[substr($key, strlen($prefix))] = $value;
+                    $vars[substr($key, strlen($prefix))] =
+                        $decode ? htmlspecialchars_decode($value, ENT_QUOTES) : $value;
                 }
             }
         }
@@ -1042,6 +1044,7 @@ EOF;
      */
     public function createLoginVars()
     {
+        $decode = SugarConfig::getInstance()->get('validation.compat_mode', true);
         $ret = array();
         $req = $this->filterCsrfToken($this->getRequestVars());
         foreach (array_keys($req) as $var) {
@@ -1049,7 +1052,7 @@ EOF;
                 $ret["login_" . $var] = $this->controller->$var;
                 continue;
             }
-            $ret["login_" . $var] = $req[$var];
+            $ret["login_" . $var] = $decode ? htmlspecialchars_decode($req[$var], ENT_QUOTES) : $req[$var];
         }
         if (isset($req['mobile'])) {
             $ret['mobile'] = $req['mobile'];
