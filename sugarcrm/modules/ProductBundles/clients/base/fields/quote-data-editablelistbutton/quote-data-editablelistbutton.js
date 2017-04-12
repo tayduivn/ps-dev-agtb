@@ -134,6 +134,12 @@
         var successCallback = function(data, request) {
             self.changed = false;
             self.model.modelView = 'list';
+
+            if (!_.isEmpty(data.related_record)) {
+                self.model.setSyncedAttributes(data.related_record);
+                self.model.set(data.related_record);
+            }
+
             if (self.view.layout) {
                 self.view.layout.trigger('editablelist:' + self.view.name + ':save', self.model, oldModelId);
             }
