@@ -5749,7 +5749,8 @@ class SugarBean
                         $rName = $field['rname_link'];
                         if (!empty($this->$link) || $this->load_relationship($link)) {
                             $params = $this->$link->beansAreLoaded() ? null : array('limit' => 1);
-                            $record = reset($this->$link->getBeans($params));
+                            $beans = $this->$link->getBeans($params);
+                            $record = reset($beans);
                             if ($record) {
                                 $this->$name = $record->$rName;
                             }
