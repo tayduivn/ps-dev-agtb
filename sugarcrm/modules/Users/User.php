@@ -1032,7 +1032,7 @@ class User extends Person {
 
 		if (!$current_user->isAdminForModule('Users')) {
 			//check old password first
-            $row = self::getUserDataByNameAndPassword($this->user_name, $user_password);
+            $row = self::getUserDataByNameAndPassword($this->user_name, md5($user_password));
             if (empty($row)) {
 				$GLOBALS['log']->warn("Incorrect old password for ".$this->user_name."");
 				$this->error_string = $mod_strings['ERR_PASSWORD_INCORRECT_OLD_1'].$this->user_name.$mod_strings['ERR_PASSWORD_INCORRECT_OLD_2'];
