@@ -64,7 +64,7 @@ fixtures.jssource = {
             "base": {
                 controller: "{" +
                     "render : function(){" +
-                    "app.view.Field.prototype.render.call(this);" +
+                    "this._super('render');" +
                     "}," +
                     "customCallback : function(){}" +
                     "}"
@@ -73,7 +73,7 @@ fixtures.jssource = {
                 controller: "{" +
                     "fieldTag:\"select\",\n" +
                     "render:function(){" +
-                    "   var result = app.view.Field.prototype.render.call(this);" +
+                    "   var result = this._super('render');" +
                     "   $(this.fieldTag + \"[name=\" + this.name + \"]\").chosen();" +
                     "   $('select').chosen();" +
                     "   return result;" +
@@ -860,7 +860,7 @@ fixtures.metadata = {
             "events": {},
             controller: "{" +
                 "render : function(){" +
-                "app.view.Field.prototype.render.call(this);" +
+                "this._super('render');" +
                 "}," +
                 "customCallback : function(){}" +
                 "}"
@@ -892,7 +892,7 @@ fixtures.metadata = {
             },
             controller: "{" +
                 "render:function(value){\n" +
-                " app.view.Field.prototype.render.call(this);//call proto render\n" +
+                " this._super('render');//call proto render\n" +
                 "  	$(function() {" +
                 "$( \".datepicker\" ).datepicker({" +
                 "showOn: \"button\"," +
@@ -924,7 +924,7 @@ fixtures.metadata = {
             },
             controller: "{" +
                 "render:function(value){\n" +
-                " app.view.Field.prototype.render.call(this);//call proto render\n" +
+                " this._super('render');//call proto render\n" +
                 "  	$(function() {" +
                 "$( \".datepicker\" ).datepicker({" +
                 "showOn: \"button\"," +
