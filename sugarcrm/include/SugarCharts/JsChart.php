@@ -82,16 +82,17 @@ class JsChart extends SugarChart {
 		$dimensions = $this->getChartDimensions($xmlStr);
 		$this->ss->assign("width", $dimensions['width']);
 		$this->ss->assign("height", $dimensions['height']);
-		$config = $this->getConfigProperties();
-		$style['gridLineColor'] = str_replace("0x","#",$config->gridLines);
-		$style['font-family'] = $config->labelFontFamily;
-		$style['color'] = str_replace("0x","#",$config->labelFontColor);
+        $xmlStyles = $this->getConfigProperties();
+        $style['gridLineColor'] = str_replace("0x", "#", $xmlStyles->gridLines);
+        $style['font-family'] = $xmlStyles->labelFontFamily;
+        $style['color'] = str_replace("0x", "#", $xmlStyles->labelFontColor);
 		$this->ss->assign("css", $style);
 		foreach($this->getChartConfigParams($xmlStr) as $key => $value) {
 			$chartConfig[$key] = $value;
 		}
 		$chartConfig['imageExportType'] = $this->image_export_type;
 		$this->ss->assign("config", $chartConfig);
+        $this->ss->assign("params", $this->chart_properties);
 		if($json == "No Data") {
 			$this->ss->assign("error", $app_strings['LBL_NO_DATA']);
 		}

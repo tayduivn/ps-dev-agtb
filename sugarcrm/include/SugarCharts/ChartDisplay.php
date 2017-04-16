@@ -110,7 +110,7 @@ class ChartDisplay
 
             $sugarChart->setData($this->chartRows);
             global $do_thousands;
-            $sugarChart->setProperties($this->chartTitle, '', $this->chartType, 'on', 'value', 'on', $do_thousands);
+            $sugarChart->setProperties($this->chartTitle, '', $this->chartType, 'on', 'value', 'on', $do_thousands, $this->reporter->module, $this->reporter->name);
 
             if (isset($this->reporter->report_def['group_defs'])) {
                 $groupByNames = array();

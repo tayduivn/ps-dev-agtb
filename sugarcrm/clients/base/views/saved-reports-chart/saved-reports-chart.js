@@ -183,9 +183,8 @@
     getDefaultSettings: function() {
         // By default, settings only has: label, type, config, module
         // Module is normally null so we want to rehit that
-        var settings = _.clone(this.settings.attributes),
-            defaults = {
-                module:          this.layout.module,
+        var settings = _.clone(this.settings.attributes);
+        var defaults = {
                 auto_refresh:    0,
                 show_title:      false,
                 show_y_label:    false,
@@ -216,13 +215,13 @@
             }
             return;
         }
-        update = _.isUndefined(update) ? false : update;
+        var updated = _.isUndefined(update) ? false : update;
+        var data = serverData.reportData;
+        var properties = serverData.chartData.properties[0];
+        var config = this.getChartConfig(properties.type);
+        var params = this.getDefaultSettings();
 
-        var data = serverData.reportData,
-            properties = serverData.chartData.properties[0],
-            config = this.getChartConfig(properties.type),
-            params = this.getDefaultSettings(),
-            defaults = {
+        var defaults = {
                 label: data.name,
                 chart_type: config.chartType || properties.type,
                 report_title: properties.title,
@@ -232,8 +231,11 @@
                 y_axis_label: this._getYaxisLabel(data)
             };
 
+        // params.module is usually null based on dashlet settings
+        params.module = properties.base_module || this.layout.module;
+
         // override settings when new report is selected
-        if (update) {
+        if (updated) {
             _.extend(params, defaults);
         } else {
             _.defaults(params, defaults);

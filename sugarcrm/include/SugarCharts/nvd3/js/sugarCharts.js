@@ -10,8 +10,6 @@
  */
 
 function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, callback) {
-    this.chartObject = '';
-
     // get chartId from params or use the default for sugar
     var d3ChartId = 'd3_' + chartId || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165';
     var canvasChartId = 'canvas_' + chartId || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
@@ -20,19 +18,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         return false;
     }
 
-    var labelType = 'Native',
-        useGradients = false,
-        animate = false,
-        that = this,
-        /**
-         * the main container to render chart
-         */
-        contentEl = 'content',
-        /**
-         * width of one column to render bars
-         */
-        minColumnWidth = 40;
+    var that = this;
+
     var params = _.extend({
+        saved_report_id: chartId,
         show_title: true,
         show_legend: true,
         show_controls: false,
@@ -51,13 +40,15 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         showValues: false,
         hideEmptyGroups: true,
         stacked: true,
+        label: '',
+        reportName: SUGAR.charts.translateString('LBL_DASHLET_SAVED_REPORTS_CHART'),
+        module: 'Home',
         colorData: 'default',
         margin: {top: 10, right: 10, bottom: 10, left: 10},
         direction: chartConfig['direction'] || 'ltr'
     }, chartParams);
 
-    contentEl = params.contentEl || contentEl;
-    minColumnWidth = params.minColumnWidth || minColumnWidth;
+    this.chartObject = '';
 
     switch (chartConfig['chartType']) {
 
@@ -94,7 +85,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .strings({
                             legend: {
                                 close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN'),
+                                noText: SUGAR.charts.translateString('LBL_CHART_UNDEFINED')
                             },
                             noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
@@ -162,13 +154,17 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .margin(params.margin)
                         .showTitle(params.show_title)
                         .tooltips(params.show_tooltips)
-                        .tooltipContent(function(key, x, y, e, graph) {
+                        .tooltipContent(function(key, x, y, e, graph, seriesKey) {
                             var content = '';
                             var percentString = '';
                             if (x < 100) {
                                 percentString = ' - ' + x + '%';
                             }
-                            content = '<h3>' + key + '</h3>' + '<p>' + y + percentString + '</p>';
+                            content = '<h3>' + key + '</h3><p>';
+                            content += seriesKey && seriesKey.toString().length && key !== seriesKey ?
+                                (seriesKey + ': ') :
+                                '';
+                            content += y + percentString + '</p>';
                             return content;
                         })
                         .direction(params.direction)
@@ -186,7 +182,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .strings({
                             legend: {
                                 close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN'),
+                                noText: SUGAR.charts.translateString('LBL_CHART_UNDEFINED')
                             },
                             noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
@@ -253,13 +250,14 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
         case 'lineChart':
             SUGAR.charts.get(jsonFilename, params, function(data) {
+                var xTickLabels;
+                var tickFormat = function(d) { return d; };
+                var getX = function(d) { return d[0]; };
+                var getY = function(d) { return d[1]; };
+
                 if (SUGAR.charts.isDataEmpty(data)) {
 
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
-
-                    var xTickLabels = json.properties.labels ?
-                          json.properties.labels.map(function(d) { return d.l || d; }) :
-                          [];
 
                     var lineChart = nv.models.lineChart()
                         .id(d3ChartId)
@@ -282,7 +280,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .strings({
                             legend: {
                                 close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN'),
+                                noText: SUGAR.charts.translateString('LBL_CHART_UNDEFINED')
                             },
                             noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
@@ -297,11 +296,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             .axisLabel(params.y_axis_label);
                     }
 
-                    var tickFormat = function(d) { return d; };
-                    var getX = function(d) { return d[0]; };
-                    var getY = function(d) { return d[1]; };
-
                     if (json.data.length) {
+                        xTickLabels = json.properties.labels ?
+                            json.properties.labels.map(function(d) { return d.l || d; }) :
+                            [];
+
                         if (json.data[0].values.length && json.data[0].values[0] instanceof Array) {
                             if (nv.utils.isValidDate(json.data[0].values[0][0])) {
                                 tickFormat = function(d) { return d3.time.format('%x')(new Date(d)); };
@@ -381,7 +380,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .strings({
                             legend: {
                                 close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN'),
+                                noText: SUGAR.charts.translateString('LBL_CHART_UNDEFINED')
                             },
                             noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
@@ -438,7 +438,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .strings({
                             legend: {
                                 close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
-                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN')
+                                open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN'),
+                                noText: SUGAR.charts.translateString('LBL_CHART_UNDEFINED')
                             },
                             noData: SUGAR.charts.translateString('LBL_CHART_NO_DATA')
                         });
@@ -467,10 +468,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
         case 'gaugeChart':
             SUGAR.charts.get(jsonFilename, params, function(data) {
-                if (SUGAR.charts.isDataEmpty(data)) {
+                var json;
+                var maxValue;
 
-                    var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
-                    var maxValue = d3.max(json.data.map(function(d) { return d.y; }));
+                if (SUGAR.charts.isDataEmpty(data)) {
+                    json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
+                    maxValue = d3.max(json.data.map(function(d) { return d.y; }));
 
                     if (maxValue === 0) {
                         json.data[0].y = 1;
@@ -483,16 +486,16 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                     //init Gauge Chart
                     var gaugeChart = nv.models.gaugeChart()
-                            .id(d3ChartId)
-                            .x(function(d) { return d.key; })
-                            .y(function(d) { return d.y; })
-                            .direction(params.direction)
-                            .showLabels(true)
-                            .showTitle(true)
-                            .colorData('class')
-                            .ringWidth(50)
-                            .maxValue(maxValue)
-                            .transitionMs(4000);
+                        .id(d3ChartId)
+                        .x(function(d) { return d.key; })
+                        .y(function(d) { return d.y; })
+                        .direction(params.direction)
+                        .showLabels(true)
+                        .showTitle(true)
+                        .colorData('class')
+                        .ringWidth(50)
+                        .maxValue(maxValue)
+                        .transitionMs(4000);
 
                     that.chartObject = gaugeChart;
 
@@ -518,6 +521,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
     }
 }
 
+/**
+ * @deprecated This will be removed on future versions.
+ */
 function swapChart(chartId, jsonFilename, css, chartConfig) {
     $('#d3_' + chartId).empty();
     var chart = new loadSugarChart(chartId, jsonFilename, css, chartConfig);
@@ -573,9 +579,10 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                     .style('padding', '12px')
                     .text(str);
         },
+
         /**
          * Handle the Legend Generation
-         *
+         * @deprecated This will be removed on future versions.
          * @param chart
          * @param chartId
          * @return {*}
@@ -686,6 +693,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
         translateDataToD3: function(json, params, chartConfig) {
             var data = [];
             var value = 0;
+            var properties = json.properties[0] || {};
             var strUndefined = SUGAR.charts.translateString('LBL_CHART_UNDEFINED');
             var hasValues = json.values.filter(function(d) {
                     return Array.isArray(d.values) && d.values.length;
@@ -710,7 +718,10 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 switch (chartConfig['chartType']) {
 
                     case 'barChart':
-                        isGroupedBarType = chartConfig.barType === 'stacked' || chartConfig.barType === 'grouped';
+                        if ((chartConfig['ReportModule'] && isDiscreteData) || chartConfig.barType === 'stacked') {
+                            chartConfig.barType = 'grouped';
+                        }
+                        isGroupedBarType = chartConfig.barType === 'grouped';
 
                         data = isGroupedBarType && !isDiscreteData ?
                             // is grouped bar type on grouped data
@@ -746,7 +757,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                                 }) :
                                 // is basic bar type on discrete data
                                 [{
-                                    'key': params.module,
+                                    'key': params.module || properties.base_module,
                                     'type': 'bar',
                                     'values': json.values.map(function(e, j) {
                                         return {
@@ -824,7 +835,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
 
             return {
                 'properties': {
-                    'title': json.properties[0].title,
+                    'title': properties.title,
                     // bar group data (x-axis)
                     'labels': chartConfig['chartType'] === 'lineChart' && json.label ?
                         json.label.map(function(d, i) {
@@ -907,6 +918,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                         )
             };
         },
+
         /**
          * Is data returned from the server empty?
          *
@@ -945,16 +957,16 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                     // if window width has changed during resize
                     if (newWindowWidth !== origWindowWidth) {
                         // measure container width
-                        chart.update();
+                    chart.update();
                         origWindowWidth = newWindowWidth;
-                    }
+                }
                 }, delay);
             });
         },
 
         /**
          * Update chart with new data from server
-         *
+         * @deprecated This will be removed on future versions.
          * @param chart
          * @param url
          * @param params

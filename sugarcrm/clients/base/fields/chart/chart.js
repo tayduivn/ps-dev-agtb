@@ -15,11 +15,15 @@
  */
 ({
     /**
-     * Contains the actual chart being displayed
+     * @inheritdoc
      */
-    chart_loaded: false,
-    chart: null,
-    chartType: '',
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        this.chart = null;
+        this.chart_loaded = false;
+        this.chartType = '';
+    },
 
     /**
      * @inheritdoc
@@ -54,33 +58,14 @@
      * Generate the D3 Chart Object
      */
     generateD3Chart: function() {
-        var self = this,
-            chart,
-            chartId = this.cid,
-            chartData = this.model.get('rawChartData'),
-            chartParams = this.model.get('rawChartParams') || {},
-            chartConfig = this.getChartConfig(chartData),
-            reportData = this.model.get('rawReportData'),
-            params = {
-                contentEl: chartId,
-                minColumnWidth: 120,
-                margin: {top: 0, right: 10, bottom: 10, left: 10},
-                allowScroll: true,
-                overflowHandler: _.bind(this.overflowHandler, this)
-            };
-
-        if (!_.isEmpty(chartParams)) {
-            params = _.extend(params, chartParams);
-            chartData.properties[0].type = chartParams.chart_type;
-            // allow override of chart type
-            chartConfig = this.getChartConfig(chartData);
-        }
-
-        chartConfig['direction'] = app.lang.direction;
-
-        chart = new loadSugarChart(chartId, chartData, [], chartConfig, params, _.bind(function(chart) {
-            self.chart = chart;
-            self.chart_loaded = _.isFunction(this.chart.update);
+        var chartId = this.cid;
+        var reportData = this.model.get('rawReportData');
+        var chartData = this.model.get('rawChartData');
+        var chartParams = this.getChartParams(chartData);
+        var chartConfig = this.getChartConfig(chartData, chartParams);
+        var sugarChart = new loadSugarChart(chartId, chartData, [], chartConfig, chartParams, _.bind(function(chart) {
+            this.chart = chart;
+            this.chart_loaded = _.isFunction(chart.update);
         }, this));
 
         // This event fires when a preview is closed.
@@ -118,15 +103,41 @@
         }, this));
     },
 
+    getChartParams: function(chartData) {
+        var chartId = this.cid;
+        var chartParams = this.model.get('rawChartParams') || {};
+        var properties = !_.isUndefined(chartData.properties) && Array.isArray(chartData.properties) ?
+                chartData.properties[0] :
+                {};
+        var params = {
+                chart_type: 'multibar',
+                margin: {top: 0, right: 10, bottom: 10, left: 10},
+                allowScroll: true,
+                module: properties.base_module,
+                overflowHandler: _.bind(this.overflowHandler, this)
+            };
+        if (!_.isEmpty(chartParams)) {
+            params = _.extend(params, chartParams);
+        }
+
+        return params;
+    },
+
     /**
      * Builds the chart config based on the type of chart
      * @return {Mixed}
      */
-    getChartConfig: function(chartData) {
-        var chartConfig,
-            chartData = chartData || this.model.get('rawChartData');
+    getChartConfig: function(chartData, chartParams) {
+        var data = chartData || this.model.get('rawChartData');
+        var params = chartParams || this.model.get('rawChartParams');
+        var chartConfig;
 
-        switch (chartData.properties[0].type) {
+        // chartData artifact
+        if (!_.isEmpty(chartData) && !_.isUndefined(chartData.properties)) {
+            data.properties[0].type = params.chart_type;
+        }
+
+        switch (params.chart_type) {
             case 'pie chart':
                 chartConfig = {
                     pieType: 'basic',
@@ -206,6 +217,8 @@
                 break;
         }
 
+        chartConfig.direction = app.lang.direction;
+
         this.chartType = chartConfig.chartType;
 
         return chartConfig;
@@ -225,7 +238,11 @@
         if (!this.view.$el || !this.view.$el.is(':visible')) {
             return;
         }
-        this.chart.update();
+        if (this.chart.render) {
+            this.chart.render();
+        } else {
+            this.chart.update();
+        }
     },
 
     /**
