@@ -88,4 +88,4 @@ cd $INSTANCE_PATH
 
 export BEHAT_PARAMS="{\"extensions\" : {\"Behat\\\\MinkExtension\" : {\"base_url\" : \"${INSTANCE_URL}\"}}}"
 
-./vendor/bin/behat -s ${BEHAT_SUITE}
+../../vendor/bin/behat -s ${BEHAT_SUITE}

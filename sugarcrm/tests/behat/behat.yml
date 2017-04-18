@@ -1,16 +1,16 @@
 default:
   autoload:
-    'Sugarcrm\SugarcrmTests\Bootstrap': %paths.base%/tests/behat/bootstrap
+    'Sugarcrm\SugarcrmTests\Bootstrap': %paths.base%/bootstrap
 
   suites:
     default:
       paths:
-        features: %paths.base%/tests/behat/Default
+        features: %paths.base%/Default
       contexts:
         - Sugarcrm\SugarcrmTests\Bootstrap\FeatureContext
     saml:
       paths:
-        features: %paths.base%/tests/behat/Saml
+        features: %paths.base%/Saml
       contexts:
         - Sugarcrm\SugarcrmTests\Bootstrap\SamlFeatureContext
 

@@ -2,6 +2,7 @@
 namespace Sugarcrm\SugarcrmTests\Bootstrap;
 
 use Behat\MinkExtension\Context\MinkContext;
+use Guzzle\Http\Client;
 
 /**
  * Defines application features from the specific context.
@@ -65,12 +66,12 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * Wait for the page to redirected to be specific url.
-     * @Then /^I wait for the page to be redirected to "([^"]*)"$/
-     * @And /^I wait for the page to be redirected to "([^"]*)"$/
-     * Example: I wait for the page to be redirected to "http://localhost:8000"
+     * Wait for the page to be redirected to the specific url
+     * @Then /^I should be redirected to "([^"]*)"$/
+     * @And /^I should be redirected to "([^"]*)"$/
+     * Example: I should be redirected to "http://localhost:8000"
      */
-    public function iWaitForThePageToRedirectedTo($redirectedTo)
+    public function iShouldBeRedirectedTo($redirectedTo)
     {
         $this->spin(function (FeatureContext $context) use ($redirectedTo) {
             $diff = $result = array_diff(
@@ -78,13 +79,13 @@ class FeatureContext extends MinkContext
                 parse_url($context->getSession()->getCurrentUrl())
             );
             return empty($diff);
-        });
+        }, 10);
     }
 
     /**
      * Wait for the page to be loaded.
-     * @And /^wait for the page to be loaded$/
-     * @When /^wait for the page to be loaded$/
+     * @And I wait for the page to be loaded
+     * @When I wait for the page to be loaded
      */
     public function waitForThePageToBeLoaded()
     {
@@ -109,6 +110,53 @@ class FeatureContext extends MinkContext
             }
         }
         return false;
+    }
+
+    /**
+     * @Then I skip login wizard
+     * @And I skip login wizard
+     */
+    public function iSkipLoginWizard()
+    {
+        $accessToken = $this->getAccessToken();
+        $client = new Client();
+        $response = $client->get(
+            $this->getMinkParameter('base_url') . '/rest/v10/me/preferences',
+            ['OAuth-Token' => $accessToken]
+        )->send();
+        $userPreferences = json_decode($response->getBody(true));
+        $wizard = !(isset($userPreferences->ut) && $userPreferences->ut);
+        if ($wizard) {
+            $client->put(
+                $this->getMinkParameter('base_url') . '/rest/v10/me/preferences',
+                ['OAuth-Token' => $accessToken],
+                '{"ut":1}'
+            )->send();
+            $this->getSession()->reload();
+            $this->iWaitUntilTheLoadingIsCompleted();
+        }
+    }
+
+    /**
+     * Get access token from localStorage
+     *
+     * @return string
+     */
+    protected function getAccessToken()
+    {
+        return $this->getLocalStorageItem('prod:SugarCRM:AuthAccessToken');
+    }
+
+    /**
+     * Get local storage item value
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function getLocalStorageItem($key)
+    {
+        return json_decode($this->getSession()->getDriver()->evaluateScript("localStorage.getItem('$key')"));
     }
 
     /**

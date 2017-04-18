@@ -13,7 +13,7 @@ Feature: bwc
     When I click "#userList"
     And I click ".administration"
     When I wait until the loading is completed
-    And wait for the page to be loaded
+    And I wait for the page to be loaded
     And I switch to BWC
     And I follow "Password Management"
     Then I should see "Password Requirements"
