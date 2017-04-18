@@ -498,6 +498,20 @@ class HealthCheckScannerMeta
             'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Unsupported_DB_Driver/',
             //@codingStandardsIgnoreEnd
         ),
+        535 => array(
+            'report' => 'unsupportedMethodCall',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Unsupported_Method_Call/',
+            //@codingStandardsIgnoreEnd
+        ),
+        536 => array(
+            'report' => 'unsupportedPropertyAccess',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Unsupported_Property_Access/',
+            //@codingStandardsIgnoreEnd
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(
