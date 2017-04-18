@@ -173,6 +173,13 @@ class BeanFactory {
      */
     public static function retrieveBean($module, $id = null, $params = array(), $deleted = true)
     {
+        global $log;
+
+        if (func_num_args() < 2) {
+            $log->deprecated('The usage of ' . __METHOD__ . '() without the ID is deprecated. Use '
+                . __CLASS__ . '::newBean() instead.');
+        }
+
         // Check if params is an array, if not use old arguments
         if (isset($params) && !is_array($params)) {
         	$params = array('encode' => $params);

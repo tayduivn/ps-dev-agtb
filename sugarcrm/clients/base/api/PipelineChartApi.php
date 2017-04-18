@@ -248,7 +248,7 @@ class PipelineChartApi extends SugarApi
             $tp = BeanFactory::retrieveBean('TimePeriods', $tp_id);
         } else {
             /* @var $tp TimePeriod */
-            $tp = BeanFactory::retrieveBean('TimePeriods');
+            $tp = BeanFactory::newBean('TimePeriods');
             // generate the generic timeperiod based off the integer that was passed in.
             $data = $tp->getGenericStartEndByDuration($tp_id);
             // set the values

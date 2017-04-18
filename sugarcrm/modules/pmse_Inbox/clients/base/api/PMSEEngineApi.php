@@ -758,8 +758,8 @@ class PMSEEngineApi extends SugarApi
         $result = array('success' => true);
         try {
             foreach ($args['cas_id'] as $id) {
-                $flowBean = BeanFactory::retrieveBean('pmse_BpmFlow');
-                $inboxBean = BeanFactory::retrieveBean('pmse_Inbox');
+                $flowBean = BeanFactory::newBean('pmse_BpmFlow');
+                $inboxBean = BeanFactory::newBean('pmse_Inbox');
                 $inboxBean->retrieve_by_string_fields(array('cas_id' => $id));
                 $flowBean->retrieve_by_string_fields(array('cas_id' => $id));
                 $bean = BeanFactory::retrieveBean($flowBean->cas_sugar_module, $flowBean->cas_sugar_object_id);
@@ -806,7 +806,7 @@ class PMSEEngineApi extends SugarApi
         // offset values and always will return all occurrences
         $result['next_offset'] = -1;
 
-        $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow');
+        $bpmFlow = BeanFactory::newBean('pmse_BpmFlow');
 
         $queryOptions = array('add_deleted' => (!isset($options['add_deleted']) || $options['add_deleted']) ? true : false);
         if ($queryOptions['add_deleted'] == false) {
@@ -1215,7 +1215,7 @@ class PMSEEngineApi extends SugarApi
     public function overrideButtons($flow, $listButtons)
     {
         if($flow->cas_adhoc_type == 'ONE_WAY') {
-            $flowBean = BeanFactory::retrieveBean('pmse_BpmFlow');
+            $flowBean = BeanFactory::newBean('pmse_BpmFlow');
             $q = new SugarQuery();
             $q->select(array('cas_adhoc_type'));
             $q->from($flowBean);

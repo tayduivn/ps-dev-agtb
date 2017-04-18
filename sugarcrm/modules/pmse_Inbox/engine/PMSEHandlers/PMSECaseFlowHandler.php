@@ -1080,7 +1080,7 @@ class PMSECaseFlowHandler
     {
         $q = $this->retrieveSugarQueryObject();
         $q->select->setCountQuery();
-        $q->from(BeanFactory::retrieveBean('pmse_BpmFlow'));
+        $q->from(BeanFactory::newBean('pmse_BpmFlow'));
         $q->where()->equals("cas_id", $flowData['cas_id']);
         $q->where()->equals("cas_flow_status", $status);
         return (int) $q->getOne();
