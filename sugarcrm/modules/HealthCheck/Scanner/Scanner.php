@@ -81,128 +81,12 @@ class HealthCheckScanner
     protected $ping_url = 'http://sortinghat-sugarcrm.rhcloud.com/feedback';
 
     /**
+     * List of packages with compatible versions to check. This is driven by the
+     * package-checklist.php contents located in the same directory as this file.
      *
-     * FIXME: This needs to move to config file/class as this is OD specific
-     * @var array List of packages with compatible versions to check.
+     * @var array
      */
-    protected $packages = array(
-        'Process Author' => array(
-            'checkDisabled' => true,
-            array('version' => '*', '__MetaSuffix' => 'DataReset'),
-        ),
-        'ProcessMaker' => array(
-            'checkDisabled' => true,
-            array('version' => '*', '__MetaSuffix' => 'DataReset'),
-        ),
-        'SugarSMS' => array(
-            array('version' => '*'),
-        ),
-        'GoogleSalesMap' => array(
-            array('version' => '3.0.2'),
-        ),
-        'Zendesk' => array(
-            array('version' => '2.8'),
-        ),
-        'Act-On Integrated Marketing Automation for SugarCRM' => array(
-            array('version' => '*'),
-        ),
-        'Pardot Marketing Automation for SugarCRM' => array(
-            array('version' => '*'),
-        ),
-        'iNetMaps' => array(
-            array('version' => '*'),
-        ),
-        'Sugar-Constant Contact Integration' => array(
-            array('version' => '*'),
-        ),
-        'Adobe EchoSign e-Signatures for SugarCRM' => array(
-            array('version' => '*'),
-        ),
-        'DocuSign for SugarCRM' => array(
-            array('version' => '*'),
-        ),
-        'FBSG SugarCRM QuickBooks Integration' => array(
-            array('version' => 'v1.85.13.1'),
-        ),
-        'JJWDesign_Google_Maps' => array(
-            array('version' => '*'),
-        ),
-        'Dashboard Manager' => array(
-            array('version' => '*'),
-        ),
-        'Fonality' => array(
-            array('version' => '*'),
-        ),
-        'inetDOCS Box' => array(
-            array('version' => '*'),
-        ),
-        'Forums, Threads, Posts Modules' => array(
-            array('version' => '*'),
-        ),
-        'Accounting' => array(
-            array('version' => '*', 'author' => 'CRM Online Australia Pty Ltd'),
-        ),
-        'Marketo Marketing Automation for SugarCRM' => array(
-            array('version' => '3.0'),
-        ),
-        'SugarChimp' => array(
-            array('version' => '7.7b'),
-        ),
-        'SugarChimp - Force Sugar 7 Upgrade' => array(
-            array('version' => '7.7b'),
-        ),
-        'Calendar 2.0 V1.2 003' => array(
-            array('version' => '*'),
-        ),
-        'Sugar - MAS90 Integration' => array(
-            array('version' => '*'),
-        ),
-        'MAS90Integrator' => array(
-            array('version' => '*'),
-        ),
-        'ContactIndicators' => array(
-            array('version' => '*'),
-        ),
-        'Integral Sales' => array(
-            array('version' => '*'),
-        ),
-        'Teleseller' => array(
-            array('version' => '*'),
-        ),
-        'Freshdesk' => array(
-            array('version' => '*'),
-        ),
-        'Sugar-Sage Integration Modules' => array(
-            array('version' => '2.7.0-8-g74f8c47'),
-        ),
-        'inetMAPS' => array(
-            array('version' => '*', 'path' => 'modules/inetMAPS/classes/'),
-        ),
-        'tagMe' => array(
-            array('version' => '*'),
-        ),
-        'Map to Lead' => array(
-            array('version' => '2.7.1.3'),
-        ),
-        'wMaps76' => array(
-            array('version' => '*'),
-        ),
-        'Login/Sudo' => array(
-            array('version' => '*'),
-        ),
-        'Login/Sudo - SugarCRM 7.1.6/7.2' => array(
-            array('version' => '*'),
-        ),
-        'Login/Sudo - SugarCRM 7.1.6/7.2.*/7.5.*' => array(
-            array('version' => '*'),
-        ),
-        'Login/Sudo - SugarCRM 7.6.*/7.7.*/7.8.*/7.9.*' => array(
-            array('version' => '*'),
-        ),
-        'SynoDashboardTemplates' => array(
-            array('version' => '20161024'),
-        ),
-    );
+    protected $packages = [];
 
     /**
      * @var array List of modules which excluded from table check.
@@ -2183,10 +2067,26 @@ class HealthCheckScanner
     }
 
     /**
+     * Loads up the package check list
+     * @see Scanner::checkPackages()
+     * @return array
+     */
+    protected function loadPackageChecklist()
+    {
+        if (empty($this->packages)) {
+            $this->packages = require __DIR__ . '/package-checklist.php';
+        }
+
+        return $this->packages;
+    }
+
+    /**
      * Checks for unsupported installed packages.
      */
     protected function checkPackages()
     {
+        $this->loadPackageChecklist();
+
         require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
         $this->log("Checking packages");

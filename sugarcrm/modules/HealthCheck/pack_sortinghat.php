@@ -37,6 +37,7 @@ function packSortingHat($archive, $params, $installdefs = null, $internalPath = 
         'Scanner/ScannerWeb.php',
         'Scanner/ScannerMeta.php',
         'Scanner/removed-php4-constructors.php',
+        'Scanner/package-checklist.php',
         'Scanner/version.json',
         'language/en_us.lang.php',
     );
@@ -77,7 +78,7 @@ if(isset($argv[3])) {
 packSortingHat($phar, $params);
 
 $stub = <<<'STUB'
-<?php 
+<?php
 Phar::mapPhar();
 set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
 require_once "Scanner/ScannerCli.php"; HealthCheckScannerCli::start($argv); __HALT_COMPILER();
