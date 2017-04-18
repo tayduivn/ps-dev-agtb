@@ -2246,6 +2246,7 @@
             option.label = enabledOperators[i].label;
             option.value = enabledOperators[i].value;
             option.selected = enabledOperators[i].value === this.operator;
+            option.innerHTML = option.label;
             select.appendChild(option);
         }
 
