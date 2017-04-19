@@ -200,14 +200,30 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
             SugarTestContactUtilities::createContact(),
         );
 
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->users_arr = array($GLOBALS['current_user']->id);
+        $meeting->contacts_arr = array($contacts[0]->id, $contacts[1]->id);
+
+        $actual = $meeting->get_notification_recipients();
+        $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
+        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
+        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+    }
+
+    public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsEmptyRecipients()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
         $meeting = SugarTestMeetingUtilities::createMeeting();
         SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $GLOBALS['current_user']->id);
         SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[0]->id);
         SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[1]->id);
 
         $actual = $meeting->get_notification_recipients();
-        $expected = array($contacts[0]->id, $contacts[1]->id, $GLOBALS['current_user']->id);
-        $this->assertEquals($expected, array_keys($actual), '', 0.0, 10, true);
+        $this->assertEmpty($actual, 'No invitees should have been loaded for this meeting.');
     }
 
     /**

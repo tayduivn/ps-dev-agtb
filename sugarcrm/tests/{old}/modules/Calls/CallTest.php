@@ -161,15 +161,30 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
             SugarTestContactUtilities::createContact(),
         );
 
+        $call = BeanFactory::newBean('Calls');
+        $call->users_arr = array($GLOBALS['current_user']->id);
+        $call->contacts_arr = array($contacts[0]->id, $contacts[1]->id);
+
+        $actual = $call->get_notification_recipients();
+        $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
+        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
+        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+    }
+
+    public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsEmptyRecipients()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
         $call = SugarTestCallUtilities::createCall();
         SugarTestCallUtilities::addCallUserRelation($call->id, $GLOBALS['current_user']->id);
         SugarTestCallUtilities::addCallContactRelation($call->id, $contacts[0]->id);
         SugarTestCallUtilities::addCallContactRelation($call->id, $contacts[1]->id);
 
         $actual = $call->get_notification_recipients();
-        $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
-        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
-        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+        $this->assertEmpty($actual, 'No invitees should have been loaded for this call.');
     }
 
     /**

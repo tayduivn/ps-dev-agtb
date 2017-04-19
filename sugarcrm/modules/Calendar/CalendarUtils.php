@@ -495,6 +495,8 @@ class CalendarUtils
 
     /**
      * get all invites for bean, such as  contacts, leads and users
+     * @deprecated This is an unused method. Guests are loaded without consideration for changes to the set that are
+     * yet to be processed. This method should not be used.
      * @param SugarBean|Call|Meeting $bean
      * @return array
      */
@@ -502,6 +504,8 @@ class CalendarUtils
     {
         /** @var Localization $locale */
         global $locale;
+
+        $GLOBALS['log']->deprecated('CalendarUtils::getInvitees should not be used');
 
         $definitions = \VardefManager::getFieldDefs($bean->module_name);
         if (isset($definitions['invitees']['links'])) {
@@ -551,18 +555,47 @@ class CalendarUtils
         if (!($event instanceof \Call) && !($event instanceof \Meeting)) {
             throw new Exception('$event should be instance of Call or Meeting. Get:' . get_class($event));
         }
-        $inviteesList = array();
-        $invitees = static::getInvitees($event);
-        foreach ($invitees as $invite) {
-            $inviteesList[$invite[1]] = $invite[0];
+
+        $list = array();
+        if (!is_array($event->contacts_arr)) {
+            $event->contacts_arr = array();
         }
 
-        if (!empty($event->created_by) &&
-            !isset($inviteesList[$event->created_by])
-        ) {
-            $inviteesList[$event->created_by] = 'Users';
+        if (!is_array($event->users_arr)) {
+            $event->users_arr = array();
         }
 
-        return $inviteesList;
+        if (!is_array($event->leads_arr)) {
+            $event->leads_arr = array();
+        }
+
+        foreach ($event->users_arr as $userId) {
+            $notifyUser = BeanFactory::retrieveBean('Users', $userId);
+            if (!empty($notifyUser->id)) {
+                $notifyUser->new_assigned_user_name = $notifyUser->full_name;
+                $GLOBALS['log']->info("Notifications: recipient is $notifyUser->new_assigned_user_name");
+                $list[$notifyUser->id] = $notifyUser;
+            }
+        }
+
+        foreach ($event->contacts_arr as $contactId) {
+            $notifyUser = BeanFactory::retrieveBean('Contacts', $contactId);
+            if (!empty($notifyUser->id)) {
+                $notifyUser->new_assigned_user_name = $notifyUser->full_name;
+                $GLOBALS['log']->info("Notifications: recipient is $notifyUser->new_assigned_user_name");
+                $list[$notifyUser->id] = $notifyUser;
+            }
+        }
+
+        foreach ($event->leads_arr as $leadId) {
+            $notifyUser = BeanFactory::retrieveBean('Leads', $leadId);
+            if (!empty($notifyUser->id)) {
+                $notifyUser->new_assigned_user_name = $notifyUser->full_name;
+                $GLOBALS['log']->info("Notifications: recipient is $notifyUser->new_assigned_user_name");
+                $list[$notifyUser->id] = $notifyUser;
+            }
+        }
+
+        return $list;
     }
 }

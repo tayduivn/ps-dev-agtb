@@ -673,18 +673,7 @@ class Meeting extends SugarBean {
 			return parent::get_notification_recipients();
 		}
 
-        $inviteesList = CalendarUtils::buildInvitesList($this);
-
-        $list = array();
-        foreach ($inviteesList as $id => $module) {
-            $notify_user = BeanFactory::getBean($module, $id);
-            if(!empty($notify_user->id)) {
-                $notify_user->new_assigned_user_name = $notify_user->full_name;
-                $list[$notify_user->id] = $notify_user;
-            }
-        }
-
-		return $list;
+        return CalendarUtils::buildInvitesList($this);
 	}
 
 
