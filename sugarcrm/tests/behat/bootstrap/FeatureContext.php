@@ -2,13 +2,78 @@
 namespace Sugarcrm\SugarcrmTests\Bootstrap;
 
 use Behat\MinkExtension\Context\MinkContext;
-use Guzzle\Http\Client;
+use GuzzleHttp;
 
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext extends MinkContext
 {
+    /**
+     * List with users to be deleted after scenario
+     * @var array
+     */
+    protected $usersToDelete = [];
+
+    /**
+     * Follows to admin page
+     *
+     * @And I go to administration
+     * @When I go to administration
+     */
+    public function iGoToAdministration()
+    {
+        $this->iClick('#userList');
+        $this->iClick('.administration');
+        $this->iWaitUntilTheLoadingIsCompleted();
+        $this->waitForThePageToBeLoaded();
+        $this->switchBwc();
+    }
+
+    /**
+     * Provides user login operation.
+     *
+     * @param $username
+     * @param $password
+     *
+     * @And /^I login as "([^"]*)" with password "([^"]*)"$/
+     * @When /^I login as "([^"]*)" with password "([^"]*)"$/
+     */
+    public function iLogin($username, $password)
+    {
+        $page = $this->getSession()->getPage();
+        $page->fillField('username', $username);
+        $page->fillField('password', $password);
+        $page->pressButton('login_button');
+        $this->iWaitUntilTheLoadingIsCompleted();
+        $this->waitForThePageToBeLoaded();
+    }
+
+    /**
+     * Provides user logout operation.
+     *
+     * @Then I logout
+     * @And I logout
+     */
+    public function iLogout()
+    {
+        $this->switchSidecar();
+        $this->iClick('#userList');
+        $this->iClick('.profileactions-logout');
+        $this->iWaitUntilTheLoadingIsCompleted();
+        $this->waitForThePageToBeLoaded();
+    }
+
+    /**
+     * Add user to list for delete.
+     * deleteAddedUsers should be called manually if you want to clear added users
+     *
+     * @Given I want to delete current user after test
+     */
+    public function iWantToDeleteCurrentUser()
+    {
+        $this->usersToDelete[] = $this->getSession()->evaluateScript('App.user.id');
+    }
 
     /**
      * Click on element found by css selector.
@@ -44,7 +109,7 @@ class FeatureContext extends MinkContext
         $this->spin(function (FeatureContext $context) {
             $context->getSession()->getDriver()->switchToIFrame('bwc-frame');
             return boolval($context->getSession()->getPage()->findById('main'));
-        });
+        }, 20);
     }
 
     /**
@@ -119,19 +184,21 @@ class FeatureContext extends MinkContext
     public function iSkipLoginWizard()
     {
         $accessToken = $this->getAccessToken();
-        $client = new Client();
+        $client = new GuzzleHttp\Client();
         $response = $client->get(
             $this->getMinkParameter('base_url') . '/rest/v10/me/preferences',
-            ['OAuth-Token' => $accessToken]
-        )->send();
+            ['headers' => ['OAuth-Token' => $accessToken]]
+        );
         $userPreferences = json_decode($response->getBody(true));
         $wizard = !(isset($userPreferences->ut) && $userPreferences->ut);
         if ($wizard) {
             $client->put(
                 $this->getMinkParameter('base_url') . '/rest/v10/me/preferences',
-                ['OAuth-Token' => $accessToken],
-                '{"ut":1}'
-            )->send();
+                [
+                    'headers' => ['OAuth-Token' => $accessToken],
+                    'body' => '{"ut":1}',
+                ]
+            );
             $this->getSession()->reload();
             $this->iWaitUntilTheLoadingIsCompleted();
         }
@@ -200,5 +267,35 @@ class FeatureContext extends MinkContext
             "Timeout thrown by " . $backtrace[1]['class'] . "::" . $backtrace[1]['function'] . "()\n" .
             $backtrace[1]['file'] . ", line " . $backtrace[1]['line']
         );
+    }
+
+    /**
+     * Delete users that was added on scenario
+     */
+    protected function deleteAddedUsers()
+    {
+        $accessToken = $this->getAccessToken();
+        $client = new GuzzleHttp\Client();
+        $deletePromises = [];
+        foreach ($this->usersToDelete as $index => $userId) {
+            $deletePromises[] = $client->deleteAsync(
+                $this->getMinkParameter('base_url') . '/rest/v10/Users/' . $userId,
+                ['headers' => ['OAuth-Token' => $accessToken]]
+            );
+        }
+        if ($deletePromises) {
+            GuzzleHttp\Promise\settle($deletePromises)->wait();
+        }
+
+        $this->usersToDelete = [];
+    }
+
+    /**
+     * Clears local storage and cookies.
+     */
+    protected function clearLocalData()
+    {
+        $this->getSession()->executeScript('localStorage.clear()');
+        $this->getSession()->setCookie('PHPSESSID', null);
     }
 }

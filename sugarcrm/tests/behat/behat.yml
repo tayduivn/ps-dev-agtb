@@ -13,6 +13,17 @@ default:
         features: %paths.base%/Saml
       contexts:
         - Sugarcrm\SugarcrmTests\Bootstrap\SamlFeatureContext
+    ldap:
+      paths:
+        features: %paths.base%/Ldap
+      contexts:
+        - Sugarcrm\SugarcrmTests\Bootstrap\LdapFeatureContext:
+            sugarAdmin:
+              username: admin
+              password: a
+            ldapAdmin:
+              username: admin
+              password: admin
 
   extensions:
     Behat\MinkExtension:
