@@ -1,6 +1,9 @@
 {
-    "config":{
-      "configfoo":"configBar"
+    "config": {
+      "configfoo":"configBar",
+      "logger": {
+            "level": "FATAL"
+      }
     },
     "relationships": {
         "account_cases": {

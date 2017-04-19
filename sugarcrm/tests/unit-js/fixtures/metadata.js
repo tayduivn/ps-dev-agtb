@@ -106,7 +106,10 @@ fixtures.metadata = {
         1: "bugs"
     },
     "config":{
-        "configfoo":"configBar"
+        "configfoo":"configBar",
+        "logger": {
+            level: "FATAL"
+        }
     },
     "relationships": {
         "contacts_accounts": {

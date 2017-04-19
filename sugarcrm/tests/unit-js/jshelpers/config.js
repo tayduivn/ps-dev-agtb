@@ -16,7 +16,7 @@
         env: 'dev',
         debugSugarApi: true,
         logger: {
-            level: 'DEBUG'
+            level: 'FATAL'
         },
         logWriter: 'ConsoleWriter',
         logFormatter: 'SimpleFormatter',

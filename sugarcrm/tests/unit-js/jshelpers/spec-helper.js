@@ -133,9 +133,6 @@ var SugarTest = {};
 }(SugarTest));
 
 beforeEach(function(){
-    SUGAR.App.config.logger = {
-        level: 'FATAL'
-    };
     SUGAR.App.config.env = "test";
     SUGAR.App.config.appId = SUGAR.App.config.appId || "portal";
     SUGAR.App.config.maxQueryResult = 20;
@@ -239,7 +236,6 @@ beforeEach(function(){
 });
 
 afterEach(function() {
-
     SugarTest.dispose();
     SUGAR.App.view.reset();
 
