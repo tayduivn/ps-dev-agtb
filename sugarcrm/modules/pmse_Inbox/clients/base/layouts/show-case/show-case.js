@@ -483,10 +483,13 @@
                                     field.setDisabled(true);
                                     basefield.def.readonly = true;
                                 }
-                                return;
                             }
-                            // If the field is not readonly, verify if it's required
-                            if (that.checkRequired(field)) {
+                        });
+                    }
+                    if (field.fields && _.isArray(field.fields)) {
+                        var self = this;
+                        _.each(field.fields, function(field) {
+                            if (self.checkRequired(field)) {
                                 field.def.required = true;
                             }
                         });
