@@ -1014,11 +1014,11 @@ class PMSEEngineApi extends SugarApi
             foreach ($rows as $key => $row) {
                 $arrayId = array_search($row['cas_id'], $result);
                 if ($arrayId !== false) {
-                    // filter beans where target beans do not exist anymore
+                    // Get the assigned bean early. This allows us to check for a bean
+                    // id to determine if the bean has been deleted or not. This bean
+                    // will also be used later to get the assigned user of the record.
                     $assignedBean = BeanFactory::getBean($arrayCases[$arrayId]['cas_sugar_module'], $arrayCases[$arrayId]['cas_sugar_object_id']);
-                    if (!isset($assignedBean->id)) {
-                        continue;
-                    }
+
                     $usersBean = BeanFactory::getBean('Users', $arrayCases[$arrayId]['cas_user_id']);
                     $row['cas_user_full_name'] = $usersBean->full_name;
                     $processBean = BeanFactory::getBean('pmse_BpmnProcess', $row['pro_id']);

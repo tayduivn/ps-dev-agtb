@@ -555,11 +555,11 @@ class PMSEEngineFilterApi extends FilterApi
             if (!is_subclass_of($bean, 'SugarBean')) {
                 continue;
             }
-            // filter beans where target beans do not exist anymore
+            // Get the assigned bean early. This allows us to check for a bean
+            // id to determine if the bean has been deleted or not. This bean
+            // will also be used later to get the assigned user of the record.
             $assignedBean = BeanFactory::getBean($bean->fetched_row['cas_sugar_module'], $bean->fetched_row['cas_sugar_object_id']);
-            if (!isset($assignedBean->id)) {
-                continue;
-            }
+
             $arr_aux = array();
             $arr_aux['cas_id'] = (isset($bean->fetched_row['cas_id']))? $bean->fetched_row['cas_id']:$bean->fetched_row['pmse_bpm_flow__cas_id'];
             $arr_aux['act_assignment_method'] = $bean->fetched_row['act_assignment_method'];

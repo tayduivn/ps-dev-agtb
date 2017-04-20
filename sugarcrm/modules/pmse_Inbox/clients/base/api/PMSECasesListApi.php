@@ -216,12 +216,11 @@ class PMSECasesListApi extends FilterApi
         $list = $q->execute();
         if (!empty($list)) {
             foreach ($list as $key => $value) {
+                // Get the assigned bean early. This allows us to check for a bean
+                // id to determine if the bean has been deleted or not. This bean
+                // will also be used later to the assigned user of the record.
                 $assignedBean = BeanFactory::getBean($list[$key]['cas_sugar_module'], $list[$key]['cas_sugar_object_id']);
-                // filter beans where target beans do not exist anymore
-                if (!isset($assignedBean->id)) {
-                    unset($list[$key]);
-                    continue;
-                }
+
                 $list[$key]['cas_create_date'] = PMSEEngineUtils::getDateToFE($value['cas_create_date'], 'datetime');
                 $list[$key]['date_entered'] = PMSEEngineUtils::getDateToFE($value['date_entered'], 'datetime');
                 $list[$key]['date_modified'] = PMSEEngineUtils::getDateToFE($value['date_modified'], 'datetime');
