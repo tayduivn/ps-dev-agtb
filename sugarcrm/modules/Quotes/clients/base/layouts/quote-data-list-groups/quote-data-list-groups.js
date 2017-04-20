@@ -329,7 +329,7 @@
                 return ($(item).attr('name') == $item.attr('name'));
             });
 
-            this._moveItemToNewGroup(oldGroupId, newGroupId, rowId, isRowInEdit, newPosition, true);
+            this._moveItemToNewGroup(oldGroupId, newGroupId, rowId, isRowInEdit, newPosition, true, true);
         } else {
             // get the requests from updated rows
             this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(newGroup));
@@ -393,6 +393,7 @@
         var isRowInEdit;
         var modelCt = {};
         var updateLinkBean;
+        var positionCt = 0;
 
         // since model.link.bean is the same exact reference to a group's model across all models
         // in a group, if multiple items in the same group are moved, we have to only update the
@@ -421,7 +422,9 @@
             // updateLinkBean should only be true when this is the last model in the group (modelCt === 0)
             updateLinkBean = modelCt[oldGroupId] === 0;
 
-            this._moveItemToNewGroup(oldGroupId, newGroupId, model.cid, isRowInEdit, undefined, updateLinkBean);
+            model.set('position', positionCt++);
+
+            this._moveItemToNewGroup(oldGroupId, newGroupId, model.cid, isRowInEdit, undefined, updateLinkBean, false);
         }, this);
 
         // the items have all been moved on the frontend now call the BulkAPI
@@ -494,11 +497,12 @@
      * @param {string} newGroupId The ID of the new ProductBundle to move the item to
      * @param {string} itemId The ID of the item to move
      * @param {boolean} isRowInEdit If the row to move is in edit mode or not
-     * @param {number|undefined} [newPosition] The new position to place the item in
+     * @param {number|undefined} [newPos] The new position to place the item in
      * @param {boolean} updateLinkBean If we should update the model's link bean or not
+     * @param {boolean} updatePos If we should update the model's position or not
      * @private
      */
-    _moveItemToNewGroup: function(oldGroupId, newGroupId, itemId, isRowInEdit, newPosition, updateLinkBean) {
+    _moveItemToNewGroup: function(oldGroupId, newGroupId, itemId, isRowInEdit, newPos, updateLinkBean, updatePos) {
         var oldGroup = this._getComponentByGroupId(oldGroupId);
         var newGroup = this._getComponentByGroupId(newGroupId);
         var rowModel = oldGroup.collection.get(itemId);
@@ -509,12 +513,12 @@
         var newGroupModelId = newGroup.model.id;
         var itemModelId = rowModel.id;
 
-        // if newPosition is not passed in, make it the newGroup collection length
-        newPosition = _.isUndefined(newPosition) ? newGroup.collection.length : newPosition;
+        // if newPos is not passed in, make it the newGroup collection length
+        newPos = _.isUndefined(newPos) ? newGroup.collection.length : newPos;
 
         // set the new position, so it's only set when the item is saved via the relationship change
         // and not again for the position update
-        rowModel.set('position', newPosition);
+        rowModel.set('position', newPos);
 
         // remove the rowModel from the old group
         oldGroup.removeRowModel(rowModel, isRowInEdit);
@@ -526,14 +530,18 @@
             // update the link on all the models in the new group collection to be the newGroup's model
             _.each(newGroup.collection.models, function(newGroupCollectionModel) {
                 newGroupCollectionModel.link = {
-                    bean: newGroup.model
+                    bean: newGroup.model,
+                    isNew: newGroupCollectionModel.link.isNew,
+                    name: newGroupCollectionModel.link.name
                 };
             }, this);
         }
 
-        // get the requests from updated rows for old and new group
-        this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(oldGroup));
-        this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(newGroup));
+        if (updatePos) {
+            // get the requests from updated rows for old and new group
+            this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(oldGroup));
+            this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(newGroup));
+        }
 
         // move the item to the new group
         linkName = rowModel.module === 'Products' ? 'products' : 'product_bundle_notes';
@@ -546,14 +554,14 @@
                 link: linkName,
                 relatedId: itemModelId,
                 related: {
-                    position: newPosition
+                    position: newPos
                 }
             }
         };
 
-        // add the group switching call to the newPosition element of the bulk requests
+        // add the group switching call to the newPos element of the bulk requests
         // so position "0" will be the 0th element in currentBulkSaveRequests
-        this.currentBulkSaveRequests.splice(newPosition, 0, bulkMoveRequest);
+        this.currentBulkSaveRequests.splice(newPos, 0, bulkMoveRequest);
 
         // get the new totals after everything has happened for the old group
         url = app.api.buildURL('ProductBundles/' + oldGroupModelId);
@@ -823,7 +831,9 @@
             _.each(deletedGroupBundle.models, function(model) {
                 newGroupBundle.add(model);
                 model.link = {
-                    bean: newGroup.model
+                    bean: newGroup.model,
+                    isNew: model.link.isNew,
+                    name: model.link.name
                 };
             }, this);
         }

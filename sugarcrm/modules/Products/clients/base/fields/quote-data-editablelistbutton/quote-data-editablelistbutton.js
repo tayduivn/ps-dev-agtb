@@ -122,9 +122,9 @@
 
         var successCallback = function(model) {
             self.changed = false;
-            model.modelView = 'list';
+            self.model.modelView = 'list';
             if (self.view.layout) {
-                self.view.layout.trigger('editablelist:' + self.view.name + ':save', model, oldModelId);
+                self.view.layout.trigger('editablelist:' + self.view.name + ':save', self.model, oldModelId);
             }
         };
         var options = {

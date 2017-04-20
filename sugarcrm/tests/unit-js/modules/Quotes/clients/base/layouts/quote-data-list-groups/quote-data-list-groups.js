@@ -1020,7 +1020,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 oldGroup.collection.add(rowModel);
                 layout.currentBulkSaveRequests = [];
 
-                layout._moveItemToNewGroup(oldGroupId, newGroupId, rowModelId, false);
+                layout._moveItemToNewGroup(oldGroupId, newGroupId, rowModelId, false, undefined, false, true);
             });
 
             afterEach(function() {
