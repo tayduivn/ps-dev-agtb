@@ -77,7 +77,8 @@ $dictionary['Tag'] = array(
     ),
     'duplicate_check' => array(
         'enabled' => true,
-        'FilterDuplicateCheck' => array(
+        // Use a Tags specific dupe check to enforce cases
+        'TagsFilterDuplicateCheck' => array(
             'filter_template' => array(
                 array('name' => array('$equals' => '$name')),
             ),
