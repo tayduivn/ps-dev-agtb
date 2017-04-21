@@ -68,7 +68,7 @@ class MultiMatchQuery implements QueryInterface
 
     public function setOperator($operator)
     {
-        $this->defaultOperator = strtolower($operator);
+        $this->defaultOperator = TermParserHelper::getOperator($operator);
     }
 
     /**
