@@ -67,7 +67,14 @@ class MySugar{
 			$options = array();
             if (isset($_POST['type'], $_POST['type_module']) && $_POST['type'] == 'web') {
 				$dashlet_module = 'Home';
-                $options['url'] = $_POST['type_module'];
+                $options['url'] = $this->request->getValidInputRequest(
+                    'type_module',
+                    array(
+                        'Assert\Url' => array(
+                            'protocols' => array('http', 'https'),
+                        ),
+                    )
+                );
 				$webDashlet = new DashletRssFeedTitle($options['url']);
 				$options['title'] = $webDashlet->generateTitle();
             } elseif (!empty($_POST['type_module'])) {

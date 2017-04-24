@@ -1,4 +1,6 @@
 <?php
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 if( is_file( "printer.php" ) ){
     require_once( "printer.php" );
 }
@@ -64,6 +66,7 @@ function mkdir_recursive( $path ){
 function rmdir_recursive( $path ){
     $lpr = getPrinterInstance();
 
+    $path = FileLoader::validateFilePath($path);
     if( is_file( $path ) ){
         return( unlink( $path ) );
     }

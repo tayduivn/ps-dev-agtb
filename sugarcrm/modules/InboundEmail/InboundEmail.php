@@ -12,7 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 /**
  * Stub for certain interactions;
@@ -1753,13 +1753,12 @@ class InboundEmail extends SugarBean {
 		$uids = $this->email->et->_cleanUIDList($uids);
 
 		foreach($uids as $uid) {
-			$file = "{$this->EmailCachePath}/{$this->id}/messages/{$fromFolder}{$uid}.php";
+            $fileName = "{$this->EmailCachePath}/{$this->id}/messages/{$fromFolder}{$uid}.php";
+            $file = FileLoader::validateFilePath($fileName);
 
-			if(file_exists($file)) {
-				if(!unlink($file)) {
-					$GLOBALS['log']->debug("INBOUNDEMAIL: Could not delete [ {$file} ]");
-				}
-			}
+            if (!unlink($file)) {
+                $GLOBALS['log']->debug("INBOUNDEMAIL: Could not delete [ {$file} ]");
+            }
 		}
 	}
 
@@ -5733,12 +5732,12 @@ eoq;
 			if ($this->isPop3Protocol()) {
 				$uid = md5($uid);
 			} // if
-			$msgCacheFile = "{$this->EmailCachePath}/{$this->id}/messages/{$this->mailbox}{$uid}.php";
-			if(file_exists($msgCacheFile)) {
-				if(!unlink($msgCacheFile)) {
-					$GLOBALS['log']->error("***ERROR: InboundEmail could not delete the cache file [ {$msgCacheFile} ]");
-				}
-			}
+            $fileName = "{$this->EmailCachePath}/{$this->id}/messages/{$this->mailbox}{$uid}.php";
+            $msgCacheFile = FileLoader::validateFilePath($fileName);
+
+            if (!unlink($msgCacheFile)) {
+                $GLOBALS['log']->error("***ERROR: InboundEmail could not delete the cache file [ {$msgCacheFile} ]");
+            }
 		}
 	}
 

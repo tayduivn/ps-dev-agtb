@@ -12,6 +12,7 @@
 
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 if(!is_admin($current_user)){
     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
@@ -43,7 +44,8 @@ $valid_public_key = true;
 if (!empty($_POST['saveConfig'])) {
     do {
         if ($_POST['captcha_on'] == '1') {
-    		$handle = @fopen("http://api.recaptcha.net/challenge?k=".$_POST['captcha_public_key']."&cachestop=35235354", "r");
+            $public_key = InputValidation::getService()->getValidInputPost('captcha_public_key');
+            $handle = @fopen("http://api.recaptcha.net/challenge?k=".$public_key."&cachestop=35235354", "r");
     		$buffer ='';
     		if ($handle) {
     		    while (!feof($handle)) {

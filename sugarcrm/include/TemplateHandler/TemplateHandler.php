@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 /**
  * TemplateHandler builds templates using SugarFields and a generic view.
@@ -293,7 +294,8 @@ class TemplateHandler {
             $cache_file_name = $this->ss->_get_compile_path($this->cacheDir . $this->templateDir . $module . '/' .$view . '.tpl');
             SugarCache::cleanFile($cache_file_name);
 
-            return unlink($this->cacheDir . $this->templateDir . $module . '/' .$view . '.tpl');
+            $file = FileLoader::validateFilePath($this->cacheDir . $this->templateDir . $module . '/' .$view . '.tpl');
+            return unlink($file);
         }
         return false;
     }
