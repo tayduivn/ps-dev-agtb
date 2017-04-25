@@ -209,7 +209,7 @@ return array(
     ],
     'DuplicateCheck' => [
         [
-            'version' => '*',
+            'version' => '3.2',
         ],
     ],
     'FayeBSG Sugar - Authorize.Net Integration' => [
@@ -234,7 +234,7 @@ return array(
     ],
     'iNetMiniETL' => [
         [
-            'version' => '*',
+            'version' => '1.5.4',
         ],
     ],
     'IP Restriction Manager' => [
@@ -259,7 +259,7 @@ return array(
     ],
     'sf_SalesFusion' => [
         [
-            'version' => '*',
+            'version' => '6.8',
         ],
     ],
     'Sugar-Constant Contact Integration' => [
@@ -279,7 +279,7 @@ return array(
     ],
     'wActivities76' => [
         [
-            'version' => '*',
+            'version' => '3.0',
         ],
     ],
     'XperiDo_Admin_ConfigButtons_7.5_V1.0.19' => [
@@ -319,7 +319,12 @@ return array(
     ],
     'DrillDownReportsChart' => [
         [
-            'version' => '*',
+            'version' => '3.0',
+        ],
+    ],
+    'iNetEditique' => [
+        [
+            'version' => '1.7.3',
         ],
     ],
 );
