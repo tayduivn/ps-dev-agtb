@@ -168,8 +168,7 @@ abstract class MssqlManager extends DBManager
         $unionOrderByCount = count($orderByArray);
         $arr_count = 0;
 
-        //process if there are elements
-        if ($unionOrderByCount){
+        if ($unionOrderByCount > 1) {
             //we really want the last order by, so reconstruct string
             //adding a 1 to count, as we dont wish to process the last element
             $unionsql = '';

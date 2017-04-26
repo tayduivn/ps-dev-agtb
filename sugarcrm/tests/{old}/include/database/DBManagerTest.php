@@ -3972,4 +3972,17 @@ SQL;
         $result = $this->_db->limitQuery($query, 0, 2);
         $this->assertNotEmpty($result);
     }
+
+    public function testLimitUnionQueryWithoutOrderBy()
+    {
+        $dummy = 'SELECT 1 id ' . $this->_db->getFromDummyTable();
+
+        $query = $dummy . ' UNION ALL ' . $dummy;
+
+        $result = $this->_db->limitQuery($query, 0, 1);
+
+        $this->assertArraySubset(array(
+            'id' => 1,
+        ), $this->_db->fetchRow($result));
+    }
 }
