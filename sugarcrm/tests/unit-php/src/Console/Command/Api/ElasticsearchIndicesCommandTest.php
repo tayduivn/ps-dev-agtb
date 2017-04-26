@@ -40,14 +40,16 @@ class ElasticsearchIndicesCommandTest extends AbstractApiCommandTestCase
                     'accounts' => array(
                         'indices' => array(
                             'accounts' => array(
-                                'docs' => array(
-                                    'num_docs' => 5684,
-                                    'max_doc' => 5687,
-                                    'deleted_docs' => 3,
-                                ),
-                                'index' => array(
-                                    'primary_size_in_bytes' => 256854,
-                                    'size_in_bytes' => 256854,
+                                'total' => array(
+                                    'docs' => array(
+                                        'count' => 5684,
+                                        'max_doc' => 5687,
+                                        'deleted_docs' => 3,
+                                    ),
+                                    'store' => array(
+                                        'primary_size_in_bytes' => 256854,
+                                        'size_in_bytes' => 256854,
+                                    ),
                                 ),
                             ),
                         ),
@@ -60,14 +62,16 @@ class ElasticsearchIndicesCommandTest extends AbstractApiCommandTestCase
                     'contacts' => array(
                         'indices' => array(
                             'contacts' => array(
-                                'docs' => array(
-                                    'num_docs' => 542568,
-                                    'max_doc' => 542568,
-                                    'deleted_docs' => 0,
-                                ),
-                                'index' => array(
-                                    'primary_size_in_bytes' => 254686854,
-                                    'size_in_bytes' => 254686854,
+                                'total' => array(
+                                    'docs' => array(
+                                        'count' => 542568,
+                                        'max_doc' => 542568,
+                                        'deleted_docs' => 0,
+                                    ),
+                                    'store' => array(
+                                        'primary_size_in_bytes' => 254686854,
+                                        'size_in_bytes' => 254686854,
+                                    ),
                                 ),
                             ),
                         ),

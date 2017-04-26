@@ -104,15 +104,15 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider providerTestIsAvailable
      */
-    public function testIsAvailable($force, $adminSetting, $responseString, $expected)
+    public function testIsAvailable($force, $isSearchEngineAvallble, $responseString, $expected)
     {
-        $clientMock = $this->getClientMock(array('ping', 'getFtsInfoFromAdminSettings', 'saveAdminStatus'));
+        $clientMock = $this->getClientMock(array('ping', 'isSearchEngineAvailable', 'saveAdminStatus'));
         $clientMock->expects($this->any())
             ->method('ping')
             ->will($this->returnValue(new Response($responseString)));
         $clientMock->expects($this->any())
-            ->method('getFtsInfoFromAdminSettings')
-            ->will($this->returnValue($adminSetting));
+            ->method('isSearchEngineAvailable')
+            ->will($this->returnValue($isSearchEngineAvallble));
 
         $clientMock->expects($this->any())
             ->method('saveAdminStatus');
@@ -227,6 +227,25 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                   "cluster_name" : "elasticsearch_brew",
                   "version" : {
                     "number" : "1.7",
+                    "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
+                    "build_timestamp" : "2015-04-27T09:21:06Z",
+                    "build_snapshot" : false,
+                    "lucene_version" : "4.10.4"
+                  },
+                  "tagline" : "You Know, for Search"
+                }',
+                false,
+            ),
+            // ES version 2.3, not supported
+            array(
+                true,
+                true,
+                '{
+                  "status" : 200,
+                  "name" : "Zom",
+                  "cluster_name" : "elasticsearch_brew",
+                  "version" : {
+                    "number" : "2.3.0",
                     "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
                     "build_timestamp" : "2015-04-27T09:21:06Z",
                     "build_snapshot" : false,

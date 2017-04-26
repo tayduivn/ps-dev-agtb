@@ -392,7 +392,7 @@ class AdministrationApi extends SugarApi
 
         $indices = array();
         foreach ($this->getIndices($engine) as $index) {
-            $indices[$index->getName()] = $index->getStatus()->getData();
+            $indices[$index->getName()] = $index->getStats()->getData();
         }
         return $indices;
     }

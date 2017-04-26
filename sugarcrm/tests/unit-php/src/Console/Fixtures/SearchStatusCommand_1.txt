@@ -1,6 +1,0 @@
-+-----------------+
-| Enabled modules |
-+-----------------+
-| Accounts        |
-+-----------------+
-SearchEngine *NOT* available

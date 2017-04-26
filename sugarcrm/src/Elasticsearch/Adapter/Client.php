@@ -317,19 +317,20 @@ class Client extends BaseClient
     protected function loadAvailability()
     {
         if ($this->available === null) {
-            $this->available = empty($this->getFtsInfoFromAdminSettings());
+            $this->available = $this->isSearchEngineAvailable();
         }
         return $this->available;
     }
 
     /**
-     * get Administration settings for key=info_fts_down
-     * @return mixed
+     * check if search engine is available using
+     * Administration settings for key=info_fts_down
+     * @return boolean
      */
-    protected function getFtsInfoFromAdminSettings()
+    protected function isSearchEngineAvailable()
     {
         $settings = \Administration::getSettings();
-        return $settings->settings['info_fts_down'];
+        return empty($settings->settings['info_fts_down']);
     }
 
     /**
