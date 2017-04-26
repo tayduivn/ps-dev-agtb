@@ -28,35 +28,6 @@ $viewdefs['Reports']['base']['layout']['drillthrough-drawer'] = array(
                                 ),
                                 array(
                                     'layout' => 'drillthrough-list',
-                                    // Extend the metadata to remove any actions
-                                    'xmeta' => array(
-                                        'components' => array(
-                                            array(
-                                                'view' => 'recordlist',
-                                                'primary' => true,
-                                                'xmeta' => array(
-                                                    'favorite' => false,
-                                                    'selection' => array(),
-                                                    'rowactions' => array(
-                                                        'actions' => array(
-                                                            // Keep preview
-                                                            array(
-                                                                'type' => 'rowaction',
-                                                                'css_class' => 'btn',
-                                                                'tooltip' => 'LBL_PREVIEW',
-                                                                'event' => 'list:preview:fire',
-                                                                'icon' => 'fa-eye',
-                                                                'acl_action' => 'view',
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                            array(
-                                                'view' => 'list-bottom',
-                                            ),
-                                        ),
-                                    ),
                                 ),
                             ),
                         ),

@@ -26,5 +26,13 @@
             this.$el.off();
             app.drawer.close();
         }, this));
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _formatTitle: function(title) {
+        var chartModule = this.context.get('chartModule');
+        return app.lang.get('LBL_MODULE_NAME', chartModule);
     }
 })

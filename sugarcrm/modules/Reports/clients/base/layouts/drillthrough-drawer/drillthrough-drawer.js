@@ -73,9 +73,8 @@
                 if (this.disposed) {
                     return;
                 }
-                var title = this._buildTitle();
-                this.context.trigger('headerpane:title', title);
                 this.context.trigger('refresh:count');
+                this.context.trigger('refresh:drill:labels');
             }, this),
             error: function(o) {
                 app.alert.show('listfromreport_loading', {
@@ -92,39 +91,5 @@
         collection.model = app.data.getBeanClass(chartModule);
         collection.setOption('endpoint', endpoint);
         collection.fetch(callbacks);
-    },
-
-    _buildTitle: function() {
-        var chartModule = this.context.get('chartModule');
-        var groupDefs = this.context.get('groupDefs');
-        var filterDef = this.context.get('filterDef');
-        var dashConfig = this.context.get('dashConfig');
-        var recordCount = this.context.get('collection').length || null;
-        var key;
-        var title;
-
-        function isFiscalTimeperiod(group) {
-            return !_.isUndefined(group.qualifier) && group.qualifier.indexOf('fiscal') !== -1;
-        }
-        function titleCase(str) {
-            return str
-                .replace('_', ' ')
-                .split(' ')
-                .map(function(d, i) {
-                    return d.charAt(0).toUpperCase() + d.slice(1);
-                })
-                .join(' ');
-        }
-
-        title = isFiscalTimeperiod(groupDefs[0]) ? (app.lang.get('LBL_FISCAL', 'Reports') + ' ') : '';
-        title += titleCase(dashConfig.groupLabel) + ' ';
-        title += app.lang.getModuleName(chartModule, {plural: recordCount > 1});
-
-        if (filterDef.length > 1) {
-            key = Object.getOwnPropertyNames(filterDef[1])[0];
-            title += ' with ' + titleCase(dashConfig.seriesLabel) + ' ' + titleCase(key);
-        }
-
-        return title;
     }
 })

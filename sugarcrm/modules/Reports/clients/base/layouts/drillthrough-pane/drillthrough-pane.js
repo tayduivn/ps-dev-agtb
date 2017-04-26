@@ -49,6 +49,7 @@
                 preview: true,
                 context: this.context,
                 module: metadata.module,
+                custom_toolbar: 'no',
                 chart: field
             };
 
@@ -59,7 +60,7 @@
                 type: 'dashlet',
                 css_class: 'dashlets',
                 config: false,
-                preview: true,
+                preview: false,
                 label: metadata.label,
                 module: metadata.module,
                 context: this.context,
@@ -74,6 +75,9 @@
      * @inheritdoc
      */
     render: function() {
+        var config = this.context.get('dashConfig');
+        // Set the title of the side pane
+        this.model.setDefault('title', config.label);
         this._super('render');
 
         var dashlet = this.getComponent('dashlet').getComponent('saved-reports-chart');
@@ -89,12 +93,9 @@
         // this will trigger chart.js' change:rawChartData and the chart will update
         dashlet.reportData.set('rawChartData', chartData);
 
-        //TODO: set metadata on headerpane so we don't have to do this
-        if (title.length) {
-            title.text(config.label);
-        }
+        // remove the headerpane class because it contains a bunch of junk we don't need
+        this.$el.find('span.headerpane').removeClass('headerpane');
 
         return this;
     }
-
 })
