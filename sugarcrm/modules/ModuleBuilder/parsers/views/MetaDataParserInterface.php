@@ -12,8 +12,13 @@
 
 interface MetaDataParserInterface
 {
-
-    public function handleSave () ;
+    /**
+     * Saves the layout
+     *
+     * @param bool $populate Whether the layout should be updated with the information from request
+     * @param bool $clearCache
+     */
+    public function handleSave($populate = true, $clearCache = true);
 
     public function getLayout () ;
 
@@ -22,4 +27,3 @@ interface MetaDataParserInterface
     public function getHistory () ;
 
 }
-?>
