@@ -43,7 +43,7 @@ class RS173Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestDashboardUtilities::removeAllCreatedAccounts();
+        SugarTestDashboardUtilities::removeAllCreatedDashboards();
         SugarTestHelper::tearDown();
     }
 

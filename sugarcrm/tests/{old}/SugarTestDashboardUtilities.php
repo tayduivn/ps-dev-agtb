@@ -45,7 +45,7 @@ class SugarTestDashboardUtilities
         return $dashboard;
     }
 
-    public static function removeAllCreatedAccounts()
+    public static function removeAllCreatedDashboards()
     {
         $dashboard_ids = self::getCreatedDashboardIds();
         if (count($dashboard_ids)) {

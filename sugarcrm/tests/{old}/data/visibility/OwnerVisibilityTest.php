@@ -10,34 +10,68 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+class OwnerVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    private $account;
 
-class OwnerVisibilityTest extends Sugar_PHPUnit_Framework_TestCase 
-{   
-    public function setUp() 
+    protected function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(); 
+        parent::setUp();
+
+        /** @var User $user */
+        $user = SugarTestHelper::setUp('current_user');
+
+        $this->account = SugarTestAccountUtilities::createAccount(null, array(
+            'assigned_user_id' => $user->id,
+        ));
+
+        SugarTestAccountUtilities::createAccount(null, array(
+            'assigned_user_id' => create_guid(),
+        ));
     }
 
-    public function tearDown() 
+    protected function tearDown()
     {
-        $GLOBALS['db']->query("DELETE FROM dashboards WHERE 1=1");
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset( $GLOBALS['current_user']);
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        parent::tearDown();
     }
 
-    public function testOwnerVisibility() 
+    public function testSugarQuery()
     {
-        // Create a dashboard for current user
-        $dashboard = new Dashboard();
-        $dashboard->name = 'test dashboard1';
-        $dashboard->save(); 
-        // Create a dashboard for another user       
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(); 
-        $dashboard = new Dashboard();
-        $dashboard->name = 'test dashboard2';
-        $dashboard->save();
-        $dashboard = new Dashboard();
-        $count = count($dashboard->get_full_list());
-        $this->assertEquals(1, $count);       
-    } 
+        $query = new SugarQuery();
+        $query->from($this->account, array(
+            'team_security' => false,
+        ));
+        $query->select('id');
+
+        $visibility = new OwnerVisibility($this->account);
+        $visibility->addVisibilityQuery($query);
+
+        $data = $query->execute();
+
+        $this->assertVisibilityApplied($data);
+    }
+
+    public function testSql()
+    {
+        $query = 'SELECT id FROM accounts WHERE deleted = 0';
+
+        $visibility = new OwnerVisibility($this->account);
+        $visibility->addVisibilityFrom($query);
+        $visibility->addVisibilityWhere($query);
+
+        $conn = DBManagerFactory::getConnection();
+        $data = $conn->executeQuery($query)->fetchAll();
+
+        $this->assertVisibilityApplied($data);
+    }
+
+    private function assertVisibilityApplied(array $data)
+    {
+        $this->assertCount(1, $data);
+
+        $this->assertArraySubset(array(
+            'id' => $this->account->id,
+        ), array_shift($data));
+    }
 }
