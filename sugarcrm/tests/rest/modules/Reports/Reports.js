@@ -55,4 +55,24 @@ describe('Reports', function() {
 
         });
     });
+
+    describe('Creating a Report and checking the module field is set', function() {
+        after(function*() {
+            yield this.john.delete('Reports/' + this.id);
+        });
+
+        it('should have the target module field set correctly', function*() {
+            //let response = yield this.john.put('Reports/' + this.id, {name: 'Changed Name'});
+            let report = {
+                name: 'Report1',
+                report_type: 'summary',
+                module: 'Accounts',
+
+            };
+            let response = yield this.john.post('Reports', report);
+            expect(response).to.have.status(200);
+            this.id = response.body.id;
+            expect(response.body.module).to.equal('Accounts');
+        });
+    });
 });
