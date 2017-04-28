@@ -80,25 +80,6 @@ class HealthCheckController extends SugarController
     }
 
     /**
-     * Send health check log file to sugar
-     */
-    public function action_send()
-    {
-        $this->view = 'ajax';
-        $hc = $this->bean->getLastRun();
-
-        if ($hc->getLastRun()) {
-            if ($this->getHelper()->sendLog($hc->getLogFileName())) {
-                echo json_encode(array('status' => 'ok'));
-                sugar_cleanup(true);
-            }
-        }
-
-        echo json_encode(array('status' => 'error'));
-        sugar_cleanup(true);
-    }
-
-    /**
      *
      * Confirm action, will redirect to UpgradeWizard
      */
@@ -137,7 +118,9 @@ class HealthCheckController extends SugarController
     {
         require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
         require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
-        require_once 'modules/HealthCheck/HealthCheckClient.php';
+        if (file_exists('modules/HealthCheck/HealthCheckClient.php')) {
+            require_once 'modules/HealthCheck/HealthCheckClient.php';
+        }
         return HealthCheckHelper::getInstance();
     }
 }

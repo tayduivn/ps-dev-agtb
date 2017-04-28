@@ -49,7 +49,6 @@ Optional arguments:
     -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
     -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
     -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
-    -H/--sendlog 0/1                     : Automatic push HealthCheck logs to sugarcrm server, default to 0.
 
 Upgrading the Sugar Database Schema: 
 ------------------------------------- 

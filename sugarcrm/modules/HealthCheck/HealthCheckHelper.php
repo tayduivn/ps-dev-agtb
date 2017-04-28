@@ -89,15 +89,12 @@ class HealthCheckHelper
      * Send health check log file to sugar
      * @param string $file
      * @return bool
+     *
+     * @deprecated since 7.9
      */
     public function sendLog($file)
     {
-        $client = new HealthCheckClient();
-        if ($client->send($this->getLicenseKey(), $file)) {
-            $GLOBALS['log']->info("HealthCheck: Logs have been successfully sent to HealthCheck server.");
-            return true;
-        }
-        $GLOBALS['log']->error("HealthCheck: Unable to send logs to HealthCheck server.");
+        $GLOBALS['log']->error("HealthCheck: Send logs to HealthCheck server is disabled.");
         return false;
     }
 
