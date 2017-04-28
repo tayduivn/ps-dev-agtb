@@ -3865,19 +3865,12 @@ eoq;
         $error = false;
         $seed = BeanFactory::newBean('OutboundEmail');
 
-        if (!$seed->ACLAccess('list')) {
-            throw new SugarApiExceptionNotAuthorized("No access to view records for module: {$seed->getModuleName()}");
-        }
-
         $q = new SugarQuery();
         $q->from($seed);
         $beans = $seed->fetchFromQuery($q, ['type', 'name', 'email_address', 'mail_smtpserver']);
 
         foreach ($beans as $bean) {
             if ($bean->isConfigured()) {
-                // Don't apply field-level ACL's because the dropdown won't work without being able to view the data.
-                // It doesn't make sense to prevent users from seeing the name and email address of configurations they
-                // can use.
                 $name = $bean->type === OutboundEmail::TYPE_SYSTEM ? "* {$bean->name}" : $bean->name;
                 $option = sprintf('%s <%s> [%s]', $name, $bean->email_address, $bean->mail_smtpserver);
 

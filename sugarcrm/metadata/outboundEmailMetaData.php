@@ -12,6 +12,7 @@
 
 $dictionary['OutboundEmail'] = array (
     'table' => 'outbound_email',
+    'hidden_to_role_assignment' => true,
     'acls' => array(
         'SugarACLOutboundEmail' => true,
     ),
