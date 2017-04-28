@@ -19,7 +19,8 @@ var gutil = require('gulp-util');
 var os = require('os');
 var todo = require('gulp-todo');
 const tslint = require('gulp-tslint');
-const spawn = require('child-process-promise').spawn;
+const path = require('path');
+const execa = require('execa');
 
 /**
  * A function that returns an object from a given JSON filename, which will also strip comments.
@@ -254,7 +255,6 @@ gulp.task('test:unit:php', function(done) {
         process.stdout.write('Coverage reports will be generated to: ' + path.join(workspace, 'coverage') + '\n');
     }
 
-    var execa = require('execa');
     var phpunitPath = path.join('..', 'vendor', 'bin', 'phpunit');
     var phpProcess = execa(phpunitPath, args, {
         maxBuffer: 1e6, // 1 MB
@@ -581,20 +581,15 @@ gulp.task('find-todos', function() {
     }
 });
 
-gulp.task('tslint', () =>
-    gulp.src([
-        './tests/end-to-end/**/*.ts',
-    ])
-        .pipe(
-            tslint({formatter: 'verbose'})
-        )
-        .pipe(tslint.report())
-);
+gulp.task('cukes-ts', function() {
 
-const tsTask = watchFiles => spawn('./node_modules/.bin/tsc', [
-    '--experimentalDecorators',
-].concat(watchFiles ? ['-w'] : []) , {capture: ['stdout', 'stderr']});
+    var tsProcess = execa('./node_modules/.bin/gulp',
+        ['ts', '--color', '--cukes-path', `${path.resolve(__dirname, './tests/end-to-end/**/*.ts')}`],
+        {
+            stdio: 'inherit',
+            cwd: path.resolve(__dirname, './node_modules/@sugarcrm/seedbed'),
+        });
 
-gulp.task('ts-watch', ['tslint'], () => tsTask(true));
+    return tsProcess;
 
-gulp.task('ts', ['tslint'], () => tsTask(false));
+});

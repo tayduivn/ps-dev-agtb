@@ -10,6 +10,7 @@
  */
 
 import ModuleMenuCmp from '../components/module-menu-cmp';
+import {seedbed, whenStepsHelper} from '@sugarcrm/seedbed';
 
 const whenSteps = function () {
 
@@ -58,6 +59,19 @@ const whenSteps = function () {
             let listItem = view.getListItem({id: record.id});
             await listItem.clickPreviewButton();
         }, true);
+
+
+    this.When(/^I wait for (\d+) seconds$/,
+            (delay: string): Promise<void> =>
+                whenStepsHelper.waitStep(parseInt(delay, 10)));
+
+    this.When(/^I open ([\w,\/]+) view and login$/,
+            (module: string): Promise<void> =>
+                whenStepsHelper.setUrlHashAndLogin(module), true);
+
+    this.When(/^I go to "([^"]*)" url$/,
+            async(urlHash): Promise<void> => seedbed.client.setUrlHash(urlHash), true);
+
 
 };
 

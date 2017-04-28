@@ -10,4 +10,5 @@
  */
 'use strict';
 
-require('./ci-cukes.js').default();
+require('@sugarcrm/seedbed/lib/tsloader');
+require('./ci-cukes').default();

@@ -20,7 +20,7 @@ import LoginView from '../views/login-view';
  */
 export default class LoginLayout extends BaseView {
 
-    public type: string = 'login';
+    public type = 'login';
     public LoginView: LoginView;
     public defaultView: LoginView;
 

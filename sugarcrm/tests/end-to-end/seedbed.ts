@@ -19,7 +19,6 @@ import PreviewLayout from './layouts/preview-layout';
 /*runs as soon as log in page is loaded and metadata that is available at that moment saved*/
 seedbed.addAsyncHandler(seedbed.events.BEFORE_INIT, async() => {
 
-    seedbed.meta.modules.Login = module;
     seedbed.defineComponent('Login', LoginLayout, {module: 'Login'});
 
     await seedbed.api.updatePreferences({
@@ -73,13 +72,13 @@ seedbed.addAsyncHandler(seedbed.events.SYNC, (clientInfo) => {
 
     if (item) {
         /*find record info for created record*/
-        let recordInfo: any = _.find(seedbed.scenario.recordsInfo, (recordInfo: any) => {
+        let recordInfo: any = _.find(seedbed.scenario.recordsInfo, (record: any) => {
             /*
              We need to make sure we find correct record to be updated
              Why need this fix: Sugar do POST requests on Dashboards to create them, if not available (for new installs)
              Those POST requests are pushed to clientInfo.create and assigned to wrong seedbed.scenario.recordsInfo[] elements
              */
-            return !recordInfo.recordId && item._module && item._module === recordInfo.module;
+            return !record.recordId && item._module && item._module === record.module;
         });
 
         if (recordInfo && !seedbed.cachedRecords.contains(recordInfo.uid)) {
@@ -119,8 +118,8 @@ seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
         if (_.includes(['POST'], req.method) && url.indexOf('/file/filename') === -1) {
 
             /*find record info for created record*/
-            let recordInfo: any = _.find(seedbed.scenario.recordsInfo, (recordInfo: any) => {
-                return responseRecord && responseRecord.id && responseRecord.id === recordInfo.recordId;
+            let recordInfo: any = _.find(seedbed.scenario.recordsInfo, (record: any) => {
+                return responseRecord && responseRecord.id && responseRecord.id === record.recordId;
             });
 
             /*save record in cachedRecords by uid*/

@@ -107,7 +107,7 @@ var settings = {
     },
 
     require: [
-        path.resolve(__dirname, 'seedbed.js')
+        path.resolve(__dirname, 'seedbed')
     ],
     clientScripts: require('./client/client-scripts.js'),
     selenium: {

@@ -10,6 +10,7 @@
  */
 
 import * as _ from 'lodash';
+import {thenStepsHelper} from '@sugarcrm/seedbed';
 
 const steps = function () {
 
@@ -53,6 +54,10 @@ const steps = function () {
             }
 
         });
+
+    this.Then(/^I should be redirected to \"(.*)\" route/,
+        (expectedRoute: string): Promise<void> =>
+            thenStepsHelper.checkUrlHash(expectedRoute));
 
 };
 

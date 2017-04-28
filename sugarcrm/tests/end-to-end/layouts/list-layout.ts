@@ -22,7 +22,7 @@ import HeaderView from '../views/header-view';
  */
 export default class ListLayout extends BaseView {
 
-    public type: string = 'list';
+    public type = 'list';
     public FilterView: FilterView;
     public ListView: ListView;
     public defaultView: ListView;

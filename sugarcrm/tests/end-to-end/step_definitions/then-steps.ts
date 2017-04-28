@@ -25,7 +25,7 @@ const thenSteps = function () {
             let isVisible = await view.isVisibleView();
 
             if (!not !== isVisible) {
-                throw new Error('Expected ' + (not || '') + 'to see "' + view.$className + '" view(layout)');
+                throw new Error('Expected ' + (not || '') + 'to see "' + view.$() + '" view(layout)');
             }
 
         });
