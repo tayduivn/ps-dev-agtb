@@ -24,7 +24,6 @@ $names = ACLAction::setupCategoriesMatrix($categories);
 // Skipping modules that have 'hidden_to_role_assignment' property
 $hidden_categories = array(
     "Campaigns",
-    "Emails",
     "EmailTemplates",
     "EmailMarketing",
     "Forecasts",

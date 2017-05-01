@@ -18,15 +18,6 @@ class ModuleApi extends SugarApi {
     private $aclCheckOptions = array('source' => 'module_api');
 
     /**
-     * A list of fields for which we disallow through createRecord.
-     *
-     * @var array
-     */
-    protected $disabledCreateFields = array(
-        'deleted',
-    );
-
-    /**
      * A list of fields for which we disallow update through updateRecord
      *
      * @var array
@@ -157,12 +148,6 @@ class ModuleApi extends SugarApi {
      */
     public function createRecord(ServiceBase $api, array $args)
     {
-        foreach ($this->disabledCreateFields as $field) {
-            if (isset($args[$field])) {
-                unset($args[$field]);
-            }
-        }
-
         $bean = $this->createBean($api, $args);
         $data = $this->formatBeanAfterSave($api, $args, $bean);
 

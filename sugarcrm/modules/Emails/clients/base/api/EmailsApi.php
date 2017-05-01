@@ -55,24 +55,6 @@ class EmailsApi extends ModuleApi
     );
 
     /**
-     * The fields `type` and `status` are disabled on create and update. The field `id` is disabled on create.
-     *
-     * All sender links are disabled on update, as the sender cannot be changed. For emails in the "Draft," or "Ready"
-     * state, the sender is always the current user. For emails in the "Archived" state, the sender is immutable.
-     *
-     * {@inheritdoc}
-     */
-    public function __construct()
-    {
-        $this->disabledCreateFields = array_merge($this->disabledCreateFields, array('id', 'type', 'status'));
-        $this->disabledUpdateFields = array_merge(
-            $this->disabledUpdateFields,
-            array('type', 'status'),
-            VardefManager::getLinkFieldsForCollection('Emails', BeanFactory::getObjectName('Emails'), 'from')
-        );
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function registerApiRest()

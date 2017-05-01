@@ -769,6 +769,7 @@ class VardefManager{
             $bean = BeanFactory::newBean($object) ?: BeanFactory::newBean($module);
             if ($bean && ($bean instanceof SugarBean) && $bean->bean_implements('ACL')) {
                 $dictionary[$object]['acls']['SugarACLStatic'] = true;
+                SugarACL::resetACLs($module);
             }
         }
     }

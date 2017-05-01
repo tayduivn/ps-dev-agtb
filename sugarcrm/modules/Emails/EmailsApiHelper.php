@@ -42,28 +42,29 @@ class EmailsApiHelper extends SugarBeanApiHelper
      *
      * {@inheritdoc}
      *
-     * @throws SugarApiExceptionInvalidParameter Thrown if `outbound_email_id` is submitted and the record cannot be
-     * found or is inaccessible to the user.
+     * @throws SugarApiExceptionNotFound Thrown if `outbound_email_id` is submitted and the record cannot be found or is
+     * inaccessible to the user.
      */
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
-        $isDraft = isset($submittedData['state']) ?
-            $submittedData['state'] === Email::STATE_DRAFT :
-            $bean->state === Email::STATE_DRAFT;
+        // Set the state before anything else because field-level ACL checks are dependent on an email's state and the
+        // ACL checks are performed before the fields are populated.
+        if (isset($submittedData['state'])) {
+            $bean->state = $submittedData['state'];
+        }
 
-        if (isset($submittedData['outbound_email_id'])) {
-            if ($isDraft) {
-                if (!empty($submittedData['outbound_email_id'])) {
-                    $oe = BeanFactory::retrieveBean('OutboundEmail', $submittedData['outbound_email_id']);
+        $hasOutboundEmailId = isset($submittedData['outbound_email_id']) && !empty($submittedData['outbound_email_id']);
 
-                    if (!$oe) {
-                        throw new SugarApiExceptionInvalidParameter(
-                            "Could not find record for outbound_email_id: '{$submittedData['outbound_email_id']}'"
-                        );
-                    }
-                }
-            } else {
-                unset($submittedData['outbound_email_id']);
+        if ($hasOutboundEmailId && $bean->state === Email::STATE_DRAFT) {
+            $oe = BeanFactory::retrieveBean('OutboundEmail', $submittedData['outbound_email_id']);
+
+            if (!$oe) {
+                throw new SugarApiExceptionNotFound(
+                    sprintf(
+                        'Could not find record: %s in module: OutboundEmail for the submitted outbound_email_id',
+                        $submittedData['outbound_email_id']
+                    )
+                );
             }
         }
 

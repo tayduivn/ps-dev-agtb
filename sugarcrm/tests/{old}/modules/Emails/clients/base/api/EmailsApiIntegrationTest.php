@@ -146,9 +146,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * @covers ::updateRecord
      * @covers ::isValidStateTransition
      * @covers ::getRelatedRecordArguments
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
+     * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testUpdateArchivedEmail()
     {
@@ -204,44 +202,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->updateRecord($record['id'], $args);
-        $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived after update');
-
-        $expected = array(
-            array(
-                '_module' => 'Contacts',
-                '_link' => 'contacts_from',
-                'id' => $contact->id,
-                'email_address_used' => $contact->email1,
-                'date_modified' => $this->getIsoTimestamp($contact->date_modified),
-            ),
-        );
-        $collection = $this->getCollection($record['id'], 'from');
-        $this->assertRecords($expected, $collection, 'The sender should not have changed');
-
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_to',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => $GLOBALS['current_user']->email1,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
-        $collection = $this->getCollection($record['id'], 'to');
-        $this->assertRecords($expected, $collection, 'The TO field should not have changed');
-
-        //FIXME: The following assertion fails because we do not yet prevent changes to the recipient links on updates
-        // of archived emails.
-        //$collection = $this->getCollection($record['id'], 'cc');
-        //$this->assertEmpty($collection['records'], 'The CC field should not have changed');
-
-        $bean = $this->retrieveEmailText($record['id']);
-        $this->assertEquals("{$contact->name} <{$contact->email1}>", $bean->from_addr_name);
-        $this->assertEquals(
-            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
-            $bean->to_addrs_names
-        );
-        //FIXME: Not asserting the CC field for the same reason as above.
     }
 
     /**
@@ -341,6 +301,51 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     }
 
     /**
+     * When updating a draft, the sender always remains the current user.
+     *
+     * @covers ::updateRecord
+     * @covers ::isValidStateTransition
+     * @covers ::getRelatedRecordArguments
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testUpdateDraftEmailWithNewSender()
+    {
+        $user = $this->createRhsBean('users_from');
+
+        $args = array(
+            'state' => Email::STATE_DRAFT,
+            'outbound_email_id' => static::$overrideConfig->id,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+        );
+        $record = $this->createRecord($args);
+        $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after create');
+        $this->assertSame(
+            static::$overrideConfig->id,
+            $record['outbound_email_id'],
+            'The configuration did not match expectations after create'
+        );
+
+        $expected = array(
+            array(
+                '_module' => 'Users',
+                '_link' => 'users_from',
+                'id' => $GLOBALS['current_user']->id,
+                'email_address_used' => static::$overrideConfig->email_address,
+                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
+            ),
+        );
+        $collection = $this->getCollection($record['id'], 'from');
+        $this->assertRecords($expected, $collection, 'The sender should be the current user');
+
+        $args = array(
+            'users_from' => array(
+                'add' => array($user->id),
+            ),
+        );
+        $record = $this->updateRecord($record['id'], $args);
+    }
+
+    /**
      * When updating a draft, the sender always remains the current user and the recipients and configuration may
      * change.
      *
@@ -355,7 +360,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     public function testUpdateDraftEmail()
     {
         $prospect = $this->createRhsBean('prospects_cc');
-        $user = $this->createRhsBean('users_from');
         $address = $this->createRhsBean('email_addresses_to');
 
         $args = array(
@@ -400,9 +404,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'outbound_email_id' => static::$userConfig->id,
-            'users_from' => array(
-                'add' => array($user->id),
-            ),
             'email_addresses_to' => array(
                 'add' => array($address->id),
             ),
