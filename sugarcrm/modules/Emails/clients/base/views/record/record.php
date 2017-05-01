@@ -54,14 +54,6 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'reply_all' => true,
                 ),
                 array(
-                    'name' => 'forward_button',
-                    'type' => 'rowaction',
-                    'event' => 'button:forward_button:click',
-                    'label' => 'LBL_BUTTON_FORWARD',
-                    'acl_module' => 'Emails',
-                    'acl_action' => 'create',
-                ),
-                array(
                     'type' => 'rowaction',
                     'event' => 'button:edit_button:click',
                     'name' => 'edit_button',
