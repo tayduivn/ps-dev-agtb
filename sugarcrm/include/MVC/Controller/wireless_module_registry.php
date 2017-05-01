@@ -26,4 +26,5 @@ $wireless_module_registry = array(
 	'Employees' => array('disable_create' => true),
     'Notes' => array(),
 	'Reports' => array('disable_create' => true),
+    'Emails' => array(),
 );
