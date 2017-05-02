@@ -59,14 +59,14 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'route'=>'#UserSignatures/create',
         'label' =>'LNK_NEW_EMAIL_SIGNATURE',
         'acl_action'=>'create',
-        'acl_module'=>'UserSignatures',
+        'acl_module' => 'Emails',
         'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#UserSignatures',
         'label' =>'LNK_EMAIL_SIGNATURE_LIST',
-        'acl_action'=>'list',
-        'acl_module'=>'UserSignatures',
+        'acl_action' => 'create',
+        'acl_module' => 'Emails',
         'icon' => 'fa-bars',
     ),
     array(
