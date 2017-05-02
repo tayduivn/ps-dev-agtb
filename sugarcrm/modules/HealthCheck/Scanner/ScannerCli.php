@@ -138,8 +138,6 @@ class HealthCheckScannerCli extends HealthCheckScanner
      */
     public static function start($argv)
     {
-        ini_set('memory_limit',-1);
-
         $scanner = new self();
 
         if(!$scanner->parseCliArgs($argv)) {

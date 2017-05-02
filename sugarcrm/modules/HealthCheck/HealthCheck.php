@@ -31,9 +31,6 @@ class HealthCheck extends Basic
      */
     public function run(HealthCheckScanner $scanner)
     {
-
-        ini_set('memory_limit',-1);
-
         // log file setup
         $cacheDir = sugar_cached(self::CACHE_DIR);
         sugar_mkdir($cacheDir);
