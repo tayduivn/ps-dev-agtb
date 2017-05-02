@@ -326,6 +326,7 @@ function get_sugar_config_defaults()
     'email_default_client' => 'sugar',
     'email_default_delete_attachments' => true,
     'email_mailer_timeout' => 10,
+    'smtp_mailer_debug' => 0,
     'history_max_viewed' => 50,
     'installer_locked' => true,
     'import_max_records_per_file' => 100,

@@ -27,6 +27,12 @@ class PHPMailerProxy extends PHPMailer
         parent::__construct(true);
         $this->Timeout = SugarConfig::getInstance()->get('email_mailer_timeout', 10);
         $this->SMTPAutoTLS = false;
+        $this->SMTPDebug = SugarConfig::getInstance()->get('smtp_mailer_debug', 0);
+        $this->Debugoutput = function ($message, $level) {
+            if ($GLOBALS['log']) {
+                $GLOBALS['log']->fatal("PHPMailer: debug level {$level}; message: {$message}");
+            }
+        };
     }
 
     /**
