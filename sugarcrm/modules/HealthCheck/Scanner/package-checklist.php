@@ -108,7 +108,7 @@ return array(
     ],
     'Marketo Marketing Automation for SugarCRM' => [
         [
-            'version' => '3.0',
+            'version' => '3.1.3',
         ],
     ],
     'SugarChimp' => [
@@ -158,7 +158,7 @@ return array(
     ],
     'Sugar-Sage Integration Modules' => [
         [
-            'version' => '2.7.0-8-g74f8c47',
+            'version' => '*',
         ],
     ],
     'inetMAPS' => [
@@ -174,7 +174,7 @@ return array(
     ],
     'Map to Lead' => [
         [
-            'version' => '2.7.1.3',
+            'version' => '*',
         ],
     ],
     'wMaps76' => [
@@ -219,12 +219,12 @@ return array(
     ],
     'FBSG Sugar - Dashboard Manager' => [
         [
-            'version' => '*',
+            'version' => '2.1.8',
         ],
     ],
     'FBSG Sugar - JIRA Integration' => [
         [
-            'version' => '*',
+            'version' => '1.3.0-20',
         ],
     ],
     'INBOX25' => [
@@ -319,12 +319,92 @@ return array(
     ],
     'DrillDownReportsChart' => [
         [
-            'version' => '3.0',
+            'version' => '*',
         ],
     ],
     'iNetEditique' => [
         [
             'version' => '1.7.3',
+        ],
+    ],
+    'Tenfold Number Fields' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'wMaps' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'BulkCRUDApi' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Calculated Fields Updater' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'DashboardCopyManagerSugar7' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Dedupit' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Dupdetector' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Flexidocs for SugarCRM' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'HS Dashboard Manager' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Pardot Marketing Automation for SugarCRM' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Process Manager' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Process Manager 3.0 OnDemand' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Process Manager 4.1.2 Upgrade' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Process Manager 4.3 On Demand Upgrade' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'Rolustech QuickBooks Online Plugin' => [
+        [
+            'version' => '*',
+        ],
+    ],
+    'wGauge' => [
+        [
+            'version' => '*',
         ],
     ],
 );
