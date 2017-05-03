@@ -3508,6 +3508,10 @@ class HealthCheckScanner
                 continue;
             }
 
+            if (strpos($file, 'cache/') === 0) {
+                continue;
+            }
+
             if (strpos($file, 'upload/') === 0) {
                 continue;
             }
