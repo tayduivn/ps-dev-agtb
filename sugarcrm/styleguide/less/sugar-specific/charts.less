@@ -45,12 +45,6 @@
 //SIDEBAR
 .sidebar-content {
   .thumbnail.dashlet:not(.collapsed) {
-    &.dashlet-dnb-tall {
-      max-height: 615px;
-      .dashlet-content > div {
-        max-height: 541px;
-      }
-    }
     //400 (max) - 34 (menubar) = 366
     .dashlet-content > div {
       max-height: 366px;
@@ -135,7 +129,6 @@ span.count {
   100% { opacity: 1; }
 }
 
-// for org chart demo renderer
 .nv-chart-org {
   .nv-org-bkgd {
     stroke: darken(@grayLighter, 15%);
@@ -164,11 +157,6 @@ span.count {
   }
 }
 
-.nv-chart.nv-chart-donut.dnb-meter {
-  min-width: 118px;
-  min-height: 50px;
-  display: inline-block;
-}
 .sidebar-content .thumbnail.dashlet:not(.collapsed) .nv-chart.nv-chart-donut.dnb-meter {
   height: 118px;
   .calcWidth(~"50% - 2px");

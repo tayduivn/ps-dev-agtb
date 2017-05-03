@@ -228,11 +228,15 @@
                ),
                getSubgroupForTarget('bootstrap', 'include/javascript/sugar_sidecar.min.js'),
                array(
-                   // D3 library
+                   // D3 (version 4.x) library custom bundle
+                   // with only modules for main sugar chart types
+                   'include/javascript/sucrose/lib/d3v4.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/sucrose/lib/d3fc-rebind.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/sucrose/sucrose.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   // D3 (version 3.x) entire library
                    'include/javascript/nvd3/lib/d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'include/SugarCharts/nvd3/js/sugarCharts.js' => 'include/javascript/sugar_sidecar.min.js',
-                   // To add more models to NV D3, run the makefile in include/javascript/nvd3.
                    'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/SugarCharts/nvd3/js/sugarCharts.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/error.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/touch.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/select2/select2.js' => 'include/javascript/sugar_sidecar.min.js',

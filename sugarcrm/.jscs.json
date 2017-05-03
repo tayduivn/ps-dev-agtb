@@ -12,6 +12,7 @@
         "include/javascript/mousetrap/**",
         "include/javascript/nprogress/**",
         "include/javascript/nvd3/**",
+        "include/javascript/sucrose/**",
         "include/javascript/phpjs/**",
         "include/javascript/select2/**",
         "include/javascript/tiny_mce/**",
