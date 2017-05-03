@@ -190,37 +190,6 @@ class Project extends SugarBean {
 		return false;
 	}
 
-    /** {@inheritDoc} */
-    public function mark_deleted($id)
-    {
-        $this->markTasksDeleted($id);
-
-        parent::mark_deleted($id);
-    }
-
-    /**
-     * Marks project tasks deleted
-     *
-     * @param string $id
-     */
-    protected function markTasksDeleted($id)
-    {
-        if ($this->id != $id) {
-            $bean = BeanFactory::newBean($this->module_name, $id);
-            $bean->id = $id;
-        } else {
-            $bean = $this;
-        }
-
-        if (!$bean->load_relationship('projecttask')) {
-            return;
-        }
-
-        foreach ($bean->projecttask->getBeans() as $task) {
-            $task->mark_deleted($task->id);
-        }
-    }
-
 	function getProjectHolidays()
 	{
 	    $firstName = $this->db->convert($this->db->convert('users.first_name', "IFNULL", array('contacts.first_name')), "IFNULL", array("''"));
@@ -340,3 +309,4 @@ function constructContactSelect(){
 ";
 	}
 }
+?>

@@ -21,19 +21,36 @@ class SugarTestProjectTaskUtilities extends SugarTestObjectUtilities
 
 	}
 
-    public static function createProjectTask(array $properties)
-    {
-        $task = new ProjectTask();
+	public static function createProjectTask($projectTaskData)
+	{
+		try
+		{
+			$projectTask = new ProjectTask();
+			$projectTask->project_id = $projectTaskData['project_id'];
+			$projectTask->parent_task_id = $projectTaskData['parent_task_id'];
+			$projectTask->project_task_id = $projectTaskData['project_task_id'];
+			$projectTask->percent_complete = $projectTaskData['percent_complete'];
+			$projectTask->name = $projectTaskData['name'];
 
-        foreach ($properties as $property => $value) {
-            $task->$property = $value;
-        }
+            if (isset($projectTaskData['duration']))
+            {
+                $projectTask->duration = $projectTaskData['duration'];
+            }
 
-        $task->save();
-        self::pushObject($task);
+            if (isset($projectTaskData['duration_unit']))
+            {
+                $projectTask->duration_unit = $projectTaskData['duration_unit'];
+            }
 
-        return $task;
-    }
+			$projectTask->save();
+			self::pushObject($projectTask);
+			return $projectTask;
+		}
+		catch (Exception $ex)
+		{
+			die("Not all needed params were defined for new project task");
+		}
+	}
 
 	public static function pushProject($project)
 	{
