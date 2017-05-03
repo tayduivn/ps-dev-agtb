@@ -468,7 +468,7 @@ class PMSECasesListApi extends FilterApi
         $q->select->fieldRaw("COUNT(*) as total");
         $q->select->fieldRaw("prj_id");
 
-        $q->groupByRaw('pro_id, cas_status');
+        $q->groupByRaw('pro_id, cas_status, prj_id');
 
         if ($filter !== 'all') {
             $q->where()->addRaw("pmse_project.id = '" . $filter . "'");
