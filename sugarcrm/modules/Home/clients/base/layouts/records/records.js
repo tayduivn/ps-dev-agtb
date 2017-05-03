@@ -22,7 +22,7 @@
     initialize: function(options) {
 
         app.logger.warn('View.Layouts.Home.RecordsLayout has been deprecated since 7.9.0.0. ' +
-        'It will be removed in 7.11.0.0. Please use View.Layouts.Home.LandingPage instead.');
+        'It will be removed in 7.11.0.0. Please use View.Layouts.Home.Record instead.');
         this._super('initialize', [options]);
     }
 })
