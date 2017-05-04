@@ -178,13 +178,12 @@
      */
 
     fixDateToLocale: function(date) {
-        // get the browser time for the specified date
-        var casDateUTC = new Date(date + ' UTC');
-        // convert into date() object
-        var dateObj = app.date(casDateUTC);
+        // get local date time for the given utc datetime
+        var local = app.date.utc(date).toDate();
+        var dateObj = app.date(local);
         // get date and time based on user preferences
-        var fixedDate = dateObj.format(app.date.convertFormat(app.user.getPreference('datepref')));
-        var fixedTime = dateObj.format(app.date.convertFormat(app.user.getPreference('timepref')));
+        var fixedDate = dateObj.format(app.date.getUserDateFormat());
+        var fixedTime = dateObj.format(app.date.getUserTimeFormat());
 
         return fixedDate + ' ' + fixedTime;
     },
