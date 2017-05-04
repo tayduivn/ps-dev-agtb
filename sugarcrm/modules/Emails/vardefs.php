@@ -244,6 +244,7 @@ $dictionary['Email'] = array(
                 'enabled' => true,
                 'searchable' => false,
             ),
+            'hideacl' => true,
         ),
         'message_id' => array(
             'name' => 'message_id',
@@ -251,6 +252,7 @@ $dictionary['Email'] = array(
             'type' => 'varchar',
             'len' => 255,
             'comment' => 'ID of the email item obtained from the email transport system',
+            'hideacl' => true,
         ),
         // Bug #45395 : Deleted emails from a group inbox does not move the emails to the Trash folder for Google Apps
         'message_uid' => array(
@@ -259,6 +261,7 @@ $dictionary['Email'] = array(
             'type' => 'varchar',
             'len' => 64,
             'comment' => 'UID of the email item obtained from the email transport system',
+            'hideacl' => true,
         ),
         'name' => array(
             'name' => 'name',
@@ -272,6 +275,7 @@ $dictionary['Email'] = array(
                 'enabled' => true,
                 'searchable' => true,
             ),
+            'hideacl' => true,
         ),
         'type' => array(
             'name' => 'type',
@@ -281,6 +285,7 @@ $dictionary['Email'] = array(
             'len' => 100,
             'massupdate' => false,
             'comment' => 'Type of email (ex: draft)',
+            'hideacl' => true,
         ),
         'status' => array(
             'name' => 'status',
@@ -289,6 +294,7 @@ $dictionary['Email'] = array(
             'len' => 100,
             'options' => 'dom_email_status',
             'massupdate' => false,
+            'hideacl' => true,
         ),
         'flagged' => array(
             'name' => 'flagged',
@@ -307,6 +313,7 @@ $dictionary['Email'] = array(
             'reportable' => false,
             'comment' => 'I you reply to an email then reply to status of original email is set',
             'massupdate' => false,
+            'hideacl' => true,
         ),
         'intent' => array(
             'name' => 'intent',
@@ -315,6 +322,7 @@ $dictionary['Email'] = array(
             'len' => 100,
             'default' => 'pick',
             'comment' => 'Target of action used in Inbound Email assignment',
+            'hideacl' => true,
         ),
         'mailbox_id' => array(
             'name' => 'mailbox_id',
@@ -364,6 +372,7 @@ $dictionary['Email'] = array(
             'massupdate' => false,
             'comment' => 'An email is either a draft or archived',
             'reportable' => false,
+            'hideacl' => true,
         ),
         'reply_to_id' => array(
             'name' => 'reply_to_id',
@@ -576,6 +585,7 @@ $dictionary['Email'] = array(
             'workflow' => false,
             'importable' => false,
             'reportable' => false,
+            'hideacl' => true,
         ),
         'outbound_email_id' => array(
             'name' => 'outbound_email_id',
