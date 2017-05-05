@@ -33,6 +33,15 @@ class SugarFieldRelateLink extends SugarFieldBase
 
     /**
      * {@inheritDoc}
+     *
+     * Does nothing since link field data can't be processed or saved here.
+     */
+    public function apiSave(SugarBean $bean, array $params, $field, $properties)
+    {
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function apiFormatField(
         array &$data,
