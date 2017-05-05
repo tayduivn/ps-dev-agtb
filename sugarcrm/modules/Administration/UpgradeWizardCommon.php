@@ -181,7 +181,10 @@ class UpgradeWizardCommon
         // matches are acceptable. -rgonzalez
         if (!isset($acceptable_sugar_versions['exact_matches']) && !isset($acceptable_sugar_versions['regex_matches'])) {
             $acceptable_sugar_versions = self::addAcceptableVersionRegex($acceptable_sugar_versions);
-            if (empty($acceptable_sugar_versions['regex_matches']) && !empty($manifest['built_in_version'])) {
+            if (empty($acceptable_sugar_versions['regex_matches']) && !empty($manifest['built_in_version'])
+                // packages built prior to 7.7.1.0 (BR-4088) have incompatible relationship metadata structure
+                && version_compare($manifest['built_in_version'], '7.7.1.0', '>=')
+            ) {
                 $built_version = explode('.', $manifest['built_in_version']);
                 $acceptable_sugar_versions['regex_matches'] = array("^{$built_version[0]}\.([0-9]+)\.([0-9]+)");
             }
