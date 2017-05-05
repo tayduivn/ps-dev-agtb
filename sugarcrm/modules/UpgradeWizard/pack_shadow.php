@@ -18,6 +18,7 @@ $files = array(
     'modules/HealthCheck/Scanner/ScannerCli.php' => 'HealthCheck/Scanner/ScannerCli.php',
     'modules/HealthCheck/Scanner/ScannerMeta.php' => 'HealthCheck/Scanner/ScannerMeta.php',
     'modules/HealthCheck/Scanner/removed-php4-constructors.php' => 'HealthCheck/Scanner/removed-php4-constructors.php',
+    'modules/HealthCheck/Scanner/package-checklist.php' => 'HealthCheck/Scanner/package-checklist.php',
     'modules/HealthCheck/HealthCheckClient.php' => 'HealthCheck/HealthCheckClient.php',
     'modules/HealthCheck/HealthCheckHelper.php' => 'HealthCheck/HealthCheckHelper.php',
     'modules/HealthCheck/language/en_us.lang.php' => 'HealthCheck/language/en_us.lang.php'
