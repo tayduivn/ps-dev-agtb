@@ -24,6 +24,18 @@ class SugarUpgradeRemoveDefaultSubpanelTitleFromCustomModules extends UpgradeScr
     public $type = self::UPGRADE_CUSTOM;
 
     /**
+     * A list of exceptions to allow
+     *
+     * This is necessary since Opps+RLI by default stores the RLI module as a
+     * custom module
+     *
+     * @var array
+     */
+    protected $moduleExceptions = [
+        'RevenueLineItems' => 1,
+    ];
+
+    /**
      * Module Builder custom files
      * custom/modulebuilder/builds/*_/SugarModules/modules/*_/language/*.php
      * custom/modulebuilder/packages/*_/modules/*_/language/*.php
@@ -90,6 +102,11 @@ class SugarUpgradeRemoveDefaultSubpanelTitleFromCustomModules extends UpgradeScr
         $moduleFiles = array();
         if (!empty($moduleList)) {
             foreach ($moduleList as $module) {
+                // Handle named module exceptions
+                if (isset($this->moduleExceptions[$module])) {
+                    continue;
+                }
+
                 $modFiles = $this->getFiles('modules/'.$module.'/language/*.php');
                 $moduleFiles = array_merge($moduleFiles, $modFiles);
             }
