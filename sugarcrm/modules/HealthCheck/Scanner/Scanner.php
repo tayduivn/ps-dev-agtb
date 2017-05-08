@@ -4270,7 +4270,6 @@ ENDP;
         'EmailAddresses',
         'EmailMarketing',
         'EmailMan',
-        'Emails',
         'EmailTemplates',
         'Employees',
         'Exports',
