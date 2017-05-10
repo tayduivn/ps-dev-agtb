@@ -103,9 +103,9 @@ class XmlIdpMetadataParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect', $this->parser->getSsoBinding());
         $this->assertEquals('test', $this->parser->getSloUrl());
         $this->assertEquals('urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect', $this->parser->getSloBinding());
-        $this->assertEquals('Certificate', $this->parser->getX509Cert());
+        $this->assertEquals('SigningCertificate', $this->parser->getX509Cert());
         $this->assertEquals(
-            '-----BEGIN CERTIFICATE-----' . PHP_EOL . 'Certificate' . PHP_EOL . '-----END CERTIFICATE-----',
+            '-----BEGIN CERTIFICATE-----' . PHP_EOL . 'SigningCertificate' . PHP_EOL . '-----END CERTIFICATE-----',
             $this->parser->getX509CertPem()
         );
     }
@@ -143,9 +143,14 @@ XML;
 <?xml version="1.0" encoding="UTF-8"?>
 <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="http://www.okta.com/exk9oj4us8D9fVf370h7">
     <md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:KeyDescriptor use="encryption">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data><ds:X509Certificate>Encryption Certificate</ds:X509Certificate></ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
         <md:KeyDescriptor use="signing">
             <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-                <ds:X509Data><ds:X509Certificate>Certificate</ds:X509Certificate></ds:X509Data>
+                <ds:X509Data><ds:X509Certificate>Signing Certificate</ds:X509Certificate></ds:X509Data>
             </ds:KeyInfo>
         </md:KeyDescriptor>
         <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="test"/>

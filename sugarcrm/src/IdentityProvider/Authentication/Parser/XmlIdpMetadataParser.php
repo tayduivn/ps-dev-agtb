@@ -133,7 +133,10 @@ class XmlIdpMetadataParser
             list($this->sloUrl, $this->sloBinding) = $this->chooseCorrectBinding($elements);
         }
 
-        $elements = $this->xml->xpath('//md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor');
+        $elements = $this->xml->xpath('//md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor[@use="signing"]');
+        if (!$elements) {
+            $elements = $this->xml->xpath('//md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor');
+        }
         if (is_array($elements) && count($elements)) {
             $this->x509Cert = str_replace(
                 [" ", "\t", "\n", "\r", "\0" , "\x0B"],
