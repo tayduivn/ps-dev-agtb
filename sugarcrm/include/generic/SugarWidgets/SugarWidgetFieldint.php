@@ -34,7 +34,9 @@ class SugarWidgetFieldInt extends SugarWidgetReportField
 
  function queryFilterNot_Equals(&$layout_def)
  {
-                return $this->_get_column_select($layout_def)."!=".$GLOBALS['db']->quote($layout_def['input_name0'])."\n";
+        $field_name = $this->_get_column_select($layout_def);
+        $input_name0 = $GLOBALS['db']->quote($layout_def['input_name0']);
+        return "{$field_name} != {$input_name0} OR ({$field_name} IS NULL)\n";
  }
 
  function queryFilterGreater(&$layout_def)

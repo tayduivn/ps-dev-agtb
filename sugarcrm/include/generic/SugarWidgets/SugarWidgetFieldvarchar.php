@@ -19,7 +19,9 @@ class SugarWidgetFieldVarchar extends SugarWidgetReportField
 
     public function queryFilterNot_Equals_Str($layout_def)
  {
-		return $this->_get_column_select($layout_def)."!='".$GLOBALS['db']->quote($layout_def['input_name0'])."'\n";
+        $field_name = $this->_get_column_select($layout_def);
+        $input_name0 = $GLOBALS['db']->quote($layout_def['input_name0']);
+        return "{$field_name} != '{$input_name0}' OR ({$field_name} IS NULL)\n";
  }
 
  function queryFilterContains(&$layout_def)
@@ -28,7 +30,9 @@ class SugarWidgetFieldVarchar extends SugarWidgetReportField
  }
   function queryFilterdoes_not_contain(&$layout_def)
  {
-		return $this->_get_column_select($layout_def)." NOT LIKE '%".$GLOBALS['db']->quote($layout_def['input_name0'])."%'\n";
+        $field_name = $this->_get_column_select($layout_def);
+        $input_name0 = $GLOBALS['db']->quote($layout_def['input_name0']);
+        return "{$field_name} NOT LIKE '%{$input_name0}%' OR ({$field_name} IS NULL)\n";
  }
 
  function queryFilterStarts_With(&$layout_def)
