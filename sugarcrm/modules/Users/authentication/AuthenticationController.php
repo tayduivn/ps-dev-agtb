@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Sugarcrm\IdentityProvider\Authentication\Exception\SAMLRequestException;
 use Sugarcrm\IdentityProvider\Authentication\Exception\SAMLResponseException;
+use Sugarcrm\IdentityProvider\Authentication\Exception\InvalidIdentifier\InvalidIdentifierException;
 
 class AuthenticationController
 {
@@ -126,6 +127,9 @@ class AuthenticationController
             $_SESSION['waiting_error'] = $e->getWaitingErrorMessage();
         } catch (BadCredentialsException $e) {
             $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
+        } catch (InvalidIdentifierException $e) {
+            $_SESSION['login_error'] = translate('EXCEPTION_FATAL_ERROR', 'Users');
+            $log->error($e->getMessage());
         } catch (SAMLRequestException $e) {
             $log->error($e->getMessage());
             $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');

@@ -161,7 +161,7 @@ class SessionProxy implements SessionInterface
      */
     public function has($name)
     {
-        return array_key_exists($name, $this->storage);
+        return isset($this->storage[$name]);
     }
 
     /**
