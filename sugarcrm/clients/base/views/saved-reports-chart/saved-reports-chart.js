@@ -27,7 +27,7 @@
         // check if we're on the config screen
         if (this.meta.config) {
             this.meta.panels = this.dashletConfig.dashlet_config_panels;
-            this.getAllSavedReports();
+            this.getAllReportsWithCharts();
         } else {
             var autoRefresh = this.settings.get('auto_refresh');
             if (autoRefresh > 0) {
@@ -385,13 +385,17 @@
     },
 
     /**
-     * Makes a call to Reports/saved_reports to get any items stored in the saved_reports table
+     * Makes a call to filter api to get all reports with chart stored in the saved_reports table
      */
-    getAllSavedReports: function() {
+    getAllReportsWithCharts: function() {
         var params = {
-                has_charts: true
+                fields: 'id,name,module,report_type,content,chart_type,assigned_user_id',
+                order_by: 'name:asc',
+                filter: [{chart_type: {$not_in: ['none']}}],
+                // get all reports with charts
+                max_num: -1
             },
-            url = app.api.buildURL('Reports/saved_reports', null, null, params);
+            url = app.api.buildURL('Reports', null, null, params);
 
         app.api.call('read', url, null, {
             success: _.bind(this.parseAllSavedReports, this)
@@ -399,18 +403,21 @@
     },
 
     /**
-     * Parses items passed back from Reports/saved_reports endpoint into enum options
+     * Parses items passed back from filter api endpoint into enum options
      *
      * @param {Array} reports an array of saved reports returned from the endpoint
      */
     parseAllSavedReports: function(reports) {
+        reports = reports.records || [];
         this.reportOptions = {};
         this.reportAcls = {};
 
         _.each(reports, function(report) {
-            // build the reportOptions key/value pairs
-            this.reportOptions[report.id] = report.name;
-            this.reportAcls[report.id] = report._acl;
+            if (app.acl.hasAccess('view', report.module)) {
+                // build the reportOptions key/value pairs
+                this.reportOptions[report.id] = report.name;
+                this.reportAcls[report.id] = report._acl;
+            }
         }, this);
 
         // find the saved_report_id field
@@ -436,7 +443,7 @@
     },
 
     /**
-     * Makes a call to Reports/saved_reports/:id to fetch specific saved report data
+     * Makes a call to Reports/:id/chart to fetch specific saved report data
      *
      * @param {String} reportId the ID for the report we're looking for
      */
@@ -447,7 +454,11 @@
             this.$('[data-action=loading]').removeClass(dt.cssIconDefault).addClass(dt.cssIconRefresh);
         }
 
-        app.api.call('create', app.api.buildURL('Reports/chart/' + reportId), {'ignore_datacheck': true}, {
+        var params = {
+            'ignore_datacheck': true,
+        };
+
+        app.api.call('read', app.api.buildURL('Reports/' + reportId + '/chart'), params, {
             success: _.bind(function(serverData) {
                 if (options && options.success) {
                     // usually setChartParams()

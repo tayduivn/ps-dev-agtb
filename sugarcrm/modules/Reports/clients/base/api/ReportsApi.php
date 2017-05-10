@@ -24,29 +24,35 @@ class ReportsApi extends ModuleApi
                 'shortHelp' => 'An API to create a record list from a saved report',
                 'longHelp' => 'modules/Reports/api/help/module_recordlist_post.html',
             ),
-            'reportData' => array(
-                'reqType' => 'POST',
+            'getReportRecords' => array(
+                'reqType' => 'GET',
                 'path' => array('Reports', '?', 'records'),
-                'pathVars' => array('', 'record', ''),
-                'method' => 'getReportData',
-                'shortHelp' => 'An API to deliver an array of records from a saved report',
-                'longHelp' => 'modules/Reports/api/help/module_reportrecords_post.html',
+                'pathVars' => array('module', 'record', ''),
+                'method' => 'getReportRecords',
+                'shortHelp' => 'An API to deliver filtered records from a saved report',
+                'longHelp' => 'modules/Reports/clients/base/api/help/report_records_get_help.html',
             ),
+            'getSavedReportChartById' => array(
+                'reqType' => 'GET',
+                'path' => array('Reports', '?', 'chart'),
+                'pathVars' => array('module', 'record', ''),
+                'method' => 'getSavedReportChartById',
+                'shortHelp' => 'An API to get chart data for a saved report',
+                'longHelp' => 'modules/Reports/clients/base/api/help/report_chart_get_help.html',
+            )
         );
     }
 
     /**
      * Creates a record list from a saved report
-     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param array $args The arguments array passed in from the API containing the module and the records
-     * @throws SugarApiExceptionNotAuthorized
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API containing the module and the records
+     * @throws SugarApiExceptionNotFound
      * @throws SugarApiException
      * @return array id, module, records
      */
     public function createRecordList(ServiceBase $api, array $args)
     {
-        $this->requireArgs($args, array('record'));
-
         $savedReport = $this->getReportRecord($api, $args);
         $recordIds = $this->getRecordIdsFromReport($savedReport);
         $id = RecordListFactory::saveRecordList($recordIds, 'Reports');
@@ -55,47 +61,21 @@ class ReportsApi extends ModuleApi
         return $loadedRecordList;
     }
 
-    /**
-     * Returns the records associated with a saved report
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API containing the module and the records
-     * @throws SugarApiExceptionNotAuthorized
-     * @throws SugarApiException
-     * @return array data
-     */
-    public function getReportData($api, $args)
-    {
-        $this->requireArgs($args, array('module', 'record'));
-        $data = array();
-
-        $_args = array();
-        $_args['record'] = $args['record'];
-        $_args['module'] = 'Reports';
-
-        $report = $this->retrieveRecord($api, $_args);
-        $records = $this->getReportRecords($api, $args);
-
-        $data['saved_report'] = $report;
-        $data['records'] = $records;
-
-        return $data;
-    }
-
     private function translateAdhocFilterOperator($opp)
     {
         switch ($opp) {
             case '$in':
                 return 'one_of';
                 break;
-            // case '$not_in':
-            //     return 'not_one_of';
-            //     break;
-            // case '$not_equals':
-            //     return 'not_equals_str';
-            //     break;
-            // case '$starts':
-            //     return 'starts_with';
-            //     break;
+                // case '$not_in':
+                //     return 'not_one_of';
+                //     break;
+                // case '$not_equals':
+                //     return 'not_equals_str';
+                //     break;
+                // case '$starts':
+                //     return 'starts_with';
+                //     break;
             case '$on':
                 return 'on';
                 break;
@@ -121,19 +101,19 @@ class ReportsApi extends ModuleApi
      * Returns the records associated with a saved report
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $args array The arguments array passed in from the API containing the module and the records
-     * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarApiExceptionNotFound
      * @throws SugarApiException
      * @return array records
      */
     public function getReportRecords($api, $args)
     {
-        $this->requireArgs($args, array('module', 'record'));
-        $records = array();
         $savedReport = $this->getReportRecord($api, $args);
 
-        // If a user filter argument is passed
-        if (isset($args['filterDef']) && !empty($args['filterDef'])) {
-            $clickFilter = $args['filterDef'];
+        $data = array();
+        $records = array();
+
+        if (isset($args['filter'])) {
+            $clickFilter = $args['filter'];
             $json = getJSONobj();
             $tmpContent = $json->decode($savedReport->content, false);
 
@@ -204,65 +184,85 @@ class ReportsApi extends ModuleApi
         $recordIds = $this->getRecordIdsFromReport($savedReport);
 
         if (!empty($recordIds)) {
+            // set target module
+            if (!empty($savedReport->module)) {
+                $args['module'] = $savedReport->module;
+            } else if (!empty($savedReport->content)) {
+                $content = json_decode($savedReport->content, true);
+                if (!empty($content['module'])) {
+                    $args['module'] = $content['module'];
+                }
+            }
             foreach ($recordIds as $recordId) {
                 $args['record'] = $recordId;
                 $records[] = $this->retrieveRecord($api, $args);
             }
         }
 
-        return $records;
+        $data['records'] = $records;
+        return $data;
     }
 
     /**
-     * Returns a report record
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API containing a record id
-     * @throws SugarApiExceptionNotAuthorized
-     * @throws SugarApiException
-     * @return array record
-     */
-    public function getReportRecord($api, $args)
-    {
-        $this->requireArgs($args, array('record'));
-
-        $savedReport = BeanFactory::newBean('Reports');
-        if (!$savedReport->ACLAccess('access')) {
-            throw new SugarApiExceptionNotAuthorized();
-        }
-        $savedReport = $this->getSavedReportById($args['record']);
-
-        return $savedReport;
-    }
-
-    /**
-     * Retrieves a saved Report by Report Id
-     * @param $reportId
+     * Retrieves a saved report and chart data, given a report ID in the args
      *
-     * @return SugarBean
+     * @param $api ServiceBase The API class of the request
+     * @param $args array The arguments array passed in from the API
+     * @throws SugarApiExceptionNotFound
+     * @throws SugarApiException
+     * @return array
      */
-    protected function getSavedReportById($reportId)
+    public function getSavedReportChartById($api, $args)
     {
-        return BeanFactory::getBean('Reports', $reportId);
+        $chartReport = $this->getReportRecord($api, $args);
+
+        $returnData = array();
+
+        $reporter = new Report($chartReport->content);
+        $reporter->saved_report_id = $chartReport->id;
+
+        if ($reporter && !$reporter->has_summary_columns()) {
+            return '';
+        }
+
+        // build report data since it isn't a SugarBean
+        $reportData = array();
+        $reportData['label'] = $reporter->name; // also report_def.report_name
+        $reportData['id'] = $reporter->saved_report_id;
+        $reportData['summary_columns'] = $reporter->report_def['summary_columns'];
+        $reportData['group_defs'] = $reporter->report_def['group_defs'];
+        $reportData['filters_def'] = $reporter->report_def['filters_def'];
+        $reportData['base_module'] = $reporter->report_def['module'];
+
+        // add reportData to returnData
+        $returnData['reportData'] = $reportData;
+
+        $chartDisplay = new ChartDisplay();
+        $chartDisplay->setReporter($reporter);
+
+        $chart = $chartDisplay->getSugarChart();
+
+        if (!isset($args['ignore_datacheck'])) {
+            $args['ignore_datacheck'] = false;
+        }
+
+        $json = json_decode($chart->buildJson($chart->generateXML(), $args['ignore_datacheck']), true);
+
+        $returnData['chartData'] = $json;
+
+        return $returnData;
     }
 
     /**
      * Returns the record ids of a saved report
-     * @param $reportId
+     * @param SugarBean $savedReport
      *
      * @return array Array of record ids
-     * @throws SugarApiExceptionNotAuthorized
-     * @throws SugarApiException
      */
     protected function getRecordIdsFromReport($savedReport)
     {
         $recordIds = array();
 
-        if (!$savedReport->ACLAccess('view')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: Reports');
-        }
-        if (empty($savedReport->id)) {
-            throw new SugarApiExceptionNotAuthorized('Unable to retrieve report');
-        }
         if (!empty($savedReport->content)) {
             $results = $savedReport->runReportQuery();
 
@@ -274,5 +274,26 @@ class ReportsApi extends ModuleApi
         }
 
         return $recordIds;
+    }
+
+    /**
+     * Returns a report record
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API containing a record id
+     * @throws SugarApiExceptionNotFound
+     * @throws SugarApiException
+     * @return SugarBean record
+     */
+    protected function getReportRecord($api, $args)
+    {
+        $this->requireArgs($args, array('record'));
+
+        $savedReport = BeanFactory::getBean('Reports', $args['record']);
+
+        if (empty($savedReport) || !$savedReport->ACLAccess('access')) {
+            throw new SugarApiExceptionNotFound('Report not found: ' . $args['record']);
+        }
+
+        return $savedReport;
     }
 }

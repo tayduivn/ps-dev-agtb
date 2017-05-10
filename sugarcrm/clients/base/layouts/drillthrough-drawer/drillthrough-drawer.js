@@ -54,7 +54,7 @@
         var reportId = this.context.get('reportId');
         var filterDef = this.context.get('filterDef');
 
-        var url = app.api.buildURL('/Reports/' + reportId + '/records/');
+        var url = app.api.buildURL('Reports', 'records', {id: reportId}, {filter: filterDef});
 
         var recordList = this.getComponent('sidebar')
                              .getComponent('main-pane')
@@ -65,12 +65,7 @@
                              .getComponent('main-pane')
                              .getComponent('drillthrough-headerpane');
 
-        var params = {
-                filterDef: filterDef,
-                module: chartModule
-            };
-
-        app.api.call('create', url, params, {
+        app.api.call('read', url, null, {
             success: _.bind(function(data) {
                 // var saved_report = app.data.createBean(chartModule, data.saved_report);
                 var collection = app.data.createBeanCollection(chartModule, data.records);
