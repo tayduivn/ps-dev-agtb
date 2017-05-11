@@ -47,7 +47,11 @@
      * @return {Mixed}
      */
     findLayout: function(name, layout) {
-        return (layout.name == name || layout.type == name) ? layout : this.findLayout(name, layout.layout);
+        return (layout.name === name || layout.type === name) ?
+            layout :
+            layout.layout ?
+                this.findLayout(name, layout.layout) :
+                layout;
     },
 
     /**

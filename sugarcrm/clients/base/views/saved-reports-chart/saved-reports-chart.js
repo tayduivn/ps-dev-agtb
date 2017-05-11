@@ -170,13 +170,15 @@
      */
     loadData: function(options) {
         options = options || {};
-        if (!_.isEmpty(this.settings.get('saved_report_id'))) {
+        var reportId = this.settings.get('saved_report_id');
+        if (!_.isEmpty(reportId)) {
+            // set callback for successful get of report data in getSavedReportById()
             _.extend(options, {
                 success: _.bind(function(data) {
                     this.setChartParams(data, false);
                 }, this)
             });
-            this.getSavedReportById(this.settings.get('saved_report_id'), options);
+            this.getSavedReportById(reportId, options);
         }
     },
 
@@ -185,18 +187,24 @@
         // Module is normally null so we want to rehit that
         var settings = _.clone(this.settings.attributes);
         var defaults = {
-                auto_refresh:    0,
-                show_title:      false,
-                show_y_label:    false,
-                y_axis_label:    '',
-                show_x_label:    false,
-                x_axis_label:    '',
                 allowScroll:     true,
-                showValues:      0,
+                auto_refresh:    0,
+                colorData:       'default',
+                config:          true,
+                direction:       'ltr',
                 hideEmptyGroups: true,
-                wrapTicks:       true,
+                reduceXTicks:    true,
+                rotateTicks:     true,
+                show_controls:   false,
+                show_title:      false,
+                show_x_label:    false,
+                show_y_label:    false,
+                showValues:      0,
                 staggerTicks:    true,
-                rotateTicks:     true
+                vertical:        true,
+                wrapTicks:       true,
+                x_axis_label:    '',
+                y_axis_label:    ''
             };
         return _.defaults(settings, defaults);
     },
@@ -208,6 +216,13 @@
      * @param {Boolean} [update] Is this an update to the report?
      */
     setChartParams: function(serverData, update) {
+        var data;
+        var properties;
+        var config;
+        var params;
+        var defaults;
+        var updated;
+
         // only called by bindDataChange when the report id is changed in config panel
         if (!serverData.reportData || !serverData.chartData) {
             if (!this.meta.config && this.chartField) {
@@ -215,24 +230,24 @@
             }
             return;
         }
-        var updated = _.isUndefined(update) ? false : update;
-        var data = serverData.reportData;
-        var properties = serverData.chartData.properties[0];
-        var config = this.getChartConfig(properties.type);
-        var params = this.getDefaultSettings();
+        updated = _.isUndefined(update) ? false : update;
+        data = serverData.reportData;
+        properties = serverData.chartData.properties[0];
+        config = this.getChartConfig(properties.type);
+        params = this.getDefaultSettings();
 
-        var defaults = {
-                label: data.name,
-                chart_type: config.chartType || properties.type,
-                report_title: properties.title,
-                show_legend: properties.legend === 'on' ? true : false,
-                stacked: config.barType === 'stacked' || config.barType === 'basic' ? true : false,
-                x_axis_label: this._getXaxisLabel(data),
-                y_axis_label: this._getYaxisLabel(data)
-            };
+        defaults = {
+            label: data.label,
+            chart_type: config.chartType || properties.type,
+            report_title: properties.title,
+            show_legend: properties.legend === 'on' ? true : false,
+            stacked: config.barType === 'stacked' || config.barType === 'basic' ? true : false,
+            x_axis_label: this._getXaxisLabel(data),
+            y_axis_label: this._getYaxisLabel(data)
+        };
 
         // params.module is usually null based on dashlet settings
-        params.module = properties.base_module || this.layout.module;
+        params.module = properties.base_module;
 
         // override settings when new report is selected
         if (updated) {
@@ -435,15 +450,14 @@
         app.api.call('create', app.api.buildURL('Reports/chart/' + reportId), {'ignore_datacheck': true}, {
             success: _.bind(function(serverData) {
                 if (options && options.success) {
+                    // usually setChartParams()
                     options.success.apply(this, arguments);
                 }
 
+                this.reportData.set('rawReportData', serverData.reportData);
                 // set reportData's rawChartData to the chartData from the server
                 // this will trigger chart.js' change:rawChartData and the chart will update
-                this.reportData.set({
-                    rawReportData: serverData.reportData,
-                    rawChartData: serverData.chartData
-                });
+                this.reportData.set('rawChartData', serverData.chartData);
             }, this),
             complete: options ? options.complete : null
         });
