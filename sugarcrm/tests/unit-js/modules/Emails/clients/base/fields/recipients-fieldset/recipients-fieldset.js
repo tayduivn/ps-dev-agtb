@@ -248,7 +248,7 @@ describe('Emails.RecipientsFieldsetField', function() {
                 var spy = sandbox.spy();
 
                 field.view.getField.withArgs(fieldName).returns(recipientField);
-                field.view.on('email-recipients:resize-editor', spy);
+                field.view.on('email-recipients:toggled', spy);
                 field.render();
 
                 $recipientField = recipientField.$el.closest('.fieldset-group');
@@ -272,7 +272,7 @@ describe('Emails.RecipientsFieldsetField', function() {
 
                 field.model.set(fieldName, value);
                 field.view.getField.withArgs(fieldName).returns(recipientField);
-                field.view.on('email-recipients:resize-editor', spy);
+                field.view.on('email-recipients:toggled', spy);
                 field.render();
 
                 $recipientField = recipientField.$el.closest('.fieldset-group');
@@ -294,7 +294,7 @@ describe('Emails.RecipientsFieldsetField', function() {
                 var spy = sandbox.spy();
 
                 field.view.getField.withArgs(fieldName).returns(recipientField);
-                field.view.on('email-recipients:resize-editor', spy);
+                field.view.on('email-recipients:toggled', spy);
                 field.render();
 
                 // Account for the event to have been triggered twice during

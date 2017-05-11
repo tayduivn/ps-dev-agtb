@@ -9,8 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @deprecated Use {@link View.Views.Base.Emails.CreateView} instead.
- *
+ * @deprecated Use {@link View.Views.Base.Emails.ComposeEmailView} instead.
  * @class View.Views.Base.Emails.ComposeView
  * @alias SUGAR.App.view.views.BaseEmailsComposeView
  * @extends View.Views.Base.RecordView
@@ -32,20 +31,20 @@
 
     /**
      * @inheritdoc
+     *
+     * @deprecated Use {@link View.Views.Base.Emails.ComposeEmailView} instead.
      */
     initialize: function(options) {
         this._super('initialize', [options]);
         app.logger.warn(
-            'Warning: View.Views.Base.Emails.ComposeView is deprecated. Use View.Views.Base.Emails.CreateView instead.'
+            'View.Views.Base.Emails.ComposeView is deprecated. Use View.Views.Base.Emails.ComposeEmailView instead.'
         );
 
         this.events = _.extend({}, this.events, {
             'click [data-toggle-field]': '_handleSenderOptionClick'
         });
-        this.context.on('tinymce:upload_attachment:clicked', this.launchFilePicker, this);
-        this.context.on('tinymce:sugardoc_attachment:clicked', this.launchDocumentDrawer, this);
-        this.context.on('tinymce:signature:clicked', this.launchSignatureDrawer, this);
-        this.context.on('tinymce:template:clicked', this.launchTemplateDrawer, this);
+        this.context.on('email_attachments:file', this.launchFilePicker, this);
+        this.context.on('email_attachments:document', this.documentDrawerCallback, this);
         this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
         this.on('more-less:toggled', this.handleMoreLessToggled, this);
@@ -85,10 +84,6 @@
             this.prepopulate(prepopulateValues);
         }
         this.addSenderOptions();
-
-        if (this.model.isNew()) {
-            this._updateEditorWithSignature(this._lastSelectedSignature);
-        }
 
         this.notifyConfigurationStatus();
     },
@@ -162,7 +157,7 @@
             subject = caseMacro + ' ' + relatedModel.get('name');
 
         subject = subject.replace(keyMacro, relatedModel.get('case_number'));
-        this.model.set('subject', subject);
+        this.model.set('name', subject);
         if (!this.isFieldPopulated('to_addresses')) {
             // no addresses, attempt to populate from contacts relationship
             var contacts = relatedModel.getRelatedCollection('contacts');
@@ -390,6 +385,8 @@
             to_addresses: this.model.get('to_addresses'),
             cc_addresses: this.model.get('cc_addresses'),
             bcc_addresses: this.model.get('bcc_addresses'),
+            subject: this.model.get('name'),
+            html_body: this.model.get('description_html'),
             attachments: this.getAttachmentsForApi(),
             related: this.getRelatedForApi(),
             teams: this.getTeamsForApi()
@@ -431,19 +428,19 @@
                 level: 'error',
                 messages: 'LBL_EMAIL_COMPOSE_ERR_NO_RECIPIENTS'
             });
-        } else if (!this.isFieldPopulated('subject') && !this.isFieldPopulated('html_body')) {
+        } else if (!this.isFieldPopulated('name') && !this.isFieldPopulated('description_html')) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_NO_SUBJECT_NO_BODY_SEND_ANYWAYS', this.module),
                 onConfirm: sendEmail
             });
-        } else if (!this.isFieldPopulated('subject')) {
+        } else if (!this.isFieldPopulated('name')) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_SEND_ANYWAYS', this.module),
                 onConfirm: sendEmail
             });
-        } else if (!this.isFieldPopulated('html_body')) {
+        } else if (!this.isFieldPopulated('description_html')) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_NO_BODY_SEND_ANYWAYS', this.module),
@@ -599,14 +596,14 @@
             subject = template.get('subject');
 
             if (subject) {
-                this.model.set('subject', subject);
+                this.model.set('name', subject);
             }
 
             //TODO: May need to move over replaces special characters.
             if (template.get('text_only') === 1) {
-                this.model.set('html_body', template.get('body'));
+                this.model.set('description_html', template.get('body'));
             } else {
-                this.model.set('html_body', template.get('body_html'));
+                this.model.set('description_html', template.get('body_html'));
             }
 
             notes = app.data.createBeanCollection('Notes');
@@ -768,7 +765,7 @@
     _insertSignature: function(signature) {
         if (_.isObject(signature) && signature.get('signature_html')) {
             var signatureContent = this._formatSignature(signature.get('signature_html')),
-                emailBody = this.model.get('html_body') || '',
+                emailBody = this.model.get('description_html') || '',
                 signatureOpenTag = '<br class="signature-begin" />',
                 signatureCloseTag = '<br class="signature-end" />',
                 signatureOpenTagForRegex = '(<br\ class=[\'"]signature\-begin[\'"].*?\/?>)',
@@ -791,7 +788,7 @@
                     (app.user.getPreference('signature_prepend') == 'true'));
             }
 
-            this.model.set('html_body', emailBody.replace(regex, '$1' + signatureContent + '$2'));
+            this.model.set('description_html', emailBody.replace(regex, '$1' + signatureContent + '$2'));
 
             return true;
         }

@@ -16,10 +16,18 @@
 ({
     extendsFrom: 'RecordView',
 
+    /**
+     * Constant representing the state of an email when it is a draft.
+     *
+     * @property {string}
+     */
     STATE_DRAFT: 'Draft',
 
     /**
      * @inheritdoc
+     *
+     * Alerts the user if the email is a draft, so that user can switch to
+     * composing the email instead of simply viewing it.
      */
     initialize: function(options) {
         var loadingRequests = 0;
@@ -29,21 +37,6 @@
         if (this.model.get('state') === this.STATE_DRAFT) {
             this._alertUserDraftState();
         }
-
-        this.listenTo(this.model, 'change:state', this._alertUserDraftState);
-
-        this.listenTo(this.model, 'change:from', function() {
-            this._renderRecipientsField('from');
-        });
-        this.listenTo(this.model, 'change:to', function() {
-            this._renderRecipientsField('to');
-        });
-        this.listenTo(this.model, 'change:cc', function() {
-            this._renderRecipientsField('cc');
-        });
-        this.listenTo(this.model, 'change:bcc', function() {
-            this._renderRecipientsField('bcc');
-        });
 
         this.on('loading_collection_field', function() {
             loadingRequests++;
@@ -59,43 +52,82 @@
         }, this);
     },
 
-    /*
-    * Alerts the user that the draft email was opened in the record view route.
-    * Allows the user to click and open the draft in the compose drawer.
+    /**
+     * @inheritdoc
+     *
+     * Alerts the user if the email becomes a draft -- most likely due to
+     * asynchronous data patching -- so that user can switch to composing the
+     * email instead of simply viewing it.
+     *
+     * Renders the recipients fieldset anytime there are changes to the 'from',
+     * `to`, `cc`, or `bcc` fields.
+     */
+    bindDataChange: function() {
+        var self = this;
+
+        /**
+         * Render the specified recipients field.
+         *
+         * @param {string} fieldName
+         */
+        function renderRecipientsField(fieldName) {
+            var field = self.getField(fieldName);
+
+            if (field) {
+                field.render();
+            }
+        }
+
+        if (this.model) {
+            this.listenTo(this.model, 'change:state', this._alertUserDraftState);
+
+            this.listenTo(this.model, 'change:from', function() {
+                renderRecipientsField('from');
+            });
+            this.listenTo(this.model, 'change:to', function() {
+                renderRecipientsField('to');
+            });
+            this.listenTo(this.model, 'change:cc', function() {
+                renderRecipientsField('cc');
+            });
+            this.listenTo(this.model, 'change:bcc', function() {
+                renderRecipientsField('bcc');
+            });
+
+        }
+
+        this._super('bindDataChange');
+    },
+
+    /**
+     * Alerts the user if a draft was opened in the record view, so the user
+     * can switch to composing the email instead of simply viewing it.
+     *
+     * @private
      */
     _alertUserDraftState: function() {
-        var model = this.model;
-
         app.alert.dismiss('email-draft-alert');
 
-        if (model.get('state') === this.STATE_DRAFT) {
+        if (this.model.get('state') === this.STATE_DRAFT) {
             app.alert.show('email-draft-alert', {
                 level: 'warning',
                 autoClose: false,
                 title: ' ',
-                messages: app.lang.get('LBL_OPEN_DRAFT_ALERT', this.module, {subject: model.get('name')}),
-                onLinkClick: function(event) {
-                    var route =  '#' + app.router.buildRoute(model.module + '/drafts', model.get('id'));
+                messages: app.lang.get('LBL_OPEN_DRAFT_ALERT', this.module, {subject: this.model.get('name')}),
+                onLinkClick: _.bind(function(event) {
+                    var route = '#' + app.router.buildRoute(this.model.module, this.model.get('id'), 'compose');
+
                     app.alert.dismiss('email-draft-alert');
                     app.router.navigate(route, {trigger: true});
-                }
+                }, this)
             });
         }
     },
 
     /**
-     * Render the specified recipients field
-     */
-    _renderRecipientsField: function(fieldName) {
-        var field = this.getField(fieldName);
-        if (field) {
-            field.render();
-        }
-    },
-
-    /**
      * @inheritdoc
-     * When record name is empty, return (no subject)
+     *
+     * @return {string} Returns (no subject) when the record name is empty.
      */
     _getNameForMessage: function(model) {
         var name = this._super('_getNameForMessage', [model]);

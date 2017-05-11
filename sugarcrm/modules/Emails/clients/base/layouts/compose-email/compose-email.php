@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Emails']['base']['layout']['compose'] = array(
+$viewdefs['Emails']['base']['layout']['compose-email'] = array(
     'components' => array(
         array(
             'layout' => array(

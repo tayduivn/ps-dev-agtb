@@ -11,13 +11,11 @@
 describe('Emails.Views.Create', function() {
     var app;
     var view;
-    var dataProvider;
+    var context;
+    var model;
     var sandbox;
 
     beforeEach(function() {
-        var context;
-        var viewName = 'create';
-        var moduleName = 'Emails';
         var metadata = SugarTest.loadFixture('emails-metadata');
 
         SugarTest.testMetadata.init();
@@ -34,613 +32,47 @@ describe('Emails.Views.Create', function() {
         app = SugarTest.app;
         app.data.declareModels();
         app.routing.start();
-        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop};
 
         context = app.context.getContext({
-            module: moduleName,
+            module: 'Emails',
             create: true
         });
         context.prepare(true);
+        model = context.get('model');
 
-        var meta = {
-            panels: [
-                {
-                    fields: [
-                        {
-                            name: 'recipients',
-                            fields: [
-                                {name: 'to'},
-                                {name: 'cc'},
-                                {name: 'bcc'}
-                            ]
-                        }
-                    ]
-                }
-            ]
-        };
-
-        view = SugarTest.createView('base', moduleName, viewName, meta, context, true);
+        view = SugarTest.createView('base', 'Emails', 'create', null, context, true);
 
         sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
         sandbox.restore();
-        app.drawer = undefined;
+
         view.dispose();
-        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
+        delete app.drawer;
+
+        SugarTest.testMetadata.dispose();
         Handlebars.templates = {};
     });
 
-    describe('email is not configured', function() {
-        it('should disable the send button', function() {
-            var error = {
-                status: 403,
-                code: 'not_authorized',
-                message: 'You are not authorized to perform this action.'
-            };
-            var sendField = {setDisabled: $.noop};
+    describe('setting the page title', function() {
+        it('should set the title for creating an archived email', function() {
+            sandbox.stub(app.lang, 'get').returnsArg(0);
+            sandbox.stub(view, 'setTitle');
 
-            sandbox.spy(sendField, 'setDisabled');
-            sandbox.stub(view, 'getField').withArgs('send_button').returns(sendField);
+            view.render();
 
-            view.trigger('email_not_configured', error);
-
-            expect(sendField.setDisabled).toHaveBeenCalledOnce();
-            expect(view._userHasConfiguration).toBe(false);
-        });
-    });
-
-    describe('Render', function() {
-        var setTitleStub;
-        var prepopulateStub;
-
-        beforeEach(function() {
-            setTitleStub = sandbox.stub(view, 'setTitle');
-            prepopulateStub = sandbox.stub(view, 'prepopulate');
-        });
-
-        it('No prepopulate on context - title should be set no fields pre-populated', function() {
-            sandbox.stub(view, '_setAttachmentVisibility');
-            view._render();
-            expect(setTitleStub).toHaveBeenCalled();
-            expect(prepopulateStub.callCount).toEqual(0);
-        });
-
-        it('prepopulate on context - call is made to populate them', function() {
-            var dummyPrepopulate = {name: 'Foo!'};
-
-            sandbox.stub(view, '_setAttachmentVisibility');
-            view.context.set('prepopulate', dummyPrepopulate);
-            view._render();
-            expect(prepopulateStub.callCount).toEqual(1);
-            expect(prepopulateStub.lastCall.args).toEqual([dummyPrepopulate]);
-        });
-    });
-
-    describe('prepopulate', function() {
-        var populateRelatedStub;
-        var modelSetStub;
-        var populateForModulesStub;
-        var flag;
-        var insertSignatureStub;
-        var focusEditorStub;
-
-        beforeEach(function() {
-            flag = false;
-            populateRelatedStub = sandbox.stub(view, '_populateRelated', function() {
-                flag = true;
-            });
-
-            populateForModulesStub = sandbox.stub(view, '_populateForModules', function() {
-                flag = true;
-            });
-
-            view.model.set({to: [], cc: [], bcc: []});
-
-            modelSetStub = sandbox.stub(view.model, 'set', function() {
-                flag = true;
-            });
-
-            insertSignatureStub = sandbox.stub(view, '_insertSignature');
-            focusEditorStub = sandbox.stub(view, '_focusEditor');
-        });
-
-        it('Should trigger recipient add on context if to, cc, or bcc value is passed in.', function() {
-            var to = view.model.get('to');
-            var cc = view.model.get('cc');
-            var bcc = view.model.get('bcc');
-
-            sandbox.spy(to, 'add');
-            sandbox.spy(cc, 'add');
-            sandbox.spy(bcc, 'add');
-
-            view.prepopulate({
-                to: [
-                    app.data.createBean('Contacts', {
-                        id: _.uniqueId(),
-                        email: 'to@foo.com'
-                    }),
-                    app.data.createBean('Contacts', {
-                        id: _.uniqueId(),
-                        email: 'too@foo.com'
-                    })
-                ],
-                cc: [
-                    app.data.createBean('Contacts', {
-                        id: _.uniqueId(),
-                        email: 'cc@foo.com'
-                    })
-                ],
-                bcc: [
-                    app.data.createBean('Contacts', {
-                        id: _.uniqueId(),
-                        email: 'bcc@foo.com'
-                    })
-                ]
-            });
-
-            expect(to.add).toHaveBeenCalledOnce();
-            expect(cc.add).toHaveBeenCalledOnce();
-            expect(bcc.add).toHaveBeenCalledOnce();
-        });
-
-        using('prepopulate attachments', ['attachments', 'attachments_collection'], function(fieldName) {
-            it('should add attachments from ' + fieldName, function() {
-                var attachments = view.model.get('attachments_collection');
-                var data = {};
-
-                sandbox.spy(attachments, 'add');
-
-                data[fieldName] = [
-                    app.data.createBean('Notes', {
-                        id: _.uniqueId(),
-                        name: 'attachment 1'
-                    }),
-                    app.data.createBean('Nots', {
-                        id: _.uniqueId(),
-                        name: 'attachment 2'
-                    })
-                ];
-                view.prepopulate(data);
-
-                expect(attachments.add).toHaveBeenCalledOnce();
-            });
-        });
-
-        it('should call _populateRelated if related value passed', function() {
-            runs(function() {
-                view.prepopulate({related: {id: '123'}});
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, '_populateRelated() should have been called but timeout expired', 1000);
-
-            runs(function() {
-                expect(populateRelatedStub.callCount).toBe(1);
-                expect(populateForModulesStub.callCount).toBe(1);
-            });
-        });
-
-        it('should set other values if passed', function() {
-            runs(function() {
-                view.prepopulate({name: 'bar'});
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'model.set() should have been called but timeout expired', 1000);
-
-            runs(function() {
-                expect(modelSetStub.calledOnce).toBe(true);
-            });
-        });
-
-        it('should insert the signature if an email body was populated and a signature was inserted', function() {
-            view._lastSelectedSignature = {
-                id: '123',
-                signature_html: 'my signature'
-            };
-            runs(function() {
-                view.prepopulate({
-                    description_html: 'my content'
-                });
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'signature should have been inserted but timeout expired', 1000);
-
-            runs(function() {
-                expect(insertSignatureStub).toHaveBeenCalled();
-            });
-        });
-
-        it('should focus the editor if prepopulating for a reply email', function() {
-            runs(function() {
-                view.prepopulate({
-                    description_html: 'my reply content',
-                    reply_to_id: _.uniqueId()
-                });
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'editor should have been focused but timeout expired', 1000);
-
-            runs(function() {
-                expect(focusEditorStub).toHaveBeenCalled();
-                expect(modelSetStub.calledTwice).toBe(true);
-            });
-        });
-    });
-
-    describe('_populateRelated', function() {
-        var relatedModel;
-        var fetchedModel;
-        var parentId;
-        var parentValue;
-        var inputValues;
-        var fetchedValues;
-        var should;
-
-        beforeEach(function() {
-            inputValues = {
-                id: '123',
-                name: 'Input Name'
-            };
-            fetchedValues = {
-                id: inputValues.id,
-                name: 'Fetched Name'
-            };
-            relatedModel = new Backbone.Model(inputValues);
-            fetchedModel = new Backbone.Model(fetchedValues);
-            relatedModel.module = fetchedModel.module = 'foo';
-            sandbox.stub(relatedModel, 'fetch', function(params) {
-                params.success(fetchedModel);
-            });
-            sandbox.stub(view, 'getField', function() {
-                return {
-                    isAvailableParentType: function() {
-                        return true;
-                    },
-                    setValue: function(model) {
-                        parentId = model.id;
-                        parentValue = model.value;
-                    }
-                };
-            });
-        });
-
-        afterEach(function() {
-            parentId = undefined;
-            parentValue = undefined;
-        });
-
-        it('should set the parent_name field with id and name on the relatedModel passed in', function() {
-            view._populateRelated(relatedModel);
-            expect(parentId).toEqual(inputValues.id);
-            expect(parentValue).toEqual(inputValues.name);
-        });
-
-        should = 'should set the parent_name field with id and name on the fetched model when no name on the ' +
-            'relatedModel passed in';
-        it(should, function() {
-            relatedModel.unset('name');
-            view._populateRelated(relatedModel);
-            expect(parentId).toEqual(fetchedValues.id);
-            expect(parentValue).toEqual(fetchedValues.name);
-        });
-
-        it('should not set the parent_name field at all if no id on related Model', function() {
-            relatedModel.unset('id');
-            view._populateRelated(relatedModel);
-            expect(parentId).toBeUndefined();
-            expect(parentValue).toBeUndefined();
-        });
-    });
-
-    describe('populateForCases', function() {
-        var configStub;
-        var caseSubjectMacro = '[CASE:%1]';
-        var relatedModel;
-        var relatedCollection;
-
-        beforeEach(function() {
-            configStub = sandbox.stub(app.metadata, 'getConfig', function() {
-                return {
-                    'inboundEmailCaseSubjectMacro': caseSubjectMacro
-                };
-            });
-
-            relatedModel = app.data.createBean('Cases', {
-                id: '123',
-                case_number: '100',
-                name: 'My Case'
-            });
-
-            relatedCollection = app.data.createBeanCollection('Contacts');
-            sandbox.stub(relatedCollection, 'fetch', function(params) {
-                params.success(relatedCollection);
-            });
-
-            sandbox.stub(relatedModel, 'getRelatedCollection', function() {
-                return relatedCollection;
-            });
-        });
-
-        afterEach(function() {
-            configStub.restore();
-        });
-
-        it('should populate only the subject and when cases does not have any related contacts', function() {
-            view._populateForCases(relatedModel);
-            expect(view.model.get('name')).toEqual('[CASE:100] My Case');
-            expect(view.model.get('to').length).toBe(0);
-        });
-
-        it('should populate both the subject and "to" field when cases has related contacts', function() {
-            relatedCollection.add([
-                app.data.createBean('Contacts', {email: 'abc@foo.com'}),
-                app.data.createBean('Contacts', {email: 'def@foo.com'})
-            ]);
-
-            view._populateForCases(relatedModel);
-            expect(view.model.get('name')).toEqual('[CASE:100] My Case');
-            expect(view.model.get('to').length).toEqual(2);
-        });
-    });
-
-    describe('Send', function() {
-        var saveStub;
-        var alertShowStub;
-
-        beforeEach(function() {
-            saveStub = sandbox.stub(view, 'save');
-            alertShowStub = sandbox.stub(app.alert, 'show');
-
-            view.model.off('change');
-        });
-
-        it('should send email when to, subject and html_body fields are populated', function() {
-            view.model.set('to', app.data.createBean('Contacts', {
-                id: _.uniqueId(),
-                email: 'foo@bar.com'
-            }));
-            view.model.set('name', 'foo');
-            view.model.set('description_html', 'bar');
-
-            view.send();
-
-            expect(saveStub.calledOnce).toBe(true);
-            expect(alertShowStub.called).toBe(false);
-        });
-
-        it('should send email when cc, subject and html_body fields are populated', function() {
-            view.model.set('cc', app.data.createBean('Contacts', {
-                id: _.uniqueId(),
-                email: 'foo@bar.com'
-            }));
-            view.model.set('name', 'foo');
-            view.model.set('description_html', 'bar');
-
-            view.send();
-
-            expect(saveStub.calledOnce).toBe(true);
-            expect(alertShowStub.called).toBe(false);
-        });
-
-        it('should send email when bcc, subject and html_body fields are populated', function() {
-            view.model.set('bcc', app.data.createBean('Contacts', {
-                id: _.uniqueId(),
-                email: 'foo@bar.com'
-            }));
-            view.model.set('name', 'foo');
-            view.model.set('description_html', 'bar');
-
-            view.send();
-
-            expect(saveStub.calledOnce).toBe(true);
-            expect(alertShowStub.called).toBe(false);
-        });
-
-        it('should show error alert when address fields are empty', function() {
-            view.model.set('name', 'foo');
-            view.model.set('description_html', 'bar');
-
-            view.send();
-
-            expect(saveStub.calledOnce).toBe(false);
-            expect(alertShowStub.called).toBe(true);
-        });
-
-        it('should show confirmation alert message when subject field is empty', function() {
-            view.model.unset('name');
-            view.model.set('description_html', 'bar');
-
-            view.send();
-
-            expect(saveStub.called).toBe(false);
-            expect(alertShowStub.calledOnce).toBe(true);
-        });
-
-        it('should show confirmation alert message when html_body field is empty', function() {
-            view.model.set('name', 'foo');
-            view.model.unset('description_html');
-
-            view.send();
-
-            expect(saveStub.called).toBe(false);
-            expect(alertShowStub.calledOnce).toBe(true);
-        });
-
-        it('should show confirmation alert message when subject and html_body fields are empty', function() {
-            view.model.unset('name');
-            view.model.unset('description_html');
-
-            view.send();
-
-            expect(saveStub.called).toBe(false);
-            expect(alertShowStub.calledOnce).toBe(true);
-        });
-
-        using(
-            'content with variables and related to is not set',
-            [
-                [
-                    'Hi $contact_name',
-                    'How are you?',
-                    ''
-                ],
-                [
-                    'Hello there',
-                    'Hi, $account_name, how are you?',
-                    ''
-                ],
-                [
-                    'Read this!',
-                    '<b>What do you think?</b>',
-                    '$contact_name, What do you think?'
-                ],
-                [
-                    'Hi $contact_name',
-                    'Hi, $account_name, how are you?',
-                    '$contact_name, What do you think?'
-                ]
-            ],
-            function(subject, htmlBody, textBody) {
-                it('should show confirmation alert when content has variables and related to is not set', function() {
-                    view.model.set('to', app.data.createBean('Contacts', {
-                        id: _.uniqueId(),
-                        email: 'foo@bar.com'
-                    }));
-                    view.model.set('name', subject);
-                    view.model.set('description_html', htmlBody);
-                    view.model.set('description', textBody);
-                    view.send();
-
-                    expect(saveStub).not.toHaveBeenCalled();
-                    expect(alertShowStub).toHaveBeenCalled();
-                });
-            }
-        );
-
-        using(
-            'content with variables and related to is set',
-            [
-                [
-                    'Hi $contact_name',
-                    'How are you?',
-                    ''
-                ],
-                [
-                    'Hello there',
-                    'Hi, $account_name, how are you?',
-                    ''
-                ],
-                [
-                    'Read this!',
-                    '<b>What do you think?</b>',
-                    '$contact_name, What do you think?'
-                ],
-                [
-                    'Hi $contact_name',
-                    'Hi, $account_name, how are you?',
-                    '$contact_name, What do you think?'
-                ]
-            ],
-            function(subject, htmlBody, textBody) {
-                it('should send email when content has variables and related to is set', function() {
-                    view.model.set('to', app.data.createBean('Contacts', {
-                        id: _.uniqueId(),
-                        email: 'foo@bar.com'
-                    }));
-                    view.model.set('name', subject);
-                    view.model.set('description_html', htmlBody);
-                    view.model.set('description', textBody);
-                    view.model.set('parent_type', 'Contacts');
-                    view.model.set('parent_id', _.uniqueId());
-                    view.send();
-
-                    expect(saveStub).toHaveBeenCalled();
-                    expect(alertShowStub).not.toHaveBeenCalled();
-                });
-            }
-        );
-
-        it('should send email when content does not have variables', function() {
-            view.model.set('to', app.data.createBean('Contacts', {
-                id: _.uniqueId(),
-                email: 'foo@bar.com'
-            }));
-            view.model.set('name', 'Read this!');
-            view.model.set('description_html', '<b>What do you think?</b>');
-            view.model.set('description', 'What do you think?');
-            view.send();
-
-            expect(saveStub).toHaveBeenCalled();
-            expect(alertShowStub).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('tinyMCE field population', function() {
-        it('should return false when HTML body contains only HTML tags', function() {
-            view.model.set('description_html', '<div><span><b></b></span></div>');
-            var populated = view.isFieldPopulated('description_html');
-
-            expect(populated).toBe(false);
-        });
-
-        it('should return true when HTML body contains HTML tags and text', function() {
-            view.model.set('description_html', '<div><span><b>Hello World</b></span></div>');
-            var populated = view.isFieldPopulated('description_html');
-
-            expect(populated).toBe(true);
-        });
-
-        it('should return false when HTML body is undefined', function() {
-            view.model.set('description_html', undefined);
-            var populated = view.isFieldPopulated('description_html');
-
-            expect(populated).toBe(false);
+            expect(view.setTitle).toHaveBeenCalledWith('LNK_NEW_ARCHIVE_EMAIL');
         });
     });
 
     describe('managing attachments', function() {
-        beforeEach(function() {
-            // Seed the model with an empty set of attachments.
-            view.model.set('attachments_collection', [], {silent: true});
-        });
-
-        it(
-            'should call _setAttachmentVisibility and _checkAttachmentLimit when the attachments field changes',
-            function() {
-                sandbox.spy(view, '_setAttachmentVisibility');
-                sandbox.spy(view, '_checkAttachmentLimit');
-
-                view.model.get('attachments_collection').add({
-                    _module: 'Notes',
-                    upload_id: _.uniqueId(),
-                    name: 'logo.jpg',
-                    filename: 'logo.jpg',
-                    file_mime_type: 'image/jpg',
-                    file_size: 10000,
-                    file_source: 'DocumentRevisions',
-                    file_ext: 'jpg'
-                });
-
-                expect(view._setAttachmentVisibility).toHaveBeenCalled();
-                expect(view._checkAttachmentLimit).toHaveBeenCalled();
-            }
-        );
-
-        describe('showing or hiding the attachments field', function() {
+        describe('hiding or showing the attachments field', function() {
+            var field;
             var spyAddClass;
             var spyRemoveClass;
-            var field;
 
             beforeEach(function() {
                 var $el;
@@ -665,570 +97,112 @@ describe('Emails.Views.Create', function() {
                 };
 
                 sandbox.stub(view, 'getField').withArgs('attachments_collection').returns(field);
+                sandbox.stub(view, '_resizeEditor');
             });
 
-            it('should show the attachments field', function() {
-                sandbox.stub(field, 'isEmpty').returns(false);
+            describe('rendering the view', function() {
+                it('should show the attachments field', function() {
+                    // There are attachments.
+                    sandbox.stub(field, 'isEmpty').returns(false);
 
-                view.model.trigger('change:attachments_collection');
+                    view.render();
 
-                expect(spyAddClass).toHaveBeenCalledWith('single');
-                expect(spyRemoveClass).toHaveBeenCalledWith('hidden');
-            });
-
-            it('should hide the attachments field', function() {
-                sandbox.stub(field, 'isEmpty').returns(true);
-
-                view.model.trigger('change:attachments_collection');
-
-                expect(spyAddClass).toHaveBeenCalledWith('hidden');
-                expect(spyRemoveClass).toHaveBeenCalledWith('single');
-            });
-        });
-
-        describe('warning the user about attachments exceeding the aggregate file size limit', function() {
-            beforeEach(function() {
-                sandbox.stub(app.alert, 'show');
-                app.config.maxAggregateEmailAttachmentsBytes = 10000000;
-
-                // Seed the model with an empty set of attachments.
-                view.model.set('attachments_collection', [], {silent: true});
-            });
-
-            using(
-                'attachments over limit',
-                [
-                    {
-                        _module: 'Notes',
-                        filename_guid: _.uniqueId(),
-                        name: 'Disclosure Agreement.pdf',
-                        filename: 'Disclosure Agreement.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 11000000,
-                        file_ext: 'pdf'
-                    },
-                    [{
-                        _module: 'Notes',
-                        filename_guid: _.uniqueId(),
-                        name: 'Disclosure Agreement.pdf',
-                        filename: 'Disclosure Agreement.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 4000000,
-                        file_ext: 'pdf'
-                    }, {
-                        _module: 'Notes',
-                        upload_id: _.uniqueId(),
-                        name: 'logo.jpg',
-                        filename: 'logo.jpg',
-                        file_mime_type: 'image/jpg',
-                        file_size: '4000000',
-                        file_source: 'DocumentRevisions',
-                        file_ext: 'jpg'
-                    }, {
-                        _module: 'Notes',
-                        filename_guid: _.uniqueId(),
-                        name: 'NDA.pdf',
-                        filename: 'NDA.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 4000000,
-                        file_ext: 'pdf'
-                    }]
-                ],
-                function() {
-                    // This is a hack to allow an array to be passed as a
-                    // single argument.
-                    var attachments = [].slice.call(arguments);
-
-                    // When only one argument was passed, then we want the true
-                    // argument instead of an array containing the argument.
-                    if (arguments.length === 1) {
-                        attachments = attachments[0];
-                    }
-
-                    it('should show warning when the attachments total over 10MB in file size', function() {
-                        view.model.get('attachments_collection').add(attachments);
-
-                        expect(app.alert.show).toHaveBeenCalledWith('email-attachment-status');
-                    });
-                }
-            );
-
-            using(
-                'attachments under limit',
-                [
-                    {
-                        _module: 'Notes',
-                        filename_guid: _.uniqueId(),
-                        name: 'Disclosure Agreement.pdf',
-                        filename: 'Disclosure Agreement.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 9000000,
-                        file_ext: 'pdf'
-                    },
-                    [{
-                        _module: 'Notes',
-                        filename_guid: _.uniqueId(),
-                        name: 'Disclosure Agreement.pdf',
-                        filename: 'Disclosure Agreement.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 6000000,
-                        file_ext: 'pdf'
-                    }, {
-                        _module: 'Notes',
-                        upload_id: _.uniqueId(),
-                        name: 'logo.jpg',
-                        filename: 'logo.jpg',
-                        file_mime_type: 'image/jpg',
-                        file_size: '1000000',
-                        file_source: 'DocumentRevisions',
-                        file_ext: 'jpg'
-                    }, {
-                        _module: 'Notes',
-                        filename_guid: _.uniqueId(),
-                        name: 'NDA.pdf',
-                        filename: 'NDA.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 2000000,
-                        file_ext: 'pdf'
-                    }]
-                ],
-                function() {
-                    // This is a hack to allow an array to be passed as a
-                    // single argument.
-                    var attachments = [].slice.call(arguments);
-
-                    // When only one argument was passed, then we want the true
-                    // argument instead of an array containing the argument.
-                    if (arguments.length === 1) {
-                        attachments = attachments[0];
-                    }
-
-                    it('should not show warning when the attachments total less than 10MB in file size', function() {
-                        view.model.get('attachments_collection').add(attachments);
-
-                        expect(app.alert.show).not.toHaveBeenCalledWith('email-attachment-status');
-                    });
-                }
-            );
-
-            it(
-                'should not show warning with multiple attachments totaling over 10MB when one is queued for removal',
-                function() {
-                    var attachments = view.model.get('attachments_collection');
-                    var data = [{
-                        _module: 'Notes',
-                        filename_guid: _.uniqueId(),
-                        name: 'Disclosure Agreement.pdf',
-                        filename: 'Disclosure Agreement.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 4000000,
-                        file_ext: 'pdf'
-                    }, {
-                        _module: 'Notes',
-                        upload_id: _.uniqueId(),
-                        name: 'logo.jpg',
-                        filename: 'logo.jpg',
-                        file_mime_type: 'image/jpg',
-                        file_size: '4000000',
-                        file_source: 'DocumentRevisions',
-                        file_ext: 'jpg'
-                    }, {
-                        _module: 'Notes',
-                        filename_guid: _.uniqueId(),
-                        name: 'NDA.pdf',
-                        filename: 'NDA.pdf',
-                        file_mime_type: 'application/pdf',
-                        file_size: 4000000,
-                        file_ext: 'pdf'
-                    }];
-
-                    attachments.add(data, {silent: true});
-                    attachments.remove(attachments.at(2));
-
-                    expect(app.alert.show).not.toHaveBeenCalledWith('email-attachment-status');
-                }
-            );
-        });
-    });
-
-    describe('insert templates', function() {
-        describe('confirm template', function() {
-            beforeEach(function() {
-                sandbox.stub(view, '_insertTemplate');
-                sandbox.stub(app.alert, 'show');
-            });
-
-            it('should warn the user about replacing the content', function() {
-                var template = app.data.createBean('EmailTemplates', {
-                    id: _.uniqueId(),
-                    name: 'template',
-                    body_html: 'foo bar'
+                    expect(spyAddClass).toHaveBeenCalledWith('single');
+                    expect(spyRemoveClass).toHaveBeenCalledWith('hidden');
+                    expect(view._resizeEditor).toHaveBeenCalledOnce();
                 });
 
-                sandbox.stub(view, '_getFullContent').returns('previous content');
-                view._confirmTemplate(template);
+                it('should hide the attachments field', function() {
+                    // There are no attachments.
+                    sandbox.stub(field, 'isEmpty').returns(true);
 
-                expect(view._insertTemplate).not.toHaveBeenCalled();
-                expect(app.alert.show).toHaveBeenCalled();
-            });
+                    view.render();
 
-            it('should not warn the user about replacing the content', function() {
-                var template = app.data.createBean('EmailTemplates', {
-                    id: _.uniqueId(),
-                    name: 'template',
-                    body_html: 'foo bar'
-                });
-
-                sandbox.stub(view, '_getFullContent').returns('');
-                view._confirmTemplate(template);
-
-                expect(view._insertTemplate).toHaveBeenCalled();
-                expect(app.alert.show).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('replacing templates', function() {
-            var insertSignatureStub;
-
-            beforeEach(function() {
-                sandbox.spy(view, 'trigger');
-                insertSignatureStub = sandbox.stub(view, '_insertSignature');
-                view.model.off('change');
-            });
-
-            it('should not populate editor if template parameter is not an object', function() {
-                view._insertTemplate(null);
-                expect(view.trigger).not.toHaveBeenCalledWith('email_attachments:template:add', null);
-                expect(insertSignatureStub.callCount).toBe(0);
-                expect(view.model.get('name')).toBeUndefined();
-                expect(view.model.get('description_html')).toBeUndefined();
-            });
-
-            it('should not set content of subject when the template does not include a subject', function() {
-                var bodyHtml = '<h1>Test</h1>';
-                var templateModel = app.data.createBean(
-                    'EmailTemplates',
-                    {
-                        id: '1234',
-                        body_html: bodyHtml
-                    }
-                );
-
-                view._insertTemplate(templateModel);
-                expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
-                expect(insertSignatureStub.callCount).toBe(1);
-                expect(view.model.get('name')).toBeUndefined();
-                expect(view.model.get('description_html')).toBe(bodyHtml);
-            });
-
-            it('should set content of editor with html version of template', function() {
-                var bodyHtml = '<h1>Test</h1>';
-                var subject = 'This is my subject';
-                var templateModel = app.data.createBean(
-                    'EmailTemplates',
-                    {
-                        id: '1234',
-                        subject: subject,
-                        body_html: bodyHtml
-                    }
-                );
-
-                view._insertTemplate(templateModel);
-                expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
-                expect(insertSignatureStub.callCount).toBe(1);
-                expect(view.model.get('name')).toBe(subject);
-                expect(view.model.get('description_html')).toBe(bodyHtml);
-            });
-
-            it('should set content of editor with text only version of template', function() {
-                var bodyHtml = '<h1>Test</h1>';
-                var bodyText = 'Test';
-                var subject = 'This is my subject';
-                var templateModel = app.data.createBean(
-                    'EmailTemplates',
-                    {
-                        id: '1234',
-                        subject: subject,
-                        body_html: bodyHtml,
-                        body: bodyText,
-                        text_only: 1
-                    }
-                );
-
-                view._insertTemplate(templateModel);
-                expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
-                expect(insertSignatureStub.callCount).toBe(1);
-                expect(view.model.get('name')).toBe(subject);
-                expect(view.model.get('description_html')).toBe(bodyText);
-            });
-
-            it('should call to insert the last selected signature below the template', function() {
-                var bodyHtml = '<h1>Test</h1>';
-                var subject = 'This is my subject';
-                var templateModel = app.data.createBean(
-                    'EmailTemplates',
-                    {
-                        id: '1234',
-                        subject: subject,
-                        body_html: bodyHtml
-                    }
-                );
-                var signature = new app.Bean({id: 'abcd'});
-
-                view._lastSelectedSignature = signature;
-
-                view._insertTemplate(templateModel);
-                expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
-                expect(insertSignatureStub).toHaveBeenCalledWith(signature, view.BELOW_CONTENT);
-            });
-        });
-        describe('adding templates to reply emails', function() {
-            var insertSignatureStub;
-
-            beforeEach(function() {
-                view._lastSelectedSignature = new app.Bean({id: 'abcd'});
-                insertSignatureStub = sandbox.stub(view, '_insertSignature');
-                view.model.set('description_html',
-                    '<div>My Content</div><div id="replycontent">My Reply Content</div>'
-                );
-            });
-
-            it('should not update subject if the email is a reply', function() {
-                var originalSubject = 'Original Subject';
-                var subject = 'Template Subject';
-                var templateModel = app.data.createBean(
-                    'EmailTemplates',
-                    {
-                        id: '1234',
-                        subject: subject
-                    }
-                );
-                view.model.set('name', originalSubject);
-                view._insertTemplate(templateModel);
-                expect(view.model.get('name')).toEqual(originalSubject);
-            });
-
-            it('should insert the reply content back after the template is inserted', function() {
-                var bodyHtml = '<h1>Template Content</h1>';
-                var templateModel = app.data.createBean(
-                    'EmailTemplates',
-                    {
-                        id: '1234',
-                        body_html: bodyHtml
-                    }
-                );
-                var expected = '<h1>Template Content</h1>' +
-                    '<div></div><div id="replycontent">My Reply Content</div><div></div>';
-                view._insertTemplate(templateModel);
-                expect(view.model.get('description_html')).toEqual(expected);
-            });
-        });
-    });
-
-    describe('_getReplyContent', function() {
-        it('should return reply content when it exists', function() {
-            var actual;
-            var expected = '<div id="replycontent">My Reply Content</div>';
-            view.model.set('description_html',
-                '<div>My Content</div>' + expected
-            );
-
-            actual = view._getReplyContent();
-            expect(actual).toEqual(expected);
-        });
-
-        it('should return an empty string when reply content does not exists', function() {
-            var actual;
-            view.model.set('description_html', '<div>My Content</div>');
-
-            actual = view._getReplyContent();
-            expect(actual).toEqual('');
-        });
-    });
-
-    describe('Signatures', function() {
-        describe('signature helpers', function() {
-            dataProvider = [
-                {
-                    message: 'should format a signature with &lt; and/or &gt; to use < and > respectively',
-                    signature: 'This &lt;signature&gt; has HTML-style brackets',
-                    expected: 'This <signature> has HTML-style brackets'
-                },
-                {
-                    message: 'should leave a signature as is if &lt; and &gt; are not found',
-                    signature: 'This signature has no HTML-style brackets',
-                    expected: 'This signature has no HTML-style brackets'
-                }
-            ];
-
-            _.each(dataProvider, function(data) {
-                it(data.message, function() {
-                    var actual = view._formatSignature(data.signature);
-                    expect(actual).toBe(data.expected);
-                });
-            }, this);
-        });
-
-        describe('insert a signature', function() {
-            var signatureTagBegin = '<div class="signature">';
-            var signatureTagEnd = '</div>';
-            var signature;
-
-            beforeEach(function() {
-                sandbox.restore();
-                sandbox.stub(view, '_insertInEditor', function(content) {
-                    return view.model.get('description_html') + content;
+                    expect(spyAddClass).toHaveBeenCalledWith('hidden');
+                    expect(spyRemoveClass).toHaveBeenCalledWith('single');
+                    expect(view._resizeEditor).toHaveBeenCalledOnce();
                 });
             });
 
-            it('should append the signature to the email body', function() {
-                var id = 'abcd';
-                var htmlBody = 'my message body is awesome!';
-                var expectedBody;
-                var actualReturn;
+            describe('responding to changes to the attachments', function() {
+                it('should show the attachments field', function() {
+                    // There are attachments.
+                    sandbox.stub(field, 'isEmpty').returns(false);
 
-                signature = app.data.createBean(
-                    'UserSignatures',
-                    {
-                        id: id,
-                        name: 'Signature A',
-                        signature: 'Regards',
-                        signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
-                    }
-                );
+                    model.trigger('change:attachments_collection');
 
-                signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
-                view.model.set('description_html', htmlBody);
-                expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
-                actualReturn = view._insertSignature(signature);
-                expect(actualReturn).toBe(true);
-                expect(view.model.get('description_html')).toBe(expectedBody);
-            });
+                    expect(spyAddClass).toHaveBeenCalledWith('single');
+                    expect(spyRemoveClass).toHaveBeenCalledWith('hidden');
+                    expect(view._resizeEditor).toHaveBeenCalledOnce();
+                });
 
-            it('should remove a nested signature from the email body', function() {
-                var id = 'abcd';
-                var message = 'my message body is awesome!' +
-                        '<div class="signature"><div class="signature">SIG</div><p>Regards</p></div>';
-                var htmlBody = 'my message body is awesome!';
-                var expectedBody;
-                var actualReturn;
+                it('should hide the attachments field', function() {
+                    // THere are no attachments.
+                    sandbox.stub(field, 'isEmpty').returns(true);
 
-                signature = app.data.createBean(
-                    'UserSignatures',
-                    {
-                        id: id,
-                        name: 'Signature A',
-                        signature: 'Regards',
-                        signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
-                    }
-                );
+                    model.trigger('change:attachments_collection');
 
-                signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
-                view.model.set('description_html', message);
-                expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
-                actualReturn = view._insertSignature(signature);
-                expect(actualReturn).toBe(true);
-                expect(view.model.get('description_html')).toBe(expectedBody);
-            });
-
-            it('should remove a signature marked for removal', function() {
-                var id = 'abcd';
-                var message = '<div class="signature remove"><p>Regards, Jim</p></div>' +
-                        'my message body is awesome!<div class="signature"><p>Regards</p></div>';
-                var htmlBody = 'my message body is awesome!';
-                var expectedBody;
-                var actualReturn;
-
-                signature = app.data.createBean(
-                    'UserSignatures',
-                    {
-                        id: id,
-                        name: 'Signature A',
-                        signature: 'Regards',
-                        signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
-                    }
-                );
-
-                signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
-                view.model.set('description_html', message);
-                expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
-                actualReturn = view._insertSignature(signature);
-                expect(actualReturn).toBe(true);
-                expect(view.model.get('description_html')).toBe(expectedBody);
+                    expect(spyAddClass).toHaveBeenCalledWith('hidden');
+                    expect(spyRemoveClass).toHaveBeenCalledWith('single');
+                    expect(view._resizeEditor).toHaveBeenCalledOnce();
+                });
             });
         });
-    });
 
-    describe('InsertInEditor', function() {
-        var existingContent;
-        var divSpacer = '<div></div>';
-        var mockEditor;
+        describe('alerting the user when the attachments are too large', function() {
+            var saveButton;
 
-        beforeEach(function() {
-            mockEditor = {
-                execCommand: sandbox.stub(),
-                getContent: sandbox.stub()
-            };
-            sandbox.stub(view, 'getField', function() {
-                return {
-                    getEditor: function() {
-                        return mockEditor;
-                    }
+            beforeEach(function() {
+                saveButton = {
+                    setDisabled: sandbox.spy()
                 };
+                sandbox.stub(view, 'getField').withArgs('save_button').returns(saveButton);
             });
 
-            existingContent = '<p>My Existing Content</p>';
-            view.model.set('description_html', existingContent);
-        });
+            describe('attachments are over the limit', function() {
+                it('should disable the save button', function() {
+                    model.trigger('attachments_collection:over_max_total_bytes');
 
-        it('should insert content above existing email body', function() {
-            var newContent = 'My New Content';
-            var actual = view._insertInEditor(newContent, view.ABOVE_CONTENT);
-            var expected = divSpacer + newContent + divSpacer + existingContent;
-            expect(actual).toEqual(expected);
-        });
+                    expect(saveButton.setDisabled).toHaveBeenCalledWith(true);
+                });
 
-        it('should insert content below existing email body', function() {
-            var newContent = 'My New Content';
-            var actual = view._insertInEditor(newContent, view.BELOW_CONTENT);
-            var expected = existingContent + divSpacer + newContent + divSpacer;
-            expect(actual).toEqual(expected);
-        });
+                it('should alert the user', function() {
+                    sandbox.stub(app.alert, 'show');
 
-        it('should use TinyMCE function for inserting content at the cursor location', function() {
-            var newContent = 'My New Content';
-            view._insertInEditor(newContent, view.CURSOR_LOCATION);
-            expect(mockEditor.execCommand).toHaveBeenCalled();
-        });
+                    model.trigger('attachments_collection:over_max_total_bytes');
 
-        it('should leave email body alone if no content to add', function() {
-            var newContent = '';
-            var actual = view._insertInEditor(newContent, view.ABOVE_CONTENT);
-            var expected = existingContent;
-            expect(actual).toEqual(expected);
-        });
+                    expect(app.alert.show).toHaveBeenCalledWith('email-attachment-status');
+                });
+            });
 
-        it('should default to cursor location if no location specified', function() {
-            var newContent = 'My New Content';
-            view._insertInEditor(newContent);
-            expect(mockEditor.execCommand).toHaveBeenCalled();
-        });
+            describe('attachments are under the limit', function() {
+                it('should enable the save button', function() {
+                    model.trigger('attachments_collection:under_max_total_bytes');
 
+                    expect(saveButton.setDisabled).toHaveBeenCalledWith(false);
+                });
+
+                it('should hide any open alerts', function() {
+                    sandbox.stub(app.alert, 'dismiss');
+
+                    model.trigger('attachments_collection:under_max_total_bytes');
+
+                    expect(app.alert.dismiss).toHaveBeenCalledWith('email-attachment-status');
+                });
+            });
+        });
     });
 
-    describe('InitializeSendEmailModel', function() {
-        beforeEach(function() {
-            view.model.off('change');
-        });
+    describe('saving an email', function() {
+        it('should build a message stating that the email was archived', function() {
+            var actual;
 
-        it('should populate the related field according to how the Mail API expects it', function() {
-            var sendModel;
-            var parentId = '123';
-            var parentType = 'Foo';
-            view.model.set('parent_id', parentId);
-            view.model.set('parent_type', parentType);
-            sendModel = view.initializeSendEmailModel();
-            expect(sendModel.get('related')).toEqual({id: parentId, type: parentType});
+            sandbox.stub(app.lang, 'get').returnsArg(0);
+
+            actual = view.buildSuccessMessage();
+
+            expect(actual).toBe('LBL_EMAIL_ARCHIVED');
+            expect(app.lang.get.firstCall.args[1]).toBe(view.module);
         });
     });
 
@@ -1257,6 +231,9 @@ describe('Emails.Views.Create', function() {
             view.$('.record').height(editorHeight);
             view.$('.show-hide-toggle').height(otherHeight);
 
+            app.drawer = {
+                getHeight: $.noop
+            };
             sandbox.stub(app.drawer, 'getHeight', function() {
                 return $drawer.height();
             });
@@ -1269,7 +246,7 @@ describe('Emails.Views.Create', function() {
             //increase drawer height by 100 pixels
             $drawer.height(drawerHeightBefore + 100);
 
-            view.resizeEditor();
+            view._resizeEditor();
             //editor should be increased to fill the space
             expect($editor.height()).toEqual(editorHeightBefore + 100);
         });
@@ -1281,7 +258,7 @@ describe('Emails.Views.Create', function() {
             //decrease drawer height by 100 pixels
             $drawer.height(drawerHeightBefore - 100);
 
-            view.resizeEditor();
+            view._resizeEditor();
             //editor should be decreased to account for decreased drawer height
             expect($editor.height()).toEqual(editorHeightBefore - 100);
         });
@@ -1290,7 +267,7 @@ describe('Emails.Views.Create', function() {
             //decrease drawer height to 50 pixels below min editor height
             $drawer.height(view.MIN_EDITOR_HEIGHT - 50);
 
-            view.resizeEditor();
+            view._resizeEditor();
             //editor should maintain min height
             expect($editor.height()).toEqual(view.MIN_EDITOR_HEIGHT);
         });
@@ -1304,77 +281,32 @@ describe('Emails.Views.Create', function() {
             view.$('.record').height(editorHeightPlusPadding);
 
             //padding should be added back
-            view.resizeEditor();
+            view._resizeEditor();
             expect($editor.height()).toEqual(editorHeightBefore);
         });
-    });
 
-    it('should toggle action buttons while loading all recipients', function() {
-        sandbox.spy(view, 'toggleButtons');
-
-        view.trigger('loading_collection_field', 'to');
-        view.trigger('loading_collection_field', 'cc');
-        view.trigger('loading_collection_field', 'bcc');
-
-        expect(view.toggleButtons).toHaveBeenCalledThrice();
-        expect(view.toggleButtons.alwaysCalledWithExactly(false)).toBe(true);
-
-        view.trigger('loaded_collection_field', 'to');
-        expect(view.toggleButtons).toHaveBeenCalledThrice();
-        expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
-
-        view.trigger('loaded_collection_field', 'cc');
-        expect(view.toggleButtons).toHaveBeenCalledThrice();
-        expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
-
-        view.trigger('loaded_collection_field', 'bcc');
-        expect(view.toggleButtons.callCount).toBe(4);
-        expect(view.toggleButtons.lastCall.args[0]).toBe(true);
-    });
-
-    describe('Render recipients fieldset when one of its fields have changed', function() {
-        using('recipient fields', ['to', 'cc', 'bcc'], function(data) {
-            it('should render recipients fieldset', function() {
-                var field = {
-                    render: sandbox.spy()
-                };
-                sandbox.stub(view, 'getField').withArgs('recipients').returns(field);
-                view.model.trigger('change:' + data);
-                expect(field.render).toHaveBeenCalled();
+        describe('events that resize the editor', function() {
+            beforeEach(function() {
+                sandbox.stub(view, '_resizeEditor');
             });
-        });
-    });
 
-    it('should change the recipients fieldset to detail mode after fields have been toggled to edit mode', function() {
-        // `BaseEmailsRecipientsFieldsetField#setMode` will decide if the mode can actually be changed.
-        var recipientsFieldset = {setMode: $.noop};
+            it('should resize the editor when tinymce is initialized', function() {
+                context.trigger('tinymce:oninit');
 
-        sandbox.spy(recipientsFieldset, 'setMode');
-        sandbox.stub(view, 'getField').withArgs('recipients').returns(recipientsFieldset);
+                expect(view._resizeEditor).toHaveBeenCalledOnce();
+            });
 
-        view.trigger('editable:toggle_fields');
+            it('should resize the editor when toggling to show/hide hidden panel', function() {
+                view.trigger('more-less:toggled');
 
-        expect(recipientsFieldset.setMode).toHaveBeenCalledWith('detail');
-    });
+                expect(view._resizeEditor).toHaveBeenCalledOnce();
+            });
 
-    describe('hasUnsavedChanges', function() {
-        it('should use the create views hasUnsavedChanges()', function() {
-            sandbox.stub(view.model, 'isNew').returns(true);
-            sandbox.stub(view, '_super').withArgs('hasUnsavedChanges');
+            it('should resize the editor when the visibility of any recipients fields is toggled', function() {
+                view.trigger('email-recipients:toggled');
 
-            view.hasUnsavedChanges();
-
-            expect(view._super).toHaveBeenCalled();
-        });
-
-        it('should use the record views hasUnsavedChanges()', function() {
-            SugarTest.loadComponent('base', 'view', 'record', 'Emails');
-            sandbox.stub(view.model, 'isNew').returns(false);
-            sandbox.stub(app.view.views.BaseEmailsRecordView.prototype, 'hasUnsavedChanges');
-
-            view.hasUnsavedChanges();
-
-            expect(app.view.views.BaseEmailsRecordView.prototype.hasUnsavedChanges).toHaveBeenCalled();
+                expect(view._resizeEditor).toHaveBeenCalledOnce();
+            });
         });
     });
 });

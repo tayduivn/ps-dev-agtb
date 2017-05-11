@@ -35,6 +35,10 @@
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['EmailParticipants', 'ListEditable']);
         this._super('initialize', [options]);
+
+        // Specify the error label for when the sender's email address is
+        // invalid.
+        app.error.errorName2Keys[this.type] = 'ERR_INVALID_SENDER';
     },
 
     /**
@@ -78,7 +82,8 @@
                 if (!_.isEmpty(event.added)) {
                     // Replace the current model in the collection, as there
                     // can only be one.
-                    collection.set(event.added);
+                    collection.remove(collection.models);
+                    collection.add(event.added);
                 }
 
                 if (!_.isEmpty(event.removed)) {

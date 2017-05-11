@@ -11,13 +11,17 @@
 
 describe("Sugar7 utils", function() {
     var app;
+    var sandbox;
+
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadFile("../include/javascript/sugar7", "utils", "js", function(d) { eval(d) });
+
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
-
+        sandbox.restore();
     });
 
     describe('hideForecastCommitStageField()', function() {
@@ -413,5 +417,348 @@ describe("Sugar7 utils", function() {
                     expect(actual).toEqual(readableSize);
                 });
             });
+    });
+
+    describe('creating an email', function() {
+        beforeEach(function() {
+            var metadata = SugarTest.loadFixture('emails-metadata');
+
+            SugarTest.testMetadata.init();
+
+            _.each(metadata.modules, function(def, module) {
+                SugarTest.testMetadata.updateModuleMetadata(module, def);
+            });
+
+            SugarTest.testMetadata.set();
+
+            app.data.declareModels();
+            app.routing.start();
+
+            app.drawer = {
+                open: sandbox.stub()
+            };
+        });
+
+        afterEach(function() {
+            delete app.drawer;
+        });
+
+        using('layouts', ['create', 'compose-email'], function(layout) {
+            it('should load the specified layout when opening the drawer', function() {
+                app.utils.openEmailCreateDrawer(layout);
+
+                expect(app.drawer.open).toHaveBeenCalledOnce();
+                expect(app.drawer.open.firstCall.args[0].layout).toBe(layout);
+            });
+        });
+
+        it('should open the drawer with an Emails create context', function() {
+            app.utils.openEmailCreateDrawer('compose-email');
+
+            expect(app.drawer.open).toHaveBeenCalledOnce();
+            expect(app.drawer.open.firstCall.args[0].context.create).toBe(true);
+            expect(app.drawer.open.firstCall.args[0].context.module).toBe('Emails');
+            expect(app.drawer.open.firstCall.args[0].context.model.module).toBe('Emails');
+        });
+
+        describe('populating the model', function() {
+            it('should use the model if one is provided', function() {
+                var model;
+                var email = app.data.createBean('Emails');
+
+                app.utils.openEmailCreateDrawer('compose-email', {model: email});
+                model = app.drawer.open.firstCall.args[0].context.model;
+
+                expect(model).toBe(email);
+            });
+
+            it('should add recipients if to, cc, or bcc value is passed in.', function() {
+                var model;
+                var data = {
+                    to: [
+                        app.data.createBean('Contacts', {
+                            id: _.uniqueId(),
+                            email: 'to@foo.com'
+                        }),
+                        app.data.createBean('Contacts', {
+                            id: _.uniqueId(),
+                            email: 'too@foo.com'
+                        })
+                    ],
+                    cc: [
+                        app.data.createBean('Contacts', {
+                            id: _.uniqueId(),
+                            email: 'cc@foo.com'
+                        })
+                    ],
+                    bcc: [
+                        app.data.createBean('Contacts', {
+                            id: _.uniqueId(),
+                            email: 'bcc@foo.com'
+                        })
+                    ]
+                };
+
+                app.utils.openEmailCreateDrawer('compose-email', data);
+                model = app.drawer.open.firstCall.args[0].context.model;
+
+                expect(model.get('to').length).toBe(2);
+                expect(model.get('cc').length).toBe(1);
+                expect(model.get('bcc').length).toBe(1);
+            });
+
+            using('attachments fields', ['attachments', 'attachments_collection'], function(fieldName) {
+                it('should add attachments from ' + fieldName, function() {
+                    var model;
+                    var data = {};
+
+                    data[fieldName] = [
+                        app.data.createBean('Notes', {
+                            id: _.uniqueId(),
+                            name: 'attachment 1'
+                        }),
+                        app.data.createBean('Notes', {
+                            id: _.uniqueId(),
+                            name: 'attachment 2'
+                        })
+                    ];
+
+                    app.utils.openEmailCreateDrawer('compose-email', data);
+                    model = app.drawer.open.firstCall.args[0].context.model;
+
+                    expect(model.get('attachments_collection').length).toBe(2);
+                });
+            });
+
+            using('attributes', ['name', 'description_html', 'reply_to_id'], function(fieldName) {
+                it('should set standard attributes', function() {
+                    var model;
+                    var data = {};
+
+                    data[fieldName] = 'foo';
+
+                    app.utils.openEmailCreateDrawer('compose-email', data);
+                    model = app.drawer.open.firstCall.args[0].context.model;
+
+                    expect(model.get(fieldName)).toBe('foo');
+                });
+            });
+
+            using('non-fields', [
+                [
+                    'signature_location',
+                    'above'
+                ],
+                [
+                    'foo',
+                    'bar'
+                ]
+            ], function(fieldName, value) {
+                it('should pass non-fields to be set as attributes on the context', function() {
+                    var context;
+                    var data = {};
+
+                    data[fieldName] = value;
+
+                    app.utils.openEmailCreateDrawer('compose-email', data);
+                    context = app.drawer.open.firstCall.args[0].context;
+
+                    expect(context.model.get(fieldName)).toBeUndefined();
+                    expect(context[fieldName]).toBe(value);
+                });
+            });
+
+            using('static options', [
+                [
+                    'create',
+                    false,
+                    true
+                ],
+                [
+                    'module',
+                    'Notes',
+                    'Emails'
+                ]
+            ], function(option, value, expected) {
+                it('should not allow some options to be overridden by the caller', function() {
+                    var context;
+                    var data = {};
+
+                    data[option] = value;
+
+                    app.utils.openEmailCreateDrawer('compose-email', data);
+                    context = app.drawer.open.firstCall.args[0].context;
+
+                    expect(context.model.get(option)).toBeUndefined();
+                    expect(context[option]).toBe(expected);
+                });
+            });
+
+            describe('populating the related fields', function() {
+                beforeEach(function() {
+                    sandbox.stub(app.lang, 'getAppListStrings')
+                        .withArgs('record_type_display_emails')
+                        .returns({
+                            Accounts: 'Account',
+                            Contacts: 'Contact',
+                            Tasks: 'Task',
+                            Opportunities: 'Opportunity',
+                            Products: 'Quoted Line Item',
+                            Quotes: 'Quote',
+                            Bugs: 'Bug',
+                            Cases: 'Case',
+                            Leads: 'Lead',
+                            Project: 'Project',
+                            ProjectTask: 'Project Task',
+                            Prospects: 'Target',
+                            Notes: 'Note',
+                            Meetings: 'Meeting',
+                            RevenueLineItems: 'Revenue Line Item'
+                        });
+                    sandbox.stub(app.acl, 'hasAccess').withArgs('list').returns(true);
+                });
+
+                it('should set the parent attributes without fetching the name of the related record', function() {
+                    var model;
+                    var contact = app.data.createBean('Contacts', {
+                        id: _.uniqueId(),
+                        name: 'Bob Tillman'
+                    });
+
+                    app.utils.openEmailCreateDrawer('compose-email', {related: contact});
+                    model = app.drawer.open.firstCall.args[0].context.model;
+
+                    expect(model.get('parent_type')).toBe('Contacts');
+                    expect(model.get('parent_id')).toBe(contact.get('id'));
+                    expect(model.get('parent_name')).toBe('Bob Tillman');
+                });
+
+                it('should set the parent attributes after fetching the name of the related record', function() {
+                    var model;
+                    var contact = app.data.createBean('Contacts', {id: _.uniqueId()});
+
+                    sandbox.stub(contact, 'fetch', function(params) {
+                        contact.set('name', 'Torry Young');
+                        params.success(contact);
+                    });
+
+                    app.utils.openEmailCreateDrawer('compose-email', {related: contact});
+                    model = app.drawer.open.firstCall.args[0].context.model;
+
+                    expect(model.get('parent_type')).toBe('Contacts');
+                    expect(model.get('parent_id')).toBe(contact.get('id'));
+                    expect(model.get('parent_name')).toBe('Torry Young');
+                });
+
+                it('should not set the parent attributes when there is no ID for the related record', function() {
+                    var model;
+                    var contact = app.data.createBean('Contacts', {
+                        name: 'Andy Hopkins'
+                    });
+                    sandbox.spy(contact, 'fetch');
+
+                    app.utils.openEmailCreateDrawer('compose-email', {related: contact});
+                    model = app.drawer.open.firstCall.args[0].context.model;
+
+                    expect(contact.fetch).not.toHaveBeenCalled();
+                    expect(model.get('parent_type')).toBeUndefined();
+                    expect(model.get('parent_id')).toBeUndefined();
+                    expect(model.get('parent_name')).toBeUndefined();
+                });
+
+                describe('populating for a related case', function() {
+                    var aCase;
+                    var relatedCollection;
+
+                    beforeEach(function() {
+                        sandbox.stub(app.metadata, 'getConfig').returns({'inboundEmailCaseSubjectMacro': '[CASE:%1]'});
+
+                        aCase = app.data.createBean('Cases', {
+                            id: _.uniqueId(),
+                            case_number: '100',
+                            name: 'My Case'
+                        });
+
+                        relatedCollection = app.data.createBeanCollection('Contacts');
+                        sandbox.stub(relatedCollection, 'fetch', function(params) {
+                            params.success(relatedCollection);
+                        });
+
+                        sandbox.stub(aCase, 'getRelatedCollection').returns(relatedCollection);
+                    });
+
+                    it('should set only the subject and when the case does not have any related contacts', function() {
+                        var model;
+
+                        app.utils.openEmailCreateDrawer('compose-email', {related: aCase});
+                        model = app.drawer.open.firstCall.args[0].context.model;
+
+                        expect(model.get('parent_type')).toBe('Cases');
+                        expect(model.get('parent_id')).toBe(aCase.get('id'));
+                        expect(model.get('parent_name')).toBe('My Case');
+                        expect(model.get('name')).toBe('[CASE:100] My Case');
+                        expect(model.get('to').length).toBe(0);
+                    });
+
+                    it('should populate the subject and "to" field when the case has related contacts', function() {
+                        var model;
+
+                        relatedCollection.add([
+                            app.data.createBean('Contacts', {
+                                id: _.uniqueId(),
+                                name: 'Jaime Hammonds'
+                            }),
+                            app.data.createBean('Contacts', {
+                                id: _.uniqueId(),
+                                name: 'Frank Upton'
+                            })
+                        ]);
+
+                        app.utils.openEmailCreateDrawer('compose-email', {related: aCase});
+                        model = app.drawer.open.firstCall.args[0].context.model;
+
+                        expect(model.get('parent_type')).toBe('Cases');
+                        expect(model.get('parent_id')).toBe(aCase.get('id'));
+                        expect(model.get('parent_name')).toBe('My Case');
+                        expect(model.get('name')).toBe('[CASE:100] My Case');
+                        expect(model.get('to').length).toBe(2);
+                    });
+
+                    it('should not add to the "to" field when the field already has recipients', function() {
+                        var model;
+                        var email = app.data.createBean('Emails');
+
+                        relatedCollection.add([
+                            app.data.createBean('Contacts', {
+                                id: _.uniqueId(),
+                                name: 'Jaime Hammonds'
+                            }),
+                            app.data.createBean('Contacts', {
+                                id: _.uniqueId(),
+                                name: 'Frank Upton'
+                            })
+                        ]);
+                        email.get('to').add([
+                            app.data.createBean('Leads', {
+                                id: _.uniqueId(),
+                                name: 'Nancy Rollins'
+                            })
+                        ]);
+
+                        app.utils.openEmailCreateDrawer('compose-email', {
+                            model: email,
+                            related: aCase
+                        });
+                        model = app.drawer.open.firstCall.args[0].context.model;
+
+                        expect(model.get('parent_type')).toBe('Cases');
+                        expect(model.get('parent_id')).toBe(aCase.get('id'));
+                        expect(model.get('parent_name')).toBe('My Case');
+                        expect(model.get('name')).toBe('[CASE:100] My Case');
+                        expect(model.get('to').length).toBe(1);
+                    });
+                });
+            });
+        });
     });
 });

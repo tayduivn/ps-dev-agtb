@@ -55,11 +55,10 @@
      * Adds events for uploading a file when the file input changes and
      * downloading a file when a file link is clicked in detail mode.
      *
-     * Adds listeners for the `email_attachments:file:pick` and
-     * `email_attachments:document:pick` events that are triggered on the view
-     * to add attachments. `email_attachments:file:pick` will launch the file
-     * picker dialog. `email_attachments:document:pick` will launch a drawer
-     * for selecting a Document.
+     * Adds listeners for the `email_attachments:file` and
+     * `email_attachments:document` events that are triggered on the view to
+     * add attachments. `email_attachments:file` will launch the file picker
+     * dialog. `email_attachments:document` accepts a document to attach.
      */
     initialize: function(options) {
         var events = {};
@@ -70,14 +69,8 @@
         this.plugins = _.union(this.plugins || [], ['CollectionFieldLoadAll', 'ListEditable']);
         this._super('initialize', [options]);
 
-        // Must wrap listenTo callbacks in anonymous functions for stubbing.
-        // https://stackoverflow.com/q/23823889
-        this.listenTo(this.view, 'email_attachments:file:pick', function() {
-            this._openFilePicker();
-        });
-        this.listenTo(this.view, 'email_attachments:document:pick', function() {
-            this._openDocumentPicker();
-        });
+        this.listenTo(this.view, 'email_attachments:file', this._openFilePicker);
+        this.listenTo(this.view, 'email_attachments:document', this._attachDocument);
 
         this._placeholders = app.data.createBeanCollection('Notes');
         this._requests = {};
@@ -85,17 +78,80 @@
 
     /**
      * @inheritdoc
+     *
+     * @fires change:<field_name> on the model when placeholder attachments are
+     * added or removed. Internally, this causes the field to be rendered with
+     * the updated placeholders. And it avoids an expensive full render when
+     * in edit mode.
+     * @fires <field_name>:under_max_total_bytes on the model when the total
+     * bytes of all attachments is under the maximum from the
+     * max_aggregate_email_attachments_bytes configuration. The total bytes,
+     * maximum allowed bytes, and bytes remaining under the limit (positive)
+     * are passed as parameters.
+     * @fires <field_name>:over_max_total_bytes on the model when the total
+     * bytes of all attachments exceeds the maximum from the
+     * max_aggregate_email_attachments_bytes configuration. The total bytes,
+     * maximum allowed bytes, and bytes remaining under the limit (negative)
+     * are passed as parameters.
      */
     bindDataChange: function() {
+        /**
+         * Sums the bytes for each attachment in the collection.
+         *
+         * @param {Data.BeanCollection} attachments
+         * @return {int}
+         */
+        function getTotalBytes(attachments) {
+            var bytes;
+
+            if (!(attachments instanceof app.BeanCollection)) {
+                return 0;
+            }
+
+            bytes = attachments.reduce(function(total, attachment) {
+                var fileSize = attachment.get('file_size');
+
+                if (!_.isNumber(fileSize)) {
+                    try {
+                        fileSize = parseInt(fileSize, 10);
+                    } catch (err) {
+                        // If failed conversion, treat attachment as 0 bytes.
+                        fileSize = 0;
+                    }
+                }
+
+                return total + fileSize;
+            }, 0);
+
+            return bytes;
+        }
+
         if (this.model) {
-            this.listenTo(this.model, 'change:' + this.name, this._smartRender);
+            this.listenTo(this.model, 'change:' + this.name, function() {
+                var $el = this.$(this.fieldTag);
+                var maxBytes = app.config.maxAggregateEmailAttachmentsBytes;
+                var totalBytes;
+                var bytesRemaining;
+
+                if (_.isEmpty($el.data('select2'))) {
+                    this.render();
+                } else {
+                    $el.select2('data', this.getFormattedValue());
+                }
+
+                totalBytes = getTotalBytes(this.model.get(this.name));
+                bytesRemaining = maxBytes - totalBytes;
+
+                if (bytesRemaining > 0) {
+                    this.model.trigger(this.name + ':under_max_total_bytes', totalBytes, maxBytes, bytesRemaining);
+                } else {
+                    this.model.trigger(this.name + ':over_max_total_bytes', totalBytes, maxBytes, bytesRemaining);
+                }
+            });
         }
 
         if (this._placeholders) {
             this.listenTo(this._placeholders, 'update', function() {
-                // Triggering a change for the attribute causes the field to be
-                // rendered -- using `EmailAttachmentsField#_smartRender` --
-                // with the updated placeholders.
                 this.model.trigger('change:' + this.name);
             });
         }
@@ -230,22 +286,6 @@
         }
 
         return this;
-    },
-
-    /**
-     * Avoids a full re-rendering when editing. The current value of the field
-     * is formatted and passed directly to Select2 when in edit mode.
-     *
-     * @private
-     */
-    _smartRender: function() {
-        var $el = this.$(this.fieldTag);
-
-        if (_.isEmpty($el.data('select2'))) {
-            this.render();
-        } else {
-            $el.select2('data', this.getFormattedValue());
-        }
     },
 
     /**
@@ -482,26 +522,6 @@
     },
 
     /**
-     * Launches a selection drawer for choosing a Document to attach.
-     *
-     * @private
-     */
-    _openDocumentPicker: function() {
-        var def = {
-            layout: 'selection-list',
-            context: {
-                module: 'Documents'
-            }
-        };
-
-        if (this.disposed === true) {
-            return;
-        }
-
-        app.drawer.open(def, _.bind(this._handleDocumentSelection, this));
-    },
-
-    /**
      * Called when the Document selection drawer is closed. If a Document was
      * selected, then the Document is fetched.
      *
@@ -510,33 +530,29 @@
      * is needed. A placeholder attachment is added to the Select2 field while
      * the Document is being retrieved.
      *
-     * @param {Object} [selection] The attributes from the selected Document.
-     * @param {string} [selection.id] The ID of the selected Document.
-     * @param {string} [selection.value] The name of the selected Document.
+     * @param {Data.Bean} doc The selected Document.
      * @private
      */
-    _handleDocumentSelection: function(selection) {
-        var doc;
+    _attachDocument: function(doc) {
         var placeholder;
         var placeholderName;
 
-        if (selection) {
-            // `value` is not a real attribute.
-            doc = app.data.createBean('Documents', _.omit(selection, 'value'));
-
-            placeholderName = app.utils.getRecordName(doc) || selection.value || app.lang.getModuleName(doc.module);
-            placeholder = this._addPlaceholderAttachment(placeholderName);
-            this._requests[placeholder.cid] = doc.fetch({
-                success: _.bind(this._handleDocumentFetchSuccess, this),
-                error: function(error) {
-                    // Track errors attaching a document.
-                    app.analytics.trackEvent('email_attachment', 'doc_error', error);
-                },
-                complete: _.bind(function() {
-                    this._removePlaceholderAttachment(placeholder);
-                }, this)
-            });
+        if (this.disposed === true) {
+            return;
         }
+
+        placeholderName = app.utils.getRecordName(doc) || app.lang.getModuleName(doc.module);
+        placeholder = this._addPlaceholderAttachment(placeholderName);
+        this._requests[placeholder.cid] = doc.fetch({
+            success: _.bind(this._handleDocumentFetchSuccess, this),
+            error: function(error) {
+                // Track errors attaching a document.
+                app.analytics.trackEvent('email_attachment', 'doc_error', error);
+            },
+            complete: _.bind(function() {
+                this._removePlaceholderAttachment(placeholder);
+            }, this)
+        });
     },
 
     /**

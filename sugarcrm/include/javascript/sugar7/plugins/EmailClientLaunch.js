@@ -33,11 +33,11 @@
             /**
              * Open the email compose drawer, prepopulated with given options
              *
+             * @fires emailclient:close on the component after the drawer is
+             * closed to allow a custom action to be performed.
              * @param {Object} [options]
              */
             launchSugarEmailClient: function(options) {
-                var module = 'Emails';
-
                 //clean the recipient fields before handing off to email compose
                 _.each(['to', 'cc', 'bcc'], function(recipientType) {
                     if (options[recipientType]) {
@@ -45,24 +45,21 @@
                     }
                 }, this);
 
-                app.drawer.open({
-                    layout: 'create',
-                    context: {
-                        create: 'true',
-                        module: module,
-                        prepopulate: options
-                    }
-                }, _.bind(function(context, model) {
-                    if (model) {
-                        // Allow for component to perform action after close
-                        this.trigger('emailclient:close');
+                app.utils.openEmailCreateDrawer(
+                    'compose-email',
+                    options,
+                    _.bind(function(context, model) {
+                        if (model) {
+                            this.trigger('emailclient:close');
 
-                        // Refresh current list view if it is the Emails list view
-                        if (app.controller.context.get('module') === module) {
-                            app.controller.context.reloadData();
+                            // Refresh the current list view if it is the
+                            // Emails list view.
+                            if (app.controller.context.get('module') === 'Emails') {
+                                app.controller.context.reloadData();
+                            }
                         }
-                    }
-                }, this));
+                    }, this)
+                );
             },
 
             /**

@@ -49,6 +49,7 @@ describe('Plugins.EmailParticipants', function() {
     });
 
     afterEach(function() {
+        model.off();
         sandbox.restore();
         field.dispose();
         app.cache.cutAll();
@@ -109,6 +110,9 @@ describe('Plugins.EmailParticipants', function() {
             // The primary email address is used.
             expect(result.email_address).toBe('hrhodes@example.com');
             expect(bean.email_address).toBe('hrhodes@example.com');
+            // Derived from `app.utils.isValidEmailAddress`.
+            expect(result.invalid).toBe(false);
+            expect(bean.invalid).toBe(false);
         });
 
         it('should lock the selection', function() {
@@ -329,6 +333,56 @@ describe('Plugins.EmailParticipants', function() {
             actual = options.createSearchChoice(term, data);
 
             expect(actual).toBeUndefined();
+        });
+    });
+
+    describe('invalid participants', function() {
+        var bean;
+
+        beforeEach(function() {
+            bean = app.data.createBean('Contacts', {
+                _link: 'contacts_to',
+                id: _.uniqueId(),
+                name: 'Haley Rhodes',
+                email: [{
+                    email_address: 'hrhodes',
+                    primary_address: false,
+                    invalid_email: true,
+                    opt_out: false
+                }]
+            });
+        });
+
+        it('should mark the participant as invalid', function() {
+            var result = field.prepareModel(bean);
+
+            // Derived from `app.utils.isValidEmailAddress`.
+            expect(result.invalid).toBe(true);
+            expect(bean.invalid).toBe(true);
+        });
+
+        it('should invalidate the field', function() {
+            var cbSpy = sandbox.spy();
+            var eventSpy = sandbox.spy();
+
+            model.on('error:validation:' + field.name, eventSpy);
+
+            field.prepareModel(bean);
+            model.get(field.name).add(bean);
+
+            runs(function() {
+                model.doValidate(null, cbSpy);
+            });
+
+            waitsFor(function() {
+                return cbSpy.called;
+            });
+
+            runs(function() {
+                expect(cbSpy).toHaveBeenCalledWith(false);
+                expect(eventSpy).toHaveBeenCalledOnce();
+                expect(eventSpy.firstCall.args[0][field.type]).toBe(true);
+            });
         });
     });
 });

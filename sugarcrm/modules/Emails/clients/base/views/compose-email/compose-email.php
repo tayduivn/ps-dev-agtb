@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Emails']['base']['view']['create'] = array(
+$viewdefs['Emails']['base']['view']['compose-email'] = array(
     'template' => 'record',
     'buttons' => array(
         array(
@@ -24,11 +24,18 @@ $viewdefs['Emails']['base']['view']['create'] = array(
         array(
             'name' => 'save_button',
             'type' => 'button',
-            'label' => 'LBL_ARCHIVE',
-            'primary' => true,
-            'showOn' => 'create',
+            'label' => 'LBL_SAVE_AS_DRAFT_BUTTON_LABEL',
             'events' => array(
                 'click' => 'button:save_button:click',
+            ),
+        ),
+        array(
+            'name' => 'send_button',
+            'type' => 'button',
+            'label' => 'LBL_SEND_BUTTON_LABEL',
+            'primary' => true,
+            'events' => array(
+                'click' => 'button:send_button:click',
             ),
         ),
         array(
@@ -46,49 +53,70 @@ $viewdefs['Emails']['base']['view']['create'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'date_sent',
-                    'type' => 'datetimecombo',
-                    'label' => 'LBL_DATE_SENT',
-                    'span' => 12,
-                    'required' => true,
-                ),
-                array(
-                    'name' => 'from',
-                    'type' => 'from',
-                    'label' => 'LBL_FROM',
-                    'span'  => 12,
-                    'required' => true,
-                ),
-                array(
-                    'name' => 'to',
-                    'type' => 'email-recipients',
-                    'label' => 'LBL_TO_ADDRS',
-                    'span' => 12,
-                ),
-                array(
-                    'name' => 'cc',
-                    'type' => 'email-recipients',
-                    'label' => 'LBL_CC',
-                    'span' => 12,
-                ),
-                array(
-                    'name' => 'bcc',
-                    'type' => 'email-recipients',
-                    'label' => 'LBL_BCC',
-                    'span' => 12,
+                    'name' => 'recipients',
+                    'type' => 'recipients-fieldset',
+                    'css_class' => 'email-recipients',
+                    'dismiss_label' => true,
+                    'fields' => array(
+                        array(
+                            'name' => 'outbound_email_id',
+                            'type' => 'outbound-email',
+                            'label' => 'LBL_FROM',
+                            'span' => 12,
+                            'css_class' => 'inherit-width',
+                            'searchBarThreshold' => -1,
+                        ),
+                        array(
+                            'name' => 'to',
+                            'type' => 'email-recipients',
+                            'label' => 'LBL_TO_ADDRS',
+                            'span' => 12,
+                            'fields' => array(
+                                'name',
+                                'email_address_used',
+                                'email',
+                            ),
+                        ),
+                        array(
+                            'name' => 'cc',
+                            'type' => 'email-recipients',
+                            'label' => 'LBL_CC',
+                            'span' => 12,
+                            'fields' => array(
+                                'name',
+                                'email_address_used',
+                                'email',
+                            ),
+                        ),
+                        array(
+                            'name' => 'bcc',
+                            'type' => 'email-recipients',
+                            'label' => 'LBL_BCC',
+                            'span' => 12,
+                            'fields' => array(
+                                'name',
+                                'email_address_used',
+                                'email',
+                            ),
+                        ),
+                    ),
                 ),
                 array(
                     'name' => 'name',
                     'label' => 'LBL_SUBJECT',
+                    'dismiss_label' => true,
+                    'placeholder' => 'LBL_SUBJECT',
                     'span' => 12,
-                    'required' => true,
+                    'css_class' => 'ellipsis_inline',
+                    'related_fields' => array(
+                        'state',
+                    ),
                 ),
                 array(
                     'name' => 'description_html',
                     'type' => 'htmleditable_tinymce',
                     'dismiss_label' => true,
                     'span' => 12,
-                    'fieldSelector' => 'archive_html_body',
                     'tinyConfig' => array(
                         'toolbar' => 'code | bold italic underline strikethrough | bullist numlist | ' .
                             'alignleft aligncenter alignright alignjustify | forecolor backcolor | ' .
@@ -100,6 +128,15 @@ $viewdefs['Emails']['base']['view']['create'] = array(
                     'type' => 'email-attachments',
                     'dismiss_label' => true,
                     'span' => 12,
+                    'fields' => array(
+                        'name',
+                        'filename',
+                        'file_size',
+                        'file_source',
+                        'file_mime_type',
+                        'file_ext',
+                        'upload_id',
+                    ),
                 ),
             ),
         ),
@@ -120,13 +157,8 @@ $viewdefs['Emails']['base']['view']['create'] = array(
                     'span' => 12,
                 ),
                 array(
-                    'name' => 'assigned_user_name',
-                    'type' => 'relate',
-                    'span' => 12,
-                ),
-                array(
                     'name' => 'tag',
-                    'span' => 12,
+                    'span' => '12',
                 ),
             ),
         ),

@@ -9,25 +9,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @deprecated Use {@link View.Layouts.Base.Emails.ComposeEmailLayout} instead.
- * @class View.Layouts.Base.Emails.ComposeLayout
- * @alias SUGAR.App.view.layouts.BaseEmailsComposeLayout
- * @extends View.Layouts.Base.Emails.CreateLayout
+ * @class View.Layouts.Base.Emails.CreateLayout
+ * @alias SUGAR.App.view.layouts.BaseEmailsCreateLayout
+ * @extends View.Layouts.Base.CreateLayout
  */
 ({
-    extendsFrom: 'EmailsCreateLayout',
+    extendsFrom: 'CreateLayout',
 
     /**
      * @inheritdoc
      *
-     * @deprecated Use {@link View.Layouts.Base.Emails.ComposeEmailLayout}
-     * instead.
+     * Enables the DragdropSelect2:SelectAll shortcut for views that implement
+     * it.
      */
     initialize: function(options) {
-        var deprecation = 'View.Layouts.Base.Emails.ComposeLayout is deprecated. ' +
-            'Use View.Layouts.Base.Emails.ComposeEmailLayout instead.';
-        app.logger.warn(deprecation);
-
+        this.shortcuts = _.union(this.shortcuts || [], ['DragdropSelect2:SelectAll']);
         this._super('initialize', [options]);
     }
 })

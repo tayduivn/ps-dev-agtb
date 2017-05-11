@@ -89,12 +89,12 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'span'           => 12,
                 ),
                 array(
-                    'name'            => 'subject',
+                    'name'            => 'name',
                     'label'           => 'LBL_SUBJECT',
                     'span'            => 12,
                 ),
                 array(
-                    'name'          => 'html_body',
+                    'name'          => 'description_html',
                     'type'          => 'htmleditable_tinymce',
                     'dismiss_label' => true,
                     'span'          => 12,

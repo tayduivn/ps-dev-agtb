@@ -107,7 +107,9 @@ describe('Emails.Views.Record', function() {
 
             expect(app.alert.show).toHaveBeenCalled();
         });
+    });
 
+    describe('loading all recipients', function() {
         it('should toggle action buttons while loading all recipients', function() {
             sandbox.spy(view, 'toggleButtons');
 

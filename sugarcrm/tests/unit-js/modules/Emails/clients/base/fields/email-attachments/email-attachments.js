@@ -174,7 +174,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 options.complete({uid: _.uniqueId()});
             });
 
-            field.view.trigger('email_attachments:template:add', template);
+            field.view.trigger('email_attachments:template', template);
 
             expect(attachments.length).toBe(7);
 
@@ -283,7 +283,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 options.complete({uid: _.uniqueId()});
             });
 
-            field.view.trigger('email_attachments:template:add', template);
+            field.view.trigger('email_attachments:template', template);
 
             expect(attachments.length).toBe(4);
 
@@ -380,7 +380,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 options.complete({uid: _.uniqueId()});
             });
 
-            field.view.trigger('email_attachments:template:add', template);
+            field.view.trigger('email_attachments:template', template);
 
             // The template attachments should have been added.
             expect(attachments.length).toBe(5);
@@ -449,7 +449,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     options.complete({uid: _.uniqueId()});
                 });
 
-                field.view.trigger('email_attachments:template:add', template);
+                field.view.trigger('email_attachments:template', template);
 
                 expect(attachments.length).toBe(4);
 
@@ -573,7 +573,7 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     options.complete({uid: _.uniqueId()});
                 });
 
-                field.view.trigger('email_attachments:template:add', template);
+                field.view.trigger('email_attachments:template', template);
 
                 expect(attachments.length).toBe(4);
 

@@ -366,19 +366,16 @@
             });
         }
 
-        app.drawer.open({
-            layout: 'create',
-            context: {
-                create: true,
-                module: 'Emails',
-                prepopulate: prepopulate
-            }
-        }, _.bind(function(context, model) {
-            // Reload the BWC to update subpanels.
-            if (model) {
-                this.$('iframe').get(0).contentWindow.location.reload(true);
-            }
-        }, this));
+        app.utils.openEmailCreateDrawer(
+            'compose-email',
+            prepopulate,
+            _.bind(function(context, model) {
+                // Reload the BWC window to update subpanels.
+                if (model) {
+                    this.$('iframe').get(0).contentWindow.location.reload(true);
+                }
+            }, this)
+        );
     },
 
     /**
@@ -386,24 +383,18 @@
      * Reloads the BWC page if email created so it appears in the subpanel
      */
     openArchiveEmailDrawer: function() {
-        var self = this,
-            parentModel = this.context.get('model');
-
-        app.drawer.open({
-            layout: 'archive-email',
-            context: {
-                create: true,
-                module: 'Emails',
-                prepopulate: {
-                    related: parentModel
+        app.utils.openEmailCreateDrawer(
+            'create',
+            {
+                related: this.context.get('model')
+            },
+            _.bind(function(model) {
+                if (model) {
+                    // Reload the BWC window to update subpanels.
+                    this.$('iframe').get(0).contentWindow.location.reload(true);
                 }
-            }
-        }, function(model) {
-            if (model) {
-                // Reload the BWC to update subpanels.
-                self.$('iframe').get(0).contentWindow.location.reload(true);
-            }
-        });
+            }, this)
+        );
     },
 
     /**

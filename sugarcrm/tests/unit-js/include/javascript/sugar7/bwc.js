@@ -195,44 +195,32 @@ describe("sugar7.extensions.bwc", function() {
     });
 
     describe('shareRecord', function() {
-        var getViewStub, launchExternalEmailStub;
-
         beforeEach(function() {
-            getViewStub = sinon.stub(app.template, 'getView', function() {
+            sinonSandbox.stub(app.template, 'getView', function() {
                 return $.noop;
             });
-            launchExternalEmailStub = sinon.stub(app.bwc, '_launchExternalEmail');
+            sinonSandbox.stub(app.bwc, '_launchExternalEmail');
             SugarTest.loadPlugin('EmailClientLaunch');
             SugarTest.loadComponent('base', 'field', 'shareaction');
-            app.drawer = {
-                open: sinon.stub()
-            };
-        });
-
-        afterEach(function() {
-            getViewStub.restore();
-            launchExternalEmailStub.restore();
-            app.drawer = null;
+            sinonSandbox.stub(app.utils, 'openEmailCreateDrawer');
         });
 
         it('should launch external email client if preferred', function() {
-            var getPrefStub = sinon.stub(app.user, 'getPreference', function() {
+            sinonSandbox.stub(app.user, 'getPreference', function() {
                 return {type: 'mailto'};
             });
             app.bwc.shareRecord(module, id, 'name123');
-            expect(launchExternalEmailStub.callCount).toBe(1);
-            expect(app.drawer.open.callCount).toBe(0);
-            getPrefStub.restore();
+            expect(app.bwc._launchExternalEmail).toHaveBeenCalledOnce();
+            expect(app.utils.openEmailCreateDrawer).not.toHaveBeenCalled();
         });
 
         it('should launch internal email client if preferred', function() {
-            var getPrefStub = sinon.stub(app.user, 'getPreference', function() {
+            sinonSandbox.stub(app.user, 'getPreference', function() {
                 return {type: 'sugar'};
             });
             app.bwc.shareRecord(module, id, 'name123');
-            expect(launchExternalEmailStub.callCount).toBe(0);
-            expect(app.drawer.open.callCount).toBe(1);
-            getPrefStub.restore();
+            expect(app.bwc._launchExternalEmail).not.toHaveBeenCalled();
+            expect(app.utils.openEmailCreateDrawer).toHaveBeenCalledOnce();
         });
     });
 

@@ -9,23 +9,35 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * @deprecated Use {@link View.Views.Base.Emails.CreateView} instead.
  * @class View.Views.Base.Emails.ArchiveEmailView
  * @alias SUGAR.App.view.views.BaseEmailsArchiveEmailView
- * @extends View.Views.Base.Emails.CreateView
+ * @extends View.Views.Base.Emails.ComposeView
  */
 ({
-    extendsFrom: 'EmailsCreateView',
+    extendsFrom: 'EmailsComposeView',
 
     /**
      * @inheritdoc
      *
      * Add click event handler to archive an email.
+     *
+     * @deprecated Use {@link View.Views.Base.Emails.CreateView} instead.
      */
     initialize: function(options) {
+        app.logger.warn(
+            'View.Views.Base.Emails.ArchiveEmailView is deprecated. Use View.Views.Base.Emails.CreateView instead.'
+        );
+
         this.events = _.extend({}, this.events, {
             'click [name=archive_button]': 'archive'
         });
         this._super('initialize', [options]);
+
+        if (!this.model.has('assigned_user_id')) {
+            this.model.set('assigned_user_id', app.user.id);
+            this.model.set('assigned_user_name', app.user.get('full_name'));
+        }
     },
 
     /**
@@ -48,10 +60,13 @@
     /**
      * Archive email if validation passes.
      */
-    archive: function() {
+    archive: function(event) {
+        this.setMainButtonsDisabled(true);
         this.model.doValidate(this.getFieldsToValidate(), _.bind(function(isValid) {
             if (isValid) {
                 this.archiveEmail();
+            } else {
+                this.setMainButtonsDisabled(false);
             }
         }, this));
     },
@@ -72,27 +87,63 @@
      * Call archive api.
      */
     archiveEmail: function() {
-        this.model.set('state', 'Archived');
-        this.save();
+        var archiveUrl = app.api.buildURL('Mail/archive');
+        var alertKey = 'mail_archive';
+        var archiveEmailModel = this.initializeSendEmailModel();
+
+        app.alert.show(alertKey, {level: 'process', title: app.lang.get('LBL_EMAIL_ARCHIVING', this.module)});
+
+        app.api.call('create', archiveUrl, archiveEmailModel, {
+            success: _.bind(function() {
+                app.alert.dismiss(alertKey);
+                app.alert.show(alertKey, {
+                    autoClose: true,
+                    level: 'success',
+                    messages: app.lang.get('LBL_EMAIL_ARCHIVED', this.module)
+                });
+                app.drawer.close(this.model);
+            }, this),
+            error: function(error) {
+                var msg = {level: 'error'};
+                if (error && _.isString(error.message)) {
+                    msg.messages = error.message;
+                }
+                app.alert.dismiss(alertKey);
+                app.alert.show(alertKey, msg);
+            },
+            complete: _.bind(function() {
+                if (!this.disposed) {
+                    this.setMainButtonsDisabled(false);
+                }
+            }, this)
+        });
     },
 
     /**
      * @inheritdoc
-     *
-     * Build the appropriate success message for an archvived email.
      */
-    buildSuccessMessage: function() {
-        return app.lang.get('LBL_EMAIL_ARCHIVED', this.module);
+    initializeSendEmailModel: function() {
+        var model = this._super('initializeSendEmailModel');
+        model.set({
+            'date_sent': this.model.get('date_sent'),
+            'from_address': this.model.get('from_address'),
+            'status': 'archive',
+            'state': 'Archived'
+        });
+        return model;
+    },
+
+    /**
+     * Disable/enable archive button.
+     * @param {boolean} disabled
+     */
+    setMainButtonsDisabled: function(disabled) {
+        this.getField('archive_button').setDisabled(disabled);
     },
 
     /**
      * No need to warn of configuration status for archive email because no
      * email is being sent.
      */
-    notifyConfigurationStatus: $.noop,
-
-    /**
-     * No need to insert the default signature for archive email.
-     */
-    _initializeDefaultSignature: $.noop
+    notifyConfigurationStatus: $.noop
 })

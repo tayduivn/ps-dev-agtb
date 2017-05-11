@@ -140,7 +140,7 @@
      * @protected
      */
     _retrieveEmailOptionsFromLink: function() {
-        return {_signatureLocation: 'below'};
+        return {signature_location: 'below'};
     },
 
     /**

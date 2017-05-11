@@ -23,15 +23,6 @@
     plugins: ['EmailClientLaunch'],
 
     /**
-     * ID to add to the div wrapper around reply content for later identifying
-     * the portion of the email body which is the reply content. ie., when
-     * inserting templates into an email but maintaining reply content.
-     *
-     * @private
-     */
-    REPLY_CONTENT_ID: 'replycontent',
-
-    /**
      * Template for reply header.
      *
      * @private
@@ -68,7 +59,11 @@
         var replyHeaderHtml = tplHeaderHtml(this._getReplyHeaderParams());
         var replyBody = this._getReplyBody();
         var replyBodyHtml = this._getReplyBodyHtml();
-        var descriptionHtml = '<div></div><div id="' + this.REPLY_CONTENT_ID + '">' +
+        // The "replycontent" ID is added to the div wrapper around the reply
+        // content for later identifying the portion of the email body which is
+        // the reply content (e.g., when inserting templates into an email, but
+        // maintaining the reply content).
+        var descriptionHtml = '<div></div><div id="replycontent">' +
             replyHeaderHtml + replyBodyHtml + '</div>';
 
         var options = {
@@ -81,7 +76,7 @@
             parent_name: this.model.get('parent_name'),
             team_name: this.model.get('team_name'),
             reply_to_id: this.model.get('id'),
-            _signatureLocation: 'above'
+            signature_location: 'above'
         };
 
         if (!this.useSugarEmailClient()) {
@@ -257,6 +252,6 @@
     _getReplyBodyHtml: function() {
         var body = (this.model.get('description_html') || '');
         body = body.replace('<div class="signature">', '<div>');
-        return body.replace('<div id="' + this.REPLY_CONTENT_ID + '">', '<div>');
+        return body.replace('<div id="replycontent">', '<div>');
     }
 })

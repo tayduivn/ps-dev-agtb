@@ -16,6 +16,232 @@
 
         var $tooltipTemplate = $(tooltipTemplate());
 
+        /**
+         * Each related record must have a valid `_link` attribute. That starts
+         * with generating a map of related modules to link names for the
+         * collection field.
+         *
+         * @param {string} module The module for the side of the relationship
+         * on which you are operating.
+         * @param {Array} links Each link may either by the name (string) or an
+         * object with a `name` key-value pair.
+         * @return {Object} The keys are the names of the modules on the other
+         * side of the relationship. The values are names of the links for each
+         * module.
+         */
+        function getRelatedModuleToLinkNameMap(module, links) {
+            var relatedModuleToLinkNameMap;
+
+            relatedModuleToLinkNameMap = _.chain(links)
+                .map(function(link) {
+                    return _.has(link, 'name') ? link.name : link;
+                })
+                .reduce(function(map, link) {
+                    var relatedModule = app.data.getRelatedModule(module, link);
+
+                    if (relatedModule) {
+                        map[relatedModule] = link;
+                    }
+
+                    return map;
+                }, {})
+                .value();
+
+            return relatedModuleToLinkNameMap;
+        }
+
+        /**
+         * Assigns the appropriate `_link` attribute to the model.
+         *
+         * @param {Data.Bean} model
+         * @param {Object} relatedModuleToLinkNameMap Use the map to identify
+         * the link from the model's module, if the model doesn't already have
+         * a `_link` attribute.
+         * @return {Data.Bean} The mutated model.
+         */
+        function prepareModelForCollection(model, relatedModuleToLinkNameMap) {
+            var link;
+
+            if (!_.contains(relatedModuleToLinkNameMap, model.get('_link'))) {
+                link = relatedModuleToLinkNameMap[model.module] || '';
+
+                if (link) {
+                    model.set('_link', link);
+                }
+            }
+
+            return model;
+        }
+
+        /**
+         * Sets the `parent_type`, `parent_id`, and `parent_name` attributes of
+         * the model using the data from the parent.
+         *
+         * The attributes are updated asynchronously if the parent's name isn't
+         * known and must be retrieved. The attributes cannot be set if the
+         * user does not have `list` access to the parent's module.
+         *
+         * @param {Data.Bean} model
+         * @param {Data.Bean} parent
+         */
+        function setParentAttributes(model, parent) {
+            var fields = app.metadata.getModule(model.module, 'fields');
+            var modules;
+
+            modules = _.chain(app.lang.getAppListStrings(fields.parent_type.options))
+                .keys()
+                .filter(function(module) {
+                    return app.acl.hasAccess('list', module);
+                })
+                .value();
+
+            if (!_.contains(modules, parent.module)) {
+                return;
+            }
+
+            function setAttributes(parent) {
+                model.set('parent_type', parent.module);
+                model.set('parent_id', parent.get('id'));
+                model.set('parent_name', parent.get('name'));
+            }
+
+            if (!_.isEmpty(parent.get('id')) && !_.isEmpty(parent.get('name'))) {
+                setAttributes(parent);
+            } else if (!_.isEmpty(parent.get('id'))) {
+                parent.fetch({
+                    showAlerts: false,
+                    success: setAttributes,
+                    fields: ['name']
+                });
+            }
+        }
+
+        /**
+         * Populates an email with data from a case. This is used when
+         * composing an email that is related to a case.
+         *
+         * The subject of the email becomes "[CASE:<case_number>] <case_name>".
+         * Contacts related to the case are added as recipients in the To
+         * field.
+         *
+         * @param {Data.Bean} email
+         * @param {Data.Bean} aCase
+         */
+        function prepopulateEmailWithCase(email, aCase) {
+            var config;
+            var keyMacro = '%1';
+            var caseMacro;
+            var subject;
+            var contacts;
+
+            if (aCase.module !== 'Cases') {
+                return;
+            }
+
+            config = app.metadata.getConfig();
+            caseMacro = config.inboundEmailCaseSubjectMacro;
+            subject = caseMacro + ' ' + aCase.get('name');
+            subject = subject.replace(keyMacro, aCase.get('case_number'));
+
+            email.set('name', subject);
+
+            if (email.get('to').length === 0) {
+                // no addresses, attempt to populate from contacts relationship
+                contacts = aCase.getRelatedCollection('contacts');
+                contacts.fetch({
+                    relate: true,
+                    success: function(data) {
+                        var records = data.map(function(record) {
+                            record.set('_link', 'contacts_to');
+
+                            return record;
+                        });
+
+                        email.get('to').add(records);
+                    },
+                    fields: ['id', 'full_name', 'email']
+                });
+            }
+        }
+
+        /**
+         * Populates attributes on an email from the data provided.
+         *
+         * @param {Date.Bean} email
+         * @param {Object} data Attributes to set on the email.
+         * @param {string} [data.name] Sets the subject of the email.
+         * @param {string} [data.description_html] Sets the HTML body of the
+         * email.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.from] The sender
+         * to add to the From field.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.to] The
+         * recipients to add to the To field.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.cc] The
+         * recipients to add to the CC field.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.bcc] The
+         * recipients to add to the BCC field.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.attachments_collection]
+         * The attachments to attach to the email.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.attachments] A
+         * more convenient alternative name for the attachments.
+         * @param {Data.Bean} [data.related] A convenience for relating a
+         * parent record to the email.
+         * @return {Object} Any key-values pairs that could not be assigned are
+         * returned so the caller can decide what to do with them.
+         */
+        function prepopulateEmailForCreate(email, data) {
+            var fields = app.metadata.getModule('Emails', 'fields');
+            var fieldNames = _.keys(fields);
+            var nonFieldData = {};
+
+            _.each(data, function(value, fieldName) {
+                var fieldDefs;
+                var relatedModuleToLinkNameMap;
+
+                // Change it to the collection field.
+                if (fieldName === 'attachments') {
+                    fieldName = 'attachments_collection';
+                }
+
+                fieldDefs = fields[fieldName] || {};
+
+                if (fieldName === 'related') {
+                    prepopulateEmailWithCase(email, value);
+                    setParentAttributes(email, value);
+                } else if (fieldDefs.type === 'collection') {
+                    if (value instanceof app.BeanCollection) {
+                        value = value.models;
+                    }
+
+                    if (!_.isArray(value)) {
+                        value = [value];
+                    }
+
+                    relatedModuleToLinkNameMap = getRelatedModuleToLinkNameMap('Emails', fieldDefs.links);
+
+                    // Assign the appropriate `_link` attribute. Filter out any
+                    // related records that end up with an invalid `_link` for
+                    // the collection field.
+                    value = _.chain(value)
+                        .map(function(model) {
+                            return prepareModelForCollection(model, relatedModuleToLinkNameMap);
+                        })
+                        .filter(function(model) {
+                            return _.contains(relatedModuleToLinkNameMap, model.get('_link'));
+                        })
+                        .value();
+
+                    email.get(fieldName).add(value);
+                } else if (_.contains(fieldNames, fieldName)) {
+                    email.set(fieldName, value);
+                } else {
+                    nonFieldData[fieldName] = value;
+                }
+            });
+
+            return nonFieldData;
+        }
+
         app.utils = _.extend(app.utils, {
             /**
              * If Forecasts is not setup, it will convert commit_stage into a spacer field and show no-data
@@ -795,6 +1021,58 @@
                     || value === '1'
                     || value === 'on'
                     || value === 'yes';
+            },
+
+            /**
+             * Populates the data on the email and then opens the specified
+             * Emails layout in a drawer.
+             *
+             * @param {string} layout Use `create` for creating an archived
+             * email and `compose-email` for creating a draft/sending an email.
+             * @param {Object} [data] Any data to populate on the model before
+             * opening the drawer. The keys `create` and `module` are reserved.
+             * Any key-value pairs that can't be populated on the model will
+             * become attributes on the drawer's context.
+             * @param {Data.Bean} [data.model] Can be used to specify a model
+             * for the drawer's context. The model must be an Emails model. If
+             * not specified, a new Emails model will be created for the
+             * context and the data will be populated on that new model.
+             * @param {Function} [onClose] The callback that is called when the
+             * drawer closes.
+             */
+            openEmailCreateDrawer: function(layout, data, onClose) {
+                var context = {
+                    create: true,
+                    module: 'Emails'
+                };
+
+                data = data || {};
+
+                if (data.model && data.model instanceof app.Bean && data.model.module === context.module) {
+                    // Use the provided model for the context.
+                    context.model = data.model;
+                } else {
+                    // Create a new model for the context.
+                    context.model = app.data.createBean(context.module);
+                }
+
+                // We're done with the provided model. Remove it so nothing
+                // funky happens while populating the email.
+                data = _.omit(data, 'model');
+
+                // Populate the email with the rest of the data. Any data that
+                // can't be mapped to an Emails field will be returned so it
+                // can become an attribute on the context.
+                data = prepopulateEmailForCreate(context.model, data);
+
+                // Merge context over the remaining data so that it is
+                // impossible for anyone to override `create` and `module`.
+                context = _.extend(data, context);
+
+                app.drawer.open({
+                    layout: layout,
+                    context: context
+                }, onClose);
             }
         });
     });

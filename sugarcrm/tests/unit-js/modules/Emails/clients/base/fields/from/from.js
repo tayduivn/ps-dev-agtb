@@ -112,6 +112,7 @@ describe('Emails.BaseFromField', function() {
                 loadFromModule: true
             });
             field.model.set('from', from);
+            field.model.trigger('sync');
             field.render();
         });
 
@@ -134,6 +135,7 @@ describe('Emails.BaseFromField', function() {
 
         it('should change the sender', function() {
             var event = new $.Event('change');
+            var currentSender = field.model.get('from').at(0);
             var newSender = app.data.createBean('Contacts', {
                 _link: 'contacts_from',
                 id: _.uniqueId(),
@@ -141,6 +143,7 @@ describe('Emails.BaseFromField', function() {
                 email_address_used: 'icarr@example.com'
             });
             var actual;
+            var json;
 
             event.added = [newSender];
             field.$(field.fieldTag).trigger(event);
@@ -148,6 +151,13 @@ describe('Emails.BaseFromField', function() {
 
             expect(actual.length).toBe(1);
             expect(actual.at(0)).toBe(newSender);
+
+            // Assert that the new sender will be linked on the next sync.
+            json = field.model.toJSON({fields: ['from']});
+            expect(json.contacts_from.add.length).toBe(1);
+            expect(json.contacts_from.add[0]).toBe(newSender.get('id'));
+            expect(json.contacts_from.delete.length).toBe(1);
+            expect(json.contacts_from.delete[0]).toBe(currentSender.get('id'));
         });
 
         it('should remove the sender', function() {

@@ -45,6 +45,10 @@
             'click .btn': '_showAddressBook'
         });
         this._super('initialize', [options]);
+
+        // Specify the error label for when any recipient's email address is
+        // invalid.
+        app.error.errorName2Keys[this.type] = 'ERR_INVALID_RECIPIENTS';
     },
 
     /**
@@ -145,7 +149,7 @@
                         cid: recipient.cid,
                         name: recipient.name || recipient.email_address,
                         email_address: recipient.email_address,
-                        invalid: !app.utils.isValidEmailAddress(recipient.email_address)
+                        invalid: recipient.invalid
                     });
                 }, this),
 

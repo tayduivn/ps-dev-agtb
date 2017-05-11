@@ -37,14 +37,14 @@
      * @return {string}
      */
     buildHref: function() {
-        var defRoute = this.def.route ? this.def.route : {};
+        var action = this.def.route && this.def.route.action ? this.def.route.action : null;
         var module = this.model.module || this.context.get('module');
 
-        if (this.model.get('state') === 'Draft' && this._useSugarEmailClient()) {
-            module += '/drafts';
+        if (this.model.get('state') === 'Draft' && this._useSugarEmailClient() && !action) {
+            action = 'compose';
         }
 
-        return '#' + app.router.buildRoute(module, this.model.get('id'), defRoute.action);
+        return '#' + app.router.buildRoute(module, this.model.get('id'), action);
     },
 
     /**

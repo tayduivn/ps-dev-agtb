@@ -211,104 +211,108 @@ describe('Base.View.Bwc', function() {
         });
     });
 
-    describe('send an email from a bwc module', function() {
+    describe('creating emails from a bwc module', function() {
         beforeEach(function() {
             view.model.set({
                 id: _.uniqueId(),
                 name: 'Foo Bar'
             });
 
-            app.drawer = {
-                open: sandbox.spy()
-            };
+            sandbox.stub(app.utils, 'openEmailCreateDrawer');
         });
 
-        afterEach(function() {
-            app.drawer = null;
-        });
-
-        it('should open the compose email drawer', function() {
-            var composePackage = {
-                attachments: {
-                    123: {
-                        id: 123,
-                        filename: 'foobar.jpg'
+        describe('sending an email', function() {
+            it('should open the compose email drawer', function() {
+                var composePackage = {
+                    attachments: {
+                        123: {
+                            id: 123,
+                            filename: 'foobar.jpg'
+                        },
+                        456: {
+                            id: 456,
+                            filename: 'bizbaz.pdf'
+                        }
                     },
-                    456: {
-                        id: 456,
-                        filename: 'bizbaz.pdf'
-                    }
-                },
-                body: 'blah blah blah',
-                email_id: '',
-                parent_id: view.model.get('id'),
-                parent_name: view.model.get('name'),
-                parent_type: view.model.module,
-                subject: 'check this out!',
-                to_email_addrs: ''
-            };
+                    body: 'blah blah blah',
+                    email_id: '',
+                    parent_id: view.model.get('id'),
+                    parent_name: view.model.get('name'),
+                    parent_type: view.model.module,
+                    subject: 'check this out!',
+                    to_email_addrs: ''
+                };
 
-            view.openComposeEmailDrawer(composePackage);
+                view.openComposeEmailDrawer(composePackage);
 
-            expect(app.drawer.open).toHaveBeenCalledOnce();
-            expect(app.drawer.open.args[0][0].layout).toBe('create');
-            expect(app.drawer.open.args[0][0].context.create).toBe(true);
-            expect(app.drawer.open.args[0][0].context.module).toBe('Emails');
-            expect(app.drawer.open.args[0][0].context.prepopulate.name).toBe(composePackage.subject);
-            expect(app.drawer.open.args[0][0].context.prepopulate.description_html).toBe(composePackage.body);
-            expect(app.drawer.open.args[0][0].context.prepopulate.related).toBe(view.model);
-            expect(app.drawer.open.args[0][0].context.prepopulate.attachments.length).toBe(2);
-            expect(app.drawer.open.args[0][0].context.prepopulate.attachments[0].toJSON()).toEqual({
-                upload_id: 123,
-                name: 'foobar.jpg',
-                filename: 'foobar.jpg'
+                expect(app.utils.openEmailCreateDrawer).toHaveBeenCalledOnce();
+                expect(app.utils.openEmailCreateDrawer.args[0][0]).toBe('compose-email');
+                expect(app.utils.openEmailCreateDrawer.args[0][1].name).toBe(composePackage.subject);
+                expect(app.utils.openEmailCreateDrawer.args[0][1].description_html).toBe(composePackage.body);
+                expect(app.utils.openEmailCreateDrawer.args[0][1].related).toBe(view.model);
+                expect(app.utils.openEmailCreateDrawer.args[0][1].attachments.length).toBe(2);
+                expect(app.utils.openEmailCreateDrawer.args[0][1].attachments[0].toJSON()).toEqual({
+                    upload_id: 123,
+                    name: 'foobar.jpg',
+                    filename: 'foobar.jpg'
+                });
+                expect(app.utils.openEmailCreateDrawer.args[0][1].attachments[1].toJSON()).toEqual({
+                    upload_id: 456,
+                    name: 'bizbaz.pdf',
+                    filename: 'bizbaz.pdf'
+                });
             });
-            expect(app.drawer.open.args[0][0].context.prepopulate.attachments[1].toJSON()).toEqual({
-                upload_id: 456,
-                name: 'bizbaz.pdf',
-                filename: 'bizbaz.pdf'
-            });
+
+            using(
+                'to_email_addrs',
+                [
+                    [
+                        'Billy Bob <bb@foo.com>',
+                        'bb@foo.com'
+                    ],
+                    [
+                        '<bb@foo.com>',
+                        'bb@foo.com'
+                    ],
+                    [
+                        'Billy Bob <bb@foo.com>, Cathy Cobb <cc@foo.com>, Susie Q <sq@foo.com>',
+                        'bb@foo.com|cc@foo.com|sq@foo.com'
+                    ],
+                    [
+                        '<bb@foo.com>, <cc@foo.com>',
+                        'bb@foo.com|cc@foo.com'
+                    ],
+                    [
+                        'bb@foo.com, cc@foo.com',
+                        'bb@foo.com|cc@foo.com'
+                    ]
+                ],
+                function(toEmailAddrs, expected) {
+                    it('should pass email addresses to the email compose drawer', function() {
+                        var actual;
+                        var composePackage = {
+                            to_email_addrs: toEmailAddrs
+                        };
+
+                        view.openComposeEmailDrawer(composePackage);
+
+                        actual = _.map(app.utils.openEmailCreateDrawer.args[0][1].to, function(recipient) {
+                            return recipient.get('email_address');
+                        }).join('|');
+                        expect(actual).toBe(expected);
+                    });
+                }
+            );
         });
 
-        using(
-            'to_email_addrs',
-            [
-                [
-                    'Billy Bob <bb@foo.com>',
-                    'bb@foo.com'
-                ],
-                [
-                    '<bb@foo.com>',
-                    'bb@foo.com'
-                ],
-                [
-                    'Billy Bob <bb@foo.com>, Cathy Cobb <cc@foo.com>, Susie Q <sq@foo.com>',
-                    'bb@foo.com|cc@foo.com|sq@foo.com'
-                ],
-                [
-                    '<bb@foo.com>, <cc@foo.com>',
-                    'bb@foo.com|cc@foo.com'
-                ],
-                [
-                    'bb@foo.com, cc@foo.com',
-                    'bb@foo.com|cc@foo.com'
-                ]
-            ],
-            function(toEmailAddrs, expected) {
-                it('should pass email addresses to the email compose drawer', function() {
-                    var actual;
-                    var composePackage = {
-                        to_email_addrs: toEmailAddrs
-                    };
+        describe('creating an archived email', function() {
+            it('should open the archive email drawer', function() {
+                view.openArchiveEmailDrawer();
 
-                    view.openComposeEmailDrawer(composePackage);
-
-                    actual = _.map(app.drawer.open.args[0][0].context.prepopulate.to, function(recipient) {
-                        return recipient.get('email_address');
-                    }).join('|');
-                    expect(actual).toBe(expected);
-                });
-            }
-        );
+                expect(app.utils.openEmailCreateDrawer).toHaveBeenCalledOnce();
+                expect(app.utils.openEmailCreateDrawer.args[0][0]).toBe('create');
+                expect(app.utils.openEmailCreateDrawer.args[0][1].related).toBe(view.model);
+            });
+        });
     });
 });

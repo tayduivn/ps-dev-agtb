@@ -10,6 +10,18 @@
  */
 (function(app) {
     app.events.on('app:init', function() {
+        /**
+         * Generate a unique, but consistent, ID for a validation task for the
+         * component.
+         *
+         * @param {View.Component} component The component to which the
+         * validation task is being added.
+         * @return {string} email_participants_validator_<component.cid>
+         */
+        function getValidationTaskName(component) {
+            return 'email_participants_validator_' + component.cid;
+        }
+
         app.plugins.register('EmailParticipants', ['field'], {
             /**
              * @inheritdoc
@@ -73,6 +85,8 @@
                 }, 300);
 
                 this.on('init', function() {
+                    var task = getValidationTaskName(this);
+
                     relatedModuleToLinkNameMap = _.chain(this.fieldDefs.links)
                         .map(function(link) {
                             return _.has(link, 'name') ? link.name : link;
@@ -87,6 +101,36 @@
                             return map;
                         }, {}, this)
                         .value();
+
+                    /**
+                     * Verify that there are not any invalid participants.
+                     */
+                    this.model.addValidationTask(task, _.bind(function(fields, errors, callback) {
+                        var participants = this.model.get(this.name);
+                        var hasInvalidParticipants = _.some(participants.models, function(participant) {
+                            return !!participant.invalid;
+                        });
+
+                        if (hasInvalidParticipants) {
+                            errors[this.name] = errors[this.name] || {};
+                            errors[this.name][this.type] = true;
+                        }
+
+                        callback(null, fields, errors);
+                    }, this));
+                });
+
+                /**
+                 * Remove the validation task when disposing the component.
+                 */
+                this.unbindData = _.wrap(this.unbindData, function(_super) {
+                    var task = getValidationTaskName(this);
+
+                    if (this.model) {
+                        this.model.removeValidationTask(task);
+                    }
+
+                    _super.call(this);
                 });
 
                 this.hasLink = function(link) {
@@ -125,6 +169,7 @@
                     model.email_address = model.get('email_address_used') ||
                         model.get('email_address') ||
                         app.utils.getPrimaryEmailAddress(model);
+                    model.invalid = !app.utils.isValidEmailAddress(model.email_address);
 
                     return model;
                 };

@@ -19,18 +19,13 @@
     /**
      * @inheritdoc
      *
-     * Adds a listener for the `email_attachments:template:add` event, which is
+     * Adds a listener for the `email_attachments:template` event, which is
      * triggered on the view to add attachments. The handler will fetch the
      * attachments from a template, so that they can be copied to the email.
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-
-        // Must wrap listenTo callbacks in anonymous functions for stubbing.
-        // https://stackoverflow.com/q/23823889
-        this.listenTo(this.view, 'email_attachments:template:add', function(template) {
-            this._fetchTemplateAttachments(template);
-        });
+        this.listenTo(this.view, 'email_attachments:template', this._fetchTemplateAttachments);
     },
 
     /**

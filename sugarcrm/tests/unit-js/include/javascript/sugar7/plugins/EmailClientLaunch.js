@@ -11,7 +11,6 @@
 describe('EmailClientLaunch Plugin', function() {
     var app;
     var field;
-    var originalDrawer;
     var setUseSugarClient;
     var userPrefs;
     var sandbox;
@@ -24,18 +23,13 @@ describe('EmailClientLaunch Plugin', function() {
         SugarTest.app.plugins.attach(field, 'field');
 
         sandbox = sinon.sandbox.create();
-
-        originalDrawer = app.drawer;
-        app.drawer = {
-            open: sandbox.stub()
-        };
+        sandbox.stub(app.utils, 'openEmailCreateDrawer');
         userPrefs = app.user.get('preferences');
     });
 
     afterEach(function() {
         sandbox.restore();
         field.dispose();
-        app.drawer = originalDrawer;
         app.user.set('preferences', userPrefs);
     });
 
@@ -60,13 +54,13 @@ describe('EmailClientLaunch Plugin', function() {
         it('should launch the Sugar Email Client if user profile says internal', function() {
             setUseSugarClient(true);
             field.launchEmailClient({});
-            expect(app.drawer.open.callCount).toBe(1);
+            expect(app.utils.openEmailCreateDrawer).toHaveBeenCalledWith('compose-email');
         });
 
         it('should not launch the Sugar Email Client if user profile says external', function() {
             setUseSugarClient(false);
             field.launchEmailClient({});
-            expect(app.drawer.open.callCount).toBe(0);
+            expect(app.utils.openEmailCreateDrawer).not.toHaveBeenCalled();
         });
 
         it('should clean to, cc, and bcc recipient lists before launching Sugar Email Client', function() {
@@ -85,7 +79,7 @@ describe('EmailClientLaunch Plugin', function() {
             app.controller.context.set('module', 'Emails');
             setUseSugarClient(true);
             field.launchEmailClient({});
-            drawerCloseCallback = app.drawer.open.lastCall.args[1];
+            drawerCloseCallback = app.utils.openEmailCreateDrawer.lastCall.args[2];
             drawerCloseCallback(field.context, model);
             expect(app.controller.context.reloadData).toHaveBeenCalled();
         });
@@ -97,7 +91,7 @@ describe('EmailClientLaunch Plugin', function() {
             app.controller.context.set('module', 'Tasks');
             setUseSugarClient(true);
             field.launchEmailClient({});
-            drawerCloseCallback = app.drawer.open.lastCall.args[1];
+            drawerCloseCallback = app.utils.openEmailCreateDrawer.lastCall.args[2];
             drawerCloseCallback(model);
             expect(app.controller.context.reloadData).not.toHaveBeenCalled();
         });
@@ -108,7 +102,7 @@ describe('EmailClientLaunch Plugin', function() {
             app.controller.context.set('module', 'Emails');
             setUseSugarClient(true);
             field.launchEmailClient({});
-            drawerCloseCallback = app.drawer.open.lastCall.args[1];
+            drawerCloseCallback = app.utils.openEmailCreateDrawer.lastCall.args[2];
             drawerCloseCallback();
             expect(app.controller.context.reloadData).not.toHaveBeenCalled();
         });

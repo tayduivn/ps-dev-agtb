@@ -68,31 +68,47 @@ describe('Emails.Field.Name', function() {
     });
 
     describe('buildHref()', function() {
+        var oldAppRouter;
+
+        beforeEach(function() {
+            oldAppRouter = app.router;
+            app.router = {
+                buildRoute: sandbox.stub()
+            };
+            field.model.set('id', _.uniqueId());
+        });
+
+        afterEach(function() {
+            app.router = oldAppRouter;
+        });
+
         using('different email states and email client settings',
             [
-                ['Draft', true, 'Emails/drafts'],
-                ['Draft', false, 'Emails'],
-                ['Archived', true, 'Emails'],
-                ['Archived', false, 'Emails']
+                ['Draft', true, 'compose'],
+                ['Draft', false, null],
+                ['Archived', true, null],
+                ['Archived', false, null]
             ],
-            function(state, useSugarClient, expected) {
+            function(state, useSugarClient, action) {
                 it('should return the correct href', function() {
-                    var oldAppRouter = app.router;
-
                     field.model.set('state', state);
-                    sandbox
-                        .stub(field, '_useSugarEmailClient')
-                        .returns(useSugarClient);
-
-                    app.router = {
-                        buildRoute: sandbox.stub()
-                    };
+                    sandbox.stub(field, '_useSugarEmailClient').returns(useSugarClient);
 
                     field.buildHref();
-                    expect(app.router.buildRoute).toHaveBeenCalledWith(expected);
-                    app.router = oldAppRouter;
+                    expect(app.router.buildRoute).toHaveBeenCalledWith('Emails', field.model.get('id'), action);
                 });
             }
         );
+
+        it('should use the action from the route def if one is given in the view metadata', function() {
+            field.def.route = {
+                action: 'edit'
+            };
+            field.model.set('state', 'Draft');
+            sandbox.stub(field, '_useSugarEmailClient').returns(true);
+
+            field.buildHref();
+            expect(app.router.buildRoute).toHaveBeenCalledWith('Emails', field.model.get('id'), field.def.route.action);
+        });
     });
 });

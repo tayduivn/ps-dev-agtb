@@ -33,6 +33,16 @@
     },
 
     /**
+     * @inheritdoc
+     *
+     * Dismisses any alerts with the key `email-client-status`.
+     */
+    _dispose: function() {
+        app.alert.dismiss('email-client-status');
+        this._super('_dispose');
+    },
+
+    /**
      * Shows a warning to the user when a not_authorized error is returned.
      *
      * @inheritdoc

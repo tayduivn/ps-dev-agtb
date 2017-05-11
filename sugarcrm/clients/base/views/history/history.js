@@ -102,23 +102,19 @@
      * @param params
      */
     archiveEmail: function(event, params) {
-        var self = this;
-        app.drawer.open({
-            layout: 'archive-email',
-            context: {
-                create: true,
-                module: 'Emails',
-                prepopulate: {
-                    related: this.model,
-                    to: this.model
+        app.utils.openEmailCreateDrawer(
+            'create',
+            {
+                related: this.model,
+                to: this.model
+            },
+            _.bind(function(model) {
+                if (model) {
+                    this.layout.reloadDashlet();
+                    this.context.parent.trigger('panel-top:refresh', 'emails');
+                    this.context.parent.trigger('panel-top:refresh', 'archived_emails');
                 }
-            }
-        }, function(model) {
-            if (model) {
-                self.layout.reloadDashlet();
-                self.context.parent.trigger('panel-top:refresh', 'emails');
-                self.context.parent.trigger('panel-top:refresh', 'archived_emails');
-            }
-        });
+            }, this)
+        );
     }
 })

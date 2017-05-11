@@ -109,17 +109,14 @@ describe('Base.Fields.MassEmailButton', function() {
             ]
         });
 
-        app.drawer = {
-            open: sandbox.stub()
-        };
+        sandbox.stub(app.utils, 'openEmailCreateDrawer');
         sandbox.stub(field, 'useSugarEmailClient').returns(true);
         massCollection.add(bean1);
         massCollection.add(bean2);
         field.$('a').click();
-        drawerOpenOptions = app.drawer.open.lastCall.args[0];
-        expect(drawerOpenOptions.context.prepopulate.to.length).toEqual(2);
-        expect(drawerOpenOptions.context.prepopulate.to[0].get('email_address')).toEqual(email1);
-        expect(drawerOpenOptions.context.prepopulate.to[1].get('email_address')).toEqual(email2);
-        app.drawer = null;
+        drawerOpenOptions = app.utils.openEmailCreateDrawer.lastCall.args[1];
+        expect(drawerOpenOptions.to.length).toEqual(2);
+        expect(drawerOpenOptions.to[0].get('email_address')).toEqual(email1);
+        expect(drawerOpenOptions.to[1].get('email_address')).toEqual(email2);
     });
 });

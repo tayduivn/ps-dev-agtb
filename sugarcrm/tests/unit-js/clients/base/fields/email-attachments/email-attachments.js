@@ -56,6 +56,7 @@ describe('BaseEmailAttachmentsField', function() {
         clock.restore();
         sandbox.restore();
 
+        field.model.off();
         field.dispose();
         app.cache.cutAll();
         app.view.reset();
@@ -215,9 +216,13 @@ describe('BaseEmailAttachmentsField', function() {
 
         describe('uploading an attachment', function() {
             it('should open the file dialog', function() {
-                sandbox.stub(field, '_openFilePicker');
-                field.view.trigger('email_attachments:file:pick');
-                expect(field._openFilePicker).toHaveBeenCalled();
+                var $file = {
+                    click: sandbox.stub()
+                };
+
+                sandbox.stub(field, '_getFileInput').returns($file);
+                field.view.trigger('email_attachments:file');
+                expect($file.click).toHaveBeenCalled();
             });
 
             it('should add an uploaded file', function() {
@@ -354,33 +359,15 @@ describe('BaseEmailAttachmentsField', function() {
 
         describe('attaching a document', function() {
             it("should add a document's file", function() {
-                var oCreateBean = app.data.createBean;
-                var selection = {
-                    id: _.uniqueId(),
-                    name: 'Contract',
-                    value: 'Contract'
-                };
                 var doc;
                 var attachment;
                 var json;
 
-                app.drawer = {
-                    open: sandbox.stub().callsArgWith(1, selection)
-                };
-
                 app.data.declareModel('Documents', {});
                 doc = app.data.createBean('Documents', {
-                    id: selection.id,
-                    name: selection.name
-                });
-                // Only stub `app.data.createBean` for Documents. Call the
-                // original method for all other modules.
-                sandbox.stub(app.data, 'createBean', function(module, attrs, options) {
-                    if (module === 'Documents') {
-                        return doc;
-                    }
-
-                    return oCreateBean(module, attrs, options);
+                    id: _.uniqueId(),
+                    name: 'Contract.pdf',
+                    filename: 'Contract.pdf'
                 });
                 sandbox.stub(doc, 'fetch', function(options) {
                     // The document attachment doesn't yet exist.
@@ -389,7 +376,7 @@ describe('BaseEmailAttachmentsField', function() {
                     // A placeholder currently exists in the document
                     // attachment's place.
                     expect(field._placeholders.length).toBe(1);
-                    expect(field._placeholders.at(0).get('name')).toBe('Contract');
+                    expect(field._placeholders.at(0).get('name')).toBe('Contract.pdf');
 
                     doc.set({
                         document_revision_id: _.uniqueId(),
@@ -404,7 +391,7 @@ describe('BaseEmailAttachmentsField', function() {
                     options.complete();
                 });
 
-                field.view.trigger('email_attachments:document:pick');
+                field.view.trigger('email_attachments:document', doc);
 
                 // The placeholder should no longer exist.
                 expect(field._placeholders.length).toBe(0);
@@ -435,8 +422,6 @@ describe('BaseEmailAttachmentsField', function() {
                 }]);
                 expect(json.attachments.add.length).toBe(0);
                 expect(json.attachments.delete.length).toBe(0);
-
-                app.drawer = null;
             });
         });
 
@@ -530,6 +515,136 @@ describe('BaseEmailAttachmentsField', function() {
                 expect(field._placeholders.length).toBe(0);
                 expect(field._requests[placeholder.cid]).toBeUndefined();
             });
+        });
+
+        describe('reporting if the max aggregate file size limit has been exceeded', function() {
+            var spyOver;
+            var spyUnder;
+
+            beforeEach(function() {
+                app.config.maxAggregateEmailAttachmentsBytes = 10000000;
+                spyOver = sandbox.spy();
+                spyUnder = sandbox.spy();
+            });
+
+            it('should trigger the over_max_total_bytes event', function() {
+                field.model.on('attachments_collection:over_max_total_bytes', spyOver);
+                field.model.on('attachments_collection:under_max_total_bytes', spyUnder);
+
+                attachments.add([{
+                    _module: 'Notes',
+                    _link: 'attachments',
+                    filename_guid: _.uniqueId(),
+                    name: 'Disclosure Agreement.pdf',
+                    filename: 'Disclosure Agreement.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_size: 4000000,
+                    file_ext: 'pdf'
+                }, {
+                    _module: 'Notes',
+                    _link: 'attachments',
+                    upload_id: _.uniqueId(),
+                    name: 'logo.jpg',
+                    filename: 'logo.jpg',
+                    file_mime_type: 'image/jpg',
+                    file_size: '4000000',
+                    file_source: 'DocumentRevisions',
+                    file_ext: 'jpg'
+                }, {
+                    _module: 'Notes',
+                    _link: 'attachments',
+                    filename_guid: _.uniqueId(),
+                    name: 'NDA.pdf',
+                    filename: 'NDA.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_size: 4000000,
+                    file_ext: 'pdf'
+                }]);
+
+                expect(spyOver).toHaveBeenCalledOnce();
+                expect(spyUnder).not.toHaveBeenCalled();
+                expect(spyOver.firstCall.args[0]).toBe(12317178);
+                expect(spyOver.firstCall.args[1]).toBe(app.config.maxAggregateEmailAttachmentsBytes);
+                expect(spyOver.firstCall.args[2]).toBe(-2317178);
+            });
+
+            it('should trigger the under_max_total_bytes event', function() {
+                field.model.on('attachments_collection:over_max_total_bytes', spyOver);
+                field.model.on('attachments_collection:under_max_total_bytes', spyUnder);
+
+                attachments.add([{
+                    _module: 'Notes',
+                    _link: 'attachments',
+                    filename_guid: _.uniqueId(),
+                    name: 'Disclosure Agreement.pdf',
+                    filename: 'Disclosure Agreement.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_size: 4000000,
+                    file_ext: 'pdf'
+                }, {
+                    _module: 'Notes',
+                    _link: 'attachments',
+                    upload_id: _.uniqueId(),
+                    name: 'logo.jpg',
+                    filename: 'logo.jpg',
+                    file_mime_type: 'image/jpg',
+                    file_size: '4000000',
+                    file_source: 'DocumentRevisions',
+                    file_ext: 'jpg'
+                }]);
+
+                expect(spyOver).not.toHaveBeenCalled();
+                expect(spyUnder).toHaveBeenCalledOnce();
+                expect(spyUnder.firstCall.args[0]).toBe(8317178);
+                expect(spyUnder.firstCall.args[1]).toBe(app.config.maxAggregateEmailAttachmentsBytes);
+                expect(spyUnder.firstCall.args[2]).toBe(1682822);
+            });
+
+            it(
+                'should trigger the under_max_total_bytes event when removing an attachment brings the total under max',
+                function() {
+                    attachments.add([{
+                        _module: 'Notes',
+                        _link: 'attachments',
+                        filename_guid: _.uniqueId(),
+                        name: 'Disclosure Agreement.pdf',
+                        filename: 'Disclosure Agreement.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 4000000,
+                        file_ext: 'pdf'
+                    }, {
+                        _module: 'Notes',
+                        _link: 'attachments',
+                        upload_id: _.uniqueId(),
+                        name: 'logo.jpg',
+                        filename: 'logo.jpg',
+                        file_mime_type: 'image/jpg',
+                        file_size: '4000000',
+                        file_source: 'DocumentRevisions',
+                        file_ext: 'jpg'
+                    }, {
+                        _module: 'Notes',
+                        _link: 'attachments',
+                        filename_guid: _.uniqueId(),
+                        name: 'NDA.pdf',
+                        filename: 'NDA.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 4000000,
+                        file_ext: 'pdf'
+                    }]);
+
+                    field.model.on('attachments_collection:over_max_total_bytes', spyOver);
+                    field.model.on('attachments_collection:under_max_total_bytes', spyUnder);
+
+                    attachments.remove(attachments.at(4));
+
+                    expect(spyOver).not.toHaveBeenCalled();
+                    expect(spyUnder).toHaveBeenCalledOnce();
+                    expect(spyUnder.firstCall.args[0]).toBe(8317178);
+                    expect(spyUnder.firstCall.args[1]).toBe(app.config.maxAggregateEmailAttachmentsBytes);
+                    expect(spyUnder.firstCall.args[2]).toBe(1682822);
+                }
+            );
         });
     });
 

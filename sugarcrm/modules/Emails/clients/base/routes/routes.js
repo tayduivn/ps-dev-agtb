@@ -9,61 +9,70 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
-    app.events.on('router:init', function() {
-        var module = 'Emails';
+    var module = 'Emails';
 
-        var routes = [
-            {
-                name: 'emails_drafts',
-                route: module + '/drafts/:id',
-                callback: function(id) {
-                    var model = app.data.createBean(module, {id: id});
+    /**
+     * Open the email compose view in either a drawer or full-page.
+     *
+     * The view will be opened in a drawer if the user is routing from a page
+     * in the application. The view will be opened in full-page if the user is
+     * routing from login or a location outside the application.
+     *
+     * @param {Data.Bean} model The model that is given to the layout.
+     */
+    function openEmailCompose(model) {
+        var prevLayout = app.controller.context.get('layout');
 
-                    model.fetch({
-                        view: 'create',
-                        success: onSuccess
-                    });
-
-                    function onSuccess(model) {
-                        var context;
-                        var options;
-                        var prevLayout = app.controller.context.get('layout');
-
-                        if (model.get('state') !== 'Draft') {
-                            // Handle routing for email that used to be a draft
-                            app.router.record(module, id);
-                        } else if (prevLayout && prevLayout !== 'login') {
-                            // Routing from a page in the app - open drawer
-                            context = {
-                                create: true,
-                                module: 'Emails',
-                                model: model,
-                                fromRouter: true
-                            };
-
-                            app.drawer.open({
-                                layout: 'create',
-                                context: context
-                            }, function(context, model) {
-                                if (model && model.module === app.controller.context.get('module')) {
-                                    app.controller.context.reloadData();
-                                }
-                            });
-                        } else {
-                            // Routing from login or outside the app - load view
-                            options = {
-                                module: module,
-                                layout: 'create',
-                                action: 'edit',
-                                model: model,
-                                create: true
-                            };
-                            app.controller.loadView(options);
-                        }
+        if (prevLayout && prevLayout !== 'login') {
+            app.utils.openEmailCreateDrawer(
+                'compose-email',
+                {
+                    model: model,
+                    fromRouter: true
+                }, function(context, model) {
+                    if (model && model.module === app.controller.context.get('module')) {
+                        app.controller.context.reloadData();
                     }
                 }
+            );
+        } else {
+            options = {
+                module: module,
+                layout: 'compose-email',
+                action: model.isNew() ? 'create' : 'edit',
+                model: model,
+                create: true
+            };
+            app.controller.loadView(options);
+        }
+    }
+
+    app.events.on('router:init', function() {
+        var routes = [{
+            name: 'email_compose',
+            route: module + '(/:id)/compose',
+            callback: function(id) {
+                var model = app.data.createBean(module);
+
+                if (_.isEmpty(id)) {
+                    openEmailCompose(model);
+                } else {
+                    model.set('id', id);
+                    model.fetch({
+                        view: 'compose-email',
+                        success: function(model) {
+                            if (model.get('state') === 'Draft') {
+                                openEmailCompose(model);
+                            } else {
+                                // Handle routing for an email that used to be
+                                // a draft.
+                                app.router.record(module, id);
+                            }
+                        }
+                    });
+                }
             }
-        ];
+        }];
 
         app.router.addRoutes(routes);
     });

@@ -440,6 +440,7 @@ $mod_strings = array(
     'ERR_INVALID_RECIPIENTS' => 'There are one or more recipients with an invalid email address. ' .
         'Please correct this and try again.',
     'ERR_INVALID_EMAIL_ADDRESS' => 'Invalid Email Address',
+    'ERR_INVALID_SENDER' => "The sender's email address is invalid. Please correct this and try again.",
 
     // Mail API Messages
     'LBL_MAILAPI_NO_RECIPIENTS' => 'no recipients specified',
@@ -460,4 +461,6 @@ You may apply a predefined template using the Template button or include one of 
         'for all users who have access to them.',
 
     'LBL_OUTBOUND_EMAIL_ID_HELP' => 'An asterisk (*) indicates the system account.',
+
+    'LBL_SHORTCUT_EMAIL_SEND' => 'Send email',
 );

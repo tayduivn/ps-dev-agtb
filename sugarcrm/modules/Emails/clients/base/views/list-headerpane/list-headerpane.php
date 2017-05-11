@@ -14,7 +14,7 @@ $viewdefs['Emails']['base']['view']['list-headerpane'] = array(
         array(
             'name' => 'create_button',
             'type' => 'emailaction',
-            'label' => 'LBL_CREATE_BUTTON_LABEL',
+            'label' => 'LBL_COMPOSE_MODULE_NAME_SINGULAR',
             'button' => true,
             'primary' => true,
             'acl_action' => 'create',

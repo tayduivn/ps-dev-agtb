@@ -300,7 +300,7 @@ describe("Emails.Views.Compose", function() {
             }, 'fetch() should have been called but timeout expired', 1000);
 
             runs(function () {
-                expect(view.model.get('subject')).toEqual('[CASE:100] My Case');
+                expect(view.model.get('name')).toEqual('[CASE:100] My Case');
                 expect(relatedCollectionStub.callCount).toBe(1);
             });
         });
@@ -311,7 +311,7 @@ describe("Emails.Views.Compose", function() {
 
             view.model.set('to_addresses', toAddresses);
             view._populateForCases(relatedModel);
-            expect(view.model.get('subject')).toEqual('[CASE:100] My Case');
+            expect(view.model.get('name')).toEqual('[CASE:100] My Case');
             expect(view.model.get('to_addresses')).toEqual(toAddresses);
         });
     });
@@ -475,8 +475,8 @@ describe("Emails.Views.Compose", function() {
 
         it('should send email when to, subject and html_body fields are populated', function() {
             view.model.set('to_addresses', 'foo@bar.com');
-            view.model.set('subject', 'foo');
-            view.model.set('html_body', 'bar');
+            view.model.set('name', 'foo');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
@@ -486,8 +486,8 @@ describe("Emails.Views.Compose", function() {
 
         it('should send email when cc, subject and html_body fields are populated', function() {
             view.model.set('cc_addresses', 'foo@bar.com');
-            view.model.set('subject', 'foo');
-            view.model.set('html_body', 'bar');
+            view.model.set('name', 'foo');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
@@ -497,8 +497,8 @@ describe("Emails.Views.Compose", function() {
 
         it('should send email when bcc, subject and html_body fields are populated', function() {
             view.model.set('bcc_addresses', 'foo@bar.com');
-            view.model.set('subject', 'foo');
-            view.model.set('html_body', 'bar');
+            view.model.set('name', 'foo');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
@@ -507,8 +507,8 @@ describe("Emails.Views.Compose", function() {
         });
 
         it('should show error alert when address fields are empty', function() {
-            view.model.set('subject', 'foo');
-            view.model.set('html_body', 'bar');
+            view.model.set('name', 'foo');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
@@ -517,8 +517,8 @@ describe("Emails.Views.Compose", function() {
         });
 
         it('should show confirmation alert message when subject field is empty', function() {
-            view.model.unset('subject');
-            view.model.set('html_body', 'bar');
+            view.model.unset('name');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
@@ -527,8 +527,8 @@ describe("Emails.Views.Compose", function() {
         });
 
         it('should show confirmation alert message when html_body field is empty', function() {
-            view.model.set('subject', 'foo');
-            view.model.unset('html_body');
+            view.model.set('name', 'foo');
+            view.model.unset('description_html');
 
             view.send();
 
@@ -537,8 +537,8 @@ describe("Emails.Views.Compose", function() {
         });
 
         it('should show confirmation alert message when subject and html_body fields are empty', function() {
-            view.model.unset('subject');
-            view.model.unset('html_body');
+            view.model.unset('name');
+            view.model.unset('description_html');
 
             view.send();
 
@@ -568,8 +568,8 @@ describe("Emails.Views.Compose", function() {
                 expect(createBeanCollectionStub.callCount).toBe(0);
                 expect(insertTemplateAttachmentsStub.callCount).toBe(0);
                 expect(updateEditorWithSignatureStub.callCount).toBe(0);
-                expect(view.model.get("subject")).toBeUndefined();
-                expect(view.model.get("html_body")).toBeUndefined();
+                expect(view.model.get('name')).toBeUndefined();
+                expect(view.model.get('description_html')).toBeUndefined();
             });
 
             it("should not set content of subject when the template doesn't include a subject", function() {
@@ -583,8 +583,8 @@ describe("Emails.Views.Compose", function() {
                 view.insertTemplate(templateModel);
                 expect(createBeanCollectionStub.callCount).toBe(1);
                 expect(updateEditorWithSignatureStub.callCount).toBe(1);
-                expect(view.model.get('subject')).toBeUndefined();
-                expect(view.model.get("html_body")).toBe(bodyHtml);
+                expect(view.model.get('name')).toBeUndefined();
+                expect(view.model.get('description_html')).toBe(bodyHtml);
             });
 
             it('should set content of editor with html version of template', function() {
@@ -600,8 +600,8 @@ describe("Emails.Views.Compose", function() {
                 view.insertTemplate(templateModel);
                 expect(createBeanCollectionStub.callCount).toBe(1);
                 expect(updateEditorWithSignatureStub.callCount).toBe(1);
-                expect(view.model.get('subject')).toBe(subject);
-                expect(view.model.get("html_body")).toBe(bodyHtml);
+                expect(view.model.get('name')).toBe(subject);
+                expect(view.model.get('description_html')).toBe(bodyHtml);
             });
 
             it('should set content of editor with text only version of template', function() {
@@ -620,8 +620,8 @@ describe("Emails.Views.Compose", function() {
                 view.insertTemplate(templateModel);
                 expect(createBeanCollectionStub.callCount).toBe(1);
                 expect(updateEditorWithSignatureStub.callCount).toBe(1);
-                expect(view.model.get('subject')).toBe(subject);
-                expect(view.model.get("html_body")).toBe(bodyText);
+                expect(view.model.get('name')).toBe(subject);
+                expect(view.model.get('description_html')).toBe(bodyText);
             });
 
             it("should call to insert the signature that was marked as the last one selected", function() {
@@ -836,9 +836,9 @@ describe("Emails.Views.Compose", function() {
 
             _.each(dataProvider, function(data) {
                 it(data.message, function() {
-                    view.model.set("html_body", data.body);
+                    view.model.set('description_html', data.body);
                     var actualReturn = view._insertSignature(new app.Bean(data.signature)),
-                        actualBody   = view.model.get("html_body");
+                        actualBody   = view.model.get('description_html');
                     expect(actualReturn).toBe(data.expectedReturn);
                     expect(actualBody).toBe(data.expectedBody);
                 });

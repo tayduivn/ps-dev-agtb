@@ -9,9 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @deprecated Use {@link View.Layouts.Base.Emails.ComposeEmailLayout} instead.
- * @class View.Layouts.Base.Emails.ComposeLayout
- * @alias SUGAR.App.view.layouts.BaseEmailsComposeLayout
+ * @class View.Layouts.Base.Emails.ComposeEmailLayout
+ * @alias SUGAR.App.view.layouts.BaseEmailsComposeEmailLayout
  * @extends View.Layouts.Base.Emails.CreateLayout
  */
 ({
@@ -20,14 +19,10 @@
     /**
      * @inheritdoc
      *
-     * @deprecated Use {@link View.Layouts.Base.Emails.ComposeEmailLayout}
-     * instead.
+     * Enables the Compose:Send shortcut for views that implement it.
      */
     initialize: function(options) {
-        var deprecation = 'View.Layouts.Base.Emails.ComposeLayout is deprecated. ' +
-            'Use View.Layouts.Base.Emails.ComposeEmailLayout instead.';
-        app.logger.warn(deprecation);
-
+        this.shortcuts = _.union(this.shortcuts || [], ['Compose:Send']);
         this._super('initialize', [options]);
     }
 })

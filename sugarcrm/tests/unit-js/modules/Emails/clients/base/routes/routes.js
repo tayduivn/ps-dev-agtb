@@ -1,6 +1,7 @@
 describe('Emails.Routes', function() {
     var app;
     var oldSync;
+    var sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -15,74 +16,112 @@ describe('Emails.Routes', function() {
         oldSync = app.isSynched;
         app.isSynced = true;
 
-        sinon.sandbox.stub(app.api, 'isAuthenticated').returns(true);
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(app.api, 'isAuthenticated').returns(true);
     });
 
     afterEach(function() {
         app.router.navigate('', {trigger: true});
         Backbone.history.stop();
-        sinon.sandbox.restore();
+        sandbox.restore();
         app.isSynched = oldSync;
     });
 
-    describe('Routes', function() {
-        describe('Email Draft', function() {
-            var model;
+    describe('compose a new email', function() {
+        it('should open the compose drawer when routing from another page in the app', function() {
+            // Routing from layout.
+            app.controller.context.set('layout', 'foo');
+            sandbox.stub(app.utils, 'openEmailCreateDrawer');
 
-            beforeEach(function() {
-                model = app.data.createBean('Emails', {id: '123'});
-                sinon.sandbox.stub(app.data, 'createBean');
-                app.data.createBean.returns(model);
-                sinon.sandbox.stub(model, 'fetch', function(options) {
-                    options.success(model);
-                });
+            app.router.navigate('Emails/compose', {trigger: true});
+
+            expect(app.utils.openEmailCreateDrawer).toHaveBeenCalledWith('compose-email');
+        });
+
+        it('should open the full page composer when routing from login', function() {
+            // Routing from login.
+            app.controller.context.set('layout', 'login');
+            sandbox.stub(app.controller, 'loadView');
+
+            app.router.navigate('Emails/compose', {trigger: true});
+
+            expect(app.controller.loadView).toHaveBeenCalledOnce();
+            expect(app.controller.loadView.firstCall.args[0].layout).toBe('compose-email');
+            expect(app.controller.loadView.firstCall.args[0].action).toBe('create');
+        });
+
+        it('should open the full page composer when routing directly', function() {
+            // Routing from outside the app.
+            app.controller.context.unset('layout');
+            sandbox.stub(app.controller, 'loadView');
+
+            app.router.navigate('Emails/compose', {trigger: true});
+
+            expect(app.controller.loadView).toHaveBeenCalledOnce();
+            expect(app.controller.loadView.firstCall.args[0].layout).toBe('compose-email');
+            expect(app.controller.loadView.firstCall.args[0].action).toBe('create');
+        });
+    });
+
+    describe('editing a draft', function() {
+        var model;
+
+        beforeEach(function() {
+            model = app.data.createBean('Emails');
+            sandbox.stub(app.data, 'createBean');
+            app.data.createBean.returns(model);
+            sandbox.stub(model, 'fetch', function(options) {
+                options.success(model);
             });
+        });
 
-            it('should open create drawer when routing from another page in the app', function() {
-                model.set('state', 'Draft');
+        it('should open the compose drawer when routing from another page in the app', function() {
+            model.set('state', 'Draft');
 
-                //routing from layout
-                app.controller.context.set('layout', 'foo');
+            // Routing from layout.
+            app.controller.context.set('layout', 'foo');
+            sandbox.stub(app.utils, 'openEmailCreateDrawer');
 
-                app.drawer = app.drawer || {open: $.noop};
-                sinon.sandbox.stub(app.drawer, 'open');
+            app.router.navigate('Emails/123/compose', {trigger: true});
 
-                app.router.navigate('Emails/drafts/' + model.id, {trigger: true});
-                expect(app.drawer.open).toHaveBeenCalled();
-            });
+            expect(app.utils.openEmailCreateDrawer).toHaveBeenCalledWith('compose-email');
+        });
 
-            it('should open full page create when routing from login', function() {
-                model.set('state', 'Draft');
+        it('should open the full page composer when routing from login', function() {
+            model.set('state', 'Draft');
 
-                //routing from login
-                app.controller.context.set('layout', 'login');
+            // Routing from login.
+            app.controller.context.set('layout', 'login');
+            sandbox.stub(app.controller, 'loadView');
 
-                sinon.sandbox.stub(app.controller, 'loadView');
+            app.router.navigate('Emails/123/compose', {trigger: true});
 
-                app.router.navigate('Emails/drafts/' + model.id, {trigger: true});
-                expect(app.controller.loadView).toHaveBeenCalled();
-            });
+            expect(app.controller.loadView).toHaveBeenCalledOnce();
+            expect(app.controller.loadView.firstCall.args[0].layout).toBe('compose-email');
+            expect(app.controller.loadView.firstCall.args[0].action).toBe('edit');
+        });
 
-            it('should open full page create when routing directly', function() {
-                model.set('state', 'Draft');
+        it('should open the full page composer when routing directly', function() {
+            model.set('state', 'Draft');
 
-                //routing from outside the app
-                app.controller.context.unset('layout');
+            // Routing from outside the app.
+            app.controller.context.unset('layout');
+            sandbox.stub(app.controller, 'loadView');
 
-                sinon.sandbox.stub(app.controller, 'loadView');
+            app.router.navigate('Emails/123/compose', {trigger: true});
 
-                app.router.navigate('Emails/drafts/' + model.id, {trigger: true});
-                expect(app.controller.loadView).toHaveBeenCalled();
-            });
+            expect(app.controller.loadView).toHaveBeenCalledOnce();
+            expect(app.controller.loadView.firstCall.args[0].layout).toBe('compose-email');
+            expect(app.controller.loadView.firstCall.args[0].action).toBe('edit');
+        });
 
-            it('should open record view if email is not a draft', function() {
-                model.set('state', 'Archived');
+        it('should open the record view if the email is not a draft', function() {
+            model.set('state', 'Archived');
+            sandbox.stub(app.router, 'record');
 
-                sinon.sandbox.stub(app.router, 'record');
+            app.router.navigate('Emails/123/compose', {trigger: true});
 
-                app.router.navigate('Emails/drafts/' + model.id, {trigger: true});
-                expect(app.router.record).toHaveBeenCalled();
-            });
+            expect(app.router.record).toHaveBeenCalled();
         });
     });
 });

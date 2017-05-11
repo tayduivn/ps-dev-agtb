@@ -232,7 +232,7 @@
             field.$el.closest('.fieldset-group').toggleClass('hide', !show);
         }
 
-        this.view.trigger('email-recipients:resize-editor');
+        this.view.trigger('email-recipients:toggled');
     },
 
     /**
