@@ -29,28 +29,50 @@ class MigrateEmailStateTest extends UpgradeTestCase
      */
     public function testRun()
     {
+        //default type=out, status=sent
         SugarTestEmailUtilities::createEmail();
         SugarTestEmailUtilities::createEmail();
         SugarTestEmailUtilities::createEmail();
-        SugarTestEmailUtilities::createEmail('', array('status' => 'sent', 'type' => 'out'));
+
+        //archived
+        SugarTestEmailUtilities::createEmail('', array('status' => 'archived', 'type' => 'archived'));
+        SugarTestEmailUtilities::createEmail('', array('status' => 'read', 'type' => 'archived'));
+        SugarTestEmailUtilities::createEmail('', array('status' => 'unread', 'type' => 'archived'));
+
+        //inbound
+        SugarTestEmailUtilities::createEmail('', array('status' => 'archived', 'type' => 'inbound'));
+        SugarTestEmailUtilities::createEmail('', array('status' => 'read', 'type' => 'inbound'));
         SugarTestEmailUtilities::createEmail('', array('status' => 'unread', 'type' => 'inbound'));
+        SugarTestEmailUtilities::createEmail('', array('status' => 'replied', 'type' => 'inbound'));
+
+        //draft
         SugarTestEmailUtilities::createEmail('', array('status' => 'draft', 'type' => 'draft'));
         SugarTestEmailUtilities::createEmail('', array('status' => 'draft', 'type' => 'draft'));
-        SugarTestEmailUtilities::createEmail('', array('status' => 'draft', 'type' => 'out'));
-        SugarTestEmailUtilities::createEmail('', array('status' => 'draft', 'type' => 'archived'));
         SugarTestEmailUtilities::createEmail('', array('status' => 'draft', 'type' => 'draft'));
+        SugarTestEmailUtilities::createEmail('', array('status' => 'read', 'type' => 'draft'));
+        SugarTestEmailUtilities::createEmail('', array('status' => 'unread', 'type' => 'draft'));
+
+        //campaign
+        SugarTestEmailUtilities::createEmail('', array('status' => 'sent', 'type' => 'archived'));
+        SugarTestEmailUtilities::createEmail('', array('status' => 'sent', 'type' => 'campaign'));
+
+        //failure
         SugarTestEmailUtilities::createEmail('', array('status' => 'send_error', 'type' => 'out'));
         SugarTestEmailUtilities::createEmail('', array('status' => 'send_error', 'type' => 'out'));
 
         $script = $this->upgrader->getScript('post', '2_MigrateEmailState');
         $script->db = $GLOBALS['db'];
-        $script->from_version = '7.8.0.0';
+        $script->from_version = '7.9.0.0';
         $script->run();
 
-        $num = $GLOBALS['db']->getOne("SELECT COUNT(id) FROM emails WHERE state='Archived'");
-        $this->assertEquals(5, $num, 'There should be 5 archived emails');
+        $expectedArchivedEmails = 12;
+        $sql = "SELECT COUNT(id) FROM emails WHERE state='Archived'";
+        $num = DBManagerFactory::getConnection()->executeQuery($sql)->fetchColumn();
+        $this->assertEquals($expectedArchivedEmails, $num, "There should be {$expectedArchivedEmails} archived emails");
 
-        $num = $GLOBALS['db']->getOne("SELECT COUNT(id) FROM emails WHERE state='Draft'");
-        $this->assertEquals(7, $num, 'There should be 7 draft emails');
+        $expectedDraftEmails = 7;
+        $sql = "SELECT COUNT(id) FROM emails WHERE state='Draft'";
+        $num = DBManagerFactory::getConnection()->executeQuery($sql)->fetchColumn();
+        $this->assertEquals($expectedDraftEmails, $num, "There should be {$expectedDraftEmails} draft emails");
     }
 }

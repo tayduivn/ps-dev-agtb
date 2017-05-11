@@ -20,20 +20,20 @@ class SugarUpgradeMigrateEmailState extends UpgradeScript
      *
      * Sets the `emails.state` column to "Archived" or "Draft" for all rows in emails.
      *
-     * This upgrade script only runs when upgrading from a version prior to 7.9.
+     * This upgrade script only runs when upgrading from a version prior to 7.10.
      */
     public function run()
     {
-        if (!version_compare($this->from_version, '7.9', '<')) {
+        if (!version_compare($this->from_version, '7.10', '<')) {
             return;
         }
 
-        $this->log('Set emails.state to Draft where emails.status is draft or send_error');
-        $sql = "UPDATE emails SET state='Draft' WHERE status IN ('draft', 'send_error')";
-        $this->runQuery($sql);
+        $this->log('Set emails.state to Draft where emails.type is draft or emails.status is send_error');
+        $sql = "UPDATE emails SET state='Draft' WHERE type='draft' OR status='send_error'";
+        $this->runUpdate($sql);
 
         $sql = "SELECT COUNT(id) FROM emails WHERE state IS NULL OR state=''";
-        $num = $this->db->getOne($sql);
+        $num = $this->db->getConnection()->executeQuery($sql)->fetchColumn();
         $this->log("{$num} emails remain with an empty state");
     }
 
@@ -42,15 +42,12 @@ class SugarUpgradeMigrateEmailState extends UpgradeScript
      *
      * @param string $sql The query to execute.
      */
-    protected function runQuery($sql)
+    protected function runUpdate($sql)
     {
-        $result = $this->db->query($sql);
-
-        if ($result) {
-            $rows = $this->db->getAffectedRowCount($result);
+        try {
+            $rows = DBManagerFactory::getConnection()->executeUpdate($sql);
             $this->log("Number of affected rows: {$rows}");
-        } else {
-            $error = $this->db->lastError();
+        } catch (DBALException $error) {
             $this->log("Error: {$error}");
         }
     }
