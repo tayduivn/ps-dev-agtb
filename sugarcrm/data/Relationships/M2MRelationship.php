@@ -682,13 +682,13 @@ class M2MRelationship extends SugarRelationship
      * Build a Join using an existing SugarQuery Object
      * @param Link2 $link
      * @param SugarQuery $sugar_query
-     * @param Array $options array of additional paramters. Possible parameters include
+     * @param array $options array of additional paramters. Possible parameters include
      *  - 'myAlias' String name of starting table alias
      *  - 'joinTableAlias' String alias to use for the related table in the final result
      *  - 'reverse' Boolean true if this join should be built in reverse for subpanel style queries where the select is
      *              on the related table
      *  - 'ignoreRole' Boolean true if the role column of the relationship should be ignored for this join .
-     * @return SugarQuery
+     * @return SugarQuery_Builder_Join[]
      */
     public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
     {
@@ -715,7 +715,8 @@ class M2MRelationship extends SugarRelationship
         $targetModule = $linkIsLHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
         $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $joinTable_alias = $sugar_query->getJoinTableAlias($joinTable, false, false);
+        $joinTable_alias = DBManagerFactory::getInstance()
+            ->getValidDBName($this->def['name'], true, 'alias');
         $targetTable_alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $targetTable;
 
         $relTableJoin = $sugar_query->joinTable($joinTable, array('alias'=>$joinTable_alias, 'joinType' => $join_type, 'linkingTable' => true,))

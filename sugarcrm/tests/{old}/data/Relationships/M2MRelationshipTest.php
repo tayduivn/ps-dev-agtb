@@ -98,59 +98,6 @@ class M2MRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test join alias when building joins - BR-2039
-     * @covers M2MRelationship::buildJoinSugarQuery
-     */
-    public function testBuildJoinSugarQueryJoinAlias()
-    {
-        $m2m = $this->getMockBuilder('M2MRelationship')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
-
-        $query = $this->getSugarQueryMockBase(array('getJoinTableAlias'));
-
-        // Ensure join table alias is not called as `$isLink`
-        $query->expects($this->once())
-            ->method('getJoinTableAlias')
-            ->with($this->anything(), false, false);
-
-        $link = $this->getLinkMock();
-        $m2m->buildJoinSugarQuery($link, $query, array());
-    }
-
-    /**
-     * Return SugqrQuery mock
-     * @param array|null $methods Mockbuilder methods
-     * @return SugarQuery
-     */
-    private function getSugarQueryMockBase($methods)
-    {
-        return $this->getMockBuilder('SugarQuery')
-            ->disableOriginalConstructor()
-            ->setMethods($methods)
-            ->getMock();
-    }
-
-    /**
-     * Return Link2 mock
-     * @param string $side LHS or RHS
-     * @return Link2
-     */
-    private function getLinkMock($side = 'LHS')
-    {
-        $link = $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $link->expects($this->any())
-            ->method('getSide')
-            ->will($this->returnValue($side));
-
-        return $link;
-    }
-
-    /**
      * @covers M2MRelationship::getType
      */
     public function testGetType()

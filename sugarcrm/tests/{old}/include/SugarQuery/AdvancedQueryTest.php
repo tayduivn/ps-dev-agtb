@@ -103,6 +103,9 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
                 );
             }
         }
+
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestQuoteUtilities::removeAllCreatedQuotes();
     }
 
     public function testSelectInWhere()
@@ -563,6 +566,32 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($contact->last_name, $data[0][$longAlias]);
     }
 
+    public function testSelectMultipleLinksUsingSameTable()
+    {
+        $quote = SugarTestQuoteUtilities::createQuote();
+
+        $quote->load_relationship('billing_accounts');
+        $billingAccount = SugarTestAccountUtilities::createAccount();
+        $quote->billing_accounts->add($billingAccount);
+
+        $shippingAccount = SugarTestAccountUtilities::createAccount();
+        $quote->load_relationship('shipping_accounts');
+        $quote->shipping_accounts->add($shippingAccount);
+
+        $query = new SugarQuery();
+        $query->from($quote, array(
+            'team_security' => false,
+        ));
+        $query->select('id', 'billing_account_name', 'shipping_account_name');
+        $query->where()->equals('quotes.id', $quote->id);
+
+        $data = $query->execute();
+        $this->assertCount(1, $data);
+
+        $row = array_shift($data);
+        $this->assertEquals($billingAccount->name, $row['billing_account_name']);
+        $this->assertEquals($shippingAccount->name, $row['shipping_account_name']);
+    }
 }
 
 class Contact_Mock_Bug62961 extends Contact
