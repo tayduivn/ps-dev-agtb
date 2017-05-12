@@ -83,6 +83,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
     this.chartObject = '';
 
+    // get and save the fiscal start date
+    SUGAR.charts.defineFiscalYearStart();
+
     // instantiate Sucrose chart
     switch (chartConfig.chartType) {
 
@@ -532,7 +535,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             // dashlets override with their own handler
             chart.seriesClick(_.bind(function(data, eo, chart, labels) {
                 var chartState;
-                var groupDefs;
                 var filterDef;
                 var drawerContext;
 
@@ -552,7 +554,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 // report_def is defined as a global in _reportCriteriaWithResult
                 // but only in Reports module
                 //TODO: fix usage of global report_def
-                groupDefs = this.getGrouping(report_def);
                 filterDef = this.buildFilter(report_def, params);
 
                 drawerContext = {
@@ -566,7 +567,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     filterOptions: {
                         auto_apply: false
                     },
-                    groupDefs: groupDefs,
                     layout: 'drillthrough-drawer',
                     module: 'Reports',
                     reportData: report_def,
@@ -656,6 +656,207 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         },
 
         /**
+         * Get and save the fiscal year start date as an application cached variable
+         */
+        defineFiscalYearStart: function() {
+            var sugarApp = SUGAR.App || SUGAR.app || app;
+            var fiscalYear = this.getFiscalStartDate();
+
+            if (!_.isEmpty(fiscalYear)) {
+                return;
+            }
+
+            fiscalYear = new Date().getFullYear();
+
+            sugarApp.api.call('GET', sugarApp.api.buildURL('TimePeriods/' + fiscalYear + '-01-01'), null, {
+                success: _.bind(this.setFiscalStateDate, this),
+                error: _.bind(function() {
+                    // Needed to catch the 404 in case there isnt a current timeperiod
+                }, this)
+            });
+        },
+
+        /**
+         * Process and set the defined fiscal time period in the application cache
+         *
+         * @param firstQuarter the currently configured fiscal time period
+         */
+        setFiscalStateDate: function(firstQuarter) {
+            var sugarApp = SUGAR.App || SUGAR.app || app;
+            var fiscalYear = new Date().getFullYear();
+            var quarterNumber = firstQuarter.name.match(/.*Q(\d{1})/)[1];  // [1-4]
+            var quarterDateStart = new Date(firstQuarter.start_date);      // 2017-01-01
+            var hourUTCOffset = quarterDateStart.getTimezoneOffset() / 60; // 5
+            var fiscalMonth = quarterDateStart.getUTCMonth() - (quarterNumber - 1) * 3; // 1
+            var fiscalYearStart = new Date(fiscalYear, fiscalMonth, 1, -hourUTCOffset, 0, 0).toUTCString();
+            sugarApp.cache.set('fiscaltimeperiods', {'annualDate': fiscalYearStart});
+        },
+
+        /**
+         * Get the currently defined fiscal time period from the application cache
+         *
+         * @return {string} a string representation of a UTC datetime
+         */
+        getFiscalStartDate: function() {
+            var sugarApp = SUGAR.App || SUGAR.app || app;
+            var timeperiods = sugarApp.cache.get('fiscaltimeperiods');
+            var datetime = !_.isEmpty(timeperiods) && !_.isUndefined(timeperiods.annualDate) ?
+                timeperiods.annualDate :
+                null;
+            return datetime;
+        },
+
+        /**
+         * Process the user selected chart date label based on the report def
+         * column function
+         *
+         * @param label chart group or series label
+         * @param type group or series column function
+         * @return {Array} a date range from a date parsed label
+         */
+        getDateValues: function(label, type) {
+            var fy = new Date(this.getFiscalStartDate() || new Date().getFullYear() + '-01-01');
+            var re;
+            var rm;
+            var dt;
+            var wd;
+            var y1;
+            var y2;
+            var m1;
+            var m2;
+            var d1;
+            var d2;
+            var values = [];
+
+            switch (type) {
+                case 'year':
+                    //2017
+                    y1 = label;
+                    m1 = 1;
+                    m2 = 12;
+                    y2 = y1;
+                    d1 = 1;
+                    d2 = 31;
+                    break;
+
+                case 'fiscalYear':
+                    //2017
+                    fy.setUTCFullYear(label);
+                    y1 = fy.getUTCFullYear();
+                    m1 = fy.getUTCMonth() + 1;
+                    d1 = fy.getUTCDate();
+                    fy.setUTCMonth(fy.getUTCMonth() + 12);
+                    fy.setUTCDate(fy.getUTCDate() - 1);
+                    y2 = fy.getUTCFullYear();
+                    m2 = fy.getUTCMonth() + 1;
+                    d2 = fy.getUTCDate(); //1-31
+                    break;
+
+                case 'quarter':
+                    //Q1 2017
+                    re = /Q([1-4]{1})\s(\d{4})/;
+                    rm = label.match(re);
+                    y1 = y2 = rm[2];
+                    m2 = rm[1] * 3; // Q1 = 3
+                    m1 = m2 - 2; // Q1 = 1
+                    d1 = new Date(y1, m1 - 1, 1).getDate();
+                    d2 = new Date(y2, m2, 0).getDate();
+                    break;
+
+                case 'fiscalQuarter':
+                    //Q1 2017
+                    re = /Q([1-4]{1})\s(\d{4})/;
+                    rm = label.match(re);
+                    fy.setUTCFullYear(rm[2]);
+                    fy.setUTCMonth((rm[1] - 1) * 3 + fy.getUTCMonth());
+                    y1 = fy.getUTCFullYear();
+                    m1 = fy.getUTCMonth() + 1;
+                    d1 = fy.getUTCDate();
+                    fy.setUTCMonth(m1 + 2);
+                    fy.setUTCDate(fy.getUTCDate() - 1);
+                    y2 = fy.getUTCFullYear();
+                    m2 = fy.getUTCMonth() + 1;
+                    d2 = fy.getUTCDate();
+                    break;
+
+                case 'month':
+                    // May 2017
+                    dt = new Date(label);
+                    y1 = dt.getFullYear();
+                    m1 = dt.getMonth() + 1;
+                    d1 = dt.getDate();
+                    y2 = y1;
+                    m2 = m1;
+                    d2 = new Date(y2, m2, 0).getDate();
+                    break;
+
+                case 'week':
+                    //W1 2017 (Sunday is first day)
+                    re = /W(\d{1,2})\s(\d{4})/;
+                    rm = label.match(re);
+                    dt = new Date(rm[2], 0, rm[1] * 7 - 6);
+                    wd = dt.getDay();
+                    if (wd > 4) {
+                        // if Sunday (0), +1
+                        // if Saturday (6), +2
+                        // if Friday (5), +3
+                        dt.setDate(dt.getDate() + (8 - wd) % 7);
+                    } else {
+                        // if Thursday (4), -3
+                        // if Wednesday (3), -2
+                        // if Tuesday (2), -1
+                        // if Monday (1), -0
+                        dt.setDate(dt.getDate() - wd + 1);
+                    }
+                    y1 = dt.getFullYear();
+                    m1 = dt.getMonth() + 1;
+                    d1 = dt.getDate();
+                    dt.setDate(dt.getDate() + 6);
+                    y2 = dt.getFullYear();
+                    m2 = dt.getMonth() + 1;
+                    d2 = dt.getDate();
+                    break;
+
+                case 'day':
+                    //2017-4-1
+                    // mode = '$on'
+                    break;
+            }
+
+            values.push(y1 + '-' + m1 + '-' + d1);
+            values.push(y2 + '-' + m2 + '-' + d2);
+            values.push(type);
+
+            return values;
+        },
+
+        /**
+         * Process the user selected chart label and return an array with a
+         * single filter input value, or three if a date range
+         *
+         * @param label chart group or series label
+         * @param def report definition object
+         * @return {Array} a single element if not a date else three
+         */
+        getValues: function(label, def) {
+            var dateFunctions = ['year', 'quarter', 'month', 'week', 'day', 'fiscalYear', 'fiscalQuarter'];
+            var columnFn = def.column_function;
+            var isDateFn = !_.isEmpty(columnFn) && dateFunctions.indexOf(columnFn) !== -1;
+            var isDayFn = (isDateFn && columnFn === 'day') || (!isDateFn && def.type === 'date');
+            var values = [];
+
+            if (isDateFn && !isDayFn) {
+                // returns [dateStart, dateEnd, columnFn]
+                values = this.getDateValues(label, columnFn);
+            } else {
+                // returns [label]
+                values.push(label);
+            }
+
+            return values;
+        },
+
+        /**
          * Construct a new report definition filter
          *
          * @param reportDef report definition object
@@ -663,7 +864,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * @return {Array}
          */
         buildFilter: function(reportDef, params) {
-            var def = [];
+            var filter = [];
 
             var groups = this.getGrouping(reportDef, 0);
             var series = this.getGrouping(reportDef, 1);
@@ -672,38 +873,29 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             var groupLabel = params.groupLabel;
             var seriesLabel = params.seriesLabel;
 
-            var hasSameLabel = !_.isEmpty(seriesLabel) && !_.isEmpty(groupLabel) && seriesLabel === groupLabel;
+            var hasSameLabel = !_.isEmpty(seriesLabel) &&
+                               !_.isEmpty(groupLabel) &&
+                               seriesLabel === groupLabel;
             var hasSameGroup = groups.name === series.name &&
                                groups.label === series.label &&
                                groups.table_key === series.table_key;
 
-            var groupsValues = [];
-            var seriesValues = [];
+            var addGroupRow = _.bind(function () {
+                var groupsName = groups.table_key + ':' + groups.name;
+                var groupsValues = this.getValues(groupLabel, groups);
+                addFilterRow(groupsName, groupsValues);
+            }, this);
 
-            function getName(tableKey, name) {
-                return tableKey + ':' + name;
-            }
-
-            function setValues(values, label) {
-                values.push(label);
-            }
+            var addSeriesRow = _.bind(function() {
+                var seriesName = series.table_key + ':' + series.name;
+                var seriesValues = this.getValues(seriesLabel, series);
+                addFilterRow(seriesName, seriesValues);
+            }, this);
 
             function addFilterRow(name, values) {
                 var row = {};
                 row[name] = values;
-                def.push(row);
-            }
-
-            function addSeriesRow() {
-                var seriesName = getName(series.table_key, series.name);
-                setValues(seriesValues, seriesLabel, series);
-                addFilterRow(seriesName, seriesValues);
-            }
-
-            function addGroupRow() {
-                var groupsName = getName(groups.table_key, groups.name);;
-                setValues(groupsValues, groupLabel, groups);
-                addFilterRow(groupsName, groupsValues);
+                filter.push(row);
             }
 
             // PIE | FUNNEL CHART & DISCRETE DATA
@@ -756,7 +948,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 addSeriesRow();
             }
 
-            return def;
+            return filter;
         },
 
         /**

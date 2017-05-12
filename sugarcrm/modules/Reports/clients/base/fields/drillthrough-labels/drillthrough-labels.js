@@ -29,17 +29,29 @@
      */
     format: function(value) {
         var filterDef = this.context.get('filterDef');
+        var params = this.context.get('dashConfig');
 
-        function getValues(filter) {
+        //TODO: should this be moved outside?
+        function getValues(filter, label) {
             var key = getKey(filter);
             var values = filter[key];
-            return values.join(', ');
+            var dateLabels = ['year', 'quarter', 'month', 'week', 'fiscalYear', 'fiscalQuarter'];
+
+            // if datetime values, format differently
+            if (values.length === 3 && dateLabels.indexOf(values[2]) !== -1) {
+                //TODO: format with user date format preference when we have locale support
+                //TODO: should format be label (mm/dd/yyyy - mm/dd/yyyy)
+                return label;
+            } else {
+                return values.join(', ');
+            }
         }
 
         function getKey(filter) {
             return _.keys(filter)[0];
         }
 
+        //TODO: should this be moved outside?
         function parseField(field) {
             var parsedField = {};
             var position = field.indexOf(':');
@@ -61,15 +73,14 @@
 
         var group = _.first(filterDef);
         var groupField = parseField(getKey(group));
-
-        this.groupTitle = this._getTitle(groupField) + ': ';
-        this.group = getValues(group);
+        this.groupLabel = this._getLabel(groupField) + ': ';
+        this.groupValue = getValues(group, params.groupLabel);
 
         if (filterDef.length > 1) {
             var series = _.last(filterDef);
             var seriesField = parseField(getKey(series));
-            this.seriesTitle = this._getTitle(seriesField) + ': ';
-            this.series = getValues(series);
+            this.seriesLabel = this._getLabel(seriesField) + ': ';
+            this.seriesValue = getValues(series, params.seriesLabel);
         }
 
         // returns nothing
@@ -83,7 +94,7 @@
      * @return {string} Translated field name or fallback to system field name
      * @private
      */
-    _getTitle: function(field) {
+    _getLabel: function(field) {
         var chartModule = this.context.get('chartModule');
         var fieldsMeta = app.metadata.getModule(chartModule, 'fields');
 

@@ -250,7 +250,7 @@ class ReportsApi extends ModuleApi
                     $value = array($value);
                 }
                 $fieldDef = $this->getGroupFilterFieldDef($reportDef, $field);
-                if (!empty($fieldDef['type'])) {
+                if (!empty($fieldDef['type']) && !in_array($fieldDef['type'], ['date', 'datetime', 'datetimecombo'])) {
                     $value = $this->massageFilterValue($fieldDef['type'], $value, $fieldDef);
                 }
                 if ($fieldDef && !empty($fieldDef['type'])) {
@@ -267,11 +267,13 @@ class ReportsApi extends ModuleApi
                         case 'date':
                         case 'datetime':
                         case 'datetimecombo':
-                            if (empty($fieldDef['qualifier'])) {
+                            if (count($value) == 1) {
                                 $filterRow['qualifier_name'] = 'on';
                                 $filterRow['input_name0'] = reset($value);
                             } else {
-                                // TODO: date range
+                                $filterRow['qualifier_name'] = 'between_dates';
+                                $filterRow['input_name0'] = $value[0];
+                                $filterRow['input_name1'] = $value[1];
                             }
                             break;
                         // TODO: more types
