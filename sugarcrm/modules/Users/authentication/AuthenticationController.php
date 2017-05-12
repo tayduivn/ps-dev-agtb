@@ -115,6 +115,7 @@ class AuthenticationController
 		if(empty($params['noHooks'])) {
 		    LogicHook::initialize()->call_custom_logic('Users', 'before_login');
 		}
+        $_SESSION['externalLogin'] = false;
         $this->loggedIn = false;
         $this->loginSuccess = false;
         try {

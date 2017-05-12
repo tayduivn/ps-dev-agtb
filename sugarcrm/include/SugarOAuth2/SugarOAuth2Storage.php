@@ -426,6 +426,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
     {
         global $sugar_config;
 
+        $IdPSessionIndex = !empty($_SESSION['IdPSessionIndex']) ? $_SESSION['IdPSessionIndex'] : null;
+        $externalLogin = !empty($_SESSION['externalLogin']) ? $_SESSION['externalLogin'] : false;
         $clientInfo = $this->getClientDetails($client_id);
         if ( $clientInfo === false ) {
             return false;
@@ -464,6 +466,10 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         // set up the rest of the session, but only if we have what is needed
         if ($this->canStartSession()) {
             $GLOBALS['current_user'] = $this->userBean;
+            if ($IdPSessionIndex) {
+                $_SESSION['IdPSessionIndex'] = $IdPSessionIndex;
+            }
+            $_SESSION['externalLogin'] = $externalLogin;
             $_SESSION['is_valid_session'] = true;
             $_SESSION['ip_address'] = query_client_ip();
             $_SESSION['user_id'] = $this->userBean->id;

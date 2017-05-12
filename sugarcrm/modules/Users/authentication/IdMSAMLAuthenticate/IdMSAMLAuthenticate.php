@@ -81,6 +81,7 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
 
         $session = $this->getSession();
         $session['IdPSessionIndex'] = $token->getAttribute('IdPSessionIndex');
+        $session['externalLogin'] = true;
 
         return true;
     }
