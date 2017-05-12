@@ -13,41 +13,50 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
     // get chartId from params or use the default for sugar
     var d3ChartId = 'd3_' + chartId || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165';
 
+    // make sure the chart container exists
     if (document.getElementById(d3ChartId) === null) {
         return false;
     }
 
-    var params = _.extend({
+    // set barType to 'grouped'
+    var chartType = chartConfig.barType || chartConfig.lineType || chartConfig.pieType || chartConfig.funnelType || 'basic';
+    var configBarType = chartType === 'stacked' ? 'grouped' : chartType;
+
+    // update default params from chartConfig and then chartParams
+    var params = _.extendOwn({
+        allowScroll: false,
+        base_module: 'Reports',
+        barType: configBarType,
+        chart_type: 'bar chart',
+        colorData: 'default',
+        direction: 'ltr',
+        groupType: 'basic',
+        hideEmptyGroups: true,
+        label: SUGAR.charts.translateString('LBL_DASHLET_SAVED_REPORTS_CHART'),
+        margin: {top: 10, right: 10, bottom: 10, left: 10},
+        module: 'Reports',
+        overflowHandler: false,
+        reduceXTicks: false,
+        rotateTicks: true,
         saved_report_id: chartId,
-        show_title: true,
-        show_legend: true,
         show_controls: false,
+        show_legend: 'on',
+        show_title: true,
         show_tooltips: true,
-        show_y_label: false,
-        y_axis_label: '',
         show_x_label: false,
-        x_axis_label: '',
+        show_y_label: false,
+        showValues: false,
+        stacked: true,
+        staggerTicks: true,
+        type: 'saved-report-view',
         vertical: true,
         wrapTicks: true,
-        staggerTicks: true,
-        rotateTicks: true,
-        reduceXTicks: false,
-        allowScroll: false,
-        overflowHandler: false,
-        showValues: false,
-        hideEmptyGroups: true,
-        stacked: true,
-        label: '',
-        reportName: SUGAR.charts.translateString('LBL_DASHLET_SAVED_REPORTS_CHART'),
-        module: 'Home',
-        colorData: 'default',
-        margin: {top: 10, right: 10, bottom: 10, left: 10},
-        direction: chartConfig.direction || 'ltr'
-    }, chartParams);
+        x_axis_label: '',
+        y_axis_label: ''
+    }, chartConfig, chartParams);
+    params.vertical = (chartConfig.orientation ? chartConfig.orientation === 'vertical' : false);
 
-    var imageExportType = chartConfig.imageExportType;
-    var isReportView = chartConfig.ReportModule || false;
-
+    // chart display strings
     var displayErrorMsg = SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports');
     var noDataMsg = SUGAR.charts.translateString('LBL_CHART_NO_DATA');
     var legendStrings = {
@@ -56,6 +65,14 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             noText: SUGAR.charts.translateString('LBL_CHART_UNDEFINED')
         };
 
+    // controls if chart image is auto-saved
+    var imageExportType = chartConfig.imageExportType;
+    // determines if basic bar chart is displayed as discrete
+    var isReportView = chartConfig.ReportModule || false;
+
+    this.chartObject = '';
+
+    // instantiate Sucrose chart
     switch (chartConfig.chartType) {
 
         case 'barChart':
@@ -64,8 +81,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 var barChart;
 
                 if (SUGAR.charts.isDataEmpty(data)) {
-
-                    params.vertical = chartConfig.orientation === 'vertical' ? true : false;
 
                     json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
@@ -115,6 +130,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             noData: noDataMsg
                         });
 
+                    barChart.textureFill(true);
+
                     barChart.yAxis.tickSize(0);
 
                     //check to see if thousands symbol is in use
@@ -160,9 +177,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         }
                     } else {
                         SUGAR.charts.renderChart(chartId, barChart, json);
+
+                        if (params.state) {
+                            barChart.cellActivate(params.state);
+                        }
                     }
 
-                    SUGAR.charts.callback(callback, barChart);
+                    SUGAR.charts.callback(callback, barChart, chartId, params);
                 }
             });
             break;
@@ -247,7 +268,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         SUGAR.charts.renderChart(chartId, lineChart, json);
                     }
 
-                    SUGAR.charts.callback(callback, lineChart);
+                    SUGAR.charts.callback(callback, lineChart, chartId, params);
                 }
             });
             break;
@@ -297,6 +318,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             noData: noDataMsg
                         });
 
+                    pieChart.textureFill(true);
+
                     if (isReportView) {
                         pieChart.legend.showAll(true);
 
@@ -309,9 +332,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         }
                     } else {
                         SUGAR.charts.renderChart(chartId, pieChart, json);
+
+                        if (params.state) {
+                            pieChart.seriesActivate(params.state);
+                        }
                     }
 
-                    SUGAR.charts.callback(callback, pieChart);
+                    SUGAR.charts.callback(callback, pieChart, chartId, params);
                 }
             });
             break;
@@ -352,6 +379,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             noData: noDataMsg
                         });
 
+                    funnelChart.textureFill(true);
+
                     if (isReportView) {
                         funnelChart.legend.showAll(true);
 
@@ -364,9 +393,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         }
                     } else {
                         SUGAR.charts.renderChart(chartId, funnelChart, json);
+
+                        if (params.state) {
+                            funnelChart.seriesActivate(params.state);
+                        }
                     }
 
-                    SUGAR.charts.callback(callback, funnelChart);
+                    SUGAR.charts.callback(callback, funnelChart, chartId, params);
                 }
             });
             break;
@@ -417,7 +450,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         SUGAR.charts.renderChart(chartId, gaugeChart, json);
                     }
 
-                    SUGAR.charts.callback(callback, gaugeChart);
+                    SUGAR.charts.callback(callback, gaugeChart, chartId, params);
                 }
             });
             break;
@@ -425,7 +458,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 }
 
 /**
- * As you touch the code above, migrate the code to use the pattern below.
+ * Global sugar chart class
  */
 (function($) {
     if (typeof SUGAR == 'undefined' || !SUGAR) {
@@ -439,9 +472,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         /**
          * Execute callback function if specified
          *
-         * @param callback function
+         * @param callback function to invoke after chart rendering
+         * @param chart Sucrose chart instance to render
+         * @param chartId chart id used to select the chart container
+         * @param params chart display control parameters
          */
-        callback: function(callback, chart) {
+        callback: function(callback, chart, chartId, params) {
+            // add drill through support
             this.chart = chart;
             this.chart_loaded = _.isFunction(chart.update);
 
@@ -450,11 +487,228 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             }
 
             if (callback) {
-                // if the call back is fired, include the chart as the only param
+                // if the call back is provided, include the chart as the only param
                 callback(chart);
+                return;
+            }
+
+            // only assign the event handler if chart supports it
+            if (!_.isFunction(chart.seriesClick)) {
+                return;
+            }
+
+            // This default seriesClick callback is normally used
+            // by the Report module charts. Saved Reports Chart
+            // dashlets override with their own handler
+            chart.seriesClick(_.bind(function(data, eo, chart, labels) {
+                var chartState = this.buildChartState(eo, labels);
+                var groupDefs;
+                var filterDef;
+
+                params.seriesLabel = this.extractSeriesLabel(eo, data);
+                params.groupLabel = this.extractGroupLabel(eo, labels);
+
+                // report_def is defined as a global in _reportCriteriaWithResult
+                // but only in Reports module
+                // var base_module = params.base_module || (_.isUndefined(report_def) ? 'Home' : report_def);
+                //TODO: fix usage of global report_def
+                groupDefs = this.getGrouping(report_def);
+                filterDef = this.buildFilter(report_def, params);
+
+                chart.clearActive();
+                if (chart.cellActivate) {
+                    chart.cellActivate(chartState);
+                } else if (chart.seriesActivate) {
+                    chart.seriesActivate(chartState);
+                } else {
+                    chart.dataSeriesActivate(eo);
+                }
+                chart.dispatch.call('tooltipHide', this);
+
+                // No need for _handleFilter since we alwasy open drawer in Reports module
+                // this._handleFilter(filterDef, chartData, chartState);
+                app.alert.show('listfromreport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
+                this.chart.clearActive();
+                this.openDrawer(report_def.module, chartId, groupDefs, filterDef, chartState, params);
+            }, this));
+        },
+
+        /**
+         * Create an active state object based on chart element clicked
+         *
+         * @param eo an event object with extended properties
+         * constructed from a clicked chart element
+         * @param labels an array of grouping labels
+         */
+        buildChartState: function(eo, labels) {
+            var seriesIndex = eo.seriesIndex || eo.series.seriesIndex;
+            if (_.isEmpty(labels)) {
+                return {seriesIndex: seriesIndex || eo.pointIndex};
+            } else {
+                return {seriesIndex: seriesIndex, groupIndex: eo.pointIndex};
             }
         },
 
+        /**
+         * Get the series label from chart data based on chart element clicked
+         *
+         * @param eo an event object with extended properties
+         * constructed from a clicked chart element
+         * @param data report data
+         */
+        extractSeriesLabel: function(eo, data) {
+            var seriesIndex = eo.seriesIndex || eo.series.seriesIndex;
+            return _.isUndefined(seriesIndex) ? data[eo.pointIndex].key : data[seriesIndex].key;
+        },
+
+        /**
+         * Get the group label from chart labels based on chart element clicked
+         *
+         * @param eo an event object with extended properties
+         * constructed from a clicked chart element
+         * @param labels an array of grouping labels
+         */
+        extractGroupLabel: function(eo, labels) {
+            return _.isEmpty(labels) ? null : labels[eo.pointIndex];
+        },
+
+        /**
+         * Get the first or second grouping from report definition
+         * or the first grouping if there is only one
+         *
+         * @param reportDef report definition object
+         * @param i group definition index
+         * @return {object}
+         */
+        getGrouping: function(reportDef, i) {
+            var groupDefs = reportDef.group_defs;
+            if (isNaN(i)) {
+                return groupDefs;
+            }
+            return i > 0 && groupDefs.length > 1 ? reportDef.group_defs[1] : reportDef.group_defs[0];
+        },
+
+        /**
+         * Construct a new report definition filter
+         *
+         * @param reportDef report definition object
+         * @param params chart display control parameters
+         * @return {array}
+         */
+        buildFilter: function(reportDef, params) {
+            var def = [];
+            var mode = '$in';
+
+            var groups = this.getGrouping(reportDef, 0);
+            var series = this.getGrouping(reportDef, 1);
+
+            var isGroupType = params.groupType === 'grouped';
+            var groupLabel = params.groupLabel;
+            var seriesLabel = params.seriesLabel;
+
+            var hasSameLabel = !_.isEmpty(seriesLabel) && !_.isEmpty(groupLabel) && seriesLabel === groupLabel;
+            var hasSameGroup = groups.name === series.name &&
+                               groups.label === series.label &&
+                               groups.table_key === series.table_key;
+
+            var groupsValues = [];
+            var seriesValues = [];
+
+            function setValues(values, label) {
+                mode = '$in';
+                values.push(label);
+            }
+
+            function addFilterRow(name, values) {
+                var field = {};
+                var row = {};
+                field[mode] = values;
+                row[name] = field;
+                def.push(row);
+            }
+
+            function addSeriesRow() {
+                setValues(seriesValues, seriesLabel, series);
+                addFilterRow(series.name, seriesValues);
+            }
+
+            function addGroupRow() {
+                setValues(groupsValues, groupLabel, groups);
+                addFilterRow(groups.name, groupsValues);
+            }
+
+            // pie & funnel chart
+            if (!isGroupType && hasSameGroup && !_.isEmpty(seriesLabel) && _.isEmpty(groupLabel)) {
+                // then use series
+                groupLabel = groupLabel || seriesLabel;
+                params.groupLabel = groupLabel;
+                addSeriesRow();
+            }
+            // pie & funnel chart & grouped data
+            // this happens when data with multiple groupings is displayed as pie or funnel
+            else if (!isGroupType && !hasSameGroup && !hasSameLabel) {
+                // then use group
+                groupLabel = groupLabel || seriesLabel;
+                params.groupLabel = groupLabel;
+                addGroupRow();
+            }
+            // grouped or basic type & discrete data (isGroupType ignored)
+            else if (hasSameGroup && hasSameLabel) {
+                // then use either, but only one
+                addSeriesRow();
+            }
+            // grouped type & grouped data
+            else if (isGroupType && !hasSameGroup && !hasSameLabel) {
+                // then use both
+                addGroupRow();
+                addSeriesRow();
+            }
+            // basic type & discrete data
+            else if (!isGroupType && hasSameGroup && !hasSameLabel) {
+                // then use group
+                addGroupRow();
+            }
+            // basic type & grouped data
+            else if (!isGroupType && !hasSameGroup && hasSameLabel) {
+                // then use group
+                addGroupRow();
+            }
+
+            return def;
+        },
+
+        /**
+         * Open a drill through drawer
+         */
+        openDrawer: function(chartModule, reportId, groupDefs, filterDef, chartState, dashConfig) {
+            var sugarApp = SUGAR.App || SUGAR.app || app;
+            sugarApp.drawer.open({
+                layout: 'drillthrough-drawer',
+                context: {
+                    layout: 'drillthrough-drawer',
+                    module: chartModule,
+                    chartModule: chartModule,
+                    chartState: chartState,
+                    reportId: reportId,
+                    filterOptions: {
+                        auto_apply: false
+                    },
+                    filterDef: filterDef,
+                    groupDefs: groupDefs,
+                    skipFetch: true,
+                    dashModel: null,
+                    dashConfig: dashConfig
+                }
+            });
+        },
+
+        /**
+         * Main render chart method
+         *
+         * @param id chart id used to select the chart container
+         * @param chart Sucrose chart instance to render
+         * @param json report data to render
+         */
         renderChart: function(id, chart, json) {
             $('#d3_' + id).empty();
             d3sugar.select('#d3_' + id)
@@ -465,6 +719,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 .call(chart);
         },
 
+        /**
+         * Display an error message in chart container
+         *
+         * @param id chart id used to select the chart container
+         * @param str error message string
+         */
         renderError: function(id, str) {
             $('#d3_' + id).empty();
             d3sugar.select('.reportChartContainer')
@@ -509,6 +769,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             }
         },
 
+        /**
+         * Translate a chart string using current application language
+         *
+         * @param appString string to translate
+         * @param module module where the string is defined
+         * @return {string}
+         */
         translateString: function(appString, module) {
             if (SUGAR.language) {
                 if (module) {
@@ -527,7 +794,15 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             }
         },
 
-        translateDataToD3: function(json, params, chartConfig) {
+        /**
+         * Transform data from Report module to format used by Sucrose
+         *
+         * @param json the report data to transform
+         * @param params chart display control parameters
+         * @param config chart configuration settings
+         * @return {object} contains chart properties object and data array
+         */
+        translateDataToD3: function(json, params, config) {
             var data = [];
             var value = 0;
             var properties = json.properties[0] || {};
@@ -553,13 +828,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             }
 
             if (hasValues) {
-                switch (chartConfig.chartType) {
+                switch (config.chartType) {
 
                     case 'barChart':
-                        if ((chartConfig.ReportModule && isDiscreteData) || chartConfig.barType === 'stacked') {
-                            params.barType = chartConfig.barType = 'grouped';
+                        if ((config.ReportModule && isDiscreteData) || config.barType === 'stacked') {
+                            params.barType = config.barType = 'grouped';
                         }
-                        isGroupedBarType = chartConfig.barType === 'grouped';
+                        isGroupedBarType = params.barType === 'grouped';
 
                         data = isGroupedBarType && !isDiscreteData ?
                             // is grouped bar type on grouped data
@@ -675,7 +950,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 'properties': {
                     'title': properties.title,
                     // bar group data (x-axis)
-                    'groups': chartConfig.chartType === 'lineChart' && json.label ?
+                    'groups': config.chartType === 'lineChart' && json.label ?
                         json.label.map(function(d, i) {
                             return {
                                 'group': i + 1,
@@ -690,7 +965,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                 };
                             }) :
                             [],
-                    'values': chartConfig.chartType === 'gaugeChart' ?
+                    'values': config.chartType === 'gaugeChart' ?
                         [{'group': 1, 'total': value}] :
                         hasValues ?
                             json.values.map(function(d, i) {
@@ -723,9 +998,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         /**
          * Resize graph on window resize
          *
-         * @param chart
-         * @param chartId
-         * @param json
+         * @param chart Sucrose chart instance to render
          */
         trackWindowResize: function(chart) {
             // var resizer = chart.render ? chart.render : chart.update;
@@ -738,14 +1011,30 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             }, this), 300));
         },
 
+        /**
+         * Save the current chart to an image
+         *
+         * @param id chart id used to construct the chart container id
+         * @param chart Sucrose chart instance to call
+         * @param json report data to render
+         * @param jsonfilename name of the data file to save image as
+         * @param imageExt type of image to save
+         * @param saveTo url of service to post the image to
+         * @param complete the callback to reset chart instance after saving image
+         */
         saveImageFile: function(id, chart, json, jsonfilename, imageExt, saveTo, complete) {
             var d3ChartId = '#d3_' + id + '_print' || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165_print';
             var canvasChartId = 'canvas_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
             var svgChartId = 'svg_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
             var legendShowState = chart.legend.showAll();
+            var textureFillState = true;
 
             var completeCallback = complete || _.bind(function() {
                 chart.legend.showAll(legendShowState); //restore showAll state for web render
+                // reenable texture fill for onclick feedback
+                if (chart.textureFill) {
+                    chart.textureFill(textureFillState);
+                }
                 // now that image is generated
                 // it is ok to render the visible chart
                 this.renderChart(id, chart, json);
