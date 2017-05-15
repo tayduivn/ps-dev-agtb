@@ -90,9 +90,6 @@ class SugarArrayUtilsTest extends Sugar_PHPUnit_Framework_TestCase
 		$expectedEval = true;
 		
 		$this->assertEquals($expectedNoEval, override_value_to_string_recursive($key_names, $array_name, $value));
-		global $name;
-		
-		$array = override_value_to_string_recursive($key_names, $array_name, $value, true);
 	} 
 	
 	
