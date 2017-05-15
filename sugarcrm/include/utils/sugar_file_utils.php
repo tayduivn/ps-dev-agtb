@@ -146,7 +146,7 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
 function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_include_path=false, $context=null){
 
     $dir = dirname($filename);
-    $temp = tempnam($dir, 'temp');
+    $temp = @tempnam($dir, 'temp');
 
     if ($temp === false || !($f = @fopen($temp, $mode))) {
         // delete the file created by tempnam
