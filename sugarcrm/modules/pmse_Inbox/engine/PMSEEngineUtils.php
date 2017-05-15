@@ -131,7 +131,6 @@ class PMSEEngineUtils
         'favorite_link',
         'users',
         'user_sync',
-        'cases',
         'localizations',
         'revisions',
         'attachments',
