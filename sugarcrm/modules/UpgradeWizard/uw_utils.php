@@ -4348,7 +4348,7 @@ function updateRenamedModulesLabels()
 
         //get base list strings for this language
         if (file_exists("include/language/$langKey.lang.php")) {
-            include("include/language/$langKey.lang.php");
+            include FileLoader::validateFilePath("include/language/$langKey.lang.php");
 
             //Keep only renamed modules
             $renamedModules = array_diff($strings['moduleList'], $app_list_strings['moduleList']);
