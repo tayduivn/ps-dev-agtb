@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,6 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 class SugarUpgradeEmailTemplatesUpdateHasVariables extends UpgradeScript
 {
     public $order = 2180;
@@ -16,19 +18,35 @@ class SugarUpgradeEmailTemplatesUpdateHasVariables extends UpgradeScript
 
     public function run()
     {
-        // are we coming from anything before 7.9?
-        if (!version_compare($this->from_version, '7.9', '<')) {
+        // are we coming from anything before 7.10?
+        if (!version_compare($this->from_version, '7.10', '<')) {
             return;
         }
 
         $this->log('Updating Email Templates has_variables field');
 
-        $sql = 'UPDATE email_templates ' .
-                'SET has_variables = 1 ' .
-                'WHERE CONCAT_WS(" ", body, body_html) REGEXP "\\\$[a-zA-Z]*\\\_[a-zA-Z0-9_]*"';
+        $sql = "SELECT id, subject, body, body_html FROM email_templates" .
+            " WHERE subject LIKE '%$%' OR body LIKE '%$%' OR body_html LIKE '%$%'";
 
-        $r = $this->db->query($sql);
-        $this->log('SQL Ran, Updated ' . $this->db->getAffectedRowCount($r) . ' Rows');
+        $conn = $GLOBALS['db']->getConnection();
+        $stmt = $conn->executeQuery($sql);
+        $savedRecords = 0;
+        while ($row = $stmt->fetch()) {
+            $templateData = $row['subject'] . ' ' . $row['body'] . ' ' . $row['body_html'];
+            if (EmailTemplate::checkStringHasVariables($templateData)) {
+                $template = BeanFactory::retrieveBean(
+                    'EmailTemplates',
+                    $row['id'],
+                    array('disable_row_level_security' => true)
+                );
+                if ($template) {
+                    $savedRecords++;
+                    $template->save();
+                }
+            }
+        }
+
+        $this->log('SQL Ran, Updated ' . $savedRecords . ' EmailTemplates');
         $this->log('Done updating Email Templates has_variables field');
     }
 }
