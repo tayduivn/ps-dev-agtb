@@ -13,7 +13,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 
 // if we're in upgrade, upgrade files will be preserved in special place
 $webUpgraderFile = 'modules/UpgradeWizard/WebUpgrader.php';
-if (!empty($_POST['action']) && !empty($_POST['token'])) {
+if (!empty($_REQUEST['action']) && !empty($_REQUEST['token'])) {
     session_start();
     if (!empty($_SESSION['upgrade_dir']) && is_file($_SESSION['upgrade_dir'] . 'WebUpgrader.php')) {
         $webUpgraderFile = $_SESSION['upgrade_dir'] . 'WebUpgrader.php';
@@ -26,8 +26,8 @@ $upg = new WebUpgrader(dirname(__FILE__));
 $upg->init();
 
 // handle log export
-if (!empty($_POST['action']) && $_POST['action'] == 'exportlog') {
-    if (!empty($_POST['token']) && $upg->checkTokenAndAdmin($_POST['token'])) {
+if (!empty($_REQUEST['action']) && $_REQUEST['action'] == 'exportlog') {
+    if (!empty($_REQUEST['token']) && $upg->checkTokenAndAdmin($_REQUEST['token'])) {
         $file = $upg->context['log'];
         if (!file_exists($file)) {
             die('Log file does not exist');
@@ -42,7 +42,7 @@ if (!empty($_POST['action']) && $_POST['action'] == 'exportlog') {
     exit;
 }
 
-if (empty($_POST['action']) || empty($_POST['token'])) {
+if (empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
     $token = $upg->startUpgrade();
     if (!$token) {
         if (!$upg->error) {
@@ -55,12 +55,12 @@ if (empty($_POST['action']) || empty($_POST['token'])) {
 	$upg->displayUpgradePage();
 	exit(0);
 }
-if (!$upg->startRequest($_POST['token'])) {
+if (!$upg->startRequest($_REQUEST['token'])) {
     die("Bad token");
 }
 
 ob_start();
-$res = $upg->process($_POST['action']);
+$res = $upg->process($_REQUEST['action']);
 if ($res !== false && $upg->success) {
     // OK
     $reply = array("status" => "ok", "data" => $res);
@@ -72,10 +72,10 @@ if ($res !== false && $upg->success) {
     }
 } else {
     // error
-    $reply = array("status" => "error", "message" => $upg->error?$upg->error:"Stage {$_POST['action']} failed", 'data' => $res);
+    $reply = array("status" => "error", "message" => $upg->error?$upg->error:"Stage {$_REQUEST['action']} failed", 'data' => $res);
 }
 
-if ($_POST['action'] == 'healthcheck') {
+if ($_REQUEST['action'] == 'healthcheck') {
     $upgState = $upg->getState();
     if (!empty($upgState['healthcheck'])) {
         $reply['healthcheck'] = $upgState['healthcheck'];
