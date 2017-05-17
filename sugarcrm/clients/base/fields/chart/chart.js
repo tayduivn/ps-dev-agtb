@@ -34,7 +34,7 @@
             // the newChartData (data set for the model's rawChartData) is not null
             if (newChartData && this.model.get('rawChartData').values.length > 0) {
                 this.displayNoData(false);
-                this.$('.nv-chart').attr('class', 'nv-chart nv-' + this.chartType);
+                this.$('.sc-chart').attr('class', 'sc-chart sc-' + this.chartType);
                 // if the chart already exists, remove it before we generate the new one
                 if (this.chart_loaded) {
                     this.$('#d3_' + this.cid + ' svg').remove();
@@ -98,8 +98,8 @@
         // Resize chart on print.
         this.handlePrinting('on');
         // This on click event is required to dismiss the dropdown legend
-        this.$('.nv-chart').on('click', _.bind(function(e){
-          this.chart.dispatch.chartClick();
+        this.$('.sc-chart').on('click', _.bind(function() {
+            this.chart.dispatch.call('chartClick', this);
         }, this));
     },
 
@@ -320,7 +320,7 @@
         if (this.view && this.view.layout) {
             this.view.layout.context.off(null, null, this);
         }
-        this.$('.nv-chart').off('click');
+        this.$('.sc-chart').off('click');
         $(window).off('resize.' + this.sfId);
         this.handlePrinting('off');
 

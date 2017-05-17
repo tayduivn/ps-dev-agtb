@@ -233,10 +233,10 @@
                    'include/javascript/sucrose/lib/d3v4.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sucrose/lib/d3fc-rebind.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sucrose/sucrose.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/SugarCharts/sucrose/js/sugarCharts.js' => 'include/javascript/sugar_sidecar.min.js',
                    // D3 (version 3.x) entire library
                    'include/javascript/nvd3/lib/d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'include/SugarCharts/nvd3/js/sugarCharts.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/error.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/touch.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/select2/select2.js' => 'include/javascript/sugar_sidecar.min.js',

@@ -22,8 +22,13 @@ class SugarUpgradeFixReportCharts extends UpgradeScript
     public function run()
     {
         if (version_compare($this->from_version, '7', '<') &&
-            (strtolower($this->upgrader->config['chartEngine']) == 'jit' ||
-            strtolower($this->upgrader->config['chartEngine']) == 'nvd3')
+            strtolower($this->upgrader->config['chartEngine']) == 'jit'
+        ) {
+            $this->upgrader->config['chartEngine'] = 'nvd3';
+            $this->log('Chart engine changed to Sucrose');
+        }
+        if (version_compare($this->from_version, '7.10', '<') &&
+            strtolower($this->upgrader->config['chartEngine']) == 'nvd3'
         ) {
             $this->upgrader->config['chartEngine'] = 'sucrose';
             $this->log('Chart engine changed to Sucrose');

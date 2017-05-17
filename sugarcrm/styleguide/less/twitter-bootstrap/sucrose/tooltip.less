@@ -10,17 +10,101 @@
   pointer-events: none;
 }
 
+// Base class
+.tooltip {
+  position: absolute;
+  z-index: @zindexTooltip;
+  display: block;
+  visibility: visible;
+  padding: 5px;
+  pointer-events: none;
+  .opacity(0);
+  &.in { .opacity(100); }
+  &.top { margin-top: -3px; }
+  &.right { margin-left: 3px; }
+  &.bottom { margin-top: 3px; }
+  &.left { margin-left: -3px; }
+
+  div,
+  span,
+  a {
+    color: @white;
+  }
+}
+
 // Wrapper for the tooltip content
 .tooltip-inner {
   font-family: @sansFontFamily;
   font-weight: normal;
   font-size: 11px;
   line-height: 15px;
+  color: @tooltipColor;
+  background-color: @tooltipBackground;
+  max-width: 200px;
+  padding: 3px 8px;
+  text-align: center;
+  text-decoration: none;
   text-shadow: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  .border-radius(@baseBorderRadius);
+
+  & > div {
+    text-align: left;
+  }
+
+  & > p {
+    margin: 0;
+  }
+
   h3 {
+    font-size: 13px;
     color: darken(@grayLighter, 25%);
+    line-height: normal;
     padding: 0;
     margin: 0;
   }
 }
 
+// Arrows
+.tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+
+.tooltip {
+  &.top .tooltip-arrow {
+    bottom: 0;
+    left: 50%;
+    margin-left: -@tooltipArrowWidth;
+    border-width: @tooltipArrowWidth @tooltipArrowWidth 0;
+    border-top-color: @tooltipArrowColor;
+  }
+
+  &.right .tooltip-arrow {
+    top: 50%;
+    left: 0;
+    margin-top: -@tooltipArrowWidth;
+    border-width: @tooltipArrowWidth @tooltipArrowWidth @tooltipArrowWidth 0;
+    border-right-color: @tooltipArrowColor;
+  }
+
+  &.left .tooltip-arrow {
+    top: 50%;
+    right: 0;
+    margin-top: -@tooltipArrowWidth;
+    border-width: @tooltipArrowWidth 0 @tooltipArrowWidth @tooltipArrowWidth;
+    border-left-color: @tooltipArrowColor;
+  }
+
+  &.bottom .tooltip-arrow {
+    top: 0;
+    left: 50%;
+    margin-left: -@tooltipArrowWidth;
+    border-width: 0 @tooltipArrowWidth @tooltipArrowWidth;
+    border-bottom-color: @tooltipArrowColor;
+  }
+}

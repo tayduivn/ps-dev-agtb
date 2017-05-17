@@ -41,7 +41,7 @@ class SugarChartFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sugarChart = SugarChartFactory::getInstance();
         $name = get_class($sugarChart);
-        $this->assertEquals('nvd3', $name, 'Assert chart engine defaults to nvd3');
+        $this->assertEquals('sucrose', $name, 'Assert chart engine defaults to sucrose');
     }
 
     public function testChartFactoryJit()
@@ -66,12 +66,23 @@ class SugarChartFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('nvd3Reports', $name, 'Assert chart engine is nvd3Reports');
     }
 
+    public function testChartFactorySucrose()
+    {
+        $sugarChart = SugarChartFactory::getInstance('sucrose');
+        $name = get_class($sugarChart);
+        $this->assertEquals('sucrose', $name, 'Assert engine is sucrose');
+
+        $sugarChart = SugarChartFactory::getInstance('sucrose', 'Reports');
+        $name = get_class($sugarChart);
+        $this->assertEquals('sucroseReports', $name, 'Assert chart engine is sucroseReports');
+    }
+
     public function testConfigChartFactory()
     {
         global $sugar_config;
-        $sugar_config['chartEngine'] = 'Jit';
+        $sugar_config['chartEngine'] = 'nvd3';
         $sugarChart = SugarChartFactory::getInstance();
         $name = get_class($sugarChart);
-        $this->assertEquals('Jit', $name, 'Assert chart engine set in global sugar_config is correct');
+        $this->assertEquals('nvd3', $name, 'Assert chart engine set in global sugar_config is correct');
     }
 }
