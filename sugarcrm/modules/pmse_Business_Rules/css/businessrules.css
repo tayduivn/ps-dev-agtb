@@ -15,14 +15,14 @@
 #businessruleheader {
   display: block;
   padding: 5px;
+  white-space: nowrap;
   width: auto;
-  background-color: #dfdfdf;
 }
 
 #businessruledesigner {
   display: block;
   background-color: #efefef;
-  border: solid 1px #dfdfdf;
+  overflow: auto;
 }
 
 .brTitle {
@@ -33,7 +33,6 @@
 }
 
 .brModule {
-  float: right;
   padding: 5px 12px;
   font-weight: normal;
   font-size: 13px;
@@ -81,7 +80,6 @@
   text-align: center;
   width: auto;
   padding: 0px;
-  vertical-align: top;
 }
 
 .decision-table th > * {
@@ -225,6 +223,7 @@ th.decision-table-title {
 
 div.decision-table-conditions-header,
 div.decision-table-conclusions-header {
+  float: left;
   padding: 0px;
   overflow: hidden;
 }
@@ -877,4 +876,33 @@ table.decision-table-index span {
 
 .adam.single-item:hover .single-item-remove {
   color: #555555;
+}
+
+.close-list-item {
+  text-align: center;
+}
+
+.decision-table tfoot tr {
+  height: 30px;
+}
+
+td.decision-table-conclusion-column {
+  background: #fff;
+  min-width: 200px;
+}
+
+.ui-sortable tr {
+  cursor: pointer;
+}
+
+.ui-sortable tr:hover {
+  background-color: #ff9;
+}
+
+.index {
+  width: 20px;
+}
+
+span.remove-index, span.checkbox-index {
+  width: 1.5em;
 }

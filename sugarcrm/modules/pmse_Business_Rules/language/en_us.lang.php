@@ -65,11 +65,16 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_CONDITIONS' => 'Conditions',
     'LBL_PMSE_LABEL_RETURN' => 'Return',
     'LBL_PMSE_LABEL_CONCLUSIONS' => 'Conclusions',
+    'LBL_PMSE_LABEL_CHANGE_FIELD' => 'Change Field',
+    'LBL_PMSE_LABEL_RETURN_VALUE' => 'Return Value',
 
     'LBL_PMSE_TOOLTIP_ADD_CONDITION' => 'Add condition',
     'LBL_PMSE_TOOLTIP_ADD_CONCLUSION' => 'Add conclusion',
     'LBL_PMSE_TOOLTIP_ADD_ROW' => 'Add row',
     'LBL_PMSE_TOOLTIP_REMOVE_COLUMN' => 'Remove column',
+    'LBL_PMSE_TOOLTIP_REMOVE_CONDITION' => 'Remove condition',
+    'LBL_PMSE_TOOLTIP_REMOVE_CONCLUSION' => 'Remove conclusion',
+    'LBL_PMSE_TOOLTIP_REMOVE_COL_DATA' => 'Remove column data',
 
     'LBL_PMSE_DROP_DOWN_CHECKED' => 'Yes',
     'LBL_PMSE_DROP_DOWN_UNCHECKED' => 'No',
