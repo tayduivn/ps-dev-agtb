@@ -19,7 +19,7 @@
         {{#if externalLoginForm}}
             <p>&nbsp;</p>
             <p class="wide">
-                <a class="btn btn-block btn-primary" name="external_login_button" title="{{str "LBL_LOGIN_BUTTON_LABEL"}}">{{str "LBL_LOGIN_BUTTON_LABEL"}}</a>
+                <a class="btn btn-block btn-primary {{#unless externalLoginUrl}}disabled{{/unless}}" name="external_login_button" title="{{str "LBL_LOGIN_BUTTON_LABEL"}}">{{str "LBL_LOGIN_BUTTON_LABEL"}}</a>
             </p>
             <p class="wide">
                 <a class="btn btn-link btn-invisible" name="login_form_button" title="{{str "LBL_LOGIN_FORM_LABEL"}}">{{str "LBL_LOGIN_FORM_LABEL"}}</a>

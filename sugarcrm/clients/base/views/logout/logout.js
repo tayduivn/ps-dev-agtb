@@ -16,7 +16,6 @@
 ({
     events: {
         "click [name=login_button]": "login",
-        "click [name=login_form_button]": "login_form"
     },
 
     /**
@@ -40,29 +39,18 @@
     },
 
     /**
-     * Process Login
+     * @deprecated
      */
-    login: function() {        
-        if (app.config && 
-            app.config.externalLogin === true &&
-            app.config.externalLoginSameWindow === true &&
-            !_.isEmpty(app.config.externalLoginUrl)
-        ) {
-            window.location.replace(app.config.externalLoginUrl);
-        } else {
-            app.router.login();
-        }
+    login_form: function() {
+        app.logger.warn('`View.Views.Base.LogoutView#login_form` has been deprecated since 7.9.1.0 and' +
+            ' will be removed in a future release. Please use `View.Views.Base.LogoutView#login`.');
+        this.login();
     },
 
     /**
-     * Show Login form
+     * Process Login
      */
-    login_form: function() {
-        app.config.externalLogin = false;
-        app.controller.loadView({
-            module: "Login",
-            layout: "login",
-            create: true
-        });
+    login: function() {
+        app.router.login();
     }
 })

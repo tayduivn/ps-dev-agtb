@@ -3276,6 +3276,7 @@ Sincerely, SugarCRM',
     'LBL_LOGIN_PASSWORD' => 'Password',
     'LBL_LOGGED_OUT' => 'You have been logged out.',
     'LBL_LOGIN_FORM_LABEL' => 'Show log in form',
+    'LBL_RETURN_TO_LOGIN_PAGE' => 'Return to login',
     // END LOGIN PAGE STRINGS
 
     'LBL_TABGROUP_HOME' => 'Dashboard',

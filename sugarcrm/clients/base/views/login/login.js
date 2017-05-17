@@ -126,11 +126,15 @@
         
         if (config && 
             app.config.externalLogin === true && 
-            app.config.externalLoginSameWindow === true &&
-            !_.isEmpty(app.config.externalLoginUrl)
+            app.config.externalLoginSameWindow === true
         ) {
             this.externalLoginForm = true;
             this.externalLoginUrl = app.config.externalLoginUrl;
+            app.api.setExternalLoginUICallback(_.bind(function(url) {
+                this.externalLoginUrl = app.config.externalLoginUrl = url;
+                this.render();
+            }, this));
+
         }
 
         // Set the page title to 'SugarCRM' while on the login screen
@@ -229,6 +233,8 @@
                             app.logger.debug('logged in successfully!');
                             app.alert.dismiss(this._alertKeys.invalidGrant);
                             app.alert.dismiss(this._alertKeys.needLogin);
+                            //External login URL should be cleaned up if the login form was successfully used instead.
+                            app.config.externalLoginUrl = undefined;
 
                             app.events.on('app:sync:complete', function() {
                                 app.logger.debug('sync in successfully!');
@@ -313,7 +319,9 @@
      * Process Login
      */
     external_login: function() {
-        window.location.replace(this.externalLoginUrl);
+        if (this.externalLoginUrl) {
+            window.location.replace(this.externalLoginUrl);
+        }
     },
     
     /**
