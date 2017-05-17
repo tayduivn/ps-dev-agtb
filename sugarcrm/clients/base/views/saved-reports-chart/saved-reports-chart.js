@@ -65,6 +65,8 @@
         this.reportData = new Backbone.Model();
         this.reportOptions = [];
         this._super('initialize', [options]);
+        //TODO: why can't i call this.view.trigger('chart:complete') from chart field
+        // this.on('chart:complete', this.chartComplete, this);
     },
 
     /**
@@ -171,6 +173,7 @@
     loadData: function(options) {
         options = options || {};
         var reportId = this.settings.get('saved_report_id');
+
         if (!_.isEmpty(reportId)) {
             // set callback for successful get of report data in getSavedReportById()
             _.extend(options, {
@@ -222,6 +225,7 @@
         var params;
         var defaults;
         var updated;
+        var label;
 
         // only called by bindDataChange when the report id is changed in config panel
         if (!serverData.reportData || !serverData.chartData) {
@@ -268,7 +272,10 @@
         this._toggleChartFields();
 
         // set the title of the dashlet to the report title
-        this.$('[name="label"]').val(this.settings.get('label'));
+        var label = this.$('[name="label"]');
+        if (label.length) {
+            label.val(this.settings.get('label'));
+        }
     },
 
     /**
@@ -354,6 +361,119 @@
         }
 
         return chartConfig;
+    },
+
+    /**
+     * Callback function on chart render complete.
+     *
+     * @param {function} chart sucrose chart instance
+     * @param {object} params chart display parameters
+     * @param {object} reportData report data with properties and data array
+     */
+    chartComplete: function(chart, params, reportData) {
+        if (!_.isFunction(chart.seriesClick)) {
+            return;
+        }
+
+        // This seriesClick callback overrides the default set
+        // in sugarCharts for use in the Report module charts
+        chart.seriesClick(_.bind(function(chartData, eo, chart, labels) {
+            var state = SUGAR.charts.buildChartState(eo, labels);
+            params.groupLabel = SUGAR.charts.extractGroupLabel(eo, labels);
+            params.seriesLabel = SUGAR.charts.extractSeriesLabel(eo, chartData);
+
+            chart.clearActive();
+            if (chart.cellActivate) {
+                chart.cellActivate(state);
+            } else if (chart.seriesActivate) {
+                chart.seriesActivate(state);
+            } else {
+                chart.dataSeriesActivate(eo);
+            }
+            chart.dispatch.call('tooltipHide', this);
+
+            this._handleFilter(chart, reportData, params, state);
+        }, this));
+    },
+
+    /**
+     * Handle either navigating to target module or update list view filter.
+     *
+     * @param {function} chart sucrose chart instance
+     * @param {object} params chart display parameters
+     * @param {object} reportData report data with properties and data array
+     * @param {object} state chart display and data state
+     * @protected
+     */
+    _handleFilter: function(chart, data, params, state) {
+        var module = params.baseModule;
+        var reportId = this.settings.get('saved_report_id');
+
+        var filterDef = SUGAR.charts.buildFilter(data, params);
+        var groupDefs;
+        var drawerContext;
+
+        app.alert.show('listfromreport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
+
+        if (this.$el.parents('.drawer.active').length === 0) {
+            groupDefs = SUGAR.charts.getGrouping(data);
+            drawerContext = {
+                chartData: data,
+                chartModule: module,
+                chartState: state,
+                dashModel: null,
+                dashConfig: params,
+                filterDef: filterDef,
+                filterOptions: {
+                    auto_apply: false
+                },
+                groupDefs: groupDefs,
+                layout: 'drillthrough-drawer',
+                module: module,
+                reportId: reportId,
+                skipFetch: true
+            };
+
+            chart.clearActive();
+            this.openDrawer(drawerContext);
+        } else {
+            this.updateList(filterDef, params, state);
+        }
+    },
+
+    /**
+     * Open a drill through drawer with list and dashlet replica.
+     *
+     * @param {string} module base chart module
+     * @param {string} id saved report uuid
+     * @param {object} groupDefs report definition data groupings
+     * @param {object} filterDef updated report definition data filter
+     * @param {object} state chart display and data state
+     * @param {object} params chart display parameters
+     */
+    openDrawer: function(drawerContext) {
+        app.drawer.open({
+            layout: 'drillthrough-drawer',
+            context: drawerContext
+        });
+    },
+
+    /**
+     * Update the record list in drill through drawer.
+     *
+     * @param {string} module base chart module
+     * @param {string} id saved report uuid
+     * @param {object} groupDefs report definition data groupings
+     * @param {object} filterDef updated report definition data filter
+     * @param {object} state chart display and data state
+     * @param {object} params chart display parameters
+     */
+    updateList: function(filterDef, params, state) {
+        var drawer = this.closestComponent('drawer').getComponent('drillthrough-drawer');
+        drawer.context.set('filterDef', filterDef);
+        drawer.context.set('dashConfig', params);
+        drawer.context.set('chartState', state);
+        drawer.updateList();
     },
 
     /**
@@ -632,6 +752,8 @@
         // hang on to a reference to the chart field
         if (_.isUndefined(this.chartField) && field.name === 'chart') {
             this.chartField = field;
+
+            field.once('chart:complete', this.chartComplete, this);
         }
     }
 })

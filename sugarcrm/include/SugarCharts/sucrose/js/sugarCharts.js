@@ -25,7 +25,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
     // update default params from chartConfig and then chartParams
     var params = _.extendOwn({
         allowScroll: false,
-        base_module: 'Reports',
+        baseModule: 'Reports',
         barType: configBarType,
         chart_type: 'bar chart',
         colorData: 'default',
@@ -510,7 +510,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                 // report_def is defined as a global in _reportCriteriaWithResult
                 // but only in Reports module
-                // var base_module = params.base_module || (_.isUndefined(report_def) ? 'Home' : report_def);
+                // var baseModule = params.baseModule || (_.isUndefined(report_def) ? 'Home' : report_def);
                 //TODO: fix usage of global report_def
                 groupDefs = this.getGrouping(report_def);
                 filterDef = this.buildFilter(report_def, params);
@@ -585,7 +585,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             if (isNaN(i)) {
                 return groupDefs;
             }
-            return i > 0 && groupDefs.length > 1 ? reportDef.group_defs[1] : reportDef.group_defs[0];
+            return i > 0 && groupDefs.length > 1 ? groupDefs[1] : groupDefs[0];
         },
 
         /**

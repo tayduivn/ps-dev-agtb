@@ -10,11 +10,20 @@
  */
 ({
     /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        this.initDashletComponents();
+    },
+
+    /**
      * Load dashlet preview by passing preview metadata
      *
      * @param {Object} metadata Preview metadata.
      */
-    addDashlet: function() {
+    initDashletComponents: function() {
         var config = this.context.get('dashConfig');
 
         var metadata = {
@@ -68,16 +77,13 @@
      * @inheritdoc
      */
     render: function() {
-        this.addDashlet();
-
         this._super('render');
 
         var dashlet = this.getComponent('dashlet').getComponent('saved-reports-chart');
-        var field = dashlet.getField('chart');
+        // var field = dashlet.getField('chart');
         var config = this.context.get('dashConfig');
-        var state = this.context.get('chartState');
 
-        field.setChartState(state);
+        //TODO: the existing dashlet has the report data, why reload the report from server?
         dashlet.settings.set(config);
         dashlet.loadData();
 

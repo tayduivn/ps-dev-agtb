@@ -23,7 +23,6 @@
         this.chart = null;
         this.chart_loaded = false;
         this.chartType = '';
-        this.chartState = null;
     },
 
     /**
@@ -56,52 +55,37 @@
     },
 
     /**
+     * Callback function on chart render complete.
+     *
+     * @param {function} chart sucrose chart instance
+     * @param {object} params chart display parameters
+     * @param {object} data report data with properties and data array
+     */
+    chartComplete: function(chart, params, data) {
+        this.chart = chart;
+        this.chart_loaded = _.isFunction(chart.update);
+
+        if (!this.chart_loaded) {
+            return;
+        }
+
+        this.trigger('chart:complete', chart, params, data);
+    },
+
+    /**
      * Generate the D3 Chart Object
      */
     generateD3Chart: function() {
-        var chartId = this.cid;
+        var id = this.cid;
         var reportData = this.model.get('rawReportData');
         var chartData = this.model.get('rawChartData');
-        var chartParams = this.getChartParams(chartData);
-        var chartConfig = this.getChartConfig(chartData, chartParams);
+        var params = this.getChartParams(chartData);
+        var config = this.getChartConfig(chartData, params);
 
-        var sugarChart = new loadSugarChart(chartId, chartData, [], chartConfig, chartParams, _.bind(function(chart) {
-            this.chart = chart;
-            this.chart_loaded = _.isFunction(chart.update);
+        params.baseModule = chartData.properties[0].base_module;
 
-            if (!this.chart_loaded) {
-                return;
-            }
-            if (!_.isFunction(chart.seriesClick)) {
-                return;
-            }
-
-            // This seriesClick callback overrides the default set
-            // in sugarCharts for use in the Report module charts
-            chart.seriesClick(_.bind(function(data, eo, chart, labels) {
-                var chartState = SUGAR.charts.buildChartState(eo, labels);
-                var groupDefs;
-                var filterDef;
-
-                chartParams.groupLabel = SUGAR.charts.extractGroupLabel(eo, labels);
-                chartParams.seriesLabel = SUGAR.charts.extractSeriesLabel(eo, data);
-                chartParams.base_module = chartData.properties[0].base_module;
-
-                groupDefs = SUGAR.charts.getGrouping(reportData);
-                filterDef = SUGAR.charts.buildFilter(reportData, chartParams);
-
-                chart.clearActive();
-                if (chart.cellActivate) {
-                    chart.cellActivate(chartState);
-                } else if (chart.seriesActivate) {
-                    chart.seriesActivate(chartState);
-                } else {
-                    chart.dataSeriesActivate(eo);
-                }
-                chart.dispatch.call('tooltipHide', this);
-
-                this._handleFilter(groupDefs, filterDef, chartState, chartParams);
-            }, this));
+        var sugarChart = new loadSugarChart(id, chartData, [], config, params, _.bind(function(chart) {
+            this.chartComplete(chart, params, reportData);
         }, this));
 
         // This event fires when a preview is closed.
@@ -154,68 +138,16 @@
                 module: properties.base_module,
                 overflowHandler: _.bind(this.overflowHandler, this)
             };
+        var state = this.context.get('chartState');
+
         if (!_.isEmpty(chartParams)) {
             params = _.extend(params, chartParams);
         }
-        if (!_.isEmpty(this.chartState)) {
-            params.state = this.chartState;
+        if (!_.isEmpty(state)) {
+            params.state = state;
         }
 
         return params;
-    },
-
-    /**
-     * Handle either navigating to target module or update list view filter.
-     *
-     * @protected
-     */
-    _handleFilter: function(groupDefs, filterDef, chartState, chartParams) {
-        var chartModule = chartParams.base_module;
-        var reportId = this.view.settings.get('saved_report_id');
-
-        app.alert.show('listfromreport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
-
-        if (this.$el.parents('.drawer.active').length === 0) {
-            this.chart.clearActive();
-            this.openDrawer(chartModule, reportId, groupDefs, filterDef, chartState, chartParams);
-        } else {
-            this.updateList(chartModule, reportId, groupDefs, filterDef, chartState, chartParams);
-        }
-    },
-
-    openDrawer: function(chartModule, reportId, groupDefs, filterDef, chartState, dashConfig) {
-        app.drawer.open({
-            layout: 'drillthrough-drawer',
-            context: {
-                layout: 'drillthrough-drawer',
-                module: chartModule,
-                chartModule: chartModule,
-                chartState: chartState,
-                reportId: reportId,
-                filterOptions: {
-                    auto_apply: false
-                },
-                filterDef: filterDef,
-                groupDefs: groupDefs,
-                skipFetch: true,
-                dashConfig: dashConfig
-            }
-        });
-    },
-
-    updateList: function(chartModule, reportId, groupDefs, filterDef, chartState, dashConfig) {
-        var drawer = this.closestComponent('drawer').getComponent('drillthrough-drawer');
-        drawer.context.set('filterDef', filterDef);
-        drawer.context.set('chartState', chartState);
-        drawer.context.set('dashConfig', dashConfig);
-        drawer.loadReportData(chartModule, reportId);
-    },
-
-    /**
-     * Update the chart's state aware attributes (disabled, active, etc)
-     */
-    setChartState: function(state) {
-        this.chartState = state;
     },
 
     /**

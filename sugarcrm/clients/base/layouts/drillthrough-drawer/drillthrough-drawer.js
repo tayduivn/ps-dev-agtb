@@ -36,20 +36,14 @@
     ],
 
     /**
-     * @override
-     * @private
-     */
-    _render: function() {
-        this._super('_render');
-
-        this.loadReportData();
-    },
-
-    /**
      * Success callback function for api call
      * @param {Object} results
      */
-    loadReportData: function() {
+    loadData: function() {
+        this.updateList();
+    },
+
+    updateList: function() {
         var chartModule = this.context.get('chartModule');
         var reportId = this.context.get('reportId');
         var filterDef = this.context.get('filterDef');
@@ -67,7 +61,6 @@
 
         app.api.call('read', url, null, {
             success: _.bind(function(data) {
-                // var saved_report = app.data.createBean(chartModule, data.saved_report);
                 var collection = app.data.createBeanCollection(chartModule, data.records);
                 var title = this._buildTitle(collection);
 
