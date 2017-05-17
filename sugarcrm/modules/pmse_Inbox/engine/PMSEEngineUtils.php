@@ -171,6 +171,16 @@ class PMSEEngineUtils
     public static $blacklistedFieldTypes = array('image','password','file');
 
     /**
+     * List of field types with a non-db source that are considered valid for
+     * reading in certain contexts. At present, only Emails Templates allow
+     * non-db fields, and at that, only relate type fields.
+     * @var array
+     */
+    protected static $allowedNonDbFields = [
+        'relate',
+    ];
+
+    /**
      * Method get key fields
      * @param type $pattern
      * @param type $array
@@ -1114,6 +1124,25 @@ class PMSEEngineUtils
     }
 
     /**
+     * Determines whether a non-db source field is allowed for use for a given
+     * type
+     * @param array $def The field def
+     * @param string $type The action type
+     * @return boolean|null Null means a source attribute of non-db was not found
+     */
+    protected static function isDisallowedNonDbField(array $def, $type = '')
+    {
+        // We only want a real return value if source is set to non-db
+        if (isset($def['source']) && $def['source'] == 'non-db') {
+            // For now, only relate type non-db fields are valid, and only for
+            // Email Template actions
+            return $type !== 'ET' || !in_array($def['type'], self::$allowedNonDbFields);
+        }
+
+        return null;
+    }
+
+    /**
      * Determines the validity of a field used in a process definition, business
      * rule, action element, etc.
      * @param array $def The field def
@@ -1139,8 +1168,11 @@ class PMSEEngineUtils
         }
 
         // Now carry on the rest of the special case madness until we need to
-        // check studio validity
-        if (isset($def['source']) && $def['source'] == 'non-db') {
+        // check studio validity, starting with NON-DB fields for non Emails
+        // Templates types. A boolean true means this field is not valid. A false
+        // means the field IS valid. A null implies validity at this point because
+        // it means the field is NOT a non-db field.
+        if (self::isDisallowedNonDbField($def, $type) === true) {
             return false;
         }
 
