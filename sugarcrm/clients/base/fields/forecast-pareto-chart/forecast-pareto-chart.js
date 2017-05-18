@@ -225,7 +225,7 @@
         this._serverData = undefined;
 
         this.chartId = this.cid + '_chart';
-        this.paretoChart = nv.models.paretoChart()
+        this.paretoChart = sucrose.charts.paretoChart()
             .margin({top: 0, right: 10, bottom: 0, left: 10})
             .showTitle(false)
             .tooltips(true)
@@ -254,22 +254,22 @@
             }, this))
             .colorData('default')
             .colorFill('default')
-            .yAxisTickFormat(function(d) {
-                var si = d3.formatPrefix(d, 2);
-                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.round(si.scale(d), 2) + si.symbol;
+            .yValueFormat(function(d) {
+                var f = d3v4.formatPrefix(',.0', 1000);
+                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + f(d);
             })
-            .quotaTickFormat(function(d) {
-                var si = d3.formatPrefix(d, 2);
-                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.round(si.scale(d), 2) + si.symbol;
+            .quotaValueFormat(function(d) {
+                var f = d3v4.formatPrefix(',.2', 1000);
+                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + f(d);
             })
             //TODO: only do barClick if dashlet in Forecasts intelligence pane
-            .barClick(function(data, eo, chart, container) {
+            .seriesClick(function(data, eo, chart, container) {
                 var d = eo.series,
                     selectedSeries = eo.seriesIndex;
 
                 d.disabled = !d.disabled;
 
-                chart.dispatch.tooltipHide();
+                chart.dispatch.call('tooltipHide', this);
 
                 if (!chart.stacked()) {
                     data.filter(function(d) {
@@ -286,7 +286,7 @@
                 }).length) {
                     data.map(function(d) {
                         d.disabled = false;
-                        container.selectAll('.nv-series').classed('disabled', false);
+                        container.selectAll('.sc-series').classed('disabled', false);
                         return d;
                     });
                 }
@@ -361,19 +361,19 @@
         // clear out the current chart before a re-render
         if (!_.isEmpty(this.paretoChart)) {
             $(window).off('resize.' + this.sfId);
-            d3.select('#' + this.chartId + ' svg').remove();
+            d3v4.select('#' + this.chartId + ' svg').remove();
         }
 
         this.paretoChart.stacked(!params.display_manager);
 
         if (this.d3Data.data.length > 0) {
             // if the chart element is hidden by a previous render, but has data now, show it
-            this.$('.nv-chart').toggleClass('hide', false);
+            this.$('.sc-chart').toggleClass('hide', false);
             this.$('.block-footer').toggleClass('hide', true);
 
             // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
             // only so we can custom format the Y-Axis values
-            d3.select('#' + this.chartId)
+            d3v4.select('#' + this.chartId)
                 .append('svg')
                 .datum(this.d3Data)
                 .call(this.paretoChart);
@@ -381,11 +381,11 @@
             $(window).on('resize.' + this.sfId, _.debounce(_.bind(this.resize, this), 100));
             this.handlePrinting('on');
 
-            this.$('.nv-chart').on('click', _.bind(function(e){
-              this.paretoChart.dispatch.chartClick();
+            this.$('.sc-chart').on('click', _.bind(function(e) {
+                this.paretoChart.dispatch.call('chartClick', this);
             }, this));
         } else {
-            this.$('.nv-chart').toggleClass('hide', true);
+            this.$('.sc-chart').toggleClass('hide', true);
             this.$('.block-footer').toggleClass('hide', false);
         }
 
@@ -604,8 +604,8 @@
      * @return {Array}
      */
     getDisabledChartKeys: function() {
-        var currentChartData = d3.select('#' + this.chartId + ' svg').data(),
-            disabledBars = (!_.isUndefined(currentChartData[0])) ?
+        var currentChartData = d3v4.select('#' + this.chartId + ' svg').data();
+        var disabledBars = (!_.isUndefined(currentChartData[0])) ?
                 _.filter(currentChartData[0].data, function(d) {
                     return (!_.isUndefined(d.disabled) && d.disabled === true);
                 }) : [];
@@ -684,7 +684,7 @@
     _dispose: function() {
         this.handlePrinting('off');
         $(window).off('resize.' + this.sfId);
-        this.$('.nv-chart').off('click');
+        this.$('.sc-chart').off('click');
         this._super('_dispose');
     }
 

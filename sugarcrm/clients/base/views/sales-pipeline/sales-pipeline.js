@@ -70,18 +70,25 @@
         } else {
             this.settings.set({'selectedTimePeriod': 'current'}, {silent: true});
         }
-        this.chart = nv.models.funnelChart()
+        this.chart = sucrose.charts.funnelChart()
             .showTitle(false)
             .tooltips(true)
             .margin({top: 0})
             .direction(app.lang.direction)
-            .tooltipContent(function(key, x, y, e, graph) {
-                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + ((salesStageLabels && salesStageLabels[key]) ? salesStageLabels[key] : key) + '</b></p>' +
-                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + formatValue(y) + '</b></p>' +
-                    '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
-            })
+            .tooltipContent(_.bind(function(eo, properties) {
+                var key = this.chart.fmtKey()(eo);
+                var y = this.chart.getValue()(eo.data);
+                var x = properties.total ? (y * 100 / properties.total).toFixed(1) : 100;
+                var label = salesStageLabels ? salesStageLabels[key] || key : key;
+                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' +
+                    label + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' +
+                    formatValue(y) + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' +
+                    x + '%</b></p>';
+            }, this))
             .colorData('class', {step: 2})
-            .fmtValueLabel(function(d) {
+            .fmtValue(function(d) {
                 var y = d.value || (isNaN(d) ? 0 : d);
                 return formatValue(y, 0);
             })
@@ -134,7 +141,7 @@
         // Clear out the current chart before a re-render
         this.$('svg#' + this.cid).children().remove();
 
-        d3.select('svg#' + this.cid)
+        d3v4.select('svg#' + this.cid)
             .datum(this.results)
             .transition().duration(500)
             .call(this.chart);
