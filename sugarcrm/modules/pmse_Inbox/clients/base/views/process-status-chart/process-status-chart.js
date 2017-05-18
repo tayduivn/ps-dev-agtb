@@ -23,14 +23,17 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.chart = nv.models.multiBarChart()
+        this.chart = sucrose.charts.multibarChart()
             .showTitle(false)
             .showControls(true)
             .showValues(false)
             .stacked(true)
-            .tooltipContent(function(key, x, y, e, graph) {
-                return '<p><b>' + parseInt(y, 10) + '</b></p>';
-            })
+            .tooltipContent(_.bind(function(eo, properties) {
+                var point = eo.point;
+                var series = eo.series;
+                return '<h3>' + series.key + '</h3>' +
+                       '<p>' + parseInt(point.y, 10) + '</p>';
+            }, this))
             .tooltips(true);
     },
 

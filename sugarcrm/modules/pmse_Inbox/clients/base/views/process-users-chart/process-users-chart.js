@@ -24,7 +24,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.chart = nv.models.pieChart()
+        this.chart = sucrose.charts.pieChart()
             .x(function(d) {
                 return d.key;
             })
@@ -40,9 +40,10 @@
             .tooltips(true)
             .showLegend(true)
             .colorData('class')
-            .tooltipContent(function(key, x, y, e, graph) {
-                return '<p><b>' + key + '</b></p><p><b>' + parseInt(y, 10) + '</b></p>';
-            })
+            .tooltipContent(_.bind(function(eo, properties) {
+                return '<h3>' + this.chart.fmtKey()(eo) + '</h3>' +
+                       '<p>' + parseInt(this.chart.getValue()(eo), 10) + '</p>';
+            }, this))
             .strings({
                 noData: app.lang.get('LBL_CHART_NO_DATA')
             });

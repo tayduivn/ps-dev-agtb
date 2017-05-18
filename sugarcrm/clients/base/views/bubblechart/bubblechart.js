@@ -104,26 +104,27 @@
             }).value();
         }
 
-        this.chart = nv.models.bubbleChart()
+        this.chart = sucrose.charts.bubbleChart()
             .x(function(d) {
-                return d3.time.format('%Y-%m-%d').parse(d.x);
+                return d3v4.timeParse('%Y-%m-%d')(d.x);
             })
             .y(function(d) {
                 return d.y;
             })
             .margin({top: 0})
-            .tooltipContent(function(key, x, y, e, graph) {
-                e.point.close_date = d3.time.format('%x')(d3.time.format('%Y-%m-%d').parse(e.point.x));
-                e.point.amount = app.currency.formatAmountLocale(e.point.base_amount, e.point.currency_id);
-                return self.tooltiptemplate(e.point).replace(/(\r\n|\n|\r)/gm, '');
+            .tooltipContent(function(eo, properties) {
+                var point = eo.point;
+                point.close_date = d3v4.timeFormat('%x')(d3v4.timeParse('%Y-%m-%d')(point.x));
+                point.amount = app.currency.formatAmountLocale(point.base_amount, point.currency_id);
+                return self.tooltiptemplate(point).replace(/(\r\n|\n|\r)/gm, '');
             })
             .showTitle(false)
             .tooltips(true)
             .showLegend(true)
             .direction(app.lang.direction)
-            .bubbleClick(function(e) {
-                self.chart.dispatch.tooltipHide(e);
-                app.router.navigate(app.router.buildRoute(self.forecastBy, e.point.id), {trigger: true});
+            .seriesClick(function(data, eo, chart) {
+                self.chart.dispatch.call('tooltipHide', this);
+                app.router.navigate(app.router.buildRoute(self.forecastBy, eo.point.id), {trigger: true});
             })
             .colorData('class', {step: 2})
             .groupBy(function(d) {
@@ -183,7 +184,7 @@
         this.$('svg#' + this.cid).children().remove();
 
         // Load data into chart model and set reference to chart
-        d3.select('svg#' + this.cid)
+        d3v4.select('svg#' + this.cid)
             .datum(this.chartCollection)
             .transition().duration(500)
             .call(this.chart);
@@ -194,7 +195,7 @@
 
     /**
      * Override the chartResize method in Chart plugin because
-     * bubblechart nvd3 model uses render instead of update.
+     * bubblechart sucrose model uses render instead of update.
      */
     chartResize: function() {
         this.chart.render();
@@ -245,7 +246,9 @@
             }, this),
             properties: {
                 title: app.lang.get('LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME'),
-                value: data.records.length
+                value: data.records.length,
+                xDataType: 'datetime',
+                yDataType: 'numeric'
             }
         };
     },

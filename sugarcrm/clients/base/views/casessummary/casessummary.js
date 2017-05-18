@@ -30,7 +30,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.chart = nv.models.pieChart()
+        this.chart = sucrose.charts.pieChart()
                 .x(function(d) {
                     return d.key;
                 })
@@ -50,9 +50,13 @@
                 .showLegend(false)
                 .direction(app.lang.direction)
                 .colorData('data')
-                .tooltipContent(function(key, x, y, e, graph) {
-                    return '<p><b>' + key + ' ' + parseInt(y, 10) + '</b></p>';
-                })
+                .tooltipContent(_.bind(function(eo, properties) {
+                    var key = this.chart.getKey()(eo);
+                    var y = this.chart.getValue()(eo);
+                    var percent = properties.total ? (y * 100 / properties.total).toFixed(1) : 100;
+                    return '<h3>' + key + '</h3>' +
+                           '<p>' + y + ' - ' + percent + '%</p>';
+                }, this))
                 .strings({
                     noData: app.lang.get('LBL_CHART_NO_DATA')
                 });
@@ -70,7 +74,7 @@
 
         // Set value of label inside donut chart
         this.chart.hole(this.total);
-        d3.select(this.el).select('svg#' + this.cid)
+        d3v4.select(this.el).select('svg#' + this.cid)
             .datum(this.chartCollection)
             .transition().duration(500)
             .call(this.chart);
@@ -123,12 +127,12 @@
         };
         this.chartCollection.data.push({
             key: app.lang.get('LBL_DASHLET_CASESSUMMARY_CLOSE_CASES'),
-            classes: 'nv-fill-green',
+            classes: 'sc-fill-green',
             value: countClosedCases
         });
         this.chartCollection.data.push({
             key: app.lang.get('LBL_DASHLET_CASESSUMMARY_OPEN_CASES'),
-            classes: 'nv-fill-red',
+            classes: 'sc-fill-red',
             value: countOpenCases
         });
 

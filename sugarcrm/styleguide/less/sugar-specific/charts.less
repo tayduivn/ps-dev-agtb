@@ -26,14 +26,19 @@
     //450 (chart height) - 41 (dashlet options) = 409
     .dashlet-options+.sc-chart,
     .dashlet-options+.nv-chart,
+    .process-users-chart .sc-chart,
     .process-users-chart .nv-chart,
     .opportunity-pipeline-wrapper .sc-chart,
-    .forecasts-chart-wrapper .sc-chart {
+    .opportunity-pipeline-wrapper .nv-chart,
+    .forecasts-chart-wrapper .sc-chart,
+    .forecasts-chart-wrapper .nv-chart {
       height: 409px;
     }
+    .opportunity-metrics-wrapper .sc-chart,
     .opportunity-metrics-wrapper .nv-chart {
       height: 309px;
     }
+    .sc-chart-cases,
     .nv-chart-cases {
       height: 399px;
     }
@@ -67,21 +72,27 @@
     //350 (chart height) - 41 (dashlet options) = 309
     .dashlet-options+.sc-chart,
     .dashlet-options+.nv-chart,
+    .process-users-chart .sc-chart,
     .process-users-chart .nv-chart,
     .opportunity-pipeline-wrapper .sc-chart,
-    .forecasts-chart-wrapper .sc-chart {
+    .opportunity-pipeline-wrapper .nv-chart,
+    .forecasts-chart-wrapper .sc-chart,
+    .forecasts-chart-wrapper .nv-chart {
       height: 309px;
     }
     //366 (max) - 67 (tabs) - 22 (chart margins) = 277
+    .opportunity-metrics-wrapper .sc-chart,
     .opportunity-metrics-wrapper .nv-chart {
       height: 277px;
       margin-bottom: 14px;
     }
     //366 (max) - 60 (tabs) - 16 (chart margins) = 288
+    .sc-chart-cases,
     .nv-chart-cases {
       height: 288px;
     }
-    .saved-reports-chart .sc-chart {
+    .saved-reports-chart .sc-chart,
+    .saved-reports-chart .nv-chart {
       max-height: 348px;
     }
     //366 (max) - 39 (block footer) = 327
@@ -133,11 +144,14 @@ span.count {
   100% { opacity: 1; }
 }
 
+.sc-chart-org,
 .nv-chart-org {
+  .sc-org-bkgd,
   .nv-org-bkgd {
     stroke: darken(@grayLighter, 15%);
     stroke-width: 2px;
   }
+  .sc-org-node,
   .nv-org-node {
     text {
       font-style: normal;
@@ -147,6 +161,7 @@ span.count {
       font-size: 10px;
       line-height: normal;
       font-family: "Helvetica Neue", Arial, sans-serif;
+      &.sc-org-name,
       &.nv-org-name {
         font-size: 10px;
         fill: @linkColor;
@@ -154,6 +169,7 @@ span.count {
           text-decoration: underline;
         }
       }
+      &.sc-org-title,
       &.nv-org-title {
         font-size: 8px;
       }
