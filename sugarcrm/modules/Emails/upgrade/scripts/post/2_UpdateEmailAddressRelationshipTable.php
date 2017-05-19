@@ -13,10 +13,9 @@
 /**
  * Update Email Address Relationship Table
  */
-class SugarUpgradeUpdateEmailAddressRelationshipTable extends UpgradeScript
+class SugarUpgradeUpdateEmailAddressRelationshipTable extends UpgradeDBScript
 {
-    public $order = 2100;
-    public $type = self::UPGRADE_DB;
+    public $order = 2200;
 
     /**
      * {@inheritdoc}
@@ -33,21 +32,6 @@ class SugarUpgradeUpdateEmailAddressRelationshipTable extends UpgradeScript
         }
         $this->log('Setting all existing email addresses in emails_email_addr_rel as bean type: EmailAddresses');
         $sql = "UPDATE emails_email_addr_rel SET bean_type='EmailAddresses', bean_id=email_address_id";
-        $this->runUpdate($sql);
-    }
-
-    /**
-     * Executes an update query and logs the number of affected rows or the error.
-     *
-     * @param string $sql The query to execute.
-     */
-    protected function runUpdate($sql)
-    {
-        try {
-            $rows = DBManagerFactory::getConnection()->executeUpdate($sql);
-            $this->log("Number of affected rows: {$rows}");
-        } catch (DBALException $error) {
-            $this->log("Error: {$error}");
-        }
+        $this->executeUpdate($sql);
     }
 }

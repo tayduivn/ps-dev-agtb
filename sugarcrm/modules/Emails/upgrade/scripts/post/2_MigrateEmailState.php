@@ -10,10 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarUpgradeMigrateEmailState extends UpgradeScript
+class SugarUpgradeMigrateEmailState extends UpgradeDBScript
 {
-    public $order = 2100;
-    public $type = self::UPGRADE_DB;
+    public $order = 2200;
 
     /**
      * {@inheritdoc}
@@ -30,25 +29,10 @@ class SugarUpgradeMigrateEmailState extends UpgradeScript
 
         $this->log('Set emails.state to Draft where emails.type is draft or emails.status is send_error');
         $sql = "UPDATE emails SET state='Draft' WHERE type='draft' OR status='send_error'";
-        $this->runUpdate($sql);
+        $this->executeUpdate($sql);
 
         $sql = "SELECT COUNT(id) FROM emails WHERE state IS NULL OR state=''";
         $num = $this->db->getConnection()->executeQuery($sql)->fetchColumn();
         $this->log("{$num} emails remain with an empty state");
-    }
-
-    /**
-     * Executes an update query and logs the number of affected rows or the error.
-     *
-     * @param string $sql The query to execute.
-     */
-    protected function runUpdate($sql)
-    {
-        try {
-            $rows = DBManagerFactory::getConnection()->executeUpdate($sql);
-            $this->log("Number of affected rows: {$rows}");
-        } catch (DBALException $error) {
-            $this->log("Error: {$error}");
-        }
     }
 }

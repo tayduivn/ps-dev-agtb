@@ -10,10 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarUpgradeAssignSystemTemplate extends UpgradeScript
+class SugarUpgradeAssignSystemTemplate extends UpgradeDBScript
 {
-    public $order = 2100;
-    public $type = self::UPGRADE_DB;
+    public $order = 2200;
 
     /**
      * {@inheritdoc}
@@ -33,29 +32,13 @@ class SugarUpgradeAssignSystemTemplate extends UpgradeScript
         $generatePasswordTemplateId = $GLOBALS['sugar_config']['passwordsetting']['generatepasswordtmpl'];
 
         $sql = "UPDATE email_templates SET type='system' WHERE id=?";
-        $this->runUpdate($sql, array(
+        $this->executeUpdate($sql, array(
             $lostPasswordTemplateId,
         ));
 
         $sql = "UPDATE email_templates SET type='system' WHERE id=?";
-        $this->runUpdate($sql, array(
+        $this->executeUpdate($sql, array(
             $generatePasswordTemplateId,
         ));
-    }
-
-    /**
-     * Executes an update query and logs the number of affected rows or the error.
-     *
-     * @param string $sql The query to execute.
-     * @param array $params The parameters to pass into the query to be escaped
-     */
-    protected function runUpdate($sql, array $params)
-    {
-        try {
-            $rows = DBManagerFactory::getConnection()->executeUpdate($sql, $params);
-            $this->log("Number of affected rows: {$rows}");
-        } catch (DBALException $error) {
-            $this->log("Error: {$error}");
-        }
     }
 }

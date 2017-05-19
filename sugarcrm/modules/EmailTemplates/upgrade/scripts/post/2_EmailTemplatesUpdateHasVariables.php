@@ -13,7 +13,7 @@
 
 class SugarUpgradeEmailTemplatesUpdateHasVariables extends UpgradeScript
 {
-    public $order = 2180;
+    public $order = 2200;
     public $type = self::UPGRADE_DB;
 
     public function run()

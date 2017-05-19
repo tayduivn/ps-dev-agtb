@@ -14,7 +14,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 
 class SugarUpgradeAssociateEmailsWithTheirParentNotes extends UpgradeScript
 {
-    public $order = 2000;
+    public $order = 2200;
     public $type = self::UPGRADE_DB;
 
     /**
