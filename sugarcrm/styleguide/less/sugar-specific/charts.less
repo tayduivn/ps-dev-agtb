@@ -17,30 +17,22 @@
     .dashlet-content .activitystream-list {
       max-height: 426px;
     }
-    //466 (max) - 16 (chart margins) = 450
+    //466 (max) - 16 (chart margins) = 450 - 2 border
     .sc-chart,
     .nv-chart {
-      height: 450px;
+      height: 448px;
       margin: 8px;
     }
-    //450 (chart height) - 41 (dashlet options) = 409
+    //448 (chart height) - 41 (dashlet options) = 407
     .dashlet-options+.sc-chart,
     .dashlet-options+.nv-chart,
     .process-users-chart .sc-chart,
     .process-users-chart .nv-chart,
-    .opportunity-pipeline-wrapper .sc-chart,
+    .sales-pipeline-chart,
     .opportunity-pipeline-wrapper .nv-chart,
-    .forecasts-chart-wrapper .sc-chart,
+    .forecast-pareto-chart,
     .forecasts-chart-wrapper .nv-chart {
       height: 409px;
-    }
-    .opportunity-metrics-wrapper .sc-chart,
-    .opportunity-metrics-wrapper .nv-chart {
-      height: 309px;
-    }
-    .sc-chart-cases,
-    .nv-chart-cases {
-      height: 399px;
     }
     //466 (max) - 39 (block footer) = 427
     .twitter-widget.scroll {
@@ -63,10 +55,10 @@
     .dashlet-content .activitystream-list {
       max-height: 326px;
     }
-    //366 (max) - 16 (chart margins) = 350
+    //366 (max) - 16 (chart margins) - 2 border = 350
     .sc-chart,
     .nv-chart {
-      height: 350px;
+      height: 348px;
       margin: 8px;
     }
     //350 (chart height) - 41 (dashlet options) = 309
@@ -74,26 +66,22 @@
     .dashlet-options+.nv-chart,
     .process-users-chart .sc-chart,
     .process-users-chart .nv-chart,
-    .opportunity-pipeline-wrapper .sc-chart,
+    .sales-pipeline-chart,
     .opportunity-pipeline-wrapper .nv-chart,
-    .forecasts-chart-wrapper .sc-chart,
+    .forecast-pareto-chart,
     .forecasts-chart-wrapper .nv-chart {
       height: 309px;
     }
-    //366 (max) - 67 (tabs) - 22 (chart margins) = 277
-    .opportunity-metrics-wrapper .sc-chart,
+    //366 (max) - 67 (tabs) - 22 (chart margins) - 2 border = 275
+    .opportunity-metrics-chart,
     .opportunity-metrics-wrapper .nv-chart {
-      height: 277px;
+      height: 275px;
       margin-bottom: 14px;
     }
     //366 (max) - 60 (tabs) - 16 (chart margins) = 288
-    .sc-chart-cases,
+    .cases-summary-chart,
     .nv-chart-cases {
       height: 288px;
-    }
-    .saved-reports-chart .sc-chart,
-    .saved-reports-chart .nv-chart {
-      max-height: 348px;
     }
     //366 (max) - 39 (block footer) = 327
     .twitter-widget.scroll {
@@ -144,7 +132,7 @@ span.count {
   100% { opacity: 1; }
 }
 
-.sc-chart-org,
+.organization-chart,
 .nv-chart-org {
   .sc-org-bkgd,
   .nv-org-bkgd {

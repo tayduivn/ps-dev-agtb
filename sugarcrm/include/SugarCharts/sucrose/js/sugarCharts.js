@@ -713,7 +713,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             $('#d3_' + id).empty();
             d3sugar.select('#d3_' + id)
                 .append('svg')
-                .attr('class', 'sucrose sc-chart')
+                .attr('class', 'sucrose')
                 .datum(json)
                 .transition().duration(500)
                 .call(chart);
