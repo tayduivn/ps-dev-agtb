@@ -38,7 +38,7 @@ class ReportsExportApi extends SugarApi {
      * @param array $args Arguments array built by the service base
      * @return binary file
      */
-    public function exportRecord($api, $args)
+    public function exportRecord(ServiceBase $api, array $args)
     {
 
         $this->requireArgs($args,array('record', 'export_type'));

@@ -33,12 +33,12 @@ class LeadConvertApi extends ModuleApi
     /**
      * This method handles the /Lead/:id/convert REST endpoint
      *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
-     * @return Array of worksheet data entries
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API
+     * @return array Worksheet data entries
      * @throws SugarApiExceptionNotAuthorized
      */
-    public function convertLead($api, $args)
+    public function convertLead(ServiceBase $api, array $args)
     {
         $leadConvert = new LeadConvert($args['leadId']);
         $modules = $this->loadModules($api, $leadConvert->getAvailableModules(), $args['modules']);
@@ -58,13 +58,13 @@ class LeadConvertApi extends ModuleApi
     /**
      * This method loads a bean from posted data through api
      *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $module string The module name to be loaded/created.
      * @param $data array The posted data
      * @return SugarBean The loaded bean
      * @throws SugarApiExceptionRequestMethodFailure
      */
-    protected function loadModule($api, $module, $data)
+    protected function loadModule(ServiceBase $api, $module, $data)
     {
         $version = $api->getRequest()->getVersion();
         $moduleDef = array (
@@ -101,12 +101,12 @@ class LeadConvertApi extends ModuleApi
     /**
      * This method loads an array of beans based on available modules for lead convert
      *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $modulesToConvert Array The modules that will be loaded/created.
      * @param $data The posted data
-     * @return Array SugarBean The loaded beans
+     * @return SugarBean[] The loaded beans
      */
-    protected function loadModules($api, $modulesToConvert, $data)
+    protected function loadModules(ServiceBase $api, $modulesToConvert, $data)
     {
         $beans = array();
 

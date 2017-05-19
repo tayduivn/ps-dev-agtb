@@ -31,11 +31,11 @@ class LoggerApi extends SugarApi
     /**
      * Logs a message on the server, based on supplied arguments.
      *
-     * @param RestService $api The service object.
+     * @param ServiceBase $api The service object.
      * @param array $args The request arguments.
      * @return array Status.
      */
-    public function logMessage($api, $args)
+    public function logMessage(ServiceBase $api, array $args)
     {
         if (empty($args['message'])) {
             return array('status' => false);

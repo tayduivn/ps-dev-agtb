@@ -530,7 +530,7 @@ class PMSEEngineFilterApi extends FilterApi
         return $q;
     }
 
-    protected function formatBeans(ServiceBase $api, $args, $beans, $options = array())
+    protected function formatBeans(ServiceBase $api, array $args, $beans, array $options = array())
     {
         if (!empty($args['fields']) && !is_array($args['fields'])) {
             $args['fields'] = explode(',',$args['fields']);

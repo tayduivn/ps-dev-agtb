@@ -232,7 +232,7 @@ class PMSEEngineApi extends SugarApi
         );
     }
 
-    public function getNotes($api, $args)
+    public function getNotes(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
 
@@ -286,7 +286,7 @@ class PMSEEngineApi extends SugarApi
         return $records;
     }
 
-    public function saveNotes($api, $args)
+    public function saveNotes(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         global $current_user;
@@ -306,7 +306,7 @@ class PMSEEngineApi extends SugarApi
         $notes->save();
         return array('success' => true, 'id' => $notes->id, 'date_entered' => PMSEEngineUtils::getDateToFE($notes->date_entered,'datetime'));    }
 
-    public function deleteNotes($api, $args)
+    public function deleteNotes(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $notesBean = BeanFactory::getBean('pmse_BpmNotes', $args['id']);
@@ -314,7 +314,7 @@ class PMSEEngineApi extends SugarApi
         return array('id' => $args['id']);
     }
 
-    public function retrieveHistoryLog($api, $args)
+    public function retrieveHistoryLog(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $historyLog = ProcessManager\Factory::getPMSEObject('PMSEHistoryLogWrapper');
@@ -322,7 +322,7 @@ class PMSEEngineApi extends SugarApi
         return array('success' => true, 'result' => $res->result);
     }
 
-    public function engineRoute($api, $args)
+    public function engineRoute(ServiceBase $api, array $args)
     {
         // Needed to tell the save process to ignore locked field enforcement
         Registry\Registry::getInstance()->set('skip_locked_field_checks', true);
@@ -335,7 +335,7 @@ class PMSEEngineApi extends SugarApi
         return array('success' => true);
     }
 
-    public function engineClaim($api, $args)
+    public function engineClaim(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $cas_id = $args['cas_id'];
@@ -365,7 +365,7 @@ class PMSEEngineApi extends SugarApi
         return array('success' => true);
     }
 
-    public function reassignRecord($api, $args)
+    public function reassignRecord(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $case = $args['data'];
@@ -383,7 +383,7 @@ class PMSEEngineApi extends SugarApi
         return $case;
     }
 
-    public function adhocReassign($api, $args)
+    public function adhocReassign(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $case = $args['data'];
@@ -398,7 +398,7 @@ class PMSEEngineApi extends SugarApi
         return $result;
     }
 
-    public function getReassign($api, $args)
+    public function getReassign(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
@@ -457,7 +457,7 @@ class PMSEEngineApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function getFormDataReassign($args)
+    public function getFormDataReassign(array $args)
     {
         $bpmFlow = new BpmFlow();
         $orderBy = '';
@@ -494,7 +494,7 @@ class PMSEEngineApi extends SugarApi
      * @param array $args
      * @return object
      */
-    public function getAdhoc($api, $args)
+    public function getAdhoc(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
@@ -553,7 +553,7 @@ class PMSEEngineApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function getFormDataAdhoc($args)
+    public function getFormDataAdhoc(array $args)
     {
         $bpmFlow = BeanFactory::newBean('pmse_BpmFlow'); //new BpmFlow();
         $orderBy = '';
@@ -583,10 +583,10 @@ class PMSEEngineApi extends SugarApi
     }
 
     /**
-     * @param $args
+     * @param array $args
      * @return object
      */
-    public function changeCaseUser($api, $args)
+    public function changeCaseUser(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $time_data = $GLOBALS['timedate'];
@@ -625,7 +625,7 @@ class PMSEEngineApi extends SugarApi
      * Method that returns the user roles as Sugar
      * @return object
      */
-    public function userListByTeam($api, $args)
+    public function userListByTeam(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         global $db;
@@ -655,7 +655,7 @@ class PMSEEngineApi extends SugarApi
      * @param type $args
      * @return boolean
      */
-    public function updateChangeCaseFlow($api, $args)
+    public function updateChangeCaseFlow(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         global $db;
@@ -731,7 +731,7 @@ class PMSEEngineApi extends SugarApi
      * @param type $args
      * @return boolean
      */
-    public function reactivateFlows($api, $args)
+    public function reactivateFlows(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $h = ProcessManager\Factory::getPMSEObject('RequestHandler', 'Engine');
@@ -752,7 +752,7 @@ class PMSEEngineApi extends SugarApi
      * @param type $args
      * @return type
      */
-    public function cancelCase($api, $args)
+    public function cancelCase(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $result = array('success' => true);
@@ -775,7 +775,7 @@ class PMSEEngineApi extends SugarApi
         return $result;
     }
 
-    public function reassignFlows($api, $args)
+    public function reassignFlows(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $result = array('success' => true);
@@ -791,13 +791,13 @@ class PMSEEngineApi extends SugarApi
 
     /**
      * Returns a list of all activities that can be reassigned
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarQueryException
      */
-    public function getReassignFlows($api, $args)
+    public function getReassignFlows(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $result = array('success' => true);
@@ -897,7 +897,7 @@ class PMSEEngineApi extends SugarApi
         return $result;
     }
 
-    private function getUsersForReassign($options)
+    private function getUsersForReassign(array $options)
     {
         $result = array();
         if (isset($options['act_assignment_method']) &&
@@ -937,7 +937,7 @@ class PMSEEngineApi extends SugarApi
         return $result;
     }
 
-    public function getUnattendedCases($api, $args)
+    public function getUnattendedCases(ServiceBase $api, array $args)
     {
         global $db;
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
@@ -1104,7 +1104,7 @@ class PMSEEngineApi extends SugarApi
         return $return;
     }
 
-    public function selectCase($api, $args)
+    public function selectCase(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $returnArray = array();
@@ -1176,7 +1176,7 @@ class PMSEEngineApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function getCaseRecord($api, $args)
+    public function getCaseRecord(ServiceBase $api, array $args)
     {
         // Tell the Locked Field ACLs to not set
         Registry\Registry::getInstance()->set('skip_locked_field_checks', true);
@@ -1374,7 +1374,7 @@ class PMSEEngineApi extends SugarApi
         return $arrayReturn;
     }
 
-    public function getSettingsEngine($api, $args)
+    public function getSettingsEngine(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         global $sugar_config;
@@ -1396,7 +1396,7 @@ class PMSEEngineApi extends SugarApi
         return $settings;
     }
 
-    public function putSettingsEngine($api, $args)
+    public function putSettingsEngine(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         if (!empty($args['data'])) {

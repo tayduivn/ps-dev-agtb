@@ -97,11 +97,13 @@ class ModuleApi extends SugarApi {
 
     /**
      * This method returns the dropdown options of a given field
-     * @param array $api
+     *
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      */
-    public function getEnumValues($api, $args) {
+    public function getEnumValues(ServiceBase $api, array $args)
+    {
         $this->requireArgs($args, array('module','field'));
 
         $bean = BeanFactory::newBean($args['module']);
@@ -237,7 +239,8 @@ class ModuleApi extends SugarApi {
         return $this->reloadBean($api, $args);
     }
 
-    public function updateRecord($api, $args) {
+    public function updateRecord(ServiceBase $api, array $args)
+    {
         foreach ($this->disabledUpdateFields as $field) {
             if (isset($args[$field])) {
                 unset($args[$field]);
@@ -269,7 +272,7 @@ class ModuleApi extends SugarApi {
      * @param array $args API arguments
      * @throws SugarApiExceptionInvalidParameter
      */
-    public function updateRelatedRecords($api, $bean, $args)
+    public function updateRelatedRecords(ServiceBase $api, SugarBean $bean, array $args)
     {
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'delete');
         $this->unlinkRelatedRecords($api, $bean, $relateArgs);
@@ -282,7 +285,8 @@ class ModuleApi extends SugarApi {
 
     }
 
-    public function retrieveRecord($api, $args) {
+    public function retrieveRecord(ServiceBase $api, array $args)
+    {
         $this->requireArgs($args,array('module','record'));
 
         $bean = $this->loadBean($api, $args, 'view');
@@ -296,10 +300,10 @@ class ModuleApi extends SugarApi {
         $data = $this->formatBean($api, $args, $bean);
 
         return $data;
-
     }
 
-    public function deleteRecord($api, $args) {
+    public function deleteRecord(ServiceBase $api, array $args)
+    {
         $this->requireArgs($args,array('module','record'));
 
         $bean = $this->loadBean($api, $args, 'delete', $this->aclCheckOptions);
@@ -308,7 +312,8 @@ class ModuleApi extends SugarApi {
         return array('id'=>$bean->id);
     }
 
-    public function setFavorite($api, $args) {
+    public function setFavorite(ServiceBase $api, array $args)
+    {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
 
@@ -333,7 +338,8 @@ class ModuleApi extends SugarApi {
         return $data;
     }
 
-    public function unsetFavorite($api, $args) {
+    public function unsetFavorite(ServiceBase $api, array $args)
+    {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
 
@@ -365,7 +371,7 @@ class ModuleApi extends SugarApi {
      * @param SugarBean $bean The bean associated.
      * @return array Array of additional related fields
      */
-    protected function getRelatedFields($args, SugarBean $bean)
+    protected function getRelatedFields(array $args, SugarBean $bean)
     {
         $additional_rel_fields = array();
 
@@ -386,7 +392,7 @@ class ModuleApi extends SugarApi {
      * @throws SugarApiExceptionInvalidParameter If the file mime types differ
      *   from $imageFileMimeTypes.
      */
-    protected function moveTemporaryFiles($args, SugarBean $bean)
+    protected function moveTemporaryFiles(array $args, SugarBean $bean)
     {
 
         $fileFields = $bean->getFieldDefinitions('type', array('file', 'image'));
@@ -452,7 +458,7 @@ class ModuleApi extends SugarApi {
      * @param array $args Request arguments
      * @return array Array of formatted fields
      */
-    protected function getLoadedAndFormattedBean($api, $args)
+    protected function getLoadedAndFormattedBean(ServiceBase $api, array $args)
     {
         $bean = $this->reloadBean($api, $args);
         $data = $this->formatBeanAfterSave($api, $args, $bean);
@@ -502,10 +508,11 @@ class ModuleApi extends SugarApi {
      * copy_rel_from - Copies relationships from a specified record. The relationship that should be copied is specified
      *                 in the vardef.
      *
-     * @param $args
+     * @param array $args
      * @param SugarBean $bean
      */
-    protected function processAfterCreateOperations($args, SugarBean $bean) {
+    protected function processAfterCreateOperations(array $args, SugarBean $bean)
+    {
         $this->requireArgs($args, array('module'));
 
         global $dictionary;

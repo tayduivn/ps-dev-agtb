@@ -32,13 +32,13 @@ class PasswordApi extends SugarApi
 
     /**
      * Resets password and sends email to user
-     * @param $api
+     * @param ServiceBase $api
      * @param array $args
      * @return bool
      * @throws SugarApiExceptionRequestMethodFailure
      * @throws SugarApiExceptionMissingParameter
      */
-    public function requestPassword($api, $args)
+    public function requestPassword(ServiceBase $api, array $args)
     {
         require_once('modules/Users/language/en_us.lang.php');
         $res = $GLOBALS['sugar_config']['passwordsetting'];

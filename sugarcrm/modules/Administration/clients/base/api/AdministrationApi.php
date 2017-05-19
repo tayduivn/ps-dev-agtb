@@ -120,11 +120,11 @@ class AdministrationApi extends SugarApi
 
     /**
      * Search reindex
-     * @param RestService $api
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      */
-    public function searchReindex(\RestService $api, array $args)
+    public function searchReindex(ServiceBase $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -137,11 +137,11 @@ class AdministrationApi extends SugarApi
 
     /**
      * Search status
-     * @param RestService $api
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      */
-    public function searchStatus(\RestService $api, array $args)
+    public function searchStatus(ServiceBase $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -165,11 +165,11 @@ class AdministrationApi extends SugarApi
 
     /**
      * Search field configuration
-     * @param RestService $api
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      */
-    public function searchFields(\RestService $api, array $args)
+    public function searchFields(ServiceBase $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -251,11 +251,11 @@ class AdministrationApi extends SugarApi
 
     /**
      * Elasticsearch queue
-     * @param RestService $api
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      */
-    public function elasticSearchQueue(\RestService $api, array $args)
+    public function elasticSearchQueue(ServiceBase $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -283,11 +283,11 @@ class AdministrationApi extends SugarApi
 
     /**
      * Elasticsearch index routing
-     * @param RestService $api
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      */
-    public function elasticSearchRouting(\RestService $api, array $args)
+    public function elasticSearchRouting(ServiceBase $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -316,11 +316,11 @@ class AdministrationApi extends SugarApi
 
     /**
      * Elasticsearch index statistics
-     * @param RestService $api
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      */
-    public function elasticSearchIndices(\RestService $api, array $args)
+    public function elasticSearchIndices(ServiceBase $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -335,11 +335,11 @@ class AdministrationApi extends SugarApi
 
     /**
      * Elasticsearch mapping
-     * @param RestService $api
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      */
-    public function elasticSearchMapping(\RestService $api, array $args)
+    public function elasticSearchMapping(ServiceBase $api, array $args)
     {
         $this->ensureAdminUser();
 

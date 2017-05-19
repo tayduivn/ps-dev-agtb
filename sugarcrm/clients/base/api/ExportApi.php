@@ -40,8 +40,8 @@ class ExportApi extends SugarApi
     /**
      * Export API
      *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API
      * @return String
      */
     public function export(ServiceBase $api, array $args = array())

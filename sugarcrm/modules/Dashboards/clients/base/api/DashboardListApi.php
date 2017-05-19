@@ -85,7 +85,7 @@ class DashboardListApi extends FilterApi
      * @throws SugarApiExceptionInvalidParameter If any arguments are invalid.
      * @throws SugarApiExceptionNotAuthorized If we lack ACL access.
      */
-    public function getDashboards($api, $args)
+    public function getDashboards(ServiceBase $api, array $args)
     {
         if (empty($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();

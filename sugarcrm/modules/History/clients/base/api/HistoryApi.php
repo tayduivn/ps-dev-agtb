@@ -221,7 +221,7 @@ class HistoryApi extends RelateApi
         return $this->runQuery($api, $args, $query, $options);
     }
 
-    protected function scrubFields($args)
+    protected function scrubFields(array $args)
     {
         $filters = !empty($args['order_by']) ? explode(',', $args['order_by']) : array();
         foreach ($filters as $filter) {

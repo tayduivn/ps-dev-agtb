@@ -540,7 +540,7 @@ class FilterApi extends SugarApi
      * @param SugarBean $bean
      * @param array $data
      */
-    protected function populateRelatedFields($bean, $data)
+    protected function populateRelatedFields(SugarBean $bean, $data)
     {
         $relates = array();
         // fill in related rows data by field
@@ -1170,7 +1170,7 @@ class FilterApi extends SugarApi
      * @param $options array of options to use
      * @return mixed the options without any relate collections
      */
-    protected function removeRelateCollectionsFromSelect($options)
+    protected function removeRelateCollectionsFromSelect(array $options)
     {
         if (isset($options['select'])) {
             foreach ($options['select'] as $index => $field) {

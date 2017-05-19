@@ -77,7 +77,7 @@ class PipelineChartApi extends SugarApi
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionNotFound
      */
-    public function pipeline(ServiceBase $api, $args)
+    public function pipeline(ServiceBase $api, array $args)
     {
 
         // if not in the allowed module list, then we throw a 404 not found
@@ -193,7 +193,7 @@ class PipelineChartApi extends SugarApi
     }
 
     /**
-     * @param $api
+     * @param ServiceBase $api
      * @param $seed
      * @param $tp
      * @param $amount_field
@@ -201,7 +201,7 @@ class PipelineChartApi extends SugarApi
      * @return SugarQuery
      * @throws SugarQueryException
      */
-    protected function buildQuery($api, $seed, $tp, $amount_field, $type = 'user')
+    protected function buildQuery(ServiceBase $api, SugarBean $seed, $tp, $amount_field, $type = 'user')
     {
         // build out the query
         $sq = new SugarQuery();

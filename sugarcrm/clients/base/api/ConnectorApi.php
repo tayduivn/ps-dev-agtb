@@ -46,10 +46,10 @@ class ConnectorApi extends SugarApi
     /**
      * gets connector metadata
      * @param Object $api api object
-     * @param Array $args arguments passed from api
+     * @param array $args arguments passed from api
      * @return array
      */
-    public function getConnectors($api, $args)
+    public function getConnectors(ServiceBase $api, array $args)
     {
         $cm = $this->getConnectorManager();
         // build cache
@@ -58,10 +58,10 @@ class ConnectorApi extends SugarApi
 
     /**
      * handles if given connector hash is valid
-     * @param Array $args arguments passed from api
+     * @param array $args arguments passed from api
      * @throws SugarApiExceptionInvalidHash
      */
-    public function validateHash($args)
+    public function validateHash(array $args)
     {
         if (!empty($args['connectorHash'])) {
             $cm = $this->getConnectorManager();

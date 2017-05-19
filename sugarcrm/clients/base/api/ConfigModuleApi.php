@@ -61,10 +61,10 @@ class ConfigModuleApi extends ModuleApi
      *
      * @throws SugarApiExceptionNotAuthorized
      * @param ServiceBase $api
-     * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
+     * @param array $args 'module' is required, 'platform' is optional and defaults to 'base'
      * @return array
      */
-    public function config(ServiceBase $api, $args)
+    public function config(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, array('module'));
         $seed = BeanFactory::newBean($args['module']);

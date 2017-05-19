@@ -42,7 +42,7 @@ class ContactsApi extends ModuleApi
         );
     }
 
-    public function influencers($api, $args)
+    public function influencers(ServiceBase $api, array $args)
     {
         $account = $this->getAccountBean($api, $args);
         $relationships = array('calls' => 0, 'meetings' => 0);
@@ -85,7 +85,7 @@ class ContactsApi extends ModuleApi
         return array_values($data);
     }
 
-    public function opportunityStats($api, $args)
+    public function opportunityStats(ServiceBase $api, array $args)
     {
         $account = $this->getAccountBean($api, $args);
         $data = $this->getAccountRelationship($api, $args, $account, 'opportunities', null);
@@ -114,11 +114,11 @@ class ContactsApi extends ModuleApi
 
     /**
      * Retrieve a list of calendar event start and end times for specified person
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function getFreeBusySchedule($api, $args)
+    public function getFreeBusySchedule(ServiceBase $api, array $args)
     {
         $bean = $this->loadBean($api, $args, 'view');
         return array(
@@ -128,7 +128,7 @@ class ContactsApi extends ModuleApi
         );
     }
 
-    protected function getBean($api, $args)
+    protected function getBean(ServiceBase $api, array $args)
     {
         // Load up the bean
         $record = BeanFactory::getBean($args['module'], $args['record']);
@@ -142,7 +142,7 @@ class ContactsApi extends ModuleApi
         return $record;
     }
 
-    protected function getAccountBean($api, $args)
+    protected function getAccountBean(ServiceBase $api, array $args)
     {
         $record = $this->getBean($api, $args);
         // Load up the relationship
@@ -172,7 +172,7 @@ class ContactsApi extends ModuleApi
         }
     }
 
-    protected function getAccountRelationship($api, $args, $account, $relationship, $limit = 5, $query = array())
+    protected function getAccountRelationship(ServiceBase $api, array $args, $account, $relationship, $limit = 5, $query = array())
     {
         // Load up the relationship
         if (!$account->load_relationship($relationship)) {

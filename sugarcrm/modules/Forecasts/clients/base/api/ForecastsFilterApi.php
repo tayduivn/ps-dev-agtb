@@ -51,11 +51,11 @@ class ForecastsFilterApi extends FilterApi
     /**
      * forecastsCommitted -- only left in for testing purposes
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function forecastsCommitted($api, $args)
+    public function forecastsCommitted(ServiceBase $api, array $args)
     {
 
         // if no timeperiod is set, just set it to false, and the current time period will be set

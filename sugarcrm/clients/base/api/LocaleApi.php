@@ -28,7 +28,7 @@ class LocaleApi extends SugarApi
         );
     }
 
-    public function localeOptions($api, $args)
+    public function localeOptions(ServiceBase $api, array $args)
     {
         global $locale, $sugar_config;
         return array(

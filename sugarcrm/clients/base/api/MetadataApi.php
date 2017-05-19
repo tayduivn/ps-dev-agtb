@@ -110,7 +110,8 @@ class MetadataApi extends SugarApi
      * @param array $default
      * @return array
      */
-    protected function getTypeFilter($args, $default) {
+    protected function getTypeFilter(array $args, $default)
+    {
         $typeFilter = $default;
         if (!empty($args['type_filter'])) {
             // Explode is fine here, we control the list of types
@@ -130,7 +131,8 @@ class MetadataApi extends SugarApi
      * @param array $default
      * @return array
      */
-    protected function getModuleFilter($args, $default) {
+    protected function getModuleFilter(array $args, $default)
+    {
         $moduleFilter = $default;
         if (!empty($args['module_filter'])) {
             if (function_exists('str_getcsv')) {
@@ -154,7 +156,8 @@ class MetadataApi extends SugarApi
      * @param array $args
      * @return bool
      */
-    protected function isOnlyHash($args) {
+    protected function isOnlyHash(array $args)
+    {
         return !empty($args['only_hash']) && ($args['only_hash'] == 'true' || $args['only_hash'] == '1');
     }
 
@@ -243,11 +246,11 @@ class MetadataApi extends SugarApi
     /**
      * Public metadata request endpoint
      * 
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function getPublicMetadata($api, $args)
+    public function getPublicMetadata(ServiceBase $api, array $args)
     {
         // Get the metadata manager we need for this request
         $mm = $this->getMetaDataManager($api->platform, true);
@@ -285,7 +288,7 @@ class MetadataApi extends SugarApi
      * @param array $perModuleChunks the module chunks we want filtered
      * @param array $moduleFilter the specific modules we want
      */
-    protected function filterResults($args, $data, $typeFilter, $onlyHash = false, $baseChunks = array(), $perModuleChunks = array(), $moduleFilter = array())
+    protected function filterResults(array $args, $data, $typeFilter, $onlyHash = false, $baseChunks = array(), $perModuleChunks = array(), $moduleFilter = array())
     {
         if ($onlyHash) {
             // The client only wants hashes

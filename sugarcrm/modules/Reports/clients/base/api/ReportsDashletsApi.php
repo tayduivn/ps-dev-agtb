@@ -39,11 +39,11 @@ class ReportsDashletsApi extends SugarApi
     /**
      * Retrieves all saved reports that meet args-driven criteria
      *
-     * @param $api ServiceBase The API class of the request
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request
+     * @param array $args The arguments array passed in from the API
      * @return array
      */
-    public function getSavedReports($api, $args)
+    public function getSavedReports(ServiceBase $api, array $args)
     {
         // Make sure the user isn't seeing reports they don't have access to
         require_once('modules/Reports/SavedReport.php');
@@ -88,11 +88,11 @@ class ReportsDashletsApi extends SugarApi
     /**
      * Retrieves a saved report and chart data, given a report ID in the args
      *
-     * @param $api ServiceBase The API class of the request
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request
+     * @param array $args The arguments array passed in from the API
      * @return array
      */
-    public function getSavedReportChartById($api, $args)
+    public function getSavedReportChartById(ServiceBase $api, array $args)
     {
 
         $chartReport = $this->getSavedReportById($args['reportId']);

@@ -90,7 +90,7 @@ class PMSECasesListApi extends FilterApi
         );
     }
 
-    public function selectCasesList($api, $args)
+    public function selectCasesList(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $q = new SugarQuery();
@@ -294,7 +294,7 @@ class PMSECasesListApi extends FilterApi
         return $converted;
     }
 
-    public function selectLogLoad($api, $args)
+    public function selectLogLoad(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $logger = PMSELogger::getInstance();
@@ -302,7 +302,7 @@ class PMSECasesListApi extends FilterApi
         $log = $pmse->getLogFile($logger->getLogFileNameWithPath());
         return $log;
         }
-    public function clearLog($api, $args)
+    public function clearLog(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $logger = PMSELogger::getInstance();
@@ -316,7 +316,7 @@ class PMSECasesListApi extends FilterApi
         return true;
     }
 
-    public function configLogLoad($api, $args)
+    public function configLogLoad(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $q = new SugarQuery();
@@ -347,7 +347,7 @@ class PMSECasesListApi extends FilterApi
     /*
      * config log PMSE log
      */
-    public function configLogPut($api, $args)
+    public function configLogPut(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $data = $args['cfg_value'];
@@ -359,14 +359,14 @@ class PMSECasesListApi extends FilterApi
         return array('success' => true);
     }
 
-    public function returnProcessUsersChart($api, $args)
+    public function returnProcessUsersChart(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $filter = $args['filter'];
         return $this->createProcessUsersChartData($filter);
     }
 
-    public function returnProcessStatusChart($api, $args)
+    public function returnProcessStatusChart(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $filter = $args['filter'];

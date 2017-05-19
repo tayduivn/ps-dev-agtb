@@ -28,7 +28,8 @@ abstract class SugarListApi extends SugarApi {
      * @param SugarBean|null $seed This is the seed bean that feeds the list, if you pass in a null seed then the fields are not validated
      * @return array An array with the options limit, offset, fields and order_by set
      */
-    public function parseArguments(ServiceBase $api, array $args, $seed = null) {
+    public function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null)
+    {
         $limit = $this->defaultLimit;
         if ( isset($args['max_num']) ) {
             $limit = (int)$args['max_num'];

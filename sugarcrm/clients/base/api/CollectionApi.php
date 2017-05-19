@@ -278,7 +278,7 @@ abstract class CollectionApi extends SugarApi
      *
      * @return array Mapped arguments
      */
-    protected function mapSourceArguments(CollectionDefinitionInterface $definition, $source, $args)
+    protected function mapSourceArguments(CollectionDefinitionInterface $definition, $source, array $args)
     {
         if ($definition->hasFieldMap($source)) {
             $fieldMap = $definition->getFieldMap($source);
@@ -298,7 +298,7 @@ abstract class CollectionApi extends SugarApi
      *
      * @return array
      */
-    abstract protected function getSourceData($api, $source, $args);
+    abstract protected function getSourceData(ServiceBase $api, $source, array $args);
 
     /**
      * Counts records from the given collection source
@@ -309,7 +309,7 @@ abstract class CollectionApi extends SugarApi
      *
      * @return array
      */
-    abstract protected function getSourceCount($api, $source, $args);
+    abstract protected function getSourceCount(ServiceBase $api, $source, array $args);
 
     /**
      * Returns collection definition

@@ -72,13 +72,13 @@ class TwitterApi extends ConnectorApi
 
     /**
      * Gets Tweets for a user via proxy call to twitter
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return mixed
      * @throws SugarApiExceptionRequestMethodFailure
      * @throws SugarApiExceptionMissingParameter
      */
-    public function getTweets($api, $args)
+    public function getTweets(ServiceBase $api, array $args)
     {
         $this->validateHash($args);
         $args2params = array(
@@ -122,13 +122,13 @@ class TwitterApi extends ConnectorApi
 
     /**
      * Gets Tweets for a user via proxy call to twitter
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return mixed
      * @throws SugarApiExceptionRequestMethodFailure
      * @throws SugarApiExceptionMissingParameter
      */
-    public function getCurrentUser($api, $args)
+    public function getCurrentUser(ServiceBase $api, array $args)
     {
         $this->validateHash($args);
         $extApi = $this->getEAPM();

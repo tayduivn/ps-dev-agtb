@@ -27,7 +27,7 @@ class AccountsApi extends ModuleApi
         );
     }
 
-    public function opportunityStats($api, $args)
+    public function opportunityStats(ServiceBase $api, array $args)
     {
         // TODO make all APIs wrapped on tries and catches
         // TODO: move this to own module (in this case accounts)

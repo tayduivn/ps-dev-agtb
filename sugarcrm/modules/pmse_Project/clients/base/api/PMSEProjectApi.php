@@ -183,7 +183,7 @@ class PMSEProjectApi extends ModuleApi
         );
     }
 
-    public function retrieveCustomProject($api, $args)
+    public function retrieveCustomProject(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $api->action = "read";
@@ -192,7 +192,7 @@ class PMSEProjectApi extends ModuleApi
         return $this->projectWrapper->retrieveProject($args['record']);
     }
 
-    public function updateCustomProject($api, $args)
+    public function updateCustomProject(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $api->action = "update";
@@ -210,7 +210,7 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args Request arguments
      * @return array Array of formatted fields
      */
-    protected function getLoadedAndFormattedBean($api, $args)
+    protected function getLoadedAndFormattedBean(ServiceBase $api, array $args)
     {
         $addNoAccessAcl = false;
         // Load the bean fresh to ensure the cache entry from the create process
@@ -246,7 +246,7 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args
      * @return type
      */
-    public function getBRFields($api, $args)
+    public function getBRFields(ServiceBase $api, array $args)
     {
         $args['module'] = 'pmse_Project';
         $args['data'] = 'oneToOneRelated';
@@ -260,7 +260,7 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args
      * @return type
      */
-    public function getCrmData($api, $args)
+    public function getCrmData(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->crmDataWrapper->_get($args, $this);
@@ -272,7 +272,7 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args
      * @return type
      */
-    public function putCrmData($api, $args)
+    public function putCrmData(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $processObserver = ProcessManager\Factory::getPMSEObject('PMSEProcessObserver');
@@ -286,13 +286,13 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args
      * @return type
      */
-    public function getActivityDefinition($api, $args)
+    public function getActivityDefinition(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->activityDefinitionWrapper->_get($args);
     }
 
-    public function putActivityDefinition($api, $args)
+    public function putActivityDefinition(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->activityDefinitionWrapper->_put($args);
@@ -304,13 +304,13 @@ class PMSEProjectApi extends ModuleApi
      * @param array $args
      * @return type
      */
-    public function getEventDefinition($api, $args)
+    public function getEventDefinition(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->eventDefinitionWrapper->_get($args);
     }
 
-    public function putEventDefinition($api, $args)
+    public function putEventDefinition(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $observer = ProcessManager\Factory::getPMSEObject('PMSEEventObserver');
@@ -318,19 +318,19 @@ class PMSEProjectApi extends ModuleApi
         $this->eventDefinitionWrapper->_put($args);
     }
 
-    public function getGatewayDefinition($api, $args)
+    public function getGatewayDefinition(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->gatewayDefinitionWrapper->_get($args);
     }
 
-    public function putGatewayDefinition($api, $args)
+    public function putGatewayDefinition(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->gatewayDefinitionWrapper->_put($args);
     }
 
-    public function verifyRunningProcess($api, $args)
+    public function verifyRunningProcess(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         if (empty($args['baseModule'])) {

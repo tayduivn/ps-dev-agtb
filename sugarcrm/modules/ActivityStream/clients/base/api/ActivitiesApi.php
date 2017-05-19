@@ -193,7 +193,7 @@ class ActivitiesApi extends FilterApi
         return $response;
     }
 
-    protected function checkParentPreviewEnabled($user, $module, $id)
+    protected function checkParentPreviewEnabled(User $user, $module, $id)
     {
         $previewCheckKey = $module . '.' . $id;
         $previewCheckResult = array();

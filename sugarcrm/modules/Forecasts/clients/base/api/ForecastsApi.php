@@ -86,23 +86,25 @@ class ForecastsApi extends ModuleApi
 
     /**
      * Returns an empty set for favorites and filter because those operations on forecasts are impossible
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function returnEmptySet($api, $args) {
+    public function returnEmptySet(ServiceBase $api, array $args)
+    {
         return array('next_offset' => -1, 'records' => array());
     }
     /**
      * Returns the initialization data for the module including currently logged-in user data,
      * timeperiods, and admin config settings
      *
-     * @param RestService $api
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      * @throws SugarApiExceptionNotAuthorized
      */
-    public function forecastsInitialization($api, $args) {
+    public function forecastsInitialization(ServiceBase $api, array $args)
+    {
         global $current_user;
 
         if(!SugarACL::checkAccess('Forecasts', 'access')) {
@@ -161,7 +163,7 @@ class ForecastsApi extends ModuleApi
      * @param array $args
      * @return array
      */
-    public function retrieveSelectedUser(ServiceBase $api, $args)
+    public function retrieveSelectedUser(ServiceBase $api, array $args)
     {
         global $locale;
         $uid = $args['user_id'];
@@ -185,11 +187,11 @@ class ForecastsApi extends ModuleApi
      *
      * //TODO, move this logic to store the values in a custom language file that contains the timeperiods for the Forecast module
      *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API
      * @return array of timeperiods
      */
-    public function timeperiod($api, $args)
+    public function timeperiod(ServiceBase $api, array $args)
     {
         $obj = $this->getTimeperiodFilterClass($args);
         return $obj->process();
@@ -198,10 +200,10 @@ class ForecastsApi extends ModuleApi
     /**
      * Utility method to get the timeperiod filter class
      *
-     * @param $args array The arguments array passed in from the API
+     * @param array $args The arguments array passed in from the API
      * @return SugarForecasting_AbstractForecast
      */
-    protected function getTimeperiodFilterClass($args)
+    protected function getTimeperiodFilterClass(array $args)
     {
         // base file and class name
         $file = 'include/SugarForecasting/Filter/TimePeriodFilter.php';
@@ -217,11 +219,11 @@ class ForecastsApi extends ModuleApi
     /**
      * Retrieve an array of Users and their tree state that report to the user that was passed in
      *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API
      * @return array|string of users that reported to specified/current user
      */
-    public function getReportees($api, $args)
+    public function getReportees(ServiceBase $api, array $args)
     {
         $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
         $args['level'] = isset($args['level']) ? (int) $args['level'] : 1;
@@ -262,11 +264,11 @@ class ForecastsApi extends ModuleApi
     /**
      * Retrieve an array of Users and their tree state that report to the user that was passed in
      *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API
      * @return array|string of users that reported to specified/current user
      */
-    public function getOrgTree($api, $args)
+    public function getOrgTree(ServiceBase $api, array $args)
     {
         $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
         $args['level'] = isset($args['level']) ? (int) $args['level'] : 1;
@@ -341,10 +343,10 @@ class ForecastsApi extends ModuleApi
     /**
      * @param Administration $admin
      * @param array $forecastsSettings
-     * @param RestService $api
+     * @param ServiceBase $api
      * @throws SugarApiExceptionInvalidHash
      */
-    protected function compareSettingsToDefaults(Administration $admin, $forecastsSettings, $api)
+    protected function compareSettingsToDefaults(Administration $admin, $forecastsSettings, ServiceBase $api)
     {
         $defaultConfig = ForecastsDefaults::getDefaults();
         $missing_config = array_diff(array_keys($defaultConfig), array_keys($forecastsSettings));
@@ -365,12 +367,13 @@ class ForecastsApi extends ModuleApi
     /**
      * Returns the Quota for a given timeperiod_id, user_id, and quota_type
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      * @throws SugarApiExceptionNotAuthorized
      */
-    public function getQuota($api, $args) {
+    public function getQuota(ServiceBase $api, array $args)
+    {
         if(!SugarACL::checkAccess('Quotas', 'access')) {
             throw new SugarApiExceptionNotAuthorized();
         }

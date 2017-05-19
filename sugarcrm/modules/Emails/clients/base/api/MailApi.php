@@ -149,21 +149,21 @@ class MailApi extends ModuleApi
     }
 
     /**
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function createMail($api, $args)
+    public function createMail(ServiceBase $api, array $args)
     {
         return $this->handleMail($api, $args);
     }
 
     /**
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function updateMail($api, $args)
+    public function updateMail(ServiceBase $api, array $args)
     {
         $email = new Email();
 
@@ -185,11 +185,11 @@ class MailApi extends ModuleApi
     /**
      * Archive email.
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function archiveMail($api, $args)
+    public function archiveMail(ServiceBase $api, array $args)
     {
         // Perform Front End argument validation per the Mail API architecture
         // Non-compliant arguments will result in an Invalid Parameter Exception Thrown
@@ -199,11 +199,11 @@ class MailApi extends ModuleApi
     }
 
     /**
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    protected function handleMail($api, $args)
+    protected function handleMail(ServiceBase $api, array $args)
     {
         // Perform Front End argument validation per the Mail API architecture
         // Non-compliant arguments will result in an Invalid Parameter Exception Thrown
@@ -232,11 +232,11 @@ class MailApi extends ModuleApi
      * This endpoint accepts an array of one or more recipients and tries to resolve unsupplied arguments.
      * EmailRecipientsService::lookup contains the lookup and resolution rules.
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function recipientLookup($api, $args)
+    public function recipientLookup(ServiceBase $api, array $args)
     {
         $recipients = $args;
         unset($recipients['__sugar_url']);
@@ -262,11 +262,11 @@ class MailApi extends ModuleApi
      *    offset      -  offset of first record to return
      *    max_num     -  maximum records to return
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function findRecipients($api, $args)
+    public function findRecipients(ServiceBase $api, array $args)
     {
         if (ini_get('max_execution_time') > 0 && ini_get('max_execution_time') < 300) {
             ini_set('max_execution_time', 300);
@@ -352,7 +352,7 @@ class MailApi extends ModuleApi
      *
      * @param array  - $args
      */
-    public function validateArguments(&$args)
+    public function validateArguments(array &$args)
     {
         global $app_list_strings;
         $relatedToModules = array_keys($app_list_strings['parent_type_display']);
@@ -512,10 +512,10 @@ class MailApi extends ModuleApi
     /**
      * Validate Recipient List
      *
-     * @param $args - array
+     * @param array $args - array
      * @param $argName - string
      */
-    protected function validateRecipients($args, $argName, $isRequired = false)
+    protected function validateRecipients(array $args, $argName, $isRequired = false)
     {
         $recipientCount = 0;
         if (isset($args[$argName])) {
@@ -556,7 +556,7 @@ class MailApi extends ModuleApi
      *
      * @param string  - $message
      */
-    protected function initMailRecord($args)
+    protected function initMailRecord(array $args)
     {
         $mailRecord = new MailRecord();
         $mailRecord->mailConfig = $args[self::EMAIL_CONFIG];
@@ -584,12 +584,12 @@ class MailApi extends ModuleApi
      * Validates email addresses. The return value is an array of key-value pairs where the keys are the email
      * addresses and the values are booleans indicating whether or not the email address is valid.
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      * @throws SugarApiException
      */
-    public function validateEmailAddresses($api, $args)
+    public function validateEmailAddresses(ServiceBase $api, array $args)
     {
         $validatedEmailAddresses = array();
         unset($args["__sugar_url"]);
@@ -622,7 +622,7 @@ class MailApi extends ModuleApi
      * @param array $args Arguments array built by the service base
      * @return array metadata about the attachment including name, guid, and nameForDisplay
      */
-    public function saveAttachment($api, $args)
+    public function saveAttachment(ServiceBase $api, array $args)
     {
         $this->checkPostRequestBody();
         $email = $this->getEmailBean();
@@ -639,7 +639,7 @@ class MailApi extends ModuleApi
      * @return bool
      * @throws SugarApiExceptionRequestMethodFailure
      */
-    public function removeAttachment($api, $args)
+    public function removeAttachment(ServiceBase $api, array $args)
     {
         $email = $this->getEmailBean();
         $email->email2init();
@@ -660,7 +660,7 @@ class MailApi extends ModuleApi
      * @return bool
      * @throws SugarApiExceptionRequestMethodFailure
      */
-    public function clearUserCache($api, $args)
+    public function clearUserCache(ServiceBase $api, array $args)
     {
         $em = new EmailUI();
         $em->preflightUserCache();

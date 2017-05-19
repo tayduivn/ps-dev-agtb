@@ -37,7 +37,7 @@ class BulkApi extends SugarApi
      * @throws SugarApiExceptionMissingParameter
      * @return array
      */
-    public function bulkCall($api, $args)
+    public function bulkCall(ServiceBase $api, array $args)
     {
         $this->requireArgs($args,array('requests'));
         $restResp = new BulkRestResponse($_SERVER);

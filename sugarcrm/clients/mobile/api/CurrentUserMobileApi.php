@@ -20,7 +20,7 @@ class CurrentUserMobileApi extends CurrentUserApi {
      *
      * @return string
      */
-    protected function getUserHash($user)
+    protected function getUserHash(User $user)
     {
         $hash = parent::getUserHash($user);
         //Mix in the mobile tabs as User::getUserMDHash only takes the base tabs into account

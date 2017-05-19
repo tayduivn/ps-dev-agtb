@@ -35,8 +35,12 @@ class KBContentsRelateRecordApi extends RelateRecordApi
      * Disable linking for `localizations` and `revisions`.
      * @inheritdoc
      */
-    public function createRelatedLinks($api, $args, $securityTypeLocal = 'view', $securityTypeRemote = 'view')
-    {
+    public function createRelatedLinks(
+        ServiceBase $api,
+        array $args,
+        $securityTypeLocal = 'view',
+        $securityTypeRemote = 'view'
+    ) {
         if (in_array($args['link_name'], array('localizations', 'revisions'))) {
             throw new SugarApiExceptionInvalidParameter('Unable to link existing record as localisation or revision.');
         }

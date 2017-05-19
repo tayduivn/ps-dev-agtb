@@ -27,7 +27,7 @@ class AuditApi extends ModuleApi
         );
     }
 
-    public function viewChangeLog($api, $args)
+    public function viewChangeLog(ServiceBase $api, array $args)
     {
         global $focus, $current_user;
 

@@ -114,7 +114,7 @@ class KBContentsFilterApi extends FilterApi
      * @param array $filterArgs filter args that contain only 'containing/excluding these words' filter
      * @return array
      */
-    protected function filterByContainingExcludingWords($api, $args, $filterArgs)
+    protected function filterByContainingExcludingWords(ServiceBase $api, array $args, $filterArgs)
     {
         $options = $this->parseArguments($api, $args);
         $bean = BeanFactory::newBean($args['module']);
@@ -162,7 +162,7 @@ class KBContentsFilterApi extends FilterApi
 
     /**
      * Get configured Elastic search builder.
-     * @param $args array The arguments array passed in from the API.
+     * @param array $args The arguments array passed in from the API.
      * @param $options array An array with the options limit, offset, fields and order_by set
      * @return QueryBuilder
      */

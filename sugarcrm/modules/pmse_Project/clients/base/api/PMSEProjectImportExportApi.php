@@ -45,7 +45,7 @@ class PMSEProjectImportExportApi extends vCardApi
         );
     }
 
-    public function projectDownload($api, $args)
+    public function projectDownload(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $projectBean = ProcessManager\Factory::getPMSEObject('PMSEProjectExporter');
@@ -71,7 +71,7 @@ class PMSEProjectImportExportApi extends vCardApi
         return $projectBean->exportProject($args['record'], $api);
     }
 
-    public function projectImport($api, $args)
+    public function projectImport(ServiceBase $api, array $args)
     {
         ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $this->requireArgs($args, array('module'));

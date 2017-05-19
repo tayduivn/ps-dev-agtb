@@ -150,11 +150,11 @@ class GlobalSearchApi extends SugarApi
 
     /**
      * GlobalSearch endpoint
-     * @param \RestService $api
+     * @param ServiceBase $api
      * @param array $args
      * @return array
      */
-    public function globalSearch(\RestService $api, array $args)
+    public function globalSearch(ServiceBase $api, array $args)
     {
         $api->action = 'list';
 
@@ -400,11 +400,11 @@ class GlobalSearchApi extends SugarApi
     /**
      * Format result set
      *
-     * @param \RestService $api
+     * @param ServiceBase $api
      * @param ResultSetInterface $results
      * @return array
      */
-    protected function formatResults(\RestService $api, ResultSetInterface $results)
+    protected function formatResults(ServiceBase $api, ResultSetInterface $results)
     {
         $formatted = array();
 
@@ -455,11 +455,11 @@ class GlobalSearchApi extends SugarApi
 
     /**
      * Wrapper around formatBean based on Result
-     * @param \RestService $api
+     * @param ServiceBase $api
      * @param Result $result
      * @return array
      */
-    protected function formatBeanFromResult(\RestService $api, Result $result)
+    protected function formatBeanFromResult(ServiceBase $api, Result $result)
     {
         // pass in field list from available data fields on result
         $args = array('fields' => $result->getDataFields());

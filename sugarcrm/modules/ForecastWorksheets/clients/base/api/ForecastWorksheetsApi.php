@@ -31,12 +31,12 @@ class ForecastWorksheetsApi extends SugarApi
     /**
      * This method handles saving data for the /ForecastsWorksheet REST endpoint
      *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
-     * @return Array of worksheet data entries
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API
+     * @return array Worksheet data entries
      * @throws SugarApiExceptionNotAuthorized
      */
-    public function forecastWorksheetSave($api, $args)
+    public function forecastWorksheetSave(ServiceBase $api, array $args)
     {
         $obj = $this->getClass($args);
         $bean = $obj->save();
@@ -46,10 +46,10 @@ class ForecastWorksheetsApi extends SugarApi
 
 
     /**
-     * @param $args
+     * @param array $args
      * @return SugarForecasting_Individual
      */
-    protected function getClass($args)
+    protected function getClass(array $args)
     {
         // base file and class name
         $file = 'include/SugarForecasting/Individual.php';

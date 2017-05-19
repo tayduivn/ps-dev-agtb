@@ -139,9 +139,12 @@ class RestTestPortalBase extends RestTestBase {
         $this->authToken = 'LOGGING_IN';
 
         $reply = $this->_restCall('oauth2/token',json_encode($args));
-        if ( empty($reply['reply']['access_token']) ) {
-            throw new Exception("Rest authentication failed, message looked like: ".$reply['replyRaw']);
-        }
+
+        $this->assertNotEmpty(
+            $reply['reply']['access_token'],
+            'REST authentication failed, the response looked like: ' . var_export($reply, true)
+        );
+
         $this->authToken = $reply['reply']['access_token'];
         $this->refreshToken = $reply['reply']['refresh_token'];
     }

@@ -174,12 +174,12 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @see testResaveConfig
      * @param ConfigModuleApi $apiClass
-     * @param RestService $api
+     * @param ServiceBase $api
      * @param Administration $admin
      * @param mixed $value
      * @throws SugarApiExceptionNotAuthorized
      */
-    private function assertConfigUpdated(ConfigModuleApi $apiClass, RestService $api, Administration $admin, $value)
+    private function assertConfigUpdated(ConfigModuleApi $apiClass, ServiceBase $api, Administration $admin, $value)
     {
         $args = array(
             'module' => 'Contacts',

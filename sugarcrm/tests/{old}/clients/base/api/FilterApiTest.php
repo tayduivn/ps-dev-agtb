@@ -875,10 +875,11 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @group unit
      *
      */
-    public function testRunQueryOffsetCompensation(array $beans, $compensation, $limit, $offset, $expected)
+    public function testRunQueryOffsetCompensation($numBeans, $compensation, $limit, $offset, $expected)
     {
         // prepare fetched bean array
-        $beans['_rows'] = $beans;
+        $beans = array_fill(0, $numBeans, new Account());
+        $beans['_rows'] = array_fill(0, $numBeans, array());
         $beans['_distinctCompensation'] = $compensation;
 
         $query = new SugarQuery();
@@ -925,10 +926,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
             // bean records less than limit
             array(
-                array(
-                    'a1' => 'record1',
-                    'a2' => 'record2',
-                ),
+                2,
                 0, // compensation
                 5, // limit
                 0, // offset
@@ -937,13 +935,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
             // bean records equal to limit
             array(
-                array(
-                    'a1' => 'record1',
-                    'a2' => 'record2',
-                    'a3' => 'record3',
-                    'a4' => 'record4',
-                    'a5' => 'record5',
-                ),
+                5,
                 0, // compensation
                 5, // limit
                 0, // offset
@@ -952,14 +944,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
             // bean records equal to limit + 1
             array(
-                array(
-                    'a1' => 'record1',
-                    'a2' => 'record2',
-                    'a3' => 'record3',
-                    'a4' => 'record4',
-                    'a5' => 'record5',
-                    'a6' => 'record6',
-                ),
+                6,
                 0, // compensation
                 5, // limit
                 0, // offset
@@ -968,13 +953,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
             // bean records equal to limit, but with compensation
             array(
-                array(
-                    'a1' => 'record1',
-                    'a2' => 'record2',
-                    'a3' => 'record3',
-                    'a4' => 'record4',
-                    'a5' => 'record5',
-                ),
+                5,
                 1, // compensation
                 5, // limit
                 0, // offset
@@ -983,11 +962,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
             // bean records less than limit, but with compensation
             array(
-                array(
-                    'a1' => 'record1',
-                    'a2' => 'record2',
-                    'a3' => 'record3',
-                ),
+                3,
                 3, // compensation
                 5, // limit
                 0, // offset
@@ -996,11 +971,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
             // bean records less than limit and combination not reaching threshold
             array(
-                array(
-                    'a1' => 'record1',
-                    'a2' => 'record2',
-                    'a3' => 'record3',
-                ),
+                3,
                 2, // compensation
                 5, // limit
                 0, // offset

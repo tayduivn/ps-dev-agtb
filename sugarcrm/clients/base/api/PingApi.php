@@ -64,7 +64,8 @@ class PingApi extends SugarApi {
         );
     }
 
-    public function ping($api, $args) {
+    public function ping(ServiceBase $api, array $args)
+    {
         if ( isset($args['sub_method']) && $args['sub_method'] == 'whattimeisit' ) {
             $dt = new SugarDateTime();
             $td = new TimeDate();

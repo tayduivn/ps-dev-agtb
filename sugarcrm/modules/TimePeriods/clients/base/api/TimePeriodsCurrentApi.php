@@ -36,7 +36,7 @@ class TimePeriodsCurrentApi extends SugarApi
         );
     }
 
-    public function getCurrentTimePeriod(ServiceBase $api, $args)
+    public function getCurrentTimePeriod(ServiceBase $api, array $args)
     {
         $tp = TimePeriod::getCurrentTimePeriod();
 
@@ -48,7 +48,7 @@ class TimePeriodsCurrentApi extends SugarApi
         return $tp->toArray();
     }
 
-    public function getTimePeriodByDate(ServiceBase $api, $args)
+    public function getTimePeriodByDate(ServiceBase $api, array $args)
     {
         if(!isset($args["date"]) || $args["date"] == 'undefined') {
             // return a 404

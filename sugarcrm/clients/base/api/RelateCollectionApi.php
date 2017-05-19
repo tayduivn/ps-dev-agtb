@@ -74,14 +74,14 @@ class RelateCollectionApi extends CollectionApi
     }
 
     /** {@inheritDoc} */
-    protected function getSourceData($api, $source, $args)
+    protected function getSourceData(ServiceBase $api, $source, array $args)
     {
         $args['link_name'] = $source;
         return $this->getRelateApi()->filterRelated($api, $args);
     }
 
     /** {@inheritDoc} */
-    protected function getSourceCount($api, $source, $args)
+    protected function getSourceCount(ServiceBase $api, $source, array $args)
     {
         $args['link_name'] = $source;
         return $this->getRelateApi()->filterRelatedCount($api, $args);

@@ -26,7 +26,7 @@ class SugarUpgradeRemoveDefaultSubpanelTitleFromCustomModulesTest extends Upgrad
      */
     public function testRemoveLangProperty($data, $expect)
     {
-        $testScript = new SugarUpgradeRemoveDefaultSubpanelTitleFromCustomModulesMock($this->upgrader);
+        $testScript = new SugarUpgradeRemoveDefaultSubpanelTitleFromCustomModules($this->upgrader);
         $actual = $testScript->removeLangProperty($data);
         $this->assertEquals($actual, $expect['mod_strings']);
     }
@@ -69,13 +69,5 @@ class SugarUpgradeRemoveDefaultSubpanelTitleFromCustomModulesTest extends Upgrad
                 ),
             ),
         );
-    }
-}
-
-class SugarUpgradeRemoveDefaultSubpanelTitleFromCustomModulesMock extends SugarUpgradeRemoveDefaultSubpanelTitleFromCustomModules
-{
-    public function removeLangProperty($data)
-    {
-        return parent::removeLangProperty($data);
     }
 }

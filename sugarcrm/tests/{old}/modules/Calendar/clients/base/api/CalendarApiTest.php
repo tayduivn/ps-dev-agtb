@@ -31,8 +31,6 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testBuildSearchParams_ConvertsRestArgsToLegacyParams()
     {
-        $this->calendarApi = new CalendarApiTest_CalendarApi();
-
         $args = array(
             'q' => 'woo',
             'module_list' => 'Foo,Bar',
@@ -67,14 +65,17 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedParams,
-            $this->calendarApi->publicBuildSearchParams($args),
+            SugarTestReflection::callProtectedMethod(
+                $this->calendarApi,
+                'buildSearchParams',
+                array($args)
+            ),
             'Rest API args should be transformed correctly into legacy query params'
         );
     }
 
     public function testTransformInvitees_ConvertsLegacyResultsToUnifiedSearchForm()
     {
-        $this->calendarApi = new CalendarApiTest_CalendarApi();
         $args = array(
             'q' => 'bar',
             'fields' => 'first_name,last_name,email,account_name',
@@ -94,7 +95,7 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $this->calendarApi = $this->createPartialMock(
-            'CalendarApiTest_CalendarApi',
+            'CalendarApi',
             array('formatBean')
         );
         $this->calendarApi->expects($this->once())
@@ -130,15 +131,17 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedInvitees,
-            $this->calendarApi->publicTransformInvitees($this->api, $args, $searchResults),
+            SugarTestReflection::callProtectedMethod(
+                $this->calendarApi,
+                'transformInvitees',
+                array($this->api, $args, $searchResults)
+            ),
             'Legacy search results should be transformed correctly into unified search format'
         );
     }
 
     public function testGetMatchedFields_MatchesRegularFieldsCorrectly()
     {
-        $this->calendarApi = new CalendarApiTest_CalendarApi();
-
         $args = array(
             'q' => 'foo',
             'search_fields' => 'first_name,last_name,email,account_name',
@@ -165,15 +168,17 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedMatchedFields,
-            $this->calendarApi->publicGetMatchedFields($args, $record, 1),
+            SugarTestReflection::callProtectedMethod(
+                $this->calendarApi,
+                'getMatchedFields',
+                array($args, $record, 1)
+            ),
             'Should match search query to field containing search text'
         );
     }
 
     public function testGetMatchedFields_MatchesEmailFieldCorrectly()
     {
-        $this->calendarApi = new CalendarApiTest_CalendarApi();
-
         $args = array(
             'q' => 'woo',
             'search_fields' => 'first_name,last_name,email,account_name',
@@ -200,27 +205,12 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedMatchedFields,
-            $this->calendarApi->publicGetMatchedFields($args, $record, 1),
+            SugarTestReflection::callProtectedMethod(
+                $this->calendarApi,
+                'getMatchedFields',
+                array($args, $record, 1)
+            ),
             'Should match search query to field containing search text'
         );
     }
 }
-
-class CalendarApiTest_CalendarApi extends CalendarApi
-{
-    public function publicBuildSearchParams($args)
-    {
-        return $this->buildSearchParams($args);
-    }
-
-    public function publicTransformInvitees($api, $args, $searchResults)
-    {
-        return $this->transformInvitees($api, $args, $searchResults);
-    }
-
-    public function publicGetMatchedFields($args, $record, $maxFields)
-    {
-        return $this->getMatchedFields($args, $record, $maxFields);
-    }
-}
-

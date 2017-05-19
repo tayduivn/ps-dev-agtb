@@ -39,7 +39,7 @@ class MeetingsApi extends CalendarEventsApi
         return parent::getRestApi("Meetings", $register);
     }
 
-    public function getAgenda($api, $args)
+    public function getAgenda(ServiceBase $api, array $args)
     {
         // Fetch the next 14 days worth of meetings (limited to 20)
         $end_time = new SugarDateTime("+14 days");
@@ -77,11 +77,11 @@ class MeetingsApi extends CalendarEventsApi
     /**
      * Gets the host/join information about an external meeting
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function getExternalInfo($api, $args)
+    public function getExternalInfo(ServiceBase $api, array $args)
     {
         $module = $args['module'];
         $meetingBean = BeanFactory::getBean($module, $args['record']);

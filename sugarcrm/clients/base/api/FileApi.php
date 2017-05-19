@@ -80,7 +80,7 @@ class FileApi extends SugarApi {
      * @throws SugarApiExceptionMissingParameter
      * @return array
      */
-    public function saveFilePut($api, $args, $stream = 'php://input')
+    public function saveFilePut(ServiceBase $api, array $args, $stream = 'php://input')
     {
         // Mime type, set to null for grabbing it later if not sent
         $filetype = isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : null;
@@ -138,7 +138,7 @@ class FileApi extends SugarApi {
      * @param array $args
      * @throws SugarApiExceptionNotAuthorized
      */
-    protected function checkFileAccess($bean, $field, $args)
+    protected function checkFileAccess(SugarBean $bean, $field, array $args)
     {
         if(!$bean->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
@@ -162,7 +162,8 @@ class FileApi extends SugarApi {
      * @return array
      * @throws SugarApiExceptionError
      */
-    public function saveFilePost($api, $args, $temporary = false) {
+    public function saveFilePost(ServiceBase $api, array $args, $temporary = false)
+    {
         //Needed by SugarFieldImage.php to know if we are saving a temporary image
         $args['temp'] = $temporary;
 
@@ -285,7 +286,8 @@ class FileApi extends SugarApi {
      * @param array $args Arguments array built by the service base
      * @return array
      */
-    public function getFileList($api, $args) {
+    public function getFileList(ServiceBase $api, array $args)
+    {
         // Validate and load up the bean because we need it
         $bean = $this->loadBean($api, $args, 'view');
 
@@ -331,7 +333,8 @@ class FileApi extends SugarApi {
      * @throws SugarApiExceptionNotFound When file cannot be found.
      * @throws SugarApiExceptionNotAuthorized When there is no access to record in module.
      */
-    public function getFile($api, $args) {
+    public function getFile(ServiceBase $api, array $args)
+    {
         // if exists link_name param then get archive
         if (!empty($args['link_name'])) {
             // @TODO Remove this code and use getArchive method via rest
@@ -384,7 +387,8 @@ class FileApi extends SugarApi {
      * @return array Listing of fields for a record
      * @throws SugarApiExceptionError|SugarApiExceptionNoMethod|SugarApiExceptionRequestMethodFailure
      */
-    public function removeFile($api, $args) {
+    public function removeFile(ServiceBase $api, array $args)
+    {
         // Get the field
         $field = $args['field'];
 
@@ -439,7 +443,7 @@ class FileApi extends SugarApi {
      * @throws SugarApiExceptionMissingParameter When field name is missing.
      * @throws SugarApiExceptionInvalidParameter When relationship name is incorrect.
      */
-    public function getArchive(ServiceBase $api, $args)
+    public function getArchive(ServiceBase $api, array $args)
     {
         // Get the field
         if (empty($args['field'])) {
@@ -499,7 +503,8 @@ class FileApi extends SugarApi {
      * @param array $args The request args
      * @return false if no deletion occured because delete_if_fails was not set otherwise true.
      */
-    protected function deleteIfFails($bean, $args) {
+    protected function deleteIfFails(SugarBean $bean, array $args)
+    {
         // Bug 57210: Need to be able to mark a related record 'deleted=1' when a file uploads fails.
         // delete_if_fails flag is an optional query string which can trigger this behavior. An example
         // use case might be: user's in a modal and client: 1. POST's related record 2. uploads file...
@@ -529,7 +534,8 @@ class FileApi extends SugarApi {
      * @param ServiceBase $api The calling API service object
      * @return array|bool
      */
-    protected function getFileInfo($bean, $field, $api) {
+    protected function getFileInfo(SugarBean $bean, $field, ServiceBase $api)
+    {
         $info = array();
         if (isset($bean->field_defs[$field])) {
             $def = $bean->field_defs[$field];
@@ -570,7 +576,7 @@ class FileApi extends SugarApi {
      * @param array $args The request arguments
      * @return boolean
      */
-    protected function isFileEncoded($api, $args)
+    protected function isFileEncoded(ServiceBase $api, array $args)
     {
         if ($api->getRequest()->hasHeader('X_CONTENT_TRANSFER_ENCODING')) {
             return $api->getRequest()->getHeader('X_CONTENT_TRANSFER_ENCODING') === 'base64';

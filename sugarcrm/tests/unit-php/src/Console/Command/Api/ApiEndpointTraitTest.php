@@ -40,7 +40,7 @@ class ApiEndpointTraitTest extends \PHPUnit_Framework_TestCase
             ->method('getService')
             ->will($this->returnValue($service));
 
-        $api = $this->createMock('Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\UnitTestApi');
+        $api = $this->createPartialMock('SugarApi', array('test1'));
 
         $apiCallArgs = array('foo', 'bar', array('more' => 'beer'));
 

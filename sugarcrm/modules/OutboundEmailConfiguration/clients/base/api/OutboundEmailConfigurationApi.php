@@ -31,11 +31,12 @@ class OutboundEmailConfigurationApi extends ModuleApi
     }
 
     /**
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function listConfigurations($api, $args) {
+    public function listConfigurations(ServiceBase $api, array $args)
+    {
         $list = array();
 
         $configs = OutboundEmailConfigurationPeer::listValidMailConfigurations($GLOBALS["current_user"]);

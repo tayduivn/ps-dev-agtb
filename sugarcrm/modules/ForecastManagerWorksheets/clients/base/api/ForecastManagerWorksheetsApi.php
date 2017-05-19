@@ -35,7 +35,7 @@ class ForecastManagerWorksheetsApi extends SugarApi
      * @param array $args               Args from the XHR Call
      * @return array
      */
-    public function assignQuota(ServiceBase $api, $args = array())
+    public function assignQuota(ServiceBase $api, array $args = array())
     {
         /* @var $mgr_worksheet ForecastManagerWorksheet */
         $mgr_worksheet = $this->getBean($args['module']);

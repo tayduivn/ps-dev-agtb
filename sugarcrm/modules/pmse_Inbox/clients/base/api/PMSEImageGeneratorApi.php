@@ -75,7 +75,7 @@ class PMSEImageGeneratorApi extends FileTempApi
      * @return string
      * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound
      */
-    public function getFile($api, $args)
+    public function getFile(ServiceBase $api, array $args)
     {
         $this->getProcessImage($api, $args);
         $args['temp_id'] = $args['record'];
@@ -89,7 +89,7 @@ class PMSEImageGeneratorApi extends FileTempApi
      * @param array $args Arguments array built by the service base
      * @return array
      */
-    public function getTempImage($api, $args)
+    public function getTempImage(ServiceBase $api, array $args)
     {
         parent::getTempImage($api, $args);
     }
@@ -102,7 +102,7 @@ class PMSEImageGeneratorApi extends FileTempApi
      * @return string
      * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound
      */
-    public function getProjectFile($api, $args)
+    public function getProjectFile(ServiceBase $api, array $args)
     {
         $args['_project'] = true;
         $this->getProcessImage($api, $args);
@@ -110,7 +110,7 @@ class PMSEImageGeneratorApi extends FileTempApi
         parent::getTempImage($api, $args);
     }
 
-    public function getProcessImage($api, $args)
+    public function getProcessImage(ServiceBase $api, array $args)
     {
         $path = 'upload://tmp/';
         $image = ProcessManager\Factory::getPMSEObject('PMSEImageGenerator');

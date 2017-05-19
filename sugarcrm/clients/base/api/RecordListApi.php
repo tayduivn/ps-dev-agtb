@@ -49,11 +49,11 @@ class RecordListApi extends SugarApi
 
     /**
      * To create a record list
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API containing the module and the records
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API containing the module and the records
      * @return array id, module, records
      */
-    public function recordListCreate($api, $args)
+    public function recordListCreate(ServiceBase $api, array $args)
     {
         $seed = BeanFactory::newBean($args['module']);
 
@@ -74,11 +74,11 @@ class RecordListApi extends SugarApi
 
     /**
      * To delete a record list
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API containing the module
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API containing the module
      * @return bool Did the delete succeed
      */
-    public function recordListDelete($api, $args)
+    public function recordListDelete(ServiceBase $api, array $args)
     {
         $seed = BeanFactory::newBean($args['module']);
         if (!$seed->ACLAccess('access')) {
@@ -102,11 +102,11 @@ class RecordListApi extends SugarApi
 
     /**
      * To retrieve a record list
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API containing the module and id of the record list
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API containing the module and id of the record list
      * @return array The record list
      */
-    public function recordListGet($api, $args)
+    public function recordListGet(ServiceBase $api, array $args)
     {
         $seed = BeanFactory::newBean($args['module']);
         if (!$seed->ACLAccess('access')) {

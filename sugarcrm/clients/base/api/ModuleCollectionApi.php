@@ -74,14 +74,14 @@ class ModuleCollectionApi extends CollectionApi
     }
 
     /** {@inheritDoc} */
-    protected function getSourceData($api, $source, $args)
+    protected function getSourceData(ServiceBase $api, $source, array $args)
     {
         $args['module'] = $source;
         return $this->getFilterApi()->filterList($api, $args);
     }
 
     /** {@inheritDoc} */
-    protected function getSourceCount($api, $source, $args)
+    protected function getSourceCount(ServiceBase $api, $source, array $args)
     {
         $args['module'] = $source;
         return $this->getFilterApi()->filterListCount($api, $args);

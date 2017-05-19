@@ -27,7 +27,7 @@ class OpportunitiesEnumApi extends ModuleApi
         );
     }
 
-    public function getEnumValues($api, $args)
+    public function getEnumValues(ServiceBase $api, array $args)
     {
         // if the field is not opps_view_by, go up to the parent
         if ($args['field'] !== 'opps_view_by') {

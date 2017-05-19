@@ -101,11 +101,11 @@ class CalendarEventsApi extends ModuleApi
 
     /**
      * Updates either a single event record or a set of recurring events based on all_recurrences flag
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function updateCalendarEvent($api, $args)
+    public function updateCalendarEvent(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, array('module', 'record'));
         CalendarEvents::setOldAssignedUser($args['module'], $args['record']);
@@ -147,11 +147,11 @@ class CalendarEventsApi extends ModuleApi
 
     /**
      * Deletes either a single event record or a set of recurring events based on all_recurrences flag
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function deleteCalendarEvent($api, $args)
+    public function deleteCalendarEvent(ServiceBase $api, array $args)
     {
         if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
             $result = $this->deleteRecordAndRecurrences($api, $args);
@@ -173,13 +173,13 @@ class CalendarEventsApi extends ModuleApi
     /**
      * Re-generates child events in recurring series
      * @param SugarBean $bean
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      * @throws SugarApiExceptionInvalidParameter - when updating using the 'all_recurrences' option, the id of the
      *         Parent (root) bean must be provided.
      */
-    public function updateRecurringCalendarEvent(SugarBean $bean, $api, &$args)
+    public function updateRecurringCalendarEvent(SugarBean $bean, ServiceBase $api, array &$args)
     {
         if (!empty($bean->repeat_parent_id) && ($bean->repeat_parent_id !== $bean->id)) {
             throw new SugarApiExceptionInvalidParameter('ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD');
@@ -203,11 +203,11 @@ class CalendarEventsApi extends ModuleApi
 
     /**
      * Deletes the parent and associated child events in a series.
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function deleteRecordAndRecurrences($api, $args)
+    public function deleteRecordAndRecurrences(ServiceBase $api, array $args)
     {
         /** @var Call|Meeting $bean */
         $bean = $this->loadBean($api, $args, 'delete');
@@ -240,7 +240,7 @@ class CalendarEventsApi extends ModuleApi
      *
      * @param $bean
      */
-    public function deleteRecurrences($bean)
+    public function deleteRecurrences(SugarBean $bean)
     {
         CalendarUtils::markRepeatDeleted($bean);
     }
@@ -249,10 +249,11 @@ class CalendarEventsApi extends ModuleApi
      * If the event specifies a recurring series, ensure that the series date_start represents
      * the first date in the series.
      *
+     * @param SugarBean $bean
      * @param array $args
      * @return array
      */
-    protected function initializeArgs($args, $bean=null)
+    protected function initializeArgs(array $args, SugarBean $bean = null)
     {
         $repeatType = '';
         if (!empty($bean)) {
@@ -315,7 +316,7 @@ class CalendarEventsApi extends ModuleApi
      * the first date in the series.
      * @param array $args
      */
-    protected function adjustStartDate(&$args)
+    protected function adjustStartDate(array &$args)
     {
         if (!empty($args['repeat_type']) && !empty($args['date_start'])) {
             $sequence = $this->getRecurringSequence($args);
@@ -333,7 +334,8 @@ class CalendarEventsApi extends ModuleApi
      * @param array $args
      * @return array
      */
-    protected function filterOutRecurrenceFields($args) {
+    protected function filterOutRecurrenceFields(array $args)
+    {
         $recurrenceFieldBlacklist = array(
             'repeat_type',
             'repeat_interval',
@@ -377,7 +379,7 @@ class CalendarEventsApi extends ModuleApi
      * @param array $args
      * @return bool
      */
-    protected function shouldAutoInviteParent($bean, $args)
+    protected function shouldAutoInviteParent(SugarBean $bean, array $args)
     {
         $isUpdate = isset($args['id']);
 
@@ -407,7 +409,7 @@ class CalendarEventsApi extends ModuleApi
      * @param SugarBean $parentBean
      * @return array
      */
-    protected function getRecurringSequence($args)
+    protected function getRecurringSequence(array $args)
     {
         $calEvents = $this->getCalendarEvents();
 

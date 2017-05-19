@@ -29,7 +29,7 @@ class RevenueLineItemsGlobeChartApi extends SugarApi
     }
 
 
-    public function salesByCountry($api, $args)
+    public function salesByCountry(ServiceBase $api, array $args)
     {
         // TODO: Fix information leakage if user cannot list or view records not
         // belonging to them. It's hard to tell if the user has access if we

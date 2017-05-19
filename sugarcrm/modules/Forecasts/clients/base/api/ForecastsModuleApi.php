@@ -42,7 +42,7 @@ class ForecastsModuleApi extends ModuleApi
      * @param array $args
      * @return SugarForecasting_Committed
      */
-    protected function getClass($args)
+    protected function getClass(array $args)
     {
         // base file and class name
         $file = 'include/SugarForecasting/Committed.php';

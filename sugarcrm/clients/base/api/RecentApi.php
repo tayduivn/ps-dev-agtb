@@ -44,7 +44,7 @@ class RecentApi extends SugarApi
      * @param arrat $args Arguments from request.
      * @return array options after setup.
      */
-    protected function parseArguments($args)
+    protected function parseArguments(array $args)
     {
         $options = array();
         $options['limit'] = !empty($args['limit']) ? (int) $args['limit'] : 20;
@@ -102,7 +102,7 @@ class RecentApi extends SugarApi
      * @param string $acl (optional) ACL action to check, default is `list`.
      * @return array List of recently viewed records.
      */
-    public function getRecentlyViewed($api, $args, $acl = 'list')
+    public function getRecentlyViewed(ServiceBase $api, array $args, $acl = 'list')
     {
         $this->requireArgs($args, array('module_list'));
 
@@ -172,7 +172,7 @@ class RecentApi extends SugarApi
      * @param array $options Prepared options.
      * @return SugarQuery query to execute.
      */
-    protected function getRecentlyViewedQueryObject($seed, $options)
+    protected function getRecentlyViewedQueryObject(SugarBean $seed, array $options)
     {
         $currentUser = $this->getUserBean();
 

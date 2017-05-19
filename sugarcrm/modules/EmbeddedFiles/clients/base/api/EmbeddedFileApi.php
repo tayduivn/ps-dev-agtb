@@ -59,7 +59,7 @@ class EmbeddedFileApi extends FileApi
      *
      * Need flexible field names for download files, so we need to override it.
      */
-    public function saveFilePost($api, $args, $temporary = false)
+    public function saveFilePost(ServiceBase $api, array $args, $temporary = false)
     {
         $field = $args['field'];
 
@@ -87,7 +87,7 @@ class EmbeddedFileApi extends FileApi
      *
      * Need flexible field names for download files, so we need to override it.
      */
-    public function getFile($api, $args)
+    public function getFile(ServiceBase $api, array $args)
     {
         if (empty($args['field'])) {
             throw new SugarApiExceptionMissingParameter('Field name is missing');

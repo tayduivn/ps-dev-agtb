@@ -74,11 +74,11 @@ class LeadsApi extends ModuleApi {
 
     /**
      * Retrieve a list of calendar event start and end times for specified person
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function getFreeBusySchedule($api, $args)
+    public function getFreeBusySchedule(ServiceBase $api, array $args)
     {
         $bean = $this->loadBean($api, $args, 'view');
         return array(
@@ -111,7 +111,7 @@ class LeadsApi extends ModuleApi {
         $email->leads->add($leadId);
     }
 
-    protected function getAccountBean($api, $args, $record)
+    protected function getAccountBean(ServiceBase $api, array $args, $record)
     {
         // Load up the relationship
         if (!$record->load_relationship('accounts')) {
@@ -140,7 +140,7 @@ class LeadsApi extends ModuleApi {
         }
     }
 
-    protected function getAccountRelationship($api, $args, $account, $relationship, $limit = 5, $query = array())
+    protected function getAccountRelationship(ServiceBase $api, array $args, $account, $relationship, $limit = 5, $query = array())
     {
         // Load up the relationship
         if (!$account->load_relationship($relationship)) {

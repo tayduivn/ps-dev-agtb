@@ -53,7 +53,7 @@ class FileTempApi extends FileApi {
      * @return array
      * @throws SugarApiExceptionError
      */
-    public function saveTempImagePost($api, $args)
+    public function saveTempImagePost(ServiceBase $api, array $args)
     {
         if (!isset($args['record'])) {
             $args['record'] = null;
@@ -68,7 +68,7 @@ class FileTempApi extends FileApi {
      * @param ServiceBase $api The service base
      * @param array $args Arguments array built by the service base
      */
-    public function getTempImage($api, $args)
+    public function getTempImage(ServiceBase $api, array $args)
     {
         // Get the field
         if (empty($args['field'])) {

@@ -41,7 +41,7 @@ class PMSEProjectCRUDApi extends ModuleApi
         );
     }
 
-    public function deleteRecord($api, $args)
+    public function deleteRecord(ServiceBase $api, array $args)
     {
         $this->requireArgs($args,array('module','record'));
 

@@ -126,7 +126,7 @@ class RSSFeedApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         // Call the API
-        $actual = $api->getFeed(null, $args);
+        $actual = $api->getFeed(SugarTestRestUtilities::getRestServiceMock(), $args);
 
         // Get our test data for comparison...
         $specs = $this->providerTestGetParsedXMLData();

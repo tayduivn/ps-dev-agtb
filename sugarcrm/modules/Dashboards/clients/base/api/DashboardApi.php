@@ -48,7 +48,8 @@ class DashboardApi extends SugarApi
      * @param array $args           Service Call Arguments
      * @return mixed
      */
-    public function createDashboard($api, $args) {
+    public function createDashboard(ServiceBase $api, array $args)
+    {
         $args['dashboard_module'] = empty($args['module']) ? 'Home' : $args['module'];
         $bean = BeanFactory::newBean('Dashboards');
         

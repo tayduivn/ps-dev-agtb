@@ -62,7 +62,7 @@ class OAuth2Api extends SugarApi
         );
     }
 
-    protected function getOAuth2Server($args)
+    protected function getOAuth2Server(array $args)
     {
         $platform = empty($args['platform']) ? 'base' : $args['platform'];
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
@@ -71,7 +71,7 @@ class OAuth2Api extends SugarApi
         return $oauth2Server;
     }
 
-    public function token($api, $args)
+    public function token(ServiceBase $api, array $args)
     {
         //The token API supports setting a language for error messages as the user is not yet logged in.
         global $current_language;
@@ -145,7 +145,7 @@ class OAuth2Api extends SugarApi
         return $authData;
     }
 
-    public function logout($api, $args)
+    public function logout(ServiceBase $api, array $args)
     {
         $oauth2Server = $this->getOAuth2Server($args);
         if(!empty($api->user)) {
@@ -187,10 +187,10 @@ class OAuth2Api extends SugarApi
      *
      * Use the information supplied by oauth2 on $_SESSION.
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      */
-    public function bwcLogin($api, $args)
+    public function bwcLogin(ServiceBase $api, array $args)
     {
         // Send back session_name so the client can use it for other bwc functions,
         // like studio, module builder, etc when sessions expire outside of the

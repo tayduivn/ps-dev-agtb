@@ -40,7 +40,7 @@ class ForecastsChartApi extends SugarApi
      * @param array $args           Service Call Arguments
      * @return mixed
      */
-    public function chart($api, $args)
+    public function chart(ServiceBase $api, array $args)
     {
         $args['timeperiod_id'] = clean_string($args['timeperiod_id']);
         $args['user_id'] = clean_string($args['user_id']);
@@ -69,7 +69,7 @@ class ForecastsChartApi extends SugarApi
      * @param array $args
      * @return SugarForecasting_Chart_AbstractChart
      */
-    protected function getClass($file, $klass, $args)
+    protected function getClass($file, $klass, array $args)
     {
         // check for a custom file exists
         SugarAutoLoader::requireWithCustom($file);

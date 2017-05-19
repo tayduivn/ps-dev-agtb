@@ -81,8 +81,8 @@ class PersonFilterApi extends FilterApi {
 
     /**
      * This function is the global search
-     * @param $api ServiceBase The API class of the request
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request
+     * @param array $args The arguments array passed in from the API
      * @return array result set
      */
     public function globalSearch(ServiceBase $api, array $args) {

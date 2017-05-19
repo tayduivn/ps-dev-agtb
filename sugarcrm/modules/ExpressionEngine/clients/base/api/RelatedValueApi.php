@@ -40,7 +40,7 @@ class RelatedValueApi extends SugarApi
      * Used by the dependency manager to pre-load all the related fields required
      * to load an entire view.
      */
-    public function getRelatedValues($api, $args)
+    public function getRelatedValues(ServiceBase $api, array $args)
     {
         if (empty($args['module']) || empty($args['fields'])) {
             return;
@@ -315,7 +315,7 @@ class RelatedValueApi extends SugarApi
      * @param string $field The name of the field
      * @return bool
      */
-    protected function isFieldCurrency($bean, $field)
+    protected function isFieldCurrency(SugarBean $bean, $field)
     {
         $def = $bean->getFieldDefinition($field);
         // start by just using the type in the def

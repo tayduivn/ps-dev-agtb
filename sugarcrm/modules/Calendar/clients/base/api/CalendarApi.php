@@ -33,12 +33,12 @@ class CalendarApi extends ModuleApi {
      *   linked fields like account_name or remove the endpoint altogether.
      *   Either way - remember to update api docs.
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      * @throws SugarApiExceptionMissingParameter
      */
-    public function inviteeSearch($api, $args)
+    public function inviteeSearch(ServiceBase $api, array $args)
     {
         $api->action = 'list';
         $this->requireArgs($args, array('q', 'module_list', 'search_fields', 'fields'));
@@ -54,10 +54,10 @@ class CalendarApi extends ModuleApi {
      * Map from global search api arguments to search params expected by
      * legacy invitee search code
      *
-     * @param $args
+     * @param array $args
      * @return array
      */
-    protected function buildSearchParams($args)
+    protected function buildSearchParams(array $args)
     {
         $modules = explode(',', $args['module_list']);
         $searchFields = explode(',', $args['search_fields']);
@@ -102,12 +102,12 @@ class CalendarApi extends ModuleApi {
      *
      * Pagination is not supported
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @param $searchResults
      * @return array
      */
-    protected function transformInvitees($api, $args, $searchResults)
+    protected function transformInvitees(ServiceBase $api, array $args, $searchResults)
     {
         $resultList = $searchResults['result']['list'];
         $records = array();
@@ -135,7 +135,7 @@ class CalendarApi extends ModuleApi {
      *
      * @return array matched fields key value pairs
      */
-    protected function getMatchedFields($args, $record, $maxFields = 0)
+    protected function getMatchedFields(array $args, $record, $maxFields = 0)
     {
         $query = $args['q'];
         $searchFields = explode(',', $args['search_fields']);

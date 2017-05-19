@@ -26,7 +26,7 @@ class QuoteConvertApi extends SugarApi
         );
     }
 
-    public function convertQuote(ServiceBase $api, $args)
+    public function convertQuote(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, array('record'));
         /* @var $quote Quote */

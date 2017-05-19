@@ -29,11 +29,13 @@ class MostActiveUsersApi extends SugarApi
 
     /**
      * Returns most active users for last n days
-     * @param $api
-     * @param $args
+     *
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function getMostActiveUsers($api, $args) {
+    public function getMostActiveUsers(ServiceBase $api, array $args)
+    {
         $days = isset($args['days']) ? (int) $args['days'] : 30;
         $db = DBManagerFactory::getInstance();
 

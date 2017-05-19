@@ -46,8 +46,8 @@ class UnifiedSearchApi extends SugarListApi {
 
     /**
      * This function pulls all of the search-related options out of the $args array and returns a fully-populated array with either the defaults or the provided settings
-     * @param $api ServiceBase The API class of the request
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request
+     * @param array $args The arguments array passed in from the API
      * @return array Many elements containing each setting the search engine uses
      */
     public function parseSearchOptions(ServiceBase $api, array $args)
@@ -201,8 +201,8 @@ class UnifiedSearchApi extends SugarListApi {
 
     /**
      * This function is the global search
-     * @param $api ServiceBase The API class of the request
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request
+     * @param array $args The arguments array passed in from the API
      * @return array result set
      */
     public function globalSearch(ServiceBase $api, array $args) {
@@ -239,8 +239,8 @@ class UnifiedSearchApi extends SugarListApi {
 
     /**
      * This function is used to determine the search engine to use
-     * @param $api ServiceBase The API class of the request
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request
+     * @param array $args The arguments array passed in from the API
      * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
      * @return string name of the Search Engine
      */
@@ -294,8 +294,8 @@ class UnifiedSearchApi extends SugarListApi {
 
     /**
      * This function is used to hand off the global search to the FTS Search Emgine
-     * @param $api ServiceBase The API class of the request
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request
+     * @param array $args The arguments array passed in from the API
      * @param $searchEngine SugarSearchEngine The SugarSpot search engine created using the Factory in the caller
      * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
      * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.
@@ -362,8 +362,8 @@ class UnifiedSearchApi extends SugarListApi {
 
     /**
      * This function is used to hand off the global search to the built-in SugarSearchEngine (aka SugarSpot)
-     * @param $api ServiceBase The API class of the request
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request
+     * @param array $args The arguments array passed in from the API
      * @param $searchEngine SugarSearchEngine The SugarSpot search engine created using the Factory in the caller
      * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
      * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.

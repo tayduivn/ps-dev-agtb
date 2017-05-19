@@ -15,11 +15,12 @@ class CurrentUserPortalApi extends CurrentUserApi {
     /**
      * Retrieves the current portal user info
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function retrieveCurrentUser($api, $args) {
+    public function retrieveCurrentUser(ServiceBase $api, array $args)
+    {
         global $current_user;
 
         // Get the basics
@@ -49,11 +50,12 @@ class CurrentUserPortalApi extends CurrentUserApi {
     /**
      * Updates current portal users info
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function updateCurrentUser($api, $args) {
+    public function updateCurrentUser(ServiceBase $api, array $args)
+    {
         $bean = $this->getPortalContact();
         // setting these for the loadBean
         $args['module'] = $bean->module_name;
@@ -101,7 +103,8 @@ class CurrentUserPortalApi extends CurrentUserApi {
      * @param string $new New password
      * @return array
      */
-    protected function changePassword($bean, $old, $new) {
+    protected function changePassword(SugarBean $bean, $old, $new)
+    {
         $bean->portal_password = User::getPasswordHash($new);
         $bean->save();
         return array(

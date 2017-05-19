@@ -149,11 +149,11 @@ class CurrentUserApi extends SugarApi
     /**
      * Retrieves the current user info
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function retrieveCurrentUser($api, $args)
+    public function retrieveCurrentUser(ServiceBase $api, array $args)
     {
         $current_user = $this->getUserBean();
         //If the users password is expired, don't generate an etag.
@@ -173,7 +173,7 @@ class CurrentUserApi extends SugarApi
         return $data;
     }
 
-    protected function getUserHash($user)
+    protected function getUserHash(User $user)
     {
         return $user->getUserMDHash();
     }
@@ -252,11 +252,11 @@ class CurrentUserApi extends SugarApi
     /**
      * Updates current user info
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function updateCurrentUser($api, $args)
+    public function updateCurrentUser(ServiceBase $api, array $args)
     {
         $bean = $this->getUserBean();
 
@@ -272,12 +272,12 @@ class CurrentUserApi extends SugarApi
     /**
      * Updates the current user's password
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound
      */
-    public function updatePassword($api, $args)
+    public function updatePassword(ServiceBase $api, array $args)
     {
         $user_data['valid'] = false;
 
@@ -304,11 +304,11 @@ class CurrentUserApi extends SugarApi
     /**
      * Verifies against the current user's password
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function verifyPassword($api, $args)
+    public function verifyPassword(ServiceBase $api, array $args)
     {
         $user_data['valid'] = false;
 
@@ -417,7 +417,7 @@ class CurrentUserApi extends SugarApi
      * @param string $category The category for the preference
      * @return array 
      */
-    protected function getUserPref($user, $pref, $metaName, $category = 'global') 
+    protected function getUserPref(User $user, $pref, $metaName, $category = 'global')
     {
         $method = 'getUserPref' . ucfirst($pref);
         if (method_exists($this, $method)) {
@@ -455,7 +455,7 @@ class CurrentUserApi extends SugarApi
      * @param User $user The current user
      * @return string
      */
-    protected function getUserPrefTimezone($user, $category = 'global')
+    protected function getUserPrefTimezone(User $user, $category = 'global')
     {
         // Grab the user's timezone preference if it's set
         $val = $user->getPreference('timezone', $category);
@@ -480,7 +480,7 @@ class CurrentUserApi extends SugarApi
         return array('timezone' => $val, 'tz_offset' => $offset, 'tz_offset_sec' => $offsetSec);
     }
     
-    protected function getUserPrefCurrency($user, $category = 'global')
+    protected function getUserPrefCurrency(User $user, $category = 'global')
     {
         global $locale;
         
@@ -506,9 +506,9 @@ class CurrentUserApi extends SugarApi
      * Helper function that gets a default signature user pref
      * 
      * @param User $user Current User
-     * @return Array
+     * @return array
      */
-    protected function getUserPrefSignature_default($user) 
+    protected function getUserPrefSignature_default(User $user)
     {
         // email signature preferences
         return array('signature_default' => $user->getDefaultSignature());
@@ -518,9 +518,9 @@ class CurrentUserApi extends SugarApi
      * Helper function to get a signature prepend setting
      * 
      * @param User $user Current User
-     * @return Array
+     * @return array
      */
-    protected function getUserPrefSignature_prepend($user, $category = 'global')
+    protected function getUserPrefSignature_prepend(User $user, $category = 'global')
     {
         return array('signature_prepend' => $user->getPreference('signature_prepend', $category) ? 'true' : 'false');
     }
@@ -530,7 +530,7 @@ class CurrentUserApi extends SugarApi
      * @param User $user Current User object
      * @return array
      */
-    protected function getUserPrefEmail_link_type($user)
+    protected function getUserPrefEmail_link_type(User $user)
     {
         $emailClientPreference = $user->getEmailClientPreference();
         $preferences = array ('type' => $emailClientPreference);
@@ -554,9 +554,9 @@ class CurrentUserApi extends SugarApi
      * Utility function to get the users preferred language
      * 
      * @param User $user Current User object
-     * @return Array
+     * @return array
      */
-    protected function getUserPrefLanguage($user)
+    protected function getUserPrefLanguage(User $user)
     {
         // use their current auth language if it exists
         if (!empty($_SESSION['authenticated_user_language'])) {
@@ -704,7 +704,7 @@ class CurrentUserApi extends SugarApi
      * @param  string $new  New password
      * @return array
      */
-    protected function changePassword($bean, $old, $new)
+    protected function changePassword(SugarBean $bean, $old, $new)
     {
         if ($bean->change_password($old, $new)) {
             return array(
@@ -736,11 +736,11 @@ class CurrentUserApi extends SugarApi
     /**
      * Return all the current users preferences
      *
-     * @param  RestService $api  Api Service
+     * @param  ServiceBase $api  Api Service
      * @param  array       $args Array of arguments from the rest call
      * @return mixed       User Preferences, if the category exists.  If it doesn't then return an empty array
      */
-    public function userPreferences($api, $args)
+    public function userPreferences(ServiceBase $api, array $args)
     {
         $current_user = $this->getUserBean();
 
@@ -771,7 +771,7 @@ class CurrentUserApi extends SugarApi
      * 
      * @param array $prefs Preferences collection for a user
      * @param array $prefFilter Filter definition to filter against
-     * @return Array
+     * @return array
      */
     protected function filterResults($prefs, $prefFilter) 
     {
@@ -790,11 +790,11 @@ class CurrentUserApi extends SugarApi
     /**
      * Update multiple user preferences at once
      *
-     * @param  RestService $api  Api Service
+     * @param  ServiceBase $api  Api Service
      * @param  array       $args Array of arguments from the rest call
      * @return mixed       Return the updated keys with their values
      */
-    public function userPreferencesSave($api, $args)
+    public function userPreferencesSave(ServiceBase $api, array $args)
     {
         $current_user = $this->getUserBean();
 
@@ -819,12 +819,12 @@ class CurrentUserApi extends SugarApi
     /**
      * Return a specific preference for the key that was passed in.
      *
-     * @param  RestService $api
+     * @param  ServiceBase $api
      * @param  array       $args
      * @return mixed
      * @return mixed
      */
-    public function userPreference($api, $args)
+    public function userPreference(ServiceBase $api, array $args)
     {
         // Get the pref so we can find out if it needs special handling
         $pref = $args['preference_name'];
@@ -856,11 +856,11 @@ class CurrentUserApi extends SugarApi
     /**
      * Update a preference.  The key is part of the url and the value comes from the value $args variable
      *
-     * @param  RestService $api
+     * @param  ServiceBase $api
      * @param  array       $args
      * @return array
      */
-    public function userPreferenceSave($api, $args)
+    public function userPreferenceSave(ServiceBase $api, array $args)
     {
         $current_user = $this->getUserBean();
 
@@ -881,11 +881,11 @@ class CurrentUserApi extends SugarApi
      * Delete a preference.  Since there is no way to actually delete with out resetting the whole category, we just
      * set the value of the key = null.
      *
-     * @param  RestService $api
+     * @param  ServiceBase $api
      * @param  array       $args
      * @return array
      */
-    public function userPreferenceDelete($api, $args)
+    public function userPreferenceDelete(ServiceBase $api, array $args)
     {
         $current_user = $this->getUserBean();
 
@@ -931,11 +931,11 @@ class CurrentUserApi extends SugarApi
 
     /**
      * Get all of the records a user follows.
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array - records user follows
      */
-    public function getMyFollowedRecords($api, $args)
+    public function getMyFollowedRecords(ServiceBase $api, array $args)
     {
         $current_user = $this->getUserBean();
 

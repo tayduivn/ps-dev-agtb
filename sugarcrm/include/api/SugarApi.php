@@ -19,7 +19,8 @@ abstract class SugarApi {
      * @param array $requiredFields
      * @throws SugarApiExceptionMissingParameter
      */
-    public function requireArgs(&$args,$requiredFields = array()) {
+    public function requireArgs(array $args, $requiredFields = array())
+    {
         foreach ( $requiredFields as $fieldName ) {
             if ( !array_key_exists($fieldName, $args) ) {
                 throw new SugarApiExceptionMissingParameter('Missing parameter: '.$fieldName);
@@ -29,14 +30,14 @@ abstract class SugarApi {
 
     /**
      * Fetches data from the $args array and formats the bean with those parameters
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the formatted data is returned
-     * @param $args array The arguments array passed in from the API, will check this for the 'fields' argument to only return the requested fields
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the formatted data is returned
+     * @param array $args The arguments array passed in from the API, will check this for the 'fields' argument to only return the requested fields
      * @param $bean SugarBean The fully loaded bean to format
      * @param $options array Formatting options
      * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
      */
-    protected function formatBean(ServiceBase $api, $args, SugarBean $bean, array $options = array()) {
-
+    protected function formatBean(ServiceBase $api, array $args, SugarBean $bean, array $options = array())
+    {
         if ((empty($args['fields']) && !empty($args['view'])) ||
             (!empty($args['fields']) && !is_array($args['fields']))
         ) {
@@ -87,7 +88,7 @@ abstract class SugarApi {
         return $data;
     }
 
-    protected function formatBeans(ServiceBase $api, $args, $beans, $options = array())
+    protected function formatBeans(ServiceBase $api, array $args, $beans, array $options = array())
     {
         if (!empty($args['fields']) && !is_array($args['fields'])) {
             $args['fields'] = explode(',',$args['fields']);
@@ -130,13 +131,14 @@ abstract class SugarApi {
 
     /**
      * Fetches data from the $args array and updates the bean with that data
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the bean is retrieved
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request
+     * @param array $args The arguments array passed in from the API
      * @param $aclToCheck string What kind of ACL to verify when loading a bean. Supports: view,edit,create,import,export
      * @param $options Options array to pass to the retrieveBean method
      * @return SugarBean The loaded bean
      */
-    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'view', $options = array()) {
+    protected function loadBean(ServiceBase $api, array $args, $aclToCheck = 'view', array $options = array())
+    {
         $this->requireArgs($args, array('module','record'));
 
         $bean = BeanFactory::retrieveBean($args['module'],$args['record'], $options);
@@ -160,11 +162,11 @@ abstract class SugarApi {
     /**
      * Fetches data from the $args array and updates the bean with that data
      * @param $bean SugarBean The bean to be updated
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
+     * @param ServiceBase $api The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param array $args The arguments array passed in from the API
      * @return id Bean id
      */
-    protected function updateBean(SugarBean $bean, ServiceBase $api, $args)
+    protected function updateBean(SugarBean $bean, ServiceBase $api, array $args)
     {
         $this->populateBean($bean, $api, $args);
         $this->saveBean($bean, $api, $args);
@@ -234,7 +236,7 @@ abstract class SugarApi {
      * @return bool
      */
 
-    protected function toggleFavorites($bean, $favorite)
+    protected function toggleFavorites(SugarBean $bean, $favorite)
     {
 
         $reindexBean = false;

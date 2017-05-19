@@ -109,8 +109,8 @@ class KBContentsConfigApi extends ConfigModuleApi
     /**
      * Update documents.
      *
-     * @param Array $values Pairs {key=>value} for update.
-     * @param Array $lang Languages which should be updated.
+     * @param array $values Pairs {key=>value} for update.
+     * @param array $lang Languages which should be updated.
      */
     protected function updateDocuments($values, $lang)
     {

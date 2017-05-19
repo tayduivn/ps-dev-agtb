@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 class HelpApi extends SugarApi 
 {
     /**
@@ -57,7 +56,8 @@ class HelpApi extends SugarApi
         );
     }
 
-    public function getHelp($api, $args) {
+    public function getHelp(ServiceBase $api, array $args)
+    {
         // This function needs to peer into the deep, twisted soul of the RestServiceDictionary
         $dir = $api->dict->dict;
 
@@ -124,11 +124,11 @@ class HelpApi extends SugarApi
     /**
      * Gets the exceptions list for the exceptions help endpoint
      * 
-     * @param RestService $api The service object
+     * @param ServiceBase $api The service object
      * @param array $args The request arguments
      * @return string The HTML output for this help endpoint
      */
-    public function getExceptionsHelp($api, $args)
+    public function getExceptionsHelp(ServiceBase $api, array $args)
     {
         $exceptions = $this->getExceptions();
         $this->ensureClientFiles();

@@ -21,7 +21,7 @@ class ListApi extends SugarListApi {
         $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
     }
 
-    public function parseArguments(ServiceBase $api, array $args, $seed = null)
+    public function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null)
     {
         $parsed = parent::parseArguments($api, $args, $seed);
 
@@ -79,7 +79,8 @@ class ListApi extends SugarListApi {
         
     }
 
-    public function listModule($api, $args) {
+    public function listModule(ServiceBase $api, array $args)
+    {
         $this->requireArgs($args,array('module'));
 
         // Load up a seed bean
@@ -95,8 +96,8 @@ class ListApi extends SugarListApi {
         return $this->performQuery($api, $args, $seed, $listQueryParts, $options['limit'], $options['offset']);
     }
 
-
-    protected function performQuery($api, $args, $seed, $queryParts, $limit, $offset) {
+    protected function performQuery(ServiceBase $api, array $args, SugarBean $seed, $queryParts, $limit, $offset)
+    {
         $query = $queryParts['select'] . $queryParts['from'] . $queryParts['where'] . $queryParts['order_by'];
         $countQuery = 'SELECT COUNT(*) c ' . $queryParts['from'] . $queryParts['where'] . $queryParts['order_by'];
 
@@ -169,13 +170,5 @@ class ListApi extends SugarListApi {
         }
 
         return $response;
-    }
-
-    protected function performSearch(ServiceBase $api, $args, SugarBean $seed, $searchTerm, $options) {
-        $searchEngine = SugarSearchEngineFactory::getInstance();
-        //Default db search will be handled by the spot view, everything else by fts.
-        if($searchEngine instanceOf SugarSearchEngine) {
-        }
-        
     }
 }

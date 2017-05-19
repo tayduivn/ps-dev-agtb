@@ -41,8 +41,13 @@ class TeamsRelateRecordApi extends RelateRecordApi
         );
     }
 
-    protected function checkRelatedSecurity(ServiceBase $api, $args, SugarBean $primaryBean, $securityTypeLocal = 'view', $securityTypeRemote = 'view')
-    {
+    protected function checkRelatedSecurity(
+        ServiceBase $api,
+        array $args,
+        SugarBean $primaryBean,
+        $securityTypeLocal = 'view',
+        $securityTypeRemote = 'view'
+    ) {
         global $current_user;
 
         if (!$current_user->isAdmin()) {
@@ -50,6 +55,5 @@ class TeamsRelateRecordApi extends RelateRecordApi
         }
 
         return parent::checkRelatedSecurity($api, $args, $primaryBean, $securityTypeLocal, $securityTypeRemote);
-
     }
 }
