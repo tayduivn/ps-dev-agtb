@@ -34,7 +34,6 @@
             // the newChartData (data set for the model's rawChartData) is not null
             if (newChartData && this.model.get('rawChartData').values.length > 0) {
                 this.displayNoData(false);
-                this.$('.sc-chart').attr('class', 'sc-chart sc-' + this.chartType);
                 // if the chart already exists, remove it before we generate the new one
                 if (this.chart_loaded) {
                     this.$('#d3_' + this.cid + ' svg').remove();
@@ -61,7 +60,7 @@
      * @param {object} params chart display parameters
      * @param {object} data report data with properties and data array
      */
-    chartComplete: function(chart, params, data) {
+    chartComplete: function(chart, params, reportData, chartData) {
         this.chart = chart;
         this.chart_loaded = _.isFunction(chart.update);
 
@@ -69,7 +68,7 @@
             return;
         }
 
-        this.trigger('chart:complete', chart, params, data);
+        this.view.trigger('chart:complete', chart, params, reportData, chartData);
     },
 
     /**
@@ -85,7 +84,7 @@
         params.baseModule = chartData.properties[0].base_module;
 
         var sugarChart = new loadSugarChart(id, chartData, [], config, params, _.bind(function(chart) {
-            this.chartComplete(chart, params, reportData);
+            this.chartComplete(chart, params, reportData, chartData);
         }, this));
 
         // This event fires when a preview is closed.

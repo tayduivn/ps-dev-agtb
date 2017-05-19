@@ -51,7 +51,7 @@
             layout :
             layout.layout ?
                 this.findLayout(name, layout.layout) :
-                layout;
+                null;
     },
 
     /**

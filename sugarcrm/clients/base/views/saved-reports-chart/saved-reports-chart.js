@@ -65,8 +65,7 @@
         this.reportData = new Backbone.Model();
         this.reportOptions = [];
         this._super('initialize', [options]);
-        //TODO: why can't i call this.view.trigger('chart:complete') from chart field
-        // this.on('chart:complete', this.chartComplete, this);
+        this.on('chart:complete', this.chartComplete, this);
     },
 
     /**
@@ -370,17 +369,17 @@
      * @param {object} params chart display parameters
      * @param {object} reportData report data with properties and data array
      */
-    chartComplete: function(chart, params, reportData) {
+    chartComplete: function(chart, params, reportData, chartData) {
         if (!_.isFunction(chart.seriesClick)) {
             return;
         }
 
         // This seriesClick callback overrides the default set
         // in sugarCharts for use in the Report module charts
-        chart.seriesClick(_.bind(function(chartData, eo, chart, labels) {
+        chart.seriesClick(_.bind(function(data, eo, chart, labels) {
             var state = SUGAR.charts.buildChartState(eo, labels);
             params.groupLabel = SUGAR.charts.extractGroupLabel(eo, labels);
-            params.seriesLabel = SUGAR.charts.extractSeriesLabel(eo, chartData);
+            params.seriesLabel = SUGAR.charts.extractSeriesLabel(eo, data);
 
             chart.clearActive();
             if (chart.cellActivate) {
@@ -392,7 +391,7 @@
             }
             chart.dispatch.call('tooltipHide', this);
 
-            this._handleFilter(chart, reportData, params, state);
+            this._handleFilter(chart, params, state, reportData, chartData);
         }, this));
     },
 
@@ -405,20 +404,20 @@
      * @param {object} state chart display and data state
      * @protected
      */
-    _handleFilter: function(chart, data, params, state) {
+    _handleFilter: function(chart, params, state, reportData, chartData) {
         var module = params.baseModule;
         var reportId = this.settings.get('saved_report_id');
 
-        var filterDef = SUGAR.charts.buildFilter(data, params);
+        var filterDef = SUGAR.charts.buildFilter(reportData, params);
         var groupDefs;
         var drawerContext;
 
         app.alert.show('listfromreport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
 
         if (this.$el.parents('.drawer.active').length === 0) {
-            groupDefs = SUGAR.charts.getGrouping(data);
+            groupDefs = SUGAR.charts.getGrouping(reportData);
             drawerContext = {
-                chartData: data,
+                chartData: chartData,
                 chartModule: module,
                 chartState: state,
                 dashModel: null,
@@ -430,6 +429,7 @@
                 groupDefs: groupDefs,
                 layout: 'drillthrough-drawer',
                 module: module,
+                reportData: reportData,
                 reportId: reportId,
                 skipFetch: true
             };
@@ -752,8 +752,6 @@
         // hang on to a reference to the chart field
         if (_.isUndefined(this.chartField) && field.name === 'chart') {
             this.chartField = field;
-
-            field.once('chart:complete', this.chartComplete, this);
         }
     }
 })

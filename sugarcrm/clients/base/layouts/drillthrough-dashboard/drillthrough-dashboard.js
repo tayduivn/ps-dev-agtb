@@ -80,15 +80,21 @@
         this._super('render');
 
         var dashlet = this.getComponent('dashlet').getComponent('saved-reports-chart');
-        // var field = dashlet.getField('chart');
         var config = this.context.get('dashConfig');
+        var chartData = this.context.get('chartData');
+        var reportData = this.context.get('reportData');
+        var title = dashlet.$('.dashlet-title');
 
-        //TODO: the existing dashlet has the report data, why reload the report from server?
         dashlet.settings.set(config);
-        dashlet.loadData();
+        dashlet.reportData.set('rawReportData', reportData);
+        // set reportData's rawChartData to the chartData from the source chart
+        // this will trigger chart.js' change:rawChartData and the chart will update
+        dashlet.reportData.set('rawChartData', chartData);
 
         //TODO: set metadata on headerpane so we don't have to do this
-        dashlet.$('.dashlet-title').text(config.label);
+        if (title.length) {
+            title.text(config.label);
+        }
     }
 
 })
