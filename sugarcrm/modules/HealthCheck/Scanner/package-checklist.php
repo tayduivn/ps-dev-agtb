@@ -202,11 +202,6 @@ return array(
             'version' => '*',
         ],
     ],
-    'SynoDashboardTemplates' => [
-        [
-            'version' => '20161024',
-        ],
-    ],
     'DuplicateCheck' => [
         [
             'version' => '3.2',
@@ -214,7 +209,7 @@ return array(
     ],
     'FayeBSG Sugar - Authorize.Net Integration' => [
         [
-            'version' => '*',
+            'version' => '2.1.0.0',
         ],
     ],
     'FBSG Sugar - Dashboard Manager' => [
@@ -269,12 +264,12 @@ return array(
     ],
     'SynoDashboardTemplates' => [
         [
-            'version' => '*',
+            'version' => '20170424',
         ],
     ],
     'Viabl' => [
         [
-            'version' => '*',
+            'version' => '2.0.7',
         ],
     ],
     'wActivities76' => [
@@ -297,12 +292,12 @@ return array(
             'version' => '*',
         ],
     ],
-    'XperiDo_Core_&Modules&_Roles_V2.0.11' => [
+    'XperiDo_Core_&_Modules_&_Roles_V2.0.11' => [
         [
             'version' => '*',
         ],
     ],
-    'XperiDo_Core_&Modules&_Roles_V2.0.9' => [
+    'XperiDo_Core_&_Modules_&_Roles_V2.0.9' => [
         [
             'version' => '*',
         ],
