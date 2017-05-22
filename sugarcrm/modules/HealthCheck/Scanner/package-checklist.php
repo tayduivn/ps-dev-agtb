@@ -209,7 +209,7 @@ return array(
     ],
     'FayeBSG Sugar - Authorize.Net Integration' => [
         [
-            'version' => '2.1.0.0',
+            'version' => 'v2.1.0.0',
         ],
     ],
     'FBSG Sugar - Dashboard Manager' => [
