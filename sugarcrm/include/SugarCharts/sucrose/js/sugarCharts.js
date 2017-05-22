@@ -183,7 +183,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         }
                     }
 
-                    SUGAR.charts.callback(callback, barChart, chartId, params);
+                    SUGAR.charts.callback(callback, barChart, chartId, params, data);
                 }
             });
             break;
@@ -268,7 +268,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         SUGAR.charts.renderChart(chartId, lineChart, json);
                     }
 
-                    SUGAR.charts.callback(callback, lineChart, chartId, params);
+                    SUGAR.charts.callback(callback, lineChart, chartId, params, data);
                 }
             });
             break;
@@ -338,7 +338,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         }
                     }
 
-                    SUGAR.charts.callback(callback, pieChart, chartId, params);
+                    SUGAR.charts.callback(callback, pieChart, chartId, params, data);
                 }
             });
             break;
@@ -399,7 +399,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         }
                     }
 
-                    SUGAR.charts.callback(callback, funnelChart, chartId, params);
+                    SUGAR.charts.callback(callback, funnelChart, chartId, params, data);
                 }
             });
             break;
@@ -450,7 +450,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         SUGAR.charts.renderChart(chartId, gaugeChart, json);
                     }
 
-                    SUGAR.charts.callback(callback, gaugeChart, chartId, params);
+                    SUGAR.charts.callback(callback, gaugeChart, chartId, params, data);
                 }
             });
             break;
@@ -477,7 +477,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * @param chartId chart id used to select the chart container
          * @param params chart display control parameters
          */
-        callback: function(callback, chart, chartId, params) {
+        callback: function(callback, chart, chartId, params, chartData) {
             // add drill through support
             this.chart = chart;
             this.chart_loaded = _.isFunction(chart.update);
@@ -504,16 +504,34 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 var chartState = this.buildChartState(eo, labels);
                 var groupDefs;
                 var filterDef;
+                var drawerContext;
 
                 params.seriesLabel = this.extractSeriesLabel(eo, data);
                 params.groupLabel = this.extractGroupLabel(eo, labels);
 
                 // report_def is defined as a global in _reportCriteriaWithResult
                 // but only in Reports module
-                // var baseModule = params.baseModule || (_.isUndefined(report_def) ? 'Home' : report_def);
                 //TODO: fix usage of global report_def
                 groupDefs = this.getGrouping(report_def);
                 filterDef = this.buildFilter(report_def, params);
+
+                drawerContext = {
+                    chartData: chartData,
+                    chartModule: report_def.module,
+                    chartState: chartState,
+                    dashConfig: params,
+                    dashModel: null,
+                    filterDef: filterDef,
+                    filterOptions: {
+                        auto_apply: false
+                    },
+                    groupDefs: groupDefs,
+                    layout: 'drillthrough-drawer',
+                    module: report_def.module,
+                    reportData: report_def,
+                    reportId: chartId,
+                    skipFetch: true
+                };
 
                 chart.clearActive();
                 if (chart.cellActivate) {
@@ -525,11 +543,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 }
                 chart.dispatch.call('tooltipHide', this);
 
-                // No need for _handleFilter since we alwasy open drawer in Reports module
-                // this._handleFilter(filterDef, chartData, chartState);
                 app.alert.show('listfromreport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
                 this.chart.clearActive();
-                this.openDrawer(report_def.module, chartId, groupDefs, filterDef, chartState, params);
+                this.openDrawer(drawerContext);
+
             }, this));
         },
 
@@ -680,25 +697,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         /**
          * Open a drill through drawer
          */
-        openDrawer: function(chartModule, reportId, groupDefs, filterDef, chartState, dashConfig) {
+        openDrawer: function(drawerContext) {
             var sugarApp = SUGAR.App || SUGAR.app || app;
             sugarApp.drawer.open({
                 layout: 'drillthrough-drawer',
-                context: {
-                    layout: 'drillthrough-drawer',
-                    module: chartModule,
-                    chartModule: chartModule,
-                    chartState: chartState,
-                    reportId: reportId,
-                    filterOptions: {
-                        auto_apply: false
-                    },
-                    filterDef: filterDef,
-                    groupDefs: groupDefs,
-                    skipFetch: true,
-                    dashModel: null,
-                    dashConfig: dashConfig
-                }
+                context: drawerContext
             });
         },
 
