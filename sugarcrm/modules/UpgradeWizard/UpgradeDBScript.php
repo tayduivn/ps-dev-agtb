@@ -22,14 +22,18 @@ abstract class UpgradeDBScript extends UpgradeScript
      *
      * @param string $sql The query to execute.
      * @param array $params Optional. The parameters to pass into the query to be escaped.
+     * @return integer The number of affected rows.
      */
     protected function executeUpdate($sql, array $params = array())
     {
+        $rows = 0;
         try {
             $rows = DBManagerFactory::getConnection()->executeUpdate($sql, $params);
             $this->log("Number of affected rows: {$rows}");
         } catch (DBALException $error) {
             $this->log("Error: {$error}");
         }
+
+        return $rows;
     }
 }
