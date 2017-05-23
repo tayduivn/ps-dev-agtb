@@ -22,7 +22,7 @@ class UpdateEmailAddressRelationshipTest extends UpgradeTestCase
 {
     protected $emailIds = array();
 
-    public function tearDown()
+    protected function tearDown()
     {
         if (!empty($this->emailIds)) {
             $emails = "'" . implode("','", $this->emailIds) . "'";
