@@ -897,46 +897,6 @@ class PMSEEngineApi extends SugarApi
         return $result;
     }
 
-    private function getUsersForReassign(array $options)
-    {
-        $result = array();
-        if (isset($options['act_assignment_method']) &&
-            !empty($options['act_assignment_method']) &&
-            $options['act_assignment_method'] == 'selfservice'
-        ) {
-            $teamsBean = BeanFactory::getBean('Teams', $options['user_id']);
-            if ($teamsBean->fetched_row) {
-                foreach ($teamsBean->get_team_members(true) as $user) {
-                    if ($options['user_id'] != $user->id) {
-                        $result[$user->id] = $user->full_name;
-                    }
-                }
-            } else {
-                $result = $this->getUsersForReassign(array(
-                        'user_id' => $options['user_id'],
-                        'act_assignment_method' => 'static'
-                    ));
-            }
-        } else {
-            $teamsBean = new Team();
-            $teams = $teamsBean->get_teams_for_user($options['user_id']);
-            if (!empty($teams)) {
-                $arrayUsers = array();
-                foreach ($teams as $key => $value) {
-                    if ($value->private == 0) {
-                        foreach ($value->get_team_members(true) as $user) {
-                            if ($options['user_id'] != $user->id) {
-                                $result[$user->id] = $user->full_name;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
     public function getUnattendedCases(ServiceBase $api, array $args)
     {
         global $db;
