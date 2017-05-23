@@ -224,7 +224,7 @@ return array(
     ],
     'INBOX25' => [
         [
-            'version' => '*',
+            'version' => 'v4.7.3',
         ],
     ],
     'iNetMiniETL' => [
