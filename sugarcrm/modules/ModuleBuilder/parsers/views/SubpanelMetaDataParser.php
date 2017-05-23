@@ -136,7 +136,7 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
         return $viewdefs ;
     }
 
-    static function _trimFieldDefs ( $def )
+    public static function _trimFieldDefs(array $def)
     {
         $listDef = parent::_trimFieldDefs($def);
         if (isset($listDef ['label']))

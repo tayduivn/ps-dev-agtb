@@ -932,7 +932,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return false;
     }
 
-    public static function _trimFieldDefs ($def)
+    public static function _trimFieldDefs(array $def)
 	{
         $requiredProps = array(
             'studio' => true,

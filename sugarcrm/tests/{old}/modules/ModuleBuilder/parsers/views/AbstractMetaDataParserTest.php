@@ -10,47 +10,37 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-/**
- * Wrapper class to test protected functions of AbstractMetaDataParser
- */
-class TestMetaDataParser extends AbstractMetaDataParser
-{
-    //Trim Field defs implementation is required to extend AbstractMetaDataParser
-    static function _trimFieldDefs ( $def ) {}
-    
-    //Wrapper of isTrue for testing purposes
-    public static function testIsTrue($val)
-    {
-        return self::isTrue($val);
-    }
-}
-
 class AbstractMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * Test the the isTrue function works correctly for boolean and non-boolean values
      * @group Studio
+     * @dataProvider isTrueProvider
      */
-    public function testIsTrue()
+    public function testIsTrue($value, $expected)
     {
-        $testValues = array(
-            true => true,
-            false => false,
-            0 => false,
-            "" => false,
-            "true" => true,
-            "false" => false,
-            "FALSE" => false,
-            "0" => false,
-            "something" => true,
-        );
-        
-        foreach($testValues as $testVal => $boolVal){
-            $this->assertEquals($boolVal, TestMetaDataParser::testIsTrue($testVal));
-        }
+        $this->assertSame($expected, SugarTestReflection::callProtectedMethod(
+            'AbstractMetaDataParser',
+            'isTrue',
+            array($value)
+        ));
     }
-    
+
+    public static function isTrueProvider()
+    {
+        return array(
+            array(true, true),
+            array(false, false),
+            array(0, false),
+            array('', false),
+            array('true', true),
+            array('false', false),
+            array('FALSE', false),
+            array('0', false),
+            array('something', true),
+        );
+    }
+
     /**
      * Tests validation of studio defs for client and view specific rules
      * 

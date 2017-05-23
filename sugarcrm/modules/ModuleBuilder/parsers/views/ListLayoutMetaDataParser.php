@@ -477,7 +477,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return array();
     }
 
-    public static function _trimFieldDefs($def)
+    public static function _trimFieldDefs(array $def)
     {
         if (isset($def['vname'])) {
             $def['label'] = $def['vname'];

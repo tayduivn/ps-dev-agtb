@@ -437,7 +437,7 @@ abstract class AbstractMetaDataImplementation
         SugarAutoLoader::addToMap($filename);
     }
 
-    /*
+    /**
      * Fielddefs are obtained from two locations:
      *
      * 1. The starting point is the module's fielddefs, sourced from the Bean
