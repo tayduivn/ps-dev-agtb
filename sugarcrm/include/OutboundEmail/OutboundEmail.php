@@ -195,7 +195,10 @@ class OutboundEmail extends SugarBean
             $saveIt = true;
             $user = BeanFactory::retrieveBean('Users', $user_id, ['disable_row_level_security' => true]);
 
-            $ob = $this->getSystemMailerSettings();
+            // Get 'system' Record, clone it and create new user 'system-override' record
+            $obSystem = $this->getSystemMailerSettings();
+            $ob = clone $obSystem;
+
             $ob->id = create_guid();
             $ob->new_with_id = true;
             $ob->user_id = $user_id;
