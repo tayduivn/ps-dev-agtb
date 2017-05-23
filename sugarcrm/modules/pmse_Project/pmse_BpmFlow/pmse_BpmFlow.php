@@ -61,9 +61,9 @@ class pmse_BpmFlow extends pmse_BpmFlow_sugar {
 	}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function populateFromRow($row, $convert = false)
+    public function populateFromRow(array $row, $convert = false)
     {
         // Done here since assignment of this field could happen from anywhere
         // and assigned_user_id on some DBs is char whereas on others it is varchar

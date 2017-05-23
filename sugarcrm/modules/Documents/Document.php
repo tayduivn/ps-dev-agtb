@@ -72,10 +72,11 @@ class Document extends SugarBean {
 		$this->setupCustomFields('Documents'); //parameter is module name
 		$this->disable_row_level_security = false;
 	}
+
     /**
-     * @see SugarBean::populateFromRow
+     * {@inheritDoc}
      */
-    function populateFromRow($row, $convert = false)
+    public function populateFromRow(array $row, $convert = false)
     {
         $row = parent::populateFromRow($row, $convert);
 

@@ -3548,7 +3548,7 @@ class SugarBean
      *
      * Internal function, do not override.
      */
-    function populateFromRow($row, $convert = false)
+    public function populateFromRow(array $row, $convert = false)
     {
         global $locale;
         foreach($this->field_defs as $field=>$field_value)

@@ -338,7 +338,7 @@ class TemplateRelatedTextField extends TemplateText{
     	return "";
     }
 
-    function populateFromRow($row=array()) 
+    public function populateFromRow(array $row)
     {
         parent::populateFromRow($row);
         // In some cases, MB Controller sets $this->module to a bean or mbmodule

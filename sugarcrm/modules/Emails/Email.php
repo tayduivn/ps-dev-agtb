@@ -1395,9 +1395,9 @@ class Email extends SugarBean {
     }
 
     /**
-     * @see SugarBean::populateFromRow
+     * {@inheritDoc}
      */
-    public function populateFromRow($row, $convert = false)
+    public function populateFromRow(array $row, $convert = false)
     {
         $row = parent::populateFromRow($row, $convert);
 

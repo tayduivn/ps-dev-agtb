@@ -126,10 +126,10 @@ class File extends Basic
         return false;
     }
 
-     /**
+    /**
      * {@inheritdoc}
      */
-    public function populateFromRow($row, $convert = false)
+    public function populateFromRow(array $row, $convert = false)
     {
         $row = parent::populateFromRow($row, $convert);
 

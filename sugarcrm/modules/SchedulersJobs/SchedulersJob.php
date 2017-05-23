@@ -435,7 +435,7 @@ class SchedulersJob extends Basic
      * Change current user to given user
      * @param User $user
      */
-    protected function sudo($user)
+    protected function sudo(User $user)
     {
         $GLOBALS['current_user'] = $user;
         // Reset the session

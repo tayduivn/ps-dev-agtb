@@ -215,8 +215,8 @@ class Person extends Basic
      * Gets VCal data
      * @param array $options
      */
-     protected function getVCalData($options)
-     {
+    protected function getVCalData(array $options)
+    {
         global $timedate, $sugar_config;
 
         //--- Explicit config can be used to force use of vCal Cache instead of RealTime Search

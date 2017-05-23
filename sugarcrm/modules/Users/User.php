@@ -2440,15 +2440,15 @@ class User extends Person {
     }
 
     /**
-     * Sets value from fetched row into the bean.  Special case override for Users module otherwise we incur the
+     * {@inheritDoc}
+     *
+     * Special case override for Users module otherwise we incur the
      * unnecessary check for user_preferences field for all SugarBean instances.
      *
-     * @param array $row Fetched row
      * @todo loop through vardefs instead
      * @internal runs into an issue when populating from field_defs for users - corrupts user prefs
-     *
      */
-    function populateFromRow($row, $convert = false)
+    public function populateFromRow(array $row, $convert = false)
     {
         unset($row['user_preferences']);
         return parent::populateFromRow($row, $convert);
