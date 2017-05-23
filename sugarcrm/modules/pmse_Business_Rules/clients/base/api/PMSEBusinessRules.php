@@ -77,9 +77,9 @@ class PMSEBusinessRules extends vCardApi
                     try {
                         $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
                     } catch (SugarApiExceptionNotAuthorized $e) {
-                        $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_BR');
-                        PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
-                        throw $sugarApiExceptionNotAuthorized;
+                        $e->setMessage('ERROR_UPLOAD_ACCESS_BR');
+                        PMSELogger::getInstance()->alert($e->getMessage());
+                        throw $e;
                     }
                     $results = array('businessrules_import' => $data);
                 } else  {

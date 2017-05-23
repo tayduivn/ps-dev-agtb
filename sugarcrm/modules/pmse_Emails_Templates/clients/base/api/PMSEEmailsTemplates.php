@@ -230,10 +230,9 @@ class PMSEEmailsTemplates extends vCardApi
                     try {
                         $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
                     } catch (SugarApiExceptionNotAuthorized $e) {
-
-                        $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_ET');
-                        PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
-                        throw $sugarApiExceptionNotAuthorized;
+                        $e->setMessage('ERROR_UPLOAD_ACCESS_ET');
+                        PMSELogger::getInstance()->alert($e->getMessage());
+                        throw $e;
                     }
                     $result = array('emailtemplates_import' => $data);
                 } else  {
