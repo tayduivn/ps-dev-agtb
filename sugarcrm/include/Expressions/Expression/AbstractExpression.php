@@ -142,6 +142,16 @@ abstract class AbstractExpression
         throw new BadMethodCallException(__METHOD__ . ' is not implemented');
     }
 
+    /**
+     * Returns the operation name or names that this expression should be called by
+     *
+     * @return string|string[]
+     */
+    public static function getOperationName()
+    {
+        throw new BadMethodCallException(__METHOD__ . ' is not implemented');
+    }
+
 	/**
 	 * Validates the parameters and throws an Exception if invalid.
 	 */

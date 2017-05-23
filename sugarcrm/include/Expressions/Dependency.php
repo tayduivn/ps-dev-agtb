@@ -169,7 +169,8 @@ class Dependency
 	 *
 	 * @param SugarBean $target
 	 */
-	function fire(&$target) {
+    public function fire(SugarBean $target)
+    {
 		try {
 		  if ($this->trigger->evaluate($target) === true) {
 			     $this->fireActions($target);
@@ -189,7 +190,8 @@ class Dependency
 	 * @param SugarBean $target
 	 * @param boolean $useFalse
 	 */
-	private function fireActions(&$target, $useFalse = false) {
+    private function fireActions(SugarBean $target, $useFalse = false)
+    {
 		$action = "";
 		try {
 			$actions = $this->actions;
@@ -203,7 +205,6 @@ class Dependency
             $GLOBALS['log']->fatal($e->getMessage());
             $GLOBALS['log']->debug("Trigger was : {$this->trigger->conditionFunction}");
             $GLOBALS['log']->debug("Target was : " . print_r($action, true));
-
         }
 	}
 

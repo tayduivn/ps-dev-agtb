@@ -20,6 +20,7 @@ class NumericExpressionTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testIsCurrencyField($def, $expected)
     {
+        /* @var $bean Opportunity|PHPUnit_Framework_MockObject_MockObject */
         $bean = $this->getMockBuilder('Opportunity')
             ->setMethods(array('save', 'getFieldDefinition'))
             ->disableOriginalConstructor()
@@ -29,15 +30,23 @@ class NumericExpressionTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('getFieldDefinition')
             ->will($this->returnValue($def));
 
-        $numeric_expression = new MockNumericExpression();
+        $numeric_expression = $this->getMockBuilder('NumericExpression')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
 
-        /* @var $bean Opportunity */
-        $return = $numeric_expression->isCurrencyField($bean, 'test_field');
+        $return = SugarTestReflection::callProtectedMethod(
+            $numeric_expression,
+            'isCurrencyField',
+            array(
+                $bean,
+                'test_field',
+            )
+        );
 
         $this->assertEquals($expected, $return);
     }
 
-    public function dataProviderTestIsCurrencyField()
+    public static function dataProviderTestIsCurrencyField()
     {
         return array(
             array(
@@ -81,30 +90,7 @@ class NumericExpressionTest extends Sugar_PHPUnit_Framework_TestCase
                     'type' => 'decimal',
                 ),
                 false
-            )
-
+            ),
         );
-    }
-}
-
-class MockNumericExpression extends NumericExpression
-{
-    public function evaluate()
-    {
-    }
-
-    public static function getJSEvaluate()
-    {
-
-    }
-
-    public static function getOperationName()
-    {
-        return 'MockNumeric';
-    }
-
-    public function isCurrencyField($bean, $field)
-    {
-        return parent::isCurrencyField($bean, $field);
     }
 }

@@ -60,7 +60,7 @@ abstract class NumericExpression extends AbstractExpression
      * @param string $field
      * @return bool
      */
-    protected function isCurrencyField($bean, $field)
+    protected function isCurrencyField(SugarBean $bean, $field)
     {
         $is_currency = false;
         $def = $bean->getFieldDefinition($field);
@@ -80,7 +80,7 @@ abstract class NumericExpression extends AbstractExpression
         return $is_currency;
     }
 
-    protected function getFieldPrecision($bean, $field)
+    protected function getFieldPrecision(SugarBean $bean, $field)
     {
         $precision = '0';
         $def = $bean->getFieldDefinition($field);
