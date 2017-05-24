@@ -87,7 +87,7 @@ class SugarLocalUserProvider implements UserProviderInterface
         }
 
         if (!$sugarUserId) {
-            throw new UsernameNotFoundException();
+            throw new UsernameNotFoundException('User was not found by provided name identifier');
         }
         $sugarUser->retrieve($sugarUserId, true, false);
 

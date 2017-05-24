@@ -55,6 +55,23 @@
                 }
             },
             {
+                name: 'externalAuthError',
+                route: 'externalAuthError',
+                callback: function() {
+                    app.controller.loadView({
+                        module: 'Login',
+                        layout: 'login',
+                        create: true
+                    });
+                    app.alert.show('needs_login_error', {
+                        level: 'error',
+                        messages: app.lang.getAppString('LBL_PORTAL_INVALID_CREDS_TITLE'),
+                        title: app.lang.get('LBL_PORTAL_INVALID_CREDS_TITLE')
+                    });
+                    app.router.redirect('/');
+                }
+            },
+            {
                 name: 'about',
                 route: 'about',
                 callback: function() {

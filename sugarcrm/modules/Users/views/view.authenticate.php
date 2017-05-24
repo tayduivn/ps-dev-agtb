@@ -60,7 +60,22 @@ class UsersViewAuthenticate extends SidecarView
             $this->authorization = $oapi->token($service, $args);
         } catch (Exception $e) {
             $GLOBALS['log']->error("Login exception: " . $e->getMessage());
-            sugar_die($e->getMessage());
+
+            if (AuthenticationController::getInstance()->isExternal()) {
+                if (!SugarConfig::getInstance()->get('SAML_SAME_WINDOW')) {
+                    // We need to render AuthenticateParent template.
+                    $this->dataOnly = true;
+                } else {
+                    // Make redirect to a special route that shows error message.
+                    // Also allows to get rid of BWC URL in browser that breaks further navigation.
+                    SugarApplication::redirect('./#externalAuthError');
+                }
+
+                parent::preDisplay($params);
+                return;
+            } else {
+                sugar_die($e->getMessage());
+            }
         }
 
         $relayState = [];
