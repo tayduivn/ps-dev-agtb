@@ -2621,4 +2621,19 @@ class Report
         }
     }
 
+    /**
+     * Create a query piece from report filter for reports/filter api.
+     * @return string
+     */
+    public function getFilterQuery()
+    {
+        // check if filter exists
+        $filters = $this->report_def['filters_def'];
+        if (!isset($filters['Filter_1']) || count($filters['Filter_1']) < 2) {
+            return '';
+        }
+        $this->create_where();
+        $this->create_from();
+        return 'SELECT DISTINCT ' . $this->full_bean_list['self']->table_name . '.id ' . $this->from . ' WHERE ' . $this->where;
+    }
 }

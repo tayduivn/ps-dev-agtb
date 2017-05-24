@@ -574,11 +574,7 @@
             this.$('[data-action=loading]').removeClass(dt.cssIconDefault).addClass(dt.cssIconRefresh);
         }
 
-        var params = {
-            'ignore_datacheck': true,
-        };
-
-        app.api.call('read', app.api.buildURL('Reports/' + reportId + '/chart'), params, {
+        app.api.call('read', app.api.buildURL('Reports/' + reportId + '/chart'), null, {
             success: _.bind(function(serverData) {
                 if (options && options.success) {
                     // usually setChartParams()

@@ -98,10 +98,93 @@ class ReportsApi extends ModuleApi
     }
 
     /**
+     * Adds click filter to report def
+     * @param SugarBean $savedReport
+     * @param Array $clickFilter
+     */
+    protected function addClickFilter($savedReport, $clickFilter)
+    {
+        if (is_string($clickFilter)) { // json encoded
+            $clickFilter = json_decode($clickFilter, true);
+        }
+
+        if (!is_array($clickFilter)) {
+            return;
+        }
+
+        $tmpContent = json_decode($savedReport->content, true);
+
+        //[{"industry":{"$in":["Chemicals"]}},{"account_type":{"$in":["Customer"]}}]
+
+        // Construct a Report module filter from user filterDef
+        $adhocFilter = array();
+        foreach ($clickFilter as $filter) {
+            foreach ($filter as $field => $def) {
+                //$field: "industry"
+                //$def: {"$in":["Chemicals"]}
+
+                //TODO: replace with array get last
+                foreach ($def as $operator => $values) {
+                    //$operator: $in
+                    //$values: ["Chemicals"]
+                    $input = $values;
+                    $qualifier_name = $this->translateAdhocFilterOperator($operator);
+                }
+                $filterRow = array(
+                    'adhoc' => true,
+                    'name' => $field,
+                    'table_key' => 'self',
+                    'qualifier_name' => $qualifier_name,
+                );
+
+                if ($qualifier_name === 'one_of' || $qualifier_name === 'is') {
+                    $filterRow['input_name0'] = $input;
+                } elseif ($qualifier_name === 'between_dates') {
+                    $filterRow['input_name0'] = current($input);
+                    $filterRow['input_name1'] = end($input);
+                } elseif ($qualifier_name === 'on') {
+                    $filterRow['input_name0'] = current($input);
+                    $filterRow['input_name1'] = 'on';
+                }
+                array_push($adhocFilter, $filterRow);
+            }
+        }
+
+        $adhocFilter['operator'] = 'AND';
+
+        // Make sure Filter_1 is defined
+        if (empty($tmpContent['filters_def']) || !isset($tmpContent['filters_def']['Filter_1'])) {
+            $tmpContent['filters_def']['Filter_1'] = array();
+        }
+        $savedReportFilter = $tmpContent['filters_def']['Filter_1'];
+
+        // For the conditions [] || {"Filter_1":{"operator":"AND"}}
+        if (empty($savedReportFilter) ||
+            (sizeof($savedReportFilter) == 1 && isset($savedReportFilter['operator']))
+        ) {
+            // Just set Filter_1 to adhocFilter
+            $newFilter = $adhocFilter;
+        } else {
+            // Concatenate existing and adhocFilter
+            $newFilter = array();
+            array_push($newFilter, $savedReportFilter);
+            array_push($newFilter, $adhocFilter);
+            $newFilter['operator'] = 'AND';
+        }
+
+        //TODO: is this not passed by reference and if so do we need this
+        $tmpContent['filters_def']['Filter_1'] = $newFilter;
+
+        $savedReport->content = json_encode($tmpContent);
+    }
+
+    
+    /**
      * Returns the records associated with a saved report
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API containing the module and the records
+     * @param $args array The arguments array passed in from the API containing the module and the record
      * @throws SugarApiExceptionNotFound
+     * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiException
      * @return array records
      */
@@ -109,98 +192,32 @@ class ReportsApi extends ModuleApi
     {
         $savedReport = $this->getReportRecord($api, $args);
 
-        $data = array();
-        $records = array();
+        unset($args['record']);
+        unset($args['module']);
+
+        // set target module
+        if (!empty($savedReport->module)) {
+            $args['module'] = $savedReport->module;
+        } else if (!empty($savedReport->content)) {
+            $content = json_decode($savedReport->content, true);
+            if (!empty($content['module'])) {
+                $args['module'] = $content['module'];
+            }
+        }
+
+        if (!isset($args['module'])) {
+            throw new SugarApiExceptionInvalidParameter('Target module not found for report: ' . $savedReport->id);
+        }
 
         if (isset($args['filter'])) {
-            $clickFilter = $args['filter'];
-            $json = getJSONobj();
-            $tmpContent = $json->decode($savedReport->content, false);
-
-            //[{"industry":{"$in":["Chemicals"]}},{"account_type":{"$in":["Customer"]}}]
-
-            // Construct a Report module filter from user filterDef
-            $adhocFilter = array();
-            foreach ($clickFilter as $filter) {
-                foreach ($filter as $field => $def) {
-                    //$field: "industry"
-                    //$def: {"$in":["Chemicals"]}
-
-                    //TODO: replace with array get last
-                    foreach ($def as $operator => $values) {
-                        //$operator: $in
-                        //$values: ["Chemicals"]
-                        $input = $values;
-                        $qualifier_name = $this->translateAdhocFilterOperator($operator);
-                    }
-                    $filterRow = array(
-                        'adhoc' => true,
-                        'name' => $field,
-                        'table_key' => 'self',
-                        'qualifier_name' => $qualifier_name,
-                    );
-
-                    if ($qualifier_name === 'one_of' || $qualifier_name === 'is') {
-                        $filterRow['input_name0'] = $input;
-                    } elseif ($qualifier_name === 'between_dates') {
-                        $filterRow['input_name0'] = current($input);
-                        $filterRow['input_name1'] = end($input);
-                    } elseif ($qualifier_name === 'on') {
-                        $filterRow['input_name0'] = current($input);
-                        $filterRow['input_name1'] = 'on';
-                    }
-                    array_push($adhocFilter, $filterRow);
-                }
-            }
-
-            $adhocFilter['operator'] = 'AND';
-
-            // Make sure Filter_1 is defined
-            if (empty($tmpContent['filters_def']) || !isset($tmpContent['filters_def']['Filter_1'])) {
-                $tmpContent['filters_def']['Filter_1'] = array();
-            }
-            $savedReportFilter = $tmpContent['filters_def']['Filter_1'];
-
-            // For the conditions [] || {"Filter_1":{"operator":"AND"}}
-            if (empty($savedReportFilter) ||
-                (sizeof($savedReportFilter) == 1 && isset($savedReportFilter['operator']))
-            ) {
-                // Just set Filter_1 to adhocFilter
-                $newFilter = $adhocFilter;
-            } else {
-                // Concatenate existing and adhocFilter
-                $newFilter = array();
-                array_push($newFilter, $savedReportFilter);
-                array_push($newFilter, $adhocFilter);
-                $newFilter['operator'] = 'AND';
-            }
-
-            //TODO: is this not passed by reference and if so do we need this
-            $tmpContent['filters_def']['Filter_1'] = $newFilter;
-
-            $savedReport->content = $json->encode($tmpContent);
+            $this->addClickFilter($savedReport, $args['filter']);
+            unset($args['filter']);
         }
 
-        $recordIds = $this->getRecordIdsFromReport($savedReport);
+        $args['report'] = $savedReport;
 
-        if (!empty($recordIds)) {
-            // set target module
-            if (!empty($savedReport->module)) {
-                $args['module'] = $savedReport->module;
-            } else if (!empty($savedReport->content)) {
-                $content = json_decode($savedReport->content, true);
-                if (!empty($content['module'])) {
-                    $args['module'] = $content['module'];
-                }
-            }
-            foreach ($recordIds as $recordId) {
-                $args['record'] = $recordId;
-                $records[] = $this->retrieveRecord($api, $args);
-            }
-        }
-
-        $data['records'] = $records;
-        return $data;
+        $filterApi = new FilterApi();
+        return $filterApi->filterList($api, $args);
     }
 
     /**
@@ -242,38 +259,11 @@ class ReportsApi extends ModuleApi
 
         $chart = $chartDisplay->getSugarChart();
 
-        if (!isset($args['ignore_datacheck'])) {
-            $args['ignore_datacheck'] = false;
-        }
-
-        $json = json_decode($chart->buildJson($chart->generateXML(), $args['ignore_datacheck']), true);
+        $json = json_decode($chart->buildJson($chart->generateXML(), true), true);
 
         $returnData['chartData'] = $json;
 
         return $returnData;
-    }
-
-    /**
-     * Returns the record ids of a saved report
-     * @param SugarBean $savedReport
-     *
-     * @return array Array of record ids
-     */
-    protected function getRecordIdsFromReport($savedReport)
-    {
-        $recordIds = array();
-
-        if (!empty($savedReport->content)) {
-            $results = $savedReport->runReportQuery();
-
-            foreach ($results as $record) {
-                if(isset($record['primaryid'])){
-                    $recordIds[] = $record['primaryid'];
-                }
-            }
-        }
-
-        return $recordIds;
     }
 
     /**

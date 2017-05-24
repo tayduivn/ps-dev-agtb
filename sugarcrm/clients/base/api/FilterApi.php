@@ -361,6 +361,11 @@ class FilterApi extends SugarApi
             static::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
         }
 
+        // this param is internally used by ReportsApi and its value should be a SavedReport bean
+        if (!empty($args['report'])) {
+            static::addReportFilter($q, $q->where(), $args['report']);
+        }
+
         if (!sizeof($q->order_by)) {
             self::addOrderBy($q, $this->defaultOrderBy);
         }
@@ -1109,6 +1114,23 @@ class FilterApi extends SugarApi
         }
         $q->distinct(false);
         $q->select()->fieldRaw('tracker.track_max', 'last_viewed_date');
+    }
+
+    /**
+     * Adds report filter to the sugar query
+     * @param SugarQuery $q
+     * @param SugarQuery_Builder_Where $where
+     * @param SugarBean $savedReport
+     */
+    protected static function addReportFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $savedReport)
+    {
+        $report = new Report($savedReport->content);
+        $query = $report->getFilterQuery();
+        if (!empty($query)) {
+            $alias = 'report_filter_subquery';
+            $join = $q->joinTable('(' . $query . ')', array('alias' => $alias));
+            $join->on()->equalsField($alias . '.id', $q->from->getTableName() . '.id');
+        }
     }
 
     /**
