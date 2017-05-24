@@ -124,8 +124,9 @@ class RelateRecordApi extends SugarApi
      *
      * @param ServiceBase $api The API class of the request, used in cases where the API changes how security is applied
      * @param array $args The arguments array passed in from the API
-     * @param $primaryBean SugarBean The near side of the link
-     * @param $linkName string What is the name of the link field that you want to get the related fields for
+     * @param SugarBean $primaryBean The near side of the link
+     * @param string $linkName What is the name of the link field that you want to get the related fields for
+     * @param SugarBean $seed Related bean seed
      *
      * @return array A list of the related fields pulled out of the $args array
      */

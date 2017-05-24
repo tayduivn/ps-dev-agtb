@@ -583,8 +583,9 @@ class PMSEEngineApi extends SugarApi
     }
 
     /**
+     * @param ServiceBase $api
      * @param array $args
-     * @return object
+     * @return array
      */
     public function changeCaseUser(ServiceBase $api, array $args)
     {

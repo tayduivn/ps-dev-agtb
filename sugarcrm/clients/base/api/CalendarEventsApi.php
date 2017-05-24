@@ -238,7 +238,7 @@ class CalendarEventsApi extends ModuleApi
     /**
      * Deletes the child recurrences of the given bean
      *
-     * @param $bean
+     * @param SugarBean $bean
      */
     public function deleteRecurrences(SugarBean $bean)
     {
@@ -249,8 +249,8 @@ class CalendarEventsApi extends ModuleApi
      * If the event specifies a recurring series, ensure that the series date_start represents
      * the first date in the series.
      *
-     * @param SugarBean $bean
      * @param array $args
+     * @param SugarBean $bean
      * @return array
      */
     protected function initializeArgs(array $args, SugarBean $bean = null)
@@ -406,7 +406,8 @@ class CalendarEventsApi extends ModuleApi
 
     /**
      * Generate the recurring DateTime sequence for a Recurring Event given the Recurring Parent Bean
-     * @param SugarBean $parentBean
+     *
+     * @param array $args
      * @return array
      */
     protected function getRecurringSequence(array $args)

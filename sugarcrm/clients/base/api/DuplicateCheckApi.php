@@ -39,7 +39,9 @@ class DuplicateCheckApi extends SugarApi
         $bean = BeanFactory::newBean($args['module']);
 
         if (!$bean) {
-            throw new SugarApiExceptionInvalidParameter('Module ' . $args['module'] . ' does not exist');
+            throw new SugarApiExceptionInvalidParameter(
+                'Module ' . $args['module'] . ' cannot be used for duplicate check'
+            );
         }
 
         $args=$this->trimArgs($args);

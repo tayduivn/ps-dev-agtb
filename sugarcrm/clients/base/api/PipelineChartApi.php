@@ -194,7 +194,7 @@ class PipelineChartApi extends SugarApi
 
     /**
      * @param ServiceBase $api
-     * @param $seed
+     * @param SugarBean $seed
      * @param $tp
      * @param $amount_field
      * @param string $type

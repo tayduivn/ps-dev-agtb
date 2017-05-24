@@ -45,7 +45,8 @@ class ConnectorApi extends SugarApi
 
     /**
      * gets connector metadata
-     * @param Object $api api object
+     *
+     * @param ServiceBase $api api object
      * @param array $args arguments passed from api
      * @return array
      */
