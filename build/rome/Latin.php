@@ -8,6 +8,13 @@ class Latin
         $this->translationPath = $translationPath;
         $this->rome = $rome;
         $this->baseDir = realpath($baseDir);
+        // if the base dir has sugarcrm in it, that means just the app is being built
+        if (substr($this->baseDir, -8) == "sugarcrm") {
+            // we need to remove it for translations to work correctly
+            $this->baseDir = substr($this->baseDir, 0, -9);
+            // but we also need to add translations to the startPath so they are placed in the correct location.
+            $this->startPath = $this->baseDir . DIRECTORY_SEPARATOR . "translations";
+        }
         $this->ver = $ver;
         $this->no_latin_scm = $no_latin_scm;
         $this->langs = $langs;
@@ -30,7 +37,11 @@ class Latin
 
         $translationBranch = "master";
 
-        if (version_compare($this->ver, "7.8", ">=")) {
+        if (version_compare($this->ver, "7.10", ">=")) {
+            $translationBranch = "7_10";     // 7_10 is the branch for 7.10.x train
+        } elseif (version_compare($this->ver, "7.9", ">=")) {
+            $translationBranch = "7_9";     // 7_9 is the branch for 7.9.x train
+        } elseif (version_compare($this->ver, "7.8", ">=")) {
             $translationBranch = "7_8";     // 7_8 is the branch for 7.8.x train
         } elseif (version_compare($this->ver, "7.7", ">=")) {
             $translationBranch = "7_7";     // 7_7 is the branch for 7.7.x train
@@ -52,11 +63,11 @@ class Latin
         }
     }
 
-    private function copyFiles($path)
+    private function copyFiles($source_path)
     {
         require($this->cwd . "/" . $this->translationPath . '/config_override.php');
         $langConfig = array();
-        $dir = new DirectoryIterator($path);
+        $dir = new DirectoryIterator($source_path);
         foreach ($dir as $fileInfo) {
             if ($fileInfo->isDot()) {
                 continue;
@@ -92,14 +103,19 @@ class Latin
                             $langConfig[$lang] = $lang;
                         }
                     }
-                    $lic_cont = trim(file_get_contents($this->baseDir . '/sugarcrm/LICENSE'));
+                    $licenseFile = "/sugarcrm/LICENSE";
+                    $licenseConfig = "/sugarcrm/install/lang.config.php";
+                    if (substr($this->baseDir, -8) != "sugarcrm") {
+                        $licenseConfig = "/install/lang.config.php";
+                    }
+                    $lic_cont = trim(file_get_contents($this->baseDir . $licenseFile));
                     $subbed_lic = str_replace(
                         PHP_EOL . ' * ' . PHP_EOL,
                         PHP_EOL . ' *' . PHP_EOL,
                         str_replace(PHP_EOL, PHP_EOL . ' * ', $lic_cont)
                     );
                     $license = '/*' . PHP_EOL . ' * ' . $subbed_lic . PHP_EOL . ' */' . PHP_EOL;
-                    $lang_config_path = "{$this->rome->buildPath}/$flav/sugarcrm/install/lang.config.php";
+                    $lang_config_path = "{$this->rome->buildPath}/$flav$licenseConfig";
                     $config_vars = var_export($langConfig, true);
                     file_put_contents($lang_config_path, "<?php\n$license\n" . '$config["languages"]=' . "$config_vars;");
                 }
@@ -114,8 +130,9 @@ class Latin
             $this->updateGit();
         }
 
-        $tmp_path=realpath("$this->cwd" ."/". "$this->translationPath");
-        $this->copyFiles($tmp_path);
+        $src_path = $this->cwd . DIRECTORY_SEPARATOR . $this->translationPath;
+        $real_path=realpath($src_path);
+        $this->copyFiles($real_path);
         chdir($this->cwd);
     }
 }

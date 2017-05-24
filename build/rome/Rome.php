@@ -624,8 +624,9 @@ class Rome
     protected function quickCopy($orig_path, $skipBuilds)
     {
         $path = $this->cleanPath($orig_path);
+        $blackListPath = $this->getBlacklistPath($path);
         foreach ($this->active as $f => $a) {
-            if (!empty($this->config['blackList'][$f][$path]) || !empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f])) {
+            if (!empty($this->config['blackList'][$f][$blackListPath]) || !empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f])) {
                 continue;
             }
             $this->makeDirs(dirname($path), $f);

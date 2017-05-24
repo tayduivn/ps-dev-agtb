@@ -1,0 +1,64 @@
+FROM php:7.1.5-cli
+LABEL maintainer "SugarCRM Engineering <engineering@sugarcrm.com>"
+
+# Install node
+ENV NPM_CONFIG_LOGLEVEL info
+ENV NODE_VERSION 6.10.3
+
+RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
+  && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
+  && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
+# Install Yarn
+RUN apt-get update \
+    && apt-get install -y apt-transport-https \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    && apt-get update \
+    && apt-get install -y yarn --no-install-recommends \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false
+
+# Install PHP dependencies
+RUN apt-get update && \
+    apt-get install -y g++ \
+                      openssl \
+                      libc-client-dev \
+                      libkrb5-dev \
+                      libxml2-dev \
+                      libfreetype6-dev \
+                      libgd-dev \
+                      libmcrypt-dev \
+                      libcurl4-openssl-dev \
+                      --no-install-recommends && \
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false
+
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
+        docker-php-ext-configure gd --with-freetype-dir=/usr && \
+        docker-php-ext-configure bcmath
+
+RUN docker-php-ext-install imap gd exif mcrypt dom gettext mbstring soap zip bcmath
+
+RUN php -r "copy('https://raw.githubusercontent.com/composer/getcomposer.org/1b137f8bf6db3e79a38a5bc45324414a6b1f9df2/web/installer', 'composer-setup.php');" && \
+  php composer-setup.php --quiet --install-dir="/usr/local/bin/" --filename="composer" && \
+  rm composer-setup.php
+
+# configure php
+RUN printf "error_reporting = E_ALL & ~E_STRICT \n\
+phar.readonly = false \n\
+display_errors = On \n\
+log_errors = Off \n\
+memory_limit = 512M \n\
+date.timezone='America/Los_Angeles'" >> /usr/local/etc/php/conf.d/setting.ini
+
+# install additional build utilities needed for packaging
+RUN apt-get update && \
+    apt-get install -y zip unzip \
+      --no-install-recommends && \
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false
+# Set build dir
+ENV SUGAR_BUILD_DIR="/build"
+
+VOLUME ["/sugar","/build"]
+WORKDIR "/sugar"
+
+ENTRYPOINT ["make"]
