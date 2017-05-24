@@ -1316,9 +1316,10 @@ class SugarThemeRegistry
             }
         }
 
-        return array_pop(array_keys($availableThemes));
-    }
+        end($availableThemes);
 
+        return key($availableThemes);
+    }
 
     /**
      * Returns an array of available themes. Designed to be absorbed into get_select_options_with_id()

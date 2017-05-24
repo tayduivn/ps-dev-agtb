@@ -989,7 +989,8 @@ class Scheduler extends SugarBean {
         $scheduler->name = $mod_strings['LBL_OOTB_PROCESS_AUTHOR_JOB'];
         $scheduler->job = 'function::PMSEEngineCron';
         $scheduler->date_time_start = create_date(2015, 1, 1) . ' ' . create_time(0, 0, 1);
-        $scheduler->date_time_end = create_date(2040, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->date_time_end = create_date(2030, 12, 31)
+            . ' ' . create_time(23, 59, 59);
         $scheduler->job_interval = '*::*::*::*::*';;
         $scheduler->status = 'Active';
         $scheduler->created_by = '1';

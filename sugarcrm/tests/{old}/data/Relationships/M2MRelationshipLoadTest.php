@@ -85,11 +85,11 @@ class M2MRelationshipLoadTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunities = self::$contact->opportunities->query(
             ['where' => ['lhs_field' => 'contact_role', 'operator' => '=', 'rhs_value' => 'test1']]
         );
-        $relId1 = array_pop(array_keys($opportunities['rows']));
+        $relId1 = key($opportunities['rows']);
         $opportunities = self::$contact->opportunities->query(
             ['where' => ['lhs_field' => 'contact_role', 'operator' => '=', 'rhs_value' => 'test2']]
         );
-        $relId2 = array_pop(array_keys($opportunities['rows']));
+        $relId2 = key($opportunities['rows']);
 
         $expected = [
             $relId2 => ['id' => $relId2, 'contact_role' => 'test2'],
@@ -111,7 +111,7 @@ class M2MRelationshipLoadTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunities = self::$contact->opportunities->query(
             ['where' => ['lhs_field' => 'contact_role', 'operator' => '=', 'rhs_value' => 'test2']]
         );
-        $relId2 = array_pop(array_keys($opportunities['rows']));
+        $relId2 = key($opportunities['rows']);
 
         $opportunities = self::$contact->opportunities->query(
             ['limit' => 1, 'offset' => 1, 'orderby' => 'contact_role ASC']

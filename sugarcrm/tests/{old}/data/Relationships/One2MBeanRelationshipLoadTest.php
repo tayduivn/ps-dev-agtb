@@ -84,11 +84,11 @@ class One2MBeanRelationshipLoadTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunities = self::$account->opportunities->query(
             ['where' => ['lhs_field' => 'name', 'operator' => '=', 'rhs_value' => 'Opportunity1']]
         );
-        $relId1 = array_pop(array_keys($opportunities['rows']));
+        $relId1 = key($opportunities['rows']);
         $opportunities = self::$account->opportunities->query(
             ['where' => ['lhs_field' => 'name', 'operator' => '=', 'rhs_value' => 'Opportunity2']]
         );
-        $relId2 = array_pop(array_keys($opportunities['rows']));
+        $relId2 = key($opportunities['rows']);
 
         $opportunities = self::$account->opportunities->query(['orderby' => 'name DESC']);
         $expected = [
@@ -107,7 +107,7 @@ class One2MBeanRelationshipLoadTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunities = self::$account->opportunities->query(
             ['where' => ['lhs_field' => 'name', 'operator' => '=', 'rhs_value' => 'Opportunity2']]
         );
-        $relId2 = array_pop(array_keys($opportunities['rows']));
+        $relId2 = key($opportunities['rows']);
 
         $opportunities = self::$account->opportunities->query(
             ['limit' => 1, 'offset' => 1, 'orderby' => 'name ASC']
