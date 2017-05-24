@@ -53,16 +53,29 @@ class SugarTestKBContentUtilities
     {
         $db = DBManagerFactory::getInstance();
 
-        $db->query('DELETE FROM kbdocuments WHERE id IN (' . static::getPreparedIdsString(self::$_createdKbDocumentIds) . ')');
-        $db->query('DELETE FROM kbarticles WHERE id IN (' . static::getPreparedIdsString(self::$_createdKbArticleIds) . ')');
+        if (self::$_createdKbDocumentIds) {
+            $db->query('DELETE FROM kbdocuments WHERE id IN ('
+                . static::getPreparedIdsString(self::$_createdKbDocumentIds)
+                . ')');
 
-        $conditions = static::getPreparedIdsString(self::$_createdKbContentIds);
-        $db->query('DELETE FROM kbcontents WHERE id IN (' . $conditions . ')');
-        $db->query('DELETE FROM kbcontents_audit WHERE parent_id IN (' . $conditions . ')');
+            self::$_createdKbDocumentIds = array();
+        }
 
-        self::$_createdKbDocumentIds = array();
-        self::$_createdKbArticleIds = array();
-        self::$_createdKbContentIds = array();
+        if (self::$_createdKbArticleIds) {
+            $db->query('DELETE FROM kbarticles WHERE id IN ('
+                . static::getPreparedIdsString(self::$_createdKbArticleIds)
+                . ')');
+
+            self::$_createdKbArticleIds = array();
+        }
+
+        if (self::$_createdKbContentIds) {
+            $conditions = static::getPreparedIdsString(self::$_createdKbContentIds);
+            $db->query('DELETE FROM kbcontents WHERE id IN (' . $conditions . ')');
+            $db->query('DELETE FROM kbcontents_audit WHERE parent_id IN (' . $conditions . ')');
+
+            self::$_createdKbContentIds = array();
+        }
     }
 
     /**
