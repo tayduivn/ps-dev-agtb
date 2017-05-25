@@ -24,6 +24,10 @@ class OutboundEmailConfigurationTestHelper
     public static function tearDown()
     {
         self::restoreExistingConfigurations();
+        static::$systemConfiguration = null;
+
+        $oe = new OutboundEmail();
+        $oe->resetSystemMailerCache();
     }
 
     public static function getSystemConfiguration() {
@@ -188,6 +192,8 @@ class OutboundEmailConfigurationTestHelper
         $inboundEmail->is_personal    = true;
         $inboundEmail->created_by     = $userId;
         $inboundEmail->group_id       = $userId;
+        $inboundEmail->team_set_id = '1';
+        $inboundEmail->team_id = '1';
         $inboundEmail->save();
 
         return $inboundEmail;

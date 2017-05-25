@@ -163,6 +163,10 @@ class InboundEmail extends SugarBean {
 		$ret = parent::retrieve($id,$encode,$deleted);
 		// if I-E bean exist
 		if (!is_null($ret)) {
+            if (!empty($ret->email_password)) {
+                $ret->email_password = htmlspecialchars_decode($this->email_password, ENT_QUOTES);
+            }
+
 		    $this->retrieveMailBoxFolders();
 		}
 		return $ret;
@@ -173,6 +177,10 @@ class InboundEmail extends SugarBean {
 	 * @param string ID of saved bean
 	 */
 	function save($check_notify=false) {
+        if (!empty($this->email_password)) {
+            $this->email_password = htmlspecialchars_decode($this->email_password, ENT_QUOTES);
+        }
+
 		// generate cache table for email 2.0
 		$multiDImArray = $this->generateMultiDimArrayFromFlatArray(explode(",", $this->mailbox), $this->retrieveDelimiter());
 		$raw = $this->generateFlatArrayFromMultiDimArray($multiDImArray, $this->retrieveDelimiter());
