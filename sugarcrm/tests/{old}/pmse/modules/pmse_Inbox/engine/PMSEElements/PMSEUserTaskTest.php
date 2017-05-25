@@ -59,7 +59,10 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             ->setMethods(array('taskAssignment'))
             ->getMock();
 
-        $activityDefinition = new stdClass();
+        $activityDefinition = $this->getMockBuilder('pmse_BpmActivityDefinition')
+            ->disableOriginalConstructor()
+            ->setMethods(array('prepareResponse'))
+            ->getMock();
         $activityDefinition->act_response_buttons = 'ROUTE';
         $activityDefinition->act_assignment_method = 'static';
 
@@ -130,7 +133,10 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             ->setMethods(array('taskAssignment'))
             ->getMock();
 
-        $activityDefinition = new stdClass();
+        $activityDefinition = $this->getMockBuilder('pmse_BpmActivityDefinition')
+            ->disableOriginalConstructor()
+            ->setMethods(array('prepareResponse'))
+            ->getMock();
         $activityDefinition->act_response_buttons = 'FORM';
         $activityDefinition->act_assignment_method = 'static';
 
