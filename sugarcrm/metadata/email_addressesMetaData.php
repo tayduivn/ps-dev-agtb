@@ -304,17 +304,6 @@ $dictionary['emails_email_addr_rel'] = array(
             ),
         ),
         array(
-            'name' => 'idx_eearl_unique',
-            'type' => 'unique',
-            'fields' => array(
-                'email_id',
-                'address_type',
-                'bean_type',
-                'bean_id',
-                'deleted',
-            ),
-        ),
-        array(
             'name' => 'idx_eearl_email_address_deleted',
             'type' => 'index',
             'fields' => array(
