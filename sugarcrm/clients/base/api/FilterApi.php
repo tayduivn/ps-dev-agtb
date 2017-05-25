@@ -1153,7 +1153,7 @@ class FilterApi extends SugarApi
                 if ((count($fields) == 0 || in_array($def['name'], $fields)) && !empty($def['relate_collection'])) {
                     $options['relate_collections'][$def['name']] = $def;
                     if (!isset($options['module'])) {
-                        $options['module'] = $bean->module_dir;
+                        $options['module'] = $bean->getModuleName();
                     }
                 }
             }
