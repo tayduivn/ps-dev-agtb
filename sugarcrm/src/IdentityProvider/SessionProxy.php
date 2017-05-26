@@ -14,7 +14,6 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider;
 
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Sugarcrm\Sugarcrm\Session\SessionStorageInterface;
 
 /**
  * Mango proxy for Symfony Session.
@@ -23,29 +22,12 @@ use Sugarcrm\Sugarcrm\Session\SessionStorageInterface;
 class SessionProxy implements SessionInterface
 {
     /**
-     * @var SessionStorageInterface
-     */
-    protected $storage = null;
-
-    /**
-     * __construct
-     * @param SessionStorageInterface $storage
-     */
-    public function __construct(SessionStorageInterface $storage)
-    {
-        $this->storage = $storage;
-        if (!$this->isStarted()) {
-            $this->start();
-        }
-    }
-
-    /**
      * @inheritDoc
      */
     public function start()
     {
-        $this->storage->start();
-        return $this->isStarted();
+        //should be started in external code.
+        return true;
     }
 
     /**
@@ -53,15 +35,17 @@ class SessionProxy implements SessionInterface
      */
     public function getId()
     {
-        return $this->storage->getId();
+        return session_id();
     }
 
     /**
-     * @inheritDoc
+     * Unsupported method.
+     * @throws \LogicException
+     * @param string $id
      */
     public function setId($id)
     {
-        $this->storage->setId($id);
+        throw new \LogicException('Cannot change the ID of an active session');
     }
 
     /**
@@ -114,7 +98,7 @@ class SessionProxy implements SessionInterface
      */
     public function all()
     {
-        return $this->storage;
+        return $_SESSION;
     }
 
     /**
@@ -132,7 +116,7 @@ class SessionProxy implements SessionInterface
      */
     public function set($name, $value)
     {
-        $this->storage[$name] = $value;
+        $_SESSION[$name] = $value;
     }
 
     /**
@@ -141,7 +125,7 @@ class SessionProxy implements SessionInterface
     public function remove($name)
     {
         $return = $this->get($name);
-        unset($this->storage[$name]);
+        unset($_SESSION[$name]);
         return $return;
     }
 
@@ -153,7 +137,7 @@ class SessionProxy implements SessionInterface
         if (!$this->has($name)) {
             return $default;
         }
-        return $this->storage[$name];
+        return $_SESSION[$name];
     }
 
     /**
@@ -161,7 +145,7 @@ class SessionProxy implements SessionInterface
      */
     public function has($name)
     {
-        return isset($this->storage[$name]);
+        return array_key_exists($name, $_SESSION);
     }
 
     /**
@@ -177,7 +161,8 @@ class SessionProxy implements SessionInterface
      */
     public function isStarted()
     {
-        return $this->storage->sessionHasId();
+        // session should be already started
+        return true;
     }
 
     /**

@@ -34,7 +34,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarSAMLUserProvider;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
-use Sugarcrm\Sugarcrm\Session\SessionStorage;
 
 class AuthProviderBasicManagerBuilder
 {
@@ -173,7 +172,7 @@ class AuthProviderBasicManagerBuilder
             $this->samlConfig,
             new SugarSAMLUserProvider(),
             new SugarSAMLUserChecker(new SugarLocalUserProvider()),
-            new SessionProxy(SessionStorage::getInstance()),
+            new SessionProxy(),
             new UserMapping($this->samlConfig)
         );
     }

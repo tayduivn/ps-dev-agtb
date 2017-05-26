@@ -12,8 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider;
 
+use Elastica\Transport\Null;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
-use Sugarcrm\Sugarcrm\Session\SessionStorage;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
 /**
@@ -22,9 +22,9 @@ use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 class SessionProxyTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var SessionStorage|\PHPUnit_Framework_MockObject_MockObject
+     * @var null|array
      */
-    protected $sessionStorage;
+    protected $oldSession = null;
 
     /**
      * @var SessionProxy
@@ -42,50 +42,11 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
     protected $sessionValue;
 
     /**
-     * @covers ::__construct
-     */
-    public function testIfSessionStarted()
-    {
-        /** @var SessionStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
-        $storage = $this->createMock(SessionStorage::class);
-        $storage->method('sessionHasId')
-            ->willReturn(true);
-        $storage->expects($this->never())
-            ->method('start');
-
-        $sessionProxy = new SessionProxy($storage);
-    }
-
-    /**
-     * @covers ::__construct
-     */
-    public function testIfSessionNotStarted()
-    {
-        /** @var SessionStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
-        $storage = $this->createMock(SessionStorage::class);
-
-        $storage->method('sessionHasId')->willReturn(false);
-        $storage->expects($this->once())
-            ->method('start');
-
-        $sessionProxy = new SessionProxy($storage);
-    }
-
-    /**
      * @covers ::start
      */
     public function testStart()
     {
-        $expectedIsStarted = rand(1000, 9999);
-        $this->sessionStorage
-            ->expects($this->once())
-            ->method('start');
-        $this->sessionStorage
-            ->expects($this->once())
-            ->method('sessionHasId')
-            ->willReturn($expectedIsStarted);
-
-        $this->assertEquals($expectedIsStarted, $this->sessionProxy->start());
+        $this->assertTrue($this->sessionProxy->start());
     }
 
     /**
@@ -93,26 +54,7 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetId()
     {
-        $expectedSessionId = rand(1000, 9999);
-        $this->sessionStorage
-            ->expects($this->once())
-            ->method('getId')
-            ->willReturn($expectedSessionId);
-        $this->assertEquals($expectedSessionId, $this->sessionProxy->getId());
-    }
-
-    /**
-     * @covers ::setId
-     */
-    public function testSetId()
-    {
-        $expectedSessionId = rand(1000, 9999);
-        $this->sessionStorage
-            ->expects($this->once())
-            ->method('setId')
-            ->with($this->equalTo($expectedSessionId));
-
-        $this->sessionProxy->setId($expectedSessionId);
+        $this->assertEquals(session_id(), $this->sessionProxy->getId());
     }
 
     /**
@@ -128,14 +70,7 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsStarted()
     {
-
-        $expectedIsStarted = rand(1000, 9999);
-        $this->sessionStorage
-            ->expects($this->once())
-            ->method('sessionHasId')
-            ->willReturn($expectedIsStarted);
-
-        $this->assertEquals($expectedIsStarted, $this->sessionProxy->isStarted());
+        $this->assertTrue($this->sessionProxy->isStarted());
     }
 
     /**
@@ -165,6 +100,7 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
     public function unsupportedMethodsProvider()
     {
         return [
+            'setId' => ['methods' => 'setId', 'arguments' => ['someId']],
             'setName' => ['methods' => 'setName', 'arguments' => ['someName']],
             'invalidate' => ['methods' => 'invalidate', 'arguments' => []],
             'migrate' => ['methods' => 'migrate', 'arguments' => []],
@@ -182,11 +118,10 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testSet()
     {
-        $this->sessionStorage->expects($this->once())
-            ->method('offsetSet')
-            ->with($this->sessionKey, $this->sessionValue);
-
         $this->sessionProxy->set($this->sessionKey, $this->sessionValue);
+
+        $this->assertArrayHasKey($this->sessionKey, $_SESSION);
+        $this->assertEquals($this->sessionValue, $_SESSION[$this->sessionKey]);
     }
 
     /**
@@ -194,10 +129,7 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testHas()
     {
-        $this->sessionStorage->expects($this->once())
-            ->method('offsetExists')
-            ->with($this->sessionKey)
-            ->willReturn(true);
+        $_SESSION[$this->sessionKey] = $this->sessionValue;
 
         $this->assertTrue($this->sessionProxy->has($this->sessionKey));
     }
@@ -207,14 +139,8 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testGet()
     {
-        $this->sessionStorage->method('offsetExists')
-            ->with($this->sessionKey)
-            ->willReturn(true);
 
-        $this->sessionStorage->expects($this->once())
-            ->method('offsetGet')
-            ->with($this->sessionKey)
-            ->willReturn($this->sessionValue);
+        $_SESSION[$this->sessionKey] = $this->sessionValue;
 
         $this->assertEquals($this->sessionValue, $this->sessionProxy->get($this->sessionKey));
     }
@@ -224,17 +150,9 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetUndefined()
     {
-        $this->sessionStorage->method('offsetExists')
-            ->with($this->sessionKey)
-            ->willReturn(false);
+        unset($_SESSION[$this->sessionKey]);
 
-        $this->sessionStorage->expects($this->never())
-            ->method('offsetGet');
-
-        $this->assertEquals(
-            $this->sessionValue,
-            $this->sessionProxy->get($this->sessionKey, $this->sessionValue)
-        );
+        $this->assertEquals($this->sessionValue, $this->sessionProxy->get($this->sessionKey, $this->sessionValue));
     }
 
     /**
@@ -242,26 +160,22 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testAll()
     {
-        $this->sessionStorage[$this->sessionKey] = $this->sessionValue;
+        $_SESSION[$this->sessionKey] = $this->sessionValue;
 
-        $this->assertEquals($this->sessionStorage, $this->sessionProxy->all());
+        $this->assertEquals($_SESSION, $this->sessionProxy->all());
     }
+
 
     /**
      * @covers ::remove
      */
     public function testRemove()
     {
-        $this->sessionStorage->method('offsetExists')
-            ->with($this->sessionKey)
-            ->willReturn(true);
-        $this->sessionStorage->method('offsetGet')
-            ->willReturn($this->sessionValue);
-        $this->sessionStorage->expects($this->once())
-            ->method('offsetUnset')
-            ->with($this->sessionKey);
+
+        $_SESSION[$this->sessionKey] = $this->sessionValue;
 
         $this->assertEquals($this->sessionValue, $this->sessionProxy->remove($this->sessionKey));
+        $this->assertArrayNotHasKey($this->sessionKey, $_SESSION);
     }
 
     /**
@@ -269,7 +183,7 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testRemoveUndefined()
     {
-        unset($this->sessionStorage[$this->sessionKey]);
+        unset($_SESSION[$this->sessionKey]);
 
         $this->assertNull($this->sessionProxy->remove($this->sessionKey));
     }
@@ -292,16 +206,28 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
             'sessionReplacedValue' . rand(1000, 9999),
         );
 
-        $this->sessionStorage->expects($this->exactly(4))
-            ->method('offsetSet')
-            ->withConsecutive(
-                [$keys[0], $values[0]],
-                [$keys[1], $values[1]],
-                [$keys[2], $values[2]]
-            );
         $replacement = array_combine($keys, $values);
 
+        $_SESSION[$this->sessionKey] = $this->sessionValue;
+
         $this->sessionProxy->replace($replacement);
+
+        foreach ($replacement as $key => $value) {
+            $this->assertArrayHasKey($key, $_SESSION);
+            $this->assertEquals($value, $_SESSION[$key]);
+        }
+    }
+
+    /**
+     * Testing dummies methods.
+     * @dataProvider dummiesProvider
+     * @param $methods
+     * @covers ::save
+     * @covers ::clear
+     */
+    public function testDummies($methods)
+    {
+        $this->assertEmpty($this->sessionProxy->$methods());
     }
 
     /**
@@ -318,29 +244,32 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Testing dummies methods.
-     * @dataProvider dummiesProvider
-     * @param $methods
-     * @covers ::save
-     * @covers ::clear
-     */
-    public function testDummies($methods)
-    {
-        $this->assertEmpty($this->sessionProxy->$methods());
-    }
-
-    /**
      * @inheritDoc
      */
     protected function setUp()
     {
         parent::setUp();
-
-        $this->sessionStorage = $this->createMock(SessionStorage::class);
-        $this->sessionStorage->method('sessionHasId')->willReturn(true);
-        $this->sessionProxy = new SessionProxy($this->sessionStorage);
-
+        if (isset($_SESSION)) {
+            $this->oldSession = $_SESSION;
+        } else {
+            $this->oldSession = null;
+        }
+        $_SESSION = [];
+        $this->sessionProxy = new SessionProxy();
         $this->sessionKey = 'sessionKey' . rand(1000, 9999);
         $this->sessionValue = 'sessionValue' . rand(1000, 9999);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown()
+    {
+        if (is_null($this->oldSession)) {
+            unset($_SESSION);
+        } else {
+            $_SESSION = $this->oldSession;
+        }
+        parent::tearDown();
     }
 }
