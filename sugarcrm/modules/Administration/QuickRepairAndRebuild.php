@@ -58,6 +58,8 @@ class RepairAndClear
         $this->clearVardefs();
         $this->clearLanguageCache();
 
+        ACLField::clearACLCache();
+
         // Enable the metadata manager cache refresh to queue. This allows the
         // cache refresh processes in metadata manager to be carried out one time
         // at the end of the rebuild instead of continual processing during the
