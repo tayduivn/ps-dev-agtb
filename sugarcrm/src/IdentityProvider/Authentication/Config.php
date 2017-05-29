@@ -75,7 +75,7 @@ class Config
             'strict' => false,
             'debug' => false,
             'sp' => [
-                'entityId' => $this->get('SAML_issuer', 'php-saml'), // BC mode, this should be an URL to metadata
+                'entityId' => $this->get('SAML_issuer', 'php-saml') ?: 'php-saml',
                 'assertionConsumerService' => [
                     'url' => $acsUrl,
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,

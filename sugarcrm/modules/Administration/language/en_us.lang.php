@@ -1133,6 +1133,8 @@ expressions in the regex. Regular expressions should not include any delimiters.
     'LBL_SAML_LOGOUT_URL' => 'SLO URL',
     'LBL_SAML_IDP_ENTITY_ID' => 'Entity ID',
     'LBL_SAML_IDP_ENTITY_ID_DESC' => 'Identifier of the IdP entity<br>should be a valid URI',
+    'LBL_SAML_SP_ENTITY_ID' => 'SugarCRM Entity ID',
+    'LBL_SAML_SP_ENTITY_ID_DESC' => 'Identifier of the Service Provider entity<br>should be a valid URI',
     'LBL_SAML_SAME_WINDOW' => 'Load login screen in same <br>window to avoid pop-up blocking',
     'LBL_SAML_SAME_WINDOW_DESC' => 'This option will load SAML login screen in the same window',
     'LBL_SAML_PROVISION_USER' => 'Auto-create user',

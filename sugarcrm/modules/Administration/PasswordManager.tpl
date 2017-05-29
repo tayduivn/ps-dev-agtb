@@ -855,6 +855,15 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td scope="row" valign="middle"
+                                    nowrap>{$MOD.LBL_SAML_SP_ENTITY_ID}
+                                    {sugar_help text=$MOD.LBL_SAML_SP_ENTITY_ID_DESC}
+                                </td>
+                                <td align="left" valign="middle">
+                                    <input name="SAML_issuer" size="35" type="text" value="{$config.SAML_issuer}">
+                                </td>
+                            </tr>
+                            <tr>
                                 <td width='25%' scope="row" valign='top'
                                     nowrap>{$MOD.LBL_SAML_CERT} {sugar_help text=$MOD.LBL_SAML_CERT_DESC}<span class="required">*</span></td>
                                 <td width='25%' align="left" valign='top'><textarea style='height:200px;width:600px'
