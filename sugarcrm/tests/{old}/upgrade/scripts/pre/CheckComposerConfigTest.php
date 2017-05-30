@@ -383,27 +383,25 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
     /**
      * @dataProvider isNotStockComposerProvider
      */
-    public function testIsNotStockComposer($lockHash, $actualHash, $stockHash)
+    public function testIsNotStockComposer($actualHash, $stockHash)
     {
-        $isStockComposer = $this->isStockComposer($lockHash, $actualHash, $stockHash);
+        $isStockComposer = $this->isStockComposer($actualHash, $stockHash);
         $this->assertFalse($isStockComposer);
     }
 
     public static function isNotStockComposerProvider()
     {
         return array(
-            'empty-lock-hash' => array(null, null, null),
-            'empty-actual-hash' => array('X', null, null),
-            'actual-lock-mismatch' => array('X', null, 'Y'),
-            'empty-stock-hash' => array('X', null, 'X'),
-            'actual-stock-mismatch' => array('X', 'Y', 'X'),
+            'empty-actual-hash' => array(null, null),
+            'empty-stock-hash' => array(null, 'X'),
+            'actual-stock-mismatch' => array('Y', 'X'),
         );
     }
 
-    private function isStockComposer($lockHash, $stockHash, $actualHash)
+    private function isStockComposer($stockHash, $actualHash)
     {
         $sut = $this->getMockSut(array('loadLock', 'getActualHash', 'getStockHash'));
-        SugarTestReflection::setProtectedValue($sut, 'lockHash', $lockHash);
+
         $sut->expects($this->any())
             ->method('getActualHash')
             ->willReturn($actualHash);
@@ -411,5 +409,24 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
             ->method('getStockHash')
             ->willReturn($stockHash);
         return SugarTestReflection::callProtectedMethod($sut, 'isStockComposer');
+    }
+
+    public function testStockFilesAreRegognized()
+    {
+        if (!file_exists(SugarUpgradeCheckComposerConfig::FILES_MD5)) {
+            $this->markTestSkipped('Skipping since the checksum file does not exist (depends on the build)');
+        }
+
+        $sut = $this->getMockSut(null, array(
+            'source_dir' => SUGAR_BASE_DIR,
+        ));
+
+        $this->assertTrue(
+            SugarTestReflection::callProtectedMethod($sut, 'initialize')
+        );
+
+        $this->assertTrue(
+            SugarTestReflection::callProtectedMethod($sut, 'isStockComposer')
+        );
     }
 }

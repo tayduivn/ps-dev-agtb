@@ -68,12 +68,6 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
     protected $lockFile = '';
 
     /**
-     * Composer lock hash
-     * @var string
-     */
-    protected $lockHash = '';
-
-    /**
      * Installed packages from lock file
      * @var array
      */
@@ -329,20 +323,9 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
         // Load lock file into memory.
         $this->loadLock();
 
-        if (empty($this->lockHash)) {
-            $this->log("No hash available in lock file");
-            return false;
-        }
-
         $actualHash = $this->getActualHash($this->jsonFile);
         if (!$actualHash) {
             $this->log("Cannot calculate hash of {$this->jsonFile}");
-            return false;
-        }
-
-        // Compare hash from lock file against composer.json content
-        if ($actualHash !== $this->lockHash) {
-            $this->log("Composer lock not up to date with json file");
             return false;
         }
 
@@ -409,9 +392,6 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
     protected function loadLock()
     {
         $lock = $this->loadFromFile($this->lockFile);
-
-        // Set hash
-        $this->lockHash = isset($lock['hash']) ? $lock['hash'] : '';
 
         // Parse packages.
         if (isset($lock['packages']) && is_array($lock['packages'])) {
@@ -509,13 +489,6 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
      */
     protected function skipMerge()
     {
-        // Composer has been publically introduced since 7.5 so there
-        // should not be any composer.json file present in the root.
-        if (version_compare($this->from_version, '7.5', '<')) {
-            $this->log("Skipping merge, pre 7.5 version");
-            return true;
-        }
-
         // In case for one reason composer.json or composer.lock have
         // dissappeared, we skip the merge as there is no reference
         // to start from..
