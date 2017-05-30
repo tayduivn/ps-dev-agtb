@@ -541,6 +541,10 @@ class HealthCheckScannerMeta
             'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Unsupported_Property_Access/',
             //@codingStandardsIgnoreEnd
         ),
+        570 => array(
+            'report' => 'invalidStatusAndTypeForEmails',
+            'bucket' => self::CUSTOM,
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(

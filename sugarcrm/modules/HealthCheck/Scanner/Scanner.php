@@ -816,6 +816,9 @@ class HealthCheckScanner
         // Check Advanced Workflow locked fields
         $this->checkPALockedFields();
 
+        // Check for Email Combinations of type and status
+        $this->checkEmailsForInvalidStatusAndType();
+
         if (version_compare($sugar_version, '7.9.0.0', '<')) {
             $calls = array();
             $this->scanCustomPhpFiles(array(
@@ -1239,6 +1242,42 @@ class HealthCheckScanner
         }
 
         return "Could not determine reason (Reason Code: $reason)";
+    }
+
+    /**
+     * Search for combinations of emails.type and emails.status that are unexpected
+     * Flag the instances as self::MANUAL
+     */
+    protected function checkEmailsForInvalidStatusAndType()
+    {
+        // Make sure we need to run this first
+        list($version, $flavor) = $this->getVersionAndFlavor();
+        
+        if (version_compare($version, '7.10.0.0', '<')) {
+            $sql = "SELECT DISTINCT emails.status, emails.type
+                    FROM emails
+                    WHERE(
+                        NOT(emails.type='draft' AND emails.status='draft')
+                        OR (emails.type='out' AND emails.status='sent')
+                        OR (emails.type='out' AND emails.status='send_error')
+                        OR (emails.type='inbound' AND emails.status='replied')
+                        OR (emails.type='out' AND emails.status='archived')
+                        OR (emails.type='out' AND (emails.status='' OR emails.status IS NULL))
+                        OR (emails.type='forward' AND emails.status='sent')
+                        OR (emails.type='forward' AND emails.status='send_error')
+                        OR (emails.type='archived' AND emails.status='archived')
+                        OR (emails.type='archived' AND emails.status='sent')
+                        OR (emails.type='campaign' AND emails.status='archived')
+                        OR (emails.type='inbound' AND emails.status='unread')
+                        OR (emails.type='inbound' AND emails.status='read')
+                    )";
+
+            $stmt = DBManagerFactory::getConnection()->executeQuery($sql);
+
+            while ($row = $stmt->fetch()) {
+                $this->updateStatus('invalidStatusAndTypeForEmails', $row['status'], $row['type']);
+            }
+        }
     }
 
     /**
