@@ -10,10 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarUpgradeMigrateEmailAttachments extends UpgradeScript
+class SugarUpgradeMigrateEmailAttachments extends UpgradeDBScript
 {
-    public $order = 2000;
-    public $type = self::UPGRADE_DB;
+    public $order = 2200;
 
     /**
      * {@inheritdoc}
@@ -25,11 +24,11 @@ class SugarUpgradeMigrateEmailAttachments extends UpgradeScript
      * email_id, respectively, for attachments. The parent_type and parent_id fields are nullified because an attachment
      * is related to an email through the email_type and email_id fields, as opposed to through the parent reference.
      *
-     * This upgrade script only runs when upgrading from a version prior to 7.9.
+     * This upgrade script only runs when upgrading from a version prior to 7.10.
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.9', '<')) {
+        if (version_compare($this->from_version, '7.10', '<')) {
             $now = TimeDate::getInstance()->nowDb();
             $sql = 'UPDATE notes SET ' .
                 // Move the parent_type and parent_id values to email_type and email_id, respectively.
@@ -41,12 +40,14 @@ class SugarUpgradeMigrateEmailAttachments extends UpgradeScript
                 // It's only an attachment if the parent is an Emails or EmailTemplates record.
                 "WHERE parent_type IN ('Emails', 'EmailTemplates') AND " .
                 // parent_id is not empty.
-                "parent_id IS NOT NULL AND parent_id<>'' AND " .
+                $this->db->getNotEmptyFieldSQL('parent_id') .
+                "AND " .
                 // filename is not empty.
-                "filename IS NOT NULL AND filename<>'' AND " .
+                $this->db->getNotEmptyFieldSQL('filename') .
+                "AND " .
                 // file_mime_type is not empty.
-                "file_mime_type IS NOT NULL AND file_mime_type<>''";
-            $this->db->query($sql);
+                $this->db->getNotEmptyFieldSQL('file_mime_type');
+            $this->executeUpdate($sql);
         }
     }
 }

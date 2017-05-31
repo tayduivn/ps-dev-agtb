@@ -12,10 +12,9 @@
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
-class SugarUpgradeAssociateEmailsWithTheirParentNotes extends UpgradeScript
+class SugarUpgradeAssociateEmailsWithTheirParentNotes extends UpgradeDBScript
 {
     public $order = 2200;
-    public $type = self::UPGRADE_DB;
 
     /**
      * {@inheritdoc}
@@ -25,17 +24,17 @@ class SugarUpgradeAssociateEmailsWithTheirParentNotes extends UpgradeScript
      * inserts these associations into the emails_beans tables so that the relationship between Emails and Notes behaves
      * the same as for all of Emails' other parent relationships.
      *
-     * This upgrade script only runs when upgrading from a version prior to 7.9.
+     * This upgrade script only runs when upgrading from a version prior to 7.10.
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.9', '<')) {
+        if (version_compare($this->from_version, '7.10', '<')) {
             $inserts = $this->getNewAssociations();
 
             if (!empty($inserts)) {
                 $sql = "INSERT INTO emails_beans (id, email_id, bean_id, bean_module, date_modified) VALUES " .
                     implode(', ', $inserts);
-                $this->db->query($sql);
+                $this->executeUpdate($sql);
             }
         }
     }
@@ -52,11 +51,13 @@ class SugarUpgradeAssociateEmailsWithTheirParentNotes extends UpgradeScript
     {
         $associations = array();
 
-        $sql = "SELECT id, parent_id FROM emails WHERE parent_type='Notes' AND parent_id IS NOT NULL AND parent_id<>''";
-        $results = $this->db->query($sql);
+        $sql = "SELECT id, parent_id FROM emails WHERE parent_type='Notes' AND " .
+            $this->db->getNotEmptyFieldSQL('parent_id');
+        $stmt = $this->db->getConnection()->executeQuery($sql);
 
-        while ($row = $this->db->fetchByAssoc($results, false)) {
+        while ($row = $stmt->fetch()) {
             if (!$this->associationExists($row['id'], $row['parent_id'])) {
+                $this->log("Association does not exist for email id: {$row['id']} with parent id: {$row['parent_id']}");
                 $associations[] = $this->getValues($row['id'], $row['parent_id']);
             }
         }
@@ -73,14 +74,11 @@ class SugarUpgradeAssociateEmailsWithTheirParentNotes extends UpgradeScript
      */
     protected function associationExists($emailId, $noteId)
     {
-        $sql = "SELECT COUNT(*) as num FROM emails_beans WHERE email_id='{$emailId}' AND bean_id='{$noteId}' AND " .
-            "bean_module='Notes'";
-        $results = $this->db->query($sql);
+        $sql = "SELECT COUNT(*) FROM emails_beans WHERE email_id= ? AND bean_id= ? AND bean_module='Notes'";
+        $rows = $this->db->getConnection()->executeQuery($sql, array($emailId, $noteId))->fetchColumn();
 
-        if ($row = $this->db->fetchByAssoc($results, false)) {
-            if ($row['num'] > 0) {
-                return true;
-            }
+        if ($rows > 0) {
+            return true;
         }
 
         return false;

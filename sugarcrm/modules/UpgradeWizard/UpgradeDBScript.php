@@ -28,7 +28,7 @@ abstract class UpgradeDBScript extends UpgradeScript
     {
         $rows = 0;
         try {
-            $rows = DBManagerFactory::getConnection()->executeUpdate($sql, $params);
+            $rows = $this->db->getConnection()->executeUpdate($sql, $params);
             $this->log("Number of affected rows: {$rows}");
         } catch (DBALException $error) {
             $this->log("Error: {$error}");
