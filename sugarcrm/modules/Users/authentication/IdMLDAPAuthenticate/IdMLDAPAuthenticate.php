@@ -9,11 +9,7 @@
 *
 * Copyright (C) SugarCRM Inc. All rights reserved.
 */
-
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 
 /**
  * IdM LDAP login
@@ -31,13 +27,15 @@ class IdMLDAPAuthenticate extends \LDAPAuthenticate
     public function loginAuthenticate($username, $password, $fallback = false, $params = [])
     {
         $authManager = $this->getAuthProviderBuilder(new Config(\SugarConfig::getInstance()))->buildAuthProviders();
-        $token = new UsernamePasswordToken(
-            $username,
-            $password,
-            AuthProviderManagerBuilder::PROVIDER_KEY_LDAP,
-            User::getDefaultRoles()
-        );
-        $token = $authManager->authenticate($token);
+        $tokenFactory = $this->getUsernamePasswordTokenFactory($username, $password, $params);
+        $ldapToken = $tokenFactory->createLdapAuthenticationToken();
+        $localToken = $tokenFactory->createLocalAuthenticationToken();
+
+        $mixedToken = $tokenFactory->createMixedAuthenticationToken();
+        $mixedToken->addToken($ldapToken);
+        $mixedToken->addToken($localToken);
+
+        $token = $authManager->authenticate($mixedToken);
         return $token && $token->isAuthenticated();
     }
 }

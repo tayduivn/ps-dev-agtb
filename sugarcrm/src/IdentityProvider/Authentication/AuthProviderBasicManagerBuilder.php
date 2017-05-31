@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\MixedAuthenticationProvider;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 
@@ -39,6 +40,7 @@ class AuthProviderBasicManagerBuilder
 {
     const PROVIDER_KEY_LOCAL = 'SugarLocalProvider';
     const PROVIDER_KEY_LDAP = 'SugarLdapProvider';
+    const PROVIDER_KEY_MIXED = 'SugarMixedProvider';
     /**
      * Encoders config
      * @var array|null
@@ -80,11 +82,11 @@ class AuthProviderBasicManagerBuilder
      */
     public function buildAuthProviders(EventDispatcherInterface $eventDispatcher = null)
     {
-        $manager = new AuthenticationProviderManager(array_filter([
-            $this->getLocalAuthProvider(),
-            $this->getLdapAuthProvider(),
-            $this->getSamlAuthIDP(),
-        ]));
+        $providers = array_filter(
+            [$this->getLocalAuthProvider(), $this->getLdapAuthProvider(), $this->getSamlAuthIDP()]
+        );
+        $providers[] = new MixedAuthenticationProvider($providers, static::PROVIDER_KEY_MIXED);
+        $manager = new AuthenticationProviderManager($providers);
 
         if (!$eventDispatcher) {
             $eventDispatcher = $this->getAuthenticationEventDispatcher();

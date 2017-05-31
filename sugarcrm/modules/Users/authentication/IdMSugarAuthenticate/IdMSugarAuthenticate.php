@@ -10,10 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
-use Sugarcrm\IdentityProvider\Authentication\User;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Encoder\SugarPreAuthPassEncoder;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 class IdMSugarAuthenticate extends SugarAuthenticate
@@ -32,22 +28,9 @@ class IdMSugarAuthenticate extends SugarAuthenticate
      */
     public function loginAuthenticate($username, $password, $fallback = false, $params = [])
     {
-        $isPasswordEncrypted = !empty($params['passwordEncrypted']);
-
         $authManager = $this->getAuthProviderBuilder(new Config(\SugarConfig::getInstance()))->buildAuthProviders();
-
-        $token = new UsernamePasswordToken(
-            $username,
-            (new SugarPreAuthPassEncoder())->encodePassword($password, '', $isPasswordEncrypted),
-            AuthProviderManagerBuilder::PROVIDER_KEY_LOCAL,
-            User::getDefaultRoles()
-        );
-
-        // TODO delete this when strtolower+md5 encrypt will be deleted
-        $token->setAttribute('isPasswordEncrypted', $isPasswordEncrypted);
-        // Raw password is required for password rehash on success auth
-        $token->setAttribute('rawPassword', $password);
-
+        $token = $this->getUsernamePasswordTokenFactory($username, $password, $params)
+                      ->createLocalAuthenticationToken();
         $token = $authManager->authenticate($token);
         return $token && $token->isAuthenticated();
     }

@@ -9,15 +9,18 @@
 *
 * Copyright (C) SugarCRM Inc. All rights reserved.
 */
+namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMLDAPAuthenticate;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
 /**
  * @coversDefaultClass \IdMLDAPAuthenticate
  */
-class IdMLDAPAuthenticateTest extends PHPUnit_Framework_TestCase
+class IdMLDAPAuthenticateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::loginAuthenticate
@@ -47,11 +50,12 @@ class IdMLDAPAuthenticateTest extends PHPUnit_Framework_TestCase
         $manager->expects($this->once())
             ->method('authenticate')
             ->with($this->callback(function ($token) {
-                /** @var UsernamePasswordToken $token */
-                $this->assertInstanceOf(UsernamePasswordToken::class, $token);
+                /** @var MixedUsernamePasswordToken $token */
+                $this->assertInstanceOf(MixedUsernamePasswordToken::class, $token);
                 $this->assertEquals('user', $token->getUsername());
                 $this->assertEquals('pass', $token->getCredentials());
-                $this->assertEquals(AuthProviderManagerBuilder::PROVIDER_KEY_LDAP, $token->getProviderKey());
+                $this->assertCount(2, $token->getTokens());
+                $this->assertEquals(AuthProviderManagerBuilder::PROVIDER_KEY_MIXED, $token->getProviderKey());
 
                 return true;
             }))
