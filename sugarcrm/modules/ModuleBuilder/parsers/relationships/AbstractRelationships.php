@@ -205,11 +205,9 @@ class AbstractRelationships
             }
 
             // in order to create consistent relationship name,
-            // blank it out from definition for factory to create a name.
+            // blank out old name from definition for factory to create a name.
             unset($definition['relationship_name']);
             $this->add(RelationshipFactory::newRelationship($definition));
-            // remove relationship with old name
-            $this->remove($relationshipName);
         }
 
     }
