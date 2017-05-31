@@ -24,7 +24,7 @@ docker build -f Node.Dockerfile -t registry.sugarcrm.net/engineering/node:latest
 
 ## Karma Image
 
-This image installs everything required for Seedbed to run on top of our Node Selenium image.
+This image installs everything required for Karma (Unit JS) to run on top of our Node image.
 ```
 docker build -f Karma.Dockerfile -t registry.sugarcrm.net/karma/karma:latest .
 ```
