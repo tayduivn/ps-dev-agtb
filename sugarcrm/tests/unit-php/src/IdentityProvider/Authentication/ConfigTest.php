@@ -238,7 +238,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->once())
             ->method('isLdapEnabled')
             ->willReturn(true);
-        $config->expects($this->exactly(14))
+        $config->expects($this->exactly(16))
             ->method('getLdapSetting')
             ->withConsecutive(
                 [$this->equalTo('ldap_hostname'), $this->equalTo('127.0.0.1')],
@@ -246,6 +246,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 [$this->equalTo('ldap_base_dn'), $this->identicalTo('')],
                 [$this->equalTo('ldap_login_attr'), $this->identicalTo('')],
                 [$this->equalTo('ldap_login_filter'), $this->identicalTo('')],
+                [$this->equalTo('ldap_bind_attr')],
                 [$this->equalTo('ldap_auto_create_users'), $this->isFalse()],
                 [$this->equalTo('ldap_authentication')],
                 [$this->equalTo('ldap_admin_user')],
@@ -254,6 +255,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 [$this->equalTo('ldap_group_name')],
                 [$this->equalTo('ldap_group_dn')],
                 [$this->equalTo('ldap_group_attr')],
+                [$this->equalTo('ldap_group_user_attr')],
                 [$this->equalTo('ldap_group_attr_req_dn'), $this->isFalse()]
             )
             ->willReturnOnConsecutiveCalls(
@@ -262,6 +264,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'dn',
                 'uidKey',
                 '',
+                'ldap_bind_attr',
                 true,
                 true,
                 'admin',
@@ -270,6 +273,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'group',
                 'group_dn',
                 'group_attr',
+                'ldap_group_user_attr',
                 false
             );
 
@@ -297,14 +301,15 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             'baseDn' => 'dn',
             'uidKey' => 'uidKey',
             'filter' => '({uid_key}={username})',
-            'dnString' => NULL,
-            'entryAttribute' => NULL,
+            'dnString' => null,
+            'entryAttribute' => 'ldap_bind_attr',
             'autoCreateUser' => true,
             'searchDn' => 'admin',
             'searchPassword' => 'test',
             'groupMembership' => true,
             'groupDn' => 'group,group_dn',
             'groupAttribute' => 'group_attr',
+            'userUniqueAttribute' => 'ldap_group_user_attr',
             'includeUserDN' => false,
         ];
         $this->assertEquals($expected, $config->getLdapConfig());

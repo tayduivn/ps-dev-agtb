@@ -133,7 +133,7 @@ class Config
             'uidKey' => $this->getLdapSetting('ldap_login_attr', ''),
             'filter' => '({uid_key}={username})' . $this->getLdapSetting('ldap_login_filter', ''),
             'dnString' => null,
-            'entryAttribute' => null,
+            'entryAttribute' => $this->getLdapSetting('ldap_bind_attr'),
             'autoCreateUser' => $this->getLdapSetting('ldap_auto_create_users', false),
         ];
         if (!empty($this->getLdapSetting('ldap_authentication'))) {
@@ -149,6 +149,7 @@ class Config
                 $this->getLdapSetting('ldap_group_dn')
             );
             $ldap['groupAttribute'] = $this->getLdapSetting('ldap_group_attr');
+            $ldap['userUniqueAttribute'] = $this->getLdapSetting('ldap_group_user_attr');
             $ldap['includeUserDN'] = $this->getLdapSetting('ldap_group_attr_req_dn', false);
         }
 
