@@ -13,9 +13,9 @@
 require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
 
 /**
- * @coversDefaultClass InboundEmail
+ * @coversDefaultClass OutboundEmail
  */
-class InboundEmailPasswordTest extends Sugar_PHPUnit_Framework_TestCase
+class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
@@ -30,7 +30,7 @@ class InboundEmailPasswordTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDownAfterClass();
     }
 
-    public function inboundEmailPasswordProvider()
+    public function smtpEmailPasswordProvider()
     {
         return [
             [
@@ -57,19 +57,33 @@ class InboundEmailPasswordTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Proves that encoded HTML characters are decoded when saving a password to the database.
+     * Proves that encoded HTML characters are decoded when saving an SMTP password to the database.
      *
      * @covers ::save
      * @covers ::retrieve
-     * @dataProvider inboundEmailPasswordProvider
+     * @dataProvider smtpEmailPasswordProvider
      */
-    public function testSaveInboundEmailWithPassword($encodedPassword, $decodedPassword)
+    public function testSaveOutboundEmailConfigurationWithPassword($encodedPassword, $decodedPassword)
     {
-        $ie = OutboundEmailConfigurationTestHelper::createInboundEmail();
-        $ie->email_password = $encodedPassword;
-        $ie->save();
+        $configuration = array(
+            'name' => 'User Configuration',
+            'type' => 'user',
+            'user_id' => $GLOBALS['current_user']->id,
+            'from_email' => 'foo@bar.com',
+            'from_name' => 'Foo Bar',
+            'mail_sendtype' => 'SMTP',
+            'mail_smtptype' => 'other',
+            'mail_smtpserver' => 'smtp.example.com',
+            'mail_smtpport' => '25',
+            'mail_smtpuser' => 'mickey',
+            'mail_smtppass' => $encodedPassword,
+            'mail_smtpauth_req' => '1',
+            'mail_smtpssl' => '0',
+        );
+        $configuration = OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
-        $record = BeanFactory::retrieveBean('InboundEmail', $ie->id, ['use_cache' => false]);
-        $this->assertSame($decodedPassword, $record->email_password);
+        $record = new OutboundEmail();
+        $record->retrieve($configuration->id);
+        $this->assertSame($decodedPassword, $record->mail_smtppass);
     }
 }

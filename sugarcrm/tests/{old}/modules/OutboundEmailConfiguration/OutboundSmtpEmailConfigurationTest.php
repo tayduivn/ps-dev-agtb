@@ -12,6 +12,7 @@
 
 
 /**
+ * @coversDefaultClass OutboundSmtpEmailConfiguration
  * @group email
  * @group outboundemailconfiguration
  */
@@ -66,5 +67,16 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
         $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
         $actual   = $configuration->getMode();
         self::assertEquals($expected, $actual, "The mode should have been a {$expected}");
+    }
+
+    /**
+     * @covers ::setPassword
+     * @covers ::getPassword
+     */
+    public function testGetPassword()
+    {
+        $configuration = new OutboundSmtpEmailConfiguration($GLOBALS['current_user']);
+        $configuration->setPassword('abc&amp;');
+        $this->assertEquals('abc&', $configuration->getPassword(), 'The smtp password should be html decoded');
     }
 }

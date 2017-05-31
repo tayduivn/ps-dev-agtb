@@ -445,6 +445,7 @@ class OutboundEmail
 
         if (!empty($data['mail_smtppass'])) {
             $this->mail_smtppass = blowfishDecode(blowfishGetKey('OutBoundEmail'), $data['mail_smtppass']);
+            $this->mail_smtppass = htmlspecialchars_decode($this->mail_smtppass, ENT_QUOTES);
         }
 
         $this->mail_smtpdisplay = $data['mail_smtpserver'];
@@ -493,6 +494,9 @@ class OutboundEmail
         foreach ($fieldDefs as $field => $def) {
             if (isset($this->$field)) {
                 if ($field == 'mail_smtppass') {
+                    if (!empty($this->mail_smtppass)) {
+                        $this->mail_smtppass = htmlspecialchars_decode($this->mail_smtppass, ENT_QUOTES);
+                    }
                     $this->mail_smtppass = Blowfish::encode(Blowfish::getKey('OutBoundEmail'), $this->mail_smtppass);
                 }
                 if ($field == 'mail_smtpserver'

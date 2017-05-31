@@ -232,7 +232,7 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
      * @return string
      */
     public function getPassword() {
-        return $this->password;
+        return htmlspecialchars_decode($this->password, ENT_QUOTES);
     }
 
     /**
