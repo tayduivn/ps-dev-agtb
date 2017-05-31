@@ -31,6 +31,13 @@ module.exports = function(config) {
         }
     };
 
+    var dockerLaunchers = {
+        docker_chrome: {
+            base: 'Chrome',
+            flags: ['--no-sandbox']
+        }
+    };
+
     config.set({
         basePath: '../',
         frameworks: [
@@ -68,6 +75,6 @@ module.exports = function(config) {
         sauceLabs: {
             testName: 'Mango Karma Tests'
         },
-        customLaunchers: sauceLaunchers
+        customLaunchers: Object.assign(sauceLaunchers, dockerLaunchers)
     });
 };

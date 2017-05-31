@@ -7,8 +7,21 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-FROM registry.sugarcrm.net/engineering/node-selenium:latest
+FROM registry.sugarcrm.net/engineering/node:latest
 MAINTAINER Engineering Automation "engineering-automation@sugarcrm.com"
+
+ENV GEOMETRY 1920x1080x24
+ENV DISPLAY :0
+ENV DBUS_SESSION_BUS_ADDRESS /dev/null
+
+# Prevents timezone message in Sugar instance (it was covering page elements)
+ENV TZ America/Los_Angeles
+
+# Install Graphical Support and Browsers
+ENV FIREFOX_VERSION 53.0
+COPY scripts/install-web-browsers.sh /opt/bin/install-web-browsers.sh
+RUN chmod +x /opt/bin/install-web-browsers.sh && \
+    /opt/bin/install-web-browsers.sh
 
 # Add multimedia repository, required to install ffmpeg
 RUN \
@@ -22,11 +35,20 @@ RUN \
 RUN apt-get install -y --force-yes --no-install-recommends \
     graphicsmagick ffmpeg
 
+# Install Java 8, required for Selenium
+RUN \
+    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" > /etc/apt/sources.list.d/java-8-debian.list && \
+    echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" >> /etc/apt/sources.list.d/java-8-debian.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886 && \
+    apt-get update && \
+    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
+    apt-get install -y --no-install-recommends oracle-java8-installer
+
 # Cleanup
 RUN apt-get autoremove -y && apt-get clean && \
     rm -Rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ADD Seedbed.Entrypoint.sh /Seedbed.Entrypoint.sh
+ADD scripts/Seedbed.Entrypoint.sh /Seedbed.Entrypoint.sh
 
 # Default command to run when container starts:
 ENTRYPOINT ["/Seedbed.Entrypoint.sh"]

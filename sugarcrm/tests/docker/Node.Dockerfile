@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-FROM node:6.9.4
+FROM node:6.10.3
 MAINTAINER Engineering Automation "engineering-automation@sugarcrm.com"
 
 # Set debconf to run non-interactively
@@ -18,26 +18,12 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 RUN apt-get update
 
-# Update node registry
-RUN \
-    npm cache clear && \
-    npm config set registry https://cache.sugardev.team/repository/npm/
-
 # Install basic build dependencies
 RUN apt-get upgrade -y && \
     DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y --force-yes --no-install-recommends \
     apt-transport-https build-essential ca-certificates lsb-release python \
     rlwrap software-properties-common
-
-# Install Yarn
-#RUN npm install --global yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && apt-get install yarn
-
-# Install gulp CLI
-RUN yarn global add gulp-cli
 
 # Install CI-specific goodies
 RUN apt-get install -y --force-yes --no-install-recommends \

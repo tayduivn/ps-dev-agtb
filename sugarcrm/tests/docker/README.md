@@ -22,11 +22,11 @@ This image installs yarn, gulp, and a few other utilities used in CI. Our *lates
 docker build -f Node.Dockerfile -t registry.sugarcrm.net/engineering/node:latest .
 ```
 
-## Engineering Node Selenium Image
+## Karma Image
 
-This image installs everything required to run Selenium on top of our Node image.
+This image installs everything required for Seedbed to run on top of our Node Selenium image.
 ```
-docker build -f Node.Selenium.Dockerfile -t registry.sugarcrm.net/engineering/node-selenium:latest .
+docker build -f Karma.Dockerfile -t registry.sugarcrm.net/karma/karma:latest .
 ```
 
 ## Thorn Image
