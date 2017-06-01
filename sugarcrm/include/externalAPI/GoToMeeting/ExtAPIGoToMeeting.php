@@ -17,7 +17,7 @@
 class ExtAPIGoToMeeting extends OAuthPluginBase implements WebMeeting
 {
     protected $dateFormat = 'Y-m-d\TH:i:s';
-    protected $url = 'https://api.citrixonline.com/';
+    protected $url = 'https://api.getgo.com/';
 
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = false;
