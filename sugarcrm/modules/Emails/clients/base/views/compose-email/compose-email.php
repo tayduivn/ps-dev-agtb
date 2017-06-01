@@ -71,6 +71,7 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                             'type' => 'email-recipients',
                             'label' => 'LBL_TO_ADDRS',
                             'span' => 12,
+                            'max_num' => -1,
                             'fields' => array(
                                 'name',
                                 'email_address_used',
@@ -82,6 +83,7 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                             'type' => 'email-recipients',
                             'label' => 'LBL_CC',
                             'span' => 12,
+                            'max_num' => -1,
                             'fields' => array(
                                 'name',
                                 'email_address_used',
@@ -93,6 +95,7 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                             'type' => 'email-recipients',
                             'label' => 'LBL_BCC',
                             'span' => 12,
+                            'max_num' => -1,
                             'fields' => array(
                                 'name',
                                 'email_address_used',
@@ -128,6 +131,7 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                     'type' => 'email-attachments',
                     'dismiss_label' => true,
                     'span' => 12,
+                    'max_num' => -1,
                     'fields' => array(
                         'name',
                         'filename',

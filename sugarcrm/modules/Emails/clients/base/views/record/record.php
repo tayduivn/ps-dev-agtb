@@ -129,6 +129,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'type' => 'email-recipients',
                     'label' => 'LBL_TO_ADDRS',
                     'readonly' => true,
+                    'max_num' => -1,
                     'fields' => array(
                         'name',
                         'email_address_used',
@@ -152,6 +153,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'label' => 'LBL_ATTACHMENTS',
                     'readonly' => true,
                     'span' => 12,
+                    'max_num' => -1,
                     'fields' => array(
                         'name',
                         'filename',
@@ -177,6 +179,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'type' => 'email-recipients',
                     'label' => 'LBL_CC',
                     'readonly' => true,
+                    'max_num' => -1,
                     'fields' => array(
                         'name',
                         'email_address_used',
@@ -188,6 +191,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'type' => 'email-recipients',
                     'label' => 'LBL_BCC',
                     'readonly' => true,
+                    'max_num' => -1,
                     'fields' => array(
                         'name',
                         'email_address_used',
