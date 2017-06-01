@@ -49,7 +49,8 @@ class PMSECriteriaEvaluator
         $resultToken = new stdClass();
         $resultToken->expType = 'CONSTANT';
         $operationGroup = 'relation';
-        if (!isset($criteriaToken->expSubtype)) {
+        $expSubtype = PMSEEngineUtils::getExpressionSubtype($criteriaToken);
+        if (!isset($expSubtype)) {
             $criteriaToken->expSubtype = '';
         }
         $resultToken->expValue = $this->expressionEvaluator->routeFunctionOperator(
@@ -72,59 +73,4 @@ class PMSECriteriaEvaluator
         }
         return $tokenArray;
     }
-    
-//    public function retrieveCriteriaSubtype($subType)
-//    {
-//        $type = 'string';
-//        switch (strtolower($subtype)) {
-//            case 'name':
-//            case 'textfield':
-//            case 'varchar':
-//            case 'dropdown':
-//            case 'enum':
-//            case 'textarea':
-//            case 'text':
-//            case 'html':
-//            case 'url':
-//            case 'radio':
-//            case 'radioenum':
-//                $type = 'string';
-//            break;
-//            case 'checkbox':
-//            case 'bool':
-//                $type = 'boolean';
-//            break;
-//            case 'date':
-//            case 'datetime':
-//            case 'datetimecombo':
-//                $type = 'date';
-//            break;            
-//            case 'currency':
-//            case 'float':
-//            case 'integer':
-//            case 'int':
-//            case 'decimal':
-//                $type = 'number';
-//            break;
-//            default :
-//                $type = $subType;
-//            break;
-//        }
-//        return $type;
-//    }
-//    
-//    public function retrieveCaster($subtype)
-//    {
-//        switch ($subtype) {
-//            case 'string':
-//            case 'date':
-//            case 'boolean':
-//                $caster = $subtype;
-//                break;
-//            case 'number':
-//                $caster = '';
-//            default:
-//                break;
-//        }
-//    }
 }

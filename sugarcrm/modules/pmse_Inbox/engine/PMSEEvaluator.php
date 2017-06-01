@@ -152,8 +152,9 @@ class PMSEEvaluator
             $result = true;
         } else {
             $result = $resultArray[0];
-            if (isset($result->expSubtype)) {
-                $type = strtolower($result->expSubtype);
+            $expSubtype = PMSEEngineUtils::getExpressionSubtype($result);
+            if (isset($expSubtype)) {
+                $type = strtolower($expSubtype);
                 switch ($type) {
                     case 'currency':
                         $result = json_encode($result);

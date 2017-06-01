@@ -1814,4 +1814,27 @@ class PMSEEngineUtils
     {
         return "pmse_{$moduleName}_module_has_records_with_locked_fields";
     }
+
+    /**
+     * Because we used expSubType property prior to 7.9 instead of expSubtype,
+     * we need to make sure BRs still work after upgrade that's why this hack
+     * @param stdClass object
+     * @return string || null
+     */
+    public static function getExpressionSubtype(stdClass $obj)
+    {
+        // Expectation is expSubtype
+        if (isset($obj->expSubtype)) {
+            return $obj->expSubtype;
+        } elseif (isset($obj->expSubType)) {
+            // If there is no expSubtype but there is expSubType use that,
+            // but set the property onto the object first so it is available
+            // from here on out
+            $obj->expSubtype = $obj->expSubType;
+            return $obj->expSubtype;
+        } else {
+            // Nothing found so return a null
+            return null;
+        }
+    }
 }

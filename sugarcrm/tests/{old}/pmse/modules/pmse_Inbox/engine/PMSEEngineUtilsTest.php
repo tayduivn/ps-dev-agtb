@@ -760,4 +760,63 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($result->name, 'GetLinkedBeans Test Case');
     }
 
+    /**
+     * Data provider for expression subType
+     * @return array
+     */
+    public function getExpressionSubtypeProvider()
+    {
+        $o1 = new stdClass;
+        $o1->expSubtype = 'black';
+
+        $o2 = new stdClass;
+        $o2->expSubType = 'blue';
+
+        $o3 = new stdClass;
+        $o3->expSubtype = 'red';
+        $o3->expSubType = 'green';
+
+        return [
+            // tests expSubtype
+            [
+                'obj' => $o1,
+                'expect' => 'black',
+                'flag' => false,
+            ],
+            // tests expSubType and setting expSubtype
+            [
+                'obj' => $o2,
+                'expect' => 'blue',
+                'flag' => true,
+            ],
+            // tests null
+            [
+                'obj' => new stdClass,
+                'expect' => null,
+                'flag' => false,
+            ],
+            // test expSubtype beats expSubType
+            [
+                'obj' => $o3,
+                'expect' => 'red',
+                'flag' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getExpressionSubtypeProvider
+     * @param stdClass $obj
+     * @param string $expect
+     * @param boolean $flag
+     */
+    public function testGetExpressionSubtype($obj, $expect, $flag)
+    {
+        $val = PMSEEngineUtils::getExpressionSubtype($obj);
+        $this->assertEquals($expect, $val);
+        if ($flag) {
+            $this->assertTrue(isset($obj->expSubtype));
+            $this->assertEquals($expect, $obj->expSubtype);
+        }
+    }
 }

@@ -600,8 +600,9 @@ class PMSEProjectImporter extends PMSEImporter
                                     foreach ($tokenExpression as $_key => $_value) {
                                         switch ($_value->expType) {
                                             case 'MODULE':
-                                                if (!empty($_value->expSubtype) &&
-                                                    (strtolower($_value->expSubtype) == 'currency') &&
+                                                $expSubtype = PMSEEngineUtils::getExpressionSubtype($_value);
+                                                if (!empty($expSubtype) &&
+                                                    (strtolower($expSubtype) == 'currency') &&
                                                     (empty($_value->expCurrency))
                                                 ) {
                                                     PMSEEngineUtils::fixCurrencyType($tokenExpression[$_key]);

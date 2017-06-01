@@ -97,7 +97,10 @@ class PMSEExpressionEvaluator
         $resultToken = new stdClass();
         $resultToken->expType = 'CONSTANT';
 
-        if (strtolower($firstToken->expSubtype) == 'currency' || strtolower($secondToken->expSubtype) == 'currency') {
+        $firstTokenExpSubtype = PMSEEngineUtils::getExpressionSubtype($firstToken);
+        $secondTokenExpSubtype = PMSEEngineUtils::getExpressionSubtype($secondToken);
+
+        if (strtolower($firstTokenExpSubtype) == 'currency' || strtolower($secondTokenExpSubtype) == 'currency') {
             $resultToken->expSubtype = 'currency';
             $operationGroup = $this->checkCurrencyEvaluation(
                 $groupKey,
@@ -132,19 +135,21 @@ class PMSEExpressionEvaluator
 
     public function checkDateEvaluation($key, $firstToken, $operator, $secondToken)
     {
-        if (strtolower($firstToken->expSubtype)=='date' ||
-            strtolower($firstToken->expSubtype)=='datetime') {
-            if (strtolower($secondToken->expSubtype)=='date' ||
-                strtolower($secondToken->expSubtype)=='datetime') {
+        $firstTokenExpSubtype = PMSEEngineUtils::getExpressionSubtype($firstToken);
+        $secondTokenExpSubtype = PMSEEngineUtils::getExpressionSubtype($secondToken);
+        if (strtolower($firstTokenExpSubtype)=='date' ||
+            strtolower($firstTokenExpSubtype)=='datetime') {
+            if (strtolower($secondTokenExpSubtype)=='date' ||
+                strtolower($secondTokenExpSubtype)=='datetime') {
                 $key = 'dateDateOp';
-            } elseif (strtolower($secondToken->expSubtype)=='timespan') {
+            } elseif (strtolower($secondTokenExpSubtype)=='timespan') {
                 $key = 'dateSpanOp';
             }
-        } elseif (strtolower($firstToken->expSubtype)=='timespan') {
-            if (strtolower($secondToken->expSubtype)=='date' ||
-                strtolower($secondToken->expSubtype)=='datetime') {
+        } elseif (strtolower($firstTokenExpSubtype)=='timespan') {
+            if (strtolower($secondTokenExpSubtype)=='date' ||
+                strtolower($secondTokenExpSubtype)=='datetime') {
                 $key = 'spanDateOp';
-            } elseif (strtolower($secondToken->expSubtype)=='timespan') {
+            } elseif (strtolower($secondTokenExpSubtype)=='timespan') {
                 $key = 'spanSpanOp';
             }
         }
@@ -152,7 +157,9 @@ class PMSEExpressionEvaluator
     }
 
     public function checkCurrencyEvaluation($key, $firstToken, $operator, $secondToken) {
-        if (strtolower($firstToken->expSubtype)  == 'currency' || strtolower($secondToken->expSubtype) == 'currency') {
+        $firstTokenExpSubtype = PMSEEngineUtils::getExpressionSubtype($firstToken);
+        $secondTokenExpSubtype = PMSEEngineUtils::getExpressionSubtype($secondToken);
+        if (strtolower($firstTokenExpSubtype)  == 'currency' || strtolower($secondTokenExpSubtype) == 'currency') {
             switch ($operator->expValue) {
                 case '+':
                 case '-':
@@ -332,21 +339,25 @@ class PMSEExpressionEvaluator
     }
 
     public function isScalar ($expression) {
-        return ($expression->expType == 'CONSTANT' && $expression->expSubtype == 'number') ||
-        ($expression->expType == 'VARIABLE' && ($expression->expSubtype == 'Currency' ||
-                $expression->expSubtype == 'Decimal' || $expression->expSubtype == 'Float' ||
-                $expression->expSubtype == 'Integer'));
+        $expSubtype = PMSEEngineUtils::getExpressionSubtype($expression);
+        $result = ($expression->expType == 'CONSTANT' && $expSubtype == 'number') ||
+            ($expression->expType == 'VARIABLE' && ($expSubtype == 'Currency' ||
+                    $expSubtype == 'Decimal' || $expSubtype == 'Float' ||
+                    $expSubtype == 'Integer'));
+        return $result;
     }
 
     public function executeMultiplyDivideCurrency($value1, $operator, $value2) {
-        if ((strtolower($value1->expSubtype) == 'currency' && $this->isScalar($value2)) ||
-            (strtolower($value2->expSubtype) == 'currency' && $this->isScalar($value1))) {
+        $value1ExpSubtype = PMSEEngineUtils::getExpressionSubtype($value1);
+        $value2ExpSubtype = PMSEEngineUtils::getExpressionSubtype($value2);
+        if ((strtolower($value1ExpSubtype) == 'currency' && $this->isScalar($value2)) ||
+            (strtolower($value2ExpSubtype) == 'currency' && $this->isScalar($value1))) {
             switch ($operator) {
                 case 'x':
                     $result = $value1->expValue * $value2->expValue;
                     break;
                 case '/':
-                    if (strtolower($value1->expSubtype) == 'currency') {
+                    if (strtolower($value1ExpSubtype) == 'currency') {
                         $result = $value1->expValue / $value2->expValue;
                     } else {
                         $error = "Impossible to divide an scalar value by a currency.";
@@ -359,7 +370,7 @@ class PMSEExpressionEvaluator
         if (isset($error)) {
             throw new PMSEExpressionEvaluationException($error, func_get_args());
         }
-        $currency_id = strtolower($value1->expSubtype) == 'currency' ? $value1->expField : $value2->expField;
+        $currency_id = strtolower($value1ExpSubtype) == 'currency' ? $value1->expField : $value2->expField;
         $newCurrency = new stdClass();
         $newCurrency->expType = 'CONSTANT';
         $newCurrency->expSubtype = 'currency';
@@ -385,7 +396,9 @@ class PMSEExpressionEvaluator
     public function executeAddSubstractCurrency($value1, $operator, $value2) {
         global $current_user;
 
-        if (!(strtolower($value1->expSubtype) == 'currency' && strtolower($value2->expSubtype) == 'currency')) {
+        $value1ExpSubtype = PMSEEngineUtils::getExpressionSubtype($value1);
+        $value2ExpSubtype = PMSEEngineUtils::getExpressionSubtype($value2);
+        if (!(strtolower($value1ExpSubtype) == 'currency' && strtolower($value2ExpSubtype) == 'currency')) {
             throw new PMSEExpressionEvaluationException("Add|Substract Currency - ".
                 "Both operands must be currency types.", func_get_args());
         }

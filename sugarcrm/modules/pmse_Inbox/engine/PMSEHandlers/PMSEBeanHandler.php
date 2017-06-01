@@ -365,9 +365,10 @@ class PMSEBeanHandler
         $response = new stdClass();
         $dataEval = array();
         foreach ($expression as $value) {
+            $expSubtype = PMSEEngineUtils::getExpressionSubtype($value);
             if ($value->expType != 'VARIABLE') {
-                if (isset($value->expSubtype)) {
-                    switch (strtoupper($value->expSubtype)) {
+                if (isset($expSubtype)) {
+                    switch (strtoupper($expSubtype)) {
                         case 'INT':
                             $dataEval[] = (int)$value->expValue;
                             break;
@@ -394,7 +395,7 @@ class PMSEBeanHandler
             } else {
                 $fields = $value->expValue;
                 $field_value = !empty($bean->fetched_row[$fields]) ? $bean->fetched_row[$fields] : $bean->$fields;
-                switch (strtolower($value->expSubtype)) {
+                switch (strtolower($expSubtype)) {
                     case 'currency':
                         $constantCurrency = new stdClass();
                         $constantCurrency->expType = 'CONSTANT';
