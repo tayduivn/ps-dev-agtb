@@ -33,7 +33,6 @@
                         var offsets;
                         var hasMore;
                         var options;
-                        var fields;
 
                         if (this.disposed === true) {
                             return;
@@ -43,18 +42,14 @@
                         hasMore = _.some(offsets, function(offset) {
                             return offset > -1;
                         });
-                        fields = _.map(this.def.fields, function(field) {
-                            return _.has(field, 'name') ? field.name : field;
-                        });
                         options = {
+                            // Use the view's metadata to control sort order
+                            // and limit, as well as define fields to retrieve.
+                            view: this.view.name,
                             success: function() {
                                 fetchAll(collection);
                             }
                         };
-
-                        if (!_.isEmpty(fields)) {
-                            options.fields = fields;
-                        }
 
                         if (hasMore) {
                             collection.paginate(options);
@@ -64,11 +59,11 @@
                     }, this);
 
                     if (this.model) {
-                        // Each time the model is synchronized after the initial fetch, the
-                        // response will not include data for the collection. Since this
-                        // field requires all records in the collection, we must reload it.
-                        // Even after the initial fetch, we must continue to load the rest
-                        // of the records. This achieves both.
+                        // Each time the model is synchronized -- including
+                        // the initial fetch -- the response may not include
+                        // all records in the collection. Since this field
+                        // requires all records in the collection, we must load
+                        // the rest.
                         this.listenTo(this.model, 'sync', function() {
                             var collection = this.model.get(this.name);
 
@@ -78,11 +73,7 @@
 
                             if (!this.model.isNew()) {
                                 this.view.trigger('loading_collection_field', this.name);
-                                //FIXME: Pagination doesn't currently work. Fix in MAR-4522.
-                                // collection.resetPagination();
-                                // fetchAll(collection);
-                                // In the meantime, call onComplete.
-                                onComplete();
+                                fetchAll(collection);
                             }
                         });
                     }

@@ -8,7 +8,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//FIXME: Add more test cases when MAR-4522 is addressed to support pagination.
 describe('Plugins.CollectionFieldLoadAll', function() {
     var app;
     var context;
@@ -39,7 +38,7 @@ describe('Plugins.CollectionFieldLoadAll', function() {
         field = SugarTest.createField({
             name: 'attachments_collection',
             type: 'email-attachments',
-            viewName: 'detail',
+            viewName: 'record',
             module: model.module,
             model: model,
             context: context,
@@ -61,12 +60,52 @@ describe('Plugins.CollectionFieldLoadAll', function() {
     it('should fetch all related records when the model is synchronized', function() {
         var loadingSpy = sandbox.spy();
         var loadedSpy = sandbox.spy();
+        var collection = model.get(field.name);
+        var pages = 3;
 
         model.set('id', _.uniqueId());
         field.view.on('loading_collection_field', loadingSpy);
         field.view.on('loaded_collection_field', loadedSpy);
+
+        collection.next_offset = {
+            attachments: 5
+        };
+        sandbox.stub(collection, 'paginate', function(options) {
+            expect(options.view).toBe('record');
+
+            if (--pages === 0) {
+                collection.next_offset.attachments = -1;
+            } else {
+                collection.next_offset.attachments += 5;
+            }
+
+            options.success();
+        });
+
         model.trigger('sync');
 
+        expect(collection.paginate).toHaveBeenCalledThrice();
+        expect(loadingSpy).toHaveBeenCalledOnce();
+        expect(loadedSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should not fetch any additional related records when the model is synchronized', function() {
+        var loadingSpy = sandbox.spy();
+        var loadedSpy = sandbox.spy();
+        var collection = model.get(field.name);
+
+        model.set('id', _.uniqueId());
+        field.view.on('loading_collection_field', loadingSpy);
+        field.view.on('loaded_collection_field', loadedSpy);
+
+        collection.next_offset = {
+            attachments: -1
+        };
+        sandbox.spy(collection, 'paginate');
+
+        model.trigger('sync');
+
+        expect(collection.paginate).not.toHaveBeenCalled();
         expect(loadingSpy).toHaveBeenCalledOnce();
         expect(loadedSpy).toHaveBeenCalledOnce();
     });
