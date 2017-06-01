@@ -146,4 +146,11 @@ describe('Emails.Views.Record', function() {
             });
         });
     });
+
+    describe('saving an email', function() {
+        it('should set the view parameter to the name of the view', function() {
+            var options = view.getCustomSaveOptions({});
+            expect(options.params.view).toBe(view.name);
+        });
+    });
 });

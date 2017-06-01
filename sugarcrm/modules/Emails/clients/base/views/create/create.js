@@ -138,6 +138,21 @@
     /**
      * @inheritdoc
      *
+     * Adds the view parameter. It must be added to `options.params` because
+     * the `options.view` is only added as a parameter if the request method is
+     * "read".
+     */
+    getCustomSaveOptions: function(options) {
+        options = options || {};
+        options.params = options.params || {};
+        options.params.view = this.name;
+
+        return options;
+    },
+
+    /**
+     * @inheritdoc
+     *
      * Sets the title of the page. Hides or shows the attachments field.
      */
     _render: function() {

@@ -100,6 +100,21 @@
     },
 
     /**
+     * @inheritdoc
+     *
+     * Adds the view parameter. It must be added to `options.params` because
+     * the `options.view` is only added as a parameter if the request method is
+     * "read".
+     */
+    getCustomSaveOptions: function(options) {
+        options = options || {};
+        options.params = options.params || {};
+        options.params.view = this.name;
+
+        return options;
+    },
+
+    /**
      * Alerts the user if a draft was opened in the record view, so the user
      * can switch to composing the email instead of simply viewing it.
      *

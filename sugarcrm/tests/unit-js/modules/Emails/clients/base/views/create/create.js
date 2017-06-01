@@ -204,6 +204,11 @@ describe('Emails.Views.Create', function() {
             expect(actual).toBe('LBL_EMAIL_ARCHIVED');
             expect(app.lang.get.firstCall.args[1]).toBe(view.module);
         });
+
+        it('should set the view parameter to the name of the view', function() {
+            var options = view.getCustomSaveOptions({});
+            expect(options.params.view).toBe(view.name);
+        });
     });
 
     describe('ResizeEditor', function() {
