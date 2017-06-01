@@ -94,11 +94,7 @@
         // Remove all existing attachments that came from an email template.
         attachments = this.model.get(this.name);
         existingTemplateAttachments = attachments.where({file_source: 'EmailTemplates'});
-
-        //FIXME: Shouldn't have to check the length once SC-6252 is resolved.
-        if (existingTemplateAttachments.length > 0) {
-            attachments.remove(existingTemplateAttachments);
-        }
+        attachments.remove(existingTemplateAttachments);
 
         // Add the attachments from the new email template.
         newTemplateAttachments = notes.map(function(model) {

@@ -260,13 +260,6 @@ describe('Plugins.EmailParticipants', function() {
         });
 
         it('should search for participants that match the query', function() {
-            //FIXME: The following record should be included in data.records after MAR-4523 is completed.
-            // {
-            //     id: _.uniqueId(),
-            //     _module: 'EmailAddresses',
-            //     name: '',
-            //     email: 'haley@example.com'
-            // }
             var data = {
                 next_offset: -1,
                 records: [{
@@ -274,6 +267,11 @@ describe('Plugins.EmailParticipants', function() {
                     _module: 'Contacts',
                     name: 'Haley Rhodes',
                     email: 'hrhodes@example.com'
+                }, {
+                    id: _.uniqueId(),
+                    _module: 'EmailAddresses',
+                    name: '',
+                    email: 'haley@example.com'
                 }]
             };
             var url = /.*\/rest\/v10\/Mail\/recipients\/find\?q=haley&max_num=10/;
@@ -281,7 +279,7 @@ describe('Plugins.EmailParticipants', function() {
                 term: 'haley',
                 callback: function(data) {
                     expect(data.more).toBe(false);
-                    expect(data.results.length).toBe(1);
+                    expect(data.results.length).toBe(2);
                 }
             };
             var response = [
@@ -330,7 +328,6 @@ describe('Plugins.EmailParticipants', function() {
             expect(actual).toBeUndefined();
         });
 
-        //FIXME: This should start working after MAR-4523 is completed.
         it('should create a choice when the term is a valid email address', function() {
             var term = 'test@example.com';
             var data = [];
