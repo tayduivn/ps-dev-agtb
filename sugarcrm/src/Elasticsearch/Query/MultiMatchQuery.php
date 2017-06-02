@@ -144,7 +144,7 @@ class MultiMatchQuery implements QueryInterface
             if (TermParserHelper::isAndOperator($operator) || TermParserHelper::isOrOperator($operator)) {
                 $returnExpr = $this->buildBoolQuery($operands);
 
-                $boolQuery = new \Elastica\Query\Bool();
+                $boolQuery = new \Elastica\Query\BoolQuery();
                 foreach ($returnExpr as $expr) {
                     //convert a single string to a multi-match query
                     if (is_string($expr)) {
@@ -159,7 +159,7 @@ class MultiMatchQuery implements QueryInterface
                 return $boolQuery;
             } elseif (TermParserHelper::isNotOperator($operator)) {
                 $query = $this->buildMultiMatchQuery($operands);
-                $boolQuery = new \Elastica\Query\Bool();
+                $boolQuery = new \Elastica\Query\BoolQuery();
                 foreach ($operands as $operand) {
                     $query = $this->buildMultiMatchQuery($operand);
                     $boolQuery->addMustNot($query);
