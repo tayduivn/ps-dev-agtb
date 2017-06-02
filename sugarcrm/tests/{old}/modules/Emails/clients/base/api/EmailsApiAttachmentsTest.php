@@ -143,63 +143,6 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
             "The file {$attachment2->id} should have been deleted"
         );
 
-        $result = $GLOBALS['db']->query("SELECT * FROM notes WHERE email_id='{$record['id']}' AND deleted=1");
-
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $this->assertEquals($attachment2->id, $row['id'], "{$row['id']} should not have been deleted");
-            $this->assertFileNotExists("upload://{$row['id']}", "The file {$row['id']} should have been deleted");
-        }
-
         unlink("upload://{$templateId}");
-    }
-
-    /**
-     * @covers ::deleteRecord
-     * @covers EmailsHookHandler::removeEmailAttachment
-     */
-    public function testDeleteRecord()
-    {
-        $uploadId = Uuid::uuid1();
-        file_put_contents("upload://tmp/{$uploadId}", 'test');
-
-        $docId = Uuid::uuid1();
-        file_put_contents("upload://{$docId}", 'test');
-
-        $args = array(
-            'state' => Email::STATE_DRAFT,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
-            'attachments' => array(
-                'create' => array(
-                    array(
-                        'filename_guid' => $uploadId,
-                        'name' => 'aaaaa',
-                        'filename' => 'aaaaa.png',
-                        'file_mime_type' => 'image/png',
-                    ),
-                    array(
-                        'upload_id' => $docId,
-                        'name' => 'bbbbb',
-                        'filename' => 'bbbbb.png',
-                        'file_mime_type' => 'image/png',
-                        'file_source' => 'DocumentRevisions',
-                    ),
-                ),
-            ),
-        );
-        $record = $this->createRecord($args);
-
-        $attachments = $this->getRelatedRecords($record['id'], 'attachments');
-        $this->assertCount(2, $attachments['records'], 'Should have two attachments');
-        $this->assertFiles($attachments['records']);
-
-        $this->deleteRecord($record['id']);
-
-        $result = $GLOBALS['db']->query("SELECT * FROM notes WHERE email_id='{$record['id']}'");
-
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $this->assertEquals(1, $row['deleted'], "{$row['id']} should have been deleted");
-            $file = empty($row['upload_id']) ? $row['id'] : $row['upload_id'];
-            $this->assertFileNotExists("upload://{$file}", "The file {$file} should not exist");
-        }
     }
 }

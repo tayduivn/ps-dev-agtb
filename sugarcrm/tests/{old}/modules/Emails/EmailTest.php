@@ -583,6 +583,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testTotalAttachments()
     {
+        $this->email->state = Email::STATE_DRAFT;
         $this->email->save();
         SugarTestEmailUtilities::setCreatedEmail($this->email->id);
 

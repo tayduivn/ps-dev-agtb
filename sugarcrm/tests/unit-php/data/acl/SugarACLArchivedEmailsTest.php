@@ -106,7 +106,6 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ['leads_bcc'],
             ['prospects_bcc'],
             ['users_bcc'],
-            ['attachments'],
         ];
     }
 
@@ -360,10 +359,6 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'users_bcc',
-                false,
-            ],
-            [
-                'attachments',
                 false,
             ],
         ];
@@ -682,10 +677,6 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'users_bcc',
-                true,
-            ],
-            [
-                'attachments',
                 true,
             ],
         ];

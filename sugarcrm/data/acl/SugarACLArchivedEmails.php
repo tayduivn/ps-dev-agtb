@@ -64,7 +64,6 @@ class SugarACLArchivedEmails extends SugarACLStrategy
             'state',
             'reply_to_id',
             'outbound_email_id',
-            'attachments',
         ];
 
         // All of the sender and recipient links are immutable.

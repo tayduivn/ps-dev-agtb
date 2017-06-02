@@ -561,6 +561,7 @@ $dictionary['Email'] = array(
             'type' => 'link',
             'vname' => 'LBL_ATTACHMENTS',
             'reportable' => false,
+            'readonly' => true,
         ),
         'attachments_collection' => array(
             'name' => 'attachments_collection',
@@ -926,6 +927,8 @@ $dictionary['Email'] = array(
             'rhs_table' => 'notes',
             'rhs_key' => 'email_id',
             'relationship_type' => 'one-to-many',
+            'relationship_class' => 'EmailAttachmentRelationship',
+            'relationship_file' => 'modules/Emails/EmailAttachmentRelationship.php',
             'relationship_role_column' => 'email_type',
             'relationship_role_column_value' => 'Emails',
         ),

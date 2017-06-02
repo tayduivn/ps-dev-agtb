@@ -165,4 +165,37 @@ class EmailsRelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api = new EmailsRelateRecordApi();
         $api->deleteRelatedLink($this->service, $args);
     }
+
+    /**
+     * The attachments link is readonly.
+     *
+     * @covers ::updateRelatedLink
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testUpdateRelatedLink()
+    {
+        $email = BeanFactory::newBean('Emails');
+        $email->id = Uuid::uuid1();
+
+        $note = BeanFactory::newBean('Notes');
+        $note->id = Uuid::uuid1();
+
+        $linkName = 'attachments';
+
+        $args = [
+            'module' => 'Emails',
+            'record' => $email->id,
+            'link_name' => $linkName,
+            'remote_id' => $note->id,
+        ];
+
+        $api = $this->createPartialMock('EmailsRelateRecordApi', [
+            'loadBean',
+            'checkRelatedSecurity',
+        ]);
+        $api->expects($this->once())->method('loadBean')->willReturn($email);
+        $api->expects($this->once())->method('checkRelatedSecurity')->willReturn([$linkName, $note]);
+
+        $api->updateRelatedLink($this->service, $args);
+    }
 }

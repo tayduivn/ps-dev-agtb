@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 require_once 'modules/Emails/EmailsHookHandler.php';
 
 /**
@@ -37,16 +39,21 @@ class EmailsHookHandlerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUpdateAttachmentVisibility()
     {
         $teams = BeanFactory::getBean('TeamSets');
-        $data = array(
-            'state' => Email::STATE_ARCHIVED,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
-            'team_id' => 'East',
-            'team_set_id' => $teams->addTeams(array('East', 'West')),
-            //BEGIN SUGARCRM flav=ent ONLY
-            'team_set_selected_id' => 'East',
-            //END SUGARCRM flav=ent ONLY
-        );
-        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $teamSetId = $teams->addTeams(['East', 'West']);
+
+        $email = BeanFactory::newBean('Emails');
+        $email->new_with_id = true;
+        $email->id = Uuid::uuid1();
+        $email->name = 'SugarTest';
+        $email->state = Email::STATE_ARCHIVED;
+        $email->assigned_user_id = $GLOBALS['current_user']->id;
+        $email->team_id = 'East';
+        $email->team_set_id = $teamSetId;
+        //BEGIN SUGARCRM flav=ent ONLY
+        $email->team_set_selected_id = 'East';
+        //END SUGARCRM flav=ent ONLY
+        SugarTestEmailUtilities::setCreatedEmail($email->id);
+
         $note1 = SugarTestNoteUtilities::createNote();
         $note2 = SugarTestNoteUtilities::createNote();
 
