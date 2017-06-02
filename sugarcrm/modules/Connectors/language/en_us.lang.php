@@ -91,5 +91,6 @@ $mod_strings = array(
     'ERROR_NO_DISPLAYABLE_MAPPED_FIELDS' => 'Error: There are no module fields that have been mapped for display in the results.  Please contact the system administrator.',
     'LBL_INFO_INLINE' => 'Info' /*for 508 compliance fix*/,
     'LBL_CLOSE' => 'Close' /*for 508 compliance fix*/,
+    'ERROR_NO_CONNECTOR' => 'No connector was found for the given source ID.',
 );
 

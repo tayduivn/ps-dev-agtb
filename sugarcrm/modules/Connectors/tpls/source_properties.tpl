@@ -12,6 +12,10 @@
 *}
 
 <br/>
+{if $no_connector}
+<span class="error workflow-sunset">{$mod.ERROR_NO_CONNECTOR}</span>
+<br />
+{else}
 {if !empty($connector_language.LBL_LICENSING_INFO)}
 {$connector_language.LBL_LICENSING_INFO}
 {/if}
@@ -55,3 +59,4 @@
 addToValidate("ModifyProperties", "{$source_id}_{$id}", "alpha", true, "{$label}");
 {/foreach}
 </script>
+{/if}
