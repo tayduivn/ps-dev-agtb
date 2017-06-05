@@ -3,7 +3,7 @@
 class Latin
 {
 
-    public function __construct($rome, $translationPath, $baseDir, $ver, $no_latin_scm, $langs = null)
+    public function __construct($rome, $translationPath, $baseDir, $ver, $no_latin_scm, $langs = null, $rome_config = [])
     {
         $this->translationPath = $translationPath;
         $this->rome = $rome;
@@ -18,6 +18,7 @@ class Latin
         $this->ver = $ver;
         $this->no_latin_scm = $no_latin_scm;
         $this->langs = $langs;
+        $this->rome_config = $rome_config;
         if (empty($this->startPath)) {
             $this->startPath = $this->baseDir;
         }
@@ -105,7 +106,8 @@ class Latin
                     }
                     $licenseFile = "/sugarcrm/LICENSE";
                     $licenseConfig = "/sugarcrm/install/lang.config.php";
-                    if (substr($this->baseDir, -8) != "sugarcrm") {
+
+                    if (isset($this->rome_config['base_dir']) && substr($this->rome_config['base_dir'], -8) == "sugarcrm") {
                         $licenseConfig = "/install/lang.config.php";
                     }
                     $lic_cont = trim(file_get_contents($this->baseDir . $licenseFile));

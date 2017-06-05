@@ -156,7 +156,8 @@ if (!empty($config['base_dir'])) {
             $config['base_dir'],
             $config['ver'],
             $no_latin_scm,
-            $langs
+            $langs,
+            $config
         );
         $latin->copyTranslations();
     }
