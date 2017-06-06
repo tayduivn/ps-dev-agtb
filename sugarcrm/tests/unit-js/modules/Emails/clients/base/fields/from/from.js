@@ -155,7 +155,7 @@ describe('Emails.BaseFromField', function() {
             // Assert that the new sender will be linked on the next sync.
             json = field.model.toJSON({fields: ['from']});
             expect(json.contacts_from.add.length).toBe(1);
-            expect(json.contacts_from.add[0]).toBe(newSender.get('id'));
+            expect(json.contacts_from.add[0].id).toBe(newSender.get('id'));
             expect(json.contacts_from.delete.length).toBe(1);
             expect(json.contacts_from.delete[0]).toBe(currentSender.get('id'));
         });
