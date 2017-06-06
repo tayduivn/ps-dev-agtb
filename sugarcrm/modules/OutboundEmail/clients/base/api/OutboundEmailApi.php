@@ -71,7 +71,7 @@ class OutboundEmailApi extends ModuleApi
      */
     protected function saveBean(SugarBean $bean, ServiceBase $api, array $args)
     {
-        $this->validateSmtpConfiguration($bean, $api, $args);
+        $this->validateSmtpConfiguration($bean);
 
         if ($bean->type === OutboundEmail::TYPE_SYSTEM) {
             $bean->saveSystem(true);
@@ -96,14 +96,9 @@ class OutboundEmailApi extends ModuleApi
      * Validate the SMTP account settings and verify that the SMTP server can be successfully connected to.
      *
      * @param SugarBean $oe
-     * @param ServiceBase $api
-     * @param array $args
-     * @throws Exception
      * @throws SugarApiException
-     * @throws SugarApiExceptionEditConflict
-     * @throws SugarApiExceptionInvalidParameter
      */
-    private function validateSmtpConfiguration(SugarBean $oe, ServiceBase $api, array $args)
+    private function validateSmtpConfiguration(SugarBean $oe)
     {
         try {
             $configurations = array('from_email' => 'a@a');
