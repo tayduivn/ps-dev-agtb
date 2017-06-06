@@ -28,6 +28,7 @@ class MetaDataManagerMobile extends MetaDataManager
         'edit',
         'detail',
         'subpanels',
+        'convert-main',
     );
 
     /**
