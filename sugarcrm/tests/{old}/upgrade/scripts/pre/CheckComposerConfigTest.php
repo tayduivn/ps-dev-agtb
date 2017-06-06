@@ -413,10 +413,6 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
 
     public function testStockFilesAreRegognized()
     {
-        if (!file_exists(SugarUpgradeCheckComposerConfig::FILES_MD5)) {
-            $this->markTestSkipped('Skipping since the checksum file does not exist (depends on the build)');
-        }
-
         $sut = $this->getMockSut(null, array(
             'source_dir' => SUGAR_BASE_DIR,
         ));
