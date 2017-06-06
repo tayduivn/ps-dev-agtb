@@ -55,13 +55,13 @@ class PHPMailerProxy extends PHPMailer
      *
      * {@inheritdoc}
      */
-    public function smtpConnect()
+    public function smtpConnect($options = null)
     {
         if (defined('DISABLE_EMAIL_SEND') && DISABLE_EMAIL_SEND === true) {
             return true;
         }
 
-        return parent::smtpConnect();
+        return parent::smtpConnect($options);
     }
 
     /**

@@ -43,7 +43,7 @@ class OutboundEmailApi extends ModuleApi
      *
      * {@inheritdoc}
      */
-    public function createRecord(ServiceBase $api, $args)
+    public function createRecord(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, ['module']);
         $systemTypes = [

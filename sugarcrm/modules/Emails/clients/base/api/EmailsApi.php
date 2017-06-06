@@ -86,7 +86,7 @@ class EmailsApi extends ModuleApi
      *
      * {@inheritdoc}
      */
-    public function createRecord(ServiceBase $api, $args)
+    public function createRecord(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, array('state'));
 
@@ -138,7 +138,7 @@ class EmailsApi extends ModuleApi
      *
      * {@inheritdoc}
      */
-    public function updateRecord(ServiceBase $api, $args)
+    public function updateRecord(ServiceBase $api, array $args)
     {
         $api->action = 'view';
         $this->requireArgs($args, array('module', 'record'));
