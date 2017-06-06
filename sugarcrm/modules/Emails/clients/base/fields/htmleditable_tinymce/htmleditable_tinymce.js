@@ -205,31 +205,47 @@
      */
     addCustomButtons: function(editor) {
         var self = this;
+        var attachmentButtons = [];
 
-        editor.addButton('sugarattachment', {
-            type: 'menubutton',
-            tooltip: app.lang.get('LBL_ATTACHMENT', this.module),
-            icon: 'paperclip',
-            onclick: function(event) {
-                // Track click on the attachment button.
-                app.analytics.trackEvent('click', 'tinymce_email_attachment_button', event);
-            },
-            menu: [{
+        // Attachments can only be added if the user has permission to create
+        // Notes records. Only add the attachment button(s) if the user is
+        // allowed.
+        if (app.acl.hasAccess('create', 'Notes')) {
+            attachmentButtons.push({
                 text: app.lang.get('LBL_ATTACH_FROM_LOCAL', this.module),
                 onclick: _.bind(function(event) {
                     // Track click on the file attachment button.
                     app.analytics.trackEvent('click', 'tinymce_email_attachment_file_button', event);
                     this.view.trigger('email_attachments:file');
                 }, this)
-            }, {
-                text: app.lang.get('LBL_ATTACH_SUGAR_DOC', this.module),
-                onclick: _.bind(function(event) {
-                    // Track click on the document attachment button.
-                    app.analytics.trackEvent('click', 'tinymce_email_attachment_doc_button', event);
-                    this._selectDocument();
-                }, this)
-            }]
-        });
+            });
+
+            // The user can only select a document to attach if he/she has
+            // permission to view Documents records in the selection list.
+            // Don't add the Documents button if the user can't view and select
+            // documents.
+            if (app.acl.hasAccess('view', 'Documents')) {
+                attachmentButtons.push({
+                    text: app.lang.get('LBL_ATTACH_SUGAR_DOC', this.module),
+                    onclick: _.bind(function(event) {
+                        // Track click on the document attachment button.
+                        app.analytics.trackEvent('click', 'tinymce_email_attachment_doc_button', event);
+                        this._selectDocument();
+                    }, this)
+                });
+            }
+
+            editor.addButton('sugarattachment', {
+                type: 'menubutton',
+                tooltip: app.lang.get('LBL_ATTACHMENT', this.module),
+                icon: 'paperclip',
+                onclick: function(event) {
+                    // Track click on the attachment button.
+                    app.analytics.trackEvent('click', 'tinymce_email_attachment_button', event);
+                },
+                menu: attachmentButtons
+            });
+        }
 
         editor.addButton('sugarsignature', {
             type: 'menubutton',

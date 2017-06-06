@@ -308,6 +308,72 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
         });
     });
 
+    describe('adding custom buttons', function() {
+        beforeEach(function() {
+            field = SugarTest.createField({
+                name: 'description_html',
+                type: 'htmleditable_tinymce',
+                viewName: 'edit',
+                module: 'Emails',
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+            sandbox.stub(editor, 'addButton');
+        });
+
+        it('should add all of the buttons', function() {
+            field.addCustomButtons(editor);
+
+            expect(editor.addButton.callCount).toBe(3);
+            expect(editor.addButton.getCall(0).args[0]).toBe('sugarattachment');
+            expect(editor.addButton.getCall(0).args[1].menu.length).toBe(2);
+            expect(editor.addButton.getCall(1).args[0]).toBe('sugarsignature');
+            expect(editor.addButton.getCall(2).args[0]).toBe('sugartemplate');
+        });
+
+        it('should not add attachments buttons', function() {
+            sandbox.stub(app.acl, 'hasAccess');
+            app.acl.hasAccess.withArgs('create', 'Notes').returns(false);
+            app.acl.hasAccess.withArgs('view', 'EmailTemplates').returns(true);
+
+            field.addCustomButtons(editor);
+
+            expect(editor.addButton.callCount).toBe(2);
+            expect(editor.addButton.getCall(0).args[0]).toBe('sugarsignature');
+            expect(editor.addButton.getCall(1).args[0]).toBe('sugartemplate');
+        });
+
+        it('should not add the attachment document button', function() {
+            sandbox.stub(app.acl, 'hasAccess');
+            app.acl.hasAccess.withArgs('create', 'Notes').returns(true);
+            app.acl.hasAccess.withArgs('view', 'Documents').returns(false);
+            app.acl.hasAccess.withArgs('view', 'EmailTemplates').returns(true);
+
+            field.addCustomButtons(editor);
+
+            expect(editor.addButton.callCount).toBe(3);
+            expect(editor.addButton.getCall(0).args[0]).toBe('sugarattachment');
+            expect(editor.addButton.getCall(0).args[1].menu.length).toBe(1);
+            expect(editor.addButton.getCall(1).args[0]).toBe('sugarsignature');
+            expect(editor.addButton.getCall(2).args[0]).toBe('sugartemplate');
+        });
+
+        it('should not add the email template button', function() {
+            sandbox.stub(app.acl, 'hasAccess');
+            app.acl.hasAccess.withArgs('create', 'Notes').returns(true);
+            app.acl.hasAccess.withArgs('view', 'Documents').returns(true);
+            app.acl.hasAccess.withArgs('view', 'EmailTemplates').returns(false);
+
+            field.addCustomButtons(editor);
+
+            expect(editor.addButton.callCount).toBe(2);
+            expect(editor.addButton.getCall(0).args[0]).toBe('sugarattachment');
+            expect(editor.addButton.getCall(0).args[1].menu.length).toBe(2);
+            expect(editor.addButton.getCall(1).args[0]).toBe('sugarsignature');
+        });
+    });
+
     describe('clicking custom buttons', function() {
         beforeEach(function() {
             field = SugarTest.createField({
