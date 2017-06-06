@@ -193,6 +193,24 @@ describe('Plugins.EmailParticipants', function() {
 
             expect(bean.email_address).toBe('haley@example.com');
         });
+
+        it('should define the url to the model', function() {
+            sandbox.stub(app.acl, 'hasAccessToModel').returns(true);
+
+            bean.set('_link', 'contacts_to');
+            field.prepareModel(bean);
+
+            expect(bean.href).toBe('#Contacts/' + bean.get('id'));
+        });
+
+        it('should not define the url to the model', function() {
+            sandbox.stub(app.acl, 'hasAccessToModel').returns(false);
+
+            bean.set('_link', 'contacts_to');
+            field.prepareModel(bean);
+
+            expect(bean.href).toBeUndefined();
+        });
     });
 
     describe('formatting a model for email headers', function() {

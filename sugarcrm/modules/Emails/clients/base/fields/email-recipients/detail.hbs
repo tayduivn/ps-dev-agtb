@@ -12,8 +12,15 @@
 --}}
 {{#each value}}
     {{#if name}}
-        <span>
-            <a href="#{{buildRoute model=this action='detail'}}" rel="tooltip" data-placement="top" title="{{email_address}}">{{name}}</a>{{#unless @last}}, {{/unless}}
+        <span rel="tooltip" data-placement="top" title="{{email_address}}">
+            {{#if href~}}
+                <a href="{{href}}">
+            {{~/if~}}
+            {{~name~}}
+            {{~#if href~}}
+                </a>
+            {{~/if~}}
+            {{~#unless @last}}, {{/unless}}
         </span>
     {{else}}
         <span>{{email_address}}{{#unless @last}}, {{/unless}}</span>

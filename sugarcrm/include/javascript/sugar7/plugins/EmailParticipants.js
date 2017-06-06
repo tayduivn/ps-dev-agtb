@@ -171,6 +171,10 @@
                         app.utils.getPrimaryEmailAddress(model);
                     model.invalid = !app.utils.isValidEmailAddress(model.email_address);
 
+                    if (app.acl.hasAccessToModel('view', model)) {
+                        model.href = '#' + app.router.buildRoute(model.module, model.get('id'));
+                    }
+
                     return model;
                 };
 
