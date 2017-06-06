@@ -13,9 +13,6 @@ MAINTAINER Engineering Automation "engineering-automation@sugarcrm.com"
 # Set debconf to run non-interactively
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-# Replace shell with bash so we can source files
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
 RUN apt-get update
 
 # Install basic build dependencies

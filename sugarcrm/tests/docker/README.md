@@ -11,41 +11,84 @@ utilized until you rebuild that Docker image. As another friendly reminder, if
 you haven't changed anything inside the Dockerfile since the last time you
 built it, the Dockerfile won't automatically rebuild because Docker has no way
 to detect that you altered the contents of a script that's included in the
-Docker image itself. To forcefully rebuild the docker image after making
-changes to the entrypoint script or any other files included in the image, run
-docker build with the --no-cache argument.
+Docker image itself.
 
-## Engineering Node Image
+To forcefully rebuild the docker image after making changes to the entrypoint
+script or any other files included in the image, pass `NO_CACHE=true` to the
+`make` command or if the image is built with `docker build`, use the
+`--no-cache` argument.
 
-This image installs yarn, gulp, and a few other utilities used in CI. Our *latest* tag should always point to the latest *LTS release* of the [official node docker image](https://hub.docker.com/_/node/).
+e.g. `NO_CACHE=true make build-node` or
+`docker build -f Node.Dockerfile -t registry.sugarcrm.net/engineering/node:custom_tag --no-cache .`
+
+## Images
+
+### Engineering Node Image
+
+This image is built upon the official node image with common utilities used in CI. 
+The *latest* tag should always point to the latest *LTS release* of the [official node docker image](https://hub.docker.com/_/node/).
+
+* Build image with `make build-node`
+
+### Karma Image
+
+This image is built upon the "Engineering Node Image" and installs Xvfb and browsers
+
+* Build image with `make build-karma`
+* To run Karma tests using the image
 ```
-docker build -f Node.Dockerfile -t registry.sugarcrm.net/engineering/node:latest .
+cd Mango
+docker run \
+    -v "${PWD}/sugarcrm:/usr/local" \
+    registry.sugarcrm.net/karma/karma:latest \
+    node_modules/gulp/bin/gulp.js karma --ci --coverage --path=/usr/local --browsers $browsers
 ```
 
-## Karma Image
+### Thorn Image
 
-This image installs everything required for Karma (Unit JS) to run on top of our Node image.
+This image is built upon the "Engineering Node Image" and installs everything required for Thorn
+
+* Built image with `make build-thorn`
+* To run Thorn tests using the image
 ```
-docker build -f Karma.Dockerfile -t registry.sugarcrm.net/karma/karma:latest .
+cd Mango
+SUGAR_URL='http://sugar-url/' # You will need to set this
+docker run \
+   -v "${PWD}/sugarcrm:/sugarcrm" \
+   --net=host \
+   registry.sugarcrm.net/thorn/thorn:latest \
+   --url "${SUGAR_URL}" \
+   --username "admin" \
+   --password "asdf" \
+   --ci
 ```
 
-## Thorn Image
+### Seedbed Image
 
-This image installs everything required for Thorn to run on top of our Node image.
-```
-docker build -f Thorn.Dockerfile -t registry.sugarcrm.net/thorn/thorn:latest .
-```
+This image is built upon the "Engineering Node Image" and installs everything required for Seedbed
 
-## Seedbed Image
-
-This image installs everything required for Seedbed to run on top of our Node Selenium image.
+* Build image with `make build-seedbed`
+* To run Seedbed tests using the image
 ```
-docker build -f Seedbed.Dockerfile -t registry.sugarcrm.net/seedbed/seedbed:latest .
+cd Mango
+SUGAR_URL='http://sugar-url/' # You will need to set this
+docker run \
+   --rm \
+   -v "${PWD}/sugarcrm:/sugarcrm" \
+   -p 5900:5900 \
+   --net=host \
+   registry.sugarcrm.net/seedbed/seedbed:latest -u "${SUGAR_URL}"
 ```
 
 # Pushing Images
 
-Just push them to our internal repository:
+If the image is pushed to production with the 'latest' tag, use the Makefile commands
+
+```
+make build-${name} # name can be node, karma, thorn, or seedbed
+```
+
+If the image is pushed to registry with a custom tag,
 ```
 docker push registry.sugarcrm.net/namespace/image_name:tag
 ```

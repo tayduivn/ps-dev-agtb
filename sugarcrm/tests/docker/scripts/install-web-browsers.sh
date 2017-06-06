@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Your installation or use of this SugarCRM file is subject to the applicable
+# terms available at
+# http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+# If you do not agree to all of the applicable terms or do not have the
+# authority to bind the entity as an authorized representative, then do not
+# install or use this SugarCRM file.
+#
+# Copyright (C) SugarCRM Inc. All rights reserved.
+
 #========================
 # Install Virtual Frame buffer (Graphical Support) and VNC Server
 #========================
@@ -25,9 +34,6 @@ apt-get install -qqy google-chrome-stable
 #========================
 # Install Firefox
 #========================
-apt-get -qqy --no-install-recommends install bzip2 firefox
-apt-get -y purge firefox
-rm -rf /opt/firefox
 wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2
 tar -C /opt -xf /tmp/firefox.tar.bz2
 rm /tmp/firefox.tar.bz2
