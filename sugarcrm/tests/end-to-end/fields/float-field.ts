@@ -11,10 +11,10 @@
 import {BaseField, seedbed} from '@sugarcrm/seedbed';
 
 /**
- * @class TextField
+ * @class FloatField
  * @extends BaseField
  */
-export default class TextField extends BaseField {
+export default class FloatField extends BaseField {
 
     constructor(options) {
         super(options);
@@ -32,10 +32,9 @@ export default class TextField extends BaseField {
     }
 }
 
+export const Edit = FloatField;
 
-export const Edit = TextField;
-
-export class Detail extends TextField {
+export class Detail extends FloatField {
 
     constructor(options) {
         super(options);
@@ -49,7 +48,7 @@ export class Detail extends TextField {
     }
 };
 
-export class List extends TextField {
+export class List extends FloatField {
 
     constructor(options) {
         super(options);

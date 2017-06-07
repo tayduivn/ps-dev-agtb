@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 import HeaderView from '../views/header-view';
-import {BaseView} from '@sugarcrm/seedbed';
+import {BaseView, seedbed} from '@sugarcrm/seedbed';
 import RecordView from '../views/record-view';
 
 /**
@@ -30,7 +30,9 @@ export default class RecordLayout extends BaseView {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.main-pane'
+            $: '.main-pane',
+            showMoreBtn: '.btn.more',
+            showLessBtn: '.btn.less',
         });
 
         this.type = 'record';
@@ -44,5 +46,16 @@ export default class RecordLayout extends BaseView {
             module: options.module,
         });
 
+    }
+
+    public async showMore() {
+        if (await seedbed.client.isVisible(this.$('showMoreBtn'))) {
+            await seedbed.client.click(this.$('showMoreBtn'));
+        }
+    }
+    public async showLess() {
+        if (await seedbed.client.isVisible(this.$('showLessBtn'))) {
+            await seedbed.client.click(this.$('showLessBtn'));
+        }
     }
 }

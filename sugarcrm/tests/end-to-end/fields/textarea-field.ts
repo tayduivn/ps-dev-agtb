@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import {BaseField} from '@sugarcrm/seedbed';
+import {BaseField, seedbed} from '@sugarcrm/seedbed';
 
 /**
  * @class TextareaField
@@ -25,6 +25,10 @@ export default class TextareaField extends BaseField {
                 selector: 'textarea'
             }
         });
+    }
+
+    public async setValue(val: any): Promise<void> {
+        await seedbed.client.setValue(this.$('field.selector'), val);
     }
 }
 

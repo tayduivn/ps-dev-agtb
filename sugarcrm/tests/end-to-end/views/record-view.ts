@@ -10,6 +10,7 @@
  */
 
 import BaseView from './base-view';
+import {seedbed} from '@sugarcrm/seedbed';
 
 /**
  * Represents Record view.
@@ -24,7 +25,10 @@ export default class RecordView extends BaseView {
 
         this.selectors = this.mergeSelectors({
             $: '.record',
-
+            panel_body: 'div[data-panelname=\'panel_body\'] .pull-right',
+            panel_shipping_body: 'div[data-panelname=\'panel_shipping_body\'] .pull-right',
+            panel_setting_body: 'div[data-panelname=\'panel_setting_body\'] .pull-right',
+            panel_hidden: 'div[data-panelname=\'panel_hidden\'] .pull-right',
             title: '.title',
             arrow: '.icon-chevron-right',
 
@@ -33,8 +37,33 @@ export default class RecordView extends BaseView {
                 count: '.records-count',
                 label: '.label-module-sm.label-{{label}}'
             },
-            listingItemCreateLink: "a[href$='{{module}}/create']"
+            listingItemCreateLink: "a[href$='{{module}}/create']",
         });
+
+    }
+
+    public async togglePanel(panelName) {
+
+        let panelSelector = null;
+
+        switch (panelName) {
+
+            case 'Business_Card':
+                panelSelector = this.$('panel_body');
+            break;
+            case 'Billing_and_Shipping':
+                panelSelector = this.$('panel_shipping_body');
+                break;
+            case 'Quote_Settings':
+                panelSelector = this.$('panel_setting_body');
+                break;
+            case 'Show_More':
+                panelSelector = this.$('panel_hidden');
+                break;
+
+        }
+
+        await seedbed.client.click(panelSelector);
 
     }
 }

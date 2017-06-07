@@ -8,13 +8,49 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import {BaseField, seedbed} from '@sugarcrm/seedbed';
+
+import BaseField from './text-field';
+import {seedbed} from '@sugarcrm/seedbed';
 
 /**
- * @class TextField
+ * @class NameField
  * @extends BaseField
  */
-export default class TextField extends BaseField {
+
+export default BaseField;
+
+export class Detail extends BaseField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div'
+            }
+        });
+    }
+};
+
+export class List extends BaseField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div'
+            }
+        });
+
+    }
+
+};
+
+
+export class Edit extends BaseField {
+
+    private itemSelector: String;
 
     constructor(options) {
         super(options);
@@ -22,47 +58,21 @@ export default class TextField extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}]',
             field: {
-                selector: 'input'
+                selector: '.select2-container.select2'
             }
         });
+
+        this.itemSelector = '.select2-result-label=';
+
     }
 
     public async setValue(val: any): Promise<void> {
-        await seedbed.client.setValue(this.$('field.selector'), val);
-    }
-}
 
-
-export const Edit = TextField;
-
-export class Detail extends TextField {
-
-    constructor(options) {
-        super(options);
-
-        this.selectors = this.mergeSelectors({
-            field: {
-                selector: 'div'
-            }
-        });
-
-    }
-};
-
-export class List extends TextField {
-
-    constructor(options) {
-        super(options);
-
-        this.selectors = this.mergeSelectors({
-            field: {
-                selector: 'div'
-            }
-        });
-
+        await seedbed.client.click(this.$('field.selector'));
+        await seedbed.client.waitForApp();
+        await seedbed.client.click(`${this.itemSelector}${val}`);
     }
 
 };
 
 export const Preview = Detail;
-

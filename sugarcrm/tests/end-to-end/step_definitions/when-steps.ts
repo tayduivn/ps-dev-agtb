@@ -10,7 +10,10 @@
  */
 
 import ModuleMenuCmp from '../components/module-menu-cmp';
-import {seedbed, whenStepsHelper} from '@sugarcrm/seedbed';
+import {seedbed, whenStepsHelper, stepsHelper, Utils} from '@sugarcrm/seedbed';
+import {TableDefinition} from 'cucumber';
+import RecordView from '../views/record-view';
+import RecordLayout from '../layouts/record-layout';
 
 const whenSteps = function () {
 
@@ -72,7 +75,43 @@ const whenSteps = function () {
     this.When(/^I go to "([^"]*)" url$/,
             async(urlHash): Promise<void> => seedbed.client.setUrlHash(urlHash), true);
 
+    // The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
+    this.When(/^I provide input for (#\S+) view$/,
+        async(view: RecordView, data: TableDefinition): Promise<void> => {
 
+            if (data.hashes.length > 1) {
+                throw new Error('One line data table entry is expected');
+            }
+
+            let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
+
+            // check for * marked column and cache the record and view if needed
+            let uidInfo = Utils.computeRecordUID(inputData);
+
+            seedbed.scenario.recordsInfo[uidInfo.uid] = {
+                uid: uidInfo.uid,
+                originInput: JSON.parse(JSON.stringify(inputData)),
+                input: inputData,
+                module: view.module,
+            };
+
+            await view.setFieldsValue(inputData);
+
+        }, true);
+
+    this.When(/^I click show more button on (#\S+) view$/, async (layout: RecordLayout) => {
+        await layout.showMore();
+    });
+
+    this.When(/^I click show less button on (#\S+) view$/, async (layout: RecordLayout) => {
+        await layout.showLess();
+    });
+
+    this.When(/^I toggle (Business_Card|Billing_and_Shipping|Quote_Settings|Show_More) panel on (#\S+) view$/, async (panelName: string, view: RecordView) =>  {
+
+        await view.togglePanel(panelName);
+
+    });
 };
 
 module.exports = whenSteps;

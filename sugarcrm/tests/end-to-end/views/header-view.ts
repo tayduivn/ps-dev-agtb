@@ -26,8 +26,9 @@ export default class HeaderView extends BaseView {
             $: '.headerpane',
             buttons: {
                 'create': 'a[name="create_button"]',
+                'copy': 'a[name="duplicate_button"]',
                 'cancel': 'a[name="cancel_button"]',
-                'save': 'a[name="save_button"]',
+                'save': 'a[name="save_button"]:not(.hide)',
                 'edit': 'a[name="edit_button"]',
                 'delete': 'a[name="delete_button"]',
                 'actions': '.actions:not([style*="display: none"]) a.btn.dropdown-toggle'

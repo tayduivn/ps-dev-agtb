@@ -97,6 +97,11 @@ seedbed.addAsyncHandler(seedbed.events.SYNC, (clientInfo) => {
                 id: item.id
             });
 
+            seedbed.defineComponent(`${recordInfo.uid}Preview`, PreviewLayout, {
+                module: recordInfo.module,
+                id: recordInfo.id,
+            });
+
         }
     }
 });

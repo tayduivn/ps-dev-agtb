@@ -15,6 +15,10 @@ import * as _ from 'lodash';
 import * as TextField from '../fields/text-field';
 import * as TextareaField from '../fields/textarea-field';
 import * as NameField from '../fields/name-field';
+import * as EnumField from '../fields/enum-field';
+import * as IntField from '../fields/int-field';
+import * as FloatField from '../fields/float-field';
+import * as DateField from '../fields/date-field';
 
 const classify = name => _.upperFirst(_.camelCase(name));
 
@@ -77,6 +81,10 @@ export default class extends BaseView {
             case 'name': Clazz = NameField[templateName]; break;
             case 'text': Clazz = TextField[templateName]; break;
             case 'textarea': Clazz = TextareaField[templateName]; break;
+            case 'enum': Clazz = EnumField[templateName]; break;
+            case 'int': Clazz = IntField[templateName]; break;
+            case 'date': Clazz = DateField[templateName]; break;
+            case 'float': Clazz = FloatField[templateName]; break;
         }
 
         if (!Clazz) {

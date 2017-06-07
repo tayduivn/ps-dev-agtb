@@ -10,6 +10,7 @@
  */
 
 import BaseField from './text-field';
+import {seedbed} from '@sugarcrm/seedbed';
 
 /**
  * @class NameField
@@ -42,6 +43,27 @@ export class List extends BaseField {
             }
         });
 
+    }
+
+};
+
+
+export class Edit extends BaseField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            $: '[field-name={{name}}]',
+            field: {
+                selector: 'input'
+            }
+        });
+
+    }
+
+    public async setValue(val: any): Promise<void> {
+        await seedbed.client.setValue(this.$('field.selector'), val);
     }
 
 };
