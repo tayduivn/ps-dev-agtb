@@ -3871,7 +3871,12 @@ eoq;
 
         foreach ($beans as $bean) {
             if ($bean->isConfigured()) {
-                $name = $bean->type === OutboundEmail::TYPE_SYSTEM ? "* {$bean->name}" : $bean->name;
+                $name = $bean->name;
+
+                if ($bean->type === OutboundEmail::TYPE_SYSTEM && $GLOBALS['current_user']->isAdmin()) {
+                    $name = '* ' . $name;
+                }
+
                 $option = sprintf('%s <%s> [%s]', $name, $bean->email_address, $bean->mail_smtpserver);
 
                 if ($bean->type === OutboundEmail::TYPE_SYSTEM_OVERRIDE) {
