@@ -1474,7 +1474,22 @@ class PMSEEngineUtils
     public static function saveAssociatedBean(SugarBean $bean)
     {
         $bean->isPASaveRequest = true;
-        return $bean->save();
+        $check_notify = false;
+        // There are three checks performed here
+        // 1) notification is not turned off in the settings
+        // 2) it is not part of a mass update
+        // 3) assigned user has changed to other than the current user
+        if ((empty($GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir]) ||
+                $GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir] != true) &&
+            (empty($_REQUEST['__sugar_url']) ||
+                substr($_REQUEST['__sugar_url'], -10) != 'MassUpdate') &&
+            (isset($bean->assigned_user_id) &&
+                $bean->assigned_user_id != $GLOBALS['current_user']->id &&
+                (empty($bean->fetched_row['assigned_user_id']) ||
+                    $bean->fetched_row['assigned_user_id'] != $bean->assigned_user_id))) {
+            $check_notify = true;
+        }
+        return $bean->save($check_notify);
     }
 
     /**
