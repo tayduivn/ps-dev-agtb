@@ -565,7 +565,6 @@
             "sugarcrm/data/SugarVisibility.php",
 
             "tests/SugarTestHelper.php",
-            "testsunit/AutoLoaderHelper.php",
             "testsunit/AnnotationListener.php",
             "testsunit/ResultListener.php",
             "testsunit/TestBootstrap.php",
