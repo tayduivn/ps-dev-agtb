@@ -587,9 +587,9 @@ $mod_strings = array(
 	'LBL_REQUIRED_SYSTEM_NAME'=>'Provide a System Name for the Sugar instance.',
 	'LBL_PATCH_UPLOAD' => 'Select a patch file from your local computer',
 	'LBL_INCOMPATIBLE_PHP_VERSION' => 'PHP version 5 or above is required.',
-	'LBL_MINIMUM_PHP_VERSION' => 'Minimum PHP version required is 5.3.0.',
+    'LBL_MINIMUM_PHP_VERSION' => 'Minimum PHP version required is 5.6.0.',
 	'LBL_YOUR_PHP_VERSION' => '(Your current php version is ',
-	'LBL_RECOMMENDED_PHP_VERSION' =>' Recommended php version is 5.3.x)',
+    'LBL_RECOMMENDED_PHP_VERSION' =>' Recommended php version is 7.1.x)',
 	'LBL_BACKWARD_COMPATIBILITY_ON' => 'PHP Backward Compatibility mode is turned on. Set zend.ze1_compatibility_mode to Off for proceeding further',
 
     'advanced_password_new_account_email' => array(

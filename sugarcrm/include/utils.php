@@ -3138,15 +3138,15 @@ function check_php_version($sys_php_version = '')
     // versions below $min_considered_php_version considered invalid by default,
     // versions equal to or above this ver will be considered depending
     // on the rules that follow
-    $min_considered_php_version = '5.4.0';
+    $min_considered_php_version = '5.6.0';
     //always use .unsupported to make sure that the dev/beta/rc releases are excluded as well
 
-    $version_threshold  = '7.1.unsupported';
+    $version_threshold  = '7.2.unsupported';
 
     // only the supported versions,
     // should be mutually exclusive with $invalid_php_versions
     $supported_php_versions = array (
-        //'5.3.0'
+        //'5.6.0'
     );
 
     // invalid versions above the $min_considered_php_version,
