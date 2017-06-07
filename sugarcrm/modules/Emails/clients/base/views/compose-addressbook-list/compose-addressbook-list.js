@@ -17,6 +17,20 @@
     extendsFrom: 'FlexListView',
     plugins: ['ListColumnEllipsis', 'ListRemoveLinks', 'Pagination', 'MassCollection'],
     /**
+     * Changed the address book view to use an independent mass collection
+     *
+     * The address book collection is not the same as the list view
+     * collection and therefore we need to preserve the state of the address
+     * book collection through changes to the list view collection.
+     * independentMassCollection: true allows us to indicate that the
+     * collections should not be treated as the same so that we are always
+     * adding to the collection instead of resetting with completely new data
+     *
+     * @property {boolean}
+     */
+    independentMassCollection: true,
+
+    /**
      * Removes the event listeners that were added to the mass collection.
      */
     unbindData: function() {
