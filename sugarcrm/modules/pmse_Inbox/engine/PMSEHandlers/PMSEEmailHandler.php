@@ -380,30 +380,16 @@ class PMSEEmailHandler
         $res = array();
         $item = new stdClass();
         if (isset($entry->id)) {
-            $userBean = $this->retrieveBean("Users", $entry->id);
-        } else {
-            // for backward compatibility of email addresses that were already stored for a PD and didn't have an id
-            $db = DBManagerFactory::getInstance();
-            $query  = " SELECT eabr.bean_id, ";
-            $query .= " FROM email_addr_bean_rel eabr ";
-            $query .= " JOIN email_addresses ea on ea.id = eabr.email_address_id";
-            $query .= " where ea.email_address = ?";
-            $query .= " and ea.deleted = 0 ";
-            $query .= " and eabr.deleted = 0 " ;
-
-            $result = $db->getConnection()
-                        ->executeQuery($query, array($entry->value))
-                        ->fetch();
-
-            // get the user
-            if (!empty($result['bean_id'])) {
-                $userBean = $this->retrieveBean("Users", $result['bean_id']);
+            $userBean = $this->retrieveBean('Users', $entry->id);
+            if (!empty($userBean)) {
+                $item->name = $userBean->full_name;
+                $item->address = $userBean->email1;
+                $res[] = $item;
             }
-        }
-
-        if (!empty($userBean)) {
-            $item->name = $userBean->full_name;
-            $item->address = $userBean->email1;
+        } else {
+            // for typed-in emails
+            $item->name = $entry->value;
+            $item->address = $entry->value;
             $res[] = $item;
         }
 
