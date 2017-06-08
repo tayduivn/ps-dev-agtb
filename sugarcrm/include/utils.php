@@ -337,6 +337,7 @@ function get_sugar_config_defaults()
     'list_max_entries_per_subpanel' => 5,
     'wl_list_max_entries_per_page' => 10,
     'wl_list_max_entries_per_subpanel' => 3,
+    'drillthru_test' => true,
     'lock_default_user_name' => false,
     'log_memory_usage' => false,
     'portal_view' => 'single_user',

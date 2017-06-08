@@ -120,6 +120,227 @@ function get_default_reports()
     // User Session Summary (Last 7 Days)
     $default_reports[] = array('TrackerSessions', $lang_strings['DEFAULT_REPORT_TITLE_42'], '{"display_columns":[],"module":"TrackerSessions","group_defs":[{"name":"user_id","label":"User Id","table_key":"self","type":"varchar"}],"summary_columns":[{"name":"user_id","label":"User Id","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"seconds","label":"SUM: Seconds","field_type":"int","group_function":"sum","table_key":"self"}],"report_name":"'. $lang_strings['DEFAULT_REPORT_TITLE_42'] .'","chart_type":"none","chart_description":"","numerical_chart_column":"self:seconds:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"TrackerSessions","module":"TrackerSessions","label":"TrackerSessions"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"date_end","table_key":"self","qualifier_name":"tp_last_7_days","input_name0":"tp_last_7_days","input_name1":"on"}}}}', 'summary', 'none');
 
+    // Chart drill through reports
+    // [chart drill through - enum]
+    $default_reports[] = array(
+        'Opportunities',
+        '[chart drill through - enum] opportunity by lead source by type',
+        '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"lead_source","label":"Lead Source","table_key":"self","type":"enum"},{"name":"opportunity_type","label":"Type","table_key":"self","type":"enum"}],"summary_columns":[{"name":"lead_source","label":"Lead Source","table_key":"self"},{"name":"opportunity_type","label":"Type","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"amount","label":"AVG: Likely","field_type":"currency","group_function":"avg","table_key":"self"}],"report_name":"[chart drill through] opportunity by lead source by type","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Meetings',
+        '[chart drill through - enum] meeting by type by status',
+        '{"display_columns":[],"module":"Meetings","group_defs":[{"name":"type","label":"Meeting Type","table_key":"self","type":"enum"},{"name":"status","label":"Status","table_key":"self","type":"enum"}],"summary_columns":[{"name":"type","label":"Meeting Type","table_key":"self"},{"name":"status","label":"Status","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"duration_hours","label":"AVG: Duration Hours","field_type":"int","group_function":"avg","table_key":"self"}],"report_name":"[chart drill through] meeting by type by status","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Meetings","module":"Meetings","label":"Meetings"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'vBarF');
+
+    $default_reports[] = array(
+        'Accounts',
+        '[chart drill through - enum] accounts by type by industry',
+        '{"display_columns":[],"module":"Accounts","group_defs":[{"name":"account_type","label":"Type","table_key":"self","type":"enum"},{"name":"industry","label":"Industry","table_key":"self","type":"enum"}],"summary_columns":[{"name":"account_type","label":"Type","table_key":"self"},{"name":"industry","label":"Industry","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through] accounts by type by industry","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"Accounts"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Cases',
+        '[chart drill through - enum] case by priority by status by type',
+        '{"display_columns":[],"module":"Cases","group_defs":[{"name":"priority","label":"Priority","table_key":"self","type":"enum"},{"name":"status","label":"Status","table_key":"self","type":"enum"},{"name":"type","label":"Type","table_key":"self","type":"enum"}],"summary_columns":[{"name":"priority","label":"Priority","table_key":"self"},{"name":"status","label":"Status","table_key":"self"},{"name":"type","label":"Type","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through] case by priority by status by type","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Cases","module":"Cases","label":"Cases","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'vBarF');
+
+    $default_reports[] = array(
+        'Leads',
+        '[chart drill through - enum] Leads by lead source (SUM: lead score)',
+        '{"display_columns":[],"module":"Leads","group_defs":[{"name":"lead_source","label":"Lead Source","table_key":"self","type":"enum","force_label":"Lead Source"}],"summary_columns":[{"name":"lead_source","label":"Lead Source","table_key":"self"},{"name":"mkto_lead_score","label":"SUM: Lead Score","field_type":"int","group_function":"sum","table_key":"self"}],"report_name":"[chart drill through - enum] Leads by lead source (SUM: lead score)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:mkto_lead_score:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Leads","module":"Leads","label":"Leads","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Leads',
+        '[chart drill through - enum] Leads by lead source (MIN: lead score)',
+        '{"display_columns":[],"module":"Leads","group_defs":[{"name":"lead_source","label":"Lead Source","table_key":"self","type":"enum","force_label":"Lead Source"}],"summary_columns":[{"name":"lead_source","label":"Lead Source","table_key":"self"},{"name":"mkto_lead_score","label":"MIN: Lead Score","field_type":"int","group_function":"min","table_key":"self"}],"report_name":"[chart drill through - enum] Leads by lead source (MIN: lead score)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:mkto_lead_score:min","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Leads","module":"Leads","label":"Leads","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Leads',
+        '[chart drill through - enum] Leads by lead source (MAX: lead score)',
+        '{"display_columns":[],"module":"Leads","group_defs":[{"name":"lead_source","label":"Lead Source","table_key":"self","type":"enum","force_label":"Lead Source"}],"summary_columns":[{"name":"lead_source","label":"Lead Source","table_key":"self"},{"name":"mkto_lead_score","label":"MAX: Lead Score","field_type":"int","group_function":"max","table_key":"self"}],"report_name":"[chart drill through - enum] Leads by lead source (MAX: lead score)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:mkto_lead_score:max","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Leads","module":"Leads","label":"Leads","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Leads',
+        '[chart drill through - enum] Leads by lead source (AVG: lead score)',
+        '{"display_columns":[],"module":"Leads","group_defs":[{"name":"lead_source","label":"Lead Source","table_key":"self","type":"enum"}],"summary_columns":[{"name":"lead_source","label":"Lead Source","table_key":"self"},{"name":"mkto_lead_score","label":"AVG: Lead Score","field_type":"int","group_function":"avg","table_key":"self"}],"report_name":"[chart drill through - enum] Leads by lead source (AVG: lead score)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:mkto_lead_score:avg","numerical_chart_column_type":"int","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Leads","module":"Leads","label":"Leads","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    // [chart drill through - name and address]
+    $default_reports[] = array(
+        'Accounts',
+        '[chart drill through - name and address] accounts by billing city by name',
+        '{"display_columns":[],"module":"Accounts","group_defs":[{"name":"billing_address_city","label":"Billing City","table_key":"self","type":"varchar"},{"name":"name","label":"Name","table_key":"self","type":"name"}],"summary_columns":[{"name":"billing_address_city","label":"Billing City","table_key":"self"},{"name":"name","label":"Name","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - name and address] accounts by billing city by name","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"Accounts","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'vBarF');
+
+    $default_reports[] = array(
+        'Accounts',
+        '[chart drill through - name and address] accounts by Name by industry [runtime filter: San Jose',
+        '{"display_columns":[],"module":"Accounts","group_defs":[{"name":"name","label":"Name","table_key":"self","type":"name"},{"name":"industry","label":"Industry","table_key":"self","type":"enum"}],"summary_columns":[{"name":"name","label":"Name","table_key":"self"},{"name":"industry","label":"Industry","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - name and address] accounts by Name by industry [runtime filter: San Jose]","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"Accounts","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"billing_address_city","table_key":"self","qualifier_name":"equals","runtime":1,"input_name0":"San Jose","input_name1":"on"}}}}',
+        'summary',
+        'funnelF');
+
+    $default_reports[] = array(
+        'Contacts',
+        '[chart drill through - name and address] contacts by state by lead source',
+        '{"display_columns":[],"module":"Contacts","group_defs":[{"name":"primary_address_state","label":"Primary Address State","table_key":"self","type":"varchar","force_label":"Primary Address State"},{"name":"lead_source","label":"Lead Source","table_key":"self","type":"enum","force_label":"Lead Source"}],"summary_columns":[{"name":"primary_address_state","label":"Primary Address State","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"lead_source","label":"Lead Source","table_key":"self"}],"report_name":"[chart drill through - name and address] contacts by state by lead source","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Contacts","module":"Contacts","label":"Contacts","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Leads',
+        '[chart drill through - name and address] leads by country by city',
+        '{"display_columns":[],"module":"Leads","group_defs":[{"name":"primary_address_country","label":"Primary Address Country","table_key":"self","type":"varchar","force_label":"Primary Address Country"},{"name":"primary_address_city","label":"Primary Address City","table_key":"self","type":"varchar","force_label":"Primary Address City"}],"summary_columns":[{"name":"primary_address_country","label":"Primary Address Country","table_key":"self"},{"name":"primary_address_city","label":"Primary Address City","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - name and address] leads by country by city","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Leads","module":"Leads","label":"Leads","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'vBarF');
+
+    // [chart drill through - date]
+    $default_reports[] = array(
+        'Opportunities',
+        '[chart drill through - date] Opportunity by close date (likely MIN)',
+        '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"amount","label":"MIN: Likely","field_type":"currency","group_function":"min","table_key":"self"}],"report_name":"[chart drill through - date] Opportunity by close date (likely MIN)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:amount:min","numerical_chart_column_type":"currency","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Opportunities',
+        '[chart drill through - date] Opportunity by close date (likely MAX)',
+        '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date","force_label":"Month: Expected Close Date"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"amount","label":"MAX: Likely","field_type":"currency","group_function":"max","table_key":"self"}],"report_name":"[chart drill through - date] Opportunity by close date (likely MAX)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:amount:max","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Opportunities',
+        '[chart drill through - date] Opportunity by close date (likely AVG)',
+        '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date","force_label":"Month: Expected Close Date"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"amount","label":"AVG: Likely","field_type":"currency","group_function":"avg","table_key":"self"}],"report_name":"[chart drill through - date] Opportunity by close date (likely AVG)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:amount:avg","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Opportunities',
+        '[chart drill through - date] opportunities by year close date by status',
+        '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Year: Expected Close Date","column_function":"year","qualifier":"year","table_key":"self","type":"date","force_label":"Year: Expected Close Date"},{"name":"sales_status","label":"Status","table_key":"self","type":"enum","force_label":"Status"}],"summary_columns":[{"name":"date_closed","label":"Year: Expected Close Date","column_function":"year","qualifier":"year","table_key":"self"},{"name":"sales_status","label":"Status","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - date] opportunities by year close date by status","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities","dependents":[]},"Opportunities:accounts":{"name":"Opportunities  \u003E  Accounts","parent":"self","link_def":{"name":"accounts","relationship_name":"accounts_opportunities","bean_is_lhs":false,"link_type":"one","label":"Account Name","module":"Accounts","table_key":"Opportunities:accounts"},"dependents":["Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1","Filter.1_table_filter_row_1"],"module":"Accounts","label":"Account Name"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"industry","table_key":"Opportunities:accounts","qualifier_name":"one_of","runtime":1,"input_name0":["Apparel","Banking","Biotechnology","Chemicals","Communications","Construction"]}}}}',
+        'summary',
+        'vBarF');
+
+    $default_reports[] = array(
+        'Opportunities',
+        '[chart drill through - date] opportunities by Month: expected close date',
+        '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date","force_label":"Month: Expected Close Date"}],"summary_columns":[{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"}],"report_name":"[chart drill through - date] opportunities by Month: expected close date","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'vBarF');
+
+    $default_reports[] = array(
+        'Cases',
+        '[chart drill through - date] cases by month by priority',
+        '{"display_columns":[{"name":"case_number","label":"Cases: Number","table_key":"self"},{"name":"name","label":"Cases: Subject","table_key":"self"}],"module":"Cases","group_defs":[{"name":"date_entered","label":"Month: Date Created","column_function":"month","qualifier":"month","table_key":"self","type":"datetime"},{"name":"priority","label":"Priority","table_key":"self","type":"enum"}],"summary_columns":[{"name":"date_entered","label":"Date Created","column_function":"month","qualifier":"month","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"priority","label":"Priority","table_key":"self"}],"report_name":"[chart drill through - date] cases by month by priority","chart_type":"vBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Cases","module":"Cases","label":"Cases","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"status","table_key":"self","qualifier_name":"one_of","input_name0":["New","Assigned","Pending Input"]}}}}',
+        'detailed_summary',
+        'vBarF');
+
+    $default_reports[] = array(
+        'Cases',
+        '[chart drill through - date] cases by created date by status',
+        '{"display_columns":[],"module":"Cases","group_defs":[{"name":"date_entered","label":"Day: Date Created","column_function":"day","qualifier":"day","table_key":"self","type":"datetime","force_label":"Day: Date Created"},{"name":"status","label":"Status","table_key":"self","type":"enum","force_label":"Status"}],"summary_columns":[{"name":"date_entered","label":"Day: Date Created","column_function":"day","qualifier":"day","table_key":"self"},{"name":"status","label":"Status","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - date] cases by created date by status","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Cases","module":"Cases","label":"Cases","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Opportunities',
+        '[chart drill through - date] Opportunity by Qtr (SUM: likely)',
+        '{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Fiscal Quarter: Expected Close Date","column_function":"fiscalQuarter","qualifier":"fiscalQuarter","table_key":"self","type":"date","force_label":"Fiscal Quarter: Expected Close Date"}],"summary_columns":[{"name":"date_closed","label":"Fiscal Quarter: Expected Close Date","column_function":"fiscalQuarter","qualifier":"fiscalQuarter","table_key":"self"},{"name":"amount","label":"SUM: Likely","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"[chart drill through - date] Opportunity by Qtr (SUM: likely)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:amount:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'RevenueLineItems',
+        '[chart drill through - date] RLI by qtr (SUM: likely)',
+        '{"display_columns":[],"module":"RevenueLineItems","group_defs":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self","type":"date","force_label":"Month: Expected Close Date"}],"summary_columns":[{"name":"date_closed","label":"Month: Expected Close Date","column_function":"month","qualifier":"month","table_key":"self"},{"name":"likely_case","label":"SUM: Likely","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"[chart drill through - date] RLI by qtr  (SUM: likely)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"RevenueLineItems","module":"RevenueLineItems","label":"RevenueLineItems","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Quotes',
+        '[chart drill through - date] Quotes by Stage (SUM: Total)',
+        '{"display_columns":[],"module":"Quotes","group_defs":[{"name":"quote_stage","label":"Quote Stage","table_key":"self","type":"enum","force_label":"Quote Stage"}],"summary_columns":[{"name":"quote_stage","label":"Quote Stage","table_key":"self"},{"name":"total","label":"SUM: Total","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"[chart drill through - date] Quotes by Stage (SUM: Total)","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:total:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Quotes","module":"Quotes","label":"Quotes"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Accounts',
+        '[chart drill through - related field] accounts by assigned user',
+        '{"display_columns":[],"module":"Accounts","group_defs":[{"name":"user_name","label":"User Name","table_key":"Accounts:assigned_user_link","type":"username","force_label":"User Name"}],"summary_columns":[{"name":"user_name","label":"User Name","table_key":"Accounts:assigned_user_link"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - related field] accounts by assigned user","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"Accounts","dependents":[]},"Accounts:assigned_user_link":{"name":"Accounts  \u003E  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"accounts_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"Accounts:assigned_user_link"},"dependents":["group_by_row_1","display_summaries_row_group_by_row_1","group_by_row_1","display_summaries_row_group_by_row_1","group_by_row_1","display_summaries_row_group_by_row_1","group_by_row_1","display_summaries_row_group_by_row_1"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'RevenueLineItems',
+        '[chart drill through - related + enum] RLI by assigned user by sales stage [SUM: likely]',
+        '{"display_columns":[],"module":"RevenueLineItems","group_defs":[{"name":"user_name","label":"User Name","table_key":"RevenueLineItems:assigned_user_link","type":"username","force_label":"User Name"},{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum","force_label":"Sales Stage"}],"summary_columns":[{"name":"user_name","label":"User Name","table_key":"RevenueLineItems:assigned_user_link"},{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"likely_case","label":"SUM: Likely","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"[chart drill through - related + enum] RLI by assigned user by sales stage [SUM: likely]","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"RevenueLineItems","module":"RevenueLineItems","label":"RevenueLineItems"},"RevenueLineItems:assigned_user_link":{"name":"Revenue Line Items  \u003E  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"revenuelineitems_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"RevenueLineItems:assigned_user_link"},"dependents":["group_by_row_1","display_summaries_row_group_by_row_1","group_by_row_1","display_summaries_row_group_by_row_1"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'RevenueLineItems',
+        '[chart drill through - related + enum] RLI by QTR expect close date by assigned user [SUM: likely]',
+        '{"display_columns":[],"module":"RevenueLineItems","group_defs":[{"name":"date_closed","label":"Quarter: Expected Close Date","column_function":"quarter","qualifier":"quarter","table_key":"self","type":"date","force_label":"Quarter: Expected Close Date"},{"name":"user_name","label":"User Name","table_key":"RevenueLineItems:assigned_user_link","type":"username","force_label":"User Name"}],"summary_columns":[{"name":"date_closed","label":"Quarter: Expected Close Date","column_function":"quarter","qualifier":"quarter","table_key":"self"},{"name":"user_name","label":"User Name","table_key":"RevenueLineItems:assigned_user_link"},{"name":"likely_case","label":"SUM: Likely","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"[chart drill through - related + enum] RLI by QTR expect close date by assigned user [SUM: likely]","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"RevenueLineItems","module":"RevenueLineItems","label":"RevenueLineItems"},"RevenueLineItems:assigned_user_link":{"name":"Revenue Line Items  \u003E  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"revenuelineitems_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","module":"Users","table_key":"RevenueLineItems:assigned_user_link"},"dependents":["group_by_row_2","display_summaries_row_group_by_row_2","group_by_row_2","display_summaries_row_group_by_row_2"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Contacts',
+        '[chart drill through - checkbox] contacts by do not call by lead source',
+        '{"display_columns":[],"module":"Contacts","group_defs":[{"name":"do_not_call","label":"Do Not Call","table_key":"self","type":"bool"},{"name":"lead_source","label":"Lead Source","table_key":"self","type":"enum"}],"summary_columns":[{"name":"do_not_call","label":"Do Not Call","table_key":"self"},{"name":"lead_source","label":"Lead Source","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - checkbox] contacts by do not call by lead source","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Contacts","module":"Contacts","label":"Contacts","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Quotes',
+        '[chart drill through - radio] quotes by quote stage by quote type [filter in pay term and valid date]',
+        '{"display_columns":[],"module":"Quotes","group_defs":[{"name":"quote_stage","label":"Quote Stage","table_key":"self","type":"enum","force_label":"Quote Stage"},{"name":"quote_type","label":"Quote Type","table_key":"self","type":"radioenum","force_label":"Quote Type"}],"summary_columns":[{"name":"quote_stage","label":"Quote Stage","table_key":"self"},{"name":"quote_type","label":"Quote Type","table_key":"self"},{"name":"total","label":"SUM: Total","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"[chart drill through - radio] quotes by quote stage by quote type [filter in pay term and valid date]","chart_type":"funnelF","do_round":1,"chart_description":"","numerical_chart_column":"self:total:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Quotes","module":"Quotes","label":"Quotes","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"payment_terms","table_key":"self","qualifier_name":"is","runtime":1,"input_name0":["Net 15"]},"1":{"name":"date_quote_expected_closed","table_key":"self","qualifier_name":"tp_last_30_days","runtime":1,"input_name0":"tp_last_30_days","input_name1":"on"}}}}',
+        'summary',
+        'funnelF');
+
+    $default_reports[] = array(
+        'Products',
+        '[chart drill through - integer] QLI by quantity by status [AVG: cost]',
+        '{"display_columns":[],"module":"Products","group_defs":[{"name":"quantity","label":"Quantity","table_key":"self","type":"decimal","force_label":"Quantity"},{"name":"status","label":"Status","table_key":"self","type":"enum","force_label":"Status"}],"summary_columns":[{"name":"quantity","label":"Quantity","table_key":"self"},{"name":"status","label":"Status","table_key":"self"},{"name":"cost_price","label":"AVG: Cost","field_type":"currency","group_function":"avg","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - integer] QLI by quantity by status [AVG: cost]","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:cost_price:avg","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Products","module":"Products","label":"Products"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'Accounts',
+        '[Chart drill through - date + name] accounts by month: create date by account name',
+        '{"display_columns":[],"module":"Accounts","group_defs":[{"name":"date_entered","label":"Month: Date Created","column_function":"month","qualifier":"month","table_key":"self","type":"datetime"},{"name":"name","label":"Name","table_key":"self","type":"name"}],"summary_columns":[{"name":"date_entered","label":"Month: Date Created","column_function":"month","qualifier":"month","table_key":"self"},{"name":"name","label":"Name","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - date + name] accounts by month: create date by account name","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"Accounts"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
+    $default_reports[] = array(
+        'RevenueLineItems',
+        '[chart drill through - enum] RLI by sales stage (SUM: likely]',
+        '{"display_columns":[],"module":"RevenueLineItems","group_defs":[{"name":"sales_stage","label":"Sales Stage","table_key":"self","type":"enum","force_label":"Sales Stage"}],"summary_columns":[{"name":"sales_stage","label":"Sales Stage","table_key":"self"},{"name":"likely_case","label":"SUM: Likely","field_type":"currency","group_function":"sum","table_key":"self"}],"report_name":"[chart drill through - enum] RLI by sales stage (SUM: likely]","chart_type":"funnelF","do_round":1,"chart_description":"","numerical_chart_column":"self:likely_case:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"RevenueLineItems","module":"RevenueLineItems","label":"RevenueLineItems","dependents":[]}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'funnelF');
+
+    $default_reports[] = array(
+        'RevenueLineItems',
+        '[chart drill through - integer] RLI by Probability',
+        '{"display_columns":[],"module":"RevenueLineItems","group_defs":[{"name":"probability","label":"Probability (%)","table_key":"self","type":"int","force_label":"Probability (%)"}],"summary_columns":[{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"[chart drill through - integer] RLI by Probability ","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"RevenueLineItems","module":"RevenueLineItems","label":"RevenueLineItems"}},"filters_def":{"Filter_1":{"operator":"AND"}}}',
+        'summary',
+        'hBarF');
+
     return $default_reports;
 }
 

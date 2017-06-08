@@ -46,6 +46,8 @@ class OpportunitiesSeedData {
      */
     public static function populateSeedData($records, $app_list_strings, $accounts, $users)
     {
+        global $sugar_config;
+
         if (empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1) || empty($users)) {
             return array();
         }
@@ -110,6 +112,11 @@ class OpportunitiesSeedData {
         $fwRows = array();
         $fwSql = 'INSERT INTO ' . $fw->table_name . '(' . join(',', array_keys($fw->toArray(true))) . ') VALUES';
 
+        // Opportunities
+        $lead_source_dom_keys = array_keys($app_list_strings['lead_source_dom']);
+        $sales_stage_dom_keys = array_keys($app_list_strings['sales_stage_dom']);
+        $opportunity_type_dom_keys = array_keys($app_list_strings['opportunity_type_dom']);
+
         while ($records-- > 0) {
             $key = array_rand($accounts);
             $account = $accounts[$key];
@@ -140,8 +147,15 @@ class OpportunitiesSeedData {
             $opp->currency_id = $currency_id;
 
             $opp->name = $account->name;
-            $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
-            $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
+
+            if (!empty($sugar_config['drillthru_test'])) {
+                $opp->lead_source = $lead_source_dom_keys[$records % 7];
+                $opp->sales_stage = $sales_stage_dom_keys[$records % 6];
+            } else {
+                $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
+                $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
+            }
+
             $opp->sales_status = 'New';
 
             if (!$usingRLIs) {
@@ -151,7 +165,13 @@ class OpportunitiesSeedData {
                     : self::createDate();
                 $opp->date_closed_timestamp = $timedate->fromDbDate($opp->date_closed)->getTimestamp();
             }
-            $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
+
+            if (!empty($sugar_config['drillthru_test'])) {
+                $opp->opportunity_type = $opportunity_type_dom_keys[$records % 3];
+            } else {
+                $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
+            }
+
             $amount = rand(1000, 7500);
             $opp->amount = $amount;
             $opp->amount_usdollar = SugarMath::init($amount)->div($base_rate)->result();
