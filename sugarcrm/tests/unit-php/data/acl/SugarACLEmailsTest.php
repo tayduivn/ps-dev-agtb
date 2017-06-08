@@ -74,30 +74,10 @@ class SugarACLEmailsTest extends \PHPUnit_Framework_TestCase
             ['team_id'],
             ['team_set_id'],
             ['tags'],
-            ['accounts_from'],
-            ['contacts_from'],
-            ['email_addresses_from'],
-            ['leads_from'],
-            ['prospects_from'],
-            ['users_from'],
-            ['accounts_to'],
-            ['contacts_to'],
-            ['email_addresses_to'],
-            ['leads_to'],
-            ['prospects_to'],
-            ['users_to'],
-            ['accounts_cc'],
-            ['contacts_cc'],
-            ['email_addresses_cc'],
-            ['leads_cc'],
-            ['prospects_cc'],
-            ['users_cc'],
-            ['accounts_bcc'],
-            ['contacts_bcc'],
-            ['email_addresses_bcc'],
-            ['leads_bcc'],
-            ['prospects_bcc'],
-            ['users_bcc'],
+            ['from_link'],
+            ['to_link'],
+            ['cc_link'],
+            ['bcc_link'],
             ['attachments'],
         ];
     }
@@ -251,99 +231,19 @@ class SugarACLEmailsTest extends \PHPUnit_Framework_TestCase
                 true,
             ],
             [
-                'accounts_from',
+                'from_link',
                 true,
             ],
             [
-                'contacts_from',
+                'to_link',
                 true,
             ],
             [
-                'email_addresses_from',
+                'cc_link',
                 true,
             ],
             [
-                'leads_from',
-                true,
-            ],
-            [
-                'prospects_from',
-                true,
-            ],
-            [
-                'users_from',
-                true,
-            ],
-            [
-                'accounts_to',
-                true,
-            ],
-            [
-                'contacts_to',
-                true,
-            ],
-            [
-                'email_addresses_to',
-                true,
-            ],
-            [
-                'leads_to',
-                true,
-            ],
-            [
-                'prospects_to',
-                true,
-            ],
-            [
-                'users_to',
-                true,
-            ],
-            [
-                'accounts_cc',
-                true,
-            ],
-            [
-                'contacts_cc',
-                true,
-            ],
-            [
-                'email_addresses_cc',
-                true,
-            ],
-            [
-                'leads_cc',
-                true,
-            ],
-            [
-                'prospects_cc',
-                true,
-            ],
-            [
-                'users_cc',
-                true,
-            ],
-            [
-                'accounts_bcc',
-                true,
-            ],
-            [
-                'contacts_bcc',
-                true,
-            ],
-            [
-                'email_addresses_bcc',
-                true,
-            ],
-            [
-                'leads_bcc',
-                true,
-            ],
-            [
-                'prospects_bcc',
-                true,
-            ],
-            [
-                'users_bcc',
+                'bcc_link',
                 true,
             ],
             [

@@ -114,6 +114,7 @@ $app_list_strings = array (
     'Categories' => 'Categories',
     'Dashboards' => 'Dashboards',
     'OutboundEmail' => 'Email Settings',
+    'EmailParticipants' => 'Email Participants',
   ),
 
     'moduleIconList' =>
@@ -231,6 +232,7 @@ $app_list_strings = array (
     'Tags' => 'Tag',
     'Categories' => 'Category',
     'OutboundEmail' => 'Email Setting',
+    'EmailParticipants' => 'Email Participant',
   ),
 
 /*
@@ -701,6 +703,13 @@ $app_list_strings = array (
         'Notes' => 'Note',
         'Meetings' => 'Meeting',
         'RevenueLineItems' => 'Revenue Line Item',
+    ),
+    'record_type_display_emailparticipants' => array(
+        'Accounts' => 'Account',
+        'Contacts' => 'Contact',
+        'Leads' => 'Lead',
+        'Prospects' => 'Target',
+        'Users' => 'User',
     ),
 
   'parent_type_display' =>
@@ -5198,6 +5207,9 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_OUTBOUND_EMAILS' => 'Email Settings',
     'LBL_OUTBOUND_EMAIL' => 'Email Setting',
+
+    'LBL_EMAIL_PARTICIPANTS' => 'Email Participants',
+    'LBL_EMAIL_PARTICIPANT' => 'Email Participant',
 );
 
 $app_list_strings['activity_user_options'] = array (

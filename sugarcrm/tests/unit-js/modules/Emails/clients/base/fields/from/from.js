@@ -18,6 +18,7 @@ describe('Emails.BaseFromField', function() {
 
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
+        var parentId = _.uniqueId();
 
         SugarTest.testMetadata.init();
 
@@ -40,11 +41,20 @@ describe('Emails.BaseFromField', function() {
         context.prepare(true);
         model = context.get('model');
 
-        from = app.data.createBean('Contacts', {
-            _link: 'contacts_from',
+        from = app.data.createBean('EmailParticipants', {
+            _link: 'from_link',
             id: _.uniqueId(),
-            name: 'Harry Vickers',
-            email_address_used: 'hvickers@example.com'
+            parent: {
+                _acl: {},
+                type: 'Contacts',
+                id: parentId,
+                name: 'Harry Vickers'
+            },
+            parent_type: 'Contacts',
+            parent_id: parentId,
+            parent_name: 'Harry Vickers',
+            email_address_id: _.uniqueId(),
+            email_address: 'hvickers@example.com'
         });
 
         sandbox = sinon.sandbox.create();
@@ -116,31 +126,22 @@ describe('Emails.BaseFromField', function() {
             field.render();
         });
 
-        it('should not complete the selection with an invalid link', function() {
-            var event = new $.Event('select2-selecting');
-
-            sandbox.spy(event, 'preventDefault');
-            event.choice = app.data.createBean('Contacts', {
-                _link: 'contacts_to',
-                id: _.uniqueId(),
-                name: 'Eugene Kushner',
-                email_address_used: 'ek@example.com'
-            });
-
-            field.$(field.fieldTag).trigger(event);
-
-            expect(event.preventDefault).toHaveBeenCalled();
-            expect(field.model.get('from').at(0)).toBe(from);
-        });
-
         it('should change the sender', function() {
             var event = new $.Event('change');
-            var currentSender = field.model.get('from').at(0);
-            var newSender = app.data.createBean('Contacts', {
-                _link: 'contacts_from',
-                id: _.uniqueId(),
-                name: 'Ira Carr',
-                email_address_used: 'icarr@example.com'
+            var parentId = _.uniqueId();
+            var newSender = app.data.createBean('EmailParticipants', {
+                _link: 'from_link',
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId,
+                    name: 'Ira Carr'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: 'Ira Carr',
+                email_address_id: _.uniqueId(),
+                email_address: 'icarr@example.com'
             });
             var actual;
             var json;
@@ -154,10 +155,11 @@ describe('Emails.BaseFromField', function() {
 
             // Assert that the new sender will be linked on the next sync.
             json = field.model.toJSON({fields: ['from']});
-            expect(json.contacts_from.add.length).toBe(1);
-            expect(json.contacts_from.add[0].id).toBe(newSender.get('id'));
-            expect(json.contacts_from.delete.length).toBe(1);
-            expect(json.contacts_from.delete[0]).toBe(currentSender.get('id'));
+            expect(json.from_link.create.length).toBe(1);
+            expect(json.from_link.create[0].parent_type).toBe(newSender.get('parent_type'));
+            expect(json.from_link.create[0].parent_id).toBe(newSender.get('parent_id'));
+            expect(json.from_link.delete.length).toBe(1);
+            expect(json.from_link.delete[0]).toBe(from.get('id'));
         });
 
         it('should remove the sender', function() {
@@ -167,6 +169,11 @@ describe('Emails.BaseFromField', function() {
             field.$(field.fieldTag).trigger(event);
 
             expect(field.model.get('from').length).toBe(0);
+
+            // Assert that the current sender will be unlinked on the next sync.
+            json = field.model.toJSON({fields: ['from']});
+            expect(json.from_link.delete.length).toBe(1);
+            expect(json.from_link.delete[0]).toBe(from.get('id'));
         });
     });
 
@@ -186,8 +193,10 @@ describe('Emails.BaseFromField', function() {
         actual = field.getFormattedValue();
 
         expect(actual).toBe(from);
-        expect(actual.name).toBe('Harry Vickers');
-        expect(actual.email_address).toBe('hvickers@example.com');
+        expect(actual.locked).toBe(false);
+        expect(actual.invalid).toBe(false);
+        expect(actual.get('parent_name')).toBe('Harry Vickers');
+        expect(actual.get('email_address')).toBe('hvickers@example.com');
         expect(field.tooltip).toBe('Harry Vickers <hvickers@example.com>');
     });
 

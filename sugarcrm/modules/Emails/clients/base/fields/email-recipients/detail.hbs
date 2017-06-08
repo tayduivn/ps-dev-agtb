@@ -11,18 +11,18 @@
  */
 --}}
 {{#each value}}
-    {{#if name}}
-        <span rel="tooltip" data-placement="top" title="{{email_address}}">
+    {{#if attributes.parent_name}}
+        <span {{#if attributes.email_address}}rel="tooltip" data-placement="top" title="{{attributes.email_address}}"{{/if}}>
             {{#if href~}}
                 <a href="{{href}}">
             {{~/if~}}
-            {{~name~}}
+            {{~attributes.parent_name~}}
             {{~#if href~}}
                 </a>
             {{~/if~}}
             {{~#unless @last}}, {{/unless}}
         </span>
     {{else}}
-        <span>{{email_address}}{{#unless @last}}, {{/unless}}</span>
+        <span>{{attributes.email_address}}{{#unless @last}}, {{/unless}}</span>
     {{/if}}
 {{/each}}

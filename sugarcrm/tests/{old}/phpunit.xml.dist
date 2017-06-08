@@ -162,16 +162,7 @@
         </testsuite>
         <testsuite name="Sugar MAR Test Suite">
             <directory>./modules/ActivityStream/</directory>
-            <directory>./modules/CampaignLog/</directory>
-            <directory>./modules/Campaigns/</directory>
-            <directory>./modules/CampaignTrackers/</directory>
-            <directory>./modules/EmailMan/</directory>
-            <directory>./modules/EmailTemplates/</directory>
-            <directory>./modules/Emails/</directory>
-            <directory>./modules/InboundEmail/</directory>
             <directory>./modules/Leads/</directory>
-            <directory>./modules/Mailer/</directory>
-            <directory>./modules/OutboundEmailConfiguration/</directory>
             <directory>./modules/ProspectLists/</directory>
             <directory>./modules/Prospects/</directory>
         </testsuite>
@@ -229,6 +220,7 @@
             <directory>./modules/CampaignTrackers</directory>
             <directory>./modules/EmailAddresses</directory>
             <directory>./modules/EmailMan</directory>
+            <directory>./modules/EmailParticipants</directory>
             <directory>./modules/Emails</directory>
             <directory>./modules/EmailTemplates</directory>
             <directory>./modules/InboundEmail</directory>

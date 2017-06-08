@@ -18,18 +18,6 @@ class EmailsRelateRecordApi extends RelateRecordApi
     public function registerApiRest()
     {
         return [
-            'createRelatedRecord' => [
-                'reqType' => 'POST',
-                'path' => ['Emails', '?', 'link', '?'],
-                'pathVars' => ['module', 'record', '', 'link_name'],
-                'method' => 'createRelatedRecord',
-                'shortHelp' => 'Create a single record and relate it to an email',
-                'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_link_link_name_post_help.html',
-                'exceptions' => [
-                    'SugarApiExceptionNotAuthorized',
-                    'SugarApiExceptionNotFound',
-                ],
-            ],
             'createRelatedLink' => [
                 'reqType' => 'POST',
                 'path' => ['Emails', '?', 'link', '?', '?'],
@@ -82,54 +70,6 @@ class EmailsRelateRecordApi extends RelateRecordApi
     }
 
     /**
-     * Creating records for the links from the from, to, cc, and bcc collection fields is not supported. Only existing
-     * records can be added for these links, with the exception of email_addresses_from, email_addresses_to,
-     * email_addresses_cc, and email_addresses_bcc.
-     *
-     * When creating a new EmailAddresses record with an email address that already exists, the call is rerouted to link
-     * the existing EmailAddresses record instead.
-     *
-     * {@inheritdoc}
-     * @throws SugarApiExceptionNotAuthorized
-     */
-    public function createRelatedRecord(ServiceBase $api, array $args)
-    {
-        $primaryBean = $this->loadBean($api, $args);
-        list($linkName) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view', 'create');
-        $relatedModuleName = $primaryBean->$linkName->getRelatedModuleName();
-
-        static $allowed = [
-            'email_addresses_from',
-            'email_addresses_to',
-            'email_addresses_cc',
-            'email_addresses_bcc',
-        ];
-
-        foreach (['from', 'to', 'cc', 'bcc'] as $field) {
-            $links = VardefManager::getLinkFieldsForCollection(
-                $primaryBean->getModuleName(),
-                $primaryBean->getObjectName(),
-                $field
-            );
-
-            if (in_array($linkName, $links) && !in_array($linkName, $allowed)) {
-                throw new SugarApiExceptionNotAuthorized("Cannot create related records for link: {$linkName}");
-            }
-        }
-
-        if ($relatedModuleName === 'EmailAddresses' && !empty($args['email_address'])) {
-            $guid = $this->getEmailAddressId($args['email_address']);
-
-            if (!empty($guid)) {
-                $args = array_merge($args, ['remote_id' => $guid]);
-                return $this->createRelatedLink($api, $args);
-            }
-        }
-
-        return parent::createRelatedRecord($api, $args);
-    }
-
-    /**
      * Prevents existing Notes records from being linked as attachments.
      *
      * {@inheritdoc}
@@ -171,26 +111,10 @@ class EmailsRelateRecordApi extends RelateRecordApi
      */
     public function deleteRelatedLink(ServiceBase $api, array $args)
     {
-        $links = VardefManager::getLinkFieldsForCollection('Emails', BeanFactory::getObjectName('Emails'), 'from');
-
-        if (in_array($args['link_name'], $links)) {
+        if ($args['link_name'] === 'from_link') {
             throw new SugarApiExceptionNotAuthorized('The sender cannot be removed');
         }
 
         return parent::deleteRelatedLink($api, $args);
-    }
-
-    /**
-     * Given an email address, this method returns the ID of that email address when it already exists or an empty
-     * string when it does not exist.
-     *
-     * @see SugarEmailAddress:getGuid()
-     * @param string $address
-     * @return string
-     */
-    protected function getEmailAddressId($address)
-    {
-        $sea = new SugarEmailAddress();
-        return $sea->getGuid($address);
     }
 }

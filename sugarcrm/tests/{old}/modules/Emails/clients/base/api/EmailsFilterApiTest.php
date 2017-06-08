@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 /**
  * @coversDefaultClass EmailsFilterApi
  * @group api
@@ -84,300 +86,502 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
         $contact = SugarTestContactUtilities::createContact();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
         // Archived email sent by the current user to $contact.
-        $data = array(
+        $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('users_from');
-        $email->users_from->add($GLOBALS['current_user']);
-        $email->load_relationship('contacts_to');
-        $email->contacts_to->add($contact);
+        $email->load_relationship('from_link');
+        $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('to_link');
+        $email->to_link->add($this->createEmailParticipant($contact));
 
         // Archived email sent by the current user to $user and $contact.
-        $data = array(
+        $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('users_from');
-        $email->users_from->add($GLOBALS['current_user']);
-        $email->load_relationship('users_to');
-        $email->users_to->add($user);
-        $email->load_relationship('contacts_cc');
-        $email->contacts_cc->add($contact);
+        $email->load_relationship('from_link');
+        $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('to_link');
+        $email->to_link->add($this->createEmailParticipant($user));
+        $email->load_relationship('cc_link');
+        $email->cc_link->add($this->createEmailParticipant($contact));
 
         // Draft email owned by the current user.
-        $data = array(
+        $data = [
             'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('users_from');
-        $email->users_from->add($GLOBALS['current_user']);
-        $email->load_relationship('users_to');
-        $email->users_to->add($user);
+        $email->load_relationship('to_link');
+        $email->to_link->add($this->createEmailParticipant($user));
 
         // Draft email owned by the current user to be sent to $contact.
-        $data = array(
+        $data = [
             'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('users_from');
-        $email->users_from->add($GLOBALS['current_user']);
-        $email->load_relationship('contacts_cc');
-        $email->contacts_cc->add($contact);
+        $email->load_relationship('from_link');
+        $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('cc_link');
+        $email->cc_link->add($this->createEmailParticipant($contact));
 
         // Archived email sent by $user to the current user.
-        $data = array(
+        $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $user->id,
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('users_from');
-        $email->users_from->add($user);
-        $email->load_relationship('users_to');
-        $email->users_to->add($GLOBALS['current_user']);
+        $email->load_relationship('from_link');
+        $email->from_link->add($this->createEmailParticipant($user));
+        $email->load_relationship('to_link');
+        $email->to_link->add($this->createEmailParticipant($GLOBALS['current_user']));
 
         // Archived email sent by $contact to $user and the current user.
-        $data = array(
+        $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('contacts_from');
-        $email->contacts_from->add($contact);
-        $email->load_relationship('users_to');
-        $email->users_to->add($user);
-        $email->load_relationship('users_bcc');
-        $email->users_bcc->add($GLOBALS['current_user']);
+        $email->load_relationship('from_link');
+        $email->from_link->add($this->createEmailParticipant($contact));
+        $email->load_relationship('to_link');
+        $email->to_link->add($this->createEmailParticipant($user));
+        $email->load_relationship('bcc_link');
+        $email->bcc_link->add($this->createEmailParticipant($GLOBALS['current_user']));
 
-        $args = array(
+        // Archived email sent by the current user to an email address.
+        $data = [
+            'state' => Email::STATE_ARCHIVED,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+        ];
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email->load_relationship('from_link');
+        $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('to_link');
+        $email->to_link->add($this->createEmailParticipant(null, $address));
+
+        // Archived email sent by the contact to the user with the specified email address.
+        $data = [
+            'state' => Email::STATE_ARCHIVED,
+            'assigned_user_id' => $user->id,
+        ];
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email->load_relationship('from_link');
+        $email->from_link->add($this->createEmailParticipant($contact));
+        $email->load_relationship('to_link');
+        $email->to_link->add($this->createEmailParticipant($user, $address));
+
+        $args = [
             'module' => 'Emails',
-            'filter' => array(
-                array(
-                    '$from' => array(
-                        array(
-                            'bean_type' => 'Users',
-                            'bean_id' => '$current_user_id',
-                        ),
-                    ),
-                ),
-            ),
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        );
+            'filter' => [
+                [
+                    '$from' => [
+                        [
+                            'parent_type' => 'Users',
+                            'parent_id' => '$current_user_id',
+                        ],
+                    ],
+                ],
+            ],
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(4, $response['records'], 'All emails where the current user is the sender');
+        $this->assertCount(5, $response['records'], 'All emails where the current user is the sender');
 
-        $args = array(
+        $args = [
             'module' => 'Emails',
-            'filter' => array(
-                array(
-                    '$from' => array(
-                        array(
-                            'bean_type' => 'Users',
-                            'bean_id' => '$current_user_id',
-                        ),
-                    ),
-                ),
-                array(
-                    'state' => array(
-                        '$in' => array('Archived'),
-                    ),
-                ),
-            ),
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        );
+            'filter' => [
+                [
+                    '$from' => [
+                        [
+                            'parent_type' => 'Users',
+                            'parent_id' => '$current_user_id',
+                        ],
+                    ],
+                ],
+                [
+                    'state' => [
+                        '$in' => ['Archived'],
+                    ],
+                ],
+            ],
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(2, $response['records'], 'All archived emails sent by the current user');
+        $this->assertCount(3, $response['records'], 'All archived emails sent by the current user');
 
-        $args = array(
+        $args = [
             'module' => 'Emails',
-            'filter' => array(
-                array(
-                    '$from' => array(
-                        array(
-                            'bean_type' => 'Users',
-                            'bean_id' => '$current_user_id',
-                        ),
-                        array(
-                            'bean_type' => 'Users',
-                            'bean_id' => $user->id,
-                        ),
-                    ),
-                ),
-                array(
-                    'state' => array(
-                        '$in' => array('Archived'),
-                    ),
-                ),
-            ),
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        );
+            'filter' => [
+                [
+                    '$from' => [
+                        [
+                            'parent_type' => 'Users',
+                            'parent_id' => '$current_user_id',
+                        ],
+                        [
+                            'parent_type' => 'Users',
+                            'parent_id' => $user->id,
+                        ],
+                    ],
+                ],
+                [
+                    'state' => [
+                        '$in' => ['Archived'],
+                    ],
+                ],
+            ],
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(3, $response['records'], 'All archived emails sent by the current user or other user');
+        $this->assertCount(4, $response['records'], 'All archived emails sent by the current user or other user');
 
-        $args = array(
+        $args = [
             'module' => 'Emails',
-            'filter' => array(
-                array(
-                    '$from' => array(
-                        array(
-                            'bean_type' => 'Contacts',
-                            'bean_id' => $contact->id,
-                        ),
-                    ),
-                ),
-            ),
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        );
+            'filter' => [
+                [
+                    '$from' => [
+                        [
+                            'parent_type' => 'Contacts',
+                            'parent_id' => $contact->id,
+                        ],
+                    ],
+                ],
+            ],
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(1, $response['records'], 'All emails sent by the contact');
+        $this->assertCount(2, $response['records'], 'All emails sent by the contact');
 
-        $args = array(
+        $args = [
             'module' => 'Emails',
-            'filter' => array(
-                array(
-                    '$or' => array(
-                        array(
-                            '$to' => array(
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => '$current_user_id',
-                                ),
-                            ),
-                        ),
-                        array(
-                            '$cc' => array(
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => '$current_user_id',
-                                ),
-                            ),
-                        ),
-                        array(
-                            '$bcc' => array(
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => '$current_user_id',
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                array(
-                    'state' => array(
-                        '$in' => array('Archived'),
-                    ),
-                ),
-            ),
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        );
+            'filter' => [
+                [
+                    '$or' => [
+                        [
+                            '$to' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                            ],
+                        ],
+                        [
+                            '$cc' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                            ],
+                        ],
+                        [
+                            '$bcc' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'state' => [
+                        '$in' => ['Archived'],
+                    ],
+                ],
+            ],
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
         $response = $this->api->filterList($this->service, $args);
         $this->assertCount(2, $response['records'], 'All archived emails received by the current user');
 
-        $args = array(
+        $args = [
             'module' => 'Emails',
-            'filter' => array(
-                array(
-                    '$or' => array(
-                        array(
-                            '$to' => array(
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => '$current_user_id',
-                                ),
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => $user->id,
-                                ),
-                            ),
-                        ),
-                        array(
-                            '$cc' => array(
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => '$current_user_id',
-                                ),
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => $user->id,
-                                ),
-                            ),
-                        ),
-                        array(
-                            '$bcc' => array(
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => '$current_user_id',
-                                ),
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => $user->id,
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        );
+            'filter' => [
+                [
+                    '$or' => [
+                        [
+                            '$to' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => $user->id,
+                                ],
+                            ],
+                        ],
+                        [
+                            '$cc' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => $user->id,
+                                ],
+                            ],
+                        ],
+                        [
+                            '$bcc' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => $user->id,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(4, $response['records'], 'All emails received by the current user or $user');
+        $this->assertCount(5, $response['records'], 'All emails received by the current user or $user');
 
-        $args = array(
+        $args = [
             'module' => 'Emails',
-            'filter' => array(
-                array(
-                    '$or' => array(
-                        array(
-                            '$from' => array(
-                                array(
-                                    'bean_type' => 'Users',
-                                    'bean_id' => '$current_user_id',
-                                ),
-                            ),
-                        ),
-                        array(
-                            '$to' => array(
-                                array(
-                                    'bean_type' => 'Contacts',
-                                    'bean_id' => $contact->id,
-                                ),
-                            ),
-                        ),
-                        array(
-                            '$cc' => array(
-                                array(
-                                    'bean_type' => 'Contacts',
-                                    'bean_id' => $contact->id,
-                                ),
-                            ),
-                        ),
-                        array(
-                            '$bcc' => array(
-                                array(
-                                    'bean_type' => 'Contacts',
-                                    'bean_id' => $contact->id,
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC',
-        );
+            'filter' => [
+                [
+                    '$or' => [
+                        [
+                            '$from' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => '$current_user_id',
+                                ],
+                            ],
+                        ],
+                        [
+                            '$to' => [
+                                [
+                                    'parent_type' => 'Contacts',
+                                    'parent_id' => $contact->id,
+                                ],
+                            ],
+                        ],
+                        [
+                            '$cc' => [
+                                [
+                                    'parent_type' => 'Contacts',
+                                    'parent_id' => $contact->id,
+                                ],
+                            ],
+                        ],
+                        [
+                            '$bcc' => [
+                                [
+                                    'parent_type' => 'Contacts',
+                                    'parent_id' => $contact->id,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(4, $response['records'], 'All emails sent by the current user or to the contact');
+        $this->assertCount(5, $response['records'], 'All emails sent by the current user or to the contact');
+
+        $args = [
+            'module' => 'Emails',
+            'filter' => [
+                [
+                    '$or' => [
+                        [
+                            '$to' => [
+                                [
+                                    'email_address_id' => $address->id,
+                                ],
+                            ],
+                        ],
+                        [
+                            '$cc' => [
+                                [
+                                    'email_address_id' => $address->id,
+                                ],
+                            ],
+                        ],
+                        [
+                            '$bcc' => [
+                                [
+                                    'email_address_id' => $address->id,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
+        $response = $this->api->filterList($this->service, $args);
+        $this->assertCount(2, $response['records'], 'All emails sent to the email address');
+
+        $args = [
+            'module' => 'Emails',
+            'filter' => [
+                [
+                    '$or' => [
+                        [
+                            '$to' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => $user->id,
+                                    'email_address_id' => $address->id,
+                                ],
+                            ],
+                        ],
+                        [
+                            '$cc' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => $user->id,
+                                    'email_address_id' => $address->id,
+                                ],
+                            ],
+                        ],
+                        [
+                            '$bcc' => [
+                                [
+                                    'parent_type' => 'Users',
+                                    'parent_id' => $user->id,
+                                    'email_address_id' => $address->id,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
+        $response = $this->api->filterList($this->service, $args);
+        $this->assertCount(1, $response['records'], 'All emails sent to the user with the specified email address');
+    }
+
+    public function throwsSugarApiExceptionInvalidParameterProvider()
+    {
+        return [
+            'no_parent_id_or_email_address_id' => [
+                [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Contacts',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'no_parent_id' => [
+                [
+                    [
+                        '$from' => [
+                            [
+                                'parent_type' => 'Contacts',
+                                'email_address_id' => Uuid::uuid1(),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'no_parent_type_or_email_address_id' => [
+                [
+                    [
+                        '$from' => [
+                            [
+                                'parent_id' => Uuid::uuid1(),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'no_parent_type' => [
+                [
+                    [
+                        '$from' => [
+                            [
+                                'parent_id' => Uuid::uuid1(),
+                                'email_address_id' => Uuid::uuid1(),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'filter_is_empty' => [
+                [
+                    [
+                        '$from' => [
+                            [
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::addParticipantFilter
+     * @dataProvider throwsSugarApiExceptionInvalidParameterProvider
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testAddParticipantFilter_ThrowsSugarApiExceptionInvalidParameter($def)
+    {
+        $args = [
+            'module' => 'Emails',
+            'filter' => $def,
+            'fields' => 'id,parent_name',
+            'order_by' => 'parent_name:ASC',
+        ];
+        $response = $this->api->filterList($this->service, $args);
+    }
+
+    /**
+     * Sets up an EmailParticipants bean from the data on the bean and the email address so that it is ready to add to a
+     * relationship.
+     *
+     * @param null|SugarBean $bean
+     * @param null|SugarBean $address
+     * @return SugarBean
+     */
+    private function createEmailParticipant($bean, $address = null)
+    {
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        BeanFactory::registerBean($ep);
+
+        if ($bean) {
+            $ep->parent_type = $bean->getModuleName();
+            $ep->parent_id = $bean->id;
+        }
+
+        if ($address) {
+            $ep->email_address_id = $address->id;
+        }
+
+        return $ep;
     }
 }

@@ -64,31 +64,17 @@ class SugarACLArchivedEmails extends SugarACLStrategy
             'state',
             'reply_to_id',
             'outbound_email_id',
+            // All of the sender and recipient links are immutable.
+            'from_link',
+            'to_link',
+            'cc_link',
+            'bcc_link',
         ];
-
-        // All of the sender and recipient links are immutable.
-        $fromLinks = $this->getLinkFieldsForCollection($bean, 'from');
-        $toLinks = $this->getLinkFieldsForCollection($bean, 'to');
-        $ccLinks = $this->getLinkFieldsForCollection($bean, 'cc');
-        $bccLinks = $this->getLinkFieldsForCollection($bean, 'bcc');
-        $immutableFields = array_merge($immutableFields, $fromLinks, $toLinks, $ccLinks, $bccLinks);
 
         if (in_array($context['field'], $immutableFields)) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Returns a list of link names for the collection field.
-     *
-     * @param SugarBean $bean
-     * @param string $collection The name of the collection field.
-     * @return array
-     */
-    protected function getLinkFieldsForCollection(SugarBean $bean, $collection)
-    {
-        return VardefManager::getLinkFieldsForCollection($bean->getModuleName(), $bean->getObjectName(), $collection);
     }
 }

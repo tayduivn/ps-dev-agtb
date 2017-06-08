@@ -252,11 +252,13 @@ describe('Base.View.Bwc', function() {
                 expect(app.utils.openEmailCreateDrawer.args[0][1].related).toBe(view.model);
                 expect(app.utils.openEmailCreateDrawer.args[0][1].attachments.length).toBe(2);
                 expect(app.utils.openEmailCreateDrawer.args[0][1].attachments[0].toJSON()).toEqual({
+                    _link: 'attachments',
                     upload_id: 123,
                     name: 'foobar.jpg',
                     filename: 'foobar.jpg'
                 });
                 expect(app.utils.openEmailCreateDrawer.args[0][1].attachments[1].toJSON()).toEqual({
+                    _link: 'attachments',
                     upload_id: 456,
                     name: 'bizbaz.pdf',
                     filename: 'bizbaz.pdf'

@@ -11,9 +11,9 @@
  */
 --}}
 <div class="ellipsis_inline" rel="tooltip" data-placement="bottom" title="{{tooltip}}">
-    {{#if value.name}}
-        {{#if value.href}}<a href="{{value.href}}">{{/if}}{{value.name}}{{#if value.href}}</a>{{/if}}
+    {{#if value.attributes.parent_name}}
+        {{#if value.href}}<a href="{{value.href}}">{{/if}}{{value.attributes.parent_name}}{{#if value.href}}</a>{{/if}}
     {{else}}
-        {{value.email_address}}
+        {{value.attributes.email_address}}
     {{/if}}
 </div>

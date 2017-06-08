@@ -216,17 +216,20 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $contact->retrieve($focus->billing_contact_id);
 
                 if(!empty($contact->email1) || !empty($contact->email2)) {
-                    if ($email_object->load_relationship('contacts_to')) {
-                        $options = array();
-                        $primaryEmail = $contact->emailAddress->getPrimaryAddress($contact);
+                    if ($email_object->load_relationship('to_link')) {
+                        $ep = BeanFactory::newBean('EmailParticipants');
+                        $ep->new_with_id = true;
+                        $ep->id = Uuid::uuid1();
+                        BeanFactory::registerBean($ep);
+                        $ep->parent_type = $contact->getModuleName();
+                        $ep->parent_id = $contact->id;
+                        $ep->email_address = $contact->emailAddress->getPrimaryAddress($contact);
 
-                        if (!empty($primaryEmail)) {
-                            $primaryEmailGuid = $contact->emailAddress->getEmailGUID($primaryEmail);
-                            if (!empty($primaryEmailGuid)) {
-                                $options['email_address_id'] = $primaryEmailGuid;
-                            }
+                        if (!empty($ep->email_address)) {
+                            $ep->email_address_id = $contact->emailAddress->getEmailGUID($ep->email_address);
                         }
-                        $email_object->contacts_to->add($contact->id, $options);
+
+                        $email_object->to_link->add($ep);
                     };
 
                     //contact email is set
@@ -250,17 +253,20 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $acct->retrieve($focus->billing_account_id);
 
                 if(!empty($acct->email1) || !empty($acct->email2)) {
-                    if ($email_object->load_relationship('accounts_to')) {
-                        $options = array();
-                        $primaryEmail = $acct->emailAddress->getPrimaryAddress($acct);
+                    if ($email_object->load_relationship('to_link')) {
+                        $ep = BeanFactory::newBean('EmailParticipants');
+                        $ep->new_with_id = true;
+                        $ep->id = Uuid::uuid1();
+                        BeanFactory::registerBean($ep);
+                        $ep->parent_type = $acct->getModuleName();
+                        $ep->parent_id = $acct->id;
+                        $ep->email_address = $acct->emailAddress->getPrimaryAddress($acct);
 
-                        if (!empty($primaryEmail)) {
-                            $primaryEmailGuid = $acct->emailAddress->getEmailGUID($primaryEmail);
-                            if (!empty($primaryEmailGuid)) {
-                                $options['email_address_id'] = $primaryEmailGuid;
-                            }
+                        if (!empty($ep->email_address)) {
+                            $ep->email_address_id = $acct->emailAddress->getEmailGUID($ep->email_address);
                         }
-                        $email_object->accounts_to->add($acct->id, $options);
+
+                        $email_object->to_link->add($ep);
                     };
 
                     //acct email is set

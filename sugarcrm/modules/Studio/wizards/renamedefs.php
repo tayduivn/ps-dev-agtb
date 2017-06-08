@@ -236,8 +236,12 @@ $renamedefs = array(
             array('name' => 'LBL_BUGS_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Bugs'),
         ),
         'EmailAddresses' => array(
-            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular', 'source' => 'Email Addresses'),
-            array('name' => 'LBL_MODULE_NAME_SINGULAR', 'type' => 'singular', 'source' => 'Email Address'),
+            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular', 'source' => 'EmailAddresses'),
+            array('name' => 'LBL_MODULE_NAME_SINGULAR', 'type' => 'singular', 'source' => 'EmailAddresses'),
+        ),
+        'EmailParticipants' => array(
+            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular', 'source' => 'EmailParticipants'),
+            array('name' => 'LBL_MODULE_NAME_SINGULAR', 'type' => 'singular', 'source' => 'EmailParticipants'),
         ),
         'Forecasts' => array(
             array('name' => 'LNK_NEW_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
@@ -1039,6 +1043,10 @@ $renamedefs = array(
         array('name' => 'LBL_HISTORY_DASHLET_DESCRIPTION', 'type' => 'plural', 'source' => 'Emails'),
         array('name' => 'LBL_HISTORY_DASHLET_EMAIL_SINGULAR', 'type' => 'singular', 'source' => 'Emails'),
         array('name' => 'LBL_HISTORY_DASHLET_EMAIL_PLURAL', 'type' => 'plural', 'source' => 'Emails'),
+
+        // Email Participants
+        array('name' => 'LBL_EMAIL_PARTICIPANTS', 'type' => 'plural', 'source' => 'EmailParticipants'),
+        array('name' => 'LBL_EMAIL_PARTICIPANT', 'type' => 'singular', 'source' => 'EmailParticipants'),
 
         // Forecasts
         array('name' => 'LBL_TOUR_SCREEN_2_DESCRIPTION_670', 'type' => 'singular', 'source' => 'Forecasts'),

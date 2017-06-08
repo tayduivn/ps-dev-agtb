@@ -67,103 +67,162 @@ describe('Emails.Field.ReplyAction', function() {
 
     describe('_getReplyRecipients', function() {
         beforeEach(function() {
-            var from = app.data.createBean('Contacts', {
-                _link: 'contacts_from',
+            var parentId = _.uniqueId();
+            var from = app.data.createBean('EmailParticipants', {
+                _link: 'from_link',
                 id: _.uniqueId(),
-                name: 'Ralph Turner'
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId,
+                    name: 'Ralph Turner'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: 'Ralph Turner',
+                email_address_id: _.uniqueId(),
+                email_address: 'rturner@example.com'
             });
 
             field.model.set('from', from);
         });
 
         it('should return the original sender in the to field if reply', function() {
+            var sender = field.model.get('from').first();
             var actual = field._getReplyRecipients(false);
-            var expected = {
-                to: [{
-                    bean: field.model.get('from').first()
-                }],
-                cc: []
-            };
 
-            expect(actual).toEqual(expected);
+            expect(actual.to.length).toBe(1);
+            expect(actual.to[0].email).toBe(sender.get('email_address'));
+            expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
+            expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
+            expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
+            expect(actual.cc.length).toBe(0);
         });
 
         it('should return the original from, to and cc recipients if reply all', function() {
+            var parentId1 = _.uniqueId();
+            var parentId2 = _.uniqueId();
+            var parentId3 = _.uniqueId();
+            var parentId4 = _.uniqueId();
+            var sender = field.model.get('from').first();
             var to = [
-                app.data.createBean('Contacts', {
-                    _link: 'contacts_to',
+                app.data.createBean('EmailParticipants', {
+                    _link: 'to_link',
                     id: _.uniqueId(),
-                    name: 'Georgia Earl',
-                    email_address_used: 'a@b.com'
+                    parent: {
+                        _acl: {},
+                        type: 'Contacts',
+                        id: parentId1,
+                        name: 'Georgia Earl'
+                    },
+                    parent_type: 'Contacts',
+                    parent_id: parentId1,
+                    parent_name: 'Georgia Earl',
+                    email_address_id: _.uniqueId(),
+                    email_address: 'a@b.com'
                 }),
-                app.data.createBean('Contacts', {
-                    _link: 'contacts_to',
+                app.data.createBean('EmailParticipants', {
+                    _link: 'to_link',
                     id: _.uniqueId(),
-                    name: 'Nancy Holman',
-                    email_address_used: 'b@c.com'
+                    parent: {
+                        _acl: {},
+                        type: 'Contacts',
+                        id: parentId2,
+                        name: 'Nancy Holman'
+                    },
+                    parent_type: 'Contacts',
+                    parent_id: parentId2,
+                    parent_name: 'Nancy Holman',
+                    email_address_id: _.uniqueId(),
+                    email_address: 'b@c.com'
                 })
             ];
             var cc = [
-                app.data.createBean('Contacts', {
-                    _link: 'contacts_cc',
+                app.data.createBean('EmailParticipants', {
+                    _link: 'cc_link',
                     id: _.uniqueId(),
-                    name: 'Wally Bibby',
-                    email_address_used: 'c@d.com'
+                    parent: {
+                        _acl: {},
+                        type: 'Contacts',
+                        id: parentId3,
+                        name: 'Wally Bibby'
+                    },
+                    parent_type: 'Contacts',
+                    parent_id: parentId3,
+                    parent_name: 'Wally Bibby',
+                    email_address_id: _.uniqueId(),
+                    email_address: 'c@d.com'
                 })
             ];
             var bcc = [
-                app.data.createBean('Contacts', {
-                    _link: 'contacts_bcc',
+                app.data.createBean('EmailParticipants', {
+                    _link: 'bcc_link',
                     id: _.uniqueId(),
-                    name: 'Rhonda Withers',
-                    email_address_used: 'e@f.com'
+                    parent: {
+                        _acl: {},
+                        type: 'Contacts',
+                        id: parentId4,
+                        name: 'Rhonda Withers'
+                    },
+                    parent_type: 'Contacts',
+                    parent_id: parentId4,
+                    parent_name: 'Rhonda Withers',
+                    email_address_id: _.uniqueId(),
+                    email_address: 'e@f.com'
                 })
             ];
-            var expected;
             var actual;
 
             field.model.set('to', to);
             field.model.set('cc', cc);
             field.model.set('bcc', bcc);
 
-            expected = {
-                to: [
-                    {bean: field.model.get('from').first()},
-                    {bean: field.model.get('to').at(0)},
-                    {bean: field.model.get('to').at(1)}
-                ],
-                cc: [{
-                    bean: field.model.get('cc').first()
-                }]
-            };
             actual = field._getReplyRecipients(true);
 
-            expect(actual).toEqual(expected);
+            expect(actual.to.length).toBe(3);
+            expect(actual.to[0].email).toBe(sender.get('email_address'));
+            expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
+            expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
+            expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
+            expect(actual.to[1].email).toBe(field.model.get('to').at(0).get('email_address'));
+            expect(actual.to[1].bean.module).toBe(field.model.get('to').at(0).get('parent_type'));
+            expect(actual.to[1].bean.get('id')).toBe(field.model.get('to').at(0).get('parent_id'));
+            expect(actual.to[1].bean.get('name')).toBe(field.model.get('to').at(0).get('parent_name'));
+            expect(actual.to[2].email).toBe(field.model.get('to').at(1).get('email_address'));
+            expect(actual.to[2].bean.module).toBe(field.model.get('to').at(1).get('parent_type'));
+            expect(actual.to[2].bean.get('id')).toBe(field.model.get('to').at(1).get('parent_id'));
+            expect(actual.to[2].bean.get('name')).toBe(field.model.get('to').at(1).get('parent_name'));
+            expect(actual.cc.length).toBe(1);
+            expect(actual.cc[0].email).toBe(field.model.get('cc').at(0).get('email_address'));
+            expect(actual.cc[0].bean.module).toBe(field.model.get('cc').at(0).get('parent_type'));
+            expect(actual.cc[0].bean.get('id')).toBe(field.model.get('cc').at(0).get('parent_id'));
+            expect(actual.cc[0].bean.get('name')).toBe(field.model.get('cc').at(0).get('parent_name'));
         });
 
         it('should correctly return email address only recipients during reply all', function() {
+            var sender = field.model.get('from').first();
             var to = [
-                app.data.createBean('EmailAddresses', {
-                    _link: 'email_addresses_to',
-                    email_address: 'foo@bar.com',
-                    email_address_used: 'foo@bar.com'
+                app.data.createBean('EmailParticipants', {
+                    _link: 'to_link',
+                    id: _.uniqueId(),
+                    email_address_id: _.uniqueId(),
+                    email_address: 'foo@bar.com'
                 })
             ];
-            var expected;
             var actual;
 
             field.model.set('to', to);
 
-            expected = {
-                to: [
-                    {bean: field.model.get('from').first()},
-                    {bean: field.model.get('to').first()}
-                ],
-                cc: []
-            };
             actual = field._getReplyRecipients(true);
 
-            expect(actual).toEqual(expected);
+            expect(actual.to.length).toBe(2);
+            expect(actual.to[0].email).toBe(sender.get('email_address'));
+            expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
+            expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
+            expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
+            expect(actual.to[1].email).toBe(field.model.get('to').at(0).get('email_address'));
+            expect(actual.to[1].bean).toBeUndefined();
+            expect(actual.cc.length).toBe(0);
         });
     });
 
@@ -297,18 +356,28 @@ describe('Emails.Field.ReplyAction', function() {
         });
 
         it('should format email list properly', function() {
+            var parentId = _.uniqueId();
             var to = [
-                app.data.createBean('Contacts', {
-                    _link: 'contacts_to',
+                app.data.createBean('EmailParticipants', {
+                    _link: 'to_link',
                     id: _.uniqueId(),
-                    name: 'Brandon Hunter',
-                    email_address_used: 'foo@bar.com'
+                    parent: {
+                        _acl: {},
+                        type: 'Contacts',
+                        id: parentId,
+                        name: 'Brandon Hunter'
+                    },
+                    parent_type: 'Contacts',
+                    parent_id: parentId,
+                    parent_name: 'Brandon Hunter',
+                    email_address_id: _.uniqueId(),
+                    email_address: 'foo@bar.com'
                 }),
-                app.data.createBean('EmailAddresses', {
-                    _link: 'email_addresses_to',
+                app.data.createBean('EmailParticipants', {
+                    _link: 'to_link',
                     id: _.uniqueId(),
-                    email_address: 'bar@foo.com',
-                    email_address_used: 'bar@foo.com'
+                    email_address_id: _.uniqueId(),
+                    email_address: 'bar@foo.com'
                 })
             ];
             var actual;

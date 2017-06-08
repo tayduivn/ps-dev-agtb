@@ -13,23 +13,13 @@
 /**
  * Class EmailRecipientRelationship
  *
- * Represents a table-based many-to-many relationship between Emails and modules that can be recipients of an email. In
- * particular, each email can have many recipients, all coming from different modules. Emails should be on the left side
- * of the relationship.
+ * Represents the relationship between Emails and modules that can be recipients of an email. In particular, each email
+ * can have many recipients, all coming from different modules. The EmailParticipants module is used to enable a
+ * three-way relationship, with EmailAddresses being the third prong. Emails should be on the left side of the
+ * relationship, while EmailParticipants should be on the right side.
  */
-class EmailRecipientRelationship extends M2MRelationship
+class EmailRecipientRelationship extends One2MBeanRelationship
 {
-    /**
-     * Disables self-referencing relationships.
-     *
-     * {@inheritdoc}
-     */
-    public function __construct($def)
-    {
-        parent::__construct($def);
-        $this->self_referencing = false;
-    }
-
     /**
      * When an email address is being linked and it collides with a row with the same email address:
      *
@@ -41,76 +31,106 @@ class EmailRecipientRelationship extends M2MRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
-        LoggerManager::getLogger()->debug('EmailRecipientRelationship::add()');
-
-        $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
-        LoggerManager::getLogger()->debug("Adding to {$this->name}");
-        LoggerManager::getLogger()->debug('data=' . var_export($dataToInsert, true));
-
-        $currentRows = $this->getCurrentRows($lhs);
+        $this->setEmailAddress($lhs, $rhs);
+        $currentRows = $lhs->{$this->lhsLink}->getBeans();
 
         foreach ($currentRows as $currentRow) {
-            LoggerManager::getLogger()->debug('current_row=' . var_export($currentRow, true));
+            if ($currentRow->id === $rhs->id) {
+                // They are the same. Let it be added again.
+                continue;
+            }
 
             // Equality is checked loosely because null and empty strings need to be considered the same.
-            if ($currentRow['email_address_id'] != $dataToInsert['email_address_id']) {
-                LoggerManager::getLogger()->debug("The email_address_id's do not collide");
-                continue;
-            }
+            $doParentsMatch = $currentRow->parent_type == $rhs->parent_type &&
+                $currentRow->parent_id == $rhs->parent_id;
+            $doEmailAddressesMatch = $currentRow->email_address_id == $rhs->email_address_id;
 
-            LoggerManager::getLogger()->debug('The email_address_id columns collide');
+            $currentRowHasParent = !empty($currentRow->parent_type) && !empty($currentRow->parent_id);
+            $rhsHasParent = !empty($rhs->parent_type) && !empty($rhs->parent_id);
 
-            if ($dataToInsert['bean_type'] === 'EmailAddresses') {
-                LoggerManager::getLogger()->debug(
-                    'There is no benefit to updating the current row when the $dataToInsert[bean_type]=EmailAddresses'
-                );
-
-                if ($currentRow['bean_type'] === $dataToInsert['bean_type']) {
-                    LoggerManager::getLogger()->debug('It is a no-op, so the framework can handle it');
-                    continue;
-                } else {
-                    LoggerManager::getLogger()->debug('Preserve $currentRow[bean_type] and $currentRow[bean_id]');
+            if ($doParentsMatch) {
+                if ($doEmailAddressesMatch) {
+                    // The parents and email addresses match, so there's nothing to do.
                     return false;
                 }
-            }
 
-            if ($currentRow['bean_type'] !== 'EmailAddresses') {
-                LoggerManager::getLogger()->debug(
-                    'Email addresses can be duplicated when bean_type and bean_id are not duplicated in order to ' .
-                    'track all records that can be linked to the email'
-                );
-                continue;
-            }
+                if (empty($rhs->email_address_id) && !empty($currentRow->email_address_id)) {
+                    // The parents match, so keep the email address that the current row has.
+                    return false;
+                }
 
-            LoggerManager::getLogger()->debug(
-                'Replace the current row with the new row because we want the bean_type and bean_id data'
-            );
+                if (!$rhsHasParent) {
+                    // Empty parents, we want both email addresses.
+                    continue;
+                }
 
-            if (!$this->removeRowBeingReplaced($lhs, $currentRow)) {
-                LoggerManager::getLogger()->error('Failed to remove current_row=' . var_export($currentRow, true));
-                return false;
+                if (empty($currentRow->email_address_id)) {
+                    // We want the email address.
+                    if (!$this->remove($lhs, $currentRow)) {
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                // The parents match, but the email addresses do not. We want the new email address.
+                if (!$this->remove($lhs, $currentRow)) {
+                    return false;
+                }
+            } else {
+                if ($doEmailAddressesMatch) {
+                    if (empty($rhs->email_address_id)) {
+                        // The email addresses are empty for both, so it's not a collision. Just add the new parent.
+                        continue;
+                    }
+
+                    if ($currentRowHasParent && $rhsHasParent) {
+                        // Keep both rows when the same email address is used for different parents.
+                        continue;
+                    }
+
+                    if ($rhsHasParent) {
+                        // The email addresses match, so take on the new parent.
+                        if (!$this->remove($lhs, $currentRow)) {
+                            return false;
+                        }
+
+                        continue;
+                    }
+
+                    if ($currentRowHasParent) {
+                        // The new row doesn't have a parent, so preserve the current row.
+                        return false;
+                    }
+                }
             }
         }
 
-        if (parent::add($lhs, $rhs, $additionalFields)) {
-            SugarRelationship::addToResaveList($lhs);
-            return true;
-        }
-
-        return false;
+        return parent::add($lhs, $rhs, $additionalFields);
     }
 
     /**
-     * Adds $lhs to the resave list so that the emails_text data can be updated after unlinking $rhs.
+     * $rhs is deleted after unlinking because it is no longer needed for anything. Resaves the emails_text data for
+     * $lhs after changing its participants.
      *
-     * @param SugarBean $lhs
-     * @param SugarBean $rhs
-     * @return bool
+     * @inheritdoc
      */
     public function remove($lhs, $rhs)
     {
         if (parent::remove($lhs, $rhs)) {
-            SugarRelationship::addToResaveList($lhs);
+            // Don't just orphan the row; delete it.
+            if (!$rhs->deleted) {
+                // We're either unlinking or deleting the email, so it is safe to delete the EmailParticipants bean. We
+                // don't want to delete it if it is already being deleted because we would end up in an infinite loop.
+                if ($lhs->isUpdate()) {
+                    // We can't rely on EmailParticipant::mark_deleted to save email_text because removing causes the
+                    // email_id field to lose its value.
+                    $lhs->saveEmailText();
+                }
+
+                $rhs->mark_deleted($rhs->id);
+            }
+
             return true;
         }
 
@@ -118,261 +138,93 @@ class EmailRecipientRelationship extends M2MRelationship
     }
 
     /**
-     * When removing all rows using the right-hand side link, rows where the email_address_id is set are converted to
-     * rows using EmailAddresses as the bean_type. This preserves historical data regarding email participants. Even if
-     * the record ceases to exist, that email will continue to have to record of sending email from or to the particular
-     * email address.
+     * Adds the EmailParticipants bean to the resave queue because not even disabling workflows should prevent an
+     * email's sender and recipients from being saved.
      *
      * {@inheritdoc}
      */
-    public function removeAll($link)
+    protected function updateFields($lhs, $rhs, $additionalFields)
     {
-        if ($link->getSide() === REL_RHS) {
-            // Most likely the right-hand side bean was deleted.
-            $removeAllResult = true;
-            $rhs = $link->getFocus();
+        parent::updateFields($lhs, $rhs, $additionalFields);
 
-            // Find all rows to remove.
-            $beans = $link->getBeans();
-
-            foreach ($beans as $lhs) {
-                // Get the existing row so you know what email_address_id is.
-                $args = array(
-                    $this->def['join_key_lhs'] => $lhs->id,
-                    $this->def['join_key_rhs'] => $rhs->id,
-                );
-                $row = $this->checkExisting($args);
-
-                if (empty($row)) {
-                    $removeAllResult = false;
-                    LoggerManager::getLogger()->error(
-                        "Warning: row did not exist for relationship {$this->name} within " .
-                        "EmailRecipientRelationship->removeAll()  dataToRemove: " . var_export($args, true)
-                    );
-                    continue;
-                }
-
-                // Remove the row.
-                $removeResult = $this->remove($lhs, $rhs);
-                $addResult = true;
-
-                // Replace the row with a new row representing the email address used.
-                if (!empty($row['email_address_id'])) {
-                    $newLink = "email_addresses_{$row['address_type']}";
-
-                    LoggerManager::getLogger()->debug(
-                        "Replace {$rhs->module_dir}/{$rhs->id} with EmailAddresses/{$row['email_address_id']} for " .
-                        "link {$newLink} on {$lhs->module_dir}/{$lhs->id}"
-                    );
-
-                    if ($lhs->load_relationship($newLink)) {
-                        $address = BeanFactory::retrieveBean(
-                            'EmailAddresses',
-                            $row['email_address_id'],
-                            array('disable_row_level_security' => true)
-                        );
-
-                        if ($lhs->$newLink->add($address) !== true) {
-                            $addResult = false;
-                            LoggerManager::getLogger()->error(
-                                "Warning: failed to replace {$rhs->module_dir}/{$rhs->id} with EmailAddresses/" .
-                                "{$address->id} for link {$newLink} on {$lhs->module_dir}/{$lhs->id} within " .
-                                'EmailRecipientRelationship->removeAll()'
-                            );
-                        }
-                    } else {
-                        $addResult = false;
-                        $lhsClass = get_class($lhs);
-                        LoggerManager::getLogger()->fatal("could not load LHS {$newLink} in {$lhsClass}");
-                    }
-                }
-
-                $removeAllResult = $removeAllResult && $removeResult && $addResult;
-            }
-
-            return $removeAllResult;
-        }
-
-        return parent::removeAll($link);
+        // Register the EmailParticipants bean in case it has not yet been registered. We need to be absolutely certain
+        // the bean being resaved is the one whose fields we just updated. This guarantees that the correct instance of
+        // the bean is saved if `SugarRelationship::resaveRelatedBeans` reloads the bean and we happened to have an
+        // older instance already in memory.
+        BeanFactory::registerBean($rhs);
+        SugarRelationship::addToResaveList($rhs);
     }
 
     /**
-     * Patches $additionalFields['email_address_id'] when adding an EmailAddresses record.
+     * Sets the `email_address_id` field on the EmailParticipants bean to the ID of the parent's primary email address
+     * if the email is archived and the `email_address_id` field is empty. Links the email address to the parent if
+     * `email_address_id` is not empty and the email address is not already linked to the parent.
      *
-     * Patches $additionalFields['email_address_id'] if $additionalFields['email_address'] is provided instead. This
-     * requires discovering the ID of the email address and then guaranteeing that the email address is linked to the
-     * right-hand side record.
-     *
-     * {@inheritdoc}
+     * @param SugarBean $lhs The Emails bean.
+     * @param SugarBean $rhs The EmailParticipants bean.
      */
-    protected function getRowToInsert($lhs, $rhs, $additionalFields = array())
+    protected function setEmailAddress(SugarBean $lhs, SugarBean $rhs)
     {
-        if ($rhs->module_dir === 'EmailAddresses') {
-            $additionalFields['email_address_id'] = $rhs->id;
-        }
+        $rhsParent = $this->getParent($rhs);
 
-        $row = parent::getRowToInsert($lhs, $rhs, $additionalFields);
-
-        if (empty($row['email_address_id'])) {
-            if (empty($row['email_address'])) {
+        if ($rhsParent && $rhsParent->id) {
+            if (empty($rhs->email_address_id)) {
                 if ($lhs->state === Email::STATE_ARCHIVED) {
                     // This email is final, so choose the first valid email address.
-                    $primary = $rhs->emailAddress->getPrimaryAddress($rhs);
-                    $row['email_address_id'] = $rhs->emailAddress->getEmailGUID($primary);
-                } else {
-                    $row['email_address_id'] = null;
+                    $primary = $rhsParent->emailAddress->getPrimaryAddress($rhsParent);
+                    $rhs->email_address_id = $rhsParent->emailAddress->getEmailGUID($primary);
                 }
             } else {
-                // An email address was given. Use it to get an ID.
-                $row['email_address_id'] = $rhs->emailAddress->getEmailGUID($row['email_address']);
-
-                if (!$this->addEmailAddressToRecord($rhs, $row['email_address'])) {
-                    LoggerManager::getLogger()->error(
-                        "Failed to add {$row['email_address']} to {$rhs->module_dir}/{$rhs->id} for {$this->name} " .
-                        "within EmailRecipientRelationship::getRowToInsert()"
-                    );
-                }
+                $emailAddress = BeanFactory::retrieveBean('EmailAddresses', $rhs->email_address_id);
+                $this->addEmailAddressToRecord($rhsParent, $emailAddress);
             }
         }
-
-        unset($row['email_address']);
-
-        return $row;
     }
 
     /**
-     * Only remove rows that match the role columns since the table is used for more than one relationship.
+     * Returns the parent record of the bean.
      *
-     * {@inheritdoc}
+     * @param SugarBean $bean
+     * @return null|SugarBean
      */
-    protected function removeRow($where)
+    private function getParent(SugarBean $bean)
     {
-        if (empty($where)) {
-            return false;
+        if (empty($bean->parent_type) || empty($bean->parent_id)) {
+            return null;
         }
 
-        $roleColumns = $this->getRelationshipRoleColumns();
-        $where = array_merge($where, $roleColumns);
-
-        return parent::removeRow($where);
-    }
-
-    /**
-     * Self-referencing relationships are not supported. This is a no-op.
-     *
-     * {@inheritdoc}
-     */
-    protected function addSelfReferencing($lhs, $rhs, $additionalFields = array())
-    {
-        return true;
-    }
-
-    /**
-     * Self-referencing relationships are not supported. This is a no-op.
-     *
-     * {@inheritdoc}
-     */
-    protected function removeSelfReferencing($lhs, $rhs, $additionalFields = array())
-    {
-        return true;
-    }
-
-    /**
-     * The modified_user_id and created_by fields are not used in this relationship.
-     *
-     * {@inheritdoc}
-     */
-    protected function getStandardFields()
-    {
-        $fields = parent::getStandardFields();
-        unset($fields['modified_user_id']);
-        unset($fields['created_by']);
-
-        return $fields;
-    }
-
-    /**
-     * Returns the rows associated with an email and matching the role columns from this relationship.
-     *
-     * @param SugarBean $lhs
-     * @return array
-     */
-    protected function getCurrentRows(SugarBean $lhs)
-    {
-        $rows = array();
-        $roleColumns = $this->getRelationshipRoleColumns();
-        $sql = "SELECT * FROM {$this->getRelationshipTable()} WHERE {$this->join_key_lhs}='{$lhs->id}' AND " .
-            "address_type='{$roleColumns['address_type']}' AND deleted=0";
-        $result = DBManagerFactory::getInstance()->query($sql);
-
-        while ($row = DBManagerFactory::getInstance()->fetchByAssoc($result)) {
-            $rows[] = $row;
-        }
-
-        return $rows;
-    }
-
-    /**
-     * A row that is being replaced needs to be removed first. This is a convenience method that takes care of loading
-     * the correct relationship and unlinking the RHS bean.
-     *
-     * @param SugarBean $lhs
-     * @param array $row
-     * @return bool
-     */
-    protected function removeRowBeingReplaced(SugarBean $lhs, array $row)
-    {
-        LoggerManager::getLogger()->debug('Removing a row that is being replaced');
-        LoggerManager::getLogger()->debug('row=' . var_export($row, true));
-
-        $rhs = BeanFactory::retrieveBean(
-            $row['bean_type'],
-            $row['bean_id'],
-            array(
-                'disable_row_level_security' => true,
-            )
-        );
-
-        if ($this->getRHSModule() === $row['bean_type']) {
-            LoggerManager::getLogger()->debug("Removing from this relationship: {$this->name}");
-            return $this->remove($lhs, $rhs);
-        } else {
-            $module = $row['bean_type'] === 'EmailAddresses' ? 'email_addresses' : strtolower($row['bean_type']);
-            $link = "{$module}_{$row['address_type']}";
-            LoggerManager::getLogger()->debug("Removing from another relationship: link={$link}");
-
-            if ($lhs->load_relationship($link)) {
-                return $lhs->$link->delete($lhs->id, $rhs);
-            } else {
-                $lhsClass = get_class($lhs);
-                LoggerManager::getLogger()->fatal("Could not load LHS {$link} in {$lhsClass}");
-            }
-        }
-
-        return false;
+        return BeanFactory::retrieveBean($bean->parent_type, $bean->parent_id, ['disable_row_level_security' => true]);
     }
 
     /**
      * Adds an email address to the bean so that they are linked.
      *
      * @param SugarBean $bean
-     * @param string $emailAddress
+     * @param SugarBean $emailAddress
      * @return bool
      */
-    private function addEmailAddressToRecord(SugarBean $bean, $emailAddress)
+    private function addEmailAddressToRecord(SugarBean $bean, SugarBean $emailAddress)
     {
-        $emailAddresses = $bean->emailAddress->getAddressesForBean($bean);
+        $emailAddresses = $bean->emailAddress->getAddressesForBean($bean, true);
         $matches = array_filter($emailAddresses, function ($address) use ($emailAddress) {
-            return $address['email_address'] === $emailAddress;
+            return $address['email_address_id'] === $emailAddress->id;
         });
 
         if (count($matches) === 0) {
-            if ($bean->emailAddress->addAddress($emailAddress) === false) {
+            if ($bean->emailAddress->addAddress($emailAddress->email_address) === false) {
+                LoggerManager::getLogger()->error(
+                    "Failed to add {$emailAddress->email_address} (EmailAddresses/{$bean->email_address_id}) to " .
+                    "{$bean->module_dir}/{$bean->id} for {$this->name}"
+                );
                 return false;
             } else {
                 $bean->emailAddress->save($bean->id, $bean->module_dir);
                 $bean->emailAddress->dontLegacySave = true;
                 $bean->emailAddress->populateLegacyFields($bean);
+                LoggerManager::getLogger()->info(
+                    "Added {$emailAddress->email_address} (EmailAddresses/{$bean->email_address_id}) to " .
+                    "{$bean->module_dir}/{$bean->id} for {$this->name}"
+                );
             }
         }
 

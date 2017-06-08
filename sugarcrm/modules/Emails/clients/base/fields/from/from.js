@@ -68,7 +68,7 @@
         var $el = this.$(this.fieldTag);
 
         $el.on('select2-selecting', _.bind(function(event) {
-            if (this.disposed || !this.hasLink(event.choice.get('_link'))) {
+            if (this.disposed) {
                 event.preventDefault();
             }
         }, this));
@@ -132,19 +132,8 @@
                  */
                 formatSelection: _.bind(function(sender) {
                     var template = app.template.getField(this.type, 'select2-selection', this.module);
-                    var value;
 
-                    if (sender) {
-                        value = sender.email_address;
-
-                        if (sender.name) {
-                            value = sender.name + ' <' + sender.email_address + '>';
-                        }
-
-                        return template({value: value});
-                    }
-
-                    return '';
+                    return sender ? template({value: this.formatForHeader(sender, true)}) : '';
                 }, this),
 
                 /**
@@ -158,15 +147,10 @@
                  */
                 formatResult: _.bind(function(sender) {
                     var template = app.template.getField(this.type, 'select2-result', this.module);
-                    var value = sender.email_address;
-
-                    if (sender.name) {
-                        value = '"' + sender.name + '" <' + sender.email_address + '>';
-                    }
 
                     return template({
-                        value: value,
-                        module: sender.module
+                        value: this.formatForHeader(sender, true),
+                        module: sender.get('parent_name')
                     });
                 }, this),
 

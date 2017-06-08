@@ -17,63 +17,6 @@
         var $tooltipTemplate = $(tooltipTemplate());
 
         /**
-         * Each related record must have a valid `_link` attribute. That starts
-         * with generating a map of related modules to link names for the
-         * collection field.
-         *
-         * @param {string} module The module for the side of the relationship
-         * on which you are operating.
-         * @param {Array} links Each link may either by the name (string) or an
-         * object with a `name` key-value pair.
-         * @return {Object} The keys are the names of the modules on the other
-         * side of the relationship. The values are names of the links for each
-         * module.
-         */
-        function getRelatedModuleToLinkNameMap(module, links) {
-            var relatedModuleToLinkNameMap;
-
-            relatedModuleToLinkNameMap = _.chain(links)
-                .map(function(link) {
-                    return _.has(link, 'name') ? link.name : link;
-                })
-                .reduce(function(map, link) {
-                    var relatedModule = app.data.getRelatedModule(module, link);
-
-                    if (relatedModule) {
-                        map[relatedModule] = link;
-                    }
-
-                    return map;
-                }, {})
-                .value();
-
-            return relatedModuleToLinkNameMap;
-        }
-
-        /**
-         * Assigns the appropriate `_link` attribute to the model.
-         *
-         * @param {Data.Bean} model
-         * @param {Object} relatedModuleToLinkNameMap Use the map to identify
-         * the link from the model's module, if the model doesn't already have
-         * a `_link` attribute.
-         * @return {Data.Bean} The mutated model.
-         */
-        function prepareModelForCollection(model, relatedModuleToLinkNameMap) {
-            var link;
-
-            if (!_.contains(relatedModuleToLinkNameMap, model.get('_link'))) {
-                link = relatedModuleToLinkNameMap[model.module] || '';
-
-                if (link) {
-                    model.set('_link', link);
-                }
-            }
-
-            return model;
-        }
-
-        /**
          * Sets the `parent_type`, `parent_id`, and `parent_name` attributes of
          * the model using the data from the parent.
          *
@@ -152,9 +95,17 @@
                     relate: true,
                     success: function(data) {
                         var records = data.map(function(record) {
-                            record.set('_link', 'contacts_to');
+                            var parentName = app.utils.getRecordName(record);
 
-                            return record;
+                            // Don't set email_address_id. It will be set when
+                            // the email is archived.
+                            return app.data.createBean('EmailParticipants', {
+                                _link: 'to_link',
+                                parent: _.extend({type: record.module}, app.utils.deepCopy(record.attributes)),
+                                parent_type: record.module,
+                                parent_id: record.get('id'),
+                                parent_name: parentName
+                            });
                         });
 
                         email.get('to').add(records);
@@ -192,17 +143,19 @@
         function prepopulateEmailForCreate(email, data) {
             var fields = app.metadata.getModule('Emails', 'fields');
             var fieldNames = _.keys(fields);
+            var fieldMap = {
+                attachments: 'attachments_collection',
+                from_link: 'from',
+                to_link: 'to',
+                cc_link: 'cc',
+                bcc_link: 'bcc'
+            };
             var nonFieldData = {};
 
             _.each(data, function(value, fieldName) {
                 var fieldDefs;
-                var relatedModuleToLinkNameMap;
 
-                // Change it to the collection field.
-                if (fieldName === 'attachments') {
-                    fieldName = 'attachments_collection';
-                }
-
+                fieldName = fieldMap[fieldName] || fieldName;
                 fieldDefs = fields[fieldName] || {};
 
                 if (fieldName === 'related') {
@@ -212,24 +165,6 @@
                     if (value instanceof app.BeanCollection) {
                         value = value.models;
                     }
-
-                    if (!_.isArray(value)) {
-                        value = [value];
-                    }
-
-                    relatedModuleToLinkNameMap = getRelatedModuleToLinkNameMap('Emails', fieldDefs.links);
-
-                    // Assign the appropriate `_link` attribute. Filter out any
-                    // related records that end up with an invalid `_link` for
-                    // the collection field.
-                    value = _.chain(value)
-                        .map(function(model) {
-                            return prepareModelForCollection(model, relatedModuleToLinkNameMap);
-                        })
-                        .filter(function(model) {
-                            return _.contains(relatedModuleToLinkNameMap, model.get('_link'));
-                        })
-                        .value();
 
                     email.get(fieldName).add(value);
                 } else if (_.contains(fieldNames, fieldName)) {

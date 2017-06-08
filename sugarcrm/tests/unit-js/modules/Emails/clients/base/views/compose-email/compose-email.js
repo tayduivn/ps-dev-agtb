@@ -245,28 +245,40 @@ describe('Emails.BaseEmailComposeView', function() {
             [
                 [
                     'to',
-                    'contacts_to',
+                    'to_link',
                     'foo',
                     'bar'
                 ],
                 [
                     'cc',
-                    'contacts_cc',
+                    'cc_link',
                     'foo',
                     'bar'
                 ],
                 [
                     'bcc',
-                    'contacts_bcc',
+                    'bcc_link',
                     'foo',
                     'bar'
                 ]
             ],
             function(collection, link, subject, html) {
                 it('should send the email when the required fields are populated', function() {
-                    model.set(collection, app.data.createBean('Contacts', {
+                    var parentId = _.uniqueId();
+
+                    model.set(collection, app.data.createBean('EmailParticipants', {
                         _link: link,
-                        id: _.uniqueId()
+                        parent: {
+                            _acl: {},
+                            type: 'Contacts',
+                            id: parentId,
+                            name: 'Ray Mason'
+                        },
+                        parent_type: 'Contacts',
+                        parent_id: parentId,
+                        parent_name: 'Ray Mason',
+                        email_address_id: _.uniqueId(),
+                        email_address: 'rmason@example.com'
                     }));
                     model.set('name', subject);
                     model.set('description_html', html);
@@ -347,12 +359,23 @@ describe('Emails.BaseEmailComposeView', function() {
             function(attributes) {
                 it('should confirm with the user before sending', function() {
                     var spy = sandbox.spy();
+                    var parentId = _.uniqueId();
 
                     view.on('error:validation:to', spy);
                     model.set(attributes);
-                    model.set('to', app.data.createBean('Contacts', {
-                        _link: 'contacts_to',
-                        id: _.uniqueId()
+                    model.set('to', app.data.createBean('EmailParticipants', {
+                        _link: 'to_link',
+                        parent: {
+                            _acl: {},
+                            type: 'Contacts',
+                            id: parentId,
+                            name: 'Jason Withers'
+                        },
+                        parent_type: 'Contacts',
+                        parent_id: parentId,
+                        parent_name: 'Jason Withers',
+                        email_address_id: _.uniqueId(),
+                        email_address: 'jwithers@example.com'
                     }));
 
                     view.send();
@@ -371,12 +394,24 @@ describe('Emails.BaseEmailComposeView', function() {
         );
 
         it('should enable buttons after canceling instead of confirming', function() {
+            var parentId = _.uniqueId();
+
             model.set({
                 name: 'foo'
             });
-            model.set('to', app.data.createBean('Contacts', {
-                _link: 'contacts_to',
-                id: _.uniqueId()
+            model.set('to', app.data.createBean('EmailParticipants', {
+                _link: 'to_link',
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId,
+                    name: 'Sam Nalon'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: 'Sam Nalon',
+                email_address_id: _.uniqueId(),
+                email_address: 'snalon@example.com'
             }));
 
             view.send();
@@ -427,10 +462,22 @@ describe('Emails.BaseEmailComposeView', function() {
             ],
             function(attributes) {
                 it('should send the email', function() {
+                    var parentId = _.uniqueId();
+
                     model.set(attributes);
-                    model.set('to', app.data.createBean('Contacts', {
-                        _link: 'contacts_to',
-                        id: _.uniqueId()
+                    model.set('to', app.data.createBean('EmailParticipants', {
+                        _link: 'to_link',
+                        parent: {
+                            _acl: {},
+                            type: 'Contacts',
+                            id: parentId,
+                            name: 'Heather Dunn'
+                        },
+                        parent_type: 'Contacts',
+                        parent_id: parentId,
+                        parent_name: 'Heather Dunn',
+                        email_address_id: _.uniqueId(),
+                        email_address: 'hdunn@example.com'
                     }));
 
                     view.send();

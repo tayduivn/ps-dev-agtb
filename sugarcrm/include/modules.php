@@ -208,6 +208,7 @@ $beanList['TeamHierarchy'] = 'TeamHierarchy';
 //END SUGARCRM flav=int ONLY
 $beanList['UpgradeHistory'] = 'UpgradeHistory';
 $beanList['OutboundEmail'] = 'OutboundEmail';
+$beanList['EmailParticipants'] = 'EmailParticipant';
 
 // this list defines all of the files that contain the SugarBean class definitions from $beanList
 // to create a new module's bean class, add the file definition here
@@ -371,6 +372,7 @@ $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
 $beanFiles['EmptyBean'] = 'data/EmptyBean.php';
 $beanFiles['Styleguide'] = 'modules/Styleguide/Styleguide.php';
 $beanFiles['OutboundEmail'] = 'include/OutboundEmail/OutboundEmail.php';
+$beanFiles['EmailParticipant'] = 'modules/EmailParticipants/EmailParticipant.php';
 
 // added these lists for security settings for tabs
 $modInvisList = array('Administration', 'CustomFields', 'Connectors',
@@ -479,6 +481,7 @@ $modInvisList[] = 'SavedSearch';
 $modInvisList[] = 'Studio';
 $modInvisList[] = 'Connectors';
 $modInvisList[] = 'Styleguide';
+$modInvisList[] = 'EmailParticipants';
 
 $report_include_modules = array();
 //add prospects

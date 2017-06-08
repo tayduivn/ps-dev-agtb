@@ -527,16 +527,22 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getRecipients
+     * @covers ::getParticipants
      */
-    public function testGetRecipients()
+    public function testGetParticipants()
     {
         $email = SugarTestEmailUtilities::createEmail();
-        $email->load_relationship('accounts_to');
-        $email->load_relationship('contacts_to');
-        $email->load_relationship('leads_to');
-        $email->load_relationship('prospects_to');
-        $email->load_relationship('email_addresses_to');
+        $email->load_relationship('to_link');
+
+        $link = function ($parent) use ($email) {
+            $ep = BeanFactory::newBean('EmailParticipants');
+            $ep->new_with_id = true;
+            $ep->id = Uuid::uuid1();
+            BeanFactory::registerBean($ep);
+            $ep->parent_type = $parent->getModuleName();
+            $ep->parent_id = $parent->id;
+            $email->to_link->add($ep);
+        };
 
         $accounts = 6;
         $contacts = 3;
@@ -546,35 +552,57 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         for ($i = 0; $i < $accounts; $i++) {
             $account = SugarTestAccountUtilities::createAccount();
-            $email->accounts_to->add($account);
+            $link($account);
         }
 
         for ($i = 0; $i < $contacts; $i++) {
             $contact = SugarTestContactUtilities::createContact();
-            $email->contacts_to->add($contact);
+            $link($contact);
         }
 
         for ($i = 0; $i < $leads; $i++) {
             $lead = SugarTestLeadUtilities::createLead();
-            $email->leads_to->add($lead);
+            $link($lead);
         }
 
         for ($i = 0; $i < $prospects; $i++) {
             $prospect = SugarTestProspectUtilities::createProspect();
-            $email->prospects_to->add($prospect);
+            $link($prospect);
         }
 
         for ($i = 0; $i < $addresses; $i++) {
             $address = SugarTestEmailAddressUtilities::createEmailAddress();
-            $email->email_addresses_to->add($address);
+            $ep = BeanFactory::newBean('EmailParticipants');
+            $ep->new_with_id = true;
+            $ep->id = Uuid::uuid1();
+            BeanFactory::registerBean($ep);
+            $ep->email_address_id = $address->id;
+            $email->to_link->add($ep);
         }
 
-        $recipients = SugarTestReflection::callProtectedMethod($email, 'getRecipients', array('to'));
-        $this->assertCount($accounts, $recipients['accounts_to'], 'Incorrect for accounts_to');
-        $this->assertCount($contacts, $recipients['contacts_to'], 'Incorrect for contacts_to');
-        $this->assertCount($leads, $recipients['leads_to'], 'Incorrect for leads_to');
-        $this->assertCount($prospects, $recipients['prospects_to'], 'Incorrect for prospects_to');
-        $this->assertCount($addresses, $recipients['email_addresses_to'], 'Incorrect for email_addresses_to');
+        $participants = SugarTestReflection::callProtectedMethod($email, 'getParticipants', array('to_link'));
+        $accountsParticipants = array_filter($participants, function ($participant) {
+            return $participant->parent_type === 'Accounts';
+        });
+        $contactsParticipants = array_filter($participants, function ($participant) {
+            return $participant->parent_type === 'Contacts';
+        });
+        $leadsParticipants = array_filter($participants, function ($participant) {
+            return $participant->parent_type === 'Leads';
+        });
+        $prospectsParticipants = array_filter($participants, function ($participant) {
+            return $participant->parent_type === 'Prospects';
+        });
+        $addressesParticipants = array_filter($participants, function ($participant) {
+            return empty($participant->parent_type);
+        });
+
+
+        $this->assertCount($accounts, $accountsParticipants, 'Incorrect number of accounts');
+        $this->assertCount($contacts, $contactsParticipants, 'Incorrect number of contacts');
+        $this->assertCount($leads, $leadsParticipants, 'Incorrect number of leads');
+        $this->assertCount($prospects, $prospectsParticipants, 'Incorrect number of prospects');
+        $this->assertCount($addresses, $addressesParticipants, 'Incorrect number of email addresses');
     }
 
     /**
@@ -882,14 +910,16 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
 
-        // The current user is the sender.
-        $email->load_relationship('users_from');
-        $email->users_from->add($GLOBALS['current_user']);
-
         // Send to an arbitrary email address.
-        $email->load_relationship('email_addresses_to');
+        $email->load_relationship('to_link');
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $email->email_addresses_to->add($address);
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        BeanFactory::registerBean($ep);
+        $ep->email_address_id = $address->id;
+        $ep->email_address = $address->email_address;
+        $email->to_link->add($ep);
 
         // Send the email.
         $email->sendEmail($config);
@@ -937,8 +967,8 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $row = $db->fetchOne($q);
 
-        $this->assertSame('Users', $row['bean_type'], 'Should be Users');
-        $this->assertSame($GLOBALS['current_user']->id, $row['bean_id'], 'Should be the current user');
+        $this->assertSame('Users', $row['parent_type'], 'Should be Users');
+        $this->assertSame($GLOBALS['current_user']->id, $row['parent_id'], 'Should be the current user');
         $this->assertEmpty($row['email_address_id'], 'Should not have recorded an email address for the sender');
     }
 
@@ -964,8 +994,8 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $row = $db->fetchOne($q);
 
-        $this->assertSame('Users', $row['bean_type'], 'Should be Users');
-        $this->assertSame($GLOBALS['current_user']->id, $row['bean_id'], 'Should be the current user');
+        $this->assertSame('Users', $row['parent_type'], 'Should be Users');
+        $this->assertSame($GLOBALS['current_user']->id, $row['parent_id'], 'Should be the current user');
         $this->assertSame($address->id, $row['email_address_id'], 'Should be the email address from the configuration');
 
         BeanFactory::unregisterBean($oe);
@@ -1053,13 +1083,27 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         // Link an email address that is already linked via multiple records.
         $contact = SugarTestContactUtilities::createContact();
         SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address2);
-        $email->load_relationship('contacts_bcc');
-        $email->contacts_bcc->add($contact, array('email_address_id' => $address2->id));
+        $email->load_relationship('bcc_link');
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        BeanFactory::registerBean($ep);
+        $ep->parent_type = $contact->getModuleName();
+        $ep->parent_id = $contact->id;
+        $ep->email_address_id = $address2->id;
+        $email->bcc_link->add($ep);
 
         $lead = SugarTestLeadUtilities::createLead();
         SugarTestEmailAddressUtilities::addAddressToPerson($lead, $address2);
-        $email->load_relationship('leads_bcc');
-        $email->leads_bcc->add($lead, array('email_address_id' => $address2->id));
+        $email->load_relationship('bcc_link');
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        BeanFactory::registerBean($ep);
+        $ep->parent_type = $lead->getModuleName();
+        $ep->parent_id = $lead->id;
+        $ep->email_address_id = $address2->id;
+        $email->bcc_link->add($ep);
 
         $this->assertNotEmpty(
             $email->linkEmailToAddress($address2->id, 'bcc'),
@@ -1067,16 +1111,18 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         // Fails to link the email address and there are no existing rows for that email address and address_type.
-        $link = $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->setMethods(array('add'))
-            ->getMock();
-        $link->method('add')->willReturn(array($address1->id));
-        $email->email_addresses_from = $link;
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        BeanFactory::registerBean($ep);
+        $ep->email_address_id = $address1->id;
+        $link = $this->createPartialMock('Link2', ['add']);
+        $link->method('add')->willReturn([$ep->id]);
+        $email->from_link = $link;
         $this->assertEmpty($email->linkEmailToAddress($address1->id, 'from'), 'Should have returned nothing');
 
         // Need to remove the mock to avoid failures when SugarRelationship::resaveRelatedBeans() is called.
-        unset($email->email_addresses_from);
+        unset($email->from_link);
     }
 }
 

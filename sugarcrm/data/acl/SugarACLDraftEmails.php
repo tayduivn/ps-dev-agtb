@@ -42,29 +42,15 @@ class SugarACLDraftEmails extends SugarACLStrategy
         $immutableFields = [
             'date_sent',
             'assigned_user_id',
+            // The sender is always the current user for drafts. No one can submit a different sender. Use
+            // outbound_email_id to choose the SMTP account used for sending the email.
+            'from_link',
         ];
-
-        // The sender is always the current user for drafts. No one can submit a different sender. Use outbound_email_id
-        // to choose the SMTP account used for sending the email.
-        $fromLinks = $this->getLinkFieldsForCollection($bean, 'from');
-        $immutableFields = array_merge($immutableFields, $fromLinks);
 
         if (in_array($context['field'], $immutableFields)) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Returns a list of link names for the collection field.
-     *
-     * @param SugarBean $bean
-     * @param string $collection The name of the collection field.
-     * @return array
-     */
-    protected function getLinkFieldsForCollection(SugarBean $bean, $collection)
-    {
-        return VardefManager::getLinkFieldsForCollection($bean->getModuleName(), $bean->getObjectName(), $collection);
     }
 }

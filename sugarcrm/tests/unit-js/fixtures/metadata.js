@@ -120,69 +120,21 @@ fixtures.metadata = {
             lhs_module: 'Emails',
             rhs_module: 'Notes'
         },
-        emails_users_from: {
+        emails_from: {
             lhs_module: 'Emails',
-            rhs_module: 'Users'
+            rhs_module: 'EmailParticipants'
         },
-        emails_contacts_from: {
+        emails_to: {
             lhs_module: 'Emails',
-            rhs_module: 'Contacts'
+            rhs_module: 'EmailParticipants'
         },
-        emails_leads_from: {
+        emails_cc: {
             lhs_module: 'Emails',
-            rhs_module: 'Leads'
+            rhs_module: 'EmailParticipants'
         },
-        emails_email_addresses_from: {
+        emails_bcc: {
             lhs_module: 'Emails',
-            rhs_module: 'EmailAddresses'
-        },
-        emails_users_to: {
-            lhs_module: 'Emails',
-            rhs_module: 'Users'
-        },
-        emails_contacts_to: {
-            lhs_module: 'Emails',
-            rhs_module: 'Contacts'
-        },
-        emails_leads_to: {
-            lhs_module: 'Emails',
-            rhs_module: 'Leads'
-        },
-        emails_email_addresses_to: {
-            lhs_module: 'Emails',
-            rhs_module: 'EmailAddresses'
-        },
-        emails_users_cc: {
-            lhs_module: 'Emails',
-            rhs_module: 'Users'
-        },
-        emails_contacts_cc: {
-            lhs_module: 'Emails',
-            rhs_module: 'Contacts'
-        },
-        emails_leads_cc: {
-            lhs_module: 'Emails',
-            rhs_module: 'Leads'
-        },
-        emails_email_addresses_cc: {
-            lhs_module: 'Emails',
-            rhs_module: 'EmailAddresses'
-        },
-        emails_users_bcc: {
-            lhs_module: 'Emails',
-            rhs_module: 'Users'
-        },
-        emails_contacts_bcc: {
-            lhs_module: 'Emails',
-            rhs_module: 'Contacts'
-        },
-        emails_leads_bcc: {
-            lhs_module: 'Emails',
-            rhs_module: 'Leads'
-        },
-        emails_email_addresses_bcc: {
-            lhs_module: 'Emails',
-            rhs_module: 'EmailAddresses'
+            rhs_module: 'EmailParticipants'
         }
     },
     "currencies": {

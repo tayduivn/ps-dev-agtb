@@ -43,366 +43,842 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    public function setParticipantModuleProvider()
-    {
-        return array(
-            array(null),
-            array('Accounts'),
-            array('Contacts'),
-            array('EmailAddresses'),
-            array('Leads'),
-            array('Prospects'),
-            array('Users'),
-        );
-    }
-
     /**
-     * There should always only be at most one row with address_type=from for an email.
+     * Only the current user can be added as the sender of a draft.
      *
      * @covers ::add
-     * @covers ::getRowToInsert
-     * @covers ::checkExisting
+     * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd()
+    public function testAdd_AddAnEmailAddressToDraft_ParticipantIsSavedWithCurrentUserAsParentAndEmailAddress()
     {
-        $email = SugarTestEmailUtilities::createEmail();
-        $contact = SugarTestContactUtilities::createContact();
-        $account = SugarTestAccountUtilities::createAccount();
-        $lead = SugarTestLeadUtilities::createLead();
-        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
-        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address2);
-        SugarTestEmailAddressUtilities::addAddressToPerson($lead, $address2);
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
-        $contactsRelationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
-        $accountsRelationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_accounts_from');
-        $addressesRelationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_email_addresses_from');
-        $leadsRelationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_leads_from');
+        $result = $relationship->add($email, $this->createEmailParticipant(null, $address));
+        $this->assertTrue($result);
 
-        $addressesRelationship->add($email, $address1);
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'There should be one row');
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
 
-        $expected = array(
-            'email_id' => $email->id,
-            'email_address_id' => $address1->id,
-            'bean_id' => $address1->id,
-            'bean_type' => 'EmailAddresses',
-            'address_type' => 'from',
-            'deleted' => '0',
-        );
-        $this->assertRow($expected, $rows[0], 'The row should be the email address');
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
 
-        SugarRelationship::resaveRelatedBeans();
         $email->retrieveEmailText();
-        $this->assertEquals($address1->email_address, $email->from_addr_name);
-
-        $addressesRelationship->add($email, $address2);
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'There should be one row');
-
-        $expected = array(
-            'email_id' => $email->id,
-            'email_address_id' => $address2->id,
-            'bean_id' => $address2->id,
-            'bean_type' => 'EmailAddresses',
-            'address_type' => 'from',
-            'deleted' => '0',
-        );
-        $this->assertRow($expected, $rows[0], 'The row should be the new email address');
-
-        SugarRelationship::resaveRelatedBeans();
-        $email->retrieveEmailText();
-        $this->assertEquals($address2->email_address, $email->from_addr_name);
-
-        $additionalFields = array(
-            'email_address_id' => $address2->id,
-        );
-        $leadsRelationship->add($email, $lead, $additionalFields);
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'There should be one row');
-
-        $expected = array(
-            'email_id' => $email->id,
-            'email_address_id' => $address2->id,
-            'bean_id' => $lead->id,
-            'bean_type' => 'Leads',
-            'address_type' => 'from',
-            'deleted' => '0',
-        );
-        $this->assertRow($expected, $rows[0], 'The row should be the lead with the same email address');
-
-        SugarRelationship::resaveRelatedBeans();
-        $email->retrieveEmailText();
-        $this->assertEquals("{$lead->name} <{$address2->email_address}>", $email->from_addr_name);
-
-        $additionalFields = array(
-            'email_address_id' => $address2->id,
-        );
-        $contactsRelationship->add($email, $contact, $additionalFields);
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'There should be one row');
-
-        $expected = array(
-            'email_id' => $email->id,
-            'email_address_id' => $address2->id,
-            'bean_id' => $contact->id,
-            'bean_type' => 'Contacts',
-            'address_type' => 'from',
-            'deleted' => '0',
-        );
-        $this->assertRow($expected, $rows[0], 'The row should be the contact with the same email address');
-
-        SugarRelationship::resaveRelatedBeans();
-        $email->retrieveEmailText();
-        $this->assertEquals("{$contact->name} <{$address2->email_address}>", $email->from_addr_name);
-
-        $addressesRelationship->add($email, $address2);
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'There should be one row');
-
-        $expected = array(
-            'email_id' => $email->id,
-            'email_address_id' => $address2->id,
-            'bean_id' => $contact->id,
-            'bean_type' => 'Contacts',
-            'address_type' => 'from',
-            'deleted' => '0',
-        );
-        $this->assertRow($expected, $rows[0], 'The row should still reference the contact');
-
-        SugarRelationship::resaveRelatedBeans();
-        $email->retrieveEmailText();
-        $this->assertEquals("{$contact->name} <{$address2->email_address}>", $email->from_addr_name);
-
-        $additionalFields = array(
-            'email_address_id' => $address1->id,
-        );
-        $contactsRelationship->add($email, $contact, $additionalFields);
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'There should be one row');
-
-        $expected = array(
-            'email_id' => $email->id,
-            'email_address_id' => $address1->id,
-            'bean_id' => $contact->id,
-            'bean_type' => 'Contacts',
-            'address_type' => 'from',
-            'deleted' => '0',
-        );
-        $this->assertRow($expected, $rows[0], 'The row should be the contact with the new email address');
-
-        SugarRelationship::resaveRelatedBeans();
-        $email->retrieveEmailText();
-        $this->assertEquals("{$contact->name} <{$address1->email_address}>", $email->from_addr_name);
-
-        $accountPrimaryAddress = $account->emailAddress->getPrimaryAddress($account);
-        $accountPrimaryAddressId = $account->emailAddress->getGuid($accountPrimaryAddress);
-
-        $additionalFields = array();
-        $accountsRelationship->add($email, $account, $additionalFields);
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'There should be one row');
-
-        $expected = array(
-            'email_id' => $email->id,
-            'email_address_id' => $accountPrimaryAddressId,
-            'bean_id' => $account->id,
-            'bean_type' => 'Accounts',
-            'address_type' => 'from',
-            'deleted' => '0',
-        );
-        $this->assertRow($expected, $rows[0], 'The row should be the account with its primary email address');
-
-        SugarRelationship::resaveRelatedBeans();
-        $email->retrieveEmailText();
-        $this->assertEquals("{$account->name} <{$accountPrimaryAddress}>", $email->from_addr_name);
+        $this->assertEquals("{$GLOBALS['current_user']->name} <$address->email_address>", $email->from_addr_name);
     }
 
     /**
-     * The sender of a draft is always replaced by the current user once the email is resaved.
+     * An email address can be linked to an archived email without a person record.
      *
      * @covers ::add
-     * @covers Email::save
+     * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_TheCurrentUserIsTheSenderForDrafts()
+    public function testAdd_AddAnEmailAddressToAnArchivedEmail_ParticipantIsSavedWithoutParent()
     {
-        $primaryAddress = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
-        $primaryAddressId = $GLOBALS['current_user']->emailAddress->getGuid($primaryAddress);
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
+        $result = $relationship->add($email, $this->createEmailParticipant(null, $address));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertEmpty($bean->parent_type);
+        $this->assertEmpty($bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals($address->email_address, $email->from_addr_name);
+    }
+
+    /**
+     * Only the current user can be added as the sender of a draft.
+     *
+     * @covers ::add
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testAdd_AddContactWithAnEmailAddressToDraft_ThrowsException()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
-        $additionalFields = [];
-        $relationship->add($email, $contact, $additionalFields);
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'There should be one row');
-
-        $expected = array(
-            'email_id' => $email->id,
-            'email_address_id' => null,
-            'bean_id' => $contact->id,
-            'bean_type' => 'Contacts',
-            'address_type' => 'from',
-            'deleted' => '0',
-        );
-        $this->assertRow($expected, $rows[0], 'The row should be the contact without an email address');
-
-        // The sender is replaced with the current user after re-saving the draft.
-        SugarRelationship::resaveRelatedBeans();
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'There should be one row');
-
-        $expected = array(
-            'email_id' => $email->id,
-            'email_address_id' => null,
-            'bean_id' => $GLOBALS['current_user']->id,
-            'bean_type' => 'Users',
-            'address_type' => 'from',
-            'deleted' => '0',
-        );
-        $this->assertRow($expected, $rows[0], 'The row should be the current user without an email address');
-
-        $email->retrieveEmailText();
-        $this->assertEquals("{$GLOBALS['current_user']->name} <{$primaryAddress}>", $email->from_addr_name);
+        $relationship->add($email, $this->createEmailParticipant($contact, $address));
     }
 
     /**
-     * Rows are deleted by the left-hand side link regardless of whether or not the right-hand side bean's module
-     * matches the value of bean_type in the existing row.
+     * An email address can be linked to an archived email without a person record.
      *
-     * @covers ::removeAll
-     * @covers ::checkExisting
-     * @covers ::remove
+     * @covers ::add
+     * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testRemoveAll_UsingLhsLink()
+    public function testAdd_AddContactWithAnEmailAddressToAnArchivedEmail_ParticipantIsSavedWithParentAndEmailAddress()
     {
-        $email = SugarTestEmailUtilities::createEmail();
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
         $contact = SugarTestContactUtilities::createContact();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
-        $relationship1 = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
-        $relationship1->add($email, $contact);
+        $result = $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $this->assertTrue($result);
 
-        $relationship2 = SugarRelationshipFactory::getInstance()->getRelationship('emails_accounts_from');
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
 
-        $link = $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getSide', 'getFocus'))
-            ->getMock();
-        $link->method('getSide')
-            ->willReturn(REL_LHS);
-        $link->method('getFocus')
-            ->willReturn($email);
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
 
-        $actual = $relationship2->removeAll($link);
-        $this->assertTrue($actual);
-
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(0, $rows, 'The row should have been removed when using the left-hand side link');
-
-        SugarRelationship::resaveRelatedBeans();
         $email->retrieveEmailText();
-        $this->assertEmpty($email->from_addr_name);
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->from_addr_name);
     }
 
     /**
-     * The value of bean_type is always set to the correct module for senders.
+     * Only the current user can be added as the sender of a draft.
      *
-     * @covers ::getRowToInsert
-     * @dataProvider setParticipantModuleProvider
-     * @param null|string $module
+     * @covers ::add
+     * @expectedException SugarApiExceptionNotAuthorized
      */
-    public function testGetRowToInsert($module)
+    public function testAdd_AddContactWithoutAnEmailAddressToDraft_ThrowsException()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
-        // Use draft state to avoid automatically setting the email_address_id column. That functionality is covered by
-        // tests in EmailRecipientRelationshipTest.
-        $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::STATE_DRAFT));
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
 
-        $additionalFields = array(
-            'bean_type' => $module,
-        );
-        // Drop empty values, like when $module comes in as null.
-        $additionalFields = array_filter($additionalFields);
-
-        $row = SugarTestReflection::callProtectedMethod(
-            $relationship,
-            'getRowToInsert',
-            array(
-                $email,
-                $contact,
-                $additionalFields,
-            )
-        );
-
-        $expected = array(
-            'email_id' => $email->id,
-            'bean_id' => $contact->id,
-            'bean_type' => 'Contacts',
-            'address_type' => 'from',
-            'deleted' => 0,
-            'email_address_id' => null,
-        );
-        $this->assertRow($expected, $row);
+        $relationship->add($email, $this->createEmailParticipant($contact));
     }
 
     /**
-     * Returns the matching set of rows from the emails_email_addr_rel table.
+     * The sender's email address can be changed for the email.
      *
-     * @param array $fields
-     * @return array
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
-    protected function getRows(array $fields)
+    public function testAdd_DraftHasCurrentUserWithoutAnEmailAddress_AddCurrentUserWithAnEmailAddress()
     {
-        $sql = 'SELECT * FROM emails_email_addr_rel WHERE deleted=0';
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
 
-        if (!empty($fields)) {
-            $where = array();
+        $result = $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
+        $this->assertTrue($result);
 
-            foreach ($fields as $field => $value) {
-                $where[] = "{$field}='{$value}'";
-            }
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
 
-            $sql .= ' AND ' . implode(' AND ', $where);
-        }
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
 
-        $result = $GLOBALS['db']->query($sql);
-        $rows = array();
-
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $rows[] = $row;
-        }
-
-        return $rows;
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address->email_address}>", $email->from_addr_name);
     }
 
     /**
-     * Asserts that the row contains the expected data.
+     * The sender's email address can be changed for the email.
      *
-     * @param array $expected
-     * @param array $row
-     * @param string $message
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
-    protected function assertRow(array $expected, array $row, $message = '')
+    public function testAdd_DraftHasCurrentUserWithAnEmailAddress_AddCurrentUserWithDifferentEmailAddress()
     {
-        // Testing for id is unnecessary.
-        unset($row['id']);
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address1));
 
-        // Assert that date_modified is not empty. Then discard it because testing the actual value is unnecessary.
-        $this->assertNotEmpty($row['date_modified']);
-        unset($row['date_modified']);
+        $result = $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address2));
+        $this->assertTrue($result);
 
-        $this->assertEquals($expected, $row, $message);
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address2->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address2->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The `email_address_id` field is preserved if an attempt is made to link the same person record without an email
+     * address when that person record is already linked along with an email address.
+     *
+     * @covers ::add
+     */
+    public function testAdd_DraftHasCurrentUserWithAnEmailAddress_AddCurrentUserWithoutAnEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
+        $this->assertFalse($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * It's a noop when adding the same sender without any change to the email address.
+     *
+     * @covers ::add
+     */
+    public function testAdd_DraftHasCurrentUserWithoutAnEmailAddress_AddCurrentUserWithoutAnEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
+        $this->assertFalse($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertEmpty($bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $email->from_addr_name
+        );
+    }
+
+    /**
+     * It's a noop when adding the same sender without any change to the email address.
+     *
+     * @covers ::add
+     */
+    public function testAdd_DraftHasCurrentUserWithAnEmailAddress_AddCurrentUserWithSameEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
+        $this->assertFalse($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender's email address can be changed for the email.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_DraftHasCurrentUserWithAnEmailAddress_AddSameParticipantWithDifferentEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $ep = $this->createEmailParticipant($GLOBALS['current_user'], $address1);
+        $relationship->add($email, $ep);
+
+        $ep->email_address_id = $address2->id;
+        $result = $relationship->add($email, $ep);
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address2->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address2->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender's email address can be changed for the email.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_DraftHasCurrentUserWithoutAnEmailAddress_AddSameParticipantWithAnEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $ep = $this->createEmailParticipant($GLOBALS['current_user']);
+        $relationship->add($email, $ep);
+
+        $ep->email_address_id = $address->id;
+        $result = $relationship->add($email, $ep);
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender's email address can be changed for the email.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_DraftHasCurrentUserWithAnEmailAddress_AddSameParticipantWithoutAnEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $ep = $this->createEmailParticipant($GLOBALS['current_user'], $address);
+        $relationship->add($email, $ep);
+
+        $ep->email_address_id = '';
+        $result = $relationship->add($email, $ep);
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertEmpty($bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $email->from_addr_name
+        );
+    }
+
+    /**
+     * The email_address_id column is set to the sender's primary email address if the email is not a draft and the
+     * email address was not chosen when the sender was added. This comes up when a record -- Accounts, Contacts, Leads,
+     * etc. -- is added with the intention of using that record's primary email address and the email is immediately
+     * being archived.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_AddContactWithoutAnEmailAddressToArchivedEmail_ParticipantIsSavedWithPrimaryEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $contact = SugarTestContactUtilities::createContact();
+        $primaryId = $contact->emailAddress->getGuid($contact->email1);
+
+        $result = $relationship->add($email, $this->createEmailParticipant($contact));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($primaryId, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->from_addr_name);
+    }
+
+    /**
+     * The `parent_type` and `parent_id` fields are patched when a bean is linked with an email address that is already
+     * linked as a plain email address.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasAnEmailAddress_AddContactWithSameEmailAddress_ParentIsAddedToParticipant()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $contact = SugarTestContactUtilities::createContact();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
+        $relationship->add($email, $this->createEmailParticipant(null, $address));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The email_address_id column cannot be emptied if the email is archived. The record's primary email address will
+     * replace the original value of email_address_id.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasAnEmailAddress_AddContactWithoutEmailAddress_ContactIsAddedWithPrimaryEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $contact = SugarTestContactUtilities::createContact();
+        $primaryId = $contact->emailAddress->getGuid($contact->email1);
+        $relationship->add($email, $this->createEmailParticipant(null, $address));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($contact));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($primaryId, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender's email address can be changed for the email.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasAnEmailAddress_AddContactWithDifferentEmailAddress_ParticipantIsSavedWithParentAndEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $contact = SugarTestContactUtilities::createContact();
+        $relationship->add($email, $this->createEmailParticipant(null, $address1));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($contact, $address2));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($address2->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address2->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender's email address can be changed for the email.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasAnEmailAddress_AddContactToSameParticipant_ParticipantIsSavedWithParent()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $contact = SugarTestContactUtilities::createContact();
+        $ep = $this->createEmailParticipant(null, $address);
+        $relationship->add($email, $ep);
+
+        $ep->parent_type = $contact->getModuleName();
+        $ep->parent_id = $contact->id;
+        $result = $relationship->add($email, $ep);
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender's email address can be changed for the email.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasAnEmailAddress_AddDifferentEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $relationship->add($email, $this->createEmailParticipant(null, $address1));
+
+        $result = $relationship->add($email, $this->createEmailParticipant(null, $address2));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertEmpty($bean->parent_type);
+        $this->assertEmpty($bean->parent_id);
+        $this->assertSame($address2->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals($address2->email_address, $email->from_addr_name);
+    }
+
+    /**
+     * The `parent_type` and `parent_id` fields are preserved if an attempt is made to link an email address when that
+     * email address is already linked along with a bean.
+     *
+     * @covers ::add
+     * @covers Email::retrieveEmailText
+     */
+    public function testAdd_EmailHasContactWithAnEmailAddress_AddSameEmailAddress_NoChangeIsMade()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $contact = SugarTestContactUtilities::createContact();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $relationship->add($email, $this->createEmailParticipant($contact, $address));
+
+        $result = $relationship->add($email, $this->createEmailParticipant(null, $address));
+        $this->assertFalse($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender can be replaced. There can only be one.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasContact_AddLeadWithoutAnEmailAddress_LeadIsAddedWithPrimaryEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $contact = SugarTestContactUtilities::createContact();
+        $lead = SugarTestLeadUtilities::createLead();
+        $primaryId = $lead->emailAddress->getGuid($lead->email1);
+        $relationship->add($email, $this->createEmailParticipant($contact));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($lead));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Leads', $bean->parent_type);
+        $this->assertSame($lead->id, $bean->parent_id);
+        $this->assertSame($primaryId, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$lead->name} <{$lead->email1}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender can be replaced. There can only be one.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasContact_AddLeadWithAnEmailAddress_LeadIsAddedWithEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $contact = SugarTestContactUtilities::createContact();
+        $lead = SugarTestLeadUtilities::createLead();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($lead, $address);
+        $relationship->add($email, $this->createEmailParticipant($contact));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($lead, $address));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Leads', $bean->parent_type);
+        $this->assertSame($lead->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$lead->name} <{$address->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender can be replaced. There can only be one.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasContactWithAnEmailAddress_AddLeadWithSameEmailAddress_LeadIsAddedWithEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $contact = SugarTestContactUtilities::createContact();
+        $lead = SugarTestLeadUtilities::createLead();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
+        SugarTestEmailAddressUtilities::addAddressToPerson($lead, $address);
+        $relationship->add($email, $this->createEmailParticipant($contact, $address));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($lead, $address));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Leads', $bean->parent_type);
+        $this->assertSame($lead->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$lead->name} <{$address->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender's email address can be changed for the email.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasContactWithAnEmailAddress_AddSameContactWithDifferentEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $contact = SugarTestContactUtilities::createContact();
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address1);
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address2);
+        $relationship->add($email, $this->createEmailParticipant($contact, $address1));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($contact, $address2));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($address2->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address2->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender's email address can be changed for the email.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasContactWithAnEmailAddress_AddSameParticipantWithDifferentEmailAddress()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $contact = SugarTestContactUtilities::createContact();
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address1);
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address2);
+        $ep = $this->createEmailParticipant($contact, $address1);
+        $relationship->add($email, $ep);
+
+        $ep->email_address_id = $address2->id;
+        $result = $relationship->add($email, $ep);
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($address2->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address2->email_address}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender's email address can be changed for the email.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ArchivedEmailHasContactWithAnEmailAddress_AddSameContactWithoutAnEmailAddress_PrimaryEmailAddressIsUsed()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_from');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $contact = SugarTestContactUtilities::createContact();
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $primaryId = $contact->emailAddress->getGuid($contact->email1);
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address1);
+        $relationship->add($email, $this->createEmailParticipant($contact, $address1));
+
+        $result = $relationship->add($email, $this->createEmailParticipant($contact));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($primaryId, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->from_addr_name);
+    }
+
+    /**
+     * Sets up an EmailParticipants bean from the data on the bean and the email address so that it is ready to add to a
+     * relationship.
+     *
+     * @param null|SugarBean $bean
+     * @param null|SugarBean $address
+     * @return SugarBean
+     */
+    private function createEmailParticipant($bean, $address = null)
+    {
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = \Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
+        BeanFactory::registerBean($ep);
+
+        if ($bean) {
+            $ep->parent_type = $bean->getModuleName();
+            $ep->parent_id = $bean->id;
+        }
+
+        if ($address) {
+            $ep->email_address_id = $address->id;
+        }
+
+        return $ep;
     }
 }

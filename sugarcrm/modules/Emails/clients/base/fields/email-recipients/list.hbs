@@ -14,10 +14,10 @@
     <div class="ellipsis_inline" data-placement="bottom"{{#if dir}} dir="{{dir}}"{{/if}} title="{{tooltip}}">
 {{/if}}
 {{#each value~}}
-    {{~#if name~}}
-        {{~#if href}}<a href="{{href}}">{{/if}}{{~name~}}{{#if href}}</a>{{/if~}}
+    {{~#if attributes.parent_name~}}
+        {{~#if href}}<a href="{{href}}">{{/if}}{{~attributes.parent_name~}}{{#if href}}</a>{{/if~}}
     {{~else~}}
-        {{~email_address~}}
+        {{~attributes.email_address~}}
     {{~/if~}}
     {{~#unless @last}}, {{/unless~}}
 {{~/each}}

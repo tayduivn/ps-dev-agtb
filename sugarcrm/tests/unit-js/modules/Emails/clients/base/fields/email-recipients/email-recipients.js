@@ -18,6 +18,8 @@ describe('Emails.BaseEmailRecipientsField', function() {
 
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
+        var parentId1 = _.uniqueId();
+        var parentId2 = _.uniqueId();
 
         SugarTest.testMetadata.init();
 
@@ -41,17 +43,35 @@ describe('Emails.BaseEmailRecipientsField', function() {
         model = context.get('model');
 
         to = [
-            app.data.createBean('Contacts', {
-                _link: 'contacts_to',
+            app.data.createBean('EmailParticipants', {
+                _link: 'to_link',
                 id: _.uniqueId(),
-                name: 'Herbert Yates',
-                email_address_used: 'hyates@example.com'
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId1,
+                    name: 'Herbert Yates'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId1,
+                parent_name: 'Herbert Yates',
+                email_address_id: _.uniqueId(),
+                email_address: 'hyates@example.com'
             }),
             app.data.createBean('Contacts', {
-                _link: 'contacts_to',
+                _link: 'to_link',
                 id: _.uniqueId(),
-                name: 'Walter Quigley',
-                email_address_used: 'wquigley@example.com'
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId2,
+                    name: 'Walter Quigley'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId2,
+                parent_name: 'Walter Quigley',
+                email_address_id: _.uniqueId(),
+                email_address: 'wquigley@example.com'
             })
         ];
 
@@ -126,29 +146,42 @@ describe('Emails.BaseEmailRecipientsField', function() {
             field.render();
         });
 
-        it('should not complete the selection with an invalid link', function() {
+        it('should not complete the selection when it is a duplicate bean', function() {
             var event = new $.Event('select2-selecting');
 
             sandbox.spy(event, 'preventDefault');
-            event.choice = app.data.createBean('Contacts', {
-                _link: 'contacts_cc',
-                id: _.uniqueId(),
-                name: 'Eugene Kushner',
-                email_address_used: 'ek@example.com'
+            field.model.set('to', to);
+            event.choice = app.data.createBean('EmailParticipants', {
+                _link: 'to_link',
+                parent: {
+                    _acl: {},
+                    type: to[1].get('parent_type'),
+                    id: to[1].get('parent_id'),
+                    name: to[1].get('parent_name')
+                },
+                parent_type: to[1].get('parent_type'),
+                parent_id: to[1].get('parent_id'),
+                parent_name: to[1].get('parent_name'),
+                email_address_id: to[1].get('email_address_id'),
+                email_address: to[1].get('email_address')
             });
 
             field.$(field.fieldTag).trigger(event);
 
             expect(event.preventDefault).toHaveBeenCalled();
-            expect(field.model.get('to').length).toBe(0);
+            expect(field.model.get('to').length).toBe(2);
         });
 
-        it('should not complete the selection when it is a duplicate', function() {
+        it('should not complete the selection when it is a duplicate email address', function() {
             var event = new $.Event('select2-selecting');
 
             sandbox.spy(event, 'preventDefault');
             field.model.set('to', to);
-            event.choice = to[1];
+            event.choice = app.data.createBean('EmailParticipants', {
+                _link: 'to_link',
+                email_address_id: to[1].get('email_address_id'),
+                email_address: to[1].get('email_address')
+            });
 
             field.$(field.fieldTag).trigger(event);
 
@@ -157,16 +190,25 @@ describe('Emails.BaseEmailRecipientsField', function() {
         });
 
         it('should add to the collection', function() {
+            var parentId = _.uniqueId();
             var event = new $.Event('change');
             var actual;
 
             field.model.set('to', to);
             event.added = [
-                app.data.createBean('Contacts', {
-                    _link: 'contacts_to',
-                    id: _.uniqueId(),
-                    name: 'Ira Carr',
-                    email_address_used: 'icarr@example.com'
+                app.data.createBean('EmailParticipants', {
+                    _link: 'to_link',
+                    parent: {
+                        _acl: {},
+                        type: 'Contacts',
+                        id: parentId,
+                        name: 'Ira Carr'
+                    },
+                    parent_type: 'Contacts',
+                    parent_id: parentId,
+                    parent_name: 'Ira Carr',
+                    email_address_id: _.uniqueId(),
+                    email_address: 'icarr@example.com'
                 })
             ];
 
@@ -204,19 +246,32 @@ describe('Emails.BaseEmailRecipientsField', function() {
         actual = field.getFormattedValue();
 
         expect(actual.length).toBe(to.length);
-        expect(actual[0].name).toBe('Herbert Yates');
-        expect(actual[0].email_address).toBe('hyates@example.com');
-        expect(actual[1].name).toBe('Walter Quigley');
-        expect(actual[1].email_address).toBe('wquigley@example.com');
+        expect(actual[0].locked).toBe(false);
+        expect(actual[0].invalid).toBe(false);
+        expect(actual[0].get('parent_name')).toBe('Herbert Yates');
+        expect(actual[0].get('email_address')).toBe('hyates@example.com');
+        expect(actual[1].locked).toBe(false);
+        expect(actual[1].invalid).toBe(false);
+        expect(actual[1].get('parent_name')).toBe('Walter Quigley');
+        expect(actual[1].get('email_address')).toBe('wquigley@example.com');
         expect(field.tooltip).toBe('Herbert Yates <hyates@example.com>, Walter Quigley <wquigley@example.com>');
     });
 
     it('should decorate invalid recipients', function() {
-        var invalid = app.data.createBean('Contacts', {
-            _link: 'contacts_to',
-            id: _.uniqueId(),
-            name: 'Francis Humphrey',
-            email_address_used: 'foo'
+        var parentId = _.uniqueId();
+        var invalid = app.data.createBean('EmailParticipants', {
+            _link: 'to_link',
+            parent: {
+                _acl: {},
+                type: 'Contacts',
+                id: parentId,
+                name: 'Francis Humphrey'
+            },
+            parent_type: 'Contacts',
+            parent_id: parentId,
+            parent_name: 'Francis Humphrey',
+            email_address_id: _.uniqueId(),
+            email_address: 'foo'
         });
         var invalidSelector = '.select2-search-choice [data-invalid="true"]';
 
@@ -264,6 +319,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
             })
         ]);
         var spy = sandbox.spy();
+        var collection;
 
         app.drawer = {
             open: function(def, onClose) {
@@ -284,8 +340,45 @@ describe('Emails.BaseEmailRecipientsField', function() {
         field.model.set('to', to);
 
         field.$('.btn').click();
+        collection = field.model.get('to');
 
-        expect(field.model.get('to').length).toBe(5);
+        expect(collection.length).toBe(5);
+        expect(collection.at(2).get('_link')).toBe('to_link');
+        expect(collection.at(2).get('parent')).toEqual({
+            _acl: {},
+            type: recipients.at(0).module,
+            id: recipients.at(0).get('id'),
+            name: recipients.at(0).get('name')
+        });
+        expect(collection.at(2).get('parent_type')).toBe(recipients.at(0).module);
+        expect(collection.at(2).get('parent_id')).toBe(recipients.at(0).get('id'));
+        expect(collection.at(2).get('parent_name')).toBe(recipients.at(0).get('name'));
+        expect(collection.at(2).get('email_address_id')).toBeUndefined();
+        expect(collection.at(2).get('email_address')).toBeUndefined();
+        expect(collection.at(3).get('_link')).toBe('to_link');
+        expect(collection.at(3).get('parent')).toEqual({
+            _acl: {},
+            type: recipients.at(1).module,
+            id: recipients.at(1).get('id'),
+            name: recipients.at(1).get('name')
+        });
+        expect(collection.at(3).get('parent_type')).toBe(recipients.at(1).module);
+        expect(collection.at(3).get('parent_id')).toBe(recipients.at(1).get('id'));
+        expect(collection.at(3).get('parent_name')).toBe(recipients.at(1).get('name'));
+        expect(collection.at(3).get('email_address_id')).toBeUndefined();
+        expect(collection.at(3).get('email_address')).toBeUndefined();
+        expect(collection.at(4).get('_link')).toBe('to_link');
+        expect(collection.at(4).get('parent')).toEqual({
+            _acl: {},
+            type: recipients.at(2).module,
+            id: recipients.at(2).get('id'),
+            name: recipients.at(2).get('name')
+        });
+        expect(collection.at(4).get('parent_type')).toBe(recipients.at(2).module);
+        expect(collection.at(4).get('parent_id')).toBe(recipients.at(2).get('id'));
+        expect(collection.at(4).get('parent_name')).toBe(recipients.at(2).get('name'));
+        expect(collection.at(4).get('email_address_id')).toBeUndefined();
+        expect(collection.at(4).get('email_address')).toBeUndefined();
         expect(spy).toHaveBeenCalledTwice();
         expect(spy).toHaveBeenCalledWith('open');
         expect(spy).toHaveBeenCalledWith('closed');

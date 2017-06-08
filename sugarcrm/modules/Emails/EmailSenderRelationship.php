@@ -15,13 +15,14 @@ require_once 'modules/Emails/EmailRecipientRelationship.php';
 /**
  * Class EmailSenderRelationship
  *
- * Represents a table-based one-to-many relationship between Emails and modules that can be senders of an email. In
- * particular, each email can have one sender, each one coming from a different module. Emails should be on the left
- * side of the relationship.
+ * Represents the relationship between Emails and modules that can be senders of an email. In particular, each email can
+ * have one sender. The EmailParticipants module is used to enable a three-way relationship, with EmailAddresses being
+ * the third prong. Emails should be on the left side of the relationship, while EmailParticipants should be on the
+ * right side.
  */
 class EmailSenderRelationship extends EmailRecipientRelationship
 {
-    public $type = 'one-to-many';
+    public $type = 'one-to-one';
 
     /**
      * If an email already has a sender, then the sender is removed before the new one is added.
@@ -35,60 +36,62 @@ class EmailSenderRelationship extends EmailRecipientRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
-        LoggerManager::getLogger()->debug('EmailSenderRelationship::add()');
+        if ($lhs->state === Email::STATE_DRAFT) {
+            if (empty($rhs->parent_type) && empty($rhs->parent_id)) {
+                // Default the parent to the current user.
+                $rhs->parent_type = $GLOBALS['current_user']->getModuleName();
+                $rhs->parent_id = $GLOBALS['current_user']->id;
+            }
 
-        $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
-        LoggerManager::getLogger()->debug("Adding to {$this->name}");
-        LoggerManager::getLogger()->debug('data=' . var_export($dataToInsert, true));
+            $isRhsParentCurrentUser = $rhs->parent_type === $GLOBALS['current_user']->getModuleName() &&
+                $rhs->parent_id === $GLOBALS['current_user']->id;
 
-        $currentRows = $this->getCurrentRows($lhs);
+            if (!$isRhsParentCurrentUser) {
+                throw new SugarApiExceptionNotAuthorized('Only the current user can be added as the sender of a draft');
+            }
+        }
+
+        $this->setEmailAddress($lhs, $rhs);
+        $currentRows = $lhs->{$this->lhsLink}->getBeans();
 
         // There can only be one. But just in case something weird happens, we'll iterate through the rows.
         foreach ($currentRows as $currentRow) {
-            LoggerManager::getLogger()->debug('current_row=' . var_export($currentRow, true));
-
-            if ($this->compareRow($currentRow, $dataToInsert, array('id', 'date_modified', 'email_address_id'))) {
-                LoggerManager::getLogger()->debug(
-                    'It is either a no-op or an update to email_address_id, so the framework can handle it'
-                );
+            if ($currentRow->id === $rhs->id) {
+                // They are the same. Let it be added again.
                 continue;
             }
 
-            if ($dataToInsert['bean_type'] !== 'EmailAddresses') {
-                LoggerManager::getLogger()->debug('Replace the current row with the new row');
+            // Equality is checked loosely because null and empty strings need to be considered the same.
+            $doParentsMatch = $currentRow->parent_type == $rhs->parent_type &&
+                $currentRow->parent_id == $rhs->parent_id;
+            $doEmailAddressesMatch = $currentRow->email_address_id == $rhs->email_address_id;
 
-                if (!$this->removeRowBeingReplaced($lhs, $currentRow)) {
-                    LoggerManager::getLogger()->error('Failed to remove current_row=' . var_export($currentRow, true));
+            if ($doParentsMatch && empty($rhs->email_address_id) && !empty($currentRow->email_address_id)) {
+                // The parents match, so keep the email address that the current row has.
+                return false;
+            }
+
+            if (!$doEmailAddressesMatch) {
+                // The email_address_id's do not collide. Consider it a new sender.
+                if (!$this->remove($lhs, $currentRow)) {
                     return false;
                 }
 
                 continue;
             }
 
-            // Equality is checked loosely because null and empty strings need to be considered the same.
-            $hasEmailAddressCollision = $currentRow['email_address_id'] == $dataToInsert['email_address_id'];
-
-            if ($hasEmailAddressCollision) {
-                LoggerManager::getLogger()->debug('The email_address_id columns collide');
-            }
-
-            if ($hasEmailAddressCollision && $currentRow['bean_type'] !== 'EmailAddresses') {
-                LoggerManager::getLogger()->debug('Preserve $currentRow[bean_type] and $currentRow[bean_id]');
+            if (empty($rhs->parent_type) || empty($rhs->parent_id)) {
+                // We already have this email address stored, so keep the current row in case it includes a parent bean.
                 return false;
             }
 
-            $message = 'Replace the current row with the new row because ';
-
-            if ($hasEmailAddressCollision) {
-                $message .= 'we want the bean_type and bean_id data from the new row';
-            } else {
-                $message .= 'we want the new email address';
+            if ($doParentsMatch) {
+                // There is no reason to change the sender since the parents and email addresses are the same.
+                return false;
             }
 
-            LoggerManager::getLogger()->debug($message);
-
-            if (!$this->removeRowBeingReplaced($lhs, $currentRow)) {
-                LoggerManager::getLogger()->error('Failed to remove current_row=' . var_export($currentRow, true));
+            // The sender has a different parent. Replace the sender.
+            if (!$this->remove($lhs, $currentRow)) {
                 return false;
             }
         }
@@ -97,50 +100,10 @@ class EmailSenderRelationship extends EmailRecipientRelationship
     }
 
     /**
-     * Removes any existing row for a particular email where the role is "from."
-     *
      * {@inheritdoc}
      */
-    public function removeAll($link)
+    public function getType($side)
     {
-        LoggerManager::getLogger()->debug('EmailSenderRelationship::removeAll()');
-        LoggerManager::getLogger()->debug("Removing from {$this->name}");
-
-        if ($link->getSide() === REL_RHS) {
-            LoggerManager::getLogger()->debug("{$link->name} is the RHS of the relationship");
-            return parent::removeAll($link);
-        }
-
-        LoggerManager::getLogger()->debug("{$link->name} is the LHS of the relationship");
-        $result = true;
-        $lhs = $link->getFocus();
-        $currentRows = $this->getCurrentRows($lhs);
-
-        // There can only be one. But just in case something weird happens, we'll iterate through the rows.
-        foreach ($currentRows as $currentRow) {
-            LoggerManager::getLogger()->debug('Removing current_row=' . var_export($currentRow, true));
-
-            if ($this->removeRowBeingReplaced($lhs, $currentRow)) {
-                $result = $result && true;
-            } else {
-                LoggerManager::getLogger()->error('Failed to remove current_row=' . var_export($currentRow, true));
-                $result = false;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Patches $additionalFields['bean_type'] to guarantee that it is always the module of the right-hand side record.
-     * This is required because bean_type isn't a role column for these relationships, whereas it is a role column for
-     * the recipients relationships.
-     *
-     * {@inheritdoc}
-     */
-    protected function getRowToInsert($lhs, $rhs, $additionalFields = array())
-    {
-        $additionalFields['bean_type'] = $rhs->module_dir;
-        return parent::getRowToInsert($lhs, $rhs, $additionalFields);
+        return REL_TYPE_ONE;
     }
 }

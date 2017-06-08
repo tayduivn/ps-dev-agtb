@@ -80,9 +80,17 @@
         var $el = this.$(this.fieldTag);
 
         $el.on('select2-selecting', _.bind(function(event) {
-            var isDuplicate = !!this.model.get(this.name).get(event.choice);
+            // Don't add the choice if it duplicates an existing recipient.
+            var duplicate = this.model.get(this.name).find(function(model) {
+                if (event.choice.get('parent_id')) {
+                    return event.choice.get('parent_type') === model.get('parent_type') &&
+                        event.choice.get('parent_id') === model.get('parent_id');
+                }
 
-            if (this.disposed || !this.hasLink(event.choice.get('_link')) || isDuplicate) {
+                return event.choice.get('email_address_id') === model.get('email_address_id');
+            });
+
+            if (this.disposed || duplicate) {
                 event.preventDefault();
             }
         }, this));
@@ -94,7 +102,7 @@
                 collection = this.model.get(this.name);
 
                 if (!_.isEmpty(event.added)) {
-                    collection.add(event.added, {merge: true});
+                    collection.add(event.added);
                 }
 
                 if (!_.isEmpty(event.removed)) {
@@ -147,8 +155,8 @@
 
                     return template({
                         cid: recipient.cid,
-                        name: recipient.name || recipient.email_address,
-                        email_address: recipient.email_address,
+                        name: recipient.get('parent_name') || recipient.get('email_address'),
+                        email_address: recipient.get('email_address'),
                         invalid: recipient.invalid
                     });
                 }, this),
@@ -164,15 +172,10 @@
                  */
                 formatResult: _.bind(function(recipient) {
                     var template = app.template.getField(this.type, 'select2-result', this.module);
-                    var value = recipient.email_address;
-
-                    if (recipient.name) {
-                        value = '"' + recipient.name + '" <' + recipient.email_address + '>';
-                    }
 
                     return template({
-                        value: value,
-                        module: recipient.module
+                        value: this.formatForHeader(recipient, true),
+                        module: recipient.get('parent_type')
                     });
                 }, this),
 
@@ -209,7 +212,14 @@
 
         if (value instanceof app.BeanCollection) {
             value = value.map(this.prepareModel, this);
-            this.tooltip = _.map(value, this.formatForHeader).join(', ');
+
+            // Must wrap the callback in a function or else the collection's
+            // index will be passed, causing the second parameter of
+            // EmailParticipantsPlugin#formatForHeader to unintentionally
+            // receive a value.
+            this.tooltip = _.map(value, function(model) {
+                return this.formatForHeader(model);
+            }, this).join(', ');
         }
 
         return value;
@@ -263,12 +273,25 @@
             },
             _.bind(function(recipients) {
                 if (recipients && recipients.length > 0) {
-                    recipients.each(function(recipient) {
-                        recipient.set('email_address', recipient.get('email'));
-                        recipient.unset('email');
-                    });
-                    recipients = this.format(recipients);
-                    this.model.get(this.name).add(recipients, {merge: true});
+                    var eps = recipients.map(function(recipient) {
+                        var parentName = app.utils.getRecordName(recipient);
+                        var ep = app.data.createBean('EmailParticipants', {
+                            _link: this.getLinkName(),
+                            parent: {
+                                _acl: recipient.get('_acl') || {},
+                                type: recipient.module,
+                                id: recipient.get('id'),
+                                name: parentName
+                            },
+                            parent_type: recipient.module,
+                            parent_id: recipient.get('id'),
+                            parent_name: parentName
+                        });
+
+                        return ep;
+                    }, this);
+
+                    this.model.get(this.name).add(eps);
                 }
 
                 this.view.trigger('address-book-state', 'closed');

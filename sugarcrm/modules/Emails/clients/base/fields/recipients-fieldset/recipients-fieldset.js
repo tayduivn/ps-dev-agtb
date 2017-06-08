@@ -79,7 +79,7 @@
             .reduce(function(fields, field) {
                 var models = field.getFormattedValue();
                 var str = _.map(models, function(model) {
-                    return model.name || model.email_address;
+                    return model.get('parent_name') || model.get('email_address');
                 }).join(', ');
 
                 if (!_.isEmpty(str)) {

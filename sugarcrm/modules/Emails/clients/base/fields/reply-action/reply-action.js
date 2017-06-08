@@ -115,7 +115,36 @@
 
         var mapRecipients = function(recipients) {
             return _.map(recipients, function(recipient) {
-                return {bean: recipient};
+                var data = {
+                    /**
+                     * FIXME: MAR-4656
+                     * When EmailClientLaunch can accept an email address' ID
+                     * along with the email address itself, then we
+                     * will want to pass that ID, too. The reply will then be
+                     * sure to use the exact same email address for this
+                     * recipient as was used in the original email.
+                     */
+                    email: recipient.get('email_address')
+                };
+
+                // The type and id fields are not unset after a parent record
+                // is deleted. So we test for name because the parent record is
+                // truly only there if type and id are non-empty and the parent
+                // record can be resolved and has not been deleted.
+                if (recipient.get('parent') &&
+                    recipient.get('parent').type &&
+                    recipient.get('parent').id &&
+                    recipient.get('parent').name
+                ) {
+                    // We omit type because it is actually the module name and
+                    // should be treated as an attribute.
+                    data.bean = app.data.createBean(
+                        recipient.get('parent').type,
+                        _.omit(recipient.get('parent'), 'type')
+                    );
+                }
+
+                return data;
             });
         };
 
@@ -199,18 +228,16 @@
     /**
      * Given a list of people, format a text only list for use in a reply header
      *
-     * @param {Collection} collection A list of models
+     * @param {Data.BeanCollection} collection A list of models
      * @protected
      */
     _formatEmailList: function(collection) {
         var result = '';
-        var models = (collection instanceof Backbone.Collection) ?
-            collection.models :
-            [];
+        var models = collection instanceof app.BeanCollection ? collection.models : [];
 
         _.each(models, function(model) {
-            var name = model.get('name');
-            var email = model.get('email_address_used');
+            var name = model.get('parent_name');
+            var email = model.get('email_address');
 
             if (result) {
                 result += ', ';

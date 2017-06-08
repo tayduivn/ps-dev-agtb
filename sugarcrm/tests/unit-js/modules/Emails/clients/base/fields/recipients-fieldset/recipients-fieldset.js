@@ -21,6 +21,10 @@ describe('Emails.RecipientsFieldsetField', function() {
 
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
+        var parentId1 = _.uniqueId();
+        var parentId2 = _.uniqueId();
+        var parentId3 = _.uniqueId();
+        var parentId4 = _.uniqueId();
 
         SugarTest.testMetadata.init();
 
@@ -97,35 +101,71 @@ describe('Emails.RecipientsFieldsetField', function() {
         ];
 
         to = [
-            app.data.createBean('Contacts', {
-                _link: 'contacts_to',
+            app.data.createBean('EmailParticipants', {
+                _link: 'to_link',
                 id: _.uniqueId(),
-                name: 'Herbert Yates',
-                email_address_used: 'hyates@example.com'
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId1,
+                    name: 'Herbert Yates'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId1,
+                parent_name: 'Herbert Yates',
+                email_address_id: _.uniqueId(),
+                email_address: 'hyates@example.com'
             }),
-            app.data.createBean('Contacts', {
-                _link: 'contacts_to',
+            app.data.createBean('EmailParticipants', {
+                _link: 'to_link',
                 id: _.uniqueId(),
-                name: 'Walter Quigley',
-                email_address_used: 'wquigley@example.com'
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId2,
+                    name: 'Walter Quigley'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId2,
+                parent_name: 'Walter Quigley',
+                email_address_id: _.uniqueId(),
+                email_address: 'wquigley@example.com'
             })
         ];
 
         cc = [
-            app.data.createBean('Contacts', {
-                _link: 'contacts_cc',
+            app.data.createBean('EmailParticipants', {
+                _link: 'cc_link',
                 id: _.uniqueId(),
-                name: 'Wyatt Archer',
-                email_address_used: 'warcher@example.com'
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId3,
+                    name: 'Wyatt Archer'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId3,
+                parent_name: 'Wyatt Archer',
+                email_address_id: _.uniqueId(),
+                email_address: 'warcher@example.com'
             })
         ];
 
         bcc = [
-            app.data.createBean('Contacts', {
-                _link: 'contacts_bcc',
+            app.data.createBean('EmailParticipants', {
+                _link: 'bcc_link',
                 id: _.uniqueId(),
-                name: 'Earl Hatcher',
-                email_address_used: 'ehatcher@example.com'
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId4,
+                    name: 'Earl Hatcher'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId4,
+                parent_name: 'Earl Hatcher',
+                email_address_id: _.uniqueId(),
+                email_address: 'ehatcher@example.com'
             })
         ];
 

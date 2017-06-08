@@ -51,22 +51,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
     }
 
-    public function createArchivedEmailProvider()
-    {
-        return array(
-            array('accounts_from'),
-            array('contacts_from'),
-            array('email_addresses_from'),
-            array('leads_from'),
-            array('prospects_from'),
-            array('users_from'),
-        );
-    }
-
     /**
      * When creating an archived email, any sender and recipients are allowed.
      *
-     * @dataProvider createArchivedEmailProvider
      * @covers ::createRecord
      * @covers ::isValidStateTransition
      * @covers ::getRelatedRecordArguments
@@ -74,68 +61,99 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
-     * @param string $fromLink
      */
-    public function testCreateArchivedEmail($fromLink)
+    public function testCreateArchivedEmail()
     {
-        $from = $this->createRhsBean($fromLink);
-        $contact = $this->createRhsBean('contacts_to');
-        $account = $this->createRhsBean('accounts_cc');
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $contact = SugarTestContactUtilities::createContact();
+        $account = SugarTestAccountUtilities::createAccount();
 
-        $args = array(
+        $args = [
             'state' => Email::STATE_ARCHIVED,
-            $fromLink => array(
-                'add' => array($from->id),
-            ),
-            'contacts_to' => array(
-                'add' => array($contact->id),
-            ),
-            'accounts_cc' => array(
-                'add' => array($account->id),
-            ),
-        );
+            'from_link' => [
+                'create' => [
+                    $this->createEmailParticipant($user),
+                ],
+            ],
+            'to_link' => [
+                'create' => [
+                    $this->createEmailParticipant($contact),
+                ],
+            ],
+            'cc_link' => [
+                'create' => [
+                    $this->createEmailParticipant($account),
+                ],
+            ],
+        ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
 
-        $expected = array(
-            array(
-                '_module' => $this->getRhsModule($fromLink),
-                '_link' => $fromLink,
-                'id' => $from->id,
-                'email_address_used' => $from->email1,
-                'date_modified' => $this->getIsoTimestamp($from->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from_link',
+                'parent' => [
+                    'type' => $user->getModuleName(),
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ],
+                'parent_name' => $user->name,
+                'email_addresses' => [
+                    'id' => $user->emailAddress->getGuid($user->email1),
+                    'email_address' => $user->email1,
+                ],
+                'email_address_id' => $user->emailAddress->getGuid($user->email1),
+                'email_address' => $user->email1,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'from');
         $this->assertRecords($expected, $collection, 'The sender did not match expectations');
 
-        $expected = array(
-            array(
-                '_module' => 'Contacts',
-                '_link' => 'contacts_to',
-                'id' => $contact->id,
-                'email_address_used' => $contact->email1,
-                'date_modified' => $this->getIsoTimestamp($contact->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [
+                    'type' => $contact->getModuleName(),
+                    'id' => $contact->id,
+                    'name' => $contact->name,
+                ],
+                'parent_name' => $contact->name,
+                'email_addresses' => [
+                    'id' => $contact->emailAddress->getGuid($contact->email1),
+                    'email_address' => $contact->email1,
+                ],
+                'email_address_id' => $contact->emailAddress->getGuid($contact->email1),
+                'email_address' => $contact->email1,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
 
-        $expected = array(
-            array(
-                '_module' => 'Accounts',
-                '_link' => 'accounts_cc',
-                'id' => $account->id,
-                'email_address_used' => $account->email1,
-                'date_modified' => $this->getIsoTimestamp($account->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'cc_link',
+                'parent' => [
+                    'type' => $account->getModuleName(),
+                    'id' => $account->id,
+                    'name' => $account->name,
+                ],
+                'parent_name' => $account->name,
+                'email_addresses' => [
+                    'id' => $account->emailAddress->getGuid($account->email1),
+                    'email_address' => $account->email1,
+                ],
+                'email_address_id' => $account->emailAddress->getGuid($account->email1),
+                'email_address' => $account->email1,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'cc');
         $this->assertRecords($expected, $collection, 'The CC field did not match expectations');
 
         $bean = $this->retrieveEmailText($record['id']);
-        $expectedFrom = ($from instanceof EmailAddress) ? $from->email_address : "{$from->name} <{$from->email1}>";
-        $this->assertEquals($expectedFrom, $bean->from_addr_name);
+        $this->assertEquals("{$user->name} <{$user->email1}>", $bean->from_addr_name);
         $this->assertEquals("{$contact->name} <{$contact->email1}>", $bean->to_addrs_names);
         $this->assertEquals("{$account->name} <{$account->email1}>", $bean->cc_addrs_names);
     }
@@ -150,57 +168,80 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      */
     public function testUpdateArchivedEmail()
     {
-        $contact = $this->createRhsBean('contacts_from');
-        $lead = $this->createRhsBean('leads_cc');
+        $contact = SugarTestContactUtilities::createContact();
+        $lead = SugarTestLeadUtilities::createLead();
+        $user = SugarTestUserUtilities::createAnonymousUser();
 
-        $args = array(
+        $args = [
             'state' => Email::STATE_ARCHIVED,
-            'contacts_from' => array(
-                'add' => array($contact->id),
-            ),
-            'users_to' => array(
-                'add' => array($GLOBALS['current_user']->id),
-            ),
-        );
+            'from_link' => [
+                'create' => [
+                    $this->createEmailParticipant($contact),
+                ],
+            ],
+            'to_link' => [
+                'create' => [
+                    $this->createEmailParticipant($GLOBALS['current_user']),
+                ],
+            ],
+        ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived after create');
 
-        $expected = array(
-            array(
-                '_module' => 'Contacts',
-                '_link' => 'contacts_from',
-                'id' => $contact->id,
-                'email_address_used' => $contact->email1,
-                'date_modified' => $this->getIsoTimestamp($contact->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from_link',
+                'parent' => [
+                    'type' => $contact->getModuleName(),
+                    'id' => $contact->id,
+                    'name' => $contact->name,
+                ],
+                'parent_name' => $contact->name,
+                'email_addresses' => [
+                    'id' => $contact->emailAddress->getGuid($contact->email1),
+                    'email_address' => $contact->email1,
+                ],
+                'email_address_id' => $contact->emailAddress->getGuid($contact->email1),
+                'email_address' => $contact->email1,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'from');
         $this->assertRecords($expected, $collection, 'The sender does not match expectations after create');
 
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_to',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => $GLOBALS['current_user']->email1,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [
+                    'type' => $GLOBALS['current_user']->getModuleName(),
+                    'id' => $GLOBALS['current_user']->id,
+                    'name' => $GLOBALS['current_user']->name,
+                ],
+                'parent_name' => $GLOBALS['current_user']->name,
+                'email_addresses' => [
+                    'id' => $GLOBALS['current_user']->emailAddress->getGuid($GLOBALS['current_user']->email1),
+                    'email_address' => $GLOBALS['current_user']->email1,
+                ],
+                'email_address_id' => $GLOBALS['current_user']->emailAddress->getGuid($GLOBALS['current_user']->email1),
+                'email_address' => $GLOBALS['current_user']->email1,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field does not match expectations after create');
 
-        $args = array(
-            'email_addresses_from' => array(
-                'create' => array(
-                    array(
-                        'email_address' => 'myname@mydomain.com',
-                    ),
-                ),
-            ),
-            'leads_cc' => array(
-                'add' => array($lead->id),
-            ),
-        );
+        $args = [
+            'from_link' => [
+                'create' => [
+                    $this->createEmailParticipant($user),
+                ],
+            ],
+            'cc_link' => [
+                'create' => [
+                    $this->createEmailParticipant($lead),
+                ],
+            ],
+        ];
         $record = $this->updateRecord($record['id'], $args);
     }
 
@@ -218,31 +259,30 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      */
     public function testCreateDraftEmail()
     {
-        $lead = $this->createRhsBean('leads_to');
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $lead = SugarTestLeadUtilities::createLead();
+        $leadEmailAddress = BeanFactory::retrieveBean('EmailAddresses', $lead->emailAddress->getGuid($lead->email1));
 
-        $args = array(
+        $args = [
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
-            'email_addresses_from' => array(
-                'create' => array(
-                    array(
-                        'email_address' => 'myname@mycompany.com',
-                    ),
-                ),
-            ),
-            'leads_to' => array(
-                'add' => array(
-                    array(
-                        'id' => $lead->id,
-                        'email_address' => $lead->email1,
-                    ),
-                ),
-            ),
+            'from_link' => [
+                'create' => [
+                    $this->createEmailParticipant(null, $address),
+                ],
+            ],
+            'to_link' => [
+                'create' => [
+                    $this->createEmailParticipant($lead, $leadEmailAddress),
+                ],
+            ],
             // The same email participant can appear in multiple roles.
-            'users_bcc' => array(
-                'add' => array($GLOBALS['current_user']->id),
-            ),
-        );
+            'bcc_link' => [
+                'create' => [
+                    $this->createEmailParticipant($GLOBALS['current_user']),
+                ],
+            ],
+        ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be a draft');
         $this->assertSame(
@@ -251,45 +291,72 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             'Should use the specified configuration'
         );
 
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_from',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => static::$overrideConfig->email_address,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from_link',
+                'parent' => [
+                    'type' => $GLOBALS['current_user']->getModuleName(),
+                    'id' => $GLOBALS['current_user']->id,
+                    'name' => $GLOBALS['current_user']->name,
+                ],
+                'parent_name' => $GLOBALS['current_user']->name,
+                'email_addresses' => [
+                    'id' => $address->getGuid(static::$overrideConfig->email_address),
+                    'email_address' => static::$overrideConfig->email_address,
+                ],
+                'email_address_id' => $address->getGuid(static::$overrideConfig->email_address),
+                'email_address' => static::$overrideConfig->email_address,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'from');
         $this->assertRecords($expected, $collection, 'The sender should be the current user');
 
-        $expected = array(
-            array(
-                '_module' => 'Leads',
-                '_link' => 'leads_to',
-                'id' => $lead->id,
-                'email_address_used' => $lead->email1,
-                'date_modified' => $this->getIsoTimestamp($lead->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [
+                    'type' => $lead->getModuleName(),
+                    'id' => $lead->id,
+                    'name' => $lead->name,
+                ],
+                'parent_name' => $lead->name,
+                'email_addresses' => [
+                    'id' => $lead->emailAddress->getGuid($lead->email1),
+                    'email_address' => $lead->email1,
+                ],
+                'email_address_id' => $leadEmailAddress->id,
+                'email_address' => $lead->email1,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
 
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_bcc',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => null,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'bcc_link',
+                'parent' => [
+                    'type' => $GLOBALS['current_user']->getModuleName(),
+                    'id' => $GLOBALS['current_user']->id,
+                    'name' => $GLOBALS['current_user']->name,
+                ],
+                'parent_name' => $GLOBALS['current_user']->name,
+                'email_addresses' => [
+                    'id' => '',
+                    'email_address' => '',
+                ],
+                'email_address_id' => '',
+                'email_address' => '',
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'bcc');
         $this->assertRecords($expected, $collection, 'The BCC field did not match expectations');
 
         $bean = $this->retrieveEmailText($record['id']);
         $this->assertEquals(
-            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            "{$GLOBALS['current_user']->name} <" . static::$overrideConfig->email_address . ">",
             $bean->from_addr_name
         );
         $this->assertEquals("{$lead->name} <{$lead->email1}>", $bean->to_addrs_names);
@@ -309,12 +376,12 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      */
     public function testUpdateDraftEmailWithNewSender()
     {
-        $user = $this->createRhsBean('users_from');
+        $user = SugarTestUserUtilities::createAnonymousUser();
 
-        $args = array(
+        $args = [
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
-        );
+        ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after create');
         $this->assertSame(
@@ -323,23 +390,34 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             'The configuration did not match expectations after create'
         );
 
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_from',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => static::$overrideConfig->email_address,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from_link',
+                'parent' => [
+                    'type' => $GLOBALS['current_user']->getModuleName(),
+                    'id' => $GLOBALS['current_user']->id,
+                    'name' => $GLOBALS['current_user']->name,
+                ],
+                'parent_name' => $GLOBALS['current_user']->name,
+                'email_addresses' => [
+                    'id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                    'email_address' => static::$overrideConfig->email_address,
+                ],
+                'email_address_id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                'email_address' => static::$overrideConfig->email_address,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'from');
         $this->assertRecords($expected, $collection, 'The sender should be the current user');
 
-        $args = array(
-            'users_from' => array(
-                'add' => array($user->id),
-            ),
-        );
+        $args = [
+            'from_link' => [
+                'create' => [
+                    $this->createEmailParticipant($user),
+                ],
+            ],
+        ];
         $record = $this->updateRecord($record['id'], $args);
     }
 
@@ -357,16 +435,18 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      */
     public function testUpdateDraftEmail()
     {
-        $prospect = $this->createRhsBean('prospects_cc');
-        $address = $this->createRhsBean('email_addresses_to');
+        $prospect = SugarTestProspectUtilities::createProspect();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
-        $args = array(
+        $args = [
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
-            'prospects_cc' => array(
-                'add' => array($prospect->id),
-            ),
-        );
+            'cc_link' => [
+                'create' => [
+                    $this->createEmailParticipant($prospect),
+                ],
+            ],
+        ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after create');
         $this->assertSame(
@@ -375,44 +455,65 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             'The configuration did not match expectations after create'
         );
 
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_from',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => static::$overrideConfig->email_address,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from_link',
+                'parent' => [
+                    'type' => $GLOBALS['current_user']->getModuleName(),
+                    'id' => $GLOBALS['current_user']->id,
+                    'name' => $GLOBALS['current_user']->name,
+                ],
+                'parent_name' => $GLOBALS['current_user']->name,
+                'email_addresses' => [
+                    'id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                    'email_address' => static::$overrideConfig->email_address,
+                ],
+                'email_address_id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                'email_address' => static::$overrideConfig->email_address,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'from');
         $this->assertRecords($expected, $collection, 'The sender should be the current user');
 
-        $expected = array(
-            array(
-                '_module' => 'Prospects',
-                '_link' => 'prospects_cc',
-                'id' => $prospect->id,
-                'email_address_used' => null,
-                'date_modified' => $this->getIsoTimestamp($prospect->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'cc_link',
+                'parent' => [
+                    'type' => $prospect->getModuleName(),
+                    'id' => $prospect->id,
+                    'name' => $prospect->name,
+                ],
+                'parent_name' => $prospect->name,
+                'email_addresses' => [
+                    'id' => '',
+                    'email_address' => '',
+                ],
+                'email_address_id' => '',
+                'email_address' => '',
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'cc');
         $this->assertRecords($expected, $collection, 'The CC field did not match expectations after create');
 
-        $args = array(
+        $args = [
             'outbound_email_id' => static::$userConfig->id,
-            'email_addresses_to' => array(
-                'add' => array($address->id),
-            ),
-            'prospects_cc' => array(
-                'add' => array(
-                    array(
-                        'id' => $prospect->id,
-                        'email_address' => $prospect->email1,
+            'to_link' => [
+                'create' => [
+                    $this->createEmailParticipant(null, $address),
+                ],
+            ],
+            // This should patch the email address onto the existing row for the prospect.
+            'cc_link' => [
+                'create' => [
+                    $this->createEmailParticipant(
+                        $prospect,
+                        BeanFactory::retrieveBean('EmailAddresses', $prospect->emailAddress->getGuid($prospect->email1))
                     ),
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $record = $this->updateRecord($record['id'], $args);
         $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after update');
         $this->assertSame(
@@ -421,45 +522,68 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             'The configuration should have changed'
         );
 
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_from',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => static::$userConfig->email_address,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from_link',
+                'parent' => [
+                    'type' => $GLOBALS['current_user']->getModuleName(),
+                    'id' => $GLOBALS['current_user']->id,
+                    'name' => $GLOBALS['current_user']->name,
+                ],
+                'parent_name' => $GLOBALS['current_user']->name,
+                'email_addresses' => [
+                    'id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                    'email_address' => static::$overrideConfig->email_address,
+                ],
+                'email_address_id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                'email_address' => static::$overrideConfig->email_address,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'from');
         $this->assertRecords($expected, $collection, 'The sender should not have changed');
 
-        $expected = array(
-            array(
-                '_module' => 'EmailAddresses',
-                '_link' => 'email_addresses_to',
-                'id' => $address->id,
-                'email_address_used' => $address->email_address,
-                'date_modified' => $this->getIsoTimestamp($address->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [],
+                'parent_name' => '',
+                'email_addresses' => [
+                    'id' => $address->id,
+                    'email_address' => $address->email_address,
+                ],
+                'email_address_id' => $address->id,
+                'email_address' => $address->email_address,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations after update');
 
-        $expected = array(
-            array(
-                '_module' => 'Prospects',
-                '_link' => 'prospects_cc',
-                'id' => $prospect->id,
-                'email_address_used' => $prospect->email1,
-                'date_modified' => $this->getIsoTimestamp($prospect->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'cc_link',
+                'parent' => [
+                    'type' => $prospect->getModuleName(),
+                    'id' => $prospect->id,
+                    'name' => $prospect->name,
+                ],
+                'parent_name' => $prospect->name,
+                'email_addresses' => [
+                    'id' => $prospect->emailAddress->getGuid($prospect->email1),
+                    'email_address' => $prospect->email1,
+                ],
+                'email_address_id' => $prospect->emailAddress->getGuid($prospect->email1),
+                'email_address' => $prospect->email1,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'cc');
         $this->assertRecords($expected, $collection, 'The CC field did not match expectations after update');
 
         $bean = $this->retrieveEmailText($record['id']);
         $this->assertEquals(
-            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            "{$GLOBALS['current_user']->name} <" . static::$overrideConfig->email_address . ">",
             $bean->from_addr_name
         );
         $this->assertEquals($address->email_address, $bean->to_addrs_names);
@@ -483,61 +607,97 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      */
     public function testSendDraftEmail()
     {
-        $account1 = $this->createRhsBean('accounts_to');
-        $account2 = $this->createRhsBean('accounts_to');
-        $lead = $this->createRhsBean('leads_to');
+        $account1 = SugarTestAccountUtilities::createAccount();
+        $account2 = SugarTestAccountUtilities::createAccount();
+        $lead = SugarTestLeadUtilities::createLead();
 
-        $args = array(
+        $args = [
             'state' => Email::STATE_DRAFT,
-            'accounts_to' => array(
-                'add' => array($account1->id),
-            ),
-            'leads_to' => array(
-                'add' => array($lead->id),
-            ),
-        );
+            'to_link' => [
+                'create' => [
+                    $this->createEmailParticipant($account1),
+                    $this->createEmailParticipant($lead),
+                ],
+            ],
+        ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after create');
         $this->assertTrue(empty($record['outbound_email_id']), 'No configuration was specified during create');
 
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_from',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => null,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from_link',
+                'parent' => [
+                    'type' => $GLOBALS['current_user']->getModuleName(),
+                    'id' => $GLOBALS['current_user']->id,
+                    'name' => $GLOBALS['current_user']->name,
+                ],
+                'parent_name' => $GLOBALS['current_user']->name,
+                'email_addresses' => [
+                    'id' => '',
+                    'email_address' => '',
+                ],
+                'email_address_id' => '',
+                'email_address' => '',
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'from');
         $this->assertRecords($expected, $collection, 'The sender should be the current user');
 
-        $expected = array(
-            array(
-                '_module' => 'Accounts',
-                '_link' => 'accounts_to',
-                'id' => $account1->id,
-                'email_address_used' => null,
-                'date_modified' => $this->getIsoTimestamp($account1->date_modified),
-            ),
-            array(
-                '_module' => 'Leads',
-                '_link' => 'leads_to',
-                'id' => $lead->id,
-                'email_address_used' => null,
-                'date_modified' => $this->getIsoTimestamp($lead->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [
+                    'type' => $account1->getModuleName(),
+                    'id' => $account1->id,
+                    'name' => $account1->name,
+                ],
+                'parent_name' => $account1->name,
+                'email_addresses' => [
+                    'id' => '',
+                    'email_address' => '',
+                ],
+                'email_address_id' => '',
+                'email_address' => '',
+            ],
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [
+                    'type' => $lead->getModuleName(),
+                    'id' => $lead->id,
+                    'name' => $lead->name,
+                ],
+                'parent_name' => $lead->name,
+                'email_addresses' => [
+                    'id' => '',
+                    'email_address' => '',
+                ],
+                'email_address_id' => '',
+                'email_address' => '',
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations after create');
 
-        $args = array(
+        // Need to extract the data that represents the EmailParticipants record for $account1, so we can use its ID.
+        $epAccount1 = array_filter($collection['records'], function ($ep) {
+            return $ep['parent']['type'] === 'Accounts';
+        });
+
+        $args = [
             'state' => Email::STATE_READY,
-            'accounts_to' => array(
-                'add' => array($account2->id),
-                'delete' => array($account1->id),
-            ),
-        );
+            'to_link' => [
+                'create' => [
+                    $this->createEmailParticipant($account2),
+                ],
+                'delete' => [
+                    $epAccount1[0]['id'],
+                ],
+            ],
+        ];
         $record = $this->updateRecord($record['id'], $args);
         $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived after sending');
         $this->assertSame(
@@ -546,44 +706,71 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             "Should use the user's system override configuration"
         );
 
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_from',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => $GLOBALS['current_user']->email1,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from_link',
+                'parent' => [
+                    'type' => $GLOBALS['current_user']->getModuleName(),
+                    'id' => $GLOBALS['current_user']->id,
+                    'name' => $GLOBALS['current_user']->name,
+                ],
+                'parent_name' => $GLOBALS['current_user']->name,
+                'email_addresses' => [
+                    'id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                    'email_address' => static::$overrideConfig->email_address,
+                ],
+                'email_address_id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                'email_address' => static::$overrideConfig->email_address,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'from');
         $this->assertRecords($expected, $collection, 'The sender should not have changed');
 
-        $expected = array(
-            array(
-                '_module' => 'Accounts',
-                '_link' => 'accounts_to',
-                'id' => $account2->id,
-                'email_address_used' => $account2->email1,
-                'date_modified' => $this->getIsoTimestamp($account2->date_modified),
-            ),
-            array(
-                '_module' => 'Leads',
-                '_link' => 'leads_to',
-                'id' => $lead->id,
-                'email_address_used' => $lead->email1,
-                'date_modified' => $this->getIsoTimestamp($lead->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [
+                    'type' => $account2->getModuleName(),
+                    'id' => $account2->id,
+                    'name' => $account2->name,
+                ],
+                'parent_name' => $account2->name,
+                'email_addresses' => [
+                    'id' => $account2->emailAddress->getGuid($account2->email1),
+                    'email_address' => $account2->email1,
+                ],
+                'email_address_id' => $account2->emailAddress->getGuid($account2->email1),
+                'email_address' => $account2->email1,
+            ],
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [
+                    'type' => $lead->getModuleName(),
+                    'id' => $lead->id,
+                    'name' => $lead->name,
+                ],
+                'parent_name' => $lead->name,
+                'email_addresses' => [
+                    'id' => $lead->emailAddress->getGuid($lead->email1),
+                    'email_address' => $lead->email1,
+                ],
+                'email_address_id' => $lead->emailAddress->getGuid($lead->email1),
+                'email_address' => $lead->email1,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations after sending');
 
         $bean = $this->retrieveEmailText($record['id']);
         $this->assertEquals(
-            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            "{$GLOBALS['current_user']->name} <" . static::$overrideConfig->email_address . ">",
             $bean->from_addr_name
         );
         $this->assertEquals(
-            "{$account2->name} <{$account2->email1}>, {$lead->name} <{$lead->email1}>",
+            "{$lead->name} <{$lead->email1}>, {$account2->name} <{$account2->email1}>",
             $bean->to_addrs_names
         );
     }
@@ -605,24 +792,24 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     public function testCreateAndSendEmail()
     {
         OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(2);
-        $contact1 = $this->createRhsBean('contacts_to');
-        $contact2 = $this->createRhsBean('contacts_to');
+        $contact1 = SugarTestContactUtilities::createContact();
+        $contact2 = SugarTestContactUtilities::createContact();
 
-        $args = array(
+        $args = [
             'state' => Email::STATE_READY,
-            'contacts_from' => array(
-                'add' => array(
-                    $contact1,
-                    $contact2,
-                ),
-            ),
-            'contacts_to' => array(
-                'add' => array(
-                    $contact1->id,
-                    $contact2->id,
-                ),
-            ),
-        );
+            'from_link' => [
+                'create' => [
+                    $this->createEmailParticipant($contact1),
+                    $this->createEmailParticipant($contact2),
+                ],
+            ],
+            'to_link' => [
+                'create' => [
+                    $this->createEmailParticipant($contact1),
+                    $this->createEmailParticipant($contact2),
+                ],
+            ],
+        ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
 
@@ -632,40 +819,67 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             'Should use the system configuration'
         );
 
-        $expected = array(
-            array(
-                '_module' => 'Users',
-                '_link' => 'users_from',
-                'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => $GLOBALS['current_user']->email1,
-                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'from_link',
+                'parent' => [
+                    'type' => $GLOBALS['current_user']->getModuleName(),
+                    'id' => $GLOBALS['current_user']->id,
+                    'name' => $GLOBALS['current_user']->name,
+                ],
+                'parent_name' => $GLOBALS['current_user']->name,
+                'email_addresses' => [
+                    'id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                    'email_address' => static::$overrideConfig->email_address,
+                ],
+                'email_address_id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
+                'email_address' => static::$overrideConfig->email_address,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'from');
         $this->assertRecords($expected, $collection, 'The sender should be the current user');
 
-        $expected = array(
-            array(
-                '_module' => 'Contacts',
-                '_link' => 'contacts_to',
-                'id' => $contact1->id,
-                'email_address_used' => $contact1->email1,
-                'date_modified' => $this->getIsoTimestamp($contact1->date_modified),
-            ),
-            array(
-                '_module' => 'Contacts',
-                '_link' => 'contacts_to',
-                'id' => $contact2->id,
-                'email_address_used' => $contact2->email1,
-                'date_modified' => $this->getIsoTimestamp($contact2->date_modified),
-            ),
-        );
+        $expected = [
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [
+                    'type' => $contact1->getModuleName(),
+                    'id' => $contact1->id,
+                    'name' => $contact1->name,
+                ],
+                'parent_name' => $contact1->name,
+                'email_addresses' => [
+                    'id' => $contact1->emailAddress->getGuid($contact1->email1),
+                    'email_address' => $contact1->email1,
+                ],
+                'email_address_id' => $contact1->emailAddress->getGuid($contact1->email1),
+                'email_address' => $contact1->email1,
+            ],
+            [
+                '_module' => 'EmailParticipants',
+                '_link' => 'to_link',
+                'parent' => [
+                    'type' => $contact2->getModuleName(),
+                    'id' => $contact2->id,
+                    'name' => $contact2->name,
+                ],
+                'parent_name' => $contact2->name,
+                'email_addresses' => [
+                    'id' => $contact2->emailAddress->getGuid($contact2->email1),
+                    'email_address' => $contact2->email1,
+                ],
+                'email_address_id' => $contact2->emailAddress->getGuid($contact2->email1),
+                'email_address' => $contact2->email1,
+            ],
+        ];
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
 
         $bean = $this->retrieveEmailText($record['id']);
         $this->assertEquals(
-            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            "{$GLOBALS['current_user']->name} <" . static::$overrideConfig->email_address . ">",
             $bean->from_addr_name
         );
         $to = "{$contact1->name} <{$contact1->email1}>, {$contact2->name} <{$contact2->email1}>";
@@ -692,21 +906,16 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         );
         $repliedToEmail = SugarTestEmailUtilities::createEmail('', $emailValues);
 
-        $user = $this->createRhsBean('users_to');
-        $args = array(
+        $contact = SugarTestContactUtilities::createContact();
+        $args = [
             'state' => Email::STATE_READY,
             'reply_to_id' => $repliedToEmail->id,
-            'users_from' => array(
-                'add' => array(
-                    $user,
-                ),
-            ),
-            'users_to' => array(
-                'add' => array(
-                    $user->id,
-                ),
-            ),
-        );
+            'to_link' => [
+                'create' => [
+                    $this->createEmailParticipant($contact),
+                ],
+            ],
+        ];
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
         $this->assertSame($repliedToEmail->id, $record['reply_to_id'], 'Should contain id of Email being replied to');

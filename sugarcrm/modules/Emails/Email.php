@@ -1111,6 +1111,10 @@ class Email extends SugarBean {
 				$this->new_with_id = true;
 			}
 
+            // The email is guaranteed to have an ID at this point. Any beans with an ID need to be registered, so that
+            // we can use them in relationships and other processes prior to saving.
+            BeanFactory::registerBean($this);
+
             if ($this->state === static::STATE_ARCHIVED) {
                 // Copy plain-text email body to HTML field column
                 if (empty($this->description_html) && !empty($this->description)) {
@@ -1141,7 +1145,7 @@ class Email extends SugarBean {
                 $this->team_set_id = '1';
             }
 
-            // Set assigned user.
+            // Assign the email to the current user if it is a draft.
             if ($this->state === static::STATE_DRAFT) {
                 $this->assigned_user_id = $GLOBALS['current_user']->id;
             }
@@ -1171,19 +1175,24 @@ class Email extends SugarBean {
 			$parentSaveResult = parent::save($check_notify);
 
             // Add the current user as the sender when the email is a draft.
-            if ($this->state === static::STATE_DRAFT && $this->load_relationship('users_from')) {
-                $additionalData = [];
+            if ($this->state === static::STATE_DRAFT && $this->load_relationship('from_link')) {
+                $ep = BeanFactory::newBean('EmailParticipants');
+                $ep->new_with_id = true;
+                $ep->id = Uuid::uuid1();
+                BeanFactory::registerBean($ep);
+                $ep->parent_type = $GLOBALS['current_user']->getModuleName();
+                $ep->parent_id = $GLOBALS['current_user']->id;
 
                 // Use the email address from the outbound email configuration.
                 if (!empty($this->outbound_email_id)) {
                     $oe = BeanFactory::retrieveBean('OutboundEmail', $this->outbound_email_id);
 
                     if ($oe) {
-                        $additionalData['email_address_id'] = $oe->email_address_id;
+                        $ep->email_address_id = $oe->email_address_id;
                     }
                 }
 
-                $this->users_from->add($this->assigned_user_id, $additionalData);
+                $this->from_link->add($ep);
             }
 
 			if(!empty($this->parent_type) && !empty($this->parent_id)) {
@@ -1420,7 +1429,7 @@ class Email extends SugarBean {
      */
     public function linkEmailToAddress($id, $type)
     {
-        $link = "email_addresses_{$type}";
+        $link = "{$type}_link";
         $emailAddress = BeanFactory::retrieveBean('EmailAddresses', $id);
 
         if (!$emailAddress) {
@@ -1433,18 +1442,24 @@ class Email extends SugarBean {
             return '';
         }
 
-        $failures = $this->$link->add($emailAddress);
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        BeanFactory::registerBean($ep);
+        $ep->email_address_id = $id;
+        $failures = $this->$link->add($ep);
 
         if ($failures === true) {
             LoggerManager::getLogger()->debug("Linked EmailAddresses/{$id} to Emails/{$this->id} on link {$link}");
-        } else {
-            LoggerManager::getLogger()->error(
-                "Failed to link EmailAddresses/{$id} to Emails/{$this->id} on link {$link}"
-            );
-            LoggerManager::getLogger()->error('failures=' . var_export($failures, true));
+
+            return $ep->id;
         }
 
-        // Get the ID of the row from the emails_email_addr_rel table.
+        LoggerManager::getLogger()->error("Failed to link EmailAddresses/{$id} to Emails/{$this->id} on link {$link}");
+        LoggerManager::getLogger()->error('failures=' . var_export($failures, true));
+
+        // The email address might already be linked to the email, in which case the ID of the existing row from the
+        // emails_email_addr_rel table should be returned.
         $joinParams = array(
             'alias' => 'eear',
             'joinType' => 'LEFT',
@@ -1502,40 +1517,43 @@ class Email extends SugarBean {
     /**
      * Save data to the emails_text table.
      */
-    protected function saveEmailText()
+    public function saveEmailText()
     {
         // Get the linked sender and recipients.
-        $collections = array(
+        $participants = array(
             'from' => array(),
             'to' => array(),
             'cc' => array(),
             'bcc' => array(),
         );
 
-        foreach (array_keys($collections) as $collection) {
-            $recipients = $this->getRecipients($collection);
+        foreach (array_keys($participants) as $linkName) {
+            $tmpLinkName = "{$linkName}_link";
+            $beans = $this->getParticipants($tmpLinkName);
 
-            foreach ($recipients as $linkName => $beans) {
-                foreach ($beans as $bean) {
-                    // Use the recipient's primary email address if no email address has been chosen.
-                    if (empty($bean->email_address_used)) {
-                        $bean->email_address_used = $bean->emailAddress->getPrimaryAddress($bean);
+            foreach ($beans as $bean) {
+                // Use the participant's primary email address if no email address has been chosen.
+                if (empty($bean->email_address_id)) {
+                    $parent = BeanFactory::retrieveBean(
+                        $bean->parent_type,
+                        $bean->parent_id,
+                        ['disable_row_level_security' => true]
+                    );
+
+                    if ($parent) {
+                        $bean->email_address = $this->emailAddress->getPrimaryAddress($parent);
                     }
-
-                    // Beans from Email Addresses don't have names.
-                    $email = empty($bean->name) ?
-                        $bean->email_address_used :
-                        "{$bean->name} <{$bean->email_address_used}>";
-                    $collections[$collection][] = $email;
                 }
+
+                $participants[$linkName][] = $bean->getRecordName();
             }
         }
 
         // Populate the sender and recipient properties on the email so they can be mapped to $text.
-        $this->{$this->email_to_text['from_addr']} = implode(', ', $collections['from']);
-        $this->{$this->email_to_text['to_addrs']} = implode(', ', $collections['to']);
-        $this->{$this->email_to_text['cc_addrs']} = implode(', ', $collections['cc']);
-        $this->{$this->email_to_text['bcc_addrs']} = implode(', ', $collections['bcc']);
+        $this->{$this->email_to_text['from_addr']} = implode(', ', $participants['from']);
+        $this->{$this->email_to_text['to_addrs']} = implode(', ', $participants['to']);
+        $this->{$this->email_to_text['cc_addrs']} = implode(', ', $participants['cc']);
+        $this->{$this->email_to_text['bcc_addrs']} = implode(', ', $participants['bcc']);
 
         $text = BeanFactory::newBean('EmailText');
 
@@ -3628,14 +3646,19 @@ eoq;
             throw new SugarException("Cannot send an email with state: {$this->state}");
         }
 
-        // Set the email address of the sender to be that of the configuration.
-        if ($this->load_relationship('users_from')) {
-            $this->users_from->add(
-                $this->assigned_user_id,
-                array('email_address' => $config->getFrom()->getEmail())
-            );
+        if ($this->load_relationship('from_link')) {
+            $ep = BeanFactory::newBean('EmailParticipants');
+            $ep->new_with_id = true;
+            $ep->id = Uuid::uuid1();
+            BeanFactory::registerBean($ep);
+            $ep->parent_type = $GLOBALS['current_user']->getModuleName();
+            $ep->parent_id = $GLOBALS['current_user']->id;
+            // Set the email address of the sender to be that of the configuration.
+            $ep->email_address = $config->getFrom()->getEmail();
+            $ep->email_address_id = $this->emailAddress->getEmailGUID($ep->email_address);
+            $this->from_link->add($ep);
         } else {
-            throw new SugarException('Could not find a relationship named: users_from');
+            throw new SugarException('Could not find a relationship named: from_link');
         }
 
         // Resolve variables in the subject and content.
@@ -3748,30 +3771,37 @@ eoq;
         );
 
         $num = 0;
-        $recipients = $this->getRecipients($role);
+        $tmpLinkName = "{$role}_link";
+        $beans = $this->getParticipants($tmpLinkName);
 
-        foreach ($recipients as $linkName => $beans) {
-            foreach ($beans as $bean) {
-                // Set the email address of the recipient to the recipient's primary email address.
-                if (empty($bean->email_address_used)) {
-                    if ($this->load_relationship($linkName)) {
-                        $primary = $bean->emailAddress->getPrimaryAddress($bean);
-                        $primaryId = $bean->emailAddress->getEmailGUID($primary);
-                        $this->$linkName->add($bean, array('email_address_id' => $primaryId));
-                        $bean->email_address_used = $primary;
+        foreach ($beans as $bean) {
+            // Set the email address of the recipient to the recipient's primary email address.
+            if (empty($bean->email_address_id)) {
+                if ($this->load_relationship($tmpLinkName)) {
+                    $parent = BeanFactory::retrieveBean(
+                        $bean->parent_type,
+                        $bean->parent_id,
+                        ['disable_row_level_security' => true]
+                    );
+
+                    if ($parent) {
+                        $bean->email_address = $this->emailAddress->getPrimaryAddress($parent);
+                        $bean->email_address_id = $this->emailAddress->getEmailGUID($bean->email_address);
                     }
-                }
 
-                try {
-                    // Beans from Email Addresses don't have names. EmailIdentity can sort that out.
-                    $identity = new EmailIdentity($bean->email_address_used, $bean->name);
-                    $method = $methodMap[$role];
-                    $mailer->$method($identity);
-                    $num++;
-                } catch (MailerException $me) {
-                    // Invalid email address. Log it and skip.
-                    $GLOBALS['log']->warning($me->getLogMessage());
+                    $this->$tmpLinkName->add($bean);
                 }
+            }
+
+            try {
+                // Rows that are just an email address don't have names. EmailIdentity can sort that out.
+                $identity = new EmailIdentity($bean->email_address, $bean->parent_name);
+                $method = $methodMap[$role];
+                $mailer->$method($identity);
+                $num++;
+            } catch (MailerException $me) {
+                // Invalid email address. Log it and skip.
+                $GLOBALS['log']->warning($me->getLogMessage());
             }
         }
 
@@ -3779,73 +3809,44 @@ eoq;
     }
 
     /**
-     * Returns all recipients with the specified role.
+     * Returns all participants with the specified role.
      *
      * @param string $role Can be "to", "cc", or "bcc".
      * @return array
      * @throws SugarException
      */
-    protected function getRecipients($role)
+    protected function getParticipants($role)
     {
-        $recipients = array();
-        $links = $this->field_defs[$role]['links'];
-
-        foreach ($links as $link) {
-            $linkName = is_array($link) ? $link['name'] : $link;
-
-            if (!$this->load_relationship($linkName)) {
-                throw new SugarException("Cannot get recipients for link: {$linkName}");
-            }
-
-            $linkModuleName = $this->$linkName->getRelatedModuleName();
-            $seed = BeanFactory::newBean($linkModuleName);
-            $fields = ['email_address_used'];
-            $nameField = 'name';
-
-            // The name field is actually mapped to a different field. That's the field we want to retrieve.
-            if (is_array($link) && !empty($link['field_map']) && !empty($link['field_map']['name'])) {
-                $nameField = $link['field_map']['name'];
-            }
-
-            $nameFieldDef = $seed->getFieldDefinition($nameField);
-
-            if ($nameFieldDef) {
-                // As long as there is a name field, we can retrieve it.
-                $fields[] = $nameField;
-
-                // Some name fields are made up of other fields. Merge those other fields so we retrieve them, too.
-                if (!empty($nameFieldDef['fields']) && is_array($nameFieldDef['fields'])) {
-                    $fields = array_merge($fields, $nameFieldDef['fields']);
-                }
-            }
-
-            // Some modules use name_format_map to construct the name. Merge those fields so we retrieve them, too.
-            $nameFields = $GLOBALS['locale']->getNameFormatFields($seed);
-            $fields = array_merge($fields, $nameFields);
-
-            // By now, we should have all of the fields that could possibly make up the name of the recipient, plus the
-            // email_address_used field. And we only need each field once.
-            $fields = array_unique($fields);
-
-            $q = new SugarQuery();
-            $q->from($seed);
-            // Must add the fields to select before calling SugarBean::fetchFromQuery() so that the email_address_used
-            // field is in SugarQuery::$joinLinkToKey. Otherwise, the joins that SugarQuery::joinSubpanel() adds will be
-            // replaced by new joins when the email_address_used field is added in SugarBean::fetchFromQuery(), and the
-            // the new joins will not include the role column for address_type, which is very important.
-            $q->select($fields);
-            $q->joinSubpanel($this, $linkName);
-            // Must also pass the fields here -- even though they have already been added to the query -- because
-            // SugarBean::fetchFromQuery() will add all of the fields in the vardefs if we don't.
-            $beans = $seed->fetchFromQuery($q, $fields);
-
-            // The fields from the collection field's field_map are not mapped in the returned beans. Consumers will
-            // need to do this if they care. Existing use cases don't require it. Should use cases emerge that do, then
-            // we can add the field mapping here.
-            $recipients[$linkName] = $beans;
+        if (!$this->load_relationship($role)) {
+            throw new SugarException("Cannot get participants for link: {$role}");
         }
 
-        return $recipients;
+        $linkModuleName = $this->$role->getRelatedModuleName();
+        $seed = BeanFactory::newBean($linkModuleName);
+        $fields = [
+            'email_address_id',
+            'email_address',
+            'parent_type',
+            'parent_id',
+            'parent_name',
+        ];
+
+        $q = new SugarQuery();
+        $q->from($seed);
+        // Must add the fields to select before calling SugarBean::fetchFromQuery() so that the email_address_used
+        // field is in SugarQuery::$joinLinkToKey. Otherwise, the joins that SugarQuery::joinSubpanel() adds will be
+        // replaced by new joins when the email_address_used field is added in SugarBean::fetchFromQuery(), and the
+        // the new joins will not include the role column for address_type, which is very important.
+        $q->select($fields);
+        $q->joinSubpanel($this, $role);
+        // Must also pass the fields here -- even though they have already been added to the query -- because
+        // SugarBean::fetchFromQuery() will add all of the fields in the vardefs if we don't.
+        $beans = $seed->fetchFromQuery($q, $fields);
+
+        // The fields from the collection field's field_map are not mapped in the returned beans. Consumers will
+        // need to do this if they care. Existing use cases don't require it. Should use cases emerge that do, then
+        // we can add the field mapping here.
+        return $beans;
     }
 
     /**

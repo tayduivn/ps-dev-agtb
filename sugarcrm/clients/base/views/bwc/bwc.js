@@ -348,7 +348,15 @@
                     address = matches[1];
                 }
 
-                prepopulate.to.push(app.data.createBean('EmailAddresses', {email_address: address}));
+                /**
+                 * FIXME: MAR-4655
+                 * Set `email_address_id` and `email_address` from the data in
+                 * `options.to_email_addrs_ids`.
+                 */
+                prepopulate.to.push(app.data.createBean('EmailParticipants', {
+                    _link: 'to_link',
+                    email_address: address
+                }));
             });
         }
 
@@ -357,6 +365,7 @@
 
             _.each(options.attachments, function(attachment) {
                 var bean = app.data.createBean('Notes', {
+                    _link: 'attachments',
                     upload_id: attachment.id,
                     name: attachment.filename,
                     filename: attachment.filename

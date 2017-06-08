@@ -103,16 +103,8 @@ class EmailsApi extends ModuleApi
         }
 
         if ($args['state'] === Email::STATE_DRAFT) {
-            $fromLinks = VardefManager::getLinkFieldsForCollection(
-                'Emails',
-                BeanFactory::getObjectName('Emails'),
-                'from'
-            );
-
-            // Drop any submitted senders. The current user will be added as the sender.
-            foreach ($fromLinks as $link) {
-                unset($args[$link]);
-            }
+            // Drop any submitted senders. The assigned user will be added as the sender.
+            unset($args['from_link']);
         }
 
         $result = parent::createRecord($api, $args);

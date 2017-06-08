@@ -58,4 +58,23 @@ class EmailsRelateRecordApiTest extends \PHPUnit_Framework_TestCase
         $api = new \EmailsRelateRecordApi();
         $api->createRelatedLinksFromRecordList($service, $args);
     }
+
+    /**
+     * Cannot break the link between an email and its sender.
+     *
+     * @covers ::deleteRelatedLink
+     * @expectedException \SugarApiExceptionNotAuthorized
+     */
+    public function testDeleteRelatedLink()
+    {
+        $args = [
+            'module' => 'Emails',
+            'record' => Uuid::uuid1(),
+            'link_name' => 'from_link',
+            'remote_id' => Uuid::uuid1(),
+        ];
+        $service = $this->createPartialMock('\\RestService', []);
+        $api = new \EmailsRelateRecordApi();
+        $api->deleteRelatedLink($service, $args);
+    }
 }

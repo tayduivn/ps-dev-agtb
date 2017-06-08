@@ -366,7 +366,6 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         // The following tests make sure that the relationship has both ends.
         // the world is too cruel for these tests right now.
         static $allowedOneWay = array(
-            'Emails' => 'Emails',
             'Users' => 'Users',
             'Activities' => 'Activities',
         );

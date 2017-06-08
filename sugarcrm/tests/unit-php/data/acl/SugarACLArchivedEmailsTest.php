@@ -82,30 +82,10 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ['team_id'],
             ['team_set_id'],
             ['tags'],
-            ['accounts_from'],
-            ['contacts_from'],
-            ['email_addresses_from'],
-            ['leads_from'],
-            ['prospects_from'],
-            ['users_from'],
-            ['accounts_to'],
-            ['contacts_to'],
-            ['email_addresses_to'],
-            ['leads_to'],
-            ['prospects_to'],
-            ['users_to'],
-            ['accounts_cc'],
-            ['contacts_cc'],
-            ['email_addresses_cc'],
-            ['leads_cc'],
-            ['prospects_cc'],
-            ['users_cc'],
-            ['accounts_bcc'],
-            ['contacts_bcc'],
-            ['email_addresses_bcc'],
-            ['leads_bcc'],
-            ['prospects_bcc'],
-            ['users_bcc'],
+            ['from_link'],
+            ['to_link'],
+            ['cc_link'],
+            ['bcc_link'],
         ];
     }
 
@@ -266,99 +246,19 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
                 true,
             ],
             [
-                'accounts_from',
+                'from_link',
                 false,
             ],
             [
-                'contacts_from',
+                'to_link',
                 false,
             ],
             [
-                'email_addresses_from',
+                'cc_link',
                 false,
             ],
             [
-                'leads_from',
-                false,
-            ],
-            [
-                'prospects_from',
-                false,
-            ],
-            [
-                'users_from',
-                false,
-            ],
-            [
-                'accounts_to',
-                false,
-            ],
-            [
-                'contacts_to',
-                false,
-            ],
-            [
-                'email_addresses_to',
-                false,
-            ],
-            [
-                'leads_to',
-                false,
-            ],
-            [
-                'prospects_to',
-                false,
-            ],
-            [
-                'users_to',
-                false,
-            ],
-            [
-                'accounts_cc',
-                false,
-            ],
-            [
-                'contacts_cc',
-                false,
-            ],
-            [
-                'email_addresses_cc',
-                false,
-            ],
-            [
-                'leads_cc',
-                false,
-            ],
-            [
-                'prospects_cc',
-                false,
-            ],
-            [
-                'users_cc',
-                false,
-            ],
-            [
-                'accounts_bcc',
-                false,
-            ],
-            [
-                'contacts_bcc',
-                false,
-            ],
-            [
-                'email_addresses_bcc',
-                false,
-            ],
-            [
-                'leads_bcc',
-                false,
-            ],
-            [
-                'prospects_bcc',
-                false,
-            ],
-            [
-                'users_bcc',
+                'bcc_link',
                 false,
             ],
         ];
@@ -379,49 +279,8 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             'field' => $field,
         ];
 
-        $acl = $this->createPartialMock('\\SugarACLArchivedEmails', ['isWriteOperation', 'getLinkFieldsForCollection']);
+        $acl = $this->createPartialMock('\\SugarACLArchivedEmails', ['isWriteOperation']);
         $acl->method('isWriteOperation')->willReturn(true);
-        $acl->method('getLinkFieldsForCollection')
-            ->withConsecutive(
-                [$this->identicalTo($bean), $this->identicalTo('from')],
-                [$this->identicalTo($bean), $this->identicalTo('to')],
-                [$this->identicalTo($bean), $this->identicalTo('cc')],
-                [$this->identicalTo($bean), $this->identicalTo('bcc')]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [
-                    'accounts_from',
-                    'contacts_from',
-                    'email_addresses_from',
-                    'leads_from',
-                    'prospects_from',
-                    'users_from',
-                ],
-                [
-                    'accounts_to',
-                    'contacts_to',
-                    'email_addresses_to',
-                    'leads_to',
-                    'prospects_to',
-                    'users_to',
-                ],
-                [
-                    'accounts_cc',
-                    'contacts_cc',
-                    'email_addresses_cc',
-                    'leads_cc',
-                    'prospects_cc',
-                    'users_cc',
-                ],
-                [
-                    'accounts_bcc',
-                    'contacts_bcc',
-                    'email_addresses_bcc',
-                    'leads_bcc',
-                    'prospects_bcc',
-                    'users_bcc',
-                ]
-            );
 
         $actual = $acl->checkAccess('Emails', 'field', $context);
         $this->assertSame($isWritable, $actual);
@@ -584,99 +443,19 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
                 true,
             ],
             [
-                'accounts_from',
+                'from_link',
                 true,
             ],
             [
-                'contacts_from',
+                'to_link',
                 true,
             ],
             [
-                'email_addresses_from',
+                'cc_link',
                 true,
             ],
             [
-                'leads_from',
-                true,
-            ],
-            [
-                'prospects_from',
-                true,
-            ],
-            [
-                'users_from',
-                true,
-            ],
-            [
-                'accounts_to',
-                true,
-            ],
-            [
-                'contacts_to',
-                true,
-            ],
-            [
-                'email_addresses_to',
-                true,
-            ],
-            [
-                'leads_to',
-                true,
-            ],
-            [
-                'prospects_to',
-                true,
-            ],
-            [
-                'users_to',
-                true,
-            ],
-            [
-                'accounts_cc',
-                true,
-            ],
-            [
-                'contacts_cc',
-                true,
-            ],
-            [
-                'email_addresses_cc',
-                true,
-            ],
-            [
-                'leads_cc',
-                true,
-            ],
-            [
-                'prospects_cc',
-                true,
-            ],
-            [
-                'users_cc',
-                true,
-            ],
-            [
-                'accounts_bcc',
-                true,
-            ],
-            [
-                'contacts_bcc',
-                true,
-            ],
-            [
-                'email_addresses_bcc',
-                true,
-            ],
-            [
-                'leads_bcc',
-                true,
-            ],
-            [
-                'prospects_bcc',
-                true,
-            ],
-            [
-                'users_bcc',
+                'bcc_link',
                 true,
             ],
         ];

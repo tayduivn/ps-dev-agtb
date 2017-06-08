@@ -551,10 +551,30 @@ for($i=0; $i<$number_contacts; $i++) {
 	$email->contacts->add($contact);
 	$email->load_relationship('accounts');
 	$email->accounts->add($contacts_account);
-    $email->load_relationship('users_from');
-    $email->users_from->add($contacts_account->assigned_user_id);
-    $email->load_relationship('contacts_to');
-    $email->contacts_to->add($contact);
+
+    if ($email->state === 'Archived') {
+        $from = BeanFactory::newBean('EmailParticipants');
+        $from->new_with_id = true;
+        $from->id = \Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
+        BeanFactory::registerBean($from);
+        $from->parent_type = 'Users';
+        $from->parent_id = $contacts_account->assigned_user_id;
+        $email->load_relationship('from_link');
+        $email->from_link->add($from);
+    }
+
+    $to = BeanFactory::newBean('EmailParticipants');
+    $to->new_with_id = true;
+    $to->id = \Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
+    BeanFactory::registerBean($to);
+    $to->parent_type = $contact->getModuleName();
+    $to->parent_id = $contact->id;
+    $email->load_relationship('to_link');
+    $email->to_link->add($to);
+
+    // The relationship between Emails and EmailParticipants requires that we resave the beans. Just in case something
+    // prevented them from being resaved already, try it one last time.
+    SugarRelationship::resaveRelatedBeans();
 
     if ($i % 10 === 0) {
         echo '.';

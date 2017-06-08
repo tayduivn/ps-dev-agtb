@@ -95,75 +95,6 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Returns the right-hand side module name for the specified link on Emails.
-     *
-     * @param string $link
-     * @return string
-     * @throws Exception
-     */
-    protected function getRhsModule($link)
-    {
-        switch ($link) {
-            case 'accounts_from':
-            case 'accounts_to':
-            case 'accounts_cc':
-            case 'accounts_bcc':
-                return 'Accounts';
-            case 'contacts_from':
-            case 'contacts_to':
-            case 'contacts_cc':
-            case 'contacts_bcc':
-                return 'Contacts';
-            case 'email_addresses_from':
-            case 'email_addresses_to':
-            case 'email_addresses_cc':
-            case 'email_addresses_bcc':
-                return 'EmailAddresses';
-            case 'leads_from':
-            case 'leads_to':
-            case 'leads_cc':
-            case 'leads_bcc':
-                return 'Leads';
-            case 'prospects_from':
-            case 'prospects_to':
-            case 'prospects_cc':
-            case 'prospects_bcc':
-                return 'Prospects';
-            case 'users_from':
-            case 'users_to':
-            case 'users_cc':
-            case 'users_bcc':
-                return 'Users';
-            default:
-                throw new Exception('Invalid link name');
-        }
-    }
-
-    /**
-     * Creates a bean for the right-hand side module of the specified link.
-     *
-     * The primary email address for all beans is available on $bean->email1 as a convenience for testing that the
-     * primary email address was used no matter what type of object it is. Beans from the EmailAddresses module don't
-     * have an email1 property, so the value from the email_address property is assigned to email1.
-     *
-     * @param string $link
-     * @return SugarBean
-     */
-    protected function createRhsBean($link)
-    {
-        $module = $this->getRhsModule($link);
-        $beanName = BeanFactory::getBeanName($module);
-        $methodName = $module === 'Users' ? 'createAnonymousUser' : "create{$beanName}";
-        $bean = call_user_func(array("SugarTest{$beanName}Utilities", $methodName));
-
-        if ($module === 'EmailAddresses') {
-            $bean->email1 = $bean->email_address;
-        }
-
-        return $bean;
-    }
-
-    /**
      * Asserts that the specified collection contains the expected records.
      *
      * @param array $expected API-formatted records that are expected.
@@ -172,27 +103,38 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function assertRecords(array $expected, array $collection, $message = '')
     {
-        // Testing for these attributes is unnecessary.
-        foreach ($collection['records'] as &$record) {
-            unset($record['_acl']);
-            unset($record['locked_fields']);
-        }
-
         /**
-         * Sorts the array of records by it's "id" attribute.
+         * Sorts the array of records by it's "parent_name" attribute.
          *
          * @param array $a
          * @param array $b
          * @return int
          */
         $rsort = function (array $a, array $b) {
-            return ($a['id'] < $b['id']) ? -1 : 1;
+            return ($a['parent_name'] < $b['parent_name']) ? -1 : 1;
         };
 
         // Sort the records so they can be compared with confidence. We don't care so much about asserting that the API
         // responded with the records in a certain order.
         usort($expected, $rsort);
         usort($collection['records'], $rsort);
+
+        // Testing for these attributes is unnecessary.
+        foreach ($collection['records'] as &$record) {
+            unset($record['_acl']);
+            unset($record['locked_fields']);
+            unset($record['id']);
+            unset($record['date_entered']);
+            unset($record['date_modified']);
+
+            if (isset($record['parent'])) {
+                unset($record['parent']['_acl']);
+            }
+
+            if (isset($record['email_addresses'])) {
+                unset($record['email_addresses']['_acl']);
+            }
+        }
 
         $this->assertEquals($expected, $collection['records'], $message);
     }
@@ -239,7 +181,9 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
             'record' => $id,
             'collection_name' => $collection,
             'fields' => array(
-                'email_address_used',
+                'parent_name',
+                'email_address_id',
+                'email_address',
             ),
         );
         $api = new RelateCollectionApi();
@@ -279,14 +223,38 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Converts a database-formatted timestamp to ISO.
+     * Sets up an EmailParticipants bean data from the data on the bean and the email address so that it is ready to add
+     * to link using the REST API.
      *
-     * @param string $timestamp
+     * @param null|SugarBean $bean
+     * @param null|SugarBean $address
+     * @return array
+     */
+    protected function createEmailParticipant($bean, $address = null)
+    {
+        $data = [];
+
+        if ($bean) {
+            $data['parent_type'] = $bean->getModuleName();
+            $data['parent_id'] = $bean->id;
+        }
+
+        if ($address) {
+            $data['email_address_id'] = $address->id;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Returns the ID of an email address.
+     *
+     * @param string $address
      * @return string
      */
-    protected function getIsoTimestamp($timestamp)
+    protected function getEmailAddressId($address)
     {
-        $td = TimeDate::getInstance();
-        return $td->asIso($td->fromDb($timestamp));
+        $ea = BeanFactory::newBean('EmailAddresses');
+        return $ea->getGuid($address);
     }
 }

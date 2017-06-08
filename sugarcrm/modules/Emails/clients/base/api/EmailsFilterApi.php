@@ -71,16 +71,20 @@ class EmailsFilterApi extends FilterApi
      *     'filter' => array(
      *         '$from' => array(
      *             array(
-     *                 'bean_type' => 'Users',
-     *                 'bean_id' => '$current_user_id',
+     *                 'parent_type' => 'Users',
+     *                 'parent_id' => '$current_user_id',
      *             ),
      *             array(
-     *                 'bean_type' => 'Contacts',
-     *                 'bean_id' => 'fa300a0e-0ad1-b322-9601-512d0983c19a',
+     *                 'parent_type' => 'Contacts',
+     *                 'parent_id' => 'fa300a0e-0ad1-b322-9601-512d0983c19a',
      *             ),
      *             array(
-     *                 'bean_type' => 'EmailAddresses',
-     *                 'bean_id' => 'b0701501-1fab-8ae7-3942-540da93f5017',
+     *                 'email_address_id' => 'b0701501-1fab-8ae7-3942-540da93f5017',
+     *             ),
+     *             array(
+     *                 'parent_type' => 'Leads',
+     *                 'parent_id' => '73b1087e-4bb6-11e7-acaa-3c15c2d582c6',
+     *                 'email_address_id' => 'b651d834-4bb6-11e7-bfcf-3c15c2d582c6',
      *             ),
      *         ),
      *     ),
@@ -88,9 +92,11 @@ class EmailsFilterApi extends FilterApi
      * </code>
      *
      * The above filter definition would return all emails sent by the current user, by the contact whose ID is
-     * fa300a0e-0ad1-b322-9601-512d0983c19a, or using the email address foo@bar.com, which is referenced by the ID
-     * b0701501-1fab-8ae7-3942-540da93f5017. Any number of tuples can be provided in the definition. When the
-     * $current_user_id macro is used for the bean_id field, it is swapped for the current user's ID.
+     * fa300a0e-0ad1-b322-9601-512d0983c19a, using the email address foo@bar.com, which is referenced by the ID
+     * b0701501-1fab-8ae7-3942-540da93f5017, or by the lead whose ID is 73b1087e-4bb6-11e7-acaa-3c15c2d582c6 using the
+     * email address biz@baz.com, which is referenced by the ID b651d834-4bb6-11e7-bfcf-3c15c2d582c6. Any number of
+     * tuples can be provided in the definition. When the $current_user_id macro is used for the parent_id field, it is
+     * swapped for the current user's ID.
      *
      * @param SugarQuery $q The whole SugarQuery object
      * @param SugarQuery_Builder_Where $where The Where part of the SugarQuery object
@@ -127,26 +133,41 @@ class EmailsFilterApi extends FilterApi
                 );
             }
 
-            if (!isset($def['bean_type'])) {
-                throw new SugarApiExceptionInvalidParameter(
-                    "definition for {$field} operation is invalid: bean_type is required"
-                );
+            // The `parent_type` and `parent_id` fields must be defined if the `email_address_id`. The `parent_id` field
+            // must be defined if the `parent_type` is defined. The `parent_type` field must be defined if the
+            // `parent_id` field is defined.
+            if (!isset($def['email_address_id']) || isset($def['parent_type']) || isset($def['parent_id'])) {
+                if (!isset($def['parent_type'])) {
+                    throw new SugarApiExceptionInvalidParameter(
+                        "definition for {$field} operation is invalid: parent_type is required"
+                    );
+                }
+
+                if (!isset($def['parent_id'])) {
+                    throw new SugarApiExceptionInvalidParameter(
+                        "definition for {$field} operation is invalid: parent_id is required"
+                    );
+                }
             }
 
-            if (!isset($def['bean_id'])) {
-                throw new SugarApiExceptionInvalidParameter(
-                    "definition for {$field} operation is invalid: bean_id is required"
-                );
+            if (isset($def['parent_id']) && $def['parent_id'] === static::MACRO_CURRENT_USER_ID) {
+                $def['parent_id'] = static::$current_user->id;
             }
 
-            if ($def['bean_id'] === static::MACRO_CURRENT_USER_ID) {
-                $def['bean_id'] = static::$current_user->id;
+            $and = $or->queryAnd();
+            $and->equals("{$jta}.address_type", $roles[$field]);
+
+            if (isset($def['email_address_id'])) {
+                $and->equals("{$jta}.email_address_id", $def['email_address_id']);
             }
 
-            $or->queryAnd()
-                ->equals("{$jta}.address_type", $roles[$field])
-                ->equals("{$jta}.bean_type", $def['bean_type'])
-                ->equals("{$jta}.bean_id", $def['bean_id']);
+            if (isset($def['parent_type'])) {
+                $and->equals("{$jta}.parent_type", $def['parent_type']);
+            }
+
+            if (isset($def['parent_id'])) {
+                $and->equals("{$jta}.parent_id", $def['parent_id']);
+            }
         }
     }
 }

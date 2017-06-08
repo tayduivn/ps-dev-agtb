@@ -27,8 +27,6 @@
              * @inheritdoc
              */
             onAttach: function(component, plugin) {
-                var relatedModuleToLinkNameMap = [];
-
                 /**
                  * Searches for more participants and loads them into Select2
                  * for selection.
@@ -49,6 +47,7 @@
                     };
                     var callbacks = {};
                     var url = app.api.buildURL('Mail', 'recipients/find', null, options);
+                    var linkName = component.getLinkName();
 
                     /**
                      * Format the data in the response to be added to the set
@@ -63,7 +62,29 @@
                         });
 
                         records = app.data.createMixedBeanCollection(records);
-                        data.results = records.map(component.prepareModel, component);
+                        data.results = records.map(function(record) {
+                            var ep;
+                            var parentName = app.utils.getRecordName(record);
+
+                            if (linkName) {
+                                ep = app.data.createBean('EmailParticipants', {
+                                    _link: linkName,
+                                    parent: {
+                                        _acl: record.get('_acl') || {},
+                                        type: record.module,
+                                        id: record.get('id'),
+                                        name: parentName
+                                    },
+                                    parent_type: record.module,
+                                    parent_id: record.get('id'),
+                                    parent_name: parentName
+                                });
+
+                                component.prepareModel(ep);
+                            }
+
+                            return ep;
+                        });
                     };
 
                     /**
@@ -86,21 +107,6 @@
 
                 this.on('init', function() {
                     var task = getValidationTaskName(this);
-
-                    relatedModuleToLinkNameMap = _.chain(this.fieldDefs.links)
-                        .map(function(link) {
-                            return _.has(link, 'name') ? link.name : link;
-                        })
-                        .reduce(function(map, link) {
-                            var module = app.data.getRelatedModule(this.module, link);
-
-                            if (module) {
-                                map[module] = link;
-                            }
-
-                            return map;
-                        }, {}, this)
-                        .value();
 
                     /**
                      * Verify that there are not any invalid participants.
@@ -133,46 +139,83 @@
                     _super.call(this);
                 });
 
-                this.hasLink = function(link) {
-                    return _.contains(relatedModuleToLinkNameMap, link);
+                /**
+                 * Returns the link used for this relationship between Emails
+                 * and EmailParticipants.
+                 *
+                 * @return {string}
+                 */
+                this.getLinkName = function() {
+                    var fieldMap = {
+                        from: 'from_link',
+                        to: 'to_link',
+                        cc: 'cc_link',
+                        bcc: 'bcc_link'
+                    };
+
+                    return fieldMap[this.name];
                 };
 
                 /**
-                 * The name and email address are cached as properties on the
-                 * object instead of modifying attributes on each model.
+                 * Adds properties to the model that the templates require.
                  *
-                 * The name is determined using {@link App.Utils#getRecordName}.
-                 * The email address is determined from the attributes
-                 * `email_address_used` and `email_address`, in that order,
-                 * followed by the model's primary email address via
-                 * {@link App.Utils#getPrimaryEmailAddress}.
+                 * Select2 needs the `locked` property to determine if an item
+                 * can be removed. This property is set to `true` if the field
+                 * is in readonly mode.
+                 *
+                 * The `invalid` property is set on the model to indicate
+                 * whether the email address is valid or invalid. This detail
+                 * can be shared with the user and an email cannot be saved
+                 * with invalid participants.
+                 *
+                 * The `href` property is set on the model as a pre-calculated
+                 * URL for navigating to the parent record. This property is
+                 * only defined if the user has access to the parent record.
                  *
                  * @param {Data.Bean} model
-                 * @return {Data.Bean}
+                 * @return {Data.Bean} The model is mutated. But it is also
+                 * returned so that the caller can specify this function as a
+                 * callback to a function that iterates over a collection of
+                 * models.
                  */
                 this.prepareModel = function(model) {
-                    var link;
-
-                    if (!this.hasLink(model.get('_link'))) {
-                        link = relatedModuleToLinkNameMap[model.module] || '';
-
-                        if (!link) {
-                            return null;
-                        }
-
-                        model.set('_link', link);
-                    }
+                    var parent;
 
                     // Select2 needs the locked property directly on the object.
                     model.locked = !!this.def.readonly;
-                    model.name = app.utils.getRecordName(model);
-                    model.email_address = model.get('email_address_used') ||
-                        model.get('email_address') ||
-                        app.utils.getPrimaryEmailAddress(model);
-                    model.invalid = !app.utils.isValidEmailAddress(model.email_address);
 
-                    if (app.acl.hasAccessToModel('view', model)) {
-                        model.href = '#' + app.router.buildRoute(model.module, model.get('id'));
+                    /**
+                     * FIXME: MAR-4658
+                     * The model is invalid if:
+                     *
+                     * - It doesn't have a `parent` and `email_address_id` is
+                     * empty.
+                     * - It has an `email_address_id` and `email_address`, and
+                     * `email_address` is invalid.
+                     */
+                    if (model.get('email_address')) {
+                        model.invalid = !app.utils.isValidEmailAddress(model.get('email_address'));
+                    } else {
+                        model.invalid = false;
+                    }
+
+                    // The type and id fields are not unset after a parent
+                    // record is deleted. So we test for name because the
+                    // parent record is truly only there if type and id are
+                    // non-empty and the parent record can be resolved and has
+                    // not been deleted.
+                    if (model.get('parent') &&
+                        model.get('parent').type &&
+                        model.get('parent').id &&
+                        model.get('parent').name
+                    ) {
+                        // We omit type because it is actually the module name
+                        // and should be treated as an attribute.
+                        parent = app.data.createBean(model.get('parent').type, _.omit(model.get('parent'), 'type'));
+
+                        if (app.acl.hasAccessToModel('view', parent)) {
+                            model.href = '#' + app.router.buildRoute(parent.module, parent.get('id'));
+                        }
                     }
 
                     return model;
@@ -181,7 +224,8 @@
                 /**
                  * Returns a string representing the email participant in the
                  * format that would be used for an address in an email address
-                 * header. Note that the name is not surrounded by quotes.
+                 * header. Note that the name is not surrounded by quotes
+                 * unless the `surroundNameWithQuotes` parameter is `true`.
                  *
                  * @example
                  * // With name and email address.
@@ -189,10 +233,28 @@
                  * @example
                  * // Without name.
                  * will@example.com
+                 * @example
+                 * // Surround name with quotes.
+                 * "Will Westin" <will@example.com>
                  * @param {Data.Bean} model
+                 * @param {boolean} [surroundNameWithQuotes=false]
                  */
-                this.formatForHeader = function(model) {
-                    return _.isEmpty(model.name) ? model.email_address : model.name + ' <' + model.email_address + '>';
+                this.formatForHeader = function(model, surroundNameWithQuotes) {
+                    var name = model.get('parent_name') || '';
+
+                    if (_.isEmpty(name)) {
+                        return model.get('email_address') || '';
+                    }
+
+                    if (_.isEmpty(model.get('email_address'))) {
+                        return name;
+                    }
+
+                    if (surroundNameWithQuotes) {
+                        name = '"' + name + '"';
+                    }
+
+                    return name + ' <' + model.get('email_address') + '>';
                 };
 
                 /**
@@ -264,7 +326,26 @@
                             var choice;
 
                             if (data.length === 0 && app.utils.isValidEmailAddress(term)) {
-                                choice = app.data.createBean('EmailAddresses', {email_address: term});
+                                /**
+                                 * FIXME: MAR-4658
+                                 * This amounts to creating a new email
+                                 * address. We must make a POST request to the
+                                 * EmailAddressesApi to create a new email
+                                 * address from `term`. The problem is that it
+                                 * is an asynchronous operation. So we must
+                                 * patch the `choice` with the ID of the
+                                 * returned email address, setting it to
+                                 * `email_address_id` when the request
+                                 * succeeds. We would want to trigger a change
+                                 * event on the field to initiate it's sequence
+                                 * for rendering the recipient pills and
+                                 * decorating as valid if they were previously
+                                 * invalid.
+                                 */
+                                choice = app.data.createBean('EmailParticipants', {
+                                    _link: this.getLinkName(),
+                                    email_address: term
+                                });
 
                                 return this.prepareModel(choice);
                             }

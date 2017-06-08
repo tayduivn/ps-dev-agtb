@@ -38,16 +38,7 @@ describe('EmailClientLaunch Plugin', function() {
     };
 
     describe('Launch Email Client', function() {
-        var retrieveValidRecipientsStub;
-
         beforeEach(function() {
-            retrieveValidRecipientsStub = sandbox.stub(
-                field,
-                '_retrieveValidRecipients',
-                function(recipients) {
-                    return recipients;
-                }
-            );
             sandbox.stub(app.controller.context, 'reloadData');
         });
 
@@ -64,12 +55,14 @@ describe('EmailClientLaunch Plugin', function() {
         });
 
         it('should clean to, cc, and bcc recipient lists before launching Sugar Email Client', function() {
+            sandbox.spy(field, '_retrieveValidRecipients');
+
             field.launchSugarEmailClient({
                 to: [{email: 'bar1@baz.com'}],
                 cc: [{email: 'bar2@baz.com'}],
                 bcc: [{email: 'bar3@baz.com'}]
             });
-            expect(retrieveValidRecipientsStub.callCount).toBe(3);
+            expect(field._retrieveValidRecipients.callCount).toBe(3);
         });
 
         it('should refresh app context if module is Emails', function() {
@@ -114,7 +107,11 @@ describe('EmailClientLaunch Plugin', function() {
                 {email_address: 'foo1@bar.com', primary_address: false, invalid_email: true, opt_out: false},
                 {email_address: 'foo2@bar.com', primary_address: true, invalid_email: true, opt_out: true}
             ];
-            var bean = new Backbone.Model({email: emails});
+            var bean = app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                name: 'Phil Thomas',
+                email: emails
+            });
             var recipients = [{bean: bean}];
             var validRecipients = field._retrieveValidRecipients(recipients);
 
@@ -127,24 +124,25 @@ describe('EmailClientLaunch Plugin', function() {
                 {email_address: 'foo2@bar.com', primary_address: false, invalid_email: false, opt_out: true},
                 {email_address: 'foo3@bar.com', primary_address: true, invalid_email: false, opt_out: false}
             ];
-            var bean = new Backbone.Model({email: emails});
+            var bean = app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                name: 'Phil Thomas',
+                email: emails
+            });
             var recipients = [{bean: bean}];
             var validRecipients = field._retrieveValidRecipients(recipients);
             expect(_.first(validRecipients).get('email_address')).toEqual('foo3@bar.com');
-        });
-
-        it('should specify valid email address for bean recipients with email_address_used', function() {
-            var bean = new Backbone.Model({email_address_used: 'foo1@bar.com'});
-            var recipients = [{bean: bean}];
-            var validRecipients = field._retrieveValidRecipients(recipients);
-            expect(_.first(validRecipients).get('email_address')).toEqual('foo1@bar.com');
         });
 
         it('should leave bean recipients that have email address specified', function() {
             var emails = [
                 {email_address: 'foo@bar.com', primary_address: true, invalid_email: false, opt_out: false}
             ];
-            var bean = new Backbone.Model({email: emails});
+            var bean = app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                name: 'Phil Thomas',
+                email: emails
+            });
             var recipients = [{
                 email: 'abc@bar.com',
                 bean: bean
@@ -154,18 +152,22 @@ describe('EmailClientLaunch Plugin', function() {
             expect(_.first(validRecipients).get('email_address')).toEqual('abc@bar.com');
         });
 
-        it('should set EmailAddresses module when just have email address specified', function() {
+        it('should not set the parent fields when just have email address specified', function() {
             var recipients;
             var validRecipients;
 
-            app.data.declareModel('EmailAddresses');
+            app.data.declareModel('EmailParticipants');
             recipients = {
                 email: 'abc@bar.com'
             };
             validRecipients = field._retrieveValidRecipients(recipients);
 
             expect(_.first(validRecipients).get('email_address')).toEqual('abc@bar.com');
-            expect(_.first(validRecipients).module).toEqual('EmailAddresses');
+            expect(_.first(validRecipients).module).toEqual('EmailParticipants');
+            expect(_.first(validRecipients).get('parent')).toBeUndefined();
+            expect(_.first(validRecipients).get('parent_type')).toBeUndefined();
+            expect(_.first(validRecipients).get('parent_id')).toBeUndefined();
+            expect(_.first(validRecipients).get('parent_name')).toBeUndefined();
         });
     });
 
@@ -269,14 +271,14 @@ describe('EmailClientLaunch Plugin', function() {
 
         it('should return emails passed in different forms', function() {
             var bean;
-            var bean2;
             var actual;
             var email1 = 'foo1@bar.com';
             var email2 = 'foo2@bar.com';
             var email3 = 'foo3@bar.com';
-            var email4 = 'foo4@bar.com';
 
-            bean = new Backbone.Model({
+            bean = app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                name: 'Helen Smith',
                 email: [{
                     email_address: email3,
                     primary_address: true,
@@ -284,25 +286,25 @@ describe('EmailClientLaunch Plugin', function() {
                     opt_out: false
                 }]
             });
-            bean2 = new Backbone.Model({
-                email_address_used: email4
-            });
             actual = field._formatRecipientsToString([
                 email1,
                 {email: email2},
-                {bean: bean},
-                {bean: bean2}
+                {bean: bean}
             ]);
-            expect(actual).toEqual(email1 + ',' + email2 + ',' + email3 + ',' + email4);
+            expect(actual).toEqual(email1 + ',' + email2 + ',' + email3);
         });
 
         it('should not return emails in bean form if no valid email on bean', function() {
             var email1 = 'foo1@bar.com';
             var email2 = 'foo2@bar.com';
-            var bean = new Backbone.Model({email: [{
-                email_address: email2,
-                invalid_email: true
-            }]});
+            var bean = app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                name: 'Phil Thomas',
+                email: [{
+                    email_address: email2,
+                    invalid_email: true
+                }]
+            });
             var actual = field._formatRecipientsToString([
                 email1,
                 {bean: bean}

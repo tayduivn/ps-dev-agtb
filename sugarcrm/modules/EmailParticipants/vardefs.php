@@ -1,4 +1,4 @@
-{{!--
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,5 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<span {{#if email_address}}rel="tooltip" data-title="{{email_address}}" {{/if}}data-invalid="{{invalid}}">{{name}}</span>
+
+global $dictionary;
+include SugarAutoLoader::existingCustomOne('metadata/email_addressesMetaData.php');
+$dictionary['EmailParticipant'] = $dictionary['emails_email_addr_rel'];
