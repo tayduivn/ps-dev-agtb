@@ -1587,116 +1587,132 @@ class User extends Person {
 		$emailLink = '';
         $client    = $this->getEmailClientPreference();
 
-		if($client == 'sugar') {
-			$email = '';
-			$to_addrs_ids = '';
-			$to_addrs_names = '';
-			$to_addrs_emails = '';
-
-			$fullName = !empty($focus->name) ? $focus->name : '';
-
-			if(empty($ret_module)) $ret_module = $focus->module_dir;
-			if(empty($ret_id)) $ret_id = $focus->id;
-			if($focus->object_name == 'Contact') {
-				$contact_id = $focus->id;
-				$to_addrs_ids = $focus->id;
-				// Bug #48555 Not User Name Format of User's locale.
-				$focus->_create_proper_name_field();
-			    $fullName = $focus->name;
-			    $to_addrs_names = $fullName;
-				$to_addrs_emails = $focus->email1;
-			}
-
-			$emailLinkUrl = 'contact_id='.$contact_id.
-				'&parent_type='.$focus->module_dir.
-				'&parent_id='.$focus->id.
-				'&parent_name='.urlencode($fullName).
-				'&to_addrs_ids='.$to_addrs_ids.
-				'&to_addrs_names='.urlencode($to_addrs_names).
-				'&to_addrs_emails='.urlencode($to_addrs_emails).
-				'&to_email_addrs='.urlencode($fullName . '&nbsp;&lt;' . $emailAddress . '&gt;').
-				'&return_module='.$ret_module.
-				'&return_action='.$ret_action.
-				'&return_id='.$ret_id;
-
-            $eUi = new EmailUI();
-            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
-
-    		$emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
-
-		} else {
-			// straight mailto:
-			$emailLink = '<a href="mailto:'.$emailAddress.'" class="'.$class.'">';
-		}
-
-		return $emailLink;
-	}
-
-	/**
-	 * returns opening <a href=xxxx for a contact, account, etc
-	 * cascades from User set preference to System-wide default
-	 * @return string	link
-	 * @param attribute the email addy
-	 * @param focus the parent bean
-	 * @param contact_id
-	 * @param return_module
-	 * @param return_action
-	 * @param return_id
-	 * @param class
-	 */
-	function getEmailLink($attribute, &$focus, $contact_id='', $ret_module='', $ret_action='DetailView', $ret_id='', $class='') {
-	    $emailLink = '';
-        $client    = $this->getEmailClientPreference();
-
-		if($client == 'sugar') {
-			$email = '';
-			$to_addrs_ids = '';
-			$to_addrs_names = '';
-			$to_addrs_emails = '';
+        if ($client === 'sugar' && ACLController::checkAccess('Emails', 'edit')) {
+            $email = '';
+            $to_addrs_ids = '';
+            $to_addrs_names = '';
+            $to_addrs_emails = '';
 
             $fullName = !empty($focus->name) ? $focus->name : '';
 
-			if(!empty($focus->$attribute)) {
-				$email = $focus->$attribute;
-			}
+            if (empty($ret_module)) {
+                $ret_module = $focus->module_dir;
+            }
+            if (empty($ret_id)) {
+                $ret_id = $focus->id;
+            }
+            if ($focus->object_name == 'Contact') {
+                $contact_id = $focus->id;
+                $to_addrs_ids = $focus->id;
+                // Bug #48555 Not User Name Format of User's locale.
+                $focus->_create_proper_name_field();
+                $fullName = $focus->name;
+                $to_addrs_names = $fullName;
+                $to_addrs_emails = $focus->email1;
+            }
 
+            $emailLinkUrl = 'contact_id=' . $contact_id .
+                '&parent_type=' . $focus->module_dir .
+                '&parent_id=' . $focus->id .
+                '&parent_name=' . urlencode($fullName) .
+                '&to_addrs_ids=' . $to_addrs_ids .
+                '&to_addrs_names=' . urlencode($to_addrs_names) .
+                '&to_addrs_emails=' . urlencode($to_addrs_emails) .
+                '&to_email_addrs=' . urlencode($fullName . '&nbsp;&lt;' . $emailAddress . '&gt;') .
+                '&return_module=' . $ret_module .
+                '&return_action=' . $ret_action .
+                '&return_id=' . $ret_id;
 
-			if(empty($ret_module)) $ret_module = $focus->module_dir;
-			if(empty($ret_id)) $ret_id = $focus->id;
-			if($focus->object_name == 'Contact') {
-				// Bug #48555 Not User Name Format of User's locale.
-				$focus->_create_proper_name_field();
-			    $fullName = $focus->name;
-			    $contact_id = $focus->id;
-				$to_addrs_ids = $focus->id;
-				$to_addrs_names = $fullName;
-				$to_addrs_emails = $focus->email1;
-			}
-
-			$emailLinkUrl = 'contact_id='.$contact_id.
-				'&parent_type='.$focus->module_dir.
-				'&parent_id='.$focus->id.
-				'&parent_name='.urlencode($fullName).
-				'&to_addrs_ids='.$to_addrs_ids.
-				'&to_addrs_names='.urlencode($to_addrs_names).
-				'&to_addrs_emails='.urlencode($to_addrs_emails).
-				'&to_email_addrs='.urlencode($fullName . '&nbsp;&lt;' . $email . '&gt;').
-				'&return_module='.$ret_module.
-				'&return_action='.$ret_action.
-				'&return_id='.$ret_id;
-
-			//Generate the compose package for the quick create options.
             $eUi = new EmailUI();
             $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
-    		$emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
 
-		} else {
-			// straight mailto:
-			$emailLink = '<a href="mailto:'.$focus->$attribute.'" class="'.$class.'">';
-		}
+            $emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
+
+        } else {
+            // straight mailto:
+            $emailLink = '<a href="mailto:' . $emailAddress . '" class="' . $class . '">';
+        }
 
 		return $emailLink;
 	}
+
+    /**
+     * returns opening <a href=xxxx for a contact, account, etc
+     * cascades from User set preference to System-wide default
+     * @return string    link
+     * @param attribute the email addy
+     * @param focus the parent bean
+     * @param contact_id
+     * @param return_module
+     * @param return_action
+     * @param return_id
+     * @param class
+     */
+    function getEmailLink(
+        $attribute,
+        &$focus,
+        $contact_id = '',
+        $ret_module = '',
+        $ret_action = 'DetailView',
+        $ret_id = '',
+        $class = ''
+    ) {
+        $emailLink = '';
+        $client = $this->getEmailClientPreference();
+
+        if ($client === 'sugar' && ACLController::checkAccess('Emails', 'edit')) {
+            $email = '';
+            $to_addrs_ids = '';
+            $to_addrs_names = '';
+            $to_addrs_emails = '';
+
+            $fullName = !empty($focus->name) ? $focus->name : '';
+
+            if (!empty($focus->$attribute)) {
+                $email = $focus->$attribute;
+            }
+
+
+            if (empty($ret_module)) {
+                $ret_module = $focus->module_dir;
+            }
+            if (empty($ret_id)) {
+                $ret_id = $focus->id;
+            }
+            if ($focus->object_name == 'Contact') {
+                // Bug #48555 Not User Name Format of User's locale.
+                $focus->_create_proper_name_field();
+                $fullName = $focus->name;
+                $contact_id = $focus->id;
+                $to_addrs_ids = $focus->id;
+                $to_addrs_names = $fullName;
+                $to_addrs_emails = $focus->email1;
+            }
+
+            $emailLinkUrl = 'contact_id=' . $contact_id .
+                '&parent_type=' . $focus->module_dir .
+                '&parent_id=' . $focus->id .
+                '&parent_name=' . urlencode($fullName) .
+                '&to_addrs_ids=' . $to_addrs_ids .
+                '&to_addrs_names=' . urlencode($to_addrs_names) .
+                '&to_addrs_emails=' . urlencode($to_addrs_emails) .
+                '&to_email_addrs=' . urlencode($fullName . '&nbsp;&lt;' . $email . '&gt;') .
+                '&return_module=' . $ret_module .
+                '&return_action=' . $ret_action .
+                '&return_id=' . $ret_id;
+
+            //Generate the compose package for the quick create options.
+            $eUi = new EmailUI();
+            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
+            $emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
+
+        } else {
+            // straight mailto:
+            $emailLink = '<a href="mailto:' . $focus->$attribute . '" class="' . $class . '">';
+        }
+
+        return $emailLink;
+    }
 
 
 	/**
