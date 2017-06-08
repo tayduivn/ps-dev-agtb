@@ -326,6 +326,11 @@
             	foreach(array("manifest", "icon") as $meta) {
             	    $this->rmMetaFile($file, $meta);
             	}
+                $realpath = UploadFile::realpath($file);
+                $md5_file = $realpath . '.md5';
+            if (file_exists($md5_file)) {
+                unlink($md5_file);
+            }
             }
             $this->sendJsonOutput(array('result' => 'true'));
         }

@@ -350,6 +350,27 @@ class PackageManager{
         }
     }
 
+    private function getMd5($fileName)
+    {
+        $realpath = UploadFile::realpath($fileName);
+
+        $fileTimestamp = filemtime($realpath);
+        $md5FileName = $realpath . '.md5';
+
+        // if md5 file does not exist or diff time stamp,
+        // generate md5 with same time as given file
+        if (!file_exists($md5FileName)
+            || $fileTimestamp !== filemtime($md5FileName)) {
+            $md5 = md5_file($realpath);
+            sugar_file_put_contents($md5FileName, $md5);
+            sugar_touch($md5FileName, $fileTimestamp);
+        } else {
+            $md5 = sugar_file_get_contents($md5FileName);
+        }
+
+        return $md5;
+    }
+
     //////////////////////////////////////////////////////////////////////
     /////////// INSTALL SECTION
     function extractFile( $zip_file, $file_in_zip, $base_tmp_upgrade_dir){
@@ -666,16 +687,26 @@ class PackageManager{
                 continue;
             }
 
+            $target_manifest = remove_file_extension($upgrade_content) . '-manifest.php';
+            if (!file_exists($target_manifest)) {
+                continue;
+            }
+
+            require_once $target_manifest;
+            $manifest_type = $manifest['type'];
+            if (($view == 'default' && $manifest_type != 'patch')
+                 || ($view == 'module' && $manifest_type != 'module'
+                    && $manifest_type != 'theme' && $manifest_type != 'langpack')
+                ) {
+                continue;
+            }
+
             $the_base = basename($upgrade_content);
-            $the_md5 = md5_file($upgrade_content);
+            $the_md5 = $this->getMd5($upgrade_content);
             $md5_matches = $uh->findByMd5($the_md5);
     		$file_install = $upgrade_content;
             if(empty($md5_matches))
             {
-                $target_manifest = remove_file_extension( $upgrade_content ) . '-manifest.php';
-                if (file_exists($target_manifest)) {
-                    require_once($target_manifest);
-
                     $name = empty($manifest['name']) ? $upgrade_content : $manifest['name'];
                     $version = empty($manifest['version']) ? '' : $manifest['version'];
                     $published_date = empty($manifest['published_date']) ? '' : $manifest['published_date'];
@@ -683,7 +714,6 @@ class PackageManager{
                     $description = empty($manifest['description']) ? 'None' : $manifest['description'];
                     $uninstallable = empty($manifest['is_uninstallable']) ? 'No' : 'Yes';
                     $type = $this->getUITextForType($manifest['type']);
-                    $manifest_type = $manifest['type'];
                     $dependencies = array();
                     if (isset($manifest['dependencies'])) {
                         $dependencies = $manifest['dependencies'];
@@ -697,16 +727,6 @@ class PackageManager{
                             $file_install =
                                 'errors_' . $mod_strings['ERR_UW_NO_DEPENDENCY'] . "[" . implode(',', $not_found) . "]";
                         }
-                    }
-
-                    if ($view == 'default' && $manifest_type != 'patch') {
-                        continue;
-                    }
-
-                    if ($view == 'module'
-                        && $manifest_type != 'module' && $manifest_type != 'theme' && $manifest_type != 'langpack'
-                    ) {
-                        continue;
                     }
 
                     if (empty($manifest['icon'])) {
@@ -730,9 +750,8 @@ class PackageManager{
                         'file_install' => fileToHash($upgrade_content),
                         'unFile' => fileToHash($upgrade_content)
                     );
-                }
-            }//fi
-        }//rof
+            } //fi
+        } //rof
         return $packages;
     }
 
@@ -830,9 +849,8 @@ class PackageManager{
 						$serial_manifest = unserialize(base64_decode($installed->manifest));
 						$manifest = $serial_manifest['manifest'];
 					}
-					if(($upgrades_installed==0 || $uh->UninstallAvailable($installeds, $installed))
-						&& is_file($filename) && !empty($manifest['is_uninstallable']))
-					{
+                    if (is_file($filename) && !empty($manifest['is_uninstallable'])
+                       && ($upgrades_installed==0 || $uh->UninstallAvailable($installeds, $installed))) {
 						$uninstallable = true;
 					}
 					$enabled = $installed->enabled;

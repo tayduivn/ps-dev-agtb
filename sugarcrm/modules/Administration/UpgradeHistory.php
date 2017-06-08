@@ -162,8 +162,8 @@ class UpgradeHistory extends SugarBean
             $patch_to_check_timestamp = TimeDate::getInstance()->fromUser($patch_to_check->date_entered)->getTimestamp();
             $more_resent_patch_timestamp = TimeDate::getInstance()->fromUser($more_recent_patch->date_entered)->getTimestamp();
             if (
-                $this->foundConflict($patch_to_check_backup_path, $more_recent_patch_backup_path) &&
-                ($more_resent_patch_timestamp >= $patch_to_check_timestamp)
+            ($more_resent_patch_timestamp >= $patch_to_check_timestamp)
+            && $this->foundConflict($patch_to_check_backup_path, $more_recent_patch_backup_path)
             )
             {
                 return false;
