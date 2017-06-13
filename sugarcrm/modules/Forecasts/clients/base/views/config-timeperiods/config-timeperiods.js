@@ -136,7 +136,7 @@
                         context: this.context,
                         module: this.module,
                         model: this.model,
-                        meta: app.metadata.getField('enum')
+                        meta: app.metadata.getField({name: 'enum'})
                     };
 
                 this.fiscalYearField = app.view.createField(fieldSettings);

@@ -257,7 +257,7 @@
                     context: this.context,
                     module: this.module,
                     model: model,
-                    meta: app.metadata.getField('range')
+                    meta: app.metadata.getField({name: 'range'})
                 };
 
                 rangeField = app.view.createField(fieldSettings);
@@ -417,7 +417,7 @@
             context: this.context,
             module: this.module,
             model: model,
-            meta: app.metadata.getField('range')
+            meta: app.metadata.getField({name: 'range'})
         };
         // set up real range name
         fieldSettings.def.name = key;
