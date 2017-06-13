@@ -14,7 +14,8 @@
 
 /**
  * This file is where the user authentication occurs. No redirection should happen in this file.
- *
+ * @deprecated Will be removed in 7.11. IDM-46
+ * @deprecated Please use new idM Mango library Glue \IdMLDAPAuthenticate or IdM library https://github.com/sugarcrm/IdentityProvider
  */
 require_once('modules/Users/authentication/LDAPAuthenticate/LDAPConfigs/default.php');
 
@@ -35,6 +36,13 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
 	 */
     public function authenticateUser($name, $password, $fallback = false)
     {
+        global $log;
+        $log->deprecated(sprintf(
+            'The %s in %s was called. Please see https://github.com/sugarcrm/IdentityProvider or \IdMLDAPAuthenticate',
+            __METHOD__,
+            __CLASS__
+        ));
+
         $server = isset($GLOBALS['ldap_config']->settings['ldap_hostname']) ? $GLOBALS['ldap_config']->settings['ldap_hostname'] : '';
         $port = isset($GLOBALS['ldap_config']->settings['ldap_port']) ? $GLOBALS['ldap_config']->settings['ldap_port'] : '';
 		if(!$port)
@@ -251,8 +259,12 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
 
     public function loadUserOnLogin($name, $password, $fallback = false, array $params = array())
     {
-
-	    global $mod_strings;
+        global $mod_strings, $log;
+        $log->deprecated(sprintf(
+            'The %s in %s was called. Please see https://github.com/sugarcrm/IdentityProvider or \IdMLDAPAuthenticate',
+            __METHOD__,
+            __CLASS__
+        ));
 
 	    // Check if the LDAP extensions are loaded
 	    if(!function_exists('ldap_connect')) {
