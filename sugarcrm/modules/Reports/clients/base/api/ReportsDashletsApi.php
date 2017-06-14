@@ -97,57 +97,52 @@ class ReportsDashletsApi extends SugarApi
 
         $chartReport = $this->getSavedReportById($args['reportId']);
 
-        if (empty($chartReport)) {
-            return;
-        }
-
-        if (!$chartReport->ACLAccess('view')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view this report');
-        }
-
-        //TODO: deprecate and remove?
         if (isset($args['filter_id']) && $args['filter_id'] !== 'all_records') {
             $chartReport->content = $this->updateFilterDef($chartReport->content, $args['filter_id']);
         }
 
-        $returnData = array();
+        if (!empty($chartReport)) {
+            if (!$chartReport->ACLAccess('view')) {
+                throw new SugarApiExceptionNotAuthorized('No access to view this report');
+            }
 
-        $this->title = $chartReport->name;
+            $returnData = array();
 
-        $reporter = new Report($chartReport->content);
-        $reporter->saved_report_id = $chartReport->id;
+            $this->title = $chartReport->name;
 
-        if ($reporter && !$reporter->has_summary_columns()) {
-            return '';
+
+            $reporter = new Report($chartReport->content);
+            $reporter->saved_report_id = $chartReport->id;
+
+            if ($reporter && !$reporter->has_summary_columns()) {
+                return '';
+            }
+
+            // build report data since it isn't a SugarBean
+            $reportData = array();
+            $reportData['name'] = $reporter->name;
+            $reportData['id'] = $reporter->saved_report_id;
+            $reportData['summary_columns'] = $reporter->report_def['summary_columns'];
+            $reportData['group_defs'] = $reporter->report_def['group_defs'];
+
+            // add reportData to returnData
+            $returnData['reportData'] = $reportData;
+
+            $chartDisplay = new ChartDisplay();
+            $chartDisplay->setReporter($reporter);
+
+            $chart = $chartDisplay->getSugarChart();
+
+            if (!isset($args['ignore_datacheck'])) {
+                $args['ignore_datacheck'] = false;
+            }
+
+            $json = json_decode($chart->buildJson($chart->generateXML(), $args['ignore_datacheck']));
+
+            $returnData['chartData'] = $json;
+
+            return $returnData;
         }
-
-        // build report data since it isn't a SugarBean
-        $reportData = array();
-        $reportData['label'] = $reporter->name; // also report_def.report_name
-        $reportData['id'] = $reporter->saved_report_id;
-        $reportData['summary_columns'] = $reporter->report_def['summary_columns'];
-        $reportData['group_defs'] = $reporter->report_def['group_defs'];
-        $reportData['filters_def'] = $reporter->report_def['filters_def'];
-        $reportData['base_module'] = $reporter->report_def['module'];
-
-
-        // add reportData to returnData
-        $returnData['reportData'] = $reportData;
-
-        $chartDisplay = new ChartDisplay();
-        $chartDisplay->setReporter($reporter);
-
-        $chart = $chartDisplay->getSugarChart();
-
-        if (!isset($args['ignore_datacheck'])) {
-            $args['ignore_datacheck'] = false;
-        }
-
-        $json = json_decode($chart->buildJson($chart->generateXML(), $args['ignore_datacheck']));
-
-        $returnData['chartData'] = $json;
-
-        return $returnData;
     }
 
     /**
@@ -297,12 +292,6 @@ class ReportsDashletsApi extends SugarApi
         switch($opp) {
             case '$in':
                 return 'one_of';
-                break;
-            case '$on':
-                return 'on';
-                break;
-            case '$is':
-                return 'is';
                 break;
             case '$not_in':
                 return 'not_one_of';

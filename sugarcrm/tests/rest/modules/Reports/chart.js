@@ -72,7 +72,7 @@ describe('Reports.Chart', function() {
     });
 
     it('should return chart data for given report', function*() {
-        let response = yield Agent.as('John').get('Reports/' + this.reportId + '/chart?ignore_datacheck=true');
+        let response = yield Agent.as('John').get('Reports/' + this.reportId + '/chart');
         expect(response).to.have.json('reportData', (reportData) => {
             expect(reportData.id).to.be.equal(this.reportId);
             expect(reportData.label).to.be.equal('test');

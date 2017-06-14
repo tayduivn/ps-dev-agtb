@@ -522,6 +522,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     dashConfig: params,
                     dashModel: null,
                     filterDef: filterDef,
+                    useSavedFilters: true,
                     filterOptions: {
                         auto_apply: false
                     },
@@ -614,7 +615,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          */
         buildFilter: function(reportDef, params) {
             var def = [];
-            var mode = '$in';
 
             var groups = this.getGrouping(reportDef, 0);
             var series = this.getGrouping(reportDef, 1);
@@ -631,27 +631,30 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             var groupsValues = [];
             var seriesValues = [];
 
+            function getName(table_key, name) {
+                return table_key + ':' + name;
+            }
+
             function setValues(values, label) {
-                mode = '$in';
                 values.push(label);
             }
 
             function addFilterRow(name, values) {
-                var field = {};
                 var row = {};
-                field[mode] = values;
-                row[name] = field;
+                row[name] = values;
                 def.push(row);
             }
 
             function addSeriesRow() {
+                var seriesName = getName(series.table_key, series.name);
                 setValues(seriesValues, seriesLabel, series);
-                addFilterRow(series.name, seriesValues);
+                addFilterRow(seriesName, seriesValues);
             }
 
             function addGroupRow() {
+                var groupsName = getName(groups.table_key, groups.name);;
                 setValues(groupsValues, groupLabel, groups);
-                addFilterRow(groups.name, groupsValues);
+                addFilterRow(groupsName, groupsValues);
             }
 
             // pie & funnel chart

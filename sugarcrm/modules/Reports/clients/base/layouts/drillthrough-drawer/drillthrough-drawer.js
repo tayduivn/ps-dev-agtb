@@ -51,9 +51,12 @@
     updateList: function() {
         var chartModule = this.context.get('chartModule');
         var reportId = this.context.get('reportId');
-        var filterDef = this.context.get('filterDef');
+        var params = {
+            group_filters: this.context.get('filterDef'),
+            use_saved_filters: this.context.get('useSavedFilters') || false
+        };
 
-        var url = app.api.buildURL('Reports', 'records', {id: reportId}, {filter: filterDef});
+        var url = app.api.buildURL('Reports', 'records', {id: reportId}, params);
 
         var recordList = this.getComponent('sidebar')
                              .getComponent('main-pane')

@@ -63,7 +63,7 @@ describe('Reports.Records', function() {
     });
 
     it('should return filtered records whose field value matches given value', function*() {
-        let filter = 'filter%5B0%5D%5Bindustry%5D%5B%24in%5D%5B%5D=TEST';
+        let filter = 'group_filters%5B0%5D%5Bindustry%5D=TEST';
         let response = yield Agent.as('John').get('Reports/' + this.reportId + '/records?' + filter);
         expect(response).to.have.json('records', (records) => {
             expect(records).to.have.length(2);

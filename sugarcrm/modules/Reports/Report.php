@@ -2622,18 +2622,29 @@ class Report
     }
 
     /**
-     * Create a query piece from report filter for reports/filter api.
-     * @return string
+     * Returns the report data as a flat list (no groups or aggs)
+     * @return array
      */
-    public function getFilterQuery()
+    public function getData()
     {
-        // check if filter exists
-        $filters = $this->report_def['filters_def'];
-        if (!isset($filters['Filter_1']) || count($filters['Filter_1']) < 2) {
-            return '';
+        global $alias_map;
+
+        $result = [];
+
+        if (!isset($this->result)) {
+            $this->run_query();
         }
-        $this->create_where();
-        $this->create_from();
-        return 'SELECT DISTINCT ' . $this->full_bean_list['self']->table_name . '.id ' . $this->from . ' WHERE ' . $this->where;
+
+        while ($row = $this->db->fetchByAssoc($this->result)) {
+           $row = array_combine(array_map(function($key) use ($alias_map) {
+                   return isset($alias_map[$key]) ? $alias_map[$key] : $key;
+               },
+               array_keys($row)),
+               array_values($row)
+           );
+           $result[] = $row;
+       }
+
+        return $result;
     }
 }
