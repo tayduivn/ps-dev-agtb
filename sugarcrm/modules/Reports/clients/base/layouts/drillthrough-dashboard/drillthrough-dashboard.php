@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['drillthrough-dashboard'] = array(
+$viewdefs['Reports']['base']['layout']['drillthrough-dashboard'] = array(
     'name' => 'dashboard',
     'css_class' => 'dashboard drillthrough-dashboard',
     'components' => array(

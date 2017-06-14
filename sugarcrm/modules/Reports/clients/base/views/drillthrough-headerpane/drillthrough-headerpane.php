@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['view']['drillthrough-headerpane'] = array(
+$viewdefs['Reports']['base']['view']['drillthrough-headerpane'] = array(
     'template' => 'headerpane',
     'fields' => array(
         array(

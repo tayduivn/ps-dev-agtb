@@ -8,6 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.Reports.DrillthroughDrawerLayout
+ * @alias SUGAR.App.view.layouts.BaseReportsDrillthroughDrawerLayout
+ * @extends View.View
+ */
 ({
     plugins: ['ShortcutSession'],
 
@@ -52,7 +57,7 @@
 
         var recordList = this.getComponent('sidebar')
                              .getComponent('main-pane')
-                             .getComponent('list')
+                             .getComponent('drillthrough-list')
                              .getComponent('recordlist');
 
         var headerPane = this.getComponent('sidebar')

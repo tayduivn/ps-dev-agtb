@@ -8,6 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Reports.DrillthroughDashboardLayout
+ * @alias SUGAR.App.view.layouts.ReportsDrillthroughDashboardLayout
+ * @extends View.ListLayout
+ */
 ({
     /**
      * @inheritdoc

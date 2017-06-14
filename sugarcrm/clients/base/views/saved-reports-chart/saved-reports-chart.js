@@ -428,7 +428,7 @@
                 },
                 groupDefs: groupDefs,
                 layout: 'drillthrough-drawer',
-                module: module,
+                module: 'Reports',
                 reportData: reportData,
                 reportId: reportId,
                 skipFetch: true

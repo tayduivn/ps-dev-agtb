@@ -9,22 +9,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.DrillthroughHeaderpaneView
- * @alias SUGAR.App.view.views.BaseDrillthroughHeaderpaneView
- * @extends View.Views.Base.HeaderpaneView
+ * @class View.Layouts.Base.Reports.DrillthroughListLayout
+ * @alias SUGAR.App.view.layouts.BaseReportsDrillthroughListLayout
+ * @extends View.Views.Base.ListLayout
  */
 ({
-    extendsFrom: 'HeaderpaneView',
+    extendsFrom: 'ListLayout',
 
     /**
      * @inheritdoc
      */
-    _renderHtml: function() {
-        this._super('_renderHtml');
-
-        this.layout.on('drillthrough:closedrawer:fire', _.once(_.bind(function() {
-            this.$el.off();
-            app.drawer.close();
-        }, this)));
+    initialize: function(options) {
+        options.module = options.context.get('chartModule');
+        this._super('initialize', [options]);
     }
 })

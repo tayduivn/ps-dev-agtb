@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['drillthrough-drawer'] = array(
+$viewdefs['Reports']['base']['layout']['drillthrough-drawer'] = array(
     'components' => array(
         array(
             'layout' => array(
@@ -27,7 +27,7 @@ $viewdefs['base']['layout']['drillthrough-drawer'] = array(
                                     'view' => 'drillthrough-headerpane',
                                 ),
                                 array(
-                                    'layout' => 'list',
+                                    'layout' => 'drillthrough-list',
                                     // Extend the metadata to remove any actions
                                     'xmeta' => array(
                                         'components' => array(
