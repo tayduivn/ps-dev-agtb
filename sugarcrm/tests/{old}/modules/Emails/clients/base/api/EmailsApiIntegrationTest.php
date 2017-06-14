@@ -223,7 +223,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = array(
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
             'email_addresses_from' => array(
                 'create' => array(
                     array(
@@ -315,7 +314,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = array(
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         $record = $this->createRecord($args);
         $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after create');
@@ -365,7 +363,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = array(
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
             'prospects_cc' => array(
                 'add' => array($prospect->id),
             ),
@@ -492,7 +489,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::STATE_DRAFT,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
             'accounts_to' => array(
                 'add' => array($account1->id),
             ),
@@ -614,7 +610,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::STATE_READY,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
             'contacts_from' => array(
                 'add' => array(
                     $contact1,
@@ -700,7 +695,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $user = $this->createRhsBean('users_to');
         $args = array(
             'state' => Email::STATE_READY,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
             'reply_to_id' => $repliedToEmail->id,
             'users_from' => array(
                 'add' => array(

@@ -41,6 +41,7 @@ class SugarACLDraftEmails extends SugarACLStrategy
 
         $immutableFields = [
             'date_sent',
+            'assigned_user_id',
         ];
 
         // The sender is always the current user for drafts. No one can submit a different sender. Use outbound_email_id

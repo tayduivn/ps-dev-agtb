@@ -68,7 +68,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::populateFromApi
      * @expectedException SugarApiExceptionNotFound
      */
-    public function testPopulateFromApi()
+    public function testPopulateFromApi_OutboundEmailIdNotFound()
     {
         $bean = BeanFactory::newBean('Emails');
         $bean->id = Uuid::uuid1();
@@ -76,6 +76,41 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $submittedData = [
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => Uuid::uuid1(),
+        ];
+
+        $this->helper->populateFromApi($bean, $submittedData);
+    }
+
+    /**
+     * @covers ::populateFromApi
+     */
+    public function testPopulateFromApi_AssignedUserSuppliedIsValidIfCurrentUserId()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+
+        $submittedData = [
+            'state' => Email::STATE_DRAFT,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+        ];
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+        $this->assertTrue($result, 'Expected Success when Supplying Current User ID On Save As Draft');
+        $this->assertEmpty($bean->assigned_user_id, 'Expected Bean Assigned User Id to be empty when Saving As Draft');
+    }
+
+    /**
+     * @covers ::populateFromApi
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testPopulateFromApi_AssignedUserSuppliedDoesNotMatchCurrentUserId()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+
+        $submittedData = [
+            'state' => Email::STATE_DRAFT,
+            'assigned_user_id' => Uuid::uuid1(),
         ];
 
         $this->helper->populateFromApi($bean, $submittedData);

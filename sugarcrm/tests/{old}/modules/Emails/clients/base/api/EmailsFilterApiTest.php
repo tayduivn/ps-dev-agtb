@@ -142,15 +142,6 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email->load_relationship('users_to');
         $email->users_to->add($GLOBALS['current_user']);
 
-        // Draft email owned by $user.
-        $data = array(
-            'state' => Email::STATE_DRAFT,
-            'assigned_user_id' => $user->id,
-        );
-        $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('users_from');
-        $email->users_from->add($user);
-
         // Archived email sent by $contact to $user and the current user.
         $data = array(
             'state' => Email::STATE_ARCHIVED,
@@ -163,17 +154,6 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email->users_to->add($user);
         $email->load_relationship('users_bcc');
         $email->users_bcc->add($GLOBALS['current_user']);
-
-        // Draft email to be sent by $user to $contact.
-        $data = array(
-            'state' => Email::STATE_DRAFT,
-            'assigned_user_id' => $user->id,
-        );
-        $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('users_from');
-        $email->users_from->add($user);
-        $email->load_relationship('contacts_to');
-        $email->contacts_to->add($contact);
 
         $args = array(
             'module' => 'Emails',

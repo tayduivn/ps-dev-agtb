@@ -1142,7 +1142,7 @@ class Email extends SugarBean {
             }
 
             // Set assigned user.
-            if ($this->state === static::STATE_DRAFT && empty($this->assigned_user_id)) {
+            if ($this->state === static::STATE_DRAFT) {
                 $this->assigned_user_id = $GLOBALS['current_user']->id;
             }
 
@@ -1183,7 +1183,7 @@ class Email extends SugarBean {
                     }
                 }
 
-                $this->users_from->add($GLOBALS['current_user'], $additionalData);
+                $this->users_from->add($this->assigned_user_id, $additionalData);
             }
 
 			if(!empty($this->parent_type) && !empty($this->parent_id)) {
@@ -3631,7 +3631,7 @@ eoq;
         // Set the email address of the sender to be that of the configuration.
         if ($this->load_relationship('users_from')) {
             $this->users_from->add(
-                $GLOBALS['current_user'],
+                $this->assigned_user_id,
                 array('email_address' => $config->getFrom()->getEmail())
             );
         } else {

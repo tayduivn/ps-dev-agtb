@@ -35,13 +35,6 @@ class EmailsVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $data = array(
             'name' => static::$subject,
-            'state' => Email::STATE_DRAFT,
-            'assigned_user_id' => Uuid::uuid1(),
-        );
-        SugarTestEmailUtilities::createEmail('', $data);
-
-        $data = array(
-            'name' => static::$subject,
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );

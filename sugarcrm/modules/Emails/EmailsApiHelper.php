@@ -53,6 +53,18 @@ class EmailsApiHelper extends SugarBeanApiHelper
             $bean->state = $submittedData['state'];
         }
 
+        if ($bean->state === Email::STATE_DRAFT) {
+            if (!empty($submittedData['assigned_user_id']) &&
+                $submittedData['assigned_user_id'] !== $GLOBALS['current_user']->id
+            ) {
+                throw new SugarApiExceptionInvalidParameter(
+                    'assigned_user_id must be empty or specify the ID of the current user'
+                );
+            }
+
+            unset($submittedData['assigned_user_id']);
+        }
+
         $hasOutboundEmailId = isset($submittedData['outbound_email_id']) && !empty($submittedData['outbound_email_id']);
 
         if ($hasOutboundEmailId && $bean->state === Email::STATE_DRAFT) {

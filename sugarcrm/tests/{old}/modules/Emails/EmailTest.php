@@ -653,35 +653,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @covers ::save
      */
-    public function testSave_CreateDraftEmail_AssignedUserIsSet_AssignedUserAccepted()
-    {
-        $data = array(
-            'state' => Email::STATE_DRAFT,
-            'assigned_user_id' => 'USER-ID',
-        );
-        $email = SugarTestEmailUtilities::createEmail('', $data);
-        $this->assertSame('USER-ID', $email->assigned_user_id, 'Assigned User Not Accepted');
-    }
-
-    /**
-     * @covers ::save
-     */
-    public function testSave_UpdateDraftEmail_AssignedUserIsSet_AssignedUserAccepted()
-    {
-        $data = array(
-            'state' => Email::STATE_DRAFT,
-            'assigned_user_id' => '',
-        );
-        $email = SugarTestEmailUtilities::createEmail('', $data);
-
-        $email->assigned_user_id = 'USER-ID';
-        $email->save(false);
-        $this->assertSame('USER-ID', $email->assigned_user_id, 'Assigned User Not Accepted');
-    }
-
-    /**
-     * @covers ::save
-     */
     public function testSave_CreateArchivedEmail_AssignedUserIsEmpty_EmptyAssigneeAccepted()
     {
         $data = array(

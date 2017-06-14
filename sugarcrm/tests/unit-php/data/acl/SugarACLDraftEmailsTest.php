@@ -147,7 +147,7 @@ class SugarACLDraftEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'assigned_user_id',
-                true,
+                false,
             ],
             [
                 'modified_user_id',

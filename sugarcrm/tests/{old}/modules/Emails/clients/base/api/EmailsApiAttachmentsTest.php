@@ -42,7 +42,6 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::STATE_DRAFT,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
             'attachments' => array(
                 'create' => array(
                     array(

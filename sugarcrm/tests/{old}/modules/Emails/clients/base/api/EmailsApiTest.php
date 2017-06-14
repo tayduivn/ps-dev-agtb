@@ -94,7 +94,6 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'module' => 'Emails',
             'name' => 'Sugar Email' . mt_rand(),
             'state' => Email::STATE_READY,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
         );
 
         $caught = false;
@@ -187,6 +186,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Pretend that the current user is the admin with id=1.
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
+        $saveUserId = $GLOBALS['current_user']->id;
         $GLOBALS['current_user']->id = 1;
 
         // The admin should have a system-override configuration in addition to the system configuration.
@@ -204,6 +204,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $api = new EmailsApi();
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
+        $GLOBALS['current_user']->id = $saveUserId;
     }
 
     /**
