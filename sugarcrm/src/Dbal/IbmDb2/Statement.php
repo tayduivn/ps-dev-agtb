@@ -27,7 +27,7 @@ class Statement extends BaseStatement
      */
     public function execute($params = null)
     {
-        if ($params && PHP_VERSION_ID >= 70100) {
+        if ($params && PHP_VERSION_ID >= 70000) {
             foreach ($params as $key => $value) {
                 if (is_bool($value)) {
                     // cast boolean values to integers to avoid the PHP/DB2 bugs
