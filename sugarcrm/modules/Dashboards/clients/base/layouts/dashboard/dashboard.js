@@ -190,7 +190,7 @@
     /**
      * @inheritdoc
      */
-    loadData: function(options, setFields) {
+    loadData: function(options) {
         // Dashboards store their own metadata as part of their model.
         // For search facet dashboard, we do not want to load the dashboard
         // metadata from the database. Instead, we build the metadata below.
@@ -215,11 +215,11 @@
 
             if (parent) {
                 parent.once('sync', function() {
-                    this._super('loadData', [options, setFields]);
+                    this._super('loadData', [options]);
                 }, this);
             }
         } else {
-            this._super('loadData', [options, setFields]);
+            this._super('loadData', [options]);
         }
     },
 
@@ -543,7 +543,7 @@
         layout.initComponents([component]);
 
         layout.removeComponent(0);
-        layout.loadData({}, false);
+        layout.loadData({});
         layout.render();
     },
 
