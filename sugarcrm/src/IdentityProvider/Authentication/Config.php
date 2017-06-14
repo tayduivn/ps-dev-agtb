@@ -131,7 +131,7 @@ class Config
             'adapter_connection_protocol_version' => 3,
             'baseDn' => $this->getLdapSetting('ldap_base_dn', ''),
             'uidKey' => $this->getLdapSetting('ldap_login_attr', ''),
-            'filter' => '({uid_key}={username})' . $this->getLdapSetting('ldap_login_filter', ''),
+            'filter' => $this->buildLdapSearchFilter(),
             'dnString' => null,
             'entryAttribute' => $this->getLdapSetting('ldap_bind_attr'),
             'autoCreateUser' => $this->getLdapSetting('ldap_auto_create_users', false),
@@ -157,6 +157,22 @@ class Config
     }
 
     /**
+     * Creates a valid LDAP filter string based on configuration.
+     *
+     * @return string
+     */
+    protected function buildLdapSearchFilter()
+    {
+        $defaultFilter = '({uid_key}={username})';
+        $loginFilter = $this->getLdapSetting('ldap_login_filter', '');
+        if ($loginFilter) {
+            $loginFilter = '(' . trim($loginFilter, " ()\t\n\r\0\x0B") . ')';
+            return '(&' . $defaultFilter . $loginFilter . ')';
+        }
+        return $defaultFilter;
+    }
+
+    /**
      * Is LDAP enabled?
      * @return bool
      */
@@ -177,7 +193,11 @@ class Config
         if (!$this->ldapSettings) {
             $this->ldapSettings = \Administration::getSettings('ldap');
         }
-        return !empty($this->ldapSettings->settings[$key]) ? $this->ldapSettings->settings[$key] : $default;
+        if (isset($this->ldapSettings->settings[$key])) {
+            return trim($this->ldapSettings->settings[$key]) ?: $default;
+        }
+
+        return $default;
     }
 
     /**

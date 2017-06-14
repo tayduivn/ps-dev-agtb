@@ -314,4 +314,57 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         ];
         $this->assertEquals($expected, $config->getLdapConfig());
     }
+
+    /**
+     * Provides data for testGetLdapConfigWithDifferentFilters.
+     * @return array
+     */
+    public function getLdapConfigWithDifferentFiltersProvider()
+    {
+        return [
+            'emptyConfigFilter' => [
+                'configFilter' => '',
+                'expectedFilter' => '({uid_key}={username})',
+            ],
+            'notEmptyConfigFilterWithBrackets' => [
+                'configFilter' => '(objectClass=person)',
+                'expectedFilter' => '(&({uid_key}={username})(objectClass=person))',
+            ],
+            'notEmptyConfigFilterWithoutBrackets' => [
+                'configFilter' => 'objectClass=person',
+                'expectedFilter' => '(&({uid_key}={username})(objectClass=person))',
+            ],
+            'notEmptyConfigFilterWithOneBracketsAndSpaces' => [
+                'configFilter' => '  objectClass=person) ',
+                'expectedFilter' => '(&({uid_key}={username})(objectClass=person))',
+            ],
+            'notEmptyConfigFilterWithOneBracketsAndSpecCharacters' => [
+                'configFilter' => "\n\x0B" . '    (objectClass=person' . "\t\n\r\0",
+                'expectedFilter' => '(&({uid_key}={username})(objectClass=person))',
+            ],
+        ];
+    }
+
+    /**
+     * @param string $configFilter
+     * @param string $expectedFilter
+     *
+     * @covers ::getLdapConfig
+     * @dataProvider getLdapConfigWithDifferentFiltersProvider
+     */
+    public function testGetLdapConfigWithDifferentFilters($configFilter, $expectedFilter)
+    {
+        /** @var \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config $config */
+        $config = $this->getMockBuilder(Config::class)
+                       ->disableOriginalConstructor()
+                       ->setMethods(['isLdapEnabled', 'getLdapSetting'])
+                       ->getMock();
+        $config->expects($this->once())
+               ->method('isLdapEnabled')
+               ->willReturn(true);
+
+        $config->method('getLdapSetting')->willReturnMap([['ldap_login_filter', '', $configFilter]]);
+        $result = $config->getLdapConfig();
+        $this->assertEquals($expectedFilter, $result['filter']);
+    }
 }
