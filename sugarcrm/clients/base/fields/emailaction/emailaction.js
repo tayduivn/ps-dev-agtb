@@ -40,15 +40,17 @@
      * @private
      */
     _initEmailOptions: function() {
-        var context = this.context.parent || this.context,
-            parentModel = context.get('model');
+        var context = this.context.parent || this.context;
+        var parentModel = context.get('model');
+        var self = this;
+        var onChange = _.debounce(function(model) {
+            self._updateEmailOptions(model);
+            self.render();
+        }, 200);
 
         if (parentModel instanceof Backbone.Model) {
             this._updateEmailOptions(parentModel);
-            parentModel.on('change', function(model) {
-                this._updateEmailOptions(model);
-                this.render();
-            }, this);
+            this.listenTo(parentModel, 'change change:from change:to change:cc change:bcc', onChange);
         }
     },
 

@@ -20,8 +20,6 @@
 ({
     extendsFrom: 'EmailactionField',
 
-    plugins: ['EmailClientLaunch'],
-
     /**
      * Template for reply header.
      *
