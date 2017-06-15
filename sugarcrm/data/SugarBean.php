@@ -8204,4 +8204,17 @@ class SugarBean
         return $sendingEmailNeeded;
     }
 
+    /**
+     * This provides an interface to specify any supporting modules which have metatdata needed by a module to be fully
+     * functional on the Mobile application. This is done by overriding this method at the Module level, and returning
+     * an array of the supporting Modules.
+     *
+     * @see Quote::getSupportingModules() for example use
+     *
+     * @return array
+     */
+    public static function getMobileSupportingModules()
+    {
+        return array();
+    }
 }

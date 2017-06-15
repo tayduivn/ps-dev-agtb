@@ -680,4 +680,27 @@ class Quote extends SugarBean
 
         return !$this->isClosed();
     }
+
+    /**
+     * This defines the supporting modules which have metatdata needed by Quotes to be fully
+     * functional on the Mobile application
+     *
+     * @return array
+     */
+    public static function getMobileSupportingModules()
+    {
+        $modules = parent::getMobileSupportingModules();
+        return array_merge($modules, array(
+            'Products',
+            'Manufacturers',
+            'ProductTypes',
+            'ProductCategories',
+            'ProductTemplates',
+            'ProductBundles',
+            'ProductBundleNotes',
+            'Manufacturers',
+            'TaxRates',
+            'Shippers',
+        ));
+    }
 }

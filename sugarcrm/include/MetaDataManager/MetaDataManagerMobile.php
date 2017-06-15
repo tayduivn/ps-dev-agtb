@@ -43,9 +43,42 @@ class MetaDataManagerMobile extends MetaDataManager
         $defaultEnabledModules = $this->getDefaultEnabledModuleList();
 
         // Add default enabled modules to the list
-        $modules = array_keys(array_merge(array_flip($modules), array_flip($defaultEnabledModules)));
+        $modules = array_keys(array_merge(
+            array_flip($modules),
+            array_flip($defaultEnabledModules),
+            array_flip($this->getSupportingModules($modules))
+        ));
 
         return $modules;
+    }
+
+    /**
+     * Utility function to make static call testable
+     *
+     * @param $BeanName
+     * @return string bean name
+     */
+    public function retrieveSupportingModuleListByBeanName($BeanName)
+    {
+        $modClass = BeanFactory::getBeanClass($BeanName);
+        return $modClass::getMobileSupportingModules();
+    }
+
+    /**
+     * Gets enabled supporting module list for things like Quotes on Mobile.
+     *
+     * @return array List of Mobile module names
+     */
+    public function getSupportingModules($modules)
+    {
+        $supportingModules = array();
+        foreach ($modules as $module) {
+            $supportingModules = array_merge(
+                $supportingModules,
+                $this->retrieveSupportingModuleListByBeanName($module)
+            );
+        }
+        return $supportingModules;
     }
 
     /**
