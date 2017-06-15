@@ -528,7 +528,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     },
                     groupDefs: groupDefs,
                     layout: 'drillthrough-drawer',
-                    module: report_def.module,
+                    module: 'Reports',
                     reportData: report_def,
                     reportId: chartId,
                     skipFetch: true
