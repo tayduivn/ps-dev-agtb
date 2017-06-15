@@ -37,6 +37,17 @@
     /**
      * @inheritdoc
      *
+     * Only add the help tooltip if the help text is being hidden.
+     */
+    decorateHelper: function() {
+        if (this.def.hideHelp) {
+            this._super('decorateHelper');
+        }
+    },
+
+    /**
+     * @inheritdoc
+     *
      * Dismisses any alerts with the key `email-client-status`.
      */
     _dispose: function() {
