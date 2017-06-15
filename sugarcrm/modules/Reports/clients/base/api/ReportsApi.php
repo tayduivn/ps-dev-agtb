@@ -89,6 +89,18 @@ class ReportsApi extends ModuleApi
         if (is_array($reportDef['group_defs'])) {
             foreach ($reportDef['group_defs'] as $groupColumn) {
                 if ($groupColumn['table_key'] === $table_key && $groupColumn['name'] === $field_name) {
+                    if (empty($groupColumn['type'])) {
+                        // missing in some reports
+                        if (!empty($reportDef['full_table_list'][$table_key]['module'])) {
+                            $bean = BeanFactory::getBean($reportDef['full_table_list'][$table_key]['module']);
+                            if ($bean) {
+                                $fieldDef = $bean->getFieldDefinition($field_name);
+                                if (!empty($fieldDef['type'])) {
+                                    $groupColumn['type'] = $fieldDef['type'];
+                                }
+                            }
+                        }
+                    }
                     return $groupColumn;
                 }
             }
@@ -116,7 +128,7 @@ class ReportsApi extends ModuleApi
                     $value = array($value);
                 }
                 $fieldDef = $this->getGroupFilterFieldDef($reportDef, $field);
-                if ($fieldDef) {
+                if ($fieldDef && isset($fieldDef['type'])) {
                     $filterRow = array(
                         'adhoc' => true,
                         'name' => $fieldDef['name'],
