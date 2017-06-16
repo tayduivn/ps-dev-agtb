@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-ddescribe('Base.Field.Chart', function() {
+describe('Base.Field.Chart', function() {
     var field, app;
 
 
