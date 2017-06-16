@@ -39,7 +39,6 @@ describe('Quotes.Base.Views.Create', function() {
         });
 
         SugarTest.loadComponent('base', 'view', 'record');
-        SugarTest.loadPlugin('VirtualCollection');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
@@ -465,8 +464,9 @@ describe('Quotes.Base.Views.Create', function() {
 
         describe('with one empty bundle', function() {
             it('should use callback with same empty fields, errors params passed in', function() {
-                bundleModel = new Backbone.Model({
-                    product_bundle_items: []
+                bundleModel = app.data.createBean('ProductBundles', {
+                    product_bundle_items: [],
+                    _link: 'product_bundles'
                 });
                 view.model.set('bundles', bundleModel);
                 view.validateBundleModels({}, {}, callback);
@@ -478,10 +478,12 @@ describe('Quotes.Base.Views.Create', function() {
         describe('with items in a bundle', function() {
             it('should use call isValidAsync on bundle model', function() {
                 prodModel = app.data.createBean('Products', {
-                    id: 'prodId1'
+                    id: 'prodId1',
+                    _link: 'products'
                 });
-                bundleModel = new Backbone.Model({
-                    product_bundle_items: [prodModel]
+                bundleModel = app.data.createBean('ProductBundles', {
+                    product_bundle_items: [prodModel],
+                    _link: 'product_bundles'
                 });
                 bundleModel.isValidAsync = sinon.collection.stub();
                 view.model.set('bundles', bundleModel);
@@ -529,15 +531,16 @@ describe('Quotes.Base.Views.Create', function() {
         it('should wrap the passed-in successs function when opps_view_by is RLIs and from convert', function() {
             var bundles = view.model.get('bundles');
             var productModel = app.data.createBean('Products', {
-                revenuelineitem_id: 'rli1'
+                revenuelineitem_id: 'rli1',
+                _link: 'products'
             });
             var bundleModel = app.data.createBean('ProductBundles', {
-                product_bundle_items: [productModel]
+                product_bundle_items: [productModel],
+                _link: 'product_bundles'
             });
             bundles.add(bundleModel);
             view.model.set({
-                id: 'quote1',
-                bundles: bundles
+                id: 'quote1'
             });
 
             view.context.set('convert', true);
@@ -567,16 +570,17 @@ describe('Quotes.Base.Views.Create', function() {
         beforeEach(function() {
             bundles = view.model.get('bundles');
             productModel = app.data.createBean('Products', {
-                revenuelineitem_id: 'rli1'
+                revenuelineitem_id: 'rli1',
+                _link: 'products'
             });
             bundleModel = app.data.createBean('ProductBundles', {
-                product_bundle_items: [productModel]
+                product_bundle_items: [productModel],
+                _link: 'product_bundles'
             });
 
             bundles.add(bundleModel);
             view.model.set({
-                id: 'quote1',
-                bundles: bundles
+                id: 'quote1'
             });
             sinon.collection.stub(app.api, 'call', function() {});
             callback = sinon.collection.stub();

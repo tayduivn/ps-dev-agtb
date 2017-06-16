@@ -320,10 +320,12 @@ describe('Quotes.Base.Views.Record', function() {
                     currency_id: 'test_1',
                     base_rate: '0.90',
                     _module: 'ProductBundles',
+                    _link: 'product_bundles',
                     product_bundle_items: [{
                         id: 12345,
                         name: 'item_1',
-                        _module: 'Products'
+                        _module: 'Products',
+                        _link: 'products'
                     }]
                 }]
             };
@@ -415,10 +417,12 @@ describe('Quotes.Base.Views.Record', function() {
                     currency_id: 'test_1',
                     base_rate: '0.90',
                     _module: 'ProductBundles',
+                    _link: 'product_bundles',
                     product_bundle_items: [{
                         id: 12345,
                         name: 'item_1',
-                        _module: 'Products'
+                        _module: 'Products',
+                        _link: 'products'
                     }]
                 }]
             };

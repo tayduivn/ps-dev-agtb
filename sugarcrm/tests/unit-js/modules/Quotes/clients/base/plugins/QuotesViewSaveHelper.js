@@ -108,8 +108,10 @@ describe('Quotes.Base.Plugins.QuotesViewSaveHelper', function() {
                     product_bundle_items: [{
                         id: 12345,
                         name: 'item_1',
-                        _module: 'Products'
-                    }]
+                        _module: 'Products',
+                        _link: 'products'
+                    }],
+                    _link: 'product_bundles'
                 }]
             };
             model.setSyncedAttributes(tmpRow);
