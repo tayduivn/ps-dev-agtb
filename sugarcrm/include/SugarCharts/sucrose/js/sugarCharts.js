@@ -545,7 +545,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 chart.dispatch.call('tooltipHide', this);
 
                 app.alert.show('listfromreport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
-                this.chart.clearActive();
+                chart.clearActive();
+                chart.render();
                 this.openDrawer(drawerContext);
 
             }, this));
