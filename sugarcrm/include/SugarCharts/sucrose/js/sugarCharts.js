@@ -30,7 +30,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         chart_type: 'bar chart',
         colorData: 'default',
         direction: 'ltr',
-        groupType: 'basic',
+        groupType: configBarType,
         hideEmptyGroups: true,
         label: SUGAR.charts.translateString('LBL_DASHLET_SAVED_REPORTS_CHART'),
         margin: {top: 10, right: 10, bottom: 10, left: 10},
