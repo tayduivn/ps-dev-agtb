@@ -23,12 +23,12 @@ class User extends IdmUser
     const USER_EMPLOYEE_STATUS_INACTIVE = 'Inactive';
 
     // User password generator types
-    CONST PASSWORD_TYPE_SYSTEM = 'syst';
-    CONST PASSWORD_TYPE_USER = 'user';
+    const PASSWORD_TYPE_SYSTEM = 'syst';
+    const PASSWORD_TYPE_USER = 'user';
 
     // sugar config expiration types
-    CONST PASSWORD_EXPIRATION_TYPE_TIME = 1;
-    CONST PASSWORD_EXPIRATION_TYPE_LOGIN = 2;
+    const PASSWORD_EXPIRATION_TYPE_TIME = 1;
+    const PASSWORD_EXPIRATION_TYPE_LOGIN = 2;
 
     /**
      * @var bool

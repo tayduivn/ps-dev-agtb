@@ -51,7 +51,7 @@ class SugarOnAuthLockoutSubscriber implements EventSubscriberInterface
     {
         return [
             AuthenticationEvents::AUTHENTICATION_SUCCESS => 'onSuccess',
-            AuthenticationEvents::AUTHENTICATION_FAILURE => 'onFailure'
+            AuthenticationEvents::AUTHENTICATION_FAILURE => 'onFailure',
         ];
     }
 

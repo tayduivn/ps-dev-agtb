@@ -141,7 +141,6 @@ class UserPasswordListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($lastChange);
 
         $this->listener->execute($this->event);
-
     }
 
     /**

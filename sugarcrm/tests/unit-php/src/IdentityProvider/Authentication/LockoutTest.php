@@ -59,7 +59,6 @@ class Lockout2Test extends \PHPUnit_Framework_TestCase
         $this->user->expects($this->any())
             ->method('getSugarUser')
             ->willReturn($this->sugarUser);
-
     }
 
     /**
@@ -147,7 +146,6 @@ class Lockout2Test extends \PHPUnit_Framework_TestCase
         $this->expectExceptionMessage($exceptionMessage);
 
         $this->lockout->throwLockoutException($this->user);
-
     }
 
     /**
