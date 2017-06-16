@@ -87,17 +87,18 @@ class ReportsApi extends ModuleApi
             $field_name = $field;
         }
         if (is_array($reportDef['group_defs'])) {
+            $report = null;
             foreach ($reportDef['group_defs'] as $groupColumn) {
                 if ($groupColumn['table_key'] === $table_key && $groupColumn['name'] === $field_name) {
                     if (empty($groupColumn['type'])) {
-                        // missing in some reports
-                        if (!empty($reportDef['full_table_list'][$table_key]['module'])) {
-                            $bean = BeanFactory::getBean($reportDef['full_table_list'][$table_key]['module']);
-                            if ($bean) {
-                                $fieldDef = $bean->getFieldDefinition($field_name);
-                                if (!empty($fieldDef['type'])) {
-                                    $groupColumn['type'] = $fieldDef['type'];
-                                }
+                        if (!$report) {
+                            $report = new Report(json_encode($reportDef));
+                        }
+                        if (!empty($report->full_bean_list[$table_key])) {
+                            $bean = $report->full_bean_list[$table_key];
+                            $fieldDef = $bean->getFieldDefinition($field_name);
+                            if (!empty($fieldDef['type'])) {
+                                $groupColumn['type'] = $fieldDef['type'];
                             }
                         }
                     }
@@ -128,7 +129,7 @@ class ReportsApi extends ModuleApi
                     $value = array($value);
                 }
                 $fieldDef = $this->getGroupFilterFieldDef($reportDef, $field);
-                if ($fieldDef && isset($fieldDef['type'])) {
+                if ($fieldDef && !empty($fieldDef['type'])) {
                     $filterRow = array(
                         'adhoc' => true,
                         'name' => $fieldDef['name'],
@@ -139,7 +140,9 @@ class ReportsApi extends ModuleApi
                             $filterRow['qualifier_name'] = 'one_of';
                             $filterRow['input_name0'] = $value;
                             break;
+                        case 'date':
                         case 'datetime':
+                        case 'datetimecombo':
                             if (empty($fieldDef['qualifier'])) {
                                 $filterRow['qualifier_name'] = 'on';
                                 $filterRow['input_name0'] = current($value);
