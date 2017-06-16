@@ -21,6 +21,7 @@ class MetaDataManagerMobile extends MetaDataManager
         'edit',
         'detail',
         'forecast-pipeline',
+        'dupecheck-list',
     );
 
     protected $allowedModuleLayouts = array(
