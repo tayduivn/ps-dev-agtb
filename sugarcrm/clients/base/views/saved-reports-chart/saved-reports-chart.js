@@ -251,6 +251,7 @@
 
         // params.module is usually null based on dashlet settings
         params.module = properties.base_module;
+        params.vertical = config.orientation === 'vertical' ? true : false;
 
         // override settings when new report is selected
         if (updated) {
@@ -260,9 +261,7 @@
         }
 
         // persist the chart settings for use by SugarCharts
-        this.reportData.set({
-            rawChartParams: params
-        });
+        this.reportData.set('rawChartParams', params);
 
         // update the settings model for use by chart field
         this.settings.set(params);

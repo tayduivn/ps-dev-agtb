@@ -91,6 +91,7 @@
         var title = dashlet.$('.dashlet-title');
 
         dashlet.settings.set(config);
+        dashlet.reportData.set('rawChartParams', config);
         dashlet.reportData.set('rawReportData', reportData);
         // set reportData's rawChartData to the chartData from the source chart
         // this will trigger chart.js' change:rawChartData and the chart will update
