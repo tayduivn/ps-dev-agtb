@@ -135,17 +135,22 @@
         if (this.meta.config) {
             this.settings.on('change:saved_report_id', function(model) {
                 var reportId = model.get('saved_report_id');
-
+                var options;
                 if (_.isEmpty(reportId)) {
                     return;
                 }
-
-                this.getSavedReportById(reportId, {
-                    success: _.bind(function(data) {
+                options = {
+                    success: function(data) {
+                        var label;
                         this.setChartParams(data, true);
-                    }, this)
-                });
-
+                        // set the title of the dashlet to the report title
+                        label = this.$('[name="label"]');
+                        if (label.length) {
+                            label.val(this.settings.get('label'));
+                        }
+                    }
+                };
+                this.getSavedReportById(reportId, options);
                 // show or hide 'Edit Selected Report' link
                 this.updateEditLink(reportId);
             }, this);
@@ -203,7 +208,6 @@
                 show_y_label:    false,
                 showValues:      0,
                 staggerTicks:    true,
-                vertical:        true,
                 wrapTicks:       true,
                 x_axis_label:    '',
                 y_axis_label:    ''
@@ -218,13 +222,12 @@
      * @param {Boolean} [update] Is this an update to the report?
      */
     setChartParams: function(serverData, update) {
+        var updated;
         var data;
         var properties;
         var config;
         var params;
-        var defaults;
-        var updated;
-        var label;
+        var settings;
 
         // only called by bindDataChange when the report id is changed in config panel
         if (!serverData.reportData || !serverData.chartData) {
@@ -236,44 +239,39 @@
         updated = _.isUndefined(update) ? false : update;
         data = serverData.reportData;
         properties = serverData.chartData.properties[0];
-        config = this.getChartConfig(properties.type);
-        params = this.getDefaultSettings();
 
-        defaults = {
+        config = this.getChartConfig(properties.type);
+        config.chartType = config.orientation === 'vertical' ? 'group by chart' : 'horizontal group by chart';
+
+        params = {
             label: data.label,
-            chart_type: config.chartType || properties.type,
+            chart_type: config.chartType,
             report_title: properties.title,
             show_legend: properties.legend === 'on' ? true : false,
             stacked: config.barType === 'stacked' || config.barType === 'basic' ? true : false,
             x_axis_label: this._getXaxisLabel(data),
-            y_axis_label: this._getYaxisLabel(data)
+            y_axis_label: this._getYaxisLabel(data),
+            module: properties.base_module,
+            vertical: config.orientation === 'vertical' ? true : false
         };
 
-        // params.module is usually null based on dashlet settings
-        params.module = properties.base_module;
-        params.vertical = config.orientation === 'vertical' ? true : false;
+        settings = this.getDefaultSettings();
 
         // override settings when new report is selected
         if (updated) {
-            _.extend(params, defaults);
+            _.extend(settings, params);
         } else {
-            _.defaults(params, defaults);
+            _.defaults(settings, params);
         }
 
         // persist the chart settings for use by SugarCharts
-        this.reportData.set('rawChartParams', params);
+        this.reportData.set('rawChartParams', settings);
 
         // update the settings model for use by chart field
-        this.settings.set(params);
+        this.settings.set(settings);
 
         // toggle display of chart display option controls based on chart type
         this._toggleChartFields();
-
-        // set the title of the dashlet to the report title
-        var label = this.$('[name="label"]');
-        if (label.length) {
-            label.val(this.settings.get('label'));
-        }
     },
 
     /**

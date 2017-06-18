@@ -81,8 +81,6 @@
         var params = this.getChartParams(chartData);
         var config = this.getChartConfig(chartData, params);
 
-        params.baseModule = chartData.properties[0].base_module;
-
         var sugarChart = new loadSugarChart(id, chartData, [], config, params, _.bind(function(chart) {
             this.chartComplete(chart, params, reportData, chartData);
         }, this));
@@ -129,13 +127,14 @@
         var properties = !_.isUndefined(chartData.properties) && Array.isArray(chartData.properties) ?
                 chartData.properties[0] :
                 {};
-        // These params should override the SugarCharts default
+        // These params will be overriden the SugarCharts defaults
         var params = {
                 chart_type: 'multibar',
                 margin: {top: 0, right: 10, bottom: 10, left: 10},
                 allowScroll: true,
                 module: properties.base_module,
-                overflowHandler: _.bind(this.overflowHandler, this)
+                overflowHandler: _.bind(this.overflowHandler, this),
+                baseModule: properties.base_module
             };
         var state = this.context.get('chartState');
 

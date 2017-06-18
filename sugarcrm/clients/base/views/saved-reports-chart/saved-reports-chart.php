@@ -46,6 +46,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'name' => 'chart_type',
                     'label' => 'LBL_CHART_CONFIG_CHART_TYPE',
                     'type' => 'enum',
+                    'default' => 'group by chart',
                     'sort_alpha' => true,
                     'ordered' => true,
                     'searchBarThreshold' => -1,
