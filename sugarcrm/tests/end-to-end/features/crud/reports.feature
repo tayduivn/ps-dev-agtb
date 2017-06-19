@@ -40,3 +40,20 @@ Feature: Reports module verification
     Then I verify fields on #Report_BPreview.PreviewView
       | fieldName   | value |
       | description | abc   |
+
+  @list-edit
+  Scenario: Reports > List View > Inline Edit
+    Given Reports records exist:
+      | *name     | module    | report_type |
+      | Report_A  | Accounts  | tabular     |
+      | Report_B  | Accounts  | tabular     |
+    Given I open about view and login
+    When I choose Reports in modules menu
+    When I click on Edit button for *Report_A in #ReportsList.ListView
+    When I set values for *Report_A in #ReportsList.ListView
+      | fieldName | value           |
+      | name      | Report_A_edited |
+    When I click on Save button for *Report_A in #ReportsList.ListView
+    Then I verify fields for *Report_A in #ReportsList.ListView
+      | fieldName    | value           |
+      | name         | Report_A_edited |

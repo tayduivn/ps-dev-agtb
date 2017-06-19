@@ -112,6 +112,41 @@ const whenSteps = function () {
         await view.togglePanel(panelName);
 
     });
+
+    /**
+     * Click on a list view action button
+     *
+     * @example I click on edit button for *Account_A in #AccountsList.ListView
+     */
+    this.When(/^I click on (\w+) button for (\*[A-Z](?:\w|\S)*) in (#\S+)$/,
+        async (button, record, view) => {
+            let listItem = view.getListItem({id: record.id});
+
+            let isVisible = await listItem.isVisible(button);
+
+            if (isVisible) {
+                await listItem.clickListButton(button);
+
+            } else {
+
+                await listItem.openDropdown();
+                await listItem.clickListButton(button);
+            }
+        }, true);
+
+    /**
+     * Set field values from data
+     *
+     * @example I set values for *Account_A in #AccountsList.ListView
+     */
+    this.When(/^I set values for (\*[A-Z](?:\w|\S)*) in (#\S+)$/,
+        async (record, view, data) => {
+            let listItem = view.getListItem({id: record.id});
+            for (let row of data.hashes()) {
+                let field = await listItem.getField(row.fieldName);
+                await field.setValue(row.value);
+            }
+        }, true);
 };
 
 module.exports = whenSteps;

@@ -62,6 +62,12 @@ export class Edit extends BaseField {
 
     }
 
+    /**
+     * Set a value for the field
+     *
+     * @param val
+     * @returns {Promise<Client<void>>}
+     */
     public async setValue(val: any): Promise<void> {
         await seedbed.client.setValue(this.$('field.selector'), val);
     }

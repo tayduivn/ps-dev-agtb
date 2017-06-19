@@ -32,6 +32,10 @@ export default class ListItemView extends BaseView {
                 listItemGrip: '.menu-container-grip',
                 buttons: {
                     preview: '.fa.fa-eye',
+                    dropdown: 'a.btn.dropdown-toggle',
+                    edit: '[name="edit_button"]',
+                    save: '[name="inline-save"]',
+                    cancel: '[name="inline-cancel"]',
                 }
             },
             buttons: {
@@ -67,6 +71,40 @@ export default class ListItemView extends BaseView {
         return seedbed.client
             .execSync('scrollToSelector', [rowSelector])
             .click(selector);
+    }
+
+    /**
+     * Checks if button is visible
+     *
+     * @param itemName
+     * @returns {Promise<Client<boolean>>}
+     */
+    public async isVisible(itemName) {
+        return seedbed.client.isVisible(this.$('listItem.buttons.' + itemName.toLowerCase()));
+    }
+
+    /**
+     * Click on list view button
+     *
+     * @param buttonName
+     * @returns {Promise<SeedbedClient<void>>}
+     */
+    public async clickListButton(buttonName) {
+        let selector = this.$('listItem.buttons.' + buttonName.toLowerCase(), {id: this.id});
+        let rowSelector = this.$();
+
+        return seedbed.client
+            .execSync('scrollToSelector', [rowSelector])
+            .click(selector);
+    }
+
+    /**
+     * Open the actions dropdown
+     *
+     * @returns {Promise<void>}
+     */
+    public async openDropdown() {
+        await this.clickListButton('dropdown');
     }
 
 }
