@@ -62,7 +62,7 @@
      */
     initialize: function(options) {
         // Holds report data from the server's endpoint once we fetch it
-        this.reportData = new Backbone.Model();
+        this.reportData = app.data.createBean();
         this.reportOptions = [];
         this._super('initialize', [options]);
         this.on('chart:complete', this.chartComplete, this);
