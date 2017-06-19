@@ -68,7 +68,12 @@ class SugarACLStatic extends SugarACLStrategy
             $context['owner_override'] = true;
         }
 
-        return ACLController::checkAccessInternal($module, $action, !empty($context['owner_override']));
+        if (isset(self::$non_module_acls[$module])) {
+            $type = self::$non_module_acls[$module];
+        } else {
+            $type = 'module';
+        }
+        return ACLController::checkAccessInternal($module, $action, !empty($context['owner_override']), $type);
     }
 
     static $edit_actions = array(
