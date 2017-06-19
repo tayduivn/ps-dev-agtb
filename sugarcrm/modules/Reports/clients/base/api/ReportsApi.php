@@ -92,7 +92,7 @@ class ReportsApi extends ModuleApi
                 if ($groupColumn['table_key'] === $table_key && $groupColumn['name'] === $field_name) {
                     if (empty($groupColumn['type'])) {
                         if (!$report) {
-                            $report = new Report(json_encode($reportDef));
+                            $report = new Report($reportDef);
                         }
                         if (!empty($report->full_bean_list[$table_key])) {
                             $bean = $report->full_bean_list[$table_key];
@@ -227,21 +227,16 @@ class ReportsApi extends ModuleApi
         unset($args['record']);
         unset($args['module']);
 
+        $reportDef = json_decode($savedReport->content, true);
+
         // set target module
-        if (!empty($savedReport->module)) {
-            $args['module'] = $savedReport->module;
-        } else if (!empty($savedReport->content)) {
-            $content = json_decode($savedReport->content, true);
-            if (!empty($content['module'])) {
-                $args['module'] = $content['module'];
-            }
+        if (!empty($reportDef['module'])) {
+            $args['module'] = $reportDef['module'];
         }
 
         if (!isset($args['module'])) {
             throw new SugarApiExceptionInvalidParameter('Target module not found for report: ' . $savedReport->id);
         }
-
-        $reportDef = json_decode($savedReport->content, true);
 
         if (isset($args['group_filters'])) {
             $reportDef = $this->addGroupFilters($reportDef, $args['group_filters']);
@@ -345,27 +340,15 @@ class ReportsApi extends ModuleApi
     {
         $recordIds = array();
         // add field 'id' to display_columns so it will be added to 'select' and returned
-        $add = true;
-        if (!empty($reportDef['display_columns'])) {
-            foreach ($reportDef['display_columns'] as $column) {
-                if ($column['table_key'] === 'self' && $column['name'] === 'id') {
-                    $add = false;
-                    break;
-                }
-            }
-        }
-        else {
-            $reportDef['display_columns'] = array();
-        }
-        if ($add) {
-            $reportDef['display_columns'][] = array (
+        $reportDef['display_columns'] = array(
+            array (
                 'label' => 'Id',
                 'name' => 'id',
                 'type' => 'id',
                 'table_key' => 'self'
-            );
-        }
-        $report = new Report(json_encode($reportDef));
+            )
+        );
+        $report = new Report($reportDef);
         $results = $report->getData();
         foreach ($results as $record) {
             if (isset($record['primaryid'])) {

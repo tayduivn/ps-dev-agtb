@@ -181,18 +181,22 @@ class Report
         $this->time_date_obj = new TimeDate();
         $this->name = $mod_strings['LBL_UNTITLED'];
         $this->db = DBManagerFactory::getInstance('reports');
-        if (Report::is_old_content($report_def_str)) {
-            $this->handleException('this report was created with an older version of reports. please upgrade');
-        }
 
         $json = getJSONobj();
         if (empty($report_def_str)) {
             $this->report_def_str = $this->default_report_def_str;
             $this->report_def = $json->decode($this->report_def_str);
+        } else if (is_array($report_def_str)) {
+            $this->report_def = $report_def_str;
+            $this->report_def_str = $json->encode($report_def_str);
         } else {
             $this->report_def_str = $report_def_str;
             $this->report_def = $json->decode($this->report_def_str);
         }
+        if (Report::is_old_content($this->report_def_str)) {
+            $this->handleException('this report was created with an older version of reports. please upgrade');
+        }
+
         // 5.1 Report Format - only called by the Wizard.
         if (!empty($filters_def_str)) {
             $this->parseUIFiltersDef($json->decode($filters_def_str), $json->decode($panels_def_str));
