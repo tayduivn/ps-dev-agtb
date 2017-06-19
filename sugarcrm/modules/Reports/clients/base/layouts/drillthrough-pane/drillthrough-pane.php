@@ -11,20 +11,19 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Reports']['base']['layout']['drillthrough-dashboard'] = array(
-    'name' => 'dashboard',
-    'css_class' => 'dashboard drillthrough-dashboard',
+$viewdefs['Reports']['base']['layout']['drillthrough-pane'] = array(
+    'name' => 'drillthrough-pane',
+    'css_class' => 'dashboard drillthrough-pane',
     'components' => array(
         array(
             'view' => array(
-                'name' => 'drillthrough-dashboard-headerpane',
-                // 'type' => 'dashboard-headerpane',
+                'name' => 'drillthrough-pane-headerpane',
                 'template' => 'headerpane',
                 'fields' => array(
                     array(
                         'name' => 'title',
                         'type' => 'label',
-                        'default_value' => 'LBL_DRILLTHROUGH_DASHBOARD',
+                        'default_value' => 'LBL_DRILLTHROUGH_PANE',
                     ),
                 ),
             ),

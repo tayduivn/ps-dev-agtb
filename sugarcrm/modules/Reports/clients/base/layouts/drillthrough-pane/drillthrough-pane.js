@@ -9,33 +9,27 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Layouts.Reports.DrillthroughDashboardLayout
- * @alias SUGAR.App.view.layouts.ReportsDrillthroughDashboardLayout
+ * @class View.Layouts.Reports.DrillthroughPaneLayout
+ * @alias SUGAR.App.view.layouts.ReportsDrillthroughPaneLayout
  * @extends View.ListLayout
  */
 ({
     /**
      * @inheritdoc
+     *
+     * @param {Object} metadata Preview metadata.
      */
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.initDashletComponents();
-    },
-
-    /**
-     * Load dashlet preview by passing preview metadata
-     *
-     * @param {Object} metadata Preview metadata.
-     */
-    initDashletComponents: function() {
+        // configuration from clicked dashlet
         var config = this.context.get('dashConfig');
 
         var metadata = {
                 component: 'saved-reports-chart',
                 name: 'saved-reports-chart',
                 type: 'saved-reports-chart',
-                label: config.label || app.lang.get('LBL_DASHLET_SAVED_REPORTS_CHART'),
+                label: config.label || app.lang.get('LBL_DASHLET_SAVED_REPORTS_CHART', 'Reports'),
                 description: 'LBL_DASHLET_SAVED_REPORTS_CHART_DESC',
                 // module: this.context.get('module'), // this breaks Dashlet plugin at context.parent
                 module: null,
@@ -101,6 +95,8 @@
         if (title.length) {
             title.text(config.label);
         }
+
+        return this;
     }
 
 })

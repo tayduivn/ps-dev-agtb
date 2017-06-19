@@ -22,9 +22,9 @@
     _renderHtml: function() {
         this._super('_renderHtml');
 
-        this.layout.on('drillthrough:closedrawer:fire', _.once(_.bind(function() {
+        this.layout.once('drillthrough:closedrawer:fire', _.bind(function() {
             this.$el.off();
             app.drawer.close();
-        }, this)));
+        }, this));
     }
 })

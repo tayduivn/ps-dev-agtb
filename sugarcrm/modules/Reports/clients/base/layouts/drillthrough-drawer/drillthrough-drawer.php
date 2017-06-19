@@ -68,7 +68,7 @@ $viewdefs['Reports']['base']['layout']['drillthrough-drawer'] = array(
                             'css_class' => 'dashboard-pane',
                             'components' => array(
                                 array(
-                                    'layout' => 'drillthrough-dashboard',
+                                    'layout' => 'drillthrough-pane',
                                 ),
                             ),
                         ),

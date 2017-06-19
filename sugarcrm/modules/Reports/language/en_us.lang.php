@@ -542,4 +542,8 @@ $mod_strings = array (
     'LBL_GREATER_THAN_EQUAL' => 'Greater Than Equal To',
 
     'LBL_FILTER_BY_MODULE' => 'By Module',
+
+    'LBL_DRILLTHROUGH_LIST' => 'Drill Through List',
+    'LBL_DRILLTHROUGH_PANE' => 'Drill Through Pane',
+    'ERROR_RETRIEVING_DRILLTHRU_DATA' => 'Error retrieving Drillthrough Report data for this action. Contact the report owner for assistance.',
 );

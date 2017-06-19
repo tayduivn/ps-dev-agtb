@@ -82,7 +82,10 @@
                 recordList.render();
             }, this),
             error: _.bind(function(o) {
-                console.log('Error retrieving Report data. ' + o);
+                app.alert.show('listfromreport_loading', {
+                    level: 'error',
+                    messages: app.lang.get('ERROR_RETRIEVING_DRILLTHRU_DATA', 'Reports')
+                });
             }, this),
             complete: function(data) {
                 app.alert.dismiss('listfromreport_loading');
