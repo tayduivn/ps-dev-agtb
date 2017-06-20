@@ -283,7 +283,7 @@ class PMSEImporter
     public function getNameWithSuffix($name)
     {
         $nums = array();
-        $where = $this->bean->table_name . '.' . $this->name . " LIKE '" . $name . "%'";
+        $where = $this->bean->table_name . '.' . $this->name . " LIKE " . $this->bean->db->quoted($name . "%");
         $rows = $this->bean->get_full_list($this->name, $where);
         if (!is_null($rows)) {
             foreach ($rows as $row) {
