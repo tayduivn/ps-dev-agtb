@@ -545,6 +545,10 @@ class HealthCheckScannerMeta
             'report' => 'invalidStatusAndTypeForEmails',
             'bucket' => self::CUSTOM,
         ),
+        571 => array(
+            'report' => 'deprecatedFileHasCustomizations',
+            'bucket' => self::CUSTOM,
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(

@@ -819,6 +819,9 @@ class HealthCheckScanner
         // Check for Email Combinations of type and status
         $this->checkEmailsForInvalidStatusAndType();
 
+        // Check for Email Customizations of Files Containing Deprecated Classes/Functions
+        $this->checkEmailCustomizationsOfDeprecatedCode();
+
         if (version_compare($sugar_version, '7.9.0.0', '<')) {
             $calls = array();
             $this->scanCustomPhpFiles(array(
@@ -1276,6 +1279,35 @@ class HealthCheckScanner
 
             while ($row = $stmt->fetch()) {
                 $this->updateStatus('invalidStatusAndTypeForEmails', $row['status'], $row['type']);
+            }
+        }
+    }
+
+    /**
+     * Check to see if there are Email customizations for files that have newly deprecated classes/methods.
+     * If so, flag it as bucket E so that things are checked by a human. This check can go away after all
+     * upgrade source versions are 7.10 or later
+     */
+    protected function checkEmailCustomizationsOfDeprecatedCode()
+    {
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        if (version_compare($version, '7.10.0.0', '<')) {
+            $customFiles = array(
+                'custom/modules/Emails/MailRecord.php',
+                'custom/modules/Emails/clients/base/fields/compose-actionbar/compose-actionbar.js',
+                'custom/modules/Emails/clients/base/fields/sender/sender.js',
+                'custom/modules/Emails/clients/base/layouts/archive-email/archive-email.js',
+                'custom/modules/Emails/clients/base/layouts/compose/compose.js',
+                'custom/modules/Emails/clients/base/views/archive-email/archive-email.js',
+                'custom/modules/Emails/clients/base/views/compose/compose.js',
+                'custom/modules/OutboundEmailConfiguration/clients/base/api/OutboundEmailConfigurationApi.php',
+            );
+
+            foreach ($customFiles as $customFile) {
+                if (file_exists($customFile)) {
+                    $this->updateStatus('deprecatedFileHasCustomizations', $customFile);
+                }
             }
         }
     }
