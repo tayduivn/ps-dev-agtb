@@ -401,8 +401,7 @@
 
                 if (field.def.readonly ||
                     (field.def.type !== 'fieldset' && isLocked) ||
-                    _.indexOf(noEditFields, field.name) >= 0 ||
-                    field.parent) {
+                    _.indexOf(noEditFields, field.name) >= 0) {
                     return true;
                 }
 
