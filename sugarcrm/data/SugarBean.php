@@ -4889,7 +4889,7 @@ class SugarBean
         }
         $results = array();
         foreach ($queries as $query) {
-            $result = $this->db->query($query . ')');
+            $result = $this->db->query($query . ') AND deleted=0');
             while($row = $this->db->fetchByAssoc($result))
             {
                 $results[$row['id']] = $row;
