@@ -157,7 +157,7 @@ describe("Record View", function () {
     });
 
     describe('Render', function () {
-        it("Should render 8 editable fields and 2 sets of buttons", function () {
+        it("Should render 8 editable fields and 6 buttons", function () {
 
             view.render();
             view.model.set({
@@ -169,7 +169,7 @@ describe("Record View", function () {
             var actual_field_length = _.keys(view.editableFields).length,
                 actual_button_length = _.keys(view.buttons).length;
             expect(actual_field_length).toBe(8);
-            expect(actual_button_length).toBe(2);
+            expect(actual_button_length).toBe(6);
         });
 
 

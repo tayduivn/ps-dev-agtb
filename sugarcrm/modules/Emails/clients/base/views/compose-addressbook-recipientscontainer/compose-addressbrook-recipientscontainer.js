@@ -39,7 +39,7 @@
     /**
      * Override to remove unwanted functionality.
      */
-    initButtons: function() {
+    _initButtons: function() {
         this.buttons = {};
     },
 

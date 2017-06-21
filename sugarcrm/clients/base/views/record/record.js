@@ -654,6 +654,25 @@
             }, this);
         }
     },
+
+    /**
+     * Registers fields as buttons.
+     *
+     * @param {Object[]} [buttons] Fields to be registered as buttons. If not
+     *   passed, we read the buttons from the view metadata.
+     * @protected
+     */
+    _initButtons: function(buttons) {
+        buttons = buttons || this.meta.buttons;
+        _.each(buttons, function(button) {
+            if (button.buttons) {
+                this._initButtons(button.buttons);
+            }
+
+            this.registerFieldAsButton(button.name);
+        }, this);
+    },
+
     showPreviousNextBtnGroup: function() {
         var listCollection = this.context.get('listCollection') || new app.data.createBeanCollection(this.module);
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
@@ -678,7 +697,7 @@
     _renderHtml: function() {
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
-        this.initButtons();
+        this._initButtons();
         this.setEditableFields();
         this.adjustHeaderpane();
     },

@@ -153,7 +153,7 @@
     _render: function() {
         app.view.View.prototype._render.call(this);
 
-        this.initButtons();
+        this._initButtons();
         this.setButtonStates(this.context.get('create') ? 'create' : 'view');
         this.setEditableFields();
     },
