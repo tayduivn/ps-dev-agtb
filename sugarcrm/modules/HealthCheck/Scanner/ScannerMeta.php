@@ -549,6 +549,14 @@ class HealthCheckScannerMeta
             'report' => 'deprecatedFileHasCustomizations',
             'bucket' => self::CUSTOM,
         ),
+        572 => array(
+            'report' => 'customFileHasNameConflict',
+            'bucket' => self::MANUAL,
+        ),
+        573 => array(
+            'report' => 'customHelpFileHasNameConflict',
+            'bucket' => self::CUSTOM,
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(

@@ -105,6 +105,8 @@ $mod_strings = array(
     'LBL_SCAN_562_LOG' => 'Use of removed Sidecar app.view.invokeParent method in %s',
     'LBL_SCAN_570_LOG' => 'Unexpected status and type for Emails: status=%s, type=%s',
     'LBL_SCAN_571_LOG' => 'Code has been deprecated for file that has been customized: %s',
+    'LBL_SCAN_572_LOG' => 'A custom file has a name conflict with a new file being added to release: %s',
+    'LBL_SCAN_573_LOG' => 'A custom help file has a name conflict with a new help file being added to release: %s',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',

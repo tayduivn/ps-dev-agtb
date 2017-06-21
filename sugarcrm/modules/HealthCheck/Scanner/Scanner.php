@@ -822,6 +822,12 @@ class HealthCheckScanner
         // Check for Email Customizations of Files Containing Deprecated Classes/Functions
         $this->checkEmailCustomizationsOfDeprecatedCode();
 
+        // Check Email HELP FILE Customizations for Files that may have name conflicts with New Files being introduced
+        $this->checkEmailHelpCustomizationsForNewFilenameConflicts();
+
+        // Check Email Customizations for Files that may have name conflicts with New Files being introduced
+        $this->checkEmailCustomizationsForNewFilenameConflicts();
+
         if (version_compare($sugar_version, '7.9.0.0', '<')) {
             $calls = array();
             $this->scanCustomPhpFiles(array(
@@ -1307,6 +1313,169 @@ class HealthCheckScanner
             foreach ($customFiles as $customFile) {
                 if (file_exists($customFile)) {
                     $this->updateStatus('deprecatedFileHasCustomizations', $customFile);
+                }
+            }
+        }
+    }
+
+    /**
+     * Check Email Help File Customizations for Files that may have name conflicts with New Help Files being introduced
+     * in release.
+     * Report any such files as a Bucket E so that things are checked by a human.
+     */
+    protected function checkEmailHelpCustomizationsForNewFilenameConflicts()
+    {
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        if (version_compare($version, '7.10.0.0', '<')) {
+            $customFiles = array(
+                'custom/modules/EmailAddresses/clients/base/api/help/email_addresses_record_post_help.html',
+                'custom/modules/EmailAddresses/clients/base/api/help/email_addresses_record_put_help.html',
+                'custom/modules/Emails/clients/base/api/help/emails_filter_get_help.html',
+                'custom/modules/Emails/clients/base/api/help/emails_record_link_link_name_post_help.html',
+                'custom/modules/Emails/clients/base/api/help/emails_record_link_link_name_remote_id_delete_help.html',
+                'custom/modules/Emails/clients/base/api/help/emails_record_link_link_name_remote_id_post_help.html',
+                'custom/modules/Emails/clients/base/api/help/emails_record_link_post_help.html',
+                'custom/modules/Emails/clients/base/api/help/emails_record_links_from_recordlist_post_help.html',
+                'custom/modules/Emails/clients/base/api/help/emails_record_post_help.html',
+                'custom/modules/Emails/clients/base/api/help/emails_record_put_help.html',
+                'custom/modules/Emails/clients/base/api/help/mail_address_validate_post_help.html',
+                'custom/modules/Emails/clients/base/api/help/mail_recipients_find_get_help.html',
+                'custom/modules/OutboundEmail/clients/base/api/help/outbound_email_post_help.html',
+                'custom/modules/OutboundEmail/clients/base/api/help/outbound_email_record_put_help.html',
+            );
+
+            foreach ($customFiles as $customFile) {
+                if (file_exists($customFile)) {
+                    $this->updateStatus('customHelpFileHasNameConflict', $customFile);
+                }
+            }
+        }
+    }
+
+    /**
+     * Check Email Customizations for Files that may have name conflicts with New Files being introduced in release.
+     * Report any such files as a Bucket F red flag.
+     */
+    protected function checkEmailCustomizationsForNewFilenameConflicts()
+    {
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        if (version_compare($version, '7.10.0.0', '<')) {
+            $customFiles = array(
+                'custom/clients/base/fields/email-attachments/detail.hbs',
+                'custom/clients/base/fields/email-attachments/edit.hbs',
+                'custom/clients/base/fields/email-attachments/email-attachments.js',
+                'custom/clients/base/fields/email-attachments/list-edit.hbs',
+                'custom/clients/base/fields/email-attachments/list.hbs',
+                'custom/data/acl/SugarACLArchivedEmails.php',
+                'custom/data/acl/SugarACLDraftEmails.php',
+                'custom/data/acl/SugarACLEmails.php',
+                'custom/data/acl/SugarACLOutboundEmail.php',
+                'custom/data/visibility/EmailsVisibility.php',
+                'custom/data/visibility/OutboundEmailVisibility.php',
+                'custom/include/javascript/sugar7/plugins/CollectionFieldLoadAll.js',
+                'custom/include/javascript/sugar7/plugins/EmailParticipants.js',
+                'custom/modules/EmailAddresses/clients/base/api/EmailAddressesApi.php',
+                'custom/modules/EmailAddresses/clients/base/filters/basic/basic.php',
+                'custom/modules/EmailAddresses/clients/base/filters/default/default.php',
+                'custom/modules/EmailAddresses/clients/base/views/selection-list/selection-list.php',
+                'custom/modules/EmailTemplates/upgrade/scripts/post/2_EmailTemplatesUpdateHasVariables.php',
+                'custom/modules/Emails/EmailAttachmentRelationship.php',
+                'custom/modules/Emails/EmailRecipientRelationship.php',
+                'custom/modules/Emails/EmailSenderRelationship.php',
+                'custom/modules/Emails/EmailsApiHelper.php',
+                'custom/modules/Emails/EmailsHookHandler.php',
+                'custom/modules/Emails/clients/base/api/EmailsApi.php',
+                'custom/modules/Emails/clients/base/api/EmailsFilterApi.php',
+                'custom/modules/Emails/clients/base/api/EmailsRelateRecordApi.php',
+                'custom/modules/Emails/clients/base/fields/email-attachments/email-attachments.js',
+                'custom/modules/Emails/clients/base/fields/email-recipients/detail.hbs',
+                'custom/modules/Emails/clients/base/fields/email-recipients/edit.hbs',
+                'custom/modules/Emails/clients/base/fields/email-recipients/email-recipients.js',
+                'custom/modules/Emails/clients/base/fields/email-recipients/list-edit.hbs',
+                'custom/modules/Emails/clients/base/fields/email-recipients/list.hbs',
+                'custom/modules/Emails/clients/base/fields/email-recipients/select2-result.hbs',
+                'custom/modules/Emails/clients/base/fields/email-recipients/select2-selection.hbs',
+                'custom/modules/Emails/clients/base/fields/from/detail.hbs',
+                'custom/modules/Emails/clients/base/fields/from/edit.hbs',
+                'custom/modules/Emails/clients/base/fields/from/from.js',
+                'custom/modules/Emails/clients/base/fields/from/list-edit.hbs',
+                'custom/modules/Emails/clients/base/fields/from/list.hbs',
+                'custom/modules/Emails/clients/base/fields/from/select2-result.hbs',
+                'custom/modules/Emails/clients/base/fields/from/select2-selection.hbs',
+                'custom/modules/Emails/clients/base/fields/htmleditable_tinymce/htmleditable_tinymce.js',
+                'custom/modules/Emails/clients/base/fields/name/list.hbs',
+                'custom/modules/Emails/clients/base/fields/name/name.js',
+                'custom/modules/Emails/clients/base/fields/outbound-email/outbound-email.js',
+                'custom/modules/Emails/clients/base/fields/recipients-fieldset/detail.hbs',
+                'custom/modules/Emails/clients/base/fields/recipients-fieldset/edit.hbs',
+                'custom/modules/Emails/clients/base/fields/recipients-fieldset/recipient-options.hbs',
+                'custom/modules/Emails/clients/base/fields/recipients-fieldset/recipients-fieldset.js',
+                'custom/modules/Emails/clients/base/fields/reply-action/reply-action.js',
+                'custom/modules/Emails/clients/base/fields/reply-action/reply-header-html.hbs',
+                'custom/modules/Emails/clients/base/layouts/archive-email/archive-email.js',
+                'custom/modules/Emails/clients/base/layouts/compose-email/compose-email.js',
+                'custom/modules/Emails/clients/base/layouts/compose-email/compose-email.php',
+                'custom/modules/Emails/clients/base/layouts/create/create.js',
+                'custom/modules/Emails/clients/base/layouts/records/records.js',
+                'custom/modules/Emails/clients/base/layouts/record-dashboard/record-dashboard.php',
+                'custom/modules/Emails/clients/base/layouts/subpanels/subpanels.php',
+                'custom/modules/Emails/clients/base/routes/routes.js',
+                'custom/modules/Emails/clients/base/views/compose-email/compose-email.js',
+                'custom/modules/Emails/clients/base/views/compose-email/compose-email.php',
+                'custom/modules/Emails/clients/base/views/create/create.js',
+                'custom/modules/Emails/clients/base/views/create/create.php',
+                'custom/modules/Emails/clients/base/views/list-headerpane/list-headerpane.php',
+                'custom/modules/Emails/clients/base/views/preview/preview.hbs',
+                'custom/modules/Emails/clients/base/views/preview/preview.php',
+                'custom/modules/Emails/clients/base/views/planned-activities/planned-activities.js',
+                'custom/modules/Emails/clients/base/views/record/record.js',
+                'custom/modules/Emails/clients/base/views/record/record.php',
+                'custom/modules/Emails/clients/base/views/recordlist/recordlist.js',
+                'custom/modules/Emails/clients/base/views/recordlist/recordlist.php',
+                'custom/modules/Emails/clients/base/views/search-list/search-list.php',
+                'custom/modules/Emails/upgrade/scripts/post/2_AssignSystemTemplate.php',
+                'custom/modules/Emails/upgrade/scripts/post/2_AssociateEmailsWithTheirParentNotes.php',
+                'custom/modules/Emails/upgrade/scripts/post/2_MigrateEmailState.php',
+                'custom/modules/Emails/upgrade/scripts/post/2_UpdateEmailAddressRelationshipTable.php',
+                'custom/modules/Notes/clients/base/filters/basic/basic.php',
+                'custom/modules/Notes/upgrade/scripts/post/2_MigrateEmailAttachments.php',
+                'custom/modules/OutboundEmail/OutboundEmailApiHelper.php',
+                'custom/modules/OutboundEmail/clients/base/api/OutboundEmailApi.php',
+                'custom/modules/OutboundEmail/clients/base/datas/model/model.js',
+                'custom/modules/OutboundEmail/clients/base/fields/email-address/email-address.js',
+                'custom/modules/OutboundEmail/clients/base/fields/email-provider/detail.hbs',
+                'custom/modules/OutboundEmail/clients/base/fields/email-provider/edit.hbs',
+                'custom/modules/OutboundEmail/clients/base/fields/email-provider/email-provider.js',
+                'custom/modules/OutboundEmail/clients/base/fields/email-provider/list-edit.hbs',
+                'custom/modules/OutboundEmail/clients/base/fields/email-provider/list.hbs',
+                'custom/modules/OutboundEmail/clients/base/fields/name/detail.hbs',
+                'custom/modules/OutboundEmail/clients/base/fields/name/disabled.hbs',
+                'custom/modules/OutboundEmail/clients/base/fields/name/edit.hbs',
+                'custom/modules/OutboundEmail/clients/base/fields/name/list.hbs',
+                'custom/modules/OutboundEmail/clients/base/fields/name/name.js',
+                'custom/modules/OutboundEmail/clients/base/filters/basic/basic.php',
+                'custom/modules/OutboundEmail/clients/base/filters/default/default.php',
+                'custom/modules/OutboundEmail/clients/base/layouts/record/record.php',
+                'custom/modules/OutboundEmail/clients/base/layouts/records/records.php',
+                'custom/modules/OutboundEmail/clients/base/views/list/list.php',
+                'custom/modules/OutboundEmail/clients/base/views/record/record.php',
+                'custom/modules/OutboundEmail/clients/base/views/recordlist/recordlist.php',
+                'custom/modules/OutboundEmail/language/en_us.lang.php',
+                'custom/modules/OutboundEmail/upgrade/scripts/post/2_UpdateSystemOutboundEmailNameAndAddress.php',
+                'custom/modules/OutboundEmail/upgrade/scripts/post/2_UpdateUserOutboundEmailNameAndAddress.php',
+                'custom/modules/OutboundEmail/vardefs.php',
+                'custom/modules/UpgradeWizard/UpgradeDBScript.php',
+                'custom/modules/UserSignatures/UserSignaturesApiHelper.php',
+                'custom/modules/UserSignatures/clients/base/fields/editablelistbutton/editablelistbutton.js',
+                'custom/modules/UserSignatures/clients/base/views/record/record.php',
+                'custom/modules/UserSignatures/clients/base/views/recordlist/recordlist.php',
+            );
+
+            foreach ($customFiles as $customFile) {
+                if (file_exists($customFile)) {
+                    $this->updateStatus('customFileHasNameConflict', $customFile);
                 }
             }
         }
