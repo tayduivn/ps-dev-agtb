@@ -647,7 +647,14 @@
         this.editableFields = this.getEditableFields(this._getNonButtonFields(), this.noEditFields);
     },
 
+    /**
+     * Registers fields as buttons.
+     *
+     * @deprecated Since 7.10.
+     */
     initButtons: function() {
+        app.logger.warn('`BaseRecordView#initButtons` is deprecated since 7.10 and will be ' +
+            'removed in a future release.');
         if (this.options.meta && this.options.meta.buttons) {
             _.each(this.options.meta.buttons, function(button) {
                 this.registerFieldAsButton(button.name);
@@ -658,8 +665,8 @@
     /**
      * Registers fields as buttons.
      *
-     * @param {Object[]} [buttons] Fields to be registered as buttons. If not
-     *   passed, we read the buttons from the view metadata.
+     * @param {Object[]} [buttons=this.meta.buttons] Fields to be registered as
+     *   buttons. If not passed, we read the buttons from the view metadata.
      * @protected
      */
     _initButtons: function(buttons) {
