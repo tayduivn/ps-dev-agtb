@@ -400,6 +400,10 @@ class HealthCheckScannerMeta
             'report' => 'deprecatedCodeSugarSession',
             'bucket' => self::MANUAL,
         ),
+        451 => array(
+            'report' => 'deprecatedAuthN',
+            'bucket' => self::CUSTOM,
+        ),
         // 7.8 sidecar and backbone deprecations, E bucket
         550 => array(
             'report' => 'removedSidecarAPI_app_date',

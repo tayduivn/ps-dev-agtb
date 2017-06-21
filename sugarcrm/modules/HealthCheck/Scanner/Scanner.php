@@ -260,6 +260,11 @@ class HealthCheckScanner
      */
     protected $deprecatedPHPCodePatterns = array(
         '/[^\w]SugarSession[^\w]/i' => 'deprecatedCodeSugarSession', //report id
+        '/[^\w]LDAPAuthenticate[^\w]/i' => 'deprecatedAuthN',
+        '/[^\w]LDAPAuthenticateUser[^\w]/i' => 'deprecatedAuthN',
+        '/[^\w]SAMLAuthenticate[^\w]/i' => 'deprecatedAuthN',
+        '/[^\w]SAMLAuthenticateUser[^\w]/i' => 'deprecatedAuthN',
+        '/[^\w]SAMLRequestRegistry[^\w]/i' => 'deprecatedAuthN',
     );
 
     protected $deprecatedJsAPIPatterns = array(
