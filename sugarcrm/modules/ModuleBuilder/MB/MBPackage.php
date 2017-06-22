@@ -1158,9 +1158,9 @@ function buildInstall($path){
 
 
 
-    function exportProjectInstall($package, $for_export){
-        $pre = $for_export ? MB_EXPORTPREPEND : "";
-        $installdefs = array ('id' => $pre . $this->name);
+    private function exportProjectInstall()
+    {
+        $installdefs = array ('id' => MB_EXPORTPREPEND . $this->name);
         $installdefs['copy'][] = array(
             'from'=> '<basepath>/' . $this->name,
             'to'=> 'custom/modulebuilder/packages/'. $this->name,
@@ -1171,12 +1171,13 @@ function buildInstall($path){
 
 
 
-    function exportProject($package, $export=true, $clean = true){
+    public function exportProject()
+    {
         $tmppath="custom/modulebuilder/projectTMP/";
         if(file_exists($this->getPackageDir())){
             if(mkdir_recursive($tmppath)){
                 copy_recursive($this->getPackageDir(), $tmppath ."/". $this->name);
-                $manifest = $this->getManifest(true, $export).$this->exportProjectInstall($package, $export);
+                $manifest = $this->getManifest(true, true).$this->exportProjectInstall();
                 $fp = sugar_fopen($tmppath .'/manifest.php', 'w');
                 fwrite($fp, $manifest);
                 fclose($fp);
@@ -1200,10 +1201,10 @@ function buildInstall($path){
         chdir($tmppath);
         zip_dir('.',$cwd . '/'. $zipDir. '/project_'. $this->name. $date. '.zip');
         chdir($cwd);
-        if($clean && file_exists($tmppath))rmdir_recursive($tmppath);
-        if($export){
-            header('Location:' . $zipDir. '/project_'. $this->name. $date. '.zip');
+        if (file_exists($tmppath)) {
+            rmdir_recursive($tmppath);
         }
+            header('Location:' . $zipDir. '/project_'. $this->name. $date. '.zip');
         return $zipDir. '/project_'. $this->name. $date. '.zip';
     }
     
