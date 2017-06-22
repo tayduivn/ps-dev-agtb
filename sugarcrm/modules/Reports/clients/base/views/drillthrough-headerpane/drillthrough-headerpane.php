@@ -18,6 +18,10 @@ $viewdefs['Reports']['base']['view']['drillthrough-headerpane'] = array(
             'type' => 'label',
             'default_value' => 'LBL_DRILLTHROUGH_LIST',
         ),
+        array(
+            'name' => 'drillthrough-collection-count',
+            'type' => 'drillthrough-collection-count',
+        ),
     ),
     'buttons' => array(
         array(

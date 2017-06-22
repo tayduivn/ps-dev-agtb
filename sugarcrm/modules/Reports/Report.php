@@ -2655,4 +2655,54 @@ class Report
 
         return $result;
     }
+
+    /**
+     * Returns the record ids of this report
+     * @param array $reportDef
+     * @param integer $offset
+     * @param integer $limit
+     * @param boolean $sort
+     * @return array Array of record ids
+     */
+    public function getRecordIds($offset = 0, $limit = -1, $sort = false)
+    {
+        $recordIds = array();
+        $this->create_where();
+        $this->create_from();
+        $id = $this->full_bean_list['self']->table_name . '.id';
+        $query = "SELECT DISTINCT $id {$this->from} WHERE {$this->where}";
+        if ($sort) {
+            $query .= " ORDER BY $id ASC";
+        }
+        if ($offset > 0 || $limit > 0) {
+            $result = $this->db->limitQuery($query, $offset, $limit, true, "Error executing query");
+        } else {
+            $result = $this->db->query($query, true, "Error executing query");
+        }
+        if ($result) {
+            while ($row = $this->db->fetchByAssoc($result)) {
+                $recordIds[] = $row['id'];
+            }
+        }
+        return $recordIds;
+    }
+
+    /**
+     * Returns record count of this report
+     * @return integer
+     */
+    public function getRecordCount()
+    {
+        $recordCount = 0;
+        $this->create_where();
+        $this->create_from();
+        $id = $this->full_bean_list['self']->table_name . '.id';
+        $query = "SELECT COUNT(DISTINCT $id) AS record_count {$this->from} WHERE {$this->where}";
+        $result = $this->db->query($query, true, "Error executing query");
+        if ($result) {
+            $row = $this->db->fetchByAssoc($result);
+            $recordCount = (int) $row['record_count'];
+        }
+        return $recordCount;
+    }
 }

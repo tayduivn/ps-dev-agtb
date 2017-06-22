@@ -60,59 +60,46 @@
     updateList: function() {
         var chartModule = this.context.get('chartModule');
         var reportId = this.context.get('reportId');
-        var params = {
-            group_filters: this.context.get('filterDef'),
-            use_saved_filters: this.context.get('useSavedFilters') || false
+        var filterDef = this.context.get('filterDef');
+        var useSavedFilters = this.context.get('useSavedFilters') || false;
+        var endpoint = function(method, model, options, callbacks) {
+            var params = _.extend(options.params || {},
+                {view: 'list', group_filters: filterDef, use_saved_filters: useSavedFilters});
+            var url = app.api.buildURL('Reports', 'records', {id: reportId}, params);
+            return app.api.call('read', url, null, callbacks);
         };
-
-        var url = app.api.buildURL('Reports', 'records', {id: reportId}, params);
-
-        var recordList = this.getComponent('sidebar')
-                             .getComponent('main-pane')
-                             .getComponent('drillthrough-list')
-                             .getComponent('recordlist');
-
-        var headerPane = this.getComponent('sidebar')
-                             .getComponent('main-pane')
-                             .getComponent('drillthrough-headerpane');
-
-        app.api.call('read', url, null, {
+        var callbacks = {
             success: _.bind(function(data) {
-                var collection;
-                var title;
                 if (this.disposed) {
                     return;
                 }
-                collection = app.data.createBeanCollection(chartModule, data.records);
-                title = this._buildTitle(collection);
-
+                var title = this._buildTitle();
                 this.context.trigger('headerpane:title', title);
-                collection.dataFetched = true;
-
-                recordList.collection = collection;
-                recordList.context.set('collection', collection);
-                recordList.context.set('dataView', 'list');
-                recordList.context.trigger('change:collection');
-                recordList.render();
+                this.context.trigger('refresh:count');
             }, this),
-            error: _.bind(function(o) {
+            error: function(o) {
                 app.alert.show('listfromreport_loading', {
                     level: 'error',
                     messages: app.lang.get('ERROR_RETRIEVING_DRILLTHRU_DATA', 'Reports')
                 });
-            }, this),
+            },
             complete: function(data) {
                 app.alert.dismiss('listfromreport_loading');
             }
-        });
+        };
+        var collection = this.context.get('collection');
+        collection.module = chartModule;
+        collection.model = app.data.getBeanClass(chartModule);
+        collection.setOption('endpoint', endpoint);
+        collection.fetch(callbacks);
     },
 
-    _buildTitle: function(collection) {
+    _buildTitle: function() {
         var chartModule = this.context.get('chartModule');
         var groupDefs = this.context.get('groupDefs');
         var filterDef = this.context.get('filterDef');
         var dashConfig = this.context.get('dashConfig');
-        var recordCount = collection.length || null;
+        var recordCount = this.context.get('collection').length || null;
         var key;
         var title;
 
@@ -137,8 +124,6 @@
             key = Object.getOwnPropertyNames(filterDef[1])[0];
             title += ' with ' + titleCase(dashConfig.seriesLabel) + ' ' + titleCase(key);
         }
-
-        title += recordCount ? ' (' + recordCount + ' records)' : '';
 
         return title;
     }

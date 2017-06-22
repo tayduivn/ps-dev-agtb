@@ -13,7 +13,7 @@ const {Agent, Fixtures} = require('@sugarcrm/thorn');
 const chakram = require('chakram');
 const expect = require('chakram').expect;
 
-describe('Reports.Records', function() {
+describe('Reports.RecordCount', function() {
     before(function*() {
         let records = {attributes: {user_name: 'John', status: 'Active'}};
 
@@ -24,7 +24,7 @@ describe('Reports.Records', function() {
         records = [
             {attributes: {name: 'Account1', industry: 'Banking', assigned_user_id: johnId}},
             {attributes: {name: 'Account2', industry: 'Banking', assigned_user_id: johnId}},
-            {attributes: {name: 'Account3', industry: 'Apparel', assigned_user_id: johnId}}
+            {attributes: {name: 'Account3', industry: 'Engineering', assigned_user_id: johnId}}
         ];
 
         yield Fixtures.create(records, {module: 'Accounts'});
@@ -47,7 +47,6 @@ describe('Reports.Records', function() {
 
         let report = {
             name: 'test',
-            module: 'Accounts',
             report_type: 'tabular',
             assigned_user_id: johnId,
             content: JSON.stringify(content)
@@ -62,35 +61,10 @@ describe('Reports.Records', function() {
         yield Fixtures.cleanup();
     });
 
-    it('should return filtered records whose field value matches given value', function*() {
+    it('should return record count for a filtered list', function*() {
         let filter = 'group_filters%5B0%5D%5Bindustry%5D=Banking';
-        let url = 'Reports/' + this.reportId + '/records?view=list&fields=industry&' + filter;
-        let response = yield Agent.as('John').get(url);
-        expect(response).to.have.json('records', (records) => {
-            expect(records).to.have.length(2);
-            expect(records[0].industry).to.be.equal('Banking');
-            expect(records[1].industry).to.be.equal('Banking');
-        });
-    });
-
-    it('should paginate records', function*() {
-        let filter = 'group_filters%5B0%5D%5Bindustry%5D=Banking';
-        let url = 'Reports/' + this.reportId + '/records?view=list&fields=industry&' + filter;
-        let response = yield Agent.as('John').get(url);
-        expect(response).to.have.json('records', (records) => {
-            expect(records).to.have.length(1);
-            expect(records[0].industry).to.be.equal('Banking');
-            expect(records[1].industry).to.be.equal('Banking');
-        });
-    });
-
-    it('should paginate records', function*() {
-        let filter = 'group_filters%5B0%5D%5Bindustry%5D=Banking';
-        let url = 'Reports/' + this.reportId + '/records?view=list&fields=industry&offset=0&max_num=1&' + filter;
-        let response = yield Agent.as('John').get(url);
-        expect(response).to.have.json('records', (records) => {
-            expect(records).to.have.length(1);
-            expect(records[0].industry).to.be.equal('Banking');
-        });
+        let response = yield Agent.as('John').get('Reports/' + this.reportId + '/record_count?' + filter);
+        expect(response).to.have.status(200);
+        expect(response.body.record_count).to.equal(2);
     });
 });

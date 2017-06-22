@@ -12,12 +12,12 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    An API to deliver filtered records from a saved report.
+    An API to get total number of filtered records from a saved report.
 </span>
 
 <h2>Summary</h2>
 <span class="lead">
-    This endpoint will return a list of records from a saved report filtered by an expression.
+    This endpoint will return total number of records from a saved report filtered by an expression.
 </span>
 
 <h2>Request Arguments</h2>
@@ -58,6 +58,8 @@
             False
         </td>
     </tr>
+    </tbody>
+    <tbody>
     <tr>
         <td>
             use_saved_filters
@@ -73,40 +75,12 @@
             False
         </td>
     </tr>
-    <tr>
-        <td>
-            max_num
-        </td>
-        <td>
-            Integer
-        </td>
-        <td>
-            A maximum number of records to return. Default is 20.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
-    <tr>
-        <td>
-            offset
-        </td>
-        <td>
-            Integer
-        </td>
-        <td>
-            The number of records to skip over before records are returned. Default is 0.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
     </tbody>
 </table>
 
 <h3>Request Example</h3>
 <pre class="pre-scrollable">
-GET /rest/v10/Reports/:id/records?group_filters[0][industry]=Engineering&use_saved_filters=true&offset=0&max_num=20
+GET /rest/v10/Reports/:id/record_count?group_filters[0][industry]=Engineering
 </pre>
 
 <h2>Response Arguments</h2>
@@ -121,25 +95,13 @@ GET /rest/v10/Reports/:id/records?group_filters[0][industry]=Engineering&use_sav
     <tbody>
     <tr>
         <td>
-            records
-        </td>
-        <td>
-            Array
-        </td>
-        <td>
-            An array of results containing matched records.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            next_offset
+            record_count
         </td>
         <td>
             Integer
         </td>
         <td>
-            Displays the next offset for retrieval of additional results. -1 will be returned when there are no more
-            records.
+            Total number of filtered records.
         </td>
     </tr>
     </tbody>
@@ -148,28 +110,6 @@ GET /rest/v10/Reports/:id/records?group_filters[0][industry]=Engineering&use_sav
 <h3>Response</h3>
 <pre class="pre-scrollable">
 {
-   "records":[
-      {
-         "id":"fa300a0e-0ad1-b322-9601-512d0983c19a",
-         "name":"Dale Spivey",
-         "date_modified":"2013-02-28T05:03:00+00:00",
-         "description":"",
-         "_acl": {
-            "fields": {
-            }
-         }
-      },
-      {
-         "id":"95e17367-9b3d-0e26-22dc-512d0961fedf",
-         "name":"Florence Haddock",
-         "date_modified":"2013-02-26T19:12:00+00:00",
-         "description":"",
-         "_acl": {
-            "fields": {
-            }
-         }
-      }
-   ],
-   "next_offset": -1
+   "record_count": 5
 }
 </pre>
