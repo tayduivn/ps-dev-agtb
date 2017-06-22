@@ -145,7 +145,7 @@ class ReportsApi extends ModuleApi
                         case 'datetimecombo':
                             if (empty($fieldDef['qualifier'])) {
                                 $filterRow['qualifier_name'] = 'on';
-                                $filterRow['input_name0'] = current($value);
+                                $filterRow['input_name0'] = reset($value);
                             }
                             else {
                                 // TODO: date range
@@ -154,7 +154,7 @@ class ReportsApi extends ModuleApi
                         // TODO: more types
                         default:
                             $filterRow['qualifier_name'] = 'equals';
-                            $filterRow['input_name0'] = current($value);
+                            $filterRow['input_name0'] = reset($value);
                             break;
                     }
                     array_push($adhocFilter, $filterRow);

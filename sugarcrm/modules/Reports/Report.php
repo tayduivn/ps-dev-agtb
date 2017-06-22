@@ -190,11 +190,11 @@ class Report
             $this->report_def = $report_def_str;
             $this->report_def_str = $json->encode($report_def_str);
         } else {
+            if (Report::is_old_content($report_def_str)) {
+                $this->handleException('this report was created with an older version of reports. please upgrade');
+            }
             $this->report_def_str = $report_def_str;
             $this->report_def = $json->decode($this->report_def_str);
-        }
-        if (Report::is_old_content($this->report_def_str)) {
-            $this->handleException('this report was created with an older version of reports. please upgrade');
         }
 
         // 5.1 Report Format - only called by the Wizard.
