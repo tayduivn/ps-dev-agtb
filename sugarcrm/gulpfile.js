@@ -255,10 +255,10 @@ gulp.task('test:unit:php', function(done) {
         process.stdout.write('Coverage reports will be generated to: ' + path.join(workspace, 'coverage') + '\n');
     }
 
-    var phpunitPath = path.join('..', 'vendor', 'bin', 'phpunit');
+    var phpunitPath = path.join('..', '..', 'vendor', 'bin', 'phpunit');
     var phpProcess = execa(phpunitPath, args, {
         maxBuffer: 1e6, // 1 MB
-        cwd: 'testsunit',
+        cwd: 'tests/unit-php',
         reject: false,
     });
     phpProcess.stdout.pipe(process.stdout);
