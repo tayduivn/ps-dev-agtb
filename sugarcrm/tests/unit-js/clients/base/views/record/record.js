@@ -156,6 +156,58 @@ describe("Record View", function () {
         view = null;
     });
 
+    describe('Pencil icon handling', function() {
+        var fieldName;
+        var descriptionField;
+        var pencilIcon;
+
+        beforeEach(function() {
+            view.render();
+            fieldName = 'description';
+
+            descriptionField = view.getField(fieldName);
+            pencilIcon = view.$('[data-name=' + fieldName + '].record-edit-link-wrapper');
+        });
+
+        it('should properly handle the pencil icon on field enabling/disabling if the field is editable', function() {
+            expect(pencilIcon.hasClass('hide')).toBe(false);
+
+            descriptionField.setDisabled(true, {trigger: true});
+
+            expect(pencilIcon.hasClass('hide')).toBe(true);
+
+            descriptionField.setDisabled(false, {trigger: true});
+
+            expect(pencilIcon.hasClass('hide')).toBe(false);
+        });
+
+        it('should properly handle the pencil icon on field enabling/disabling if the field is NOT editable', function() {
+            descriptionField.setDisabled(true, {trigger: true});
+            expect(pencilIcon.hasClass('hide')).toBe(true);
+
+            sinonSandbox.stub(app.acl, 'hasAccessToModel', function(action, model) {
+                return false;
+            });
+
+            // When the user does not have edit action on the model, the pencil
+            // icon should not be toggle on.
+            descriptionField.setDisabled(false, {trigger: true});
+
+            expect(pencilIcon.hasClass('hide')).toBe(true);
+
+            app.acl.hasAccessToModel.restore();
+
+            // When the user has edit action on the model, but the field is
+            // considered not editable by the view, the pencil icon should not
+            // be toggle on.
+            view.noEditFields.push(fieldName);
+
+            descriptionField.setDisabled(false, {trigger: true});
+
+            expect(pencilIcon.hasClass('hide')).toBe(true);
+        });
+    });
+
     describe('Render', function () {
         it("Should render 8 editable fields and 6 buttons", function () {
 
