@@ -814,7 +814,7 @@ class User extends Person {
                   WHERE ea.email_address_caps = ? AND eabr.bean_module = ? AND ea.deleted = 0 AND eabr.deleted = 0 ';
         $stmt = $this->db->getConnection()->executeQuery(
             $query,
-            [strtoupper($this->db->quote($email)), $this->module_name]
+            [strtoupper($email), $this->module_name]
         );
         $id = $stmt->fetchColumn();
         // retrieve returns User or null so keep null instead of FALSE for compatibility
