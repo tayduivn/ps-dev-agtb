@@ -142,8 +142,8 @@ class AuthProviderBasicManagerBuilder
         $userProvider = new SugarLdapUserProvider(
             $ldap,
             $this->ldapConfig['baseDn'],
-            $this->ldapConfig['searchDn'],
-            $this->ldapConfig['searchPassword'],
+            !empty($this->ldapConfig['searchDn']) ? $this->ldapConfig['searchDn'] : null,
+            !empty($this->ldapConfig['searchPassword']) ? $this->ldapConfig['searchPassword'] : null,
             User::getDefaultRoles(),
             $this->ldapConfig['uidKey'],
             $this->ldapConfig['filter']
