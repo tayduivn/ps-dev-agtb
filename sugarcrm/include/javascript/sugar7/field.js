@@ -371,10 +371,10 @@
             /**
              * @inheritdoc
              *
-             * Override setMode to remove the stale disabled CSS class.
+             * Override setDisabled to remove the stale disabled CSS class.
              * @override
              */
-            setDisabled: function (disable) {
+            setDisabled: function(disable, options) {
 
                 if (!this._checkAccessToAction('disabled')) {
                     return;
@@ -386,7 +386,7 @@
                 if (disable === false && this.isDisabled()) {
                     this._removeViewClass(this.action);
                 }
-                _fieldProto.setDisabled.call(this, disable);
+                _fieldProto.setDisabled.call(this, disable, options);
             },
             /**
              * Decorate error gets called when this Field has a validation error.  This function applies custom error

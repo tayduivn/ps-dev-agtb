@@ -160,6 +160,7 @@
         this.on('editable:mousedown', this.handleMouseDown, this);
         this.on('field:error', this.handleFieldError, this);
         this.model.on('acl:change', this.handleAclChange, this);
+        this.context.on('field:disabled', this._togglePencil, this);
 
         //event register for preventing actions
         // when user escapes the page without confirming deleting
@@ -221,6 +222,23 @@
                 $pencilEl.closest('.record-cell').toggleClass('edit', isEditable);
             }
         }, this);
+    },
+
+    /**
+     * Shows or hides the edit pencil icon for a field.
+     *
+     * @param {string} fieldName The field name.
+     * @param {boolean} hide `true` to hide the pencil, `false` to show it.
+     * @private
+     */
+    _togglePencil: function(fieldName, hide) {
+        var isEditable = !_.contains(this.noEditFields, fieldName) && app.acl.hasAccessToModel('edit', this.model);
+
+        if (!hide && !isEditable) {
+            return;
+        }
+
+        this.$('span.record-edit-link-wrapper[data-name=' + fieldName + ']').toggleClass('hide', hide);
     },
 
     /**
