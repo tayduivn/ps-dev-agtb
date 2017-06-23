@@ -443,7 +443,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
             expect(result[3]).toBe('b');
         });
     });
-    
+
     describe("when setServerData is called", function() {
         beforeEach(function() {
             sandbox.stub(field, 'convertDataToChartData', function() {
@@ -451,11 +451,11 @@ describe('Base.Fields.ForecastParetoChart', function() {
             sandbox.stub(field, 'generateD3Chart', function() {
             });
         });
-        
+
         afterEach(function() {
             sandbox.restore();
         });
-        
+
         describe("when the pane visible and the preview panel is hidden", function() {
             beforeEach(function() {
                 field.state = "open";
@@ -470,7 +470,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
                 expect(field.generateD3Chart).toHaveBeenCalled();
             });
         });
-        
+
         describe("when the pane hidden and the preview panel is hidden", function() {
             beforeEach(function() {
                 field.state = "closed";
@@ -485,7 +485,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
                 expect(field.generateD3Chart).not.toHaveBeenCalled();
             });
         });
-        
+
         describe("when the preview panel is visible", function() {
             beforeEach(function() {
                 field.state = "open";
@@ -570,7 +570,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
 
     describe('getDisabledChartKeys', function() {
         it('should return empty', function() {
-            sandbox.stub(d3, 'select', function() {
+            sandbox.stub(d3v4, 'select', function() {
                 return {
                     data: function() {
                         return [];
@@ -581,7 +581,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
             expect(field.getDisabledChartKeys()).toEqual([]);
         });
         it('should return one key', function() {
-            sandbox.stub(d3, 'select', function() {
+            sandbox.stub(d3v4, 'select', function() {
                 return {
                     data: function() {
                         return [{

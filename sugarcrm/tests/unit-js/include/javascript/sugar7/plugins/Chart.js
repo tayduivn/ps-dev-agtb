@@ -117,7 +117,7 @@ describe('Chart Plugin', function() {
     });
 
     describe('Test chart is resized.', function() {
-        var currentWidth = '';
+        var currentTransform = '';
 
         beforeEach(function() {
             view.total = 3;
@@ -182,7 +182,7 @@ describe('Chart Plugin', function() {
             view.render();
             view.chartResize();
 
-            currentWidth = view.$el.find('.nv-pie .nv-pie').attr('transform');
+            currentTransform = view.$el.find('.sc-chart-pie .sc-pie .sc-group').attr('transform');
         });
 
         afterEach(function() {
@@ -194,26 +194,26 @@ describe('Chart Plugin', function() {
         it('Chart should be resized to defined size.', function() {
             view.chart.width(1000);
             view.chartResize();
-            var resizedWidth = view.$el.find('.nv-pie .nv-pie').attr('transform');
+            var resizedTransform = view.$el.find('.sc-chart-pie .sc-pie .sc-group').attr('transform');
 
-            expect(currentWidth).not.toBe(resizedWidth);
-            expect(resizedWidth).toMatch(/^translate\(500[, ]+157.5\)/);
+            expect(currentTransform).not.toBe(resizedTransform);
+            expect(resizedTransform).toMatch(/^translate\(500[, ]+157.5\)/);
         });
 
         it('Chart should be resized when dashlet expand event fires on layout.', function() {
             view.chart.width(1000);
             view.layout.trigger('dashlet:collapse', false);
-            var resizedWidth = view.$el.find('.nv-pie .nv-pie').attr('transform');
+            var resizedTransform = view.$el.find('.sc-chart-pie .sc-pie .sc-group').attr('transform');
 
-            expect(currentWidth).not.toBe(resizedWidth);
+            expect(currentTransform).not.toBe(resizedTransform);
         });
 
         it('Chart should be resized when dashlet draggable stop event fires on layout context.', function() {
             view.chart.width(1000);
             view.layout.context.trigger('dashlet:draggable:stop');
-            var resizedWidth = view.$el.find('.nv-pie .nv-pie').attr('transform');
+            var resizedTransform = view.$el.find('.sc-chart-pie .sc-pie .sc-group').attr('transform');
 
-            expect(currentWidth).not.toBe(resizedWidth);
+            expect(currentTransform).not.toBe(resizedTransform);
         });
     });
 });
