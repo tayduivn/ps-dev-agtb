@@ -2394,17 +2394,6 @@ function clear_register_value($category,$name)
 {
     return sugar_cache_clear("{$category}-{$name}");
 }
-// this function cleans id's when being imported
-function convert_id($string)
-{
-    return preg_replace_callback( '|[^A-Za-z0-9\-]|',
-    create_function(
-    // single quotes are essential here,
-    // or alternative escape all $ as \$
-    '$matches',
-    'return ord($matches[0]);'
-         ) ,$string);
-}
 
 /**
  * @deprecated use SugarTheme::getImage()

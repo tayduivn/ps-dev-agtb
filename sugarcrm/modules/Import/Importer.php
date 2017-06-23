@@ -1050,15 +1050,9 @@ class Importer
      */
     protected function _convertId($string)
     {
-        return preg_replace_callback(
-            '|[^A-Za-z0-9\-\_\.]|',
-            create_function(
-            // single quotes are essential here,
-            // or alternative escape all $ as \$
-            '$matches',
-            'return ord($matches[0]);'
-                 ) ,
-            $string);
+        return preg_replace_callback('|[^A-Za-z0-9\-\_\.]|', function ($matches) {
+            return ord($matches[0]);
+        }, $string);
     }
 
     public function retrieveAdvancedMapping()
