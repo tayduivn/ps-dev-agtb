@@ -296,6 +296,10 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             'adapter_config' => [
                 'host' => '127.0.0.1',
                 'port' => '389',
+                'options' => [
+                    'network_timeout' => 60,
+                    'timelimit' => 60,
+                ],
             ],
             'adapter_connection_protocol_version' => 3,
             'baseDn' => 'dn',

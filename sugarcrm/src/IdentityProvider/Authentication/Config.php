@@ -127,6 +127,10 @@ class Config
             'adapter_config' => [
                 'host' => $this->getLdapSetting('ldap_hostname', '127.0.0.1'),
                 'port' => $this->getLdapSetting('ldap_port', 389),
+                'options' => [
+                    'network_timeout' => 60,
+                    'timelimit' => 60,
+                ],
             ],
             'adapter_connection_protocol_version' => 3,
             'baseDn' => $this->getLdapSetting('ldap_base_dn', ''),
