@@ -78,11 +78,17 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                 file_ext: 'jpg'
             }];
 
+            // Set the next offset now to avoid potential pagination from the
+            // CollectionFieldLoadAll plugin on sync.
+            attachments = model.get('attachments_collection');
+            attachments.next_offset = {
+                attachments: -1
+            };
+
             // Act as if the model was retrieved from the server.
             model.set('id', _.uniqueId());
             model.set('attachments_collection', data);
             model.trigger('sync');
-            attachments = model.get('attachments_collection');
 
             field = SugarTest.createField({
                 name: 'attachments_collection',
@@ -513,12 +519,18 @@ describe('Emails.BaseEmailAttachmentsField', function() {
                     file_ext: 'pdf'
                 }];
 
+                // Set the next offset now to avoid potential pagination from the
+                // CollectionFieldLoadAll plugin on sync.
+                attachments = model.get('attachments_collection');
+                attachments.next_offset = {
+                    attachments: -1
+                };
+
                 // Reset the attachments with an attachment linked from a
                 // template. Again, we're acting as if the model was retrieved
                 // from the server.
                 model.set('attachments_collection', data);
                 model.trigger('sync');
-                attachments = model.get('attachments_collection');
 
                 field = SugarTest.createField({
                     name: 'attachments_collection',
