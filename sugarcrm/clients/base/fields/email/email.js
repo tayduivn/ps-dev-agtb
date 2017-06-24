@@ -559,7 +559,10 @@
         return {
             to: [
                 {
-                    email: $link.data('email-to'),
+                    email: app.data.createBean('EmailAddresses', {
+                        id: $link.data('email-address-id'),
+                        email_address: $link.data('email-to')
+                    }),
                     bean: this.emailOptions.related
                 }
             ]

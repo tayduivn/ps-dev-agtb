@@ -21,6 +21,9 @@ describe('Base.Fields.MassEmailButton', function() {
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'mass-email-button');
         SugarTest.testMetadata.set();
+        app.data.declareModels();
+        app.data.declareModel('EmailParticipants');
+        app.data.declareModel('EmailAddresses');
         SugarTest.loadPlugin('EmailClientLaunch');
 
         context = app.context.getContext();
@@ -48,75 +51,75 @@ describe('Base.Fields.MassEmailButton', function() {
         Handlebars.templates = {};
     });
 
-    it('should add recipients to mailto for external mail client', function() {
-        var email1 = 'foo1@bar.com',
-            email2 = 'foo2@bar.com',
-            bean1,
-            bean2;
+    describe('sending email to all selected recipients', function() {
+        var email1;
+        var email2;
+        var bean1;
+        var bean2;
 
-        bean1 = app.data.createBean(module, {
-            email: [
-                {
-                    email_address: email1,
-                    primary_address: true,
-                    invalid_email: false,
-                    opt_out: false
-                }
-            ]
-        });
-        bean2 = app.data.createBean(module, {
-            email: [
-                {
-                    email_address: email2,
-                    primary_address: true,
-                    invalid_email: false,
-                    opt_out: false
-                }
-            ]
-        });
+        beforeEach(function() {
+            email1 = 'foo1@bar.com';
+            email2 = 'foo2@bar.com';
+            bean1 = app.data.createBean(module, {
+                id: _.uniqueId(),
+                name: 'Harold White',
+                email: [
+                    {
+                        email_address: email1,
+                        primary_address: true,
+                        invalid_email: false,
+                        opt_out: false
+                    }
+                ]
+            });
+            bean2 = app.data.createBean(module, {
+                id: _.uniqueId(),
+                name: 'Janice Kerling',
+                email: [
+                    {
+                        email_address: email2,
+                        primary_address: true,
+                        invalid_email: false,
+                        opt_out: false
+                    }
+                ]
+            });
 
-        sandbox.stub(field, 'useSugarEmailClient').returns(false);
-        massCollection.add(bean1);
-        massCollection.add(bean2);
-        expect(field.$('a').attr('href')).toEqual('mailto:' + email1 + ',' + email2);
-    });
-
-    it('should add recipients to mailto for internal mail client', function() {
-        var email1 = 'foo1@bar.com',
-            email2 = 'foo2@bar.com',
-            bean1,
-            bean2,
-            drawerOpenOptions;
-
-        bean1 = app.data.createBean(module, {
-            email: [
-                {
-                    email_address: email1,
-                    primary_address: true,
-                    invalid_email: false,
-                    opt_out: false
-                }
-            ]
-        });
-        bean2 = app.data.createBean(module, {
-            email: [
-                {
-                    email_address: email2,
-                    primary_address: true,
-                    invalid_email: false,
-                    opt_out: false
-                }
-            ]
+            massCollection.add([bean1, bean2]);
         });
 
-        sandbox.stub(app.utils, 'openEmailCreateDrawer');
-        sandbox.stub(field, 'useSugarEmailClient').returns(true);
-        massCollection.add(bean1);
-        massCollection.add(bean2);
-        field.$('a').click();
-        drawerOpenOptions = app.utils.openEmailCreateDrawer.lastCall.args[1];
-        expect(drawerOpenOptions.to.length).toEqual(2);
-        expect(drawerOpenOptions.to[0].get('email_address')).toEqual(email1);
-        expect(drawerOpenOptions.to[1].get('email_address')).toEqual(email2);
+        it('should construct a mailto link for external email clients', function() {
+            sandbox.stub(field, 'useSugarEmailClient').returns(false);
+            expect(field.$('a').attr('href')).toBe('mailto:' + email1 + ',' + email2);
+        });
+
+        it('should open the internal email client with all of the recipients', function() {
+            var drawerOpenOptions;
+
+            sandbox.stub(app.utils, 'openEmailCreateDrawer');
+            sandbox.stub(field, 'useSugarEmailClient').returns(true);
+            field.$('a').click();
+
+            expect(app.utils.openEmailCreateDrawer.callCount).toBe(1);
+            drawerOpenOptions = app.utils.openEmailCreateDrawer.lastCall.args[1];
+
+            expect(drawerOpenOptions.to.length).toEqual(2);
+            expect(drawerOpenOptions.to[0].get('parent').type).toBe(module);
+            expect(drawerOpenOptions.to[0].get('parent').id).toBe(bean1.get('id'));
+            expect(drawerOpenOptions.to[0].get('parent').name).toBe(bean1.get('name'));
+            expect(drawerOpenOptions.to[0].get('parent_type')).toBe(module);
+            expect(drawerOpenOptions.to[0].get('parent_id')).toBe(bean1.get('id'));
+            expect(drawerOpenOptions.to[0].get('parent_name')).toBe(bean1.get('name'));
+            expect(drawerOpenOptions.to[0].get('email_address_id')).toBeUndefined();
+            expect(drawerOpenOptions.to[0].get('email_address')).toBeUndefined();
+            expect(drawerOpenOptions.to[1].get('parent').type).toBe(module);
+            expect(drawerOpenOptions.to[1].get('parent').id).toBe(bean2.get('id'));
+            expect(drawerOpenOptions.to[1].get('parent').name).toBe(bean2.get('name'));
+            expect(drawerOpenOptions.to[1].get('parent_type')).toBe(module);
+            expect(drawerOpenOptions.to[1].get('parent_id')).toBe(bean2.get('id'));
+            expect(drawerOpenOptions.to[1].get('parent_name')).toBe(bean2.get('name'));
+            expect(drawerOpenOptions.to[1].get('email_address_id')).toBeUndefined();
+            expect(drawerOpenOptions.to[1].get('email_address')).toBeUndefined();
+        });
     });
 });

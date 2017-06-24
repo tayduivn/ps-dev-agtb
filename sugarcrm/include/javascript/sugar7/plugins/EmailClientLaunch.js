@@ -10,6 +10,47 @@
  */
 
 (function (app) {
+    /**
+     * Extract and return the email address from the recipient.
+     *
+     * @param {Object} recipient
+     * @param {Data.Bean} [recipient.email] An EmailAddresses bean.
+     * @param {Data.Bean} [recipient.bean] A bean with an email address (e.g.,
+     * Contacts, Leads, Users, etc.).
+     * @return {Data.Bean} An EmailAddresses bean.
+     */
+    function getEmailAddress(recipient) {
+        var email = app.data.createBean('EmailAddresses');
+
+        if (recipient.email) {
+            if (_.isString(recipient.email) && !_.isEmpty(recipient.email)) {
+                app.logger.warn(
+                    'EmailClientLaunch Plugin: An email address string was provided. An EmailAddresses bean was ' +
+                    'expected.'
+                );
+                email.set('email_address', recipient.email);
+            } else if (recipient.email instanceof app.Bean && recipient.email.module === 'EmailAddresses') {
+                // If there is no `id` or `email_address`, then fall back to
+                // using `recipient.bean`, if available.
+                if (!recipient.email.isNew() || recipient.email.get('email_address')) {
+                    // The email address was specified, so use it.
+                    return recipient.email;
+                }
+            } else {
+                app.logger.warn(
+                    'EmailClientLaunch Plugin: An unknown email address type was provided. An EmailAddresses bean ' +
+                    'was expected.'
+                );
+            }
+        }
+
+        if (recipient.bean && recipient.bean instanceof app.Bean && !email.get('email_address')) {
+            email.set('email_address', app.utils.getPrimaryEmailAddress(recipient.bean));
+        }
+
+        return email;
+    }
+
     app.events.on("app:init", function () {
         app.plugins.register('EmailClientLaunch', ['view', 'field'], {
 
@@ -79,8 +120,6 @@
 
             /**
              * Return recipient list for email compose drawer
-             * Strips out any recipients that don't have an email address
-             * Picks out primary or first valid address if only bean is specified
              *
              * @param {Array|Object} recipients
              * @return {Array}
@@ -89,43 +128,46 @@
             _retrieveValidRecipients: function(recipients) {
                 var validRecipients = [];
 
-                recipients = _.isArray(recipients) ? recipients : [recipients];
+                recipients = recipients || [];
+
+                if (!_.isArray(recipients)) {
+                    recipients = [recipients];
+                }
 
                 _.each(recipients, function(recipient) {
                     var validRecipient = app.data.createBean('EmailParticipants');
+                    var email = getEmailAddress(recipient);
+                    var primary;
 
-                    /**
-                     * FIXME: MAR-4521
-                     * Only set `email_address` if there is an `id` for the
-                     * returned EmailAddresses bean. And if setting
-                     * `email_address`, also set `email_address_id`.
-                     */
-                    validRecipient.set({
-                        'email_address': this._getEmailAddress(recipient)
-                    });
-
-                    if (recipient.bean) {
+                    // We can only use the email address if it has an `id`.
+                    if (!email.isNew()) {
                         validRecipient.set({
-                            parent: _.extend({type: recipient.bean.module}, app.utils.deepCopy(recipient.bean)),
-                            parent_type: recipient.bean.module,
-                            parent_id: recipient.bean.get('id'),
-                            parent_name: app.utils.getRecordName(recipient.bean)
+                            email_address_id: email.get('id'),
+                            email_address: email.get('email_address')
                         });
                     }
 
-                    /**
-                     * FIXME: MAR-4521
-                     * A recipient is added to `validRecipients` if it
-                     * satisfies one of the following conditions:
-                     *
-                     * - The recipient has a parent.
-                     * - The recipient has an `email_address_id`.
-                     *
-                     * Consider logging an error if the recipient doesn't meet
-                     * that criteria.
-                     */
-                    //only push the recipient if we have a valid email to send to
-                    if (validRecipient.get('email_address')) {
+                    if (recipient.bean) {
+                        primary = app.utils.getPrimaryEmailAddress(recipient.bean);
+
+                        // Set the parent data if the email address is already
+                        // defined. Otherwise, only set the parent data if the
+                        // bean's primary email address is valid. We can't send
+                        // an email to a bean without a valid email address.
+                        if (validRecipient.get('email_address_id') || app.utils.isValidEmailAddress(primary)) {
+                            validRecipient.set({
+                                parent: _.extend({type: recipient.bean.module}, app.utils.deepCopy(recipient.bean)),
+                                parent_type: recipient.bean.module,
+                                parent_id: recipient.bean.get('id'),
+                                parent_name: app.utils.getRecordName(recipient.bean)
+                            });
+                        }
+                    }
+
+                    // We can only use the recipient if there is an email
+                    // address to send to or a bean whose primary email address
+                    // we can identify and send to at send-time.
+                    if (validRecipient.get('email_address_id') || validRecipient.get('parent')) {
                         validRecipients.push(validRecipient);
                     }
                 }, this);
@@ -243,95 +285,21 @@
             _formatRecipientsToString: function(recipients) {
                 var emails = [];
 
-                if (_.isArray(recipients)) {
-                    _.each(recipients, function(recipient) {
-                        /**
-                         * FIXME: MAR-4521
-                         * We don't need to know the `id` of the EmailAddresses
-                         * bean. But only add the email address to `emails` if
-                         * `email_address` is not empty.
-                         */
-                        var email = this._getEmailAddress(recipient);
+                recipients = recipients || [];
 
-                        if (email) {
-                            emails.push(email);
-                        }
-                    }, this);
-                } else {
-                    emails.push(recipients);
+                if (!_.isArray(recipients)) {
+                    recipients = [recipients];
                 }
+
+                _.each(recipients, function(recipient) {
+                    var email = getEmailAddress(recipient);
+
+                    if (email.get('email_address')) {
+                        emails.push(email.get('email_address'));
+                    }
+                }, this);
 
                 return emails.join(',');
-            },
-
-            /**
-             * Retrieve the best email address off the recipient
-             *
-             * @param {string|Object} recipient
-             * @return {string}
-             * @private
-             */
-            _getEmailAddress: function(recipient) {
-                if (recipient.email) {
-                    if (_.isString(recipient.email)) {
-                        /**
-                         * FIXME: MAR-4521
-                         * There is nothing we can really do with this value.
-                         * We don't know the ID of the email address. We would
-                         * need to create the EmailAddresses record through the
-                         * REST API to get the ID. This would require us to
-                         * return the EmailAddresses bean asynchronously, which
-                         * would require quite a bit of refactoring.
-                         *
-                         * Maybe we don't have to support this case anymore.
-                         * OOTB, this use case is limited to the EmailField,
-                         * which will be refactored to provide the ID of the
-                         * email address. At that point, there are no OOTB use
-                         * cases of an email address without its ID in regards
-                         * to the EmailClientLaunch plugin. Not supporting this
-                         * would break customizations that use this feature,
-                         * but we could log a warning and return an
-                         * EmailAddresses bean that has `email_address` set,
-                         * but not `id`.
-                         */
-                        return recipient.email;
-                    } else {
-                        /**
-                         * FIXME: MAR-4521
-                         * It better be an EmailAddresses bean with an `id` and
-                         * `email_address`. If so, we can just return it. If it
-                         * has an `email_address`, but no `id`, then we can
-                         * still return it. If there is an `id`, but no
-                         * `email_address`, then we can still return it. But if
-                         * there is no `id` and no `email_address`, then we
-                         * should fall back to using `recipient.bean`, if it
-                         * exists.
-                         */
-                        // The email address was specified, so use it.
-                        return recipient.email;
-                    }
-                }
-
-                if (recipient.bean) {
-                    /**
-                     * FIXME: MAR-4521
-                     * Get the bean's primary email address and create an
-                     * EmailAddresses bean from it. The bean won't have an
-                     * `id`, but that is ok. Any consumers would be responsible
-                     * for determining if the email address can be used without
-                     * an ID. EmailClientLaunch#_formatRecipientsToString can
-                     * use it without an ID.
-                     * EmailClientLaunch#_retrieveValidRecipients cannot use it
-                     * without an ID.
-                     */
-                    return app.utils.getPrimaryEmailAddress(recipient.bean);
-                }
-
-                /**
-                 * FIXME: MAR-4521
-                 * Always return an EmailAddresses bean.
-                 */
-                return recipient;
             },
 
             /**
