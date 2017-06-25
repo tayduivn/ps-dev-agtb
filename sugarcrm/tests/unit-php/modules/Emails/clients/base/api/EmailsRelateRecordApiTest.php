@@ -21,18 +21,40 @@ require_once 'include/utils.php';
  */
 class EmailsRelateRecordApiTest extends \PHPUnit_Framework_TestCase
 {
+    public function linkProvider()
+    {
+        return [
+            [
+                'from_link',
+            ],
+            [
+                'to_link',
+            ],
+            [
+                'cc_link',
+            ],
+            [
+                'bcc_link',
+            ],
+            [
+                'attachments',
+            ],
+        ];
+    }
+
     /**
-     * Existing attachments cannot be linked to an email.
+     * Existing sender, recipients, and attachments cannot be linked to an email.
      *
+     * @dataProvider linkProvider
      * @covers ::createRelatedLinks
      * @expectedException \SugarApiExceptionNotAuthorized
      */
-    public function testCreateRelatedLinks()
+    public function testCreateRelatedLinks($linkName)
     {
         $args = [
             'module' => 'Emails',
             'record' => Uuid::uuid1(),
-            'link_name' => 'attachments',
+            'link_name' => $linkName,
             'remote_id' => Uuid::uuid1(),
         ];
         $service = $this->createPartialMock('\\RestService', []);
@@ -41,17 +63,18 @@ class EmailsRelateRecordApiTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Existing attachments cannot be linked to an email.
+     * Existing sender, recipients, and attachments cannot be linked to an email.
      *
+     * @dataProvider linkProvider
      * @covers ::createRelatedLinksFromRecordList
      * @expectedException \SugarApiExceptionNotAuthorized
      */
-    public function testCreateRelatedLinksFromRecordList()
+    public function testCreateRelatedLinksFromRecordList($linkName)
     {
         $args = [
             'module' => 'Emails',
             'record' => Uuid::uuid1(),
-            'link_name' => 'attachments',
+            'link_name' => $linkName,
             'remote_id' => Uuid::uuid1(),
         ];
         $service = $this->createPartialMock('\\RestService', []);
