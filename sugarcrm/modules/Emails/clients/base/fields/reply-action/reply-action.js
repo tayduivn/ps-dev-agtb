@@ -116,15 +116,10 @@
         var mapRecipients = function(recipients) {
             return _.map(recipients, function(recipient) {
                 var data = {
-                    /**
-                     * FIXME: MAR-4656
-                     * When EmailClientLaunch can accept an email address' ID
-                     * along with the email address itself, then we
-                     * will want to pass that ID, too. The reply will then be
-                     * sure to use the exact same email address for this
-                     * recipient as was used in the original email.
-                     */
-                    email: recipient.get('email_address')
+                    email: app.data.createBean('EmailAddresses', {
+                        id: recipient.get('email_address_id'),
+                        email_address: recipient.get('email_address')
+                    })
                 };
 
                 // The type and id fields are not unset after a parent record

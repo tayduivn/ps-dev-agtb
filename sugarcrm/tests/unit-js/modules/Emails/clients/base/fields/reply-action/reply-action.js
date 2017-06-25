@@ -92,7 +92,8 @@ describe('Emails.Field.ReplyAction', function() {
             var actual = field._getReplyRecipients(false);
 
             expect(actual.to.length).toBe(1);
-            expect(actual.to[0].email).toBe(sender.get('email_address'));
+            expect(actual.to[0].email.get('id')).toBe(sender.get('email_address_id'));
+            expect(actual.to[0].email.get('email_address')).toBe(sender.get('email_address'));
             expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
             expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
             expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
@@ -180,20 +181,24 @@ describe('Emails.Field.ReplyAction', function() {
             actual = field._getReplyRecipients(true);
 
             expect(actual.to.length).toBe(3);
-            expect(actual.to[0].email).toBe(sender.get('email_address'));
+            expect(actual.to[0].email.get('id')).toBe(sender.get('email_address_id'));
+            expect(actual.to[0].email.get('email_address')).toBe(sender.get('email_address'));
             expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
             expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
             expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(actual.to[1].email).toBe(field.model.get('to').at(0).get('email_address'));
+            expect(actual.to[1].email.get('id')).toBe(field.model.get('to').at(0).get('email_address_id'));
+            expect(actual.to[1].email.get('email_address')).toBe(field.model.get('to').at(0).get('email_address'));
             expect(actual.to[1].bean.module).toBe(field.model.get('to').at(0).get('parent_type'));
             expect(actual.to[1].bean.get('id')).toBe(field.model.get('to').at(0).get('parent_id'));
             expect(actual.to[1].bean.get('name')).toBe(field.model.get('to').at(0).get('parent_name'));
-            expect(actual.to[2].email).toBe(field.model.get('to').at(1).get('email_address'));
+            expect(actual.to[2].email.get('id')).toBe(field.model.get('to').at(1).get('email_address_id'));
+            expect(actual.to[2].email.get('email_address')).toBe(field.model.get('to').at(1).get('email_address'));
             expect(actual.to[2].bean.module).toBe(field.model.get('to').at(1).get('parent_type'));
             expect(actual.to[2].bean.get('id')).toBe(field.model.get('to').at(1).get('parent_id'));
             expect(actual.to[2].bean.get('name')).toBe(field.model.get('to').at(1).get('parent_name'));
             expect(actual.cc.length).toBe(1);
-            expect(actual.cc[0].email).toBe(field.model.get('cc').at(0).get('email_address'));
+            expect(actual.cc[0].email.get('id')).toBe(field.model.get('cc').at(0).get('email_address_id'));
+            expect(actual.cc[0].email.get('email_address')).toBe(field.model.get('cc').at(0).get('email_address'));
             expect(actual.cc[0].bean.module).toBe(field.model.get('cc').at(0).get('parent_type'));
             expect(actual.cc[0].bean.get('id')).toBe(field.model.get('cc').at(0).get('parent_id'));
             expect(actual.cc[0].bean.get('name')).toBe(field.model.get('cc').at(0).get('parent_name'));
@@ -216,11 +221,13 @@ describe('Emails.Field.ReplyAction', function() {
             actual = field._getReplyRecipients(true);
 
             expect(actual.to.length).toBe(2);
-            expect(actual.to[0].email).toBe(sender.get('email_address'));
+            expect(actual.to[0].email.get('id')).toBe(sender.get('email_address_id'));
+            expect(actual.to[0].email.get('email_address')).toBe(sender.get('email_address'));
             expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
             expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
             expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(actual.to[1].email).toBe(field.model.get('to').at(0).get('email_address'));
+            expect(actual.to[1].email.get('id')).toBe(field.model.get('to').at(0).get('email_address_id'));
+            expect(actual.to[1].email.get('email_address')).toBe(field.model.get('to').at(0).get('email_address'));
             expect(actual.to[1].bean).toBeUndefined();
             expect(actual.cc.length).toBe(0);
         });
