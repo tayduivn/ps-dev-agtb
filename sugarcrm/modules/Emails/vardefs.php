@@ -654,6 +654,7 @@ $dictionary['Email'] = array(
             'type' => 'link',
             'vname' => 'LBL_FROM',
             'reportable' => false,
+            'readonly' => true,
         ),
         'to_link' => array(
             'name' => 'to_link',
@@ -662,6 +663,7 @@ $dictionary['Email'] = array(
             'type' => 'link',
             'vname' => 'LBL_TO_ADDRS',
             'reportable' => false,
+            'readonly' => true,
         ),
         'cc_link' => array(
             'name' => 'cc_link',
@@ -670,6 +672,7 @@ $dictionary['Email'] = array(
             'type' => 'link',
             'vname' => 'LBL_CC',
             'reportable' => false,
+            'readonly' => true,
         ),
         'bcc_link' => array(
             'name' => 'bcc_link',
@@ -678,6 +681,7 @@ $dictionary['Email'] = array(
             'type' => 'link',
             'vname' => 'LBL_BCC',
             'reportable' => false,
+            'readonly' => true,
         ),
         // SNIP
         'meetings' => array(

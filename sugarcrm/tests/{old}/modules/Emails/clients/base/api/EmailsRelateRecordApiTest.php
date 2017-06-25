@@ -42,21 +42,41 @@ class EmailsRelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    public function readOnlyLinkProvider()
+    {
+        return [
+            [
+                'from_link',
+            ],
+            [
+                'to_link',
+            ],
+            [
+                'cc_link',
+            ],
+            [
+                'bcc_link',
+            ],
+            [
+                'attachments',
+            ],
+        ];
+    }
+
     /**
-     * The attachments link is readonly.
+     * The from_link, to_link, cc_link, bcc_link, and attachments links are readonly.
      *
+     * @dataProvider readOnlyLinkProvider
      * @covers ::updateRelatedLink
      * @expectedException SugarApiExceptionNotAuthorized
      */
-    public function testUpdateRelatedLink()
+    public function testUpdateRelatedLink($linkName)
     {
         $email = BeanFactory::newBean('Emails');
         $email->id = Uuid::uuid1();
 
         $note = BeanFactory::newBean('Notes');
         $note->id = Uuid::uuid1();
-
-        $linkName = 'attachments';
 
         $args = [
             'module' => 'Emails',
