@@ -308,12 +308,8 @@
      * @param {Object} [options] Data for the email from the compose package.
      * @param {Object} [options.subject] Populate the email with this subject.
      * @param {Object} [options.body] Populate the email with this body.
-     * @param {Object} [options.to_email_addrs] Populate the email with these
-     * recipients. This comes in as a string of email addresses separated by
-     * commas. Each address may contain a name and the address may be between
-     * <>. When a name is present, we do not know which module it comes from.
-     * Therefore, we extract the email address and prepopulate the email with
-     * only email addresses. This limitation only exists for the BWC flow.
+     * @param {Object} [options.to] Populate the email with these recipients.
+     * @param {Object} [options.cc] Populate the email with these recipients.
      * @param {Object} [options.attachments] Populate the email with these
      * attachments.
      */
@@ -321,7 +317,6 @@
         var prepopulate = {
             related: this.context.get('model')
         };
-        var emailAddressRegex;
 
         options = app.utils.deepCopy(options) || {};
 
@@ -333,32 +328,39 @@
             prepopulate.description_html = options.body;
         }
 
-        if (!_.isEmpty(options.to_email_addrs)) {
-            emailAddressRegex = /.*\s*<(.*)>/;
-            prepopulate.to = [];
-            options.to_email_addrs = options.to_email_addrs.split(/\s*,\s*/);
+        _.each(['to', 'cc'], function(field) {
+            var linkName = field + '_link';
 
-            _.each(options.to_email_addrs, function(address) {
-                var open = address.indexOf('<');
-                var close = address.indexOf('>');
-                var matches;
+            if (!_.isArray(options[field])) {
+                return;
+            }
 
-                if (open > -1 && close > -1 && open < close) {
-                    matches = emailAddressRegex.exec(address);
-                    address = matches[1];
+            prepopulate[field] = [];
+
+            _.each(options[field], function(data) {
+                var bean = app.data.createBean('EmailParticipants', {
+                    _link: linkName,
+                    email_address_id: data.email_address_id,
+                    email_address: data.email_address
+                });
+
+                if (data.parent_type && data.parent_id) {
+                    bean.set({
+                        parent: {
+                            _acl: {},
+                            type: data.parent_type,
+                            id: data.parent_id,
+                            name: data.parent_name || ''
+                        },
+                        parent_type: data.parent_type,
+                        parent_id: data.parent_id,
+                        parent_name: data.parent_name || ''
+                    });
                 }
 
-                /**
-                 * FIXME: MAR-4655
-                 * Set `email_address_id` and `email_address` from the data in
-                 * `options.to_email_addrs_ids`.
-                 */
-                prepopulate.to.push(app.data.createBean('EmailParticipants', {
-                    _link: 'to_link',
-                    email_address: address
-                }));
+                prepopulate[field].push(bean);
             });
-        }
+        });
 
         if (!_.isEmpty(options.attachments)) {
             prepopulate.attachments = [];

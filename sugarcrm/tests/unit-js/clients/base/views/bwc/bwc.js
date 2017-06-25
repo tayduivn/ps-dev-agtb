@@ -15,7 +15,13 @@ describe('Base.View.Bwc', function() {
     var sandbox;
 
     beforeEach(function() {
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
+
         app = SugarTest.app;
+        app.data.declareModels();
+        app.data.declareModel('EmailParticipants');
+        app.routing.start();
 
         var module = 'Documents';
         //view's initialize checks context's url so we add a "sidecar url" here
@@ -240,7 +246,8 @@ describe('Base.View.Bwc', function() {
                     parent_name: view.model.get('name'),
                     parent_type: view.model.module,
                     subject: 'check this out!',
-                    to_email_addrs: ''
+                    to_email_addrs: '',
+                    to: []
                 };
 
                 view.openComposeEmailDrawer(composePackage);
@@ -265,46 +272,66 @@ describe('Base.View.Bwc', function() {
                 });
             });
 
-            using(
-                'to_email_addrs',
-                [
-                    [
-                        'Billy Bob <bb@foo.com>',
-                        'bb@foo.com'
-                    ],
-                    [
-                        '<bb@foo.com>',
-                        'bb@foo.com'
-                    ],
-                    [
-                        'Billy Bob <bb@foo.com>, Cathy Cobb <cc@foo.com>, Susie Q <sq@foo.com>',
-                        'bb@foo.com|cc@foo.com|sq@foo.com'
-                    ],
-                    [
-                        '<bb@foo.com>, <cc@foo.com>',
-                        'bb@foo.com|cc@foo.com'
-                    ],
-                    [
-                        'bb@foo.com, cc@foo.com',
-                        'bb@foo.com|cc@foo.com'
-                    ]
-                ],
-                function(toEmailAddrs, expected) {
-                    it('should pass email addresses to the email compose drawer', function() {
-                        var actual;
-                        var composePackage = {
-                            to_email_addrs: toEmailAddrs
-                        };
+            it('should pass email addresses to the email compose drawer', function() {
+                var arg;
+                var contact = app.data.createBean('Contacts', {
+                    id: _.uniqueId(),
+                    name: 'Cathy Cobb'
+                });
+                var composePackage = {
+                    to_email_addrs: 'bb@foo.com, Cathy Cobb <cc@foo.com>',
+                    cc_addrs: 'sq@foo.com',
+                    to: [{
+                        email_address_id: _.uniqueId(),
+                        email_address: 'bb@foo.com'
+                    }, {
+                        email_address_id: _.uniqueId(),
+                        email_address: 'cc@foo.com',
+                        parent_type: contact.module,
+                        parent_id: contact.get('id'),
+                        parent_name: contact.get('name')
+                    }],
+                    cc: [{
+                        email_address_id: _.uniqueId(),
+                        email_address: 'sq@foo.com'
+                    }]
+                };
 
-                        view.openComposeEmailDrawer(composePackage);
+                view.openComposeEmailDrawer(composePackage);
 
-                        actual = _.map(app.utils.openEmailCreateDrawer.args[0][1].to, function(recipient) {
-                            return recipient.get('email_address');
-                        }).join('|');
-                        expect(actual).toBe(expected);
-                    });
-                }
-            );
+                arg = app.utils.openEmailCreateDrawer.args[0][1];
+                expect(arg.to.length).toBe(2);
+                expect(arg.to[0].module).toBe('EmailParticipants');
+                expect(arg.to[0].get('_link')).toBe('to_link');
+                expect(arg.to[0].get('email_address_id')).toBe(composePackage.to[0].email_address_id);
+                expect(arg.to[0].get('email_address')).toBe('bb@foo.com');
+                expect(arg.to[0].get('parent')).toBeUndefined();
+                expect(arg.to[0].get('parent_type')).toBeUndefined();
+                expect(arg.to[0].get('parent_id')).toBeUndefined();
+                expect(arg.to[0].get('parent_name')).toBeUndefined();
+                expect(arg.to[1].module).toBe('EmailParticipants');
+                expect(arg.to[1].get('_link')).toBe('to_link');
+                expect(arg.to[1].get('email_address_id')).toBe(composePackage.to[1].email_address_id);
+                expect(arg.to[1].get('email_address')).toBe('cc@foo.com');
+                expect(arg.to[1].get('parent')).toEqual({
+                    _acl: {},
+                    type: 'Contacts',
+                    id: contact.get('id'),
+                    name: contact.get('name')
+                });
+                expect(arg.to[1].get('parent_type')).toBe('Contacts');
+                expect(arg.to[1].get('parent_id')).toBe(contact.get('id'));
+                expect(arg.to[1].get('parent_name')).toBe(contact.get('name'));
+                expect(arg.cc.length).toBe(1);
+                expect(arg.cc[0].module).toBe('EmailParticipants');
+                expect(arg.cc[0].get('_link')).toBe('cc_link');
+                expect(arg.cc[0].get('email_address_id')).toBe(composePackage.cc[0].email_address_id);
+                expect(arg.cc[0].get('email_address')).toBe('sq@foo.com');
+                expect(arg.cc[0].get('parent')).toBeUndefined();
+                expect(arg.cc[0].get('parent_type')).toBeUndefined();
+                expect(arg.cc[0].get('parent_id')).toBeUndefined();
+                expect(arg.cc[0].get('parent_name')).toBeUndefined();
+            });
         });
 
         describe('creating an archived email', function() {
