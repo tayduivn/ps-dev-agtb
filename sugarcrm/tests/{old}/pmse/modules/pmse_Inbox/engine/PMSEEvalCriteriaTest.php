@@ -114,13 +114,19 @@ class PMSEEvalCriteriaTest extends TestCase
 
     public function testVerifyEqualsGroups()
     {
-        $this->object->arrayGroups = array(
-            array('(', ')'),
-            );
+        $this->object->arrayGroups = [
+            [
+                '(' => [0 => 0],
+                ')' => [0 => 0],
+            ],
+        ];
         $this->assertEquals(true, $this->object->verifyEqualsGroups());
-        $this->object->arrayGroups = array(
-            array('('),
-            );
+
+        $this->object->arrayGroups = [
+            [
+                '(' => [0 => 0],
+            ],
+        ];
         $this->assertEquals(false, $this->object->verifyEqualsGroups());
     }
     /**
