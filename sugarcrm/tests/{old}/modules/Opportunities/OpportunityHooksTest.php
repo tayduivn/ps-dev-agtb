@@ -65,6 +65,9 @@ class OpportunityHooksTest extends TestCase
     public function testSetOpportunitySalesStatusOnNewOpp()
     {
         $oppMock = $this->createPartialMock('Opportunity', array('get_linked_beans', 'save', 'retrieve'));
+        $oppMock->expects($this->any())
+            ->method('get_linked_beans')
+            ->willReturn([]);
 
         /* @var $hookMock OpportunityHooks */
         $hookMock = new MockOpportunityHooks();
