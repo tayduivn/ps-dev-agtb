@@ -11,13 +11,11 @@
 /**
  * @class View.Layouts.Reports.DrillthroughPaneLayout
  * @alias SUGAR.App.view.layouts.ReportsDrillthroughPaneLayout
- * @extends View.ListLayout
+ * @extends View.Layout
  */
 ({
     /**
      * @inheritdoc
-     *
-     * @param {Object} metadata Preview metadata.
      */
     initialize: function(options) {
         this._super('initialize', [options]);

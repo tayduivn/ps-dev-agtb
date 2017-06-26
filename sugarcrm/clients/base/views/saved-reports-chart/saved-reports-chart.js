@@ -510,7 +510,7 @@
         var params = {
                 fields: 'id,name,module,report_type,content,chart_type,assigned_user_id',
                 order_by: 'name:asc',
-                filter: [{chart_type: {$not_in: ['none']}}],
+                filter: [{chart_type: {$not_equals: 'none'}}],
                 // get all reports with charts
                 max_num: -1
             },

@@ -11,7 +11,7 @@
 /**
  * @class View.Layouts.Base.Reports.DrillthroughDrawerLayout
  * @alias SUGAR.App.view.layouts.BaseReportsDrillthroughDrawerLayout
- * @extends View.View
+ * @extends View.Layout
  */
 ({
     plugins: ['ShortcutSession'],
@@ -41,13 +41,22 @@
     ],
 
     /**
-     * Success callback function for api call
-     * @param {Object} results
+     * Override the default loadData method to allow for manually constructing
+     * context for each component in layout. We are loading data from the
+     * ReportAPI in public method updateList.
+     *
+     * @override
      */
     loadData: function() {
         this.updateList();
     },
 
+    /**
+     * Fetch report related records based on drawer context as defined in
+     * saved-reports-chart dashlet or Report detail view with context containing
+     * a filter definition based on a chart click event. This method will also
+     * render the list component in layout after data is fetched.
+     */
     updateList: function() {
         var chartModule = this.context.get('chartModule');
         var reportId = this.context.get('reportId');
@@ -69,8 +78,13 @@
 
         app.api.call('read', url, null, {
             success: _.bind(function(data) {
-                var collection = app.data.createBeanCollection(chartModule, data.records);
-                var title = this._buildTitle(collection);
+                var collection;
+                var title;
+                if (this.disposed) {
+                    return;
+                }
+                collection = app.data.createBeanCollection(chartModule, data.records);
+                title = this._buildTitle(collection);
 
                 this.context.trigger('headerpane:title', title);
                 collection.dataFetched = true;
