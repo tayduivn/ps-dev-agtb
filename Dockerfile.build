@@ -27,16 +27,20 @@ RUN apt-get update && \
                       libxml2-dev \
                       libfreetype6-dev \
                       libgd-dev \
+                      libldap2-dev \
+                      libsasl2-dev \
                       libmcrypt-dev \
                       libcurl4-openssl-dev \
                       --no-install-recommends && \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false && \
+    ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
         docker-php-ext-configure gd --with-freetype-dir=/usr && \
-        docker-php-ext-configure bcmath
+        docker-php-ext-configure bcmath && \
+        docker-php-ext-configure ldap --with-ldap-sasl --with-ldap
 
-RUN docker-php-ext-install imap gd exif mcrypt dom gettext mbstring soap zip bcmath
+RUN docker-php-ext-install imap gd exif mcrypt dom gettext mbstring soap zip bcmath ldap
 
 RUN php -r "copy('https://raw.githubusercontent.com/composer/getcomposer.org/1b137f8bf6db3e79a38a5bc45324414a6b1f9df2/web/installer', 'composer-setup.php');" && \
   php composer-setup.php --quiet --install-dir="/usr/local/bin/" --filename="composer" && \
