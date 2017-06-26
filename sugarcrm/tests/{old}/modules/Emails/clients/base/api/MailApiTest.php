@@ -10,17 +10,19 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
+ * @coversDefaultClass MailApi
  * @group api
  * @group email
  */
 class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $api,
-            $mailApi,
-            $emailUI,
-            $userCacheDir;
+        $mailApi,
+        $emailUI,
+        $userCacheDir;
 
     public function setUp()
     {
@@ -146,28 +148,70 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($actual[$args[1]], "Should have set the value for key '{$args[1]}' to false.");
     }
 
+    /**
+     * @covers ::findRecipients
+     */
     public function testFindRecipients_NextOffsetIsLessThanTotalRecords_ReturnsRealNextOffset()
     {
         $args = array(
-            "offset"  => 0,
-            "max_num" => 5,
+            'offset'  => 0,
+            'max_num' => 2,
         );
 
-        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array("findCount", "find"));
+        $mockContact1 = BeanFactory::newBean('Contacts');
+        $mockContact1->id = Uuid::uuid1();
+        $mockContact2 = BeanFactory::newBean('Contacts');
+        $mockContact2->id = Uuid::uuid1();
+        $mockContact3 = BeanFactory::newBean('Contacts');
+        $mockContact3->id = Uuid::uuid1();
+
+        BeanFactory::registerBean($mockContact1);
+        BeanFactory::registerBean($mockContact2);
+        BeanFactory::registerBean($mockContact3);
+
+        $recipients = array(
+            array(
+                'id' => $mockContact1->id,
+                '_module' => 'Contacts',
+                'name' => 'Foo Bar 1',
+                'email' => 'foo2@bar.com',
+            ),
+            array(
+                'id' => $mockContact2->id,
+                '_module' => 'Contacts',
+                'name' => 'Foo Bar 2' ,
+                'email' => 'foo2@bar.com',
+            ),
+            array(
+                'id' => $mockContact3->id,
+                '_module' => 'Contacts',
+                'name' => 'Foo Bar 3',
+                'email' => 'foo3@bar.com',
+            ),
+        );
+
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array('findCount', 'find'));
         $emailRecipientsServiceMock->expects($this->any())
-            ->method("find")
-            ->will($this->returnValue(array_pad(array(10), 10, 0)));
+            ->method('find')
+            ->will($this->returnValue($recipients));
 
         $this->mailApi->expects($this->any())
-            ->method("getEmailRecipientsService")
+            ->method('getEmailRecipientsService')
             ->will($this->returnValue($emailRecipientsServiceMock));
 
         $response = $this->mailApi->findRecipients($this->api, $args);
-        $expected = 5;
-        $actual   = $response["next_offset"];
-        $this->assertEquals($expected, $actual, "The next offset should be {$expected}.");
+        $expected = 2;
+        $actual   = $response['next_offset'];
+        $this->assertEquals($expected, $actual, 'The next offset should be {$expected}.');
+
+        BeanFactory::unregisterBean($mockContact1);
+        BeanFactory::unregisterBean($mockContact2);
+        BeanFactory::unregisterBean($mockContact3);
     }
 
+    /**
+     * @covers ::findRecipients
+     */
     public function testFindRecipients_NextOffsetIsGreaterThanTotalRecords_ReturnsNextOffsetAsNegativeOne()
     {
         $args = array(
@@ -193,6 +237,9 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "The next offset should be -1.");
     }
 
+    /**
+     * @covers ::findRecipients
+     */
     public function testFindRecipients_OffsetIsEnd_ReturnsNextOffsetAsNegativeOne()
     {
         $args = array(
@@ -213,6 +260,9 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "The next offset should be -1.");
     }
 
+    /**
+     * @covers ::findRecipients
+     */
     public function testFindRecipients_NoArguments_CallsFindCountAndFindWithDefaults()
     {
         $args = array();
@@ -234,6 +284,9 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         $response = $this->mailApi->findRecipients($this->api, $args);
     }
 
+    /**
+     * @covers ::findRecipients
+     */
     public function testFindRecipients_HasAllArguments_CallsFindCountAndFindWithArguments()
     {
         $args = array(
@@ -259,6 +312,41 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($emailRecipientsServiceMock));
 
         $response = $this->mailApi->findRecipients($this->api, $args);
+    }
+
+    /**
+     * @covers ::findRecipients
+     */
+    public function testFindRecipients_AclAttributePopulatedForBeans()
+    {
+        $mockContact = BeanFactory::newBean('Contacts');
+        $mockContact->id = Uuid::uuid1();
+        BeanFactory::registerBean($mockContact);
+
+        $recipients = array(
+            array(
+                'id' => $mockContact->id,
+                '_module' => 'Contacts',
+                'name' => 'Foo Bar',
+                'email' => 'foo@bar.com',
+            ),
+        );
+
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array('findCount', 'find'));
+        $emailRecipientsServiceMock->expects($this->once())
+            ->method('find')
+            ->will($this->returnValue($recipients));
+
+        $this->mailApi->expects($this->any())
+            ->method('getEmailRecipientsService')
+            ->will($this->returnValue($emailRecipientsServiceMock));
+
+        $response = $this->mailApi->findRecipients($this->api, array());
+
+        $record = array_shift($response['records']);
+        $this->assertNotEmpty($record['_acl'], '_acl should be populated on the record');
+
+        BeanFactory::unregisterBean($mockContact);
     }
 
     /**
@@ -600,8 +688,8 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             27 => array(
                 array(
                     MailApi::RELATED => array(
-                         "type" => "Widgets",
-                         "id"   => "1234567890",
+                        "type" => "Widgets",
+                        "id"   => "1234567890",
                     ),
                 ),
                 'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',

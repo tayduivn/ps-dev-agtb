@@ -374,6 +374,15 @@ class MailApi extends ModuleApi
                 $nextOffset = $offset + $limit;
                 array_pop($records);
             }
+
+            $apiHelpers = array();
+            foreach ($records as $idx => $record) {
+                $bean = BeanFactory::retrieveBean($record['_module'], $record['id']);
+                if (!isset($apiHelpers[$record['_module']])) {
+                    $apiHelpers[$record['_module']] = ApiHelper::getHelper($api, $bean);
+                }
+                $records[$idx]['_acl'] = $apiHelpers[$record['_module']]->getBeanAcl($bean, array_keys($record));
+            }
         }
 
         return array(
