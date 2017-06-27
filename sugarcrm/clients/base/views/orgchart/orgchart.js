@@ -88,7 +88,7 @@
     nodeRenderer: function(content, d, w, h) {
         var nodeData = d.data.metadata;
         var node = content.append('g').attr('class', 'sc-org-node');
-        var container = d3v4.select('svg#' + this.cid);
+        var container = d3sugar.select('svg#' + this.cid);
         if (!nodeData.img || nodeData.img === '') {
             nodeData.img = 'include/images/user.svg';
         }
@@ -127,7 +127,7 @@
      * @param {Object} nodes A collection of D3 selected nodes.
      */
     nodeCallback: function(nodes) {
-        var container = d3v4.select('svg#' + this.cid);
+        var container = d3sugar.select('svg#' + this.cid);
         // nodes is the array of enter nodes
         nodes
             .on('mouseover', function(d) {
@@ -228,7 +228,7 @@
                 }, this));
         app.accessibility.run(this.jsTree, 'click');
 
-        this.container = d3v4.select('svg#' + this.cid);
+        this.container = d3sugar.select('svg#' + this.cid);
 
         this.container
             .datum(this.chartCollection[0])

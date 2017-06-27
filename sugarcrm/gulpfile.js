@@ -18,6 +18,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var os = require('os');
 var todo = require('gulp-todo');
+var insert = require('gulp-insert');
 const tslint = require('gulp-tslint');
 const path = require('path');
 const execa = require('execa');
@@ -592,4 +593,31 @@ gulp.task('cukes-ts', function() {
 
     return tsProcess;
 
+});
+
+gulp.task('copy-sucrose', function() {
+    gulp.src([
+            'node_modules/@sugarcrm/d3-sugar/build/d3-sugar.min.js'
+        ])
+        .pipe(insert.prepend(';'))
+        .pipe(gulp.dest('include/javascript/d3-sugar/'));
+    gulp.src([
+            'node_modules/@sugarcrm/d3-sugar/LICENSE'
+        ])
+        .pipe(gulp.dest('include/javascript/d3-sugar/'));
+    gulp.src([
+            'node_modules/@sugarcrm/sucrose-sugar/build/sucrose.min.js',
+            'node_modules/@sugarcrm/sucrose-sugar/LICENSE',
+        ])
+        .pipe(gulp.dest('include/javascript/sucrose/'));
+    gulp.src([
+            'node_modules/@sugarcrm/sucrose-sugar/src/less/**/*',
+            '!node_modules/@sugarcrm/sucrose-sugar/src/less/**/sucrose*.less'
+        ])
+        .pipe(gulp.dest('styleguide/less/twitter-bootstrap/sucrose/'));
+    gulp.src([
+            'node_modules/d3fc-rebind/build/d3fc-rebind.min.js',
+            'node_modules/d3fc-rebind/LICENSE',
+        ])
+        .pipe(gulp.dest('include/javascript/d3fc-rebind/'));
 });

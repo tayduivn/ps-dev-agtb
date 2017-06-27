@@ -124,7 +124,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         parseInt(data.properties[0].thousands) === 1)
                     ) {
                         //create formatter with thousands symbol
-                        var cFormat = (d3v4.format('s'));
+                        var cFormat = (d3sugar.format('s'));
                         //the tick value comes in shortened from api,
                         //multiply times 1k and apply formatting
                         barChart.yAxis
@@ -221,7 +221,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                         if (json.data[0].values.length && json.data[0].values[0] instanceof Array) {
                             if (sucrose.utils.isValidDate(json.data[0].values[0][0])) {
-                                tickFormat = function(d) { return d3v4.timeFormat('%x')(new Date(d)); };
+                                tickFormat = function(d) { return d3sugar.timeFormat('%x')(new Date(d)); };
                             } else if (xTickLabels.length > 0) {
                                 tickFormat = function(d) { return xTickLabels[d] || ' '; };
                             }
@@ -297,7 +297,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .rotateDegrees(0)
                         .arcDegrees(360)
                         .fixedRadius(function(chart) {
-                            var n = d3v4.select('#d3_' + chartId).node(),
+                            var n = d3sugar.select('#d3_' + chartId).node(),
                                 r = Math.min(n.clientWidth * 0.25, n.clientHeight * 0.4);
                             return Math.max(r, 75);
                         })
@@ -389,7 +389,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                 if (SUGAR.charts.isDataEmpty(data)) {
                     json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
-                    maxValue = d3v4.max(json.data.map(function(d) { return d.y; }));
+                    maxValue = d3sugar.max(json.data.map(function(d) { return d.y; }));
 
                     if (maxValue === 0) {
                         json.data[0].y = 1;
@@ -467,7 +467,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
         renderChart: function(id, chart, json) {
             $('#d3_' + id).empty();
-            d3v4.select('#d3_' + id)
+            d3sugar.select('#d3_' + id)
                 .append('svg')
                 .attr('class', 'sucrose sc-chart')
                 .datum(json)
@@ -477,13 +477,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
         renderError: function(id, str) {
             $('#d3_' + id).empty();
-            d3v4.select('.reportChartContainer')
+            d3sugar.select('.reportChartContainer')
                 .style('height', 'auto');
-            d3v4.select('.reportChartContainer .chartContainer')
+            d3sugar.select('.reportChartContainer .chartContainer')
                 .style('float', 'none')
                 .style('position', 'relative')
                 .style('width', '100%');
-            d3v4.select('#d3_' + id)
+            d3sugar.select('#d3_' + id)
                 .style('height', 'auto')
                 .append('div')
                     .attr('class', 'sc-data-error')
@@ -763,16 +763,22 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
             chart.legend.showAll(true); //set showAll legend property for images
 
-            d3v4.select(d3ChartId + ' svg').remove();
+            // temporarily turn off texture filling for onclick feedback
+            if (chart.textureFill) {
+                textureFillState = chart.textureFill()
+                chart.textureFill(false);
+            }
 
-            d3v4.select(d3ChartId)
+            d3sugar.select(d3ChartId + ' svg').remove();
+
+            d3sugar.select(d3ChartId)
                 .append('svg')
                 .attr('class', 'sucrose sc-chart')
                 .attr('id', svgChartId)
                 .datum(json)
                 .call(chart);
 
-            d3v4.select(d3ChartId).selectAll('.sc-axis line')
+            d3sugar.select(d3ChartId).selectAll('.sc-axis line')
               .style('stroke', '#DDD')
               .style('stroke-width', 1)
               .style('stroke-opacity', 1);

@@ -255,11 +255,11 @@
             .colorData('default')
             .colorFill('default')
             .yValueFormat(function(d) {
-                var f = d3v4.formatPrefix(',.0', 1000);
+                var f = d3sugar.formatPrefix(',.0', 1000);
                 return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + f(d);
             })
             .quotaValueFormat(function(d) {
-                var f = d3v4.formatPrefix(',.2', 1000);
+                var f = d3sugar.formatPrefix(',.2', 1000);
                 return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + f(d);
             })
             //TODO: only do barClick if dashlet in Forecasts intelligence pane
@@ -361,7 +361,7 @@
         // clear out the current chart before a re-render
         if (!_.isEmpty(this.paretoChart)) {
             $(window).off('resize.' + this.sfId);
-            d3v4.select('#' + this.chartId + ' svg').remove();
+            d3sugar.select('#' + this.chartId + ' svg').remove();
         }
 
         this.paretoChart.stacked(!params.display_manager);
@@ -373,7 +373,7 @@
 
             // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
             // only so we can custom format the Y-Axis values
-            d3v4.select('#' + this.chartId)
+            d3sugar.select('#' + this.chartId)
                 .append('svg')
                 .datum(this.d3Data)
                 .call(this.paretoChart);
@@ -604,7 +604,7 @@
      * @return {Array}
      */
     getDisabledChartKeys: function() {
-        var currentChartData = d3v4.select('#' + this.chartId + ' svg').data();
+        var currentChartData = d3sugar.select('#' + this.chartId + ' svg').data();
         var disabledBars = (!_.isUndefined(currentChartData[0])) ?
                 _.filter(currentChartData[0].data, function(d) {
                     return (!_.isUndefined(d.disabled) && d.disabled === true);

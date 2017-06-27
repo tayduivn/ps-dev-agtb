@@ -570,7 +570,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
 
     describe('getDisabledChartKeys', function() {
         it('should return empty', function() {
-            sandbox.stub(d3v4, 'select', function() {
+            sandbox.stub(d3sugar, 'select', function() {
                 return {
                     data: function() {
                         return [];
@@ -581,7 +581,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
             expect(field.getDisabledChartKeys()).toEqual([]);
         });
         it('should return one key', function() {
-            sandbox.stub(d3v4, 'select', function() {
+            sandbox.stub(d3sugar, 'select', function() {
                 return {
                     data: function() {
                         return [{

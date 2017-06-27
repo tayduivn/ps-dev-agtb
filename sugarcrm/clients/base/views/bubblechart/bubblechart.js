@@ -106,7 +106,7 @@
 
         this.chart = sucrose.charts.bubbleChart()
             .x(function(d) {
-                return d3v4.timeParse('%Y-%m-%d')(d.x);
+                return d3sugar.timeParse('%Y-%m-%d')(d.x);
             })
             .y(function(d) {
                 return d.y;
@@ -114,7 +114,7 @@
             .margin({top: 0})
             .tooltipContent(function(eo, properties) {
                 var point = eo.point;
-                point.close_date = d3v4.timeFormat('%x')(d3v4.timeParse('%Y-%m-%d')(point.x));
+                point.close_date = d3sugar.timeFormat('%x')(d3sugar.timeParse('%Y-%m-%d')(point.x));
                 point.amount = app.currency.formatAmountLocale(point.base_amount, point.currency_id);
                 return self.tooltiptemplate(point).replace(/(\r\n|\n|\r)/gm, '');
             })
@@ -184,7 +184,7 @@
         this.$('svg#' + this.cid).children().remove();
 
         // Load data into chart model and set reference to chart
-        d3v4.select('svg#' + this.cid)
+        d3sugar.select('svg#' + this.cid)
             .datum(this.chartCollection)
             .transition().duration(500)
             .call(this.chart);

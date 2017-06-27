@@ -21,6 +21,8 @@
     "include/javascript/mousetrap",
     "include/javascript/nprogress/nprogress.js",
     "include/javascript/nvd3/",
+    "include/javascript/d3-sugar/",
+    "include/javascript/d3fc-rebind/",
     "include/javascript/sucrose/",
     "include/javascript/phpjs/",
     "include/javascript/pmse/lib/jquery.layout-latest.js",

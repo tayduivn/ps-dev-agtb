@@ -141,7 +141,7 @@
         // Clear out the current chart before a re-render
         this.$('svg#' + this.cid).children().remove();
 
-        d3v4.select('svg#' + this.cid)
+        d3sugar.select('svg#' + this.cid)
             .datum(this.results)
             .transition().duration(500)
             .call(this.chart);

@@ -230,8 +230,8 @@
                array(
                    // D3 (version 4.x) library custom bundle
                    // with only modules for main sugar chart types
-                   'include/javascript/sucrose/lib/d3v4.min.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'include/javascript/sucrose/lib/d3fc-rebind.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/d3-sugar/d3-sugar.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/d3fc-rebind/d3fc-rebind.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sucrose/sucrose.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/SugarCharts/sucrose/js/sugarCharts.js' => 'include/javascript/sugar_sidecar.min.js',
                    // D3 (version 3.x) entire library

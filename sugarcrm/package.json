@@ -5,6 +5,7 @@
   },
   "devDependencies": {
     "@sugarcrm/seedbed": "0.7.3",
+    "@sugarcrm/sucrose-sugar": "0.6.4",
     "@sugarcrm/thorn": "0.5.0-beta.1",
     "@types/async": "1.4.28",
     "@types/bluebird": "3.0.37",
@@ -26,6 +27,7 @@
     "globby": "^6.1.0",
     "gulp": "^3.9.0",
     "gulp-filter": "~3.0.1",
+    "gulp-insert": "^0.5.0",
     "gulp-jscs": "~3.0.2",
     "gulp-jshint": "^2.0.0",
     "gulp-spawn-mocha": "^3.1.0",
