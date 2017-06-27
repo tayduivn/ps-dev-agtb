@@ -25,7 +25,7 @@
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutTestSize="true"
-         checkForUnintentionallyCoveredCode="false"
+         beStrictAboutCoversAnnotation="false"
 >
 
     <php>
@@ -35,18 +35,15 @@
     </php>
     <testsuites>
         <testsuite name="all">
-            <directory>src/</directory>
-            <directory>data/</directory>
-            <directory>include/</directory>
-            <directory>clients/</directory>
+            <directory>./</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="false">
-            <directory suffix=".php">../data/</directory>
-            <directory suffix=".php">../src/</directory>
-            <directory suffix=".php">../include/</directory>
-            <directory suffix=".php">../clients/*/api</directory>
+            <directory suffix=".php">../../data/</directory>
+            <directory suffix=".php">../../src/</directory>
+            <directory suffix=".php">../../include/</directory>
+            <directory suffix=".php">../../clients/*/api</directory>
         </whitelist>
     </filter>
     <listeners>
