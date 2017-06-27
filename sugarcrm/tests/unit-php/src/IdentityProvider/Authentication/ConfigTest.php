@@ -274,7 +274,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'group_dn',
                 'group_attr',
                 'ldap_group_user_attr',
-                false
+                "1"
             );
 
         $expected = [
@@ -314,7 +314,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             'groupDn' => 'group,group_dn',
             'groupAttribute' => 'group_attr',
             'userUniqueAttribute' => 'ldap_group_user_attr',
-            'includeUserDN' => false,
+            'includeUserDN' => true,
         ];
         $this->assertEquals($expected, $config->getLdapConfig());
     }

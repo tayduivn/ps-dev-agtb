@@ -154,7 +154,7 @@ class Config
             );
             $ldap['groupAttribute'] = $this->getLdapSetting('ldap_group_attr');
             $ldap['userUniqueAttribute'] = $this->getLdapSetting('ldap_group_user_attr');
-            $ldap['includeUserDN'] = $this->getLdapSetting('ldap_group_attr_req_dn', false);
+            $ldap['includeUserDN'] = (bool) $this->getLdapSetting('ldap_group_attr_req_dn', false);
         }
 
         return array_merge($this->getLdapDefaultConfig(), $ldap);
