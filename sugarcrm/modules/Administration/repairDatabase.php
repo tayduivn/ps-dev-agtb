@@ -143,7 +143,7 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 
 		$dictionary = $olddictionary;
 
-
+        $db->setOption('skip_index_rebuild', false);
 
 		if (empty ($_REQUEST['repair_silent'])) {
 			echo "<script type=\"text/javascript\">document.getElementById('rdloading').style.display = \"none\";</script>";
