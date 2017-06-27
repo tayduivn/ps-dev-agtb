@@ -29,26 +29,26 @@ describe('Reports.Chart', function() {
         yield Fixtures.create(records, {module: 'Accounts'});
 
         let content = {
-            "display_columns": [],
-            "module": "Accounts",
-            "group_defs": [{"name":"industry","label":"Industry","table_key":"self","type":"enum"}],
-            "summary_columns": [
-                 {"name":"industry","label":"Industry","table_key":"self"},
-                 {"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}
+            'display_columns': [],
+            'module': 'Accounts',
+            'group_defs': [{'name': 'industry', 'label': 'Industry', 'table_key': 'self', 'type': 'enum'}],
+            'summary_columns': [
+                 {'name': 'industry', 'label': 'Industry', 'table_key': 'self'},
+                 {'name': 'count', 'label': 'Count', 'field_type': '', 'group_function': 'count', 'table_key': 'self'}
              ],
-            "report_name": "test",
-            "chart_type": "hBarF",
-            "do_round": 1,
-            "chart_description": "",
-            "numerical_chart_column": "self:count",
-            "numerical_chart_column_type": "",
-            "assigned_user_id": johnId,
-            "report_type": "summary",
-            "full_table_list": {"self":{"value":"Accounts","module":"Accounts","label":"Accounts"}},
-            "filters_def": {
-                "Filter_1": {
-                    "operator": "AND",
-                    "0": {"name":"industry","table_key":"self","qualifier_name":"is","input_name0":["TEST"]}
+            'report_name': 'test',
+            'chart_type': 'hBarF',
+            'do_round': 1,
+            'chart_description': '',
+            'numerical_chart_column': 'self:count',
+            'numerical_chart_column_type': '',
+            'assigned_user_id': johnId,
+            'report_type': 'summary',
+            'full_table_list': {'self': {'value': 'Accounts', 'module': 'Accounts', 'label': 'Accounts'}},
+            'filters_def': {
+                'Filter_1': {
+                    'operator': 'AND',
+                    '0': {'name': 'industry', 'table_key': 'self', 'qualifier_name': 'is', 'input_name0': ['TEST']}
                 }
             }
         };

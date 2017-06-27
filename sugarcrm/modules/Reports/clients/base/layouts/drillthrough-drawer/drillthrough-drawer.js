@@ -130,7 +130,8 @@
         }
 
         title = isFiscalTimeperiod(groupDefs[0]) ? (app.lang.get('LBL_FISCAL', 'Reports') + ' ') : '';
-        title += titleCase(dashConfig.groupLabel) + ' ' + app.lang.getModuleName(chartModule, {plural: recordCount > 1});
+        title += titleCase(dashConfig.groupLabel) + ' ';
+        title += app.lang.getModuleName(chartModule, {plural: recordCount > 1});
 
         if (filterDef.length > 1) {
             key = Object.getOwnPropertyNames(filterDef[1])[0];
