@@ -22,9 +22,9 @@ describe('Reports.Records', function() {
         let johnId = records.Users[0].id;
 
         records = [
-            {attributes: {industry: 'TEST', assigned_user_id: johnId}},
-            {attributes: {industry: 'TEST', assigned_user_id: johnId}},
-            {attributes: {industry: 'Engineering', assigned_user_id: johnId}}
+            {attributes: {name: 'Account1', industry: 'TEST', assigned_user_id: johnId}},
+            {attributes: {name: 'Account2', industry: 'TEST', assigned_user_id: johnId}},
+            {attributes: {name: 'Account3', industry: 'Engineering', assigned_user_id: johnId}}
         ];
 
         yield Fixtures.create(records, {module: 'Accounts'});
@@ -32,7 +32,7 @@ describe('Reports.Records', function() {
         let content = {
             display_columns: [{name: 'name', label: 'Name', table_key: 'self'}],
             module: 'Accounts',
-            group_defs: [],
+            group_defs: [{"table_key": "self", "name": "industry", "type": "enum"}],
             summary_columns: [],
             report_name: 'test',
             do_round: 1,
