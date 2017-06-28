@@ -678,7 +678,7 @@ class ConnectorUtils
         return false;
     }
 
-    public function setHoverField(&$viewdefs, $module, $hover_field, $source_id)
+    public static function setHoverField(&$viewdefs, $module, $hover_field, $source_id)
     {
        //Check for metadata files that aren't correctly created
        if (!MetaParser::hasMultiplePanels($viewdefs[$module]['DetailView']['panels'])) {

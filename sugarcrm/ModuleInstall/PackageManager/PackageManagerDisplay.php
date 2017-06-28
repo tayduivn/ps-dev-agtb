@@ -171,7 +171,8 @@ class PackageManagerDisplay{
         return $str;
     }
 
-    function buildInstalledGrid($mod_strings, $types = array('modules')){
+    protected static function buildInstalledGrid($mod_strings, $types = array('modules'))
+    {
     	  $descItemsInstalled = $mod_strings['LBL_UW_DESC_MODULES_INSTALLED'];
     	  $output = '<table width="100%" border="0" cellspacing="0" cellpadding="0" ><tr><td align="left">'.$descItemsInstalled.'</td>';
           $output .= '</td></tr></table>';
@@ -211,7 +212,8 @@ class PackageManagerDisplay{
      *  @param Array mod_strings - the local mod strings to display
      *  @return String - a string of html
      */
-	function buildGridOutput($tree, $mod_strings, $display = true, $show_login = true){
+    protected static function buildGridOutput($tree, $mod_strings, $display = true, $show_login = true)
+    {
 		 $output = "<div id='catview'>";
 		$loginViewStyle = ($display ? 'none' : 'block');
 		$selectViewStyle = ($display ? 'block' : 'none');
@@ -241,7 +243,8 @@ class PackageManagerDisplay{
      * @param String div_id - this div in which to display the tree
      * @return Tree - the tree that is built
      */
-    function buildTreeView($div_id, $isAlive = true){
+    protected static function buildTreeView($div_id, $isAlive = true)
+    {
         $tree = new Tree($div_id);
         $nodes = array();
         if($isAlive)
@@ -314,7 +317,8 @@ class PackageManagerDisplay{
      *
      * @return String - the javascript required for the page
      */
-    function getDisplayScript($install = false, $type = 'module', $releases = null, $types = array(), $isAlive = true){
+    protected static function getDisplayScript($install = false, $type = 'module', $releases = null, $types = array(), $isAlive = true)
+    {
         global $sugar_version, $sugar_config;
         global $current_language;
 
@@ -412,7 +416,8 @@ class PackageManagerDisplay{
         return $output;
     }
 
-    function createJavascriptModuleArray($modules, $variable_name = 'mti_data'){
+    protected static function createJavascriptModuleArray($modules, $variable_name = 'mti_data')
+    {
         $output = "var ".$variable_name." = [";
         $count = count($modules);
         $index = 1;

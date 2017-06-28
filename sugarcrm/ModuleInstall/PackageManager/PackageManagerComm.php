@@ -19,12 +19,13 @@ class PackageManagerComm
     const HTTP_URL = 'http://depot.sugarcrm.com/depot/SugarDepotSoap.php';
 //END SUGARCRM flav=int ONLY
 
-     /**
-      * Initialize the soap client and store in the $GLOBALS object for use
-      *
-      * @param login    designates whether we want to try to login after we initialize or not
-      */
-     function initialize($login = true){
+    /**
+     * Initialize the soap client and store in the $GLOBALS object for use
+     *
+     * @param login    designates whether we want to try to login after we initialize or not
+     */
+    protected static function initialize($login = true)
+    {
         if(empty($GLOBALS['SugarDepot'])){
             $GLOBALS['log']->debug('USING HTTPS TO CONNECT TO HEARTBEAT');
             $soap_client = new nusoapclient(self::HTTPS_URL, false);

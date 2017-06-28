@@ -115,7 +115,7 @@ $out.=<<<EOQ
 <tr>
 <td align="right" colspan="2">
 <hr>
-     <input type="hidden" name="current_step" value=" $next_step ">
+     <input type="hidden" name="current_step" value="$next_step">
      <table cellspacing="0" cellpadding="0" border="0" class="stdTable">
        <tr>
          <td>

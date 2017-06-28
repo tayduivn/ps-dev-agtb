@@ -25,7 +25,7 @@ class SugarpdfFactory{
         $path = '/sugarpdf/sugarpdf.'.$type.'.php';
         $pdf_file = SugarAutoLoader::existingCustomOne('include/Sugarpdf'.$path, 'modules/'.$module.$path);
         if($pdf_file) {
-            $sugarpdf = SugarpdfFactory::_buildFromFile($pdf_file, $bean, $sugarpdf_object_map, $type, $module);
+            $sugarpdf = SugarpdfFactory::buildFromFile($pdf_file, $bean, $sugarpdf_object_map, $type, $module);
         }
 
         // Default to Sugarpdf if still nothing found/built
@@ -38,9 +38,9 @@ class SugarpdfFactory{
      * This is a private function which just helps the getSugarpdf function generate the
      * proper Tcpdf object
      *
-     * @return a valid Sugarpdf
+     * @return Sugarpdf
      */
-    function _buildFromFile($file, &$bean, $sugarpdf_object_map, $type, $module)
+    protected static function buildFromFile($file, &$bean, $sugarpdf_object_map, $type, $module)
     {
         require_once($file);
         //try ModuleSugarpdfType first then try SugarpdfType if that fails then use Sugarpdf
@@ -51,7 +51,7 @@ class SugarpdfFactory{
                 return new Sugarpdf($bean, $sugarpdf_object_map);
             }
         }
-        return SugarpdfFactory::_buildClass($class, $bean, $sugarpdf_object_map);
+        return SugarpdfFactory::buildClass($class, $bean, $sugarpdf_object_map);
     }
 
     /**
@@ -65,7 +65,7 @@ class SugarpdfFactory{
      *
      * @return Sugarpdf
      */
-    function _buildClass($class, &$bean, $sugarpdf_object_map)
+    protected static function buildClass($class, &$bean, $sugarpdf_object_map)
     {
         $sugarpdf = new $class($bean, $sugarpdf_object_map);
         if($sugarpdf instanceof Sugarpdf) {

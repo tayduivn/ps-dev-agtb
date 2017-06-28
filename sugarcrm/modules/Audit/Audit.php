@@ -158,7 +158,7 @@ class Audit extends SugarBean
                 foreach ($fieldDefs as $field) {
                     if (in_array($field['name'], array('before_value_string', 'after_value_string'))) {
                         $row[$field['name']] =
-                            $this->getAssociatedFieldName($row['field_name'], $row[$field['name']]);
+                            self::getAssociatedFieldName($row['field_name'], $row[$field['name']]);
                     }
                 }
             }
@@ -347,7 +347,7 @@ class Audit extends SugarBean
                                     (array_key_exists($row['field_name'], $genericAssocFieldsArray) || (!empty($moduleAssocFieldsArray[$focus->object_name]) && array_key_exists($row['field_name'], $moduleAssocFieldsArray[$focus->object_name])) )
                                    ) {
 
-                                   $temp_list[$field['name']] = Audit::getAssociatedFieldName($row['field_name'], $row[$field['name']]);
+                                   $temp_list[$field['name']] = self::getAssociatedFieldName($row['field_name'], $row[$field['name']]);
                                 } else {
                                    $temp_list[$field['name']] = $row[$field['name']];
                                 }
@@ -407,7 +407,7 @@ class Audit extends SugarBean
      * @param {String} $fieldValue
      * @return string
      */
-    public function getAssociatedFieldName($fieldName, $fieldValue)
+    public static function getAssociatedFieldName($fieldName, $fieldValue)
     {
     global $focus,  $genericAssocFieldsArray, $moduleAssocFieldsArray;
 

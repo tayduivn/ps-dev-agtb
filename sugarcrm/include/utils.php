@@ -3577,15 +3577,10 @@ function return_bytes($val)
 {
     $val = trim($val);
     $last = strtolower($val{strlen($val)-1});
-
-    switch ($last) {
-        // The 'G' modifier is available since PHP 5.1.0
-        case 'g':
-            $val *= 1024;
-        case 'm':
-            $val *= 1024;
-        case 'k':
-            $val *= 1024;
+    $multiplers = array('k' => 1024, 'm' => 1048576, 'g' => 1073741824);
+    if (isset($multiplers[$last])) {
+        $val = substr($val, 0, -1);
+        return $val*$multiplers[$last];
     }
 
     return $val;
