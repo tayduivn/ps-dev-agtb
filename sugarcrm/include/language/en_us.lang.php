@@ -707,6 +707,7 @@ $app_list_strings = array (
     'record_type_display_emailparticipants' => array(
         'Accounts' => 'Account',
         'Contacts' => 'Contact',
+        'Employees' => 'Employee',
         'Leads' => 'Lead',
         'Prospects' => 'Target',
         'Users' => 'User',

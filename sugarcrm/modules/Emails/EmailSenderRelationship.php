@@ -51,6 +51,7 @@ class EmailSenderRelationship extends EmailRecipientRelationship
             }
         }
 
+        $this->fixParentModule($rhs);
         $this->setEmailAddress($lhs, $rhs);
         $currentRows = $lhs->{$this->lhsLink}->getBeans();
 

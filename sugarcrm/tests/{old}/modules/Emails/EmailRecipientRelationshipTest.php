@@ -861,6 +861,55 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * An Employees record should be seen as a Users record if the employee is a user.
+     *
+     * @covers ::add
+     * @covers ::fixParentModule
+     */
+    public function testAdd_AddEmployee_ChangesToUser()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $ep = $this->createEmailParticipant($GLOBALS['current_user']);
+        $ep->parent_type = 'Employees';
+        $relationship->add($email, $ep);
+
+        $beans = $email->to_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+    }
+
+    /**
+     * An Employees record should be seen as an Employees record if the employee is not a user.
+     *
+     * @covers ::add
+     * @covers ::fixParentModule
+     */
+    public function testAdd_AddEmployee_RemainsAnEmployee()
+    {
+        $employee = SugarTestUserUtilities::createAnonymousUser(true, 0, [
+            'user_name' => '',
+            'user_hash' => '',
+        ]);
+
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $ep = $this->createEmailParticipant($employee);
+        $ep->parent_type = 'Employees';
+        $relationship->add($email, $ep);
+
+        $beans = $email->to_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Employees', $bean->parent_type);
+        $this->assertSame($employee->id, $bean->parent_id);
+    }
+
+    /**
      * Unlinking a person record deletes the EmailParticipants record and updates emails_text for the email.
      *
      * @dataProvider stateProvider

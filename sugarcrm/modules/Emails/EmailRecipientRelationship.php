@@ -31,6 +31,7 @@ class EmailRecipientRelationship extends One2MBeanRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
+        $this->fixParentModule($rhs);
         $this->setEmailAddress($lhs, $rhs);
         $currentRows = $lhs->{$this->lhsLink}->getBeans();
 
@@ -153,6 +154,22 @@ class EmailRecipientRelationship extends One2MBeanRelationship
         // older instance already in memory.
         BeanFactory::registerBean($rhs);
         SugarRelationship::addToResaveList($rhs);
+    }
+
+    /**
+     * Changes the bean's `parent_type` to Users if it is Employees and the employee is actually a user.
+     *
+     * @param SugarBean $bean The EmailParticipants bean.
+     */
+    protected function fixParentModule(SugarBean $bean)
+    {
+        if ($bean->parent_type === 'Employees') {
+            $parent = $this->getParent($bean);
+
+            if ($parent && $parent->id && !empty($parent->user_name)) {
+                $bean->parent_type = 'Users';
+            }
+        }
     }
 
     /**
