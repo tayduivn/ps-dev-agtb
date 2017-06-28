@@ -27,8 +27,9 @@ export default class AlertCmp extends BaseView {
         super(options);
 
         this.selectors = {
-            container: '#alerts .alert-{{alertType}}',
-            closeIcon: '.icon-remove',
+            $: '#alerts',
+            container: '.alert-{{alertType}}',
+            closeIcon: 'button.close',
             message: '.message',
             buttons: {
                 'confirm': 'a.alert-btn-confirm',

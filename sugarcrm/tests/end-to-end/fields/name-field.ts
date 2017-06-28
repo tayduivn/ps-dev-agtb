@@ -30,6 +30,14 @@ export class Detail extends BaseField {
             }
         });
     }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await seedbed.client.getText(selector);
+
+        return value.toString().trim();
+
+    }
 };
 
 export class List extends BaseField {
@@ -42,6 +50,14 @@ export class List extends BaseField {
                 selector: 'a'
             }
         });
+
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await seedbed.client.getText(selector);
+
+        return value.toString().trim();
 
     }
 

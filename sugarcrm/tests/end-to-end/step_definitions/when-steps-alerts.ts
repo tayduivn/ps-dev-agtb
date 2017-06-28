@@ -21,6 +21,11 @@ const whenStepsAlert = function () {
         return alert.clickButton(choice.toLowerCase());
     }, true);
 
+    this.When(/^I close alert$/, async () => {
+        let alert = new AlertCmp({});
+        await alert.close();
+    }, true);
+
 };
 
 module.exports = whenStepsAlert;

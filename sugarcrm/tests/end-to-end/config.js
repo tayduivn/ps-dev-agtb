@@ -90,7 +90,7 @@ var settings = {
 
     // Seedbed client configuration that is passed to init scripts by proxy
     timeouts: {
-        maxTimeoutCatchValue : 410
+        maxTimeoutCatchValue: 1300
     },
 
     responsePayloads: {},
@@ -155,6 +155,8 @@ var settings = {
 
     log: {
         level: 'debug',
+        requests: true,
+        responses: true,
     },
 
     apiUrl: '/rest/v10',

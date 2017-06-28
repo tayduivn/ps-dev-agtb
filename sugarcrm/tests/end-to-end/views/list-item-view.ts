@@ -36,6 +36,8 @@ export default class ListItemView extends BaseView {
                     edit: '[name="edit_button"]',
                     save: '[name="inline-save"]',
                     cancel: '[name="inline-cancel"]',
+                    follow: '[name="follow_button"]',
+                    delete: '[name="delete_button"]'
                 }
             },
             buttons: {

@@ -40,7 +40,7 @@ Feature: Accounts module verification
       | name                    | Account_A  |
 
 
-  @list-search
+  @list-search @ci-excluded
   Scenario: Accounts > List View > Filter > Search main input
     Given Accounts records exist:
       | *name          | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |

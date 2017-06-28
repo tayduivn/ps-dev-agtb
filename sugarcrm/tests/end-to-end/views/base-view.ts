@@ -19,6 +19,8 @@ import * as EnumField from '../fields/enum-field';
 import * as IntField from '../fields/int-field';
 import * as FloatField from '../fields/float-field';
 import * as DateField from '../fields/date-field';
+import * as RelateField from '../fields/relate-field';
+import * as CopyField from '../fields/copy-field';
 
 const classify = name => _.upperFirst(_.camelCase(name));
 
@@ -85,6 +87,8 @@ export default class extends BaseView {
             case 'int': Clazz = IntField[templateName]; break;
             case 'date': Clazz = DateField[templateName]; break;
             case 'float': Clazz = FloatField[templateName]; break;
+            case 'relate': Clazz = RelateField[templateName]; break;
+            case 'copy': Clazz = CopyField[templateName]; break;
         }
 
         if (!Clazz) {

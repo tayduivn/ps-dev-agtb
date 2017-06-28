@@ -23,4 +23,21 @@
         }
     });
 
+    $(document).on('ajaxSend', function(event, xhr, options) {
+        console.log('ajax start: ' + options.url);
+    });
+
+    $(document).on('ajaxComplete', function(event, xhr, options) {
+        console.log('ajax complete: ' + options.url);
+    });
+
+    $(document).on('ajaxError', function(xhr, options, error) {
+        console.log('ajax error: ' + options.url + ' ' + error ? error.message : error);
+    });
+
+    $('input').live('keydown', function(e) {
+        console.log('keydown: ' + '"' + $(e.target).val() + '" ' + ((e.target.id ? 'id - ' +
+                e.target.id : '') + (e.target.className ? ' className - ' + e.target.className : '')));
+    });
+
 })(SUGAR && SUGAR.App ? SUGAR.App : null);

@@ -25,12 +25,12 @@ export default class HeaderView extends BaseView {
         this.selectors = this.mergeSelectors({
             $: '.headerpane',
             buttons: {
-                'create': 'a[name="create_button"]',
-                'copy': 'a[name="duplicate_button"]',
-                'cancel': 'a[name="cancel_button"]',
+                'create': 'a[name="create_button"]:not(.hide)',
+                'copy': 'a[name="duplicate_button"]:not(.hide)',
+                'cancel': 'a[name="cancel_button"]:not(.hide)',
                 'save': 'a[name="save_button"]:not(.hide)',
-                'edit': 'a[name="edit_button"]',
-                'delete': 'a[name="delete_button"]',
+                'edit': 'a[name="edit_button"]:not(.hide)',
+                'delete': 'a[name="delete_button"]:not(.hide)',
                 'actions': '.actions:not([style*="display: none"]) a.btn.dropdown-toggle'
             },
 

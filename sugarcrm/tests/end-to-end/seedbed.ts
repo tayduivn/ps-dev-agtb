@@ -16,6 +16,11 @@ import RecordLayout from './layouts/record-layout';
 import ListLayout from './layouts/list-layout';
 import PreviewLayout from './layouts/preview-layout';
 
+
+seedbed.addAsyncHandler(seedbed.events.BEFORE_SCENARIO, async () => {
+    seedbed.cachedRecords.clear();
+});
+
 /*runs as soon as log in page is loaded and metadata that is available at that moment saved*/
 seedbed.addAsyncHandler(seedbed.events.BEFORE_INIT, async() => {
 
