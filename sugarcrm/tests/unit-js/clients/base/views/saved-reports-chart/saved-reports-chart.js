@@ -35,7 +35,7 @@ describe('Base.View.Saved-Reports-Chart', function() {
     describe('initDashlet()', function() {
         var getAllReportsStub, getReportByIdStub;
         beforeEach(function() {
-            getAllReportsStub = sinon.stub(view, 'getAllSavedReports', function() {});
+            getAllReportsStub = sinon.stub(view, 'getAllReportsWithCharts', function() {});
             getReportByIdStub = sinon.stub(view, 'getSavedReportById', function() {});
         });
 
@@ -44,7 +44,7 @@ describe('Base.View.Saved-Reports-Chart', function() {
             getReportByIdStub.restore();
         });
 
-        it('should call getAllSavedReports() when in config', function() {
+        it('should call getAllReportsWithCharts() when in config', function() {
             view.meta.config = true;
             view.dashletConfig = {};
             view.dashletConfig.dashlet_config_panels = {};
@@ -79,16 +79,21 @@ describe('Base.View.Saved-Reports-Chart', function() {
     describe('parseAllSavedReports()', function() {
         var opts;
         beforeEach(function() {
-            opts = [
-                { id: 'a', name: 'A' },
-                { id: 'b', name: 'B' },
-                { id: 'c', name: 'C' }
-            ];
-
+            opts = {
+                records: [
+                    { id: 'a', name: 'A' },
+                    { id: 'b', name: 'B' },
+                    { id: 'c', name: 'C' }
+                ]
+            };
+            sinon.collection.stub(SugarTest.app.acl, 'hasAccess', function(action) {
+                return true;
+            });
         });
 
         afterEach(function() {
             opts = undefined;
+            SugarTest.app.acl.hasAccess.restore();
         });
 
         it('should build reportOptions correctly', function() {
