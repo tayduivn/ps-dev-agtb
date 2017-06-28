@@ -104,22 +104,70 @@ describe('Plugins.EmailParticipants', function() {
             expect(bean.locked).toBe(true);
         });
 
-        it('should mark the participant as valid', function() {
-            bean.unset('email_address_id');
-            bean.unset('email_address');
+        using(
+            'attributes to set',
+            [
+                // No change. Has parent and email address.
+                {},
+                // Has parent but no email address.
+                {
+                    email_address_id: '',
+                    email_address: ''
+                },
+                // Has parent but no email address.
+                {
+                    email_address_id: ''
+                }
+            ],
+            function(attrs) {
+                it('should mark the participant as valid', function() {
+                    // Update the attributes so the model has the data we need
+                    // for this test case.
+                    bean.set(attrs);
 
-            field.prepareModel(bean);
+                    field.prepareModel(bean);
 
-            expect(bean.invalid).toBe(false);
-        });
+                    expect(bean.invalid).toBe(false);
+                });
+            }
+        );
 
-        it('should mark the participant as invalid', function() {
-            bean.set('email_address', 'foo');
+        using(
+            'attributes to set',
+            [
+                // Invalid email address.
+                {
+                    email_address: 'foo'
+                },
+                // No parent and invalid email address.
+                {
+                    parent: {},
+                    email_address: 'foo'
+                },
+                // No parent and no email address.
+                {
+                    parent: {},
+                    email_address_id: '',
+                    email_address: ''
+                },
+                // No parent and no email address.
+                {
+                    parent: {},
+                    email_address_id: ''
+                }
+            ],
+            function(attrs) {
+                it('should mark the participant as invalid', function() {
+                    // Update the attributes so the model has the data we need
+                    // for this test case.
+                    bean.set(attrs);
 
-            field.prepareModel(bean);
+                    field.prepareModel(bean);
 
-            expect(bean.invalid).toBe(true);
-        });
+                    expect(bean.invalid).toBe(true);
+                });
+            }
+        );
 
         it('should define the url to the model', function() {
             sandbox.stub(app.acl, 'hasAccessToModel').returns(true);
@@ -322,36 +370,159 @@ describe('Plugins.EmailParticipants', function() {
             expect(actual).toBeUndefined();
         });
 
-        /**
-         * FIXME: MAR-4658
-         * Assert that the `email_address_id` field is populated. This will
-         * happen when the email address is created asynchronously. The return
-         * value shouldn't be impacted, but the test should reflect that an
-         * asynchronous request is made and the returned model is patched on a
-         * successful response. While the request is in flight, the returned
-         * module should be seen as invalid.
-         */
         it('should create a choice when the term is a valid email address', function() {
             var term = 'test@example.com';
+            var address = {
+                _module: 'EmailAddresses',
+                _acl: {
+                    fields: {}
+                },
+                id: _.uniqueId(),
+                email_address: term,
+                email_address_caps: term.toUpperCase(),
+                invalid_email: false,
+                opt_out: false
+            };
+            var response = [
+                200,
+                {'Content-Type': 'application/json'},
+                JSON.stringify(address)
+            ];
             var data = [];
             var actual;
+
+            SugarTest.server.respondWith('POST', /.*\/rest\/v10\/EmailAddresses/, response);
 
             actual = options.createSearchChoice(term, data);
 
             expect(actual.module).toBe('EmailParticipants');
+            expect(actual.get('email_address_id')).toBeUndefined();
             expect(actual.get('email_address')).toBe(term);
+            // The choice is seen as invalid while the request is in flight.
+            expect(actual.invalid).toBe(true);
+
+            sandbox.spy(field.model, 'trigger');
+            SugarTest.server.respond();
+
+            expect(actual.get('email_address_id')).toBe(address.id);
+            expect(actual.invalid).toBe(false);
+            expect(field.model.trigger).toHaveBeenCalledOnce();
+            expect(field.model.trigger.args[0][0]).toBe('change:' + field.name);
+            expect(field.model.trigger.args[0][1]).toBe(field.model);
+            expect(field.model.trigger.args[0][2]).toBe(field.model.get(field.name));
         });
 
-        /**
-         * FIXME: MAR-4658
-         * Create a test where an attempt is made to create a search choice,
-         * but the request fails. Assert that the `email_address_id` field is
-         * never populated. While the request is in flight, the returned
-         * module should be seen as invalid. The returned model remains invalid
-         * after the request fails. Even calling
-         * `EmailParticipantsPlugin#prepareModel` won't cause the model to
-         * become valid.
-         */
+        it('should not patch the new choice when the request responds with an invalid email address', function() {
+            var term = 'test@example.com';
+            var address = {
+                _module: 'EmailAddresses',
+                _acl: {
+                    fields: {}
+                },
+                id: _.uniqueId(),
+                email_address: term,
+                email_address_caps: term.toUpperCase(),
+                invalid_email: true,
+                opt_out: false
+            };
+            var response = [
+                200,
+                {'Content-Type': 'application/json'},
+                JSON.stringify(address)
+            ];
+            var data = [];
+            var actual;
+
+            SugarTest.server.respondWith('POST', /.*\/rest\/v10\/EmailAddresses/, response);
+
+            actual = options.createSearchChoice(term, data);
+
+            expect(actual.module).toBe('EmailParticipants');
+            expect(actual.get('email_address_id')).toBeUndefined();
+            expect(actual.get('email_address')).toBe(term);
+            // The choice is seen as invalid while the request is in flight.
+            expect(actual.invalid).toBe(true);
+
+            sandbox.spy(field.model, 'trigger');
+            SugarTest.server.respond();
+
+            // Nothing changed.
+            expect(actual.get('email_address_id')).toBeUndefined();
+            expect(actual.invalid).toBe(true);
+            expect(field.model.trigger).not.toHaveBeenCalled();
+        });
+
+        it('should not patch the new choice when the request responds with an opted out email address', function() {
+            var term = 'test@example.com';
+            var address = {
+                _module: 'EmailAddresses',
+                _acl: {
+                    fields: {}
+                },
+                id: _.uniqueId(),
+                email_address: term,
+                email_address_caps: term.toUpperCase(),
+                invalid_email: false,
+                opt_out: true
+            };
+            var response = [
+                200,
+                {'Content-Type': 'application/json'},
+                JSON.stringify(address)
+            ];
+            var data = [];
+            var actual;
+
+            SugarTest.server.respondWith('POST', /.*\/rest\/v10\/EmailAddresses/, response);
+
+            actual = options.createSearchChoice(term, data);
+
+            expect(actual.module).toBe('EmailParticipants');
+            expect(actual.get('email_address_id')).toBeUndefined();
+            expect(actual.get('email_address')).toBe(term);
+            // The choice is seen as invalid while the request is in flight.
+            expect(actual.invalid).toBe(true);
+
+            sandbox.spy(field.model, 'trigger');
+            SugarTest.server.respond();
+
+            // Nothing changed.
+            expect(actual.get('email_address_id')).toBeUndefined();
+            expect(actual.invalid).toBe(true);
+            expect(field.model.trigger).not.toHaveBeenCalled();
+        });
+
+        it('should not patch the new choice when the request fails', function() {
+            var term = 'test@example.com';
+            var response = [
+                500,
+                {'Content-Type': 'application/json'},
+                JSON.stringify({
+                    error: 'fatal_error',
+                    error_message: 'Your request failed to complete.'
+                })
+            ];
+            var data = [];
+            var actual;
+
+            SugarTest.server.respondWith('POST', /.*\/rest\/v10\/EmailAddresses/, response);
+
+            actual = options.createSearchChoice(term, data);
+
+            expect(actual.module).toBe('EmailParticipants');
+            expect(actual.get('email_address_id')).toBeUndefined();
+            expect(actual.get('email_address')).toBe(term);
+            // The choice is seen as invalid while the request is in flight.
+            expect(actual.invalid).toBe(true);
+
+            sandbox.spy(field.model, 'trigger');
+            SugarTest.server.respond();
+
+            // Nothing changed.
+            expect(actual.get('email_address_id')).toBeUndefined();
+            expect(actual.invalid).toBe(true);
+            expect(field.model.trigger).not.toHaveBeenCalled();
+        });
 
         it('should not create a choice when the term is an invalid email address', function() {
             var term = 'test';

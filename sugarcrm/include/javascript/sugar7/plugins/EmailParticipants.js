@@ -180,12 +180,20 @@
                  */
                 this.prepareModel = function(model) {
                     var parent;
+                    // The type and id fields are not unset after a parent
+                    // record is deleted. So we test for name because the
+                    // parent record is truly only there if type and id are
+                    // non-empty and the parent record can be resolved and has
+                    // not been deleted.
+                    var hasParent = !!(model.get('parent') &&
+                        model.get('parent').type &&
+                        model.get('parent').id &&
+                        model.get('parent').name);
 
                     // Select2 needs the locked property directly on the object.
                     model.locked = !!this.def.readonly;
 
                     /**
-                     * FIXME: MAR-4658
                      * The model is invalid if:
                      *
                      * - It doesn't have a `parent` and `email_address_id` is
@@ -193,22 +201,15 @@
                      * - It has an `email_address_id` and `email_address`, and
                      * `email_address` is invalid.
                      */
-                    if (model.get('email_address')) {
+                    if (!hasParent && !model.get('email_address_id')) {
+                        model.invalid = true;
+                    } else if (model.get('email_address_id') && model.get('email_address')) {
                         model.invalid = !app.utils.isValidEmailAddress(model.get('email_address'));
                     } else {
                         model.invalid = false;
                     }
 
-                    // The type and id fields are not unset after a parent
-                    // record is deleted. So we test for name because the
-                    // parent record is truly only there if type and id are
-                    // non-empty and the parent record can be resolved and has
-                    // not been deleted.
-                    if (model.get('parent') &&
-                        model.get('parent').type &&
-                        model.get('parent').id &&
-                        model.get('parent').name
-                    ) {
+                    if (hasParent) {
                         // We omit type because it is actually the module name
                         // and should be treated as an attribute.
                         parent = app.data.createBean(model.get('parent').type, _.omit(model.get('parent'), 'type'));
@@ -315,8 +316,28 @@
                          * when the query returns no matches for the search
                          * term.
                          *
+                         * An attempt is made to create an email address from
+                         * the term, provided that the term is considered a
+                         * valid email address. If the email address already
+                         * exists, then its data is returned. Upon a successful
+                         * request, the new choice is patched with the email
+                         * address' ID so that we can link the email address.
+                         * Until success, or in the event of a failure, the new
+                         * choice will be seen as invalid. The user will not be
+                         * able to save or send the email until the request has
+                         * succeeded or the user has made a correction.
+                         *
+                         * If the email address already exists and is invalid
+                         * or opted out, then the email address cannot be used
+                         * and the new choice will not be updated.
+                         *
                          * See [Select2 Documentation](http://ivaynberg.github.io/select2/#documentation).
                          *
+                         * @fires change:<field> Indicates that the collection
+                         * changed, when the email address is successfully
+                         * created, to initiate the field's logic for rendering
+                         * the pills and reapplying decoration for invalid
+                         * participants.
                          * @param {string} term
                          * @param {Array} data The options in the dropdown after the query
                          * callback has been executed.
@@ -324,27 +345,29 @@
                          */
                         createSearchChoice: _.bind(function(term, data) {
                             var choice;
+                            var address;
 
                             if (data.length === 0 && app.utils.isValidEmailAddress(term)) {
-                                /**
-                                 * FIXME: MAR-4658
-                                 * This amounts to creating a new email
-                                 * address. We must make a POST request to the
-                                 * EmailAddressesApi to create a new email
-                                 * address from `term`. The problem is that it
-                                 * is an asynchronous operation. So we must
-                                 * patch the `choice` with the ID of the
-                                 * returned email address, setting it to
-                                 * `email_address_id` when the request
-                                 * succeeds. We would want to trigger a change
-                                 * event on the field to initiate it's sequence
-                                 * for rendering the recipient pills and
-                                 * decorating as valid if they were previously
-                                 * invalid.
-                                 */
                                 choice = app.data.createBean('EmailParticipants', {
                                     _link: this.getLinkName(),
                                     email_address: term
+                                });
+
+                                address = app.data.createBean('EmailAddresses', {
+                                    email_address: term
+                                });
+                                address.save({}, {
+                                    success: _.bind(function(model) {
+                                        if (!model.get('invalid_email') && !model.get('opt_out')) {
+                                            choice.set('email_address_id', model.get('id'));
+                                            this.prepareModel(choice);
+                                            this.model.trigger(
+                                                'change:' + this.name,
+                                                this.model,
+                                                this.model.get(this.name)
+                                            );
+                                        }
+                                    }, this)
                                 });
 
                                 return this.prepareModel(choice);
