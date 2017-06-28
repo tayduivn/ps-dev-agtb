@@ -20,7 +20,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordToke
  * It will call on the user authenticate and controll redirection
  * based on the users validation
  * @deprecated Will be removed in 7.11. IDM-46
- * @deprecated Please use new idM Mango library Glue \IdMSugarAuthenticate or IdM library https://github.com/sugarcrm/IdentityProvider
+ * @deprecated Please use new idM Mango library Glue \IdMSugarAuthenticate
  */
 class SugarAuthenticate{
 	var $userAuthenticateClass = 'SugarAuthenticateUser';
@@ -50,7 +50,7 @@ class SugarAuthenticate{
 	function loginAuthenticate($username, $password, $fallback=false, $PARAMS = array ()){
         global $app_strings, $log;
         $log->deprecated(sprintf(
-            'The %s in %s was called. Please see https://github.com/sugarcrm/IdentityProvider or \IdMSugarAuthenticate',
+            'The %s in %s was called. Please see \IdMSugarAuthenticate',
             __METHOD__,
             __CLASS__
         ));

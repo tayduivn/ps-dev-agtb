@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
  * It will call on the user authenticate and controll redirection
  * based on the users validation
  * @deprecated Will be removed in 7.11. IDM-46
- * @deprecated Please use new idM Mango library Glue \IdMSAMLAuthenticate or IdM library https://github.com/sugarcrm/IdentityProvider
+ * @deprecated Please use new idM Mango library Glue \IdMSAMLAuthenticate
  */
 class SAMLAuthenticate extends SugarAuthenticate implements SugarAuthenticateExternal
 {

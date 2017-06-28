@@ -15,7 +15,7 @@
 /**
  * This file is where the user authentication occurs. No redirection should happen in this file.
  * @deprecated Will be removed in 7.11. IDM-46
- * @deprecated Please use new idM Mango library Glue \IdMLDAPAuthenticate or IdM library https://github.com/sugarcrm/IdentityProvider
+ * @deprecated Please use new idM Mango library Glue \IdMLDAPAuthenticate
  */
 require_once('modules/Users/authentication/LDAPAuthenticate/LDAPConfigs/default.php');
 
@@ -38,7 +38,7 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
     {
         global $log;
         $log->deprecated(sprintf(
-            'The %s in %s was called. Please see https://github.com/sugarcrm/IdentityProvider or \IdMLDAPAuthenticate',
+            'The %s in %s was called. Please see \IdMLDAPAuthenticate',
             __METHOD__,
             __CLASS__
         ));
@@ -261,7 +261,7 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
     {
         global $mod_strings, $log;
         $log->deprecated(sprintf(
-            'The %s in %s was called. Please see https://github.com/sugarcrm/IdentityProvider or \IdMLDAPAuthenticate',
+            'The %s in %s was called. Please see \IdMLDAPAuthenticate',
             __METHOD__,
             __CLASS__
         ));

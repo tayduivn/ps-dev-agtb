@@ -12,7 +12,7 @@
 
 /**
  * @deprecated Will be removed in 7.11. IDM-46
- * @deprecated Please use new idM Mango library Glue \IdMSAMLAuthenticate or IdM library https://github.com/sugarcrm/IdentityProvider
+ * @deprecated Please use new idM Mango library Glue \IdMSAMLAuthenticate
  */
 
 $settings                           = new OneLogin_Saml_Settings();

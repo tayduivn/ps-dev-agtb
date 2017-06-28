@@ -16,7 +16,7 @@ require_once 'modules/Users/authentication/SAMLAuthenticate/saml.php';
  * This file is where the user authentication occurs.
  * No redirection should happen in this file.
  * @deprecated Will be removed in 7.11. IDM-46
- * @deprecated Please use new idM Mango library Glue \IdMSAMLAuthenticate or IdM library https://github.com/sugarcrm/IdentityProvider
+ * @deprecated Please use new idM Mango library Glue \IdMSAMLAuthenticate
  */
 class SAMLAuthenticateUser extends SugarAuthenticateUser
 {
@@ -60,7 +60,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
     {
         $GLOBALS['log']->debug('authenticating user.');
         $GLOBALS['log']->deprecated(sprintf(
-            'The %s in %s was called. Please see https://github.com/sugarcrm/IdentityProvider or \IdMSugarAuthenticate',
+            'The %s in %s was called. Please see \IdMSugarAuthenticate',
             __METHOD__,
             __CLASS__
         ));
