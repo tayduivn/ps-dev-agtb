@@ -260,6 +260,8 @@ class HealthCheckScanner
      */
     protected $deprecatedPHPCodePatterns = array(
         '/[^\w]SugarSession[^\w]/i' => 'deprecatedCodeSugarSession', //report id
+        '/[^\w]SugarAuthenticate[^\w]/i' => 'deprecatedAuthN',
+        '/[^\w]SugarAuthenticateUser[^\w]/i' => 'deprecatedAuthN',
         '/[^\w]LDAPAuthenticate[^\w]/i' => 'deprecatedAuthN',
         '/[^\w]LDAPAuthenticateUser[^\w]/i' => 'deprecatedAuthN',
         '/[^\w]SAMLAuthenticate[^\w]/i' => 'deprecatedAuthN',
