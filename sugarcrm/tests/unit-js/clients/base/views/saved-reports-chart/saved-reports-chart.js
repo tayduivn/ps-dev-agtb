@@ -81,9 +81,9 @@ describe('Base.View.Saved-Reports-Chart', function() {
         beforeEach(function() {
             opts = {
                 records: [
-                    { id: 'a', name: 'A' },
-                    { id: 'b', name: 'B' },
-                    { id: 'c', name: 'C' }
+                    {id: 'a', name: 'A'},
+                    {id: 'b', name: 'B'},
+                    {id: 'c', name: 'C'}
                 ]
             };
             sinon.collection.stub(SugarTest.app.acl, 'hasAccess', function(action) {

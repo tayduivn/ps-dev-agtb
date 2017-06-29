@@ -46,7 +46,7 @@ class ReportsApi extends ModuleApi
                 'method' => 'getSavedReportChartById',
                 'shortHelp' => 'An API to get chart data for a saved report',
                 'longHelp' => 'modules/Reports/clients/base/api/help/report_chart_get_help.html',
-            )
+            ),
         );
     }
 
@@ -81,8 +81,7 @@ class ReportsApi extends ModuleApi
         if ($pos !== false) {
             $field_name = substr($field, $pos + 1);
             $table_key = substr($field, 0, $pos);
-        }
-        else {
+        } else {
             $table_key = 'self';
             $field_name = $field;
         }
@@ -133,7 +132,7 @@ class ReportsApi extends ModuleApi
                     $filterRow = array(
                         'adhoc' => true,
                         'name' => $fieldDef['name'],
-                        'table_key' => $fieldDef['table_key']
+                        'table_key' => $fieldDef['table_key'],
                     );
                     switch ($fieldDef['type']) {
                         case 'enum':
@@ -146,8 +145,7 @@ class ReportsApi extends ModuleApi
                             if (empty($fieldDef['qualifier'])) {
                                 $filterRow['qualifier_name'] = 'on';
                                 $filterRow['input_name0'] = reset($value);
-                            }
-                            else {
+                            } else {
                                 // TODO: date range
                             }
                             break;
@@ -345,8 +343,8 @@ class ReportsApi extends ModuleApi
                 'label' => 'Id',
                 'name' => 'id',
                 'type' => 'id',
-                'table_key' => 'self'
-            )
+                'table_key' => 'self',
+            ),
         );
         $report = new Report($reportDef);
         $results = $report->getData();

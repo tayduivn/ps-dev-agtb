@@ -32,7 +32,7 @@ describe('Reports.Records', function() {
         let content = {
             display_columns: [{name: 'name', label: 'Name', table_key: 'self'}],
             module: 'Accounts',
-            group_defs: [{"table_key": "self", "name": "industry", "type": "enum"}],
+            group_defs: [{'table_key': 'self', 'name': 'industry', 'type': 'enum'}],
             summary_columns: [],
             report_name: 'test',
             do_round: 1,

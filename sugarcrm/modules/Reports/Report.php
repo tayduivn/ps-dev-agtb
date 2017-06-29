@@ -186,7 +186,7 @@ class Report
         if (empty($report_def_str)) {
             $this->report_def_str = $this->default_report_def_str;
             $this->report_def = $json->decode($this->report_def_str);
-        } else if (is_array($report_def_str)) {
+        } elseif (is_array($report_def_str)) {
             $this->report_def = $report_def_str;
             $this->report_def_str = $json->encode($report_def_str);
         } else {
@@ -386,10 +386,11 @@ class Report
             if (empty($this->report_def['filters_def']) || !isset($this->report_def['filters_def']['Filter_1'])) {
                 $filters = array();
                 $filters['Filter_1'] = array();
-                if (isset($this->report_def['filters_combiner']))
+                if (isset($this->report_def['filters_combiner'])) {
                     $filters['Filter_1']['operator'] = $this->report_def['filters_combiner'];
-                else
+                } else {
                     $filters['Filter_1']['operator'] = 'AND';
+                }
                 for ($i = 0; $i < count($this->report_def['filters_def']); $i++) {
                     if ($this->report_def['filters_def'][$i]['table_key'] != 'self') {
                         $this->report_def['filters_def'][$i]['table_key'] = $upgrade_lookup[$this->report_def['filters_def'][$i]['table_key']];
@@ -1864,7 +1865,7 @@ class Report
                 $where_auto .= ' AND ' . $this->db->convert($tableAlias . '.deleted', 'IFNULL', array(0)) . "=0 \n";
             }
         }
-        
+
         // Start ACL check
         global $current_user, $mod_strings;
         if (!is_admin($current_user)) {
@@ -2338,7 +2339,7 @@ class Report
                         $display = "";
                     }
                 } // if
-                
+
 
                 if (is_array($this->moduleBean->field_defs)) {
                     if (isset($this->moduleBean->field_defs[$display_column['type']])) {
@@ -2640,14 +2641,17 @@ class Report
         }
 
         while ($row = $this->db->fetchByAssoc($this->result)) {
-           $row = array_combine(array_map(function($key) use ($alias_map) {
-                   return isset($alias_map[$key]) ? $alias_map[$key] : $key;
-               },
-               array_keys($row)),
-               array_values($row)
-           );
-           $result[] = $row;
-       }
+            $row = array_combine(
+                array_map(
+                    function ($key) use ($alias_map) {
+                        return isset($alias_map[$key]) ? $alias_map[$key] : $key;
+                    },
+                    array_keys($row)
+                ),
+                array_values($row)
+            );
+            $result[] = $row;
+        }
 
         return $result;
     }

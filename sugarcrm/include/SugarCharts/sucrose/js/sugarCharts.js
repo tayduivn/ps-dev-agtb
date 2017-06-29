@@ -19,7 +19,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
     }
 
     // set barType to 'grouped'
-    var chartType = chartConfig.barType || chartConfig.lineType || chartConfig.pieType || chartConfig.funnelType || 'basic';
+    var chartType = chartConfig.barType ||
+                    chartConfig.lineType ||
+                    chartConfig.pieType ||
+                    chartConfig.funnelType ||
+                    'basic';
     var configBarType = chartType === 'stacked' ? 'grouped' : chartType;
 
     // update default params from chartConfig and then chartParams
@@ -597,7 +601,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          *
          * @param reportDef report definition object
          * @param i group definition index
-         * @return {object}
+         * @return {Object}
          */
         getGrouping: function(reportDef, i) {
             var groupDefs = reportDef.group_defs;
@@ -612,7 +616,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          *
          * @param reportDef report definition object
          * @param params chart display control parameters
-         * @return {array}
+         * @return {Array}
          */
         buildFilter: function(reportDef, params) {
             var def = [];
@@ -632,8 +636,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             var groupsValues = [];
             var seriesValues = [];
 
-            function getName(table_key, name) {
-                return table_key + ':' + name;
+            function getName(tableKey, name) {
+                return tableKey + ':' + name;
             }
 
             function setValues(values, label) {
@@ -807,7 +811,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * @param json the report data to transform
          * @param params chart display control parameters
          * @param config chart configuration settings
-         * @return {object} contains chart properties object and data array
+         * @return {Object} contains chart properties object and data array
          */
         translateDataToD3: function(json, params, config) {
             var data = [];

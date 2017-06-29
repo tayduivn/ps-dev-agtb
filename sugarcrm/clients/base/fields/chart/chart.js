@@ -56,9 +56,9 @@
     /**
      * Callback function on chart render complete.
      *
-     * @param {function} chart sucrose chart instance
-     * @param {object} params chart display parameters
-     * @param {object} data report data with properties and data array
+     * @param {Function} chart sucrose chart instance
+     * @param {Object} params chart display parameters
+     * @param {Object} data report data with properties and data array
      */
     chartComplete: function(chart, params, reportData, chartData) {
         this.chart = chart;

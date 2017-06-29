@@ -119,7 +119,7 @@
      * Call after the user is done editing the saved report. Return the user to the page that was stored when the
      * event was set
      *
-     * @param {object} jquery event
+     * @param {Object} jquery event
      */
     postEditListener: function(event) {
         //Go back from whence we came
@@ -362,9 +362,9 @@
     /**
      * Callback function on chart render complete.
      *
-     * @param {function} chart sucrose chart instance
-     * @param {object} params chart display parameters
-     * @param {object} reportData report data with properties and data array
+     * @param {Function} chart sucrose chart instance
+     * @param {Object} params chart display parameters
+     * @param {Object} reportData report data with properties and data array
      */
     chartComplete: function(chart, params, reportData, chartData) {
         if (!_.isFunction(chart.seriesClick)) {
@@ -395,10 +395,10 @@
     /**
      * Handle either navigating to target module or update list view filter.
      *
-     * @param {function} chart sucrose chart instance
-     * @param {object} params chart display parameters
-     * @param {object} reportData report data with properties and data array
-     * @param {object} state chart display and data state
+     * @param {Function} chart sucrose chart instance
+     * @param {Object} params chart display parameters
+     * @param {Object} reportData report data with properties and data array
+     * @param {Object} state chart display and data state
      * @protected
      */
     _handleFilter: function(chart, params, state, reportData, chartData) {
@@ -443,10 +443,10 @@
      *
      * @param {string} module base chart module
      * @param {string} id saved report uuid
-     * @param {object} groupDefs report definition data groupings
-     * @param {object} filterDef updated report definition data filter
-     * @param {object} state chart display and data state
-     * @param {object} params chart display parameters
+     * @param {Object} groupDefs report definition data groupings
+     * @param {Object} filterDef updated report definition data filter
+     * @param {Object} state chart display and data state
+     * @param {Object} params chart display parameters
      */
     openDrawer: function(drawerContext) {
         app.drawer.open({
@@ -460,10 +460,10 @@
      *
      * @param {string} module base chart module
      * @param {string} id saved report uuid
-     * @param {object} groupDefs report definition data groupings
-     * @param {object} filterDef updated report definition data filter
-     * @param {object} state chart display and data state
-     * @param {object} params chart display parameters
+     * @param {Object} groupDefs report definition data groupings
+     * @param {Object} filterDef updated report definition data filter
+     * @param {Object} state chart display and data state
+     * @param {Object} params chart display parameters
      */
     updateList: function(filterDef, params, state) {
         var drawer = this.closestComponent('drawer').getComponent('drillthrough-drawer');
