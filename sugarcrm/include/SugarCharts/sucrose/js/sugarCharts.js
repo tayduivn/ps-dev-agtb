@@ -26,6 +26,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     'basic';
     var configBarType = chartType === 'stacked' ? 'grouped' : chartType;
 
+    // fix report view
+    if (_.isUndefined(chartParams.chart_type) && !_.isUndefined(chartParams.type)) {
+        chartParams.chart_type = chartParams.type;
+        chartParams.type = 'saved-report-view';
+    }
+
     // update default params from chartConfig and then chartParams
     var params = _.extendOwn({
         allowScroll: false,
