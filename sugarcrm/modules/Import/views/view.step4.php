@@ -40,7 +40,8 @@ class ImportViewStep4 extends SugarView
             trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
         }
 
-        $currentPart = end(explode("-", $uploadFile));
+        $uploadFiles = explode("-", $uploadFile);
+        $currentPart = end($uploadFiles);
 
         // Open the import file
         $importSource = new ImportFile(

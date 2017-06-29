@@ -21,7 +21,8 @@ class ViewEditFields extends ViewAjax{
         global $beanList;
 
         $beanName = $beanList[$this->module];
-        $link = new Link($this->rel, new $beanName(), array());
+        $newBean = new $beanName();
+        $link = new Link($this->rel, $newBean, array());
         $this->fields = $link->_get_link_table_definition($rel, 'fields');
  	}
 

@@ -131,10 +131,8 @@ class KBContent extends SugarBean {
         $data = $this->getLanguages();
         $result = array();
         foreach ($data as $value) {
-            unset($value['primary']);
-            $key = reset(array_keys($value));
-            $val = reset(array_values($value));
-            $result[$key] = $val;
+            reset($value);
+            $result[key($value)] = current($value);
         }
         return $result;
     }

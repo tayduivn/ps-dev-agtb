@@ -778,7 +778,8 @@ EOREGEX
             return $sq;
 		}
 
-		private function process_from(&$tokens) {
+    private function process_from($tokens)
+    {
 
 			$expression = "";
 			$expr = array();

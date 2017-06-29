@@ -117,8 +117,8 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
      */
     public function run($data)
     {
-        extract(unserialize($data));
-        $payload = json_encode($payload);
+        $data = unserialize($data);
+        $payload = json_encode($data['payload']);
 
         $curlHandler = curl_init();
 
@@ -130,13 +130,13 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
             CURLOPT_MAXREDIRS       => 1,
             CURLOPT_USERAGENT       => 'SugarCrm',
             CURLOPT_VERBOSE         => false,
-            CURLOPT_URL             => $url,
+            CURLOPT_URL             => $data['url'],
             CURLOPT_HTTPHEADER      => array(
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($payload)
             ),
             CURLOPT_POSTFIELDS      => $payload,
-            CURLOPT_CUSTOMREQUEST   => $request_method,
+            CURLOPT_CUSTOMREQUEST   => $data['request_method'],
         );
 
         curl_setopt_array($curlHandler, $options);

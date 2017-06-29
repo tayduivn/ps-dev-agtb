@@ -40,8 +40,9 @@ class SugarUpgradeOpportunityFixSalesStageDefault extends UpgradeScript
         if (isset($f->options) && isset($GLOBALS['app_list_strings'][$f->options])) {
             if (!in_array($f->default, array_keys($GLOBALS['app_list_strings'][$f->options]))) {
                 $this->log(var_export($f->default, true) . ' Is Not In The List Of Options');
-                $f->default = array_shift(array_keys($GLOBALS['app_list_strings'][$f->options]));
-                $f->default_value = array_shift(array_keys($GLOBALS['app_list_strings'][$f->options]));
+                $options = $GLOBALS['app_list_strings'][$f->options];
+                reset($options);
+                $f->default = $f->default_value = key($options);
                 $this->log('New Sales Stage Default Is: ' . var_export($f->default, true));
 
                 // save the changes to the field

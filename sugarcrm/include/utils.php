@@ -5133,7 +5133,7 @@ function verify_uploaded_image($path, $jpeg_only = false)
 
     $img_size = getimagesize($path);
     $filetype = $img_size['mime'];
-    $ext = end(explode(".", $path));
+    $ext = pathinfo($path, PATHINFO_EXTENSION);
     if(substr_count('..', $path) > 0 || ($ext !== $path && !isset($supportedExtensions[strtolower($ext)])) ||
         !in_array($filetype, array_values($supportedExtensions))) {
             return false;

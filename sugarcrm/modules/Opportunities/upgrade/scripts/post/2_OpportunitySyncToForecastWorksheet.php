@@ -68,7 +68,8 @@ class SugarUpgradeOpportunitySyncToForecastWorksheet extends UpgradeScript
         foreach ($fields as $field) {
             $key = $field;
             if (is_array($field)) {
-                $key = array_shift(array_keys($field));
+                reset($field);
+                $key = key($field);
                 $field = array_shift($field);
             }
 

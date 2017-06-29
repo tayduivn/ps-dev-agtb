@@ -43,24 +43,24 @@ class Link {
 	var $_duplicate_key;
 	var $_duplicate_where;
 
-	/* Parameters:
-	 * 		$_rel_name: use this relationship key.
-	 * 		$_bean: reference of the bean that instantiated this class.
-	 * 		$_fieldDef: vardef entry for the field.
-	 * 		$_table_name: optional, fetch from the bean's table name property.
-	 * 		$_key_name: optional, name of the primary key column for _table_name
-	 */
-    public function __construct($_rel_name, &$_bean, $fieldDef, $_table_name='', $_key_name='')
+    /**
+     *  $relName: use this relationship key.
+     *  $bean: the bean that instantiated this class.
+     *  $fieldDef: vardef entry for the field.
+     *  $tableName: optional, fetch from the bean's table name property.
+     *  $keyName: optional, name of the primary key column for _table_name
+     */
+    public function __construct($relName, $bean, $fieldDef, $tableName = '', $keyName = '')
     {
 		global $dictionary;
         require_once("modules/TableDictionary.php");
-        $GLOBALS['log']->debug("Link Constructor, relationship name: ".$_rel_name);
-		$GLOBALS['log']->debug("Link Constructor, Table name: ".$_table_name);
-		$GLOBALS['log']->debug("Link Constructor, Key name: ".$_key_name);
+        $GLOBALS['log']->debug("Link Constructor, relationship name: " . $relName);
+        $GLOBALS['log']->debug("Link Constructor, Table name: " . $tableName);
+        $GLOBALS['log']->debug("Link Constructor, Key name: " . $keyName);
 
-        $this->_relationship_name=$_rel_name;
+        $this->_relationship_name = $relName;
 		$this->relationship_fields = (!empty($fieldDef['rel_fields']))?$fieldDef['rel_fields']: array();
-		$this->_bean = $_bean;
+        $this->_bean = $bean;
 		$this->_relationship = SugarRelationshipFactory::getInstance()->getRelationship($this->_relationship_name);
 
 		$this->_db = DBManagerFactory::getInstance();
@@ -76,20 +76,19 @@ class Link {
 			}
 		}
 
-		$this->_bean_table_name=(!empty($_table_name)) ? $_table_name : $_bean->table_name;
-		if (!empty($key_name)) {
-			$this->_bean_key_name=$_key_name;
-		} else {
+        $this->_bean_table_name = (!empty($tableName)) ? $tableName : $bean->table_name;
+        if (!empty($key_name)) {
+            $this->_bean_key_name = $keyName;
+        } else {
+            if ($this->_relationship->lhs_table != $this->_relationship->rhs_table) {
+                if ($bean->table_name == $this->_relationship->lhs_table) {
+                    $this->_bean_key_name = $this->_relationship->lhs_key;
+                }
 
-			if ($this->_relationship->lhs_table != $this->_relationship->rhs_table) {
-
-				if ($_bean->table_name == $this->_relationship->lhs_table)
-					$this->_bean_key_name=$this->_relationship->lhs_key;
-
-				if ($_bean->table_name == $this->_relationship->rhs_table)
-					$this->_bean_key_name=$this->_relationship->rhs_key;
-
-			}
+                if ($bean->table_name == $this->_relationship->rhs_table) {
+                    $this->_bean_key_name = $this->_relationship->rhs_key;
+                }
+            }
 		}
 
 		if ($this->_relationship->lhs_table == $this->_relationship->rhs_table && isset($fieldDef['side']) && $fieldDef['side'] == 'right'){
