@@ -278,6 +278,13 @@ class HealthCheckScanner
         '/([Aa]pp\.date\.(compareDates|isDate(After|Before|On|Between)))\s*\(/' => 'removedSidecarAPI_app_date',
         // Removed in 7.9
         '/([Aa]pp\.view\.invokeParent)/' => 'useOfAppViewInvokeParent',
+        // Removed in 7.10
+        '/(resetLoadFlag\((true|false))/' => 'removedSidecarAPI_Context',
+        '/(resetLoadFlag\.call\(\w+,\s?(true|false))/' => 'removedSidecarAPI_Context',
+        '/(resetLoadFlag\.apply\(\w+,\s?\[(true|false))/' => 'removedSidecarAPI_Context',
+        '/(metadata\.getField\([\'"])/' => 'useOfMetadataGetFieldOldSignature',
+        // Deprecated in 7.10
+        '/\.(initButtons)/' => 'useOfInitButtons',
     );
 
     //Removed in 7.8

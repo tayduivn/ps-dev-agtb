@@ -420,6 +420,31 @@ class HealthCheckScannerMeta
             //@codingStandardsIgnoreEnd
         ),
 
+        //7.10 removed methods or signatures, F bucket
+        547 => array(
+            'report' => 'removedSidecarAPI_Context',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_of_Removed_Sidecar_Context_APIs/',
+            //@codingStandardsIgnoreEnd
+        ),
+        549 => array(
+            'report' => 'useOfMetadataGetFieldOldSignature',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_of_Removed_Sidecar_Metadata_APIs/',
+            //@codingStandardsIgnoreEnd
+        ),
+
+        // Deprecated method, bucket E
+        548 => array(
+            'report' => 'useOfInitButtons',
+            'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_of_Removed_Record_View_InitButtons_APIs/',
+            //@codingStandardsIgnoreEnd
+        ),
+
         // BUCKET F
         501 => array(
             'report' => 'missingFile',
