@@ -82,10 +82,6 @@ class SugarACLDraftEmailsTest extends \PHPUnit_Framework_TestCase
             ['team_id'],
             ['team_set_id'],
             ['tags'],
-            ['from_link'],
-            ['to_link'],
-            ['cc_link'],
-            ['bcc_link'],
         ];
     }
 
@@ -243,22 +239,6 @@ class SugarACLDraftEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'tags',
-                true,
-            ],
-            [
-                'from_link',
-                false,
-            ],
-            [
-                'to_link',
-                true,
-            ],
-            [
-                'cc_link',
-                true,
-            ],
-            [
-                'bcc_link',
                 true,
             ],
         ];

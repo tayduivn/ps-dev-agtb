@@ -64,11 +64,6 @@ class SugarACLArchivedEmails extends SugarACLStrategy
             'state',
             'reply_to_id',
             'outbound_email_id',
-            // All of the sender and recipient links are immutable.
-            'from_link',
-            'to_link',
-            'cc_link',
-            'bcc_link',
         ];
 
         if (in_array($context['field'], $immutableFields)) {
