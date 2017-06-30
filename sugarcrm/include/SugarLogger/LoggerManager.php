@@ -112,8 +112,9 @@ class LoggerManager
         $condition
         )
     {
-        if ( !$condition )
-            $this->__call('debug', $message);
+        if (!$condition) {
+            $this->debug($message);
+        }
 	}
 
 	/**

@@ -9,13 +9,19 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
+use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 
 /**
  * Assists in modifying the Metadata in places that the core cannot handle at this time.
  *
  */
-class MetaDataCache
+class MetaDataCache implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     protected $db;
 
     /**
@@ -36,9 +42,23 @@ class MetaDataCache
         return $this->getFromCacheTable($key);
     }
 
+    /**
+     * Logs message with stack trace and additional information
+     * such as user id, client type, request url.
+     * This method should only be used when called in-frequently as it has heavy logging.
+     *
+     * @param LoggerInterface $logger
+     * @param string $message
+     */
+    protected static function logDetails(LoggerInterface $logger, $message)
+    {
+        $logger->info($message);
+    }
+
     public function set($key, $data)
     {
         if ($data == null) {
+            static::logDetails($this->logger, "Removing key " . $key . " from cache table.. data is null.");
             $this->removeFromCacheTable($key);
         } else {
             $this->storeToCacheTable($key, $data);
@@ -93,7 +113,7 @@ class MetaDataCache
                 try {
                     $result = unserialize(gzinflate(base64_decode($cacheResult)));
                 } catch (Exception $e) {
-                    $GLOBALS['log']->error("Exception when decompressing metadata hash for $key:" . $e->getMessage());
+                    $this->logger->error("Exception when decompressing metadata hash for $key:" . $e->getMessage());
                 }
             }
         }
@@ -115,7 +135,7 @@ class MetaDataCache
             try {
                 $encoded = base64_encode(gzdeflate(serialize($data)));
             } catch (Exception $e) {
-                $GLOBALS['log']->fatal("Exception when compressing metadata for $key:" . $e->getMessage());
+                $this->logger->fatal("Exception when compressing metadata for $key:" . $e->getMessage());
 
                 return;
             }
@@ -202,6 +222,8 @@ class MetaDataCache
         if (!self::$isCacheEnabled) {
             return true;
         }
+
+        static::logDetails(LoggerFactory::getLogger('metadata'), "Clearing all entries from metadata cache table.");
 
         $db = DBManagerFactory::getInstance();
         $db->commit();

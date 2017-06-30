@@ -10,12 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\MetaData\RefreshQueue;
+use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 
 require_once 'soap/SoapHelperFunctions.php';
 require_once 'include/SugarObjects/LanguageManager.php';
-//BEGIN SUGARCRM flav=ent ONLY
-//END SUGARCRM flav=ent ONLY
 
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataCache.php');
@@ -32,8 +35,9 @@ SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataCache.php');
  *    for a given section or module and rewriting that data to the cache. In some
  *    cases there are rebuild* methods that are consumed by other rebuild* methods.
 */
-class MetaDataManager
+class MetaDataManager implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
     /**
      * Constants that define the sections of the metadata
      */
@@ -412,7 +416,7 @@ class MetaDataManager
             }
 
             // Let consumers know this isn't the correct use of this constuctor
-            $GLOBALS['log']->deprecated("MetaDataManager no longer accepts a User object as an arguments");
+            $this->logger->warning("MetaDataManager no longer accepts a User object as an arguments");
         }
 
         if ($platforms == null) {
@@ -441,10 +445,7 @@ class MetaDataManager
 
         $this->db = DBManagerFactory::getInstance();
 
-        //Here $this->db may be FALSE due to $sugar_config['dbconfig'] unavailable
-        if ($this->db !== false) {
-            $this->cache = new MetaDataCache($this->db);
-        }
+        $this->setLogger(new NullLogger());
     }
 
     /**
@@ -461,7 +462,7 @@ class MetaDataManager
             }
 
             if ($this->db !== false) {
-                $this->cache = new MetaDataCache($this->db);
+                $this->cache = static::newCache($this->db, $this->logger);
             }
         }
 
@@ -470,6 +471,34 @@ class MetaDataManager
         } else {
             return $this->cache;
         }
+    }
+
+    protected static function newCache(DBManager $db = null, LoggerInterface $logger = null)
+    {
+        $db = $db ? $db : DBManagerFactory::getInstance();
+        $cache = new MetaDataCache($db);
+        $logger = $logger ? $logger : LoggerFactory::getLogger('metadata');
+        $cache->setLogger($logger);
+
+        return $cache;
+    }
+
+    /**
+     * Logs message and context with stack trace and additional information
+     * such as user id, client type, request url.
+     * This method should only be used when called in-frequently as it has heavy logging.
+     *
+     * @param LoggerInterface $logger
+     * @param string $message
+     * @param MetaDataContextInterface $context
+     */
+    protected static function logDetails(LoggerInterface $logger, $message, MetaDataContextInterface $context = null)
+    {
+        if ($context) {
+            $message .= sprintf('; Context=%s', get_class($context));
+        }
+
+        $logger->info($message);
     }
 
     /**
@@ -521,6 +550,7 @@ class MetaDataManager
         if ($fresh || empty(self::$managers[$key])) {
             $manager = new $class($platform, $public);
 
+            $manager->setLogger(LoggerFactory::getLogger('metadata'));
             // Cache it and move on
             self::$managers[$key] = $manager;
         }
@@ -1276,7 +1306,7 @@ class MetaDataManager
 
         // Get the listing of files in the cache directory
         $db = DBManagerFactory::getInstance();
-        $cache = new MetaDataCache($db);
+        $cache = static::newCache($db);
         $types = $cache->getKeys();
         foreach($types as $type) {
             // If the cache key fits the pattern of a metadata cache key get the
@@ -1451,7 +1481,7 @@ class MetaDataManager
      */
     protected function rebuildJssourceSection($data, MetaDataContextInterface $context)
     {
-
+        static::logDetails($this->logger, "rebuildJssourceSection", $context);
         $data['jssource'] = $this->buildJavascriptComponentFile($data, !$this->public);
         //If this is private meta, we will still need to build the public javascript to verify that it hasn't changed.
         //If it has changed, the client will need to refresh to load it.
@@ -1507,6 +1537,7 @@ class MetaDataManager
         // NOTE: Do not try to rebuild language cache files as this could be
         // problematic on installations with many installed languages, like OD
         if (!empty($data)) {
+            static::logDetails($this->logger, "rebuildLanguagesCache.", $context);
             $this->clearLanguagesCache();
             $data = $this->loadSectionMetadata(self::MM_LABELS, $data, $context);
             $data = $this->loadSectionMetadata(self::MM_ORDEREDLABELS, $data, $context);
@@ -1632,6 +1663,7 @@ class MetaDataManager
             $context = $this->getDefaultContext();
         }
 
+        static::logDetails($this->logger, "rebuildCache ", $context);
         // Delete our current supply of caches if there are any
         $deleted = $this->deletePlatformVisibilityCaches($context);
 
@@ -1662,6 +1694,9 @@ class MetaDataManager
         if (empty($platforms)) {
             $platforms = $this->getPlatformsWithCaches();
         }
+
+        static::logDetails($this->logger, "Invalidating cache. Platforms with caches " . print_r($platforms, true), $context);
+
         $deleted = $this->deletePlatformVisibilityCaches($context);
         if ($deleted) {
             foreach ($platforms as $platform) {
@@ -1702,6 +1737,8 @@ class MetaDataManager
 
         // Set our inProcess flag;
         static::$inProcess = true;
+
+        static::logDetails(LoggerFactory::getLogger('metadata'), "refreshCache ");
 
         // The basics are, for each platform, rewrite the cache for public and private
         if (empty($platforms)) {
@@ -3319,7 +3356,6 @@ class MetaDataManager
     {
         //Sets a flag that tells callers whether this action actually did something
         $deleted = false;
-
         // Get the hashes array
         $hashes = $this->getCache()->get('hashes');
         if (empty($hashes)) {
@@ -3343,6 +3379,7 @@ class MetaDataManager
                     }
 
                     $deleted = true;
+                    $this->logger->debug("deleted language cache for " . $m[1]);
                 }
             }
         }
