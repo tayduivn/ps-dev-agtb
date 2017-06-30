@@ -1618,13 +1618,11 @@ class PMSECrmDataWrapper implements PMSEObservable
                             if (PMSEEngineUtils::specialFields($field, $type)) {
                                 $tmpField['optionItem'] = $this->gatewayModulesMethod($field);
                             } elseif ($moduleApi !== null) {
-                                $tmpField['optionItem'] = $moduleApi->getEnumValues(
-                                    array(),
-                                    array(
-                                        "module" => $newModuleFilter,
-                                        "field" => $field["name"],
-                                    )
-                                );
+                                $options = getOptionsFromVardef($field);
+                                if ($options === false) {
+                                    throw ProcessManager\Factory::getException('InvalidData', "No list options found for {$field['name']} in module {$beanModule->getModuleName()}", 1);
+                                }
+                                $tmpField['optionItem'] = $options;
                             }
                         } else {
                             $tmpField['optionItem'] = $app_list_strings[$field['options']];
