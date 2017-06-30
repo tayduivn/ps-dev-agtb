@@ -337,7 +337,12 @@
                          * changed, when the email address is successfully
                          * created, to initiate the field's logic for rendering
                          * the pills and reapplying decoration for invalid
-                         * participants.
+                         * participants. Only triggered if the choice has
+                         * already been selected by the user to avoid rendering
+                         * the Select2 data unnecessarily. If the choice is
+                         * updated before the user selects it, then the field
+                         * will handle rendering the change to the collection
+                         * and decorating the pills at that time.
                          * @param {string} term
                          * @param {Array} data The options in the dropdown after the query
                          * callback has been executed.
@@ -358,14 +363,15 @@
                                 });
                                 address.save({}, {
                                     success: _.bind(function(model) {
+                                        var collection = this.model.get(this.name);
+
                                         if (!model.get('invalid_email') && !model.get('opt_out')) {
                                             choice.set('email_address_id', model.get('id'));
                                             this.prepareModel(choice);
-                                            this.model.trigger(
-                                                'change:' + this.name,
-                                                this.model,
-                                                this.model.get(this.name)
-                                            );
+
+                                            if (collection.get(choice)) {
+                                                this.model.trigger('change:' + this.name, this.model, collection);
+                                            }
                                         }
                                     }, this)
                                 });

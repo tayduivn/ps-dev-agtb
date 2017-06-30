@@ -87,7 +87,8 @@
                         event.choice.get('parent_id') === model.get('parent_id');
                 }
 
-                return event.choice.get('email_address_id') === model.get('email_address_id');
+                return event.choice.get('email_address_id') === model.get('email_address_id') ||
+                    event.choice.get('email_address') === model.get('email_address');
             });
 
             if (this.disposed || duplicate) {

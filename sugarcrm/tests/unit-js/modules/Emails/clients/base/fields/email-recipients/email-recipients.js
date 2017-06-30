@@ -172,7 +172,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
             expect(field.model.get('to').length).toBe(2);
         });
 
-        it('should not complete the selection when it is a duplicate email address', function() {
+        it('should not complete the selection when it is a duplicate email address ID', function() {
             var event = new $.Event('select2-selecting');
 
             sandbox.spy(event, 'preventDefault');
@@ -180,6 +180,22 @@ describe('Emails.BaseEmailRecipientsField', function() {
             event.choice = app.data.createBean('EmailParticipants', {
                 _link: 'to_link',
                 email_address_id: to[1].get('email_address_id'),
+                email_address: to[1].get('email_address')
+            });
+
+            field.$(field.fieldTag).trigger(event);
+
+            expect(event.preventDefault).toHaveBeenCalled();
+            expect(field.model.get('to').length).toBe(2);
+        });
+
+        it('should not complete the selection when it is a duplicate email address', function() {
+            var event = new $.Event('select2-selecting');
+
+            sandbox.spy(event, 'preventDefault');
+            field.model.set('to', to);
+            event.choice = app.data.createBean('EmailParticipants', {
+                _link: 'to_link',
                 email_address: to[1].get('email_address')
             });
 

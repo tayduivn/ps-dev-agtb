@@ -401,7 +401,11 @@ describe('Plugins.EmailParticipants', function() {
             // The choice is seen as invalid while the request is in flight.
             expect(actual.invalid).toBe(true);
 
+            // Act as if the user has selected the choice in order to see that
+            // the event is trigger.
+            field.model.get(field.name).add(actual);
             sandbox.spy(field.model, 'trigger');
+
             SugarTest.server.respond();
 
             expect(actual.get('email_address_id')).toBe(address.id);
@@ -410,6 +414,48 @@ describe('Plugins.EmailParticipants', function() {
             expect(field.model.trigger.args[0][0]).toBe('change:' + field.name);
             expect(field.model.trigger.args[0][1]).toBe(field.model);
             expect(field.model.trigger.args[0][2]).toBe(field.model.get(field.name));
+        });
+
+        it('should not trigger the event if the choice has already been selected', function() {
+            var term = 'test@example.com';
+            var address = {
+                _module: 'EmailAddresses',
+                _acl: {
+                    fields: {}
+                },
+                id: _.uniqueId(),
+                email_address: term,
+                email_address_caps: term.toUpperCase(),
+                invalid_email: false,
+                opt_out: false
+            };
+            var response = [
+                200,
+                {'Content-Type': 'application/json'},
+                JSON.stringify(address)
+            ];
+            var data = [];
+            var actual;
+
+            SugarTest.server.respondWith('POST', /.*\/rest\/v10\/EmailAddresses/, response);
+
+            actual = options.createSearchChoice(term, data);
+
+            expect(actual.module).toBe('EmailParticipants');
+            expect(actual.get('email_address_id')).toBeUndefined();
+            expect(actual.get('email_address')).toBe(term);
+            // The choice is seen as invalid while the request is in flight.
+            expect(actual.invalid).toBe(true);
+
+            // Act as if the user has not selected the choice in order to see
+            // that the event is not triggered.
+            sandbox.spy(field.model, 'trigger');
+
+            SugarTest.server.respond();
+
+            expect(actual.get('email_address_id')).toBe(address.id);
+            expect(actual.invalid).toBe(false);
+            expect(field.model.trigger).not.toHaveBeenCalled();
         });
 
         it('should not patch the new choice when the request responds with an invalid email address', function() {
