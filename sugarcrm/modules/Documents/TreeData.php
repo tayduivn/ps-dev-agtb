@@ -83,23 +83,27 @@ function get_node_data($params,$get_array=false) {
  }
  
 function get_documents($cat_id, $subcat_id,$href=true) {
+    $db = DBManagerFactory::getInstance();
+    $builder = $db->getConnection()->createQueryBuilder();
+    $builder->select('*')->from('documents')->where('deleted = 0');
+
+    if ($cat_id != 'null') {
+        $builder->andWhere('category_id = ' . $builder->createPositionalParameter($cat_id));
+    } else {
+        $builder->andWhere('category_id IS NULL');
+    }
+
+    if ($subcat_id != 'null') {
+        $builder->andWhere('subcategory_id = ' . $builder->createPositionalParameter($subcat_id));
+    } else {
+        $builder->andWhere('subcategory_id IS NULL');
+    }
+
+    $stmt = $builder->execute();
+
     $nodes=array();
     $href_string = "javascript:select_document('doctree')";
-    $query="select * from documents where deleted=0";
-    if ($cat_id != 'null') {
-        $query.=" and category_id='$cat_id'";
-    } else {
-        $query.=" and category_id is null";
-    }
-        
-    if ($subcat_id != 'null') {
-        $query.=" and subcategory_id='$subcat_id'";
-    } else {
-        $query.=" and subcategory_id is null";
-    }
-    $result=$GLOBALS['db']->query($query);
-    $current_cat_id=null;
-    while (($row=$GLOBALS['db']->fetchByAssoc($result))!= null) {
+    while ($row = $stmt->fetch()) {
         $node = new Node($row['id'], $row['document_name']);
         if ($href) {
             $node->set_property("href", $href_string);
