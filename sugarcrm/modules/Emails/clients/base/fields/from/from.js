@@ -38,7 +38,7 @@
 
         // Specify the error label for when the sender's email address is
         // invalid.
-        app.error.errorName2Keys[this.type] = 'ERR_INVALID_SENDER';
+        app.error.errorName2Keys[this.type] = app.lang.get('ERR_INVALID_SENDER', this.module);
     },
 
     /**
