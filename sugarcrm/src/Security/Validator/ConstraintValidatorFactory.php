@@ -40,4 +40,12 @@ class ConstraintValidatorFactory implements ConstraintValidatorFactoryInterface
 
         return $this->validators[$className];
     }
+
+    /**
+     * Clear validators cache
+     */
+    public function clearValidatorsCache()
+    {
+        $this->validators = [];
+    }
 }

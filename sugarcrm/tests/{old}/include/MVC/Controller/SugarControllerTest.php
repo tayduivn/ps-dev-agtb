@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -17,6 +18,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('moduleList');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->module_name = null;
     }
@@ -25,10 +27,11 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        if($this->module_name) {
+        if ($this->module_name) {
             rmdir_recursive("modules/{$this->module_name}");
             SugarAutoLoader::delFromMap("modules/{$this->module_name}", false);
         }
+        SugarTestHelper::tearDown();
     }
 
     public function testSetup()
@@ -51,6 +54,11 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetupUseRequestVars()
     {
+        $GLOBALS['moduleList'][] = 'dog33434';
+        $GLOBALS['moduleList'][] = 'dog121255';
+        $GLOBALS['moduleList'][] = 'dog1312';
+        Validator::clearValidatorsCache();
+
         $_REQUEST = array(
             'module' => 'dog33434',
             'target_module' => 'dog121255',

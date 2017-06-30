@@ -11,7 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -24,6 +24,10 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setup("moduleList");
+        $GLOBALS['moduleList'][] = 'foo';
+        Validator::clearValidatorsCache();
+
         $this->_lvd = new ListViewDisplay();
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
@@ -44,6 +48,8 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
     	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     	unset($GLOBALS['current_user']);
     	unset($GLOBALS['app_strings']);
+
+        SugarTestHelper::tearDown();
     }
 
     public function testConstructor()

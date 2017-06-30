@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+
 if(!defined('sugarEntry')) define('sugarEntry', true);
 
 set_include_path(
@@ -570,6 +572,10 @@ class SugarTestHelper
 
         SugarConfig::getInstance()->clearCache();
         \TimeDate::getInstance()->allow_cache = true;
+
+        // Clear validator constraint factory caches. This is necessary as some of
+        // the validators rely on system state like SugarConfig, moduleList, etc.
+        Validator::clearValidatorsCache();
 
         return true;
     }

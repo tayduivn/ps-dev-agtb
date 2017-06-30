@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- 
-
 class Bug49614Test extends Sugar_PHPUnit_Framework_TestCase
 {	
     private $package;
@@ -25,18 +23,18 @@ class Bug49614Test extends Sugar_PHPUnit_Framework_TestCase
 	{
         unset($this->package);
 	}
-    
-	public function testPopulateFromPostKeyValueWithSpaces()
-	{
+
+    public function testPopulateFromPostKeyValueWithSpaces()
+    {
         $_REQUEST = array(
             'description' => '',
             'author' => 'Sugar CRM',
             'key' => ' key ',
             'readme' => ''
         );
-        
+
+        $this->expectException('Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException');
         $this->package->populateFromPost();
-        $this->assertEquals('key', $this->package->key);
 	}
     
 	public function testPopulateFromPostKeyValueWithoutSpaces()
@@ -52,4 +50,3 @@ class Bug49614Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('key', $this->package->key);
 	}
 }
-?>

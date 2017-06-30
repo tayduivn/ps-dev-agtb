@@ -31,6 +31,11 @@ class Validator
     private static $service;
 
     /**
+     * @var ConstraintValidatorFactory
+     */
+    private static $validatorFactory;
+
+    /**
      * Service class, dont instantiate.
      */
     private function __construct()
@@ -57,13 +62,27 @@ class Validator
      */
     public static function create()
     {
-        $validatorFactory = new ConstraintValidatorFactory();
+        if (empty(self::$validatorFactory)) {
+            self::$validatorFactory = new ConstraintValidatorFactory();
+        }
 
         // TODO add metadatacache when adding actual SugarBean validators
 
         return Validation::createValidatorBuilder()
             ->disableAnnotationMapping()
-            ->setConstraintValidatorFactory($validatorFactory)
+            ->setConstraintValidatorFactory(self::$validatorFactory)
             ->getValidator();
+    }
+
+    /**
+     * Convenience method to be able to flush the constraint validator
+     * factory cache. This is only conventient for testing purposes and
+     * should not be called from regular code.
+     */
+    public static function clearValidatorsCache()
+    {
+        if (!empty(self::$validatorFactory)) {
+            self::$validatorFactory->clearValidatorsCache();
+        }
     }
 }

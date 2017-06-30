@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+
 class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -58,6 +60,11 @@ class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
         // Custom help (NOT en_us) on a standard module.
         SugarAutoLoader::put("custom/modules/Accounts/language/it_it.help.DetailView.html", "<h1>Bugs39819-39820</h1>");
 
+        // Register language and reinit InputValidation
+        $GLOBALS['sugar_config']['languages']['it_it'] = 'Italian';
+        SugarConfig::getInstance()->clearCache('languages');
+        Validator::clearValidatorsCache();
+
         $_SERVER['HTTP_HOST'] = "localhost";
         $_SERVER['SCRIPT_NAME'] = "/index.php";
         $_SERVER['QUERY_STRING'] = "module=Administration&action=index";
@@ -73,7 +80,9 @@ class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
         $tStr = ob_get_contents();
         ob_end_clean();
 
+        // Cleanups custom language
         SugarAutoLoader::unlink("custom/modules/Accounts/language/it_it.help.DetailView.html");
+        unset($GLOBALS['sugar_config']['languages']['it_it']);
 
         // I expect to get the it_it custom help....
         $this->assertRegExp("/.*Bugs39819\-39820.*/", $tStr);
