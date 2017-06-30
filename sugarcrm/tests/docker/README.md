@@ -39,9 +39,9 @@ This image is built upon the "Engineering Node Image" and installs Xvfb and brow
 ```
 cd Mango
 docker run \
-    -v "${PWD}/sugarcrm:/usr/local" \
+    -v "${PWD}/sugarcrm:/karma" \
     registry.sugarcrm.net/karma/karma:latest \
-    node_modules/gulp/bin/gulp.js karma --ci --coverage --path=/usr/local --browsers $browsers
+    node_modules/gulp/bin/gulp.js karma --ci --coverage --path=/karma --browsers $browsers
 ```
 
 ### Thorn Image
