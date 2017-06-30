@@ -112,6 +112,16 @@ class PMSEImageGeneratorApi extends FileTempApi
 
     public function getProcessImage(ServiceBase $api, array $args)
     {
+        $this->doGetProcessImage($args);
+    }
+
+    /**
+     * Create the project preview image file
+     *
+     * @param array $args Arguments array built by the service base
+     */
+    public function doGetProcessImage(array $args)
+    {
         $path = 'upload://tmp/';
         $image = ProcessManager\Factory::getPMSEObject('PMSEImageGenerator');
         $img = empty($args['_project']) ?

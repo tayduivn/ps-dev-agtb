@@ -47,7 +47,7 @@ class pmse_InboxController extends SugarController
         $data['frm_action'] = $data['Type'];
         $data['taskName'] = '';
         $engineApi = ProcessManager\Factory::getPMSEObject('PMSEEngineApi');
-        $result = $engineApi->engineRoute(array(), $data);
+        $result = $engineApi->doEngineRoute($data);
         header('Location: index.php');
     }
 
@@ -55,7 +55,7 @@ class pmse_InboxController extends SugarController
     {
         header('Content-Type: image/png');
         $img = ProcessManager\Factory::getPMSEObject('PMSEImageGeneratorApi');
-        $img->getProcessImage(null, array('record' => $_REQUEST['case']));
+        $img->doGetProcessImage(array('record' => $_REQUEST['case']));
     }
 
     public function action_showHistoryEntries()

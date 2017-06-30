@@ -324,6 +324,17 @@ class PMSEEngineApi extends SugarApi
 
     public function engineRoute(ServiceBase $api, array $args)
     {
+        return $this->doEngineRoute($args);
+    }
+
+    /**
+     * Process the request in the engine
+     *
+     * @param array $args Arguments array built by the service base
+     * @return array The success status of the call
+     */
+    public function doEngineRoute(array $args)
+    {
         // Needed to tell the save process to ignore locked field enforcement
         Registry\Registry::getInstance()->set('skip_locked_field_checks', true);
 
