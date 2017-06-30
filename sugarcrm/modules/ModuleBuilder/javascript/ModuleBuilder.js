@@ -760,8 +760,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
             }
         },
 		submitForm: function(formname, successCall){
-			// Make sure the session cookie is always fresh
-			ModuleBuilder.ensureSessionCookie();
             ModuleBuilder.toggleButtons();
 			ajaxStatus.showStatus(SUGAR.language.get('ModuleBuilder', 'LBL_AJAX_LOADING'));
 			if (typeof(successCall) == 'undefined') {
@@ -1287,36 +1285,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 SUGAR.util.paramsToUrl(postFields)
             );
 		},
-		/**
-		 * Makes sure the session cookie is up to date. This supports being in 
-		 * studio and being idle while the main app refreshes the oauth token. 
-		 * This also eliminates the need to a BWC login while in studio.
-		 */
-		ensureSessionCookie: function() {
-			var sessionName = parent.SUGAR.App.cache.get("SessionName"),
-			    cookiePattern = "(" + sessionName + "=)([a-f0-9\-]*)",
-			    matches = document.cookie.match(cookiePattern),
-			    matched = false,
-                currentSID = parent.SUGAR.App.api.getOAuthToken();
-
-			// If there is a current session id cookie (which would happen for
-			// bwc logins) but it does not match the current auth token then 
-			// update the document cookie to the auth token to allow studio to 
-			// continue to function
-                if (currentSID && matches) {
-				for (var i in matches) {
-					if (matches[i] == currentSID) {
-						matched = true;
-						break;
-					}
-				}
-				
-				// There is a session cookie but it doesn't match the auth token
-				if (!matched) {
-					document.cookie = sessionName + "=" + currentSID;
-				}
-			}
-		},
 		asyncRequest : function (params, callback, showLoading) {
 			// Used to normalize request arguments needed for the async request
 			// as well as for setting into the requestElements object
@@ -1341,9 +1309,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			ModuleBuilder.requestElements.method = cMethod;
 			ModuleBuilder.requestElements.url = cUrl;
 			ModuleBuilder.requestElements.callbacks = {success: callback, failure: ModuleBuilder.failed};
-			
-			// Make sure the session cookie is always fresh if that is possible
-			ModuleBuilder.ensureSessionCookie();
+
 
             if (typeof(showLoading) == 'undefined' || showLoading == true) {
                 ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE'));
