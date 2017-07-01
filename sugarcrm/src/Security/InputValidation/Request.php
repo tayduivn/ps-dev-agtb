@@ -27,6 +27,8 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Validator\ContextualValidatorInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  *
@@ -36,8 +38,10 @@ use Psr\Log\LoggerInterface;
  * service factory `InputValidation::getService()`.
  *
  */
-class Request
+class Request implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var Superglobals
      */
@@ -57,11 +61,6 @@ class Request
      * @var ConstraintBuilder
      */
     protected $constraintBuilder;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
 
     /**
      * @var ContextualValidatorInterface
@@ -101,7 +100,7 @@ class Request
         $this->superglobals = $superglobals;
         $this->validator = $validator;
         $this->constraintBuilder = $constraintBuilder;
-        $this->logger = $logger;
+        $this->setLogger($logger);
     }
 
     /**

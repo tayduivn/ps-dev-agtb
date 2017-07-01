@@ -16,11 +16,13 @@ use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\Sanitizer;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\InputValidationException;
-use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
+use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 
 /**
  *
  * Input validation service
+ *
+ * This service uses the 'input_validation' log channel.
  *
  */
 class InputValidation
@@ -87,7 +89,7 @@ class InputValidation
      */
     public static function create(array $get, array $post)
     {
-        $logger = new LoggerTransition(\LoggerManager::getLogger());
+        $logger = LoggerFactory::getLogger('input_validation');
         $validator = Validator::getService();
         $superglobals = new Superglobals($get, $post, $logger);
         $constraintBuilder = new ConstraintBuilder();
