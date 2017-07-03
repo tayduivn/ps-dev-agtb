@@ -129,7 +129,8 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
         ),
     ),
     'orderBy' => array(
-        'field' => 'cas_create_date',
+        // Default sort for cases list view
+        'field' => 'cas_id',
         'direction' => 'desc',
     ),
 );

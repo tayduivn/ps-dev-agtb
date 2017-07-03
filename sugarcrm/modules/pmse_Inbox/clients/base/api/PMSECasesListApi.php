@@ -92,12 +92,24 @@ class PMSECasesListApi extends FilterApi
 
     public function selectCasesList(ServiceBase $api, array $args)
     {
+        // Verify access
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
+
+        // Set up the Sugar Query object
         $q = new SugarQuery();
+
+        // And remove the order by stability since it was causing us problems
+        $q->setOrderByStability(false);
+
+        // This is a our primary select table
         $inboxBean = BeanFactory::newBean('pmse_Inbox');
+
+        // Set the order by properly if we are expected a due date order
         if ($args['order_by'] == 'cas_due_date:asc') {
             $args['order_by'] = 'cas_create_date:asc';
         }
+
+        // Set up the necessary options for the query we will run
         $options = self::parseArguments($api, $args, $inboxBean);
 
         // Replacement for using .* to get all columns
@@ -122,15 +134,15 @@ class PMSECasesListApi extends FilterApi
         //INNER USER TABLE
         $q->joinTable('users', array('alias' => 'u', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
-            ->equalsField('u.id', 'a.created_by')
-            ->equals('u.deleted', 0);
+            ->equalsField('u.id', 'a.created_by');
         $fields[] = array("u.last_name", 'assigned_user_name');
 
         //INNER PROCESS TABLE
         $q->joinTable('pmse_bpmn_process', array('alias' => 'pr', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
             ->equalsField('pr.id', 'a.pro_id');
-        $fields[] = array("pr.prj_id", 'prj_id');
+        $fields[] = array('pr.prj_id', 'prj_id');
+        $fields[] = array('pr.name', 'pro_title');
 
         //INNER PROJECT TABLE
         $q->joinTable('pmse_project', array('alias' => 'prj', 'joinType' => 'INNER', 'linkingTable' => true))
@@ -139,23 +151,16 @@ class PMSECasesListApi extends FilterApi
         $fields[] = array("prj.assigned_user_id", 'prj_created_by');
         $fields[] = array("prj.prj_module", 'prj_module');
 
-        $q->joinTable('pmse_bpmn_process', array('alias' => 'process', 'joinType' => 'INNER', 'linkingTable' => true))
-            ->on()
-            ->equalsField('process.id', 'a.pro_id');
-
         //INNER BPM FLOW
         // This relationship is adding several duplicated rows to the query
         // use of DISTINCT should be added
         $q->joinTable('pmse_bpm_flow', array('alias' => 'pf', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
-            ->equalsField('pf.cas_id','a.cas_id');
+            ->equalsField('pf.cas_id', 'a.cas_id')
+            ->isNull('pf.cas_finish_date');
 
         $fields[] = array("pf.cas_sugar_module", 'cas_sugar_module');
         $fields[] = array("pf.cas_sugar_object_id", 'cas_sugar_object_id');
-
-        // get pro_title (process name) from pmse_bpmn_process table
-        // because that is updated when process definition is edited
-        $fields[] = array('process.name', 'pro_title');
 
         // Since we are retrieving deleted project's processes, we need to know
         // which of them are from deleted projects.
@@ -163,22 +168,21 @@ class PMSECasesListApi extends FilterApi
 
         $q->select($fields);
 
-        // Adding DISTINCT inside query to avoid validate duplicated rows on WHERE section
-        $q->distinct(true);
-
         $q->where()
-            ->in('prj.prj_module', PMSEEngineUtils::getSupportedModules());
+            ->in('prj.prj_module', PMSEEngineUtils::getSupportedModules())
+            ->equals('u.deleted', 0);
 
         if (!empty($args['q'])) {
+            $qLike = $q->getDBManager()->quoted('%' . $args['q'] . '%');
             $q->where()->queryAnd()
-                ->addRaw(
-                    "a.cas_title LIKE '%" . $args['q'] .
-                    "%' OR a.pro_title LIKE '%" . $args['q'] .
-                    "%' OR a.cas_status LIKE '%" . $args['q'] .
-                    "%' OR prj.assigned_user_id LIKE '%" . $args['q'] .
-                    "%' OR pr.prj_id LIKE '%" . $args['q'] .
-                    "%' OR last_name LIKE '%" . $args['q'] . "%'"
-                );
+                ->addRaw("
+                    a.cas_title LIKE $qLike OR
+                    a.pro_title LIKE $qLike OR
+                    a.cas_status LIKE $qLike OR
+                    prj.assigned_user_id LIKE $qLike OR
+                    pr.prj_id LIKE $qLike OR
+                    last_name LIKE $qLike
+                ");
         }
         if (!empty($args['module_list'])){
             switch ($args['module_list']) {
@@ -208,6 +212,7 @@ class PMSECasesListApi extends FilterApi
         foreach ($options['order_by'] as $orderBy) {
             $q->orderBy($orderBy[0], $orderBy[1]);
         }
+
         // Add an extra record to the limit so we can detect if there are more records to be found
         $q->limit($options['limit']);
         $q->offset($options['offset']);

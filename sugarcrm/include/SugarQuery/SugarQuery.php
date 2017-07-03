@@ -74,6 +74,7 @@ class SugarQuery
     protected $joined_tables = array();
 
     protected $jt_index = 0;
+
     /**
      * @var DBManager
      */
@@ -122,6 +123,12 @@ class SugarQuery
     protected $shouldSkipDeletedRecords = true;
 
     /**
+     * This is used in Order By statements and in general is always true
+     * @var boolean
+     */
+    protected $orderByStability = true;
+
+    /**
      * @param DBManager $db
      */
     public function __construct(DBManager $db = null)
@@ -146,6 +153,24 @@ class SugarQuery
     public function getDBManager()
     {
         return $this->db;
+    }
+
+    /**
+     * Sets the order by stability property
+     * @param boolean $val The toggle value
+     */
+    public function setOrderByStability($val)
+    {
+        $this->orderByStability = (bool) $val;
+    }
+
+    /**
+     * Gets the current value of the orderByStability property
+     * @return boolean
+     */
+    public function getOrderByStability()
+    {
+        return $this->orderByStability;
     }
 
     /**
@@ -496,7 +521,7 @@ class SugarQuery
             } else {
                 throw new SugarQueryException('Relationship Field Not Found');
             }
-        }        
+        }
     }
 
     /**

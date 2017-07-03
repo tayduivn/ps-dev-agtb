@@ -128,7 +128,7 @@ class SugarQuery_Compiler_Doctrine
         $this->compileWhere($builder, $query);
         $this->compileGroupBy($builder, $query);
         $this->compileHaving($builder, $query);
-        $this->compileOrderBy($builder, $query, true);
+        $this->compileOrderBy($builder, $query, $query->getOrderByStability());
         $this->compileLimit($builder, $query);
 
         return $builder;
