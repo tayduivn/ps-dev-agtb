@@ -15,7 +15,6 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
-use Symfony\Component\Security\Core\Exception\LockedException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 
 class SugarUserChecker extends UserChecker

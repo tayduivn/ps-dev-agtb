@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 
 use Sugarcrm\IdentityProvider\Encoder\EncoderBuilder;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LocalUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LdapUserChecker;
 use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
@@ -109,7 +109,7 @@ class AuthProviderBasicManagerBuilder
 
         return new DaoAuthenticationProvider(
             new SugarLocalUserProvider(),
-            new SugarUserChecker(new Lockout()),
+            new LocalUserChecker(new Lockout()),
             self::PROVIDER_KEY_LOCAL,
             $encoderFactory
         );
