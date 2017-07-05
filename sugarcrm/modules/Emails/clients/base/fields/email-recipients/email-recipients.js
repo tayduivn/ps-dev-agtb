@@ -300,5 +300,30 @@
         );
 
         this.view.trigger('address-book-state', 'open');
+    },
+
+    /**
+     * Moves the recipients to the target collection.
+     *
+     * @param {Data.BeanCollection} source The collection from which the
+     *   recipients are removed.
+     * @param {Data.BeanCollection} target The collection to which the
+     *   items are added.
+     * @param {Array} draggedItems The recipients that are to be removed from
+     *   the source collection.
+     * @param {Array} droppedItems The recipients that are to be added to
+     *   the target collection.
+     */
+    dropDraggedItems: function(source, target, draggedItems, droppedItems) {
+        source.remove(draggedItems);
+
+        _.each(droppedItems, function(item) {
+            // The `id` must be unset because we're effectively creating
+            // a brand new model to be linked.
+            item.unset('id');
+            item.set('_link', this.getLinkName());
+        }, this);
+
+        target.add(droppedItems);
     }
 })

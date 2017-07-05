@@ -28,6 +28,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
         });
 
         SugarTest.loadPlugin('EmailParticipants');
+        SugarTest.loadPlugin('DragdropSelect2');
         SugarTest.loadHandlebarsTemplate('email-recipients', 'field', 'base', 'detail', 'Emails');
         SugarTest.loadHandlebarsTemplate('email-recipients', 'field', 'base', 'edit', 'Emails');
         SugarTest.loadHandlebarsTemplate('email-recipients', 'field', 'base', 'select2-result', 'Emails');
@@ -102,6 +103,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
 
             sandbox.stub(field, 'render');
             field.model.set('to', to);
+            field.model.trigger('sync');
 
             expect(field.render).toHaveBeenCalledOnce();
         });
@@ -123,6 +125,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
             sandbox.spy(field, '_decorateInvalidRecipients');
             sandbox.spy(field, '_enableDragDrop');
             field.model.set('to', to);
+            field.model.trigger('sync');
 
             expect(field.render).not.toHaveBeenCalled();
             expect(field.getFormattedValue).toHaveBeenCalledOnce();
@@ -151,6 +154,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
 
             sandbox.spy(event, 'preventDefault');
             field.model.set('to', to);
+            field.model.trigger('sync');
             event.choice = app.data.createBean('EmailParticipants', {
                 _link: 'to_link',
                 parent: {
@@ -177,6 +181,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
 
             sandbox.spy(event, 'preventDefault');
             field.model.set('to', to);
+            field.model.trigger('sync');
             event.choice = app.data.createBean('EmailParticipants', {
                 _link: 'to_link',
                 email_address_id: to[1].get('email_address_id'),
@@ -194,6 +199,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
 
             sandbox.spy(event, 'preventDefault');
             field.model.set('to', to);
+            field.model.trigger('sync');
             event.choice = app.data.createBean('EmailParticipants', {
                 _link: 'to_link',
                 email_address: to[1].get('email_address')
@@ -211,6 +217,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
             var actual;
 
             field.model.set('to', to);
+            field.model.trigger('sync');
             event.added = [
                 app.data.createBean('EmailParticipants', {
                     _link: 'to_link',
@@ -238,6 +245,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
             var event = new $.Event('change');
 
             field.model.set('to', to);
+            field.model.trigger('sync');
             event.removed = [to[1]];
 
             field.$(field.fieldTag).trigger(event);
@@ -259,6 +267,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
         var actual;
 
         field.model.set('to', to);
+        field.model.trigger('sync');
         actual = field.getFormattedValue();
 
         expect(actual.length).toBe(to.length);
@@ -302,6 +311,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
         });
 
         field.model.set('to', to);
+        field.model.trigger('sync');
         expect(field.$(invalidSelector).length).toBe(0);
 
         field.model.get('to').add(invalid);
@@ -354,6 +364,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
         });
         field.view.on('address-book-state', spy);
         field.model.set('to', to);
+        field.model.trigger('sync');
 
         field.$('.btn').click();
         collection = field.model.get('to');
@@ -419,6 +430,151 @@ describe('Emails.BaseEmailRecipientsField', function() {
 
             field.setDisabled();
             expect(field.$(field.fieldTag).select2('container').hasClass('select2-container-disabled')).toBe(true);
+        });
+    });
+
+    describe('dragging and dropping recipients between fields', function() {
+        var toField;
+        var ccField;
+        var cc;
+        var dropHandler;
+        var $helper;
+
+        beforeEach(function() {
+            var ccParentId = _.uniqueId();
+
+            cc = [
+                app.data.createBean('EmailParticipants', {
+                    _link: 'cc_link',
+                    id: _.uniqueId(),
+                    parent: {
+                        _acl: {},
+                        type: 'Contacts',
+                        id: ccParentId,
+                        name: 'Tom Frank'
+                    },
+                    parent_type: 'Contacts',
+                    parent_id: ccParentId,
+                    parent_name: 'Tom Frank',
+                    email_address_id: _.uniqueId(),
+                    email_address: 'tfrank@example.com'
+                })
+            ];
+
+            field = SugarTest.createField({
+                name: 'to',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+            model.set('to', to);
+
+            ccField = SugarTest.createField({
+                name: 'cc',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+            model.set('cc', cc);
+
+            model.trigger('sync');
+
+            dropHandler = ccField.$(ccField.fieldTag).select2('container').droppable('option', 'drop');
+            $helper = $('<div data-source-field="' + field.name + '"></div>');
+        });
+
+        afterEach(function() {
+            ccField.dispose();
+        });
+
+        it('should move a recipient from the To field to the CC field', function() {
+            var json;
+
+            // Simulate dragging the second recipient in the To field.
+            $helper.append('<span data-id="' + to[1].cid + '"></span>');
+
+            // Simulate dropping the recipient in the CC field.
+            dropHandler($.Event(), {helper: $helper.get(0)});
+
+            expect(field.model.get('to').length).toBe(1);
+            expect(field.model.get('cc').length).toBe(2);
+
+            json = model.toJSON();
+            expect(json.to_link.create.length).toBe(0);
+            expect(json.to_link.add.length).toBe(0);
+            expect(json.to_link.delete).toEqual([to[1].get('id')]);
+            expect(json.cc_link.create).toEqual([{
+                _link: 'cc_link',
+                email_address_id: to[1].get('email_address_id'),
+                email_address: to[1].get('email_address'),
+                parent_type: to[1].get('parent_type'),
+                parent_id: to[1].get('parent_id'),
+                parent_name: to[1].get('parent_name'),
+                parent: {
+                    _acl: {},
+                    id: to[1].get('parent_id'),
+                    name: to[1].get('parent_name'),
+                    type: to[1].get('parent_type')
+                }
+            }]);
+            expect(json.cc_link.add.length).toBe(0);
+            expect(json.cc_link.delete.length).toBe(0);
+        });
+
+        it('should move a yet-to-be-saved recipient from the To field to the CC field', function() {
+            var json;
+            // Add an unsaved recipient to the To field.
+            var newParentId = _.uniqueId();
+            var newRecipient = app.data.createBean('EmailParticipants', {
+                _link: 'to_link',
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: newParentId,
+                    name: 'Charles Brohm'
+                },
+                parent_type: 'Contacts',
+                parent_id: newParentId,
+                parent_name: 'Charles Brohm',
+                email_address_id: _.uniqueId(),
+                email_address: 'cbrohm@example.com'
+            });
+            field.model.get('to').add(newRecipient);
+
+            // Simulate dragging the second recipient in the To field.
+            $helper.append('<span data-id="' + newRecipient.cid + '"></span>');
+
+            // Simulate dropping the recipient in the CC field.
+            dropHandler($.Event(), {helper: $helper.get(0)});
+
+            expect(field.model.get('to').length).toBe(2);
+            expect(field.model.get('cc').length).toBe(2);
+
+            json = model.toJSON();
+            expect(json.to_link).toBeUndefined();
+            expect(json.cc_link.create).toEqual([{
+                _link: 'cc_link',
+                deleted: 0,
+                email_address_id: newRecipient.get('email_address_id'),
+                email_address: newRecipient.get('email_address'),
+                parent_type: newRecipient.get('parent_type'),
+                parent_id: newRecipient.get('parent_id'),
+                parent_name: newRecipient.get('parent_name'),
+                parent: {
+                    _acl: {},
+                    id: newRecipient.get('parent_id'),
+                    name: newRecipient.get('parent_name'),
+                    type: newRecipient.get('parent_type')
+                }
+            }]);
+            expect(json.cc_link.add.length).toBe(0);
+            expect(json.cc_link.delete.length).toBe(0);
         });
     });
 });
