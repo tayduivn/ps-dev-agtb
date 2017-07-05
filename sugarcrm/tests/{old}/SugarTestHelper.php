@@ -11,7 +11,6 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
-use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 if(!defined('sugarEntry')) define('sugarEntry', true);
 
@@ -79,9 +78,6 @@ $repair->module_list = array();
 $repair->show_output = false;
 $repair->clearJsLangFiles();
 $repair->clearJsFiles();
-
-// Ensure InputValidation has soft_fail disabled
-InputValidation::getService()->setSoftFail(false);
 
 // make sure the client license has been validated
 $license = new Administration();
