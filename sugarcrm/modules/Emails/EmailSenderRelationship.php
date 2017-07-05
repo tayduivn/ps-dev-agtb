@@ -22,7 +22,26 @@ require_once 'modules/Emails/EmailRecipientRelationship.php';
  */
 class EmailSenderRelationship extends EmailRecipientRelationship
 {
+    /**
+     * EmailSenderRelationship extends from a one-to-many relationship implementation for the purpose of code reuse.
+     * However, each email can only have one sender, so the relationship is truly a one-to-one relationship in concept
+     * and implementation.
+     *
+     * {@inheritdoc}
+     */
     public $type = 'one-to-one';
+
+    /**
+     * Even when an email is a draft, the sender can be replaced by another sender also representing the current user,
+     * but with additional data, like a new or different email address. Replacing the sender requires removing the
+     * existing EmailParticipants bean. Removing the sender is not allowed for drafts. So, this property is used to
+     * indicate that it is safe to remove the sender, even for drafts. It must always be reset to `false` after the
+     * remove action has occurred, in success or failure, so that external callers of
+     * {@link EmailSenderRelationship::remove()} cannot remove a draft's sender, intentionally or unintentionally.
+     *
+     * @var bool
+     */
+    private $allowRemove = false;
 
     /**
      * If an email already has a sender, then the sender is removed before the new one is added.
@@ -36,6 +55,10 @@ class EmailSenderRelationship extends EmailRecipientRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
+        if ($lhs->isUpdate() && $lhs->state === Email::STATE_ARCHIVED) {
+            throw new SugarApiExceptionNotAuthorized("Cannot add to {$this->name} when the email is archived");
+        }
+
         if ($lhs->state === Email::STATE_DRAFT) {
             if (empty($rhs->parent_type) && empty($rhs->parent_id)) {
                 // Default the parent to the current user.
@@ -53,6 +76,13 @@ class EmailSenderRelationship extends EmailRecipientRelationship
 
         $this->fixParentModule($rhs);
         $this->setEmailAddress($lhs, $rhs);
+
+        if (empty($lhs->{$this->lhsLink}) && !$lhs->load_relationship($this->lhsLink)) {
+            $lhsClass = get_class($lhs);
+            $GLOBALS['log']->fatal("could not load LHS {$this->lhsLink} in {$lhsClass}");
+            return false;
+        }
+
         $currentRows = $lhs->{$this->lhsLink}->getBeans();
 
         // There can only be one. But just in case something weird happens, we'll iterate through the rows.
@@ -74,10 +104,14 @@ class EmailSenderRelationship extends EmailRecipientRelationship
 
             if (!$doEmailAddressesMatch) {
                 // The email_address_id's do not collide. Consider it a new sender.
+                $this->allowRemove = true;
+
                 if (!$this->remove($lhs, $currentRow)) {
+                    $this->allowRemove = false;
                     return false;
                 }
 
+                $this->allowRemove = false;
                 continue;
             }
 
@@ -92,12 +126,37 @@ class EmailSenderRelationship extends EmailRecipientRelationship
             }
 
             // The sender has a different parent. Replace the sender.
+            $this->allowRemove = true;
+
             if (!$this->remove($lhs, $currentRow)) {
+                $this->allowRemove = false;
                 return false;
             }
+
+            $this->allowRemove = false;
         }
 
         return parent::add($lhs, $rhs, $additionalFields);
+    }
+
+    /**
+     * $rhs is deleted after unlinking because it is no longer needed for anything. Resaves the emails_text data for
+     * $lhs after changing its participants.
+     *
+     * {@inheritdoc}
+     */
+    public function remove($lhs, $rhs)
+    {
+        if (!$this->allowRemove &&
+            $lhs->isUpdate() &&
+            $lhs->state === Email::STATE_DRAFT &&
+            !$rhs->deleted &&
+            !$lhs->deleted
+        ) {
+            throw new SugarApiExceptionNotAuthorized("Cannot remove from {$this->name} when the email is a draft");
+        }
+
+        return parent::remove($lhs, $rhs);
     }
 
     /**

@@ -93,24 +93,26 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
-        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email->load_relationship('from_link');
         $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
         $email->load_relationship('to_link');
         $email->to_link->add($this->createEmailParticipant($contact));
+        $email->save();
 
         // Archived email sent by the current user to $user and $contact.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
-        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email->load_relationship('from_link');
         $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
         $email->load_relationship('to_link');
         $email->to_link->add($this->createEmailParticipant($user));
         $email->load_relationship('cc_link');
         $email->cc_link->add($this->createEmailParticipant($contact));
+        $email->save();
 
         // Draft email owned by the current user.
         $data = [
@@ -137,46 +139,50 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $user->id,
         ];
-        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email->load_relationship('from_link');
         $email->from_link->add($this->createEmailParticipant($user));
         $email->load_relationship('to_link');
         $email->to_link->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->save();
 
         // Archived email sent by $contact to $user and the current user.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
-        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email->load_relationship('from_link');
         $email->from_link->add($this->createEmailParticipant($contact));
         $email->load_relationship('to_link');
         $email->to_link->add($this->createEmailParticipant($user));
         $email->load_relationship('bcc_link');
         $email->bcc_link->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->save();
 
         // Archived email sent by the current user to an email address.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
-        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email->load_relationship('from_link');
         $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
         $email->load_relationship('to_link');
         $email->to_link->add($this->createEmailParticipant(null, $address));
+        $email->save();
 
         // Archived email sent by the contact to the user with the specified email address.
         $data = [
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $user->id,
         ];
-        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
         $email->load_relationship('from_link');
         $email->from_link->add($this->createEmailParticipant($contact));
         $email->load_relationship('to_link');
         $email->to_link->add($this->createEmailParticipant($user, $address));
+        $email->save();
 
         $args = [
             'module' => 'Emails',

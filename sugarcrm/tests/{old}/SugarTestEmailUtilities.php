@@ -17,7 +17,7 @@ class SugarTestEmailUtilities
 
     private function __construct() {}
 
-    public static function createEmail($id = '', $override = array()) 
+    public static function createEmail($id = '', $override = array(), $save = true)
     {
         global $timedate;
         
@@ -38,7 +38,11 @@ class SugarTestEmailUtilities
         {
             $email->$key = $value;
         }
-        $email->save();
+
+        if ($save) {
+            $email->save();
+        }
+
         if(!empty($override['parent_id']) && !empty($override['parent_type']))
         {
             self::createEmailsBeansRelationship($email->id, $override['parent_type'], $override['parent_id']);

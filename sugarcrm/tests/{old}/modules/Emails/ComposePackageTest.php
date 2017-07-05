@@ -319,9 +319,10 @@ class ComposePackageTest extends Sugar_PHPUnit_Framework_TestCase
         $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
 
         $quote = SugarTestQuoteUtilities::createQuote();
-        $email = SugarTestEmailUtilities::createEmail();
-        $email->description_html = 'foo bar <b>biz</b> baz';
-        $email->to_addrs = "{$address1->email_address}, {$this->c->name} <{$address2->email_address}>";
+        $email = SugarTestEmailUtilities::createEmail('', [
+            'description_html' => 'foo bar <b>biz</b> baz',
+            'to_addrs' => "{$address1->email_address}, {$this->c->name} <{$address2->email_address}>",
+        ]);
 
         $_REQUEST['forQuickCreate'] = true;
         require_once 'modules/Emails/Compose.php';
@@ -337,7 +338,7 @@ class ComposePackageTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($quote->id, $data['parent_id']);
         $this->assertSame($quote->name, $data['parent_name']);
         $this->assertSame($email->name, $data['subject']);
-        $this->assertSame($email->description_html, $data['body']);
+        $this->assertSame(from_html($email->description_html), $data['body']);
         $this->assertEmpty($data['attachments']);
         $this->assertSame($email->id, $data['email_id']);
         $this->assertSame($email->to_addrs, $data['to_email_addrs']);

@@ -523,6 +523,10 @@ for($i=0; $i<$number_contacts; $i++) {
 
 	//Create new emails
 	$email = new Email();
+    $email->id = \Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
+    $email->new_with_id = true;
+    BeanFactory::registerBean($email);
+
 	$key = array_rand($sugar_demodata['email_seed_data_subjects']);
 	$email->name = $sugar_demodata['email_seed_data_subjects'][$key];
 	$email->date_start = create_date();
@@ -546,7 +550,7 @@ for($i=0; $i<$number_contacts; $i++) {
     }
     $email->type = current($sugar_demodata['email_seed_data_types']);
     next($sugar_demodata['email_seed_data_types']);
-	$email->save();
+
 	$email->load_relationship('contacts');
 	$email->contacts->add($contact);
 	$email->load_relationship('accounts');
@@ -571,6 +575,10 @@ for($i=0; $i<$number_contacts; $i++) {
     $to->parent_id = $contact->id;
     $email->load_relationship('to_link');
     $email->to_link->add($to);
+
+    // Add $email to the resave queue to force it to be saved now that all of the relationships have been saved. The
+    // email won't be added to the queue twice. This guarantees that the email will only be saved once.
+    SugarRelationship::addToResaveList($email);
 
     // The relationship between Emails and EmailParticipants requires that we resave the beans. Just in case something
     // prevented them from being resaved already, try it one last time.

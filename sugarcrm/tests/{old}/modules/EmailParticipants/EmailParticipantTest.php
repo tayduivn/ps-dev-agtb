@@ -79,7 +79,7 @@ class EmailParticipantTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMarkDeleted()
     {
-        $email = SugarTestEmailUtilities::createEmail();
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $email->load_relationship('to_link');
 
         $contact = SugarTestContactUtilities::createContact();

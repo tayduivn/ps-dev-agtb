@@ -1172,6 +1172,12 @@ class Email extends SugarBean {
                 }
             }
 
+            // Linking the email addresses must precede saving the emails_text data so that the sender and recipients
+            // are linked to the email before an attempt is made to recalculate those fields in the emails_text table.
+            // And linking the email addresses must precede saving the email to avoid exceptions when creating an
+            // archived email.
+            $this->saveEmailAddresses();
+
 			$parentSaveResult = parent::save($check_notify);
 
             // Add the current user as the sender when the email is a draft.
@@ -1212,10 +1218,6 @@ class Email extends SugarBean {
                 }
 			}
 
-            // Save related data.
-            // Linking the email addresses must precede saving email text so that the sender and recipients are linked
-            // to the email before an attempt is made to recalculate those fields in the email_text table.
-            $this->saveEmailAddresses();
             $this->saveEmailText();
             $this->updateAttachmentsVisibility();
 
@@ -1429,16 +1431,23 @@ class Email extends SugarBean {
      */
     public function linkEmailToAddress($id, $type)
     {
+        $logger = LoggerManager::getLogger();
         $link = "{$type}_link";
+
+        if ($this->isUpdate() && $this->state === Email::STATE_ARCHIVED) {
+            $logger->warn("Cannot add EmailAddresses/{$id} to link {$link} when Emails/{$this->id} is archived");
+            return '';
+        }
+
         $emailAddress = BeanFactory::retrieveBean('EmailAddresses', $id);
 
         if (!$emailAddress) {
-            LoggerManager::getLogger()->error("Invalid ID for an EmailAddresses record: {$id}");
+            $logger->error("Invalid ID for an EmailAddresses record: {$id}");
             return '';
         }
 
         if (!$this->load_relationship($link)) {
-            LoggerManager::getLogger()->error("Failed to load link {$link} for Emails record: {$this->id}");
+            $logger->error("Failed to load link {$link} for Emails record: {$this->id}");
             return '';
         }
 
@@ -1450,13 +1459,13 @@ class Email extends SugarBean {
         $failures = $this->$link->add($ep);
 
         if ($failures === true) {
-            LoggerManager::getLogger()->debug("Linked EmailAddresses/{$id} to Emails/{$this->id} on link {$link}");
+            $logger->debug("Linked EmailAddresses/{$id} to Emails/{$this->id} on link {$link}");
 
             return $ep->id;
         }
 
-        LoggerManager::getLogger()->error("Failed to link EmailAddresses/{$id} to Emails/{$this->id} on link {$link}");
-        LoggerManager::getLogger()->error('failures=' . var_export($failures, true));
+        $logger->error("Failed to link EmailAddresses/{$id} to Emails/{$this->id} on link {$link}");
+        $logger->error('failures=' . var_export($failures, true));
 
         // The email address might already be linked to the email, in which case the ID of the existing row from the
         // emails_email_addr_rel table should be returned.

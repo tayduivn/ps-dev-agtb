@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 require_once 'modules/Emails/EmailRecipientRelationship.php';
 
 /**
@@ -17,6 +19,8 @@ require_once 'modules/Emails/EmailRecipientRelationship.php';
  */
 class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $relationship;
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
@@ -37,6 +41,12 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDownAfterClass();
     }
 
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
+    }
+
     protected function tearDown()
     {
         // Clean up any dangling beans that need to be resaved.
@@ -44,35 +54,21 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    public function stateProvider()
-    {
-        return [
-            [
-                Email::STATE_DRAFT,
-            ],
-            [
-                Email::STATE_ARCHIVED,
-            ],
-        ];
-    }
-
     /**
      * An email address can be linked without a person record.
      *
-     * @dataProvider stateProvider
      * @covers ::add
      * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_AddAnEmailAddress_ParticipantIsSavedWithoutParent($state)
+    public function testAdd_ParticipantIsLinkedWithoutParent()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
-        $result = $relationship->add($email, $this->createEmailParticipant(null, $address));
+        $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address));
         $this->assertTrue($result);
 
         $beans = $email->to_link->getBeans();
@@ -90,22 +86,20 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * The value of email_address_id is always used when it is set.
      *
-     * @dataProvider stateProvider
      * @covers ::add
      * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_AddContactWithAnEmailAddress_ParticipantIsSavedWithParentAndEmailAddress($state)
+    public function testAdd_ParticipantIsLinkedWithParentAndEmailAddress()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
 
-        $result = $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
         $this->assertTrue($result);
 
         $beans = $email->to_link->getBeans();
@@ -131,13 +125,12 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_AddContactWithoutAnEmailAddressToDraft_ParticipantIsSavedWithoutAnEmailAddress()
+    public function testAdd_ParticipantIsLinkedWithoutAnEmailAddress()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
 
-        $result = $relationship->add($email, $this->createEmailParticipant($contact));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact));
         $this->assertTrue($result);
 
         $beans = $email->to_link->getBeans();
@@ -164,15 +157,17 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_AddContactWithoutAnEmailAddressToArchivedEmail_ParticipantIsSavedWithPrimaryEmailAddress()
+    public function testAdd_ParticipantIsLinkedWithPrimaryEmailAddress()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), ['state' => Email::STATE_ARCHIVED], false);
         $contact = SugarTestContactUtilities::createContact();
         $primaryId = $contact->emailAddress->getGuid($contact->email1);
 
-        $result = $relationship->add($email, $this->createEmailParticipant($contact));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact));
         $this->assertTrue($result);
+
+        // Save the archived email now that the relationships have been saved. This is how the REST API operates.
+        $email->save();
 
         $beans = $email->to_link->getBeans();
         $this->assertCount(1, $beans);
@@ -197,20 +192,19 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_DraftHasContactWithAnEmailAddress_RemoveEmailAddress_EmailAddressIsRemoved()
+    public function testAdd_EmailAddressIsRemoved()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
 
         $ep = $this->createEmailParticipant($contact, $address);
-        $relationship->add($email, $ep);
+        $this->relationship->add($email, $ep);
 
         // The original object must be used to try to remove the email address from the relationship.
         $ep->email_address_id = '';
-        $result = $relationship->add($email, $ep);
+        $result = $this->relationship->add($email, $ep);
         $this->assertTrue($result);
 
         $beans = $email->to_link->getBeans();
@@ -226,63 +220,22 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * The email_address_id column cannot be emptied if the email is archived. The record's primary email address will
-     * replace the original value of email_address_id.
-     *
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_ArchivedEmailHasContactWithAnEmailAddress_RemoveEmailAddress_PrimaryEmailAddressIsUsed()
-    {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
-        $contact = SugarTestContactUtilities::createContact();
-        $primaryId = $contact->emailAddress->getGuid($contact->email1);
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
-
-        $ep = $this->createEmailParticipant($contact, $address);
-        $relationship->add($email, $ep);
-
-        // The original object must be used to try to remove the email address from the relationship.
-        $ep->email_address_id = '';
-        $result = $relationship->add($email, $ep);
-        $this->assertTrue($result);
-
-        $beans = $email->to_link->getBeans();
-        $this->assertCount(1, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact->id, $bean->parent_id);
-        $this->assertSame($primaryId, $bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->to_addrs_names);
-    }
-
-    /**
      * A record -- Accounts, Contacts, Leads, etc. -- can be added as a recipient with an email_address_id where that
      * email address is not linked to the record. When this happens, the email address should be linked to the record.
      *
-     * @dataProvider stateProvider
      * @covers ::add
      * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_AddContactWithAnEmailAddress_EmailAddressIsLinkedToTheContact($state)
+    public function testAdd_EmailAddressIsLinkedToTheContact()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
-        $result = $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
         $this->assertTrue($result);
 
         $beans = $email->to_link->getBeans();
@@ -307,22 +260,56 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * The `parent_type` and `parent_id` fields are patched when a bean is linked with an email address that is already
      * linked as a plain email address.
      *
-     * @dataProvider stateProvider
      * @covers ::add
      * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_EmailHasAnEmailAddressParticipant_AddContactWithSameEmailAddress_ParentIsAddedToParticipant($state)
+    public function testAdd_ParticipantIsUpdatedWithParent()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         $contact = SugarTestContactUtilities::createContact();
-        $relationship->add($email, $this->createEmailParticipant(null, $address));
+        $this->relationship->add($email, $this->createEmailParticipant(null, $address));
 
-        $result = $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $this->assertTrue($result);
+
+        $beans = $email->to_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->to_addrs_names);
+    }
+
+    /**
+     * The `parent_type` and `parent_id` fields are patched when a bean is linked with an email address that is already
+     * linked as a plain email address.
+     *
+     * @covers ::add
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_ParentIsAddedToExistingParticipant()
+    {
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $contact = SugarTestContactUtilities::createContact();
+
+        $ep = $this->createEmailParticipant(null, $address);
+        $this->relationship->add($email, $ep);
+
+        $ep->parent_type = $contact->getModuleName();
+        $ep->parent_id = $contact->id;
+        $result = $this->relationship->add($email, $ep);
         $this->assertTrue($result);
 
         $beans = $email->to_link->getBeans();
@@ -341,19 +328,17 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * The `parent_type` and `parent_id` fields are preserved if an attempt is made to link an email address when that
      * email address is already linked along with a bean.
      *
-     * @dataProvider stateProvider
      * @covers ::add
      * @covers Email::retrieveEmailText
      */
-    public function testAdd_EmailHasContactWithAnEmailAddress_AddSameEmailAddress_NoChangeIsMade($state)
+    public function testAdd_NoChangeWhenEmailAddressIsAlreadyLinkedToParticipantWithParent()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
 
-        $result = $relationship->add($email, $this->createEmailParticipant(null, $address));
+        $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address));
         $this->assertFalse($result);
 
         $beans = $email->to_link->getBeans();
@@ -369,7 +354,8 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * The same email address can be used by more than one bean within the same role on an email.
+     * Each role can have multiple recipients. The same email address can be used by more than one bean within the same
+     * role.
      *
      * @covers ::add
      * @covers EmailParticipant::save
@@ -377,261 +363,104 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_DraftHasContact_AddLeadWithoutAnEmailAddress()
+    public function testAdd_RolesCanHaveMultipleParticipants()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $contact = SugarTestContactUtilities::createContact();
-        $lead = SugarTestLeadUtilities::createLead();
-        $relationship->add($email, $this->createEmailParticipant($contact));
 
-        $result = $relationship->add($email, $this->createEmailParticipant($lead));
-        $this->assertTrue($result);
+        $contact1 = SugarTestContactUtilities::createContact();
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact1));
+        $this->assertTrue($result, 'The contact should have been added without an email address');
 
-        $beans = $email->to_link->getBeans();
-        $this->assertCount(2, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact->id, $bean->parent_id);
-        $this->assertEmpty($bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Leads', $bean->parent_type);
-        $this->assertSame($lead->id, $bean->parent_id);
-        $this->assertEmpty($bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals(
-            "{$contact->name} <{$contact->email1}>, {$lead->name} <{$lead->email1}>",
-            $email->to_addrs_names
-        );
-    }
-
-    /**
-     * The same email address can be used by more than one bean within the same role on an email.
-     *
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_DraftHasContactWithAnEmailAddress_AddLeadWithoutAnEmailAddress()
-    {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $contact = SugarTestContactUtilities::createContact();
-        $lead = SugarTestLeadUtilities::createLead();
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant($contact, $address));
-
-        $result = $relationship->add($email, $this->createEmailParticipant($lead));
-        $this->assertTrue($result);
-
-        $beans = $email->to_link->getBeans();
-        $this->assertCount(2, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact->id, $bean->parent_id);
-        $this->assertSame($address->id, $bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Leads', $bean->parent_type);
-        $this->assertSame($lead->id, $bean->parent_id);
-        $this->assertEmpty($bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals(
-            "{$contact->name} <{$address->email_address}>, {$lead->name} <{$lead->email1}>",
-            $email->to_addrs_names
-        );
-    }
-
-    /**
-     * The same email address can be used by more than one bean within the same role on an email.
-     *
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_ArchivedEmailHasContactWithAnEmailAddress_AddLeadWithoutAnEmailAddress()
-    {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
-        $contact = SugarTestContactUtilities::createContact();
-        $lead = SugarTestLeadUtilities::createLead();
-        $primaryId = $lead->emailAddress->getGuid($lead->email1);
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant($contact, $address));
-
-        $result = $relationship->add($email, $this->createEmailParticipant($lead));
-        $this->assertTrue($result);
-
-        $beans = $email->to_link->getBeans();
-        $this->assertCount(2, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact->id, $bean->parent_id);
-        $this->assertSame($address->id, $bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Leads', $bean->parent_type);
-        $this->assertSame($lead->id, $bean->parent_id);
-        $this->assertSame($primaryId, $bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals(
-            "{$contact->name} <{$address->email_address}>, {$lead->name} <{$lead->email1}>",
-            $email->to_addrs_names
-        );
-    }
-
-    /**
-     * The same email address can be used by more than one bean within the same role on an email.
-     *
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_DraftHasContactWithoutAnEmailAddress_AddLeadWithAnEmailAddress()
-    {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $contact = SugarTestContactUtilities::createContact();
-        $lead = SugarTestLeadUtilities::createLead();
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant($contact));
-
-        $result = $relationship->add($email, $this->createEmailParticipant($lead, $address));
-        $this->assertTrue($result);
-
-        $beans = $email->to_link->getBeans();
-        $this->assertCount(2, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact->id, $bean->parent_id);
-        $this->assertEmpty($bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Leads', $bean->parent_type);
-        $this->assertSame($lead->id, $bean->parent_id);
-        $this->assertSame($address->id, $bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals(
-            "{$contact->name} <{$contact->email1}>, {$lead->name} <{$address->email_address}>",
-            $email->to_addrs_names
-        );
-    }
-
-    /**
-     * The same email address can be used by more than one bean within the same role on an email.
-     *
-     * @dataProvider stateProvider
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_EmailHasContactWithAnEmailAddress_AddLeadWithAnEmailAddress($state)
-    {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
-        $contact = SugarTestContactUtilities::createContact();
+        $contact2 = SugarTestContactUtilities::createContact();
         $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $lead = SugarTestLeadUtilities::createLead();
-        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant($contact, $address1));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact2, $address1));
+        $this->assertTrue($result, 'A different contact should have been added with an email address');
 
-        $result = $relationship->add($email, $this->createEmailParticipant($lead, $address2));
-        $this->assertTrue($result);
+        $contact3 = SugarTestContactUtilities::createContact();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact3, $address2));
+        $this->assertTrue($result, 'A different contact should have been added with a different email address');
+
+        $lead1 = SugarTestLeadUtilities::createLead();
+        $result = $this->relationship->add($email, $this->createEmailParticipant($lead1));
+        $this->assertTrue($result, 'The lead should have been added without an email address');
+
+        $lead2 = SugarTestLeadUtilities::createLead();
+        $result = $this->relationship->add($email, $this->createEmailParticipant($lead2, $address1));
+        $this->assertTrue($result, 'The lead should have been added even with a matching email address');
+
+        $address3 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address3));
+        $this->assertTrue($result, 'The plain email address should have been added');
+
+        $address4 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address4));
+        $this->assertTrue($result, 'Another plain email address should have been added');
 
         $beans = $email->to_link->getBeans();
-        $this->assertCount(2, $beans);
+        $this->assertCount(7, $beans);
 
         $bean = array_shift($beans);
         $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact->id, $bean->parent_id);
+        $this->assertSame($contact1->id, $bean->parent_id);
+        $this->assertEmpty($bean->email_address_id);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact2->id, $bean->parent_id);
         $this->assertSame($address1->id, $bean->email_address_id);
 
         $bean = array_shift($beans);
-        $this->assertSame('Leads', $bean->parent_type);
-        $this->assertSame($lead->id, $bean->parent_id);
+        $this->assertSame('Contacts', $bean->parent_type);
+        $this->assertSame($contact3->id, $bean->parent_id);
         $this->assertSame($address2->id, $bean->email_address_id);
 
-        $email->retrieveEmailText();
-        $this->assertEquals(
-            "{$contact->name} <{$address1->email_address}>, {$lead->name} <{$address2->email_address}>",
-            $email->to_addrs_names
-        );
-    }
-
-    /**
-     * The same email address can be used by more than one bean within the same role on an email.
-     *
-     * @dataProvider stateProvider
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_EmailHasContactWithAnEmailAddress_AddLeadWithSameEmailAddress($state)
-    {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
-        $contact = SugarTestContactUtilities::createContact();
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $lead = SugarTestLeadUtilities::createLead();
-        $relationship->add($email, $this->createEmailParticipant($contact, $address));
-
-        $result = $relationship->add($email, $this->createEmailParticipant($lead, $address));
-        $this->assertTrue($result);
-
-        $beans = $email->to_link->getBeans();
-        $this->assertCount(2, $beans);
-
         $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact->id, $bean->parent_id);
-        $this->assertSame($address->id, $bean->email_address_id);
+        $this->assertSame('Leads', $bean->parent_type);
+        $this->assertSame($lead1->id, $bean->parent_id);
+        $this->assertEmpty($bean->email_address_id);
 
         $bean = array_shift($beans);
         $this->assertSame('Leads', $bean->parent_type);
-        $this->assertSame($lead->id, $bean->parent_id);
-        $this->assertSame($address->id, $bean->email_address_id);
+        $this->assertSame($lead2->id, $bean->parent_id);
+        $this->assertSame($address1->id, $bean->email_address_id);
+
+        $bean = array_shift($beans);
+        $this->assertEmpty($bean->parent_type);
+        $this->assertEmpty($bean->parent_id);
+        $this->assertSame($address3->id, $bean->email_address_id);
+
+        $bean = array_shift($beans);
+        $this->assertEmpty($bean->parent_type);
+        $this->assertEmpty($bean->parent_id);
+        $this->assertSame($address4->id, $bean->email_address_id);
 
         $email->retrieveEmailText();
-        $this->assertEquals(
-            "{$contact->name} <{$address->email_address}>, {$lead->name} <{$address->email_address}>",
-            $email->to_addrs_names
-        );
+        $tos = [
+            "{$contact1->name} <{$contact1->email1}>",
+            "{$contact2->name} <{$address1->email_address}>",
+            "{$contact3->name} <{$address2->email_address}>",
+            "{$lead1->name} <{$lead1->email1}>",
+            "{$lead2->name} <{$address1->email_address}>",
+            $address3->email_address,
+            $address4->email_address,
+        ];
+        $this->assertEquals(implode(', ', $tos), $email->to_addrs_names);
     }
 
     /**
      * Adding an exact duplicate will result in no change.
      *
-     * @dataProvider stateProvider
      * @covers ::add
      */
-    public function testAdd_EmailHasContactWithAnEmailAddress_AddSameContactWithSameEmailAddress($state)
+    public function testAdd_DuplicatesAreIgnored()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
 
-        $result = $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
         $this->assertFalse($result);
 
         $beans = $email->to_link->getBeans();
@@ -649,23 +478,21 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * A person record's email address can be changed for the email.
      *
-     * @dataProvider stateProvider
      * @covers ::add
      * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_EmailHasContactWithAnEmailAddress_AddSameContactWithDifferentEmailAddress($state)
+    public function testAdd_ChangeEmailAddressByAddingSameContactWithDifferentEmailAddress()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
         $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant($contact, $address1));
+        $this->relationship->add($email, $this->createEmailParticipant($contact, $address1));
 
-        $result = $relationship->add($email, $this->createEmailParticipant($contact, $address2));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address2));
         $this->assertTrue($result);
 
         $beans = $email->to_link->getBeans();
@@ -683,26 +510,24 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * A person record's email address can be changed for the email.
      *
-     * @dataProvider stateProvider
      * @covers ::add
      * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_EmailHasContactWithAnEmailAddress_AddSameParticipantWithDifferentEmailAddress($state)
+    public function testAdd_ChangeEmailAddressByUpdatingExistingParticipantWithDifferentEmailAddress()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
         $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
 
         $ep = $this->createEmailParticipant($contact, $address1);
-        $relationship->add($email, $ep);
+        $this->relationship->add($email, $ep);
 
         $ep->email_address_id = $address2->id;
-        $result = $relationship->add($email, $ep);
+        $result = $this->relationship->add($email, $ep);
         $this->assertTrue($result);
 
         $beans = $email->to_link->getBeans();
@@ -715,44 +540,6 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         $email->retrieveEmailText();
         $this->assertEquals("{$contact->name} <{$address2->email_address}>", $email->to_addrs_names);
-    }
-
-    /**
-     * The `parent_type` and `parent_id` fields are patched when a bean is linked with an email address that is already
-     * linked as a plain email address.
-     *
-     * @dataProvider stateProvider
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_EmailHasAnEmailAddressParticipant_AddSameParticipantWithParent($state)
-    {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
-        $contact = SugarTestContactUtilities::createContact();
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-
-        $ep = $this->createEmailParticipant(null, $address);
-        $relationship->add($email, $ep);
-
-        $ep->parent_type = $contact->getModuleName();
-        $ep->parent_id = $contact->id;
-        $result = $relationship->add($email, $ep);
-        $this->assertTrue($result);
-
-        $beans = $email->to_link->getBeans();
-        $this->assertCount(1, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact->id, $bean->parent_id);
-        $this->assertSame($address->id, $bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->to_addrs_names);
     }
 
     /**
@@ -765,15 +552,14 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_DraftHasContactWithAnEmailAddress_AddSameContactWithoutAnEmailAddress()
+    public function testAdd_EmailAddressIsNotRemoved()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
 
-        $result = $relationship->add($email, $this->createEmailParticipant($contact));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact));
         $this->assertFalse($result);
 
         $beans = $email->to_link->getBeans();
@@ -789,90 +575,17 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * The `email_address_id` field is overwritten with the person record's primary email address because the primary
-     * email address is seen as a new email address to assign.
-     *
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_ArchivedEmailHasContactWithAnEmailAddress_AddSameContactWithoutAnEmailAddress()
-    {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
-        $contact = SugarTestContactUtilities::createContact();
-        $primaryId = $contact->emailAddress->getGuid($contact->email1);
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant($contact, $address));
-
-        $result = $relationship->add($email, $this->createEmailParticipant($contact));
-        $this->assertTrue($result);
-
-        $beans = $email->to_link->getBeans();
-        $this->assertCount(1, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Contacts', $bean->parent_type);
-        $this->assertSame($contact->id, $bean->parent_id);
-        $this->assertSame($primaryId, $bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->to_addrs_names);
-    }
-
-    /**
-     * When the email address is not already linked, then it is added as a new participant.
-     *
-     * @dataProvider stateProvider
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_EmailHasAnEmailAddressParticipant_AddDifferentEmailAddress($state)
-    {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
-        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $relationship->add($email, $this->createEmailParticipant(null, $address1));
-
-        $result = $relationship->add($email, $this->createEmailParticipant(null, $address2));
-        $this->assertTrue($result);
-
-        $beans = $email->to_link->getBeans();
-        $this->assertCount(2, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertEmpty($bean->parent_type);
-        $this->assertEmpty($bean->parent_id);
-        $this->assertSame($address1->id, $bean->email_address_id);
-
-        $bean = array_shift($beans);
-        $this->assertEmpty($bean->parent_type);
-        $this->assertEmpty($bean->parent_id);
-        $this->assertSame($address2->id, $bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals("{$address1->email_address}, {$address2->email_address}", $email->to_addrs_names);
-    }
-
-    /**
      * An Employees record should be seen as a Users record if the employee is a user.
      *
      * @covers ::add
      * @covers ::fixParentModule
      */
-    public function testAdd_AddEmployee_ChangesToUser()
+    public function testAdd_EmployeeChangesToUser()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $ep = $this->createEmailParticipant($GLOBALS['current_user']);
         $ep->parent_type = 'Employees';
-        $relationship->add($email, $ep);
+        $this->relationship->add($email, $ep);
 
         $beans = $email->to_link->getBeans();
         $this->assertCount(1, $beans);
@@ -888,18 +601,17 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::add
      * @covers ::fixParentModule
      */
-    public function testAdd_AddEmployee_RemainsAnEmployee()
+    public function testAdd_EmployeeDoesNotChangeToUser()
     {
         $employee = SugarTestUserUtilities::createAnonymousUser(true, 0, [
             'user_name' => '',
             'user_hash' => '',
         ]);
 
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $ep = $this->createEmailParticipant($employee);
         $ep->parent_type = 'Employees';
-        $relationship->add($email, $ep);
+        $this->relationship->add($email, $ep);
 
         $beans = $email->to_link->getBeans();
         $this->assertCount(1, $beans);
@@ -910,23 +622,59 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * The participants of an archived email cannot change.
+     *
+     * @covers ::add
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testAdd_CannotLinkParticipantAfterEmailIsArchived()
+    {
+        $email = SugarTestEmailUtilities::createEmail();
+        $contact = SugarTestContactUtilities::createContact();
+
+        $this->relationship->add($email, $this->createEmailParticipant($contact));
+    }
+
+    /**
+     * The participants of an archived email cannot change.
+     *
+     * @expectedException SugarApiExceptionNotAuthorized
+     * @covers ::add
+     */
+    public function testAdd_EmailAddressForParticipantCannotChangeAfterEmailIsArchived()
+    {
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), ['state' => Email::STATE_ARCHIVED], false);
+        $contact = SugarTestContactUtilities::createContact();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+
+        $result = $this->relationship->add($email, $this->createEmailParticipant($contact));
+        $this->assertTrue($result);
+
+        // Save the archived email now that the relationships have been saved. This is how the REST API operates.
+        $email->save();
+
+        $beans = $email->to_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
+    }
+
+    /**
      * Unlinking a person record deletes the EmailParticipants record and updates emails_text for the email.
      *
-     * @dataProvider stateProvider
-     * @covers ::add
-     * @covers EmailParticipant::save
+     * @covers ::remove
+     * @covers EmailParticipant::mark_deleted
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      */
-    public function testRemove_EmailHasContact_RemoveContact($state)
+    public function testRemove_ParticipantWithParentIsRemoved()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $ep = $this->createEmailParticipant($contact);
-        $relationship->add($email, $ep);
+        $this->relationship->add($email, $ep);
 
-        $result = $relationship->remove($email, $ep);
+        $result = $this->relationship->remove($email, $ep);
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
@@ -938,23 +686,21 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Unlinking a person record deletes the EmailParticipants record and updates emails_text for the email.
+     * Unlinking an email address record deletes the EmailParticipants record and updates emails_text for the email.
      *
-     * @dataProvider stateProvider
-     * @covers ::add
-     * @covers EmailParticipant::save
+     * @covers ::remove
+     * @covers EmailParticipant::mark_deleted
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      */
-    public function testRemove_EmailHasAnEmailAddressParticipant_RemoveEmailAddressParticipant($state)
+    public function testRemove_ParticipantWithoutParentIsRemoved()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => $state]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         $ep = $this->createEmailParticipant(null, $address);
-        $relationship->add($email, $ep);
+        $this->relationship->add($email, $ep);
 
-        $result = $relationship->remove($email, $ep);
+        $result = $this->relationship->remove($email, $ep);
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
@@ -968,28 +714,26 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * There is no need to update emails_text for the email since the email has not been saved yet.
      *
-     * @dataProvider stateProvider
      * @covers ::remove
      * @covers EmailParticipant::mark_deleted
      */
-    public function testRemove_YetToBeSavedEmailHasContact_RemoveContact($state)
+    public function testRemove_ParticipantWithParentIsRemovedFromEmailThatHasNotYetBeenSaved()
     {
         $email = $this->getMockBuilder('Email')->setMethods(['saveEmailText'])->getMock();
         $email->new_with_id = true;
         $email->id = \Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
-        $email->state = $state;
+        $email->state = Email::STATE_DRAFT;
         $email->expects($this->never())->method('saveEmailText');
         // Even though the email is never saved, we want to be certain that all of its relationships are deleted after
         // the test.
         SugarTestEmailUtilities::setCreatedEmail($email->id);
 
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
         $email->load_relationship('to_link');
         $contact = SugarTestContactUtilities::createContact();
         $ep = $this->createEmailParticipant($contact);
-        $relationship->add($email, $ep);
+        $this->relationship->add($email, $ep);
 
-        $result = $relationship->remove($email, $ep);
+        $result = $this->relationship->remove($email, $ep);
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
@@ -1000,28 +744,26 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * There is no need to update emails_text for the email since the email has not been saved yet.
      *
-     * @dataProvider stateProvider
      * @covers ::remove
      * @covers EmailParticipant::mark_deleted
      */
-    public function testRemove_YetToBeSavedEmailHasAnEmailAddressParticipant_RemoveEmailAddressParticipant($state)
+    public function testRemove_ParticipantWithoutParentIsRemovedFromEmailThatHasNotYetBeenSaved()
     {
         $email = $this->getMockBuilder('Email')->setMethods(['saveEmailText'])->getMock();
         $email->new_with_id = true;
         $email->id = \Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
-        $email->state = $state;
+        $email->state = Email::STATE_DRAFT;
         $email->expects($this->never())->method('saveEmailText');
         // Even though the email is never saved, we want to be certain that all of its relationships are deleted after
         // the test.
         SugarTestEmailUtilities::setCreatedEmail($email->id);
 
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
         $email->load_relationship('to_link');
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         $ep = $this->createEmailParticipant(null, $address);
-        $relationship->add($email, $ep);
+        $this->relationship->add($email, $ep);
 
-        $result = $relationship->remove($email, $ep);
+        $result = $this->relationship->remove($email, $ep);
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
@@ -1030,22 +772,77 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * After a bean is deleted, the EmailParticipants' `parent_type` and `parent_id` fields won't be able to retrieve
-     * the bean and resolve the `parent_name`. The email address is still valid, so the EmailParticipants row remains as
-     * if it only contains a plain email address. Should the bean be restored, then the `parent_name` will be able to be
-     * used again.
+     * The participants of an archived email cannot be unlinked.
+     *
+     * @expectedException SugarApiExceptionNotAuthorized
+     * @covers ::remove
+     */
+    public function testRemove_CannotUnlinkParticipantAfterEmailIsArchived()
+    {
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), ['state' => Email::STATE_ARCHIVED], false);
+        $contact = SugarTestContactUtilities::createContact();
+        $ep = $this->createEmailParticipant($contact);
+
+        $result = $this->relationship->add($email, $ep);
+        $this->assertTrue($result);
+
+        // Save the archived email now that the relationships have been saved. This is how the REST API operates.
+        $email->save();
+
+        $beans = $email->to_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $this->relationship->remove($email, $ep);
+    }
+
+    /**
+     * The participants of an archived email can be unlinked if the email is being deleted.
+     *
+     * @covers ::remove
+     * @covers EmailParticipant::mark_deleted
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     */
+    public function testRemove_CanUnlinkParticipantOfArchivedEmailWhenEmailIsBeingDeleted()
+    {
+        $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), ['state' => Email::STATE_ARCHIVED], false);
+        $contact = SugarTestContactUtilities::createContact();
+        $ep = $this->createEmailParticipant($contact);
+        $this->relationship->add($email, $ep);
+
+        // Save the archived email now that the relationships have been saved. This is how the REST API operates.
+        $email->save();
+
+        // Act as if the email is being deleted.
+        $email->deleted = 1;
+
+        $result = $this->relationship->remove($email, $ep);
+        $this->assertTrue($result);
+        $this->assertEquals(1, $ep->deleted);
+
+        $beans = $email->to_link->getBeans();
+        $this->assertCount(0, $beans);
+
+        $email->retrieveEmailText();
+        $this->assertEmpty($email->to_addrs_names);
+    }
+
+    /**
+     * After a parent bean is deleted, the EmailParticipants' `parent_type` and `parent_id` fields won't be able to
+     * retrieve the bean and resolve the `parent_name`. The email address is still valid, so the EmailParticipants row
+     * remains as if it only contains a plain email address. Should the bean be restored, then the `parent_name` will be
+     * able to be used again.
      *
      * @covers SugarBean::mark_deleted
      */
-    public function testEmailAddressIsStillPresentIfBeanIsDeleted()
+    public function testEmailAddressIsStillPresentIfParentIsDeleted()
     {
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
-        $email = SugarTestEmailUtilities::createEmail();
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
 
-        $relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
         $contact->mark_deleted($contact->id);
 
         $beans = $email->to_link->getBeans();

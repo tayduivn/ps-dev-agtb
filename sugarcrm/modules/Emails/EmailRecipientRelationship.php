@@ -31,8 +31,19 @@ class EmailRecipientRelationship extends One2MBeanRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
+        if ($lhs->isUpdate() && $lhs->state === Email::STATE_ARCHIVED) {
+            throw new SugarApiExceptionNotAuthorized("Cannot add to {$this->name} when the email is archived");
+        }
+
         $this->fixParentModule($rhs);
         $this->setEmailAddress($lhs, $rhs);
+
+        if (empty($lhs->{$this->lhsLink}) && !$lhs->load_relationship($this->lhsLink)) {
+            $lhsClass = get_class($lhs);
+            $GLOBALS['log']->fatal("could not load LHS {$this->lhsLink} in {$lhsClass}");
+            return false;
+        }
+
         $currentRows = $lhs->{$this->lhsLink}->getBeans();
 
         foreach ($currentRows as $currentRow) {
@@ -114,28 +125,30 @@ class EmailRecipientRelationship extends One2MBeanRelationship
      * $rhs is deleted after unlinking because it is no longer needed for anything. Resaves the emails_text data for
      * $lhs after changing its participants.
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function remove($lhs, $rhs)
     {
-        if (parent::remove($lhs, $rhs)) {
-            // Don't just orphan the row; delete it.
-            if (!$rhs->deleted) {
-                // We're either unlinking or deleting the email, so it is safe to delete the EmailParticipants bean. We
-                // don't want to delete it if it is already being deleted because we would end up in an infinite loop.
-                if ($lhs->isUpdate()) {
-                    // We can't rely on EmailParticipant::mark_deleted to save email_text because removing causes the
-                    // email_id field to lose its value.
-                    $lhs->saveEmailText();
-                }
-
-                $rhs->mark_deleted($rhs->id);
-            }
-
-            return true;
+        if ($lhs->isUpdate() && $lhs->state === Email::STATE_ARCHIVED && !$rhs->deleted && !$lhs->deleted) {
+            throw new SugarApiExceptionNotAuthorized("Cannot remove from {$this->name} when the email is archived");
         }
 
-        return false;
+        $result = parent::remove($lhs, $rhs);
+
+        // Don't just orphan the row; delete it.
+        if ($result && !$rhs->deleted) {
+            // We're either unlinking or deleting the email, so it is safe to delete the EmailParticipants bean. We
+            // don't want to delete it if it is already being deleted because we would end up in an infinite loop.
+            if ($lhs->isUpdate()) {
+                // We can't rely on EmailParticipant::mark_deleted to save the emails_text data because removing causes
+                // the email_id field to lose its value.
+                $lhs->saveEmailText();
+            }
+
+            $rhs->mark_deleted($rhs->id);
+        }
+
+        return $result;
     }
 
     /**

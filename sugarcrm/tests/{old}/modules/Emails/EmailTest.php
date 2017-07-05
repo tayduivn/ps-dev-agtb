@@ -485,23 +485,23 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUpdateAttachmentsVisibility_ArchivingADraftSynchronizesTeams()
     {
-        $email = SugarTestEmailUtilities::createEmail();
+        $teams = BeanFactory::getBean('TeamSets');
+
+        $data = [
+            'state' => Email::STATE_DRAFT,
+            'team_id' => 'East',
+            'team_set_id' => $teams->addTeams(['East', 'West']),
+            //BEGIN SUGARCRM flav=ent ONLY
+            'team_set_selected_id' => 'East',
+            //END SUGARCRM flav=ent ONLY
+        ];
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+
         $data = array(
             'email_type' => 'Emails',
             'email_id' => $email->id,
         );
         $note = SugarTestNoteUtilities::createNote('', $data);
-
-        // Change the teams on the email.
-        $teams = BeanFactory::getBean('TeamSets');
-        $email->state = Email::STATE_DRAFT;
-        $email->assigned_user_id = $GLOBALS['current_user']->id;
-        $email->team_id = 'East';
-        $email->team_set_id = $teams->addTeams(array('East', 'West'));
-        //BEGIN SUGARCRM flav=ent ONLY
-        $email->team_set_selected_id = 'East';
-        //END SUGARCRM flav=ent ONLY
-        $email->save();
 
         $expected = $GLOBALS['current_user']->getPrivateTeam();
         $this->assertEquals($expected, $note->team_set_id, 'team_set_id should be the private team');
@@ -531,7 +531,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetParticipants()
     {
-        $email = SugarTestEmailUtilities::createEmail();
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $email->load_relationship('to_link');
 
         $link = function ($parent) use ($email) {
@@ -1042,7 +1042,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLinkEmailToAddress()
     {
-        $email = SugarTestEmailUtilities::createEmail();
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
         $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
 
