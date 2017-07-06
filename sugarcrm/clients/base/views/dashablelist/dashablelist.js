@@ -90,7 +90,15 @@
      *
      * @property {Array}
      */
-    moduleBlacklist: ['Home', 'Forecasts', 'ProductCategories', 'ProductTemplates', 'ProductTypes', 'UserSignatures'],
+    moduleBlacklist: [
+        'Home',
+        'Forecasts',
+        'ProductCategories',
+        'ProductTemplates',
+        'ProductTypes',
+        'UserSignatures',
+        'OutboundEmail'
+    ],
 
     /**
      * Module Additions
