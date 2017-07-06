@@ -33,13 +33,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-bars',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Emails&action=index',
-        'label' =>'Personal Inboxes',
-        'acl_action'=>'edit',
-        'acl_module'=>$module_name,
-        'icon' => 'fa-bars',
-    ),
-    array(
         'route'=>'#bwc/index.php?module=EmailTemplates&action=EditView&return_module=EmailTemplates&return_action=DetailView',
         'label' =>'LNK_NEW_EMAIL_TEMPLATE',
         'acl_action'=>'create',
