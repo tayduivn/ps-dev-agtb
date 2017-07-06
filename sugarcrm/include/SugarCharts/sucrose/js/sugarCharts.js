@@ -527,13 +527,18 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             // by the Report module charts. Saved Reports Chart
             // dashlets override with their own handler
             chart.seriesClick(_.bind(function(data, eo, chart, labels) {
-                var chartState = this.buildChartState(eo, labels);
+                var chartState;
                 var groupDefs;
                 var filterDef;
                 var drawerContext;
 
-                params.seriesLabel = this.extractSeriesLabel(eo, data);
-                params.groupLabel = this.extractGroupLabel(eo, labels);
+                chartState = this.buildChartState(eo, labels);
+                if (!_.isFinite(chartState.seriesIndex)) {
+                    return;
+                }
+
+                params.seriesLabel = this.extractSeriesLabel(chartState, data);
+                params.groupLabel = this.extractGroupLabel(chartState, labels);
 
                 // report_def is defined as a global in _reportCriteriaWithResult
                 // but only in Reports module
@@ -586,9 +591,18 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * @param labels an array of grouping labels
          */
         buildChartState: function(eo, labels) {
-            var seriesIndex = eo.seriesIndex || eo.series.seriesIndex;
+            var seriesIndex;
+            if (!_.isEmpty(eo.series) && _.isFinite(eo.series.seriesIndex)) {
+                seriesIndex = eo.series.seriesIndex;
+            } else if (_.isFinite(eo.seriesIndex)) {
+                seriesIndex = eo.seriesIndex;
+            }
+
             if (_.isEmpty(labels)) {
-                return {seriesIndex: seriesIndex || eo.pointIndex};
+                if (!_.isFinite(seriesIndex) && _.isFinite(eo.pointIndex)) {
+                    seriesIndex = eo.pointIndex;
+                }
+                return {seriesIndex: seriesIndex};
             } else {
                 return {seriesIndex: seriesIndex, groupIndex: eo.pointIndex};
             }
@@ -601,9 +615,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * constructed from a clicked chart element
          * @param data report data
          */
-        extractSeriesLabel: function(eo, data) {
-            var seriesIndex = eo.seriesIndex || eo.series.seriesIndex;
-            return _.isUndefined(seriesIndex) ? data[eo.pointIndex].key : data[seriesIndex].key;
+        extractSeriesLabel: function(state, data) {
+            return data[state.seriesIndex].key;
         },
 
         /**
@@ -613,8 +626,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * constructed from a clicked chart element
          * @param labels an array of grouping labels
          */
-        extractGroupLabel: function(eo, labels) {
-            return _.isEmpty(labels) ? null : labels[eo.pointIndex];
+         extractGroupLabel: function(state, labels) {
+            return _.isEmpty(labels) ? null : labels[state.groupIndex];
         },
 
         /**
@@ -934,7 +947,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         break;
 
                     case 'funnelChart':
-                        data = json.values.reverse().map(function(d, i) {
+                        data = json.values.map(function(d, i) {
                             return {
                                 'key': pickLabel(d.label),
                                 'values': [{
@@ -945,7 +958,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                     'y0': 0
                                 }]
                             };
-                        });
+                        }).reverse();
                         break;
 
                     case 'lineChart':
