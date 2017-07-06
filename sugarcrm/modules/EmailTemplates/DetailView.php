@@ -143,7 +143,7 @@ $xtpl->assign("PUBLISHED","CHECKED");
 ///////////////////////////////////////////////////////////////////////////////
 $note = BeanFactory::newBean('Notes');
 //FIXME: notes.email_type should be EmailTemplates
-$where = "notes.email_id='{$focus->id}'";
+$where = 'notes.email_id=' . $GLOBALS['db']->quoted($focus->id);
 $notes_list = $note->get_full_list("notes.name", $where,true);
 
 if(! isset($notes_list)) {

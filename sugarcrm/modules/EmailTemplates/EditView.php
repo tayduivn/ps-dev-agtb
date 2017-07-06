@@ -302,7 +302,7 @@ if(true) {
 	    $note = BeanFactory::newBean('Notes');
         //FIXME: notes.email_type should be EmailTemplates
         //FIXME: notes.filename IS NOT NULL is probably not necessary
-	    $where = "notes.email_id='{$etid}' AND notes.filename IS NOT NULL";
+        $where = 'notes.email_id=' . $GLOBALS['db']->quoted($etid) . ' AND notes.filename IS NOT NULL';
 	    $notes_list = $note->get_full_list("", $where,true);
 
 	    if(!isset($notes_list)) {

@@ -644,15 +644,15 @@ class EmailMan extends SugarBean{
 				$this->current_emailtemplate->body=from_html($this->current_emailtemplate->body);
 
                 //FIXME: notes.email_type should be EmailTemplates
-				$q = "SELECT * FROM notes WHERE email_id = '".$this->current_emailtemplate->id."' AND deleted = 0";
-				$r = $this->db->query($q);
+                $stmt = $this->db->getConnection()->executeQuery(
+                    'SELECT id FROM notes WHERE email_id = ? AND deleted = 0',
+                    [$this->current_emailtemplate->id]
+                );
 
 				// cn: bug 4684 - initialize the notes array, else old data is still around for the next round
 				$this->notes_array = array();
-                if (!class_exists('Note')){
-				}
-				while($a = $this->db->fetchByAssoc($r)) {
-					$noteTemplate = BeanFactory::getBean('Notes', $a['id']);
+                while ($noteId = $stmt->fetchColumn()) {
+                    $noteTemplate = BeanFactory::getBean('Notes', $noteId);
 					$this->notes_array[] = $noteTemplate;
 				}
 			}

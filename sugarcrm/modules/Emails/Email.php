@@ -1562,7 +1562,11 @@ class Email extends SugarBean {
         }
 
         // Verify that a row exists in the emails_text table for this email.
-        $guid = $GLOBALS['db']->getOne("SELECT email_id FROM emails_text WHERE email_id='{$this->id}' LIMIT 0,1");
+        $stmt = $this->db->getConnection()->executeQuery(
+            'SELECT email_id FROM emails_text WHERE email_id = ? LIMIT 0,1',
+            array($this->id)
+        );
+        $guid = $stmt->fetchColumn();
 
         // Get and save the current Database Encoding setting and force it to be enabled
         $encodeVal = $GLOBALS['db']->getEncode();
@@ -2140,7 +2144,7 @@ class Email extends SugarBean {
             //FIXME: notes.email_type should be Emails
             $attachmentsToCopy = array_merge(
                 $attachmentsToCopy,
-                $attachmentBean->get_full_list('', "notes.email_id='{$_REQUEST['record']}'", true)
+                $attachmentBean->get_full_list('', 'notes.email_id=' . $this->db->quoted($_REQUEST['record']), true)
             );
         }
         ////    END ATTACHMENTS FROM DRAFTS
@@ -2155,11 +2159,8 @@ class Email extends SugarBean {
         	isset($_REQUEST['return_id']) && !empty($_REQUEST['return_id'])
         ) {
             //FIXME: notes.email_type should be Emails
-            $attachmentsFromForwards = $attachmentBean->get_full_list(
-                '',
-                "notes.email_id='{$_REQUEST['return_id']}'",
-                true
-            );
+            $where = 'notes.email_id=' . $this->db->quoted($_REQUEST['return_id']);
+            $attachmentsFromForwards = $attachmentBean->get_full_list('', $where, true);
 
             // Duplicate the attachments.
             foreach ($attachmentsFromForwards as $attachment) {
@@ -3005,11 +3006,14 @@ class Email extends SugarBean {
 	{
 	   $hasAttachment = FALSE;
         //FIXME: notes.file_mime_type IS NOT NULL is probably not necessary
-	   $query = "SELECT id FROM notes where email_id='$id' AND email_type='Emails' AND file_mime_type is not null AND deleted=0";
-	   $rs = $this->db->limitQuery($query, 0, 1);
-	   $row = $this->db->fetchByAssoc($rs);
-	   if( !empty($row['id']) )
-	       $hasAttachment = TRUE;
+        $stmt = $this->db->getConnection()->executeQuery(
+            'SELECT id FROM notes where email_id = ? AND email_type = ? AND file_mime_type is not null AND deleted = ?',
+            array($id, 'Emails', 0)
+        );
+        $noteId = $stmt->fetchColumn();
+        if (!empty($noteId)) {
+            $hasAttachment = true;
+        }
 
 	   return (int) $hasAttachment;
 	}
@@ -3530,19 +3534,23 @@ eoq;
 			}
         }
 
-        /**
-         * Convert all cid: links in this email into URLs
-         */
-    	function cids2Links()
-    	{
-            if(empty($this->description_html)) return;
-            //FIXME: notes.email_type should be Emails
-    	    $q = "SELECT id, file_mime_type FROM notes WHERE email_id = '{$this->id}' AND deleted = 0";
-    		$r = $this->db->query($q);
-            while($a = $this->db->fetchByAssoc($r)) {
-                $this->cid2Link($a['id'], $a['file_mime_type']);
-            }
-    	}
+    /**
+     * Convert all cid: links in this email into URLs
+     */
+    public function cids2Links()
+    {
+        if (empty($this->description_html)) {
+            return;
+        }
+        //FIXME: notes.email_type should be Emails
+        $stmt = $this->db->getConnection()->executeQuery(
+            'SELECT id, file_mime_type FROM notes WHERE email_id = ? AND deleted = 0',
+            array($this->id)
+        );
+        while ($a = $stmt->fetch()) {
+            $this->cid2Link($a['id'], $a['file_mime_type']);
+        }
+    }
 
     /**
      * Bugs 50972, 50973

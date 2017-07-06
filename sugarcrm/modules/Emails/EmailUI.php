@@ -1715,12 +1715,12 @@ EOQ;
 
 		$note = BeanFactory::newBean('Notes');
         //FIXME: notes.email_type should be Emails
-		$where = "notes.email_id='{$focus->id}'";
+        $where = 'notes.email_id=' . $this->db->quoted($focus->id);
 		//take in account if this is from campaign and the template id is stored in the macros.
 
 		if(isset($macro_values) && isset($macro_values['email_template_id'])){
             //FIXME: notes.email_type should be EmailTemplates
-		    $where = "notes.email_id='{$macro_values['email_template_id']}'";
+            $where = 'notes.email_id=' . $this->db->quoted($macro_values['email_template_id']);
 		}
 		$notes_list = $note->get_full_list("notes.name", $where, true);
 
@@ -1997,7 +1997,8 @@ function distRoundRobin($userIds, $mailIds) {
 		$email->save();
 
         //FIXME: notes.email_type should be Emails
-        $attachments = BeanFactory::getBean('Notes')->get_full_list('', "notes.email_id='{$mailId}'", true);
+        $where = 'notes.email_id=' . $this->db->quoted($mailId);
+        $attachments = BeanFactory::getBean('Notes')->get_full_list('', $where, true);
 
         foreach ($attachments as $note) {
             $note->team_id = $email->team_id;
@@ -2020,9 +2021,10 @@ function distLeastBusy($userIds, $mailIds) {
 	foreach($mailIds as $k => $mailId) {
 		$email = BeanFactory::getBean('Emails', $mailId);
 		foreach($userIds as $k => $id) {
-			$r = $this->db->query("SELECT count(*) AS c FROM emails WHERE assigned_user_id = '.$id.' AND status = 'unread'");
-			$a = $this->db->fetchByAssoc($r);
-			$counts[$id] = $a['c'];
+            $counts[$id] = $this->db->getConnection()->executeQuery(
+                'SELECT COUNT(*) AS c FROM emails WHERE assigned_user_id = ? AND status = ?',
+                [$id, 'unread']
+            )->fetchColumn();
 		}
 		asort($counts); // lowest to highest
 		$countsKeys = array_flip($counts); // keys now the 'count of items'
@@ -2034,7 +2036,8 @@ function distLeastBusy($userIds, $mailIds) {
 		$email->save();
 
         //FIXME: notes.email_type should be Emails
-        $attachments = BeanFactory::getBean('Notes')->get_full_list('', "notes.email_id='{$mailId}'", true);
+        $where = 'notes.email_id=' . $this->db->quoted($mailId);
+        $attachments = BeanFactory::getBean('Notes')->get_full_list('', $where, true);
 
         foreach ($attachments as $note) {
             $note->team_id = $email->team_id;
@@ -2076,7 +2079,8 @@ function distDirect($user, $mailIds) {
 		$email->save();
 
         //FIXME: notes.email_type should be Emails
-        $attachments = BeanFactory::getBean('Notes')->get_full_list('', "notes.email_id='{$mailId}'", true);
+        $where = 'notes.email_id=' . $this->db->quoted($mailId);
+        $attachments = BeanFactory::getBean('Notes')->get_full_list('', $where, true);
 
         foreach ($attachments as $note) {
             $note->team_id = $email->team_id;

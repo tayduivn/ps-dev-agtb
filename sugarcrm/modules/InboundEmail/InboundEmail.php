@@ -5306,7 +5306,8 @@ eoq;
                         // End fix 50972
 
                         //FIXME: notes.email_type should be Emails
-                        $attachments = BeanFactory::getBean('Notes')->get_full_list('', "notes.email_id='{$id}'", true);
+                        $where = 'notes.email_id=' . $this->db->quoted($id);
+                        $attachments = BeanFactory::getBean('Notes')->get_full_list('', $where, true);
 
                         foreach ($attachments as $note) {
                             $note->team_id = $toSugarFolder->team_id;
@@ -5417,11 +5418,8 @@ eoq;
 							} // if
                             if ($sugarFolder->is_group) {
                                 //FIXME: notes.email_type should be Emails
-                                $attachments = BeanFactory::getBean('Notes')->get_full_list(
-                                    '',
-                                    "notes.email_id='{$this->email->id}'",
-                                    true
-                                );
+                                $where = 'notes.email_id=' . $this->db->quoted($this->email->id);
+                                $attachments = BeanFactory::getBean('Notes')->get_full_list('', $where, true);
 
                                 foreach ($attachments as $note) {
                                     $note->team_id = $sugarFolder->team_id;

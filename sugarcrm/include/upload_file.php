@@ -494,8 +494,9 @@ class UploadFile
     public static function unlink_file($beanId, $filename = '')
     {
         $path = "upload://{$beanId}{$filename}";
-        $sql = "SELECT upload_id FROM notes WHERE upload_id='{$beanId}' LIMIT 0,1";
-        $uploadId = DBManagerFactory::getInstance()->getOne($sql);
+        $db = DBManagerFactory::getInstance();
+        $sql = 'SELECT upload_id FROM notes WHERE upload_id=' . $db->quoted($beanId) . ' LIMIT 0,1';
+        $uploadId = $db->getOne($sql);
 
         if (empty($uploadId)) {
             if (file_exists($path)) {

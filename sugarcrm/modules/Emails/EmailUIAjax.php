@@ -275,7 +275,7 @@ $request = InputValidation::getService();
         if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])) {
 
             //FIXME: Should notes.email_type be Emails or EmailTemplates?
-            $where = "email_id='{$_REQUEST['parent_id']}'";
+                $where = 'email_id=' . $this->db->quoted($_REQUEST['parent_id']);
             $order = "";
             $seed = BeanFactory::newBean('Notes');
             $fullList = $seed->get_full_list($order, $where, '');
