@@ -56,6 +56,9 @@ class UsersViewAuthenticate extends SidecarView
                 }
             }
         }
+
+        $args = array_merge($args, $this->getSAMLResponseRelayState());
+
         try {
             $this->authorization = $oapi->token($service, $args);
         } catch (Exception $e) {
@@ -78,23 +81,12 @@ class UsersViewAuthenticate extends SidecarView
             }
         }
 
-        $relayState = [];
-
-        if (!empty($_REQUEST['RelayState']) &&
-            filter_var($_REQUEST['RelayState'], FILTER_VALIDATE_URL) === false &&
-            $decodedRelayState = json_decode(base64_decode($_REQUEST['RelayState']), true)
-        ) {
-            $relayState = $decodedRelayState;
-        }
-
-        if (!empty($relayState['dataOnly']) || !empty($_REQUEST['dataOnly'])) {
+        if (!empty($args['dataOnly'])) {
             $this->dataOnly = true;
         }
 
-        if (!empty($relayState['platform'])) {
-            $this->platform = $relayState['platform'];
-        } elseif (!empty($_REQUEST['platform'])) {
-            $this->platform = $_REQUEST['platform'];
+        if (!empty($args['platform'])) {
+            $this->platform = $args['platform'];
         }
         parent::preDisplay($params);
     }
@@ -131,5 +123,22 @@ class UsersViewAuthenticate extends SidecarView
         }
 
         return SugarAutoLoader::existingCustomOne('modules/Users/tpls/AuthenticateParent.tpl');
+    }
+
+    /**
+     * Parse RelayState parameter from SAML response and return it as array.
+     *
+     * @return array
+     */
+    protected function getSAMLResponseRelayState()
+    {
+        if (!empty($_REQUEST['RelayState']) &&
+            filter_var($_REQUEST['RelayState'], FILTER_VALIDATE_URL) === false &&
+            $decodedRelayState = json_decode(base64_decode($_REQUEST['RelayState']), true)
+        ) {
+            return $decodedRelayState;
+        }
+
+        return [];
     }
 }
