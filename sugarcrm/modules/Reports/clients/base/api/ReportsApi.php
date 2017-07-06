@@ -70,6 +70,23 @@ class ReportsApi extends ModuleApi
     }
 
     /**
+     * Check if we need to retrieve the options attribute for field def
+     *
+     * @param $type String
+     * @return bool true if options needed, false otherwise
+     */
+    protected function needOptions($type)
+    {
+        $need = false;
+        switch ($type) {
+            case 'enum':
+            case 'radioenum':
+                $need = true;
+        }
+        return $need;
+    }
+
+    /**
      * Gets group field def.
      * @param array $reportDef
      * @param string $field
@@ -89,15 +106,18 @@ class ReportsApi extends ModuleApi
             $report = null;
             foreach ($reportDef['group_defs'] as $groupColumn) {
                 if ($groupColumn['table_key'] === $table_key && $groupColumn['name'] === $field_name) {
-                    if (empty($groupColumn['type'])) {
+                    if (empty($groupColumn['type']) || $this->needOptions($groupColumn['type'])) {
                         if (!$report) {
                             $report = new Report($reportDef);
                         }
                         if (!empty($report->full_bean_list[$table_key])) {
                             $bean = $report->full_bean_list[$table_key];
                             $fieldDef = $bean->getFieldDefinition($field_name);
-                            if (!empty($fieldDef['type'])) {
+                            if (!empty($fieldDef['type']) && empty($groupColumn['type'])) {
                                 $groupColumn['type'] = $fieldDef['type'];
+                            }
+                            if ($this->needOptions($groupColumn['type'])) {
+                                $groupColumn['options_array'] = getOptionsFromVardef($fieldDef);
                             }
                         }
                     }
@@ -106,6 +126,74 @@ class ReportsApi extends ModuleApi
             }
         }
         return false;
+    }
+
+    /**
+     * Given a value, reverse look up the associated list key
+     *
+     * @param $value String list value
+     * @param $fieldDef Array field definition
+     * @return mixed list key
+     */
+    protected function getOptionKeyFromValue($value, $fieldDef)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+        $key = false;
+        if (!empty($fieldDef['options_array'])) {
+            $key = array_search($value, $fieldDef['options_array']);
+        }
+        if ($key === false) {
+            $errMsg = 'Failed to reverse lookup for ' . $value . ' in ' . print_r($fieldDef['options_array'], true);
+            throw new SugarApiExceptionInvalidParameter($errMsg);
+        } else {
+            return $key;
+        }
+    }
+
+    /**
+     * Wrapper for global function return_app_list_strings_language
+     *
+     * @return Array
+     */
+    protected function getAppListStrings()
+    {
+        global $current_language;
+        return return_app_list_strings_language($current_language);
+    }
+
+    /**
+     * This function massages the input filter value and converts it to be report-compatible.
+     *
+     * @param $type String field type
+     * @param $value Array original filter value
+     * @param $fieldDef Array field definition
+     * @return array new filter value
+     */
+    protected function massageFilterValue($type, $value, $fieldDef)
+    {
+        $val = $value;
+        if (is_array($value)) {
+            $val = reset($value);
+        }
+        switch ($type) {
+            case 'bool':
+                $app_list_strings = $this->getAppListStrings();
+                if (!empty($app_list_strings['dom_switch_bool'])) {
+                    if ($val == $app_list_strings['dom_switch_bool']['on']) {
+                        $val = '1';
+                    } elseif ($val == $app_list_strings['dom_switch_bool']['off']) {
+                        $val = '0';
+                    }
+                }
+                break;
+            case 'enum':
+            case 'radioenum':
+                $val = $this->getOptionKeyFromValue($val, $fieldDef);
+                break;
+        }
+        return array($val);
     }
 
     /**
@@ -128,6 +216,9 @@ class ReportsApi extends ModuleApi
                     $value = array($value);
                 }
                 $fieldDef = $this->getGroupFilterFieldDef($reportDef, $field);
+                if (!empty($fieldDef['type'])) {
+                    $value = $this->massageFilterValue($fieldDef['type'], $value, $fieldDef);
+                }
                 if ($fieldDef && !empty($fieldDef['type'])) {
                     $filterRow = array(
                         'adhoc' => true,
@@ -150,6 +241,11 @@ class ReportsApi extends ModuleApi
                             }
                             break;
                         // TODO: more types
+                        case 'radioenum':
+                        case 'id':
+                            $filterRow['qualifier_name'] = 'is';
+                            $filterRow['input_name0'] = reset($value);
+                            break;
                         default:
                             $filterRow['qualifier_name'] = 'equals';
                             $filterRow['input_name0'] = reset($value);

@@ -22,9 +22,9 @@ describe('Reports.Records', function() {
         let johnId = records.Users[0].id;
 
         records = [
-            {attributes: {name: 'Account1', industry: 'TEST', assigned_user_id: johnId}},
-            {attributes: {name: 'Account2', industry: 'TEST', assigned_user_id: johnId}},
-            {attributes: {name: 'Account3', industry: 'Engineering', assigned_user_id: johnId}}
+            {attributes: {name: 'Account1', industry: 'Banking', assigned_user_id: johnId}},
+            {attributes: {name: 'Account2', industry: 'Banking', assigned_user_id: johnId}},
+            {attributes: {name: 'Account3', industry: 'Apparel', assigned_user_id: johnId}}
         ];
 
         yield Fixtures.create(records, {module: 'Accounts'});
@@ -63,11 +63,11 @@ describe('Reports.Records', function() {
     });
 
     it('should return filtered records whose field value matches given value', function*() {
-        let filter = 'group_filters%5B0%5D%5Bindustry%5D=TEST';
+        let filter = 'group_filters%5B0%5D%5Bindustry%5D=Banking';
         let response = yield Agent.as('John').get('Reports/' + this.reportId + '/records?' + filter);
         expect(response).to.have.json('records', (records) => {
             expect(records).to.have.length(2);
-            expect(records[0].industry).to.be.equal('TEST');
+            expect(records[0].industry).to.be.equal('Banking');
         });
     });
 });
