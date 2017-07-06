@@ -98,11 +98,11 @@
             _.each(panel.fields, function(field) {
                 if (field.label_css_class) {
                     app.logger.warn('Warning: metadata property "label_css_class" found on field with name "' +
-                        field.name + '" is deprecated since 7.9.0 and will be removed in 7.10.0.');
+                        field.name + '" is deprecated and will be removed in a future release.');
                 }
                 if (field.cell_css_class) {
                     app.logger.warn('Warning: metadata property "cell_css_class" found on field with name "' +
-                        field.name + '" is deprecated since 7.9.0 and will be removed in 7.10.0.');
+                        field.name + '" is deprecated and will be removed in a future release.');
                 }
             }, this);
         }, this);
