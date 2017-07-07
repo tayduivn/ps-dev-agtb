@@ -235,4 +235,16 @@ describe("sugar7.extensions.bwc", function() {
             getPrefStub.restore();
         });
     });
+
+    describe('getAction', function() {
+        it('should convert Sidecar actions to BWC actions', function() {
+            expect(app.bwc.getAction('create')).toEqual('EditView');
+            expect(app.bwc.getAction('edit')).toEqual('EditView');
+            expect(app.bwc.getAction('detail')).toEqual('DetailView');
+        });
+
+        it('should return the action itself if no specific BWC action exists', function() {
+            expect(app.bwc.getAction('some-random-action')).toEqual('some-random-action');
+        });
+    });
 });

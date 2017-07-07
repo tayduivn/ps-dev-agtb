@@ -27,6 +27,14 @@ describe('Sugar7 error handler', function() {
         sinon.collection.restore();
     });
 
+    describe('409 Handle method conflict error', function() {
+        it('should log an error', function() {
+            var loggerStub = sinon.collection.stub(app.logger, 'error');
+            app.error.handleMethodConflictError();
+            expect(loggerStub).toHaveBeenCalledWith('Data conflict detected.');
+        });
+    });
+
     describe('422 Handle validation error', function() {
         it('should show an alert on error', function() {
             var alertStub = sinon.collection.stub(app.alert, 'show');
@@ -180,5 +188,47 @@ describe('Sugar7 error handler', function() {
                 });
             });
         });
+    });
+
+    describe('500, 502, and 503 handle internal server error', function() {
+        using('different error payloads', [
+                {
+                    error: {
+                        code: 'internal_server_error'
+                    },
+                    expected: {
+                        layout: 'error',
+                        errorType: '500',
+                        module: 'Error',
+                        error: {
+                            code: 'internal_server_error'
+                        },
+                        create: true
+                    }
+                },
+                {
+                    error: {
+                        code: '',
+                        status: '502'
+                    },
+                    expected: {
+                        layout: 'error',
+                        errorType: '502',
+                        module: 'Error',
+                        error: {
+                            code: '',
+                            status: '502'
+                        },
+                        create: true
+                    }
+                }
+            ], function(data) {
+                it('should send regular users to the error page', function() {
+                    var loadViewStub = sinon.collection.stub(app.controller, 'loadView');
+                    app.error.handleServerError(data.error);
+                    expect(loadViewStub).toHaveBeenCalledWith(data.expected);
+                });
+            }
+        );
     });
 });

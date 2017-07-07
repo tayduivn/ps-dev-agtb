@@ -330,4 +330,63 @@ describe("Sugar7 utils", function() {
             });
         });
     });
+
+    describe('getArrowDirectionSpan', function() {
+        it('should return a properly styled i tag', function() {
+            var expectedHtml = '&nbsp;<i class="fa fa-arrow-up font-green"></i>';
+            expect(app.utils.getArrowDirectionSpan('LBL_UP')).toEqual(expectedHtml);
+            expectedHtml = '&nbsp;<i class="fa fa-arrow-down font-red"></i>';
+            expect(app.utils.getArrowDirectionSpan('LBL_DOWN')).toEqual(expectedHtml);
+            expect(app.utils.getArrowDirectionSpan('anything else')).toEqual('');
+        });
+    });
+
+    describe('getDifference', function() {
+        beforeEach(function() {
+            this.newModel = app.data.createBean('MyModule');
+            this.oldModel = app.data.createBean('MyModule');
+            this.isDifferentWithPrecisionStub = sinon.stub(app.math, 'isDifferentWithPrecision');
+            this.getDifferenceStub = sinon.stub(app.math, 'getDifference');
+        });
+
+        afterEach(function() {
+            this.isDifferentWithPrecisionStub.restore();
+            this.getDifferenceStub.restore();
+        });
+
+        it('should return the difference in the attributes on the models', function() {
+            this.isDifferentWithPrecisionStub.returns(true);
+            this.getDifferenceStub.returns('2');
+            expect(app.utils.getDifference(this.oldModel, this.newModel, 'myAttr')).toEqual('2');
+        });
+
+        it('should return 0 if there is no difference', function() {
+            this.isDifferentWithPrecisionStub.returns(false);
+            expect(app.utils.getDifference(this.oldModel, this.newModel, 'sameAttr')).toEqual(0);
+        });
+    });
+
+    describe('getDirection', function() {
+        it('should return the proper direction label', function() {
+            expect(app.utils.getDirection(5)).toEqual('LBL_UP');
+            expect(app.utils.getDirection(-2)).toEqual('LBL_DOWN');
+            expect(app.utils.getDirection(0)).toEqual('');
+        });
+    });
+
+    describe('isTruthy', function() {
+        it('should determine if a value is truthy in the SugarCRM sense', function() {
+            expect(app.utils.isTruthy(true)).toBeTruthy();
+            expect(app.utils.isTruthy('true')).toBeTruthy();
+            expect(app.utils.isTruthy(1)).toBeTruthy();
+            expect(app.utils.isTruthy('1')).toBeTruthy();
+            expect(app.utils.isTruthy('on')).toBeTruthy();
+            expect(app.utils.isTruthy('yes')).toBeTruthy();
+            expect(app.utils.isTruthy('no')).not.toBeTruthy();
+        });
+
+        it('should accept uppercase truthy strings', function() {
+            expect(app.utils.isTruthy('YES')).toBeTruthy();
+        });
+    });
 });
