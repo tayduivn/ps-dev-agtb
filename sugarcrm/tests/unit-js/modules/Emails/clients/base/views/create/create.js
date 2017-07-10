@@ -11,6 +11,7 @@
 describe('Emails.Views.Create', function() {
     var app;
     var view;
+    var layout;
     var context;
     var model;
     var sandbox;
@@ -27,6 +28,7 @@ describe('Emails.Views.Create', function() {
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');
+        SugarTest.loadComponent('base', 'layout', 'create');
         SugarTest.testMetadata.set();
 
         app = SugarTest.app;
@@ -40,7 +42,8 @@ describe('Emails.Views.Create', function() {
         context.prepare(true);
         model = context.get('model');
 
-        view = SugarTest.createView('base', 'Emails', 'create', null, context, true);
+        layout = SugarTest.createLayout('base', 'Emails', 'create', {}, null, false);
+        view = SugarTest.createView('base', 'Emails', 'create', null, context, true, layout, true);
 
         sandbox = sinon.sandbox.create();
     });
@@ -97,7 +100,6 @@ describe('Emails.Views.Create', function() {
                 };
 
                 sandbox.stub(view, 'getField').withArgs('attachments_collection').returns(field);
-                sandbox.stub(view, '_resizeEditor');
             });
 
             describe('rendering the view', function() {
@@ -109,7 +111,6 @@ describe('Emails.Views.Create', function() {
 
                     expect(spyAddClass).toHaveBeenCalledWith('single');
                     expect(spyRemoveClass).toHaveBeenCalledWith('hidden');
-                    expect(view._resizeEditor).toHaveBeenCalledOnce();
                 });
 
                 it('should hide the attachments field', function() {
@@ -120,7 +121,6 @@ describe('Emails.Views.Create', function() {
 
                     expect(spyAddClass).toHaveBeenCalledWith('hidden');
                     expect(spyRemoveClass).toHaveBeenCalledWith('single');
-                    expect(view._resizeEditor).toHaveBeenCalledOnce();
                 });
             });
 
@@ -133,7 +133,6 @@ describe('Emails.Views.Create', function() {
 
                     expect(spyAddClass).toHaveBeenCalledWith('single');
                     expect(spyRemoveClass).toHaveBeenCalledWith('hidden');
-                    expect(view._resizeEditor).toHaveBeenCalledOnce();
                 });
 
                 it('should hide the attachments field', function() {
@@ -144,7 +143,6 @@ describe('Emails.Views.Create', function() {
 
                     expect(spyAddClass).toHaveBeenCalledWith('hidden');
                     expect(spyRemoveClass).toHaveBeenCalledWith('single');
-                    expect(view._resizeEditor).toHaveBeenCalledOnce();
                 });
             });
         });
@@ -211,68 +209,68 @@ describe('Emails.Views.Create', function() {
         });
     });
 
-    describe('ResizeEditor', function() {
-        var $drawer;
+    describe('resizing editor', function() {
+        var $layout;
         var $editor;
+        var otherHeight = 50;
 
         beforeEach(function() {
-            var mockHtml = '<div><div class="drawer">' +
+            var mockHtml = '<div><div class="drawer active"><div class="main-pane span8">' +
                     '<div class="headerpane"></div>' +
-                    '<div class="record"><div class="mce-stack-layout"><div class="mce-stack-layout-item">' +
-                    '<iframe frameborder="0"></iframe></div></div></div><div class="show-hide-toggle"></div>' +
-                    '</div></div>';
-            var drawerHeight = view.MIN_EDITOR_HEIGHT + 300;
-            var otherHeight = 50;
-            var editorHeight = drawerHeight - (otherHeight * 2) - view.EDITOR_RESIZE_PADDING -
-                view.ATTACHMENT_FIELD_HEIGHT;
+                    '<div class="record">' +
+                        '<div class="mce-stack-layout">' +
+                           '<div class="mce-stack-layout-item">' +
+                                '<iframe frameborder="0"></iframe>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="show-hide-toggle"></div>' +
+                    '</div></div></div>';
+
+            var layoutHeight = view.MIN_EDITOR_HEIGHT + 500;
+            var editorHeight = layoutHeight - otherHeight - view.EDITOR_RESIZE_PADDING;
 
             view.$el = $(mockHtml);
-            $drawer = view.$('.drawer');
-            $drawer.height(drawerHeight);
+            $layout = view.$('.main-pane');
+            view.layout.$el = $layout;
+            $layout.height(layoutHeight);
             $editor = view.$('.mce-stack-layout .mce-stack-layout-item iframe');
             $editor.height(editorHeight);
 
             view.$('.headerpane').height(otherHeight);
             view.$('.record').height(editorHeight);
             view.$('.show-hide-toggle').height(otherHeight);
-
-            app.drawer = {
-                getHeight: $.noop
-            };
-            sandbox.stub(app.drawer, 'getHeight', function() {
-                return $drawer.height();
-            });
         });
 
-        it('should increase the height of the editor when drawer height increases', function() {
+        it('should increase the height of the editor when layout height increases', function() {
+            var layoutHeightBefore = $layout.height();
             var editorHeightBefore = $editor.height();
-            var drawerHeightBefore = $drawer.height();
 
-            //increase drawer height by 100 pixels
-            $drawer.height(drawerHeightBefore + 100);
+            //increase layout height by 100 pixels
+            $layout.height(layoutHeightBefore + 100);
 
-            view._resizeEditor();
+            $(window).trigger('resize');
             //editor should be increased to fill the space
             expect($editor.height()).toEqual(editorHeightBefore + 100);
         });
 
-        it('should decrease the height of the editor when drawer height decreases', function() {
+        it('should decrease the height of the editor when layout height decreases', function() {
+            var layoutHeightBefore = $layout.height();
             var editorHeightBefore = $editor.height();
-            var drawerHeightBefore = $drawer.height();
 
-            //decrease drawer height by 100 pixels
-            $drawer.height(drawerHeightBefore - 100);
+            //decrease layout height by 100 pixels
+            $layout.height(layoutHeightBefore - 100);
 
-            view._resizeEditor();
-            //editor should be decreased to account for decreased drawer height
+            $(window).trigger('resize');
+            //editor should be decreased to account for decreased layout height
             expect($editor.height()).toEqual(editorHeightBefore - 100);
         });
 
-        it('should ensure that editor maintains minimum height when drawer shrinks beyond that', function() {
-            //decrease drawer height to 50 pixels below min editor height
-            $drawer.height(view.MIN_EDITOR_HEIGHT - 50);
+        it('should ensure that editor maintains minimum height when layout shrinks beyond that', function() {
+            //decrease layout height to 50 pixels below min editor height
+            $layout.height(view.MIN_EDITOR_HEIGHT - 50);
 
-            view._resizeEditor();
+            $(window).trigger('resize');
             //editor should maintain min height
             expect($editor.height()).toEqual(view.MIN_EDITOR_HEIGHT);
         });
@@ -286,31 +284,31 @@ describe('Emails.Views.Create', function() {
             view.$('.record').height(editorHeightPlusPadding);
 
             //padding should be added back
-            view._resizeEditor();
+            $(window).trigger('resize');
             expect($editor.height()).toEqual(editorHeightBefore);
         });
 
         describe('events that resize the editor', function() {
             beforeEach(function() {
-                sandbox.stub(view, '_resizeEditor');
+                sandbox.stub(view, 'resizeEditor');
             });
 
             it('should resize the editor when tinymce is initialized', function() {
                 context.trigger('tinymce:oninit');
 
-                expect(view._resizeEditor).toHaveBeenCalledOnce();
+                expect(view.resizeEditor).toHaveBeenCalledOnce();
             });
 
             it('should resize the editor when toggling to show/hide hidden panel', function() {
                 view.trigger('more-less:toggled');
 
-                expect(view._resizeEditor).toHaveBeenCalledOnce();
+                expect(view.resizeEditor).toHaveBeenCalledOnce();
             });
 
             it('should resize the editor when the visibility of any recipients fields is toggled', function() {
                 view.trigger('email-recipients:toggled');
 
-                expect(view._resizeEditor).toHaveBeenCalledOnce();
+                expect(view.resizeEditor).toHaveBeenCalledOnce();
             });
         });
     });

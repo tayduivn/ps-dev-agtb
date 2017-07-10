@@ -21,7 +21,7 @@
      *
      * @property {number}
      */
-    MIN_EDITOR_HEIGHT: 300,
+    MIN_EDITOR_HEIGHT: 200,
 
     /**
      * The padding that needs to be accounted for to prevent the scroll bar
@@ -30,14 +30,6 @@
      * @property {number}
      */
     EDITOR_RESIZE_PADDING: 5,
-
-    /**
-     * Give 44 pixels of height to the attachments field, so that it is always
-     * visible beneath the editor.
-     *
-     * @property {number}
-     */
-    ATTACHMENT_FIELD_HEIGHT: 44,
 
     /**
      * @inheritdoc
@@ -50,18 +42,22 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        // batch queued calls to editor resize function
+        this.resizeEditor = _.debounce(_.bind(this._resizeEditor, this), 100);
+
         this.listenTo(this.context, 'tinymce:oninit', function() {
-            this._resizeEditor();
+            this.resizeEditor();
         });
         this.listenTo(app.drawer, 'drawer:resize', function() {
-            this._resizeEditor();
+            this.resizeEditor();
         });
         this.on('more-less:toggled', function() {
-            this._resizeEditor();
+            this.resizeEditor();
         }, this);
         this.on('email-recipients:toggled', function() {
-            this._resizeEditor();
+            this.resizeEditor();
         }, this);
+        $(window).on('resize.' + this.cid, this.resizeEditor);
     },
 
     /**
@@ -160,6 +156,8 @@
 
         this.setTitle(app.lang.get(this._titleLabel, this.module));
         this._hideOrShowTheAttachmentsField();
+
+        this._resizeEditor();
     },
 
     /**
@@ -185,8 +183,6 @@
             $row.removeClass('hidden');
             $row.addClass('single');
         }
-
-        this._resizeEditor();
     },
 
     /**
@@ -199,47 +195,62 @@
     },
 
     /**
-     * Resize the editor based on the height of the drawer.
+     * Resize the editor based on the height of the layout container.
      *
      * @private
-     * @param {number} [drawerHeight] The current height of the drawer or the
-     * height the drawer will be after animations.
      */
-    _resizeEditor: function(drawerHeight) {
-        var $editor = this.$('.mce-stack-layout .mce-stack-layout-item iframe');
-        var headerHeight;
+    _resizeEditor: function() {
+        var $editor;
+        var layoutHeight;
         var recordHeight;
-        var showHideHeight;
-        var diffHeight;
+        var showToggleHeight;
         var editorHeight;
+        // The difference in height between the current editor and the actual
+        // available height of the space available to it.
+        var diffHeight;
         var newEditorHeight;
 
+        if (this.disposed) {
+            return;
+        }
+
+        $editor = this.$('.mce-stack-layout .mce-stack-layout-item iframe');
         // Cannot resize it if the editor is not already rendered.
         if ($editor.length === 0) {
             return;
         }
 
-        drawerHeight = drawerHeight || app.drawer.getHeight();
-        headerHeight = this.$('.headerpane').outerHeight(true);
+        layoutHeight = this.layout.$el.outerHeight(true);
+        // This is the total height including the html editor and other
+        // record fields. It does not include the show-hide toggle.
         recordHeight = this.$('.record').outerHeight(true);
-        showHideHeight = this.$('.show-hide-toggle').outerHeight(true);
+
+        // Don't include the negative top margin on show-hide toggle because it
+        // has no affect on the layout because the .record has no bottom margin
+        showToggleHeight = this.$('.show-hide-toggle').outerHeight(false);
         editorHeight = $editor.height();
-
-        // Calculate the space left to fill. Subtracts padding to prevent the
-        // scrollbar.
-        diffHeight = drawerHeight - headerHeight - recordHeight - showHideHeight -
-            this.ATTACHMENT_FIELD_HEIGHT - this.EDITOR_RESIZE_PADDING;
-
+        // Calculate the difference between the current editor height and
+        // maximum available height. Subtracts padding to prevent the scrollbar.
+        diffHeight = layoutHeight - recordHeight - showToggleHeight - this.EDITOR_RESIZE_PADDING;
         // Add the space left to fill to the current height of the editor to
         // get the new height.
         newEditorHeight = editorHeight + diffHeight;
 
-        // Don't drop below the minum height.
+        // Don't drop below the minimum height.
         if (newEditorHeight < this.MIN_EDITOR_HEIGHT) {
             newEditorHeight = this.MIN_EDITOR_HEIGHT;
         }
 
         // Set the new height for the editor.
         $editor.height(newEditorHeight);
+    },
+
+    /**
+     * Stop listening to the window resize event.
+     * @inheritdoc
+     */
+    _dispose: function() {
+        $(window).off('resize.' + this.cid);
+        this._super('_dispose');
     }
 })

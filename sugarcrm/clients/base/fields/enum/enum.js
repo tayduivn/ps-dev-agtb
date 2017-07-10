@@ -157,7 +157,7 @@
             });
             if (this.isFetchingOptions){
                 // Set loading message in place of empty DIV while options are loaded via API
-                this.$el.html(app.lang.get('LBL_LOADING'));
+                this.$el.html('<div class="select2-loading">' + app.lang.get('LBL_LOADING') + '</div>');
                 return this;
             }
         }
@@ -445,7 +445,7 @@
     },
 
     /**
-     * Returns dropdown list options which can be used for editing 
+     * Returns dropdown list options which can be used for editing
      *
      * @param {Object} Dropdown list options
      * @return {Object}
