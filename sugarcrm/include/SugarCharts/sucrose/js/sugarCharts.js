@@ -173,8 +173,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 var lineChart;
                 var xTickLabels;
                 var tickFormat = function(d) { return d; };
-                var getX = function(d) { return d[0]; };
-                var getY = function(d) { return d[1]; };
 
                 if (SUGAR.charts.isDataEmpty(data)) {
 
@@ -219,24 +217,16 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             json.properties.labels.map(function(d) { return d.l || d; }) :
                             [];
 
-                        if (json.data[0].values.length && json.data[0].values[0] instanceof Array) {
-                            if (sucrose.utils.isValidDate(json.data[0].values[0][0])) {
+                        if (json.data[0].values.length) {
+                            //TODO: date detection is not working because x is index not value
+                            // need to pass xDataType from ChartDisplay
+                            if (sucrose.utils.isValidDate(json.data[0].values[0].x)) {
                                 tickFormat = function(d) { return d3sugar.timeFormat('%x')(new Date(d)); };
                             } else if (xTickLabels.length > 0) {
-                                tickFormat = function(d) { return xTickLabels[d] || ' '; };
-                            }
-                        } else {
-                            getX = function(d) { return d.x; };
-                            getY = function(d) { return d.y; };
-                            if (xTickLabels.length > 0) {
                                 tickFormat = function(d) { return xTickLabels[d - 1] || ' '; };
                             }
                         }
                     }
-
-                    // lineChart
-                    //     .x(getX)
-                    //     .y(getY);
 
                     lineChart.xAxis
                         .tickFormat(tickFormat)
@@ -546,8 +536,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     return Array.isArray(d.values) && d.values.length;
                 }).length;
             var isGroupedBarType;
-            var isDiscreteData = hasValues &&
-                    Array.isArray(json.label) && json.label.length === json.values.length &&
+            var isDiscreteData = hasValues && Array.isArray(json.label) &&
+                    json.label.length === json.values.length &&
                     json.values.reduce(function(a, b) {
                         return a && Array.isArray(b.values) && b.values.length === 1;
                     }, true);
@@ -567,7 +557,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                     case 'barChart':
                         if ((chartConfig.ReportModule && isDiscreteData) || chartConfig.barType === 'stacked') {
-                            chartConfig.barType = 'grouped';
+                            params.barType = chartConfig.barType = 'grouped';
                         }
                         isGroupedBarType = chartConfig.barType === 'grouped';
 
@@ -656,10 +646,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                 'key': pickLabel(d.label),
                                 'values': isDiscreteData ?
                                     d.values.map(function(e, j) {
-                                        return [i, parseFloat(e)];
+                                        return {x: i + 1, y: parseFloat(e)};
                                     }) :
                                     d.values.map(function(e, j) {
-                                        return [j, parseFloat(e)];
+                                        return {x: j + 1, y: parseFloat(e)};
                                     })
                             };
                         });
