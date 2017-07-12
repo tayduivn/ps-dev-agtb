@@ -46,8 +46,6 @@ describe('Sugar7.Routes', function() {
 
         afterEach(function() {
             app.isSynced = oldIsSynced;
-            app.router.navigate('', {trigger: true});
-            Backbone.history.stop();
         });
 
         describe('404', function() {

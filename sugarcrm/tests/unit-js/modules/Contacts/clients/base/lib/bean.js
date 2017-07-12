@@ -17,7 +17,7 @@ describe("ContactsBean", function() {
         app = SugarTest.app;
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-
+        app.routing.start();
         SugarTest.loadFile('../modules/Contacts/clients/base/lib', 'bean', 'js', function(d) {
             eval(d);
             app.events.trigger('app:sync:complete');
@@ -27,6 +27,7 @@ describe("ContactsBean", function() {
     afterEach(function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
+        app.router.stop();
     });
 
     it("should not extend bean class if Contacts bean does not exist (gonna create infinite loop)", function(){

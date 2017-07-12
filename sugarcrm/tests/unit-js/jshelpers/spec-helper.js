@@ -233,6 +233,13 @@ beforeEach(function(){
     SugarTest.app.view.createView = _.wrap(SugarTest.app.view.createView, _wrappedCreateMethod);
     SugarTest.app.view.createLayout = _.wrap(SugarTest.app.view.createLayout, _wrappedCreateMethod);
     SugarTest.app.view.createField = _.wrap(SugarTest.app.view.createField, _wrappedCreateMethod);
+    SugarTest.app.events.on('router:init', function() {
+        SugarTest.app.router.stop = _.wrap(SugarTest.app.router.stop, function(orig) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            SugarTest.app.router.navigate('', {trigger: true});
+            return orig.apply(this, args);
+        });
+    });
 });
 
 afterEach(function() {
@@ -281,6 +288,7 @@ afterEach(function() {
         }, this);
     }, this);
 
+    SugarTest.app.events.off('router:init');
     var type = 'app.routing';
     _.each([SugarTest.app.routing._events, SugarTest.app.routing._before], function(stack, idx) {
         _.each(stack, function(ctx, name) {
@@ -320,6 +328,10 @@ afterEach(function() {
     SugarTest.app.view.createLayout = _createLayout;
     SugarTest.app.view.createView = _createView;
     SugarTest.app.view.createField = _createField;
+    if (SugarTest.app.router) {
+        SugarTest.app.router.stop = void 0;
+    }
+
     SugarTest.components = null;
     SugarTest._events = null;
 

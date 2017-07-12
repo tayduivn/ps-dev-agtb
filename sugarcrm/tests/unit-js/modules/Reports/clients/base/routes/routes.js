@@ -35,8 +35,6 @@ describe('Reports.Routes', function() {
     });
 
     afterEach(function() {
-        app.router.navigate('', {trigger: true});
-        Backbone.history.stop();
         sinon.collection.restore();
         app.router.stop();
         app.events.off('router:init');

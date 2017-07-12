@@ -52,8 +52,6 @@ describe('Quotes.Routes', function() {
 
         afterEach(function() {
             app.isSynced = oldIsSynced;
-            app.router.navigate('', {trigger: true});
-            Backbone.history.stop();
         });
 
         it('should load the create view', function() {
