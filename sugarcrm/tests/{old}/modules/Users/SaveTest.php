@@ -71,6 +71,7 @@ class SaveTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_POST['mail_smtppass']);
         unset($_REQUEST['mail_smtppass']);
 
+        $current_user->retrieve($current_user->id);
         $userData = $current_user->getUsersNameAndEmail();
         $emailAddressId = $current_user->emailAddress->getGuid($userData['email']);
         $oe = BeanFactory::newBean('OutboundEmail');

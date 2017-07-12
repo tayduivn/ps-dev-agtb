@@ -391,15 +391,19 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 ],
                 'parent_name' => $GLOBALS['current_user']->name,
                 'email_addresses' => [
-                    'id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
-                    'email_address' => static::$overrideConfig->email_address,
+                    'id' => $this->getEmailAddressId(static::$userConfig->email_address),
+                    'email_address' => static::$userConfig->email_address,
                 ],
-                'email_address_id' => $this->getEmailAddressId(static::$overrideConfig->email_address),
-                'email_address' => static::$overrideConfig->email_address,
+                'email_address_id' => $this->getEmailAddressId(static::$userConfig->email_address),
+                'email_address' => static::$userConfig->email_address,
             ],
         ];
         $collection = $this->getCollection($record['id'], 'from');
-        $this->assertRecords($expected, $collection, 'The sender should not have changed');
+        $this->assertRecords(
+            $expected,
+            $collection,
+            'The sender should still be the current user, but with the email address assigned to the user configuration'
+        );
 
         $expected = [
             [
@@ -441,7 +445,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $bean = $this->retrieveEmailText($record['id']);
         $this->assertEquals(
-            "{$GLOBALS['current_user']->name} <" . static::$overrideConfig->email_address . ">",
+            "{$GLOBALS['current_user']->name} <" . static::$userConfig->email_address . ">",
             $bean->from_addr_name
         );
         $this->assertEquals($address->email_address, $bean->to_addrs_names);
@@ -655,12 +659,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = [
             'state' => Email::STATE_READY,
-            'from_link' => [
-                'create' => [
-                    $this->createEmailParticipant($contact1),
-                    $this->createEmailParticipant($contact2),
-                ],
-            ],
             'to_link' => [
                 'create' => [
                     $this->createEmailParticipant($contact1),

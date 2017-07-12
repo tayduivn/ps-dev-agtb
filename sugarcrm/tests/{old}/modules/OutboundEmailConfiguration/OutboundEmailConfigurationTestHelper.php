@@ -96,12 +96,16 @@ class OutboundEmailConfigurationTestHelper
             $GLOBALS['db']->query($sql);
         }
 
-        $name = 'System Override';
+        $user = BeanFactory::retrieveBean('Users', $userId);
+        $userData = $user->getUsersNameAndEmail();
+        $name = $userData['name'];
+        $email = empty($userData['email']) ? "{$userId}@unit.net" : $userData['email'];
+
         $configuration = array(
             'name' => $name,
             'type' => 'system-override',
             'user_id' => $userId,
-            'from_email' => "{$userId}@unit.net",
+            'from_email' => $email,
             'from_name' => $name,
         );
         $configuration = self::mergeOutboundEmailConfigurations($configuration);
@@ -174,6 +178,8 @@ class OutboundEmailConfigurationTestHelper
 
     public static function createOutboundEmail($configuration)
     {
+        $sea = new SugarEmailAddress();
+
         $outboundEmail                    = new OutboundEmail();
         $outboundEmail->new_with_id       = true;
         $outboundEmail->id                = create_guid();
@@ -188,6 +194,8 @@ class OutboundEmailConfigurationTestHelper
         $outboundEmail->mail_smtppass     = $configuration["mail_smtppass"];
         $outboundEmail->mail_smtpauth_req = $configuration["mail_smtpauth_req"];
         $outboundEmail->mail_smtpssl      = $configuration["mail_smtpssl"];
+        $outboundEmail->email_address = $configuration['from_email'];
+        $outboundEmail->email_address_id = $sea->getEmailGUID($outboundEmail->email_address);
         $outboundEmail->save();
 
         return $outboundEmail;
@@ -244,6 +252,11 @@ class OutboundEmailConfigurationTestHelper
         }
 
         $admin->saveSetting('notify', 'allow_default_outbound', $allow);
+
+        // The values of fields on OutboundEmail records, like `email_address_id`, are dependent on the
+        // `notify_allow_default_outbound` admin setting. Anytime a test changes it, we need to make sure these records
+        // are not retrieved from cache.
+        BeanFactory::clearCache();
     }
 
     /**
@@ -254,6 +267,11 @@ class OutboundEmailConfigurationTestHelper
         if (!is_null(static::$existingAllowDefaultOutbound)) {
             $admin = BeanFactory::getBean('Administration');
             $admin->saveSetting('notify', 'allow_default_outbound', static::$existingAllowDefaultOutbound);
+
+            // The values of fields on OutboundEmail records, like `email_address_id`, are dependent on the
+            // `notify_allow_default_outbound` admin setting. Anytime a test changes it, we need to make sure these records
+            // are not retrieved from cache.
+            BeanFactory::clearCache();
         }
     }
 }

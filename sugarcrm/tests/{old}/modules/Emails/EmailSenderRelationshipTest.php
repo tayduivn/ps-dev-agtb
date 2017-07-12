@@ -57,62 +57,22 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * Only the current user can be added as the sender of a draft.
      *
      * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_ParticipantIsPatchedWithCurrentUserAsParent()
-    {
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-
-        $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address));
-        $this->assertTrue($result);
-
-        $beans = $email->from_link->getBeans();
-        $this->assertCount(1, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Users', $bean->parent_type);
-        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
-        $this->assertSame($address->id, $bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals("{$GLOBALS['current_user']->name} <$address->email_address>", $email->from_addr_name);
-    }
-
-    public function onlyCurrentUserCanBeLinkedAsParentProvider()
-    {
-        return [
-            [
-                null,
-            ],
-            [
-                SugarTestEmailAddressUtilities::createEmailAddress(),
-            ],
-        ];
-    }
-
-    /**
-     * Only the current user can be added as the sender of a draft.
-     *
-     * @dataProvider onlyCurrentUserCanBeLinkedAsParentProvider
-     * @covers ::add
      * @expectedException SugarApiExceptionNotAuthorized
      */
-    public function testAdd_OnlyCurrentUserCanBeLinkedAsParent($address)
+    public function testAdd_OnlyCurrentUserCanBeLinkedAsParent()
     {
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
 
-        $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
+        $this->relationship->add($email, $this->createEmailParticipant($contact));
     }
 
     /**
-     * The sender's email address can be changed for the email.
+     * The sender's email address can be changed for the email. The email address is derived from the outbound email
+     * configuration.
      *
      * @covers ::add
+     * @covers ::setEmailAddress
      * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
@@ -120,11 +80,31 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAdd_ParticipantIsUpdatedWithEmailAddress()
     {
+        // Create an email without an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
 
-        $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertEmpty($bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $email->from_addr_name
+        );
+
+        // Specify an outbound email configuration for the draft.
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $oe->email_address_id = $address->id;
+        BeanFactory::registerBean($oe);
+        $email->outbound_email_id = $oe->id;
+
+        $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertTrue($result);
 
         $beans = $email->from_link->getBeans();
@@ -143,6 +123,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * The sender's email address can be changed for the email.
      *
      * @covers ::add
+     * @covers ::setEmailAddress
      * @covers EmailParticipant::save
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
@@ -150,12 +131,36 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAdd_ChangeEmailAddressForParticipant()
     {
+        // Create an email with an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address1));
+        $oe1 = BeanFactory::newBean('OutboundEmail');
+        $oe1->email_address_id = $address1->id;
+        BeanFactory::registerBean($oe1);
+        $email->outbound_email_id = $oe1->id;
 
-        $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address2));
+        $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address1->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address1->email_address}>", $email->from_addr_name);
+
+        // Change the outbound email configuration to one with a different email address.
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $oe2 = BeanFactory::newBean('OutboundEmail');
+        $oe2->email_address_id = $address2->id;
+        BeanFactory::registerBean($oe2);
+        $email->outbound_email_id = $oe2->id;
+
+        $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertTrue($result);
 
         $beans = $email->from_link->getBeans();
@@ -171,19 +176,29 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * The `email_address_id` field is preserved if an attempt is made to link the same person record without an email
-     * address when that person record is already linked along with an email address.
+     * The `email_address_id` field is emptied if the same person record is linked without an email address. This allows
+     * the email address to be removed if a draft is saved without an outbound email configuration after previously
+     * having one.
      *
      * @covers ::add
+     * @covers ::setEmailAddress
+     * @covers EmailParticipant::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
-    public function testAdd_EmailAddressIsNotRemoved()
+    public function testAdd_EmailAddressIsRemoved()
     {
+        // Create an email with an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $oe->email_address_id = $address->id;
+        BeanFactory::registerBean($oe);
+        $email->outbound_email_id = $oe->id;
 
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
-        $this->assertFalse($result);
+        $this->assertTrue($result);
 
         $beans = $email->from_link->getBeans();
         $this->assertCount(1, $beans);
@@ -195,18 +210,54 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         $email->retrieveEmailText();
         $this->assertEquals("{$GLOBALS['current_user']->name} <{$address->email_address}>", $email->from_addr_name);
+
+        // Remove the outbound email configuration from the email.
+        $email->outbound_email_id = null;
+
+        $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertEmpty($bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $email->from_addr_name
+        );
     }
 
     /**
      * It's a noop when adding the same sender without any change to the email address.
      *
      * @covers ::add
+     * @covers ::setEmailAddress
      */
     public function testAdd_DuplicatesWithoutAnEmailAddressAreIgnored()
     {
+        // Create an email without an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
 
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertEmpty($bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $email->from_addr_name
+        );
+
+        // Add the current user as the sender again.
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertFalse($result);
 
@@ -229,13 +280,33 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * It's a noop when adding the same sender without any change to the email address.
      *
      * @covers ::add
+     * @covers ::setEmailAddress
      */
     public function testAdd_DuplicatesWithAnEmailAddressAreIgnored()
     {
+        // Create an email with an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $oe->email_address_id = $address->id;
+        BeanFactory::registerBean($oe);
+        $email->outbound_email_id = $oe->id;
 
+        $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address->email_address}>", $email->from_addr_name);
+
+        // Add the current user as the sender again.
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
         $this->assertFalse($result);
 
@@ -252,89 +323,16 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * The sender's email address can be changed for the email.
+     * The sender's email address must come from the draft's outbound email configuration.
      *
      * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
+     * @covers ::setEmailAddress
+     * @expectedException SugarApiExceptionInvalidParameter
      */
-    public function testAdd_ChangeEmailAddressByUpdatingExistingParticipantWithDifferentEmailAddress()
+    public function testAdd_TheEmailAddressMustComeFromTheConfiguration()
     {
+        // Create an email without an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $ep = $this->createEmailParticipant($GLOBALS['current_user'], $address1);
-        $this->relationship->add($email, $ep);
-
-        $ep->email_address_id = $address2->id;
-        $result = $this->relationship->add($email, $ep);
-        $this->assertTrue($result);
-
-        $beans = $email->from_link->getBeans();
-        $this->assertCount(1, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Users', $bean->parent_type);
-        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
-        $this->assertSame($address2->id, $bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address2->email_address}>", $email->from_addr_name);
-    }
-
-    /**
-     * The sender's email address can be changed for the email.
-     *
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_UpdateExistingParticipantWithEmailAddress()
-    {
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $ep = $this->createEmailParticipant($GLOBALS['current_user']);
-        $this->relationship->add($email, $ep);
-
-        $ep->email_address_id = $address->id;
-        $result = $this->relationship->add($email, $ep);
-        $this->assertTrue($result);
-
-        $beans = $email->from_link->getBeans();
-        $this->assertCount(1, $beans);
-
-        $bean = array_shift($beans);
-        $this->assertSame('Users', $bean->parent_type);
-        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
-        $this->assertSame($address->id, $bean->email_address_id);
-
-        $email->retrieveEmailText();
-        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address->email_address}>", $email->from_addr_name);
-    }
-
-    /**
-     * The sender's email address can be changed for the email.
-     *
-     * @covers ::add
-     * @covers EmailParticipant::save
-     * @covers Email::saveEmailText
-     * @covers Email::retrieveEmailText
-     * @covers SugarRelationship::resaveRelatedBeans
-     */
-    public function testAdd_EmailAddressIsRemoved()
-    {
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        $ep = $this->createEmailParticipant($GLOBALS['current_user'], $address);
-        $this->relationship->add($email, $ep);
-
-        $ep->email_address_id = '';
-        $result = $this->relationship->add($email, $ep);
-        $this->assertTrue($result);
 
         $beans = $email->from_link->getBeans();
         $this->assertCount(1, $beans);
@@ -349,6 +347,83 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
             $email->from_addr_name
         );
+
+        // Add the current user as the sender again, but with an email address.
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+
+        $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
+    }
+
+    /**
+     * The sender's email address must come from the draft's outbound email configuration. It cannot be overridden.
+     *
+     * @covers ::add
+     * @covers ::setEmailAddress
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testAdd_CannotOverrideTheEmailAddressOfTheConfiguration()
+    {
+        // Create an email with an outbound email configuration.
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $oe->email_address_id = $address1->id;
+        BeanFactory::registerBean($oe);
+        $email->outbound_email_id = $oe->id;
+
+        $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
+        $this->assertTrue($result);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertSame($address1->id, $bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$address1->email_address}>", $email->from_addr_name);
+
+        // Add the current user as the sender again, but with a different email address.
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+
+        $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address2));
+    }
+
+    /**
+     * The sender's email address must come from the draft's outbound email configuration. When the configuration cannot
+     * be loaded, the specified email address cannot be verified to match the configuration's email address.
+     *
+     * @covers ::add
+     * @covers ::setEmailAddress
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testAdd_FailedToLoadTheConfiguration()
+    {
+        // Create an email without an outbound email configuration.
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+
+        $beans = $email->from_link->getBeans();
+        $this->assertCount(1, $beans);
+
+        $bean = array_shift($beans);
+        $this->assertSame('Users', $bean->parent_type);
+        $this->assertSame($GLOBALS['current_user']->id, $bean->parent_id);
+        $this->assertEmpty($bean->email_address_id);
+
+        $email->retrieveEmailText();
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $email->from_addr_name
+        );
+
+        // Add the current user as the sender again, but with an email address. The specified configuration doesn't
+        // exist.
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $email->outbound_email_id = Uuid::uuid1();
+
+        $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
     }
 
     /**

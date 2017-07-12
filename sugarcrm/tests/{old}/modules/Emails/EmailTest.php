@@ -974,35 +974,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @covers ::save
-     */
-    public function testSave_TheCurrentUserIsTheSenderForDraftsAndTheFromEmailAddressIsDerivedFromTheConfiguration()
-    {
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-
-        $oe = BeanFactory::newBean('OutboundEmail');
-        $oe->email_address_id = $address->id;
-        BeanFactory::registerBean($oe);
-
-        $email = BeanFactory::newBean('Emails');
-        $email->name = 'some subject';
-        $email->state = Email::STATE_DRAFT;
-        $email->outbound_email_id = $oe->id;
-        $email->save();
-        SugarTestEmailUtilities::setCreatedEmail($email->id);
-
-        $q = "SELECT * FROM emails_email_addr_rel WHERE email_id='{$email->id}' AND address_type='from' AND deleted=0";
-        $db = DBManagerFactory::getInstance();
-        $row = $db->fetchOne($q);
-
-        $this->assertSame('Users', $row['parent_type'], 'Should be Users');
-        $this->assertSame($GLOBALS['current_user']->id, $row['parent_id'], 'Should be the current user');
-        $this->assertSame($address->id, $row['email_address_id'], 'Should be the email address from the configuration');
-
-        BeanFactory::unregisterBean($oe);
-    }
-
-    /**
-     * @covers ::save
      * @covers ::saveEmailAddresses
      * @covers ::linkEmailToAddress
      * @covers ::saveEmailText

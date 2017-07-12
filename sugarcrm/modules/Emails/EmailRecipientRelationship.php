@@ -28,6 +28,7 @@ class EmailRecipientRelationship extends One2MBeanRelationship
      * - The new row is not added if it represents an email address and the existing row represents a record.
      *
      * {@inheritdoc}
+     * @throws SugarApiExceptionNotAuthorized
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
@@ -126,6 +127,7 @@ class EmailRecipientRelationship extends One2MBeanRelationship
      * $lhs after changing its participants.
      *
      * {@inheritdoc}
+     * @throws SugarApiExceptionNotAuthorized
      */
     public function remove($lhs, $rhs)
     {

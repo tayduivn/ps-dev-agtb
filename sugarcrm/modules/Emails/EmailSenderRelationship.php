@@ -97,11 +97,6 @@ class EmailSenderRelationship extends EmailRecipientRelationship
                 $currentRow->parent_id == $rhs->parent_id;
             $doEmailAddressesMatch = $currentRow->email_address_id == $rhs->email_address_id;
 
-            if ($doParentsMatch && empty($rhs->email_address_id) && !empty($currentRow->email_address_id)) {
-                // The parents match, so keep the email address that the current row has.
-                return false;
-            }
-
             if (!$doEmailAddressesMatch) {
                 // The email_address_id's do not collide. Consider it a new sender.
                 $this->allowRemove = true;
@@ -165,5 +160,42 @@ class EmailSenderRelationship extends EmailRecipientRelationship
     public function getType($side)
     {
         return REL_TYPE_ONE;
+    }
+
+    /**
+     * For drafts, `email_address_id` comes from the chosen outbound email configuration. Set the email's
+     * `outbound_email_id` field to the ID of a valid {@link OutboundEmail} configuration.
+     *
+     * {@inheritdoc}
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected function setEmailAddress(SugarBean $lhs, SugarBean $rhs)
+    {
+        $error = "The sender's email address must come from the draft's outbound email configuration.";
+        $noConfig = "{$error} Set the email's outbound_email_id field to choose a configuration for sending the email.";
+        $noMatch = "{$error} It cannot be overridden.";
+        $failure = "{$error}. Failed to load the draft's outbound email configuration.";
+
+        if ($lhs->state === Email::STATE_DRAFT) {
+            if (empty($lhs->outbound_email_id)) {
+                if (!empty($rhs->email_address_id)) {
+                    throw new SugarApiExceptionInvalidParameter($noConfig);
+                }
+            } else {
+                $oe = BeanFactory::retrieveBean('OutboundEmail', $lhs->outbound_email_id);
+
+                if ($oe) {
+                    if (empty($rhs->email_address_id)) {
+                        $rhs->email_address_id = $oe->email_address_id;
+                    } elseif ($rhs->email_address_id !== $oe->email_address_id) {
+                        throw new SugarApiExceptionInvalidParameter($noMatch);
+                    }
+                } elseif (!empty($rhs->email_address_id)) {
+                    throw new SugarApiExceptionInvalidParameter($failure);
+                }
+            }
+        }
+
+        parent::setEmailAddress($lhs, $rhs);
     }
 }

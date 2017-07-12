@@ -424,7 +424,7 @@ class Email extends SugarBean {
 	{
         return isset($request['saveDraft']) ||
             ($this->type == 'draft' && $this->status == 'draft') ||
-            $this->state === Email::STATE_DRAFT;
+            $this->state === static::STATE_DRAFT;
 	}
 
 	/**
@@ -494,12 +494,12 @@ class Email extends SugarBean {
         if ($saveAsDraft) {
             $this->type = 'draft';
             $this->status = 'draft';
-            $this->state = Email::STATE_DRAFT;
+            $this->state = static::STATE_DRAFT;
         } else {
             if ($archived) {
                 $this->type = 'archived';
                 $this->status = 'archived';
-                $this->state = Email::STATE_ARCHIVED;
+                $this->state = static::STATE_ARCHIVED;
             }
 
 			/* Apply Email Templates */
@@ -558,7 +558,7 @@ class Email extends SugarBean {
                 $this->new_with_id = true;
                 $this->type = 'out';
                 $this->status = 'sent';
-                $this->state = Email::STATE_ARCHIVED;
+                $this->state = static::STATE_ARCHIVED;
             }
         }
 
@@ -604,16 +604,28 @@ class Email extends SugarBean {
         $this->description_html = $htmlBody;
 
         $mailConfig = null;
+
+        // Even when saving a draft, we want to store the outbound email configuration that is to be used.
+        if (isset($request['fromAccount']) && !empty($request['fromAccount'])) {
+            $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId(
+                $current_user,
+                $request['fromAccount']
+            );
+        }
+
+        // Only fall back to the system outbound email configuration if sending the email now.
         if (!$saveAsDraft && !$archived) {
-                if (isset($request["fromAccount"]) && !empty($request["fromAccount"])) {
-                    $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId($current_user, $request["fromAccount"]);
-                } else {
-                    $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
-                }
+            if (!isset($request['fromAccount']) || empty($request['fromAccount'])) {
+                $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
+            }
 
             if (is_null($mailConfig)) {
                 throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
             }
+        }
+
+        if ($mailConfig instanceof OutboundEmailConfiguration) {
+            $this->outbound_email_id = $mailConfig->getConfigId();
         }
 
         try {
@@ -830,12 +842,12 @@ class Email extends SugarBean {
                 // sending a draft email
                 $this->type   = 'out';
                 $this->status = 'sent';
-                $this->state = Email::STATE_ARCHIVED;
+                $this->state = static::STATE_ARCHIVED;
                 $forceSave    = true;
             } elseif ($saveAsDraft) {
                 $this->type   = 'draft';
                 $this->status = 'draft';
-                $this->state = Email::STATE_DRAFT;
+                $this->state = static::STATE_DRAFT;
                 $forceSave    = true;
             }
 
@@ -982,12 +994,10 @@ class Email extends SugarBean {
 			$this->save();
 		}
 
-        $mailConfigId = ($mailConfig instanceof OutboundEmailConfiguration) ? $mailConfig->getConfigId() : null;
-
-        if (!empty($request['fromAccount']) && !empty($sentMessage) && !empty($mailConfigId)) {
+        if (!empty($request['fromAccount']) && !empty($sentMessage) && !empty($this->outbound_email_id)) {
             $ie = BeanFactory::getBean('InboundEmail', $request['fromAccount']);
             $oe = new OutboundEmail();
-            $oe->retrieve($mailConfigId);
+            $oe->retrieve($this->outbound_email_id);
 
             if (isset($ie->id) && !$ie->isPop3Protocol() && !empty($oe->id) && $oe->mail_smtptype != 'gmail') {
                 $sentFolder = $ie->get_stored_options('sentFolder');
@@ -1188,16 +1198,6 @@ class Email extends SugarBean {
                 BeanFactory::registerBean($ep);
                 $ep->parent_type = $GLOBALS['current_user']->getModuleName();
                 $ep->parent_id = $GLOBALS['current_user']->id;
-
-                // Use the email address from the outbound email configuration.
-                if (!empty($this->outbound_email_id)) {
-                    $oe = BeanFactory::retrieveBean('OutboundEmail', $this->outbound_email_id);
-
-                    if ($oe) {
-                        $ep->email_address_id = $oe->email_address_id;
-                    }
-                }
-
                 $this->from_link->add($ep);
             }
 
@@ -1371,9 +1371,14 @@ class Email extends SugarBean {
 	 */
 	function saveEmailAddresses() {
 		// from, single address
-		$fromId = $this->emailAddress->getEmailGUID(from_html($this->from_addr));
-        if(!empty($fromId)){
-		  $this->linkEmailToAddress($fromId, 'from');
+        // Only link the sender if the email is archived because the sender's email address for drafts is defined by the
+        // outbound email configuration.
+        if ($this->state === static::STATE_ARCHIVED) {
+            $fromId = $this->emailAddress->getEmailGUID(from_html($this->from_addr));
+
+            if (!empty($fromId)) {
+                $this->linkEmailToAddress($fromId, 'from');
+            }
         }
 
 		// to, multiple
@@ -1434,7 +1439,7 @@ class Email extends SugarBean {
         $logger = LoggerManager::getLogger();
         $link = "{$type}_link";
 
-        if ($this->isUpdate() && $this->state === Email::STATE_ARCHIVED) {
+        if ($this->isUpdate() && $this->state === static::STATE_ARCHIVED) {
             $logger->warn("Cannot add EmailAddresses/{$id} to link {$link} when Emails/{$this->id} is archived");
             return '';
         }
@@ -2594,7 +2599,7 @@ class Email extends SugarBean {
                 $ieMail = new Email();
                 $ieMail->retrieve($_REQUEST['inbound_email_id']);
                 $ieMail->status = 'replied';
-                $ieMail->state = Email::STATE_ARCHIVED;
+                $ieMail->state = static::STATE_ARCHIVED;
                 $ieMail->save();
             }
 
@@ -3670,9 +3675,6 @@ eoq;
             BeanFactory::registerBean($ep);
             $ep->parent_type = $GLOBALS['current_user']->getModuleName();
             $ep->parent_id = $GLOBALS['current_user']->id;
-            // Set the email address of the sender to be that of the configuration.
-            $ep->email_address = $config->getFrom()->getEmail();
-            $ep->email_address_id = $this->emailAddress->getEmailGUID($ep->email_address);
             $this->from_link->add($ep);
         } else {
             throw new SugarException('Could not find a relationship named: from_link');
@@ -3738,7 +3740,7 @@ eoq;
             $sentMessage = $mailer->send();
 
             // Archive after sending.
-            $this->state = Email::STATE_ARCHIVED;
+            $this->state = static::STATE_ARCHIVED;
             $this->date_sent = TimeDate::getInstance()->nowDb();
             $this->type = 'out';
             $this->status = 'sent';
@@ -3749,7 +3751,7 @@ eoq;
             if (!empty($this->reply_to_id)) {
                 $replyToEmail = BeanFactory::retrieveBean('Emails', $this->reply_to_id);
                 if (!empty($replyToEmail) &&
-                    $replyToEmail->state === Email::STATE_ARCHIVED &&
+                    $replyToEmail->state === static::STATE_ARCHIVED &&
                     !$replyToEmail->reply_to_status
                 ) {
                     $replyToEmail->reply_to_status = true;
