@@ -11,7 +11,7 @@
 /**
  * @class Model.Datas.Base.OutboundEmailModel
  * @alias SUGAR.App.model.datas.BaseOutboundEmailModel
- * @extends Model.Bean
+ * @extends Data.Bean
  */
 ({
     /**

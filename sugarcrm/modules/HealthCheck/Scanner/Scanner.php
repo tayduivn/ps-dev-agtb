@@ -1468,7 +1468,7 @@ class HealthCheckScanner
                 'custom/modules/OutboundEmail/vardefs.php',
                 'custom/modules/UpgradeWizard/UpgradeDBScript.php',
                 'custom/modules/UserSignatures/UserSignaturesApiHelper.php',
-                'custom/modules/UserSignatures/clients/base/fields/editablelistbutton/editablelistbutton.js',
+                'custom/modules/UserSignatures/clients/base/datas/model/model.js',
                 'custom/modules/UserSignatures/clients/base/views/record/record.php',
                 'custom/modules/UserSignatures/clients/base/views/recordlist/recordlist.php',
             );
