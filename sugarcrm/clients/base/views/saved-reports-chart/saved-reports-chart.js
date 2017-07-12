@@ -252,6 +252,7 @@
             x_axis_label: this._getXaxisLabel(data),
             y_axis_label: this._getYaxisLabel(data),
             module: properties.base_module,
+            allow_drillthru: properties.allow_drillthru,
             vertical: config.orientation === 'vertical' ? true : false
         };
 
@@ -367,7 +368,7 @@
      * @param {Object} reportData report data with properties and data array
      */
     chartComplete: function(chart, params, reportData, chartData) {
-        if (!_.isFunction(chart.seriesClick)) {
+        if (!_.isFunction(chart.seriesClick) || !params.allow_drillthru) {
             return;
         }
 

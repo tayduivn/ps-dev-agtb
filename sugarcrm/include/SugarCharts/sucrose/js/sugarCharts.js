@@ -62,10 +62,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         vertical: true,
         wrapTicks: true,
         x_axis_label: '',
-        y_axis_label: ''
+        y_axis_label: '',
+        allow_drillthru: true
     }, chartConfig, chartParams);
     params.vertical = (chartConfig.orientation ? chartConfig.orientation === 'vertical' : false);
-
+    var noDrillthruMsg = SUGAR.charts.translateString('LBL_CHART_NO_DRILLTHRU', 'Reports');
     // chart display strings
     var displayErrorMsg = SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports');
     var noDataMsg = SUGAR.charts.translateString('LBL_CHART_NO_DATA');
@@ -121,6 +122,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                 (seriesKey + ': ') :
                                 '';
                             content += y + percentString + '</p>';
+                            if (!params.allow_drillthru) {
+                                content += '<p>' + noDrillthruMsg + '</p';
+                            }
                             return content;
                         })
                         .direction(params.direction)
@@ -217,8 +221,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             var key = eo.series.key;
                             var x = eo.point.x;
                             var y = eo.point.y;
-                            return '<h3>' + key + '</h3>' +
+                            var content = '<h3>' + key + '</h3>' +
                                    '<p>' + y + ' on ' + x + '</p>';
+                            if (!params.allow_drillthru) {
+                                content += '<p>' + noDrillthruMsg + '</p';
+                            }
+                            return content;
                         })
                         .direction(params.direction)
                         .showTitle(params.show_title)
@@ -305,8 +313,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             var key = pieChart.getKey()(eo);
                             var y = pieChart.getValue()(eo);
                             var x = properties.total ? (y * 100 / properties.total).toFixed(1) : 100;
-                            return '<h3>' + key + '</h3>' +
+                            var content = '<h3>' + key + '</h3>' +
                                    '<p>' + y + ' on ' + x + '</p>';
+                            if (!params.allow_drillthru) {
+                                content += '<p>' + noDrillthruMsg + '</p';
+                            }
+                            return content;
                         })
                         .showTitle(params.show_title)
                         .showLegend(params.show_legend)
@@ -376,8 +388,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             var key = funnelChart.fmtKey()(eo);
                             var y = funnelChart.getValue()(eo);
                             var x = properties.total ? (y * 100 / properties.total).toFixed(1) : 100;
-                            return '<h3>' + key + '</h3>' +
+                            var content = '<h3>' + key + '</h3>' +
                                    '<p>' + y + ' on ' + x + '</p>';
+                            if (!params.allow_drillthru) {
+                                content += '<p>' + noDrillthruMsg + '</p';
+                            }
+                            return content;
                         })
                         .direction(params.direction)
                         .colorData(params.colorData)
@@ -503,7 +519,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             }
 
             // only assign the event handler if chart supports it
-            if (!_.isFunction(chart.seriesClick)) {
+            if (!_.isFunction(chart.seriesClick) || !params.allow_drillthru) {
                 return;
             }
 

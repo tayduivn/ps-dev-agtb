@@ -121,6 +121,8 @@ class SugarChart
         $this->chart_properties['print'] = $print;
         $this->chart_properties['thousands'] = $thousands;
         $this->chart_properties['base_module'] = $base_module;
+        // no drillthru for bwc modules
+        $this->chart_properties['allow_drillthru'] = !isModuleBWC($base_module);
         $this->chart_properties['label'] = $name;
     }
 
