@@ -682,7 +682,7 @@ class Quote extends SugarBean
     }
 
     /**
-     * This defines the supporting modules which have metatdata needed by Quotes to be fully
+     * This defines the supporting modules which have metadata needed by Quotes to be fully
      * functional on the Mobile application
      *
      * @return array
