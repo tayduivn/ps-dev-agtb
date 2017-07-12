@@ -173,7 +173,7 @@
 
             case 'line chart':
                 chartConfig = {
-                    lineType: 'basic',
+                    lineType: 'grouped',
                     chartType: 'lineChart'
                 };
                 break;

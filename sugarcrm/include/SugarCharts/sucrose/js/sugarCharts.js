@@ -284,6 +284,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         }
                     } else {
                         SUGAR.charts.renderChart(chartId, lineChart, json);
+
+                        if (params.state) {
+                            lineChart.cellActivate(params.state);
+                        }
                     }
 
                     SUGAR.charts.callback(callback, lineChart, chartId, params, data);
@@ -537,8 +541,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     return;
                 }
 
-                params.seriesLabel = this.extractSeriesLabel(chartState, data);
-                params.groupLabel = this.extractGroupLabel(chartState, labels);
+                if (params.chart_type === 'line chart') {
+                    params.groupLabel = this.extractSeriesLabel(chartState, data);
+                    params.seriesLabel = this.extractGroupLabel(chartState, labels);
+                } else {
+                    params.seriesLabel = this.extractSeriesLabel(chartState, data);
+                    params.groupLabel = this.extractGroupLabel(chartState, labels);
+                }
 
                 // report_def is defined as a global in _reportCriteriaWithResult
                 // but only in Reports module

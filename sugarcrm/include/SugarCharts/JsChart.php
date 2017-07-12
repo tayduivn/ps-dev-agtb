@@ -170,7 +170,7 @@ class JsChart extends SugarChart {
 		if($chartType == "pie chart") {
 			return array ("pieType" => "basic","tip" => "name","chartType" => "pieChart");
 		} elseif($chartType == "line chart") {
-			return array ("lineType" => "basic","tip" => "name","chartType" => "lineChart");
+            return array ("lineType" => "grouped","tip" => "name","chartType" => "lineChart");
 		} elseif($chartType == "funnel chart 3D") {
 			return array ("funnelType" => "basic","tip" => "name","chartType" => "funnelChart");
 		} elseif($chartType == "gauge chart") {

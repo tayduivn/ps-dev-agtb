@@ -290,6 +290,7 @@
 
             case 'line chart':
                 chartConfig = {
+                    lineType: 'grouped',
                     chartType: 'line chart'
                 };
                 break;
@@ -378,8 +379,14 @@
             if (!_.isFinite(state.seriesIndex)) {
                 return;
             }
-            params.seriesLabel = SUGAR.charts.extractSeriesLabel(state, data);
-            params.groupLabel = SUGAR.charts.extractGroupLabel(state, labels);
+
+            if (params.chart_type === 'line chart') {
+                params.groupLabel = SUGAR.charts.extractSeriesLabel(state, data);
+                params.seriesLabel = SUGAR.charts.extractGroupLabel(state, labels);
+            } else {
+                params.seriesLabel = SUGAR.charts.extractSeriesLabel(state, data);
+                params.groupLabel = SUGAR.charts.extractGroupLabel(state, labels);
+            }
 
             chart.clearActive();
             if (chart.cellActivate) {

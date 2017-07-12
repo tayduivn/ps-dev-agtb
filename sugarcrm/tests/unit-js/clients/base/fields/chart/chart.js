@@ -55,7 +55,7 @@ describe('Base.Field.Chart', function() {
             rawChartParams.chart_type = 'line chart';
             var cfg = field.getChartConfig(rawChartData, rawChartParams);
 
-            expect(cfg.lineType).toEqual('basic');
+            expect(cfg.lineType).toEqual('grouped');
             expect(cfg.chartType).toEqual('lineChart');
             expect(rawChartData.properties[0].type).toEqual(rawChartParams.chart_type);
         });
