@@ -179,11 +179,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = [
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
-            'from_link' => [
-                'create' => [
-                    $this->createEmailParticipant(null, $address),
-                ],
-            ],
             'to_link' => [
                 'create' => [
                     $this->createEmailParticipant($lead, $leadEmailAddress),

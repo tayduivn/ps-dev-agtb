@@ -81,6 +81,28 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api->createRecord($this->service, $args);
     }
 
+    /**
+     * @covers ::createRecord
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testCreateRecord_CannotSpecifySenderForDraft()
+    {
+        $args = [
+            'module' => 'Emails',
+            'name' => 'test subject',
+            'state' => Email::STATE_DRAFT,
+            'from_link' => [
+                'create' => [
+                    'parent_type' => 'Users',
+                    'parent_id' => Uuid::uuid1(),
+                    'email_address_id' => Uuid::uuid1(),
+                ],
+            ],
+        ];
+        $api = new EmailsApi();
+        $api->createRecord($this->service, $args);
+    }
+
     public function testCreateRecord_NoEmailIsCreatedOnFailureToSend()
     {
         $before = $GLOBALS['db']->fetchOne('SELECT COUNT(*) as num FROM emails WHERE deleted=0');
@@ -133,6 +155,29 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'state' => $toState,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
+        $api = new EmailsApi();
+        $api->updateRecord($this->service, $args);
+    }
+
+    /**
+     * @covers ::updateRecord
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testUpdateRecord_CannotSpecifySenderForDraft()
+    {
+        $email = SugarTestEmailUtilities::createEmail(null, ['state' => Email::STATE_DRAFT]);
+
+        $args = [
+            'module' => 'Emails',
+            'record' => $email->id,
+            'from_link' => [
+                'create' => [
+                    'parent_type' => 'Users',
+                    'parent_id' => Uuid::uuid1(),
+                    'email_address_id' => Uuid::uuid1(),
+                ],
+            ],
+        ];
         $api = new EmailsApi();
         $api->updateRecord($this->service, $args);
     }

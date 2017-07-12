@@ -82,8 +82,6 @@ class EmailsApi extends ModuleApi
     /**
      * Prevents the creation of a bean when the state transition is invalid. Sends the email when the state is "Ready."
      *
-     * The current user is always used as the sender for emails in the "Draft" or "Ready" states.
-     *
      * {@inheritdoc}
      */
     public function createRecord(ServiceBase $api, array $args)
@@ -102,9 +100,8 @@ class EmailsApi extends ModuleApi
             $args['state'] = Email::STATE_DRAFT;
         }
 
-        if ($args['state'] === Email::STATE_DRAFT) {
-            // Drop any submitted senders. The assigned user will be added as the sender.
-            unset($args['from_link']);
+        if ($args['state'] === Email::STATE_DRAFT && isset($args['from_link'])) {
+            throw new SugarApiExceptionNotAuthorized('Not allowed to edit field from_link when saving a draft');
         }
 
         $result = parent::createRecord($api, $args);
@@ -149,6 +146,10 @@ class EmailsApi extends ModuleApi
                 $isReady = true;
                 unset($args['state']);
             }
+        }
+
+        if ($bean->state === Email::STATE_DRAFT && isset($args['from_link'])) {
+            throw new SugarApiExceptionNotAuthorized('Not allowed to edit field from_link when saving a draft');
         }
 
         $result = parent::updateRecord($api, $args);
