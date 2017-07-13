@@ -27,7 +27,6 @@ describe('Sugar7.Routes', function() {
     afterEach(function() {
         sinon.collection.restore();
         app.router.stop();
-        app.events.off('router:init');
     });
 
     describe('Routes', function() {

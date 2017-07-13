@@ -328,9 +328,6 @@ afterEach(function() {
     SugarTest.app.view.createLayout = _createLayout;
     SugarTest.app.view.createView = _createView;
     SugarTest.app.view.createField = _createField;
-    if (SugarTest.app.router) {
-        SugarTest.app.router.stop = void 0;
-    }
 
     SugarTest.components = null;
     SugarTest._events = null;

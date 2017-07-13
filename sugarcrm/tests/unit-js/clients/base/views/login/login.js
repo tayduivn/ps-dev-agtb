@@ -35,7 +35,6 @@ describe("Login View", function() {
         SugarTest.testMetadata.set();
         view = SugarTest.createView("base", "Login", "login");
         app = SUGAR.App;
-        app.routing.start();
     });
 
     afterEach(function() {
@@ -45,7 +44,6 @@ describe("Login View", function() {
         sinon.collection.restore();
         Handlebars.templates = {};
         view = null;
-        app.router.stop();
     });
 
     describe("Declare Login Bean", function() {

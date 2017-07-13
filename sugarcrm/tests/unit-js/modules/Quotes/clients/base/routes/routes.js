@@ -32,7 +32,6 @@ describe('Quotes.Routes', function() {
     afterEach(function() {
         sinon.collection.restore();
         app.router.stop();
-        app.events.off('router:init');
     });
 
     describe('Routes', function() {
