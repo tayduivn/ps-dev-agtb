@@ -93,7 +93,7 @@ class pmse_InboxViewShowCase extends SugarView
             $metadataFile = $this->getMetaDataFile($metaDataFileName);
 
 
-            $viewdefs = '';
+            $viewdefs = [];
 
             if (isset($GLOBALS['sugar_config']['disable_vcr'])) {
                 $this->showVCRControl = !$GLOBALS['sugar_config']['disable_vcr'];
