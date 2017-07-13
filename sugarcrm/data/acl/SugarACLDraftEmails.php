@@ -42,6 +42,7 @@ class SugarACLDraftEmails extends SugarACLStrategy
         $immutableFields = [
             'date_sent',
             'assigned_user_id',
+            'assigned_user_name',
         ];
 
         if (in_array($context['field'], $immutableFields)) {

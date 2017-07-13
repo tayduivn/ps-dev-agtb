@@ -53,6 +53,7 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ['date_entered'],
             ['date_modified'],
             ['assigned_user_id'],
+            ['assigned_user_name'],
             ['modified_user_id'],
             ['created_by'],
             ['deleted'],
@@ -124,6 +125,10 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'assigned_user_id',
+                true,
+            ],
+            [
+                'assigned_user_name',
                 true,
             ],
             [
@@ -305,6 +310,10 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'assigned_user_id',
+                true,
+            ],
+            [
+                'assigned_user_name',
                 true,
             ],
             [
