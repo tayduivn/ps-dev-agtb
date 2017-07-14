@@ -123,7 +123,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                 '';
                             content += y + percentString + '</p>';
                             if (!params.allow_drillthru) {
-                                content += '<p>' + noDrillthruMsg + '</p';
+                                content += '<p class="tooltip-status">' + noDrillthruMsg + '</p';
                             }
                             return content;
                         })
@@ -224,7 +224,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             var content = '<h3>' + key + '</h3>' +
                                    '<p>' + y + ' on ' + x + '</p>';
                             if (!params.allow_drillthru) {
-                                content += '<p>' + noDrillthruMsg + '</p';
+                                content += '<p class="tooltip-status">' + noDrillthruMsg + '</p';
                             }
                             return content;
                         })
@@ -316,7 +316,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             var content = '<h3>' + key + '</h3>' +
                                    '<p>' + y + ' on ' + x + '</p>';
                             if (!params.allow_drillthru) {
-                                content += '<p>' + noDrillthruMsg + '</p';
+                                content += '<p class="tooltip-status">' + noDrillthruMsg + '</p';
                             }
                             return content;
                         })
@@ -391,7 +391,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             var content = '<h3>' + key + '</h3>' +
                                    '<p>' + y + ' on ' + x + '</p>';
                             if (!params.allow_drillthru) {
-                                content += '<p>' + noDrillthruMsg + '</p';
+                                content += '<p class="tooltip-status">' + noDrillthruMsg + '</p';
                             }
                             return content;
                         })
