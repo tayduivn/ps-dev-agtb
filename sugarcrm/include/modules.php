@@ -96,6 +96,7 @@ $beanList['Import_1']         = 'ImportMap';
 $beanList['Import_2']       = 'UsersLastImport';
 $beanList['Versions']       = 'Version';
 $beanList['Administration'] = 'Administration';
+$beanList['SessionManager'] = 'SessionManager';
 $beanList['vCals']          = 'vCal';
 $beanList['CustomFields']       = 'CustomFields';
 
