@@ -819,7 +819,7 @@ function get_document_revision($session, $id) {
     if(!empty($dr->filename)){
         $filename = "upload://{$dr->id}";
         if (filesize($filename) > 0) {
-        	$contents = sugar_file_get_contents($filename);
+                $contents = file_get_contents($filename);
         } else {
             $contents = '';
         }
