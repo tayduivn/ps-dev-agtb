@@ -241,7 +241,6 @@
         properties = serverData.chartData.properties[0];
 
         config = this.getChartConfig(properties.type);
-        config.chartType = config.orientation === 'vertical' ? 'group by chart' : 'horizontal group by chart';
 
         params = {
             label: data.label,
@@ -327,7 +326,7 @@
                 chartConfig = {
                     orientation: 'vertical',
                     barType: 'basic',
-                    chartType: 'bar chart'
+                    chartType: 'group by chart'
                 };
                 break;
 
@@ -344,7 +343,7 @@
                 chartConfig = {
                     orientation: 'horizontal',
                     barType: 'basic',
-                    chartType: 'horizontal bar chart'
+                    chartType: 'horizontal group by chart'
                 };
                 break;
 
@@ -376,8 +375,11 @@
         // in sugarCharts for use in the Report module charts
         chart.seriesClick(_.bind(function(data, eo, chart, labels) {
             var state = SUGAR.charts.buildChartState(eo, labels);
-            params.groupLabel = SUGAR.charts.extractGroupLabel(eo, labels);
-            params.seriesLabel = SUGAR.charts.extractSeriesLabel(eo, data);
+            if (!_.isFinite(state.seriesIndex)) {
+                return;
+            }
+            params.seriesLabel = SUGAR.charts.extractSeriesLabel(state, data);
+            params.groupLabel = SUGAR.charts.extractGroupLabel(state, labels);
 
             chart.clearActive();
             if (chart.cellActivate) {

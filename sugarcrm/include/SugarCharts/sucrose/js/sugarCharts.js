@@ -626,7 +626,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * constructed from a clicked chart element
          * @param labels an array of grouping labels
          */
-         extractGroupLabel: function(state, labels) {
+        extractGroupLabel: function(state, labels) {
             return _.isEmpty(labels) ? null : labels[state.groupIndex];
         },
 
