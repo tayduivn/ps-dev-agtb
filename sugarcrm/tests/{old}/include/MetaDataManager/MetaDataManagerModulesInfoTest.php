@@ -121,6 +121,13 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
+    protected function tearDown()
+    {
+        // Don't allow future tests to be affected by the cache that these tests yield.
+        sugar_cache_clear('wireless_module_registry_keys');
+        parent::tearDown();
+    }
+
     /**
      * Test getModulesInfo method for the base app
      *
@@ -308,6 +315,9 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
 
     static protected function setUpMobile()
     {
+        // Don't allow these tests to be affected by the cache.
+        sugar_cache_clear('wireless_module_registry_keys');
+
         if (file_exists(self::$customMobileMetaFile)) {
             // Backup the custom file if there is one
             self::$mobileBackedUp = true;

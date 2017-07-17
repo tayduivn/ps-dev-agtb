@@ -33,4 +33,20 @@ class EmailTest extends \PHPUnit_Framework_TestCase
         $email->state = \Email::STATE_ARCHIVED;
         $email->sendEmail($config);
     }
+
+    /**
+     * @covers ::getMobileSupportingModules
+     */
+    public function testGetMobileSupportingModules()
+    {
+        $actual = \Email::getMobileSupportingModules();
+
+        $expected = [
+            'EmailAddresses',
+            'EmailParticipants',
+            'OutboundEmail',
+            'UserSignatures',
+        ];
+        $this->assertEquals($expected, $actual);
+    }
 }

@@ -3947,4 +3947,23 @@ eoq;
 
         return $options;
     }
+
+    /**
+     * EmailAddresses is needed for enabling users to send emails to addresses, in addition to contacts, leads, etc.,
+     * and for displaying email addresses along with the contacts, leads, etc., who sent or received emails.
+     * EmailParticipants is needed for enabling users to manage and view the sender and recipients for emails.
+     * OutboundEmail is needed for enabling users to select a configuration and send email. UserSignatures is needed for
+     * enabling users to manage and use signatures in their emails.
+     *
+     * {@inheritdoc}
+     */
+    public static function getMobileSupportingModules()
+    {
+        return [
+            'EmailAddresses',
+            'EmailParticipants',
+            'OutboundEmail',
+            'UserSignatures',
+        ];
+    }
 } // end class def
