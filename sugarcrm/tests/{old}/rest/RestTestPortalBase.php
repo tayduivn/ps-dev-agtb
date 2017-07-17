@@ -11,11 +11,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-class RestTestPortalBase extends RestTestBase {
+class RestTestPortalBase extends RestTestBase
+{
     protected $currentPortalBean = null;
     protected $testConsumer = null;
     protected $originalSetting = array();
+
+    /**
+     * @var Contact
+     */
+    protected $contact;
 
     public function setUp()
     {
