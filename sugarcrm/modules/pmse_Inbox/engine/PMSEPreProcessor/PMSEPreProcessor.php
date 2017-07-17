@@ -453,6 +453,7 @@ class PMSEPreProcessor
         // Build a list of object ids that will work for our flows
         $objectIds = $this->buildLinkedObjectIdList($bean, $links);
 
+        $evnParamsChar = $bean->db->convert('rd.evn_params', 'text2char');
         $sql = "
         SELECT
             rd.evn_id, rd.evn_uid, rd.prj_id, rd.pro_id, rd.evn_type,
@@ -497,7 +498,7 @@ class PMSEPreProcessor
                 )
             )
             ORDER BY (
-                CASE rd.evn_params
+                CASE $evnParamsChar
                 WHEN 'new' THEN 1
                 WHEN 'updated' THEN 2
                 ELSE 3

@@ -136,6 +136,8 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
 
         $beanMock->id = 'T1234';
 
+        $beanMock->db = DBManagerFactory::getInstance();
+
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
             ->disableOriginalConstructor()
             ->setMethods([
