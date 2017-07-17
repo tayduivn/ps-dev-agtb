@@ -10,8 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
+use Elastica\Client as Client;
+use Elastica\Request as Request;
 
 /**
  * Check that the Sugar FTS Engine configuration is valid
@@ -20,6 +20,15 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
 {
     public $order = 200;
     public $version = '7.1.5';
+
+    /**
+     * ES supported versions. Same as the version checking in src/Elasticsearch/Adapter/Client.php.
+     * @var array
+     */
+    protected $supportedVersions = array(
+        array('version' =>'5.0', 'operator' => '>='),
+        array('version' => '5.2', 'operator' => '<'),
+    );
 
     public function run()
     {
@@ -35,14 +44,63 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
             $this->error('Access Full Text Search configuration under Administration > Search.');
         } else {
             // Test Elastic FTS connection
-            $searchEngine = SearchEngine::newEngine('Elastic', $ftsConfig['Elastic']);
-            $ftsStatus = $searchEngine->verifyConnectivity(false);
+            $ftsStatus = $this->getServerStatusElastic($ftsConfig['Elastic']);
 
-            if ($ftsStatus != Client::CONN_SUCCESS) {
+            if (!$ftsStatus['valid']) {
                 $this->error('Connection test for Elastic Full Text Search engine failed.  Check your FTS configuration.');
                 $this->error('Access Full Text Search configuration under Administration > Search.');
             }
         }
+    }
+
+    /**
+     * Get the status of the Elastic server before the upgrade, using the raw Elastica library calls.
+     *
+     * Here we don't use src/Elasticsearch/Adapter/Client.php::verifyConnectivity() directly,
+     * because the version checking there is tied to the from version of the upgrade. However, the Elastic
+     * version may be changed during the upgrade. For instance, from Sugar 7.9 to 7.10, Elastic is
+     * upgraded from 1.x to 5.x).
+     *
+     * @param array $config the Elastic server's host and port.
+     * @return array
+     */
+    protected function getServerStatusElastic($config)
+    {
+        global $app_strings;
+        $isValid = false;
+
+        try {
+            $client = new Client($config);
+            $data = $client->request('', Request::GET)->getData();
+
+            if (!empty($data['version']['number']) && $this->isSupportedVersion($data['version']['number'])) {
+                $isValid = true;
+                $displayText = $app_strings['LBL_EMAIL_SUCCESS'];
+            } else {
+                $displayText = $app_strings['ERR_ELASTIC_TEST_FAILED'];
+                $this->error("Elastic version is unknown or unsupported!");
+            }
+        } catch (Exception $e) {
+            $displayText = $e->getMessage();
+            $this->error("Unable to get server status: $displayText");
+        }
+
+        return array('valid' => $isValid, 'status' => $displayText);
+    }
+
+    /**
+     * Verify if Elasticsearch version meets the supported list.
+     *
+     * @param string $version Elasticsearch version to be checked
+     * @return boolean
+     */
+    protected function isSupportedVersion($version)
+    {
+        $result = true;
+        foreach ($this->supportedVersions as $check) {
+            $result = $result && version_compare($version, $check['version'], $check['operator']);
+        }
+        return $result;
     }
 
 }

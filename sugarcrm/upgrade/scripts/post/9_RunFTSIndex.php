@@ -27,7 +27,7 @@ class SugarUpgradeRunFTSIndex extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.7', '<')) {
+        if (version_compare($this->from_version, '7.10', '<')) {
             $this->dropExistingIndex();
             $this->runFTSIndex();
         }
