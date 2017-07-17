@@ -24,8 +24,7 @@ class CurrentUserMobileApi extends CurrentUserApi {
     {
         $hash = parent::getUserHash($user);
         //Mix in the mobile tabs as User::getUserMDHash only takes the base tabs into account
-        $metadataManagerClass = MetaDataManager::getManagerClassName('mobile');
-        $tabs = call_user_func($metadataManagerClass . '::getTabList');
+        $tabs = MetaDataManager::getManager('mobile')->getTabList();
 
         return md5($hash . serialize($tabs));
     }
