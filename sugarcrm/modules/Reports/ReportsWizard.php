@@ -19,6 +19,9 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 if (!empty($this->bean)) {
     $context = array('bean' => $this->bean);
+    if (!empty($_REQUEST['save_as'])) {
+        $context['owner_override'] = true;
+    }
 } else {
     $context = array();
 }
