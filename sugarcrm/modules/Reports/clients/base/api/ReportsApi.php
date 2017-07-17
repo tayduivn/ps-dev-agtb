@@ -164,6 +164,17 @@ class ReportsApi extends ModuleApi
     }
 
     /**
+     * Wrapper for global function return_application_language
+     *
+     * @return Array
+     */
+    protected function getAppStrings()
+    {
+        global $current_language;
+        return return_application_language($current_language);
+    }
+
+    /**
      * This function massages the input filter value and converts it to be report-compatible.
      *
      * @param $type String field type
@@ -177,6 +188,13 @@ class ReportsApi extends ModuleApi
         if (is_array($value)) {
             $val = reset($value);
         }
+
+        // if Undefined, set to empty string and use "Is Empty" filter
+        $app_strings = $this->getAppStrings();
+        if ($val == $app_strings['LBL_CHART_UNDEFINED']) {
+            $val = '';
+        }
+
         switch ($type) {
             case 'bool':
                 $app_list_strings = $this->getAppListStrings();
@@ -250,6 +268,13 @@ class ReportsApi extends ModuleApi
                             $filterRow['qualifier_name'] = 'equals';
                             $filterRow['input_name0'] = reset($value);
                             break;
+                    }
+                    // special case when the input value is empty string
+                    // create a filter simiar to the "Is Empty" filter
+                    if (strlen(reset($value)) == 0) {
+                        $filterRow['qualifier_name'] = 'empty';
+                        $filterRow['input_name0'] = 'empty';
+                        $filterRow['input_name1'] = 'on';
                     }
                     array_push($adhocFilter, $filterRow);
                 }
