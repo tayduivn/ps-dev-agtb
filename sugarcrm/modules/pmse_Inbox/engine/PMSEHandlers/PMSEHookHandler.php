@@ -158,6 +158,7 @@ class PMSEHookHandler extends PMSEAbstractRequestHandler
 
     protected function newFollowFlow($flowData, $createThread = false, $bean = null, $externalAction = '')
     {
+        Registry\Registry::getInstance()->drop('triggered_starts');
         $fr = ProcessManager\Factory::getPMSEObject('PMSEExecuter');
         return $fr->runEngine($flowData, $createThread, $bean, $externalAction);
     }
