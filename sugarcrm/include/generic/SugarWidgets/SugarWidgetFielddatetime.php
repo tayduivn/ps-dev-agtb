@@ -738,9 +738,6 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
             // Find the quarter in regard to the fiscal month
             $monthDiff = $currentMonth - $tempFiscalMonth;
-            if ($monthDiff < 0) {
-                $monthDiff -= 1;
-            }
             $monthDiff = 3 * floor($monthDiff / 3);
 
             // Update the month
