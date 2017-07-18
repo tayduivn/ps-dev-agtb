@@ -79,22 +79,14 @@
              * @param {Object} [options]
              */
             launchSugarEmailClient: function(options) {
-                var fieldMap = {
-                    from: 'from_link',
-                    to: 'to_link',
-                    cc: 'cc_link',
-                    bcc: 'bcc_link'
-                };
-
                 //clean the recipient fields before handing off to email compose
                 _.each(['to', 'cc', 'bcc'], function(recipientType) {
-                    var linkName = fieldMap[recipientType];
                     var recipients;
 
                     if (options[recipientType]) {
                         recipients = this._retrieveValidRecipients(options[recipientType]);
                         options[recipientType] = _.map(recipients, function(recipient) {
-                            recipient.set('_link', linkName);
+                            recipient.set('_link', recipientType);
 
                             return recipient;
                         });

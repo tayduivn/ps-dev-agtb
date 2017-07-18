@@ -74,10 +74,10 @@ class SugarACLEmailsTest extends \PHPUnit_Framework_TestCase
             ['team_id'],
             ['team_set_id'],
             ['tags'],
-            ['from_link'],
-            ['to_link'],
-            ['cc_link'],
-            ['bcc_link'],
+            ['from'],
+            ['to'],
+            ['cc'],
+            ['bcc'],
             ['attachments'],
         ];
     }
@@ -231,19 +231,19 @@ class SugarACLEmailsTest extends \PHPUnit_Framework_TestCase
                 true,
             ],
             [
-                'from_link',
+                'from',
                 true,
             ],
             [
-                'to_link',
+                'to',
                 true,
             ],
             [
-                'cc_link',
+                'cc',
                 true,
             ],
             [
-                'bcc_link',
+                'bcc',
                 true,
             ],
             [

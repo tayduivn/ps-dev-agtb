@@ -50,7 +50,11 @@
 
         if (parentModel instanceof Backbone.Model) {
             this._updateEmailOptions(parentModel);
-            this.listenTo(parentModel, 'change change:from change:to change:cc change:bcc', onChange);
+            this.listenTo(
+                parentModel,
+                'change change:collection_from change:to_collection change:cc_collection change:bcc_collection',
+                onChange
+            );
         }
     },
 

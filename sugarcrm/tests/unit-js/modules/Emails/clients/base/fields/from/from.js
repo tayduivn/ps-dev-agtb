@@ -42,7 +42,7 @@ describe('Emails.BaseFromField', function() {
         model = context.get('model');
 
         from = app.data.createBean('EmailParticipants', {
-            _link: 'from_link',
+            _link: 'from',
             id: _.uniqueId(),
             parent: {
                 _acl: {},
@@ -72,7 +72,7 @@ describe('Emails.BaseFromField', function() {
     describe('responding to data changes', function() {
         it('should render the field', function() {
             field = SugarTest.createField({
-                name: 'from',
+                name: 'from_collection',
                 type: 'from',
                 viewName: 'detail',
                 module: model.module,
@@ -83,14 +83,14 @@ describe('Emails.BaseFromField', function() {
             field.render();
 
             sandbox.stub(field, 'render');
-            field.model.set('from', from);
+            field.model.set('from_collection', from);
 
             expect(field.render).toHaveBeenCalledOnce();
         });
 
         it('should set data on Select2', function() {
             field = SugarTest.createField({
-                name: 'from',
+                name: 'from_collection',
                 type: 'from',
                 viewName: 'edit',
                 module: model.module,
@@ -102,7 +102,7 @@ describe('Emails.BaseFromField', function() {
 
             sandbox.stub(field, 'render');
             sandbox.spy(field, 'getFormattedValue');
-            field.model.set('from', from);
+            field.model.set('from_collection', from);
 
             expect(field.render).not.toHaveBeenCalled();
             expect(field.getFormattedValue).toHaveBeenCalledOnce();
@@ -113,7 +113,7 @@ describe('Emails.BaseFromField', function() {
     describe('responding to DOM changes', function() {
         beforeEach(function() {
             field = SugarTest.createField({
-                name: 'from',
+                name: 'from_collection',
                 type: 'from',
                 viewName: 'edit',
                 module: model.module,
@@ -121,7 +121,7 @@ describe('Emails.BaseFromField', function() {
                 context: context,
                 loadFromModule: true
             });
-            field.model.set('from', from);
+            field.model.set('from_collection', from);
             field.model.trigger('sync');
             field.render();
         });
@@ -130,7 +130,7 @@ describe('Emails.BaseFromField', function() {
             var event = new $.Event('change');
             var parentId = _.uniqueId();
             var newSender = app.data.createBean('EmailParticipants', {
-                _link: 'from_link',
+                _link: 'from',
                 parent: {
                     _acl: {},
                     type: 'Contacts',
@@ -148,18 +148,18 @@ describe('Emails.BaseFromField', function() {
 
             event.added = [newSender];
             field.$(field.fieldTag).trigger(event);
-            actual = field.model.get('from');
+            actual = field.model.get('from_collection');
 
             expect(actual.length).toBe(1);
             expect(actual.at(0)).toBe(newSender);
 
             // Assert that the new sender will be linked on the next sync.
-            json = field.model.toJSON({fields: ['from']});
-            expect(json.from_link.create.length).toBe(1);
-            expect(json.from_link.create[0].parent_type).toBe(newSender.get('parent_type'));
-            expect(json.from_link.create[0].parent_id).toBe(newSender.get('parent_id'));
-            expect(json.from_link.delete.length).toBe(1);
-            expect(json.from_link.delete[0]).toBe(from.get('id'));
+            json = field.model.toJSON({fields: ['from_collection']});
+            expect(json.from.create.length).toBe(1);
+            expect(json.from.create[0].parent_type).toBe(newSender.get('parent_type'));
+            expect(json.from.create[0].parent_id).toBe(newSender.get('parent_id'));
+            expect(json.from.delete.length).toBe(1);
+            expect(json.from.delete[0]).toBe(from.get('id'));
         });
 
         it('should remove the sender', function() {
@@ -168,18 +168,18 @@ describe('Emails.BaseFromField', function() {
             event.removed = [from];
             field.$(field.fieldTag).trigger(event);
 
-            expect(field.model.get('from').length).toBe(0);
+            expect(field.model.get('from_collection').length).toBe(0);
 
             // Assert that the current sender will be unlinked on the next sync.
-            json = field.model.toJSON({fields: ['from']});
-            expect(json.from_link.delete.length).toBe(1);
-            expect(json.from_link.delete[0]).toBe(from.get('id'));
+            json = field.model.toJSON({fields: ['from_collection']});
+            expect(json.from.delete.length).toBe(1);
+            expect(json.from.delete[0]).toBe(from.get('id'));
         });
     });
 
     it('should format the model in the collection', function() {
         var field = SugarTest.createField({
-            name: 'from',
+            name: 'from_collection',
             type: 'from',
             viewName: 'detail',
             module: model.module,
@@ -189,7 +189,7 @@ describe('Emails.BaseFromField', function() {
         });
         var actual;
 
-        field.model.set('from', from);
+        field.model.set('from_collection', from);
         actual = field.getFormattedValue();
 
         expect(actual).toBe(from);
@@ -203,7 +203,7 @@ describe('Emails.BaseFromField', function() {
     describe('rendering in disabled mode', function() {
         it('should disable the select2 element', function() {
             field = SugarTest.createField({
-                name: 'from',
+                name: 'from_collection',
                 type: 'from',
                 viewName: 'edit',
                 module: model.module,

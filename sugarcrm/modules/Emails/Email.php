@@ -1205,14 +1205,14 @@ class Email extends SugarBean {
 			$parentSaveResult = parent::save($check_notify);
 
             // Add the current user as the sender when the email is a draft.
-            if ($this->state === static::STATE_DRAFT && $this->load_relationship('from_link')) {
+            if ($this->state === static::STATE_DRAFT && $this->load_relationship('from')) {
                 $ep = BeanFactory::newBean('EmailParticipants');
                 $ep->new_with_id = true;
                 $ep->id = Uuid::uuid1();
                 BeanFactory::registerBean($ep);
                 $ep->parent_type = $GLOBALS['current_user']->getModuleName();
                 $ep->parent_id = $GLOBALS['current_user']->id;
-                $this->from_link->add($ep);
+                $this->from->add($ep);
             }
 
 			if(!empty($this->parent_type) && !empty($this->parent_id)) {
@@ -1451,10 +1451,9 @@ class Email extends SugarBean {
     public function linkEmailToAddress($id, $type)
     {
         $logger = LoggerManager::getLogger();
-        $link = "{$type}_link";
 
         if ($this->isUpdate() && $this->state === static::STATE_ARCHIVED) {
-            $logger->warn("Cannot add EmailAddresses/{$id} to link {$link} when Emails/{$this->id} is archived");
+            $logger->warn("Cannot add EmailAddresses/{$id} to link {$type} when Emails/{$this->id} is archived");
             return '';
         }
 
@@ -1465,8 +1464,8 @@ class Email extends SugarBean {
             return '';
         }
 
-        if (!$this->load_relationship($link)) {
-            $logger->error("Failed to load link {$link} for Emails record: {$this->id}");
+        if (!$this->load_relationship($type)) {
+            $logger->error("Failed to load link {$type} for Emails record: {$this->id}");
             return '';
         }
 
@@ -1475,15 +1474,15 @@ class Email extends SugarBean {
         $ep->id = Uuid::uuid1();
         BeanFactory::registerBean($ep);
         $ep->email_address_id = $id;
-        $failures = $this->$link->add($ep);
+        $failures = $this->$type->add($ep);
 
         if ($failures === true) {
-            $logger->debug("Linked EmailAddresses/{$id} to Emails/{$this->id} on link {$link}");
+            $logger->debug("Linked EmailAddresses/{$id} to Emails/{$this->id} on link {$type}");
 
             return $ep->id;
         }
 
-        $logger->error("Failed to link EmailAddresses/{$id} to Emails/{$this->id} on link {$link}");
+        $logger->error("Failed to link EmailAddresses/{$id} to Emails/{$this->id} on link {$type}");
         $logger->error('failures=' . var_export($failures, true));
 
         // The email address might already be linked to the email, in which case the ID of the existing row from the
@@ -1556,8 +1555,7 @@ class Email extends SugarBean {
         );
 
         foreach (array_keys($participants) as $linkName) {
-            $tmpLinkName = "{$linkName}_link";
-            $beans = $this->getParticipants($tmpLinkName);
+            $beans = $this->getParticipants($linkName);
 
             foreach ($beans as $bean) {
                 // Use the participant's primary email address if no email address has been chosen.
@@ -3682,16 +3680,16 @@ eoq;
             throw new SugarException("Cannot send an email with state: {$this->state}");
         }
 
-        if ($this->load_relationship('from_link')) {
+        if ($this->load_relationship('from')) {
             $ep = BeanFactory::newBean('EmailParticipants');
             $ep->new_with_id = true;
             $ep->id = Uuid::uuid1();
             BeanFactory::registerBean($ep);
             $ep->parent_type = $GLOBALS['current_user']->getModuleName();
             $ep->parent_id = $GLOBALS['current_user']->id;
-            $this->from_link->add($ep);
+            $this->from->add($ep);
         } else {
-            throw new SugarException('Could not find a relationship named: from_link');
+            throw new SugarException('Could not find a relationship named: from');
         }
 
         // Resolve variables in the subject and content.
@@ -3804,13 +3802,12 @@ eoq;
         );
 
         $num = 0;
-        $tmpLinkName = "{$role}_link";
-        $beans = $this->getParticipants($tmpLinkName);
+        $beans = $this->getParticipants($role);
 
         foreach ($beans as $bean) {
             // Set the email address of the recipient to the recipient's primary email address.
             if (empty($bean->email_address_id)) {
-                if ($this->load_relationship($tmpLinkName)) {
+                if ($this->load_relationship($role)) {
                     $parent = BeanFactory::retrieveBean(
                         $bean->parent_type,
                         $bean->parent_id,
@@ -3822,7 +3819,7 @@ eoq;
                         $bean->email_address_id = $this->emailAddress->getEmailGUID($bean->email_address);
                     }
 
-                    $this->$tmpLinkName->add($bean);
+                    $this->$role->add($bean);
                 }
             }
 

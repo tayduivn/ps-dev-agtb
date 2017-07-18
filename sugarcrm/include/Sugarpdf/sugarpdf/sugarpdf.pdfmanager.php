@@ -216,7 +216,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $contact->retrieve($focus->billing_contact_id);
 
                 if(!empty($contact->email1) || !empty($contact->email2)) {
-                    if ($email_object->load_relationship('to_link')) {
+                    if ($email_object->load_relationship('to')) {
                         $ep = BeanFactory::newBean('EmailParticipants');
                         $ep->new_with_id = true;
                         $ep->id = Uuid::uuid1();
@@ -229,7 +229,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                             $ep->email_address_id = $contact->emailAddress->getEmailGUID($ep->email_address);
                         }
 
-                        $email_object->to_link->add($ep);
+                        $email_object->to->add($ep);
                     };
 
                     //contact email is set
@@ -253,7 +253,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $acct->retrieve($focus->billing_account_id);
 
                 if(!empty($acct->email1) || !empty($acct->email2)) {
-                    if ($email_object->load_relationship('to_link')) {
+                    if ($email_object->load_relationship('to')) {
                         $ep = BeanFactory::newBean('EmailParticipants');
                         $ep->new_with_id = true;
                         $ep->id = Uuid::uuid1();
@@ -266,7 +266,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                             $ep->email_address_id = $acct->emailAddress->getEmailGUID($ep->email_address);
                         }
 
-                        $email_object->to_link->add($ep);
+                        $email_object->to->add($ep);
                     };
 
                     //acct email is set

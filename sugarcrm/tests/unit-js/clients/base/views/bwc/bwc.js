@@ -302,7 +302,7 @@ describe('Base.View.Bwc', function() {
                 arg = app.utils.openEmailCreateDrawer.args[0][1];
                 expect(arg.to.length).toBe(2);
                 expect(arg.to[0].module).toBe('EmailParticipants');
-                expect(arg.to[0].get('_link')).toBe('to_link');
+                expect(arg.to[0].get('_link')).toBe('to');
                 expect(arg.to[0].get('email_address_id')).toBe(composePackage.to[0].email_address_id);
                 expect(arg.to[0].get('email_address')).toBe('bb@foo.com');
                 expect(arg.to[0].get('parent')).toBeUndefined();
@@ -310,7 +310,7 @@ describe('Base.View.Bwc', function() {
                 expect(arg.to[0].get('parent_id')).toBeUndefined();
                 expect(arg.to[0].get('parent_name')).toBeUndefined();
                 expect(arg.to[1].module).toBe('EmailParticipants');
-                expect(arg.to[1].get('_link')).toBe('to_link');
+                expect(arg.to[1].get('_link')).toBe('to');
                 expect(arg.to[1].get('email_address_id')).toBe(composePackage.to[1].email_address_id);
                 expect(arg.to[1].get('email_address')).toBe('cc@foo.com');
                 expect(arg.to[1].get('parent')).toEqual({
@@ -324,7 +324,7 @@ describe('Base.View.Bwc', function() {
                 expect(arg.to[1].get('parent_name')).toBe(contact.get('name'));
                 expect(arg.cc.length).toBe(1);
                 expect(arg.cc[0].module).toBe('EmailParticipants');
-                expect(arg.cc[0].get('_link')).toBe('cc_link');
+                expect(arg.cc[0].get('_link')).toBe('cc');
                 expect(arg.cc[0].get('email_address_id')).toBe(composePackage.cc[0].email_address_id);
                 expect(arg.cc[0].get('email_address')).toBe('sq@foo.com');
                 expect(arg.cc[0].get('parent')).toBeUndefined();

@@ -94,10 +94,10 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
         $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
-        $email->load_relationship('from_link');
-        $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
-        $email->load_relationship('to_link');
-        $email->to_link->add($this->createEmailParticipant($contact));
+        $email->load_relationship('from');
+        $email->from->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('to');
+        $email->to->add($this->createEmailParticipant($contact));
         $email->save();
 
         // Archived email sent by the current user to $user and $contact.
@@ -106,12 +106,12 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
         $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
-        $email->load_relationship('from_link');
-        $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
-        $email->load_relationship('to_link');
-        $email->to_link->add($this->createEmailParticipant($user));
-        $email->load_relationship('cc_link');
-        $email->cc_link->add($this->createEmailParticipant($contact));
+        $email->load_relationship('from');
+        $email->from->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('to');
+        $email->to->add($this->createEmailParticipant($user));
+        $email->load_relationship('cc');
+        $email->cc->add($this->createEmailParticipant($contact));
         $email->save();
 
         // Draft email owned by the current user.
@@ -120,8 +120,8 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('to_link');
-        $email->to_link->add($this->createEmailParticipant($user));
+        $email->load_relationship('to');
+        $email->to->add($this->createEmailParticipant($user));
 
         // Draft email owned by the current user to be sent to $contact.
         $data = [
@@ -129,10 +129,10 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
-        $email->load_relationship('from_link');
-        $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
-        $email->load_relationship('cc_link');
-        $email->cc_link->add($this->createEmailParticipant($contact));
+        $email->load_relationship('from');
+        $email->from->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('cc');
+        $email->cc->add($this->createEmailParticipant($contact));
 
         // Archived email sent by $user to the current user.
         $data = [
@@ -140,10 +140,10 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'assigned_user_id' => $user->id,
         ];
         $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
-        $email->load_relationship('from_link');
-        $email->from_link->add($this->createEmailParticipant($user));
-        $email->load_relationship('to_link');
-        $email->to_link->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('from');
+        $email->from->add($this->createEmailParticipant($user));
+        $email->load_relationship('to');
+        $email->to->add($this->createEmailParticipant($GLOBALS['current_user']));
         $email->save();
 
         // Archived email sent by $contact to $user and the current user.
@@ -152,12 +152,12 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
         $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
-        $email->load_relationship('from_link');
-        $email->from_link->add($this->createEmailParticipant($contact));
-        $email->load_relationship('to_link');
-        $email->to_link->add($this->createEmailParticipant($user));
-        $email->load_relationship('bcc_link');
-        $email->bcc_link->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('from');
+        $email->from->add($this->createEmailParticipant($contact));
+        $email->load_relationship('to');
+        $email->to->add($this->createEmailParticipant($user));
+        $email->load_relationship('bcc');
+        $email->bcc->add($this->createEmailParticipant($GLOBALS['current_user']));
         $email->save();
 
         // Archived email sent by the current user to an email address.
@@ -166,10 +166,10 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'assigned_user_id' => $GLOBALS['current_user']->id,
         ];
         $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
-        $email->load_relationship('from_link');
-        $email->from_link->add($this->createEmailParticipant($GLOBALS['current_user']));
-        $email->load_relationship('to_link');
-        $email->to_link->add($this->createEmailParticipant(null, $address));
+        $email->load_relationship('from');
+        $email->from->add($this->createEmailParticipant($GLOBALS['current_user']));
+        $email->load_relationship('to');
+        $email->to->add($this->createEmailParticipant(null, $address));
         $email->save();
 
         // Archived email sent by the contact to the user with the specified email address.
@@ -178,10 +178,10 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'assigned_user_id' => $user->id,
         ];
         $email = SugarTestEmailUtilities::createEmail(Uuid::uuid1(), $data, false);
-        $email->load_relationship('from_link');
-        $email->from_link->add($this->createEmailParticipant($contact));
-        $email->load_relationship('to_link');
-        $email->to_link->add($this->createEmailParticipant($user, $address));
+        $email->load_relationship('from');
+        $email->from->add($this->createEmailParticipant($contact));
+        $email->load_relationship('to');
+        $email->to->add($this->createEmailParticipant($user, $address));
         $email->save();
 
         $args = [

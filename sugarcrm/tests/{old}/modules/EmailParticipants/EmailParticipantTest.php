@@ -80,7 +80,7 @@ class EmailParticipantTest extends Sugar_PHPUnit_Framework_TestCase
     public function testMarkDeleted()
     {
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $email->load_relationship('to_link');
+        $email->load_relationship('to');
 
         $contact = SugarTestContactUtilities::createContact();
 
@@ -91,7 +91,7 @@ class EmailParticipantTest extends Sugar_PHPUnit_Framework_TestCase
         $ep->parent_id = $contact->id;
         BeanFactory::registerBean($ep);
 
-        $email->to_link->add($ep);
+        $email->to->add($ep);
         SugarRelationship::resaveRelatedBeans();
 
         $email->retrieveEmailText();

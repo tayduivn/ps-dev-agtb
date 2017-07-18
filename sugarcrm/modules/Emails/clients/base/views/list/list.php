@@ -16,7 +16,7 @@ $viewdefs['Emails']['base']['view']['list'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name' => 'from',
+                    'name' => 'from_collection',
                     'type' => 'from',
                     'label' => 'LBL_LIST_FROM_ADDR',
                     'enabled' => true,

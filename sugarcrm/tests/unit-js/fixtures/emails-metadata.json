@@ -285,10 +285,10 @@
                     "required": false,
                     "len": "255"
                 },
-                "from": {
-                    "name": "from",
+                "from_collection": {
+                    "name": "from_collection",
                     "links": [
-                        "from_link"
+                        "from"
                     ],
                     "order_by": "parent_name:asc",
                     "source": "non-db",
@@ -296,17 +296,17 @@
                     "type": "collection",
                     "vname": "LBL_FROM"
                 },
-                "from_link": {
-                    "name": "to_link",
+                "from": {
+                    "name": "from",
                     "relationship": "emails_from",
                     "source": "non-db",
                     "type": "link",
                     "vname": "LBL_FROM"
                 },
-                "to": {
-                    "name": "to",
+                "to_collection": {
+                    "name": "to_collection",
                     "links": [
-                        "to_link"
+                        "to"
                     ],
                     "order_by": "parent_name:asc",
                     "source": "non-db",
@@ -314,17 +314,17 @@
                     "type": "collection",
                     "vname": "LBL_TO_ADDRS"
                 },
-                "to_link": {
-                    "name": "to_link",
+                "to": {
+                    "name": "to",
                     "relationship": "emails_to",
                     "source": "non-db",
                     "type": "link",
                     "vname": "LBL_TO_ADDRS"
                 },
-                "cc": {
-                    "name": "cc",
+                "cc_collection": {
+                    "name": "cc_collection",
                     "links": [
-                        "cc_link"
+                        "cc"
                     ],
                     "order_by": "parent_name:asc",
                     "source": "non-db",
@@ -332,17 +332,17 @@
                     "type": "collection",
                     "vname": "LBL_CC"
                 },
-                "cc_link": {
-                    "name": "cc_link",
+                "cc": {
+                    "name": "cc",
                     "relationship": "emails_cc",
                     "source": "non-db",
                     "type": "link",
                     "vname": "LBL_CC"
                 },
-                "bcc": {
-                    "name": "bcc",
+                "bcc_collection": {
+                    "name": "bcc_collection",
                     "links": [
-                        "bcc_link"
+                        "bcc"
                     ],
                     "order_by": "parent_name:asc",
                     "source": "non-db",
@@ -350,8 +350,8 @@
                     "type": "collection",
                     "vname": "LBL_BCC"
                 },
-                "bcc_link": {
-                    "name": "bcc_link",
+                "bcc": {
+                    "name": "bcc",
                     "relationship": "emails_bcc",
                     "source": "non-db",
                     "type": "link",

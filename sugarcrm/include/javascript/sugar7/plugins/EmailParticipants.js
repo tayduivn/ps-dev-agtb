@@ -146,14 +146,10 @@
                  * @return {string}
                  */
                 this.getLinkName = function() {
-                    var fieldMap = {
-                        from: 'from_link',
-                        to: 'to_link',
-                        cc: 'cc_link',
-                        bcc: 'bcc_link'
-                    };
+                    // There should only be one link in the collection field.
+                    var link = this.def.links[0];
 
-                    return fieldMap[this.name];
+                    return _.has(link, 'name') ? link.name : link;
                 };
 
                 /**

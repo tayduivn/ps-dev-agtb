@@ -100,8 +100,8 @@ class EmailsApi extends ModuleApi
             $args['state'] = Email::STATE_DRAFT;
         }
 
-        if ($args['state'] === Email::STATE_DRAFT && isset($args['from_link'])) {
-            throw new SugarApiExceptionNotAuthorized('Not allowed to edit field from_link when saving a draft');
+        if ($args['state'] === Email::STATE_DRAFT && isset($args['from'])) {
+            throw new SugarApiExceptionNotAuthorized('Not allowed to edit field from when saving a draft');
         }
 
         $result = parent::createRecord($api, $args);
@@ -148,8 +148,8 @@ class EmailsApi extends ModuleApi
             }
         }
 
-        if ($bean->state === Email::STATE_DRAFT && isset($args['from_link'])) {
-            throw new SugarApiExceptionNotAuthorized('Not allowed to edit field from_link when saving a draft');
+        if ($bean->state === Email::STATE_DRAFT && isset($args['from'])) {
+            throw new SugarApiExceptionNotAuthorized('Not allowed to edit field from when saving a draft');
         }
 
         $result = parent::updateRecord($api, $args);

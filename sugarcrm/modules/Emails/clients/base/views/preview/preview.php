@@ -39,7 +39,7 @@ $viewdefs['Emails']['base']['view']['preview'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'from',
+                    'name' => 'from_collection',
                     'type' => 'from',
                     'label' => 'LBL_FROM',
                     'readonly' => true,
@@ -57,7 +57,7 @@ $viewdefs['Emails']['base']['view']['preview'] = array(
                     'readonly' => true,
                 ),
                 array(
-                    'name' => 'to',
+                    'name' => 'to_collection',
                     'type' => 'email-recipients',
                     'label' => 'LBL_TO_ADDRS',
                     'readonly' => true,
@@ -110,7 +110,7 @@ $viewdefs['Emails']['base']['view']['preview'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'cc',
+                    'name' => 'cc_collection',
                     'type' => 'email-recipients',
                     'label' => 'LBL_CC',
                     'readonly' => true,
@@ -124,7 +124,7 @@ $viewdefs['Emails']['base']['view']['preview'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'bcc',
+                    'name' => 'bcc_collection',
                     'type' => 'email-recipients',
                     'label' => 'LBL_BCC',
                     'readonly' => true,

@@ -67,7 +67,7 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                             'searchBarThreshold' => -1,
                         ),
                         array(
-                            'name' => 'to',
+                            'name' => 'to_collection',
                             'type' => 'email-recipients',
                             'label' => 'LBL_TO_ADDRS',
                             'span' => 12,
@@ -81,7 +81,7 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                             ),
                         ),
                         array(
-                            'name' => 'cc',
+                            'name' => 'cc_collection',
                             'type' => 'email-recipients',
                             'label' => 'LBL_CC',
                             'span' => 12,
@@ -95,7 +95,7 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                             ),
                         ),
                         array(
-                            'name' => 'bcc',
+                            'name' => 'bcc_collection',
                             'type' => 'email-recipients',
                             'label' => 'LBL_BCC',
                             'span' => 12,

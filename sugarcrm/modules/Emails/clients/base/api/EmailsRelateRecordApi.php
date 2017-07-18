@@ -82,9 +82,9 @@ class EmailsRelateRecordApi extends RelateRecordApi
         $securityTypeLocal = 'view',
         $securityTypeRemote = 'view'
     ) {
-        if ($args['link_name'] === 'from_link') {
+        if ($args['link_name'] === 'from') {
             throw new SugarApiExceptionNotAuthorized('Cannot link an existing sender');
-        } elseif (in_array($args['link_name'], ['to_link', 'cc_link', 'bcc_link'])) {
+        } elseif (in_array($args['link_name'], ['to', 'cc', 'bcc'])) {
             throw new SugarApiExceptionNotAuthorized('Cannot link existing recipients');
         } elseif ($args['link_name'] === 'attachments') {
             throw new SugarApiExceptionNotAuthorized('Cannot link existing attachments');
@@ -102,9 +102,9 @@ class EmailsRelateRecordApi extends RelateRecordApi
      */
     public function createRelatedLinksFromRecordList(ServiceBase $api, array $args)
     {
-        if ($args['link_name'] === 'from_link') {
+        if ($args['link_name'] === 'from') {
             throw new SugarApiExceptionNotAuthorized('Cannot link an existing sender');
-        } elseif (in_array($args['link_name'], ['to_link', 'cc_link', 'bcc_link'])) {
+        } elseif (in_array($args['link_name'], ['to', 'cc', 'bcc'])) {
             throw new SugarApiExceptionNotAuthorized('Cannot link existing recipients');
         } elseif ($args['link_name'] === 'attachments') {
             throw new SugarApiExceptionNotAuthorized('Cannot link existing attachments');
@@ -121,7 +121,7 @@ class EmailsRelateRecordApi extends RelateRecordApi
      */
     public function deleteRelatedLink(ServiceBase $api, array $args)
     {
-        if ($args['link_name'] === 'from_link') {
+        if ($args['link_name'] === 'from') {
             throw new SugarApiExceptionNotAuthorized('The sender cannot be removed');
         }
 

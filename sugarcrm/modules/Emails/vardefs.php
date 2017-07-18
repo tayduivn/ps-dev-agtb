@@ -599,10 +599,10 @@ $dictionary['Email'] = array(
             'function_bean' => 'Emails',
             'reportable' => false,
         ),
-        'from' => array(
-            'name' => 'from',
+        'from_collection' => array(
+            'name' => 'from_collection',
             'links' => array(
-                'from_link',
+                'from',
             ),
             'order_by' => 'parent_name:asc',
             'source' => 'non-db',
@@ -611,10 +611,10 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_FROM',
             'reportable' => false,
         ),
-        'to' => array(
-            'name' => 'to',
+        'to_collection' => array(
+            'name' => 'to_collection',
             'links' => array(
-                'to_link',
+                'to',
             ),
             'order_by' => 'parent_name:asc',
             'source' => 'non-db',
@@ -623,10 +623,10 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_TO_ADDRS',
             'reportable' => false,
         ),
-        'cc' => array(
-            'name' => 'cc',
+        'cc_collection' => array(
+            'name' => 'cc_collection',
             'links' => array(
-                'cc_link',
+                'cc',
             ),
             'order_by' => 'parent_name:asc',
             'source' => 'non-db',
@@ -635,10 +635,10 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_CC',
             'reportable' => false,
         ),
-        'bcc' => array(
-            'name' => 'bcc',
+        'bcc_collection' => array(
+            'name' => 'bcc_collection',
             'links' => array(
-                'bcc_link',
+                'bcc',
             ),
             'order_by' => 'parent_name:asc',
             'source' => 'non-db',
@@ -647,8 +647,8 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_BCC',
             'reportable' => false,
         ),
-        'from_link' => array(
-            'name' => 'from_link',
+        'from' => array(
+            'name' => 'from',
             'relationship' => 'emails_from',
             'source' => 'non-db',
             'type' => 'link',
@@ -656,8 +656,8 @@ $dictionary['Email'] = array(
             'reportable' => false,
             'readonly' => true,
         ),
-        'to_link' => array(
-            'name' => 'to_link',
+        'to' => array(
+            'name' => 'to',
             'relationship' => 'emails_to',
             'source' => 'non-db',
             'type' => 'link',
@@ -665,8 +665,8 @@ $dictionary['Email'] = array(
             'reportable' => false,
             'readonly' => true,
         ),
-        'cc_link' => array(
-            'name' => 'cc_link',
+        'cc' => array(
+            'name' => 'cc',
             'relationship' => 'emails_cc',
             'source' => 'non-db',
             'type' => 'link',
@@ -674,8 +674,8 @@ $dictionary['Email'] = array(
             'reportable' => false,
             'readonly' => true,
         ),
-        'bcc_link' => array(
-            'name' => 'bcc_link',
+        'bcc' => array(
+            'name' => 'bcc',
             'relationship' => 'emails_bcc',
             'source' => 'non-db',
             'type' => 'link',

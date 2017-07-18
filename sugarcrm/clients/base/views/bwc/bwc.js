@@ -329,8 +329,6 @@
         }
 
         _.each(['to', 'cc'], function(field) {
-            var linkName = field + '_link';
-
             if (!_.isArray(options[field])) {
                 return;
             }
@@ -339,7 +337,7 @@
 
             _.each(options[field], function(data) {
                 var bean = app.data.createBean('EmailParticipants', {
-                    _link: linkName,
+                    _link: field,
                     email_address_id: data.email_address_id,
                     email_address: data.email_address
                 });

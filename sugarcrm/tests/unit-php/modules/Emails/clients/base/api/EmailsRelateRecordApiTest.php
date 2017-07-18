@@ -25,16 +25,16 @@ class EmailsRelateRecordApiTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'from_link',
+                'from',
             ],
             [
-                'to_link',
+                'to',
             ],
             [
-                'cc_link',
+                'cc',
             ],
             [
-                'bcc_link',
+                'bcc',
             ],
             [
                 'attachments',
@@ -93,7 +93,7 @@ class EmailsRelateRecordApiTest extends \PHPUnit_Framework_TestCase
         $args = [
             'module' => 'Emails',
             'record' => Uuid::uuid1(),
-            'link_name' => 'from_link',
+            'link_name' => 'from',
             'remote_id' => Uuid::uuid1(),
         ];
         $service = $this->createPartialMock('\\RestService', []);

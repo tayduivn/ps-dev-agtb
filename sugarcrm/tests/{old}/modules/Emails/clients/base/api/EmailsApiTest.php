@@ -91,7 +91,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'module' => 'Emails',
             'name' => 'test subject',
             'state' => Email::STATE_DRAFT,
-            'from_link' => [
+            'from' => [
                 'create' => [
                     'parent_type' => 'Users',
                     'parent_id' => Uuid::uuid1(),
@@ -170,7 +170,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = [
             'module' => 'Emails',
             'record' => $email->id,
-            'from_link' => [
+            'from' => [
                 'create' => [
                     'parent_type' => 'Users',
                     'parent_id' => Uuid::uuid1(),

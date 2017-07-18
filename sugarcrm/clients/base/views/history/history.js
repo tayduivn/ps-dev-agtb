@@ -111,7 +111,7 @@
                 // Don't set email_address_id. It will be set when the email is
                 // archived.
                 to: app.data.createBean('EmailParticipants', {
-                    _link: 'to_link',
+                    _link: 'to',
                     parent: _.extend({type: this.model.module}, app.utils.deepCopy(this.model)),
                     parent_type: this.model.module,
                     parent_id: this.model.get('id'),

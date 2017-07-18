@@ -22,7 +22,7 @@ $viewdefs['Emails']['base']['view']['compose-addressbook-recipientscontainer'] =
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'to',
+                    'name' => 'to_collection',
                     'type' => 'email-recipients',
                     'label' => 'LBL_SELECTED_RECIPIENTS',
                     'readonly' => true,

@@ -57,7 +57,7 @@ describe('Base.View.History', function() {
         expect(app.utils.openEmailCreateDrawer).toHaveBeenCalledWith('create');
         expect(app.utils.openEmailCreateDrawer.firstCall.args[1].related).toBe(view.model);
         expect(app.utils.openEmailCreateDrawer.firstCall.args[1].to.module).toBe('EmailParticipants');
-        expect(app.utils.openEmailCreateDrawer.firstCall.args[1].to.get('_link')).toBe('to_link');
+        expect(app.utils.openEmailCreateDrawer.firstCall.args[1].to.get('_link')).toBe('to');
         expect(app.utils.openEmailCreateDrawer.firstCall.args[1].to.get('parent')).toEqual({
             _acl: {},
             type: view.model.module,

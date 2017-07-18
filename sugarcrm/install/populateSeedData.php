@@ -563,8 +563,8 @@ for($i=0; $i<$number_contacts; $i++) {
         BeanFactory::registerBean($from);
         $from->parent_type = 'Users';
         $from->parent_id = $contacts_account->assigned_user_id;
-        $email->load_relationship('from_link');
-        $email->from_link->add($from);
+        $email->load_relationship('from');
+        $email->from->add($from);
     }
 
     $to = BeanFactory::newBean('EmailParticipants');
@@ -573,8 +573,8 @@ for($i=0; $i<$number_contacts; $i++) {
     BeanFactory::registerBean($to);
     $to->parent_type = $contact->getModuleName();
     $to->parent_id = $contact->id;
-    $email->load_relationship('to_link');
-    $email->to_link->add($to);
+    $email->load_relationship('to');
+    $email->to->add($to);
 
     // Add $email to the resave queue to force it to be saved now that all of the relationships have been saved. The
     // email won't be added to the queue twice. This guarantees that the email will only be saved once.

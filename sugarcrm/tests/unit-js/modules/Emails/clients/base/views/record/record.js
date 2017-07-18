@@ -44,9 +44,9 @@ describe('Emails.Views.Record', function() {
                         {
                             name: 'recipients',
                             fields: [
-                                {name: 'to'},
-                                {name: 'cc'},
-                                {name: 'bcc'}
+                                {name: 'to_collection'},
+                                {name: 'cc_collection'},
+                                {name: 'bcc_collection'}
                             ]
                         }
                     ]
@@ -113,37 +113,46 @@ describe('Emails.Views.Record', function() {
         it('should toggle action buttons while loading all recipients', function() {
             sandbox.spy(view, 'toggleButtons');
 
-            view.trigger('loading_collection_field', 'to');
-            view.trigger('loading_collection_field', 'cc');
-            view.trigger('loading_collection_field', 'bcc');
+            view.trigger('loading_collection_field', 'to_collection');
+            view.trigger('loading_collection_field', 'cc_collection');
+            view.trigger('loading_collection_field', 'bcc_collection');
 
             expect(view.toggleButtons).toHaveBeenCalledThrice();
             expect(view.toggleButtons.alwaysCalledWithExactly(false)).toBe(true);
 
-            view.trigger('loaded_collection_field', 'to');
+            view.trigger('loaded_collection_field', 'to_collection');
             expect(view.toggleButtons).toHaveBeenCalledThrice();
             expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
 
-            view.trigger('loaded_collection_field', 'cc');
+            view.trigger('loaded_collection_field', 'cc_collection');
             expect(view.toggleButtons).toHaveBeenCalledThrice();
             expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
 
-            view.trigger('loaded_collection_field', 'bcc');
+            view.trigger('loaded_collection_field', 'bcc_collection');
             expect(view.toggleButtons.callCount).toBe(4);
             expect(view.toggleButtons.lastCall.args[0]).toBe(true);
         });
 
         describe('Render each recipient field when it has changed', function() {
-            using('recipient fields', ['from', 'to', 'cc', 'bcc'], function(data) {
-                it('should render the ' + data + ' field', function() {
-                    var field = {
-                        render: sandbox.spy()
-                    };
-                    sandbox.stub(view, 'getField').withArgs(data).returns(field);
-                    view.model.trigger('change:' + data);
-                    expect(field.render).toHaveBeenCalled();
-                });
-            });
+            using(
+                'recipient fields',
+                [
+                    'from_collection',
+                    'to_collection',
+                    'cc_collection',
+                    'bcc_collection'
+                ],
+                function(fieldName) {
+                    it('should render the field', function() {
+                        var field = {
+                            render: sandbox.spy()
+                        };
+                        sandbox.stub(view, 'getField').withArgs(fieldName).returns(field);
+                        view.model.trigger('change:' + fieldName);
+                        expect(field.render).toHaveBeenCalled();
+                    });
+                }
+            );
         });
     });
 

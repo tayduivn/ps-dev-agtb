@@ -133,30 +133,30 @@ describe('Emails.BaseEmailComposeView', function() {
         it('should toggle action buttons while loading all recipients', function() {
             sandbox.spy(view, 'toggleButtons');
 
-            view.trigger('loading_collection_field', 'to');
-            view.trigger('loading_collection_field', 'cc');
-            view.trigger('loading_collection_field', 'bcc');
+            view.trigger('loading_collection_field', 'to_collection');
+            view.trigger('loading_collection_field', 'cc_collection');
+            view.trigger('loading_collection_field', 'bcc_collection');
 
             expect(view.toggleButtons).toHaveBeenCalledThrice();
             expect(view.toggleButtons.alwaysCalledWithExactly(false)).toBe(true);
 
-            view.trigger('loaded_collection_field', 'to');
+            view.trigger('loaded_collection_field', 'to_collection');
 
             expect(view.toggleButtons).toHaveBeenCalledThrice();
             expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
 
-            view.trigger('loaded_collection_field', 'cc');
+            view.trigger('loaded_collection_field', 'cc_collection');
 
             expect(view.toggleButtons).toHaveBeenCalledThrice();
             expect(view.toggleButtons.neverCalledWith(true)).toBe(true);
 
-            view.trigger('loaded_collection_field', 'bcc');
+            view.trigger('loaded_collection_field', 'bcc_collection');
 
             expect(view.toggleButtons.callCount).toBe(4);
             expect(view.toggleButtons.lastCall.args[0]).toBe(true);
         });
 
-        using('recipient fields', ['to', 'cc', 'bcc'], function(fieldName) {
+        using('recipient fields', ['to_collection', 'cc_collection', 'bcc_collection'], function(fieldName) {
             it('should render the recipients fieldset when a recipients field changes', function() {
                 var fieldset = {
                     render: sandbox.spy()
@@ -244,20 +244,20 @@ describe('Emails.BaseEmailComposeView', function() {
             'required fields',
             [
                 [
+                    'to_collection',
                     'to',
-                    'to_link',
                     'foo',
                     'bar'
                 ],
                 [
+                    'cc_collection',
                     'cc',
-                    'cc_link',
                     'foo',
                     'bar'
                 ],
                 [
+                    'bcc_collection',
                     'bcc',
-                    'bcc_link',
                     'foo',
                     'bar'
                 ]
@@ -298,7 +298,7 @@ describe('Emails.BaseEmailComposeView', function() {
         it('should show an error to the user when there are no recipients', function() {
             var spy = sandbox.spy();
 
-            model.on('error:validation:to', spy);
+            model.on('error:validation:to_collection', spy);
             model.set('name', 'foo');
             model.set('description_html', 'bar');
 
@@ -361,10 +361,10 @@ describe('Emails.BaseEmailComposeView', function() {
                     var spy = sandbox.spy();
                     var parentId = _.uniqueId();
 
-                    view.on('error:validation:to', spy);
+                    view.on('error:validation:to_collection', spy);
                     model.set(attributes);
-                    model.set('to', app.data.createBean('EmailParticipants', {
-                        _link: 'to_link',
+                    model.set('to_collection', app.data.createBean('EmailParticipants', {
+                        _link: 'to',
                         parent: {
                             _acl: {},
                             type: 'Contacts',
@@ -399,8 +399,8 @@ describe('Emails.BaseEmailComposeView', function() {
             model.set({
                 name: 'foo'
             });
-            model.set('to', app.data.createBean('EmailParticipants', {
-                _link: 'to_link',
+            model.set('to_collection', app.data.createBean('EmailParticipants', {
+                _link: 'to',
                 parent: {
                     _acl: {},
                     type: 'Contacts',
@@ -465,8 +465,8 @@ describe('Emails.BaseEmailComposeView', function() {
                     var parentId = _.uniqueId();
 
                     model.set(attributes);
-                    model.set('to', app.data.createBean('EmailParticipants', {
-                        _link: 'to_link',
+                    model.set('to_collection', app.data.createBean('EmailParticipants', {
+                        _link: 'to',
                         parent: {
                             _acl: {},
                             type: 'Contacts',

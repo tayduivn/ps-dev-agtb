@@ -88,7 +88,7 @@
 
             email.set('name', subject);
 
-            if (email.get('to').length === 0) {
+            if (email.get('to_collection').length === 0) {
                 // no addresses, attempt to populate from contacts relationship
                 contacts = aCase.getRelatedCollection('contacts');
                 contacts.fetch({
@@ -100,7 +100,7 @@
                             // Don't set email_address_id. It will be set when
                             // the email is archived.
                             return app.data.createBean('EmailParticipants', {
-                                _link: 'to_link',
+                                _link: 'to',
                                 parent: _.extend({type: record.module}, app.utils.deepCopy(record.attributes)),
                                 parent_type: record.module,
                                 parent_id: record.get('id'),
@@ -108,7 +108,7 @@
                             });
                         });
 
-                        email.get('to').add(records);
+                        email.get('to_collection').add(records);
                     },
                     fields: ['id', 'full_name', 'email']
                 });
@@ -123,14 +123,22 @@
          * @param {string} [data.name] Sets the subject of the email.
          * @param {string} [data.description_html] Sets the HTML body of the
          * email.
-         * @param {Array|Data.BeanCollection|Data.Bean} [data.from] The sender
-         * to add to the From field.
-         * @param {Array|Data.BeanCollection|Data.Bean} [data.to] The
-         * recipients to add to the To field.
-         * @param {Array|Data.BeanCollection|Data.Bean} [data.cc] The
-         * recipients to add to the CC field.
-         * @param {Array|Data.BeanCollection|Data.Bean} [data.bcc] The
-         * recipients to add to the BCC field.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.from_collection]
+         * The sender to add to the From field.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.from] A more
+         * convenient alternative name for the sender.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.to_collection]
+         * The recipients to add to the To field.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.to] A more
+         * convenient alternative name for the To recipients.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.cc_collection]
+         * The recipients to add to the CC field.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.cc] A more
+         * convenient alternative name for the CC recipients.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.bcc_collection]
+         * The recipients to add to the BCC field.
+         * @param {Array|Data.BeanCollection|Data.Bean} [data.bcc] A more
+         * convenient alternative name for the BCC recipients.
          * @param {Array|Data.BeanCollection|Data.Bean} [data.attachments_collection]
          * The attachments to attach to the email.
          * @param {Array|Data.BeanCollection|Data.Bean} [data.attachments] A
@@ -145,10 +153,10 @@
             var fieldNames = _.keys(fields);
             var fieldMap = {
                 attachments: 'attachments_collection',
-                from_link: 'from',
-                to_link: 'to',
-                cc_link: 'cc',
-                bcc_link: 'bcc'
+                from: 'from_collection',
+                to: 'to_collection',
+                cc: 'cc_collection',
+                bcc: 'bcc_collection'
             };
             var nonFieldData = {};
 

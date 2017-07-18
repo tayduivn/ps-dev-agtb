@@ -28,7 +28,7 @@
       * @private
       */
      _done: function() {
-         var recipients = this.model.get('to');
+         var recipients = this.model.get('to_collection');
 
          if (recipients) {
              app.drawer.close(recipients);

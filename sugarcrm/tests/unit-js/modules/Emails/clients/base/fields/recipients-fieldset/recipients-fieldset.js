@@ -72,7 +72,7 @@ describe('Emails.RecipientsFieldsetField', function() {
                 loadFromModule: true
             }),
             SugarTest.createField({
-                name: 'to',
+                name: 'to_collection',
                 type: 'email-recipients',
                 viewName: 'detail',
                 module: model.module,
@@ -81,7 +81,7 @@ describe('Emails.RecipientsFieldsetField', function() {
                 loadFromModule: true
             }),
             SugarTest.createField({
-                name: 'cc',
+                name: 'cc_collection',
                 type: 'email-recipients',
                 viewName: 'detail',
                 module: model.module,
@@ -90,7 +90,7 @@ describe('Emails.RecipientsFieldsetField', function() {
                 loadFromModule: true
             }),
             SugarTest.createField({
-                name: 'bcc',
+                name: 'bcc_collection',
                 type: 'email-recipients',
                 viewName: 'detail',
                 module: model.module,
@@ -102,7 +102,7 @@ describe('Emails.RecipientsFieldsetField', function() {
 
         to = [
             app.data.createBean('EmailParticipants', {
-                _link: 'to_link',
+                _link: 'to',
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
@@ -117,7 +117,7 @@ describe('Emails.RecipientsFieldsetField', function() {
                 email_address: 'hyates@example.com'
             }),
             app.data.createBean('EmailParticipants', {
-                _link: 'to_link',
+                _link: 'to',
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
@@ -135,7 +135,7 @@ describe('Emails.RecipientsFieldsetField', function() {
 
         cc = [
             app.data.createBean('EmailParticipants', {
-                _link: 'cc_link',
+                _link: 'cc',
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
@@ -153,7 +153,7 @@ describe('Emails.RecipientsFieldsetField', function() {
 
         bcc = [
             app.data.createBean('EmailParticipants', {
-                _link: 'bcc_link',
+                _link: 'bcc',
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
@@ -200,9 +200,9 @@ describe('Emails.RecipientsFieldsetField', function() {
             var expected = 'Herbert Yates, Walter Quigley; CC: Wyatt Archer; BCC: Earl Hatcher';
             var actual;
 
-            field.model.set('to', to);
-            field.model.set('cc', cc);
-            field.model.set('bcc', bcc);
+            field.model.set('to_collection', to);
+            field.model.set('cc_collection', cc);
+            field.model.set('bcc_collection', bcc);
             field.render();
 
             actual = field.getFormattedValue();
@@ -213,7 +213,7 @@ describe('Emails.RecipientsFieldsetField', function() {
             var expected = 'Herbert Yates, Walter Quigley';
             var actual;
 
-            field.model.set('to', to);
+            field.model.set('to_collection', to);
             field.render();
 
             actual = field.getFormattedValue();
@@ -224,7 +224,7 @@ describe('Emails.RecipientsFieldsetField', function() {
             var expected = 'CC: Wyatt Archer';
             var actual;
 
-            field.model.set('cc', cc);
+            field.model.set('cc_collection', cc);
             field.render();
 
             actual = field.getFormattedValue();
@@ -235,7 +235,7 @@ describe('Emails.RecipientsFieldsetField', function() {
             var expected = 'BCC: Earl Hatcher';
             var actual;
 
-            field.model.set('bcc', bcc);
+            field.model.set('bcc_collection', bcc);
             field.render();
 
             actual = field.getFormattedValue();
@@ -270,8 +270,8 @@ describe('Emails.RecipientsFieldsetField', function() {
             sandbox.spy(app.template, 'getField').withArgs(field.type, 'recipient-options', field.module);
             field.render();
 
-            $cc = field.$('button[data-toggle-field=cc]');
-            $bcc = field.$('button[data-toggle-field=bcc]');
+            $cc = field.$('button[data-toggle-field=cc_collection]');
+            $bcc = field.$('button[data-toggle-field=bcc_collection]');
 
             expect(app.template.getField.withArgs(field.type, 'recipient-options', field.module)).toHaveBeenCalled();
             expect($cc.length).toBe(1);
@@ -280,8 +280,8 @@ describe('Emails.RecipientsFieldsetField', function() {
             expect($bcc.hasClass('active')).toBe(false);
         });
 
-        using('without recipients', ['cc', 'bcc'], function(fieldName) {
-            it('should not show the ' + fieldName.toUpperCase() + ' field on render', function() {
+        using('without recipients', ['cc_collection', 'bcc_collection'], function(fieldName) {
+            it('should not show the field on render', function() {
                 var recipientField = _.findWhere(field.fields, {name: fieldName});
                 var $recipientField;
                 var $toggleButton;
@@ -302,13 +302,13 @@ describe('Emails.RecipientsFieldsetField', function() {
             });
         });
 
-        using('with recipients', ['cc', 'bcc'], function(fieldName) {
-            it('should show the ' + fieldName.toUpperCase() + ' field on render', function() {
+        using('with recipients', ['cc_collection', 'bcc_collection'], function(fieldName) {
+            it('should show the field on render', function() {
                 var recipientField = _.findWhere(field.fields, {name: fieldName});
                 var $recipientField;
                 var $toggleButton;
                 var spy = sandbox.spy();
-                var value = fieldName === 'cc' ? cc : bcc;
+                var value = fieldName === 'cc_collection' ? cc : bcc;
 
                 field.model.set(fieldName, value);
                 field.view.getField.withArgs(fieldName).returns(recipientField);
@@ -326,8 +326,8 @@ describe('Emails.RecipientsFieldsetField', function() {
             });
         });
 
-        using('toggle buttons', ['cc', 'bcc'], function(fieldName) {
-            it('should toggle the ' + fieldName.toUpperCase() + ' field when clicking the button', function() {
+        using('toggle buttons', ['cc_collection', 'bcc_collection'], function(fieldName) {
+            it('should toggle the field when clicking the button', function() {
                 var recipientField = _.findWhere(field.fields, {name: fieldName});
                 var $recipientField;
                 var $toggleButton;
@@ -383,17 +383,17 @@ describe('Emails.RecipientsFieldsetField', function() {
             });
             field.fields = children;
             field.model.set('outbound_email_id', '1');
-            field.model.set('to', to);
-            field.model.set('cc', cc);
-            field.model.set('bcc', bcc);
+            field.model.set('to_collection', to);
+            field.model.set('cc_collection', cc);
+            field.model.set('bcc_collection', bcc);
 
             sandbox.stub(field.view, 'getField');
             field.view.getField.withArgs('outbound_email_id').returns(
                 _.findWhere(field.fields, {name: 'outbound_email_id'})
             );
-            field.view.getField.withArgs('to').returns(_.findWhere(field.fields, {name: 'to'}));
-            field.view.getField.withArgs('cc').returns(_.findWhere(field.fields, {name: 'cc'}));
-            field.view.getField.withArgs('bcc').returns(_.findWhere(field.fields, {name: 'bcc'}));
+            field.view.getField.withArgs('to_collection').returns(_.findWhere(field.fields, {name: 'to_collection'}));
+            field.view.getField.withArgs('cc_collection').returns(_.findWhere(field.fields, {name: 'cc_collection'}));
+            field.view.getField.withArgs('bcc_collection').returns(_.findWhere(field.fields, {name: 'bcc_collection'}));
         });
 
         it('should render the string', function() {
@@ -531,7 +531,7 @@ describe('Emails.RecipientsFieldsetField', function() {
         ], function(data) {
             it('should set mode to ' + data.expected, function() {
                 if (data.hasRecipients) {
-                    field.model.set('to', to);
+                    field.model.set('to_collection', to);
                 }
 
                 field.view.createMode = data.createMode;

@@ -472,10 +472,12 @@ describe("Sugar7 utils", function() {
                 expect(model).toBe(email);
             });
 
-            it('should add recipients if to, cc, or bcc value is passed in.', function() {
-                var model;
-                var data = {
-                    to: [
+            using('recipients fields', ['', '_collection'], function(suffix) {
+                it('should add recipients if to, cc, or bcc value is passed in', function() {
+                    var model;
+                    var data = {};
+
+                    data['to' + suffix] = [
                         app.data.createBean('Contacts', {
                             id: _.uniqueId(),
                             email: 'to@foo.com'
@@ -484,27 +486,27 @@ describe("Sugar7 utils", function() {
                             id: _.uniqueId(),
                             email: 'too@foo.com'
                         })
-                    ],
-                    cc: [
+                    ];
+                    data['cc' + suffix] = [
                         app.data.createBean('Contacts', {
                             id: _.uniqueId(),
                             email: 'cc@foo.com'
                         })
-                    ],
-                    bcc: [
+                    ];
+                    data['bcc' + suffix] = [
                         app.data.createBean('Contacts', {
                             id: _.uniqueId(),
                             email: 'bcc@foo.com'
                         })
-                    ]
-                };
+                    ];
 
-                app.utils.openEmailCreateDrawer('compose-email', data);
-                model = app.drawer.open.firstCall.args[0].context.model;
+                    app.utils.openEmailCreateDrawer('compose-email', data);
+                    model = app.drawer.open.firstCall.args[0].context.model;
 
-                expect(model.get('to').length).toBe(2);
-                expect(model.get('cc').length).toBe(1);
-                expect(model.get('bcc').length).toBe(1);
+                    expect(model.get('to_collection').length).toBe(2);
+                    expect(model.get('cc_collection').length).toBe(1);
+                    expect(model.get('bcc_collection').length).toBe(1);
+                });
             });
 
             using('attachments fields', ['attachments', 'attachments_collection'], function(fieldName) {
@@ -697,7 +699,7 @@ describe("Sugar7 utils", function() {
                         expect(model.get('parent_id')).toBe(aCase.get('id'));
                         expect(model.get('parent_name')).toBe('My Case');
                         expect(model.get('name')).toBe('[CASE:100] My Case');
-                        expect(model.get('to').length).toBe(0);
+                        expect(model.get('to_collection').length).toBe(0);
                     });
 
                     it('should populate the subject and "to" field when the case has related contacts', function() {
@@ -721,7 +723,7 @@ describe("Sugar7 utils", function() {
                         expect(model.get('parent_id')).toBe(aCase.get('id'));
                         expect(model.get('parent_name')).toBe('My Case');
                         expect(model.get('name')).toBe('[CASE:100] My Case');
-                        expect(model.get('to').length).toBe(2);
+                        expect(model.get('to_collection').length).toBe(2);
                     });
 
                     it('should not add to the "to" field when the field already has recipients', function() {
@@ -738,7 +740,7 @@ describe("Sugar7 utils", function() {
                                 name: 'Frank Upton'
                             })
                         ]);
-                        email.get('to').add([
+                        email.get('to_collection').add([
                             app.data.createBean('Leads', {
                                 id: _.uniqueId(),
                                 name: 'Nancy Rollins'
@@ -755,7 +757,7 @@ describe("Sugar7 utils", function() {
                         expect(model.get('parent_id')).toBe(aCase.get('id'));
                         expect(model.get('parent_name')).toBe('My Case');
                         expect(model.get('name')).toBe('[CASE:100] My Case');
-                        expect(model.get('to').length).toBe(1);
+                        expect(model.get('to_collection').length).toBe(1);
                     });
                 });
             });

@@ -109,9 +109,9 @@
     _getReplyRecipients: function(all) {
         var replyTo = [];
         var replyCc = [];
-        var originalSender = this.model.get('from');
-        var originalTo = this.model.get('to');
-        var originalCc = this.model.get('cc');
+        var originalSender = this.model.get('from_collection');
+        var originalTo = this.model.get('to_collection');
+        var originalCc = this.model.get('cc_collection');
 
         var mapRecipients = function(recipients) {
             return _.map(recipients, function(recipient) {
@@ -181,10 +181,10 @@
      */
     _getReplyHeaderParams: function() {
         return {
-            from: this._formatEmailList(this.model.get('from')),
+            from: this._formatEmailList(this.model.get('from_collection')),
             date: this.model.get('date_sent'),
-            to: this._formatEmailList(this.model.get('to')),
-            cc: this._formatEmailList(this.model.get('cc')),
+            to: this._formatEmailList(this.model.get('to_collection')),
+            cc: this._formatEmailList(this.model.get('cc_collection')),
             name: this.model.get('name')
         };
     },

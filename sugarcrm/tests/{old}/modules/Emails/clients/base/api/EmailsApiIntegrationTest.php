@@ -70,17 +70,17 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = [
             'state' => Email::STATE_ARCHIVED,
-            'from_link' => [
+            'from' => [
                 'create' => [
                     $this->createEmailParticipant($user),
                 ],
             ],
-            'to_link' => [
+            'to' => [
                 'create' => [
                     $this->createEmailParticipant($contact),
                 ],
             ],
-            'cc_link' => [
+            'cc' => [
                 'create' => [
                     $this->createEmailParticipant($account),
                 ],
@@ -92,7 +92,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'from_link',
+                '_link' => 'from',
                 'parent' => [
                     'type' => $user->getModuleName(),
                     'id' => $user->id,
@@ -107,13 +107,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => $user->email1,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'from');
+        $collection = $this->getCollection($record['id'], 'from_collection');
         $this->assertRecords($expected, $collection, 'The sender did not match expectations');
 
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'to_link',
+                '_link' => 'to',
                 'parent' => [
                     'type' => $contact->getModuleName(),
                     'id' => $contact->id,
@@ -128,13 +128,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => $contact->email1,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'to');
+        $collection = $this->getCollection($record['id'], 'to_collection');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
 
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'cc_link',
+                '_link' => 'cc',
                 'parent' => [
                     'type' => $account->getModuleName(),
                     'id' => $account->id,
@@ -149,7 +149,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => $account->email1,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'cc');
+        $collection = $this->getCollection($record['id'], 'cc_collection');
         $this->assertRecords($expected, $collection, 'The CC field did not match expectations');
 
         $bean = $this->retrieveEmailText($record['id']);
@@ -179,13 +179,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = [
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
-            'to_link' => [
+            'to' => [
                 'create' => [
                     $this->createEmailParticipant($lead, $leadEmailAddress),
                 ],
             ],
             // The same email participant can appear in multiple roles.
-            'bcc_link' => [
+            'bcc' => [
                 'create' => [
                     $this->createEmailParticipant($GLOBALS['current_user']),
                 ],
@@ -202,7 +202,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'from_link',
+                '_link' => 'from',
                 'parent' => [
                     'type' => $GLOBALS['current_user']->getModuleName(),
                     'id' => $GLOBALS['current_user']->id,
@@ -217,13 +217,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => static::$overrideConfig->email_address,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'from');
+        $collection = $this->getCollection($record['id'], 'from_collection');
         $this->assertRecords($expected, $collection, 'The sender should be the current user');
 
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'to_link',
+                '_link' => 'to',
                 'parent' => [
                     'type' => $lead->getModuleName(),
                     'id' => $lead->id,
@@ -238,13 +238,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => $lead->email1,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'to');
+        $collection = $this->getCollection($record['id'], 'to_collection');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
 
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'bcc_link',
+                '_link' => 'bcc',
                 'parent' => [
                     'type' => $GLOBALS['current_user']->getModuleName(),
                     'id' => $GLOBALS['current_user']->id,
@@ -259,7 +259,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => '',
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'bcc');
+        $collection = $this->getCollection($record['id'], 'bcc_collection');
         $this->assertRecords($expected, $collection, 'The BCC field did not match expectations');
 
         $bean = $this->retrieveEmailText($record['id']);
@@ -294,7 +294,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = [
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
-            'cc_link' => [
+            'cc' => [
                 'create' => [
                     $this->createEmailParticipant($prospect),
                 ],
@@ -311,7 +311,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'from_link',
+                '_link' => 'from',
                 'parent' => [
                     'type' => $GLOBALS['current_user']->getModuleName(),
                     'id' => $GLOBALS['current_user']->id,
@@ -326,13 +326,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => static::$overrideConfig->email_address,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'from');
+        $collection = $this->getCollection($record['id'], 'from_collection');
         $this->assertRecords($expected, $collection, 'The sender should be the current user');
 
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'cc_link',
+                '_link' => 'cc',
                 'parent' => [
                     'type' => $prospect->getModuleName(),
                     'id' => $prospect->id,
@@ -347,18 +347,18 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => '',
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'cc');
+        $collection = $this->getCollection($record['id'], 'cc_collection');
         $this->assertRecords($expected, $collection, 'The CC field did not match expectations after create');
 
         $args = [
             'outbound_email_id' => static::$userConfig->id,
-            'to_link' => [
+            'to' => [
                 'create' => [
                     $this->createEmailParticipant(null, $address),
                 ],
             ],
             // This should patch the email address onto the existing row for the prospect.
-            'cc_link' => [
+            'cc' => [
                 'create' => [
                     $this->createEmailParticipant(
                         $prospect,
@@ -378,7 +378,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'from_link',
+                '_link' => 'from',
                 'parent' => [
                     'type' => $GLOBALS['current_user']->getModuleName(),
                     'id' => $GLOBALS['current_user']->id,
@@ -393,7 +393,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => static::$userConfig->email_address,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'from');
+        $collection = $this->getCollection($record['id'], 'from_collection');
         $this->assertRecords(
             $expected,
             $collection,
@@ -403,7 +403,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'to_link',
+                '_link' => 'to',
                 'parent' => [],
                 'parent_name' => '',
                 'email_addresses' => [
@@ -414,13 +414,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => $address->email_address,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'to');
+        $collection = $this->getCollection($record['id'], 'to_collection');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations after update');
 
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'cc_link',
+                '_link' => 'cc',
                 'parent' => [
                     'type' => $prospect->getModuleName(),
                     'id' => $prospect->id,
@@ -435,7 +435,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => $prospect->email1,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'cc');
+        $collection = $this->getCollection($record['id'], 'cc_collection');
         $this->assertRecords($expected, $collection, 'The CC field did not match expectations after update');
 
         $bean = $this->retrieveEmailText($record['id']);
@@ -470,7 +470,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = [
             'state' => Email::STATE_DRAFT,
-            'to_link' => [
+            'to' => [
                 'create' => [
                     $this->createEmailParticipant($account1),
                     $this->createEmailParticipant($lead),
@@ -484,7 +484,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'from_link',
+                '_link' => 'from',
                 'parent' => [
                     'type' => $GLOBALS['current_user']->getModuleName(),
                     'id' => $GLOBALS['current_user']->id,
@@ -499,13 +499,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => '',
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'from');
+        $collection = $this->getCollection($record['id'], 'from_collection');
         $this->assertRecords($expected, $collection, 'The sender should be the current user');
 
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'to_link',
+                '_link' => 'to',
                 'parent' => [
                     'type' => $account1->getModuleName(),
                     'id' => $account1->id,
@@ -521,7 +521,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ],
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'to_link',
+                '_link' => 'to',
                 'parent' => [
                     'type' => $lead->getModuleName(),
                     'id' => $lead->id,
@@ -536,7 +536,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => '',
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'to');
+        $collection = $this->getCollection($record['id'], 'to_collection');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations after create');
 
         // Need to extract the data that represents the EmailParticipants record for $account1, so we can use its ID.
@@ -546,7 +546,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = [
             'state' => Email::STATE_READY,
-            'to_link' => [
+            'to' => [
                 'create' => [
                     $this->createEmailParticipant($account2),
                 ],
@@ -566,7 +566,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'from_link',
+                '_link' => 'from',
                 'parent' => [
                     'type' => $GLOBALS['current_user']->getModuleName(),
                     'id' => $GLOBALS['current_user']->id,
@@ -581,13 +581,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => static::$overrideConfig->email_address,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'from');
+        $collection = $this->getCollection($record['id'], 'from_collection');
         $this->assertRecords($expected, $collection, 'The sender should not have changed');
 
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'to_link',
+                '_link' => 'to',
                 'parent' => [
                     'type' => $account2->getModuleName(),
                     'id' => $account2->id,
@@ -603,7 +603,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ],
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'to_link',
+                '_link' => 'to',
                 'parent' => [
                     'type' => $lead->getModuleName(),
                     'id' => $lead->id,
@@ -618,7 +618,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => $lead->email1,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'to');
+        $collection = $this->getCollection($record['id'], 'to_collection');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations after sending');
 
         $bean = $this->retrieveEmailText($record['id']);
@@ -654,7 +654,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = [
             'state' => Email::STATE_READY,
-            'to_link' => [
+            'to' => [
                 'create' => [
                     $this->createEmailParticipant($contact1),
                     $this->createEmailParticipant($contact2),
@@ -673,7 +673,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'from_link',
+                '_link' => 'from',
                 'parent' => [
                     'type' => $GLOBALS['current_user']->getModuleName(),
                     'id' => $GLOBALS['current_user']->id,
@@ -688,13 +688,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => static::$overrideConfig->email_address,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'from');
+        $collection = $this->getCollection($record['id'], 'from_collection');
         $this->assertRecords($expected, $collection, 'The sender should be the current user');
 
         $expected = [
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'to_link',
+                '_link' => 'to',
                 'parent' => [
                     'type' => $contact1->getModuleName(),
                     'id' => $contact1->id,
@@ -710,7 +710,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ],
             [
                 '_module' => 'EmailParticipants',
-                '_link' => 'to_link',
+                '_link' => 'to',
                 'parent' => [
                     'type' => $contact2->getModuleName(),
                     'id' => $contact2->id,
@@ -725,7 +725,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 'email_address' => $contact2->email1,
             ],
         ];
-        $collection = $this->getCollection($record['id'], 'to');
+        $collection = $this->getCollection($record['id'], 'to_collection');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
 
         $bean = $this->retrieveEmailText($record['id']);
@@ -761,7 +761,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = [
             'state' => Email::STATE_READY,
             'reply_to_id' => $repliedToEmail->id,
-            'to_link' => [
+            'to' => [
                 'create' => [
                     $this->createEmailParticipant($contact),
                 ],

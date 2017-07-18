@@ -83,7 +83,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Create an email without an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -107,7 +107,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertTrue($result);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -142,7 +142,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertTrue($result);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -163,7 +163,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertTrue($result);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -200,7 +200,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertTrue($result);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -217,7 +217,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertTrue($result);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -243,7 +243,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Create an email without an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -261,7 +261,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertFalse($result);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -295,7 +295,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertTrue($result);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -310,7 +310,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user'], $address));
         $this->assertFalse($result);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -334,7 +334,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Create an email without an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -374,7 +374,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($GLOBALS['current_user']));
         $this->assertTrue($result);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -404,7 +404,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Create an email without an outbound email configuration.
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -446,7 +446,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -479,7 +479,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -515,7 +515,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -552,7 +552,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -582,7 +582,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact1));
         $this->assertTrue($result, 'The contact should have been added without an email address');
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $contact2 = SugarTestContactUtilities::createContact();
@@ -590,7 +590,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact2, $address1));
         $this->assertTrue($result, 'A different contact should have been added with an email address');
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $contact3 = SugarTestContactUtilities::createContact();
@@ -598,28 +598,28 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact3, $address2));
         $this->assertTrue($result, 'A different contact should have been added with a different email address');
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $lead1 = SugarTestLeadUtilities::createLead();
         $result = $this->relationship->add($email, $this->createEmailParticipant($lead1));
         $this->assertTrue($result, 'The lead should have been added without an email address');
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $lead2 = SugarTestLeadUtilities::createLead();
         $result = $this->relationship->add($email, $this->createEmailParticipant($lead2, $address1));
         $this->assertTrue($result, 'The lead should have been added with an email address');
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $address3 = SugarTestEmailAddressUtilities::createEmailAddress();
         $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address3));
         $this->assertTrue($result, 'The plain email address should have been added');
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $address4 = SugarTestEmailAddressUtilities::createEmailAddress();
@@ -629,7 +629,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -673,7 +673,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
@@ -697,7 +697,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $this->relationship->remove($email, $ep);
@@ -713,7 +713,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -732,7 +732,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(1, $beans);
 
         // Act as if the email is being deleted.
@@ -743,7 +743,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($result);
         $this->assertEquals(1, $bean->deleted);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(0, $beans);
 
         $email->retrieveEmailText();
@@ -775,7 +775,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
-        $beans = $email->from_link->getBeans();
+        $beans = $email->from->getBeans();
         $this->assertCount(0, $beans);
 
         $email->retrieveEmailText();

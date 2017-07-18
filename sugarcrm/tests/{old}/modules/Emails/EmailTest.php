@@ -532,7 +532,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetParticipants()
     {
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
-        $email->load_relationship('to_link');
+        $email->load_relationship('to');
 
         $link = function ($parent) use ($email) {
             $ep = BeanFactory::newBean('EmailParticipants');
@@ -541,7 +541,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
             BeanFactory::registerBean($ep);
             $ep->parent_type = $parent->getModuleName();
             $ep->parent_id = $parent->id;
-            $email->to_link->add($ep);
+            $email->to->add($ep);
         };
 
         $accounts = 6;
@@ -577,10 +577,10 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
             $ep->id = Uuid::uuid1();
             BeanFactory::registerBean($ep);
             $ep->email_address_id = $address->id;
-            $email->to_link->add($ep);
+            $email->to->add($ep);
         }
 
-        $participants = SugarTestReflection::callProtectedMethod($email, 'getParticipants', array('to_link'));
+        $participants = SugarTestReflection::callProtectedMethod($email, 'getParticipants', array('to'));
         $accountsParticipants = array_filter($participants, function ($participant) {
             return $participant->parent_type === 'Accounts';
         });
@@ -911,7 +911,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $email = SugarTestEmailUtilities::createEmail('', $data);
 
         // Send to an arbitrary email address.
-        $email->load_relationship('to_link');
+        $email->load_relationship('to');
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         $ep = BeanFactory::newBean('EmailParticipants');
         $ep->new_with_id = true;
@@ -919,7 +919,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::registerBean($ep);
         $ep->email_address_id = $address->id;
         $ep->email_address = $address->email_address;
-        $email->to_link->add($ep);
+        $email->to->add($ep);
 
         // Send the email.
         $email->sendEmail($config);
@@ -1054,7 +1054,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         // Link an email address that is already linked via multiple records.
         $contact = SugarTestContactUtilities::createContact();
         SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address2);
-        $email->load_relationship('bcc_link');
+        $email->load_relationship('bcc');
         $ep = BeanFactory::newBean('EmailParticipants');
         $ep->new_with_id = true;
         $ep->id = Uuid::uuid1();
@@ -1062,11 +1062,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $ep->parent_type = $contact->getModuleName();
         $ep->parent_id = $contact->id;
         $ep->email_address_id = $address2->id;
-        $email->bcc_link->add($ep);
+        $email->bcc->add($ep);
 
         $lead = SugarTestLeadUtilities::createLead();
         SugarTestEmailAddressUtilities::addAddressToPerson($lead, $address2);
-        $email->load_relationship('bcc_link');
+        $email->load_relationship('bcc');
         $ep = BeanFactory::newBean('EmailParticipants');
         $ep->new_with_id = true;
         $ep->id = Uuid::uuid1();
@@ -1074,7 +1074,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $ep->parent_type = $lead->getModuleName();
         $ep->parent_id = $lead->id;
         $ep->email_address_id = $address2->id;
-        $email->bcc_link->add($ep);
+        $email->bcc->add($ep);
 
         $this->assertNotEmpty(
             $email->linkEmailToAddress($address2->id, 'bcc'),
@@ -1089,11 +1089,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $ep->email_address_id = $address1->id;
         $link = $this->createPartialMock('Link2', ['add']);
         $link->method('add')->willReturn([$ep->id]);
-        $email->from_link = $link;
+        $email->from = $link;
         $this->assertEmpty($email->linkEmailToAddress($address1->id, 'from'), 'Should have returned nothing');
 
         // Need to remove the mock to avoid failures when SugarRelationship::resaveRelatedBeans() is called.
-        unset($email->from_link);
+        unset($email->from);
     }
 }
 

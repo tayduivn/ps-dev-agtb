@@ -126,7 +126,11 @@
         }, 200);
 
         if (this.model) {
-            this.listenTo(this.model, 'change:to change:cc change:bcc', renderRecipientsField);
+            this.listenTo(
+                this.model,
+                'change:to_collection change:cc_collection change:bcc_collection',
+                renderRecipientsField
+            );
             this.listenTo(this.model, 'attachments_collection:over_max_total_bytes', function() {
                 var sendButton = this.getField(this.sendButtonName);
 
@@ -241,11 +245,11 @@
 
         this.disableButtons();
 
-        if (this.model.get('to').length === 0 &&
-            this.model.get('cc').length === 0 &&
-            this.model.get('bcc').length === 0
+        if (this.model.get('to_collection').length === 0 &&
+            this.model.get('cc_collection').length === 0 &&
+            this.model.get('bcc_collection').length === 0
         ) {
-            this.model.trigger('error:validation:to');
+            this.model.trigger('error:validation:to_collection');
             app.alert.show('send_error', {
                 level: 'error',
                 messages: 'LBL_EMAIL_COMPOSE_ERR_NO_RECIPIENTS'

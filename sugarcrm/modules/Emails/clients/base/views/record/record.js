@@ -59,8 +59,8 @@
      * asynchronous data patching -- so that user can switch to composing the
      * email instead of simply viewing it.
      *
-     * Renders the recipients fieldset anytime there are changes to the 'from',
-     * `to`, `cc`, or `bcc` fields.
+     * Renders the recipients fieldset anytime there are changes to the From,
+     * To, CC, or BCC fields.
      */
     bindDataChange: function() {
         var self = this;
@@ -81,17 +81,17 @@
         if (this.model) {
             this.listenTo(this.model, 'change:state', this._alertUserDraftState);
 
-            this.listenTo(this.model, 'change:from', function() {
-                renderRecipientsField('from');
+            this.listenTo(this.model, 'change:from_collection', function() {
+                renderRecipientsField('from_collection');
             });
-            this.listenTo(this.model, 'change:to', function() {
-                renderRecipientsField('to');
+            this.listenTo(this.model, 'change:to_collection', function() {
+                renderRecipientsField('to_collection');
             });
-            this.listenTo(this.model, 'change:cc', function() {
-                renderRecipientsField('cc');
+            this.listenTo(this.model, 'change:cc_collection', function() {
+                renderRecipientsField('cc_collection');
             });
-            this.listenTo(this.model, 'change:bcc', function() {
-                renderRecipientsField('bcc');
+            this.listenTo(this.model, 'change:bcc_collection', function() {
+                renderRecipientsField('bcc_collection');
             });
 
         }

@@ -46,16 +46,16 @@ class EmailsRelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return [
             [
-                'from_link',
+                'from',
             ],
             [
-                'to_link',
+                'to',
             ],
             [
-                'cc_link',
+                'cc',
             ],
             [
-                'bcc_link',
+                'bcc',
             ],
             [
                 'attachments',
@@ -64,7 +64,7 @@ class EmailsRelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * The from_link, to_link, cc_link, bcc_link, and attachments links are readonly.
+     * The from, to, cc, bcc, and attachments links are readonly.
      *
      * @dataProvider readOnlyLinkProvider
      * @covers ::updateRelatedLink

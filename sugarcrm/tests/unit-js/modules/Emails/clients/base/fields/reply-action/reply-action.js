@@ -69,7 +69,7 @@ describe('Emails.Field.ReplyAction', function() {
         beforeEach(function() {
             var parentId = _.uniqueId();
             var from = app.data.createBean('EmailParticipants', {
-                _link: 'from_link',
+                _link: 'from',
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
@@ -84,11 +84,11 @@ describe('Emails.Field.ReplyAction', function() {
                 email_address: 'rturner@example.com'
             });
 
-            field.model.set('from', from);
+            field.model.set('from_collection', from);
         });
 
         it('should return the original sender in the to field if reply', function() {
-            var sender = field.model.get('from').first();
+            var sender = field.model.get('from_collection').first();
             var actual = field._getReplyRecipients(false);
 
             expect(actual.to.length).toBe(1);
@@ -105,10 +105,10 @@ describe('Emails.Field.ReplyAction', function() {
             var parentId2 = _.uniqueId();
             var parentId3 = _.uniqueId();
             var parentId4 = _.uniqueId();
-            var sender = field.model.get('from').first();
+            var sender = field.model.get('from_collection').first();
             var to = [
                 app.data.createBean('EmailParticipants', {
-                    _link: 'to_link',
+                    _link: 'to',
                     id: _.uniqueId(),
                     parent: {
                         _acl: {},
@@ -123,7 +123,7 @@ describe('Emails.Field.ReplyAction', function() {
                     email_address: 'a@b.com'
                 }),
                 app.data.createBean('EmailParticipants', {
-                    _link: 'to_link',
+                    _link: 'to',
                     id: _.uniqueId(),
                     parent: {
                         _acl: {},
@@ -140,7 +140,7 @@ describe('Emails.Field.ReplyAction', function() {
             ];
             var cc = [
                 app.data.createBean('EmailParticipants', {
-                    _link: 'cc_link',
+                    _link: 'cc',
                     id: _.uniqueId(),
                     parent: {
                         _acl: {},
@@ -157,7 +157,7 @@ describe('Emails.Field.ReplyAction', function() {
             ];
             var bcc = [
                 app.data.createBean('EmailParticipants', {
-                    _link: 'bcc_link',
+                    _link: 'bcc',
                     id: _.uniqueId(),
                     parent: {
                         _acl: {},
@@ -174,9 +174,9 @@ describe('Emails.Field.ReplyAction', function() {
             ];
             var actual;
 
-            field.model.set('to', to);
-            field.model.set('cc', cc);
-            field.model.set('bcc', bcc);
+            field.model.set('to_collection', to);
+            field.model.set('cc_collection', cc);
+            field.model.set('bcc_collection', bcc);
 
             actual = field._getReplyRecipients(true);
 
@@ -186,29 +186,32 @@ describe('Emails.Field.ReplyAction', function() {
             expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
             expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
             expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(actual.to[1].email.get('id')).toBe(field.model.get('to').at(0).get('email_address_id'));
-            expect(actual.to[1].email.get('email_address')).toBe(field.model.get('to').at(0).get('email_address'));
-            expect(actual.to[1].bean.module).toBe(field.model.get('to').at(0).get('parent_type'));
-            expect(actual.to[1].bean.get('id')).toBe(field.model.get('to').at(0).get('parent_id'));
-            expect(actual.to[1].bean.get('name')).toBe(field.model.get('to').at(0).get('parent_name'));
-            expect(actual.to[2].email.get('id')).toBe(field.model.get('to').at(1).get('email_address_id'));
-            expect(actual.to[2].email.get('email_address')).toBe(field.model.get('to').at(1).get('email_address'));
-            expect(actual.to[2].bean.module).toBe(field.model.get('to').at(1).get('parent_type'));
-            expect(actual.to[2].bean.get('id')).toBe(field.model.get('to').at(1).get('parent_id'));
-            expect(actual.to[2].bean.get('name')).toBe(field.model.get('to').at(1).get('parent_name'));
+            expect(actual.to[1].email.get('id')).toBe(field.model.get('to_collection').at(0).get('email_address_id'));
+            expect(actual.to[1].email.get('email_address'))
+                .toBe(field.model.get('to_collection').at(0).get('email_address'));
+            expect(actual.to[1].bean.module).toBe(field.model.get('to_collection').at(0).get('parent_type'));
+            expect(actual.to[1].bean.get('id')).toBe(field.model.get('to_collection').at(0).get('parent_id'));
+            expect(actual.to[1].bean.get('name')).toBe(field.model.get('to_collection').at(0).get('parent_name'));
+            expect(actual.to[2].email.get('id')).toBe(field.model.get('to_collection').at(1).get('email_address_id'));
+            expect(actual.to[2].email.get('email_address'))
+                .toBe(field.model.get('to_collection').at(1).get('email_address'));
+            expect(actual.to[2].bean.module).toBe(field.model.get('to_collection').at(1).get('parent_type'));
+            expect(actual.to[2].bean.get('id')).toBe(field.model.get('to_collection').at(1).get('parent_id'));
+            expect(actual.to[2].bean.get('name')).toBe(field.model.get('to_collection').at(1).get('parent_name'));
             expect(actual.cc.length).toBe(1);
-            expect(actual.cc[0].email.get('id')).toBe(field.model.get('cc').at(0).get('email_address_id'));
-            expect(actual.cc[0].email.get('email_address')).toBe(field.model.get('cc').at(0).get('email_address'));
-            expect(actual.cc[0].bean.module).toBe(field.model.get('cc').at(0).get('parent_type'));
-            expect(actual.cc[0].bean.get('id')).toBe(field.model.get('cc').at(0).get('parent_id'));
-            expect(actual.cc[0].bean.get('name')).toBe(field.model.get('cc').at(0).get('parent_name'));
+            expect(actual.cc[0].email.get('id')).toBe(field.model.get('cc_collection').at(0).get('email_address_id'));
+            expect(actual.cc[0].email.get('email_address'))
+                .toBe(field.model.get('cc_collection').at(0).get('email_address'));
+            expect(actual.cc[0].bean.module).toBe(field.model.get('cc_collection').at(0).get('parent_type'));
+            expect(actual.cc[0].bean.get('id')).toBe(field.model.get('cc_collection').at(0).get('parent_id'));
+            expect(actual.cc[0].bean.get('name')).toBe(field.model.get('cc_collection').at(0).get('parent_name'));
         });
 
         it('should correctly return email address only recipients during reply all', function() {
-            var sender = field.model.get('from').first();
+            var sender = field.model.get('from_collection').first();
             var to = [
                 app.data.createBean('EmailParticipants', {
-                    _link: 'to_link',
+                    _link: 'to',
                     id: _.uniqueId(),
                     email_address_id: _.uniqueId(),
                     email_address: 'foo@bar.com'
@@ -216,7 +219,7 @@ describe('Emails.Field.ReplyAction', function() {
             ];
             var actual;
 
-            field.model.set('to', to);
+            field.model.set('to_collection', to);
 
             actual = field._getReplyRecipients(true);
 
@@ -226,8 +229,9 @@ describe('Emails.Field.ReplyAction', function() {
             expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
             expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
             expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(actual.to[1].email.get('id')).toBe(field.model.get('to').at(0).get('email_address_id'));
-            expect(actual.to[1].email.get('email_address')).toBe(field.model.get('to').at(0).get('email_address'));
+            expect(actual.to[1].email.get('id')).toBe(field.model.get('to_collection').at(0).get('email_address_id'));
+            expect(actual.to[1].email.get('email_address'))
+                .toBe(field.model.get('to_collection').at(0).get('email_address'));
             expect(actual.to[1].bean).toBeUndefined();
             expect(actual.cc.length).toBe(0);
         });
@@ -366,7 +370,7 @@ describe('Emails.Field.ReplyAction', function() {
             var parentId = _.uniqueId();
             var to = [
                 app.data.createBean('EmailParticipants', {
-                    _link: 'to_link',
+                    _link: 'to',
                     id: _.uniqueId(),
                     parent: {
                         _acl: {},
@@ -381,7 +385,7 @@ describe('Emails.Field.ReplyAction', function() {
                     email_address: 'foo@bar.com'
                 }),
                 app.data.createBean('EmailParticipants', {
-                    _link: 'to_link',
+                    _link: 'to',
                     id: _.uniqueId(),
                     email_address_id: _.uniqueId(),
                     email_address: 'bar@foo.com'
@@ -389,8 +393,8 @@ describe('Emails.Field.ReplyAction', function() {
             ];
             var actual;
 
-            field.model.set('to', to);
-            actual = field._formatEmailList(field.model.get('to'));
+            field.model.set('to_collection', to);
+            actual = field._formatEmailList(field.model.get('to_collection'));
 
             expect(actual).toEqual('Brandon Hunter <foo@bar.com>, bar@foo.com');
         });

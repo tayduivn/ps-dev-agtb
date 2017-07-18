@@ -71,7 +71,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address));
         $this->assertTrue($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -102,7 +102,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
         $this->assertTrue($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -133,7 +133,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact));
         $this->assertTrue($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -169,7 +169,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -207,7 +207,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $ep);
         $this->assertTrue($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -238,7 +238,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
         $this->assertTrue($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -276,7 +276,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
         $this->assertTrue($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -312,7 +312,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $ep);
         $this->assertTrue($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -341,7 +341,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address));
         $this->assertFalse($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -397,7 +397,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant(null, $address4));
         $this->assertTrue($result, 'Another plain email address should have been added');
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(7, $beans);
 
         $bean = array_shift($beans);
@@ -463,7 +463,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
         $this->assertFalse($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -495,7 +495,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact, $address2));
         $this->assertTrue($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -530,7 +530,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $ep);
         $this->assertTrue($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -562,7 +562,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->relationship->add($email, $this->createEmailParticipant($contact));
         $this->assertFalse($result);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -587,7 +587,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $ep->parent_type = 'Employees';
         $this->relationship->add($email, $ep);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -613,7 +613,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $ep->parent_type = 'Employees';
         $this->relationship->add($email, $ep);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);
@@ -653,7 +653,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
@@ -678,7 +678,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(0, $beans);
 
         $email->retrieveEmailText();
@@ -704,7 +704,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(0, $beans);
 
         $email->retrieveEmailText();
@@ -728,7 +728,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // the test.
         SugarTestEmailUtilities::setCreatedEmail($email->id);
 
-        $email->load_relationship('to_link');
+        $email->load_relationship('to');
         $contact = SugarTestContactUtilities::createContact();
         $ep = $this->createEmailParticipant($contact);
         $this->relationship->add($email, $ep);
@@ -737,7 +737,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(0, $beans);
     }
 
@@ -758,7 +758,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // the test.
         SugarTestEmailUtilities::setCreatedEmail($email->id);
 
-        $email->load_relationship('to_link');
+        $email->load_relationship('to');
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         $ep = $this->createEmailParticipant(null, $address);
         $this->relationship->add($email, $ep);
@@ -767,7 +767,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(0, $beans);
     }
 
@@ -789,7 +789,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the archived email now that the relationships have been saved. This is how the REST API operates.
         $email->save();
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $this->relationship->remove($email, $ep);
@@ -820,7 +820,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($result);
         $this->assertEquals(1, $ep->deleted);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(0, $beans);
 
         $email->retrieveEmailText();
@@ -845,7 +845,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->relationship->add($email, $this->createEmailParticipant($contact, $address));
         $contact->mark_deleted($contact->id);
 
-        $beans = $email->to_link->getBeans();
+        $beans = $email->to->getBeans();
         $this->assertCount(1, $beans);
 
         $bean = array_shift($beans);

@@ -60,7 +60,7 @@
     _render: function() {
         this._super('_render');
         var massCollection = this.context.get('mass_collection');
-        var selectedRecipientsFieldName = 'to';
+        var selectedRecipientsFieldName = 'to_collection';
 
         if (massCollection) {
             // get rid of any old event listeners on the mass collection

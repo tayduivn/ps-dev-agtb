@@ -36,7 +36,7 @@ describe('Plugins.EmailParticipants', function() {
         model = context.get('model');
 
         field = SugarTest.createField({
-            name: 'to',
+            name: 'to_collection',
             type: 'email-recipients',
             viewName: 'detail',
             module: model.module,
@@ -65,7 +65,7 @@ describe('Plugins.EmailParticipants', function() {
             var parentId = _.uniqueId();
 
             bean = app.data.createBean('EmailParticipants', {
-                _link: 'to_link',
+                _link: 'to',
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
@@ -197,7 +197,7 @@ describe('Plugins.EmailParticipants', function() {
     describe('formatting a model for email headers', function() {
         it('should return just an email address', function() {
             var bean = app.data.createBean('EmailParticipants', {
-                _link: 'to_link',
+                _link: 'to',
                 id: _.uniqueId(),
                 email_address_id: _.uniqueId(),
                 email_address: 'rhodes@example.com'
@@ -214,7 +214,7 @@ describe('Plugins.EmailParticipants', function() {
             var parentId = _.uniqueId();
 
             var bean = app.data.createBean('EmailParticipants', {
-                _link: 'to_link',
+                _link: 'to',
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
@@ -240,7 +240,7 @@ describe('Plugins.EmailParticipants', function() {
             var parentId = _.uniqueId();
 
             var bean = app.data.createBean('EmailParticipants', {
-                _link: 'to_link',
+                _link: 'to',
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
@@ -266,7 +266,7 @@ describe('Plugins.EmailParticipants', function() {
             it('should return just a name', function() {
                 var parentId = _.uniqueId();
                 var bean = app.data.createBean('EmailParticipants', {
-                    _link: 'to_link',
+                    _link: 'to',
                     id: _.uniqueId(),
                     parent: {
                         _acl: {},
@@ -316,7 +316,7 @@ describe('Plugins.EmailParticipants', function() {
                 callback: function(response) {
                     expect(response.more).toBe(false);
                     expect(response.results.length).toBe(1);
-                    expect(response.results[0].get('_link')).toBe('to_link');
+                    expect(response.results[0].get('_link')).toBe('to');
                     expect(response.results[0].get('parent_type')).toBe('Contacts');
                     expect(response.results[0].get('parent_id')).toBe(data.records[0].id);
                     expect(response.results[0].get('parent_name')).toBe(data.records[0].name);
@@ -588,7 +588,7 @@ describe('Plugins.EmailParticipants', function() {
             var parentId = _.uniqueId();
 
             bean = app.data.createBean('EmailParticipants', {
-                _link: 'to_link',
+                _link: 'to',
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
@@ -626,6 +626,21 @@ describe('Plugins.EmailParticipants', function() {
                 expect(eventSpy).toHaveBeenCalledOnce();
                 expect(eventSpy.firstCall.args[0][field.type]).toBe(true);
             });
+        });
+    });
+
+    describe('getting the link name associated with the collection field', function() {
+        it('should return the name when the link is a string', function() {
+            expect(field.getLinkName()).toBe('to');
+        });
+
+        it('should return the name property when the link is an object', function() {
+            field.def.links[0] = {
+                name: 'to',
+                field_map: {}
+            };
+
+            expect(field.getLinkName()).toBe('to');
         });
     });
 });

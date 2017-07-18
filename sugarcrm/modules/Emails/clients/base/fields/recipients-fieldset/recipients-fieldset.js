@@ -45,15 +45,14 @@
      * @inheritdoc
      */
     _render: function() {
-        var to = this.model.get('to');
-        var cc = this.model.get('cc');
-        var bcc = this.model.get('bcc');
+        var cc = this.model.get('cc_collection');
+        var bcc = this.model.get('bcc_collection');
 
         this._super('_render');
 
         this._addToggleButtons('outbound_email_id');
-        this._toggleFieldVisibility('cc', !!cc.length);
-        this._toggleFieldVisibility('bcc', !!bcc.length);
+        this._toggleFieldVisibility('cc_collection', !!cc.length);
+        this._toggleFieldVisibility('bcc_collection', !!bcc.length);
     },
 
     /**
@@ -92,9 +91,9 @@
             .map(function(field, fieldName) {
                 var label = '';
 
-                if (fieldName === 'cc') {
+                if (fieldName === 'cc_collection') {
                     label = app.lang.get('LBL_CC', this.module) + ': ';
-                } else if (fieldName === 'bcc') {
+                } else if (fieldName === 'bcc_collection') {
                     label = app.lang.get('LBL_BCC', this.module) + ': ';
                 }
 
@@ -112,9 +111,9 @@
      * @inheritdoc
      */
     setMode: function(name) {
-        var to = this.model.get('to');
-        var cc = this.model.get('cc');
-        var bcc = this.model.get('bcc');
+        var to = this.model.get('to_collection');
+        var cc = this.model.get('cc_collection');
+        var bcc = this.model.get('bcc_collection');
         var hasRecipients = to.length > 0 || cc.length > 0 || bcc.length > 0;
 
         if (this.view.createMode && name === 'detail' && !hasRecipients) {
