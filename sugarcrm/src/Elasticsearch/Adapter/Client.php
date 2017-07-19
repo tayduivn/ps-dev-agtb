@@ -41,6 +41,12 @@ class Client extends BaseClient
     const CONN_FAILURE = -99;
 
     /**
+     * User-agent settings
+     */
+    const USER_AGENT = 'SugarCRM';
+    const VERSION_UNKNOWN = 'unknown';
+
+    /**
      * Return allowed versions array
      * @var array
      */
@@ -274,6 +280,10 @@ class Client extends BaseClient
                 $connection[$k] = $v;
             }
         }
+
+        // Force the user-agent header to match SugarCRM's version
+        $connection['curl'][CURLOPT_USERAGENT] = self::USER_AGENT . '/' . $this->getSugarVersion();
+
         return array('connections' => array($connection));
     }
 
@@ -339,5 +349,14 @@ class Client extends BaseClient
     protected function _log($context)
     {
         return;
+    }
+
+    /**
+     * Get sugar version number, returns "unknown" if not available.
+     * @return string
+     */
+    protected function getSugarVersion()
+    {
+        return empty($GLOBALS['sugar_version']) ? self::VERSION_UNKNOWN : $GLOBALS['sugar_version'];
     }
 }
