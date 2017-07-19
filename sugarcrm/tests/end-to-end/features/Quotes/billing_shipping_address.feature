@@ -14,7 +14,7 @@ Feature: Billing/Shipping Account verification
     Given I use default account
     Given I launch App
 
-  @billing_and_shipping_address @T_34380
+  @billing_and_shipping_address @T_34380 @ci-excluded
   Scenario: Quotes > Create -> Verify billing address is correct
     Given Accounts records exist:
       | *name     | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
@@ -55,7 +55,7 @@ Feature: Billing/Shipping Account verification
       | shipping_account_name      | myAccount           |
 
 
-  @create @T_34381
+  @create @T_34381 @ci-excluded
   Scenario: Quotes > Create -> Verify billing and shipping addresses are correct
     Given Accounts records exist:
       | *name           | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |

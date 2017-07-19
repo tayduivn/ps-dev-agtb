@@ -35,8 +35,18 @@
         console.log('ajax error: ' + options.url + ' ' + error ? error.message : error);
     });
 
+    document.body.addEventListener('click', function(e) {
+        console.log('click element: ' + ((e.target.id ? 'id - ' + e.target.id : '') +
+            (e.target.className ? ' className - ' + e.target.className : '')));
+    }, true);
+
     $('input').live('keydown', function(e) {
         console.log('keydown: ' + '"' + $(e.target).val() + '" ' + ((e.target.id ? 'id - ' +
+                e.target.id : '') + (e.target.className ? ' className - ' + e.target.className : '')));
+    });
+
+    $('input').live('focusin', (e) => {
+        console.log('focusin: ' + '"' + $(e.target).val() + '" ' + ((e.target.id ? 'id - ' +
                 e.target.id : '') + (e.target.className ? ' className - ' + e.target.className : '')));
     });
 

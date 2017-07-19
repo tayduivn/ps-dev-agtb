@@ -17,8 +17,8 @@ const whenStepsFilter = function () {
      * @example "I search for "Account_Search" in #AccountsList:FilterView view"
      */
     this.When(/^I search for "([^"]*)" in (#\S+) view$/,
-        (value, view) => {
-            return view.setSearchField(value);
+        async (value, view) => {
+            await view.setSearchField(value);
         }, true);
 };
 

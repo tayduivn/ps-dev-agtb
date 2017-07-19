@@ -155,7 +155,7 @@ Feature: productTypes module verification
       | description | Great Type |
       | list_order  | 5          |
 
-  @create @T_34403
+  @create @T_34403 @ci-excluded
   Scenario: Product Type > Create record
     Given I open about view and login
     When I go to "ProductTypes" url

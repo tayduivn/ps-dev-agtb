@@ -10,10 +10,14 @@
  */
 var testSchemes = {
     default: {
-        env : "e2e",
+        env: 'e2e',
         analytics: {
             enabled: false
-        }
+        },
+        logger: {
+            level: 'debug',
+        },
+        logLevel: 'debug',
     },
     skipTutorial: {
         skipTutorial: true

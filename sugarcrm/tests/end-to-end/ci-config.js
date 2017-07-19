@@ -31,8 +31,6 @@ tasks.push({
     args: _.concat(process.argv, [
         '--sp', utils.getArgument('-u', '--url'),
         '--cfg', CUKES_PATH + '/' + utils.getConfigFile(),
-        '-t', '@crud',
-        '-p', 'false'
     ]),
     extendsArgv: true
 });

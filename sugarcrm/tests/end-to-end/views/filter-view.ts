@@ -37,10 +37,10 @@ export default class FilterView extends BaseView {
      * @returns {*}
      */
     public async setSearchField (value) {
+
         let locator = this.$('searchField');
 
-        return seedbed.client
-            .waitForVisible(locator)
-            .setValue(locator, value);
+        await seedbed.client.waitForVisible(locator);
+        await seedbed.client.setValue(locator, value);
     }
 }

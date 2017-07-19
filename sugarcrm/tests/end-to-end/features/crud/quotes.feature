@@ -14,7 +14,7 @@ Feature: Quotes module verification
     Given I use default account
     Given I launch App
 
-  @list-preview @T_32765
+  @list-preview @T_32765 @ci-excluded
   Scenario Outline: Quotes > List View > Preview
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed |
@@ -43,7 +43,7 @@ Feature: Quotes module verification
       | CA    |
       | WA    |
 
-  @list-search @T_34376 @ci-excluded
+  @list-search @T_34376
   Scenario: Quotes > List View > Filter > Search main input
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed |
@@ -162,7 +162,7 @@ Feature: Quotes module verification
       | billing_account_name       | Acc_2      |
 
 
-  @create_cancel_save @T_34379
+  @create_cancel_save @T_34379 @ci-excluded
   Scenario: Quotes > Create > Cancel/Save
     Given Accounts records exist:
       | *name     | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |

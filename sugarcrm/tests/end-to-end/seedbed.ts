@@ -16,6 +16,22 @@ import RecordLayout from './layouts/record-layout';
 import ListLayout from './layouts/list-layout';
 import PreviewLayout from './layouts/preview-layout';
 
+seedbed.addAsyncHandler(seedbed.events.BEFORE_SCENARIO, async () => {
+
+    let client: any = seedbed.client;
+
+    // override default 'setValue' method: we have to clear element before
+    client.addCommand('setValue', (cssSelector, value) => {
+
+        return client.clearElement(cssSelector)
+            .element(cssSelector)
+            .then(result => {
+                return client.elementIdValueByWord(result.value.ELEMENT, value);
+            });
+
+    }, true);
+
+});
 
 seedbed.addAsyncHandler(seedbed.events.BEFORE_SCENARIO, async () => {
     seedbed.cachedRecords.clear();
