@@ -4524,7 +4524,10 @@ protected function checkQuery($sql, $object_name = false)
 	 */
     public function disconnect()
     {
-        $this->conn = null;
+        if ($this->conn) {
+            $this->conn->close();
+            $this->conn = null;
+        }
     }
 
 	/**

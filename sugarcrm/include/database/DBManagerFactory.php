@@ -23,6 +23,9 @@ use Doctrine\DBAL\Logging\SQLLogger;
  */
 class DBManagerFactory
 {
+    /**
+     * @var DBManager[]
+     */
     static $instances = array();
 
     /** @var SQLLogger instance of Doctrine Dbal logger class */
