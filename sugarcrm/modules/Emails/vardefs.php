@@ -918,6 +918,11 @@ $dictionary['Email'] = array(
             'type' => 'index',
             'fields' => array('date_modified'),
         ),
+        array(
+            'name' => 'idx_state',
+            'type' => 'index',
+            'fields' => array('state', 'id'),
+        ),
     ), // end indices
     'uses' => array(
         'favorite',
