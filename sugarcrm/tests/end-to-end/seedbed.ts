@@ -38,7 +38,7 @@ seedbed.addAsyncHandler(seedbed.events.BEFORE_SCENARIO, async () => {
 });
 
 /*runs as soon as log in page is loaded and metadata that is available at that moment saved*/
-seedbed.addAsyncHandler(seedbed.events.BEFORE_INIT, async() => {
+seedbed.addAsyncHandler(seedbed.events.BEFORE_INIT, async () => {
 
     seedbed.defineComponent('Login', LoginLayout, {module: 'Login'});
 
@@ -53,11 +53,11 @@ seedbed.addAsyncHandler(seedbed.events.AFTER_INIT, () => {
     /*cache drawers for modules*/
     _.each(seedbed.meta.modules, (module, moduleName) => {
 
-        seedbed.defineComponent(`${moduleName}List`, ListLayout, { module : moduleName });
+        seedbed.defineComponent(`${moduleName}List`, ListLayout, {module: moduleName});
 
         // If module supports "RecordLayout" let's pre-create it
         if (module.views && module.views.record) {
-            seedbed.defineComponent(`${moduleName}Record`, RecordLayout, { module : moduleName});
+            seedbed.defineComponent(`${moduleName}Record`, RecordLayout, {module: moduleName});
         }
     });
 
@@ -88,43 +88,50 @@ seedbed.addAsyncHandler(seedbed.events.LOGIN, () => {
 // is called after waitForApp, each time
 seedbed.addAsyncHandler(seedbed.events.SYNC, (clientInfo) => {
 
-    /*we need this logic only for offline mode*/
-    let item: any = _.last(clientInfo.create);
+    let createdRecords = clientInfo.create;
 
-    if (item) {
-        /*find record info for created record*/
-        let recordInfo: any = _.find(seedbed.scenario.recordsInfo, (record: any) => {
+    let recordsInfo = _.filter(seedbed.scenario.recordsInfo, (recordInfo: any) => !recordInfo.recordId);
+
+    let recordInfo: any = null;
+
+    let item = _.find(createdRecords, (createdRecord: any) => {
+
+        recordInfo = _.find(recordsInfo, (record: any) => {
             /*
              We need to make sure we find correct record to be updated
              Why need this fix: Sugar do POST requests on Dashboards to create them, if not available (for new installs)
              Those POST requests are pushed to clientInfo.create and assigned to wrong seedbed.scenario.recordsInfo[] elements
              */
-            return !record.recordId && item._module && item._module === record.module;
+            return createdRecord._module && createdRecord._module === record.module;
         });
 
-        if (recordInfo && !seedbed.cachedRecords.contains(recordInfo.uid)) {
+        return !!recordInfo;
 
-            seedbed.cachedRecords.push(
-                recordInfo.uid,
-                {
-                    input: recordInfo.input,
-                    id: item.id,
-                    module: recordInfo.module
-                }
-            );
+    });
 
-            seedbed.defineComponent(`${recordInfo.uid}Record`, RecordLayout, {
-                module: recordInfo.module,
-                id: item.id
-            });
+    if (recordInfo && !seedbed.cachedRecords.contains(recordInfo.uid)) {
 
-            seedbed.defineComponent(`${recordInfo.uid}Preview`, PreviewLayout, {
-                module: recordInfo.module,
-                id: recordInfo.id,
-            });
+        seedbed.cachedRecords.push(
+            recordInfo.uid,
+            {
+                input: recordInfo.input,
+                id: item.id,
+                module: recordInfo.module
+            }
+        );
 
-        }
+        seedbed.defineComponent(`${recordInfo.uid}Record`, RecordLayout, {
+            module: recordInfo.module,
+            id: item.id
+        });
+
+        seedbed.defineComponent(`${recordInfo.uid}Preview`, PreviewLayout, {
+            module: recordInfo.module,
+            id: recordInfo.id,
+        });
+
     }
+
 });
 
 seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
