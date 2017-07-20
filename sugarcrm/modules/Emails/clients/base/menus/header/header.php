@@ -20,7 +20,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     array(
         'route' => '#' . $module_name . '/create',
-        'label' => 'LNK_NEW_ARCHIVE_EMAIL',
+        'label' => 'LBL_CREATE_ARCHIVED_EMAIL',
         'acl_action' => 'create',
         'acl_module' => $module_name,
         'icon' => 'fa-plus',

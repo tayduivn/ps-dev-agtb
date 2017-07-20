@@ -4784,6 +4784,7 @@ Sincerely, SugarCRM',
     'LBL_UNASSIGNED' => 'Unassigned',
     'LBL_ARCHIVE_EMAIL' => 'Archive Email',
     'LBL_EMAIL_ARCHIVED' => 'Email archived',
+    'LBL_CREATE_ARCHIVED_EMAIL' => 'Create Archived Email',
 
     // planned activities dashlet
     'LBL_PLANNED_ACTIVITIES_DASHLET' => 'Planned Activities',

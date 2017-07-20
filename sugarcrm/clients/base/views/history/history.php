@@ -56,7 +56,7 @@ $viewdefs['base']['view']['history'] = array(
                             'link' => 'emails',
                             'module' => 'Emails',
                         ),
-                        'label' => 'LBL_ARCHIVE_EMAIL',
+                        'label' => 'LBL_CREATE_ARCHIVED_EMAIL',
                         'acl_action' => 'create',
                         'acl_module' => 'Emails',
                     ),
