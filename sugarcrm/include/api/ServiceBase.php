@@ -10,8 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Platform as PlatformConstraint;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-abstract class ServiceBase {
+abstract class ServiceBase implements LoggerAwareInterface
+{
+    use LoggerAwareTrait;
+
     public $user;
     public $platform = 'base';
     public $action = 'view';
@@ -152,5 +159,53 @@ abstract class ServiceBase {
             )))->setExtraData('platform', $this->platform);
        }
        throw $login_exc;
+    }
+
+    /**
+     * Validate the given platform name against the known platform list.
+     *
+     * As the platform has not been enforced in the past, this functionality
+     * needs to be explicitly enabled by setting the following config flag:
+     *
+     *      `$sugar_config['disable_unknown_platforms'] = true`
+     *
+     * This will become the default behavior and will be strictly enforced
+     * in the near future. It is a MUST for all customizations to properly
+     * register custom platforms through the Extension framework.
+     *
+     * If the above config flag is not set some generic validation will
+     * still be applied restricting the allowed characters and length.
+     *
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    public function validatePlatform($platform)
+    {
+        $violations = Validator::getService()->validate($platform, new PlatformConstraint());
+        if (count($violations) === 0) {
+            return;
+        }
+
+        $raiseException = false;
+        $strict = (bool) SugarConfig::getInstance()->get('disable_unknown_platforms', false);
+
+        foreach ($violations as $violation) {
+            switch ($violation->getCode()) {
+                case PlatformConstraint::ERROR_INVALID_PLATFORM:
+                    if ($strict === true) {
+                        $this->logger->alert($violation->getMessage());
+                        $raiseException = true;
+                    } else {
+                        $this->logger->warning($violation->getMessage());
+                    }
+                    break;
+                default:
+                    $this->logger->alert($violation->getMessage());
+                    $raiseException = true;
+            }
+        }
+
+        if ($raiseException) {
+            throw new SugarApiExceptionInvalidParameter("EXCEPTION_INVALID_PLATFORM");
+        }
     }
 }
