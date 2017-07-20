@@ -913,6 +913,11 @@ $dictionary['Email'] = array(
             'type' => 'index',
             'fields' => array('assigned_user_id', 'type', 'status')
         ),
+        array(
+            'name' => 'idx_date_modified',
+            'type' => 'index',
+            'fields' => array('date_modified'),
+        ),
     ), // end indices
     'uses' => array(
         'favorite',
