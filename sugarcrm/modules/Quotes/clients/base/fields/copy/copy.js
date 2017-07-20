@@ -76,7 +76,8 @@
      * @inheritdoc
      */
     syncCopy: function(enable) {
-        if (!this.isConvertingFromShipping || (this.isConvertingFromShipping && this._isChecked())) {
+        if ((!this.isConvertingFromShipping && !_.isUndefined(this._isChecked())) ||
+            (this.isConvertingFromShipping && this._isChecked())) {
             // if this view is not coming from a Ship To convert subpanel,
             // or if it IS but the user specifically checked the Copy Billing to Shipping checkbox
             this._super('syncCopy', [enable]);

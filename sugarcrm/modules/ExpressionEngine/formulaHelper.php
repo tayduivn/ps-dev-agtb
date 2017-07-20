@@ -38,6 +38,7 @@ class FormulaHelper
                 case "int":
                 case "float":
                 case "decimal":
+                case "discount":
                 case "currency":
                     $fieldArray[$fieldName] = array($fieldName, 'number');
                     break;

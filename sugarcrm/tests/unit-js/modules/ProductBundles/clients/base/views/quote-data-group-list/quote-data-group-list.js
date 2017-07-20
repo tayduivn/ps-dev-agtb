@@ -1174,6 +1174,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 view._render();
 
                 expect(view.addedConvertModels).toBeTruthy();
+                expect(view.context.parent.get('addedConvertModels')).toBeTruthy();
             });
         });
 

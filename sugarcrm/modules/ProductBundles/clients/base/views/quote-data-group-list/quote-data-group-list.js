@@ -166,7 +166,7 @@
 
         this.isCreateView = this.context.parent.get('create') || false;
         this.isOppsConvert = this.isCreateView && this.context.parent.get('convert');
-        this.addedConvertModels = false;
+        this.addedConvertModels = this.context.parent.get('addedConvertModels') || false;
 
         this.action = 'list';
         this.viewName = this.isCreateView ? 'edit' : 'list';
@@ -623,6 +623,8 @@
                 this.onAddNewItemToGroup('products', qliModel.toJSON());
             }, this);
 
+            //be sure to set this on the parent as well so new groups don't try to do this.
+            this.context.parent.set('addedConvertModels', true);
             this.addedConvertModels = true;
         }
 

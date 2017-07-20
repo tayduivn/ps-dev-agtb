@@ -1072,7 +1072,11 @@ class SidecarMetaDataUpgrader
         if ($subpanels || (!empty($this->legacyMetaDataFileNames[$client]) && in_array($filename, $this->legacyMetaDataFileNames[$client]))) {
             // Success! We have a full file path. Add this module to the stack
             $this->addUpgradeModule($module);
+            $viewtype = $this->getViewTypeFromFilename($filename, $client, $type, $file);
 
+            if ($viewtype == 'layoutdef') {
+                $this->upgradeRelatedModuleSubpanel($filename);
+            }
             return array(
                 'client'    => $client,
                 'module'    => $module,
@@ -1083,12 +1087,33 @@ class SidecarMetaDataUpgrader
                 'package'   => $package,
                 'deployed'  => $deployed,
                 'sidecar'   => $sidecar,
-                'viewtype'  => $this->getViewTypeFromFilename($filename, $client, $type, $file),
+                'viewtype'  => $viewtype,
             );
         }
         $this->logUpgradeStatus("Not upgrading $file: no file name for $filename");
 
         return false;
+    }
+
+    /**
+     * If you're upgrading a subpanel layout, check to see if the supporting module's subpanel def also needs to be
+     * upgraded to match.  This is needed if you're upgrading a BWC module and there are custom subpanel definitions
+     * for another module that is also still in BWC.
+     *
+     * @param $basename filename of BWC layout override (looks like _overrideQuote_subpanel_documents.php)
+     */
+    public function upgradeRelatedModuleSubpanel($basename)
+    {
+        //pull the module out of the override file
+        $parts = explode('_', $basename);
+        $module = ucfirst($parts[count($parts) - 1]);
+
+        //set the path to look in
+        $path = 'custom/modules/' . $module . '/metadata/subpanels/';
+
+        //look for files and add any candidates to the internal file array
+        $files = $this->getUpgradeableFilesInPath($path, $module, 'base', 'base', null, true, true);
+        $this->files = array_merge($this->files, $files);
     }
 
     /**

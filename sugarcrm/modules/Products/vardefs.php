@@ -130,7 +130,7 @@ $dictionary['Product'] = array(
             'name' => 'total_amount',
             'default' => '0.00',
             'formula' => '
-                ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
+                ifElse(and(isNumeric(toString($quantity)), isNumeric(toString($discount_price))),
                     currencySubtract(
                         currencyMultiply(
                             $discount_price,
@@ -138,7 +138,7 @@ $dictionary['Product'] = array(
                         ),
                         ifElse(equal($discount_select, "1"),
                             currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
-                            ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                            ifElse(isNumeric(toString($discount_amount)), $discount_amount, 0)
                         )
                     ),
                     ""

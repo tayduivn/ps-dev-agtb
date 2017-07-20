@@ -593,16 +593,11 @@ FLEXLIST GENERIC */
         display: inline-block;
         white-space: nowrap;
       }
-    }
-
-    // row action buttons
-    .fieldset-field .btn {
-      margin-left: 0;
-      max-width: 80px;
-      + .btn {
+      .btn-group > .list + .btn {
         margin-left: -1px;
       }
     }
+    // row action buttons
     .actions {
       .btn:hover:not(.disabled) {
         color: @grayDark;
@@ -673,7 +668,6 @@ FLEXLIST GENERIC */
       }
     }
     td:last-child {
-
       // row action buttons
       .actions {
         .dropdown-menu {
@@ -815,6 +809,10 @@ FLEXLIST GENERIC */
           width: 125px;
           padding-left: 2px;
           border-bottom: 1px solid lighten(@warningBorder, 5%);
+        }
+        // row action buttons
+        .fieldset-field .btn {
+          max-width: 80px;
         }
       }
     }

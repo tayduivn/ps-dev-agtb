@@ -212,6 +212,9 @@ describe('Quotes.Base.Fields.CopyField', function() {
     describe('syncCopy()', function() {
         it('should call _super syncCopy when isConvertingFromShipping is false', function() {
             field.isConvertingFromShipping = false;
+            sinon.collection.stub(field, '_isChecked', function() {
+                return false;
+            });
             field.syncCopy(true);
 
             expect(field._super).toHaveBeenCalledWith('syncCopy', [true]);
