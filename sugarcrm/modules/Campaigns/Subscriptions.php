@@ -155,7 +155,7 @@ function printOriginalValues($focus){
     global $app_strings;
     $unsubs_arr = '';
     $subs_arr =  '';
-    $return_arr =  '';
+    $return_arr =  [];
 
      // Lets start by creating the subscription and unsubscription arrays
         $subscription_arrays = get_subscription_lists($focus);
