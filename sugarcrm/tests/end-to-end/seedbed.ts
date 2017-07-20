@@ -129,6 +129,28 @@ seedbed.addAsyncHandler(seedbed.events.SYNC, (clientInfo) => {
 
 seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
 
+    if (req.method === 'POST' && /(\/opportunity)/.test(req.url)) {
+
+        let responseRecord = JSON.parse(data.buffer.toString());
+        responseRecord = responseRecord.record;
+
+        /* find record info for created record */
+        let recordInfo: any = _.find(seedbed.scenario.recordsInfo, (record: any) => {
+            return responseRecord && responseRecord.id && responseRecord.id === record.recordId;
+        });
+
+        // TODO: it's a temporary solution, we need to create views for this record, see
+        // Scenario: Quotes > Create Opportunity
+        if (!recordInfo) {
+            seedbed.api.created.push(responseRecord);
+        }
+
+    }
+
+});
+
+seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
+
     let url = req.url,
         responseData;
 

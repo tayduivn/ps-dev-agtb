@@ -12,10 +12,10 @@ import {seedbed} from '@sugarcrm/seedbed';
 import {BaseField} from './base-field';
 
 /**
- * @class CopyField
+ * @class CurrencyField
  * @extends BaseField
  */
-export default class CopyField extends BaseField {
+export default class CurrencyField extends BaseField {
 
     constructor(options) {
         super(options);
@@ -23,15 +23,46 @@ export default class CopyField extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}]',
             field: {
-                selector: 'input'
+                selector: 'input:not([class *= select2])'
             }
         });
     }
 
     public async setValue(val: any): Promise<void> {
-        await seedbed.client.scroll(this.$('field.selector'));
-        await seedbed.client.click(this.$('field.selector'));
+        await seedbed.client.setValue(this.$('field.selector'), val);
     }
 }
 
-export const Edit = CopyField;
+export const Edit = CurrencyField;
+
+export class Detail extends CurrencyField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div'
+            }
+        });
+
+    }
+};
+
+export class List extends CurrencyField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div'
+            }
+        });
+
+    }
+
+};
+
+export const Preview = Detail;
+

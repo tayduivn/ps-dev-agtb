@@ -31,17 +31,24 @@ export default class HeaderView extends BaseView {
                 'save': 'a[name="save_button"]:not(.hide)',
                 'edit': 'a[name="edit_button"]:not(.hide)',
                 'delete': 'a[name="delete_button"]:not(.hide)',
+                'createopportunity': 'a[name="convert_to_opportunity_button"]:not(.hide)',
+                'generatequote': 'a[name="convert_to_quote_button"]:not(.hide)',
                 'actions': '.actions:not([style*="display: none"]) a.btn.dropdown-toggle'
             },
 
             title: {
-                'old' : 'h1 [data-name="title"] span.list-headerpane',
-                    'new' : 'h1 [data-name="title"] span.list-headerpane div'
+                'old': 'h1 [data-name="title"] span.list-headerpane',
+                'new': 'h1 [data-name="title"] span.list-headerpane div'
             }
         });
     }
 
-    public async clickButton(selectorName) {
-        return seedbed.client.click(this.$(`buttons.${selectorName.toLowerCase()}`));
+    public async clickButton(buttonName) {
+        return seedbed.client.click(this.$(`buttons.${buttonName.toLowerCase()}`));
+    }
+
+    public async checkIsButtonActive(buttonName) {
+        let isDisabled = await seedbed.client.isExisting(this.$(`buttons.${buttonName.toLowerCase()}`) + '.disabled');
+        return !isDisabled;
     }
 }

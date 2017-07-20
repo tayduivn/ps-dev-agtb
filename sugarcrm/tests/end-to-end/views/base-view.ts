@@ -9,7 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {BaseView, seedbed, BaseField} from '@sugarcrm/seedbed';
+import {BaseView, seedbed} from '@sugarcrm/seedbed';
+
 
 import * as _ from 'lodash';
 import * as TextField from '../fields/text-field';
@@ -21,6 +22,8 @@ import * as FloatField from '../fields/float-field';
 import * as DateField from '../fields/date-field';
 import * as RelateField from '../fields/relate-field';
 import * as CopyField from '../fields/copy-field';
+import * as CurrencyField from '../fields/currency-field';
+import {BaseField} from '../fields/base-field';
 
 const classify = name => _.upperFirst(_.camelCase(name));
 
@@ -43,7 +46,7 @@ export default class extends BaseView {
 
     public async getField(name: string, type?: string): Promise<BaseField> {
 
-        let selector = this.$('field', { name });
+        let selector = this.$('field', {name});
         let templateName: string;
         try {
             templateName = await this.getAttribute(selector, 'field-tpl-name');
@@ -80,15 +83,41 @@ export default class extends BaseView {
         let Clazz;
 
         switch (type) {
-            case 'name': Clazz = NameField[templateName]; break;
-            case 'text': Clazz = TextField[templateName]; break;
-            case 'textarea': Clazz = TextareaField[templateName]; break;
-            case 'enum': Clazz = EnumField[templateName]; break;
-            case 'int': Clazz = IntField[templateName]; break;
-            case 'date': Clazz = DateField[templateName]; break;
-            case 'float': Clazz = FloatField[templateName]; break;
-            case 'relate': Clazz = RelateField[templateName]; break;
-            case 'copy': Clazz = CopyField[templateName]; break;
+            case 'name':
+                Clazz = NameField[templateName];
+                break;
+            case 'phone':
+            case 'url':
+            case 'text':
+                Clazz = TextField[templateName];
+                break;
+            case 'textarea':
+                Clazz = TextareaField[templateName];
+                break;
+            case 'enum':
+                Clazz = EnumField[templateName];
+                break;
+            case 'int':
+                Clazz = IntField[templateName];
+                break;
+            case 'date':
+                Clazz = DateField[templateName];
+                break;
+            case 'float':
+                Clazz = FloatField[templateName];
+                break;
+            case 'relate':
+                Clazz = RelateField[templateName];
+                break;
+            case 'checkbox':
+            case 'copy':
+                Clazz = CopyField[templateName];
+                break;
+            case 'currency':
+                Clazz = CurrencyField[templateName];
+                break;
+            default:
+                throw new Error(`Field type '${type}' is not found`);
         }
 
         if (!Clazz) {
@@ -118,6 +147,11 @@ export default class extends BaseView {
         }
 
         return templateName.toString();
+    }
+
+    public async clickField(fieldName: string): Promise<void> {
+        let field: BaseField = await this.getField(fieldName);
+        await field.click();
     }
 
 }

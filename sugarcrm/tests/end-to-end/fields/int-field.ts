@@ -8,10 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import {BaseField, seedbed} from '@sugarcrm/seedbed';
+import {seedbed} from '@sugarcrm/seedbed';
+import {BaseField} from './base-field';
 
 /**
- * @class FloatField
+ * @class IntField
  * @extends BaseField
  */
 export default class IntField extends BaseField {

@@ -147,6 +147,12 @@ const whenSteps = function () {
                 await field.setValue(row.value);
             }
         }, true);
+
+    this.When(/^I click (\S+) field on (#\S+) view$/,
+        (fieldName, layout) => {
+            let view = layout.type ? layout.defaultView : layout;
+            return view.clickField(fieldName);
+        }, true);
 };
 
 module.exports = whenSteps;

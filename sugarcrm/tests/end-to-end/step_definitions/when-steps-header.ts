@@ -11,6 +11,8 @@
 // turn of warnings like "Confusing use of '!'., W018"
 /* jshint -W018 */
 
+import {TableDefinition} from 'cucumber';
+
 const whenStepsHeader = function () {
 
     /**
@@ -19,7 +21,7 @@ const whenStepsHeader = function () {
      * @example "I click Save button on #AccountsDrawer header"
      */
     this.When(/^I click (Create|Edit|Cancel|Save) button on (#[A-Z](?:\w|\S)*) header$/,
-         (btnName, layout) => {
+        (btnName, layout) => {
             return layout.HeaderView.clickButton(btnName.toLowerCase());
         }, true);
 
@@ -28,9 +30,40 @@ const whenStepsHeader = function () {
      *
      * @example "I open actions menu in #Account_ARecord"
      */
-    this.When(/^I open actions menu in (#[A-Z]\w+)$/,
-        layout => {
-            return layout.HeaderView.clickButton('actions');
+    this.When(/^I open actions menu in (#[A-Z]\w+)\s*(and check:)?$/,
+        async (layout, needToCheck, data: TableDefinition) => {
+
+            await layout.HeaderView.clickButton('actions');
+
+            if (needToCheck) {
+
+                let rows = data.rows();
+
+                for (let i = 0; i < rows.length; i++) {
+
+                    let row = rows[i];
+                    let buttonName = row[0];
+
+                    let isButtonActive = await layout.HeaderView.checkIsButtonActive(buttonName);
+
+                    if (row[1] !== isButtonActive.toString()) {
+
+                        let errMessage = null;
+
+                        if (row[1] === 'true') {
+                            errMessage = `menu item '${buttonName}' expected to be active, but it's disabled`;
+                        } else {
+                            errMessage = `menu item '${buttonName}' expected to be disabled, but it's active`;
+                        }
+
+                        throw new Error(errMessage);
+
+                    }
+
+                }
+
+            }
+
         }, true);
 
     /**
@@ -38,7 +71,7 @@ const whenStepsHeader = function () {
      *
      * @example "I choose Delete from actions menu in #Account_ARecord"
      */
-    this.When(/^I choose (Copy|Delete) from actions menu in (#[A-Z]\w+)\s*$/,
+    this.When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote) from actions menu in (#[A-Z]\w+)\s*$/,
         (action, layout) => {
             return layout.HeaderView.clickButton(action);
         }, true);
