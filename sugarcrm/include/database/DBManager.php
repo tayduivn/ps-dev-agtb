@@ -3433,6 +3433,9 @@ protected function checkQuery($sql, $object_name = false)
                                 $after_value = trim($after_value);
                             }
 
+							$before_value = empty($before_value)? 0 : $before_value;
+							$after_value = empty($after_value)? 0 : $after_value;
+
                             $numerator = abs(2*($before_value - $after_value));
                             $denominator = abs($before_value + $after_value);
                             // detect whether to use absolute or relative error. use absolute if denominator is zero to avoid division by zero

@@ -159,19 +159,21 @@ class TeamSetManager {
      */
     public static function doesRecordWithTeamSetExist($moduleTableName, $teamSetId, $beanId = null)
     {
-        $query = sprintf('SELECT COUNT(*) FROM %s WHERE team_set_id = ?', $moduleTableName);
-        $params = array($teamSetId);
-
-        if ($beanId) {
-            $query .= ' AND id != ?';
-            $params[] = $beanId;
-        }
-
-        $query .= ' AND deleted = 0';
-
-        return DBManagerFactory::getConnection()
-            ->executeQuery($query, $params)
-            ->fetchColumn() > 0;
+		$whereStmt = 'team_set_id = ? AND deleted = 0';
+		$params = array($teamSetId);
+		if ($beanId) {
+			$whereStmt .= ' AND id != ?';
+			$params[] = $beanId;
+		}
+		$connection = DBManagerFActory::getConnection();
+		$queryBuilder = $connection->createQueryBuilder();
+		$queryBuilder->select('id')
+				->from($moduleTableName)
+				->where($whereStmt);
+		// set the maximum number of records to be 1 to avoid scanning extra records in database
+		$query = $queryBuilder->setMaxResults(1)->getSQL();
+		$numRows = $connection->executeQuery($query, $params)->rowCount();
+		return ($numRows == 1);
     }
 
     /**
