@@ -49,7 +49,8 @@ class ReportsApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testMassageFilterValue($type, $value, $fieldDef, $mockedData, $expectedVal)
     {
-        $sut = $this->getReportsApiMock(array('getOptionKeyFromValue', 'getAppListStrings'));
+        $sut = $this->getReportsApiMock(array('getOptionKeyFromValue', 'getAppListStrings', 'getAppStrings'));
+        $sut->method('getAppStrings')->willReturn(array('LBL_CHART_UNDEFINED' => 'Undefined'));
         $sut->method('getAppListStrings')->willReturn($mockedData);
         $sut->method('getOptionKeyFromValue')->willReturn($mockedData);
         $op = TestReflection::callProtectedMethod($sut, 'massageFilterValue', array($type, $value, $fieldDef));
@@ -66,6 +67,8 @@ class ReportsApiTest extends \PHPUnit_Framework_TestCase
             array('bool', array('1'), array(), array('dom_switch_bool'=>array('on' => 'Yes', 'off' => 'No',)), '1'),
             array('bool', array('0'), array(), array('dom_switch_bool'=>array('on' => 'Yes', 'off' => 'No',)), '0'),
             array('name', array('abc'), array(), array(), 'abc'),
+            array('name', array(''), array(), array(), ''),
+            array('name', array('Undefined'), array(), array(), ''),
         );
     }
 
