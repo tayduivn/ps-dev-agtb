@@ -274,22 +274,12 @@
             },
             _.bind(function(recipients) {
                 if (recipients && recipients.length > 0) {
+                    // Set the correct link for the field where these
+                    // recipients are being added.
                     var eps = recipients.map(function(recipient) {
-                        var parentName = app.utils.getRecordName(recipient);
-                        var ep = app.data.createBean('EmailParticipants', {
-                            _link: this.getLinkName(),
-                            parent: {
-                                _acl: recipient.get('_acl') || {},
-                                type: recipient.module,
-                                id: recipient.get('id'),
-                                name: parentName
-                            },
-                            parent_type: recipient.module,
-                            parent_id: recipient.get('id'),
-                            parent_name: parentName
-                        });
+                        recipient.set('_link', this.getLinkName());
 
-                        return ep;
+                        return recipient;
                     }, this);
 
                     this.model.get(this.name).add(eps);

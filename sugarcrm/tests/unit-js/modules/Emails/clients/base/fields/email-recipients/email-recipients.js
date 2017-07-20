@@ -327,23 +327,53 @@ describe('Emails.BaseEmailRecipientsField', function() {
     });
 
     it('should open the address book and add the selected recipients', function() {
-        var recipients = app.data.createMixedBeanCollection([
-            app.data.createBean('Contacts', {
-                id: _.uniqueId(),
-                name: 'Aaron Fitzgerald',
-                email: 'afitz@example.com'
+        // First change the links so the CC field can be initialized.
+        var cc = _.map(to, function(model) {
+            model.set('_link', 'cc');
+
+            return model;
+        });
+        var parentId1 = _.uniqueId();
+        var parentId2 = _.uniqueId();
+        var parentId3 = _.uniqueId();
+        var recipients = [
+            app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId1,
+                    name: 'Aaron Fitzgerald'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId1,
+                parent_name: 'Aaron Fitzgerald'
             }),
-            app.data.createBean('Contacts', {
-                id: _.uniqueId(),
-                name: 'Isaac Hopper',
-                email: 'ihopper@example.com'
+            app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId2,
+                    name: 'Isaac Hopper'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId2,
+                parent_name: 'Isaac Hopper'
             }),
-            app.data.createBean('Contacts', {
-                id: _.uniqueId(),
-                name: 'Grace Beal',
-                email: 'gbeal@example.com'
+            app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId3,
+                    name: 'Grace Beal'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId3,
+                parent_name: 'Grace Beal'
             })
-        ]);
+        ];
         var spy = sandbox.spy();
         var collection;
 
@@ -354,7 +384,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
         };
 
         field = SugarTest.createField({
-            name: 'to_collection',
+            name: 'cc_collection',
             type: 'email-recipients',
             viewName: 'edit',
             module: model.module,
@@ -363,47 +393,47 @@ describe('Emails.BaseEmailRecipientsField', function() {
             loadFromModule: true
         });
         field.view.on('address-book-state', spy);
-        field.model.set('to_collection', to);
+        field.model.set('cc_collection', cc);
         field.model.trigger('sync');
 
         field.$('.btn').click();
-        collection = field.model.get('to_collection');
+        collection = field.model.get('cc_collection');
 
         expect(collection.length).toBe(5);
-        expect(collection.at(2).get('_link')).toBe('to');
+        expect(collection.at(2).get('_link')).toBe('cc');
         expect(collection.at(2).get('parent')).toEqual({
             _acl: {},
-            type: recipients.at(0).module,
-            id: recipients.at(0).get('id'),
-            name: recipients.at(0).get('name')
+            type: recipients[0].get('parent_type'),
+            id: recipients[0].get('parent_id'),
+            name: recipients[0].get('parent_name')
         });
-        expect(collection.at(2).get('parent_type')).toBe(recipients.at(0).module);
-        expect(collection.at(2).get('parent_id')).toBe(recipients.at(0).get('id'));
-        expect(collection.at(2).get('parent_name')).toBe(recipients.at(0).get('name'));
+        expect(collection.at(2).get('parent_type')).toBe(recipients[0].get('parent_type'));
+        expect(collection.at(2).get('parent_id')).toBe(recipients[0].get('parent_id'));
+        expect(collection.at(2).get('parent_name')).toBe(recipients[0].get('parent_name'));
         expect(collection.at(2).get('email_address_id')).toBeUndefined();
         expect(collection.at(2).get('email_address')).toBeUndefined();
-        expect(collection.at(3).get('_link')).toBe('to');
+        expect(collection.at(3).get('_link')).toBe('cc');
         expect(collection.at(3).get('parent')).toEqual({
             _acl: {},
-            type: recipients.at(1).module,
-            id: recipients.at(1).get('id'),
-            name: recipients.at(1).get('name')
+            type: recipients[1].get('parent_type'),
+            id: recipients[1].get('parent_id'),
+            name: recipients[1].get('parent_name')
         });
-        expect(collection.at(3).get('parent_type')).toBe(recipients.at(1).module);
-        expect(collection.at(3).get('parent_id')).toBe(recipients.at(1).get('id'));
-        expect(collection.at(3).get('parent_name')).toBe(recipients.at(1).get('name'));
+        expect(collection.at(3).get('parent_type')).toBe(recipients[1].get('parent_type'));
+        expect(collection.at(3).get('parent_id')).toBe(recipients[1].get('parent_id'));
+        expect(collection.at(3).get('parent_name')).toBe(recipients[1].get('parent_name'));
         expect(collection.at(3).get('email_address_id')).toBeUndefined();
         expect(collection.at(3).get('email_address')).toBeUndefined();
-        expect(collection.at(4).get('_link')).toBe('to');
+        expect(collection.at(4).get('_link')).toBe('cc');
         expect(collection.at(4).get('parent')).toEqual({
             _acl: {},
-            type: recipients.at(2).module,
-            id: recipients.at(2).get('id'),
-            name: recipients.at(2).get('name')
+            type: recipients[2].get('parent_type'),
+            id: recipients[2].get('parent_id'),
+            name: recipients[2].get('parent_name')
         });
-        expect(collection.at(4).get('parent_type')).toBe(recipients.at(2).module);
-        expect(collection.at(4).get('parent_id')).toBe(recipients.at(2).get('id'));
-        expect(collection.at(4).get('parent_name')).toBe(recipients.at(2).get('name'));
+        expect(collection.at(4).get('parent_type')).toBe(recipients[2].get('parent_type'));
+        expect(collection.at(4).get('parent_id')).toBe(recipients[2].get('parent_id'));
+        expect(collection.at(4).get('parent_name')).toBe(recipients[2].get('parent_name'));
         expect(collection.at(4).get('email_address_id')).toBeUndefined();
         expect(collection.at(4).get('email_address')).toBeUndefined();
         expect(spy).toHaveBeenCalledTwice();
