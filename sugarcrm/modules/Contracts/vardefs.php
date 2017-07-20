@@ -396,18 +396,15 @@ $dictionary['Contract'] = array(
         array('name' => 'idx_contract_start_date', 'type' => 'index', 'fields' => array('start_date')),
         array('name' => 'idx_contract_end_date', 'type' => 'index', 'fields' => array('end_date')),
     ),
-);
-VardefManager::createVardef(
-    'Contracts',
-    'Contract',
-    array(
+    'uses' => array(
         'default',
         'assignable',
-        'team_security'
-    )
+        'team_security',
+        'taggable',
+    ),
 );
 
-$dictionary['Contract']['fields']['tag']['massupdate'] = false;
+VardefManager::createVardef('Contracts', 'Contract');
 
 //boost value for full text search
 $dictionary['Contract']['fields']['description']['full_text_search']['boost'] = 0.63;

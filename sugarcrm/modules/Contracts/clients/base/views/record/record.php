@@ -147,6 +147,10 @@ $viewdefs['Contracts']['base']['view']['record'] = array(
                 'expiration_notice',
                 'customer_signed_date',
                 'description',
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(
