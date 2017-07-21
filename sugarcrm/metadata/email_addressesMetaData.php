@@ -321,13 +321,6 @@ $dictionary['emails_email_addr_rel'] = array(
             ),
         ),
         array(
-            'name' => 'idx_eearl_address_id',
-            'type' => 'index',
-            'fields' => array(
-                'email_address_id',
-            ),
-        ),
-        array(
             'name' => 'idx_eearl_email_address_deleted',
             'type' => 'index',
             'fields' => array(
