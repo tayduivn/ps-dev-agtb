@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e3ce3f8731f9a724d78d9b4bf767570",
+    "content-hash": "bc5bfd5575cb23fddea4af4a1b3228f8",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -302,17 +302,17 @@
         },
         {
             "name": "doctrine/common",
-            "version": "v2.7.3",
+            "version": "v2.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/common.git",
-                "reference": "a9e955831132758be6ae3ee74019658663e7aa05"
+                "reference": "c11b6522d83d44a7563f49d881acb2501f63cdf8"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-common-v2.7.3-257025.tar",
-                "reference": "a9e955831132758be6ae3ee74019658663e7aa05",
-                "shasum": "94ef04e5cfb402109fc55c13f6ba4280b7ac4d42"
+                "url": "https://satis.sugardev.team/dist/doctrine/common/doctrine-common-v2.8.1-5978d8.tar",
+                "reference": "c11b6522d83d44a7563f49d881acb2501f63cdf8",
+                "shasum": "de3a661c41167a9f81483e73e3d7f706bd102642"
             },
             "require": {
                 "doctrine/annotations": "1.*",
@@ -320,20 +320,25 @@
                 "doctrine/collections": "1.*",
                 "doctrine/inflector": "1.*",
                 "doctrine/lexer": "1.*",
-                "php": "~5.6|~7.0"
+                "php": "~7.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.4.6"
+                "phpunit/phpunit": "^5.7"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7.x-dev"
+                    "dev-master": "2.8.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "Doctrine\\Common\\": "lib/Doctrine/Common"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Doctrine\\Tests\\": "tests/Doctrine/Tests"
                 }
             },
             "license": [
@@ -370,27 +375,28 @@
                 "persistence",
                 "spl"
             ],
-            "time": "2017-07-22T08:35:12+00:00"
+            "time": "2017-08-31T08:43:38+00:00"
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.5.12",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "220cd9971c1de05ab5d4be982cf51f15c5530b36"
+                "reference": "fc7604b444c12be6ce006842a666a476e7d79573"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-dbal-v2.5.12-f1e0b4.tar",
-                "reference": "220cd9971c1de05ab5d4be982cf51f15c5530b36",
-                "shasum": "c4ebc36de3c5f85f8a9bb0d12eece35ff3e41344"
+                "url": "https://satis.sugardev.team/dist/doctrine/dbal/doctrine-dbal-v2.7.1-11a7fa.tar",
+                "reference": "fc7604b444c12be6ce006842a666a476e7d79573",
+                "shasum": "1e154bac9015eb0f1cd67245a9f168ff4bc14638"
             },
             "archive": {
                 "exclude": [
                     "!vendor",
                     "tests",
                     "*phpunit.xml",
+                    ".appveyor.yml",
                     ".travis.yml",
                     "build.xml",
                     "build.properties",
@@ -398,12 +404,16 @@
                 ]
             },
             "require": {
-                "doctrine/common": ">=2.4,<2.8-dev",
-                "php": ">=5.3.2"
+                "doctrine/common": "^2.7.1",
+                "ext-pdo": "*",
+                "php": "^7.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*",
-                "symfony/console": "2.*||^3.0"
+                "doctrine/coding-standard": "^4.0",
+                "phpunit/phpunit": "^7.0",
+                "phpunit/phpunit-mock-objects": "!=3.2.4,!=3.2.5",
+                "symfony/console": "^2.0.5||^3.0",
+                "symfony/phpunit-bridge": "^3.4.5|^4.0.5"
             },
             "suggest": {
                 "symfony/console": "For helpful console commands such as SQL execution and import of files."
@@ -414,12 +424,17 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.5.x-dev"
+                    "dev-master": "2.7.x-dev"
                 }
             },
             "autoload": {
                 "psr-0": {
                     "Doctrine\\DBAL\\": "lib/"
+                }
+            },
+            "autoload-dev": {
+                "psr-0": {
+                    "Doctrine\\Tests\\": "tests/"
                 }
             },
             "license": [
@@ -451,7 +466,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2017-02-08T12:53:47+00:00"
+            "time": "2018-04-07T18:44:18+00:00"
         },
         {
             "name": "doctrine/inflector",
