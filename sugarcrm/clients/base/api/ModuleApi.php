@@ -205,6 +205,7 @@ class ModuleApi extends SugarApi {
 
         $bean->id = $args['id'];
         $bean->new_with_id = true;
+        $bean->in_save = true;
 
         $additionalProperties['additional_rel_values'] = $this->getRelatedFields($args, $bean);
 
