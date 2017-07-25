@@ -150,7 +150,7 @@
 
                     return template({
                         value: this.formatForHeader(sender, true),
-                        module: sender.get('parent_name')
+                        module: sender.get('parent_type')
                     });
                 }, this),
 
