@@ -400,8 +400,9 @@
      *
      * @param {Function} chart sucrose chart instance
      * @param {Object} params chart display parameters
-     * @param {Object} reportData report data with properties and data array
      * @param {Object} state chart display and data state
+     * @param {Object} reportData report data as returned from API
+     * @param {Object} chartData chart data with properties and data array
      * @protected
      */
     _handleFilter: function(chart, params, state, reportData, chartData) {
@@ -444,12 +445,7 @@
     /**
      * Open a drill through drawer with list and dashlet replica.
      *
-     * @param {string} module base chart module
-     * @param {string} id saved report uuid
-     * @param {Object} groupDefs report definition data groupings
-     * @param {Object} filterDef updated report definition data filter
-     * @param {Object} state chart display and data state
-     * @param {Object} params chart display parameters
+     * @param {Object} drawerContext drillthrough content and display parameters
      */
     openDrawer: function(drawerContext) {
         app.drawer.open({
@@ -461,12 +457,9 @@
     /**
      * Update the record list in drill through drawer.
      *
-     * @param {string} module base chart module
-     * @param {string} id saved report uuid
-     * @param {Object} groupDefs report definition data groupings
      * @param {Object} filterDef updated report definition data filter
-     * @param {Object} state chart display and data state
      * @param {Object} params chart display parameters
+     * @param {Object} state chart display and data state
      */
     updateList: function(filterDef, params, state) {
         var drawer = this.closestComponent('drawer').getComponent('drillthrough-drawer');

@@ -99,16 +99,5 @@
             var fieldDef = fieldsMeta[field.name];
             return fieldDef && fieldDef.vname ? app.lang.get(fieldDef.vname, chartModule) : field.name;
         }
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _render: function() {
-        this._super('_render');
-        // Fix a bug where border is 2 pixels lower when labels contain a group and a series
-        if (!_.isUndefined(this.series)) {
-            this.$el.parents('.record-cell').css('padding-top', '16px');
-        }
     }
 })
