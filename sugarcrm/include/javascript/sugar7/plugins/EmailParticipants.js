@@ -176,15 +176,22 @@
                  */
                 this.prepareModel = function(model) {
                     var parent;
+                    var hasParent;
+                    var parentName;
+
+                    if (model.get('parent') && model.get('parent').type && model.get('parent').id) {
+                        // We omit type because it is actually the module name
+                        // and should not be treated as an attribute.
+                        parent = app.data.createBean(model.get('parent').type, _.omit(model.get('parent'), 'type'));
+                        parentName = app.utils.getRecordName(parent);
+                    }
+
                     // The type and id fields are not unset after a parent
                     // record is deleted. So we test for name because the
                     // parent record is truly only there if type and id are
                     // non-empty and the parent record can be resolved and has
                     // not been deleted.
-                    var hasParent = !!(model.get('parent') &&
-                        model.get('parent').type &&
-                        model.get('parent').id &&
-                        model.get('parent').name);
+                    hasParent = !!(parent && parentName);
 
                     // Select2 needs the locked property directly on the object.
                     model.locked = !!this.def.readonly;
@@ -205,14 +212,8 @@
                         model.invalid = false;
                     }
 
-                    if (hasParent) {
-                        // We omit type because it is actually the module name
-                        // and should be treated as an attribute.
-                        parent = app.data.createBean(model.get('parent').type, _.omit(model.get('parent'), 'type'));
-
-                        if (app.acl.hasAccessToModel('view', parent)) {
-                            model.href = '#' + app.router.buildRoute(parent.module, parent.get('id'));
-                        }
+                    if (hasParent && app.acl.hasAccessToModel('view', parent)) {
+                        model.href = '#' + app.router.buildRoute(parent.module, parent.get('id'));
                     }
 
                     return model;
