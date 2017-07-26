@@ -153,7 +153,7 @@ if(strpos($install_file,'upload://') === 0){
 
 $id_name = $request->getValidInputRequest('id_name', null, '');
 $s_manifest = $request->getValidInputRequest('s_manifest', null, '');
-$s_patch = $request->getValidInputRequest('patch');
+$s_patch = $request->getValidInputRequest('patch', 'Assert\ArrayRecursive');
 if ($s_patch) {
     $s_patch = base64_encode(serialize($s_patch));
 }
