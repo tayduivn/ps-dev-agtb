@@ -21,10 +21,10 @@
      * @inheritdoc
      * @override
      */
-    toggleSaveAndCancel: function(edit) {
+    triggerEdit: function() {
         //If this isn't the base currency, go ahead and display the edit view
         if (!this.isBase) {
-            this._super('toggleSaveAndCancel', [edit]);
+            this._super('triggerEdit');
         }
     },
 
@@ -44,7 +44,7 @@
      * @param model
      */
     isBaseCurrency: function(model) {
-        if (model.get && _.isFunction(model.get) && model.get('id') === app.currency.getBaseCurrencyId()) {
+        if (model && _.isFunction(model.get) && model.get('id') === app.currency.getBaseCurrencyId()) {
             this.isBase = true;
         } else {
             this.isBase = false;

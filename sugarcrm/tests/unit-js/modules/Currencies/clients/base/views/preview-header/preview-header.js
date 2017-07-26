@@ -32,18 +32,18 @@ describe('Currencies.Base.Views.Record', function() {
 
     });
 
-    describe('toggleSaveAndCancel', function() {
+    describe('triggerEdit', function() {
         it('should not call super if base currency', function() {
             view.isBase = true;
-            view.toggleSaveAndCancel('foo');
+            view.triggerEdit();
 
             expect(view._super).wasNotCalled();
         });
 
         it('should call super if not base currency', function() {
             view.isBase = false;
-            view.toggleSaveAndCancel('foo');
-            expect(view._super).toHaveBeenCalledWith('toggleSaveAndCancel', ['foo']);
+            view.triggerEdit();
+            expect(view._super).toHaveBeenCalledWith('triggerEdit');
         });
     });
 
