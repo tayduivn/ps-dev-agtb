@@ -2670,7 +2670,7 @@ class Report
         $this->create_where();
         $this->create_from();
         $id = $this->full_bean_list['self']->table_name . '.id';
-        $query = "SELECT DISTINCT $id {$this->from} WHERE {$this->where}";
+        $query = "SELECT DISTINCT $id {$this->from} WHERE {$this->where} AND {$this->focus->table_name}.deleted=0";
         if ($sort) {
             $query .= " ORDER BY $id ASC";
         }
