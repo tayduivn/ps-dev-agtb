@@ -6095,7 +6095,7 @@ $app_list_strings['moduleListSingular']['KBContentTemplates'] = 'Knowledge Base 
 $app_list_strings['moduleList']['EmbeddedFiles'] = 'Embedded Files';
 $app_list_strings['moduleListSingular']['EmbeddedFiles'] = 'Embedded File';
 
-$app_list_strings['iso_currency_symbol'] = array(
+    $app_list_strings['iso_currency_symbol'] = array(
     'ALL' => 'Lek',
     'USD' => '$',
     'AFN' => '؋',
