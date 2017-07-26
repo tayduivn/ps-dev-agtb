@@ -132,7 +132,17 @@ $viewdefs['Contracts']['base']['view']['record'] = array(
                 'end_date',
                 'type_name',
                 'contract_term',
-                'total_contract_value_usdollar',
+                array(
+                    'name' => 'total_contract_value',
+                    'convertToBase' => true,
+                    'showTransactionalAmount' => true,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                    'related_fields' => array(
+                        'currency_id',
+                        'base_rate',
+                    ),
+                ),
                 'company_signed_date',
                 'expiration_notice',
                 'customer_signed_date',
