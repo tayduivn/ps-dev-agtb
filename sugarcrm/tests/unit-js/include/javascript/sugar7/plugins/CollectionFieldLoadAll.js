@@ -44,6 +44,15 @@ describe('Plugins.CollectionFieldLoadAll', function() {
             context: context,
             loadFromModule: false
         });
+        field.def.fields = [
+            'name',
+            'filename',
+            'file_size',
+            'file_source',
+            'file_mime_type',
+            'file_ext',
+            'upload_id'
+        ];
 
         sandbox = sinon.sandbox.create();
     });
@@ -71,7 +80,18 @@ describe('Plugins.CollectionFieldLoadAll', function() {
             attachments: 5
         };
         sandbox.stub(collection, 'paginate', function(options) {
-            expect(options.view).toBe('record');
+            expect(options.add).toBe(true);
+            expect(options.limit).toBe(-1);
+            expect(options.fields).toEqual([
+                'name',
+                'filename',
+                'file_size',
+                'file_source',
+                'file_mime_type',
+                'file_ext',
+                'upload_id'
+            ]);
+            expect(options.order_by).toBe('name:asc');
 
             if (--pages === 0) {
                 collection.next_offset.attachments = -1;

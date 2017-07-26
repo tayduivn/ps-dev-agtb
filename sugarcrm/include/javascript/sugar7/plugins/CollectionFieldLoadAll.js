@@ -33,23 +33,37 @@
                         var offsets;
                         var hasMore;
                         var options;
+                        var fields;
 
                         if (this.disposed === true) {
                             return;
+                        }
+
+                        options = {
+                            success: function() {
+                                fetchAll(collection);
+                            },
+                            add: true,
+                            // Use the highest limit possible.
+                            limit: -1
+                        };
+
+                        fields = _.map(this.def.fields || [], function(field) {
+                            return _.has(field, 'name') ? field.name : field;
+                        });
+
+                        if (!_.isEmpty(fields)) {
+                            options.fields = fields;
+                        }
+
+                        if (this.def.order_by) {
+                            options.order_by = this.def.order_by;
                         }
 
                         offsets = collection.next_offset || [0];
                         hasMore = _.some(offsets, function(offset) {
                             return offset > -1;
                         });
-                        options = {
-                            // Use the view's metadata to control sort order
-                            // and limit, as well as define fields to retrieve.
-                            view: this.view.name,
-                            success: function() {
-                                fetchAll(collection);
-                            }
-                        };
 
                         if (hasMore) {
                             collection.paginate(options);
