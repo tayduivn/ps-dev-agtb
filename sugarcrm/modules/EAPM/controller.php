@@ -190,7 +190,8 @@ class EAPMController extends SugarController
                         'choices' => array(
                             'hideExternalDiv',
                             'reload',
-                            'close'
+                            'close',
+                            '',
                         )
                     )
                 ),
