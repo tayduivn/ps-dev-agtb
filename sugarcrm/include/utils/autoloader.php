@@ -1341,20 +1341,17 @@ class SugarAutoLoader
     /**
      * Get custom class name if that exists or original one if not
      * @param string $className Class name, legacy or FQCN
-     * @param boolean $autoload Try to autoload the custom class, always true
-     *      when a namespaced class name is passed in.
      * @return string Classname
      */
-    public static function customClass($className, $autoload = false)
+    public static function customClass($className)
     {
         if (strpos($className, '\\') !== false) {
             $customClass = self::getCustomClassFQCN($className);
-            $autoload = true;
         } else {
             $customClass = 'Custom'.$className;
         }
 
-        if ($customClass && class_exists($customClass, $autoload)) {
+        if ($customClass && class_exists($customClass)) {
             return $customClass;
         }
 

@@ -165,7 +165,7 @@ class ViewFactory{
 		}
 		//Now check if there is a custom SugarView for generic handling
 		// autoloader will check filesystem
-		$class = SugarAutoLoader::customClass('SugarView', true);
+        $class = SugarAutoLoader::customClass('SugarView');
 		//if all else fails return SugarView
 		return new $class($bean, $view_object_map);
 
