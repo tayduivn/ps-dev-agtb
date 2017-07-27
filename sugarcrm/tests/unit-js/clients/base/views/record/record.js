@@ -169,7 +169,7 @@ describe("Record View", function () {
             pencilIcon = view.$('[data-name=' + fieldName + '].record-edit-link-wrapper');
         });
 
-        it('should properly handle the pencil icon on field enabling/disabling if the field is editable', function() {
+        it('should properly handle pencil icon on field enabling/disabling if the field is editable', function() {
             expect(pencilIcon.hasClass('hide')).toBe(false);
 
             descriptionField.setDisabled(true, {trigger: true});
@@ -181,7 +181,7 @@ describe("Record View", function () {
             expect(pencilIcon.hasClass('hide')).toBe(false);
         });
 
-        it('should properly handle the pencil icon on field enabling/disabling if the field is NOT editable', function() {
+        it('should properly handle pencil icon on field enabling/disabling if the field is NOT editable', function() {
             descriptionField.setDisabled(true, {trigger: true});
             expect(pencilIcon.hasClass('hide')).toBe(true);
 
