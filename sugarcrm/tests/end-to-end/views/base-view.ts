@@ -25,6 +25,7 @@ import * as CopyField from '../fields/copy-field';
 import * as CurrencyField from '../fields/currency-field';
 import * as UrlField from '../fields/url-field';
 import * as FullnameField from '../fields/fullname-field';
+import * as TagField from '../fields/tag-field';
 import {BaseField} from '../fields/base-field';
 
 const classify = name => _.upperFirst(_.camelCase(name));
@@ -122,6 +123,9 @@ export default class extends BaseView {
                 break;
             case 'currency':
                 Clazz = CurrencyField[templateName];
+                break;
+            case 'tag':
+                Clazz = TagField[templateName];
                 break;
             default:
                 throw new Error(`Field type '${type}' is not found`);

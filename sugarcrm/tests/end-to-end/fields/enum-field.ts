@@ -13,7 +13,7 @@ import BaseField from './text-field';
 import {seedbed} from '@sugarcrm/seedbed';
 
 /**
- * @class NameField
+ * @class EnumField
  * @extends BaseField
  */
 
