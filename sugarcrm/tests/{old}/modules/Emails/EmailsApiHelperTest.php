@@ -88,6 +88,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = BeanFactory::newBean('Emails');
         $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
 
         $submittedData = [
             'state' => Email::STATE_DRAFT,
@@ -96,7 +97,77 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $result = $this->helper->populateFromApi($bean, $submittedData);
         $this->assertTrue($result, 'Expected Success when Supplying Current User ID On Save As Draft');
-        $this->assertEmpty($bean->assigned_user_id, 'Expected Bean Assigned User Id to be empty when Saving As Draft');
+        $this->assertSame(
+            $bean->assigned_user_id,
+            $GLOBALS['current_user']->id,
+            'Expected Bean Assigned User Id to be Current User Id when Saving As Draft'
+        );
+    }
+
+    /**
+     * @covers ::populateFromApi
+     */
+    public function testPopulateFromApi_AssignedUserIsDefaultedToTheCurrentUserForDraftEmail()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
+
+        $submittedData = [
+            'state' => Email::STATE_DRAFT,
+        ];
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+        $this->assertTrue($result, 'Expected Success when Supplying Current User ID On Save As Draft');
+        $this->assertSame(
+            $bean->assigned_user_id,
+            $GLOBALS['current_user']->id,
+            'Expected Bean Assigned User Id to be Current User Id when Saving As Draft'
+        );
+    }
+
+    /**
+     * @covers ::populateFromApi
+     */
+    public function testPopulateFromApi_AssignedUserIsDefaultedToTheCurrentUserForArchivedEmail()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
+
+        $submittedData = [
+            'state' => Email::STATE_ARCHIVED,
+        ];
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+        $this->assertTrue($result, 'Expected Success when not specifying Assigned User On Save As Archived');
+        $this->assertSame(
+            $bean->assigned_user_id,
+            $GLOBALS['current_user']->id,
+            'Expected Bean Assigned User Id to be Current User Id when Saving Archived without an assigned_user_id'
+        );
+    }
+
+    /**
+     * @covers ::populateFromApi
+     */
+    public function testPopulateFromApi_UnassignedUserIsValidForArchivedEmail()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
+
+        $submittedData = [
+            'state' => Email::STATE_ARCHIVED,
+            'assigned_user_id' => '',
+        ];
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+        $this->assertTrue($result, 'Expected Success when blanking Assigned User On Save As Archived');
+        $this->assertEmpty(
+            $bean->assigned_user_id,
+            'Expected Bean Assigned User Id to be Unassigned'
+        );
     }
 
     /**

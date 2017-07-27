@@ -164,6 +164,20 @@ class Email extends SugarBean {
 		$this->imagePrefix = rtrim($GLOBALS['sugar_config']['site_url'], "/")."/cache/images/";
 	}
 
+    /**
+     * {@inheritDoc}
+     *
+     * All Emails are initialized with an assigned_user_id equal to the signed in user
+     */
+    public function populateDefaultValues($force = false)
+    {
+        parent::populateDefaultValues($force);
+
+        if (!empty($GLOBALS['current_user'])) {
+            $this->assigned_user_id = $GLOBALS['current_user']->id;
+        }
+    }
+
 	function email2init() {
 		$this->et = new EmailUI();
 	}
