@@ -208,9 +208,8 @@ describe("Record View", function () {
         });
     });
 
-    describe('Render', function () {
-        it("Should render 8 editable fields and 6 buttons", function () {
-
+    describe('Render', function() {
+        it('Should render 8 editable fields and 2 buttons', function() {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -218,15 +217,11 @@ describe("Record View", function () {
                 description: 'Description'
             });
 
-            var actual_field_length = _.keys(view.editableFields).length,
-                actual_button_length = _.keys(view.buttons).length;
-            expect(actual_field_length).toBe(8);
-            expect(actual_button_length).toBe(6);
+            expect(_.keys(view.editableFields).length).toBe(8);
+            expect(_.keys(view.buttons).length).toBe(2);
         });
 
-
-
-        it("Should hide 4 editable fields", function () {
+        it('Should hide 4 editable fields', function() {
             var hiddenFields = 0;
             view.hidePanel = true; //setting directly instead of using togglePlugin
             view.render();

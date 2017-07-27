@@ -683,17 +683,11 @@
     /**
      * Registers fields as buttons.
      *
-     * @param {Object[]} [buttons=this.meta.buttons] Fields to be registered as
-     *   buttons. If not passed, we read the buttons from the view metadata.
      * @protected
      */
-    _initButtons: function(buttons) {
-        buttons = buttons || this.meta.buttons;
+    _initButtons: function() {
+        buttons = this.meta.buttons;
         _.each(buttons, function(button) {
-            if (button.buttons) {
-                this._initButtons(button.buttons);
-            }
-
             this.registerFieldAsButton(button.name);
         }, this);
     },

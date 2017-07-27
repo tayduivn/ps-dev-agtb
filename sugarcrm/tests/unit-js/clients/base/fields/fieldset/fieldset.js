@@ -56,13 +56,10 @@ describe('Base.Field.Fieldset', function() {
             expect(fallbackTemplate).toEqual('list');
         });
 
-        it('should initialize all the private properties correctly', function() {
-
-            field.fields = ['fields must be initialized'];
-
-            field.initialize(field.options);
-            var expectedFields = [];
-            expect(field.fields).toEqual(expectedFields);
+        it('should initialize child fields based on field defs without attaching them to the parent view', function() {
+            expect(field.fields.length).toEqual(5);
+            expect(field.fields[0] instanceof app.view.Field);
+            expect(Object.keys(field.view.fields).length).toEqual(1);
         });
 
         it('should render nested fields on render', function() {
@@ -73,8 +70,9 @@ describe('Base.Field.Fieldset', function() {
 
             field.render();
 
+            expect(_.isEmpty(field.fields)).not.toBe(true);
             _.each(field.fields, function(childField) {
-                expect(childField.render).toHaveBeenCalled();
+                expect(childField.render).toHaveBeenCalledOnce();
             });
         });
 
