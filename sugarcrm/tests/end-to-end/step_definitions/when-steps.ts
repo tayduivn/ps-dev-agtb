@@ -46,7 +46,7 @@ const whenSteps = function () {
     /**
      * Select item from cached View
      */
-    this.When(/^I select (\*[A-Z](?:\w|\S)*) in (#\S+)$/,
+    this.When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
         (record, view) => {
             let listItem = view.getListItem({id: record.id});
             return listItem.clickListItem();
@@ -57,7 +57,7 @@ const whenSteps = function () {
      *
      * @example I click on preview button on *Account_A in #AccountsList.ListView
      */
-    this.When(/^I click on preview button on (\*[A-Z](?:\w|\S)*) in (#\S+)$/,
+    this.When(/^I click on preview button on (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
         async (record, view) => {
             let listItem = view.getListItem({id: record.id});
             await listItem.clickPreviewButton();
@@ -118,7 +118,7 @@ const whenSteps = function () {
      *
      * @example I click on edit button for *Account_A in #AccountsList.ListView
      */
-    this.When(/^I click on (\w+) button for (\*[A-Z](?:\w|\S)*) in (#\S+)$/,
+    this.When(/^I click on (\w+) button for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
         async (button, record, view) => {
             let listItem = view.getListItem({id: record.id});
 
@@ -139,7 +139,7 @@ const whenSteps = function () {
      *
      * @example I set values for *Account_A in #AccountsList.ListView
      */
-    this.When(/^I set values for (\*[A-Z](?:\w|\S)*) in (#\S+)$/,
+    this.When(/^I set values for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
         async (record, view, data) => {
             let listItem = view.getListItem({id: record.id});
             for (let row of data.hashes()) {

@@ -23,6 +23,8 @@ import * as DateField from '../fields/date-field';
 import * as RelateField from '../fields/relate-field';
 import * as CopyField from '../fields/copy-field';
 import * as CurrencyField from '../fields/currency-field';
+import * as UrlField from '../fields/url-field';
+import * as FullnameField from '../fields/fullname-field';
 import {BaseField} from '../fields/base-field';
 
 const classify = name => _.upperFirst(_.camelCase(name));
@@ -86,8 +88,13 @@ export default class extends BaseView {
             case 'name':
                 Clazz = NameField[templateName];
                 break;
-            case 'phone':
             case 'url':
+                Clazz = UrlField[templateName];
+                break;
+            case 'fullname':
+                Clazz = FullnameField[templateName];
+                break;
+            case 'phone':
             case 'text':
                 Clazz = TextField[templateName];
                 break;

@@ -20,7 +20,7 @@ const whenStepsHeader = function () {
      *
      * @example "I click Save button on #AccountsDrawer header"
      */
-    this.When(/^I click (Create|Edit|Cancel|Save) button on (#[A-Z](?:\w|\S)*) header$/,
+    this.When(/^I click (Create|Edit|Cancel|Save) button on (#[a-zA-Z](?:\w|\S)*) header$/,
         (btnName, layout) => {
             return layout.HeaderView.clickButton(btnName.toLowerCase());
         }, true);
@@ -30,7 +30,7 @@ const whenStepsHeader = function () {
      *
      * @example "I open actions menu in #Account_ARecord"
      */
-    this.When(/^I open actions menu in (#[A-Z]\w+)\s*(and check:)?$/,
+    this.When(/^I open actions menu in (#[a-zA-Z]\w+)\s*(and check:)?$/,
         async (layout, needToCheck, data: TableDefinition) => {
 
             await layout.HeaderView.clickButton('actions');
@@ -71,7 +71,7 @@ const whenStepsHeader = function () {
      *
      * @example "I choose Delete from actions menu in #Account_ARecord"
      */
-    this.When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote) from actions menu in (#[A-Z]\w+)\s*$/,
+    this.When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote|Convert) from actions menu in (#[a-zA-Z]\w+)\s*$/,
         (action, layout) => {
             return layout.HeaderView.clickButton(action);
         }, true);

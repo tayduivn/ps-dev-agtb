@@ -19,7 +19,7 @@ const steps = function () {
      *
      * @example "I verify fields for *Account_A in #AccountsList:"
      */
-    this.Then(/^I verify fields for (\*[A-Z](?:\w|\S)*) in (#[A-Z](?:\w|\S)*)$/,
+    this.Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
         async(record, view, data) => {
 
             let listItem = view.getListItem({id: record.id});
@@ -42,7 +42,7 @@ const steps = function () {
      *
      * @example "I should see *Account_A in #AccountsList"
      */
-    this.Then(/^I should (not )?see (\*[A-Z](?:\w|\S)*) in (#[A-Z](?:\w|\S)*)$/,
+    this.Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
         async(not, record, view) => {
 
             let listItem = view.getListItem({id: record.id}, record);

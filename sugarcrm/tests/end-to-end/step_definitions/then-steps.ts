@@ -35,7 +35,7 @@ const thenSteps = function () {
      *
      * @example "I verify fields on #Account_APreview.PreviewView"
      */
-    this.Then(/^I verify fields on (#[A-Z](?:\w|\S)*)$/,
+    this.Then(/^I verify fields on (#[a-zA-Z](?:\w|\S)*)$/,
         async(view, data) => {
 
             let errors = await view.checkFields(data.hashes());
