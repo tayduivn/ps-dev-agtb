@@ -9,7 +9,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * This chart engine is now deprecated. Use the sucrose chart engine instead.
+ * @deprecated This file will removed in a future release.
+ */
 function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, callback) {
+    (app || SUGAR.App).logger.warn('The nvd3 chart engine is deprecated.');
+
     // get chartId from params or use the default for sugar
     var d3ChartId = 'd3_' + chartId || 'd3_c3090c86-2b12-a65e-967f-51b642ac6165';
     var canvasChartId = 'canvas_' + chartId || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
