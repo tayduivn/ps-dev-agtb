@@ -68,7 +68,7 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
     public function loginAuthenticate($username, $password, $fallback = false, $params = [])
     {
         if (empty($_POST['SAMLResponse'])) {
-            return parent::loginAuthenticate($username, $password, $fallback, $params);
+            return $this->getSugarAuthenticate()->loginAuthenticate($username, $password, $fallback, $params);
         }
 
         $acsToken = new AcsToken($_POST['SAMLResponse']);
@@ -213,5 +213,15 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
     protected function getAuthProviderBasicBuilder(Config $config)
     {
         return new AuthProviderBasicManagerBuilder($config);
+    }
+
+    /**
+     * Gets IDM sugar authenticate instance.
+     *
+     * @return IdMSugarAuthenticate
+     */
+    protected function getSugarAuthenticate()
+    {
+        return new IdMSugarAuthenticate();
     }
 }

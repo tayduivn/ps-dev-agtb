@@ -77,6 +77,7 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
                                    'getRequest',
                                    'redirect',
                                    'terminate',
+                                   'getSugarAuthenticate',
                                ]
                            )
                            ->getMock();
@@ -184,6 +185,23 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->auth->loginAuthenticate('', ''));
 
         unset($_POST['SAMLResponse']);
+    }
+
+    /**
+     * Checks loginAuthenticate logic when SAMLResponse is not present.
+     *
+     * @covers ::loginAuthenticate()
+     */
+    public function testLoginAuthenticateWithoutSamlResponse()
+    {
+        $sugarAuthenticate = $this->createMock(\IdMSugarAuthenticate::class);
+        $this->auth->expects($this->once())->method('getSugarAuthenticate')->willReturn($sugarAuthenticate);
+        $sugarAuthenticate->expects($this->once())
+                          ->method('loginAuthenticate')
+                          ->with('user', 'password', true, ['test' => 'test']);
+        $this->authProviderManager->expects($this->never())->method('authenticate');
+
+        $this->auth->loginAuthenticate('user', 'password', true, ['test' => 'test']);
     }
 
     public function getLogoutUrlDataProvider()
