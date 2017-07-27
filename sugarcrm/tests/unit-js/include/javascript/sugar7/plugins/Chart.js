@@ -197,7 +197,7 @@ describe('Chart Plugin', function() {
             var resizedTransform = view.$el.find('.sc-chart-pie .sc-pie .sc-group').attr('transform');
 
             expect(currentTransform).not.toBe(resizedTransform);
-            expect(resizedTransform).toMatch(/^translate\(500[, ]+157.5\)/);
+            expect(resizedTransform).toMatch(/^translate\(500[, ]+152.5\)/);
         });
 
         it('Chart should be resized when dashlet expand event fires on layout.', function() {
