@@ -2661,19 +2661,16 @@ class Report
      * @param array $reportDef
      * @param integer $offset
      * @param integer $limit
-     * @param boolean $sort
      * @return array Array of record ids
      */
-    public function getRecordIds($offset = 0, $limit = -1, $sort = false)
+    public function getRecordIds($offset = 0, $limit = -1)
     {
         $recordIds = array();
         $this->create_where();
         $this->create_from();
         $id = $this->full_bean_list['self']->table_name . '.id';
         $query = "SELECT DISTINCT $id {$this->from} WHERE {$this->where} AND {$this->focus->table_name}.deleted=0";
-        if ($sort) {
-            $query .= " ORDER BY $id ASC";
-        }
+        $query .= " ORDER BY $id ASC";
         if ($offset > 0 || $limit > 0) {
             $result = $this->db->limitQuery($query, $offset, $limit, true, "Error executing query");
         } else {

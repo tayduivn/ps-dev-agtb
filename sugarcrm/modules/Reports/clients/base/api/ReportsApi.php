@@ -398,7 +398,7 @@ class ReportsApi extends ModuleApi
             // check if there are more
             $limit++;
         }
-        $recordIds = $this->getRecordIdsFromReport($reportDef, $offset, $limit, true);
+        $recordIds = $this->getRecordIdsFromReport($reportDef, $offset, $limit);
 
         if (!empty($recordIds)) {
             $next_offset = -1;
@@ -513,12 +513,11 @@ class ReportsApi extends ModuleApi
      * @param array $reportDef
      * @param integer $offset
      * @param integer $limit
-     * @param boolean $sort
      * @return array Array of record ids
      */
-    protected function getRecordIdsFromReport($reportDef, $offset = 0, $limit = -1, $sort = false)
+    protected function getRecordIdsFromReport($reportDef, $offset = 0, $limit = -1)
     {
         $report = new Report($reportDef);
-        return $report->getRecordIds($offset, $limit, $sort);
+        return $report->getRecordIds($offset, $limit);
     }
 }
