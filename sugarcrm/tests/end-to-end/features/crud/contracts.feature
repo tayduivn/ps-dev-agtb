@@ -313,6 +313,31 @@ Feature: Contracts module verification
       | account_name         | myAccount     |
       | type_name            | Type1         |
 
-
-
-
+  @tags
+  Scenario: Contracts > Record View > Edit > Add tag values > Save
+    Given Contracts records exist:
+      | *name      | status     | start_date                | end_date                  |
+      | MyContract | inprogress | 2017-09-19T19:20:22+00:00 | 2017-10-19T19:20:22+00:00 |
+    Given Accounts records exist related via accounts link:
+      | name  |
+      | Acc_1 |
+    Given I open about view and login
+    When I go to "Contracts" url
+    When I select *MyContract in #ContractsList.ListView
+    Then I should see #MyContractRecord view
+    When I open actions menu in #MyContractRecord
+    When I click Edit button on #MyContractRecord header
+    Then I should see #MyContractRecord view
+    When I click show more button on #MyContractRecord view
+    When I provide input for #MyContractRecord.RecordView view
+      | tag |
+      | Test Tag,Tag2,Test Tag3       |
+    When I click Save button on #MyContractRecord header
+    Then I verify fields on #MyContractRecord.RecordView
+          | tag            | Test Tag,Tag2,Test Tag3    |
+    When I click show less button on #MyContractRecord view
+    When I go to "Contracts" url
+    When I click on preview button on *MyContract in #ContractsList.ListView
+    Then I should see #MyContractPreview view
+    Then I verify fields on #MyContractPreview.PreviewView
+      | tag            | Test Tag,Tag2,Test Tag3                 |
