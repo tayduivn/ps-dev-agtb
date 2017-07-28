@@ -367,7 +367,7 @@ class Client extends BaseClient
      * @throws \Exception
      * @throws \Sugarcrm\Sugarcrm\Elasticsearch\Exception\ConnectionException
      */
-    public function request($path, $method = Request::GET, $data = array(), array $query = array())
+    public function request($path, $method = Request::GET, $data = array(), array $query = array(), $contentType = Request::DEFAULT_CONTENT_TYPE)
     {
         // Enforce cached availability
         if (!$this->isAvailable()) {
