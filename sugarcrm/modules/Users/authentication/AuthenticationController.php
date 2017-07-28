@@ -13,7 +13,9 @@
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\PermanentLockedUserException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
 use Sugarcrm\IdentityProvider\Authentication\Exception\SAMLRequestException;
 use Sugarcrm\IdentityProvider\Authentication\Exception\SAMLResponseException;
 use Sugarcrm\IdentityProvider\Authentication\Exception\InvalidIdentifier\InvalidIdentifierException;
@@ -139,9 +141,15 @@ class AuthenticationController
         } catch (SAMLResponseException $e) {
             $log->error($e->getMessage());
             $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
-        } catch (AuthenticationException $e) {
+        } catch (AuthenticationServiceException $e) {
             $log->error($e->getMessage());
-            $_SESSION['login_error'] = $e->getMessage();
+            $_SESSION['login_error'] = $this->getMessageForProviderException($e->getPrevious());
+        } catch (InactiveUserException $e) {
+            $log->error($e->getMessage());
+            $_SESSION['login_error'] = $this->getMessageForProviderException($e);
+        } catch (InvalidUserException $e) {
+            $log->error($e->getMessage());
+            $_SESSION['login_error'] = $this->getMessageForProviderException($e);
         } catch (\Exception $e) {
             $log->error($e->getMessage());
             $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
@@ -307,4 +315,20 @@ class AuthenticationController
 	    }
 	    return false;
 	}
+
+    /**
+     * return translated error message
+     * @param InvalidUserException|InactiveUserException $exception
+     * @return string return translated error message
+     */
+    protected function getMessageForProviderException($exception)
+    {
+        if ($exception instanceof InvalidUserException) {
+            return translate('LBL_LOGIN_PORTAL_GROUP_CANT_LOGIN');
+        } elseif ($exception instanceof InactiveUserException) {
+            return translate('LBL_LOGIN_INACTIVE_USER');
+        } else {
+            return translate('ERR_INVALID_PASSWORD', 'Users');
+        }
+    }
 }

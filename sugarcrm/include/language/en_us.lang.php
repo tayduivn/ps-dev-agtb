@@ -3277,6 +3277,8 @@ Sincerely, SugarCRM',
     'LBL_LOGGED_OUT' => 'You have been logged out.',
     'LBL_LOGIN_FORM_LABEL' => 'Show log in form',
     'LBL_RETURN_TO_LOGIN_PAGE' => 'Return to login',
+    'LBL_LOGIN_INACTIVE_USER' => 'Inactive user',
+    'LBL_LOGIN_PORTAL_GROUP_CANT_LOGIN' => 'Portal or group user can not log in.',
     // END LOGIN PAGE STRINGS
 
     'LBL_TABGROUP_HOME' => 'Dashboard',
