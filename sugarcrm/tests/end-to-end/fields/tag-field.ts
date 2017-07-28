@@ -41,7 +41,10 @@ export class Edit extends BaseField {
     public async setValue(val: any): Promise<void> {
         await seedbed.client.click(this.$('field'));
         await seedbed.client.setValue(this.$('field.input'), val);
-        await seedbed.client.waitForApp();
+        // await seedbed.client.waitForApp();
+        // TODO: the better approach is to use waitForApp, as above, but a known issue tracked as SBD-358 requires a sleep
+        // TODO remove this pause once SBD-358 is fixed, and uncomment the line above.
+        await seedbed.client.pause(4000);
         await seedbed.client.click(`${this.matchInput}`);
     }
 
