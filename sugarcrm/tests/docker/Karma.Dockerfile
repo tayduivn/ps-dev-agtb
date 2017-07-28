@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-FROM registry.sugarcrm.net/engineering/node:latest
+FROM node:8.2.0
 MAINTAINER Engineering Automation "engineering-automation@sugarcrm.com"
 
 #========================
@@ -18,6 +18,13 @@ ENV GEOMETRY 1920x1080x24
 ENV DISPLAY :0
 ENV DBUS_SESSION_BUS_ADDRESS /dev/null
 ARG DEBIAN_FRONTEND=noninteractive
+
+#========================
+# Install CI Utilities
+#========================
+COPY scripts/install-ci-utils.sh /opt/bin/install-ci-utils.sh
+RUN chmod +x /opt/bin/install-ci-utils.sh && \
+    /opt/bin/install-ci-utils.sh
 
 #========================
 # Install Graphical Support and Browsers

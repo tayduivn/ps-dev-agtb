@@ -7,8 +7,13 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-FROM registry.sugarcrm.net/engineering/node:latest
+FROM node:6.11.1
 MAINTAINER Engineering Automation "engineering-automation@sugarcrm.com"
+
+# Install CI Utilities
+COPY scripts/install-ci-utils.sh /opt/bin/install-ci-utils.sh
+RUN chmod +x /opt/bin/install-ci-utils.sh && \
+    /opt/bin/install-ci-utils.sh
 
 ADD scripts/Thorn.Entrypoint.sh /Thorn.Entrypoint.sh
 

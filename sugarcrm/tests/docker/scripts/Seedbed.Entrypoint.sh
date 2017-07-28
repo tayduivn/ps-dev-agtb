@@ -9,6 +9,8 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
+set -ex
+
 # Ensure that the required mountpoint exists:
 if [[ ! -d "/sugarcrm" ]]; then
     echo "You must mount your sugarcrm directory in the container as /sugarcrm."
@@ -23,9 +25,7 @@ x11vnc -display "${DISPLAY}" -bg -nopw -xkb -usepw -shared -repeat -loop -foreve
 cd /sugarcrm
 
 if [[ -z "${DEV}" ]]; then
-    yarn install
     cd tests/end-to-end && node ci.js "$@"
-    #gulp test:end-to-end "$@"
 else
     /bin/bash
 fi

@@ -23,16 +23,7 @@ e.g. `NO_CACHE=true make build-node` or
 
 ## Images
 
-### Engineering Node Image
-
-This image is built upon the official node image with common utilities used in CI. 
-The *latest* tag should always point to the latest *LTS release* of the [official node docker image](https://hub.docker.com/_/node/).
-
-* Build image with `make build-node`
-
 ### Karma Image
-
-This image is built upon the "Engineering Node Image" and installs Xvfb and browsers
 
 * Build image with `make build-karma`
 * To run Karma tests using the image
@@ -45,8 +36,6 @@ docker run \
 ```
 
 ### Thorn Image
-
-This image is built upon the "Engineering Node Image" and installs everything required for Thorn
 
 * Built image with `make build-thorn`
 * To run Thorn tests using the image
@@ -65,8 +54,6 @@ docker run \
 
 ### Seedbed Image
 
-This image is built upon the "Engineering Node Image" and installs everything required for Seedbed
-
 * Build image with `make build-seedbed`
 * To run Seedbed tests using the image
 ```
@@ -78,6 +65,11 @@ docker run \
    -p 5900:5900 \
    --net=host \
    registry.sugarcrm.net/seedbed/seedbed:latest -u "${SUGAR_URL}"
+```
+* Alternatively you can run with
+```
+cd Mango
+./sugarcrm/tests/end-to-end/ci.sh -u "${SUGAR_URL}" 
 ```
 
 # Pushing Images

@@ -17,29 +17,23 @@ endif
 
 # Registry and image names
 REGISTRY = registry.sugarcrm.net
-NODE_IMAGE = engineering/node
 KARMA_IMAGE = karma/karma
 SEEDBED_IMAGE = seedbed/seedbed
 THORN_IMAGE = thorn/thorn
 
-# The default goal is to build the Sugar Node Image
-.DEFAULT_GOAL := build-node
-
 .PHONY: help
 help:
 	@echo "Example:"
-	@echo " NO_CACHE=true make build-node"
+	@echo " NO_CACHE=true make build-thorn"
 	@echo ""
 	@echo "Options:"
 	@echo " NO_CACHE=                 Building an image from scratch without using cache"
 	@echo ""
 	@echo "TARGETS:"
 	@echo " build-all:                Build ALL containers"
-	@echo " build-node:               Build the Engineering Node Image as a basis for other test containers"
 	@echo " build-karma:              Build the Karma Docker Container"
 	@echo " build-seedbed:            Build the Seedbed Docker Container"
 	@echo " build-thorn:              Build the Thorn Docker Container"
-	@echo " push-node:                Push the Engineering Node Image as a basis for other test containers"
 	@echo " push-karma:               Push the Karma Docker Container"
 	@echo " push-seedbed:             Push the Seedbed Docker Container"
 	@echo " push-thorn:               Push the Thorn Docker Container"
@@ -48,30 +42,20 @@ help:
 .PHONY: build-all
 build-all: build-karma build-seedbed build-thorn
 
-.PHONY: build-node
-build-node:
-	@echo "Building Sugar Node Image"
-	docker build -f Node.Dockerfile -t $(REGISTRY)/$(NODE_IMAGE):latest ${__NO_CACHE_FLAG} .
-
 .PHONY: build-karma
-build-karma: build-node
+build-karma:
 	@echo "Building Karma Image"
 	docker build -f Karma.Dockerfile -t $(REGISTRY)/$(KARMA_IMAGE):latest ${__NO_CACHE_FLAG} .
 
 .PHONY: build-seedbed
-build-seedbed: build-node
+build-seedbed:
 	@echo "Building Seedbed Image"
 	docker build -f Seedbed.Dockerfile -t $(REGISTRY)/$(SEEDBED_IMAGE):latest ${__NO_CACHE_FLAG} .
 
 .PHONY: build-thorn
-build-thorn: build-node
+build-thorn:
 	@echo "Building Thorn Image"
 	docker build -f Thorn.Dockerfile -t $(REGISTRY)/$(THORN_IMAGE):latest ${__NO_CACHE_FLAG} .
-
-.PHONY: push-node
-push-node:
-	@echo "Push Sugar Node Image to Registry"
-	docker push $(REGISTRY)/$(NODE_IMAGE):latest
 
 .PHONY: push-karma
 push-karma:

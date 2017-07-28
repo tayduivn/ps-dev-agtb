@@ -12,8 +12,8 @@
 #========================
 # Install Virtual Frame buffer (Graphical Support) and VNC Server
 #========================
-apt-get update
-apt-get install -y --force-yes --no-install-recommends \
+apt-get update -qqy
+apt-get install -qqy --force-yes --no-install-recommends \
     xvfb \
     x11vnc
 
