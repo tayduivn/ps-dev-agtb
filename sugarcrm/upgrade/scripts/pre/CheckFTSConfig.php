@@ -22,6 +22,12 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
     public $version = '7.1.5';
 
     /**
+     * User-agent settings
+     */
+    const USER_AGENT = 'SugarCRM';
+    const VERSION_UNKNOWN = 'unknown';
+
+    /**
      * ES supported versions. Same as the version checking in src/Elasticsearch/Adapter/Client.php.
      * @var array
      */
@@ -70,6 +76,9 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
         $isValid = false;
 
         try {
+            //add config for sugar version
+            $config = $this->setSugarVersion($config);
+
             $client = new Client($config);
             $data = $client->request('', Request::GET)->getData();
 
@@ -103,4 +112,26 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
         return $result;
     }
 
+    /**
+     * Add the upgrade-to-version of sugar instance to the client header "User-Agent".
+     *
+     * @param array $config the Elastic server's configuration.
+     * @return array
+     */
+    protected function setSugarVersion(array $config)
+    {
+        $config = empty($config)? array(): $config;
+        $config['curl'][CURLOPT_USERAGENT] = self::USER_AGENT . '/' . $this->getSugarVersion();
+        return $config;
+    }
+
+    /**
+     * Get the upgrade-to-version of sugar instance, returns "unknown" if not available.
+     * @return string
+     */
+    protected function getSugarVersion()
+    {
+        $version = $this->to_version; 
+        return empty($version) ? self::VERSION_UNKNOWN : $version;
+    }
 }
