@@ -11,11 +11,15 @@
 
 set -xe
 
+
+# You will need to run this script in the Mango directory
+# e.g. cd Mango && ./sugarcrm/tests/end-to-end/ci.sh -u "${SUGAR_URL}"
+
 SEEDBED_IMAGE_NAME='registry.sugarcrm.net/seedbed/seedbed'
 
 # Tag is set to "latest" if not defined in shell
 # export SEEDBED_IMAGE_TAG='custom' to override latest
-SEEDBED_IMAGE_TAG="${SEEDBED_IMAGE_TAG:?latest}" 
+SEEDBED_IMAGE_TAG="${SEEDBED_IMAGE_TAG:-latest}" 
 
 docker pull "${SEEDBED_IMAGE_NAME}:${SEEDBED_IMAGE_TAG}"
 

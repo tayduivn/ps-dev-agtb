@@ -66,6 +66,7 @@
     "styleguide/content/js/google-code-prettify",
     "tests/docker/",
     "tests/end-to-end/features/",
+    "tests/end-to-end/ci.sh",
     "tests/{old}/HealthCheck/cases/433_1/sugarcrm/custom/include/SugarSearchEngine/Elastic/Facets/FacetBar.php",
     "tests/{old}/HealthCheck/cases/433_1/sugarcrm/custom/include/SugarSearchEngine/Elastic/Facets/FacetFoo.php",
     "tests/{old}/HealthCheck/cases/433_1/sugarcrm/custom/include/SugarSearchEngine/Elastic/SugarSearchEngineElastic.php",
