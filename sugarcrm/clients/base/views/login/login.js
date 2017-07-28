@@ -66,6 +66,13 @@
     logoUrl: null,
 
     /**
+     * Is external login in progress?
+     *
+     * @type {boolean}
+     */
+    isExternalLoginInProgress: false,
+
+    /**
      * Process login on key `Enter`.
      *
      * @param {Event} event The `keypress` event.
@@ -132,7 +139,13 @@
             this.externalLoginUrl = app.config.externalLoginUrl;
             app.api.setExternalLoginUICallback(_.bind(function(url) {
                 this.externalLoginUrl = app.config.externalLoginUrl = url;
-                this.render();
+                if (this.isExternalLoginInProgress) {
+                    this.isExternalLoginInProgress = false;
+                    app.api.setRefreshingToken(true);
+                    window.location.replace(this.externalLoginUrl);
+                } else {
+                    this.render();
+                }
             }, this));
 
         }
@@ -319,9 +332,9 @@
      * Process Login
      */
     external_login: function() {
-        if (this.externalLoginUrl) {
-            window.location.replace(this.externalLoginUrl);
-        }
+        this.isExternalLoginInProgress = true;
+        app.api.setRefreshingToken(false);
+        app.api.ping(null, {});
     },
     
     /**
