@@ -62,7 +62,7 @@ return array(
     ],
     'Adobe EchoSign e-Signatures for SugarCRM' => [
         [
-            'version' => '*',
+            'version' => '1.78',
         ],
     ],
     'DocuSign for SugarCRM' => [
