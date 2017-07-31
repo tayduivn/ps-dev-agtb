@@ -10,40 +10,35 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$GLOBALS['current_user']->call_custom_logic('before_logout');
+if (isset($_REQUEST['SAMLRequest'])) {
+    if (empty($_GET['logout'])) {
+        $smarty = new Sugar_Smarty();
+        $smarty->assign(array(
+                'REDIRECT_URL'  => 'index.php?module=Users&action=Logout&logout=1&SAMLRequest=' . urlencode($_REQUEST['SAMLRequest']),
+        ));
+        $smarty->display('modules/Users/tpls/Logout.tpl');
+    } else {
+        /** @var AuthenticationController $authController */
+        $authController->authController->logout();
+    }
+} else {
+    // record the last theme the user used
+    $current_user->setPreference('lastTheme', $theme);
+    $GLOBALS['current_user']->call_custom_logic('before_logout');
 
-// code from REST logout
-if (isset($_SESSION['oauth2']) && !empty($_SESSION['oauth2']['refresh_token'])) {
-    $oauth2Server = SugarOAuth2Server::getOAuth2Server();
-    $oauth2Server->unsetRefreshToken($_SESSION['oauth2']['refresh_token']);
+    // submitted by Tim Scott from SugarCRM forums
+    foreach ($_SESSION as $key => $val) {
+        $_SESSION[$key] = ''; // cannot just overwrite session data, causes segfaults in some versions of PHP
+    }
+    if (isset($_COOKIE[session_name()])) {
+        setcookie(session_name(), '', time()-42000, '/');
+    }
+
+    SugarApplication::endSession();
+
+    LogicHook::initialize();
+    $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
+
+    /** @var AuthenticationController $authController */
+    $authController->authController->logout();
 }
-
-if (isset($_SESSION['platform'])) {
-    setcookie(
-        RestService::DOWNLOAD_COOKIE . '_' . $_SESSION['platform'],
-        false,
-        -1,
-        ini_get('session.cookie_path'),
-        ini_get('session.cookie_domain'),
-        ini_get('session.cookie_secure'),
-        true
-    );
-}
-
-SugarApplication::endSession();
-$_SESSION = array();
-setcookie(
-    session_name(),
-    '',
-    time() - 3600,
-    ini_get('session.cookie_path'),
-    ini_get('session.cookie_domain'),
-    ini_get('session.cookie_secure'),
-    ini_get('session.cookie_httponly')
-);
-
-LogicHook::initialize();
-$GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
-
-/** @var AuthenticationController $authController */
-$authController->authController->logout();
