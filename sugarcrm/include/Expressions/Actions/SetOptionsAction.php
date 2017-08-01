@@ -66,7 +66,7 @@ class SetOptionsAction extends AbstractAction{
 
                     selected = [].concat(field.model.get(this.target));
                     if (!this.canSetValue(context)) {
-                        keys = keys.concat(selected);
+                        keys = _.uniq(keys.concat(selected));
                     }
 
                     empty = (_.size(keys) === 0 || _.size(keys) === 1) && (keys[0] == undefined || keys[0] === '');
