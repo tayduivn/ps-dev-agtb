@@ -77,19 +77,18 @@ class SugarLocalUserProvider implements UserProviderInterface
 
         if ($field == 'email') {
             $sugarUser->retrieve_by_email_address($nameIdentifier);
-            $sugarUserId = $sugarUser->id;
         } else {
             $query = $this->getSugarQuery();
             $query->select(['id']);
             $query->from($sugarUser);
             $query->where()->equals($field, $nameIdentifier);
             $sugarUserId = $query->getOne();
+            $sugarUser->retrieve($sugarUserId, true, false);
         }
 
-        if (!$sugarUserId) {
+        if (!$sugarUser->id) {
             throw new UsernameNotFoundException('User was not found by provided name identifier');
         }
-        $sugarUser->retrieve($sugarUserId, true, false);
 
         if ($sugarUser->status != User::USER_STATUS_ACTIVE) {
             throw new InactiveUserException('Inactive user');

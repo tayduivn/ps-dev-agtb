@@ -97,7 +97,13 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
         $this->user->expects($this->once())
             ->method('retrieve')
             ->with($this->equalTo($id), $this->isTrue(), $this->isFalse())
-            ->willReturn(null);
+            ->will(
+                $this->returnCallback(
+                    function () use ($id) {
+                        $this->user->id = $id;
+                    }
+                )
+            );
 
         $this->user->is_group = 0;
         $this->user->portal_only = 0;
@@ -136,7 +142,13 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
         $this->user->expects($this->once())
             ->method('retrieve')
             ->with($this->equalTo($id), $this->isTrue(), $this->isFalse())
-            ->willReturn(null);
+            ->will(
+                $this->returnCallback(
+                    function () use ($id) {
+                        $this->user->id = $id;
+                    }
+                )
+            );
 
         $this->user->is_group = $isGroup;
         $this->user->portal_only = $portalOnly;
@@ -159,7 +171,13 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
         $this->user->expects($this->once())
             ->method('retrieve')
             ->with($this->equalTo($id), $this->isTrue(), $this->isFalse())
-            ->willReturn(null);
+            ->will(
+                $this->returnCallback(
+                    function () use ($id) {
+                        $this->user->id = $id;
+                    }
+                )
+            );
 
         $this->user->is_group = 0;
         $this->user->portal_only = 0;
@@ -191,7 +209,13 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
         $this->user->expects($this->once())
             ->method('retrieve')
             ->with($this->equalTo($id), $this->isTrue(), $this->isFalse())
-            ->willReturn(null);
+            ->will(
+                $this->returnCallback(
+                    function () use ($id) {
+                        $this->user->id = $id;
+                    }
+                )
+            );
 
         $this->user->is_group = 0;
         $this->user->portal_only = 0;
@@ -223,10 +247,7 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->user->expects($this->once())
-            ->method('retrieve')
-            ->with($this->equalTo($id), $this->isTrue(), $this->isFalse())
-            ->willReturn(null);
+        $this->user->expects($this->never())->method('retrieve');
 
         $this->user->is_group = 0;
         $this->user->portal_only = 0;
@@ -269,7 +290,13 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
         $this->user->expects($this->once())
             ->method('retrieve')
             ->with($this->equalTo($id), $this->isTrue(), $this->isFalse())
-            ->willReturn(null);
+            ->will(
+                $this->returnCallback(
+                    function () use ($id) {
+                        $this->user->id = $id;
+                    }
+                )
+            );
 
         $this->user->is_group = 0;
         $this->user->portal_only = 0;
