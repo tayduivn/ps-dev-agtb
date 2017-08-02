@@ -64,6 +64,7 @@ class UsersViewAuthenticate extends SidecarView
         } catch (Exception $e) {
             $GLOBALS['log']->error("Login exception: " . $e->getMessage());
 
+            $this->killSessionCookie();
             if (AuthenticationController::getInstance()->isExternal()) {
                 if (!SugarConfig::getInstance()->get('SAML_SAME_WINDOW')) {
                     // We need to render AuthenticateParent template.
@@ -140,5 +141,21 @@ class UsersViewAuthenticate extends SidecarView
         }
 
         return [];
+    }
+
+    /**
+     * Kills a session cookie for BWC
+     */
+    protected function killSessionCookie()
+    {
+        setcookie(
+            session_name(),
+            '',
+            time() - 3600,
+            ini_get('session.cookie_path'),
+            ini_get('session.cookie_domain'),
+            ini_get('session.cookie_secure'),
+            ini_get('session.cookie_httponly')
+        );
     }
 }
