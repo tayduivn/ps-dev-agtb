@@ -61,7 +61,7 @@ export default class extends BaseView {
     public async clickItem (link, dropdown?) {
         let itemSelector = this.getModuleButtonSelector(link, dropdown);
 
-        return seedbed.client
+        await seedbed.client
             .waitForVisible(itemSelector)
             .click(itemSelector);
 
@@ -74,14 +74,14 @@ export default class extends BaseView {
      * @param itemName
      */
     public async isVisible(itemName) {
-        return seedbed.client.isVisible(this.getModuleButtonSelector(itemName));
+        return await seedbed.client.isVisible(this.getModuleButtonSelector(itemName));
     }
 
     /**
      * Click on Modules Mege Menu dropdown to show all modules
      */
     public async showAllModules() {
-        return seedbed.client
+        await seedbed.client
             .click(this.$('moduleList.moreIcon'));
     }
 };

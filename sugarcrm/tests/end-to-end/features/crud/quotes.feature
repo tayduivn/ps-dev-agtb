@@ -14,7 +14,7 @@ Feature: Quotes module verification
     Given I use default account
     Given I launch App
 
-  @list-preview @T_32765 @ci-excluded
+  @list-preview @T_32765
   Scenario Outline: Quotes > List View > Preview
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed |
