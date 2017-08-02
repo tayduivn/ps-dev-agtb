@@ -370,7 +370,7 @@ $beanFiles['EmptyBean'] = 'data/EmptyBean.php';
 $beanFiles['Styleguide'] = 'modules/Styleguide/Styleguide.php';
 
 // added these lists for security settings for tabs
-$modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connectors',
+$modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'Dropdown', 'Dynamic', 'DynamicFields', 'DynamicLayout', 'EditCustomFields',
     'Help', 'Import',  'MySettings', 'EditCustomFields','FieldsMetaData',
     'UpgradeWizard', 'Trackers', 'Connectors', 'Employees', 'Calendar',
@@ -508,7 +508,6 @@ $GLOBALS['moduleTabMap'] = array(
     'ModuleBuilder' => 'Administration',
     'Configurator' => 'Administration',
     'Studio' => 'Administration',
-    'Currencies' => 'Administration',
     'DocumentRevisions' => 'Documents',
     'EmailTemplates' => 'Emails',
 //BEGIN SUGARCRM flav=ent ONLY
