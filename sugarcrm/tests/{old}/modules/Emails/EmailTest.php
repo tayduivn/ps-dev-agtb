@@ -86,8 +86,8 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->email->save();
         SugarTestEmailUtilities::setCreatedEmail($this->email->id);
 
-        $this->assertEquals('1', $this->email->team_id, "Actual team_id doesn't match Expected team_id");
-        $this->assertEquals('1', $this->email->team_set_id, "Actual team_set_id doesn't match Expected team_set_id");
+        $this->assertEquals('1', trim($this->email->team_id), "Actual team_id doesn't match Expected team_id");
+        $this->assertEquals('1', trim($this->email->team_set_id), "Actual team_set_id doesn't match Expected team_set_id");
     }
 
 	public function testSafeAttachmentName ()
@@ -968,7 +968,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $row = $db->fetchOne($q);
 
         $this->assertSame('Users', $row['parent_type'], 'Should be Users');
-        $this->assertSame($GLOBALS['current_user']->id, $row['parent_id'], 'Should be the current user');
+        $this->assertSame(trim($GLOBALS['current_user']->id), trim($row['parent_id']), 'Should be the current user');
         $this->assertEmpty($row['email_address_id'], 'Should not have recorded an email address for the sender');
     }
 
@@ -1003,9 +1003,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         $email->retrieveEmailText();
         $this->assertEquals('sam@example.com', $email->from_addr_name);
-        $this->assertEquals('tom@example.com, wendy@example.com', $email->to_addrs_names);
+        $expected = ['tom@example.com', 'wendy@example.com'];
+        $this->assertEquals($expected, $this->emailAddrsToArray($email->to_addrs_names));
         $this->assertEquals('randy@example.com', $email->cc_addrs_names);
-        $this->assertEquals('bonnie@example.com, tara@example.com, bill@example.com', $email->bcc_addrs_names);
+        $expected = ['bill@example.com', 'bonnie@example.com', 'tara@example.com'];
+        $this->assertEquals($expected, $this->emailAddrsToArray($email->bcc_addrs_names));
     }
 
     /**
@@ -1094,6 +1096,17 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Need to remove the mock to avoid failures when SugarRelationship::resaveRelatedBeans() is called.
         unset($email->from);
+    }
+
+    private function emailAddrsToArray($emailAddrs)
+    {
+        $emailAddresses = array();
+        $temp = explode(', ', $emailAddrs);
+        foreach ($temp as $emailAddr) {
+            $emailAddresses[] = $emailAddr;
+        }
+        sort($emailAddresses);
+        return $emailAddresses;
     }
 }
 

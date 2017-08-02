@@ -495,7 +495,7 @@ class UploadFile
     {
         $path = "upload://{$beanId}{$filename}";
         $db = DBManagerFactory::getInstance();
-        $sql = 'SELECT upload_id FROM notes WHERE upload_id=' . $db->quoted($beanId) . ' LIMIT 0,1';
+        $sql = 'SELECT upload_id FROM notes WHERE upload_id=' . $db->quoted($beanId);
         $uploadId = $db->getOne($sql);
 
         if (empty($uploadId)) {

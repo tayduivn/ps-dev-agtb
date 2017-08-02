@@ -92,8 +92,9 @@ class UpdateUserOutboundEmailNameAndAddressTest extends UpgradeTestCase
             $oe1->id,
             array('disable_row_level_security' => true, 'use_cache' => false)
         );
-        $expectedName = $storedOptions1['from_name'];
-        $expectedAddressId = $user1->emailAddress->getEmailGUID($storedOptions1['from_addr']);
+        $expectedStoredOptions = ($ie2->id < $ie1->id) ? $storedOptions2 : $storedOptions1;
+        $expectedName = $expectedStoredOptions['from_name'];
+        $expectedAddressId = $user1->emailAddress->getEmailGUID($expectedStoredOptions['from_addr']);
         $this->assertSame($expectedName, $oe->name, 'Unexpected OutboundEmail1 Name');
         $this->assertSame($expectedAddressId, $oe->email_address_id, 'Unexpected OutboundEmail1 Address ID');
 

@@ -1589,7 +1589,7 @@ class Email extends SugarBean {
 
         // Verify that a row exists in the emails_text table for this email.
         $stmt = $this->db->getConnection()->executeQuery(
-            'SELECT email_id FROM emails_text WHERE email_id = ? LIMIT 0,1',
+            'SELECT email_id FROM emails_text WHERE email_id = ?',
             array($this->id)
         );
         $guid = $stmt->fetchColumn();

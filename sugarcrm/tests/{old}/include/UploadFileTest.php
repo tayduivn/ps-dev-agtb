@@ -59,7 +59,7 @@ class UploadFileTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->db->addQuerySpy(
             'upload_id',
-            "/SELECT upload_id FROM notes WHERE upload_id='{$id}' LIMIT 0,1/",
+            "/SELECT upload_id FROM notes WHERE upload_id='{$id}'/",
             array($rows)
         );
 
@@ -80,7 +80,7 @@ class UploadFileTest extends Sugar_PHPUnit_Framework_TestCase
         $rows = array();
         $this->db->addQuerySpy(
             'upload_id',
-            "/SELECT upload_id FROM notes WHERE upload_id='{$id}' LIMIT 0,1/",
+            "/SELECT upload_id FROM notes WHERE upload_id='{$id}'/",
             array($rows)
         );
 

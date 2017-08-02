@@ -199,7 +199,6 @@ $dictionary['emails_email_addr_rel'] = array(
             'name' => 'email_id',
             'vname' => 'LBL_EMAIL_ID',
             'type' => 'id',
-            'required' => true,
         ),
         'from' => array(
             'name' => 'from',

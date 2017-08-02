@@ -626,9 +626,10 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             "{$GLOBALS['current_user']->name} <" . static::$overrideConfig->email_address . ">",
             $bean->from_addr_name
         );
+        $expected = ["{$lead->name} <{$lead->email1}>", "{$account2->name} <{$account2->email1}>"];
         $this->assertEquals(
-            "{$lead->name} <{$lead->email1}>, {$account2->name} <{$account2->email1}>",
-            $bean->to_addrs_names
+            $this->sortEmailAddresses($expected),
+            $this->emailAddrsToArray($bean->to_addrs_names)
         );
     }
 
@@ -773,5 +774,22 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $repliedToEmail = $repliedToEmail->retrieve($repliedToEmail->id);
         $this->assertEquals('1', $repliedToEmail->reply_to_status, 'reply_to_status value should be True');
+    }
+
+    private function emailAddrsToArray($emailAddrs)
+    {
+        $emailAddresses = array();
+        $temp = explode(', ', $emailAddrs);
+        foreach ($temp as $emailAddr) {
+            $emailAddresses[] = $emailAddr;
+        }
+        $emailAddresses = $this->sortEmailAddresses($emailAddresses);
+        return $emailAddresses;
+    }
+
+    private function sortEmailAddresses($emailAddresses)
+    {
+        sort($emailAddresses);
+        return $emailAddresses;
     }
 }

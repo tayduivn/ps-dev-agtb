@@ -81,7 +81,7 @@ class SugarUpgradeUpdateUserOutboundEmailNameAndAddress extends UpgradeDBScript
         }
 
         // Process 'user' Outbound Emails referenced in personal Inbound Email records.
-        $sql = "SELECT id FROM inbound_email WHERE is_personal='1' AND deleted=0";
+        $sql = "SELECT id FROM inbound_email WHERE is_personal='1' AND deleted=0 ORDER by id";
         $conn = $GLOBALS['db']->getConnection();
         $stmt = $conn->executeQuery($sql);
         while ($row = $stmt->fetch()) {
