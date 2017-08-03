@@ -51,7 +51,7 @@ export class Detail extends TextField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'span'
             }
         });
 
@@ -59,7 +59,7 @@ export class Detail extends TextField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(this.$('field.selector'));
+        let value: string | string[] = await seedbed.client.getText(this.$('field'));
 
         return value.toString().trim();
 
@@ -73,7 +73,7 @@ export class List extends TextField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'span'
             }
         });
 
@@ -81,7 +81,7 @@ export class List extends TextField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(this.$('field.selector'));
+        let value: string | string[] = await seedbed.client.getText(this.$('field'));
 
         return value.toString().trim();
 

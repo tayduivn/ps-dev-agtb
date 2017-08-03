@@ -40,6 +40,8 @@ const whenSteps = function () {
                 await moduleMenuCmp.showAllModules();
                 await moduleMenuCmp.clickItem(itemName, true);
             }
+            // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
+            await seedbed.client.pause(1000);
 
         }, true);
 
@@ -73,7 +75,11 @@ const whenSteps = function () {
                 whenStepsHelper.setUrlHashAndLogin(module), true);
 
     this.When(/^I go to "([^"]*)" url$/,
-            async(urlHash): Promise<void> => seedbed.client.setUrlHash(urlHash), true);
+        async (urlHash): Promise<void> => {
+            await seedbed.client.setUrlHash(urlHash);
+            // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
+            await seedbed.client.pause(1500);
+        }, true);
 
     // The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
     this.When(/^I provide input for (#\S+) view$/,
