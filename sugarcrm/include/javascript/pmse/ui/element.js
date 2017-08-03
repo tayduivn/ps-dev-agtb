@@ -60,6 +60,16 @@ var Element = function (options) {
      * @type {Number}
      */
     this.zOrder = null;
+    /**
+     * Holds the compiled handlebars template
+     * @type {Object}
+     */
+    this.template = null;
+    /**
+     * Holds the compiled handlebars template2
+     * @type {Object}
+     */
+    this.template2 = null;
 
     Element.prototype.initObject.call(this, options);
 };
@@ -311,6 +321,36 @@ Element.prototype.getHTML = function () {
         this.createHTML();
     }
     return this.html;
+};
+
+/**
+ * Returns the compiled handlebars template based on the input
+ * @param {string} template
+ * @return {Object}
+ */
+Element.prototype.compileTemplate = function(template) {
+    var source = App
+        .metadata
+        .getView('pmse_Business_Rules')
+        .businessrules
+        .templates[template]
+        .replace(/\r?\n|\r/g,'');
+    return Handlebars.compile(source);
+};
+
+/**
+ * Returns the html pointer by using the provided handlebars template and context
+ * @param {Object} template
+ * @param {Object} context
+ * @return {HTMLElement}
+ */
+Element.prototype.getHTMLFromTemplate = function(template, context) {
+    if (template) {
+        var html = template(context);
+        var parsed = $.parseHTML(html);
+        return parsed[0];
+    }
+    return null;
 };
 
 /**

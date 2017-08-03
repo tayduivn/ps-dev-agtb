@@ -49,6 +49,9 @@
         this.addColumnClassName = 'decision-table-add-button';
         this.decisionTableRowClassName = 'decision-table-row';
         this.decisionTableBodyClassId = '#decision-table-body';
+        this.decisionTableTemplate = null;
+        this.decisionRowTemplate = null;
+        this.emptyCellTemplate = null;
         DecisionTable.prototype.initObject.call(this, options || {});
     };
 
@@ -202,14 +205,10 @@
             var preConcCols = 0;
 
             isEvaluationVariable = valueObject instanceof DecisionTableValueEvaluation;
-            cell = isEvaluationVariable ? valueObject.getHTML()[0] : valueObject.getHTML();
-
-            if (isEvaluationVariable) {
-                row = cell.closest('tr.' + self.decisionTableRowClassName);
-                rCell = $(row).children('td').index(cell.parentElement.parentElement.parentElement);
-            } else {
-                row = cell.parentElement;
-                rCell = $(row).children('td').index(cell);
+            cell = valueObject.getHTML();
+            row = cell.parentElement;
+            rCell = $(row).children('td').index(cell);
+            if (!isEvaluationVariable) {
                 conLength = self.conditions.length;
                 preConcCols = self.preConclusionsCols;
             }
@@ -363,52 +362,42 @@
 
     DecisionTable.prototype.addDecisionRow = function() {
         var self = this;
-        var row = this.createHTMLElement('tr');
         var i;
-        var aux;
 
         if (!(this.conditions.length && this.conclusions.length)) {
             return this;
         }
 
-        row.className = self.decisionTableRowClassName;
-        row.appendChild(this.getIndexRowElement());
-        row.appendChild(this.getRemoveRowElement());
-        row.appendChild(this.getRowCheckboxElement());
+        if (!this.decisionRowTemplate) {
+            this.decisionRowTemplate = this.compileTemplate('decision-row');
+        }
+
+        var context = {index : this.decisionRows + 1};
+
+        var row = this.getHTMLFromTemplate(this.decisionRowTemplate, context);
 
         // Add condition columns
+        var conditions = document.createElement("div");
         for (i = 0; i < this.conditions.length; i++) {
-            var conditionsCol = this.createHTMLElement('td');
-            var conditionsTable = this.createHTMLElement('table');
-            var conditionsRow = this.createHTMLElement('tr');
-
-            conditionsCol.className = this.conditionColumnClassName;
             if (!this.conditions[i].values[this.decisionRows]) {
                 this.conditions[i].addValue();
             }
-            aux = this.conditions[i].getValueHTML(this.conditions[i].values.length - 1);
-            conditionsRow.appendChild(aux[0]);
-            conditionsRow.appendChild(aux[1]);
-            conditionsTable.appendChild(conditionsRow);
-            conditionsCol.appendChild(conditionsTable);
-            row.appendChild(conditionsCol);
+            conditions.appendChild(this.conditions[i].getValueHTML(this.conditions[i].values.length - 1));
         }
-
-        // account for add condition "+" symbol
-        row.appendChild(this.createEmptyCell());
+        $(row).find('#conditions').replaceWith(conditions.children);
 
         // Add conclusion columns
+        var conclusions = document.createElement("div");
         for (i = 0; i < this.conclusions.length; i++) {
             if (!this.conclusions[i].values[this.decisionRows]) {
                 this.conclusions[i].addValue();
             }
-            row.appendChild(this.conclusions[i].getValueHTML(this.conclusions[i].values.length - 1));
+            conclusions.appendChild(this.conclusions[i].getValueHTML(this.conclusions[i].values.length - 1));
         }
-
-        row.appendChild(this.createEmptyCell());
+        $(row).find('#conclusions').replaceWith(conclusions.children);
 
         this.decisionRows++;
-        this.dom.decisionTableBody.appendChild(row);
+        this.dom.decisionTableBody.append(row);
 
         // attach click event on checkbox to save the current index in data-previndex
         $(row).find('.checkbox-input').click(function() {
@@ -886,7 +875,6 @@
 
 
     DecisionTable.prototype.addCondition = function(defaultValue) {
-        var self = this;
         var condition = new DecisionTableVariable({
             parent: this,
             field: defaultValue || null,
@@ -895,13 +883,7 @@
             inputFields: this.conditionFields,
             variableMode: 'condition'
         }), i, html;
-        var plusNode;
-        var addConditionElement;
-        var textContainer;
-        var conditionContainer;
         var conditionsColSpan;
-        var conditionTable;
-        var conditionRow;
 
         condition.onBeforeValueOpenPanel = this.onBeforeVariableOpenPanelHandler();
         condition.onRemove = this.onRemoveVariableHandler(this.conditions);
@@ -910,45 +892,34 @@
         if (this.html) {
             // First add the condition col to the decision row header
             if (this.conditions.length == 0) {
-                plusNode = this.createHTMLElement('span');
-                plusNode.className = 'fa fa-plus';
-                addConditionElement = this.createHTMLElement('td');
-                textContainer = this.createHTMLElement('button');
-                textContainer.appendChild(plusNode);
-                textContainer.title = translate('LBL_PMSE_TOOLTIP_ADD_CONDITION', DecisionTable.LANG_MODULE);
-                textContainer.className = this.addColumnClassName;
-                this.dom.addConditionButton = textContainer;
-                addConditionElement.appendChild(textContainer);
-                $(this.dom.decisionRowHeader).children('td').eq(this.preConditionsCols - 1)
-                    .after(addConditionElement).after(condition.getHTML());
-                this.dom.firstCondition = $('#decision-row-header').children('td').eq(this.preConditionsCols);
-
-                $(this.dom.addConditionButton).on('click', function() {
-                    self.addCondition();
-                });
+                this.dom.firstCondition = this.dom.decisionRowHeader
+                    .children('td')
+                    .eq(this.preConditionsCols);
+                this.dom.firstCondition
+                    .replaceWith(condition.getHTML());
 
                 // Display a different tool tip if there is only 1 condition remaining
-                $(this.dom.decisionRowHeader)
+                this.dom.decisionRowHeader
                     .children('td.' + this.conditionColumnClassName)
                     .find('.' + this.closeElementClassName)
                     .eq(0)
                     .attr('title', translate('LBL_PMSE_TOOLTIP_REMOVE_COL_DATA', DecisionTable.LANG_MODULE));
             } else {
-                $(this.dom.decisionRowHeader)
+                this.dom.decisionRowHeader
                     .children('td.' + this.conditionColumnClassName)
                     .eq(this.conditions.length - 1)
                     .after(condition.getHTML());
 
                 // For more than 1 condition set the tool tip to be "Remove Condition"
-                $(this.dom.decisionRowHeader)
+                this.dom.decisionRowHeader
                     .children('td.' + this.conditionColumnClassName)
                     .find('.' + this.closeElementClassName)
                     .attr('title', translate('LBL_PMSE_TOOLTIP_REMOVE_CONDITION', DecisionTable.LANG_MODULE));
             }
 
             conditionsColSpan = this.conditions.length + 2;
-            this.dom.conditionsHeader.setAttribute('colspan', conditionsColSpan);
-            this.dom.conditionsFooter.setAttribute('colspan', conditionsColSpan);
+            this.dom.conditionsHeader.attr('colspan', conditionsColSpan);
+            this.dom.conditionsFooter.attr('colspan', conditionsColSpan);
         }
 
         this.conditions.push(condition);
@@ -958,21 +929,13 @@
         for (i = 0; i < this.decisionRows; i++) {
             condition.addValue();
             html = condition.getValueHTML(i);
-            conditionContainer = this.createHTMLElement('td');
-            conditionContainer.className = this.conditionColumnClassName;
-            conditionTable = this.createHTMLElement('table');
-            conditionRow = this.createHTMLElement('tr');
-            conditionRow.appendChild(html[0]);
-            conditionRow.appendChild(html[1]);
-            conditionTable.appendChild(conditionRow);
-            conditionContainer.appendChild(conditionTable);
 
-            $(this.dom.decisionTableBody)
+            this.dom.decisionTableBody
                 .children('tr')
                 .eq(i + 1)
                 .children('td.' + this.conditionColumnClassName)
                 .eq(this.conditions.length - 2)
-                .after(conditionContainer);
+                .after(html);
         }
 
         this.setIsDirty(true);
@@ -981,7 +944,6 @@
     };
 
     DecisionTable.prototype.addConclusion = function(returnType, defaultValue) {
-        var self = this;
         var conclusion = new DecisionTableVariable({
             isReturnType: returnType,
             variableMode: "conclusion",
@@ -992,9 +954,6 @@
             parent: this
         });
         var i;
-        var plusNode;
-        var addConclusionElement;
-        var textContainer;
         var conclusionsColSpan;
         var lastConclusionChild;
 
@@ -1011,55 +970,52 @@
                 this.preConclusionsCols;
 
             if (returnType) {
-                plusNode = this.createHTMLElement('span');
-                plusNode.className = 'fa fa-plus';
-                addConclusionElement = this.createHTMLElement('td');
-                textContainer = this.createHTMLElement('button');
-                textContainer.appendChild(plusNode);
-                textContainer.title = translate('LBL_PMSE_TOOLTIP_ADD_CONCLUSION', DecisionTable.LANG_MODULE);
-                textContainer.className = this.addColumnClassName;
-                this.dom.addConclusionButton = textContainer;
-                addConclusionElement.appendChild(textContainer);
-                $(this.dom.decisionRowHeader).children('td').eq(lastConclusionChild - 1)
-                    .after(addConclusionElement).after(conclusion.getHTML());
-
-                $(this.dom.addConclusionButton).on('click', function() {
-                    self.addConclusion();
-                });
-
+                this.dom.decisionRowHeader
+                    .children('td')
+                    .eq(lastConclusionChild)
+                    .replaceWith(conclusion.getHTML());
             } else {
-                $(this.dom.decisionRowHeader).children('td').eq(lastConclusionChild - 1)
+                this.dom.decisionRowHeader
+                    .children('td')
+                    .eq(lastConclusionChild - 1)
                     .after(conclusion.getHTML());
             }
 
+            if (this.conclusions.length == 0) {
+                this.dom.firstConclusion = this.dom.decisionRowHeader
+                    .children('td')
+                    .eq(this.conditions.length + this.preConditionsCols + this.preConclusionsCols);
+            } else if (this.conclusions.length == 1) {
+                // Display a different tool tip if there is only 1 Change Field remaining
+                this.dom.decisionRowHeader
+                    .children('td.' + this.conclusionColumnClassName)
+                    .find('.' + this.closeElementClassName)
+                    .eq(0)
+                    .attr('title', translate('LBL_PMSE_TOOLTIP_REMOVE_COL_DATA', DecisionTable.LANG_MODULE));
+            } else {
+                // Display the normal tool tip if there are more Change Fields
+                this.dom.decisionRowHeader
+                    .children('td.' + this.conclusionColumnClassName)
+                    .find('.' + this.closeElementClassName)
+                    .eq(0)
+                    .attr('title', translate('LBL_PMSE_TOOLTIP_REMOVE_CONCLUSION', DecisionTable.LANG_MODULE));
+            }
+
             conclusionsColSpan = this.conclusions.length + 1;
-            this.dom.conclusionsHeader.setAttribute('colspan', conclusionsColSpan);
-            this.dom.conclusionsFooter.setAttribute('colspan', conclusionsColSpan);
+            this.dom.conclusionsHeader.attr('colspan', conclusionsColSpan);
+            this.dom.conclusionsFooter.attr('colspan', conclusionsColSpan);
         }
 
-        if (this.conclusions.length == 0) {
-            this.dom.firstConclusion = $('#decision-row-header')
-                .children('td')
-                .eq(this.conditions.length + this.preConditionsCols + this.preConclusionsCols);
-        } else if (this.conclusions.length == 1) {
-            // Display a different tool tip if there is only 1 Change Field remaining
-            $(this.dom.decisionRowHeader).children('td.' + this.conclusionColumnClassName)
-                .find('.' + this.closeElementClassName)
-                .eq(0).attr('title', translate('LBL_PMSE_TOOLTIP_REMOVE_COL_DATA', DecisionTable.LANG_MODULE));
-        } else {
-            // Display the normal tool tip if there are more Change Fields
-            $(this.dom.decisionRowHeader).children('td.' + this.conclusionColumnClassName)
-                .find('.' + this.closeElementClassName)
-                .eq(0).attr('title', translate('LBL_PMSE_TOOLTIP_REMOVE_CONCLUSION', DecisionTable.LANG_MODULE));
-        }
 
         this.conclusions.push(conclusion);
 
         for (i = 0; i < this.decisionRows; i += 1) {
             conclusion.addValue();
 
-            $(this.dom.decisionTableBody).children('tr')
-                .eq(i + 1).children('td')
+            this.dom.decisionTableBody
+                .children('tr')
+                .eq(i + 1)
+                .children('td')
                 .eq(lastConclusionChild - 1)
                 .after(conclusion.getValueHTML(i));
         }
@@ -1100,118 +1056,39 @@
             return this.html;
         }
 
-        var table, row, cell, header, body, textContainer, subtable, button, i, span;
+        if (!this.decisionTableTemplate) {
+            this.decisionTableTemplate = this.compileTemplate('decision-table');
+        }
 
-        header = this.createHTMLElement('thead');
-        var plusNode = this.createHTMLElement('span');
-        plusNode.className = 'fa fa-plus';
+        var context = {
+            conditionsSpan : 2,
+            conclusionsSpan : 2,
+            conditionsTitle : translate('LBL_PMSE_LABEL_CONDITIONS', DecisionTable.LANG_MODULE),
+            returnTitle : translate('LBL_PMSE_LABEL_RETURN_VALUE', DecisionTable.LANG_MODULE),
+            conclusionsTitle : translate('LBL_PMSE_LABEL_CHANGE_FIELD', DecisionTable.LANG_MODULE),
+            removeConditionTitle : '',
+            addConditionTitle : translate('LBL_PMSE_TOOLTIP_ADD_CONDITION', DecisionTable.LANG_MODULE),
+            removeConclusionTitle : '',
+            addConclusionTitle : translate('LBL_PMSE_TOOLTIP_ADD_CONCLUSION', DecisionTable.LANG_MODULE)
+        };
 
-        //create the table subheaders
-        row = this.createHTMLElement('tr');
-        row.id = 'business-rules-header';
-        this.dom.businessRulesHeader = row;
-        cell = this.createHTMLElement('th');
-        var indexSpan = this.createHTMLElement('span');
-        indexSpan.className = 'index';
-        cell.appendChild(indexSpan);
-        row.appendChild(cell);
-        cell = this.createHTMLElement('th');
-        var removeSpan = this.createHTMLElement('span');
-        removeSpan.className = 'remove-index';
-        cell.appendChild(removeSpan);
-        row.appendChild(cell);
-        cell = this.createHTMLElement('th');
-        var checkboxSpan = this.createHTMLElement('span');
-        checkboxSpan.className = 'checkbox-index';
-        cell.appendChild(checkboxSpan);
-        row.appendChild(cell);
-        button = this.createHTMLElement('button');
-        button.appendChild(plusNode);
-        button.className = this.addColumnClassName;
-        button.title = translate('LBL_PMSE_TOOLTIP_ADD_CONDITION', DecisionTable.LANG_MODULE);
-        cell = this.createHTMLElement('th');
-        textContainer = this.createHTMLElement('span');
-        textContainer.appendChild(document.createTextNode(translate('LBL_PMSE_LABEL_CONDITIONS',
-            DecisionTable.LANG_MODULE)));
-        cell.appendChild(textContainer);
-        cell.className = 'decision-table-separator-border';
-        cell.id = 'decision-table-conditions-header-column';
-        row.appendChild(cell);
-        this.dom.conditionsHeader = cell;
-        cell = cell.cloneNode(false);
-        button = button.cloneNode(true);
-        button.title = translate('LBL_PMSE_TOOLTIP_ADD_CONCLUSION', DecisionTable.LANG_MODULE);
-        this.dom.addConclusionButton = button;
-        textContainer = textContainer.cloneNode(false);
-        textContainer.appendChild(
-            document.createTextNode(translate('LBL_PMSE_LABEL_RETURN_VALUE', DecisionTable.LANG_MODULE))
-        );
-        cell.appendChild(textContainer);
-        row.appendChild(cell);
-        cell = cell.cloneNode(false);
-        textContainer = textContainer.cloneNode(false);
-        textContainer.appendChild(
-            document.createTextNode(translate('LBL_PMSE_LABEL_CHANGE_FIELD', DecisionTable.LANG_MODULE))
-        );
-        cell.appendChild(textContainer);
-        cell.id = 'decision-table-conclusions-header-column';
-        row.appendChild(cell);
-        this.dom.conclusionsHeader = cell;
+        var html = this.getHTMLFromTemplate(this.decisionTableTemplate, context);
 
-        header.appendChild(row);
+        this.dom.businessRulesHeader = $(html).find('tr.business-rules-header').first();
+        this.dom.conditionsHeader = $(html).find('#decision-table-conditions-header-column').first();
+        this.dom.conclusionsHeader = $(html).find('#decision-table-conclusions-header-column').first();
+        this.dom.businessRulesFooter = $(html).find('#business-rules-footer').first();
+        this.dom.conditionsFooter = $(html).find('#decision-table-conditions-footer').first();
+        this.dom.conclusionsFooter = $(html).find('#decision-table-conclusions-footer').first();
+        this.dom.decisionRowHeader = $(html).find('#decision-row-header').first();
+        this.dom.trashNode = $(html).find('#trash-button').first();
+        this.dom.decisionTableBody = $(html).find('#decision-table-body').first();
+        this.dom.addConditionButton = $(html).find('#add-condition-button').first();
+        this.dom.addConclusionButton = $(html).find('#add-conclusion-button').first();
+        this.dom.addDecisionRowButton = $(html).find('#add-decision-row-button').first();
+        this.dom.decisionTable = $(html);
 
-        // create the footer to add more decision rows
-        footer = this.createHTMLElement('tfoot');
-        row = this.createHTMLElement('tr');
-        row.id = 'business-rules-footer';
-        this.dom.businessRulesFooter = row;
-        row.appendChild(this.createEmptyCell());    // index col
-        var addElement = this.getAddRowElement();
-        row.appendChild(addElement);
-        row.appendChild(this.createEmptyCell());    // trash col
-        this.dom.conditionsFooter = this.createEmptyCell(2);
-        row.appendChild(this.dom.conditionsFooter); // conditions col
-        row.appendChild(this.createEmptyCell());    // return col
-        this.dom.conclusionsFooter = this.createEmptyCell(2);
-        row.appendChild(this.dom.conclusionsFooter);    // conclusions col
-        footer.appendChild(row);
-
-        //create the body and the body header
-        row = this.createHTMLElement("tr");
-        row.id = 'decision-row-header';
-        this.dom.decisionRowHeader = row;
-
-        // Spacers before the trash can in the header row
-        cell = this.createHTMLElement('td');
-        row.appendChild(cell);
-        cell = this.createHTMLElement('td');
-        row.appendChild(cell);
-
-        cell = this.createHTMLElement('td');
-        var trashNode = this.createHTMLElement('span');
-        trashNode.className = 'fa fa-trash-o';
-        textContainer = this.createHTMLElement('button');
-        textContainer.className = 'btn-block';
-        textContainer.id = 'trash-button';
-        textContainer.appendChild(trashNode);
-        this.dom.trashNode = textContainer;
-        cell.appendChild(textContainer);
-        row.appendChild(cell);
-
-        // Attach table header, footer, body to table
-        body = this.createHTMLElement('tbody');
-        body.id = 'decision-table-body';
-        body.appendChild(row);
-        this.dom.decisionTableBody = body;
-
-        //create the table and append the header and body
-        table = this.createHTMLElement('table');
-        table.className = 'decision-table';
-        table.appendChild(header);
-        table.appendChild(footer);
-        table.appendChild(body);
-
-        this.html = this.dom.decisionTable = table;
+        this.html = html;
         this.setShowDirtyIndicator(this.showDirtyIndicator);
 
         this.attachTableListeners();
@@ -1223,13 +1100,23 @@
     DecisionTable.prototype.attachTableListeners = function() {
         var self = this;
         // Click event for removing multiple decision rows
-        $(this.dom.trashNode).on('click', function() {
+        this.dom.trashNode.on('click', function() {
             self.removeMultipleDecisionRows();
+        });
+        this.dom.addConditionButton.on('click', function() {
+            self.addCondition();
+        });
+        this.dom.addConclusionButton.on('click', function() {
+            self.addConclusion();
+        });
+        this.dom.addDecisionRowButton.on('click', function() {
+            self.addDecisionRow();
         });
     };
 
     DecisionTable.prototype.attachListeners = function() {
-        var that = this;
+        var self = this;
+        /*
         $(this.dom.conditionsTableContainer).on('scroll', function(){
             if (that._isApplyingColumnScrolling) {
                 that._isApplyingColumnScrolling = false;
@@ -1263,15 +1150,18 @@
         $(this.dom.indexTableContainer).on('scroll', function() {
             that.dom.conditionsTableContainer.scrollTop = that.dom.conclusionsTableContainer.scrollTop = this.scrollTop;
         });
+        */
 
         // Click event for removing decision row
-        $(this.dom.decisionTableBody).on('click', 'span.decision-table-remove-row', function() {
-            that.removeDecisionRow(
-                $(that.dom.decisionTableBody).children('tr.' + that.decisionTableRowClassName)
+        this.dom.decisionTableBody.on('click', 'span.decision-table-remove-row', function() {
+            self.removeDecisionRow(
+                self.dom.decisionTableBody
+                    .children('tr.' + self.decisionTableRowClassName)
                     .index(this.closest('tr'))
             );
         });
 
+        /*
         $(this.dom.conditionsTable).on('keydown', 'td', function(e) {
             var index, row = this.parentElement;
             if(e.keyCode === 9) {
@@ -1285,21 +1175,26 @@
                 }
             }
         });
+        */
 
-        $(this.dom.decisionTable).on('keydown', 'td', function(e) {
+        this.dom.decisionTable.on('keydown', 'td', function(e) {
             var index, row = this.parentElement;
             if(e.keyCode === 9) {
                 index = $(row.parentElement).find("tr").index(row);
                 if(!e.shiftKey) {
                     e.preventDefault();
-                    $(that.conditions[0].getValueHTML(index)[0]).find("span").focus();
+                    $(self.conditions[0]
+                        .getValueHTML(index)[0])
+                        .find("span").focus();
                 } else if(index > 0){
                     e.preventDefault();
-                    $(that.conclusions[that.conclusions.length - 1].getValueHTML(index - 1)).find("span").focus();
+                    $(self.conclusions[that.conclusions.length - 1].getValueHTML(index - 1))
+                        .find("span").focus();
                 }
             }
         });
 
+        /*
         $(this.dom.conclusionsTable).on("keydown", "td", function(e) {
             var index, row = this.parentElement;
             if(e.keyCode === 9) {
@@ -1327,21 +1222,24 @@
                 }
             }
         });
+        */
 
-        $(this.dom.decisionTable).on('keydown', 'td', function(e) {
-            var index, row = this.parentElement;
-            if(e.keyCode === 9) {
+        this.dom.decisionTable.on('keydown', 'td', function(e) {
+            var index, row = self.parentElement;
+            if (e.keyCode === 9) {
                 index = $(row.parentElement).find("tr").index(row);
-                if($(row).find("td:last").get(0) === this && !e.shiftKey) {
+                if ($(row).find("td:last").get(0) === self && !e.shiftKey) {
                     e.preventDefault();
-                    $(that.conditions[0].getValueHTML(index)[0]).find("span").focus();
-                } else if($(row).find("td:first").get(0) === this && e.shiftKey && index > 0){
+                    $(self.conditions[0].getValueHTML(index)[0]).find("span").focus();
+                } else if ($(row).find("td:first").get(0) === self && e.shiftKey && index > 0){
                     e.preventDefault();
-                    $(that.conclusions[that.conclusions.length - 1].getValueHTML(index - 1)).find('span').focus();
+                    $(self.conclusions[self.conclusions.length - 1].getValueHTML(index - 1))
+                        .find('span').focus();
                 }
             }
         });
 
+        /*
         $(this.dom.conclusionsTable).on('keydown', 'td', function(e) {
             var index, row = this.parentElement;
             if(e.keyCode === 9) {
@@ -1364,6 +1262,7 @@
         }).on("blur", "select, input", function(){
             //$(that.html).find("tr.cell-edit").removeClass("cell-edit");
         });
+        */
 
         return this;
     };
@@ -1598,72 +1497,6 @@
         }
 
         return json;
-    };
-
-    /*
-     * Create an element to select check box of business rule
-     */
-    DecisionTable.prototype.getRowCheckboxElement = function() {
-        var input = document.createElement('input');
-        var checkboxSpan = this.createHTMLElement('span');
-        var cell = this.createHTMLElement('td');
-        cell.className = 'checkbox-td';
-        input.type = 'checkbox';
-        input.className = 'checkbox-input';
-        checkboxSpan.className = 'checkbox-index';
-        checkboxSpan.appendChild(input);
-        cell.appendChild(checkboxSpan);
-        return cell;
-    };
-
-    /*
-     * Create an element to show index of business rule
-     */
-    DecisionTable.prototype.getIndexRowElement = function() {
-        var indexNode = this.createHTMLElement('span');
-        var cell = this.createHTMLElement('td');
-        // set the index;
-        indexNode.innerText = this.decisionRows + 1;
-        indexNode.className = 'index';
-        cell.appendChild(indexNode);
-        return cell;
-    };
-
-    /*
-     * Create an element for removing a decision row
-     */
-    DecisionTable.prototype.getRemoveRowElement = function() {
-        var minusNode = this.createHTMLElement('span');
-        var cell = this.createHTMLElement('td');
-        minusNode.className = 'fa fa-minus decision-table-remove-row';
-        cell.appendChild(minusNode);
-        return cell;
-    };
-
-    /*
-     * Create an element for adding a decision row
-     */
-    DecisionTable.prototype.getAddRowElement = function() {
-        var self = this;
-        var plusNode = this.createHTMLElement('span');
-        var cell = this.createHTMLElement('td');
-        plusNode.className = 'fa fa-plus decision-table-add-row';
-        $(plusNode).on('click', function() {
-            self.addDecisionRow();
-        });
-        cell.appendChild(plusNode);
-        return cell;
-    };
-
-    /*
-     * Create an empty td element
-     */
-    DecisionTable.prototype.createEmptyCell = function(colspan) {
-        var emptyCol = this.createHTMLElement('td');
-        if ((!_.isUndefined(colspan)) && (colspan > 1)) {
-            $(emptyCol).attr('colspan', colspan);
-        }
-        return emptyCol;
     };
 
 //DecisionTableVariable
@@ -1936,46 +1769,24 @@
     };
 
     DecisionTableVariable.prototype.createHTML = function() {
-        var html = this.createHTMLElement('td');
-        var content;
-
         if (this.html) {
             return this.html;
         }
 
-        var div = this.createHTMLElement('div');
-        div.className = (this.variableMode == 'condition') ?
-            'decision-table-conditions-header' :
-            'decision-table-conclusions-header';
+        if (!this.template) {
+            this.template = this.compileTemplate('variable');
+        }
 
-        if(this.isReturnType) {
-            content = this.createHTMLElement('span');
-            content.className = 'decision-table-return';
-            div.appendChild(content);
-            html.className = this.parent.conclusionColumnClassName;
-            html.appendChild(div);
-        } else {
-            content = this.select;
-            div.appendChild(content);
-            var div2 = this.createHTMLElement('div');
-            div2.style.float = 'right';
-            var minusNode = this.createHTMLElement('span');
-            minusNode.className = 'fa fa-minus';
-            var textContainer = this.createHTMLElement('button');
-            textContainer.appendChild(minusNode);
-            textContainer.className = this.parent.closeElementClassName;
-            if (this.variableMode == 'condition') {
-                textContainer.title = translate('LBL_PMSE_TOOLTIP_REMOVE_CONDITION', DecisionTable.LANG_MODULE);
-                html.className = this.parent.conditionColumnClassName;
-            } else {
-                textContainer.title = translate('LBL_PMSE_TOOLTIP_REMOVE_CONCLUSION', DecisionTable.LANG_MODULE);
-                html.className = this.parent.conclusionColumnClassName;
-            }
-            this.closeButton = textContainer;
-            div2.appendChild(textContainer);
+        var context = {isCondition : this.variableMode == 'condition', isReturn : this.isReturnType};
+        context.title = context.isCondition ?
+            translate('LBL_PMSE_TOOLTIP_REMOVE_CONDITION', DecisionTable.LANG_MODULE) :
+            translate('LBL_PMSE_TOOLTIP_REMOVE_CONCLUSION', DecisionTable.LANG_MODULE);
 
-            html.appendChild(div);
-            html.appendChild(div2);
+        var html = this.getHTMLFromTemplate(this.template, context);
+
+        if (!context.isReturn) {
+            $(html).find('#select').replaceWith(this.select);
+            this.closeButton = $(html).find(':button').first();
         }
 
         this.html = html;
@@ -1997,13 +1808,6 @@
 
         numDecisionRows = $(this.parent.decisionTableBodyClassId).children('tr').length - 1;
         if (this.variableMode == 'condition') {
-            // Delete the condition from all decision rows
-            // skip the first row (index of 0) since that has been removed already
-            for (i = 1; i <= numDecisionRows; i++) {
-                $(this.parent.decisionTableBodyClassId).children('tr').eq(i).
-                children('td').eq(index + this.parent.preConditionsCols).remove();
-            }
-
             // Adjust the Conditions Header Column colspan
             newColspan = $('#decision-table-conditions-header-column').attr('colspan') - 1;
             $(this.parent.dom.conditionsHeader).attr('colspan', newColspan);
@@ -2476,11 +2280,13 @@
             return this.html;
         }
 
-        var cell;
+        if (!this.template2) {
+            this.template2 = this.compileTemplate('single-value');
+        }
 
-        cell = this.createHTMLElement('td');
+        var context = {};
 
-        cell.className = 'decision-table-conclusion-column';
+        var cell = this.getHTMLFromTemplate(this.template2, context);
 
         cell.appendChild(this.expression.getHTML());
 
@@ -2592,23 +2398,27 @@
             return this.html;
         }
 
-        var valueCell, operatorCell, span;
-        valueCell = DecisionTableSingleValue.prototype.createHTML.call(this);
-
-        operatorCell = this.createHTMLElement("td");
-        operatorCell.className = 'decision-table-operator';
-        span = this.createHTMLElement("span");
-        span.tabIndex = 0;
-        if(this.operator) {
-            span.appendChild(document.createTextNode(this.findOperatorLabel(this.operator)));
-        } else {
-            span.innerHTML = '&nbsp';
+        if (!this.template) {
+            this.template = this.compileTemplate('value-evaluation');
         }
-        operatorCell.appendChild(span);
 
-        this.html = [operatorCell, valueCell];
+        var context = {};
+        if(this.operator) {
+            context.operator = this.findOperatorLabel(this.operator);
+        } else {
+            context.operator = '&nbsp;';
+        }
 
-        this.attachListeners();
+        var html = this.getHTMLFromTemplate(this.template, context);
+
+        var valueCell = DecisionTableSingleValue.prototype.createHTML.call(this);
+
+        $(html).find('#value').replaceWith(valueCell);
+
+        $(html).on('focus', 'span', this.onEnterCellHandler(this.createOperatorControl()))
+            .on('blur', 'select', this.onLeaveCellHandler('operator'));
+
+        this.html = html;
 
         return this.html;
     };
@@ -2677,17 +2487,6 @@
                 return select;
             }
         };
-    };
-
-    DecisionTableValueEvaluation.prototype.attachListeners = function() {
-        if(!this.html || !this.html.push) {
-            return this;
-        }
-
-        $(this.html[0]).on('focus', 'span', this.onEnterCellHandler(this.createOperatorControl()))
-            .on('blur', 'select', this.onLeaveCellHandler('operator'));
-
-        return this;
     };
 
     DecisionTableValueEvaluation.prototype.filledValue = function() {
