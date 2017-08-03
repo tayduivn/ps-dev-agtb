@@ -42,8 +42,8 @@ help:
 	@echo "TARGETS:"
 	@echo " build:                  builds Sugar for Dev Use"
 	@echo " release_build:          builds Sugar and Upgrade Utilities"
-	@echo " docker_build:           builds Sugar in a docker container, runs `make clean build`
-	@echo " docker_release_build:   builds Sugar and Upgrade Utilities in a docker container, runs `make clean release_build`
+	@echo " docker_build:           builds Sugar in a docker container, runs clean and build targets"
+	@echo " docker_release_build:   builds Sugar and Upgrade Utilities in a docker container, runs clean and release_build targets"
 	@echo " clean:                  removes existing build from the SUGAR_BUILD_DIR"
 	@echo " package:                creates the zip files and places them in SUGAR_BUILD_DIR, should be called after build or release_build"
 
