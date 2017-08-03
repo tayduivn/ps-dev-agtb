@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {BaseView} from '@sugarcrm/seedbed';
+import {BaseView, seedbed} from '@sugarcrm/seedbed';
 import PreviewView from '../views/preview-view';
 import PreviewHeaderView from '../views/preview-header-view';
 
@@ -33,8 +33,20 @@ export default class PreviewLayout extends BaseView {
         this.PreviewHeaderView = this.createComponent(PreviewHeaderView);
 
         this.selectors = this.mergeSelectors({
-            $: '#sugarcrm .preview-pane.active'
+            $: '#sugarcrm .preview-pane.active',
+            showMoreBtn: '.btn.more',
+            showLessBtn: '.btn.less',
         });
 
+    }
+    public async showMore() {
+        if (await seedbed.client.isVisible(this.$('showMoreBtn'))) {
+            await seedbed.client.click(this.$('showMoreBtn'));
+        }
+    }
+    public async showLess() {
+        if (await seedbed.client.isVisible(this.$('showLessBtn'))) {
+            await seedbed.client.click(this.$('showLessBtn'));
+        }
     }
 }
