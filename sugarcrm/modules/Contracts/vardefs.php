@@ -133,35 +133,6 @@ $dictionary['Contract'] = array(
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
         ),
-        'currency_id' => array(
-            'name' => 'currency_id',
-            'type' => 'currency_id',
-            'dbType' => 'id',
-            'vname' => 'LBL_CURRENCY_ID',
-            'group' => 'currency_id',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'required' => false,
-            'reportable' => false,
-            'default' => '-99',
-            'comment' => 'The currency in use for the contract'
-        ),
-        'base_rate' => array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-            'studio' => false
-        ),
-        'currency_name' => array(
-            'name' => 'currency_name',
-            'type' => 'enum',
-            'vname' => 'LBL_CURRENCY',
-            'function' => 'getCurrencyDropDown',
-            'source' => 'non-db',
-            'studio' => 'false',
-            'comment' => 'Currency name used for Meta-data framework',
-        ),
         'total_contract_value' => array(
             'name' => 'total_contract_value',
             'vname' => 'LBL_TOTAL_CONTRACT_VALUE',
@@ -400,6 +371,7 @@ $dictionary['Contract'] = array(
         'default',
         'assignable',
         'team_security',
+        'currency',
         'taggable',
     ),
 );
