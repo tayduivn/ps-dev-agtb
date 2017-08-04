@@ -697,41 +697,54 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 addFilterRow(groupsName, groupsValues);
             }
 
-            // pie & funnel chart
+            // PIE | FUNNEL CHART & DISCRETE DATA
             if (!isGroupType && hasSameGroup && !_.isEmpty(seriesLabel) && _.isEmpty(groupLabel)) {
                 // then use series
                 groupLabel = groupLabel || seriesLabel;
                 params.groupLabel = groupLabel;
                 addSeriesRow();
             }
-            // pie & funnel chart & grouped data
-            // this happens when data with multiple groupings is displayed as pie or funnel
-            else if (!isGroupType && !hasSameGroup && !hasSameLabel) {
-                // then use group
-                groupLabel = groupLabel || seriesLabel;
-                params.groupLabel = groupLabel;
-                addGroupRow();
-            }
-            // grouped or basic type & discrete data (isGroupType ignored)
-            else if (hasSameGroup && hasSameLabel) {
-                // then use either, but only one
-                addSeriesRow();
-            }
-            // grouped type & grouped data
-            else if (isGroupType && !hasSameGroup && !hasSameLabel) {
-                // then use both
-                addGroupRow();
-                addSeriesRow();
-            }
-            // basic type & discrete data
+            // BASIC TYPE & DISCRETE DATA
+            /*
+                Accounts by Type ::
+                Bar Chart :: industry == industry && Apparel != Accounts
+            */
             else if (!isGroupType && hasSameGroup && !hasSameLabel) {
                 // then use group
                 addGroupRow();
             }
-            // basic type & grouped data
-            else if (!isGroupType && !hasSameGroup && hasSameLabel) {
+            // PIE | FUNNEL CHART & GROUPED DATA
+            // this happens when data with multiple groupings is displayed as pie or funnel
+            /*
+                Accounts by Type by Industry ::
+                Bar Chart :: type != industry
+            */
+            else if (!isGroupType && !hasSameGroup) {
                 // then use group
+                if (!hasSameLabel) {
+                    groupLabel = groupLabel || seriesLabel;
+                    params.groupLabel = groupLabel;
+                }
                 addGroupRow();
+            }
+            // GROUPED OR BASIC TYPE & DISCRETE DATA (isGroupType ignored)
+            /*
+                Accounts by Type
+                Bar Grouped Chart :: type == type && Apparel == Apparel
+            */
+            else if (hasSameGroup && hasSameLabel) {
+                // then use either, but only one
+                addSeriesRow();
+            }
+            // GROUPED TYPE & GROUPED DATA
+            /*
+                Accounts by Type by Industry ::
+                Bar Grouped Chart :: type != industry
+            */
+            else if (isGroupType && !hasSameGroup) {
+                // then use both
+                addGroupRow();
+                addSeriesRow();
             }
 
             return def;
