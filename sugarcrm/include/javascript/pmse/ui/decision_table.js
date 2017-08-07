@@ -415,12 +415,12 @@
                     });
 
                 // Visual cue to remove decision table rows
-                $('#trash-button').addClass('btn-primary');
+                $('#trash-button').removeClass('decision-table-btn-hidden');
             }
 
             // Remove visual cue when nothing is selected
             if ($('.checkbox-input:checked').length == 0) {
-                $('#trash-button').removeClass('btn-primary');
+                $('#trash-button').addClass('decision-table-btn-hidden');
             }
         });
 
@@ -519,7 +519,7 @@
                 .index(this);
             self.removeDecisionRowWithoutConfirmation(removeIndex);
         });
-        $('#trash-button').removeClass('btn-primary');
+        $('#trash-button').addClass('decision-table-btn-hidden');
     };
 
     DecisionTable.prototype.removeMultipleDecisionRows = function() {
@@ -724,7 +724,7 @@
                     $(this).removeAttr('data-previndex').removeAttr('data-newindex');
                 });
                 self.sortDecisionRows(decisionRowMappings);
-                $('#trash-button').removeClass('btn-primary');
+                $('#trash-button').addClass('decision-table-btn-hidden');
             }
         });
     };

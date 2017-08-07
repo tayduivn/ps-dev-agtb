@@ -906,3 +906,7 @@ td.decision-table-conclusion-column {
 span.remove-index, span.checkbox-index {
   width: 1.5em;
 }
+
+.decision-table-btn-hidden {
+  display: none;
+}
