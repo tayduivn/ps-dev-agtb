@@ -333,7 +333,7 @@ class RestRequest
      * @param string $rawPath
      * @return array
      */
-    protected function parsePath($rawPath)
+    public function parsePath($rawPath)
     {
         $pathBits = explode('/',trim($rawPath,'/'));
         $versionBit = $pathBits[0];
