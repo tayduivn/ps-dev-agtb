@@ -95,8 +95,8 @@
         this.onChange = defaults.onChange;
         this.rows = parseInt(defaults.rows, 10);
 
-        // first 3 cols are for index, add/delete and checkbox
-        this.preConditionsCols = 3;
+        // first 2 cols are for index and checkbox
+        this.preConditionsCols = 2;
         // after Conditions end and before Conclusions begin
         // there is a column '+' for adding a condition
         this.preConclusionsCols = 1;
@@ -1116,66 +1116,6 @@
 
     DecisionTable.prototype.attachListeners = function() {
         var self = this;
-        /*
-        $(this.dom.conditionsTableContainer).on('scroll', function(){
-            if (that._isApplyingColumnScrolling) {
-                that._isApplyingColumnScrolling = false;
-            } else {
-                that.globalCBControl.close();
-                that.globalDDSelector.close();
-            }
-            that.dom.conditionsHeaderContainer.scrollLeft = this.scrollLeft;
-            that.dom.conclusionsTableContainer.scrollTop = this.scrollTop;
-        });
-
-        $(this.dom.conditionsHeaderContainer).on('scroll', function() {
-            that.dom.conditionsTableContainer.scrollLeft = this.scrollLeft;
-        });
-
-        $(this.dom.conclusionsHeaderContainer).on('scroll', function () {
-            that.dom.conclusionsTableContainer.scrollLeft = this.scrollLeft;
-        });
-
-        $(this.dom.conclusionsTableContainer).on('scroll', function(){
-            if (that._isApplyingColumnScrolling) {
-                that._isApplyingColumnScrolling = false;
-            } else {
-                that.globalCBControl.close();
-                that.globalDDSelector.close();
-            }
-            that.dom.conclusionsHeaderContainer.scrollLeft = this.scrollLeft;
-            that.dom.indexTableContainer.scrollTop = that.dom.conditionsTableContainer.scrollTop = this.scrollTop;
-        });
-
-        $(this.dom.indexTableContainer).on('scroll', function() {
-            that.dom.conditionsTableContainer.scrollTop = that.dom.conclusionsTableContainer.scrollTop = this.scrollTop;
-        });
-        */
-
-        // Click event for removing decision row
-        this.dom.decisionTableBody.on('click', 'span.decision-table-remove-row', function() {
-            self.removeDecisionRow(
-                self.dom.decisionTableBody
-                    .children('tr.' + self.decisionTableRowClassName)
-                    .index(this.closest('tr'))
-            );
-        });
-
-        /*
-        $(this.dom.conditionsTable).on('keydown', 'td', function(e) {
-            var index, row = this.parentElement;
-            if(e.keyCode === 9) {
-                index = $(row.parentElement).find("tr").index(row);
-                if($(row).find("td:last").get(0) === this && !e.shiftKey) {
-                    e.preventDefault();
-                    $(that.conclusions[0].getValueHTML(index)).find("span").focus();
-                } else if($(row).find("td:first").get(0) === this && e.shiftKey) {
-                    e.preventDefault();
-                    $(that.dom.indexTable).find("span").eq(index).focus();
-                }
-            }
-        });
-        */
 
         this.dom.decisionTable.on('keydown', 'td', function(e) {
             var index, row = this.parentElement;
@@ -1194,36 +1134,6 @@
             }
         });
 
-        /*
-        $(this.dom.conclusionsTable).on("keydown", "td", function(e) {
-            var index, row = this.parentElement;
-            if(e.keyCode === 9) {
-                index = $(row.parentElement).find("tr").index(row);
-                if($(row).find("td:last").get(0) === this && !e.shiftKey && index < that.decisionRows - 1) {
-                    e.preventDefault();
-                    $(that.dom.indexTable).find("span").eq(index + 1).focus();
-                } else if($(row).find("td:first").get(0) === this && e.shiftKey) {
-                    e.preventDefault();
-                    $(that.conditions[that.conditions.length - 1].getValueHTML(index)[1]).find("span").focus();
-                }
-            }
-        });
-
-        $(this.dom.conditionsTable).on('keydown', 'td', function(e) {
-            var index, row = this.parentElement;
-            if(e.keyCode === 9) {
-                index = $(row.parentElement).find("tr").index(row);
-                if($(row).find("td:last").get(0) === this && !e.shiftKey) {
-                    e.preventDefault();
-                    $(that.conclusions[0].getValueHTML(index)).find("span").focus();
-                } else if($(row).find("td:first").get(0) === this && e.shiftKey) {
-                    e.preventDefault();
-                    $(that.dom.indexTable).find("button").eq(index).focus();
-                }
-            }
-        });
-        */
-
         this.dom.decisionTable.on('keydown', 'td', function(e) {
             var index, row = self.parentElement;
             if (e.keyCode === 9) {
@@ -1239,30 +1149,6 @@
             }
         });
 
-        /*
-        $(this.dom.conclusionsTable).on('keydown', 'td', function(e) {
-            var index, row = this.parentElement;
-            if(e.keyCode === 9) {
-                index = $(row.parentElement).find("tr").index(row);
-                if($(row).find("td:last").get(0) === this && !e.shiftKey && index < that.decisionRows - 1) {
-                    e.preventDefault();
-                    $(that.dom.decisionTable).find('button').eq(index + 1).focus();
-                } else if($(row).find("td:first").get(0) === this && e.shiftKey) {
-                    e.preventDefault();
-                    $(that.conditions[that.conditions.length - 1].getValueHTML(index)[1]).find("span").focus();
-                }
-            }
-        });
-
-        $(this.dom.conditionsTable).add(this.dom.conclusionsTable).add(this.dom.indexTable).on("focus", "td", function() {
-            var row = this.parentElement, index;
-            $(that.html).find("tr.cell-edit").removeClass("cell-edit");
-            index = $(row.parentElement).find("tr").index(row);
-            $(that.dom.indexTable.childNodes[index]).add(that.dom.conditionsTable.childNodes[index]).add(that.dom.conclusionsTable.childNodes[index]).addClass("cell-edit");
-        }).on("blur", "select, input", function(){
-            //$(that.html).find("tr.cell-edit").removeClass("cell-edit");
-        });
-        */
 
         return this;
     };
