@@ -17,11 +17,7 @@ $viewdefs['Emails']['base']['filter']['basic'] = array(
         array(
             'id' => 'all_records',
             'name' => 'LBL_LISTVIEW_FILTER_ALL',
-            'filter_definition' => array(
-                'state' => array(
-                    '$not_in' => array('Draft'),
-                ),
-            ),
+            'filter_definition' => array(),
             'editable' => false,
         ),
         array(
