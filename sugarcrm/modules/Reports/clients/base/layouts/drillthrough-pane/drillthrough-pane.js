@@ -86,6 +86,10 @@
         var reportData = this.context.get('reportData');
         var title = dashlet.$('.dashlet-title');
 
+        // This will allow scrolling when drilling thru from Report detail view
+        // but will respect the dashlet setting when drilling thru from SRC
+        config.allowScroll = true;
+
         dashlet.settings.set(config);
         dashlet.reportData.set('rawChartParams', config);
         dashlet.reportData.set('rawReportData', reportData);
