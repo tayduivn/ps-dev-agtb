@@ -28,10 +28,38 @@ class Email extends SugarBean {
 	var $created_by;
 	var $team_id;
 	var $deleted;
+    /**
+     * The name and email address of the email's sender, formatted for use in the email's FROM header.
+     *
+     * @var string
+     * @deprecated Use {@link Email::$from} to link the sender to the email.
+     */
 	var $from_addr;
+    /**
+     * @var string
+     * @deprecated Replies are directed to the sender. Use {@link Email::$from} to retrieve the sender.
+     */
 	var $reply_to_addr;
+    /**
+     * The names and email addresses of the email's recipients, formatted for use in the email's TO header.
+     *
+     * @var string
+     * @deprecated Use {@link Email::$to} to link the recipients to the email.
+     */
 	var $to_addrs;
+    /**
+     * The names and email addresses of the email's recipients, formatted for use in the email's CC header.
+     *
+     * @var string
+     * @deprecated Use {@link Email::$cc} to link the recipients to the email.
+     */
     var $cc_addrs;
+    /**
+     * The names and email addresses of the email's recipients, formatted for use in the email's BCC header.
+     *
+     * @var string
+     * @deprecated Use {@link Email::$bcc} to link the recipients to the email.
+     */
     var $bcc_addrs;
 	var $message_id;
 
@@ -52,10 +80,22 @@ class Email extends SugarBean {
 	var $status;
 	var $intent;
 	var $mailbox_id;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$from} to link the sender to the email.
+     */
 	var $from_name;
 
 	var $reply_to_status;
+    /**
+     * @var string
+     * @deprecated Replies are directed to the sender. Use {@link Email::$from} to retrieve the sender.
+     */
 	var $reply_to_name;
+    /**
+     * @var string
+     * @deprecated Replies are directed to the sender. Use {@link Email::$from} to retrieve the sender.
+     */
 	var $reply_to_email;
 	var $description;
 	var $description_html;
@@ -70,18 +110,70 @@ class Email extends SugarBean {
 	/* legacy */
 	var $date_start; // legacy
 	var $time_start; // legacy
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$from} to link the sender to the email.
+     */
 	var $from_addr_name;
+    /**
+     * @var array
+     * @deprecated Use {@link Email::$to} to link the recipients to the email.
+     */
 	var $to_addrs_arr;
+    /**
+     * @var array
+     * @deprecated Use {@link Email::$cc} to link the recipients to the email.
+     */
     var $cc_addrs_arr;
+    /**
+     * @var array
+     * @deprecated Use {@link Email::$bcc} to link the recipients to the email.
+     */
     var $bcc_addrs_arr;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$to} to link the recipients to the email.
+     */
 	var $to_addrs_ids;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$to} to link the recipients to the email.
+     */
 	var $to_addrs_names;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$to} to link the recipients to the email.
+     */
 	var $to_addrs_emails;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$cc} to link the recipients to the email.
+     */
 	var $cc_addrs_ids;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$cc} to link the recipients to the email.
+     */
 	var $cc_addrs_names;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$cc} to link the recipients to the email.
+     */
 	var $cc_addrs_emails;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$bcc} to link the recipients to the email.
+     */
 	var $bcc_addrs_ids;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$bcc} to link the recipients to the email.
+     */
 	var $bcc_addrs_names;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$bcc} to link the recipients to the email.
+     */
 	var $bcc_addrs_emails;
 	var $contact_id;
 	var $contact_name;
@@ -100,25 +192,74 @@ class Email extends SugarBean {
 
 	/* private attributes */
 	var $rolloverStyle		= "<style>div#rollover {position: relative;float: left;margin: none;text-decoration: none;}div#rollover a:hover {padding: 0;text-decoration: none;}div#rollover a span {display: none;}div#rollover a:hover span {text-decoration: none;display: block;width: 250px;margin-top: 5px;margin-left: 5px;position: absolute;padding: 10px;color: #333;	border: 1px solid #ccc;	background-color: #fff;	font-size: 12px;z-index: 1000;}</style>\n";
+    /**
+     * @var string
+     * @deprecated This property is no longer used.
+     */
 	var $cachePath;
+    /**
+     * @var string
+     * @deprecated This property is no longer used.
+     */
 	var $cacheFile			= 'robin.cache.php';
+    /**
+     * The prefix for any lines in a reply that come from the original email.
+     *
+     * @var string
+     * @deprecated This property is only used in {@link Email::getForwardHeader()}, which has been deprecated.
+     */
 	var $replyDelimiter	= "> ";
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$description} to store the plain-text body of the email.
+     */
 	var $emailDescription;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$description_html} to store the HTML body of the email.
+     */
 	var $emailDescriptionHTML;
+    /**
+     * @var string
+     * @deprecated Use {@link Email::$raw_source} to store the raw contents of the email.
+     */
 	var $emailRawSource;
+    /**
+     * @var string
+     * @deprecated This property is only used in {@link Email::fill_in_additional_list_fields()},
+     * {@link Email::fill_in_additional_detail_fields()}, and {@link Email::get_list_view_data()}.
+     */
 	var $link_action;
+    /**
+     * @var EmailAddress
+     * @deprecated Use `BeanFactory::newBean('EmailAddresses')` to create an instance as needed.
+     */
 	var $emailAddress;
 	var $attachments = array();
+    /**
+     * @var array
+     * @deprecated This property is only used in {@link Email::send()} and {@link Email::handleAttachments()}.
+     */
     var $saved_attachments = array();
 
 	/* to support Email 2.0 */
 	var $isDuplicate;
 	var $uid;
 	var $to;
+    /**
+     * The IMAP flag for an email.
+     *
+     * @var int
+     * @deprecated The BWC Emails UI is no longer being used.
+     */
 	var $flagged;
 	var $answered;
 	var $seen;
 	var $draft;
+    /**
+     * @var array
+     * @deprecated This property is no longer used.
+     */
 	var $relationshipMap = array(
 		'Contacts'	=> 'emails_contacts_rel',
 		'Accounts'	=> 'emails_accounts_rel',
@@ -128,9 +269,27 @@ class Email extends SugarBean {
 	);
 
 	/* public */
-	var $et;		// EmailUI object
-	// prefix to use when importing inlinge images in emails
+    /**
+     * @var EmailUI
+     * @deprecated The BWC Emails UI is no longer being used.
+     */
+    public $et;
+    /**
+     * Prefix to use when importing inlinge images in emails.
+     *
+     * @var string
+     * @deprecated This property is only used in {@link Email::cid2Link()}.
+     */
 	public $imagePrefix;
+
+    /**
+     * A reference to the attachment icon for the selected theme.
+     *
+     * @var string
+     * @deprecated This property is only used in {@link Email::fill_in_additional_list_fields()} and
+     * {@link Email::get_list_view_data()}.
+     */
+    public $attachment_image;
 
     private $MockMailerFactoryClass = 'MailerFactory';
 
@@ -138,6 +297,8 @@ class Email extends SugarBean {
      * Used for keeping track of field defs that have been modified
      *
      * @var array
+     * @deprecated This property is only used in {@link Email::setFieldNullable()} and
+     * {@link Email::revertFieldNullable()}.
      */
     public $modifiedFieldDefs = array();
 
@@ -145,9 +306,24 @@ class Email extends SugarBean {
      * Used for keeping track of field defs that have been added
      *
      * @var array
+     * @deprecated This property is only used in {@link Email::setFieldNullable()} and
+     * {@link Email::revertFieldNullable()}.
      */
     protected $addedFieldDefs = array();
 
+    /**
+     * @var string
+     * @deprecated {@link Email::$type} and {@link Email::$status} have been merged into one field named
+     * {@link Email::$state}.
+     */
+    public $type_name;
+
+    /**
+     * @var string
+     * @deprecated {@link Email::$type} and {@link Email::$status} have been merged into one field named
+     * {@link Email::$state}.
+     */
+    public $status_name;
 
 	/**
 	 * sole constructor
@@ -178,7 +354,12 @@ class Email extends SugarBean {
         }
     }
 
+    /**
+     * @deprecated {@link EmailUI} is no longer used, making this method unnecessary.
+     */
 	function email2init() {
+        LoggerManager::getLogger()->deprecated('Email::email2init() has been deprecated. EmailUI is no longer used.');
+
 		$this->et = new EmailUI();
 	}
 
@@ -187,8 +368,11 @@ class Email extends SugarBean {
      * It should never be used outside of the PHP Unit Test Framework
      *
      * @param $className
+     * @deprecated This method is only used in a test for {@link Email::send()}.
      */
     public function _setMailerFactoryClassName($className) {
+        LoggerManager::getLogger()->deprecated('Email::_setMailerFactoryClassName() has been deprecated.');
+
         $this->MockMailerFactoryClass = $className;
     }
 
@@ -204,10 +388,17 @@ class Email extends SugarBean {
 	/**
 	 * Presaves one attachment for new email 2.0 spec
 	 * DOES NOT CREATE A NOTE
+     *
+     * @deprecated Use the File API to upload files and {@link Email::$attachments} in the Emails API to move files to
+     * their final destinations and attach them to the email.
 	 * @return string ID of note associated with the attachment
 	 */
 	public function email2saveAttachment()
 	{
+        LoggerManager::getLogger()->deprecated('Email::email2saveAttachment() has been deprecated. Use the File API '.
+            'to upload files and Email::$attachments in the Emails API to move files to their final destinations and ' .
+            'attach them to the email.');
+
         $email_uploads = "modules/Emails/{$GLOBALS['current_user']->id}";
 	    $upload = new UploadFile('email_attachment');
 		if(!$upload->confirm_upload()) {
@@ -235,8 +426,19 @@ class Email extends SugarBean {
         }
 	}
 
+    /**
+     * @deprecated Use the File API to upload files and {@link Email::$attachments} in the Emails API to move files to
+     * their final destinations and attach them to the email.
+     * @param string $filename
+     * @return bool
+     */
 	function safeAttachmentName($filename) {
 		global $sugar_config;
+
+        LoggerManager::getLogger()->deprecated('Email::safeAttachmentName() has been deprecated. Use the File API ' .
+            'to upload files and Email::$attachments in the Emails API to move files to their final destinations and ' .
+            'attach them to the email.');
+
 		$badExtension = false;
 		//get position of last "." in file name
 		$file_ext_beg = strrpos($filename, ".");
@@ -263,11 +465,14 @@ class Email extends SugarBean {
     /**
      * takes output from email 2.0 to/cc/bcc fields and returns appropriate arrays for usage by PHPMailer
      *
+     * @deprecated This method is no longer used.
      * @param string addresses
      * @return array
      */
     public function email2ParseAddresses($addresses)
     {
+        LoggerManager::getLogger()->deprecated('Email::email2ParseAddresses() has been deprecated.');
+
         $ret = array();
         if (!empty($addresses)) {
             $addresses = from_html($addresses);
@@ -310,10 +515,17 @@ class Email extends SugarBean {
 
 	/**
 	 * takes output from email 2.0 to/cc/bcc fields and returns appropriate arrays for usage by PHPMailer
+     *
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to link recipients to the email.
+     * Use {@link Email::$from} to link the sender to the email.
 	 * @param string addresses
 	 * @return array
 	 */
 	function email2ParseAddressesForAddressesOnly($addresses) {
+        LoggerManager::getLogger()->deprecated('Email::email2ParseAddressesForAddressesOnly() has been deprecated.' .
+            'Use Email::$to, Email::$cc, and Email::$bcc to link recipients to the email. Use Email::$from to link ' .
+            'the sender to the email.');
+
 		$addresses = from_html($addresses);
 		$pattern = '/@.*,/U';
 		preg_match_all($pattern, $addresses, $matchs);
@@ -353,13 +565,32 @@ class Email extends SugarBean {
 
 	/**
 	 * Determines MIME-type encoding as possible.
+     *
+     * @deprecated Use get_file_mime_type() instead.
 	 * @param string $fileLocation relative path to file
 	 * @return string MIME-type
 	 */
 	function email2GetMime($fileLocation) {
+        LoggerManager::getLogger()->deprecated('Email::email2GetMime() has been deprecated. Use get_file_mime_type() ' .
+            'instead.');
+
 	    return get_file_mime_type($fileLocation, 'application/octet-stream');
 	}
 
+    /**
+     * @deprecated The BWC Emails UI is no longer being used.
+     * @param string $mailserver_url
+     * @param string $port
+     * @param string $ssltls
+     * @param string $smtp_auth_req
+     * @param string $smtp_username
+     * @param string $smtppassword
+     * @param string $fromaddress
+     * @param string $toaddress
+     * @param string $mail_sendtype
+     * @param string $fromname
+     * @return array
+     */
     public static function sendEmailTest(
         $mailserver_url,
         $port,
@@ -374,6 +605,9 @@ class Email extends SugarBean {
     ) {
 		global $current_user,
                $app_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::sendEmailTest() has been deprecated. The BWC Emails UI is no ' .
+            'longer being used.');
 
 		$mod_strings = return_module_language($GLOBALS['current_language'], 'Emails'); //Called from EmailMan as well.
 
@@ -436,6 +670,9 @@ class Email extends SugarBean {
 	 */
 	function isDraftEmail($request)
 	{
+        LoggerManager::getLogger()->deprecated('Email::isDraftEmail() has been deprecated. Check if Email::$state ' .
+            'equals Email::STATE_DRAFT instead.');
+
         return isset($request['saveDraft']) ||
             ($this->type == 'draft' && $this->status == 'draft') ||
             $this->state === static::STATE_DRAFT;
@@ -443,10 +680,15 @@ class Email extends SugarBean {
 
 	/**
 	 * Sends Email for Email 2.0
+     *
+     * @deprecated Use {@link Email::sendEmail()} to send the email and {@link Email::save()} to save a draft.
 	 */
 	function email2Send($request) {
 		global $current_user;
 		global $timedate;
+
+        LoggerManager::getLogger()->deprecated('Email::email2Send() has been deprecated. Use Email::sendEmail() to ' .
+            'send the email and Email::save() to save a draft.');
 
         // The fully constructed MIME message -- the email as it was transmitted to the mail server, complete with
         // headers and message parts -- is stored in this variable to allow the caller to choose to do something with
@@ -1046,6 +1288,8 @@ class Email extends SugarBean {
 	 * contacts or leads from listview
      * By default, use comma, but allow for non-standard delimeters as specified in email_address_separator
 	 *
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to retrieve the email's
+     * recipients. Use {@link Email::$from} to retrieve the email's sender.
 	 * @param $module string module name
 	 * @param $idsArray array of record ids to get the email address for
 	 * @return string (config-specified) delimited list of email addresses
@@ -1053,8 +1297,13 @@ class Email extends SugarBean {
 	public function getNamePlusEmailAddressesForCompose($module, $idsArray)
 	{
 		global $locale;
-        $result = array();
 		global $db;
+
+        LoggerManager::getLogger()->deprecated('Email::getNamePlusEmailAddressesForCompose() has been deprecated. ' .
+            "Use Email::\$to, Email::\$cc, and Email::\$bcc to retrieve the email's recipients. Use Email::\$from to " .
+            "retrieve the email's sender.");
+
+        $result = array();
 		$table = BeanFactory::newBean($module)->table_name;
 		$returndata = array();
 		$idsString = "";
@@ -1104,11 +1353,17 @@ class Email extends SugarBean {
     }
 
     /**
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to retrieve the email's
+     * recipients. Use {@link Email::$from} to retrieve the email's sender.
      * @param Array $arr - list of strings
      * @return string the list of strings delimited by email_address_separator
      */
     function _arrayToDelimitedString($arr)
     {
+        LoggerManager::getLogger()->deprecated('Email::_arrayToDelimitedString() has been deprecated. Use ' .
+            "Email::\$to, Email::\$cc, and Email::\$bcc to retrieve the email's recipients. Use Email::\$from to " .
+            "retrieve the email's sender.");
+
         // bug 51804: outlook does not respect the correct email address separator (',') , so let
         // clients override the default.
         $separator = (isset($GLOBALS['sugar_config']['email_address_separator']) &&
@@ -1350,12 +1605,16 @@ class Email extends SugarBean {
 	/**
 	 * Helper function to save temporary attachments assocaited to an email as note.
 	 *
+     * @deprecated Use {@link Email::$attachments} to link attachments to the email.
 	 * @param string $filename
 	 * @param string $fileLocation
 	 * @param string $mimeType
 	 */
 	function saveTempNoteAttachments($filename,$fileLocation, $mimeType, $uploadId = null)
 	{
+        LoggerManager::getLogger()->deprecated('Email::saveTempNoteAttachments() has been deprecated. Use ' .
+            'Email::$attachments to link attachments to the email.');
+
 	    $tmpNote = BeanFactory::newBean('Notes');
 	    $tmpNote->id = create_guid();
 	    $tmpNote->new_with_id = true;
@@ -1382,13 +1641,22 @@ class Email extends SugarBean {
 	}
 	/**
 	 * Handles normalization of Email Addressess
+     *
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to link recipients to the email.
+     * Use {@link Email::$from} to link the sender to the email.
 	 */
 	function saveEmailAddresses() {
+        LoggerManager::getLogger()->deprecated('Email::saveEmailAddresses() has been deprecated. Use Email::$to, ' .
+            'Email::$cc, and Email::$bcc to link recipients to the email. Use Email::$from to link the sender to ' .
+            'the email.');
+
+        $ea = BeanFactory::newBean('EmailAddresses');
+
 		// from, single address
         // Only link the sender if the email is archived because the sender's email address for drafts is defined by the
         // outbound email configuration.
         if ($this->state === static::STATE_ARCHIVED) {
-            $fromId = $this->emailAddress->getEmailGUID(from_html($this->from_addr));
+            $fromId = $ea->getEmailGUID(from_html($this->from_addr));
 
             if (!empty($fromId)) {
                 $this->linkEmailToAddress($fromId, 'from');
@@ -1404,7 +1672,7 @@ class Email extends SugarBean {
 			foreach($exToAddrs as $toaddr) {
 				$toaddr = trim($toaddr);
 				if(!empty($toaddr)) {
-					$toId = $this->emailAddress->getEmailGUID($toaddr);
+                    $toId = $ea->getEmailGUID($toaddr);
 					$this->linkEmailToAddress($toId, 'to');
 				}
 			}
@@ -1418,7 +1686,7 @@ class Email extends SugarBean {
 			foreach($exccAddrs as $ccAddr) {
 				$ccAddr = trim($ccAddr);
 				if(!empty($ccAddr)) {
-					$ccId = $this->emailAddress->getEmailGUID($ccAddr);
+                    $ccId = $ea->getEmailGUID($ccAddr);
 					$this->linkEmailToAddress($ccId, 'cc');
 				}
 			}
@@ -1431,7 +1699,7 @@ class Email extends SugarBean {
 			foreach($exbccAddrs as $bccAddr) {
 				$bccAddr = trim($bccAddr);
 				if(!empty($bccAddr)) {
-					$bccId = $this->emailAddress->getEmailGUID($bccAddr);
+                    $bccId = $ea->getEmailGUID($bccAddr);
 					$this->linkEmailToAddress($bccId, 'bcc');
 				}
 			}
@@ -1444,6 +1712,8 @@ class Email extends SugarBean {
      * The email address might already be linked to the email, in which case the ID of the existing row is returned. An
      * empty string is returned if a failure occurs that cannot allow for the email address to be linked.
      *
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to link recipients to the email.
+     * Use {@link Email::$from} to link the sender to the email.
      * @param string $id The ID of the email address
      * @param string $type from, to, cc, or bcc
      * @return string The ID of the row added to the emails_email_addr_rel table.
@@ -1451,6 +1721,8 @@ class Email extends SugarBean {
     public function linkEmailToAddress($id, $type)
     {
         $logger = LoggerManager::getLogger();
+        $logger->deprecated('Email::linkEmailToAddress() has been deprecated. Use Email::$to, Email::$cc, and ' .
+            'Email::$bcc to link recipients to the email. Use Email::$from to link the sender to the email.');
 
         if ($this->isUpdate() && $this->state === static::STATE_ARCHIVED) {
             $logger->warn("Cannot add EmailAddresses/{$id} to link {$type} when Emails/{$this->id} is archived");
@@ -1521,14 +1793,26 @@ class Email extends SugarBean {
         "bcc_addrs" => "bcc_addrs_names",
     );
 
+    /**
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to link recipients to the email.
+     * Use {@link Email::$from} to link the sender to the email.
+     * @param string $emails
+     * @return string
+     */
 	function cleanEmails($emails)
 	{
+        LoggerManager::getLogger()->deprecated('Email::cleanEmails() has been deprecated. Use Email::$to, ' .
+            'Email::$cc, and Email::$bcc to link recipients to the email. Use Email::$from to link the sender to ' .
+            'the email.');
+
+        $ea = BeanFactory::newBean('EmailAddresses');
+
 	    if(empty($emails)) return '';
 		$emails = str_replace(array(",",";"), "::", from_html($emails));
 		$addrs = explode("::", $emails);
 		$res = array();
 		foreach($addrs as $addr) {
-            $parts = $this->emailAddress->splitEmailAddress($addr);
+            $parts = $ea->splitEmailAddress($addr);
             if(empty($parts["email"])) {
                 continue;
             }
@@ -1546,6 +1830,8 @@ class Email extends SugarBean {
      */
     public function saveEmailText()
     {
+        $ea = BeanFactory::newBean('EmailAddresses');
+
         // Get the linked sender and recipients.
         $participants = array(
             'from' => array(),
@@ -1567,7 +1853,7 @@ class Email extends SugarBean {
                     );
 
                     if ($parent) {
-                        $bean->email_address = $this->emailAddress->getPrimaryAddress($parent);
+                        $bean->email_address = $ea->getPrimaryAddress($parent);
                     }
                 }
 
@@ -1624,9 +1910,18 @@ class Email extends SugarBean {
 
     /**
      * Load any additional data and perform any additional postRetrieve processing
+     *
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to retrieve the email's
+     * recipients. Use {@link Email::$from} to retrieve the email's sender. Use {@link Email::retrieveEmailText()} to
+     * retrieve the email's {@link Email::description} and {@link Email::description_html}.
      */
     function loadAdditionalEmailData(SugarBean $emailBean = null)
     {
+        LoggerManager::getLogger()->deprecated('Email::loadAdditionalEmailData() has been deprecated. Use ' .
+            "Email::\$to, Email::\$cc, and Email::\$bcc to retrieve the email's recipients. Use Email::\$from to " .
+            "retrieve the email's sender. Use @link Email::retrieveEmailText() to retrieve the email's " .
+            'Email::description and Email::description_html');
+
         if (is_null($emailBean)) {
             $bean = $this;
         } else {
@@ -1652,11 +1947,18 @@ class Email extends SugarBean {
         }
     }
 
-   /**
+    /**
      * Retrieves email addresses from GUIDs
+     *
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to retrieve the email's
+     * recipients. Use {@link Email::$from} to retrieve the email's sender.
      */
     public function retrieveEmailAddresses()
     {
+        LoggerManager::getLogger()->deprecated('Email::retrieveEmailAddresses() has been deprecated. Use ' .
+            "Email::\$to, Email::\$cc, and Email::\$bcc to retrieve the email's recipients. Use Email::\$from to " .
+            "retrieve the email's sender.");
+
         if (empty($this->id)) {
             $GLOBALS['log']->warn('Skipping Email::retrieveEmailAddresses because of missing bean.id value');
             return;
@@ -1785,11 +2087,16 @@ class Email extends SugarBean {
 
 	/**
 	 * creates the standard "Forward" info at the top of the forwarded message
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
 	 * @return string
 	 */
 	function getForwardHeader() {
 		global $mod_strings;
 		global $current_user;
+
+        LoggerManager::getLogger()->deprecated('Email::getForwardHeader() has been deprecated. The BWC Emails UI is ' .
+            'no longer being used.');
 
 		//$from = str_replace(array("&gt;","&lt;"), array(")","("), $this->from_name);
 		$from = to_html($this->from_name);
@@ -1852,11 +2159,16 @@ class Email extends SugarBean {
 
     /**
      * creates the standard "Reply" info at the top of the forwarded message
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
      * @return string
      */
     public function getReplyHeader()
     {
         global $mod_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::getReplyHeader() has been deprecated. The BWC Emails UI is no ' .
+            'longer being used.');
 
 		$from = str_replace(array("&gt;","&lt;", ">","<"), array(")","(",")","("), $this->from_name);
 		$ret  = "<br>{$mod_strings['LBL_REPLY_HEADER_1']} {$this->date_start}, {$this->time_start}, {$from} {$mod_strings['LBL_REPLY_HEADER_2']}";
@@ -1866,10 +2178,14 @@ class Email extends SugarBean {
 
 	/**
 	 * Quotes plain-text email text
+     *
+     * @deprecated This method is no longer used.
 	 * @param string $text
 	 * @return string
 	 */
 	function quotePlainTextEmail($text) {
+        LoggerManager::getLogger()->deprecated('Email::quotePlainTextEmail() has been deprecated.');
+
 		$quoted = "\n";
 
 		// plain-text
@@ -1885,10 +2201,15 @@ class Email extends SugarBean {
 
 	/**
 	 * "quotes" (i.e., "> my text yadda" the HTML part of an email
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
 	 * @param string $text HTML text to quote
 	 * @return string
 	 */
 	function quoteHtmlEmail($text) {
+        LoggerManager::getLogger()->deprecated('Email::quoteHtmlEmail() has been deprecated. The BWC Emails UI is no ' .
+            'longer being used.');
+
 		$text = trim(from_html($text));
 
 		if(empty($text)) {
@@ -1904,10 +2225,14 @@ class Email extends SugarBean {
 
 	/**
 	 * "quotes" (i.e., "> my text yadda" the HTML part of an email
+     *
+     * @deprecated This method is no longer used.
 	 * @param string $text HTML text to quote
 	 * @return string
 	 */
 	function quoteHtmlEmailForNewEmailUI($text) {
+        LoggerManager::getLogger()->deprecated('Email::quoteHtmlEmailForNewEmailUI() has been deprecated.');
+
 		$text = trim($text);
 
 		if(empty($text)) {
@@ -1921,9 +2246,17 @@ class Email extends SugarBean {
 
 	/**
 	 * Ensures that the user is able to send outbound emails
+     *
+     * @deprecated Use {@link OutboundEmailConfigurationPeer::getMailConfigurationStatusForUser()} instead. Compare the
+     * return value to {@link OutboundEmailConfigurationPeer::STATUS_VALID_CONFIG} to determine if the use is able to
+     * send emails.
 	 */
 	function check_email_settings() {
 		global $current_user;
+
+        LoggerManager::getLogger()->deprecated('Email::check_email_settings() has been deprecated. Use ' .
+            'OutboundEmailConfigurationPeer::getMailConfigurationStatusForUser() instead. Compare the return value ' .
+            'to OutboundEmailConfigurationPeer::STATUS_VALID_CONFIG to determine if the use is able to send emails.');
 
 		$mail_fromaddress = $current_user->emailAddress->getPrimaryAddress($current_user);
 		$replyToName = $current_user->getPreference('mail_fromname');
@@ -1955,9 +2288,14 @@ class Email extends SugarBean {
 
 	/**
 	 * outputs JS to set fields in the MassUpdate form in the "My Inbox" view
+     *
+     * @deprecated This method is no longer used.
 	 */
 	function js_set_archived() {
 		global $mod_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::js_set_archived() has been deprecated.');
+
 		$script = '
 		<script type="text/javascript" language="JavaScript"><!-- Begin
 			function setArchived() {
@@ -1997,8 +2335,13 @@ class Email extends SugarBean {
 
 	/**
 	 * replaces the javascript in utils.php - more specialized
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
 	 */
 	function u_get_clear_form_js($type='', $group='', $assigned_user_id='') {
+        LoggerManager::getLogger()->deprecated('Email::u_get_clear_form_js() has been deprecated. The BWC Emails UI ' .
+            'is no longer being used.');
+
 		$uType				= '';
 		$uGroup				= '';
 		$uAssigned_user_id	= '';
@@ -2020,9 +2363,16 @@ class Email extends SugarBean {
 		return $the_script;
 	}
 
+    /**
+     * @deprecated This method is no longer used.
+     * @return string
+     */
 	function pickOneButton() {
 		global $theme;
 		global $mod_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::pickOneButton() has been deprecated.');
+
 		$out = '<div><input	title="'.$mod_strings['LBL_BUTTON_GRAB_TITLE'].'"
 						class="button"
 						type="button" name="button"
@@ -2034,11 +2384,16 @@ class Email extends SugarBean {
 
 	/**
 	 * Determines what Editor (HTML or Plain-text) the current_user uses;
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
 	 * @return string Editor type
 	 */
 	function getUserEditorPreference() {
 		global $sugar_config;
 		global $current_user;
+
+        LoggerManager::getLogger()->deprecated('Email::getUserEditorPreference() has been deprecated. The BWC Emails ' .
+            'UI is no longer being used.');
 
 		$editor = '';
 
@@ -2060,6 +2415,9 @@ class Email extends SugarBean {
 
 	/**
 	 * takes the mess we pass from EditView and tries to create some kind of order
+     *
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to link recipients to the email.
+     * Use {@link Email::$from} to link the sender to the email.
 	 * @param array addrs
 	 * @param array addrs_ids (from contacts)
 	 * @param array addrs_names (from contacts);
@@ -2067,6 +2425,10 @@ class Email extends SugarBean {
 	 * @return array Parsed assoc array to feed to PHPMailer
 	 */
 	function parse_addrs($addrs, $addrs_ids, $addrs_names, $addrs_emails) {
+        LoggerManager::getLogger()->deprecated('Email::parse_addrs() has been deprecated. Use Email::$to, ' .
+            'Email::$cc, and Email::$bcc to link recipients to the email. Use Email::$from to link the sender to ' .
+            'the email.');
+
 		// cn: bug 9406 - enable commas to separate email addresses
 		$addrs = str_replace(",", ";", $addrs);
 
@@ -2124,7 +2486,14 @@ class Email extends SugarBean {
 		return $return;
 	}
 
+    /**
+     * @deprecated This method is no longer used.
+     * @param array $arr
+     * @return array
+     */
 	function remove_empty_fields(&$arr) {
+        LoggerManager::getLogger()->deprecated('Email::remove_empty_fields() has been deprecated.');
+
 		$newarr = array();
 
 		foreach($arr as $field) {
@@ -2139,12 +2508,15 @@ class Email extends SugarBean {
 
     /**
      * Used to find a usable Emails relationship link
-     * @param SugarBean $bean
      *
+     * @deprecated This method is no longer used.
+     * @param SugarBean $bean
      * @return bool|string Name of an Emails relationship link or false
      */
     protected function findEmailsLink(SugarBean $bean)
     {
+        LoggerManager::getLogger()->deprecated('Email::findEmailsLink() has been deprecated.');
+
         foreach($bean->field_defs as $field => $def) {
             if (!empty($def['type']) && $def['type'] == 'link' && !empty($def['module']) && $def['module'] == 'Emails') {
                 return $field;
@@ -2155,10 +2527,15 @@ class Email extends SugarBean {
 
 	/**
 	 * handles attachments of various kinds when sending email
+     *
+     * @deprecated Use {@link Email::$attachments} to link attachments to the email.
 	 */
 	function handleAttachments() {
 
 		global $mod_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::handleAttachments() has been deprecated. Use ' .
+            'Email::$attachments to link attachments to the email.');
 
         $attachmentsToCopy = array();
         $attachmentBean = BeanFactory::getBean('Notes');
@@ -2391,10 +2768,15 @@ class Email extends SugarBean {
 
 	/**
 	 * Determines if an email body (HTML or Plain) has a User signature already in the content
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
 	 * @param array Array of signatures
 	 * @return bool
 	 */
 	function hasSignatureInBody($sig) {
+        LoggerManager::getLogger()->deprecated('Email::hasSignatureInBody() has been deprecated. The BWC Emails UI ' .
+            'is no longer being used.');
+
 		// strpos can't handle line breaks - normalize
 		$html = $this->removeAllNewlines($this->description_html);
 		$htmlSig = $this->removeAllNewlines($sig['signature_html']);
@@ -2413,10 +2795,15 @@ class Email extends SugarBean {
 
 	/**
 	 * internal helper
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
 	 * @param string String to be normalized
 	 * @return string
 	 */
 	function removeAllNewlines($str) {
+        LoggerManager::getLogger()->deprecated('Email::removeAllNewlines() has been deprecated. The BWC Emails UI is ' .
+            'no longer being used.');
+
 		$bad = array("\r\n", "\n\r", "\n", "\r");
 		$good = array('', '', '', '');
 
@@ -2427,10 +2814,15 @@ class Email extends SugarBean {
 
 	/**
 	 * Set navigation anchors to aid DetailView record navigation (VCR buttons)
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
 	 * @param string uri The URI from the referring page (always ListView)
 	 * @return array start Array of the URI broken down with a special "current_view" for My Inbox Navs
 	 */
 	function getStartPage($uri) {
+        LoggerManager::getLogger()->deprecated('Email::getStartPage() has been deprecated. The BWC Emails UI is no ' .
+            'longer being used.');
+
 		if(strpos($uri, '&')) { // "&" to ensure that we can explode the GET vars - else we're gonna trigger a Notice error
 			$serial = substr($uri, (strpos($uri, '?')+1), strlen($uri));
 			$exUri = explode('&', $serial);
@@ -2455,6 +2847,8 @@ class Email extends SugarBean {
 
     /**
      * Sends Email
+     *
+     * @deprecated Use {@link Email::sendEmail()} instead.
      * @return bool True on success
      */
     function send() {
@@ -2462,6 +2856,8 @@ class Email extends SugarBean {
                $app_strings,
                $current_user,
                $sugar_config;
+
+        LoggerManager::getLogger()->deprecated('Email::send() has been deprecated. Use Email::sendEmail() instead.');
 
         try {
             $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
@@ -2659,8 +3055,15 @@ class Email extends SugarBean {
 		return $array_assign;
 	}
 
+    /**
+     * @deprecated Use {OutboundEmail::getSystemMailerSettings()} instead.
+     * @return array
+     */
     public function getSystemDefaultEmail()
     {
+        LoggerManager::getLogger()->deprecated('Email::getSystemDefaultEmail() has been deprecated. Use ' .
+            'OutboundEmail::getSystemMailerSettings() instead.');
+
         $email = array();
 
         $query = 'SELECT config.value FROM config WHERE name = ?';
@@ -2676,6 +3079,10 @@ class Email extends SugarBean {
         return $email;
     }
 
+    /**
+     * {@inheritdoc}
+     * @deprecated Use SugarQuery & $this->fetchFromQuery() instead.
+     */
     public function create_new_list_query(
         $order_by,
         $where,
@@ -2688,6 +3095,9 @@ class Email extends SugarBean {
         $singleSelect = false,
         $ifListForExport = false
     ) {
+
+        LoggerManager::getLogger()->deprecated('Email::create_new_list_query() has been deprecated. Use SugarQuery ' .
+            'and Email::fetchFromQuery() instead.');
 
 		if ($return_array) {
             return parent::create_new_list_query(
@@ -2745,10 +3155,17 @@ class Email extends SugarBean {
 		return $query;
     } // fn
 
-
+    /**
+     * {@inheritdoc}
+     * @deprecated Not used in the REST API.
+     */
     public function fill_in_additional_list_fields()
     {
         global $timedate, $mod_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::fill_in_additional_list_fields() has been deprecated. It is ' .
+            'not used in the REST API.');
+
         $this->fill_in_additional_detail_fields();
 
         $this->link_action = 'DetailView';
@@ -2772,9 +3189,16 @@ class Email extends SugarBean {
 		}
 	}
 
+    /**
+     * {@inheritdoc}
+     * @deprecated Not used in the REST API.
+     */
 	function fill_in_additional_detail_fields()
 	{
 		global $app_list_strings,$mod_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::fill_in_additional_detail_fields() has been deprecated. It is ' .
+            'not used in the REST API.');
 
         $mod_strings = return_module_language($GLOBALS['current_language'], 'Emails');
 
@@ -2916,8 +3340,15 @@ class Email extends SugarBean {
 		return $email_fields;
 	}
 
+    /**
+     * @deprecated The BWC Emails UI is no longer being used.
+     * @return string
+     */
     function quickCreateForm() {
         global $mod_strings, $app_strings, $currentModule, $current_language;
+
+        LoggerManager::getLogger()->deprecated('Email::quickCreateForm() has been deprecated. The BWC Emails UI is ' .
+            'no longer being used.');
 
         // Coming from the home page via Dashlets
         if($currentModule != 'Email')
@@ -2928,6 +3359,7 @@ class Email extends SugarBean {
     /**
      * Searches all imported emails and returns the result set as an array.
      *
+     * @deprecated Use the Filter API instead.
      */
     function searchImportedEmails($sort = '', $direction='')
     {
@@ -2936,6 +3368,9 @@ class Email extends SugarBean {
 		global $beanList;
 		global $sugar_config;
 		global $app_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::searchImportedEmails() has been deprecated. Use the Filter ' .
+            'API instead.');
 
 		$emailSettings = $current_user->getPreference('emailSettings', 'Emails');
 		// cn: default to a low number until user specifies otherwise
@@ -3025,11 +3460,15 @@ class Email extends SugarBean {
     /**
      * Determine if an imported email has an attachment by examining the relationship to notes.
      *
+     * @deprecated Use {@link Email::$total_attachments} instead.
      * @param string $id
      * @return boolean
      */
     function doesImportedEmailHaveAttachment($id)
 	{
+        LoggerManager::getLogger()->deprecated('Email::doesImportedEmailHaveAttachment() has been deprecated. Use ' .
+            'Email::$total_attachments instead.');
+
 	   $hasAttachment = FALSE;
         //FIXME: notes.file_mime_type IS NOT NULL is probably not necessary
         $stmt = $this->db->getConnection()->executeQuery(
@@ -3047,11 +3486,15 @@ class Email extends SugarBean {
     /**
      * Generate the query used for searching imported emails.
      *
+     * @deprecated Use the Filter API instead.
      * @return String Query to be executed.
      */
     function _genereateSearchImportedEmailsQuery()
     {
 		global $timedate;
+
+        LoggerManager::getLogger()->deprecated('Email::_genereateSearchImportedEmailsQuery() has been deprecated. ' .
+            'Use the Filter API instead.');
 
         $additionalWhereClause = $this->_generateSearchImportWhereClause();
 
@@ -3101,13 +3544,17 @@ class Email extends SugarBean {
 
         return $fullQuery;
     }
-        /**
+    /**
      * Generate the where clause for searching imported emails.
      *
+     * @deprecated Use the Filter API instead.
      */
     function _generateSearchImportWhereClause()
     {
         global $timedate;
+
+        LoggerManager::getLogger()->deprecated('Email::_generateSearchImportWhereClause() has been deprecated. Use ' .
+            'the Filter API instead.');
 
         //The clear button was removed so if a user removes the asisgned user name, do not process the id.
         if( empty($_REQUEST['assigned_user_name']) && !empty($_REQUEST['assigned_user_id'])  )
@@ -3186,8 +3633,15 @@ class Email extends SugarBean {
 	/**
 	 * takes a long TO: string of emails and returns the first appended by an
 	 * elipse
+     *
+     * @deprecated Use {@link Email::$to}, {@link Email::$cc}, and {@link Email::$bcc} to retrieve the email's
+     * recipients.
 	 */
 	function trimLongTo($str) {
+        LoggerManager::getLogger()->deprecated("Email::trimLongTo() has been deprecated. Use Email::\$to, " .
+            "Email::\$cc, and Email::\$bcc to retrieve the email's recipients. Use Email::\$from to retrieve the " .
+            "email's sender.");
+
 		if(strpos($str, ',')) {
 			$exStr = explode(',', $str);
 			return $exStr[0].'...';
@@ -3203,14 +3657,20 @@ class Email extends SugarBean {
 		return $this->name;
 	}
 
-
-
+    /**
+     * @deprecated The BWC Emails UI is no longer being used.
+     * @param mixed $where
+     * @return string
+     */
 	function distributionForm($where) {
 		global $app_list_strings;
 		global $app_strings;
 		global $mod_strings;
 		global $theme;
 		global $current_user;
+
+        LoggerManager::getLogger()->deprecated('Email::distributionForm() has been deprecated. The BWC Emails UI is ' .
+            'no longer being used.');
 
 		$distribution	= get_select_options_with_id($app_list_strings['dom_email_distribution'], '');
 		$_SESSION['distribute_where'] = $where;
@@ -3352,9 +3812,16 @@ eoq;
 	return $out;
 	}
 
+    /**
+     * @deprecated The BWC Emails UI is no longer being used.
+     * @return string
+     */
 	function userSelectTable() {
 		global $theme;
 		global $mod_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::userSelectTable() has been deprecated. The BWC Emails UI is ' .
+            'no longer being used.');
 
 		$colspan = 1;
 		$setTeamUserFunction = '';
@@ -3486,9 +3953,18 @@ eoq;
 		return $out;
 	}
 
+    /**
+     * @deprecated The BWC Emails UI is no longer being used.
+     * @param string $type
+     * @return string
+     */
 	function checkInbox($type) {
 		global $theme;
 		global $mod_strings;
+
+        LoggerManager::getLogger()->deprecated('Email::checkInbox() has been deprecated. The BWC Emails UI is no ' .
+            'longer being used.');
+
 		$out = '<div><input	title="'.$mod_strings['LBL_BUTTON_CHECK_TITLE'].'"
 						class="button"
 						type="button" name="button"
@@ -3502,9 +3978,14 @@ eoq;
      * Guesses primary parent id from "To" and "From" email addresses.
      * This will not affect the many-to-many relationships already constructed as this is, at best,
      * informational linking.
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
      */
     public function fillPrimaryParentFields($table)
     {
+        LoggerManager::getLogger()->deprecated('Email::fillPrimaryParentFields() has been deprecated. The BWC Emails ' .
+            'UI is no longer being used.');
+
         $addresses = $this->email2ParseAddressesForAddressesOnly($this->to_addrs);
         $addresses[] = $this->from_addr;
 
@@ -3538,11 +4019,16 @@ eoq;
         /**
          * Convert reference to inline image (stored as Note) to URL link
          * Enter description here ...
+         *
+         * @deprecated The BWC Emails UI is no longer being used.
          * @param string $note ID of the note
          * @param string $ext type of the note
          */
         public function cid2Link($noteId, $noteType)
         {
+            LoggerManager::getLogger()->deprecated('Email::cid2Link() has been deprecated. The BWC Emails UI is no ' .
+                'longer being used.');
+
             if(empty($this->description_html)) return;
 			list($type, $subtype) = explode('/', $noteType);
 			if(strtolower($type) != 'image') {
@@ -3562,9 +4048,14 @@ eoq;
 
     /**
      * Convert all cid: links in this email into URLs
+     *
+     * @deprecated The BWC Emails UI is no longer being used.
      */
     public function cids2Links()
     {
+        LoggerManager::getLogger()->deprecated('Email::cids2Links() has been deprecated. The BWC Emails UI is no ' .
+            'longer being used.');
+
         if (empty($this->description_html)) {
             return;
         }
@@ -3583,11 +4074,15 @@ eoq;
      * Sets the field def for a field to allow null values
      *
      * @todo Consider moving to SugarBean to allow other models to set fields to NULL
+     * @deprecated The BWC Emails UI is no longer being used.
      * @param string $field The field name to modify
      * @return void
      */
     public function setFieldNullable($field)
     {
+        LoggerManager::getLogger()->deprecated('Email::setFieldNullable() has been deprecated. The BWC Emails UI is ' .
+            'no longer being used.');
+
         if (isset($this->field_defs[$field]) && is_array($this->field_defs[$field]))
         {
             if (empty($this->modifiedFieldDefs[$field]))
@@ -3622,11 +4117,15 @@ eoq;
      * Bugs 50972, 50973
      * Set the field def back to the way it was prior to modification
      *
+     * @deprecated The BWC Emails UI is no longer being used.
      * @param $field
      * @return void
      */
     public function revertFieldNullable($field)
     {
+        LoggerManager::getLogger()->deprecated('Email::revertFieldNullable() has been deprecated. The BWC Emails UI ' .
+            'is no longer being used.');
+
         if (!empty($this->modifiedFieldDefs[$field]) && is_array($this->modifiedFieldDefs[$field]))
         {
             foreach ($this->modifiedFieldDefs[$field] as $k => $v)
@@ -3648,12 +4147,15 @@ eoq;
     /**
      * Set the DateTime Search Data based on Current User TimeZone
      *
+     * @deprecated This method is no longer used.
      * @param  string $userSearchDateTime  - user Search Datetime
      * @return string $dbSearchDateTime    - database Search Datetime
      */
     public function toDatabaseSearchDateTime($userSearchDateTime) {
         global $timedate;
         global $current_user;
+
+        LoggerManager::getLogger()->deprecated('Email::toDatabaseSearchDateTime() has been deprecated.');
 
         $usertimezone = $current_user->getPreference('timezone');
         if (empty($usertimezone)) {
@@ -3801,6 +4303,7 @@ eoq;
             'bcc' => 'addRecipientsBcc',
         );
 
+        $ea = BeanFactory::newBean('EmailAddresses');
         $num = 0;
         $beans = $this->getParticipants($role);
 
@@ -3815,8 +4318,8 @@ eoq;
                     );
 
                     if ($parent) {
-                        $bean->email_address = $this->emailAddress->getPrimaryAddress($parent);
-                        $bean->email_address_id = $this->emailAddress->getEmailGUID($bean->email_address);
+                        $bean->email_address = $ea->getPrimaryAddress($parent);
+                        $bean->email_address_id = $ea->getEmailGUID($bean->email_address);
                     }
 
                     $this->$role->add($bean);

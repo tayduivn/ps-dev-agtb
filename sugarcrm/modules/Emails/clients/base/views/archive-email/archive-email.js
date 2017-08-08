@@ -9,10 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @deprecated Use {@link View.Views.Base.Emails.CreateView} instead.
  * @class View.Views.Base.Emails.ArchiveEmailView
  * @alias SUGAR.App.view.views.BaseEmailsArchiveEmailView
  * @extends View.Views.Base.Emails.ComposeView
+ * @deprecated Use {@link View.Views.Base.Emails.CreateView} instead.
  */
 ({
     extendsFrom: 'EmailsComposeView',
@@ -21,8 +21,6 @@
      * @inheritdoc
      *
      * Add click event handler to archive an email.
-     *
-     * @deprecated Use {@link View.Views.Base.Emails.CreateView} instead.
      */
     initialize: function(options) {
         app.logger.warn(

@@ -311,7 +311,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         $note->id = Uuid::uuid1();
         $note->new_with_id = true;
         $note->filename = $file_name;
-        $note->file_mime_type = $email_object->email2GetMime('upload://'.$file_name);
+        $note->file_mime_type = get_file_mime_type("upload://{$file_name}", 'application/octet-stream');
         $note->name = translate('LBL_EMAIL_ATTACHMENT', "Quotes").$file_name;
 
         $note->email_id = $email_object->id;

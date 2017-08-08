@@ -1300,13 +1300,19 @@ class HealthCheckScanner
 
         if (version_compare($version, '7.10.0.0', '<')) {
             $customFiles = array(
+                'custom/clients/base/fields/attachments/attachments.js',
                 'custom/modules/Emails/MailRecord.php',
+                'custom/modules/Emails/clients/base/fields/attachment-button/attachment-button.js',
                 'custom/modules/Emails/clients/base/fields/compose-actionbar/compose-actionbar.js',
+                'custom/modules/Emails/clients/base/fields/recipients/recipients.js',
                 'custom/modules/Emails/clients/base/fields/sender/sender.js',
                 'custom/modules/Emails/clients/base/layouts/archive-email/archive-email.js',
                 'custom/modules/Emails/clients/base/layouts/compose/compose.js',
+                'custom/modules/Emails/clients/base/layouts/compose-documents/compose-documents.js',
                 'custom/modules/Emails/clients/base/views/archive-email/archive-email.js',
                 'custom/modules/Emails/clients/base/views/compose/compose.js',
+                'custom/modules/Emails/clients/base/views/compose-senderoptions/compose-senderoptions.js',
+                'custom/modules/Emails/clients/base/views/compose-senderoptions/compose-senderoptions.hbs',
                 'custom/modules/OutboundEmailConfiguration/clients/base/api/OutboundEmailConfigurationApi.php',
             );
 

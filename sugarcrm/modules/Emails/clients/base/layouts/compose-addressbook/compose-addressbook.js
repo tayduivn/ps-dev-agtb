@@ -24,7 +24,7 @@
         this.context.on('compose:addressbook:search', this.search, this);
     },
     /**
-     * Calls the custom Emails API endpoint to search for email addresses.
+     * Calls the custom Mail API endpoint to search for email addresses.
      *
      * @param {string} method
      * @param {Data.Bean} model

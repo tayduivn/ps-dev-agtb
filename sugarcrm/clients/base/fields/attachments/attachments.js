@@ -12,6 +12,7 @@
  * @class View.Fields.Base.AttachmentsField
  * @alias SUGAR.App.view.fields.BaseAttachmentsField
  * @extends View.Fields.Base.BaseField
+ * @deprecated Use {@link View.Fields.Base.EmailAttachmentsField} instead.
  */
 ({
     fieldSelector: '.attachments',
@@ -23,6 +24,9 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        app.logger.warn('View.Fields.Base.AttachmentsField is deprecated. Use ' +
+            'View.Fields.Base.EmailAttachmentsField instead.');
+
         this.events = _.extend({}, this.events, options.def.events, {
             'change .fileinput': 'uploadFile'
         });

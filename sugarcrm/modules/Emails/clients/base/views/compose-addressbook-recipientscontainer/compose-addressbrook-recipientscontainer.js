@@ -19,10 +19,6 @@
     enableHeaderPane: false,
     events: {},
 
-    initialize: function(options) {
-        this._super('initialize', [options]);
-    },
-
     /**
      * Override to remove unwanted functionality.
      *

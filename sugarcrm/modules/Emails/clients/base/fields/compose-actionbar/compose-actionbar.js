@@ -15,7 +15,8 @@
  * @alias SUGAR.App.view.fields.BaseEmailsComposeActionbarField
  * @extends View.Fields.Base.FieldsetField
  *
- * @deprecated Use htmleditable_tinymce field instead to add compose buttons.
+ * @deprecated Use {@link View.Fields.Base.Emails.Htmleditable_tinymceField}
+ * instead to add buttons for email composition.
  */
 ({
     extendsFrom: 'FieldsetField',
@@ -28,6 +29,9 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        app.logger.warn('View.Fields.Base.Emails.SenderField is deprecated. Use ' +
+            'View.Fields.Base.Emails.Htmleditable_tinymceField instead.');
+
         this._super('initialize', [options]);
         this.type = 'fieldset';
     },

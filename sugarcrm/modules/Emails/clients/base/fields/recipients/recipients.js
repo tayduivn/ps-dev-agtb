@@ -12,6 +12,8 @@
  * @class View.Fields.Base.Emails.RecipientsField
  * @alias SUGAR.App.view.fields.BaseEmailsRecipientsField
  * @extends View.Fields.Base.BaseField
+ * @deprecated Use {@link View.Fields.Base.Emails.EmailRecipientsField}
+ * instead.
  */
 ({
     /**
@@ -30,10 +32,12 @@
     plugins: ['DragdropSelect2'],
 
     /**
-     * @override
-     * @param {Object} options
+     * @inheritdoc
      */
     initialize: function(options) {
+        app.logger.warn('View.Fields.Base.Emails.RecipientsField is deprecated. Use ' +
+            'View.Fields.Base.Emails.EmailRecipientsField instead.');
+
         this._super('initialize', [options]);
         // initialize the value to an empty collection
         this.model.setDefault(this.name, new Backbone.Collection);
