@@ -14,15 +14,15 @@ Feature: RLI module verification
     Given I use default account
     Given I launch App
 
-  @T_17776
-  Scenario: RLI > Select Product
+  @T_17776 @T_18187
+  Scenario: RLI > Verify that corresponding fields are auto populated when select product in the RLI edit mode
     # Create Product
     Given ProductTemplates records exist:
       | *name     | discount_price | list_price | cost_price |
       | Product_1 | 1000           | 2000       | 500        |
     # Could not related Product Category to Product Template via API
     Given ProductCategories records exist related via category_link link:
-      | name       |
+      | *name       |
       | Category_1 |
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
@@ -68,10 +68,19 @@ Feature: RLI module verification
       | category_name  | Category_1 |
       | list_price     | $2,000.00  |
       | cost_price     | $500.00    |
+    # Check Product Category link
+    When I click category_name field on #RLI_1Record.RecordView view
+    Then I should see #Category_1Record view
+    When I choose RevenueLineItems in modules menu
+    When I select *RLI_1 in #RevenueLineItemsList.ListView
+    Then I should see #RLI_1Record view
+    # Check Product Template link
+    When I click product_template_name field on #RLI_1Record.RecordView view
+    Then I should see #Product_1Record view
 
 
   @T_19044
-  Scenario: RLI > Select Product Category
+  Scenario: RLI > Verify that quote could not be created from RLI record view when RLI has product category but does not have a product associated to the record
     # Could not related Product Category to Product Template via API
     Given ProductCategories records exist:
       | name       |
@@ -103,7 +112,7 @@ Feature: RLI module verification
 
 
   @T_26018
-  Scenario Outline: RevenueLineItems > Record View > Set Sales Satge to Closed Won/Lost
+  Scenario Outline: RLI > Verify that Best and Worst amounts made read-only and equal to likely when closed won/lost sales stage is selected.
     # Create RLI record
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -136,7 +145,7 @@ Feature: RLI module verification
 
 
   @T_17779
-  Scenario: RLI > Select Opportunity
+  Scenario: RLI > Verify that account field is populated when opportunity is selected in RLI edit view
     # Create RLI
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |

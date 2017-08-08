@@ -273,7 +273,7 @@ Feature: Quotes module verification
       | best_case   | $600.00    |
       | worst_case  | $300.00    |
 
-  @create_cancel_save @T_34555 @xxx
+  @create_cancel_save @T_34555
   Scenario: Revenue Line Items > Create > Cancel/Save
     Given Opportunities records exist:
       | name  |

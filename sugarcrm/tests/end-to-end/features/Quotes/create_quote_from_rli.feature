@@ -60,7 +60,7 @@ Feature: Create Quote From RLI
       | quote_name |       |
 
 
-  @generate_quote_from_rli @T_34171
+  @generate_quote_from_rli @T_34171 @T_19050
   Scenario: Quotes > Generate Quote from RLI > Save
     # Create RLI
     Given RevenueLineItems records exist:
@@ -118,10 +118,13 @@ Feature: Create Quote From RLI
       | billing_address_postalcode | 220051              |
       | billing_address_state      | WA                  |
       | billing_address_country    | USA                 |
+    When I open actions menu in #RecordIDRecord and check:
+      | menu_item         | active |
+      | CreateOpportunity | false  |
     # Add verification of QLi table numbers after AT-78 is implemented
 
 
-  @generate_quote_from_rli @T_34173
+  @generate_quote_from_rli @T_34173 @T_18085 @T_18402
   Scenario: Quotes > Generate Quote from RLI > RLI has a link to generated quote
     # Create RLI
     Given RevenueLineItems records exist:
