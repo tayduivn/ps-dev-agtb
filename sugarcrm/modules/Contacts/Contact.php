@@ -301,8 +301,11 @@ class Contact extends Person {
 
         global $locale, $app_list_strings, $current_user;
 
-		// retrieve the account information and the information about the person the contact reports to.
-		$query = "SELECT acc.id, acc.name, con_reports_to.first_name, con_reports_to.last_name
+        $account = BeanFactory::newBean('Accounts');
+        $ownerField = $account->getOwnerField();
+
+        // retrieve the account information and the information about the person the contact reports to.
+        $query = "SELECT acc.{$ownerField} acc_owner, acc.id, acc.name, con_reports_to.first_name, con_reports_to.last_name
 		from contacts
         left join accounts_contacts a_c on a_c.contact_id = ".$this->db->quoted($this->id)." and a_c.deleted=0
 		left join accounts acc on a_c.account_id = acc.id and acc.deleted=0
@@ -332,6 +335,8 @@ class Contact extends Person {
 			$this->account_name = $row['name'];
 			$this->account_id = $row['id'];
             $this->report_to_name = $locale->formatName($this->module_name, $row);
+            $this->account_name_owner = $row['acc_owner'];
+            $this->account_id_owner = $row['acc_owner'];
 		}
 		else
 		{
