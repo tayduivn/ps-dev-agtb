@@ -1394,6 +1394,11 @@ class Email extends SugarBean {
             // we can use them in relationships and other processes prior to saving.
             BeanFactory::registerBean($this);
 
+            // This will prevent the BeanFactory::registerBean from removing the unsaved email bean
+            // from the BeanFactory cache while linking large number of recipients
+            // via Email::saveEmailAddresses() prior to calling parent::save()
+            $this->in_save = true;
+
             if ($this->state === static::STATE_ARCHIVED) {
                 // Copy plain-text email body to HTML field column
                 if (empty($this->description_html) && !empty($this->description)) {
