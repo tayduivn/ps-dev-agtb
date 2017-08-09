@@ -65,8 +65,8 @@
                     });
                     app.alert.show('needs_login_error', {
                         level: 'error',
-                        messages: app.lang.getAppString('LBL_PORTAL_INVALID_CREDS_TITLE'),
-                        title: app.lang.get('LBL_PORTAL_INVALID_CREDS_TITLE')
+                        messages: app.lang.getAppString('LBL_LOGIN_INACTIVE_USER'),
+                        title: app.lang.get('LBL_INVALID_CREDS_TITLE')
                     });
                     app.router.redirect('/');
                 }
