@@ -39,8 +39,6 @@
 
             // if datetime values, format differently
             if (values.length === 3 && dateLabels.indexOf(values[2]) !== -1) {
-                //TODO: format with user date format preference when we have locale support
-                //TODO: should format be label (mm/dd/yyyy - mm/dd/yyyy)
                 return label;
             } else {
                 return values.join(', ');

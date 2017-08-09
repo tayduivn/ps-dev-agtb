@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div {{#if series}}class="series-adjust"{{/if}}>
+<div {{#if seriesValue}}class="series-adjust"{{/if}}>
     <div class="ellipsis_inline">
         <span class="record-label">{{groupLabel}}</span>
         <span>{{groupValue}}</span>
     </div>
-    {{#if series}}
+    {{#if seriesValue}}
         <div class="ellipsis_inline">
             <span class="record-label">{{seriesLabel}}</span>
             <span>{{seriesValue}}</span>

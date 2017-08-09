@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-ddescribe('Reports.Fields.DrillthroughLabels', function() {
+describe('Reports.Fields.DrillthroughLabels', function() {
     var app;
     var field;
     var chartModule = 'Accounts';
@@ -35,11 +35,11 @@ ddescribe('Reports.Fields.DrillthroughLabels', function() {
 
         beforeEach(function() {
             field.context.set('chartModule', chartModule);
+            field.context.set('dashConfig', {groupLabel: 'Industry', seriesLabel: 'Type'});
             SugarTest.testMetadata.init();
             langStub = sinon.collection.stub(app.lang, 'get')
                 .withArgs('LBL_INDUSTRY', chartModule).returns('Industry');
             langStub.withArgs('LBL_TYPE', chartModule).returns('Type');
-
         });
 
         afterEach(function() {
@@ -67,8 +67,8 @@ ddescribe('Reports.Fields.DrillthroughLabels', function() {
             ];
             field.context.set('filterDef', filterDef);
             field.format();
-            expect(field.groupTitle).toBe('Industry: ');
-            expect(field.group).toBe('Biotechnology');
+            expect(field.groupLabel).toBe('Industry: ');
+            expect(field.groupValue).toBe('Biotechnology');
         });
 
         it('should set series and group when both are present', function() {
@@ -99,10 +99,10 @@ ddescribe('Reports.Fields.DrillthroughLabels', function() {
             ];
             field.context.set('filterDef', filterDef);
             field.format();
-            expect(field.groupTitle).toBe('Industry: ');
-            expect(field.group).toBe('Biotechnology');
-            expect(field.seriesTitle).toBe('Type: ');
-            expect(field.series).toBe('Customer');
+            expect(field.groupLabel).toBe('Industry: ');
+            expect(field.groupValue).toBe('Biotechnology');
+            expect(field.seriesLabel).toBe('Type: ');
+            expect(field.seriesValue).toBe('Customer');
         });
     });
 

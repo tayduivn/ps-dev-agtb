@@ -225,6 +225,10 @@ class ReportsApi extends ModuleApi
             case 'radioenum':
                 $val = $this->getOptionKeyFromValue($val, $fieldDef);
                 break;
+            case 'name':
+                break;
+            default:
+                return $value;
         }
         return array($val);
     }
@@ -250,7 +254,7 @@ class ReportsApi extends ModuleApi
                     $value = array($value);
                 }
                 $fieldDef = $this->getGroupFilterFieldDef($reportDef, $field);
-                if (!empty($fieldDef['type']) && !in_array($fieldDef['type'], ['date', 'datetime', 'datetimecombo'])) {
+                if (!empty($fieldDef['type'])) {
                     $value = $this->massageFilterValue($fieldDef['type'], $value, $fieldDef);
                 }
                 if ($fieldDef && !empty($fieldDef['type'])) {

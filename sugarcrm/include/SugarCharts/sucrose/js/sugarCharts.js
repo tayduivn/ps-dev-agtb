@@ -715,11 +715,17 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * @return {Array} a date range from a date parsed label
          */
         getDateValues: function(label, type) {
-            var fy = new Date(this.getFiscalStartDate() || new Date().getFullYear() + '-01-01');
-            var re;
-            var rm;
-            var dt;
-            var wd;
+            var sugarApp = SUGAR.App || SUGAR.app || app;
+            var dateParser = sugarApp.date;
+            var userLangPref = sugarApp.user.getLanguage() || 'en_us';
+            var datePatterns = {
+                year: 'YYYY', // 2017
+                quarter: 'Q YYYY', // Q3 2017
+                month: 'MMMM YYYY', // March 2017
+                week: 'W YYYY' // W56 2017
+            };
+            var startDate;
+            var endDate;
             var y1;
             var y2;
             var m1;
@@ -729,18 +735,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             var values = [];
 
             switch (type) {
-                case 'year':
-                    //2017
-                    y1 = label;
-                    m1 = 1;
-                    m2 = 12;
-                    y2 = y1;
-                    d1 = 1;
-                    d2 = 31;
-                    break;
 
                 case 'fiscalYear':
-                    //2017
+                    // 2017
+                    var fy = new Date(this.getFiscalStartDate() || new Date().getFullYear() + '-01-01');
                     fy.setUTCFullYear(label);
                     y1 = fy.getUTCFullYear();
                     m1 = fy.getUTCMonth() + 1;
@@ -750,23 +748,15 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     y2 = fy.getUTCFullYear();
                     m2 = fy.getUTCMonth() + 1;
                     d2 = fy.getUTCDate(); //1-31
-                    break;
-
-                case 'quarter':
-                    //Q1 2017
-                    re = /Q([1-4]{1})\s(\d{4})/;
-                    rm = label.match(re);
-                    y1 = y2 = rm[2];
-                    m2 = rm[1] * 3; // Q1 = 3
-                    m1 = m2 - 2; // Q1 = 1
-                    d1 = new Date(y1, m1 - 1, 1).getDate();
-                    d2 = new Date(y2, m2, 0).getDate();
+                    startDate = y1 + '-' + m1 + '-' + d1;
+                    endDate = y2 + '-' + m2 + '-' + d2;
                     break;
 
                 case 'fiscalQuarter':
-                    //Q1 2017
-                    re = /Q([1-4]{1})\s(\d{4})/;
-                    rm = label.match(re);
+                    // Q1 2017
+                    var fy = new Date(this.getFiscalStartDate() || new Date().getFullYear() + '-01-01');
+                    var re = /Q([1-4]{1})\s(\d{4})/;
+                    var rm = label.match(re);
                     fy.setUTCFullYear(rm[2]);
                     fy.setUTCMonth((rm[1] - 1) * 3 + fy.getUTCMonth());
                     y1 = fy.getUTCFullYear();
@@ -777,55 +767,32 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     y2 = fy.getUTCFullYear();
                     m2 = fy.getUTCMonth() + 1;
                     d2 = fy.getUTCDate();
-                    break;
-
-                case 'month':
-                    // May 2017
-                    dt = new Date(label);
-                    y1 = dt.getFullYear();
-                    m1 = dt.getMonth() + 1;
-                    d1 = dt.getDate();
-                    y2 = y1;
-                    m2 = m1;
-                    d2 = new Date(y2, m2, 0).getDate();
-                    break;
-
-                case 'week':
-                    //W1 2017 (Sunday is first day)
-                    re = /W(\d{1,2})\s(\d{4})/;
-                    rm = label.match(re);
-                    dt = new Date(rm[2], 0, rm[1] * 7 - 6);
-                    wd = dt.getDay();
-                    if (wd > 4) {
-                        // if Sunday (0), +1
-                        // if Saturday (6), +2
-                        // if Friday (5), +3
-                        dt.setDate(dt.getDate() + (8 - wd) % 7);
-                    } else {
-                        // if Thursday (4), -3
-                        // if Wednesday (3), -2
-                        // if Tuesday (2), -1
-                        // if Monday (1), -0
-                        dt.setDate(dt.getDate() - wd + 1);
-                    }
-                    y1 = dt.getFullYear();
-                    m1 = dt.getMonth() + 1;
-                    d1 = dt.getDate();
-                    dt.setDate(dt.getDate() + 6);
-                    y2 = dt.getFullYear();
-                    m2 = dt.getMonth() + 1;
-                    d2 = dt.getDate();
+                    startDate = y1 + '-' + m1 + '-' + d1;
+                    endDate = y2 + '-' + m2 + '-' + d2;
                     break;
 
                 case 'day':
-                    //2017-4-1
-                    // mode = '$on'
+                    // use moment to parse 2017.12.31 vs 12/31/2017
+                    var pattern = sugarApp.date.getUserDateFormat();
+                    var parsedDate = dateParser(label, pattern, userLangPref);
+                    startDate = parsedDate.format('YYYY-MM-DD'); //2017-12-31
+                    endDate = 'on';
+                    break;
+
+                default:
+                    var pattern = datePatterns[type] || 'YYYY';
+                    var parsedDate = dateParser(label, pattern, userLangPref);
+                    var momentType = type === 'week' ? 'isoweek' : type;
+                    startDate = parsedDate.startOf(momentType).format('YYYY-MM-DD'); //2017-01-01
+                    endDate = parsedDate.endOf(momentType).format('YYYY-MM-DD'); //2017-12-31
                     break;
             }
 
-            values.push(y1 + '-' + m1 + '-' + d1);
-            values.push(y2 + '-' + m2 + '-' + d2);
-            values.push(type);
+            values.push(startDate);
+            if (type !== 'day') {
+                values.push(endDate);
+                values.push(type);
+            }
 
             return values;
         },
@@ -842,10 +809,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             var dateFunctions = ['year', 'quarter', 'month', 'week', 'day', 'fiscalYear', 'fiscalQuarter'];
             var columnFn = def.column_function;
             var isDateFn = !_.isEmpty(columnFn) && dateFunctions.indexOf(columnFn) !== -1;
-            var isDayFn = (isDateFn && columnFn === 'day') || (!isDateFn && def.type === 'date');
             var values = [];
 
-            if (isDateFn && !isDayFn) {
+            if (isDateFn) {
                 // returns [dateStart, dateEnd, columnFn]
                 values = this.getDateValues(label, columnFn);
             } else {
@@ -880,7 +846,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                groups.label === series.label &&
                                groups.table_key === series.table_key;
 
-            var addGroupRow = _.bind(function () {
+            var addGroupRow = _.bind(function() {
                 var groupsName = groups.table_key + ':' + groups.name;
                 var groupsValues = this.getValues(groupLabel, groups);
                 addFilterRow(groupsName, groupsValues);
