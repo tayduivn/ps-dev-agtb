@@ -397,6 +397,11 @@
         $(row).find('#conclusions').replaceWith(conclusions.children);
 
         this.decisionRows++;
+        if (this.decisionRows === 1) {
+            $(row).find('.checkbox-index .checkbox-input').addClass('hide');
+        } else {
+            $(document).find('.checkbox-index .checkbox-input.hide').removeClass('hide');
+        }
         this.dom.decisionTableBody.append(row);
 
         // attach click event on checkbox to save the current index in data-previndex
@@ -421,6 +426,11 @@
             // Remove visual cue when nothing is selected
             if ($('.checkbox-input:checked').length == 0) {
                 $('#trash-button').addClass('decision-table-btn-hidden');
+            }
+            if ($('.checkbox-input:checked').length === self.decisionRows-1) {
+                $(document).find('.checkbox-index:not(.highlight) .checkbox-input').addClass('hide');
+            } else {
+                $(document).find('.checkbox-index .checkbox-input.hide').removeClass('hide');
             }
         });
 
@@ -448,6 +458,9 @@
         $(this.dom.decisionTableBody).children('tr.' + this.decisionTableRowClassName).eq(index).remove();
 
         this.decisionRows--;
+        if (this.decisionRows === 1) {
+            $(document).find('.checkbox-index .checkbox-input').addClass('hide');
+        }
         this.setIsDirty(true);
 
         // reset the index numbers on decision rows
@@ -725,6 +738,7 @@
                 });
                 self.sortDecisionRows(decisionRowMappings);
                 $('#trash-button').addClass('decision-table-btn-hidden');
+                $(document).find('.checkbox-index .checkbox-input.hide').removeClass('hide');
             }
         });
     };
