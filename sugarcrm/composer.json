@@ -93,7 +93,6 @@
     "require": {
         "psr/log": "1.0.0",
         "ruflin/elastica" : "2.3.1",
-        "onelogin/php-saml": "2.10.5",
         "aws/aws-sdk-php": "2.7.7",
         "phpmailer/phpmailer" : "v5.2.22",
         "etechnika/idna-convert" : "1.0.3",
@@ -113,7 +112,7 @@
         "monolog/monolog": "1.22.0",
         "tedivm/jshrink": "v1.1.0",
         "vanderlee/php-stable-sort-functions": "2.0.2",
-        "sugarcrm/identity-provider": "~1.0.0",
+        "sugarcrm/identity-provider": "1.0.1",
         "ext-openssl": "*",
         "php": ">=5.6.0"
     },
