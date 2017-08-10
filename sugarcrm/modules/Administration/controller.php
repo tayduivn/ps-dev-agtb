@@ -417,19 +417,37 @@ class AdministrationController extends SugarController
         ], Response::HTTP_BAD_REQUEST);
 
         if ($file = $this->getUploadedMetadataFile()) {
-            $parser = $this->getXmlMetadataParser();
-            if ($parser->loadFromFile((string) $file)) {
+            $errors = [];
+            $parseResult = $this->getParsedIdPMetadata((string) $file);
+
+            if (!$parseResult) {
+                $errors[] = $this->translateModuleError('WRONG_IMPORT_METADATA_INVALID_SOURCE_ERROR');
+            }
+            if (empty($parseResult['idp']['entityId'])) {
+                $errors[] = $this->translateModuleError('WRONG_IMPORT_XML_FILE_NO_MAIN_SECTION_ERROR');
+            }
+            if (empty($parseResult['idp']['singleSignOnService'])) {
+                $errors[] = $this->translateModuleError('WRONG_IMPORT_XML_FILE_NO_IDP_SECTION_ERROR');
+            }
+
+            if (!$errors) {
                 $response->setStatusCode(Response::HTTP_OK);
                 $response->setData([
-                    'SAML_loginurl' => $parser->getSsoUrl(),
-                    'SAML_login_binding' => $parser->getSsoBinding(),
-                    'SAML_SLO' => $parser->getSloUrl(),
-                    'SAML_SLO_binding' => $parser->getSloBinding(),
-                    'SAML_idp_entityId' => $parser->getEntityId(),
-                    'SAML_X509Cert' => $parser->getX509CertPem(),
+                    'SAML_loginurl' => !empty($parseResult['idp']['singleSignOnService']['url']) ?
+                        $parseResult['idp']['singleSignOnService']['url'] : '',
+                    'SAML_login_binding' => !empty($parseResult['idp']['singleSignOnService']['binding']) ?
+                        $parseResult['idp']['singleSignOnService']['binding'] : '',
+                    'SAML_SLO' => !empty($parseResult['idp']['singleLogoutService']['url']) ?
+                        $parseResult['idp']['singleLogoutService']['url'] : '',
+                    'SAML_SLO_binding' => !empty($parseResult['idp']['singleLogoutService']['binding']) ?
+                        $parseResult['idp']['singleLogoutService']['binding'] : '',
+                    'SAML_idp_entityId' => !empty($parseResult['idp']['entityId']) ?
+                        $parseResult['idp']['entityId'] : '',
+                    'SAML_X509Cert' => !empty($parseResult['idp']['x509cert']) ?
+                        $parseResult['idp']['x509cert'] : '',
                 ]);
             } else {
-                $response->setData(['error' => implode(', ', $parser->getErrors())]);
+                $response->setData(['error' => implode(', ', $errors)]);
             }
         }
 
@@ -450,12 +468,14 @@ class AdministrationController extends SugarController
     }
 
     /**
-     * return XmlIdpMetadataParser
-     * @return XmlIdpMetadataParser
+     * Wrapper for getting parsed contents of IdP Metadata from file.
+     *
+     * @param string $file
+     * @return array
      */
-    protected function getXmlMetadataParser()
+    protected function getParsedIdPMetadata($file)
     {
-        return new XmlIdpMetadataParser();
+        return \OneLogin_Saml2_IdPMetadataParser::parseFileXML($file);
     }
 
     /**

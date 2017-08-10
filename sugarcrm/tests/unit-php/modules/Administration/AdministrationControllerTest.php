@@ -2,8 +2,6 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Administration;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Parser\XmlIdpMetadataParser;
-
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -20,11 +18,6 @@ class AdministrationControllerTest extends \PHPUnit_Framework_TestCase
      * @var \OneLogin_Saml2_Settings|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $settings;
-
-    /**
-     * @var XmlIdpMetadataParser|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $parser;
 
     /**
      * @var UploadedFile|\PHPUnit_Framework_MockObject_MockObject
@@ -46,7 +39,7 @@ class AdministrationControllerTest extends \PHPUnit_Framework_TestCase
                 'terminate',
                 'getUploadedMetadataFile',
                 'translateModuleError',
-                'getXmlMetadataParser',
+                'getParsedIdPMetadata',
             ])
             ->getMock();
 
@@ -58,11 +51,6 @@ class AdministrationControllerTest extends \PHPUnit_Framework_TestCase
         $this->controller->expects($this->any())
             ->method('getSamlSettings')
             ->willReturn($this->settings);
-
-        $this->parser = $this->createMock(XmlIdpMetadataParser::class);
-        $this->controller->expects($this->any())
-            ->method('getXmlMetadataParser')
-            ->willReturn($this->parser);
 
         $this->file = $this->createMock(UploadedFile::class);
         $this->file->expects($this->any())
@@ -161,22 +149,24 @@ class AdministrationControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testAction_parseImportSamlXmlFileParseErrors()
     {
-        $this->controller->expects($this->once())
+        $this->controller->expects($this->atLeastOnce())
             ->method('translateModuleError')
-            ->with($this->equalTo('WRONG_IMPORT_FILE_NOT_FOUND_ERROR'))
+            ->withConsecutive(
+                ['WRONG_IMPORT_FILE_NOT_FOUND_ERROR'],
+                ['WRONG_IMPORT_METADATA_INVALID_SOURCE_ERROR'],
+                ['WRONG_IMPORT_XML_FILE_NO_MAIN_SECTION_ERROR'],
+                ['WRONG_IMPORT_XML_FILE_NO_IDP_SECTION_ERROR']
+            )
             ->willReturn('error');
 
         $this->controller->expects($this->once())
             ->method('getUploadedMetadataFile')
             ->willReturn($this->file);
 
-        $this->parser->expects($this->once())
-            ->method('loadFromFile')
+        $this->controller->expects($this->once())
+            ->method('getParsedIdPMetadata')
             ->with($this->equalTo('dump'))
-            ->willReturn(false);
-        $this->parser->expects($this->once())
-            ->method('getErrors')
-            ->willReturn(['error']);
+            ->willReturn([]);
 
         ob_start();
         $this->controller->action_parseImportSamlXmlFile();
@@ -198,21 +188,22 @@ class AdministrationControllerTest extends \PHPUnit_Framework_TestCase
             ->method('getUploadedMetadataFile')
             ->willReturn($this->file);
 
-        $this->parser->expects($this->once())
-            ->method('loadFromFile')
+        $this->controller->expects($this->once())
+            ->method('getParsedIdPMetadata')
             ->with($this->equalTo('dump'))
-            ->willReturn(true);
-
-        $this->parser->expects($this->never())
-            ->method('getErrors');
-
-        $this->parser->expects($this->once())
-            ->method('getSsoUrl')
-            ->willReturn('url');
+            ->willReturn([
+                'idp' => [
+                    'entityId' => 'SomeEntityID',
+                    'singleSignOnService' => [
+                        'url' => 'http://sso.com',
+                    ],
+                ],
+            ]);
 
         ob_start();
         $this->controller->action_parseImportSamlXmlFile();
         $content = ob_get_clean();
         $this->assertContains('url', $content);
+        $this->assertContains('entityId', $content);
     }
 }
