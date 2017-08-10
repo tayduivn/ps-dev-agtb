@@ -22,12 +22,14 @@ describe('Reports.RecordCount', function() {
         let johnId = records.Users[0].id;
 
         records = [
-            {attributes: {name: 'Account1', industry: 'Banking', assigned_user_id: johnId}},
-            {attributes: {name: 'Account2', industry: 'Banking', assigned_user_id: johnId}},
-            {attributes: {name: 'Account3', industry: 'Engineering', assigned_user_id: johnId}}
+            {attributes: {name: 'RecordCountAccount1', industry: 'Banking', assigned_user_id: johnId}},
+            {attributes: {name: 'RecordCountAccount2', industry: 'Banking', assigned_user_id: johnId}},
+            {attributes: {name: 'RecordCountAccount3', industry: 'Engineering', assigned_user_id: johnId}}
         ];
 
-        yield Fixtures.create(records, {module: 'Accounts'});
+        records = yield Fixtures.create(records, {module: 'Accounts'});
+
+        this.accounts = records.Accounts;
 
         let content = {
             display_columns: [{name: 'name', label: 'Name', table_key: 'self'}],
@@ -41,7 +43,18 @@ describe('Reports.RecordCount', function() {
             assigned_user_id: johnId,
             report_type: 'tabular',
             full_table_list: {self: {value: 'Accounts', module: 'Accounts', label: 'Accounts'}},
-            filters_def: {Filter_1: {operator: 'AND'}},
+            filters_def: {
+                Filter_1: {
+                    operator: 'AND',
+                    0: {
+                        name: 'name',
+                        table_key: 'self',
+                        qualifier_name: 'starts_with',
+                        input_name0: 'RecordCount',
+                        input_name1: 'on'
+                    }
+                }
+            },
             chart_type: 'none'
         };
 
@@ -62,9 +75,21 @@ describe('Reports.RecordCount', function() {
     });
 
     it('should return record count for a filtered list', function*() {
-        let filter = 'group_filters%5B0%5D%5Bindustry%5D=Banking';
-        let response = yield Agent.as('John').get('Reports/' + this.reportId + '/record_count?' + filter);
+        let filter = {
+            group_filters: [{'self:industry': ['Banking']}]
+        };
+        let response = yield Agent.as('John').get('Reports/' + this.reportId + '/record_count', {qs: filter});
         expect(response).to.have.status(200);
         expect(response.body.record_count).to.equal(2);
+    });
+
+    it('should exclude deleted records', function*() {
+        yield Agent.as('John').delete('Accounts/' + this.accounts[0].id);
+        let filter = {
+            group_filters: [{'self:industry': ['Banking']}]
+        };
+        let response = yield Agent.as('John').get('Reports/' + this.reportId + '/record_count', {qs: filter});
+        expect(response).to.have.status(200);
+        expect(response.body.record_count).to.equal(1);
     });
 });

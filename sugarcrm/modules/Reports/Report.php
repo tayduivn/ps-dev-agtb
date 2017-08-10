@@ -2694,7 +2694,7 @@ class Report
         $this->create_where();
         $this->create_from();
         $id = $this->full_bean_list['self']->table_name . '.id';
-        $query = "SELECT COUNT(DISTINCT $id) AS record_count {$this->from} WHERE {$this->where}";
+        $query = "SELECT COUNT(DISTINCT $id) AS record_count {$this->from} WHERE {$this->where} AND {$this->focus->table_name}.deleted=0";
         $result = $this->db->query($query, true, "Error executing query");
         if ($result) {
             $row = $this->db->fetchByAssoc($result);
