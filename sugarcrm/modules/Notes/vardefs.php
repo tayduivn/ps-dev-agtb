@@ -51,6 +51,7 @@ $dictionary['Note'] = array(
             'type' => 'varchar',
             'len' => 100,
             'duplicate_on_record_copy' => 'always',
+            'massupdate' => false,
         ),
         'file_source' => array(
             'name' => 'file_source',
@@ -60,6 +61,7 @@ $dictionary['Note'] = array(
             'comment' => 'The name of the module where the attachment originated',
             'importable' => false,
             'duplicate_on_record_copy' => 'always',
+            'massupdate' => false,
         ),
         'file_size' => array(
             'name' => 'file_size',
@@ -69,6 +71,7 @@ $dictionary['Note'] = array(
             'importable' => false,
             'default' => 0,
             'duplicate_on_record_copy' => 'always',
+            'massupdate' => false,
         ),
   'file_url'=>
   array(
@@ -106,6 +109,8 @@ $dictionary['Note'] = array(
             'reportable' => false,
             'required' => false,
             'studio' => false,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'always',
             'type' => 'varchar',
             'vname' => 'LBL_EMAIL_TYPE',
         ),
@@ -115,6 +120,8 @@ $dictionary['Note'] = array(
             'reportable' => false,
             'required' => false,
             'studio' => false,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'always',
             'type' => 'id',
             'vname' => 'LBL_EMAIL_ID',
         ),

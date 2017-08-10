@@ -109,6 +109,7 @@ $dictionary['DocumentRevision'] = array(
             'type' => 'int',
             'comment' => 'The size of the file',
             'importable' => false,
+            'massupdate' => false,
         ),
         'revision' => array(
             'name' => 'revision',

@@ -37,6 +37,8 @@ $dictionary['Email'] = array(
             'required' => true,
             'comment' => 'Date record created',
             'readonly' => true,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
@@ -54,6 +56,8 @@ $dictionary['Email'] = array(
             'required' => true,
             'comment' => 'Date record last modified',
             'readonly' => true,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
@@ -106,6 +110,8 @@ $dictionary['Email'] = array(
             'dbType' => 'id',
             'comment' => 'User ID that last modified record',
             'readonly' => true,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
@@ -140,6 +146,8 @@ $dictionary['Email'] = array(
             'reportable' => false,
             'comment' => 'User name who created record',
             'readonly' => true,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
@@ -184,12 +192,14 @@ $dictionary['Email'] = array(
                 'enabled' => true,
                 'searchable' => false,
             ),
+            'massupdate' => false,
         ),
         'reply_to_addr' => array(
             'name' => 'reply_to_addr',
             'type' => 'varchar',
             'vname' => 'reply_to_addr',
             'source' => 'non-db',
+            'massupdate' => false,
         ),
         'to_addrs_names' => array(
             'name' => 'to_addrs_names',
@@ -197,6 +207,7 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_TO_ADDRS',
             'source' => 'non-db',
             'reportable' => false,
+            'massupdate' => false,
         ),
         'cc_addrs_names' => array(
             'name' => 'cc_addrs_names',
@@ -204,6 +215,7 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_CC',
             'source' => 'non-db',
             'reportable' => false,
+            'massupdate' => false,
         ),
         'bcc_addrs_names' => array(
             'name' => 'bcc_addrs_names',
@@ -211,18 +223,21 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_BCC',
             'source' => 'non-db',
             'reportable' => false,
+            'massupdate' => false,
         ),
         'raw_source' => array(
             'name' => 'raw_source',
             'type' => 'varchar',
             'vname' => 'raw_source',
             'source' => 'non-db',
+            'massupdate' => false,
         ),
         'description_html' => array(
             'name' => 'description_html',
             'type' => 'varchar',
             'vname' => 'description_html',
             'source' => 'non-db',
+            'massupdate' => false,
         ),
         'description' => array(
             'name' => 'description',
@@ -234,6 +249,7 @@ $dictionary['Email'] = array(
                 'searchable' => true,
                 'type' => 'text',
             ),
+            'massupdate' => false,
         ),
         'date_sent' => array(
             'name' => 'date_sent',
@@ -253,6 +269,8 @@ $dictionary['Email'] = array(
             'len' => 255,
             'comment' => 'ID of the email item obtained from the email transport system',
             'hideacl' => true,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
         ),
         // Bug #45395 : Deleted emails from a group inbox does not move the emails to the Trash folder for Google Apps
         'message_uid' => array(
@@ -262,6 +280,7 @@ $dictionary['Email'] = array(
             'len' => 64,
             'comment' => 'UID of the email item obtained from the email transport system',
             'hideacl' => true,
+            'massupdate' => false,
         ),
         'name' => array(
             'name' => 'name',
@@ -276,6 +295,7 @@ $dictionary['Email'] = array(
                 'searchable' => true,
             ),
             'hideacl' => true,
+            'massupdate' => false,
         ),
         'type' => array(
             'name' => 'type',
@@ -314,6 +334,7 @@ $dictionary['Email'] = array(
             'comment' => 'I you reply to an email then reply to status of original email is set',
             'massupdate' => false,
             'hideacl' => true,
+            'duplicate_on_record_copy' => 'no',
         ),
         'intent' => array(
             'name' => 'intent',
@@ -330,6 +351,8 @@ $dictionary['Email'] = array(
             'type' => 'id',
             'len' => '36',
             'reportable' => false,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
         ),
         'created_by_link' => array(
             'name' => 'created_by_link',
@@ -383,6 +406,8 @@ $dictionary['Email'] = array(
             'duplicate_on_record_copy' => 'no',
             'importable' => false,
             'comment' => 'Identifier of email record that this email was a reply to',
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
         ),
         'parent_name' => array(
             'name' => 'parent_name',
@@ -586,6 +611,7 @@ $dictionary['Email'] = array(
             'workflow' => false,
             'importable' => false,
             'reportable' => false,
+            'massupdate' => false,
             'hideacl' => true,
         ),
         'outbound_email_id' => array(
@@ -598,6 +624,7 @@ $dictionary['Email'] = array(
             'function' => 'getOutboundEmailDropdown',
             'function_bean' => 'Emails',
             'reportable' => false,
+            'massupdate' => false,
         ),
         'from_collection' => array(
             'name' => 'from_collection',

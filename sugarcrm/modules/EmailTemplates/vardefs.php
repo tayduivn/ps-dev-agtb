@@ -169,7 +169,7 @@ $dictionary['EmailTemplate'] = array(
 			'isnull' => 'false',
 			'audited'=>true,
 			'comment' => 'User ID assigned to record',
-            'duplicate_merge'=>'disabled'
+            'duplicate_merge'=>'disabled',
 		),
     	 'assigned_user_name' => array (
         	 'name' => 'assigned_user_name',
@@ -254,6 +254,9 @@ $dictionary['EmailTemplate'] = array(
             'type' => 'bool',
             'default' => '0',
             'readonly' => true,
+            'duplicate_on_record_copy' => 'no',
+            'massupdate' => false,
+            'importable' => false,
         ),
 	),
 	'indices' => array(

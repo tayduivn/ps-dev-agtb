@@ -51,6 +51,8 @@ $dictionary['UserSignature'] = array(
             'type' => 'bool',
             'sortable' => false,
             'source' => 'non-db',
+            'duplicate_on_record_copy' => 'no',
+            'massupdate' => false,
         ),
     ),
     'indices' => array(
