@@ -125,6 +125,10 @@
             "packagist.org": false
         },
         {
+            "type": "path",
+            "url": "dist/identity-provider"
+        },
+        {
             "type": "composer",
             "url": "https://satis.sugardev.team"
         }
