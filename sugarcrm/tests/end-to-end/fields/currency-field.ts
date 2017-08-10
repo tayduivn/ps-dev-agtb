@@ -33,7 +33,21 @@ export default class CurrencyField extends BaseField {
     }
 }
 
-export const Edit = CurrencyField;
+export class Edit extends CurrencyField {
+
+    constructor(options) {
+        super(options);
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await seedbed.client.getValue(this.$('field.selector'));
+
+        return value.toString().trim();
+
+    }
+}
+
 
 export class Detail extends CurrencyField {
 

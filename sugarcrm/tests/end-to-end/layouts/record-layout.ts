@@ -31,8 +31,8 @@ export default class RecordLayout extends BaseView {
 
         this.selectors = this.mergeSelectors({
             $: '.main-pane',
-            showMoreBtn: '.btn.more',
-            showLessBtn: '.btn.less',
+            showMoreBtn: '.show-hide-toggle .btn.more',
+            showLessBtn: '.show-hide-toggle .btn.less',
         });
 
         this.type = 'record';

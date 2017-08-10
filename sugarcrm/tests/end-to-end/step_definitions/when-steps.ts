@@ -153,6 +153,15 @@ const whenSteps = function () {
             let view = layout.type ? layout.defaultView : layout;
             return view.clickField(fieldName);
         }, true);
+
+    this.When(/^I click (\S+) field on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) view$/,
+        async (fieldName, record, listView) => {
+
+            let listItem = listView.getListItem({id: record.id}, record);
+
+            await listItem.clickField(fieldName);
+
+        }, true);
 };
 
 module.exports = whenSteps;

@@ -18,7 +18,10 @@ export class BaseField extends BaseSeedbedField {
     }
 
     public async click(): Promise<void> {
-        return seedbed.client.click(this.$('field', {name: this.name}));
+        let selector = this.$('field', {name: this.name});
+
+        await seedbed.client.scroll(selector)
+            .click(selector);
     }
 
 }
