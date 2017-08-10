@@ -1039,8 +1039,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             var isGroupedBarType;
             var isDiscreteData = hasValues && Array.isArray(json.label) &&
                     json.label.length === json.values.length &&
-                    json.values.reduce(function(a, b) {
-                        return a && Array.isArray(b.values) && b.values.length === 1;
+                    json.values.reduce(function(a, c, i) {
+                        return a && Array.isArray(c.values) && c.values.length === 1 &&
+                            pickLabel(c.label) === pickLabel(json.label[i]);
                     }, true);
 
             function sumValues(values) {
