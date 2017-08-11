@@ -14,7 +14,7 @@ Feature: Reports module verification
     Given I use default account
     Given I launch App with config: "skipTutorial"
 
-  @list-method
+  @list-method @ci-excluded
   Scenario: Reports > List View
     Given Reports records exist:
       | *name     | module    |
