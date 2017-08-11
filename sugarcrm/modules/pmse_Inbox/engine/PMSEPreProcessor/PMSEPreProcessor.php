@@ -192,6 +192,9 @@ class PMSEPreProcessor
 
             // Loop the flowdata list and handle the actions necessary
             foreach ($flowDataList as $flowData) {
+                // Make sure we start fresh each time with validation and such
+                $request->reset();
+
                 // Process the flow data and also the bean object data
                 $request->setFlowData($this->processFlowData($flowData));
 
