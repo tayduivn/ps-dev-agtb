@@ -67,6 +67,8 @@ class FilterApi extends SugarApi
                     'SugarApiExceptionError',
                     // Thrown in filterListSetup and getPredefinedFilterById
                     'SugarApiExceptionNotAuthorized',
+                    // Thrown in filterListSetup
+                    'SugarApiExceptionInvalidParameter',
                 ),
             ),
             'filterModulePost' => array(

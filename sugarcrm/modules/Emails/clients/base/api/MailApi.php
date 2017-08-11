@@ -111,6 +111,7 @@ class MailApi extends ModuleApi
                 'method' => 'validateEmailAddresses',
                 'shortHelp' => 'Validate One Or More Email Address',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_address_validate_post_help.html',
+                'maxVersion' => 11,
             ),
             'saveAttachment' => array(
                 'reqType' => 'POST',
@@ -651,6 +652,7 @@ class MailApi extends ModuleApi
      * Validates email addresses. The return value is an array of key-value pairs where the keys are the email
      * addresses and the values are booleans indicating whether or not the email address is valid.
      *
+     * @deprecated POST /Mail/address/validate has been deprecated and will not be available after v11.
      * @param ServiceBase $api
      * @param array $args
      * @return array
@@ -658,6 +660,10 @@ class MailApi extends ModuleApi
      */
     public function validateEmailAddresses(ServiceBase $api, array $args)
     {
+        LoggerManager::getLogger()->deprecated(
+            'POST /Mail/address/validate has been deprecated and will not be available after v11.'
+        );
+
         $validatedEmailAddresses = array();
         unset($args["__sugar_url"]);
         if (!is_array($args)) {

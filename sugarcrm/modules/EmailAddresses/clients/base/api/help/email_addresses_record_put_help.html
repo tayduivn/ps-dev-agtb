@@ -10,84 +10,86 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 -->
-<h2 xmlns="http://www.w3.org/1999/html">Overview</h2>
+<h2>Overview</h2>
 <span class="lead">
-    Update an existing email address. The <code>email_address</code> parameter is not supported as email addresses are
-    immutable.
+    Update an existing email address.
+</span>
+
+<h2>Summary</h2>
+<span class="lead">
+    The <b>email_address</b> parameter is not supported as email addresses are immutable.
 </span>
 
 <h2>Request Arguments</h2>
 <table class="table table-hover">
     <thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Required</th>
-    </tr>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>
-            invalid_email
-        </td>
-        <td>
-            Boolean
-        </td>
-        <td>
-            <code>true</code> if the email address is invalid.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
-    <tr>
-        <td>
-            opt_out
-        </td>
-        <td>
-            Boolean
-        </td>
-        <td>
-            <code>true</code> if the email address is opted out.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
+        <tr>
+            <td>
+                invalid_email
+            </td>
+            <td>
+                Boolean
+            </td>
+            <td>
+                <b>true</b> if the email address is invalid.
+            </td>
+            <td>
+                False
+            </td>
+        </tr>
+        <tr>
+            <td>
+                opt_out
+            </td>
+            <td>
+                Boolean
+            </td>
+            <td>
+                <b>true</b> if the email address is opted out.
+            </td>
+            <td>
+                False
+            </td>
+        </tr>
     </tbody>
 </table>
 
 <h3>Request</h3>
 <pre class="pre-scrollable">
-    {
-      "email_address": "myname@mydomain.com",
-      "invalid_email": false,
-      "opt_out": true
-    }
+{
+  "opt_out": true
+}
 </pre>
 
 <h2>Response Arguments</h2>
 <table class="table table-hover">
     <thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-    </tr>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>
-            &lt;record field&gt;
-        </td>
-        <td>
-            &lt;record field type&gt;
-        </td>
-        <td>
-            Returns the fields for the updated record.
-        </td>
-    </tr>
+        <tr>
+            <td>
+                &lt;record field&gt;
+            </td>
+            <td>
+                &lt;record field type&gt;
+            </td>
+            <td>
+                Returns the fields for the updated record.
+            </td>
+        </tr>
     </tbody>
 </table>
 
@@ -98,14 +100,12 @@
   "date_created": "2016-02-25T11:53:07-08:00",
   "date_modified": "2016-02-25T11:53:07-08:00",
   "deleted": false,
-  "email_address": "myname@mydomain.com",
-  "email_address_caps": "MYNAME@MYDOMAIN.COM",
+  "email_address": "eharmon@example.com",
+  "email_address_caps": "EHARMON@EXAMPLE.COM",
   "invalid_email": false,
   "opt_out": true,
   "_acl": {
-    "fields": [
-
-    ]
+    "fields": {}
   },
   "_module": "EmailAddresses"
 }
@@ -119,7 +119,7 @@
     </tr>
     <tr>
         <td>
-            v11
+            v10
         </td>
         <td>
             Added <code>/EmailAddresses/:record</code> PUT endpoint.

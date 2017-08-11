@@ -26,6 +26,7 @@ class EmailsRelateRecordApi extends RelateRecordApi
                 'shortHelp' => 'Relates an existing record to an email',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_link_link_name_remote_id_post_help.html',
                 'exceptions' => [
+                    'SugarApiExceptionMissingParameter',
                     'SugarApiExceptionNotAuthorized',
                     'SugarApiExceptionNotFound',
                 ],
@@ -38,6 +39,7 @@ class EmailsRelateRecordApi extends RelateRecordApi
                 'shortHelp' => 'Relates existing records to an email',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_link_post_help.html',
                 'exceptions' => [
+                    'SugarApiExceptionMissingParameter',
                     'SugarApiExceptionNotAuthorized',
                     'SugarApiExceptionNotFound',
                 ],
@@ -50,6 +52,7 @@ class EmailsRelateRecordApi extends RelateRecordApi
                 'shortHelp' => 'Deletes a relationship between an email and another record',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_link_link_name_remote_id_delete_help.html',
                 'exceptions' => [
+                    'SugarApiExceptionMissingParameter',
                     'SugarApiExceptionNotAuthorized',
                     'SugarApiExceptionNotFound',
                 ],
@@ -62,6 +65,7 @@ class EmailsRelateRecordApi extends RelateRecordApi
                 'shortHelp' => 'Relates existing records from a record list to an email',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_links_from_recordlist_post_help.html',
                 'exceptions' => [
+                    'SugarApiExceptionMissingParameter',
                     'SugarApiExceptionNotAuthorized',
                     'SugarApiExceptionNotFound',
                 ],

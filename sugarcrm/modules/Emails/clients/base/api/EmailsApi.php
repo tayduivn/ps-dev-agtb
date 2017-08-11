@@ -67,6 +67,28 @@ class EmailsApi extends ModuleApi
                 'method' => 'createRecord',
                 'shortHelp' => 'This method creates a new Emails record',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_post_help.html',
+                'minVersion' => 11,
+                'exceptions' => array(
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionMissingParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                    'SugarApiException',
+                    'SugarApiExceptionError',
+                ),
+            ),
+            'retrieve' => array(
+                'reqType' => 'GET',
+                'path' => array('Emails', '?'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'retrieveRecord',
+                'shortHelp' => 'Returns a single Emails record',
+                'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_get_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionMissingParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                ),
             ),
             'update' => array(
                 'reqType' => 'PUT',
@@ -75,6 +97,15 @@ class EmailsApi extends ModuleApi
                 'method' => 'updateRecord',
                 'shortHelp' => 'This method updates an Emails record',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_put_help.html',
+                'minVersion' => 11,
+                'exceptions' => array(
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionMissingParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                    'SugarApiException',
+                    'SugarApiExceptionError',
+                ),
             ),
         );
     }
@@ -194,6 +225,7 @@ class EmailsApi extends ModuleApi
      *
      * @param SugarBean $email
      * @throws SugarApiException
+     * @throws SugarApiExceptionError
      */
     protected function sendEmail(SugarBean $email)
     {

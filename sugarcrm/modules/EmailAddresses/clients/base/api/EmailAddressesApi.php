@@ -27,8 +27,7 @@ class EmailAddressesApi extends ModuleApi
      * Registers the create route for EmailAddresses to guarantee that {@link EmailAddressesApi::createBean()} is used
      * in place of {@link ModuleApi::createBean()}.
      *
-     * Registers the update route for EmailAddresses to guarantee that {@link EmailAddressesApi::__construct()} is used
-     * in place of {@link ModuleApi::__construct()}.
+     * Registers the update route for EmailAddresses to guarantee that {@link EmailAddressesApi::__construct()} is used.
      *
      * {@inheritdoc}
      */
@@ -42,6 +41,12 @@ class EmailAddressesApi extends ModuleApi
                 'method' => 'createRecord',
                 'shortHelp' => 'This method creates a new EmailAddresses record',
                 'longHelp' => 'modules/EmailAddresses/clients/base/api/help/email_addresses_record_post_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionMissingParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                ),
             ),
             'update' => array(
                 'reqType' => 'PUT',
@@ -50,6 +55,12 @@ class EmailAddressesApi extends ModuleApi
                 'method' => 'updateRecord',
                 'shortHelp' => 'This method updates an EmailAddresses record',
                 'longHelp' => 'modules/EmailAddresses/clients/base/api/help/email_addresses_record_put_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionMissingParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                ),
             ),
         );
     }

@@ -36,6 +36,10 @@ class OutboundEmailConfigurationApi extends ModuleApi
      * @deprecated All /OutboundEmailConfiguration endpoints have been deprecated.
      */
     public function registerApiRest() {
+        LoggerManager::getLogger()->deprecated(
+            'OutboundEmailConfigurationApi and all of its endpoints have been deprecated.'
+        );
+
         $api = array(
             "outboundEmailConfigurationList" => array(
                 "reqType"   => "GET",
@@ -43,7 +47,7 @@ class OutboundEmailConfigurationApi extends ModuleApi
                 "pathVars"  => array("", ""),
                 "method"    => "listConfigurations",
                 "shortHelp" => "A list of outbound email configurations",
-                'longHelp'  => '',
+                'longHelp'  => 'modules/OutboundEmailConfiguration/clients/base/api/help/outbound_email_configuration_list_get_help.html',
                 'maxVersion' => 11,
             ),
         );

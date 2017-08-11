@@ -185,7 +185,7 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'message_uid',
-                false,
+                true,
             ],
             [
                 'name',

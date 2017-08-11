@@ -12,8 +12,14 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    Creates relationships to a pre-existing email. See <a href="module_record_link_post_help.html">RelateRecordApi</a>
-    and <a href="emails_record_link_link_name_remote_id_post_help.html">EmailsRelateRecordApi</a> for details.
+    Creates a relationship to a pre-existing email.
+</span>
+
+<h2>Summary</h2>
+<span class="lead">
+    Cannot link existing Notes records as attachments (link: <b>attachments</b>) and existing EmailParticipants records
+    as a sender (link: <b>from</b>) or recipients(links: <b>to</b>, <b>cc</b>, <b>bcc</b>). All other operations
+    described in <a onclick="openLongHelp('d929047c54d78ad96401be98aa699ccf');">Relate Record API</a> are supported.
 </span>
 
 <h2>Change Log</h2>
@@ -24,7 +30,7 @@
     </tr>
     <tr>
         <td>
-            v11
+            v10
         </td>
         <td>
             Added <code>/Emails/:record/link</code> POST endpoint.

@@ -129,7 +129,7 @@ class EmailsFilterApi extends FilterApi
         foreach ($filter as $def) {
             if (!is_array($def)) {
                 throw new SugarApiExceptionInvalidParameter(
-                    "definition for {$field} operation is invalid: must be an array"
+                    "definition for {$field} operator is invalid: must be an array"
                 );
             }
 
@@ -139,13 +139,13 @@ class EmailsFilterApi extends FilterApi
             if (!isset($def['email_address_id']) || isset($def['parent_type']) || isset($def['parent_id'])) {
                 if (!isset($def['parent_type'])) {
                     throw new SugarApiExceptionInvalidParameter(
-                        "definition for {$field} operation is invalid: parent_type is required"
+                        "definition for {$field} operator is invalid: parent_type is required"
                     );
                 }
 
                 if (!isset($def['parent_id'])) {
                     throw new SugarApiExceptionInvalidParameter(
-                        "definition for {$field} operation is invalid: parent_id is required"
+                        "definition for {$field} operator is invalid: parent_id is required"
                     );
                 }
             }

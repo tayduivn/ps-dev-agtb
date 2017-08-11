@@ -10,10 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 -->
-<h2 xmlns="http://www.w3.org/1999/html">Overview</h2>
+<h2>Overview</h2>
 <span class="lead">
-    Create a new email address. In the event that the email address already exists, that record will be returned without
-    making any changes.
+    Create a new email address.
+</span>
+
+<h2>Summary</h2>
+<span class="lead">
+    In the event that the email address already exists, that record will be returned without making any changes.
 </span>
 
 <h2>Request Arguments</h2>
@@ -49,7 +53,7 @@
                 Boolean
             </td>
             <td>
-                <code>true</code> if the email address is invalid. <code>false</code> is the default.
+                <b>true</b> if the email address is invalid. <b>false</b> is the default.
             </td>
             <td>
                 False
@@ -63,7 +67,7 @@
                 Boolean
             </td>
             <td>
-                <code>true</code> if the email address is opted out. <code>false</code> is the default.
+                <b>true</b> if the email address is opted out. <b>false</b> is the default.
             </td>
             <td>
                 False
@@ -74,11 +78,11 @@
 
 <h3>Request</h3>
 <pre class="pre-scrollable">
-    {
-      "email_address": "myname@mydomain.com",
-      "invalid_email": false,
-      "opt_out": false
-    }
+{
+  "email_address": "eharmon@example.com",
+  "invalid_email": false,
+  "opt_out": false
+}
 </pre>
 
 <h2>Response Arguments</h2>
@@ -112,14 +116,12 @@
   "date_created": "2016-02-25T11:53:07-08:00",
   "date_modified": "2016-02-25T11:53:07-08:00",
   "deleted": false,
-  "email_address": "myname@mydomain.com",
-  "email_address_caps": "MYNAME@MYDOMAIN.COM",
+  "email_address": "eharmon@example.com",
+  "email_address_caps": "EHARMON@EXAMPLE.COM",
   "invalid_email": false,
   "opt_out": false,
   "_acl": {
-    "fields": [
-
-    ]
+    "fields": {}
   },
   "_module": "EmailAddresses"
 }
@@ -133,7 +135,7 @@
     </tr>
     <tr>
         <td>
-            v11
+            v10
         </td>
         <td>
             Added <code>/EmailAddresses</code> POST endpoint.

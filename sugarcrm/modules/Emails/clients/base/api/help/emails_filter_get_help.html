@@ -12,147 +12,84 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    Lists filtered records.
+    Lists filtered emails.
 </span>
 
 <h2>Summary</h2>
 <span class="lead">
-    Adds additional operations to <a onclick="openLongHelp('3d2524f2398c30db68af051c799f3c18');">Filter API</a> that are
+    Adds additional operators to <a onclick="openLongHelp('3d2524f2398c30db68af051c799f3c18');">Filter API</a> that are
     specific to Emails. A special macro, <b>$current_user_id</b>, is a convenience that allows for finding emails
     involving the current user.
 </span>
 
-<h3>Filter Expressions</h3>
-<span class="lead">
-The additional filters:
-</span>
-
-<h4>Emails Sent By</h4>
+<h4>Filter By Sender</h4>
 <div class="well well-small">
-    The <b>$from</b> operation allows you to find emails sent by one or more people. When the person is not known, only
-    the email address is stored. In such a case, the <b>parent_type</b> is EmailAddresses and the <b>parent_id</b> is the ID
-    of the email address from the database. In the example, you would find any emails sent by the current user, the
-    Contacts record with ID "fa300a0e-0ad1-b322-9601-512d0983c19a", or the email address with ID
-    "b0701501-1fab-8ae7-3942-540da93f5017".
-
-    <h5>Example</h5>
+    This will return all emails sent by the current user, by the contact whose ID is
+    <code>fa300a0e-0ad1-b322-9601-512d0983c19a</code>, using the email address sam@example.com, which is referenced by
+    the ID <code>b0701501-1fab-8ae7-3942-540da93f5017</code>, or by the lead whose ID is
+    <code>73b1087e-4bb6-11e7-acaa-3c15c2d582c6</code> using the email address wally@example.com, which is referenced by
+    the ID <code>b651d834-4bb6-11e7-bfcf-3c15c2d582c6</code>.
 <pre class="pre-scrollable">
 {
-    "filter":[
-        {
-            "$from":{
-                {
-                    "parent_type":"Users",
-                    "parent_id":"$current_user_id"
-                },
-                {
-                    "parent_type":"Contacts",
-                    "parent_id":"fa300a0e-0ad1-b322-9601-512d0983c19a"
-                },
-                {
-                    "parent_type":"EmailAddresses",
-                    "parent_id":"b0701501-1fab-8ae7-3942-540da93f5017"
-                }
-            }
-        }
+  "filter": [{
+    "$from": [
+      {
+        "parent_type": "Users",
+        "parent_id": "$current_user_id"
+      },
+      {
+        "parent_type": "Contacts",
+        "parent_id": "fa300a0e-0ad1-b322-9601-512d0983c19a"
+      },
+      {
+        "email_address_id": "b0701501-1fab-8ae7-3942-540da93f5017"
+      },
+      {
+        "parent_type": "Leads",
+        "parent_id": "73b1087e-4bb6-11e7-acaa-3c15c2d582c6",
+        "email_address_id": "b651d834-4bb6-11e7-bfcf-3c15c2d582c6"
+      }
     ]
+  }]
 }
 </pre>
-
 </div>
 
-    <h4>Emails Sent To</h4>
-    <div class="well well-small">
-        The <b>$to</b>, <b>$cc</b>, and <b>$bcc</b> operations allow you to find emails sent to one or more people. In
-        the example, you would find any emails sent to the current user, where the current user is a recipient found in
-        of the TO, CC, or BCC headers. The filter is styled like the <b>$from</b> filter. Each operation can accept one
-        or more tuples.
-
-    <h5>Example</h5>
+<h4>Filter By Recipients</h4>
+<div class="well well-small">
+    This would return all archived emails received by the current user.
 <pre class="pre-scrollable">
 {
-    "filter":[
+  "filter": [{
+    "$or": [{
+      "$to": [
         {
-            "$or":{
-                "$to":{
-                    {
-                        "parent_type":"Users",
-                        "parent_id":"$current_user_id"
-                    }
-                },
-                "$cc":{
-                    {
-                        "parent_type":"Users",
-                        "parent_id":"$current_user_id"
-                    }
-                },
-                "$bcc":{
-                    {
-                        "parent_type":"Users",
-                        "parent_id":"$current_user_id"
-                    }
-                }
-            }
+          "parent_type": "Users",
+          "parent_id": "$current_user_id"
         }
-    ]
+      ],
+      "$cc": [
+        {
+          "parent_type": "Users",
+          "parent_id": "$current_user_id"
+        }
+      ],
+      "$bcc": [
+        {
+          "parent_type": "Users",
+          "parent_id": "$current_user_id"
+        }
+      ]
+    }]
+  }, {
+    "state": {
+      "$in": [
+        "Archived"
+      ]
+    }
+  }]
 }
 </pre>
-
-</div>
-
-<div class="well well-small">
-
-    <span class="lead">
-        Below is a list of operation types in addition to those from
-        <a onclick="openLongHelp('3d2524f2398c30db68af051c799f3c18');">Filter API</a>:
-    </span>
-
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th>Operation</th>
-            <th>Description</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                $from
-            </td>
-            <td>
-                Finds emails sent by one or more people as specified as an array.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                $to
-            </td>
-            <td>
-                Finds emails sent to one or more people as specified as an array, where recipients are found in the TO
-                header.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                $cc
-            </td>
-            <td>
-                Finds emails sent to one or more people as specified as an array, where recipients are found in the CC
-                header.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                $bcc
-            </td>
-            <td>
-                Finds emails sent to one or more people as specified as an array, where recipients are found in the BCC
-                header.
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
 </div>
 
 <h2>Change Log</h2>
@@ -163,10 +100,10 @@ The additional filters:
     </tr>
     <tr>
         <td>
-            v11
+            v10
         </td>
         <td>
-            Added the <code>$from</code>, <code>$to</code>, <code>$cc</code>, and <code>$bcc</code> operations to
+            Added the <code>$from</code>, <code>$to</code>, <code>$cc</code>, and <code>$bcc</code> operators to
             <code>/Emails/filter</code> GET endpoint.
         </td>
     </tr>

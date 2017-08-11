@@ -58,7 +58,6 @@ class SugarACLArchivedEmails extends SugarACLStrategy
             'description_html',
             'date_sent',
             'message_id',
-            'message_uid',
             'name',
             'mailbox_id',
             'state',

@@ -12,69 +12,15 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    Deletes an existing relationship between an email and another record. See
-    <a href="module_record_link_link_name_remote_id_delete_help.html">RelateRecordApi</a> for details.
+    Deletes an existing relationship between an email and another record.
 </span>
 
-<h2>Links</h2>
-<table class="table table-hover">
-    <thead>
-    <tr>
-        <th>Link</th>
-        <th>Description</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>
-            accounts_from
-        </td>
-        <td>
-            The sender cannot be removed. You may change the sender unless the email is archived.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            contacts_from
-        </td>
-        <td>
-            The sender cannot be removed. You may change the sender unless the email is archived.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            email_addresses_from
-        </td>
-        <td>
-            The sender cannot be removed. You may change the sender unless the email is archived.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            leads_from
-        </td>
-        <td>
-            The sender cannot be removed. You may change the sender unless the email is archived.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            prospects_from
-        </td>
-        <td>
-            The sender cannot be removed. You may change the sender unless the email is archived.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            users_from
-        </td>
-        <td>
-            The sender cannot be removed. You may change the sender unless the email is archived.
-        </td>
-    </tr>
-    </tbody>
-</table>
+<h2>Summary</h2>
+<span class="lead">
+    The sender (link: <b>from</b>) cannot be removed. Replace the sender with a different sender instead. All other
+    operations described in <a onclick="openLongHelp('f4eba1e41b9a3d4e82f6a9fb588a5459');">Relate Record API</a> are
+    supported.
+</span>
 
 <h2>Change Log</h2>
 <table class="table table-hover">
@@ -84,7 +30,7 @@
     </tr>
     <tr>
         <td>
-            v11
+            v10
         </td>
         <td>
             Added <code>/Emails/:record/link/:link_name/:remote_id</code> DELETE endpoint.

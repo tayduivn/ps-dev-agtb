@@ -10,330 +10,333 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 -->
-<h2 xmlns="http://www.w3.org/1999/html">Overview</h2>
+<h2>Overview</h2>
 <span class="lead">
-    Create a new OutboundEmail record to use to send emails to customers over SMTP.
+    Create a new OutboundEmail configuration to use to send emails over SMTP.
+</span>
+
+<h2>Summary</h2>
+<span class="lead">
+    Each configuration that is created is validated first by attempting to connect to the server.
 </span>
 
 <h2>Request Arguments</h2>
 <table class="table table-hover">
     <thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Required</th>
-    </tr>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>
-            name
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The display name of the account.
-        </td>
-        <td>
-            True
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_sendtype
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            Only SMTP is supported. This field is defaulted to <code>smtp</code>.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtptype
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The email provider through which emails are sent. This is merely a convenience which allows for
-            prepopulating data in the UI. Possible values are: google, exchange, outlook, other. <code>other</code> is
-            the default.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpserver
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The address of the SMTP server.
-        </td>
-        <td>
-            True
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpport
-        </td>
-        <td>
-            Integer
-        </td>
-        <td>
-            The port on which to connect to the SMTP server. The default is <code>456</code>, which assumes you are
-            using SSL.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpuser
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The username for authenticating with the SMTP server. It is only required if <code>mail_smtpauth_req</code>
-            is <code>true</code>.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtppass
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The password for authenticating with the SMTP server. It is only required if <code>mail_smtpauth_req</code>
-            is true.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpauth_req
-        </td>
-        <td>
-            Boolean
-        </td>
-        <td>
-            Indicates whether or not the SMTP server requires authentication. The default is <code>false</code>.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpssl
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The encryption protocol used for connecting to the SMTP server. <code>"0"</code> represents no encryption.
-            <code>"1"</code> represents SSL. <code>"2"</code> represents TLS. The default is SSL.
-        </td>
-        <td>
-            False
-        </td>
-    </tr>
+        <tr>
+            <td>
+                name
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The display name of the configuration.
+            </td>
+            <td>
+                True
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_sendtype
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                Only SMTP is supported. This field is defaulted to <b>smtp</b>.
+            </td>
+            <td>
+                False
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtptype
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The email provider through which emails are sent. This is merely a convenience which allows for
+                prepopulating data in the UI. Possible values are: google, exchange, outlook, other. <b>other</b> is the
+                default.
+            </td>
+            <td>
+                False
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpserver
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The address of the SMTP server.
+            </td>
+            <td>
+                True
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpport
+            </td>
+            <td>
+                Integer
+            </td>
+            <td>
+                The port on which to connect to the SMTP server. The default is <b>465</b>, which assumes you are using
+                SSL.
+            </td>
+            <td>
+                False
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpuser
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The username for authenticating with the SMTP server. It is only required if <b>mail_smtpauth_req</b> is
+                <b>true</b>.
+            </td>
+            <td>
+                False
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtppass
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The password for authenticating with the SMTP server. It is only required if <b>mail_smtpauth_req</b> is
+                <b>true</b>.
+            </td>
+            <td>
+                False
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpauth_req
+            </td>
+            <td>
+                Boolean
+            </td>
+            <td>
+                Indicates whether or not the SMTP server requires authentication. The default is <b>false</b>.
+            </td>
+            <td>
+                False
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpssl
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The encryption protocol used for connecting to the SMTP server. <b>"0"</b> represents no encryption.
+                <b>"1"</b> represents SSL. <b>"2"</b> represents TLS. The default is SSL.
+            </td>
+            <td>
+                False
+            </td>
+        </tr>
     </tbody>
 </table>
 
 <h3>Request</h3>
 <pre class="pre-scrollable">
 {
-    "name": "My Exchange Account",
-    "mail_smtptype": "exchange",
-    "mail_smtpserver": "smtp.example.com",
-    "mail_smtpport": 465,
-    "mail_smtpuser": "foo@example.com",
-    "mail_smtppass": "P@55w0rd",
-    "mail_smtpauth_req": true,
-    "mail_smtpssl": "1"
+  "name": "My Exchange Account",
+  "mail_smtptype": "exchange",
+  "mail_smtpserver": "smtp.example.com",
+  "mail_smtpport": 465,
+  "mail_smtpuser": "foo@example.com",
+  "mail_smtppass": "P@55w0rd",
+  "mail_smtpauth_req": true,
+  "mail_smtpssl": "1"
 }
 </pre>
 
 <h2>Response Arguments</h2>
 <table class="table table-hover">
     <thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-    </tr>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>
-            name
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The display name of the account.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            type
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            Only <code>user</code> accounts may be created using this endpoint, so <code>user</code> will always be
-            returned. <code>system</code> and <code>system-override</code> accounts are always created by the
-            application.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            user_id
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The current user's ID. The current user may only create accounts for himself or herself.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_sendtype
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            Only SMTP is supported, <code>smtp</code> will always be returned.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtptype
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The email provider through which emails are sent. Possible values are: google, exchange, outlook, other.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpserver
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The address of the SMTP server.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpport
-        </td>
-        <td>
-            Integer
-        </td>
-        <td>
-            The port on which to connect to the SMTP server.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpuser
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The username for authenticating with the SMTP server.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtppass
-        </td>
-        <td>
-            Boolean
-        </td>
-        <td>
-            Indicates whether or not a password exists. <code>true</code> is returned for this field when a password
-            does exist. This field is not included in the response when a password does not exist.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpauth_req
-        </td>
-        <td>
-            Boolean
-        </td>
-        <td>
-            Indicates whether or not the SMTP server requires authentication.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            mail_smtpssl
-        </td>
-        <td>
-            String
-        </td>
-        <td>
-            The encryption protocol used for connecting to the SMTP server.
-        </td>
-    </tr>
+        <tr>
+            <td>
+                name
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The display name of the configuration.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                type
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                Only <b>user</b> configuration may be created using this endpoint, so <b>user</b> will always be
+                returned. <b>system</b> and <b>system-override</b> configurations are always created by the application.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                user_id
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The current user's ID. The current user may only create configurations for himself or herself.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_sendtype
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                Only SMTP is supported, so <b>smtp</b> will always be returned.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtptype
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The email provider through which emails are sent. Possible values are: google, exchange, outlook, other.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpserver
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The address of the SMTP server.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpport
+            </td>
+            <td>
+                Integer
+            </td>
+            <td>
+                The port on which to connect to the SMTP server.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpuser
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The username for authenticating with the SMTP server.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtppass
+            </td>
+            <td>
+                Boolean
+            </td>
+            <td>
+                Indicates whether or not a password exists. <b>true</b> is returned for this field when a password does
+                exist. This field is not included in the response when a password does not exist.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpauth_req
+            </td>
+            <td>
+                Boolean
+            </td>
+            <td>
+                Indicates whether or not the SMTP server requires authentication.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                mail_smtpssl
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The encryption protocol used for connecting to the SMTP server.
+            </td>
+        </tr>
     </tbody>
 </table>
 
 <h3>Response</h3>
 <pre class="pre-scrollable">
 {
-    "id": "e04ce998-960e-11e6-8628-3c15c2d582c6",
-    "name": "My Exchange Account",
-    "type": "user",
-    "user_id": "e91b1fa7-1bd8-3c71-be96-512e643f9ca4",
-    "mail_sendtype": "smtp",
-    "mail_smtptype": "exchange",
-    "mail_smtpserver": "smtp.example.com",
-    "mail_smtpport": 465,
-    "mail_smtpuser": "foo@example.com",
-    "mail_smtppass": true,
-    "mail_smtpauth_req": true,
-    "mail_smtpssl": "1",
-    "deleted": false,
-    "my_favorite": false,
-    "_acl": {
-        "fields": {
-        }
-    },
-    "_module": "OutboundEmail"
+  "id": "e04ce998-960e-11e6-8628-3c15c2d582c6",
+  "name": "My Exchange Account",
+  "type": "user",
+  "user_id": "e91b1fa7-1bd8-3c71-be96-512e643f9ca4",
+  "mail_sendtype": "smtp",
+  "mail_smtptype": "exchange",
+  "mail_smtpserver": "smtp.example.com",
+  "mail_smtpport": 465,
+  "mail_smtpuser": "foo@example.com",
+  "mail_smtppass": true,
+  "mail_smtpauth_req": true,
+  "mail_smtpssl": "1",
+  "deleted": false,
+  "my_favorite": false,
+  "_acl": {
+    "fields": {}
+  },
+  "_module": "OutboundEmail"
 }
 </pre>
 

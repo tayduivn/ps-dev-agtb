@@ -80,9 +80,9 @@
 <h3>Output Example</h3>
 <pre class="pre-scrollable">
 {
-    "guid":"61b19f41-0ac9-0f2f-d9c5-51eecaf89396",
-    "name":"ExampleDocument.txt",
-    "nameForDisplay":"ExampleDocument.txt"
+    "guid": "61b19f41-0ac9-0f2f-d9c5-51eecaf89396",
+    "name": "ExampleDocument.txt",
+    "nameForDisplay": "ExampleDocument.txt"
 }
 </pre>
 
@@ -94,19 +94,20 @@
     </tr>
     <tr>
         <td>
-            v10
+            v11
         </td>
         <td>
-            Added <code>/Mail/attachment</code> POST endpoint.
+            Last version in which <code>/Mail/attachment</code> POST is available. Use
+            <code>/Notes/temp/file/filename</code> POST in conjunction with
+            <code>/Emails/:record/link/attachments</code> POST instead.
         </td>
     </tr>
     <tr>
         <td>
-            v11
+            v10
         </td>
         <td>
-            Deprecated <code>/Mail/attachment</code> POST endpoint. Use <code>/Notes/temp/file/filename</code> POST
-            endpoint in conjunction with <code>/Emails/:record/link/attachments</code> POST instead.
+            Added <code>/Mail/attachment</code> POST endpoint.
         </td>
     </tr>
 </table>

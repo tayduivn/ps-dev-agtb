@@ -25,6 +25,13 @@ class OutboundEmailApi extends ModuleApi
                 'method' => 'createRecord',
                 'shortHelp' => 'This method creates a new OutboundEmail record',
                 'longHelp' => 'modules/OutboundEmail/clients/base/api/help/outbound_email_post_help.html',
+                'exceptions' => [
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionMissingParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                    'SugarApiException',
+                ],
             ],
             'update' => [
                 'reqType' => 'PUT',
@@ -33,6 +40,13 @@ class OutboundEmailApi extends ModuleApi
                 'method' => 'updateRecord',
                 'shortHelp' => 'This method updates an OutboundEmail record',
                 'longHelp' => 'modules/OutboundEmail/clients/base/api/help/outbound_email_record_put_help.html',
+                'exceptions' => [
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionMissingParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                    'SugarApiException',
+                ],
             ],
         ];
     }
