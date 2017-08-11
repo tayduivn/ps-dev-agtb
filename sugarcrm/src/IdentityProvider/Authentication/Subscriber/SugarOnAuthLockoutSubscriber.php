@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber;
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\AuthenticationEvents;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 
 /**
  * example subscriber

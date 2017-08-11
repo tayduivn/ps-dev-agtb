@@ -13,12 +13,13 @@
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
+
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
 
 class SugarLocalUserProvider implements UserProviderInterface
 {

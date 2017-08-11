@@ -10,18 +10,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\AcsToken;
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\ConsumeLogoutToken;
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\IdpLogoutToken;
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\InitiateLogoutToken;
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\InitiateToken;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
-use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-use Sugarcrm\Sugarcrm\Session\SessionStorage;
+
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 class IdMSAMLAuthenticate extends SAMLAuthenticate
 {

@@ -12,8 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider;
 
-use Sugarcrm\IdentityProvider\Authentication\UserProvider\SAMLUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+
+use Sugarcrm\IdentityProvider\Authentication\UserProvider\SAMLUserProvider;
 
 class SugarSAMLUserProvider extends SAMLUserProvider
 {

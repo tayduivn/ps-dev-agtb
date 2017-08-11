@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 
 class LoadUserOnSessionListener

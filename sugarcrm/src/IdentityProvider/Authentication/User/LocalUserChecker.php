@@ -12,8 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
-use Symfony\Component\Security\Core\User\UserInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
+
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Checks User local authentication regarding Sugar-specific business logic.

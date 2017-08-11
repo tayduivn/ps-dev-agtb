@@ -14,7 +14,6 @@ namespace Sugarcrm\SugarcrmTests\Security\Validator\Constraints;
 
 use Symfony\Component\Validator\Tests\Constraints\AbstractConstraintValidatorTest as AbstractBase;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Validation;
 
 /**
  *

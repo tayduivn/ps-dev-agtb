@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSugarAuthenticate;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
+
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 

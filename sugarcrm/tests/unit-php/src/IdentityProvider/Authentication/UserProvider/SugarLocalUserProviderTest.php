@@ -13,6 +13,7 @@ namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\UserProvider
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**

@@ -14,10 +14,11 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Subscriber;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber

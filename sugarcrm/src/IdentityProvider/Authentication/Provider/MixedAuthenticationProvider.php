@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
+
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\ProviderNotFoundException;

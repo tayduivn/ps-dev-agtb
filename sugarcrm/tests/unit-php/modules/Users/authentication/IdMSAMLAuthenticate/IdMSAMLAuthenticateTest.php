@@ -11,11 +11,13 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSAMLAuthenticate;
 
-use Sugarcrm\IdentityProvider\Authentication\Token\SAML\ResultToken;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+
+use Sugarcrm\IdentityProvider\Authentication\Token\SAML\ResultToken;
+
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 /**
  * Class IdMSAMLAuthenticateTest

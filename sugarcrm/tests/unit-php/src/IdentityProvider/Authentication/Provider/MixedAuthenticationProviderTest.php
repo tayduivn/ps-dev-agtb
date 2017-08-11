@@ -12,10 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Provider;
 
-use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\MixedAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
+
+use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider;
+
 use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;

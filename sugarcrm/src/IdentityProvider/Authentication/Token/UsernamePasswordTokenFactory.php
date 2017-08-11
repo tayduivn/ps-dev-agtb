@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Encoder\SugarPreAuthPassEncoder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**

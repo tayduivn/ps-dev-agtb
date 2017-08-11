@@ -12,8 +12,10 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider;
 
-use Sugarcrm\IdentityProvider\Authentication\UserProvider\LdapUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+
+use Sugarcrm\IdentityProvider\Authentication\UserProvider\LdapUserProvider;
+
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Security\Core\User\User as StandardUser;
 

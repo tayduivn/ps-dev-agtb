@@ -12,29 +12,26 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
+use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\MixedAuthenticationProvider;
-use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
-use Symfony\Component\Security\Core\Encoder\EncoderFactory;
-
-use Sugarcrm\IdentityProvider\Encoder\EncoderBuilder;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LocalUserChecker;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LdapUserChecker;
-use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
-
-use Symfony\Component\Ldap\Adapter\ExtLdap\Adapter;
-use Symfony\Component\Ldap\Ldap;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLdapUserProvider;
-use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider;
-
-use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarSAMLUserProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LocalUserChecker;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LdapUserChecker;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLdapUserProvider;
+
+use Sugarcrm\IdentityProvider\Encoder\EncoderBuilder;
+use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider;
+use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarSAMLUserProvider;
-
-use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
+use Symfony\Component\Ldap\Adapter\ExtLdap\Adapter;
+use Symfony\Component\Ldap\Ldap;
+use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
+use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
+use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 
 class AuthProviderBasicManagerBuilder
 {

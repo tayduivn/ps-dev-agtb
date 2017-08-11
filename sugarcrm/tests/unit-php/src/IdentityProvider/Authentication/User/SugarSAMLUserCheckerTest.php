@@ -15,8 +15,9 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
+
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker

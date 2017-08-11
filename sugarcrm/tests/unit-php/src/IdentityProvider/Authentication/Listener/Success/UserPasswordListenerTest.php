@@ -12,9 +12,10 @@
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Success;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UserPasswordListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UserPasswordListener

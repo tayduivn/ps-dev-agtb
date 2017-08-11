@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping;
+
 use OneLogin_Saml2_Response;
 
 /**

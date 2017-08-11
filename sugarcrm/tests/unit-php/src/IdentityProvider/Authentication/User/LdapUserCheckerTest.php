@@ -14,8 +14,9 @@ namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
-use Symfony\Component\Ldap\Entry;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LdapUserChecker;
+
+use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**

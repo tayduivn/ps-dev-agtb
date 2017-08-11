@@ -12,8 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider;
 
-use Elastica\Transport\Null;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
+
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
 /**

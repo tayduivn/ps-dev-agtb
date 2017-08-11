@@ -12,11 +12,13 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
-use Symfony\Component\Security\Core\User\UserInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Sugarcrm\IdentityProvider\Authentication\User\SAMLUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
+
+use Sugarcrm\IdentityProvider\Authentication\User\SAMLUserChecker;
+
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
  * Class performs post authentication checking for Sugar SAML user.

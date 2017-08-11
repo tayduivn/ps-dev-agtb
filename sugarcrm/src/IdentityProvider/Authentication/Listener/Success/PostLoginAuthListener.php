@@ -12,9 +12,10 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success;
 
-use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
+
+use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 
 class PostLoginAuthListener
 {
