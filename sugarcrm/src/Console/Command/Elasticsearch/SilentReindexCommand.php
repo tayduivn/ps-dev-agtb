@@ -47,7 +47,7 @@ class SilentReindexCommand extends Command implements InstanceModeInterface
     {
         $this
             ->setName('search:silent_reindex')
-            ->setDescription('Execute a silent reindex')
+            ->setDescription('Create mappings and index the data')
             ->addOption(
                 'modules',
                 null,
