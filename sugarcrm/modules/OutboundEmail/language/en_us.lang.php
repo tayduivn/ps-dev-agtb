@@ -10,8 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $mod_strings = array(
-    'LBL_MODULE_NAME' => 'Email Settings',
-    'LBL_MODULE_NAME_SINGULAR' => 'Email Setting',
+    'LBL_MODULE_NAME' => 'Outgoing Email Accounts',
+    'LBL_MODULE_NAME_SINGULAR' => 'Outgoing Email Account',
     'LBL_MAIL_SENDTYPE' => 'Mail Transfer Agent',
     'LBL_MAIL_SMTPSERVER' => 'Server',
     'LBL_MAIL_SMTPPORT' => 'Port',
