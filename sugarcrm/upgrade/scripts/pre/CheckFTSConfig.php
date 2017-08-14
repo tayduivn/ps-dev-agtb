@@ -32,8 +32,8 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
      * @var array
      */
     protected $supportedVersions = array(
-        array('version' =>'5.0', 'operator' => '>='),
-        array('version' => '5.2', 'operator' => '<'),
+        array('version' =>'5.4', 'operator' => '>='),
+        array('version' => '5.5', 'operator' => '<'),
     );
 
     public function run()

@@ -56,7 +56,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->config['host'], $client->getConfig('host'));
         $this->assertSame($this->config['port'], $client->getConfig('port'));
 
-        $version = '5.1';
+        $version = '5.4';
         TestReflection::setProtectedValue($client, 'version', $version);
         $this->assertSame($version, $client->getVersion());
 
@@ -82,13 +82,13 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function providerTestCheckVersion()
     {
         return array(
-            //5.1.x is supported
-            array('5.1.0', true),
-            array('5.1.9', true),
-            array('5.1', true),
-            // 5.2.x is not supported
-            array('5.2.0', false),
-            array('5.2', false),
+            //5.4.x is supported
+            array('5.4.0', true),
+            array('5.4.9', true),
+            array('5.4', true),
+            // 5.5.x is not supported
+            array('5.5.0', false),
+            array('5.5', false),
             // 1.x and 2.x are not supported
             array('1.7', false),
             array('2.3.1', false),
@@ -132,7 +132,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                   "name" : "Zom",
                   "cluster_name" : "elasticsearch_brew",
                   "version" : {
-                    "number" : "5.1.0",
+                    "number" : "5.4.0",
                     "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
                     "build_timestamp" : "2015-04-27T09:21:06Z",
                     "build_snapshot" : false,
@@ -151,7 +151,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                   "name" : "Zom",
                   "cluster_name" : "elasticsearch_brew",
                   "version" : {
-                    "number" : "5.1.0",
+                    "number" : "5.4.0",
                     "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
                     "build_timestamp" : "2015-04-27T09:21:06Z",
                     "build_snapshot" : false,
@@ -170,7 +170,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                   "name" : "Zom",
                   "cluster_name" : "elasticsearch_brew",
                   "version" : {
-                    "number" : "5.1.0",
+                    "number" : "5.4.0",
                     "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
                     "build_timestamp" : "2015-04-27T09:21:06Z",
                     "build_snapshot" : false,
@@ -207,7 +207,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                   "name" : "Zom",
                   "cluster_name" : "elasticsearch_brew",
                   "version" : {
-                    "number" : "5.1.0",
+                    "number" : "5.4.0",
                     "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
                     "build_timestamp" : "2015-04-27T09:21:06Z",
                     "build_snapshot" : false,

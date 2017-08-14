@@ -57,8 +57,7 @@ class Client extends BaseClient
      * @var array
      */
     protected $allowedVersions = array(
-        '5.0',
-        '5.1',
+        '5.4',
     );
 
     /**
@@ -66,8 +65,8 @@ class Client extends BaseClient
      * @var array
      */
     protected static $supportedVersion5x = array(
-        array('version' =>'5.0', 'operator' => '>='),
-        array('version' => '5.2', 'operator' => '<'),
+        array('version' =>'5.4', 'operator' => '>='),
+        array('version' => '5.5', 'operator' => '<'),
     );
 
     /**
