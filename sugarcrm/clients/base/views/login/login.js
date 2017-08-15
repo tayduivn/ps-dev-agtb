@@ -238,24 +238,30 @@
                     };
 
                     app.login(args, null, {
-                        error: function() {
-                            app.$contentEl.show();
-                            app.logger.debug('login failed!');
-                        },
+                        error: _.bind(function() {
+                            this.showSugarLoginForm();
+                        }, this),
                         success: _.bind(function() {
                             app.logger.debug('logged in successfully!');
                             app.alert.dismiss(this._alertKeys.invalidGrant);
                             app.alert.dismiss(this._alertKeys.needLogin);
+                            app.alert.dismiss(this._alertKeys.login);
                             //External login URL should be cleaned up if the login form was successfully used instead.
                             app.config.externalLoginUrl = undefined;
 
                             app.events.on('app:sync:complete', function() {
+                                app.events.trigger('data:sync:complete', 'login', null, {
+                                    'showAlerts': {'process': true}
+                                });
+                                app.api.setRefreshingToken(false);
                                 app.logger.debug('sync in successfully!');
                                 _.defer(_.bind(this.postLogin, this));
                             }, this);
                         }, this),
-                        complete: _.bind(function() {
-                            app.alert.dismiss(this._alertKeys.login);
+                        complete: _.bind(function(request) {
+                            if (request.xhr.status == 401) {
+                                this.showSugarLoginForm();
+                            }
                         }, this)
                     });
                 }
@@ -263,6 +269,19 @@
         );
 
         app.alert.dismiss('offset_problem');
+    },
+
+    /**
+     * When SAML enabled app login error callback will be run only when _refreshToken = true and
+     * app login complete callback will be run when _refreshToken = false
+     * So to avoid form disappearance after second incorrect login we need to run the same code into to two callbacks
+     */
+    showSugarLoginForm: function() {
+        app.alert.dismiss(this._alertKeys.login);
+        app.api.setExternalLogin(false);
+        app.config.externalLoginUrl = undefined;
+        app.$contentEl.show();
+        app.logger.debug('login failed!');
     },
 
     /**

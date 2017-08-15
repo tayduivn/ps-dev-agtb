@@ -276,7 +276,7 @@ describe("Login View", function() {
                 sinon.collection.spy(app.alert, 'dismiss');
                 sinon.collection.stub(app, 'login', function(credentials, info, callbacks) {
                     callbacks.success();
-                    callbacks.complete();
+                    callbacks.complete({'xhr': {'status': 401}});
                 });
             });
 
