@@ -93,7 +93,6 @@ class MappingFactoryTest extends \PHPUnit_Framework_TestCase
                 array(
                     'type' => 'text',
                     'index' => true,
-                    'include_in_all' => false,
                 )
             ),
             array(
@@ -103,7 +102,6 @@ class MappingFactoryTest extends \PHPUnit_Framework_TestCase
                 array(
                     'type' => 'keyword',
                     'index' => true,
-                    'include_in_all' => true,
                 )
             ),
             // no index type
@@ -113,7 +111,6 @@ class MappingFactoryTest extends \PHPUnit_Framework_TestCase
                 false,
                 array(
                     'type' => 'date',
-                    'include_in_all' => false,
                 )
             ),
         );

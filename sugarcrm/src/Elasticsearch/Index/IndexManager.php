@@ -67,8 +67,6 @@ class IndexManager
     protected $defaultMapping = array(
         // Avoid wasting space on _all field which we don't need
         '_all' => array('enabled' => false),
-        // Disable inclusion of fields by default for _all
-        'include_in_all' => false,
         // Ignore new fields for which no mapping exists
         'dynamic' => false,
     );

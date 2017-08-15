@@ -45,8 +45,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
     public function testConstructor()
     {
         $module = 'FooBar';
-        $expectedMulitFieldBase = array('type' => 'keyword', 'index' => true, 'include_in_all' => false);
-        $expectedNotIndexedBase = array('type' => 'text', 'index' => false, 'include_in_all' => false);
+        $expectedMulitFieldBase = array('type' => 'keyword', 'index' => true);
+        $expectedNotIndexedBase = array('type' => 'text', 'index' => false);
 
         $mapping = new Mapping($module);
         $this->assertSame($module, TestReflection::getProtectedValue($mapping, 'module'));
@@ -166,7 +166,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field1' => array(
                 'type' => 'keyword',
                 'index' => true,
-                'include_in_all' => false,
             ),
         ), $mapping->compile());
 
@@ -176,7 +175,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field1' => array(
                 'type' => 'keyword',
                 'index' => true,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
                 )
@@ -190,7 +188,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field1' => array(
                 'type' => 'keyword',
                 'index' => true,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
                 )
@@ -198,7 +195,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field2' => array(
                 'type' => 'keyword',
                 'index' => true,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field2_copy1',
                 )
@@ -211,7 +207,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field1' => array(
                 'type' => 'keyword',
                 'index' => true,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
                     'field1_copy2',
@@ -220,7 +215,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field2' => array(
                 'type' => 'keyword',
                 'index' => true,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field2_copy1',
                 )
@@ -246,7 +240,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field1' => array(
                 'type' => 'text',
                 'index' => false,
-                'include_in_all' => false,
             ),
         ), $mapping->compile());
 
@@ -256,7 +249,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field1' => array(
                 'type' => 'text',
                 'index' => false,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
                 )
@@ -270,7 +262,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field1' => array(
                 'type' => 'text',
                 'index' => false,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
                 )
@@ -278,7 +269,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field2' => array(
                 'type' => 'text',
                 'index' => false,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field2_copy1',
                 )
@@ -291,7 +281,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field1' => array(
                 'type' => 'text',
                 'index' => false,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
                     'field1_copy2',
@@ -300,7 +289,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'field2' => array(
                 'type' => 'text',
                 'index' => false,
-                'include_in_all' => false,
                 'copy_to' => array(
                     'field2_copy1',
                 )
@@ -326,7 +314,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'base1' => array(
                 'type' => 'keyword',
                 'index' => true,
-                'include_in_all' => false,
                 'fields' => array(
                     'field1' => array('type' => 'text'),
                 ),
@@ -339,7 +326,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
             'base1' => array(
                 'type' => 'keyword',
                 'index' => true,
-                'include_in_all' => false,
                 'fields' => array(
                     'field1' => array('type' => 'text'),
                     'field2' => array('type' => 'text'),
@@ -409,7 +395,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
                     'base' => array(
                         'type' => 'text',
                         'index' => false,
-                        'include_in_all' => false,
                         'fields' => array(
                             'field1' => array('type' => 'text'),
                         ),
@@ -422,7 +407,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
                     'base' => array(
                         'type' => 'keyword',
                         'index' => true,
-                        'include_in_all' => false,
                         'fields' => array(
                             'field1' => array('type' => 'text'),
                         ),

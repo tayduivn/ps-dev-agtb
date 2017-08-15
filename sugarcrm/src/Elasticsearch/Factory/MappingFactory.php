@@ -69,9 +69,7 @@ class MappingFactory
      */
     public static function createFieldBase($type, $index, $includeInAll = false)
     {
-        $base = self::createBaseProperty($type, $index);
-        $base[self::ES_KEYWORD_INCINALL] = $includeInAll;
-        return $base;
+        return self::createBaseProperty($type, $index);
     }
 
     /**

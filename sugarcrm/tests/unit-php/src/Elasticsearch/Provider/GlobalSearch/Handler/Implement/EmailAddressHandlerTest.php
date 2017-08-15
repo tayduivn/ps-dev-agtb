@@ -166,7 +166,6 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                         'type' => 'object',
                         'dynamic' => false,
                         'enabled' => true,
-                        'include_in_all' => false,
                         'properties' => array(
                             'primary' => array(
                                 'type' => 'keyword',
@@ -210,7 +209,6 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                     'email' => array(
                         'type' => 'object',
-                        'include_in_all' => false,
                         'dynamic' => false,
                         'enabled' => false,
                     ),
