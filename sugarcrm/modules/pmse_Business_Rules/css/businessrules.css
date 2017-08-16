@@ -9,7 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 #businessrulecontainer {
-  padding: 5px;
+
+  // conflicts with businessrules.less
+  /*padding: 5px;*/
 }
 
 #businessruleheader {
@@ -21,8 +23,10 @@
 
 #businessruledesigner {
   display: block;
-  background-color: #efefef;
   overflow: auto;
+
+  // conflicts with businessrules.less
+  /*background-color: #efefef;*/
 }
 
 .brTitle {
@@ -48,7 +52,10 @@
 }
 
 .decision-table {
-  background: #ebebeb;
+
+  // conflicts with businessrules.less
+  /*background: #ebebeb;*/
+
   /*margin-bottom: 2em;*/
   /*-webkit-box-shadow: #999999 0px 2px 10px;*/
   /*-moz-box-shadow: #999999 0px 2px 10px;*/
@@ -62,7 +69,10 @@
 
 .decision-table th,
 .decision-table td {
-  border: 1px solid #cccccc !important;
+  border: 1px solid #cccccc;
+
+  // conflicts with businessrules.less
+  /*border: 1px solid #cccccc !important;*/
 }
 
 .decision-table thead tr {
@@ -147,11 +157,15 @@
 }
 
 .decision-table table tr:nth-child(even) {
-  background: #F6F6F6;
+
+  // conflicts with businessrules.less
+  /*background: #F6F6F6;*/
 }
 
 .decision-table table tr:nth-child(odd) {
-  background: #FFF;
+
+  // conflicts with businessrules.less
+  /*background: #FFF;*/
 }
 
 .decision-table table tr > *:first-child {
@@ -887,7 +901,9 @@ table.decision-table-index span {
 }
 
 td.decision-table-conclusion-column {
-  background: #fff;
+  // conflicts with businessrules.less
+  /*background: #fff;*/
+
   min-width: 200px;
 }
 
@@ -896,7 +912,8 @@ td.decision-table-conclusion-column {
 }
 
 .ui-sortable tr:hover {
-  background-color: #ff9;
+  // conflicts with businessrules.less
+  /*background-color: #ff9;*/
 }
 
 .index {
