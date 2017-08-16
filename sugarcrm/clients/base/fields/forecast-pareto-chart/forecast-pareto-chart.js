@@ -242,8 +242,8 @@
             })
             .tooltipBar(_.bind(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
-                var val = app.currency.formatAmountLocale(e.value),
-                    lbl = app.lang.get('LBL_SALES_STAGE', 'Forecasts');
+                var val = app.currency.formatAmountLocale(e.point.y);
+                var lbl = app.lang.get('LBL_SALES_STAGE', 'Forecasts');
                 if (this.model.get('group_by') == 'probability') {
                     lbl = app.lang.get('LBL_OW_PROBABILITY', 'Forecasts') + ' (%)';
                 }

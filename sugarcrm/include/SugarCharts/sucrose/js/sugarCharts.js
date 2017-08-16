@@ -70,10 +70,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
     // chart display strings
     var displayErrorMsg = SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports');
     var noDataMsg = SUGAR.charts.translateString('LBL_CHART_NO_DATA');
+    var noLabelStr = SUGAR.charts.translateString('LBL_CHART_UNDEFINED');
     var legendStrings = {
             close: SUGAR.charts.translateString('LBL_CHART_LEGEND_CLOSE'),
             open: SUGAR.charts.translateString('LBL_CHART_LEGEND_OPEN'),
-            noText: SUGAR.charts.translateString('LBL_CHART_UNDEFINED')
+            noLabel: noLabelStr
         };
 
     // controls if chart image is auto-saved
@@ -115,16 +116,15 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             var x = eo.point.x;
                             var y = barChart.valueFormat()(eo.point.y);
                             var p = Math.abs(y * 100 / eo.group._height).toFixed(1);
-                            var content = '';
-                            var percentString = '';
-                            if (x < 100) {
-                                percentString = ' - ' + p + '%';
+                            var content = '<h3>' + key + '</h3><p>';
+                            if (!y) {
+                                return;
                             }
-                            content = '<h3>' + key + '</h3><p>';
-                            content += seriesKey && seriesKey.toString().length && key !== seriesKey ?
+                            content += !_.isEmpty(seriesKey) && (key !== seriesKey || key === noLabelStr) ?
                                 (seriesKey + ': ') :
                                 '';
-                            content += y + percentString + '</p>';
+                            content += eo.point.label || y;
+                            content += (p < 100 ? ' - ' + p + '%' : '') + '</p>';
                             if (!params.allow_drillthru) {
                                 content += '<p class="tooltip-status">' + noDrillthruMsg + '</p';
                             }
@@ -144,7 +144,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .showValues(params.showValues)
                         .strings({
                             legend: legendStrings,
-                            noData: noDataMsg
+                            noData: noDataMsg,
+                            noLabel: noLabelStr
                         });
 
                     barChart.textureFill(true);
@@ -243,7 +244,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .colorData(params.colorData)
                         .strings({
                             legend: legendStrings,
-                            noData: noDataMsg
+                            noData: noDataMsg,
+                            noLabel: noLabelStr
                         });
 
                     if (params.show_x_label) {
@@ -317,11 +319,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .margin(params.margin)
                         .tooltips(params.show_tooltips)
                         .tooltipContent(function(eo, properties) {
-                            var key = pieChart.getKey()(eo);
+                            var key = pieChart.fmtKey()(eo);
+                            var label = pieChart.fmtValue()(eo.data);
                             var y = pieChart.getValue()(eo);
-                            var x = properties.total ? (y * 100 / properties.total).toFixed(1) : 100;
+                            var percent = properties.total ? (y * 100 / properties.total).toFixed(1) : 100;
                             var content = '<h3>' + key + '</h3>' +
-                                   '<p>' + y + ' on ' + x + '</p>';
+                                   '<p>' + label + ' - ' + percent + '%</p>';
                             if (!params.allow_drillthru) {
                                 content += '<p class="tooltip-status">' + noDrillthruMsg + '</p';
                             }
@@ -342,9 +345,16 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             return Math.max(r, 75);
                         })
                         .direction(params.direction)
+                        .fmtValue(function(d) {
+                            return d.label || d.value || d;
+                        })
+                        .fmtCount(function(d) {
+                            return !isNaN(d.count) ? (' (' + d.count + ')') : '';
+                        })
                         .strings({
                             legend: legendStrings,
-                            noData: noDataMsg
+                            noData: noDataMsg,
+                            noLabel: noLabelStr
                         });
 
                     pieChart.textureFill(true);
@@ -393,10 +403,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .tooltips(params.show_tooltips)
                         .tooltipContent(function(eo, properties) {
                             var key = funnelChart.fmtKey()(eo);
+                            var label = funnelChart.fmtValue()(eo.data);
                             var y = funnelChart.getValue()(eo);
-                            var x = properties.total ? (y * 100 / properties.total).toFixed(1) : 100;
+                            var percent = properties.total ? (y * 100 / properties.total).toFixed(1) : 100;
                             var content = '<h3>' + key + '</h3>' +
-                                   '<p>' + y + ' on ' + x + '</p>';
+                                   '<p>' + label + ' - ' + percent + '%</p>';
                             if (!params.allow_drillthru) {
                                 content += '<p class="tooltip-status">' + noDrillthruMsg + '</p';
                             }
@@ -407,9 +418,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .fmtValue(function(d) {
                             return d.label || d.value || d;
                         })
+                        .fmtCount(function(d) {
+                            return !isNaN(d.count) ? (' (' + d.count + ')') : '';
+                        })
                         .strings({
                             legend: legendStrings,
-                            noData: noDataMsg
+                            noData: noDataMsg,
+                            noLabel: noLabelStr
                         });
 
                     funnelChart.textureFill(true);
@@ -1032,7 +1047,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             var data = [];
             var value = 0;
             var properties = json.properties[0] || {};
-            var strUndefined = SUGAR.charts.translateString('LBL_CHART_UNDEFINED');
+            var noLabelStr = SUGAR.charts.translateString('LBL_CHART_UNDEFINED');
             var hasValues = json.values.filter(function(d) {
                     return Array.isArray(d.values) && d.values.length;
                 }).length;
@@ -1051,7 +1066,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
             function pickLabel(label) {
                 var l = [].concat(label)[0];
-                return l ? l : strUndefined;
+                return !_.isEmpty(l) ? l : noLabelStr;
+            }
+
+            function pickValueLabel(d, i) {
+                var l = d.valuelabels && d.valuelabels[i] ? d.valuelabels[i] : d.values[i];
+                return !_.isEmpty(l) ? l : null;
             }
 
             if (hasValues) {
@@ -1070,12 +1090,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                     'key': pickLabel(d),
                                     'type': 'bar',
                                     'values': json.values.map(function(e, j) {
-                                        return {
+                                        var value = {
                                             'series': i,
+                                            'label': pickValueLabel(e, i),
                                             'x': j + 1,
-                                            'y': parseFloat(e.values[i]) || 0,
-                                            'y0': 0
+                                            'y': parseFloat(e.values[i]) || 0
                                         };
+                                        return value;
                                     })
                                 };
                             }) :
@@ -1086,12 +1107,17 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                         'key': d.values.length > 1 ? d.label : pickLabel(d.label),
                                         'type': 'bar',
                                         'values': json.values.map(function(e, j) {
-                                            return {
+                                            var value = {
                                                 'series': i,
                                                 'x': j + 1,
-                                                'y': i === j ? sumValues(e.values) : 0,
-                                                'y0': 0
+                                                'y': i === j ? sumValues(e.values) : 0
                                             };
+                                            //TODO: when collapsing grouped data into basic bar chart
+                                            // we lose the label formatting (fix with localization)
+                                            if (isDiscreteData) {
+                                                value.label = value.y !== 0 ? pickValueLabel(e, 0) : '';
+                                            }
+                                            return value;
                                         })
                                     };
                                 }) :
@@ -1100,46 +1126,49 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                                     'key': params.module || properties.base_module,
                                     'type': 'bar',
                                     'values': json.values.map(function(e, j) {
-                                        return {
+                                        var value = {
                                             'series': j,
+                                            'label': pickValueLabel(e, j),
                                             'x': j + 1,
-                                            'y': sumValues(e.values),
-                                            'y0': 0
+                                            'y': sumValues(e.values)
                                         };
+                                        return value;
                                     })
                                 }];
 
                         break;
 
                     case 'pieChart':
+                    case 'funnelChart':
                         data = json.values.map(function(d, i) {
+                            var value = {
+                                    'series': i,
+                                    'x': 0,
+                                    'y': sumValues(d.values)
+                                };
+                            // some data provided to sugarCharts do not include
+                            // valueLabels, like KB usefulness pie chart
+                            if (d.valuelabels && d.valuelabels.length === 1) {
+                                value.label = d.valuelabels[0];
+                            } else {
+                                value.label = sumValues(d.values);
+                            }
                             var data = {
                                 'key': pickLabel(d.label),
-                                'value': sumValues(d.values)
+                                'values': []
                             };
-                            if (d.color !== undefined) {
+                            data.values.push(value);
+                            if (!_.isUndefined(d.color)) {
                                 data.color = d.color;
                             }
-                            if (d.classes !== undefined) {
+                            if (!_.isUndefined(d.classes)) {
                                 data.classes = d.classes;
                             }
                             return data;
                         });
-                        break;
-
-                    case 'funnelChart':
-                        data = json.values.map(function(d, i) {
-                            return {
-                                'key': pickLabel(d.label),
-                                'values': [{
-                                    'series': i,
-                                    'label': d.valuelabels[0] ? d.valuelabels[0] : d.values[0],
-                                    'x': 0,
-                                    'y': sumValues(d.values),
-                                    'y0': 0
-                                }]
-                            };
-                        }).reverse();
+                        if (config.chartType) {
+                            data.reverse();
+                        }
                         break;
 
                     case 'lineChart':
