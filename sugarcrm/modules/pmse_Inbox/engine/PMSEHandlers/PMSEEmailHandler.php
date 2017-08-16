@@ -152,9 +152,11 @@ class PMSEEmailHandler
      * @param type $param
      * @return \SugarPHPMailer
      * @codeCoverageIgnore
+     * @deprecated Will be removed in a future release
      */
     public function retrieveSugarPHPMailer()
     {
+        LoggerManager::getLogger()->deprecated('The retrieveSugarPHPMailer method is no longer used and will be removed in a future release.');
         return new SugarPHPMailer();
     }
 
@@ -395,7 +397,7 @@ class PMSEEmailHandler
 
         return $res;
     }
-    
+
     /**
      * filling the mail object with all the administrative settings and configurations
      * @global type $sugar_version
@@ -403,9 +405,11 @@ class PMSEEmailHandler
      * @global type $app_list_strings
      * @global type $current_user
      * @param type $mailObject
+     * @deprecated Will be removed in a future release
      */
     public function setupMailObject($mailObject)
     {
+        LoggerManager::getLogger()->deprecated('The setupMailObject method is no longer used and will be removed in a future release.');
         $this->admin->retrieveSettings();
         if ($this->admin->settings['mail_sendtype'] == "SMTP") {
             $mailObject->Mailer = "smtp";
@@ -431,6 +435,14 @@ class PMSEEmailHandler
     }
 
     /**
+     * Returns a Mailer object
+     * @return mixed
+     */
+    protected function retrieveMailer()
+    {
+        return MailerFactory::getSystemDefaultMailer();
+    }
+    /**
      * Send the email based in an email template and with the email data parsed.
      * @param type $moduleName
      * @param type $beanId
@@ -440,87 +452,77 @@ class PMSEEmailHandler
      */
     public function sendTemplateEmail($moduleName, $beanId, $addresses, $templateId)
     {
-        $msgError = '';
-        $bean = $this->retrieveBean($moduleName, $beanId);
+        $mailTransmissionProtocol = "unknown";
+        try {
+            $bean = $this->retrieveBean($moduleName, $beanId);
+            $templateObject = $this->retrieveBean('pmse_Emails_Templates');
+            $templateObject->disable_row_level_security = true;
 
-        $mailObject = $this->retrieveSugarPHPMailer();
-        $this->setupMailObject($mailObject);
+            $mailObject = $this->retrieveMailer();
+            $mailTransmissionProtocol   = $mailObject->getMailTransmissionProtocol();
 
-        $OBCharset = $this->locale->getPrecedentPreference('default_email_charset');
+            $this->addRecipients($mailObject, $addresses);
 
-        if (isset($addresses->to)) {
-            foreach ($addresses->to as $key => $email) {
-                $mailObject->AddAddress($email->address, $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
-            }
-        } else {
-            $msgError = 'addresses field \'TO\' is not defined';
-        }
-
-        if (isset($addresses->cc)) {
-            foreach ($addresses->cc as $key => $email) {
-                $mailObject->AddCC($email->address, $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
-            }
-        } else {
-            $this->logger->info('addresses field \'CC\' is not defined');
-        }
-
-        if (isset($addresses->bcc)) {
-            foreach ($addresses->bcc as $key => $email) {
-                $mailObject->AddBCC($email->address, $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
-            }
-        } else {
-            $this->logger->info('addresses field \'BCC\' is not defined');
-        }
-
-        //    $email = trim($this->mergeBeanInTemplate($bean, $addressArray['to'][0][1], false));
-        $templateObject = $this->retrieveBean('pmse_Emails_Templates');
-        $templateObject->disable_row_level_security = true;
-
-        if (isset($templateId) && $templateId != "") {
-            $templateObject->retrieve($templateId);
-        } else {
-            $msgError = 'template_id is not defined';
-        }
-
-        if (isset($templateObject->from_name) && $templateObject->from_name != '') {
-            $mailObject->FromName = $templateObject->from_name;
-        }
-
-        if (isset($templateObject->from_address) && $templateObject->from_address != '') {
-            $mailObject->From = $templateObject->from_address;
-        }
-
-        if (isset($templateObject->body) && empty($templateObject->body)) {
-            $templateObject->body = strip_tags(from_html($templateObject->body_html));
-        } else {
-            $this->logger->warning('template body is not defined');
-        }
-
-        if (isset($templateObject->body) && isset($templateObject->body_html)) {
-            if (!empty($templateObject->body_html)) {
-                $mailObject->IsHTML(true);
-                $mailObject->Body = from_html($this->beanUtils->mergeBeanInTemplate($bean, $templateObject->body_html));
-                $mailObject->AltBody = from_html($this->beanUtils->mergeBeanInTemplate($bean, $templateObject->body));
+            if (isset($templateId) && $templateId != "") {
+                $templateObject->retrieve($templateId);
             } else {
-                $mailObject->AltBody = from_html($this->beanUtils->mergeBeanInTemplate($bean, $templateObject->body));
+                $this->logger->warning('template_id is not defined');
             }
-        } else {
-            $this->logger->warning('template body_html is not defined');
+
+            if (!empty($templateObject->from_name) && !empty($templateObject->from_address)) {
+                $mailObject->setHeader(EmailHeaders::From, new EmailIdentity($templateObject->from_address, $templateObject->from_name));
+            }
+
+            if (isset($templateObject->body) && empty($templateObject->body)) {
+                $templateObject->body = strip_tags(from_html($templateObject->body_html));
+            } else {
+                $this->logger->warning('template body is not defined');
+            }
+
+            if (!empty($templateObject->body) && !empty($templateObject->body_html)) {
+                $textOnly = EmailFormatter::isTextOnly($templateObject->body_html);
+                if (!$textOnly) {
+                    if (!empty($templateObject->body_html)) {
+                        //set HTMLBody
+                        $htmlBody = from_html($this->beanUtils->mergeBeanInTemplate($bean, $templateObject->body_html));
+                        $mailObject->setHtmlBody($htmlBody);
+                    }
+                }
+                // set TextBody too
+                $textBody = strip_tags(br2nl($templateObject->body));
+                $mailObject->setTextBody($textBody);
+            } else {
+                $this->logger->warning('template body_html is not defined');
+            }
+
+            if (isset($templateObject->subject)) {
+                $mailObject->setSubject(from_html($this->beanUtils->mergeBeanInTemplate($bean, $templateObject->subject)));
+            } else {
+                $this->logger->warning('template subject is not defined');
+            }
+
+            $mailObject->send();
+        } catch (MailerException $mailerException) {
+            $message = $mailerException->getMessage();
+            $this->logger->warning("Error sending email (method: {$mailTransmissionProtocol}), (error: {$message})");
         }
+    }
 
-        if (isset($templateObject->subject)) {
-            $mailObject->Subject = from_html($this->beanUtils->mergeBeanInTemplate($bean, $templateObject->subject));
-        } else {
-            $this->logger->warning('template subject is not defined');
+    /**
+     * Add receipients to Mailer object in preparation to sending email
+     * @param $mailObject Mailer object
+     * @param $addresses To, CC & BCC Email addresses
+     */
+    protected function addRecipients($mailObject, $addresses)
+    {
+        foreach (['to', 'cc', 'bcc'] as $type) {
+            if (isset($addresses->{$type})) {
+                $method = 'addRecipients' . ucfirst($type);
+                foreach ($addresses->{$type} as $key => $email) {
+                    $mailObject->{$method}(new EmailIdentity($email->address, $email->name));
+                }
+            }
         }
-
-        $mailObject->prepForOutbound();
-        $result = $mailObject->Send();
-
-        //if (isset($mailObject->ErrorInfo)) {
-        //$this->bpmLog('ERROR', "mail error: " . $mailObject->ErrorInfo);
-        //}
-        return array('result' => $result, 'ErrorMessage' => $msgError, 'ErrorInfo' => $mailObject->ErrorInfo);
     }
 
     /**

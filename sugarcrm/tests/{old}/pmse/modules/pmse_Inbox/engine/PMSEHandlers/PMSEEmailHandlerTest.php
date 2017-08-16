@@ -72,165 +72,52 @@ class PMSEEmailHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("joane.gill@gmail.com", $result->bcc);
     }
 
-    public function testSetupMailObjectSSL()
-    {
-        $adminMock = $this->getMockBuilder('Administration')
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieveSettings', 'getSettings'))                
-                ->getMock();
-        
-        $adminMock->settings = array(
-            'mail_sendtype' => 'SMTP',
-            'notify_fromaddress' => 'admin@gmail.com',
-            'notify_fromname' => 'administrator',
-            'mail_smtpserver' => 'smtp://someserver.com',
-            'mail_smtpport' => '3124',
-            'mail_smtpssl' => 1,
-            'mail_smtpauth_req' => true,
-            'mail_smtpuser' => 'admin',
-            'mail_smtppass' => 'sample',
-            
-        );
-        
-        $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
-            ->disableOriginalConstructor()
-            ->setMethods(NULL)
-            ->getMock();
-        
-        $mailObject = new stdClass();
-        
-        $emailHandlerMock->setAdmin($adminMock);
-        $emailHandlerMock->setupMailObject($mailObject);
-        
-        $this->assertEquals('smtp', $mailObject->Mailer);
-        $this->assertEquals('ssl', $mailObject->SMTPSecure);
-        $this->assertEquals(true, $mailObject->SMTPAuth);
-        $this->assertEquals('admin', $mailObject->Username);
-        $this->assertEquals('sample', $mailObject->Password);
-        $this->assertEquals('admin@gmail.com', $mailObject->From);
-        $this->assertEquals('administrator', $mailObject->FromName);
-    }
-    
-    public function testSetupMailObjectTSL()
-    {
-        $adminMock = $this->getMockBuilder('Administration')
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieveSettings', 'getSettings'))                
-                ->getMock();
-
-        $adminMock->settings = array(
-            'mail_sendtype' => 'SMTP',
-            'notify_fromaddress' => 'admin@gmail.com',
-            'notify_fromname' => 'administrator',
-            'mail_smtpserver' => 'smtp://someserver.com',
-            'mail_smtpport' => '3124',
-            'mail_smtpssl' => 2,
-            'mail_smtpauth_req' => true,
-            'mail_smtpuser' => 'admin',
-            'mail_smtppass' => 'sample',
-            
-        );
-
-        $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
-            ->disableOriginalConstructor()
-            ->setMethods(NULL)
-            ->getMock();
-
-        $mailObject = new stdClass();
-        $emailHandlerMock->setAdmin($adminMock);
-        $emailHandlerMock->setupMailObject($mailObject);
-
-        $this->assertEquals('smtp', $mailObject->Mailer);
-        $this->assertEquals('tls', $mailObject->SMTPSecure);
-        $this->assertEquals(true, $mailObject->SMTPAuth);
-        $this->assertEquals('admin', $mailObject->Username);
-        $this->assertEquals('sample', $mailObject->Password);
-        $this->assertEquals('admin@gmail.com', $mailObject->From);
-        $this->assertEquals('administrator', $mailObject->FromName);
-    }
-    
-    public function testSetupMailObjectSendMail()
-    {
-        $adminMock = $this->getMockBuilder('Administration')
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieveSettings', 'getSettings'))
-                ->getMock();
-
-        $adminMock->settings = array(
-            'mail_sendtype' => 'sendmail',
-            'notify_fromaddress' => 'admin@gmail.com',
-            'notify_fromname' => 'administrator',
-            'mail_smtpserver' => 'smtp://someserver.com',
-            'mail_smtpport' => '3124',
-            'mail_smtpssl' => 1,
-            'mail_smtpauth_req' => true,
-            'mail_smtpuser' => 'admin',
-            'mail_smtppass' => 'sample',
-            
-        );
-
-        $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
-            ->disableOriginalConstructor()
-            ->setMethods(NULL)
-            ->getMock();
-
-        $mailObject = new stdClass();
-
-        $emailHandlerMock->setAdmin($adminMock);
-        $emailHandlerMock->setupMailObject($mailObject);
-
-        $this->assertEquals('sendmail', $mailObject->Mailer);
-        $this->assertEquals('admin@gmail.com', $mailObject->From);
-        $this->assertEquals('administrator', $mailObject->FromName);
-    }
-    
     public function testSendTemplateEmailAddressesNotDefined()
     {
-
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveSugarPHPMailer', 'retrieveBean', 'setupMailObject'))
+            ->setMethods(array('addRecipients', 'retrieveBean', 'retrieveMailer'))
             ->getMock();
 
-        $sugarMailerMock = $this->getMockBuilder('SugarPHPMailer')
+        $beanUtilsMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('AddAddress', 'AddCC', 'AddBCC', 'IsHTML', 'prepForOutbound', 'Send'))
+            ->setMethods(array('mergeBeanInTemplate'))
             ->getMock();
-        
-        $sugarMailerMock->ErrorInfo = 'Some Error Info.';
-        
-        $localeMock = $this->getMockBuilder('Locale')
+
+        $sugarMailerMock = $this->getMockBuilder('SmtpMailer')
             ->disableOriginalConstructor()
-            ->setMethods(array('getPrecedentPreference', 'translateCharsetMIME'))
+            ->setMethods(array('addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
+                'setSubject', 'setHeader', 'send'))
             ->getMock();
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('error', 'debug', 'info', 'warning'))
+            ->setMethods(array('warning'))
             ->getMock();
-        
-        $emailHandlerMock->expects($this->at(1))
-            ->method('retrieveSugarPHPMailer')
-            ->will($this->returnValue($sugarMailerMock));
-        
-        $beanMock = new stdClass();
-        
-        $emailHandlerMock->expects($this->at(2))
-            ->method('retrieveBean')
-            ->will($this->returnValue($beanMock));
-
-        $templateObjectMock = $this->getMockBuilder('PSMEEmailTemplate')
+        $templateMock = $this->getMockBuilder('pmse_Emails_Templates')
+            ->disableAutoload()
             ->disableOriginalConstructor()
             ->setMethods(array('retrieve'))
             ->getMock();
-        
-        $emailHandlerMock->expects($this->at(3))
+
+        $beanMock = new stdClass();
+
+        $emailHandlerMock->expects($this->at(0))
             ->method('retrieveBean')
-            ->will($this->returnValue($templateObjectMock));
-        
-        $emailHandlerMock->setLocale($localeMock);
+            ->will($this->returnValue($beanMock));
+
+        $emailHandlerMock->expects($this->at(1))
+            ->method('retrieveBean')
+            ->with('pmse_Emails_Templates')
+            ->will($this->returnValue($templateMock));
+
+        $emailHandlerMock->expects($this->once())
+            ->method('retrieveMailer')
+            ->will($this->returnValue($sugarMailerMock));
+
         $emailHandlerMock->setLogger($loggerMock);
-        
+        $emailHandlerMock->setBeanUtils($beanUtilsMock);
+
         $moduleName = 'Leads';
 
         $beanId = 'bean01';
@@ -244,60 +131,55 @@ class PMSEEmailHandlerTest extends PHPUnit_Framework_TestCase
     
     public function testSendTemplateEmailAddressesDefined()
     {
-
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveSugarPHPMailer', 'retrieveBean', 'setupMailObject'))
+            ->setMethods(array('addRecipients', 'retrieveBean', 'retrieveMailer'))
             ->getMock();
 
-        $sugarMailerMock = $this->getMockBuilder('SugarPHPMailer')
-            ->disableOriginalConstructor()
-            ->setMethods(array('AddAddress', 'AddCC', 'AddBCC', 'IsHTML', 'prepForOutbound', 'Send'))
-            ->getMock();
-        
-        $sugarMailerMock->ErrorInfo = 'Some Error Info.';
-        
-        $localeMock = $this->getMockBuilder('Locale')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getPrecedentPreference', 'translateCharsetMIME'))
-            ->getMock();
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('error', 'debug', 'info', 'warning'))
+            ->setMethods(array('warning'))
             ->getMock();
-        
+
         $beanUtilsMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
             ->setMethods(array('mergeBeanInTemplate'))
             ->getMock();
-        
-        $emailHandlerMock->expects($this->at(1))
-            ->method('retrieveSugarPHPMailer')
-            ->will($this->returnValue($sugarMailerMock));
-        
-        $beanMock = new stdClass();
-        
-        $emailHandlerMock->expects($this->at(2))
-            ->method('retrieveBean')
-            ->will($this->returnValue($beanMock));
 
-        $templateObjectMock = $this->getMockBuilder('PSMEEmailTemplate')
+        $sugarMailerMock = $this->getMockBuilder('SmtpMailer')
+            ->disableOriginalConstructor()
+            ->setMethods(array('addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
+                'setSubject', 'setHeader', 'send'))
+            ->getMock();
+
+        $templateMock = $this->getMockBuilder('pmse_Emails_Templates')
+            ->disableAutoload()
             ->disableOriginalConstructor()
             ->setMethods(array('retrieve'))
             ->getMock();
-        
-        $templateObjectMock->from_name = 'administrator';
-        $templateObjectMock->from_address = 'admin@gmail.com';
-        $templateObjectMock->body = 'Hello Mr Goodman';
-        $templateObjectMock->body_html = '<h1>Hello Mr Goodman</h1>';
-        $templateObjectMock->subject = 'Nice to hear from you!';
-        
-        $emailHandlerMock->expects($this->at(3))
+
+        $beanMock = new stdClass();
+
+        $emailHandlerMock->expects($this->at(0))
             ->method('retrieveBean')
-            ->will($this->returnValue($templateObjectMock));
-        
-        $emailHandlerMock->setLocale($localeMock);
+            ->will($this->returnValue($beanMock));
+
+        $emailHandlerMock->expects($this->at(1))
+            ->method('retrieveBean')
+            ->with('pmse_Emails_Templates')
+            ->will($this->returnValue($templateMock));
+
+        $emailHandlerMock->expects($this->once())
+            ->method('retrieveMailer')
+            ->will($this->returnValue($sugarMailerMock));
+
+        $templateMock->from_name = 'administrator';
+        $templateMock->from_address = 'admin@gmail.com';
+        $templateMock->body = 'Hello Mr Goodman';
+        $templateMock->body_html = '<h1>Hello Mr Goodman</h1>';
+        $templateMock->subject = 'Nice to hear from you!';
+
         $emailHandlerMock->setLogger($loggerMock);
         $emailHandlerMock->setBeanUtils($beanUtilsMock);
         
@@ -326,60 +208,53 @@ class PMSEEmailHandlerTest extends PHPUnit_Framework_TestCase
     
     public function testSendTemplateEmailTemplateIdNotDefined()
     {
-
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveSugarPHPMailer', 'retrieveBean', 'setupMailObject'))
+            ->setMethods(array('retrieveMailer', 'retrieveBean', 'addRecipients'))
             ->getMock();
 
-        $sugarMailerMock = $this->getMockBuilder('SugarPHPMailer')
+        $sugarMailerMock = $this->getMockBuilder('SmtpMailer')
             ->disableOriginalConstructor()
-            ->setMethods(array('AddAddress', 'AddCC', 'AddBCC', 'IsHTML', 'prepForOutbound', 'Send'))
-            ->getMock();
-        
-        $sugarMailerMock->ErrorInfo = 'Some Error Info.';
-        
-        $localeMock = $this->getMockBuilder('Locale')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getPrecedentPreference', 'translateCharsetMIME'))
+            ->setMethods(array('addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
+                'setSubject', 'setHeader', 'send'))
             ->getMock();
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('error', 'debug', 'info', 'warning'))
+            ->setMethods(array('warning'))
             ->getMock();
         
         $beanUtilsMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
             ->setMethods(array('mergeBeanInTemplate'))
             ->getMock();
-        
-        $emailHandlerMock->expects($this->at(1))
-            ->method('retrieveSugarPHPMailer')
-            ->will($this->returnValue($sugarMailerMock));
-        
-        $beanMock = new stdClass();
-        
-        $emailHandlerMock->expects($this->at(2))
-            ->method('retrieveBean')
-            ->will($this->returnValue($beanMock));
 
-        $templateObjectMock = $this->getMockBuilder('PSMEEmailTemplate')
+        $templateObjectMock = $this->getMockBuilder('pmse_Emails_Templates')
             ->disableOriginalConstructor()
             ->setMethods(array('retrieve'))
             ->getMock();
+
+        $beanMock = new stdClass();
+        
+        $emailHandlerMock->expects($this->at(0))
+            ->method('retrieveBean')
+            ->will($this->returnValue($beanMock));
+
+        $emailHandlerMock->expects($this->at(1))
+            ->method('retrieveBean')
+            ->with('pmse_Emails_Templates')
+            ->will($this->returnValue($templateObjectMock));
+
+        $emailHandlerMock->expects($this->once())
+            ->method('retrieveMailer')
+            ->will($this->returnValue($sugarMailerMock));
         
         $templateObjectMock->from_name = 'administrator';
         $templateObjectMock->from_address = 'admin@gmail.com';
         $templateObjectMock->body = '';
         $templateObjectMock->body_html = '';
         $templateObjectMock->subject = 'Nice to hear from you!';
-        
-        $emailHandlerMock->expects($this->at(3))
-            ->method('retrieveBean')
-            ->will($this->returnValue($templateObjectMock));
-        
-        $emailHandlerMock->setLocale($localeMock);
+
         $emailHandlerMock->setLogger($loggerMock);
         $emailHandlerMock->setBeanUtils($beanUtilsMock);
         
