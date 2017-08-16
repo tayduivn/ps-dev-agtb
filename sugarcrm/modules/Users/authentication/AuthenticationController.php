@@ -15,6 +15,8 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\PermanentLockedU
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
 
+use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
+
 use Sugarcrm\IdentityProvider\Authentication\Exception\SAMLRequestException;
 use Sugarcrm\IdentityProvider\Authentication\Exception\SAMLResponseException;
 use Sugarcrm\IdentityProvider\Authentication\Exception\InvalidIdentifier\InvalidIdentifierException;
@@ -22,8 +24,13 @@ use Sugarcrm\IdentityProvider\Authentication\Exception\InvalidIdentifier\Invalid
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 
-class AuthenticationController
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+
+class AuthenticationController implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
 	public $loggedIn = false; //if a user has attempted to login
 	public $authenticated = false;
 	public $loginSuccess = false;// if a user has successfully logged in
@@ -63,6 +70,8 @@ class AuthenticationController
                 $type = $idmType;
             }
         }
+
+        $this->setLogger(LoggerFactory::getLogger('authentication'));
 
         $this->authController = new $type();
 	}
@@ -112,7 +121,6 @@ class AuthenticationController
 	 */
 	public function login($username, $password, $params = array())
 	{
-        global $log;
 		//kbrill bug #13225
 		$_SESSION['loginAttempts'] = (isset($_SESSION['loginAttempts']))? $_SESSION['loginAttempts'] + 1: 1;
 		unset($GLOBALS['login_error']);
@@ -136,24 +144,24 @@ class AuthenticationController
             $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
         } catch (InvalidIdentifierException $e) {
             $_SESSION['login_error'] = translate('EXCEPTION_FATAL_ERROR', 'Users');
-            $log->error($e->getMessage());
+            $this->logger->error($e->getMessage());
         } catch (SAMLRequestException $e) {
-            $log->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
         } catch (SAMLResponseException $e) {
-            $log->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
         } catch (AuthenticationServiceException $e) {
-            $log->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = $this->getMessageForProviderException($e->getPrevious());
         } catch (InactiveUserException $e) {
-            $log->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = $this->getMessageForProviderException($e);
         } catch (InvalidUserException $e) {
-            $log->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = $this->getMessageForProviderException($e);
         } catch (\Exception $e) {
-            $log->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
         }
 
@@ -161,7 +169,7 @@ class AuthenticationController
 			loginLicense();
 			if(!empty($GLOBALS['login_error'])){
 				unset($_SESSION['authenticated_user_id']);
-				$GLOBALS['log']->fatal('FAILED LOGIN: potential hack attempt:'.$GLOBALS['login_error']);
+                $this->logger->fatal('FAILED LOGIN: potential hack attempt:' . $GLOBALS['login_error']);
 				$this->loginSuccess = false;
 				return false;
 			}
@@ -207,7 +215,7 @@ class AuthenticationController
 			    LogicHook::initialize();
 			    $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
 			}
-			$GLOBALS['log']->fatal('FAILED LOGIN:attempts[' .$_SESSION['loginAttempts'] .'] - '. $username);
+            $this->logger->fatal('FAILED LOGIN:attempts[' .$_SESSION['loginAttempts'] .'] - '. $username);
 		}
 		// if password has expired, set a session variable
 
@@ -271,12 +279,11 @@ class AuthenticationController
 	 */
 	public function logout()
 	{
-        global $log;
 		$GLOBALS['current_user']->call_custom_logic('before_logout');
         try {
             $this->authController->logout();
         } catch (SAMLResponseException $e) {
-            $log->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             throw $e;
         }
 		LogicHook::initialize();
