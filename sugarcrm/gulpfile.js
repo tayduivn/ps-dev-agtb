@@ -615,9 +615,4 @@ gulp.task('copy-sucrose', function() {
             '!node_modules/@sugarcrm/sucrose-sugar/src/less/**/sucrose*.less'
         ])
         .pipe(gulp.dest('styleguide/less/twitter-bootstrap/sucrose/'));
-    gulp.src([
-            'node_modules/d3fc-rebind/build/d3fc-rebind.min.js',
-            'node_modules/d3fc-rebind/LICENSE',
-        ])
-        .pipe(gulp.dest('include/javascript/d3fc-rebind/'));
 });

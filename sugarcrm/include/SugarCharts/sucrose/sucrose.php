@@ -33,7 +33,6 @@ class sucrose extends JsChart
     {
         return '
         <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/d3-sugar/d3-sugar.min.js').'"></script>
-        <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/d3fc-rebind/d3fc-rebind.min.js').'"></script>
         <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/sucrose/sucrose.min.js').'"></script>
         <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/rgbcolor.js').'"></script>
         <script language="javascript" type="text/javascript" src="'.getJSPath('include/javascript/StackBlur.js').'"></script>
