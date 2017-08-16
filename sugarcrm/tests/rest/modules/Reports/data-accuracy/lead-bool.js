@@ -133,7 +133,7 @@ describe('Reports.DataAccuracy.Bool', function() {
 
     it('should only show converted, Cold Call leads', function*() {
         let filter = {
-            group_filters: [{'self:converted': ['Yes']}, {'self:lead_source': ['Cold Call']}]
+            group_filters: [{'self:converted': ['1']}, {'self:lead_source': ['Cold Call']}]
         };
         let response = yield Agent.as('John').get('Reports/' + this.reportId + '/records',  {qs: filter});
         expect(response).to.have.json('records', (records) => {
@@ -145,7 +145,7 @@ describe('Reports.DataAccuracy.Bool', function() {
 
     it('should only show not converted, Cold Call leads', function*() {
         let filter = {
-            group_filters: [{'self:converted': ['No']}, {'self:lead_source': ['Cold Call']}]
+            group_filters: [{'self:converted': ['0']}, {'self:lead_source': ['Cold Call']}]
         };
         let response = yield Agent.as('John').get('Reports/' + this.reportId + '/records',  {qs: filter});
         expect(response).to.have.json('records', (records) => {
@@ -292,7 +292,7 @@ describe('Reports.DataAccuracy.Bool.Runtime', function() {
 
     it('should only show converted, non Cold Call leads', function*() {
         let filter = {
-            group_filters: [{'self:converted': ['Yes']}, {'self:lead_source': ['Self Generated']}]
+            group_filters: [{'self:converted': ['1']}, {'self:lead_source': ['Self Generated']}]
         };
         let response = yield Agent.as('John').get('Reports/' + this.reportId + '/records',  {qs: filter});
         expect(response).to.have.json('records', (records) => {
@@ -304,7 +304,7 @@ describe('Reports.DataAccuracy.Bool.Runtime', function() {
 
     it('should only show not converted, non Cold Call leads', function*() {
         let filter = {
-            group_filters: [{'self:converted': ['No']}, {'self:lead_source': ['Self Generated']}]
+            group_filters: [{'self:converted': ['0']}, {'self:lead_source': ['Self Generated']}]
         };
         let response = yield Agent.as('John').get('Reports/' + this.reportId + '/records',  {qs: filter});
         expect(response).to.have.json('records', (records) => {

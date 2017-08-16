@@ -416,7 +416,7 @@
         var module = params.baseModule;
         var reportId = this.settings.get('saved_report_id');
 
-        var filterDef = SUGAR.charts.buildFilter(reportData, params);
+        var enums = SUGAR.charts._getEnums(reportData);
         var groupDefs;
         var drawerContext;
 
@@ -430,7 +430,7 @@
                 chartState: state,
                 dashModel: null,
                 dashConfig: params,
-                filterDef: filterDef,
+                enumsToFetch: enums,
                 filterOptions: {
                     auto_apply: false
                 },
@@ -445,7 +445,7 @@
             chart.clearActive();
             this.openDrawer(drawerContext);
         } else {
-            this.updateList(filterDef, params, state);
+            this.updateList(params, state);
         }
     },
 
@@ -464,13 +464,11 @@
     /**
      * Update the record list in drill through drawer.
      *
-     * @param {Object} filterDef updated report definition data filter
      * @param {Object} params chart display parameters
      * @param {Object} state chart display and data state
      */
-    updateList: function(filterDef, params, state) {
+    updateList: function(params, state) {
         var drawer = this.closestComponent('drawer').getComponent('drillthrough-drawer');
-        drawer.context.set('filterDef', filterDef);
         drawer.context.set('dashConfig', params);
         drawer.context.set('chartState', state);
         drawer.updateList();

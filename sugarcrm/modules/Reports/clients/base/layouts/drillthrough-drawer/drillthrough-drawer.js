@@ -41,14 +41,63 @@
     ],
 
     /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        /**
+         * Cache for enum and enum like values
+         */
+        this.enums = {};
+    },
+
+    /**
      * Override the default loadData method to allow for manually constructing
      * context for each component in layout. We are loading data from the
-     * ReportAPI in public method updateList.
+     * ReportAPI in public method updateList. We need to first get any enum data
+     * so that we can translate to english
      *
      * @override
      */
     loadData: function() {
-        this.updateList();
+        var enumsToFetch = this.context.get('enumsToFetch');
+        // Make requests for any enums here so they can happen while the drawer is still rendering
+        if (!_.isEmpty(enumsToFetch) && _.isEmpty(this.enums)) {
+            this._loadEnumOptions(enumsToFetch);
+        } else {
+            this.updateList();
+        }
+    },
+    /**
+     * Make a request for each enum like field so we can reverse lookup values later
+     *
+     * @param enumsToFetch
+     * @private
+     */
+    _loadEnumOptions: function(enumsToFetch) {
+        var reportDef = this.context.get('reportData');
+        var count = enumsToFetch.length;
+
+        var enumSuccess = function(key, data) {
+            count--;
+
+            // cache the values inverted to help with reverse lookup
+            this.enums[key] = _.invert(data);
+
+            // I love that I have to simulate Promise.all but anyways, once
+            // we have all our enum data, then make the record list request
+            if (count === 0) {
+                this.updateList();
+            }
+        };
+        _.each(enumsToFetch, function(field) {
+            var module = reportDef.full_table_list[field.table_key].module;
+            var key = field.table_key + ':' + field.name;
+            app.api.enumOptions(module, field.name, {
+                success: _.bind(enumSuccess, this, key)
+            });
+        }, this);
     },
 
     /**
@@ -60,8 +109,15 @@
     updateList: function() {
         var chartModule = this.context.get('chartModule');
         var reportId = this.context.get('reportId');
-        var filterDef = this.context.get('filterDef');
+        var reportDef = this.context.get('reportData');
+        var params = this.context.get('dashConfig');
+
+        // At this point, we should have finished all translations and requests for translations so
+        // we can finally build the filter in english
+        var filterDef = SUGAR.charts.buildFilter(reportDef, params, this.enums);
+        this.context.set('filterDef', filterDef);
         var useSavedFilters = this.context.get('useSavedFilters') || false;
+
         var endpoint = function(method, model, options, callbacks) {
             var params = _.extend(options.params || {},
                 {view: 'list', group_filters: filterDef, use_saved_filters: useSavedFilters});

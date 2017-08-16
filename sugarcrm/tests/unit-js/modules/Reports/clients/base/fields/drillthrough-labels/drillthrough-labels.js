@@ -32,6 +32,8 @@ describe('Reports.Fields.DrillthroughLabels', function() {
 
     describe('format', function() {
         var langStub;
+        var getGroupingStub;
+        var getFieldDefStub;
 
         beforeEach(function() {
             field.context.set('chartModule', chartModule);
@@ -40,6 +42,8 @@ describe('Reports.Fields.DrillthroughLabels', function() {
             langStub = sinon.collection.stub(app.lang, 'get')
                 .withArgs('LBL_INDUSTRY', chartModule).returns('Industry');
             langStub.withArgs('LBL_TYPE', chartModule).returns('Type');
+            getGroupingStub = sinon.collection.stub(SUGAR.charts, 'getGrouping');
+            getFieldDefStub = sinon.collection.stub(SUGAR.charts, 'getFieldDef');
         });
 
         afterEach(function() {
@@ -60,15 +64,29 @@ describe('Reports.Fields.DrillthroughLabels', function() {
             SugarTest.testMetadata.updateModuleMetadata(chartModule, meta);
             SugarTest.testMetadata.set();
 
-            var filterDef = [
-                {
-                    'self:industry': ['Biotechnology']
-                }
-            ];
-            field.context.set('filterDef', filterDef);
+            var dashConfig = {groupLabel: 'Biotechnology'};
+            field.context.set('dashConfig', dashConfig);
+
+            var groupDefs = [{
+                name: 'industry',
+                table_key: 'self',
+                label: 'Industry'
+            }];
+            field.context.set('reportData', {group_defs: groupDefs});
+
+            getGroupingStub.returns(groupDefs);
+            getFieldDefStub.withArgs(groupDefs[0]).returns({
+                    name: 'industry',
+                    type: 'enum',
+                    vname: 'LBL_INDUSTRY',
+                    module: 'Accounts'
+                });
             field.format();
-            expect(field.groupLabel).toBe('Industry: ');
+            expect(field.groupName).toBe('Industry: ');
             expect(field.groupValue).toBe('Biotechnology');
+            expect(field.seriesName).toBe(undefined);
+            expect(field.seriesValue).toBe(undefined);
+
         });
 
         it('should set series and group when both are present', function() {
@@ -89,19 +107,42 @@ describe('Reports.Fields.DrillthroughLabels', function() {
             SugarTest.testMetadata.updateModuleMetadata(chartModule, meta);
             SugarTest.testMetadata.set();
 
-            var filterDef = [
+            var dashConfig = {groupLabel: 'Biotechnology', seriesLabel: 'Customer'};
+            field.context.set('dashConfig', dashConfig);
+
+            var groupDefs = [
                 {
-                    industry: ['Biotechnology']
+                    name: 'industry',
+                    table_key: 'self',
+                    label: 'Industry'
                 },
                 {
-                    account_type: ['Customer']
+                    name: 'account_type',
+                    table_key: 'self',
+                    label: 'Type'
                 }
             ];
-            field.context.set('filterDef', filterDef);
+            field.context.set('reportData', {group_defs: groupDefs});
+
+            getGroupingStub.returns(groupDefs);
+            getFieldDefStub.withArgs(groupDefs[0]).returns({
+                name: 'industry',
+                type: 'enum',
+                vname: 'LBL_INDUSTRY',
+                module: 'Accounts'
+            });
+
+            getFieldDefStub.withArgs(groupDefs[1]).returns({
+                name: 'account_type',
+                type: 'enum',
+                vname: 'LBL_TYPE',
+                module: 'Accounts'
+            });
+
             field.format();
-            expect(field.groupLabel).toBe('Industry: ');
+            expect(field.groupName).toBe('Industry: ');
             expect(field.groupValue).toBe('Biotechnology');
-            expect(field.seriesLabel).toBe('Type: ');
+            expect(field.seriesName).toBe('Type: ');
             expect(field.seriesValue).toBe('Customer');
         });
     });

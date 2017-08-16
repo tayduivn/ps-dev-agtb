@@ -550,7 +550,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             // dashlets override with their own handler
             chart.seriesClick(_.bind(function(data, eo, chart, labels) {
                 var chartState;
-                var filterDef;
                 var drawerContext;
 
                 chartState = this.buildChartState(eo, labels);
@@ -569,7 +568,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 // report_def is defined as a global in _reportCriteriaWithResult
                 // but only in Reports module
                 //TODO: fix usage of global report_def
-                filterDef = this.buildFilter(report_def, params);
+                var enums = this._getEnums(report_def);
 
                 drawerContext = {
                     chartData: chartData,
@@ -577,7 +576,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     chartState: chartState,
                     dashConfig: params,
                     dashModel: null,
-                    filterDef: filterDef,
+                    enumsToFetch: enums,
                     useSavedFilters: true,
                     filterOptions: {
                         auto_apply: false
@@ -818,20 +817,44 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          *
          * @param label chart group or series label
          * @param def report definition object
+         * @param type the data type for the field
+         * @param enums list of enums with their key value data translations
+         *
          * @return {Array} a single element if not a date else three
          */
-        getValues: function(label, def) {
+        getValues: function(label, def, type, enums) {
+            var sugarApp = SUGAR.App || SUGAR.app || app;
             var dateFunctions = ['year', 'quarter', 'month', 'week', 'day', 'fiscalYear', 'fiscalQuarter'];
             var columnFn = def.column_function;
             var isDateFn = !_.isEmpty(columnFn) && dateFunctions.indexOf(columnFn) !== -1;
             var values = [];
 
+            // Send empty string if value is undefined
+            if (sugarApp.lang.get('LBL_CHART_UNDEFINED') === label) {
+                label = '';
+            }
+
             if (isDateFn) {
                 // returns [dateStart, dateEnd, columnFn]
                 values = this.getDateValues(label, columnFn);
             } else {
-                // returns [label]
-                values.push(label);
+                switch (type) {
+                    case 'bool':
+                        if (sugarApp.lang.getAppListStrings('dom_switch_bool').on == label) {
+                            values.push('1');
+                        } else if (sugarApp.lang.getAppListStrings('dom_switch_bool').off == label) {
+                            values.push('0');
+                        }
+                        break;
+                    case 'enum':
+                    case 'radioenum':
+                        values.push(enums[def.table_key + ':' + def.name][label]);
+                        break;
+                    default:
+                        // returns [label]
+                        values.push(label);
+                        break;
+                }
             }
 
             return values;
@@ -842,14 +865,16 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          *
          * @param reportDef report definition object
          * @param params chart display control parameters
+         * @param enums list of enums with their key value data translations
          * @return {Array}
          */
-        buildFilter: function(reportDef, params) {
+        buildFilter: function(reportDef, params, enums) {
             var filter = [];
 
             var groups = this.getGrouping(reportDef, 0);
             var series = this.getGrouping(reportDef, 1);
-
+            var groupType = this.getFieldDef(groups, reportDef).type;
+            var seriesType = this.getFieldDef(series, reportDef).type;
             var isGroupType = params.groupType === 'grouped';
             var groupLabel = params.groupLabel;
             var seriesLabel = params.seriesLabel;
@@ -863,13 +888,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
             var addGroupRow = _.bind(function() {
                 var groupsName = groups.table_key + ':' + groups.name;
-                var groupsValues = this.getValues(groupLabel, groups);
+                var groupsValues = this.getValues(groupLabel, groups, groupType, enums);
                 addFilterRow(groupsName, groupsValues);
             }, this);
 
             var addSeriesRow = _.bind(function() {
                 var seriesName = series.table_key + ':' + series.name;
-                var seriesValues = this.getValues(seriesLabel, series);
+                var seriesValues = this.getValues(seriesLabel, series, seriesType, enums);
                 addFilterRow(seriesName, seriesValues);
             }, this);
 
@@ -930,6 +955,56 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             }
 
             return filter;
+        },
+
+        /**
+         * If the type for the group by field is an enum type, return it
+         *
+         * @param reportDef
+         * @return {Array} array of enums group defs
+         * @private
+         */
+        _getEnums: function(reportDef) {
+            var enumTypes = ['enum', 'radioenum'];
+            var groups = this.getGrouping(reportDef);
+            var enums = [];
+            _.each(groups, function(group) {
+                var groupType = this.getFieldDef(group, reportDef).type;
+                if (groupType && _.contains(enumTypes, groupType)) {
+                    enums.push(group);
+                }
+            }, this);
+            return enums;
+        },
+
+        /**
+         * Gets the field def from the group def
+         *
+         * @param groupDef
+         * @param reportDef
+         * @return {*} array
+         */
+        getFieldDef(groupDef, reportDef) {
+            var sugarApp = SUGAR.App || SUGAR.app || app;
+            var chartModule = reportDef.module || reportDef.base_module;
+
+            if (groupDef.table_key === 'self') {
+                return sugarApp.metadata.getField({name: groupDef.name, module: chartModule});
+            }
+
+            // Need to parse something like 'Accounts:contacts:assigned_user_link:user_name'
+            var relationships = groupDef.table_key.split(':');
+            var fieldsMeta = sugarApp.metadata.getModule(chartModule, 'fields');
+            var fieldDef;
+            for (var i = 1; i < relationships.length; i++) {
+                var relationship = relationships[i];
+                fieldDef = fieldsMeta[relationship];
+                var module = fieldDef.module;
+                fieldsMeta = sugarApp.metadata.getModule(module || chartModule, 'fields');
+            }
+            fieldDef = fieldsMeta[groupDef.name];
+            fieldDef.module = fieldDef.module || module;
+            return fieldDef;
         },
 
         /**
