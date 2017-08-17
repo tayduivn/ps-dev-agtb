@@ -693,14 +693,14 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     public function searchTags()
     {
         //create a module list including the tag module only
-        $modules = array($this->tagModule);
+        $this->modules = array($this->tagModule);
 
         $multiMatch = $this->createMultiMatchQuery();
 
         $builder = new QueryBuilder($this->container);
         $builder
             ->setUser($this->user)
-            ->setModules($modules)
+            ->setModules($this->modules)
             ->setLimit($this->tagLimit)
             ->setQuery($multiMatch)
         ;
