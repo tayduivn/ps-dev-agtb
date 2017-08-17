@@ -112,10 +112,27 @@ class ChartDisplay
             global $do_thousands;
             $sugarChart->setProperties($this->chartTitle, '', $this->chartType, 'on', 'value', 'on', $do_thousands, $this->reporter->module, $this->reporter->name);
 
+            // no drillthru for bwc modules
+            $sugarChart->chart_properties['allow_drillthru'] = !isModuleBWC($this->reporter->module);
             if (isset($this->reporter->report_def['group_defs'])) {
                 $groupByNames = array();
                 foreach ($this->reporter->report_def['group_defs'] as $group_def) {
                     $groupByNames[] = $group_def['name'];
+                    // check for any unsupported drillthru fields for sidecar modules
+                    if ($sugarChart->chart_properties['allow_drillthru']) {
+                        $groupByType = !empty($group_def['type']) ? $group_def['type'] : '';
+                        if (empty($groupByType) && !empty($this->reporter->full_bean_list[$group_def['table_key']])) {
+                            $bean = $this->reporter->full_bean_list[$group_def['table_key']];
+                            $fieldDef = $bean->getFieldDefinition($group_def['name']);
+                            if (!empty($fieldDef['type'])) {
+                                $groupByType = $fieldDef['type'];
+                            }
+                        }
+                        // no drillthru on fields: 'datetime', 'multienum'
+                        if (in_array($groupByType, array('datetime', 'multienum'))) {
+                            $sugarChart->chart_properties['allow_drillthru'] = false;
+                        }
+                    }
                 }
                 $sugarChart->group_by = $groupByNames;
             }
