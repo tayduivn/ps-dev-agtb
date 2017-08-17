@@ -73,6 +73,11 @@
     isExternalLoginInProgress: false,
 
     /**
+     * Save login popup handler
+     */
+    childLoginPopup: null,
+
+    /**
      * Process login on key `Enter`.
      *
      * @param {Event} event The `keypress` event.
@@ -130,7 +135,15 @@
         if (config && app.config.forgotpasswordON === true) {
             this.showPasswordReset = true;
         }
-        
+
+        /**
+         * Set window open handler to save popup handler
+         */
+        app.api.setExternalLoginUICallback(_.bind(function(url, name, params) {
+            this.closeLoginPopup();
+            this.childLoginPopup = window.open(url, name, params);
+        }, this));
+
         if (config && 
             app.config.externalLogin === true && 
             app.config.externalLoginSameWindow === true
@@ -147,7 +160,6 @@
                     this.render();
                 }
             }, this));
-
         }
 
         // Set the page title to 'SugarCRM' while on the login screen
@@ -221,6 +233,19 @@
             password: this.$('input[name=password]').val(),
             username: this.$('input[name=username]').val()
         });
+
+        // Prepare local auth variables if user chooses local auth
+        if (app.api.isExternalLogin() &&
+            app.config.externalLogin === true &&
+            !_.isNull(app.config.externalLoginSameWindow) &&
+            app.config.externalLoginSameWindow === false
+        ) {
+            app.config.externalLogin = false;
+            app.config.externalLoginUrl = undefined;
+            app.api.setExternalLogin(false);
+            this.closeLoginPopup();
+        }
+
         this.model.doValidate(null,
             _.bind(function(isValid) {
                 if (isValid) {
@@ -282,6 +307,16 @@
         app.config.externalLoginUrl = undefined;
         app.$contentEl.show();
         app.logger.debug('login failed!');
+    },
+
+    /**
+     * close log in popup
+     */
+    closeLoginPopup: function() {
+        if (!_.isNull(this.childLoginPopup)) {
+            this.childLoginPopup.close();
+            this.childLoginPopup = null;
+        }
     },
 
     /**
