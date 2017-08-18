@@ -615,20 +615,28 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          */
         buildChartState: function(eo, labels) {
             var seriesIndex;
+            var state = {};
+
             if (!_.isEmpty(eo.series) && _.isFinite(eo.series.seriesIndex)) {
                 seriesIndex = eo.series.seriesIndex;
             } else if (_.isFinite(eo.seriesIndex)) {
                 seriesIndex = eo.seriesIndex;
             }
-
             if (_.isEmpty(labels)) {
                 if (!_.isFinite(seriesIndex) && _.isFinite(eo.pointIndex)) {
                     seriesIndex = eo.pointIndex;
                 }
-                return {seriesIndex: seriesIndex};
             } else {
-                return {seriesIndex: seriesIndex, groupIndex: eo.pointIndex};
+                if (_.isFinite(eo.groupIndex)) {
+                    state.groupIndex = eo.groupIndex;
+                }
+                if (_.isFinite(eo.pointIndex)) {
+                    state.pointIndex = eo.pointIndex;
+                }
             }
+            state.seriesIndex = seriesIndex;
+
+            return state;
         },
 
         /**

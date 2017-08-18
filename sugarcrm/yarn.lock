@@ -90,9 +90,9 @@
     which "1.1.1"
     yargs "3.29.0"
 
-"@sugarcrm/sucrose-sugar@^0.6.11":
-  version "0.6.11"
-  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/sucrose-sugar/-/sucrose-sugar-0.6.11.tgz#36c19862062f6b2c0441f993f276ee18e48086bf"
+"@sugarcrm/sucrose-sugar@^0.6.12":
+  version "0.6.12"
+  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/sucrose-sugar/-/sucrose-sugar-0.6.12.tgz#2530e3cdac10ecf29ca76c04e410f95d2a4c56d4"
   dependencies:
     "@sugarcrm/d3-sugar" "4.9.1"
 
