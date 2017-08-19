@@ -180,7 +180,7 @@
             if(this.variableMode === 'condition') {
                 valid = that.validateColumn(index, 0);
             } else {
-                valid = that.validateColumn(index, 1);
+                valid = that.validateColumn(index, 2);
             }
 
             that.setIsDirty(true);
@@ -1015,7 +1015,7 @@
                     .attr('title', translate('LBL_PMSE_TOOLTIP_REMOVE_CONCLUSION', DecisionTable.LANG_MODULE));
             }
 
-            conclusionsColSpan = this.conclusions.length + 1;
+            conclusionsColSpan = this.conclusions.length + 2;
             this.dom.conclusionsHeader.attr('colspan', conclusionsColSpan);
             this.dom.conclusionsFooter.attr('colspan', conclusionsColSpan);
         }
@@ -1076,10 +1076,10 @@
 
         var context = {
             conditionsSpan : 2,
-            conclusionsSpan : 2,
+            conclusionsSpan : 3,
             conditionsTitle : translate('LBL_PMSE_LABEL_CONDITIONS', DecisionTable.LANG_MODULE),
             returnTitle : translate('LBL_PMSE_LABEL_RETURN_VALUE', DecisionTable.LANG_MODULE),
-            conclusionsTitle : translate('LBL_PMSE_LABEL_CHANGE_FIELD', DecisionTable.LANG_MODULE),
+            conclusionsTitle : translate('LBL_PMSE_LABEL_CONCLUSIONS', DecisionTable.LANG_MODULE),
             removeConditionTitle : '',
             addConditionTitle : translate('LBL_PMSE_TOOLTIP_ADD_CONDITION', DecisionTable.LANG_MODULE),
             removeConclusionTitle : '',
@@ -1682,6 +1682,8 @@
             translate('LBL_PMSE_TOOLTIP_REMOVE_CONDITION', DecisionTable.LANG_MODULE) :
             translate('LBL_PMSE_TOOLTIP_REMOVE_CONCLUSION', DecisionTable.LANG_MODULE);
 
+        // Since the return label is in the header row of form elements, we need to add it here
+        context.returnTitle = translate('LBL_PMSE_LABEL_RETURN_VALUE', DecisionTable.LANG_MODULE);
         var html = this.getHTMLFromTemplate(this.template, context);
 
         if (!context.isReturn) {

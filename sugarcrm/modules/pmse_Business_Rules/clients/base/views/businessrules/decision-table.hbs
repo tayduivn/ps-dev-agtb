@@ -22,9 +22,6 @@
         <th class="decision-table-separator-border table-split" id="decision-table-conditions-header-column" colspan="{{conditionsSpan}}">
             <span>{{conditionsTitle}}</span>
         </th>
-        <th class="decision-table-separator-border" id="decision-table-conditions-header-column">
-            <span>{{returnTitle}}</span>
-        </th>
         <th class="decision-table-separator-border" id="decision-table-conclusions-header-column" colspan="{{conclusionsSpan}}">
             <span>{{conclusionsTitle}}</span>
         </th>
@@ -37,7 +34,6 @@
             <span id="add-decision-row-button" class="btn fa fa-plus decision-table-add-row"></span>
         </td>
         <td id="decision-table-conditions-footer" class="table-split" colspan="{{conditionsSpan}}"></td>
-        <td></td>
         <td id="decision-table-conclusions-footer" colspan="{{conclusionsSpan}}"></td>
     </tr>
     </tfoot>
@@ -62,7 +58,7 @@
                 <span class="fa fa-plus"></span>
             </button>
         </td>
-        <td class="decision-table-conclusion-column"></td>
+        <td class="decision-table-conclusion-column">{{returnTitle}}</td>
         <td>
             <button id="add-conclusion-button" title="{{addConclusionTitle}}" class="btn decision-table-add-button">
                 <span class="fa fa-plus"></span>

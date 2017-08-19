@@ -11,9 +11,9 @@
  */
 --}}
 <td class={{#if isCondition}}"decision-table-condition-column"{{else}}"decision-table-conclusion-column"{{/if}}>
-    <div class={{#if isCondition}}"decision-table-conditions-header"{{else}}"decision-table-conclusions-header"{{/if}}>
+    <div class={{#if isCondition}}"decision-table-conditions-header"{{else}}"decision-table-conclusions-header{{#if isReturn}}-return{{/if}}"{{/if}}>
         {{#if isReturn}}
-            <span class="decision-table-return"></span>
+            <span class="decision-table-return">{{returnTitle}}</span>
         {{else}}
             <div id="select"></div>
         {{/if}}
