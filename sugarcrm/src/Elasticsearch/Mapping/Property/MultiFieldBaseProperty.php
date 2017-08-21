@@ -13,7 +13,6 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\MappingFactory;
 
 /**
  *
@@ -25,16 +24,13 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Factory\MappingFactory;
 class MultiFieldBaseProperty extends RawProperty implements PropertyInterface
 {
     /**
-     * ctor
-     * @throws \Exception
+     * Base mapping
+     * {@inheritdoc}
      */
-    public function __construct()
-    {
-        $this->mapping = MappingFactory::createBaseProperty(
-            MappingFactory::KEYWORD_TYPE,
-            MappingFactory::INDEX_TRUE
-        );
-    }
+    protected $mapping = array(
+        'type' => 'keyword',
+        'index' => false,
+    );
 
     /**
      * Multi field properties

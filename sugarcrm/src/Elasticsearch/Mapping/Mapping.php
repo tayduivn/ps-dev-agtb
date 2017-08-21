@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\MappingFactory;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
@@ -61,13 +60,19 @@ class Mapping implements MappingInterface
      * Base mapping used for all multi fields
      * @var array
      */
-    private $multiFieldBase;
+    private $multiFieldBase = [
+        'type' => 'keyword',
+        'index' => true,
+    ];
 
     /**
      * Base mapping for not indexed fields
      * @var array
      */
-    private $notIndexedBase;
+    private $notIndexedBase = [
+        'type' => 'keyword',
+        'index' => false,
+    ];
 
     /**
      * Excluded fields from _source
@@ -81,14 +86,6 @@ class Mapping implements MappingInterface
     public function __construct($module)
     {
         $this->module = $module;
-        $this->multiFieldBase = MappingFactory::createFieldBase(
-            MappingFactory::KEYWORD_TYPE,
-            MappingFactory::INDEX_TRUE
-        );
-        $this->notIndexedBase = MappingFactory::createFieldBase(
-            MappingFactory::KEYWORD_TYPE,
-            MappingFactory::INDEX_FALSE
-        );
     }
 
     /**
