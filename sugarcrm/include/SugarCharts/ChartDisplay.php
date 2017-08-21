@@ -128,8 +128,9 @@ class ChartDisplay
                                 $groupByType = $fieldDef['type'];
                             }
                         }
-                        // no drillthru on fields: 'datetime', 'multienum'
-                        if (in_array($groupByType, array('datetime', 'multienum'))) {
+                        // no drillthru on fields: 'datetime' (no column function), 'multienum'
+                        if ($groupByType === 'multienum'
+                            || ($groupByType === 'datetime' && empty($group_def['column_function']))) {
                             $sugarChart->chart_properties['allow_drillthru'] = false;
                         }
                     }
