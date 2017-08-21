@@ -299,8 +299,9 @@ EOQ;
 
 		if(isset($_REQUEST['remove_attachment']) && !empty($_REQUEST['remove_attachment'])) {
 			foreach($_REQUEST['remove_attachment'] as $noteId) {
-				$q = 'UPDATE notes SET deleted = 1 WHERE id = \''.$noteId.'\'';
-				$focus->db->query($q);
+                $query = 'UPDATE notes SET deleted = 1 WHERE id = ?';
+                $conn = $focus->db->getConnection();
+                $conn->executeQuery($query, array($noteId));
 			}
 
 		}
