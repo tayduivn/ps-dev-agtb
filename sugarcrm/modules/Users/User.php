@@ -1286,9 +1286,10 @@ class User extends Person {
 
 		if(isset($_REQUEST['module']) && $_REQUEST['module'] == 'Teams' &&
 			(isset($_REQUEST['record']) && !empty($_REQUEST['record'])) ) {
-			$q = "SELECT count(*) c FROM team_memberships WHERE deleted=0 AND user_id = '{$this->id}' AND team_id = '{$_REQUEST['record']}' AND explicit_assign = 1";
-			$r = $this->db->query($q);
-			$a = $this->db->fetchByAssoc($r);
+            $query = "SELECT COUNT(*) c FROM team_memberships WHERE deleted=0 AND user_id = ? AND team_id = ? AND explicit_assign = 1";
+            $conn = $this->db->getConnection();
+            $stmt = $conn->executeQuery($query, array($this->id, $_REQUEST['record']));
+            $a = $stmt->fetch();
 
 			$user_fields['UPLINE'] = translate('LBL_TEAM_UPLINE','Users');
 
