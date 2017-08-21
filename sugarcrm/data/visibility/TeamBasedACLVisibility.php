@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
  * Class TeamBasedACLVisibility
@@ -148,7 +149,9 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
      */
     public function elasticBuildMapping(Mapping $mapping, Visibility $provider)
     {
-        $mapping->addNotAnalyzedField('acl_team_set_id');
+        $property = new MultiFieldProperty();
+        $property->setType('keyword');
+        $mapping->addCommonField('acl_team_set_id', 'set', $property);
     }
 
     /**
@@ -173,12 +176,14 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
     {
         if ($this->isApplicable()) {
             $combo = ElasticaFactory::createNewInstance('Bool');
-            $combo->addFilter(
-                $provider->createFilter('TeamSet', array('user' => $user, 'field' => 'acl_team_set_id'))
-            );
-            $combo->addFilter(
-                $provider->createFilter('Owner', array('bean' => $this->bean, 'user' => $user))
-            );
+            $combo->addFilter($provider->createFilter('TeamSet', [
+                'user' => $user,
+                'module' => $this->bean->module_name,
+                'field' => 'acl_team_set_id.set',
+            ]));
+            $combo->addFilter($provider->createFilter('Owner', [
+                'user_id' => $user->id,
+            ]));
             $filter->addMust($combo);
         }
     }

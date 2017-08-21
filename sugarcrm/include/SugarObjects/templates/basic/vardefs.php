@@ -73,6 +73,7 @@ $vardefs = array(
                 'full_text_search' => array(
                     'enabled' => true,
                     'searchable' => false,
+                    'sortable' => true,
                     // Disabled until UX component is available
                     //'aggregations' => array(
                     //    'date_modified' => array(

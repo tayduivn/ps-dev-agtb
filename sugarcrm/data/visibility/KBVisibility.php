@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
  * Class KBVisibility
@@ -87,7 +88,13 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
      */
     public function elasticBuildMapping(Mapping $mapping, Visibility $provider)
     {
-        $mapping->addNotAnalyzedField('status');
+        $property = new MultiFieldProperty();
+        $property->setType('keyword');
+        $mapping->addModuleField('status', 'kbvis', $property);
+
+        $property = new MultiFieldProperty();
+        $property->setType('integer');
+        $mapping->addModuleField('active_rev', 'kbvis', $property);
     }
 
     /**
@@ -116,22 +123,23 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
         }
 
         // create owner filter
-        $options = array(
-            'bean' => $this->bean,
-            'user' => $user,
-        );
-        $ownerFilter = $provider->createFilter('Owner', $options);
+        $ownerFilter = $provider->createFilter('Owner', ['user' => $user]);
 
         if ($statuses = $this->getPublishedStatuses()) {
             $combo = ElasticaFactory::createNewInstance('Bool');
-            $combo->addShould($provider->createFilter('KBStatus', array('published_statuses' => $statuses)));
+            $combo->addShould($provider->createFilter('KBStatus', [
+                'published_statuses' => $statuses,
+                'module' => $this->bean->module_name,
+            ]));
             $combo->addShould($ownerFilter);
             $filter->addMust($combo);
         } else {
             $filter->addMust($ownerFilter);
         }
 
-        $filter->addShould($provider->createFilter('KBActiveRevision'));
+        $filter->addShould($provider->createFilter('KBActiveRevision', [
+            'module' => $this->bean->module_name,
+        ]));
     }
 
     /**

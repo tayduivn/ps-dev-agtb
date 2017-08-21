@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
  * Team security visibility
@@ -390,7 +391,9 @@ SQL;
      */
     public function elasticBuildMapping(Mapping $mapping, Visibility $provider)
     {
-        $mapping->addNotAnalyzedField('team_set_id');
+        $property = new MultiFieldProperty();
+        $property->setType('keyword');
+        $mapping->addModuleField('team_set_id', 'set', $property);
     }
 
     /**
@@ -416,7 +419,10 @@ SQL;
     public function elasticAddFilters(\User $user, $filter, Visibility $provider)
     {
         if ($this->isTeamSecurityApplicable()) {
-            $filter->addMust($provider->createFilter('TeamSet', array('user' => $user)));
+            $filter->addMust($provider->createFilter('TeamSet', [
+                'user' => $user,
+                'module' => $this->bean->module_name,
+            ]));
         }
     }
 }

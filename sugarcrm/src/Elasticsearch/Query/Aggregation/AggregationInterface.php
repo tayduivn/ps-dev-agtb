@@ -42,6 +42,8 @@ interface AggregationInterface
 
     /**
      * Build mapping
+     * @param Mapping $mapping
+     * @param string $field
      * @param array $defs
      */
     public function buildMapping(Mapping $mapping, $field, array $defs);

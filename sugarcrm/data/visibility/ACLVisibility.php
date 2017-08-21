@@ -15,6 +15,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
  * ACL-driven visibility
@@ -101,8 +102,10 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
      */
     public function elasticBuildMapping(Mapping $mapping, Visibility $provider)
     {
-        $ownerField = $provider->getFilter('Owner')->getOwnerField($this->bean);
-        $mapping->addNotAnalyzedField($ownerField);
+        $property = new MultiFieldProperty();
+        $property->setType('keyword');
+        $mapping->addCommonField('owner_id', 'owner', $property);
+
         //BEGIN SUGARCRM flav=ent ONLY
         if ($this->tbaConfig->implementsTBA($this->bean->module_dir)) {
             $tbaVisibility = new TeamBasedACLVisibility($this->bean);
@@ -116,7 +119,9 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
      */
     public function elasticProcessDocumentPreIndex(Document $document, SugarBean $bean, Visibility $provider)
     {
-        // no special processing needed
+        if ($ownerField = $bean->getOwnerField()) {
+            $document->setDataField('owner_id', $bean->$ownerField);
+        }
     }
 
     /**
@@ -126,8 +131,9 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
     {
         $result = array();
         // retrieve the owner field directly from the bean
-        $ownerField = $provider->getFilter('Owner')->getOwnerField($this->bean);
-        $result[$ownerField] = 'id';
+        if ($ownerField = $this->bean->getOwnerField()) {
+            $result[$ownerField] = 'id';
+        }
         //BEGIN SUGARCRM flav=ent ONLY
         if ($this->tbaConfig->implementsTBA($this->bean->module_dir)) {
             $tbaVisibility = new TeamBasedACLVisibility($this->bean);
@@ -147,11 +153,7 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
             $actualAccess = ACLAction::getUserAccessLevel($user->id, $this->bean->module_dir, $accessToHandle);
 
             if (ACLController::requireOwner($this->bean->module_dir, $accessToHandle)) {
-                $options = array(
-                    'bean' => $this->bean,
-                    'user' => $user,
-                );
-                $filter->addMust($provider->createFilter('Owner', $options));
+                $filter->addMust($provider->createFilter('Owner', ['user' => $user]));
             //BEGIN SUGARCRM flav=ent ONLY
             } elseif ($this->tbaConfig->isValidAccess($actualAccess)) {
                 $tbaVisibility = new TeamBasedACLVisibility($this->bean);

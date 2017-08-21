@@ -30,6 +30,18 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
 class Mapping implements MappingInterface
 {
     /**
+     * Property name prefix separator
+     * @var string
+     */
+    const PREFIX_SEP = '__';
+
+    /**
+     * Common prefix
+     * @var string
+     */
+    const PREFIX_COMMON = 'Common__';
+
+    /**
      * @var string Module name
      */
     private $module;
@@ -69,9 +81,12 @@ class Mapping implements MappingInterface
     public function __construct($module)
     {
         $this->module = $module;
-        $this->multiFieldBase = MappingFactory::createFieldBase(MappingFactory::KEYWORD_TYPE, MappingFactory::INDEX_TRUE);
+        $this->multiFieldBase = MappingFactory::createFieldBase(
+            MappingFactory::KEYWORD_TYPE,
+            MappingFactory::INDEX_TRUE
+        );
         $this->notIndexedBase = MappingFactory::createFieldBase(
-            MappingFactory::getBaseStringType(),
+            MappingFactory::KEYWORD_TYPE,
             MappingFactory::INDEX_FALSE
         );
     }
@@ -137,6 +152,26 @@ class Mapping implements MappingInterface
     /**
      * {@inheritdoc}
      */
+    public function addModuleField($baseField, $field, MultiFieldProperty $property)
+    {
+        $moduleField = $this->module . self::PREFIX_SEP . $baseField;
+        $this->createMultiFieldBase($moduleField, $this->notIndexedBase)->addField($field, $property);
+        $this->createCopyToBase($baseField, [$moduleField]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addCommonField($baseField, $field, MultiFieldProperty $property)
+    {
+        $commonField = self::PREFIX_COMMON . $baseField;
+        $this->createMultiFieldBase($commonField, $this->notIndexedBase)->addField($field, $property);
+        $this->createCopyToBase($baseField, [$commonField]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function addNotIndexedField($field, array $copyTo = array())
     {
         $this->createMultiFieldBase($field, $this->notIndexedBase, $copyTo);
@@ -157,7 +192,7 @@ class Mapping implements MappingInterface
     {
         $this->createMultiFieldBase($baseField, $this->multiFieldBase, array())->addField($field, $property);
     }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -225,6 +260,17 @@ class Mapping implements MappingInterface
         }
 
         return $property;
+    }
+
+    /**
+     * Create primary base field for indexing and _source purpose
+     * copying the values into the given target field
+     * @param string $field The primary field name
+     * @param string[] $targetFields Array of target fields
+     */
+    private function createCopyToBase($field, array $targetFields = [])
+    {
+        $this->createMultiFieldBase($field, $this->notIndexedBase, $targetFields);
     }
 
     /**

@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
-use Elastica\Query as Query;
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationInterface;
@@ -21,6 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationStack;
 use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+use User;
 
 /**
  *
@@ -36,6 +36,7 @@ class QueryBuilder
 
     /**
      * Module name prefix separator
+     * @deprecated Use Mapping::PREFIX_SEP
      */
     const PREFIX_SEP = '__';
 
@@ -45,13 +46,13 @@ class QueryBuilder
     const BOOST_SEP = '^';
 
     /**
-     * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
+     * @var Container
      */
     protected $container;
 
     /**
      * User context
-     * @var \User
+     * @var User
      */
     protected $user;
 
@@ -123,6 +124,7 @@ class QueryBuilder
 
     /**
      * Ctor
+     * @param Container $container
      */
     public function __construct(Container $container)
     {
@@ -131,10 +133,10 @@ class QueryBuilder
 
     /**
      * Set user context
-     * @param \User $user
+     * @param User $user
      * @return QueryBuilder
      */
-    public function setUser(\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
         return $this;
@@ -142,7 +144,7 @@ class QueryBuilder
 
     /**
      * Get user context
-     * @return \User
+     * @return User
      */
     public function getUser()
     {
@@ -334,7 +336,7 @@ class QueryBuilder
 
     /**
      * Build query
-     * @return Query
+     * @return \Elastica\Query
      */
     public function build()
     {
@@ -361,7 +363,7 @@ class QueryBuilder
 
     /**
      * Execute query against search API
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet
+     * @return ResultSet
      */
     public function executeSearch()
     {
@@ -447,11 +449,11 @@ class QueryBuilder
 
     /**
      * Build aggregations
-     * @param Query $query
+     * @param \Elastica\Query $query
      * @param AggregationStack $stack
      * @param array $filterDefs
      */
-    protected function buildAggregations(Query $query, AggregationStack $stack, array $filterDefs)
+    protected function buildAggregations(\Elastica\Query $query, AggregationStack $stack, array $filterDefs)
     {
         // build the aggregations from the stack
         foreach ($stack->buildAggregations($filterDefs) as $agg) {
@@ -466,12 +468,12 @@ class QueryBuilder
 
     /**
      * Build main query object
-     * @param $query
-     * @return Query
+     * @param \Elastica\Query\AbstractQuery $query
+     * @return \Elastica\Query
      */
-    protected function buildQuery($query)
+    protected function buildQuery(\Elastica\Query\AbstractQuery $query)
     {
-        return new Query($query);
+        return new \Elastica\Query($query);
     }
 
     /**
@@ -480,10 +482,10 @@ class QueryBuilder
      * indices depending on the index pool strategies.
      *
      * @param array $modules
-     * @param \User $user
+     * @param User $user
      * @return array
      */
-    protected function getReadIndices(array $modules, \User $user = null)
+    protected function getReadIndices(array $modules, User $user = null)
     {
         $context = empty($user) ? array() : array('user' => $user);
         $collection = $this->container->indexPool->getReadIndices($modules, $context);

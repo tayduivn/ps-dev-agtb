@@ -31,7 +31,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\Cros
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\TagsHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\FavoritesHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\HtmlHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\OwnerIdHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatchQuery;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\MatchAllQuery;
 
@@ -136,7 +135,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->addHandler(new TagsHandler());
         $this->addHandler(new FavoritesHandler());
         $this->addHandler(new HtmlHandler());
-        $this->addHandler(new OwnerIdHandler());
     }
 
     /**
@@ -600,14 +598,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             return $this;
         }
 
-        // TODO - we need field mapping logic here based on type etc
-        // We probably want a separate sorting class with the required logic
         $sortFields = array();
         foreach ($fields as $field => $order) {
             $sortFields[$field] = array(
                 'order' => $order,
                 'missing' => '_last',
-                'ignore_unmapped' => true,
             );
         }
         $this->sort = $sortFields;
@@ -651,9 +646,9 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             $query = $this->createMultiMatchQuery();
         } else {
             // If no query term is passed in we use a MatchAll and try to
-            // order by date_modified
+            // order by the common date_modified field
             $query = new MatchAllQuery();
-            $this->sort = array('date_modified' => 'desc');
+            $this->sort([Mapping::PREFIX_COMMON . 'date_modified.gs_datetime' => 'desc']);
             $this->useHighlighter = false;
         }
 
@@ -717,6 +712,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $multiMatch = new MultiMatchQuery();
         $multiMatch->setTerms($this->term);
         $multiMatch->setOperator($this->getDefaultOperator());
+        $multiMatch->setVisibilityProvider($this->container->getProvider('Visibility'));
 
         $modules = $this->modules;
         //when searching on a specific module, include tags if necessary

@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationCapable;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\TagsHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
  *
@@ -313,7 +314,11 @@ class GlobalSearchApi extends SugarApi
     {
         // Compose the term filter for the tags
         if (!empty($this->tagFilters)) {
-            $this->filters[] = ElasticaFactory::createNewInstance('Terms', TagsHandler::TAGS_FIELD, $this->tagFilters);
+            $this->filters[] = ElasticaFactory::createNewInstance(
+                'Terms',
+                Mapping::PREFIX_COMMON .TagsHandler::TAGS_FIELD .'.tags',
+                $this->tagFilters
+            );
         }
 
         // Compose the bool and term filter to exclude the tag module
@@ -422,6 +427,15 @@ class GlobalSearchApi extends SugarApi
 
             // add highlights if available
             if ($highlights = $result->getHighlights()) {
+
+                // Filter out fields from highlights which are not present
+                // on our bean. This is to ensure we never return any fields
+                // which are not avialable due to ACL's.
+                foreach ($highlights as $field => $highlight) {
+                    if (!isset($data[$field])) {
+                        unset($highlights[$field]);
+                    }
+                }
                 $data['_highlights'] = $highlights;
             }
 

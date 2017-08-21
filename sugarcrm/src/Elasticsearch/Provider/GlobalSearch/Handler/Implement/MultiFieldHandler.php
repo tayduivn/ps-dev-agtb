@@ -424,50 +424,15 @@ class MultiFieldHandler extends AbstractHandler implements
         $fieldType = $defs['type'];
 
         foreach ($this->typesMultiField[$fieldType] as $multiField) {
-            /*
-             * When a field is searchable we want to add a module prefix to the
-             * field name to ensure disambigious field names during query time.
-             * In certain case (i.e. MultiMatch query) Elasticsearch does not
-             * properly resolve qualified field names removing the type prefix.
-             * Because of this we can get hits on fields we didn't ask for and
-             * hence we want to ensure the searchable field names are unique.
-             *
-             * 1. Create a not analyzed field for the regular field name with
-             * an additional copy_to to the unique field name.
-             * 2. Create the actual mapping on the new unique field. Because of
-             * the copy_to functionality there is no need to add additional
-             * logic during indexing.
-             */
-            if ($this->isFieldSearchable($defs)) {
-                $realField = $mapping->getModule() . QueryBuilder::PREFIX_SEP . $field;
-                $this->createMultiFieldBase($mapping, $realField, $fieldType);
-            } else {
-                $realField = $field;
-            }
-
-            // create multi field base for primary field
-            $copyTo = $realField === $field ? array() : array($realField);
-            $this->createMultiFieldBase($mapping, $field, $fieldType, $copyTo);
-
-            // add multi field mapping if available
             if ($property = $this->getMultiFieldProperty($multiField)) {
-                $mapping->addMultiField($realField, $multiField, $property);
-            }
-        }
-    }
+                $mapping->addModuleField($field, $multiField, $property);
 
-    /**
-     * Create multi field base
-     * @param string $field
-     * @param string $fieldType
-     * @param array $copyTo
-     */
-    protected function createMultiFieldBase(Mapping $mapping, $field, $fieldType, array $copyTo = array())
-    {
-        if ($this->isLongFieldType($fieldType)) {
-            $mapping->addNotIndexedField($field, $copyTo);
-        } else {
-            $mapping->addNotAnalyzedField($field, $copyTo);
+                // Sortable fields also receive a common field to make sorting
+                // possible when querying multiple modules at once.
+                if (!empty($defs['full_text_search']['sortable'])) {
+                    $mapping->addCommonField($field, $multiField, $property);
+                }
+            }
         }
     }
 

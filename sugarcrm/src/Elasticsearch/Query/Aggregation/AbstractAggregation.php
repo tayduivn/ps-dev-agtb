@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
  *
@@ -79,8 +80,9 @@ abstract class AbstractAggregation implements AggregationInterface
      */
     public function buildMapping(Mapping $mapping, $field, array $defs)
     {
-        // apply not analyzed value by default
-        $mapping->addNotAnalyzedField($field);
+        $property = new MultiFieldProperty();
+        $property->setType('keyword');
+        $mapping->addCommonField($field, 'agg', $property);
     }
 
     /**

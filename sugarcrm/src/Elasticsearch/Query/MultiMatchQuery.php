@@ -13,11 +13,13 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
-use Elastica\Query\MultiMatch;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SimpleTermParser;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+use Elastica\Query\MultiMatch;
+use User;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 
 /**
  *
@@ -33,16 +35,10 @@ class MultiMatchQuery implements QueryInterface
     protected $hasReadOwnerFields;
 
     /**
-     * A flag indicates if it is for the sub-query of read owner fields.
-     * @var boolean
+     * Current user object
+     * @var User
      */
-    protected $isReadOwnerQuery;
-
-    /**
-     * the id of the current user
-     * @var string
-     */
-    protected $userId;
+    protected $user;
 
     /**
      * the search terms
@@ -51,7 +47,7 @@ class MultiMatchQuery implements QueryInterface
     protected $terms;
 
     /**
-     * the search terms
+     * the search fields
      * @var array
      */
     protected $searchFields;
@@ -67,6 +63,21 @@ class MultiMatchQuery implements QueryInterface
      * @var string
      */
     protected $defaultOperator;
+
+    /**
+     * Visibility Provider
+     * @var Visibility
+     */
+    protected $visibility;
+
+    /**
+     * Set visibility provider
+     * @param Visibility $visibility
+     */
+    public function setVisibilityProvider(Visibility $visibility)
+    {
+        $this->visibility = $visibility;
+    }
 
     /**
      * set default search logic operator for space
@@ -102,7 +113,7 @@ class MultiMatchQuery implements QueryInterface
      */
     public function setUser(\User $user)
     {
-        $this->userId = $user->id;
+        $this->user = $user;
     }
 
     /**
@@ -117,6 +128,7 @@ class MultiMatchQuery implements QueryInterface
     /**
      * Create a multi-match query.
      * @return \Elastica\Query\BoolQuery
+     * @throws QueryBuilderException
      */
     public function build()
     {
@@ -138,10 +150,10 @@ class MultiMatchQuery implements QueryInterface
 
     /**
      * Build the bool query, based on the parsed boolean expression.
-     * @param array $terms the boolean expression from the parser.
+     * @param array|string $terms the boolean expression from the parser.
      * @return mixed
      */
-    public function buildBoolQuery($terms)
+    protected function buildBoolQuery($terms)
     {
         if (is_string($terms)) {
             return $terms;
@@ -182,21 +194,15 @@ class MultiMatchQuery implements QueryInterface
 
     /**
      * Create a multi-match query.
+     * @param string $terms
      * @return \Elastica\Query\BoolQuery
      */
     protected function buildMultiMatchQuery($terms)
     {
-        $boolQuery = ElasticaFactory::createNewInstance('Bool');
-
-        //create the sub-query with read-acessible fields
-        $this->isReadOwnerQuery = false;
-        $this->createReadAccSubQuery($boolQuery, $terms);
-
-        //create the sub-query with owner-read-only fields
-        $this->isReadOwnerQuery = true;
-        $this->createOwnerReadSubQuery($boolQuery, $terms);
-
-        return $boolQuery;
+        $query = ElasticaFactory::createNewInstance('Bool');
+        $this->addReadAccessibleQuery($query, $terms);
+        $this->addOwnerReadQuery($query, $terms);
+        return $query;
     }
 
     /**
@@ -216,95 +222,93 @@ class MultiMatchQuery implements QueryInterface
     }
 
     /**
-     * Create the sub-query for read-accessible fields.
-     * @param $parentQuery object the parent query (i.e. bool query) that this sub-query is added to.
+     * Add query for all read accessible fields
+     * @param \Elastica\Query\BoolQuery $parent Parent query object that this sub-query is added to.
+     * @param string $terms
      */
-    protected function createReadAccSubQuery($parentQuery, $terms)
+    protected function addReadAccessibleQuery(\Elastica\Query\BoolQuery $parent, $terms)
     {
-        $fields = $this->filterSearchFields();
+        $fields = $this->getReadAccessibleSearchFields();
         $query = $this->createMultiMatchQuery($fields, $terms);
-        $parentQuery->addShould($query);
+        $parent->addShould($query);
     }
 
     /**
-     * Create the sub-query for owner read fields.
-     * @param $parentQuery object the parent query (i.e. bool query) that this sub-query is added to.
+     * Add query for owner read fields
+     * @param \Elastica\Query\BoolQuery $parent Parent query object that this sub-query is added to.
+     * @param string $terms
      */
-    protected function createOwnerReadSubQuery($parentQuery, $terms)
+    protected function addOwnerReadQuery(\Elastica\Query\BoolQuery $parent, $terms)
     {
-        $this->hasReadOwnerFields = false;
-        $fields = $this->filterSearchFields();
-        //If no owner read fields are found from isFieldReadOwner(), do nothing.
-        if ($this->hasReadOwnerFields === false) {
-            return;
+        if ($fields = $this->getReadOwnerSearchFields()) {
+            $query = $this->createMultiMatchQuery($fields, $terms);
+            $filteredQuery = ElasticaFactory::createNewInstance('Bool');
+            $filteredQuery->addMust($query);
+            $filteredQuery->addFilter($this->createOwnerFilter());
+            $parent->addShould($filteredQuery);
         }
-        $query = $this->createMultiMatchQuery($fields, $terms);
-
-        //If owner read fields are found, need to add a filtered query with the owner filter.
-        $filteredQuery = ElasticaFactory::createNewInstance('Bool');
-        $filteredQuery->addMust($query);
-
-        // Add the owner filter to query
-        $filteredQuery->addFilter($this->addOwnerFilter());
-
-
-        $parentQuery->addShould($filteredQuery);
     }
 
     /**
-     * Create the filter for the ownerId.
+     * Create owner filter
      * @return \Elastica\Query\Terms
      */
-    protected function addOwnerFilter()
+    protected function createOwnerFilter()
     {
-        $filter = ElasticaFactory::createNewInstance('Terms');
-        $filter->setTerms("owner_id", array($this->userId));
-        return $filter;
+        return $this->visibility->createFilter('Owner', ['user' => $this->user]);
     }
 
     /**
-     * Filter the search fields based on ACL settings.
+     * Get list of readable fields based on selected search fields.
      * @return array
      */
-    protected function filterSearchFields()
+    protected function getReadAccessibleSearchFields()
     {
-        $fields = array();
-        foreach ($this->searchFields as $field) {
-            list($moduleName, $fieldName) = $this->processFieldName($field);
-            $isAccess = $this->isFieldAccessible($moduleName, $fieldName);
-            if ($isAccess === true) {
-                $fields[] = $field;
-            }
-        }
-        return $fields;
+        return array_values(array_filter($this->searchFields, function ($field) {
+            list($module, $field) = $this->processFieldName($field);
+            return $this->isFieldReadAccessible($module, $field);
+        }));
     }
 
     /**
-     * Check if a field is accessible.
-     * @param string $module the module name
-     * @param string $field the field name
+     * Get list of "owner read" fields based on selected search fields.
+     * @return array
+     */
+    protected function getReadOwnerSearchFields()
+    {
+        return array_values(array_filter($this->searchFields, function ($field) {
+            list($module, $field) = $this->processFieldName($field);
+            return $this->isFieldReadOwner($module, $field);
+        }));
+    }
+
+    /**
+     * Check if we have at least read access to a given module/field
+     * @param string $module Module name
+     * @param string $field Field name
      * @return bool
      */
-    public function isFieldAccessible($module, $field)
+    protected function isFieldReadAccessible($module, $field)
     {
-        $accessLevel = $this->getAccessLevel($module, $field);
-        $isOwnerRead = $this->isFieldReadOwner($module, $field);
+        // Any "owner read" field is expected to have ACL_NO_ACCESS and should not be included here
+        return $this->getFieldAccess($module, $field) !== \SugarACL::ACL_NO_ACCESS ? true : false;
+    }
 
-        if ($this->isReadOwnerQuery === true) {
-            // return the owner read fields for the read owner sub-query
-            if ($isOwnerRead === true) {
-                return true;
-            }
-        } else {
-            // return the read accessible fields for the read accessible sub-query
-            // the "owner read" field has the access level of ACL_NO_ACCESS and hence no checking needed
-            if ($accessLevel !== \SugarACL::ACL_NO_ACCESS) {
-                return true;
-            }
+    /**
+     * Check if we have owner read access to a given module/field
+     * @param string $module Module name
+     * @param string $field Field name
+     * @return bool
+     */
+    protected function isFieldReadOwner($module, $field)
+    {
+        $object = \BeanFactory::getObjectName($module);
+        $aclFields = \ACLField::loadUserFields($module, $object, $this->user->id);
+        if (isset($aclFields[$field]) && $aclFields[$field] === ACL_OWNER_READ_WRITE) {
+            return true;
         }
         return false;
     }
-
 
     /**
      * Get the module name and the field name.
@@ -374,28 +378,8 @@ class MultiMatchQuery implements QueryInterface
      * @param $field string the field name
      * @return int
      */
-    protected function getAccessLevel($module, $field)
+    protected function getFieldAccess($module, $field)
     {
-        return \SugarACL::getFieldAccess($module, $field);
-    }
-
-    /**
-     * Check if a field is a owner-read field.
-     * @param $module string the name of the owner
-     * @param $field string the name of the field
-     * @return bool
-     */
-    protected function isFieldReadOwner($module, $field)
-    {
-        $object = \BeanFactory::getObjectName($module);
-        $aclFields = \ACLField::loadUserFields($module, $object, $this->userId);
-
-        if (isset($aclFields[$field])) {
-            if ($aclFields[$field] == ACL_OWNER_READ_WRITE) {
-                $this->hasReadOwnerFields = true;
-                return true;
-            }
-        }
-        return false;
+        return \SugarACL::getFieldAccess($module, $field, ['user' => $this->user]);
     }
 }

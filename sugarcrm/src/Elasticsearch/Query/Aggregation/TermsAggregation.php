@@ -44,7 +44,7 @@ class TermsAggregation extends AbstractAggregation
     public function build($id, array $filters)
     {
         $terms = ElasticaFactory::createNewInstance('AggTerms', $id);
-        $this->applyOptions($terms, $this->options);
+        $this->applyOptions($terms);
 
         if (empty($filters)) {
             return $terms;
