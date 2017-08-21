@@ -416,13 +416,20 @@ Field.prototype.evalRequired = function () {
     var response = true, value;
     if (this.required) {
         response = (this.value !== null && this.value !== '' && this.value.trim());
-        if (!response) {
-            $(this.controlObject).addClass('required');
-        } else {
-            $(this.controlObject).removeClass('required');
-        }
+        this.markFieldError(!response);
     }
     return response;
+};
+
+/**
+ * Decorate the field's controlObject with an error state
+ */
+Field.prototype.markFieldError = function(error) {
+    if (error) {
+        $(this.controlObject).addClass('required');
+    } else {
+        $(this.controlObject).removeClass('required');
+    }
 };
 
 /**
@@ -431,7 +438,7 @@ Field.prototype.evalRequired = function () {
 Field.prototype.reset = function () {
     this.setValue(this.initialValue || null, true);
     if (this.required && this.controlObject) {
-        $(this.controlObject).removeClass('required');
+        this.markFieldError(false);
     }
 };
 
@@ -455,6 +462,8 @@ Field.prototype.isValid = function () {
             break;
         }
     }
+
+    this.markFieldError(!res);
 
     return res;
 };
@@ -508,7 +517,7 @@ Field.prototype.disable = function () {
     if (this.controlObject) {
         this.labelObject.className = 'adam-form-label-disabled';
         this.controlObject.disabled = true;
-        $(this.controlObject).removeClass('required');
+        this.markFieldError(false);
     }
     this.disabled = true;
     return this;
