@@ -30,14 +30,7 @@ class SugarACLEmails extends SugarACLStrategy
         }
 
         $immutableFields = [
-            'type',
-            'status',
             'reply_to_status',
-            'from_addr_name',
-            'reply_to_addr',
-            'to_addrs_names',
-            'cc_addrs_names',
-            'bcc_addrs_names',
         ];
 
         if (in_array($context['field'], $immutableFields)) {

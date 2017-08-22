@@ -145,23 +145,23 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'from_addr_name',
-                true,
+                false,
             ],
             [
                 'reply_to_addr',
-                true,
+                false,
             ],
             [
                 'to_addrs_names',
-                true,
+                false,
             ],
             [
                 'cc_addrs_names',
-                true,
+                false,
             ],
             [
                 'bcc_addrs_names',
-                true,
+                false,
             ],
             [
                 'raw_source',
@@ -193,7 +193,7 @@ class SugarACLArchivedEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'type',
-                true,
+                false,
             ],
             [
                 'status',

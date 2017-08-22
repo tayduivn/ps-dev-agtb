@@ -13,48 +13,6 @@
 class EmailsApi extends ModuleApi
 {
     /**
-     * Wildcard state value.
-     *
-     * @var string
-     */
-    const STATE_ANY = '*';
-
-    /**
-     * The valid transitions for an Emails record's state.
-     *
-     * @var array
-     */
-    private $validStateTransitions = array(
-        'create' => array(
-            array(
-                'from' => self::STATE_ANY,
-                'to' => array(
-                    Email::STATE_READY,
-                    Email::STATE_DRAFT,
-                    Email::STATE_ARCHIVED,
-                ),
-            ),
-        ),
-        'update' => array(
-            array(
-                'from' => Email::STATE_DRAFT,
-                'to' => array(
-                    Email::STATE_DRAFT,
-                    // The draft is ready to be sent.
-                    Email::STATE_READY,
-                ),
-            ),
-            array(
-                'from' => Email::STATE_ARCHIVED,
-                'to' => array(
-                    // Allows for changing teams or the assigned user, etc.
-                    Email::STATE_ARCHIVED,
-                ),
-            ),
-        ),
-    );
-
-    /**
      * {@inheritdoc}
      */
     public function registerApiRest()
@@ -67,7 +25,6 @@ class EmailsApi extends ModuleApi
                 'method' => 'createRecord',
                 'shortHelp' => 'This method creates a new Emails record',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_post_help.html',
-                'minVersion' => 11,
                 'exceptions' => array(
                     'SugarApiExceptionInvalidParameter',
                     'SugarApiExceptionMissingParameter',
@@ -97,7 +54,6 @@ class EmailsApi extends ModuleApi
                 'method' => 'updateRecord',
                 'shortHelp' => 'This method updates an Emails record',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_put_help.html',
-                'minVersion' => 11,
                 'exceptions' => array(
                     'SugarApiExceptionInvalidParameter',
                     'SugarApiExceptionMissingParameter',
@@ -111,30 +67,13 @@ class EmailsApi extends ModuleApi
     }
 
     /**
-     * Prevents the creation of a bean when the state transition is invalid. Sends the email when the state is "Ready."
+     * Sends the email when the state is "Ready".
      *
      * {@inheritdoc}
      */
     public function createRecord(ServiceBase $api, array $args)
     {
-        $this->requireArgs($args, array('state'));
-
-        if (!$this->isValidStateTransition('create', static::STATE_ANY, $args['state'])) {
-            $message = "State transition to {$args['state']} is invalid for creating an email";
-            throw new SugarApiExceptionInvalidParameter($message);
-        }
-
-        $isReady = false;
-
-        if ($args['state'] === Email::STATE_READY) {
-            $isReady = true;
-            $args['state'] = Email::STATE_DRAFT;
-        }
-
-        if ($args['state'] === Email::STATE_DRAFT && isset($args['from'])) {
-            throw new SugarApiExceptionNotAuthorized('Not allowed to edit field from when saving a draft');
-        }
-
+        $isReady = isset($args['state']) && $args['state'] === Email::STATE_READY;
         $result = parent::createRecord($api, $args);
 
         if ($isReady) {
@@ -154,35 +93,13 @@ class EmailsApi extends ModuleApi
     }
 
     /**
-     * Prevents the update of a bean when the state transition is invalid. Sends the email when the state is "Ready."
+     * Sends the email when the state is "Ready".
      *
      * {@inheritdoc}
      */
     public function updateRecord(ServiceBase $api, array $args)
     {
-        $api->action = 'view';
-        $this->requireArgs($args, array('module', 'record'));
-
-        $bean = $this->loadBean($api, $args, 'save', array('source' => 'module_api'));
-        $api->action = 'save';
-        $isReady = false;
-
-        if (isset($args['state'])) {
-            if (!$this->isValidStateTransition('update', $bean->state, $args['state'])) {
-                $message = "State transition from {$bean->state} to {$args['state']} is invalid for an email";
-                throw new SugarApiExceptionInvalidParameter($message);
-            }
-
-            if ($args['state'] === Email::STATE_READY) {
-                $isReady = true;
-                unset($args['state']);
-            }
-        }
-
-        if ($bean->state === Email::STATE_DRAFT && isset($args['from'])) {
-            throw new SugarApiExceptionNotAuthorized('Not allowed to edit field from when saving a draft');
-        }
-
+        $isReady = isset($args['state']) && $args['state'] === Email::STATE_READY;
         $result = parent::updateRecord($api, $args);
 
         if ($isReady) {
@@ -192,29 +109,6 @@ class EmailsApi extends ModuleApi
         }
 
         return $result;
-    }
-
-    /**
-     * Is the supplied state transition valid?
-     *
-     * @param string $operation
-     * @param string $fromState
-     * @param string $toState
-     * @return boolean
-     */
-    protected function isValidStateTransition($operation, $fromState, $toState)
-    {
-        $transitions = $this->validStateTransitions[$operation];
-
-        foreach ($transitions as $transition) {
-            if (in_array($transition['from'], array(self::STATE_ANY, $fromState)) &&
-                in_array($toState, $transition['to'])
-            ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

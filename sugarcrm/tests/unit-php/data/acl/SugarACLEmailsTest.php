@@ -128,23 +128,23 @@ class SugarACLEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'from_addr_name',
-                false,
+                true,
             ],
             [
                 'reply_to_addr',
-                false,
+                true,
             ],
             [
                 'to_addrs_names',
-                false,
+                true,
             ],
             [
                 'cc_addrs_names',
-                false,
+                true,
             ],
             [
                 'bcc_addrs_names',
-                false,
+                true,
             ],
             [
                 'raw_source',
@@ -176,11 +176,11 @@ class SugarACLEmailsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'type',
-                false,
+                true,
             ],
             [
                 'status',
-                false,
+                true,
             ],
             [
                 'flagged',

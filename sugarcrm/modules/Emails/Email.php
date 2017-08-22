@@ -385,6 +385,40 @@ class Email extends SugarBean {
 
 	}
 
+    /**
+     * Use this method to determine if the email can be transitioned to the desired state.
+     *
+     * A new email's state can be "Archived" or "Draft", or "Ready" to send it. An existing draft can remain a draft. An
+     * existing draft can transition to "Ready" to send it. An archived email cannot change states.
+     *
+     * @param string $newState
+     * @return bool
+     */
+    public function isStateTransitionAllowed($newState)
+    {
+        // A new email can be placed in any valid state.
+        if (!$this->isUpdate()) {
+            return in_array($newState, [Email::STATE_ARCHIVED, Email::STATE_DRAFT, Email::STATE_READY]);
+        }
+
+        // An existing email must already have a valid state.
+        if (!in_array($this->state, [Email::STATE_ARCHIVED, Email::STATE_DRAFT])) {
+            return false;
+        }
+
+        // Noop's are ok.
+        if ($this->state === $newState) {
+            return true;
+        }
+
+        // A draft can be sent.
+        if ($this->state === Email::STATE_DRAFT) {
+            return $newState === Email::STATE_READY;
+        }
+
+        return false;
+    }
+
 	/**
 	 * Presaves one attachment for new email 2.0 spec
 	 * DOES NOT CREATE A NOTE

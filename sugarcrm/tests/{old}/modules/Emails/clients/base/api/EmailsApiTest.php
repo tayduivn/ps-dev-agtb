@@ -47,62 +47,6 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    public function cannotMakeInvalidStateChangeProvider()
-    {
-        return array(
-            array(
-                Email::STATE_DRAFT,
-                Email::STATE_ARCHIVED,
-            ),
-            array(
-                Email::STATE_ARCHIVED,
-                Email::STATE_DRAFT,
-            ),
-            array(
-                Email::STATE_ARCHIVED,
-                Email::STATE_READY,
-            ),
-        );
-    }
-
-    /**
-     * @covers ::createRecord
-     * @covers ::isValidStateTransition
-     * @expectedException SugarApiExceptionInvalidParameter
-     */
-    public function testCreateRecord_StatusIsInvalid()
-    {
-        $args = array(
-            'module' => 'Emails',
-            'name' => 'Sugar Email' . mt_rand(),
-            'state' => 'SomeBogusToState',
-        );
-        $api = new EmailsApi();
-        $api->createRecord($this->service, $args);
-    }
-
-    /**
-     * @covers ::createRecord
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
-    public function testCreateRecord_CannotSpecifySenderForDraft()
-    {
-        $args = [
-            'module' => 'Emails',
-            'name' => 'test subject',
-            'state' => Email::STATE_DRAFT,
-            'from' => [
-                'create' => [
-                    'parent_type' => 'Users',
-                    'parent_id' => Uuid::uuid1(),
-                    'email_address_id' => Uuid::uuid1(),
-                ],
-            ],
-        ];
-        $api = new EmailsApi();
-        $api->createRecord($this->service, $args);
-    }
-
     public function testCreateRecord_NoEmailIsCreatedOnFailureToSend()
     {
         $before = $GLOBALS['db']->fetchOne('SELECT COUNT(*) as num FROM emails WHERE deleted=0');
@@ -135,51 +79,6 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         // it, so add the ID in order to allow teardown to clean up the database.
         $id = $GLOBALS['db']->fetchOne("SELECT id FROM emails WHERE name='{$args['name']}' AND deleted=1");
         SugarTestEmailUtilities::setCreatedEmail($id);
-    }
-
-    /**
-     * @dataProvider cannotMakeInvalidStateChangeProvider
-     * @expectedException SugarApiExceptionInvalidParameter
-     * @covers ::updateRecord
-     * @covers ::isValidStateTransition
-     * @param string $fromState
-     * @param string $toState
-     */
-    public function testUpdateRecord_CannotMakeInvalidStateChange($fromState, $toState)
-    {
-        $email = SugarTestEmailUtilities::createEmail(null, array('state' => $fromState));
-
-        $args = array(
-            'module' => 'Emails',
-            'record' => $email->id,
-            'state' => $toState,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
-        );
-        $api = new EmailsApi();
-        $api->updateRecord($this->service, $args);
-    }
-
-    /**
-     * @covers ::updateRecord
-     * @expectedException SugarApiExceptionNotAuthorized
-     */
-    public function testUpdateRecord_CannotSpecifySenderForDraft()
-    {
-        $email = SugarTestEmailUtilities::createEmail(null, ['state' => Email::STATE_DRAFT]);
-
-        $args = [
-            'module' => 'Emails',
-            'record' => $email->id,
-            'from' => [
-                'create' => [
-                    'parent_type' => 'Users',
-                    'parent_id' => Uuid::uuid1(),
-                    'email_address_id' => Uuid::uuid1(),
-                ],
-            ],
-        ];
-        $api = new EmailsApi();
-        $api->updateRecord($this->service, $args);
     }
 
     /**

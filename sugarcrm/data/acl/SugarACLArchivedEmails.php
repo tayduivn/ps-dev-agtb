@@ -63,6 +63,12 @@ class SugarACLArchivedEmails extends SugarACLStrategy
             'state',
             'reply_to_id',
             'outbound_email_id',
+            'from_addr_name',
+            'to_addrs_names',
+            'cc_addrs_names',
+            'bcc_addrs_names',
+            'reply_to_addr',
+            'type',
         ];
 
         if (in_array($context['field'], $immutableFields)) {

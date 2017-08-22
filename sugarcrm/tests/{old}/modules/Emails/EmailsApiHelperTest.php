@@ -72,6 +72,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = BeanFactory::newBean('Emails');
         $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
 
         $submittedData = [
             'state' => Email::STATE_DRAFT,
@@ -185,5 +186,142 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         ];
 
         $this->helper->populateFromApi($bean, $submittedData);
+    }
+
+    /**
+     * @covers ::populateFromApi
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testPopulateFromApi_CannotSpecifySenderForDraft()
+    {
+        $bean = BeanFactory::newBean('Emails');
+
+        $submittedData = [
+            'state' => Email::STATE_DRAFT,
+            'from' => [
+                'create' => [
+                    'parent_type' => 'Users',
+                    'parent_id' => Uuid::uuid1(),
+                    'email_address_id' => Uuid::uuid1(),
+                ],
+            ],
+        ];
+
+        $this->helper->populateFromApi($bean, $submittedData);
+    }
+
+    public function isUpdateProvider()
+    {
+        return [
+            [false],
+            [true],
+        ];
+    }
+
+    /**
+     * @dataProvider isUpdateProvider
+     * @covers ::populateFromApi
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testPopulateFromApi_StateChangeIsInvalid($isUpdate)
+    {
+        $bean = $this->createPartialMock('Email', ['isUpdate', 'isStateTransitionAllowed']);
+        $bean->method('isUpdate')->willReturn($isUpdate);
+        $bean->method('isStateTransitionAllowed')->willReturn(false);
+
+        $submittedData = [
+            'state' => 'Foo',
+        ];
+
+        $this->helper->populateFromApi($bean, $submittedData);
+    }
+
+    /**
+     * @covers ::populateFromApi
+     */
+    public function testPopulateFromApi_PopulatedAsDraftIfStateIsReady()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
+
+        $submittedData = [
+            'state' => Email::STATE_READY,
+        ];
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+        $this->assertTrue($result, 'Populating was not successful');
+        $this->assertSame(Email::STATE_DRAFT, $bean->state, 'The email should be a draft');
+    }
+
+    public function testPopulateFromApi_MaintainBackwardCompatibilityForCreatingDrafts()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
+
+        $submittedData = [
+            'type' => 'draft',
+            'status' => 'draft',
+            'to_addrs_names' => '"Wenona Seely" <hr.kid.info@example.co.uk>, "Annie Cotter" <kid.vegan@example.de>',
+            'name' => 'Thanks for your time today',
+            'description_html' => 'We should chat again tomorrow!',
+            'description' => 'We should chat again tomorrow!',
+        ];
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+        $this->assertTrue($result, 'Populating was not successful');
+        $this->assertSame(Email::STATE_DRAFT, $bean->state, 'The email should be a draft');
+        $this->assertSame('draft', $bean->type, 'type should be draft');
+        $this->assertSame('draft', $bean->status, 'status should be draft');
+        $this->assertSame($submittedData['to_addrs_names'], $bean->to_addrs, 'The TO recipients were not mapped');
+    }
+
+    public function testPopulateFromApi_MaintainBackwardCompatibilityForUpdatingDrafts()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->state = Email::STATE_DRAFT;
+
+        $submittedData = [
+            'to_addrs_names' => '"Wenona Seely" <hr.kid.info@example.co.uk>, "Annie Cotter" <kid.vegan@example.de>',
+            'cc_addrs_names' => 'eddie.hammer@example.co.uk',
+            'bcc_addrs_names' => '"Tom Vernon" <tvernon@example.com>',
+        ];
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+        $this->assertTrue($result, 'Populating was not successful');
+        $this->assertSame($submittedData['to_addrs_names'], $bean->to_addrs, 'The TO recipients were not mapped');
+        $this->assertSame($submittedData['cc_addrs_names'], $bean->cc_addrs, 'The CC recipients were not mapped');
+        $this->assertSame($submittedData['bcc_addrs_names'], $bean->bcc_addrs, 'The BCC recipients were not mapped');
+    }
+
+    public function testPopulateFromApi_MaintainBackwardCompatibilityForCreatingArchivedEmails()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
+
+        $submittedData = [
+            'type' => 'archived',
+            'status' => 'read',
+            'from_addr_name' => '"Will Westin" <will@example.com>',
+            'to_addrs_names' => '"Wenona Seely" <hr.kid.info@example.co.uk>, "Annie Cotter" <kid.vegan@example.de>',
+            'cc_addrs_names' => 'eddie.hammer@example.co.uk',
+            'bcc_addrs_names' => '"Tom Vernon" <tvernon@example.com>',
+            'name' => 'I want your business',
+            'description_html' => 'We can deliver on our promises.',
+            'description' => 'We can deliver on our promises.',
+        ];
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+        $this->assertTrue($result, 'Populating was not successful');
+        $this->assertSame(Email::STATE_ARCHIVED, $bean->state, 'The email should be archived');
+        $this->assertSame('archived', $bean->type, 'type should be archived');
+        $this->assertSame('read', $bean->status, 'status should be read');
+        $this->assertSame($submittedData['from_addr_name'], $bean->from_addr, 'The sender was not mapped');
+        $this->assertSame($submittedData['to_addrs_names'], $bean->to_addrs, 'The TO recipients were not mapped');
+        $this->assertSame($submittedData['cc_addrs_names'], $bean->cc_addrs, 'The CC recipients were not mapped');
+        $this->assertSame($submittedData['bcc_addrs_names'], $bean->bcc_addrs, 'The BCC recipients were not mapped');
     }
 }
