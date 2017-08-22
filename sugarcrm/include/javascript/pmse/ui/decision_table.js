@@ -180,7 +180,7 @@
             if(this.variableMode === 'condition') {
                 valid = that.validateColumn(index, 0);
             } else {
-                valid = that.validateColumn(index, 2);
+                valid = that.validateColumn(index, 1);
             }
 
             that.setIsDirty(true);

@@ -237,7 +237,10 @@ DropdownSelector.prototype._appendPanel = function () {
         appendPanelTo.appendChild(this.html);
     }
     if (owner) {
-        this.setWidth(this._matchOwnerWidth ? owner.offsetWidth : this.width);
+        // Only match owner width if there is one to match
+        // @TODO - Figure out how to make the parent offsetWidth get
+        // set properly so that this condition can be removed.
+        this.setWidth(this._matchOwnerWidth && owner.offsetWidth ? owner.offsetWidth : this.width);
         position = getRelativePosition(owner, appendPanelTo);
     } else {
         this.setWidth(this.width);

@@ -386,6 +386,12 @@ table.decision-table-index span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /*
+    Since we moved to templates we need to set this
+    so that inner hidden elements get an appropriate
+    width to set themselves to.
+  */
+  width: 100%;
 }
 
 .expression-container-input {
