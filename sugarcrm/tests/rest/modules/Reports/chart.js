@@ -48,7 +48,7 @@ describe('Reports.Chart', function() {
             'filters_def': {
                 'Filter_1': {
                     'operator': 'AND',
-                    '0': {'name': 'industry', 'table_key': 'self', 'qualifier_name': 'is', 'input_name0': ['TEST']}
+                    '0': {'name': 'industry', 'table_key': 'self', 'qualifier_name': 'one_of', 'input_name0': ['TEST']}
                 }
             }
         };
