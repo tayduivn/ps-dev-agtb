@@ -99,5 +99,6 @@
     "tests/{old}/service/core/envelope.xsd",
     "themes/SugarIE6/js/pngbehavior.htc",
     "upload/",
-    "vendor/"
+    "vendor/",
+    "dist/"
 ]
