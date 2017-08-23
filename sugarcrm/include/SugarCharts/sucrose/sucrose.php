@@ -16,6 +16,8 @@
  */
 class sucrose extends JsChart
 {
+    public $supports_image_export = true;
+
     /**
      * Call the parent object contructor
      */
