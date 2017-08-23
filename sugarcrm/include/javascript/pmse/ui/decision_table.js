@@ -651,7 +651,6 @@
     DecisionTable.prototype.makeDecisionRowsSortable = function() {
         var self = this;
         $(self.decisionTableBodyClassId).sortable({
-            handle: '.checkbox-td',
             cancel: 'tr:not(.selected)',
             items: 'tr.' + self.decisionTableRowClassName,
             connectWith: 'table',
