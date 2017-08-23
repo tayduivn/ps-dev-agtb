@@ -15,7 +15,8 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
+use SugarBean;
+use User;
 
 /**
  *
@@ -41,10 +42,10 @@ interface StrategyInterface
     /**
      * Process document before its being indexed
      * @param Document $document
-     * @param \SugarBean $bean
+     * @param SugarBean $bean
      * @param Visibility $provider
      */
-    public function elasticProcessDocumentPreIndex(Document $document, \SugarBean $bean, Visibility $provider);
+    public function elasticProcessDocumentPreIndex(Document $document, SugarBean $bean, Visibility $provider);
 
     /**
      * Bean index fields to be indexed
@@ -56,9 +57,9 @@ interface StrategyInterface
 
     /**
      * Add visibility filters
-     * @param $filter
+     * @param User $user
+     * @param \Elastica\Query\BoolQuery $filter
      * @param Visibility $provider
-     * @return mixed
      */
-    public function elasticAddFilters(\User $user, $filter, Visibility $provider);
+    public function elasticAddFilters(User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider);
 }

@@ -80,7 +80,7 @@ class CrossModuleAggHandler extends AbstractHandler implements
 
             // set options from defs
             if (!empty($defs['options']) && is_array($defs['options'])) {
-                $agg->setOptions($defs['options'], false);
+                $agg->setOptions($defs['options']);
             }
 
             // cross aggs use the field name as identifier

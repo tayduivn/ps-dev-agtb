@@ -12,8 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
@@ -31,6 +29,8 @@ class KBActiveRevisionFilter implements FilterInterface
     public function buildFilter(array $options = array())
     {
         $field = $options['module'] . Mapping::PREFIX_SEP . 'active_rev.kbvis';
-        return ElasticaFactory::createNewInstance('Terms', $field, 1);
+        $filter = new \Elastica\Query\Term();
+        $filter->setTerm($field, 1);
+        return $filter;
     }
 }

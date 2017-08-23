@@ -11,7 +11,6 @@
  */
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -41,7 +40,7 @@ abstract class FilterAggregation extends AbstractAggregation
         // Add our own filter to the stack
         $filters[] = $this->getAggFilter($this->options['field']);
 
-        $agg = ElasticaFactory::createNewInstance('AggFilter', $id);
+        $agg = new \Elastica\Aggregation\Filter($id);
         $agg->setFilter($this->buildFilters($filters));
         return $agg;
     }
@@ -71,7 +70,7 @@ abstract class FilterAggregation extends AbstractAggregation
     /**
      * Get aggregation filter definition
      * @param string $field
-     * @return array
+     * @return \Elastica\Query\AbstractQuery
      */
     abstract protected function getAggFilter($field);
 }

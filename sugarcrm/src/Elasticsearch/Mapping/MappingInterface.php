@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
+use SugarBean;
 
 /**
  *
@@ -39,7 +40,7 @@ interface MappingInterface
     /**
      * Create a module only field. This field will be added on top
      * of a MultiFieldBase. If the base does not exist it will be created.
-     * The module field is prefixed with the "Module__" prefix.
+     * The module field is prefixed with the "{Module}__" prefix.
      * @param string $baseField The non-prefixed base field name
      * @param string $field The (multi) field name to create the mapping for
      * @param MultiFieldProperty $property The mapping properties of the field
@@ -146,7 +147,7 @@ interface MappingInterface
 
     /**
      * Get seed bean
-     * @return \SugarBean
+     * @return SugarBean
     */
     public function getBean();
 

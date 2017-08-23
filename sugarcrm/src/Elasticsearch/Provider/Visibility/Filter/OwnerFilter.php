@@ -12,8 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
@@ -32,7 +30,7 @@ class OwnerFilter implements FilterInterface
     {
         // Create the field name
         $ownerField = Mapping::PREFIX_COMMON . 'owner_id.owner';
-        $filter = ElasticaFactory::createNewInstance('Term');
+        $filter = new \Elastica\Query\Term();
         $filter->setTerm($ownerField, $options['user']->id);
         return $filter;
     }

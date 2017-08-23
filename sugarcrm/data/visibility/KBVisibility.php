@@ -15,7 +15,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
@@ -116,7 +115,7 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function elasticAddFilters(\User $user, $filter, Visibility $provider)
+    public function elasticAddFilters(User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider)
     {
         if (!$this->shouldCheckVisibility()) {
             return;
@@ -126,7 +125,7 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
         $ownerFilter = $provider->createFilter('Owner', ['user' => $user]);
 
         if ($statuses = $this->getPublishedStatuses()) {
-            $combo = ElasticaFactory::createNewInstance('Bool');
+            $combo = new \Elastica\Query\BoolQuery();
             $combo->addShould($provider->createFilter('KBStatus', [
                 'published_statuses' => $statuses,
                 'module' => $this->bean->module_name,

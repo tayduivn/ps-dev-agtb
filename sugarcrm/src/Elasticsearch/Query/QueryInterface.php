@@ -22,7 +22,7 @@ interface QueryInterface
 {
     /**
      * Build the query
-     * @return mixed
+     * @return \Elastica\Query\AbstractQuery
      */
     public function build();
 }

@@ -12,8 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
@@ -31,6 +29,6 @@ class KBStatusFilter implements FilterInterface
     public function buildFilter(array $options = array())
     {
         $field = $options['module'] . Mapping::PREFIX_SEP . 'status.kbvis';
-        return ElasticaFactory::createNewInstance('Terms', $field, $options['published_statuses']);
+        return new \Elastica\Query\Terms($field, $options['published_statuses']);
     }
 }

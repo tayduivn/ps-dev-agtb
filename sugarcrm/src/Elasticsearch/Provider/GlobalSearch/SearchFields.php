@@ -12,8 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
-
 /**
  *
  * SearchFields builder
@@ -60,7 +58,7 @@ class SearchFields
      */
     public function addSearchField($module, array $path, array $defs, $weightId)
     {
-        $searchField = implode(QueryBuilder::FIELD_SEP, $path);
+        $searchField = implode('.', $path);
         if ($this->booster) {
             $searchField = $this->booster->getBoostedField($searchField, $defs, $weightId);
         }

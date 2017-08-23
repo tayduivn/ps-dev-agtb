@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationCapable;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\TagsHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
@@ -314,16 +313,15 @@ class GlobalSearchApi extends SugarApi
     {
         // Compose the term filter for the tags
         if (!empty($this->tagFilters)) {
-            $this->filters[] = ElasticaFactory::createNewInstance(
-                'Terms',
+            $this->filters[] = new \Elastica\Query\Terms(
                 Mapping::PREFIX_COMMON .TagsHandler::TAGS_FIELD .'.tags',
                 $this->tagFilters
             );
         }
 
         // Compose the bool and term filter to exclude the tag module
-        $tagFilter = ElasticaFactory::createNewInstance('Terms', "_type", array("Tags"));
-        $boolFilter = ElasticaFactory::createNewInstance('Bool');
+        $tagFilter = new \Elastica\Query\Terms("_type", ["Tags"]);
+        $boolFilter = new \Elastica\Query\BoolQuery();
         $boolFilter->addMustNot($tagFilter);
         $this->filters[] = $boolFilter;
     }

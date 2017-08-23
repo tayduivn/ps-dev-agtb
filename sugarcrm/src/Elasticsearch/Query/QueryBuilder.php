@@ -19,7 +19,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationStack;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 use User;
 
 /**
@@ -31,6 +30,7 @@ class QueryBuilder
 {
     /**
      * Field separator
+     * @deprecated
      */
     const FIELD_SEP = '.';
 
@@ -86,13 +86,13 @@ class QueryBuilder
 
     /**
      * List of query filters
-     * @var array
+     * @var \Elastica\Query\AbstractQuery[]
      */
     protected $filters = array();
 
     /**
      * List of post filters
-     * @var array
+     * @var \Elastica\Query\AbstractQuery[]
      */
     protected $postFilters = array();
 
@@ -224,10 +224,10 @@ class QueryBuilder
 
     /**
      * Add query filter
-     * @param $filter
+     * @param \Elastica\Query\AbstractQuery $filter
      * @return QueryBuilder
      */
-    public function addFilter($filter)
+    public function addFilter(\Elastica\Query\AbstractQuery $filter)
     {
         $this->filters[] = $filter;
         return $this;
@@ -235,10 +235,10 @@ class QueryBuilder
 
     /**
      * Add query filter
-     * @param $postFilter
+     * @param \Elastica\Query\AbstractQuery $postFilter
      * @return QueryBuilder
      */
-    public function addPostFilter($postFilter)
+    public function addPostFilter(\Elastica\Query\AbstractQuery $postFilter)
     {
         $this->postFilters[] = $postFilter;
         return $this;
@@ -341,7 +341,7 @@ class QueryBuilder
     public function build()
     {
         // Wrap query in a filtered query
-        $query = ElasticaFactory::createNewInstance('Bool');
+        $query = new \Elastica\Query\BoolQuery();
         $query->addMust($this->query->build());
 
         // Apply visibility filtering
@@ -427,7 +427,7 @@ class QueryBuilder
      */
     protected function buildFilters(array $filters)
     {
-        $result = ElasticaFactory::createNewInstance('Bool');
+        $result = new \Elastica\Query\BoolQuery();
         foreach ($filters as $filter) {
             $result->addMust($filter);
         }
@@ -440,7 +440,7 @@ class QueryBuilder
      */
     protected function buildPostFilters(array $postFilters)
     {
-        $result = ElasticaFactory::createNewInstance('Bool');
+        $result = new \Elastica\Query\BoolQuery();
         foreach ($postFilters as $postFilter) {
             $result->addMust($postFilter);
         }

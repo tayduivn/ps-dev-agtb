@@ -12,9 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
-
 /**
  *
  * Type (module) filter
@@ -29,7 +26,7 @@ class TypeFilter implements FilterInterface
      */
     public function buildFilter(array $options = array())
     {
-        $filter = ElasticaFactory::createNewInstance('Term');
+        $filter = new \Elastica\Query\Term();
         $filter->setTerm('_type', $options['module']);
         return $filter;
     }

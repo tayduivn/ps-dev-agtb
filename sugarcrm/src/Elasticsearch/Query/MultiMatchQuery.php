@@ -16,10 +16,13 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SimpleTermParser;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
-use Elastica\Query\MultiMatch;
-use User;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use BeanFactory;
+use Exception;
+use SugarACL;
+use ACLField;
+use User;
 
 /**
  *
@@ -109,9 +112,9 @@ class MultiMatchQuery implements QueryInterface
 
     /**
      * Set the user.
-     * @param \User $user
+     * @param User $user
      */
-    public function setUser(\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     }
@@ -143,7 +146,7 @@ class MultiMatchQuery implements QueryInterface
                 $query = $this->buildMultiMatchQuery($query);
             }
             return $query;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             throw new QueryBuilderException("exception in building query: " . $ex->getMessage());
         }
     }
@@ -164,7 +167,7 @@ class MultiMatchQuery implements QueryInterface
             if (TermParserHelper::isAndOperator($operator) || TermParserHelper::isOrOperator($operator)) {
                 $returnExpr = $this->buildBoolQuery($operands);
 
-                $boolQuery = ElasticaFactory::createNewInstance('Bool');
+                $boolQuery = new \Elastica\Query\BoolQuery();
                 foreach ($returnExpr as $expr) {
                     //convert a single string to a multi-match query
                     if (is_string($expr)) {
@@ -178,7 +181,7 @@ class MultiMatchQuery implements QueryInterface
                 }
                 return $boolQuery;
             } elseif (TermParserHelper::isNotOperator($operator)) {
-                $boolQuery = ElasticaFactory::createNewInstance('Bool');
+                $boolQuery = new \Elastica\Query\BoolQuery();
                 foreach ($operands as $operand) {
                     $query = $this->buildMultiMatchQuery($operand);
                     $boolQuery->addMustNot($query);
@@ -199,7 +202,7 @@ class MultiMatchQuery implements QueryInterface
      */
     protected function buildMultiMatchQuery($terms)
     {
-        $query = ElasticaFactory::createNewInstance('Bool');
+        $query = new \Elastica\Query\BoolQuery();
         $this->addReadAccessibleQuery($query, $terms);
         $this->addOwnerReadQuery($query, $terms);
         return $query;
@@ -209,12 +212,12 @@ class MultiMatchQuery implements QueryInterface
      * Create a multi-match query.
      * @param $fields array the searchable fields
      * @param $term string the search term
-     * @return MultiMatch
+     * @return \Elastica\Query\MultiMatch
      */
     protected function createMultiMatchQuery(array $fields, $terms)
     {
-        $query = new MultiMatch();
-        $query->setType(MultiMatch::TYPE_CROSS_FIELDS);
+        $query = new \Elastica\Query\MultiMatch();
+        $query->setType(\Elastica\Query\MultiMatch::TYPE_CROSS_FIELDS);
         $query->setQuery($terms);
         $query->setFields($fields);
         $query->setTieBreaker(1.0); // TODO make configurable
@@ -242,7 +245,7 @@ class MultiMatchQuery implements QueryInterface
     {
         if ($fields = $this->getReadOwnerSearchFields()) {
             $query = $this->createMultiMatchQuery($fields, $terms);
-            $filteredQuery = ElasticaFactory::createNewInstance('Bool');
+            $filteredQuery = new \Elastica\Query\BoolQuery();
             $filteredQuery->addMust($query);
             $filteredQuery->addFilter($this->createOwnerFilter());
             $parent->addShould($filteredQuery);
@@ -291,7 +294,7 @@ class MultiMatchQuery implements QueryInterface
     protected function isFieldReadAccessible($module, $field)
     {
         // Any "owner read" field is expected to have ACL_NO_ACCESS and should not be included here
-        return $this->getFieldAccess($module, $field) !== \SugarACL::ACL_NO_ACCESS ? true : false;
+        return $this->getFieldAccess($module, $field) !== SugarACL::ACL_NO_ACCESS ? true : false;
     }
 
     /**
@@ -302,8 +305,8 @@ class MultiMatchQuery implements QueryInterface
      */
     protected function isFieldReadOwner($module, $field)
     {
-        $object = \BeanFactory::getObjectName($module);
-        $aclFields = \ACLField::loadUserFields($module, $object, $this->user->id);
+        $object = BeanFactory::getObjectName($module);
+        $aclFields = ACLField::loadUserFields($module, $object, $this->user->id);
         if (isset($aclFields[$field]) && $aclFields[$field] === ACL_OWNER_READ_WRITE) {
             return true;
         }
@@ -334,14 +337,14 @@ class MultiMatchQuery implements QueryInterface
         $moduleName = "";
         $fieldName = $field;
 
-        $value = explode(QueryBuilder::FIELD_SEP, $field);
-        //QueryBuilder::FIELD_SEP is found
+        $value = explode('.', $field);
+        // Field separate '.' is found
         if (is_array($value)) {
             $value = $value[0];
         }
 
-        $names = explode(QueryBuilder::PREFIX_SEP, $value);
-        //QueryBuilder::PREFIX_SEP is found
+        $names = explode(Mapping::PREFIX_SEP, $value);
+        // Mapping::PREFIX_SEP is found
         if (is_array($names) && count($names)>1) {
             $moduleName = $names[0];
             $fieldName = $this->normalizeFieldName($value);
@@ -380,6 +383,6 @@ class MultiMatchQuery implements QueryInterface
      */
     protected function getFieldAccess($module, $field)
     {
-        return \SugarACL::getFieldAccess($module, $field, ['user' => $this->user]);
+        return SugarACL::getFieldAccess($module, $field, ['user' => $this->user]);
     }
 }

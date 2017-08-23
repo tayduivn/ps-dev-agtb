@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\MatchAllQuery;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Factory\ElasticaFactory;
 
 /**
  *
@@ -39,7 +38,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
 
         $postFilters = array();
         foreach ($filterParams as $key => $value) {
-            $termFilter = ElasticaFactory::createNewInstance('Term');
+            $termFilter = new \Elastica\Query\Term();
             $termFilter->setTerm($key, $value);
             $postFilters[] = $termFilter;
         }
