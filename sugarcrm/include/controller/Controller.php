@@ -183,47 +183,49 @@ class Controller extends SugarBean {
 	}
 	
 	function update_affected_order($affected_id, $affected_new_x="", $affected_new_y=""){
-		 
-		$query = 	"UPDATE ".$this->focus->table_name." SET";
-		
-		if($this->focus->controller_def['list_x']=="Y"){				
-				$query .= 	"	 list_order_x='$affected_new_x'";
-		}
-		if($this->focus->controller_def['list_y']=="Y"){	
+        $qb = $this->db->getConnection()->createQueryBuilder();
 
-			if($this->focus->controller_def['list_x']=="Y"){
-				$query .= 	"	, ";
-			}		 
-			$query .= 	"	list_order_y='$affected_new_y'";
-		}						
-		
-		$query .=	"	WHERE id='$affected_id'";
-		$query .=   "	AND ".$this->focus->table_name.".deleted='0'";
-		$result = $this->db->query($query,true," Error updating affected order id: ");
-	//end function update_affected_order
+        $qb->update($this->focus->table_name);
+
+        if ($this->focus->controller_def['list_x'] == "Y") {
+            $qb->set('list_order_x', $qb->createPositionalParameter($affected_new_x));
+        }
+
+        if ($this->focus->controller_def['list_y'] == "Y") {
+            $qb->set('list_order_y', $qb->createPositionalParameter($affected_new_y));
+        }
+
+        $qb->where($qb->expr()->eq('id', $qb->createPositionalParameter($affected_id)))
+            ->andWhere($qb->expr()->eq('deleted', 0));
+
+        $qb->execute();
 	}
 	
 	function get_affected_id($parent_id, $list_order_x="", $list_order_y=""){	
-		
-		$query = "	SELECT id from ".$this->focus->table_name."
-					WHERE ".$this->focus->controller_def['parent_var']."='$parent_id'
-					AND ".$this->focus->table_name.".deleted='0'
-					";
-		
-		if($this->focus->controller_def['list_x']=="Y"){		
-			$query .= "	AND list_order_x='$list_order_x' ";
-		}
-		
-		if($this->focus->controller_def['list_y']=="Y"){			
-			$query .= "	AND list_order_y='$list_order_y' ";
-		}			
+        $qb = $this->db->getConnection()->createQueryBuilder();
 
-	//echo $query."<BR>";		
-		$row = $this->db->fetchOne($query,true," Error capturing affected id: ");
+        $qb->select('id')
+            ->from($this->focus->table_name)
+            ->where(
+                $qb->expr()->eq(
+                    $this->focus->controller_def['parent_var'],
+                    $qb->createPositionalParameter($parent_id)
+                )
+            )
+            ->andWhere($qb->expr()->eq('deleted', 0));
 
-		return $row['id'];
-		
-	//end function get_affected_id
+        if ($this->focus->controller_def['list_x'] == "Y") {
+            $qb->andWhere($qb->expr()->eq('list_order_x', $qb->createPositionalParameter($list_order_x)));
+        }
+
+        if ($this->focus->controller_def['list_y'] == "Y") {
+            $qb->andWhere($qb->expr()->eq('list_order_y', $qb->createPositionalParameter($list_order_y)));
+        }
+
+        $stmt = $qb->execute();
+        $row = $stmt->fetchColumn();
+
+		return $row;
 	}	
 	
 
