@@ -46,6 +46,18 @@ class EmailTemplatesUpdateHasVariablesTest extends UpgradeTestCase
             'body_html' => $bodyHtmlStr,
         ));
 
+        // Set date_modified to some date in the past so we can verify that date_modified is not changed.
+        $emailTpl->setModifiedDate(TimeDate::getInstance()->asDb(new SugarDateTime('2016-01-01')));
+        $emailTpl->update_date_modified = false;
+        $emailTpl->save();
+        $emailTpl->update_date_modified = true;
+
+        // Retrieve the template so that the fields are converted. We want to compare apples to apples, when comparing
+        // the date modified timestamps, and we need the date_modified field formatted the same as it will be after
+        // retrieving the template post-upgrade.
+        $emailTpl->retrieve();
+        $originalDateModified = $emailTpl->date_modified;
+
         $this->db->query('UPDATE email_templates SET has_variables = 0');
 
         $script = $this->upgrader->getScript('post', '2_EmailTemplatesUpdateHasVariables');
@@ -54,7 +66,8 @@ class EmailTemplatesUpdateHasVariablesTest extends UpgradeTestCase
         $script->run();
 
         $emailTpl->retrieve();
-        $this->assertEquals($emailTpl->has_variables, $expected, $msg);
+        $this->assertEquals($expected, $emailTpl->has_variables, $msg);
+        $this->assertSame($originalDateModified, $emailTpl->date_modified, 'The date modified timestamp changed');
     }
 
     public function dataProviderTemplateStringVariables()

@@ -10,10 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarUpgradeEmailTemplatesUpdateHasVariables extends UpgradeScript
+class SugarUpgradeEmailTemplatesUpdateHasVariables extends UpgradeDBScript
 {
     public $order = 2200;
-    public $type = self::UPGRADE_DB;
 
     public function run()
     {
@@ -29,23 +28,21 @@ class SugarUpgradeEmailTemplatesUpdateHasVariables extends UpgradeScript
 
         $conn = $GLOBALS['db']->getConnection();
         $stmt = $conn->executeQuery($sql);
-        $savedRecords = 0;
+        $idsToUpdate = [];
+
         while ($row = $stmt->fetch()) {
             $templateData = $row['subject'] . ' ' . $row['body'] . ' ' . $row['body_html'];
+
             if (EmailTemplate::checkStringHasVariables($templateData)) {
-                $template = BeanFactory::retrieveBean(
-                    'EmailTemplates',
-                    $row['id'],
-                    array('disable_row_level_security' => true)
-                );
-                if ($template) {
-                    $savedRecords++;
-                    $template->save();
-                }
+                $idsToUpdate[] = $row['id'];
             }
         }
 
-        $this->log('SQL Ran, Updated ' . $savedRecords . ' EmailTemplates');
+        if (count($idsToUpdate) > 0) {
+            $sql = 'UPDATE email_templates SET has_variables=1 WHERE id IN (?)';
+            $this->executeUpdate($sql, [$idsToUpdate], [\Sugarcrm\Sugarcrm\Dbal\Connection::PARAM_STR_ARRAY]);
+        }
+
         $this->log('Done updating Email Templates has_variables field');
     }
 }

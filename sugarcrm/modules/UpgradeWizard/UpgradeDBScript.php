@@ -11,7 +11,7 @@
  */
 
 /**
- * Base class for Uprade scripts that neeed to perform database changes
+ * Base class for upgrade scripts that need to perform database changes.
  */
 abstract class UpgradeDBScript extends UpgradeScript
 {
@@ -22,15 +22,16 @@ abstract class UpgradeDBScript extends UpgradeScript
      *
      * @param string $sql The query to execute.
      * @param array $params Optional. The parameters to pass into the query to be escaped.
+     * @param array $types Options. The parameter types. See the Doctrine DBAL documentation for more information.
      * @return integer The number of affected rows.
      */
-    protected function executeUpdate($sql, array $params = array())
+    protected function executeUpdate($sql, array $params = array(), array $types = array())
     {
         $rows = 0;
         try {
-            $rows = $this->db->getConnection()->executeUpdate($sql, $params);
+            $rows = $this->db->getConnection()->executeUpdate($sql, $params, $types);
             $this->log("Number of affected rows: {$rows}");
-        } catch (DBALException $error) {
+        } catch (\Doctrine\DBAL\DBALException $error) {
             $this->log("Error: {$error}");
         }
 
