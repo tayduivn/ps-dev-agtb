@@ -176,7 +176,7 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
                         ),
                         '_score' => 1.80,
                         'highlight' => array(
-                            'list' => array('of', 'stuff'),
+                            'name' => array('hl1', 'hl2'),
                         ),
                     ),
                     array(
@@ -195,7 +195,7 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
                         '_module' => 'Accounts',
                         '_score' => 1.80,
                         '_highlights' => array(
-                            'list' => array('of', 'stuff'),
+                            'name' => array('hl1', 'hl2'),
                         ),
                     ),
                     array(
@@ -217,7 +217,7 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
                             'name' => 'SugarCRM',
                         ),
                         'highlight' => array(
-                            'list' => array('of', 'stuff'),
+                            'name' => array('hl1', 'hl2'),
                         ),
                     ),
                     array(
@@ -236,7 +236,7 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
                         'name' => 'SugarCRM',
                         '_module' => 'Accounts',
                         '_highlights' => array(
-                            'list' => array('of', 'stuff'),
+                            'name' => array('hl1', 'hl2'),
                         ),
                     ),
                     array(

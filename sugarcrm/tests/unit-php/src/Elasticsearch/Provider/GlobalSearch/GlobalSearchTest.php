@@ -30,7 +30,7 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
     {
         $sut = new GlobalSearch();
         $this->assertInstanceOf('Iterator', $sut->getHandlers());
-        $this->assertCount(8, $sut->getHandlers());
+        $this->assertCount(7, $sut->getHandlers());
     }
 
     /**
@@ -125,7 +125,6 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($sut->hasHandler('TagsHandler'));
         $this->assertTrue($sut->hasHandler('FavoritesHandler'));
         $this->assertTrue($sut->hasHandler('HtmlHandler'));
-        $this->assertTrue($sut->hasHandler('OwnerIdHandler'));
     }
 
     /**

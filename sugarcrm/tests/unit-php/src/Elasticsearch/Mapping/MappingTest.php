@@ -40,21 +40,6 @@ class MappingTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::__construct
-     */
-    public function testConstructor()
-    {
-        $module = 'FooBar';
-        $expectedMulitFieldBase = array('type' => 'keyword', 'index' => true);
-        $expectedNotIndexedBase = array('type' => 'text', 'index' => false);
-
-        $mapping = new Mapping($module);
-        $this->assertSame($module, TestReflection::getProtectedValue($mapping, 'module'));
-        $this->assertSame($expectedMulitFieldBase, TestReflection::getProtectedValue($mapping, 'multiFieldBase'));
-        $this->assertSame($expectedNotIndexedBase, TestReflection::getProtectedValue($mapping, 'notIndexedBase'));
-    }
-
-    /**
      * @covers ::getModule
      */
     public function testGetModule()
@@ -238,7 +223,7 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($mapping->hasProperty('field1'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'text',
+                'type' => 'keyword',
                 'index' => false,
             ),
         ), $mapping->compile());
@@ -247,7 +232,7 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $mapping->addNotIndexedField('field1', array('field1_copy1'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'text',
+                'type' => 'keyword',
                 'index' => false,
                 'copy_to' => array(
                     'field1_copy1',
@@ -260,14 +245,14 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($mapping->hasProperty('field2'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'text',
+                'type' => 'keyword',
                 'index' => false,
                 'copy_to' => array(
                     'field1_copy1',
                 )
             ),
             'field2' => array(
-                'type' => 'text',
+                'type' => 'keyword',
                 'index' => false,
                 'copy_to' => array(
                     'field2_copy1',
@@ -279,7 +264,7 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $mapping->addNotIndexedField('field1', array('field1_copy2'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'text',
+                'type' => 'keyword',
                 'index' => false,
                 'copy_to' => array(
                     'field1_copy1',
@@ -287,7 +272,7 @@ class MappingTest extends \PHPUnit_Framework_TestCase
                 )
             ),
             'field2' => array(
-                'type' => 'text',
+                'type' => 'keyword',
                 'index' => false,
                 'copy_to' => array(
                     'field2_copy1',
@@ -393,7 +378,7 @@ class MappingTest extends \PHPUnit_Framework_TestCase
                 'addNotIndexedField',
                 array(
                     'base' => array(
-                        'type' => 'text',
+                        'type' => 'keyword',
                         'index' => false,
                         'fields' => array(
                             'field1' => array('type' => 'text'),
