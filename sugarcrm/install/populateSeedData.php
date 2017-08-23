@@ -215,32 +215,14 @@ $contacts = array();
 // the name of de-duplication during account population.
 $accounts_companies_list = $sugar_demodata['company_name_array'];
 
-// Accounts
-$accounts_companies_list_size = count($accounts_companies_list);
-$industry_dom_keys = array_keys($app_list_strings['industry_dom']);
-$account_type_dom_keys = array_keys($app_list_strings['account_type_dom']);
-
-// Cases
-$case_priority_dom_keys = array_keys($app_list_strings['case_priority_dom']);
-$case_status_dom_keys = array_keys($app_list_strings['case_status_dom']);
-$case_type_dom_keys = array_keys($app_list_strings['case_type_dom']);
-
-// Contacts
-$lead_source_dom_keys = array_keys($app_list_strings['lead_source_dom']);
-
 installLog("DemoData: Companies + Related Calls, Notes Meetings and Bugs");
 for($i = 0; $i < $number_companies; $i++) {
 
     if (count($accounts_companies_list) > 0) {
         // De-populate a copy of the company name list
         // as each name is used to prevent duplication.
-        if (!empty($sugar_config['drillthru_test'])) {
-            $account_num = $i % $accounts_companies_list_size;
-            $account_name = $accounts_companies_list[$account_num];
-        } else {
-            $account_num = array_rand($accounts_companies_list);
-            $account_name = $accounts_companies_list[$account_num];
-        }
+        $account_num = array_rand($accounts_companies_list);
+        $account_name = $accounts_companies_list[$account_num];
 	    unset($accounts_companies_list[$account_num], $account_num);
     } else {
         // We've run out of preset company names so start generating new ones.
@@ -258,14 +240,8 @@ for($i = 0; $i < $number_companies; $i++) {
 	$account->emailAddress->addAddress(createEmailAddress(), true);
 	$account->emailAddress->addAddress(createEmailAddress());
 	$account->website = createWebAddress();
-
-    if (!empty($sugar_config['drillthru_test'])) {
-        $account->billing_address_street = $sugar_demodata['street_address_array'][$i % 10];
-        $account->billing_address_city = $sugar_demodata['city_array'][$i % 15];
-    } else {
-        $account->billing_address_street = $sugar_demodata['street_address_array'][mt_rand(0, $street_address_count-1)];
-        $account->billing_address_city = $sugar_demodata['city_array'][mt_rand(0, $city_array_count-1)];
-    }
+    $account->billing_address_street = $sugar_demodata['street_address_array'][mt_rand(0, $street_address_count-1)];
+    $account->billing_address_city = $sugar_demodata['city_array'][mt_rand(0, $city_array_count-1)];
 
 	if($i % 3 == 1)	{
 		$account->billing_address_state = "NY";
@@ -323,13 +299,8 @@ for($i = 0; $i < $number_companies; $i++) {
 	$account->shipping_address_state = $account->billing_address_state;
 	$account->shipping_address_postalcode = $account->billing_address_postalcode;
 	$account->shipping_address_country = $account->billing_address_country;
-    if (!empty($sugar_config['drillthru_test'])) {
-        $account->industry = $industry_dom_keys[$i % 10];
-        $account->account_type = $account_type_dom_keys[$i % 4];
-    } else {
-        $account->industry = array_rand($app_list_strings['industry_dom']);
-        $account->account_type = "Customer";
-    }
+    $account->industry = array_rand($app_list_strings['industry_dom']);
+    $account->account_type = "Customer";
 
     $account->save();
     addTagsToBean($account);
@@ -341,17 +312,9 @@ for($i = 0; $i < $number_companies; $i++) {
     $contact->first_name = $sugar_demodata['first_name_array'][mt_rand(0, $first_name_max)];
     $contact->last_name = $sugar_demodata['last_name_array'][mt_rand(0, $last_name_max)];
     $contact->assigned_user_id = $account->assigned_user_id;
-
-    if (!empty($sugar_config['drillthru_test'])) {
-        $contact->primary_address_street = $sugar_demodata['street_address_array'][$i % 10];
-        $contact->primary_address_city = $sugar_demodata['city_array'][$i % 15];
-        $contact->lead_source = $lead_source_dom_keys[$i % 6];
-    } else {
-        $contact->primary_address_street = $sugar_demodata['street_address_array'][mt_rand(0, $street_address_max)];
-        $contact->primary_address_city = $sugar_demodata['city_array'][mt_rand(0, $city_array_max)];
-        $contact->lead_source = array_rand($app_list_strings['lead_source_dom']);
-    }
-
+    $contact->primary_address_street = $sugar_demodata['street_address_array'][mt_rand(0, $street_address_max)];
+    $contact->primary_address_city = $sugar_demodata['city_array'][mt_rand(0, $city_array_max)];
+    $contact->lead_source = array_rand($app_list_strings['lead_source_dom']);
     $contact->title = $titles[mt_rand(0, $title_max)];
     $contact->emailAddress->addAddress(createEmailAddress(), true, true);
     $contact->emailAddress->addAddress(createEmailAddress(), false, false, false, true);
@@ -375,27 +338,19 @@ for($i = 0; $i < $number_companies; $i++) {
     $contacts[] = $contact->id;
 
     for($c = 0; $c < $number_cases; $c++) {
-	// Create a case for the account
-	$case = new aCase();
-	$case->account_id = $account->id;
-
-        if (!empty($sugar_config['drillthru_test'])) {
-            $case->priority = $case_priority_dom_keys[$i % 3];
-            $case->status = $case_status_dom_keys[$i % 6];
-            $case->type = $case_type_dom_keys[$i % 2];
-        } else {
-            $case->priority = array_rand($app_list_strings['case_priority_dom']);
-            $case->status = array_rand($app_list_strings['case_status_dom']);
-            $case->type = array_rand($app_list_strings['case_type_dom']);
-        }
-
-	$case->name = $sugar_demodata['case_seed_names'][mt_rand(0,4)];
-	$case->assigned_user_id = $account->assigned_user_id;
-	$case->assigned_user_name = $account->assigned_user_name;
-	$case->team_id = $account->team_id;
-	$case->team_set_id = $account->team_set_id;
+        // Create a case for the account
+        $case = new aCase();
+        $case->account_id = $account->id;
+        $case->priority = array_rand($app_list_strings['case_priority_dom']);
+        $case->status = array_rand($app_list_strings['case_status_dom']);
+        $case->type = array_rand($app_list_strings['case_type_dom']);
+        $case->name = $sugar_demodata['case_seed_names'][mt_rand(0, 4)];
+        $case->assigned_user_id = $account->assigned_user_id;
+        $case->assigned_user_name = $account->assigned_user_name;
+        $case->team_id = $account->team_id;
+        $case->team_set_id = $account->team_set_id;
 //BEGIN SUGARCRM flav=ent ONLY
-    $case->portal_viewable = 1;
+        $case->portal_viewable = 1;
 //END SUGARCRM flav=ent ONLY
         $case->save();
         $case->load_relationship('tag_link');
@@ -472,25 +427,14 @@ $account_max = count($account_ids) - 1;
 ////	DEMO CONTACTS
 installLog("DemoData: Contacts");
 
-// Meetings
-$meeting_status_dom_keys = array_keys($app_list_strings['meeting_status_dom']);
-
 for($i=0; $i<$number_contacts; $i++) {
 	$contact = new Contact();
 	$contact->first_name = $sugar_demodata['first_name_array'][mt_rand(0,$first_name_max)];
 	$contact->last_name = $sugar_demodata['last_name_array'][mt_rand(0,$last_name_max)];
 	$contact->assigned_user_id = $account->assigned_user_id;
-
-    if (!empty($sugar_config['drillthru_test'])) {
-        $contact->primary_address_street = $sugar_demodata['street_address_array'][$i % 10];
-        $contact->primary_address_city = $sugar_demodata['city_array'][$i % 15];
-        $contact->lead_source = $lead_source_dom_keys[$i % 6];
-    } else {
-        $contact->primary_address_street = $sugar_demodata['street_address_array'][mt_rand(0, $street_address_max)];
-        $contact->primary_address_city = $sugar_demodata['city_array'][mt_rand(0, $city_array_max)];
-        $contact->lead_source = array_rand($app_list_strings['lead_source_dom']);
-    }
-
+    $contact->primary_address_street = $sugar_demodata['street_address_array'][mt_rand(0, $street_address_max)];
+    $contact->primary_address_city = $sugar_demodata['city_array'][mt_rand(0, $city_array_max)];
+    $contact->lead_source = array_rand($app_list_strings['lead_source_dom']);
 	$contact->title = $titles[mt_rand(0,$title_max)];
 	$contact->emailAddress->addAddress(createEmailAddress(), true, true);
 	$contact->emailAddress->addAddress(createEmailAddress(), false, false, false, true);
@@ -553,12 +497,7 @@ for($i=0; $i<$number_contacts; $i++) {
 	$key = array_rand($sugar_demodata['meeting_seed_data_names']);
 	$meeting->name = $sugar_demodata['meeting_seed_data_names'][$key];
 	$meeting->date_start = create_date(). ' ' . create_time();
-    if (!empty($sugar_config['drillthru_test'])) {
-        $meeting->duration_hours = $i % 4;
-    } else {
-        $meeting->duration_hours = array_rand($possible_duration_hours_arr);
-    }
-
+    $meeting->duration_hours = array_rand($possible_duration_hours_arr);
 	$meeting->duration_minutes = array_rand($possible_duration_minutes_arr);
 	$meeting->assigned_user_id = $assigned_user_id;
 	$meeting->team_id = $contacts_account->team_id;
@@ -627,15 +566,8 @@ for($i=0; $i<$number_leads; $i++)
 	$lead->account_name = $sugar_demodata['company_name_array'][mt_rand(0,$company_name_count-1)];
 	$lead->first_name = $sugar_demodata['first_name_array'][mt_rand(0,$first_name_max)];
 	$lead->last_name = $sugar_demodata['last_name_array'][mt_rand(0,$last_name_max)];
-
-    if (!empty($sugar_config['drillthru_test'])) {
-        $lead->primary_address_street = $sugar_demodata['street_address_array'][$i % 10];
-        $lead->primary_address_city = $sugar_demodata['city_array'][$i % 15];
-    } else {
-        $lead->primary_address_street = $sugar_demodata['street_address_array'][mt_rand(0, $street_address_max)];
-        $lead->primary_address_city = $sugar_demodata['city_array'][mt_rand(0, $city_array_max)];
-    }
-
+    $lead->primary_address_street = $sugar_demodata['street_address_array'][mt_rand(0, $street_address_max)];
+    $lead->primary_address_city = $sugar_demodata['city_array'][mt_rand(0, $city_array_max)];
 	$lead->lead_source = array_rand($app_list_strings['lead_source_dom']);
 	$lead->title = $sugar_demodata['titles'][mt_rand(0,$title_max)];
 	$lead->phone_work = create_phone_number();
@@ -719,7 +651,6 @@ for($i=0; $i<$number_leads; $i++)
 	}
 	$lead->primary_address_postalcode = mt_rand(10000,99999);
 	$lead->primary_address_country = $sugar_demodata['primary_address_country'];
-    $lead->mkto_lead_score = $i % 5;
 	$lead->save();
 
     if ($i % 10 === 0) {
