@@ -66,7 +66,7 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_string_wildcard',
         ),
         'phone' => array(
-            'not_analyzed',
+            'gs_not_analyzed',
             'gs_phone_wildcard',
         ),
         'url' => array(
@@ -74,7 +74,7 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_url_wildcard',
         ),
         'id' => array(
-            'not_analyzed',
+            'gs_not_analyzed',
         ),
         'exact' => array(
             'gs_string_exact',
@@ -90,22 +90,8 @@ class MultiFieldHandler extends AbstractHandler implements
             //'gs_text_wildcard',
         ),
         'enum' => array(
-            'not_analyzed',
+            'gs_not_analyzed',
         ),
-    );
-
-    /**
-     * By default this handler creates not_analyzed multi field base to stack
-     * the different mappings on top of it. However for fields which contain
-     * long texts, we will hit the term limit of 32'766 bytes. Therefor for the
-     * listed fields a non-indexed multi field base will be created instead.
-     *
-     * @var array
-     */
-    protected $longFieldTypes = array(
-        'text',
-        'longtext',
-        'htmleditable_tinymce',
     );
 
     /**
@@ -124,6 +110,7 @@ class MultiFieldHandler extends AbstractHandler implements
      * @var array
      */
     protected $highlighterFields = array(
+        '*.gs_not_analyzed' => array(),
         '*.gs_string' => array(),
         '*.gs_string_exact' => array(),
         '*.gs_string_html' => array(),
@@ -139,11 +126,15 @@ class MultiFieldHandler extends AbstractHandler implements
     protected $multiFieldDefs = [
 
         /*
-         * This is a special analyzer to be able to use fields with
-         * not_analyzed values only. This is part of the multi field
-         * definition as every multi field is not_analyzed by default.
+         * Mapping which stores the values as a single term. This
+         * is the equivalent to the old Elasticsearch behavior for
+         * `index: not_analyzed` which is no longer supported.
          */
-        'not_analyzed' => [],
+        'gs_not_analyzed' => [
+            'type' => 'keyword',
+            'index' => true,
+            'store' => true,
+        ],
 
         /*
          * Default string analyzer with full word matching base ond
@@ -413,16 +404,6 @@ class MultiFieldHandler extends AbstractHandler implements
     }
 
     /**
-     * Check if given field type is defined as a long field
-     * @param string $fieldType
-     * @return boolean
-     */
-    protected function isLongFieldType($fieldType)
-    {
-        return in_array($fieldType, $this->longFieldTypes);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildSearchFields(SearchFields $sf, $module, $field, array $defs)
@@ -437,16 +418,8 @@ class MultiFieldHandler extends AbstractHandler implements
 
         // Add fields which are based on strings
         foreach ($this->getStringFieldsForType($defs['type']) as $searchField) {
-            if ($searchField === 'not_analyzed') {
-                $path = array($field);
-                $weightId = $field;
-                // add explicit field to highlighter
-                $this->addHighlighterField($module, $field, array('number_of_fragments' => 0));
-            } else {
-                $path = array($field, $searchField);
-                $weightId = $searchField;
-            }
-            $sf->addSearchField($module, $path, $defs, $weightId);
+            $path = array($field, $searchField);
+            $sf->addSearchField($module, $path, $defs, $searchField);
         }
     }
 
@@ -492,11 +465,6 @@ class MultiFieldHandler extends AbstractHandler implements
      */
     protected function isStringBased($multiFieldDef)
     {
-        // special case for not_analyzed fields
-        if ($multiFieldDef === 'not_analyzed') {
-            return true;
-        }
-
         $defs = $this->multiFieldDefs[$multiFieldDef];
         if (isset($defs['type']) && in_array($defs['type'], ['text', 'keyword'])) {
             return true;
@@ -531,15 +499,5 @@ class MultiFieldHandler extends AbstractHandler implements
         $multiField->setMapping($this->multiFieldDefs[$name]);
 
         return $multiField;
-    }
-
-    /**
-     * Wrapper for field searchable check
-     * @param array $defs
-     * @return boolean
-     */
-    protected function isFieldSearchable(array $defs)
-    {
-        return $this->provider->getContainer()->metaDataHelper->isFieldSearchable($defs);
     }
 }
