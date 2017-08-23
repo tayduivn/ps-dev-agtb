@@ -410,18 +410,16 @@
                 .find('span, div.expression-container-cell, td.' + self.conclusionColumnClassName)
                 .toggleClass('highlight');
 
-            if (this.checked) {
-                $(self.decisionTableBodyClassId)
-                    .children('tr.' + self.decisionTableRowClassName + ':not([data-previndex])')
-                    .each(function() {
-                        var curIndex = $(self.decisionTableBodyClassId)
-                            .children('tr.' + self.decisionTableRowClassName).index($(this));
-                        $(this).closest('tr').attr('data-previndex', curIndex);
-                    });
+            $(self.decisionTableBodyClassId)
+                .children('tr.' + self.decisionTableRowClassName + ':not([data-previndex])')
+                .each(function() {
+                    var curIndex = $(self.decisionTableBodyClassId)
+                        .children('tr.' + self.decisionTableRowClassName).index($(this));
+                    $(this).closest('tr').attr('data-previndex', curIndex);
+                });
 
-                // Visual cue to remove decision table rows
-                $('#trash-button').removeClass('decision-table-btn-hidden');
-            }
+            // Visual cue to remove decision table rows
+            $('#trash-button').removeClass('decision-table-btn-hidden');
 
             // Remove visual cue when nothing is selected
             if ($('.checkbox-input:checked').length == 0) {
@@ -715,13 +713,6 @@
 
                 // Show the selected items after the operation
                 ui.item.siblings('.selected').removeClass('hidden');
-                // De-select since the operation is complete
-                $('.selected').removeClass('selected');
-
-                // Reset the checkbox and the selected rows
-                $(self.decisionTableBodyClassId).find('.checkbox-input').attr('checked', false);
-                $(self.decisionTableBodyClassId).find('.selected').toggleClass('selected');
-                $(self.decisionTableBodyClassId).find('.highlight').toggleClass('highlight');
 
                 // Save the mappings between old and new index of the moved elements
                 var decisionRowMappings = [];
@@ -737,7 +728,7 @@
                     $(this).removeAttr('data-previndex').removeAttr('data-newindex');
                 });
                 self.sortDecisionRows(decisionRowMappings);
-                $('#trash-button').addClass('decision-table-btn-hidden');
+
                 $(document).find('.checkbox-index .checkbox-input.hide').removeClass('hide');
             }
         });
