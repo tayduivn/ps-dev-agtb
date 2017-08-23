@@ -25,12 +25,6 @@
         this._super('initialize', [options]);
 
         this.chart = sucrose.charts.pieChart()
-            .x(function(d) {
-                return d.key;
-            })
-            .y(function(d) {
-                return d.value;
-            })
             .margin({top: 5, right: 20, bottom: 20, left: 20})
             .donut(true)
             .donutLabelsOutside(true)
