@@ -152,8 +152,11 @@ class Account extends Company {
         //rrs bug: 28184 - instead of removing this code altogether just adding this check to ensure that if the parent_name
         //is empty then go ahead and fill it.
         if(empty($this->parent_name) && !empty($this->id)){
-			$query = "SELECT a1.name from accounts a1, accounts a2 where a1.id = a2.parent_id and a2.id = '$this->id' and a1.deleted=0";
-			$row = $this->db->fetchOne($query,true," Error filling in additional detail fields: ");
+
+            $query = 'SELECT a1.name from accounts a1, accounts a2 where a1.id = a2.parent_id and a2.id = ? and a1.deleted=0';
+            $conn = $this->db->getConnection();
+            $stmt = $conn->executeQuery($query, array($this->id));
+            $row = $stmt->fetch();
 
 			if($row != null)
 			{
