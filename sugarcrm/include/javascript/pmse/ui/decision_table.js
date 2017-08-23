@@ -2317,7 +2317,8 @@
 
         $(html).find('#value').replaceWith(valueCell);
 
-        $(html).on('focus', 'span', this.onEnterCellHandler(this.createOperatorControl()))
+        $(html).find('#operator')
+            .on('focus', 'span', this.onEnterCellHandler(this.createOperatorControl()))
             .on('blur', 'select', this.onLeaveCellHandler('operator'));
 
         this.html = html;
