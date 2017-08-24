@@ -186,52 +186,52 @@ class QueryController extends SugarBean {
     //end function change_component_order
     }
 
-    function update_affected_order($affected_id, $affected_new_x="", $affected_new_y=""){
+    private function update_affected_order($affected_id, $affected_new_x = "", $affected_new_y = "")
+    {
+        $qb = $this->db->getConnection()->createQueryBuilder();
 
-                $query = 	"	UPDATE ".$this->focus->table_name." SET";
+        $qb->update($this->focus->table_name);
 
-        if($this->focus->controller_def['list_x']=="Y"){
-                $query .= 	"	 list_order_x = '$affected_new_x'";
+        if ($this->focus->controller_def['list_x'] == "Y") {
+            $qb->set('list_order_x', $qb->createPositionalParameter($affected_new_x));
         }
-        if($this->focus->controller_def['list_y']=="Y"){
 
-            if($this->focus->controller_def['list_x']=="Y"){
-                $query .= 	"	, ";
-            }
-                $query .= 	"	list_order_y='$affected_new_y'";
+        if ($this->focus->controller_def['list_y'] == "Y") {
+            $qb->set('list_order_y', $qb->createPositionalParameter($affected_new_y));
         }
-                $query .=	"	WHERE id='$affected_id'";
-                $query .=   "	AND ".$this->focus->table_name.".deleted='0'";
-//echo $query."<BR>";
-                $result = $this->db->query($query,true," Error updating affected order id: ");
 
+        $qb->where($qb->expr()->eq('id', $qb->createPositionalParameter($affected_id)))
+            ->andWhere($qb->expr()->eq('deleted', 0));
 
-
+        $qb->execute();
     }
 
-    function get_affected_id($parent_id, $list_order_x="", $list_order_y=""){
+    private function get_affected_id($parent_id, $list_order_x = "", $list_order_y = "")
+    {
+        $qb = $this->db->getConnection()->createQueryBuilder();
 
+        $qb->select('id')
+            ->from($this->focus->table_name)
+            ->where(
+                $qb->expr()->eq(
+                    $this->focus->controller_def['parent_var'],
+                    $qb->createPositionalParameter($parent_id)
+                )
+            )
+            ->andWhere($qb->expr()->eq('deleted', 0));
 
-        $query = "	SELECT id from ".$this->focus->table_name."
-                    WHERE ".$this->focus->controller_def['parent_var']."='$parent_id'
-                    AND ".$this->focus->table_name.".deleted='0'
-                    ";
-
-        if($this->focus->controller_def['list_x']=="Y"){
-            $query .= "	AND list_order_x='$list_order_x' ";
+        if ($this->focus->controller_def['list_x'] == "Y") {
+            $qb->andWhere($qb->expr()->eq('list_order_x', $qb->createPositionalParameter($list_order_x)));
         }
 
-        if($this->focus->controller_def['list_y']=="Y"){
-            $query .= "	AND list_order_y='$list_order_y' ";
+        if ($this->focus->controller_def['list_y'] == "Y") {
+            $qb->andWhere($qb->expr()->eq('list_order_y', $qb->createPositionalParameter($list_order_y)));
         }
 
-    //echo $query."<BR>";
-        $result = $this->db->query($query,true," Error capturing affected id: ");
-        $row = $this->db->fetchByAssoc($result);
+        $stmt = $qb->execute();
+        $row = $stmt->fetchColumn();
 
-        return $row['id'];
-
-    //end function get_affected_id
+        return $row;
     }
 
 

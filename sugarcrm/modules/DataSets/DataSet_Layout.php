@@ -187,10 +187,10 @@ class DataSet_Layout extends SugarBean {
 			// Print out the calculation column info
         while ($beanId = $stmt->fetchColumn()) {
 				//Mark all attributes deleted
-				BeanFactory::deleteBean('DataSet_Attribute', $beanId);
+            BeanFactory::deleteBean('DataSet_Attribute', $beanId);
 
 				//Remove the layout records
-				$this->mark_deleted($beanId);
+            $this->mark_deleted($beanId);
 
 			//end while
 			}

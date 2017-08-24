@@ -183,8 +183,9 @@ class Controller extends SugarBean {
 		}	
 	//end function change_component_order	
 	}
-	
-	function update_affected_order($affected_id, $affected_new_x="", $affected_new_y=""){
+
+    private function update_affected_order($affected_id, $affected_new_x = "", $affected_new_y = "")
+    {
         $qb = $this->db->getConnection()->createQueryBuilder();
 
         $qb->update($this->focus->table_name);
@@ -201,9 +202,10 @@ class Controller extends SugarBean {
             ->andWhere($qb->expr()->eq('deleted', 0));
 
         $qb->execute();
-	}
+    }
 
-	function get_affected_id($parent_id, $list_order_x="", $list_order_y=""){	
+    private function get_affected_id($parent_id, $list_order_x = "", $list_order_y = "")
+    {
         $qb = $this->db->getConnection()->createQueryBuilder();
 
         $qb->select('id')
@@ -227,8 +229,8 @@ class Controller extends SugarBean {
         $stmt = $qb->execute();
         $row = $stmt->fetchColumn();
 
-		return $row;
-	}	
+        return $row;
+    }
 	
 
 /////////////Wall Functions////////////////////
@@ -242,15 +244,18 @@ function check_wall($magnitude, $direction, $parent_id){
 	
 //If down or Right, then check max list_order value
 	if($direction=="Down" || $direction =="Right"){
-            $query = sprintf(
-                'SELECT MAX(%s) max_start FROM %s WHERE %s = %s AND deleted=0',
-                $this->focus->controller_def['start_var'],
-                $this->focus->table_name,
-                $this->focus->controller_def['parent_var'],
-                $this->db->quoted($parent_id)
-            );
+            $variable_name = $this->focus->controller_def['start_var'];
+            $parent_name = $this->focus->controller_def['parent_var'];
 
-		$row = $this->db->fetchOne($query,true," Error capturing max start order: ");
+            $qb = $this->db->getConnection()->createQueryBuilder();
+
+            $qb->select('MAX('.$variable_name.') AS max_start')
+                ->from($this->focus->table_name)
+                ->where($qb->expr()->eq($parent_name, $qb->createPositionalParameter($parent_id)))
+                ->andWhere($qb->expr()->eq('deleted', 0));
+
+            $stmt = $qb->execute();
+            $row = $stmt->fetch();
 
 			if($this->focus->controller_def['start_axis']=="x")	{
 				if($row['max_start'] == $this->focus->list_order_x){
@@ -292,30 +297,24 @@ function check_wall($magnitude, $direction, $parent_id){
 //Delete adjust functions////////////////////
 
 
-function delete_adjust_order($parent_id){
-	
-	
-	//Currently handles single axis motion only!!!!!!!!!
-	//TODO: jgreen - Add dual axis motion 
-	
-	//adjust along start_axis
-	$variable_name = $this->focus->controller_def['start_var'];
-	$current_position = $this->focus->$variable_name;
+    public function delete_adjust_order($parent_id)
+    {
+        //Currently handles single axis motion only!!!!!!!!!
+        //TODO: jgreen - Add dual axis motion
 
-        $query = sprintf(
-            'UPDATE %s SET %s = %s - 1 WHERE %s > %s AND deleted = 0 AND %s = %s',
-            $this->focus->table_name,
-            $this->focus->controller_def['start_var'],
-            $this->focus->controller_def['start_var'],
-            $this->focus->controller_def['start_var'],
-            $current_position,
-            $this->focus->controller_def['parent_var'],
-            $this->db->quoted($parent_id)
-        );
+        //adjust along start_axis
+        $variable_name = $this->focus->controller_def['start_var'];
+        $parent_name = $this->focus->controller_def['parent_var'];
+        $current_position = $this->focus->$variable_name;
 
-	$result = $this->db->query($query,true," Error updating the delete_adjust_order: ");
-//end delete_adjust_order	
-}	
+        $qb = $this->db->getConnection()->createQueryBuilder();
+        $qb->update($this->focus->table_name)
+            ->set($variable_name, $variable_name.'-1')
+            ->where($qb->expr()->gt($variable_name, $qb->createPositionalParameter($current_position)))
+            ->andWhere($qb->expr()->eq($parent_name, $qb->createPositionalParameter($parent_id)))
+            ->andWhere($qb->expr()->eq('deleted', 0))
+            ->execute();
+    }
 //End Delete Functions/////////////////////////
 //end class Controller
 }	
