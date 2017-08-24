@@ -154,18 +154,16 @@ class Lead extends Person {
 	{
 		global $locale;
 		if(isset($this->contact_id) && !empty($this->contact_id)){
-			$query = "SELECT first_name, last_name, assigned_user_id contact_name_owner FROM contacts WHERE id='{$this->contact_id}'";
+            $query = 'SELECT first_name, last_name, assigned_user_id AS contact_name_owner FROM contacts WHERE id = ?';
+            $conn = $this->db->getConnection();
+            $stmt = $conn->executeQuery($query, array($this->contact_id));
+            $row = $stmt->fetch();
 
-			$result = $this->db->limitQuery($query,0,1,true, "Want only a single row");
-			if(!empty($result)){
-				$row= $this->db->fetchByAssoc($result);
-				if(!empty($row)) {
-                    $this->contact_name = $locale->formatName('Contacts', $row);
-    				$this->contact_name_owner = $row['contact_name_owner'];
-    				$this->contact_name_mod = 'Contacts';
-				}
-			}
-
+            if (!empty($row)) {
+                $this->contact_name = $locale->formatName('Contacts', $row);
+                $this->contact_name_owner = $row['contact_name_owner'];
+                $this->contact_name_mod = 'Contacts';
+            }
 	   }
 	}
 
