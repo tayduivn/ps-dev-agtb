@@ -770,6 +770,24 @@ PLATFORMS;
         );
     }
 
+    public function testGetPartialMetadata()
+    {
+        $mm = $this->createPartialMock('MetaDataManager', array('loadSectionMetadata'));
+        $contextSections = SugarTestReflection::callProtectedMethod($mm, 'getContextAwareSections');
+        $allSections = array_merge($contextSections, ['foo']);
+        SugarTestReflection::setProtectedValue($mm, 'sections', $allSections);
+        $mm->expects($this->once())
+            ->method('loadSectionMetadata')
+            ->with('foo')
+            ->willReturn(array('foo' => 'bar'));
+
+        $data = SugarTestReflection::callProtectedMethod($mm, 'loadMetadata', [[], new MetaDataContextPartial()]);
+
+        unset($data['_hash']);
+        unset($data['_override_values']);
+
+        $this->assertSame(array('foo' => 'bar'), $data);
+    }
 // END SUGARCRM flav=ent ONLY
 }
 
