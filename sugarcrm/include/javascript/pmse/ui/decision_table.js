@@ -123,7 +123,8 @@
         });
 
         this.globalDDSelector = new DropdownSelector({
-            matchOwnerWidth: true
+            matchOwnerWidth: true,
+            adjustWidth: false
         });
 
         this.getFields();

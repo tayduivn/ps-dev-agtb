@@ -535,6 +535,15 @@ ExpressionContainer.prototype.handleDropDownBuilder = function (globalParent, pa
         }
         globalParent.globalDDSelector.open();
         //this.setIsDDOpen(true);
+
+        var variables = $(globalParent.html).find('.decision-table-conclusion-column');
+        var selectorWidth;
+        if (parentVariable.variableMode == 'conclusion') {
+            selectorWidth = variables.last().width();
+        } else {
+            selectorWidth = variables.first().width();
+        }
+        globalParent.globalDDSelector.setWidth(selectorWidth);
     }
 };
 
