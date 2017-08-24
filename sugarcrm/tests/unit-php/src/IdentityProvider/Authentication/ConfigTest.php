@@ -15,7 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 /**
- * @coversDefaultClass Config
+ * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config
  */
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {

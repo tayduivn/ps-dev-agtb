@@ -81,7 +81,7 @@ class IdMUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers allowUpdateDateModified
+     * @covers ::allowUpdateDateModified
      */
     public function testAllowUpdateDateModified()
     {

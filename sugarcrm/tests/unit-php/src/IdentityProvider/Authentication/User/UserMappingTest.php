@@ -16,7 +16,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping;
 use OneLogin_Saml2_Response;
 
 /**
- * @coversDefaultClass UserMapping
+ * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping
  */
 class UserMappingTest extends \PHPUnit_Framework_TestCase
 {
