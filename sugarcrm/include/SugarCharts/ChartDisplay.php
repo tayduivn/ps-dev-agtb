@@ -130,6 +130,7 @@ class ChartDisplay
                         }
                         // no drillthru on fields: 'datetime' (no column function), 'multienum'
                         if ($groupByType === 'multienum'
+                            || $groupByType === 'relate'
                             || ($groupByType === 'datetime' && empty($group_def['column_function']))) {
                             $sugarChart->chart_properties['allow_drillthru'] = false;
                         }
