@@ -364,6 +364,20 @@
         return this;
     };
 
+    /**
+     * Updates the prev-index data attribute on the decision rows for use in mapping
+     */
+    DecisionTable.prototype.updatePrevIndex = function() {
+        var self = this;
+        $(self.decisionTableBodyClassId)
+            .children('tr.' + self.decisionTableRowClassName + ':not([data-previndex])')
+            .each(function() {
+                var curIndex = $(self.decisionTableBodyClassId)
+                    .children('tr.' + self.decisionTableRowClassName).index($(this));
+                $(this).closest('tr').attr('data-previndex', curIndex);
+            });
+    };
+
     DecisionTable.prototype.addDecisionRow = function() {
         var self = this;
         var i;
@@ -414,13 +428,8 @@
                 .find('span, div.expression-container-cell, td.' + self.conclusionColumnClassName)
                 .toggleClass('highlight');
 
-            $(self.decisionTableBodyClassId)
-                .children('tr.' + self.decisionTableRowClassName + ':not([data-previndex])')
-                .each(function() {
-                    var curIndex = $(self.decisionTableBodyClassId)
-                        .children('tr.' + self.decisionTableRowClassName).index($(this));
-                    $(this).closest('tr').attr('data-previndex', curIndex);
-                });
+            // Handle prev-index data attribute
+            self.updatePrevIndex();
 
             // Visual cue to remove decision table rows
             $('#trash-button').removeClass('decision-table-btn-hidden');
@@ -731,6 +740,10 @@
                     $(this).removeAttr('data-previndex').removeAttr('data-newindex');
                 });
                 self.sortDecisionRows(decisionRowMappings);
+
+                // In order to allow multiple moves per save, we needs to reset
+                // the prev-index data attribute
+                self.updatePrevIndex();
 
                 $(document).find('.checkbox-index .checkbox-input.hide').removeClass('hide');
             }
