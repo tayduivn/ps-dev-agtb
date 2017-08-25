@@ -116,6 +116,7 @@
         "sugarcrm/identity-provider": "1.0.2",
         "psr/container": "^1.0",
         "ext-openssl": "*",
+        "league/oauth2-client": "2.2.1",
         "php": ">=5.6.0"
     },
     "require-dev": {
