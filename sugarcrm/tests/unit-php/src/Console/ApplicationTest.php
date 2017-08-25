@@ -79,6 +79,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                     'password:config' => $ns . '\Password\PasswordConfigCommand',
                     'password:reset' => $ns . '\Password\PasswordResetCommand',
                     'password:weak' => $ns . '\Password\WeakHashesCommand',
+                    'team:rebuild_denorm_table' => $ns . '\TeamSecurity\RebuildDenormTableCommand',
                 ),
             ),
         );

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager;
+
 class TeamSetManager {
 
 	private static $instance;
@@ -375,6 +377,7 @@ WHERE tst.team_id = ?';
         $stmt = $conn->executeQuery($query, array($team_id));
 
         $affectedTeamSets = array();
+        $deletedTeamSets = array();
         $team_set_id_modules = array();
 
         while (($row = $stmt->fetch())) {
@@ -417,10 +420,15 @@ WHERE tst.team_id = ?';
                 $conn->delete('team_sets_modules', array(
                     'team_set_id' => $teamSet->id,
                 ));
+
+                $deletedTeamSets[$team_set_id] = $row[$team_set_id];
             }
 
     	      $affectedTeamSets[$team_set_id] = $row[$team_set_id];
     	}
+
+        DenormManager::getInstance()->removeTeamSets(array_values($deletedTeamSets));
+        DenormManager::getInstance()->removeTeamFromTeamSets(array_diff($affectedTeamSets, $deletedTeamSets), $team_id);
 
 	    return $affectedTeamSets;
     }

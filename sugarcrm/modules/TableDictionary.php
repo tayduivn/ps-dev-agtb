@@ -112,6 +112,9 @@ include("metadata/kbusefulnessMetaData.php");
 // SugarCacheDb
 include "metadata/key_value_cacheMetaData.php";
 
+// TeamSecurity Denormalization tables
+include "metadata/team_sets_usersMetaData.php";
+
 //BEGIN SUGARCRM flav=ent ONLY
 // Locked fields
 include "metadata/locked_field_bean_relMetaData.php";

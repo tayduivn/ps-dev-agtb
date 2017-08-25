@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\StrategyInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
@@ -217,19 +218,27 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
             return;
         }
 
-        $current_user_id = empty($GLOBALS['current_user']) ? '' : $GLOBALS['current_user']->id;
+        $current_user_id = $this->getCurrentUserId();
 
         if ($this->useCondition()) {
-            $cond = $this->getCondition($current_user_id);
+            if ($this->useDenorm()) {
+                $tableAlias = $this->getOption('table_alias', $this->bean->table_name);
+                $cond = $this->getConditionDenorm($tableAlias, $current_user_id);
+            } else {
+                $cond = $this->getCondition($current_user_id);
+            }
             if ($query) {
                 $query .= " AND ".ltrim($cond);
             } else {
                 $query = $cond;
             }
+        } elseif ($this->useDenorm()) {
+            $tableAlias = $this->getOption('table_alias', $this->bean->table_name);
+            $query .= $this->getJoinDenorm($tableAlias, $current_user_id);
         } else {
             $query .= $this->getJoin($current_user_id);
         }
-   }
+    }
 
     /**
      * Add visibility query
@@ -249,11 +258,19 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
             return;
         }
 
-        $current_user_id = empty($GLOBALS['current_user']) ? '' : $GLOBALS['current_user']->id;
+        $current_user_id = $this->getCurrentUserId();
 
         if ($this->useCondition()) {
-            $cond = $this->getCondition($current_user_id);
+            if ($this->useDenorm()) {
+                $tableAlias = $this->getOption('table_alias', $this->bean->table_name);
+                $cond = $this->getConditionDenorm($tableAlias, $current_user_id);
+            } else {
+                $cond = $this->getCondition($current_user_id);
+            }
             $query->where()->addRaw($cond);
+        } elseif ($this->useDenorm()) {
+            $tableAlias = $this->getOption('table_alias', $this->bean->table_name);
+            $this->joinDenorm($query, $tableAlias, $current_user_id);
         } else {
             $this->join($query, $current_user_id);
         }
@@ -383,7 +400,7 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
             $options = !empty($this->options) ? $this->options : array();
             $this->options = $this->getTuningOptions($options);
         }
-        return parent::getOption($name,$default);
+        return parent::getOption($name, $default);
     }
 
     /**
@@ -432,5 +449,77 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
                 'module' => $this->bean->module_name,
             ]));
         }
+    }
+
+    /**
+     * Check if we are on denorm
+     * @return boolean
+     */
+    protected function useDenorm()
+    {
+        return (bool) $this->getOption('use_denorm', false) && DenormManager::getInstance()->isAvailable();
+    }
+
+    /**
+     * Get current user id
+     * @return string
+     */
+    protected function getCurrentUserId()
+    {
+        return empty($GLOBALS['current_user']) ? '' : $GLOBALS['current_user']->id;
+    }
+
+    /**
+     * Get denorm team security as a JOIN clause
+     * @param string $tableAlias
+     * @param string $userId
+     * @return string
+     *
+     * @see static::joinDenorm(), should be kept synced
+     */
+    protected function getJoinDenorm($tableAlias, $userId)
+    {
+        return sprintf(
+            " INNER JOIN %s tsd ON %s.team_set_id = tsd.team_set_id AND tsd.user_id = %s",
+            DenormManager::getInstance()->getActiveTbl(),
+            $tableAlias,
+            $this->bean->db->quoted($userId)
+        );
+    }
+
+    /**
+     * Joins denorm visibility condition to the query
+     *
+     * @param SugarQuery $query
+     * @param string $tableAlias
+     * @param string $userId
+     *
+     * @see static::getJoinDenorm(), should be kept synced
+     */
+    protected function joinDenorm(SugarQuery $query, $tableAlias, $userId)
+    {
+        $query->joinTable(
+            DenormManager::getInstance()->getActiveTbl(),
+            array(
+                'alias' => 'tsd',
+            )
+        )->on()->equalsField('tsd.team_set_id', $tableAlias . '.team_set_id')
+        ->equals('tsd.user_id', $userId);
+    }
+
+    /**
+     * Get denorm team security `join` as a `IN()` condition.
+     * @param string $tableAlias
+     * @param string $userId
+     * @return string
+     */
+    protected function getConditionDenorm($tableAlias, $userId)
+    {
+        $inClause = sprintf(
+            "SELECT tsd.team_set_id FROM %s tsd WHERE tsd.user_id = %s",
+            DenormManager::getInstance()->getActiveTbl(),
+            $this->bean->db->quoted($userId)
+        );
+        return " {$tableAlias}.team_set_id IN ({$inClause}) ";
     }
 }

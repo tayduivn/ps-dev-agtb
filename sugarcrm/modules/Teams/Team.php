@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager;
 
 class Team extends SugarBean
 {
@@ -323,6 +324,8 @@ class Team extends SugarBean
             return false;
 		}
 
+        DenormManager::getInstance()->setTeamUsers($this->id);
+
 		// Update team_memberships table and set deleted = 1
         $query = "UPDATE team_memberships SET deleted = 1 WHERE team_id = ?";
         $conn = $this->db->getConnection();
@@ -436,6 +439,7 @@ class Team extends SugarBean
             $membership->team_id = $this->id;
             $membership->explicit_assign = 1;
             $membership->save();
+            DenormManager::getInstance()->addTeamUserToTeamSets($this->id, $user_id);
             $GLOBALS['log']->debug("Creating new explicit team memberhsip $user_id is a member of $this->id");
         }
 
@@ -495,6 +499,7 @@ class Team extends SugarBean
             $managers_membership->implicit_assign = true;
             $managers_membership->team_id = $this->id;
             $managers_membership->save();
+            DenormManager::getInstance()->addTeamUserToTeamSets($this->id, $manager->id);
             $GLOBALS['log']->debug("Creating new team memberhsip $manager->id is a member of $this->id");
         }
 
@@ -581,6 +586,7 @@ class Team extends SugarBean
                 //             1     0
                 //             0     0
                 $this->users->delete($this->id,$user_id);
+                DenormManager::getInstance()->removeTeamUserFromTeamSets($this->id, $user_id);
             }
             $manager = BeanFactory::newBean('Users');
             $manager->reports_to_id = $focus->reports_to_id;
@@ -599,6 +605,7 @@ class Team extends SugarBean
                         }else{
                              $GLOBALS['log']->debug("Remove membership record {$manager->user_name} from {$this->name}");
                              $this->users->delete($this->id, $manager->id);
+                             DenormManager::getInstance()->removeTeamUserFromTeamSets($this->id, $manager->id);
                         }
 
                     }

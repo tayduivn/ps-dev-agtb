@@ -21,6 +21,9 @@
  * So records that have these combinbations of teams will have the same team_set_id.
  *
  */
+
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager;
+
 require_once('vendor/ytree/Tree.php');
 require_once('vendor/ytree/Node.php');
 require_once('modules/Teams/TeamSetManager.php');
@@ -158,6 +161,8 @@ class TeamSet extends SugarBean{
             foreach($team_ids as $team_id){
                 $this->_addTeamToSet($team_id);
             }
+
+            DenormManager::getInstance()->addTeamSetsTeams($this->id, $team_ids);
 
             return $this->id;
         }else{
