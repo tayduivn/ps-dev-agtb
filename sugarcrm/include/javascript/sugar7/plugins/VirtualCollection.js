@@ -1344,12 +1344,16 @@
                  * {@link BeanOverrides#changedAttributes}.
                  */
                 this.changedAttributes = _.wrap(this.changedAttributes, function(_super, diff) {
-                    var collectionFieldNames = this.getCollectionFieldNames();
-                    var collectionFields = _.pick(diff, collectionFieldNames);
-                    var nonCollectionFields = _.omit(diff, collectionFieldNames);
-                    var fromOverrides = overrides.changedAttributes(collectionFields);
-                    var fromSuper = _super.call(this, nonCollectionFields);
-                    var changed = _.extend(fromSuper || {}, fromOverrides);
+                    var fromOverrides = overrides.changedAttributes();
+                    var nonCollectionFields;
+                    var changed;
+
+                    if (diff) {
+                        fromOverrides = _.pick(fromOverrides, _.keys(diff));
+                    }
+
+                    nonCollectionFields = _super.call(this, diff) || {};
+                    changed = _.extend(nonCollectionFields, fromOverrides);
 
                     return _.isEmpty(changed) ? false : changed;
                 });

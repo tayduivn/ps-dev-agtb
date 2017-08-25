@@ -1041,6 +1041,41 @@ describe('Plugins.VirtualCollection', function() {
 
                 expect(changed[attribute]).toBeUndefined();
             });
+
+            it('should not include `invitees` in the return value when not changed and diff is undefined', function() {
+                model.revertAttributes();
+                var changed = model.changedAttributes();
+
+                expect(changed[attribute]).toBeUndefined();
+            });
+
+            it('should include `invitees` in the return value when changed and diff is undefined', function() {
+                var changed;
+
+                model.get(attribute).remove([2]);
+                changed = model.changedAttributes();
+
+                expect(changed[attribute]).not.toBeUndefined();
+            });
+
+            it('should not include `invitees` in the return value when changed and not in diff', function() {
+                var changeAttrs = {
+                    id: '123'
+                };
+                model.get(attribute).remove([2]);
+                var changed = model.changedAttributes(changeAttrs);
+
+                expect(changed[attribute]).toBeUndefined();
+            });
+
+            it('should not include `invitees` in the return value when not changed and not in diff', function() {
+                var changeAttrs = {
+                    id: '123'
+                };
+                var changed = model.changedAttributes(changeAttrs);
+
+                expect(changed[attribute]).toBeUndefined();
+            });
         });
 
         describe('getting the names of the collection fields', function() {
