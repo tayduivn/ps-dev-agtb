@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchField;
 
 /**
  *
@@ -23,89 +24,60 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 class SearchFieldsTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::addSearchField
-     * @covers ::getSearchFields
      * @covers ::__construct
+     * @covers ::addSearchField
+     * @covers ::getIterator
      * @dataProvider providerTestAddSearchField
      */
-    public function testAddSearchField($module, array $path, array $defs, $weightId, $expected, Booster $booster = null)
+    public function testAddSearchField(SearchField $sf, $weightId, $expected, Booster $booster = null)
     {
         $sut = new SearchFields($booster);
-        $sut->addSearchField($module, $path, $defs, $weightId);
-        $this->assertEquals(array($expected), $sut->getSearchFields());
+        $sut->addSearchField($sf, $weightId);
+        foreach ($sut as $getSf) {
+            $this->assertSame($sf, $getSf);
+            $this->assertSame($expected, $getSf->compile());
+        }
     }
 
     public function providerTestAddSearchField()
     {
-        return array(
-            // one level
-            array(
-                'Contacts',
-                array('first_name'),
-                array(),
-                'test_ngram',
-                'first_name',
+        $booster = new Booster();
+        $booster->setWeighted(['bar' => 0.5]);
+
+        return [
+            // no booster
+            [
+                new SearchField('Accounts', 'name', []),
+                'foo',
+                'Accounts__name',
                 null,
-            ),
-            // two levels
-            array(
-                'Contacts',
-                array('first_name', 'test_ngram'),
-                array(),
-                'test_ngram',
-                'first_name.test_ngram',
-                null,
-            ),
-            // three levels
-            array(
-                'Contacts',
-                array('email_search', 'primary', 'test_default'),
-                array(),
-                'test_ngram',
-                'email_search.primary.test_default',
-                null,
-            ),
-            // three levels with boost
-            array(
-                'Contacts',
-                array('email_search', 'primary', 'test_default'),
-                array(),
-                'test_ngram',
-                'email_search.primary.test_default^1',
-                $this->getBoosterMock('email_search.primary.test_default'),
-            ),
-        );
-    }
-
-    /**
-     * Get SearchFields mock
-     * @param array $methods
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields
-     */
-    protected function getSearchFieldsMock(array $methods = null)
-    {
-        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields')
-            ->disableOriginalConstructor()
-            ->setMethods($methods)
-            ->getMock();
-    }
-
-    /**
-     * Get Booster mock
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster
-     */
-    protected function getBoosterMock($expected)
-    {
-        $booster = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster')
-            ->disableOriginalConstructor()
-            ->setMethods(array())
-            ->getMock();
-
-        $booster->expects($this->once())
-            ->method('getBoostedField')
-            ->with($this->equalTo($expected))
-            ->will($this->returnValue($expected . '^1'));
-
-        return $booster;
+            ],
+            // without weighting
+            [
+                new SearchField('Accounts', 'name', []),
+                'foo',
+                'Accounts__name^1',
+                $booster,
+            ],
+            [
+                new SearchField('Accounts', 'name', ['full_text_search' => ['boost' => 0.5]]),
+                'foo',
+                'Accounts__name^0.5',
+                $booster,
+            ],
+            // with weighting
+            [
+                new SearchField('Accounts', 'name', []),
+                'bar',
+                'Accounts__name^0.5',
+                $booster,
+            ],
+            [
+                new SearchField('Accounts', 'name', ['full_text_search' => ['boost' => 0.5]]),
+                'bar',
+                'Accounts__name^0.25',
+                $booster,
+            ],
+        ];
     }
 }

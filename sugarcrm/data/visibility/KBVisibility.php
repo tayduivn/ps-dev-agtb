@@ -94,6 +94,10 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
         $property = new MultiFieldProperty();
         $property->setType('integer');
         $mapping->addModuleField('active_rev', 'kbvis', $property);
+
+        $property = new MultiFieldProperty();
+        $property->setType('keyword');
+        $mapping->addModuleField('language', 'kbvis', $property);
     }
 
     /**

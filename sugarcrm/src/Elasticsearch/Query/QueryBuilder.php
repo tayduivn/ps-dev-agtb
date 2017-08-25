@@ -20,6 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationStack;
 use User;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Result\ParserInterface;
 
 /**
  *
@@ -100,6 +101,11 @@ class QueryBuilder
      * @var HighlighterInterface
      */
     protected $highlighter;
+
+    /**
+     * @var ParserInterface
+     */
+    protected $resultParser;
 
     /**
      * @var integer
@@ -206,6 +212,17 @@ class QueryBuilder
     }
 
     /**
+     * Set result parser
+     * @param ParserInterface $parser
+     * @return QueryBuilder
+     */
+    public function setResultParser(ParserInterface $parser)
+    {
+        $this->resultParser = $parser;
+        return $this;
+    }
+
+    /**
      * Add aggregation
      * @param string $id
      * @param AggregationInterface
@@ -299,9 +316,9 @@ class QueryBuilder
 
     /**
      * Add settings after building query.
-     * @param $query object the query object
+     * @param \Elastica\Query $query object the query object
      */
-    protected function addSettingsAfterBuild($query)
+    protected function addSettingsAfterBuild(\Elastica\Query $query)
     {
         // Set limit
         if (isset($this->limit)) {
@@ -397,9 +414,9 @@ class QueryBuilder
     {
         $resultSet = new ResultSet($resultSet);
 
-        // attach highlighter to resultset
-        if ($this->highlighter) {
-            $resultSet->setHighlighter($this->highlighter);
+        // attach result parser
+        if ($this->resultParser) {
+            $resultSet->setResultParser($this->resultParser);
         }
 
         // attach aggregation stack

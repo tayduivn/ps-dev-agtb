@@ -23,23 +23,16 @@ class BoosterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::setWeighted
-     * @covers ::getBoostedField
      * @covers ::getBoostValue
      * @covers ::normalizeBoost
      * @covers ::weight
      * @dataProvider dataProviderTestGetBoostedField
-     *
-     * @param array $weighted
-     * @param string $field
-     * @param array $defs
-     * @param string $type
-     * @param string $expected
      */
-    public function testGetBoostedField(array $weighted, $field, array $defs, $type, $expected)
+    public function testGetBoostedField(array $weighted, array $defs, $type, $expected)
     {
         $bh = new Booster();
         $bh->setWeighted($weighted);
-        $this->assertEquals($expected, $bh->getBoostedField($field, $defs, $type));
+        $this->assertSame($expected, $bh->getBoostValue($defs, $type));
     }
 
     public function dataProviderTestGetBoostedField()
@@ -47,31 +40,27 @@ class BoosterTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 array(),
-                'field.sub',
                 array(),
                 'foo',
-                'field.sub^1',
+                1.0,
             ),
             array(
                 array(),
-                'field.sub',
                 array('full_text_search' => array()),
                 'foo',
-                'field.sub^1',
+                1.0,
             ),
             array(
                 array(),
-                'field.sub',
                 array('full_text_search' => array('boost' => 2.138)),
                 'foo',
-                'field.sub^2.14',
+                2.14,
             ),
             array(
                 array('foo' => 0.5),
-                'field.sub',
                 array('full_text_search' => array('boost' => 2.138)),
                 'foo',
-                'field.sub^1.07',
+                1.07,
             ),
         );
     }

@@ -58,6 +58,30 @@ interface MappingInterface
     public function addCommonField($baseField, $field, MultiFieldProperty $property);
 
     /**
+     * Add object (or nested) property mapping. Note that this cannot be used
+     * as a multi field base. The field name will be prefixed with the
+     * "{Module}__" prefix automatically in the mapping to avoid mapping
+     * conflicts between modules within the same index having the same
+     * field name.
+     *
+     * @param string $field
+     * @param ObjectProperty $property
+     */
+    public function addModuleObjectProperty($field, ObjectProperty $property);
+
+    /**
+     * Add object (or nested) property mapping. Note that this cannot be used
+     * as a multi field base. The field name will be prefixed with the
+     * "Common__" prefix automatically in the mapping to avoid mapping
+     * conflicts between modules within the same index having the same
+     * field name.
+     *
+     * @param string $field
+     * @param ObjectProperty $property
+     */
+    public function addCommonObjectProperty($field, ObjectProperty $property);
+
+    /**
      * Add multi field mapping. This should be the primary method to be used
      * to build the mapping as most fields are string based. Multi fields
      * have the ability to define different analyzers for every sub field.
@@ -103,7 +127,8 @@ interface MappingInterface
      * Add object (or nested) property mapping. Note that this cannot be used
      * as a multi field base. Also fields which are created like this can have
      * mapping collisions. If this is the case, one needs to create separate
-     * indices to isolate the conflicting modules if any.
+     * indices to isolate the conflicting modules if any. It is encouraged to
+     * use Mapping::addModuleObjectProperty instead.
      *
      * @param string $field
      * @param ObjectProperty $property

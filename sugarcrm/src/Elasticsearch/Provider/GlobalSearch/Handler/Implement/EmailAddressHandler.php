@@ -25,6 +25,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AnalysisHandle
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\SearchFieldsHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\ProcessDocumentHandlerInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchField;
 
 /**
  *
@@ -102,9 +103,6 @@ class EmailAddressHandler extends AbstractHandler implements
         // highlights from that field back to the original email field.
         $provider->addFieldRemap(array($this->searchField => 'email'));
 
-        // enable adding tags in the response's highlight values
-        $provider->setWrapValueWithTags(array('email' => true));
-
         // We don't want to add the email field to the queuemanager query
         // because we will populate the emails seperately.
         $provider->addSkipTypesFromQueue(array('email'));
@@ -134,15 +132,14 @@ class EmailAddressHandler extends AbstractHandler implements
      */
     public function buildMapping(Mapping $mapping, $field, array $defs)
     {
-        // We only handle 'email' fields of 'email' type
-        if ($defs['name'] !== 'email' || $defs['type'] !== 'email') {
+        if (!$this->isEmailField($defs)) {
             return;
         }
 
         // Use original field to store the raw json content
         $baseObject = new ObjectProperty();
         $baseObject->setEnabled(false);
-        $mapping->addObjectProperty($field, $baseObject);
+        $mapping->addModuleObjectProperty($field, $baseObject);
 
         // Prepare multifield
         $email = new MultiFieldBaseProperty();
@@ -165,10 +162,9 @@ class EmailAddressHandler extends AbstractHandler implements
     /**
      * {@inheritdoc}
      */
-    public function buildSearchFields(SearchFields $sf, $module, $field, array $defs)
+    public function buildSearchFields(SearchFields $sfs, $module, $field, array $defs)
     {
-        // We only handle 'email' fields of 'email' type
-        if ($defs['name'] !== 'email' || $defs['type'] !== 'email') {
+        if (!$this->isEmailField($defs)) {
             return;
         }
 
@@ -177,10 +173,9 @@ class EmailAddressHandler extends AbstractHandler implements
 
         foreach ($emailFields as $emailField) {
             foreach ($multiFields as $multiField) {
-                $searchFieldName = $module . Mapping::PREFIX_SEP . $this->searchField;
-                $path = array($searchFieldName, $emailField, $multiField);
-                $weightId = $multiField . '_' . $emailField;
-                $sf->addSearchField($module, $path, $defs, $weightId);
+                $sf = new SearchField($module, $defs['name'], $defs);
+                $sf->setPath([$this->searchField, $emailField, $multiField]);
+                $sfs->addSearchField($sf, $multiField . '_' . $emailField);
             }
         }
     }
@@ -202,10 +197,15 @@ class EmailAddressHandler extends AbstractHandler implements
         if (!isset($bean->field_defs['email'])) {
             return;
         }
+        $defs = $bean->field_defs['email'];
+        if (!$this->isEmailField($defs)) {
+            return;
+        }
 
-        // Load raw email addresses in email field to store in ES
+        // Load raw email addresses in prefixed email field to store in ES
         $emails = $this->getEmailAddressesForBean($bean);
-        $document->setDataField('email', $emails);
+        $document->setDataField($document->getType() . Mapping::PREFIX_SEP . 'email', $emails);
+        $document->removeDataField('email');
 
         // Format data for email search fields
         $value = array(
@@ -258,5 +258,15 @@ class EmailAddressHandler extends AbstractHandler implements
     protected function fetchEmailAddressesFromDatabase(\SugarBean $bean)
     {
         return \BeanFactory::newBean('EmailAddresses')->getAddressesByGUID($bean->id, $bean->module_name);
+    }
+
+    /**
+     * Check if given field def is an email field
+     * @param array $defs
+     * @return boolean
+     */
+    protected function isEmailField(array $defs)
+    {
+        return $defs['name'] === 'email' && $defs['type'] === 'email';
     }
 }

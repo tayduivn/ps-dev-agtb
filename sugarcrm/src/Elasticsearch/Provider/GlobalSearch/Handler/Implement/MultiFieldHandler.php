@@ -22,6 +22,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AbstractHandle
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AnalysisHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\SearchFieldsHandlerInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchField;
 
 /**
  *
@@ -406,20 +407,18 @@ class MultiFieldHandler extends AbstractHandler implements
     /**
      * {@inheritdoc}
      */
-    public function buildSearchFields(SearchFields $sf, $module, $field, array $defs)
+    public function buildSearchFields(SearchFields $sfs, $module, $field, array $defs)
     {
         // Skip field if no multi field mapping has been defined or no type available
         if (!isset($defs['type']) || !isset($this->typesMultiField[$defs['type']])) {
             return;
         }
 
-        // Use prefixed field name
-        $field = $module . Mapping::PREFIX_SEP . $field;
-
         // Add fields which are based on strings
         foreach ($this->getStringFieldsForType($defs['type']) as $searchField) {
-            $path = array($field, $searchField);
-            $sf->addSearchField($module, $path, $defs, $searchField);
+            $sf = new SearchField($module, $field, $defs);
+            $sf->setPath([$field, $searchField]);
+            $sfs->addSearchField($sf, $searchField);
         }
     }
 

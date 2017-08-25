@@ -54,7 +54,7 @@ class Mapping implements MappingInterface
      * Elasticsearch mapping properties
      * @var PropertyInterface[]
      */
-    private $properties = array();
+    private $properties = [];
 
     /**
      * Base mapping used for all multi fields
@@ -78,7 +78,7 @@ class Mapping implements MappingInterface
      * Excluded fields from _source
      * @var array
      */
-    private $sourceExcludes = array();
+    private $sourceExcludes = [];
 
     /**
      * @param string $module
@@ -139,7 +139,7 @@ class Mapping implements MappingInterface
      */
     public function compile()
     {
-        $compiled = array();
+        $compiled = [];
         foreach ($this->properties as $field => $property) {
             $compiled[$field] = $property->getMapping();
         }
@@ -169,7 +169,23 @@ class Mapping implements MappingInterface
     /**
      * {@inheritdoc}
      */
-    public function addNotIndexedField($field, array $copyTo = array())
+    public function addModuleObjectProperty($field, ObjectProperty $property)
+    {
+        $this->addProperty($this->module . self::PREFIX_SEP . $field, $property);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addCommonObjectProperty($field, ObjectProperty $property)
+    {
+        $this->addProperty(self::PREFIX_COMMON . $field, $property);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addNotIndexedField($field, array $copyTo = [])
     {
         $this->createMultiFieldBase($field, $this->notIndexedBase, $copyTo);
     }
@@ -177,7 +193,7 @@ class Mapping implements MappingInterface
     /**
      * {@inheritdoc}
      */
-    public function addNotAnalyzedField($field, array $copyTo = array())
+    public function addNotAnalyzedField($field, array $copyTo = [])
     {
         $this->createMultiFieldBase($field, $this->multiFieldBase, $copyTo);
     }
@@ -187,7 +203,7 @@ class Mapping implements MappingInterface
      */
     public function addMultiField($baseField, $field, MultiFieldProperty $property)
     {
-        $this->createMultiFieldBase($baseField, $this->multiFieldBase, array())->addField($field, $property);
+        $this->createMultiFieldBase($baseField, $this->multiFieldBase, [])->addField($field, $property);
     }
     
     /**
@@ -236,7 +252,7 @@ class Mapping implements MappingInterface
      * @throws MappingException
      * @return MultiFieldBaseProperty
      */
-    private function createMultiFieldBase($field, array $mapping, array $copyTo = array())
+    private function createMultiFieldBase($field, array $mapping, array $copyTo = [])
     {
         // create multi field base if not set yet
         if (!$this->hasProperty($field)) {

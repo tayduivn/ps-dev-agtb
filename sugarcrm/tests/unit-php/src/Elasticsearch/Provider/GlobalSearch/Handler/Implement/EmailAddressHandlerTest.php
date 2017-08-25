@@ -207,7 +207,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                             ),
                         ),
                     ),
-                    'email' => array(
+                    'testModule__email' => array(
                         'type' => 'object',
                         'dynamic' => false,
                         'enabled' => false,
@@ -253,11 +253,15 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildSearchFields($module, $field, array $defs, array $expected)
     {
-        $sf = new SearchFields();
+        $sfs = new SearchFields();
         $sut = $this->getEmailAddressHandlerMock();
-        $GLOBALS['log'] = \LoggerManager::getLogger('SugarCRM');
-        $sut->buildSearchFields($sf, $module, $field, $defs);
-        $this->assertEquals($expected, $sf->getSearchFields());
+        $sut->buildSearchFields($sfs, $module, $field, $defs);
+
+        $fields = [];
+        foreach ($sfs as $sf) {
+            $fields[] = $sf->compile();
+        }
+        $this->assertEquals($expected, $fields);
     }
 
     public function providerTestBuildSearchFields()
@@ -361,12 +365,12 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
                     'field_defs' => array(
-                        'email' => array('type' => 'email'),
+                        'email' => array('name' => 'email', 'type' => 'email'),
                     ),
                 ),
                 null,
                 array(
-                    'email' => array(),
+                    'Accounts__email' => array(),
                     'Accounts__email_search' => array(
                         'primary' => '',
                         'secondary' => array(),
@@ -381,12 +385,12 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                     'email' => 'foobar',
                     'emailAddress' => '',
                     'field_defs' => array(
-                        'email' => array('type' => 'email'),
+                        'email' => array('name' => 'email', 'type' => 'email'),
                     ),
                 ),
                 null,
                 array(
-                    'email' => array(),
+                    'Accounts__email' => array(),
                     'Accounts__email_search' => array(
                         'primary' => '',
                         'secondary' => array(),
@@ -405,12 +409,12 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                         array('first@gmail.com', 'second@sugarcrm.com', 'ok@more.co.uk')
                     ),
                     'field_defs' => array(
-                        'email' => array('type' => 'email'),
+                        'email' => array('name' => 'email', 'type' => 'email'),
                     ),
                 ),
                 null,
                 array(
-                    'email' => array(
+                    'Leads__email' => array(
                         array(
                             'email_address' => 'first@gmail.com',
                             'primary_address' => true,
@@ -451,12 +455,12 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                         array('first@gmail.com', 'second@sugarcrm.com')
                     ),
                     'field_defs' => array(
-                        'email' => array('type' => 'email'),
+                        'email' => array('name' => 'email', 'type' => 'email'),
                     ),
                 ),
                 null,
                 array(
-                    'email' => array(
+                    'Leads__email' => array(
                         array(
                             'email_address' => 'first@gmail.com',
                             'primary_address' => true,
@@ -490,12 +494,12 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                         array('first@gmail.com')
                     ),
                     'field_defs' => array(
-                        'email' => array('type' => 'email'),
+                        'email' => array('name' => 'email', 'type' => 'email'),
                     ),
                 ),
                 null,
                 array(
-                    'email' => array(
+                    'Accounts__email' => array(
                         array(
                             'email_address' => 'first@gmail.com',
                             'primary_address' => true,
@@ -518,12 +522,12 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                     'email' => 'foobar',
                     'emailAddress' => $this->getSugarEmailAddressFixture(false, false),
                     'field_defs' => array(
-                        'email' => array('type' => 'email'),
+                        'email' => array('name' => 'email', 'type' => 'email'),
                     ),
                 ),
                 $this->getEmailsFixture(array('first@gmail.com', 'second@sugarcrm.com', 'ok@more.co.uk')),
                 array(
-                    'email' => array(
+                    'Leads__email' => array(
                         array(
                             'email_address' => 'first@gmail.com',
                             'primary_address' => true,

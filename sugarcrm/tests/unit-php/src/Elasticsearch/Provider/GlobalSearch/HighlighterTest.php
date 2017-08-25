@@ -11,7 +11,7 @@
  */
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter;
 
 /**
  *
@@ -20,93 +20,90 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 class HighlighterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::wrapValueWithTags
-     * @dataProvider providerTestAddTagsInValue
+     * @covers ::__construct
      */
-    public function testAddTagsInValue($value, $expected)
+    public function testDefaults()
     {
-        $highlighter = $this->getHighlighterMock();
+        $exp = [
+            'pre_tags' => ['<strong>'],
+            'post_tags' => ['</strong>'],
+            'require_field_match' => true,
+            'number_of_fragments' => 3,
+            'fragment_size' => 255,
+            'encoder' => 'html',
+            'order' => 'score',
+            'fields' => [
+                'bar' => [
+                    'type' => 'plain',
+                    'force_source' => false,
+                    'more' => 'beer',
+                ],
+            ],
+        ];
 
-        $res = TestReflection::callProtectedMethod($highlighter, 'wrapValueWithTags', array($value));
-        $this->assertEquals($expected, $res);
-    }
-
-    public function providerTestAddTagsInValue()
-    {
-        return array(
-            array(
-                array('foo'),
-                array('<strong>foo</strong>'),
-            ),
-            array(
-                array("dev.support.beans@example.it"),
-                array("<strong>dev.support.beans@example.it</strong>"),
-            ),
-            array(
-                array("<strong>dev.support.beans@example.it</strong>"),
-                array("<strong>dev.support.beans@example.it</strong>"),
-            ),
-            array(
-                array("dev.support.beans@example.it", "<strong>im.support.qa</strong>@example.edu"),
-                array("<strong>dev.support.beans@example.it</strong>", "<strong>im.support.qa@example.edu</strong>"),
-            ),
-            array(
-                array(),
-                array(),
-            ),
-        );
+        $h = new Highlighter();
+        $h->setFields(['bar' => ['more' => 'beer']]);
+        $this->assertSame($exp, $h->build());
     }
 
     /**
-     * @covers ::getSubFieldName
-     * @dataProvider providerTestGetSubFieldName
+     * @covers ::build
+     * @covers ::setPreTags
+     * @covers ::setPostTags
+     * @covers ::setRequiredFieldMatch
+     * @covers ::setMumberOfFrags
+     * @covers ::setFragSize
+     * @covers ::setFields
+     * @covers ::setDefaultFieldArgs
+     * @covers ::getPreTags
+     * @covers ::getPostTags
+     * @dataProvider providerTestBuild
      */
-    public function testGetSubFieldName($field, $expected)
+    public function testBuild(array $pre, array $post, $req, $frags, $size, array $fields, array $default, array $exp)
     {
-        $highlighter = $this->getHighlighterMock();
+        $h = new Highlighter();
+        $h
+            ->setPreTags($pre)
+            ->setPostTags($post)
+            ->setRequiredFieldMatch($req)
+            ->setNumberOfFrags($frags)
+            ->setFragSize($size)
+            ->setFields($fields)
+            ->setDefaultFieldArgs($default)
+        ;
 
-        $res = $highlighter->getSubFieldName($field);
-        $this->assertEquals($expected, $res);
+        $this->assertSame($pre, $h->getPreTags());
+        $this->assertSame($post, $h->getPostTags());
+        $this->assertSame($exp, $h->build());
     }
 
-    public function providerTestGetSubFieldName()
+    public function providerTestBuild()
     {
-        return array(
-            array(
-                'Accounts__email_search.primary.gs_email_wildcard',
-                'primary',
-            ),
-            array(
-                'Accounts__email_search.secondary.gs_email_wildcard',
-                'secondary',
-            ),
-            array(
-                'Contacts__first_name.gs_string_wildcard',
-                '',
-            ),
-            array(
-                'Contacts__phone_home',
-                '',
-            ),
-            array(
-                '',
-                '',
-            ),
-            array(
-                null,
-                '',
-            ),
-        );
-    }
-
-    /**
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter
-     */
-    protected function getHighlighterMock(array $methods = null)
-    {
-        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter')
-            ->disableOriginalConstructor()
-            ->setMethods($methods)
-            ->getMock();
+        return [
+            [
+                ['<hit>'],
+                ['</hit>'],
+                false,
+                10,
+                20,
+                ['hello' => ['world' => 'z']],
+                ['foo' => 'bar'],
+                [
+                    'pre_tags' => ['<hit>'],
+                    'post_tags' => ['</hit>'],
+                    'require_field_match' => false,
+                    'number_of_fragments' => 10,
+                    'fragment_size' => 20,
+                    'encoder' => 'html',
+                    'order' => 'score',
+                    'fields' => [
+                        'hello' => [
+                            'foo' => 'bar',
+                            'world' => 'z',
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

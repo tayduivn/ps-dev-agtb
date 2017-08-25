@@ -879,9 +879,14 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
         TestReflection::setProtectedValue($sut, 'multiFieldDefs', $multi);
 
         // mock SearchFields
-        $sf = new SearchFields();
-        $sut->buildSearchFields($sf, $module, $field, $defs);
-        $this->assertEquals($expected, $sf->getSearchFields());
+        $sfs = new SearchFields();
+        $sut->buildSearchFields($sfs, $module, $field, $defs);
+
+        $fields = [];
+        foreach ($sfs as $sf) {
+            $fields[] = $sf->compile();
+        }
+        $this->assertEquals($expected, $fields);
     }
 
     public function providerTestBuildSearchFields()

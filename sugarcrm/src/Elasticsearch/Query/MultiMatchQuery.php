@@ -13,10 +13,10 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
-use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SimpleTermParser;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use BeanFactory;
 use Exception;
@@ -51,15 +51,9 @@ class MultiMatchQuery implements QueryInterface
 
     /**
      * the search fields
-     * @var array
+     * @var SearchFields
      */
     protected $searchFields;
-
-    /**
-     * the search highlight
-     * @var HighlighterInterface
-     */
-    protected $highlighter;
 
     /**
      * default operator for space in elastic search
@@ -103,9 +97,9 @@ class MultiMatchQuery implements QueryInterface
 
     /**
      * Set the search fields.
-     * @param array $searchFields
+     * @param SearchFields $searchFields
      */
-    public function setSearchFields(array $searchFields)
+    public function setSearchFields(SearchFields $searchFields)
     {
         $this->searchFields = $searchFields;
     }
@@ -117,15 +111,6 @@ class MultiMatchQuery implements QueryInterface
     public function setUser(User $user)
     {
         $this->user = $user;
-    }
-
-    /**
-     * Set the highlighter interface in order to normalize the field name
-     * @param HighlighterInterface $highlighter
-     */
-    public function setHighlighter(HighlighterInterface $highlighter)
-    {
-        $this->highlighter = $highlighter;
     }
 
     /**
@@ -267,10 +252,13 @@ class MultiMatchQuery implements QueryInterface
      */
     protected function getReadAccessibleSearchFields()
     {
-        return array_values(array_filter($this->searchFields, function ($field) {
-            list($module, $field) = $this->processFieldName($field);
-            return $this->isFieldReadAccessible($module, $field);
-        }));
+        $fields = [];
+        foreach ($this->searchFields as $sf) {
+            if ($this->isFieldReadAccessible($sf->getModule(), $sf->getField())) {
+                $fields[] = $sf->compile();
+            }
+        }
+        return $fields;
     }
 
     /**
@@ -279,10 +267,13 @@ class MultiMatchQuery implements QueryInterface
      */
     protected function getReadOwnerSearchFields()
     {
-        return array_values(array_filter($this->searchFields, function ($field) {
-            list($module, $field) = $this->processFieldName($field);
-            return $this->isFieldReadOwner($module, $field);
-        }));
+        $fields = [];
+        foreach ($this->searchFields as $sf) {
+            if ($this->isFieldReadOwner($sf->getModule(), $sf->getField())) {
+                $fields[] = $sf->compile();
+            }
+        }
+        return $fields;
     }
 
     /**
@@ -311,68 +302,6 @@ class MultiMatchQuery implements QueryInterface
             return true;
         }
         return false;
-    }
-
-    /**
-     * Get the module name and the field name.
-     *
-     * Notes on input fields' formats:
-     * 1) Normal case:
-     * Example: Contacts__first_name.gs_string_wildcard^0.9
-     *
-     * 2) Exception case I: Email field
-     * Contacts__email_search.primary.gs_email^1.95
-     * Contacts__email_search.primary.gs_email_wildcard^0.88
-     * Contacts__email_search.secondary.gs_email^1.46
-     * Contacts__email_search.secondary.gs_email_wildcard^0.49
-     *
-     * 3) Exception case II: Field without boost value
-     * Contacts__last_name.gs_string_wildcard
-     *
-     * @param string $field the combined search field name
-     * @return array
-     */
-    protected function processFieldName($field)
-    {
-        $moduleName = "";
-        $fieldName = $field;
-
-        $value = explode('.', $field);
-        // Field separate '.' is found
-        if (is_array($value)) {
-            $value = $value[0];
-        }
-
-        $names = explode(Mapping::PREFIX_SEP, $value);
-        // Mapping::PREFIX_SEP is found
-        if (is_array($names) && count($names)>1) {
-            $moduleName = $names[0];
-            $fieldName = $this->normalizeFieldName($value);
-        }
-
-        return array($moduleName, $fieldName);
-    }
-
-    /**
-     * Normalize the field name.
-     *
-     * 1) Normal case:
-     * Input: Contacts__first_name
-     * Output: first_name
-     *
-     * 2) Email case:
-     * Input: Contacts__email_search
-     * Output: email
-     *
-     * @param string $fieldName the field name
-     * @return string
-     */
-    protected function normalizeFieldName($fieldName)
-    {
-        if (!empty($this->highlighter)) {
-            return $this->highlighter->normalizeFieldName($fieldName);
-        }
-        return $fieldName;
     }
 
     /**

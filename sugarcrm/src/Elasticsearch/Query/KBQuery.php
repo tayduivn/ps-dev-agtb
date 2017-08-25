@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+
 /**
  *
  * The Knowledge Base specific query using More_Like_This this query.
@@ -80,18 +82,23 @@ class KBQuery implements QueryInterface
         $mainFilter->addMustNot($currentIdFilter);
 
         $activeRevFilter = new \Elastica\Query\Term();
-        $activeRevFilter->setTerm('active_rev', 1);
+        $activeRevFilter->setTerm($this->bean->module_name . Mapping::PREFIX_SEP . 'active_rev.kbvis', 1);
         $mainFilter->addMust($activeRevFilter);
 
         if ($addLangFilter === true) {
             $langFilter = new \Elastica\Query\Term();
-            $langFilter->setTerm('language', $this->bean->language);
+            $langFilter->setTerm(
+                $this->bean->module_name . Mapping::PREFIX_SEP . 'language.kbvis',
+                $this->bean->language
+            );
             $mainFilter->addMust($langFilter);
         }
 
         $statusFilterOr = new \Elastica\Query\BoolQuery();
         foreach ($this->bean->getPublishedStatuses() as $status) {
-            $statusFilterOr->addFilter(new \Elastica\Query\Term(['status' => $status]));
+            $statusFilterOr->addFilter(new \Elastica\Query\Term([
+                $this->bean->module_name . Mapping::PREFIX_SEP . 'status.kbvis' => $status,
+            ]));
         }
         $mainFilter->addMust($statusFilterOr);
         return $mainFilter;

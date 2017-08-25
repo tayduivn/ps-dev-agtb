@@ -54,6 +54,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected $highlighter;
 
     /**
+     * @var ResultParser
+     */
+    protected $resultParser;
+
+    /**
      * @var Booster
      */
     protected $booster;
@@ -101,6 +106,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     public function __construct()
     {
         $this->highlighter = new Highlighter();
+        $this->resultParser = new ResultParser($this->highlighter);
         $this->booster = new Booster();
         $this->handlers = new HandlerCollection($this);
         $this->registerHandlers();
@@ -245,11 +251,20 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
 
     /**
      * Add highlighter field remaps
-     * @param array $remap
+     * @param string[] $remap
      */
     public function addFieldRemap(array $remap)
     {
-        $this->highlighter->setFieldRemap($remap);
+        $this->resultParser->addHighlightRemap($remap);
+    }
+
+    /**
+     * Add _source field remap
+     * @param string[] $remap
+     */
+    public function addSourceRemap(array $remap)
+    {
+        $this->resultParser->addSourceRemap($remap);
     }
 
     /**
@@ -346,11 +361,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
-     * Get search fields per module
+     * Add search fields per module
      * @param $sf object the search field object
      * @param $module string the name of the module
      */
-    protected function getSearchFieldsPerModule($sf, $module)
+    protected function buildSearchFieldsPerModule($sf, $module)
     {
         foreach ($this->getFtsFields($module) as $field => $defs) {
             // skip fields which are not searchable
@@ -368,16 +383,15 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     /**
      * Get search field wrapper
      * @param array $modules List of modules
-     * @return array
+     * @return SearchFields
      */
-    public function getSearchFields(array $modules)
+    public function buildSearchFields(array $modules)
     {
-        $sf = new SearchFields($this->fieldBoost ? $this->booster : null);
-
+        $sfs = new SearchFields($this->fieldBoost ? $this->booster : null);
         foreach ($modules as $module) {
-            $this->getSearchFieldsPerModule($sf, $module);
+            $this->buildSearchFieldsPerModule($sfs, $module);
         }
-        return $sf->getSearchFields();
+        return $sfs;
     }
 
     /**
@@ -660,6 +674,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             ->setOffset($this->offset)
             ->setQuery($query)
             ->setExplain($this->explain)
+            ->setResultParser($this->resultParser)
         ;
 
         // Set highlighter
@@ -707,6 +722,10 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         return $builder->executeSearch();
     }
 
+    /**
+     * Create Multi Match query object
+     * @return MultiMatchQuery
+     */
     protected function createMultiMatchQuery()
     {
         $multiMatch = new MultiMatchQuery();
@@ -720,9 +739,8 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             $modules[] = $this->tagModule;
         }
 
-        $multiMatch->setSearchFields($this->getSearchFields($modules));
+        $multiMatch->setSearchFields($this->buildSearchFields($modules));
         $multiMatch->setUser($this->user);
-        $multiMatch->setHighlighter($this->highlighter);
         return $multiMatch;
     }
 
