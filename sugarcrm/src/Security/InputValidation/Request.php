@@ -134,6 +134,15 @@ class Request implements LoggerAwareInterface
     }
 
     /**
+     * Get softFail mode
+     * @return bool
+     */
+    public function getSoftFail()
+    {
+        return $this->softFail;
+    }
+
+    /**
      * Get validated input from $_GET
      * @param string $key
      * @param string|array $constraints ConstraintBuilder compat constraints

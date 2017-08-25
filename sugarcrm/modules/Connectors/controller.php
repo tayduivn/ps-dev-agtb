@@ -233,9 +233,16 @@ class ConnectorsController extends SugarController {
 	function action_CallRest() {
 		$this->view = 'ajax';
 
-        $remoteUrl = $this->request->getValidInputRequest('url', array('Assert\Url' => array(
-            'protocols' => array('http', 'https'),
-        )));
+        $previousSoftFail = $this->request->getSoftFail();
+        $this->request->setSoftFail(false);
+
+        $remoteUrl = $this->request->getValidInputRequest('url', array(
+            'Assert\Url' => array(
+                'protocols' => array('http', 'https'),
+            ),
+        ));
+
+        $this->request->setSoftFail($previousSoftFail);
 
 		if(false === ($result=@file_get_contents($remoteUrl))) {
            echo '';
