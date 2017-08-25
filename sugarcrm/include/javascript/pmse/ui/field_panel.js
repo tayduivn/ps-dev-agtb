@@ -22,6 +22,8 @@ var FieldPanel = function (settings) {
     this._attachedListeners = false;
     this._className = null;
     this._context = null;
+    this._useOffsetLeft = false;
+    this._offsetLeft = 0;
     this.onOpen = null;
     this.onClose = null;
     FieldPanel.prototype.init.call(this, settings);
@@ -42,7 +44,8 @@ FieldPanel.prototype.init = function (settings) {
         className: "",
         context: document.body,
         onOpen: null,
-        onClose: null
+        onClose: null,
+        useOffsetLeft: false
     };
 
     jQuery.extend(true, defaults, settings);
@@ -54,6 +57,7 @@ FieldPanel.prototype.init = function (settings) {
         .setOnItemValueActionHandler(defaults.onItemValueAction)
         .setAlignWithOwner(defaults.alignWithOwner)
         .setClassName(defaults.className)
+        .setUseOffsetLeft(defaults.useOffsetLeft)
         ._setContext(defaults.context);
 
     if (defaults.open) {
@@ -64,6 +68,24 @@ FieldPanel.prototype.init = function (settings) {
 
     this.setOnOpenHandler(defaults.onOpen)
         .setOnCloseHandler(defaults.onClose);
+};
+
+/**
+ * Sets the left offset value to use when needed
+ * @param {integer} offsetLeft pixel measurement of the left offset when needed
+ */
+FieldPanel.prototype.setOffsetLeft = function(offsetLeft) {
+    this._offsetLeft = offsetLeft;
+    return this;
+};
+
+/**
+ * Sets the flag on whether to use a left offset when rendering the field panel
+ * @param {boolean} useOffsetLeft
+ */
+FieldPanel.prototype.setUseOffsetLeft = function(useOffsetLeft) {
+    this._useOffsetLeft = useOffsetLeft;
+    return this;
 };
 
 FieldPanel.prototype._setContext = function (context) {
@@ -226,7 +248,13 @@ FieldPanel.prototype._append = function () {
         this.setWidth(this._matchOwnerWidth ? owner.offsetWidth : this.width);
         position = getRelativePosition(owner, appendTo);
         if (this._alignWithOwner === 'right') {
-            position.left -= this.width - owner.offsetWidth;
+            // In some cases, a right alignment means an offset jog instead of a
+            // full movement by the width of the element
+            if (this._useOffsetLeft) {
+                position.left -= this._offsetLeft;
+            } else {
+                position.left -= this.width - owner.offsetWidth;
+            }
         }
     } else {
         this.setWidth(this.width);

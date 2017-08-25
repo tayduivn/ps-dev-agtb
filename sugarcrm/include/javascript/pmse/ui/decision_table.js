@@ -52,6 +52,7 @@
         this.decisionTableTemplate = null;
         this.decisionRowTemplate = null;
         this.emptyCellTemplate = null;
+        this.addConclusionButtonOffset = 30;
         DecisionTable.prototype.initObject.call(this, options || {});
     };
 
@@ -81,7 +82,8 @@
             showDirtyIndicator: true,
             currencies: [],
             dateFormat: "YYYY-MM-DD",
-            timeFormat: "H:i",
+            timeFormat: "H:i"
+
         }, that = this;
 
         $.extend(true, defaults, options);
@@ -119,7 +121,8 @@
             dateFormat: this._dateFormat,
             timeFormat: this._timeFormat,
             appendTo: jQuery("#businessrulecontainer").get(0),
-            currencies: this._currencies
+            currencies: this._currencies,
+            useOffsetLeft: true
         });
 
         this.globalDDSelector = new DropdownSelector({
@@ -843,19 +846,21 @@
             var headerPosition = getRelativePosition(column.html, headerContainer);
             var headerWidth = $(column.html).innerWidth();
             var leftWidth = getRelativePosition(this.html, that.html).left + that.globalCBControl.width;
+            var boundingBoxWidth = $(that.html).outerWidth();
 
             that.globalCBControl.setAlignWithOwner("left");
             if (headerPosition.left < 0) {
                 that._isApplyingColumnScrolling = true;
                 tableContainer.scrollLeft += headerPosition.left;
-            } else if (headerPosition.left + headerWidth > $(headerContainer).innerWidth()) {
-                that.globalCBControl.setAlignWithOwner("right");
+            } else if (headerPosition.left > $(headerContainer).innerWidth()) {
                 that._isApplyingColumnScrolling = true;
                 tableContainer.scrollLeft = headerPosition.left + headerWidth +
                     headerContainer.scrollLeft - $(headerContainer).innerWidth();
             }
-            if (leftWidth > $(that.html).outerWidth()) {
+            if (leftWidth > boundingBoxWidth) {
+                var offset = leftWidth - boundingBoxWidth + that.addConclusionButtonOffset;
                 that.globalCBControl.setAlignWithOwner("right");
+                that.globalCBControl.setOffsetLeft(offset);
             }
         };
     };
@@ -1078,7 +1083,6 @@
         };
 
         var html = this.getHTMLFromTemplate(this.decisionTableTemplate, context);
-
         this.dom.businessRulesHeader = $(html).find('tr.business-rules-header').first();
         this.dom.conditionsHeader = $(html).find('#decision-table-conditions-header-column').first();
         this.dom.conclusionsHeader = $(html).find('#decision-table-conclusions-header-column').first();

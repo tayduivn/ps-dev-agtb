@@ -44,6 +44,8 @@ var ExpressionControl = function (settings) {
     this._parent = null;
     this.onOpen = null;
     this.onClose = null;
+    this._useOffsetLeft = false;
+    this._offsetLeft = 0;
     ExpressionControl.prototype.init.call(this, settings);
 };
 
@@ -235,7 +237,8 @@ ExpressionControl.prototype.init = function(settings) {
         onClose: null,
         className: "",
         panelContext: document.body,
-        currencies: []
+        currencies: [],
+        useOffsetLeft: false
     };
 
     jQuery.extend(true, defaults, settings);
@@ -259,7 +262,8 @@ ExpressionControl.prototype.init = function(settings) {
         onItemValueAction: this._onPanelValueGeneration(),
         width: this.width,
         context: defaults.panelContext,
-        className: defaults.className || ""
+        className: defaults.className || "",
+        useOffsetLeft: defaults.useOffsetLeft
     });
 
     this._itemContainer.setOnAddItemHandler(this._onChange())
@@ -285,7 +289,8 @@ ExpressionControl.prototype.init = function(settings) {
         .setAlignWithOwner(defaults.alignWithOwner)
         .setMatchOwnerWidth(defaults.matchOwnerWidth)
         .setOnOpenHandler(defaults.onOpen)
-        .setOnCloseHandler(defaults.onClose);
+        .setOnCloseHandler(defaults.onClose)
+        .setUseOffsetLeft(defaults.useOffsetLeft);
 
     if (defaults.expressionVisualizer) {
         this.showExpressionVisualizer();
@@ -296,6 +301,25 @@ ExpressionControl.prototype.init = function(settings) {
     if (defaults.parent) {
         this._parent = defaults.parent;
     }
+};
+
+/**
+ * Sets the left offset value to use when needed
+ * @param {integer} offsetLeft pixel measurement of the left offset when needed
+ */
+ExpressionControl.prototype.setOffsetLeft = function(offsetLeft) {
+    this._offsetLeft = offsetLeft;
+    this._panel.setOffsetLeft(offsetLeft);
+    return this;
+}
+
+/**
+ * Sets the flag on whether to use a left offset when rendering the field panel
+ * @param {boolean} useOffsetLeft
+ */
+ExpressionControl.prototype.setUseOffsetLeft = function(useOffsetLeft) {
+    this._useOffsetLeft = useOffsetLeft;
+    return this;
 };
 
 ExpressionControl.prototype.setAlignWithOwner = function (alignment) {
