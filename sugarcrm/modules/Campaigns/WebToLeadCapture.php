@@ -33,6 +33,10 @@ $users = array(
 );
 
 $request = InputValidation::getService();
+
+$previousSoftFail = $request->getSoftFail();
+$request->setSoftFail(false);
+
 $redirect = $request->getValidInputPost(
     'redirect',
     array(
@@ -42,6 +46,8 @@ $redirect = $request->getValidInputPost(
     ),
     ''
 );
+
+$request->setSoftFail($previousSoftFail);
 
 if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	    //adding the client ip address
