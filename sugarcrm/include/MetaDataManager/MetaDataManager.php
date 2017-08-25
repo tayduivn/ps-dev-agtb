@@ -3552,7 +3552,9 @@ class MetaDataManager implements LoggerAwareInterface
             self::MM_LAYOUTS,
             self::MM_DATA,
             self::MM_JSSOURCE,
+// BEGIN SUGARCRM flav=ent ONLY
             self::MM_EDITDDFILTERS,
+// END SUGARCRM flav=ent ONLY
         );
     }
 
