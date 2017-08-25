@@ -994,25 +994,39 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          */
         getFieldDef: function(groupDef, reportDef) {
             var sugarApp = SUGAR.App || SUGAR.app || app;
-            var chartModule = reportDef.module || reportDef.base_module;
+            var module = reportDef.module || reportDef.base_module;
 
             if (groupDef.table_key === 'self') {
-                return sugarApp.metadata.getField({name: groupDef.name, module: chartModule});
+                return sugarApp.metadata.getField({name: groupDef.name, module: module});
             }
 
             // Need to parse something like 'Accounts:contacts:assigned_user_link:user_name'
             var relationships = groupDef.table_key.split(':');
-            var fieldsMeta = sugarApp.metadata.getModule(chartModule, 'fields');
+            var fieldsMeta = sugarApp.metadata.getModule(module, 'fields');
             var fieldDef;
             for (var i = 1; i < relationships.length; i++) {
                 var relationship = relationships[i];
                 fieldDef = fieldsMeta[relationship];
-                var module = fieldDef.module;
-                fieldsMeta = sugarApp.metadata.getModule(module || chartModule, 'fields');
+                module = fieldDef.module || this._getModuleFromRelationship(fieldDef.relationship, module);
+                fieldsMeta = sugarApp.metadata.getModule(module, 'fields');
             }
             fieldDef = fieldsMeta[groupDef.name];
             fieldDef.module = fieldDef.module || module;
             return fieldDef;
+        },
+
+        /**
+         * Get the other side's module name
+         *
+         * @param relationshipName
+         * @param module
+         * @return {string} module name
+         * @private
+         */
+        _getModuleFromRelationship: function(relationshipName, module) {
+            var sugarApp = SUGAR.App || SUGAR.app || app;
+            var relationship = sugarApp.metadata.getRelationship(relationshipName);
+            return module === relationship.lhs_module ? relationship.rhs_module : relationship.lhs_module;
         },
 
         /**
