@@ -55,8 +55,8 @@ class InputValidation
 
         $sugarConfig = \SugarConfig::getInstance();
 
-        // Configure softFail mode - disabled by default
-        $softFail = $sugarConfig->get('validation.soft_fail', false);
+        // Configure softFail mode - enabled by default
+        $softFail = $sugarConfig->get('validation.soft_fail', true);
         $request->setSoftFail($softFail);
 
         // Enable compatibility mode - enabled by default
