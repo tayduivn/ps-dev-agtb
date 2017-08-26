@@ -51,7 +51,7 @@ class HighlighterTest extends \PHPUnit_Framework_TestCase
      * @covers ::setPreTags
      * @covers ::setPostTags
      * @covers ::setRequiredFieldMatch
-     * @covers ::setMumberOfFrags
+     * @covers ::setNumberOfFrags
      * @covers ::setFragSize
      * @covers ::setFields
      * @covers ::setDefaultFieldArgs

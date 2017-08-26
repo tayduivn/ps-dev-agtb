@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Query;
 
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
  *
@@ -22,69 +23,6 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class MultiMatchQueryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @covers ::processFieldName
-     * @dataProvider providerProcessFieldName
-     */
-    public function testProcessFieldName($inputField, $module, $field)
-    {
-        $this->markTestSkipped('MultiMatchQuery refactor caused breakage');
-        $mQuery = $this->getMultiMatchQueryMock(array('normalizeFieldName'));
-
-
-        $mQuery->expects($this->any())
-            ->method('normalizeFieldName')
-            ->will($this->returnValue($field));
-
-        list($moduleName, $fieldName) = TestReflection::callProtectedMethod(
-            $mQuery,
-            'processFieldName',
-            array($inputField)
-        );
-
-        $this->assertEquals($moduleName, $module);
-        $this->assertEquals($fieldName, $field);
-    }
-
-    public function providerProcessFieldName()
-    {
-        return array(
-            array(
-                "Contacts__first_name.gs_string_wildcard^0.9",
-                "Contacts",
-                "first_name"
-            ),
-            array(
-                "Contacts__email_search.primary.gs_email^1.95",
-                "Contacts",
-                "email"
-            ),
-            array(
-                "Contacts__email_search.secondary.gs_email_wildcard^0.49",
-                "Contacts",
-                "email"
-            ),
-            //missing boost value
-            array(
-                "Contacts__last_name.gs_string_wildcard",
-                "Contacts",
-                "last_name"
-            ),
-            //missing field def
-            array(
-                "Contacts__first_name",
-                "Contacts",
-                "first_name"
-            ),
-            //missing contact name
-            array(
-                "first_name",
-                "",
-                "first_name"
-            )
-        );
-    }
-
     /**
      * @covers ::setOperator
      * @param $operaor
@@ -149,8 +87,7 @@ class MultiMatchQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetSearchFields()
     {
-        $this->markTestSkipped('MultiMatchQuery refactor caused breakage');
-        $searchFields = array('id', 'name');
+        $searchFields = new SearchFields();
         $multiMatchQueryMock = $this->getMultiMatchQueryMock();
         $multiMatchQueryMock->setSearchFields($searchFields);
         $this->assertSame($searchFields, TestReflection::getProtectedValue($multiMatchQueryMock, 'searchFields'));
@@ -172,24 +109,24 @@ class MultiMatchQueryTest extends \PHPUnit_Framework_TestCase
      * @covers ::buildBoolQuery
      * @covers ::createMultiMatchQuery
      * @covers ::buildMultiMatchQuery
-     * @covers ::createOwnerReadSubQuery
-     * @covers ::createReadAccSubQuery
      *
      *
      * @dataProvider providerTestBuild
      */
     public function testBuild($terms, $operator, $searchFields, $expected)
     {
-        $this->markTestSkipped('MultiMatchQuery refactor caused breakage');
-
-        $multimatchQueryMock = $this->getMultiMatchQueryMock(array('filterSearchFields', 'isFieldAccessible'));
-        $multimatchQueryMock->expects($this->any())
-            ->method('isFieldAccessible')
-            ->will($this->returnValue(true));
+        $multimatchQueryMock = $this->getMultiMatchQueryMock([
+            'getReadAccessibleSearchFields',
+            'getReadOwnerSearchFields',
+        ]);
 
         $multimatchQueryMock->expects($this->any())
-            ->method('filterSearchFields')
+            ->method('getReadAccessibleSearchFields')
             ->will($this->returnValue($searchFields));
+
+        $multimatchQueryMock->expects($this->any())
+            ->method('getReadOwnerSearchFields')
+            ->will($this->returnValue([]));
 
         $multimatchQueryMock->setOperator($operator);
         $userMock = TestMockHelper::getObjectMock($this, '\User');

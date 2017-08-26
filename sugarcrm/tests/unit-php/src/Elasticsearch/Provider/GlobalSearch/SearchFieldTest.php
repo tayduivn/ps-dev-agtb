@@ -23,7 +23,7 @@ class SearchFieldTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::__construct
-     * @covers ::compileSearchField
+     * @covers ::compile
      * @dataProvider providerTestCompileSearchField
      */
     public function testCompileSearchField($module, $field, array $path, $boost, $exp)

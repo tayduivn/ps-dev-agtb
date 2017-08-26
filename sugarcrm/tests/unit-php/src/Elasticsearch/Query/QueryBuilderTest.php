@@ -248,18 +248,22 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuild()
     {
-        $this->markTestSkipped('MultiMatchQuery refactor caused breakage');
-
         // create MultiMatchQuery mock
         $query = TestMockHelper::getObjectMock(
             $this,
             'Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatchQuery',
-            array('filterSearchFields')
+            [
+                'getReadAccessibleSearchFields',
+                'getReadOwnerSearchFields',
+            ]
         );
         $query->setTerms('abc');
         $query->expects($this->any())
-            ->method('filterSearchFields')
-            ->will($this->returnValue(array('id')));
+            ->method('getReadAccessibleSearchFields')
+            ->will($this->returnValue(['id']));
+        $query->expects($this->any())
+            ->method('getReadOwnerSearchFields')
+            ->will($this->returnValue([]));
 
         $queryBuilderMock = $this->getQueryBuilderMock();
         $queryBuilderMock->disableVisibility();
@@ -312,18 +316,22 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteSearch()
     {
-        $this->markTestSkipped('MultiMatchQuery refactor caused breakage');
-
         // create MultiMatchQuery mock
         $query = TestMockHelper::getObjectMock(
             $this,
             'Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatchQuery',
-            array('filterSearchFields')
+            [
+                'getReadAccessibleSearchFields',
+                'getReadOwnerSearchFields',
+            ]
         );
         $query->setTerms('abc');
         $query->expects($this->any())
-            ->method('filterSearchFields')
-            ->will($this->returnValue(array('id')));
+            ->method('getReadAccessibleSearchFields')
+            ->will($this->returnValue(['id']));
+        $query->expects($this->any())
+            ->method('getReadOwnerSearchFields')
+            ->will($this->returnValue([]));
 
         // ResultSet Mock
         $resultSetMock = TestMockHelper::getObjectMock($this, 'Elastica\ResultSet');
