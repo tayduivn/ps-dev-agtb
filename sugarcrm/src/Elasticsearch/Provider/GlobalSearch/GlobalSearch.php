@@ -637,7 +637,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         return $this;
     }
 
-    protected function handleSearchAggregations($builder)
+    protected function handleSearchAggregations(QueryBuilder $builder)
     {
         if ($this->queryCrossModuleAggs || $this->queryModuleAggs) {
             $builder->setAggFilterDefs($this->aggFilters);
