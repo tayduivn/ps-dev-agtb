@@ -181,7 +181,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         $queryBuilderMock->setExplain($explain);
 
         $properties = array('limit', 'offset', 'sort', 'explain');
-        foreach($properties as $property) {
+        foreach ($properties as $property) {
             $this->assertSame($expected[$property], TestReflection::getProtectedValue($queryBuilderMock, $property));
         }
     }

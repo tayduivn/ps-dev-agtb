@@ -100,14 +100,6 @@ class Elastic implements
     /**
      * {@inheritDoc}
      */
-    public function getEsVersion()
-    {
-        return $this->container->client->getVersion();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function scheduleIndexing(array $modules = array(), $clearData = false)
     {
         return $this->container->indexManager->scheduleIndexing($modules, $clearData);

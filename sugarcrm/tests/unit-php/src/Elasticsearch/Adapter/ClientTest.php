@@ -60,10 +60,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         TestReflection::setProtectedValue($client, 'version', $version);
         $this->assertSame($version, $client->getVersion());
 
-        global $sugar_config;
-        $sugar_config['es_version'] = $version;
-        $this->assertSame($version, Client::getEsVersion());
-
         $this->assertTrue(in_array($version, $client->getAllowedVersions()));
     }
 

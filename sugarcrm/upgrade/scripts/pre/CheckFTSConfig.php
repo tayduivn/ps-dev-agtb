@@ -131,7 +131,7 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
      */
     protected function getSugarVersion()
     {
-        $version = $this->to_version; 
+        $version = $this->to_version;
         return empty($version) ? self::VERSION_UNKNOWN : $version;
     }
 }

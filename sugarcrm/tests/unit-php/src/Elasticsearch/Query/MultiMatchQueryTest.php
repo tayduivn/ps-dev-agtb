@@ -393,7 +393,7 @@ class MultiMatchQueryTest extends \PHPUnit_Framework_TestCase
                                     ),
                                 ),
                         ),
-                )
+                ),
             ),
             // Single term, default space operator is 'OR'
             array(
@@ -626,7 +626,7 @@ class MultiMatchQueryTest extends \PHPUnit_Framework_TestCase
                                     ),
                                 ),
                         ),
-                )
+                ),
             ),
         );
     }

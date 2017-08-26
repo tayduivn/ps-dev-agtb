@@ -37,7 +37,7 @@ class TestMockHelper
         $className,
         array $methods = null,
         $disableOriginalConstructor = true
-    ){
+    ) {
         $mockObject = $testCase->getMockBuilder($className);
 
         if ($disableOriginalConstructor) {
@@ -63,7 +63,7 @@ class TestMockHelper
         $className,
         array $methods = null,
         $disableOriginalConstructor = true
-    ){
+    ) {
         $mockObject = $testCase->getMockBuilder($className);
 
         if ($disableOriginalConstructor) {
@@ -107,4 +107,3 @@ class TestMockHelper
         return TestReflection::callProtectedMethod($testCase, 'createPartialMock', array($originalClassName, $methods));
     }
 }
-

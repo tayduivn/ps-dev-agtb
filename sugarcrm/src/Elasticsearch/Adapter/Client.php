@@ -247,29 +247,6 @@ class Client extends BaseClient
     }
 
     /**
-     * to get Elasticsearch version from config file
-     * @return string
-     */
-    public static function getEsVersion()
-    {
-        global $sugar_config;
-        if (empty($sugar_config['es_version'])) {
-            // to query elasticsearch server again
-            $engine = SearchEngine::getInstance();
-            $ftsStatus = $engine->verifyConnectivity(false);
-            if ($ftsStatus === Client::CONN_SUCCESS) {
-                // write running es version to config
-                $sugar_config['es_version'] = $engine->getEsVersion();
-                // save to config.php
-                write_array_to_file( "sugar_config", $sugar_config, "config.php");
-            } else {
-                throw new \Exception("Elasticsearch server is not available.");
-            }
-        }
-        return $sugar_config['es_version'];
-    }
-
-    /**
      * Return array of allowed ES versions
      * @return array
      */
