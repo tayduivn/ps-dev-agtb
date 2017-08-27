@@ -136,6 +136,7 @@ $mod_strings = array (
   'LBL_DASHLET_DELETE' => 'Delete Sugar Dashlet',
   'LBL_DASHLET_REFRESH' => 'Refresh Sugar Dashlet',
   'LBL_DASHLET_EDIT' => 'Edit Sugar Dashlet',
+  'LBL_HOME_DASHBOARD' => 'Home Dashboard',
   'LBL_DASHBOARD_TITLE' => 'Dashboard Title',
   'LBL_CREATE_DASHBOARD_MENU' => 'Create Dashboard',
   'LBL_DASHBOARD_EDIT' => 'Edit Dashboard',

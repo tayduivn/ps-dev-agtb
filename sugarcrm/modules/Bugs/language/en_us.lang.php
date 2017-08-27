@@ -11,6 +11,10 @@
  */
 
 $mod_strings = array (
+  // Dashboard Names
+  'LBL_BUGS_LIST_DASHBOARD' => 'Bugs List Dashboard',
+  'LBL_BUGS_RECORD_DASHBOARD' => 'Bugs Record Dashboard',
+
   'LBL_MODULE_NAME' => 'Bugs',
   'LBL_MODULE_NAME_SINGULAR'	=> 'Bug',
   'LBL_MODULE_TITLE' => 'Bug Tracker: Home',

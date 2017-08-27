@@ -32,10 +32,15 @@
         }
 
         //set current model draggable
-        this.on("render", function() {
-            this.model.trigger("applyDragAndDrop");
+        this.on('render', function() {
+            // If the user has write access, allow drag & drop
+            if (app.acl.hasAccessToModel('edit', this.model)) {
+                this.model.trigger('applyDragAndDrop');
+            } else {
+                this.$('[data-toggle=dashlet]').css('cursor', 'default');
+            }
         }, this);
-        this.context.on("dashboard:collapse:fire", this.collapse, this);
+        this.context.on('dashboard:collapse:fire', this.collapse, this);
     },
 
     /**

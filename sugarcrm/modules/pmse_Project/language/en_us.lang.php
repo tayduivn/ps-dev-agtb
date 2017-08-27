@@ -12,7 +12,6 @@
 
 
 $mod_strings = array (
-
   'LBL_MODULE_NAME' => 'Process Definitions',
   'LBL_MODULE_TITLE' => 'Process Definitions',
   'LBL_MODULE_NAME_SINGULAR' => 'Process Definition',

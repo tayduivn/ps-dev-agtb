@@ -127,7 +127,6 @@
             <!-- <file>./soap/CanGetUserListTest.php</file> -->
             <file>./upgrade/UpgradeFixPdfTest.php</file>
             <file>./upgrade/UpgradeMigrateDashableLists.php</file>
-            <file>./upgrade/scripts/post/RebuildActivitiesDashboardsTest.php</file>
             <file>./upgrade/scripts/post/RemoveDuplicateAccountsContactsTest.php</file>
             <directory>./clients/portal</directory>
             <directory>./include/Dashlets</directory>

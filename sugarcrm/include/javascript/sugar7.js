@@ -407,11 +407,25 @@
             template = Handlebars.compile(app.lang.get(titles[context.get('layout')], module) || ''),
             moduleName = app.lang.getModuleName(module, {plural: true}),
             title;
-        //pass current translated module name and current page's model data
-        title = template(_.extend({
+        var titleInfo = _.extend({
             module: moduleName,
             appId: app.config.systemName || app.config.appId
-        }, model ? model.attributes : {}));
+        }, model ? model.attributes : {});
+
+        // If the model has a name attached (in model.attributes),
+        // we want to check if it's translatable.
+        if (titleInfo.name) {
+            // In the case of Dashboards record view page,
+            // the translation is not stored in the current module,
+            // and we want to look up from the module that dashboard is for
+            if (moduleName === 'Dashboards' && titleInfo.dashboard_module) {
+                titleInfo.name = app.lang.get(titleInfo.name, titleInfo.dashboard_module);
+            } else {
+                titleInfo.name = app.lang.get(titleInfo.name, moduleName);
+            }
+        }
+        title = template(titleInfo);
+
         // title may contain XML entities because Handlebars escapes characters
         // by replacing them for use in HTML, so the true text needs to be
         // lifted before it can be set on the title

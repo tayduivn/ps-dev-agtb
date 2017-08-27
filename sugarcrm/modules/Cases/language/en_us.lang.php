@@ -11,6 +11,10 @@
  */
 
 $mod_strings = array (
+    // Dashboard Names
+    'LBL_CASES_LIST_DASHBOARD' => 'Cases List Dashboard',
+    'LBL_CASES_RECORD_DASHBOARD' => 'Cases Record Dashboard',
+
 	'ERR_DELETE_RECORD'					=> 'You must specify a record number to delete the Account.',
 	'LBL_ACCOUNT_ID'					=> 'Account ID',
 	'LBL_ACCOUNT_NAME'					=> 'Account Name:',

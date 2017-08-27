@@ -13,52 +13,77 @@
 
 class SugarTestDashboardUtilities
 {
+    /**
+     * @var array List of previously created dashboard records.
+     */
     private static $_createdDashboards = array();
 
-    private function __construct() {}
-
-    public static function createDashboard($id = '', $dashboardValues = array())
+    private function __construct()
     {
-        $time = mt_rand();
+    }
+
+    /**
+     * Creates a dashboard record based on the supplied parameters.
+     *
+     * @param string $id Dashboard Id, if none supplied a new one is
+     *  automatically generated.
+     * @param array $properties Array of key-value pairs to be applied as
+     *  dashboard properties. If <code>$properties['name']</code> isn't
+     *  supplied, the dashboard name defaults to 'SugarDashboard <random
+     *  number>', same thing for <code>$properties['dashboard_module']</code>
+     *  which in turn defaults to 'Home' if none supplied.
+     *
+     * @return Dashboard New dashboard record.
+     */
+    public static function createDashboard($id = '', $properties = array())
+    {
+        $random = mt_rand();
         $dashboard = BeanFactory::newBean('Dashboards');
 
-        if (isset($dashboardValues['name'])) {
-            $dashboard->name = $dashboardValues['name'];
-        } else {
-            $dashboard->name = 'SugarDashboard' . $time;
+        $properties = array_merge(array(
+            'name' => 'SugarDashboard' . $random,
+            'dashboard_module' => 'Home',
+        ), $properties);
+
+        foreach ($properties as $property => $value) {
+            $dashboard->$property = $value;
         }
 
-        if (isset($dashboardValues['dashboard_module'])) {
-            $dashboard->dashboard_module = $dashboardValues['dashboard_module'];
-        } else {
-            $dashboard->dashboard_module = 'Home';
-        }
-
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $dashboard->new_with_id = true;
             $dashboard->id = $id;
         }
+
         $dashboard->save();
+
         $GLOBALS['db']->commit();
+
         self::$_createdDashboards[] = $dashboard;
         return $dashboard;
     }
 
+    /**
+     * Remove all previously created dashboards.
+     */
     public static function removeAllCreatedDashboards()
     {
-        $dashboard_ids = self::getCreatedDashboardIds();
-        if (count($dashboard_ids)) {
-            $GLOBALS['db']->query('DELETE FROM dashboards WHERE id IN (\'' . implode("', '", $dashboard_ids) . '\')');
+        $dashboardIds = self::getCreatedDashboardIds();
+        if (count($dashboardIds)) {
+            $GLOBALS['db']->query('DELETE FROM dashboards WHERE id IN (\'' . implode("', '", $dashboardIds) . '\')');
         }
     }
 
+    /**
+     * Returns a list of all the previously created dashboard ids.
+     *
+     * @return array List of ids.
+     */
     public static function getCreatedDashboardIds()
     {
-        $dashboard_ids = array();
+        $dashboardIds = array();
         foreach (self::$_createdDashboards as $dashboard) {
-            $dashboard_ids[] = $dashboard->id;
+            $dashboardIds[] = $dashboard->id;
         }
-        return $dashboard_ids;
+        return $dashboardIds;
     }
 }

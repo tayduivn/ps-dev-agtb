@@ -20,6 +20,11 @@ $mod_strings = array (
     'db_email2' => 'LBL_LIST_EMAIL_ADDRESS',
 
     //END DON'T CONVERT
+
+    // Dashboard Names
+    'LBL_LEADS_LIST_DASHBOARD' => 'Leads List Dashboard',
+    'LBL_LEADS_RECORD_DASHBOARD' => 'Leads Record Dashboard',
+
     'ERR_DELETE_RECORD' => 'A record number must be specified to delete the lead.',
     'LBL_ACCOUNT_DESCRIPTION'=> 'Account Description',
     'LBL_ACCOUNT_ID'=>'Account ID',

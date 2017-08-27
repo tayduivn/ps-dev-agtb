@@ -12,7 +12,6 @@
 
 
 $mod_strings = array (
-
   'LBL_MODULE_NAME' => 'Process Business Rules',
   'LBL_MODULE_TITLE' => 'Process Business Rules',
   'LBL_MODULE_NAME_SINGULAR' => 'Process Business Rule',

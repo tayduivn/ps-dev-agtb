@@ -269,14 +269,15 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function providerTestlookupRoute(){
+    public function providerTestlookupRoute()
+    {
         return array(
-                array(array('Accounts', 'config'), 10, 'foo1'), // default route
-                array(array('Accounts', 'config'), 11, 'foo3'), // exact match version and min/max Version
-                array(array('Accounts', 'config'), 12, 'foo4'), // foo4 has maxVersion specified
-                array(array('Accounts', 'config'), 13, 'foo2'), // foo2 has minVersion
-                array(array('Accounts', 'config'), 14, 'foo5'), // foo5 has higher minVersion
-            );
+            array(array('Accounts', 'config'), 10, 'foo1'), // default route
+            array(array('Accounts', 'config'), 11, 'foo3'), // exact match version and min/max Version
+            array(array('Accounts', 'config'), 12, 'foo4'), // foo4 has maxVersion specified
+            array(array('Accounts', 'config'), 13, 'foo2'), // foo2 has minVersion
+            array(array('Accounts', 'config'), 14, 'foo5'), // foo5 has higher minVersion
+        );
     }
 
     /**
@@ -342,8 +343,8 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-
-    public function providerTestlookupRouteCustom(){
+    public function providerTestlookupRouteCustom()
+    {
         return array(
             array(array('Accounts', 'config'), 10, 'fooCustom1'),
             array(array('Accounts', 'config'), 11, 'fooCustom4'),
@@ -373,10 +374,7 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
         // Make sure we can find the best route
         $route = $vcServiceDict->lookupRoute($path, $version, 'GET', 'base');
         $this->assertEquals($expected, $route['method'], "error in version/route");
-
     }
-
-
 
     protected function registerApiVersionCustomRest()
     {
@@ -420,9 +418,11 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function providerTestlookupRouteModuleAndWildCard(){
+    public function providerTestlookupRouteModuleAndWildCard()
+    {
         return array(
-            array(array(
+            array(
+                array(
                     'fooModule1' => array(
                         'reqType' => 'GET',
                         'path' => array('Accounts', 'config'),
@@ -444,8 +444,12 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
                         'method' => 'fooModule3',
                     ),
                 ),
-                array('Accounts', 'config'), 11, 'fooModule1'),     // exact match wins even no min/max version specified
-            array(array(
+                array('Accounts', 'config'),
+                11,
+                'fooModule1',
+            ), // exact match wins even no min/max version specified
+            array(
+                array(
                     'fooModule1' => array(
                         'reqType' => 'GET',
                         'minVersion' => 11,
@@ -469,8 +473,12 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
                         'method' => 'fooModule3',
                     ),
                 ),
-                array('Accounts', 'config'), 12, 'fooModule3'),     // <module> wins over wildcard ?
-            array(array(
+                array('Accounts', 'config'),
+                12,
+                'fooModule3',
+            ), // <module> wins over wildcard ?
+            array(
+                array(
                     'fooModule1' => array(
                         'reqType' => 'GET',
                         'minVersion' => 11,
@@ -493,7 +501,10 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
                         'method' => 'fooModule3',
                     ),
                 ),
-                array('Accounts', 'config'), 13, 'fooModule3'),     // highest minVersion winds
+                array('Accounts', 'config'),
+                13,
+                'fooModule3',
+            ), // highest minVersion winds
         );
     }
 
@@ -522,7 +533,6 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
         // Make sure we can find the best route
         $route = $vmServiceDict->lookupRoute($path, $version, 'GET', 'any');
         $this->assertEquals($expected, $route['method'], "error in version/route");
-
     }
 
     /**
@@ -533,7 +543,8 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
      *
      * @expectedException \SugarApiExceptionNoMethod
      */
-    public function testExceptionNoEntry(){
+    public function testExceptionNoEntry()
+    {
 
         require_once 'include/utils.php';
         $vServiceDict = $this->getServiceDictionaryRestMock();
@@ -554,21 +565,28 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
      *
      * @expectedException \SugarApiExceptionNoMethod
      */
-    public function testExceptionNoRoute(){
+    public function testExceptionNoRoute()
+    {
 
         require_once 'include/utils.php';
         $vServiceDict = $this->getServiceDictionaryRestMock();
         $vServiceDict->preRegisterEndpoints();
 
-        $vServiceDict->registerEndpoints(array('foo' =>
+        $vServiceDict->registerEndpoints(
             array(
-            'reqType' => 'GET',
-            'minVersion' => 11,
-            'path' => array('Accounts', 'config'),
-            'pathVars' => array('module', 'record'),
-            'method' => 'foo',
-            )
-        ), 'fake/foo.php', 'fooClass', 'base', 0);
+                'foo' => array(
+                    'reqType' => 'GET',
+                    'minVersion' => 11,
+                    'path' => array('Accounts', 'config'),
+                    'pathVars' => array('module', 'record'),
+                    'method' => 'foo',
+                ),
+            ),
+            'fake/foo.php',
+            'fooClass',
+            'base',
+            0
+        );
 
         $vServiceDict->dict = $vServiceDict->getRegisteredEndpoints();
 

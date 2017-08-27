@@ -11,6 +11,10 @@
  */
 
 $mod_strings = array (
+  // Dashboard Names
+  'LBL_TARGETS_LIST_DASHBOARD' => 'Targets List Dashboard',
+  'LBL_TARGETS_RECORD_DASHBOARD' => 'Targets Record Dashboard',
+
   'LBL_MODULE_NAME' => 'Targets',
   'LBL_MODULE_NAME_SINGULAR' => 'Target',
   'LBL_MODULE_ID'   => 'Targets',

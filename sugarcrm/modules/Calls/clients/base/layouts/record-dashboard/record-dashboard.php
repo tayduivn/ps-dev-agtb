@@ -41,4 +41,3 @@ $viewdefs['Calls']['base']['layout']['record-dashboard'] = array(
     ),
     'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
-

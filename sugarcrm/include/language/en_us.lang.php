@@ -128,7 +128,7 @@ $app_list_strings = array (
         'ProductCategories' => 'PG',
         'Quotas' => 'Fo',
         'Tasks' => 'Ts',
-        'Dashboards' => 'Db',
+        'Dashboards' => 'Ds',
     ),
 
   'moduleListSingular' =>
@@ -2102,6 +2102,11 @@ $app_list_strings = array (
     'process_definition_status_dom' => array(
         'ACTIVE' => 'Enabled',
         'INACTIVE' => 'Disabled',
+    ),
+    'dashboard_view_name_list' => array(
+        'record' => 'Record',
+        'records' => 'List',
+        'activities' => 'Activity Stream',
     ),
 );
 

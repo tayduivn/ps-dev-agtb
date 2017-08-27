@@ -31,6 +31,15 @@
     initialize: function(options) {
         _.extend(options.meta, app.metadata.getView(null, 'dashlet-toolbar'), options.meta.toolbar);
         app.view.View.prototype.initialize.call(this, options);
+        var model = this.closestComponent('dashboard') ?
+            this.closestComponent('dashboard').model : this.model;
+
+        /**
+         * A flag to indicate if the dashlet is editable.
+         *
+         * @type {boolean}
+         */
+        this.canEdit = app.acl.hasAccessToModel('edit', model) || false;
     },
 
     /**

@@ -13,34 +13,39 @@
 
 class DashboardTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $dashboardId;
-
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
     }
 
     public function tearDown()
     {
-        if(!empty($this->dashboardId)) {
-            $GLOBALS['db']->query("DELETE FROM dashboards WHERE id='{$this->dashboardId}'");
-        }
+        SugarTestDashboardUtilities::removeAllCreatedDashboards();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset( $GLOBALS['current_user']);
+
+        SugarTestHelper::tearDown();
+
+        parent::tearDown();
     }
 
     public function testGetDashboards()
     {
-         $dashboard = new Dashboard();
-         $this->dashboardId = $dashboard->id = create_guid();
-         $dashboard->new_with_id = 1;
-         $dashboard->name = 'Test';
-         $dashboard->dashboard_module = 'Home';
-         $dashboard->view_name = 'list';
-         $dashboard->save();
-         $dashboard = new dashboard();
-         $options = array('dashboard_module'=>'Home', 'view_name'=>'list');
-         $dashboards = $dashboard->getDashboardsForUser($GLOBALS['current_user'], $options);
+         $dashboard = SugarTestDashboardUtilities::createDashboard(
+             '',
+             array(
+                 'dashboard_module' => 'test_module',
+                 'view_name' => 'test_view',
+             )
+         );
+
+         $dashboards = $dashboard->getDashboardsForUser(
+             $GLOBALS['current_user'],
+             array(
+                 'dashboard_module' => 'test_module',
+                 'view_name' => 'test_view',
+             )
+         );
+
          $this->assertEquals(1, count($dashboards['records']));
     }
 
@@ -51,24 +56,43 @@ class DashboardTest extends Sugar_PHPUnit_Framework_TestCase
      * 2. Retrieving dashboard for user with 'view'
      * 3. Asserting that 'view' and 'view_name' equal to original 'view_name'
      */
-    public function testgetDashboardsForUser()
+    public function testGetDashboardsForUser()
     {
-        $expected = new Dashboard();
-        $expected->name = create_guid();
-        $expected->assigned_user_id = $GLOBALS['current_user'];
-        $expected->dashboard_module = 'Accounts';
-        $expected->view_name = 'records';
-        $expected->save();
-        $this->dashboardId = $expected->id;
+        $expected = SugarTestDashboardUtilities::createDashboard(
+            '',
+            array(
+                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'dashboard_module' => 'test_module',
+                'view_name' => 'test_view',
+            )
+        );
 
-        $actual = $expected->getDashboardsForUser($GLOBALS['current_user'], array(
-                'dashboard_module' => 'Accounts',
-                'view' => 'records',
-            ));
+        $actual = $expected->getDashboardsForUser(
+            $GLOBALS['current_user'],
+            array(
+                'dashboard_module' => 'test_module',
+                'view' => 'test_view',
+            )
+        );
+
         $this->assertNotEmpty($actual);
         $actual = reset($actual['records']);
         $this->assertEquals($expected->id, $actual->id);
         $this->assertEquals($expected->view_name, $actual->view);
         $this->assertEquals($expected->view_name, $actual->view_name);
+    }
+
+    public function testSaveDashboardDefaults()
+    {
+        $dashboard = SugarTestDashboardUtilities::createDashboard(
+            '',
+            array(
+                'name' => 'Test',
+                'dashboard_module' => 'test_module',
+                'view_name' => 'test_list',
+            )
+        );
+        $this->assertEquals($GLOBALS['current_user']->id, $dashboard->assigned_user_id);
+        $this->assertEquals($GLOBALS['current_user']->getPrivateTeamID(), $dashboard->team_id);
     }
 }

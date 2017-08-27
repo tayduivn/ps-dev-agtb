@@ -536,6 +536,14 @@ $rm = new ReflectionMethod($converter, 'resetForecastData');
 $rm->setAccessible(true);
 $rm->invokeArgs($converter, array('RevenueLineItems'));
 //END SUGARCRM flav=ent ONLY
+
+// Create default dashboards
+installLog('creating default dashboards');
+require_once 'modules/Dashboards/DefaultDashboardInstaller.php';
+$defaultDashboardInstaller = new DefaultDashboardInstaller();
+global $moduleList;
+$defaultDashboardInstaller->buildDashboardsFromFiles($moduleList);
+
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
 

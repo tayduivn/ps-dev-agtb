@@ -65,7 +65,7 @@ $viewdefs['KBContents']['base']['layout']['record-dashboard'] = array(
                                                 'module' => 'KBContents',
                                                 'filter' => array(
                                                     'module' => array(
-                                                        'KBContents'
+                                                        'KBContents',
                                                     ),
                                                     'view' => 'record',
                                                 ),

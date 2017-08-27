@@ -18,6 +18,10 @@ $mod_strings = array (
     'db_email1' => 'LBL_LIST_EMAIL_ADDRESS',
     'db_email2' => 'LBL_LIST_OTHER_EMAIL_ADDRESS',
     //END DON'T CONVERT
+    // Dashboard Names
+    'LBL_CONTACTS_LIST_DASHBOARD' => 'Contacts List Dashboard',
+    'LBL_CONTACTS_RECORD_DASHBOARD' => 'Contacts Record Dashboard',
+
     'LNK_CONTACT_REPORTS' => 'View Contact Reports',
     'ERR_DELETE_RECORD' => 'Specify the record number to delete the Contact.',
     'LBL_ACCOUNT_ID' => 'Account ID:',

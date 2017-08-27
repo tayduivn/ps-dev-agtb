@@ -2033,6 +2033,8 @@ abstract class UpgradeDriver
 
 /**
  * Base class for upgrade scripts
+ *
+ * @property DBManager db
  */
 abstract class UpgradeScript
 {

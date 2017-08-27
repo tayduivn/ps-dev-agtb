@@ -977,7 +977,8 @@ describe('Base.View.FilterRows', function() {
                     type: 'relate',
                     id_name: 'team_id',
                     required: false,
-                    readonly: false
+                    readonly: false,
+                    isMultiSelect: true
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(fetchStub).toHaveBeenCalled();
@@ -992,7 +993,8 @@ describe('Base.View.FilterRows', function() {
                     type: 'relate',
                     id_name: 'team_id',
                     required: false,
-                    readonly: false
+                    readonly: false,
+                    isMultiSelect: true
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(fetchStub).not.toHaveBeenCalled();

@@ -109,4 +109,31 @@ describe('Dashboards', function() {
             }
         });
     });
+
+    describe('default field', function() {
+        before(function*() {
+            let response = yield Agent.as('John').post('Dashboards', {name: 'JohnsDashboard'});
+            this.johnsDashboard = response.response.body;
+            this.johnsDashboardEndpoint = `Dashboards/${this.johnsDashboard.id}?fields=default_dashboard`;
+        });
+
+        after(function*() {
+            yield Agent.as('John').delete(this.johnsDashboardEndpoint);
+        });
+
+        it('should be readonly for regular users', function*() {
+            let response = yield Agent.as('John').get(this.johnsDashboardEndpoint);
+            expect(response).to.have.status(200);
+            expect(response.response.body._acl.fields.default_dashboard).to.eql({
+                create: 'no',
+                write: 'no',
+            });
+        });
+
+        it('should be editable for admins', function*() {
+            let response = yield Agent.as(Agent.ADMIN).get(this.johnsDashboardEndpoint);
+            expect(response).to.have.status(200);
+            expect(response.response.body._acl.fields).to.be.empty;
+        });
+    });
 });

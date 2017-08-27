@@ -24,6 +24,10 @@ $mod_strings = array (
     'db_amount' => 'LBL_LIST_AMOUNT',
     'db_date_closed' => 'LBL_LIST_DATE_CLOSED',
     //END DON'T CONVERT
+    // Dashboard Names
+    'LBL_QUOTES_LIST_DASHBOARD' => 'Quotes List Dashboard',
+    'LBL_QUOTES_RECORD_DASHBOARD' => 'Quotes Record Dashboard',
+
     'LBL_CONTRACTS'=>'Contracts',
     'LBL_CONTRACTS_SUBPANEL_TITLE'=>'Contracts',
     'ERR_DELETE_RECORD' => 'A record number must be specified to delete the quote.',
