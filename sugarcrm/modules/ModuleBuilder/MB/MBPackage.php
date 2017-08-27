@@ -13,6 +13,9 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
 
 require_once 'modules/ModuleBuilder/parsers/constants.php';
 
@@ -336,7 +339,26 @@ function buildInstall($path){
     function populateFromPost(){
         $this->description = trim($this->request->getValidInputRequest('description'));
         $this->author = trim($this->request->getValidInputRequest('author'));
-        $this->key = trim($this->request->getValidInputRequest('key', 'Assert\ComponentName'));
+        $this->key = trim($this->request->getValidInputRequest('key'));
+
+        $constraintBuilder = new ConstraintBuilder();
+        $constraints = $constraintBuilder->build('Assert\ComponentName');
+
+        $violations = Validator::getService()->validate($this->key, $constraints);
+        if (count($violations) > 0) {
+            $sugarConfig = \SugarConfig::getInstance();
+            // Check softFail mode - enabled by default
+            $softFail = $sugarConfig->get('validation.soft_fail', true);
+            if (!$softFail) {
+                $GLOBALS['log']->fatal("InputValidation: Violation for REQUEST -> key");
+                throw new ViolationException(
+                    'Violation for REQUEST -> key',
+                    $violations
+                );
+            } else {
+                $GLOBALS['log']->warn("InputValidation: Violation for REQUEST -> key");
+            }
+        }
         $this->readme = trim($this->request->getValidInputRequest('readme'));
     }
 
