@@ -308,6 +308,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             'Assert\ConstraintA',
             'Assert\FailingConstraint',
         ));
+        $request->setSoftFail(false);
+
         $this->assertEquals(2, count($request->getViolations()));
     }
 }
