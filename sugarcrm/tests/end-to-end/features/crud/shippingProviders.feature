@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules
+@crud @modules @ci-excluded
 Feature: ShippingProviders module verification
 
   Background:

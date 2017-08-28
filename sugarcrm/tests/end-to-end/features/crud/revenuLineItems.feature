@@ -7,8 +7,8 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @rli
-Feature: Quotes module verification
+@crud @modules @rli @ci-excluded
+Feature: Revenue Line Items module verification
 
   Background:
     Given I use default account

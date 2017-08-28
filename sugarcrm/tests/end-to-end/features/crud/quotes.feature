@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @quotes-group
+@crud @modules @ci-excluded
 Feature: Quotes module verification
 
   Background:

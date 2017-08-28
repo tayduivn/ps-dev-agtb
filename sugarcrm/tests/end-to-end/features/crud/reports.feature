@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @reports-group
+@crud @modules @reports-group @ci-excluded
 Feature: Reports module verification
 
   Background:
