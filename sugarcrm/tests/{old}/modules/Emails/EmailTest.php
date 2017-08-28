@@ -475,6 +475,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('West', $note->team_id, 'team_id should not have changed');
         //BEGIN SUGARCRM flav=ent ONLY
         $this->assertEquals('West', $note->team_set_selected_id, 'team_set_selected_id should not have changed');
+        //END SUGARCRM flav=ent ONLY
     }
 
     /**
