@@ -3368,7 +3368,7 @@ class MetaDataManager implements LoggerAwareInterface
             return $args['override_values'];
         }
 
-        return array_intersect(array_keys($data), self::$defaultOverrides);
+        return self::$defaultOverrides;
     }
 
     /**
