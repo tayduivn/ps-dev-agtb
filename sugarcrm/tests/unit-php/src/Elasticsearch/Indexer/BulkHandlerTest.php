@@ -218,6 +218,24 @@ class BulkHandlerTest extends \PHPUnit_Framework_TestCase
                     'Unrecoverable indexing failure [500]: autobr4142_accountsonly -> Accounts -> a88802d5-909e-3bc1-c025-5727fd4cb5e8 -> IllegalArgumentException[Document contains at least one immense term in field="Accounts__description" (whose UTF8 encoding is longer than the max length 32766), all of which were skipped.  Please correct the analyzer to not produce such terms., original message: bytes can be at most 32766 in length; got 40003]; nested: MaxBytesLengthExceededException[bytes can be at most 32766 in length; got 40003]; ',
                 ),
             ),
+            // 2 documents, one failure
+            array(
+                2,
+                '{"took":10,"errors":true,"items":[{"index":{"_index":"autobr5598_accountsonly","_type":"Leads","_id":"5d3f72e7-4dee-4208-185f-571fc5d95a9d","_version":1,"status":201}},{"index":{"_index":"autobr4142_accountsonly","_type":"Leads","_id":"633aca08-594e-1ba3-2ec4-5727c4e231e0","status":404,"error":"TypeMissingException[[automaster_shared] type[[Leads, trying to auto create mapping, but dynamic mapping is disabled]] missing]"}}]}',
+                200,
+                array(
+                    'Unrecoverable indexing failure [404]: autobr4142_accountsonly -> Leads -> 633aca08-594e-1ba3-2ec4-5727c4e231e0 -> TypeMissingException[[automaster_shared] type[[Leads, trying to auto create mapping, but dynamic mapping is disabled]] missing]',
+                ),
+            ),
+            // Same as above with 2 documents, but now with an array reported error
+            array(
+                2,
+                '{"took":10,"errors":true,"items":[{"index":{"_index":"autobr5598_accountsonly","_type":"Leads","_id":"5d3f72e7-4dee-4208-185f-571fc5d95a9d","_version":1,"status":201}},{"index":{"_index":"autobr4142_accountsonly","_type":"Leads","_id":"633aca08-594e-1ba3-2ec4-5727c4e231e0","status":404,"error":{"type":"index_closed_exception","reason":"closed","index_uuid":"Km0N3lMIRfGgrs9tPGYIBA","index":"autobr5598_master"}}}]}',
+                200,
+                array(
+                    "Unrecoverable indexing failure [404]: autobr4142_accountsonly -> Leads -> 633aca08-594e-1ba3-2ec4-5727c4e231e0 -> array (   'type' => 'index_closed_exception',   'reason' => 'closed',   'index_uuid' => 'Km0N3lMIRfGgrs9tPGYIBA',   'index' => 'autobr5598_master', )",
+                ),
+            ),
         );
     }
 
