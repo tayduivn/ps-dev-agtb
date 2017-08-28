@@ -521,6 +521,10 @@ class SugarSNIP
 
         $e->id = create_guid();
         $e->new_with_id = true;
+
+        // Don't assign the email to the current user by default.
+        $e->assigned_user_id = null;
+
         //Can't use sugar_bean field definition to determine which fields to import.
         $copyFields = array('from_name','description','description_html','to_addrs','cc_addrs','bcc_addrs','date_sent', 'message_id', 'subject');
         foreach ($copyFields as $field)

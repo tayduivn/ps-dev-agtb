@@ -4042,6 +4042,9 @@ class InboundEmail extends SugarBean {
 			$message = array();
 			$email->id = create_guid();
 			$email->new_with_id = true; //forcing a GUID here to prevent double saves.
+
+            // Don't assign the email to the current user by default.
+            $email->assigned_user_id = null;
 			////	END CREATE SEED EMAIL
 			///////////////////////////////////////////////////////////////////
 
