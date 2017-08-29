@@ -992,7 +992,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * @param reportDef
          * @return {*} array
          */
-        getFieldDef(groupDef, reportDef) {
+        getFieldDef: function(groupDef, reportDef) {
             var sugarApp = SUGAR.App || SUGAR.app || app;
             var chartModule = reportDef.module || reportDef.base_module;
 
