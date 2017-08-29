@@ -40,13 +40,13 @@ class EmailAttachmentRelationship extends One2MBeanRelationship
      * {@inheritdoc}
      * @throws SugarApiExceptionNotAuthorized
      */
-    public function remove($lhs, $rhs, $save = true)
+    public function remove($lhs, $rhs)
     {
         if ($lhs->isArchived() && !$rhs->deleted && !$lhs->deleted) {
             throw new SugarApiExceptionNotAuthorized("Cannot remove from {$this->name} when the email is archived");
         }
 
-        $result = parent::remove($lhs, $rhs, $save);
+        $result = parent::remove($lhs, $rhs);
 
         if ($result && !$rhs->deleted) {
             $rhs->mark_deleted($rhs->id);

@@ -36,9 +36,9 @@ class ACLRoleUserRelationship extends M2MRelationship
     /**
      * {@inheritDoc}
      */
-    public function remove($lhs, $rhs, $save = true)
+    public function remove($lhs, $rhs)
     {
-        $result = parent::remove($lhs, $rhs, $save);
+        $result = parent::remove($lhs, $rhs);
         if ($result) {
             $this->registerUserAclRoles($rhs);
         }
