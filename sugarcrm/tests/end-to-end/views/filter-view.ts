@@ -26,9 +26,23 @@ export default class FilterView extends BaseView {
 
         this.selectors = this.mergeSelectors({
             $: '.search-filter',
-            searchField: '.search-name'
+            searchField: '.search-name',
+            filter: '.search-filter .select2-choice-type',
         });
+
+        this.globalSelectors = {
+            assigned_to_me: '[data-id=assigned_to_me]',
+            my_drafts: '[data-id=my_drafts]',
+            favorites: '[data-id=favorites]',
+            my_received: '[data-id=my_received]',
+            my_sent: '[data-id=my_sent]',
+            all_records: '[data-id=all_records]',
+            recently_created: '[data-id=recently_created]',
+            recently_viewed: '[data-id=recently_viewed]'
+        };
     }
+
+    private globalSelectors: any;
 
     /**
      * Set Search field name with "value"
@@ -36,11 +50,22 @@ export default class FilterView extends BaseView {
      * @param value
      * @returns {*}
      */
-    public async setSearchField (value) {
+    public async setSearchField(value) {
 
         let locator = this.$('searchField');
 
         await seedbed.client.waitForVisible(locator);
         await seedbed.client.setValue(locator, value);
+    }
+
+    public async selectFilter(filterName: string) {
+
+        let locator = this.$('filter');
+
+        await seedbed.client.click(locator);
+
+        await seedbed.client.waitForVisible(locator);
+        await seedbed.client.click(this.globalSelectors[filterName]);
+
     }
 }

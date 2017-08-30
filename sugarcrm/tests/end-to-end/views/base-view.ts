@@ -114,6 +114,7 @@ export default class extends BaseView {
             case 'float':
                 Clazz = FloatField[templateName];
                 break;
+            case 'email-recipients':
             case 'relate':
                 Clazz = RelateField[templateName];
                 break;

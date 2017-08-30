@@ -20,6 +20,14 @@ const whenStepsFilter = function () {
         async (value, view) => {
             await view.setSearchField(value);
         }, true);
+
+    this.When(/^I choose for (\w+) in (#\S+) view$/,
+        async (filterName, view) => {
+
+            await view.selectFilter(filterName);
+
+        }, true);
+
 };
 
 module.exports = whenStepsFilter;
