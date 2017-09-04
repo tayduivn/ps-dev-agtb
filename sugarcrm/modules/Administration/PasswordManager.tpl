@@ -1268,7 +1268,7 @@ clickToEditPassword('#ldap_admin_password', '::PASSWORD::');
                 autoclose: true
             });
         });
-        $(event.target).val('');
+        $(event.target).val(null);
         return true;
     });
 </script>
