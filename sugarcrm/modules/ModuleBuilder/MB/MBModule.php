@@ -975,7 +975,7 @@ class MBModule
         $filepath = $this->getSubpanelFilePath($subpanelName, $client, $bwc);
         $var = $bwc ? 'subpanel_layout' : 'viewdefs';
         if (file_exists($filepath)) {
-            include $filepath;
+            include FileLoader::validateFilePath($filepath);
             if (isset($$var) && is_array($$var)) {
                 return $$var;
             }

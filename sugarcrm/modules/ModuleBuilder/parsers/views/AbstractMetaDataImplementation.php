@@ -403,6 +403,7 @@ abstract class AbstractMetaDataImplementation
     protected function _saveToFile($filename ,$defs ,$useVariables = true, $forPopup = false)
     {
         if (file_exists($filename)) {
+            $filename = FileLoader::validateFilePath($filename);
             unlink($filename);
         }
 
