@@ -81,7 +81,7 @@ class IndexManager
      *
      * @var int|string
      */
-    protected $reindexRefreshInterval = -1;
+    protected $reindexRefreshInterval = '1s';
 
     /**
      * During indexing documents are sent to each replica node on which the
