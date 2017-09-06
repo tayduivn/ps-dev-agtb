@@ -436,16 +436,10 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($address4->id, $bean->email_address_id);
 
         $email->retrieveEmailText();
-        $tos = [
-            "{$contact1->name} <{$contact1->email1}>",
-            "{$contact2->name} <{$address1->email_address}>",
-            "{$contact3->name} <{$address2->email_address}>",
-            "{$lead1->name} <{$lead1->email1}>",
-            "{$lead2->name} <{$address1->email_address}>",
-            $address3->email_address,
-            $address4->email_address,
-        ];
-        $this->assertEquals(implode(', ', $tos), $email->to_addrs_names);
+        $expected = "{$contact1->name} <{$contact1->email1}>, {$contact2->name} <{$address1->email_address}>, " .
+            "{$contact3->name} <{$address2->email_address}>, {$lead1->name} <{$lead1->email1}>, " .
+            "{$lead2->name} <{$address1->email_address}>, {$address3->email_address}, {$address4->email_address}";
+        $this->assertEquals($this->explodeRecipients($expected), $this->explodeRecipients($email->to_addrs_names));
     }
 
     /**
@@ -895,5 +889,25 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         return $ep;
+    }
+
+    /**
+     * Splits the comma-delimited recipients string and returns an array of recipients.
+     *
+     * @param string $recipients
+     * @return array
+     */
+    private function explodeRecipients($recipients)
+    {
+        $recipientArray = array();
+        $exploded = explode(',', $recipients);
+
+        foreach ($exploded as $recipient) {
+            $recipientArray[] = trim($recipient);
+        }
+
+        sort($recipientArray);
+
+        return $recipientArray;
     }
 }
