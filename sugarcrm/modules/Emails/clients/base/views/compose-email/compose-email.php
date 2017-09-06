@@ -123,7 +123,6 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                 ),
                 array(
                     'name' => 'description_html',
-                    'type' => 'htmleditable_tinymce',
                     'dismiss_label' => true,
                     'span' => 12,
                     'tinyConfig' => array(

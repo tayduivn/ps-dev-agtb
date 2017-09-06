@@ -236,10 +236,15 @@ $dictionary['Email'] = array(
         ),
         'description_html' => array(
             'name' => 'description_html',
-            'type' => 'varchar',
+            'type' => 'htmleditable_tinymce',
             'vname' => 'description_html',
             'source' => 'non-db',
             'massupdate' => false,
+            'full_text_search' => array(
+                'enabled' => false,
+                'searchable' => false,
+                'type' => 'text',
+            ),
         ),
         'description' => array(
             'name' => 'description',
@@ -247,8 +252,8 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_TEXT_BODY',
             'source' => 'non-db',
             'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
+                'enabled' => false,
+                'searchable' => false,
                 'type' => 'text',
             ),
             'massupdate' => false,
@@ -429,7 +434,6 @@ $dictionary['Email'] = array(
             'importable' => false,
             'comment' => 'Identifier of email record that this email was a reply to',
             'massupdate' => false,
-            'duplicate_on_record_copy' => 'no',
         ),
         'parent_name' => array(
             'name' => 'parent_name',

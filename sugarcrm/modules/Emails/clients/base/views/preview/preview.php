@@ -73,7 +73,6 @@ $viewdefs['Emails']['base']['view']['preview'] = array(
                 ),
                 array(
                     'name' => 'description_html',
-                    'type' => 'htmleditable_tinymce',
                     'dismiss_label' => true,
                     'readonly' => true,
                     'span' => 12,

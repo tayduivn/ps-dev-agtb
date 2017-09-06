@@ -85,7 +85,6 @@ $viewdefs['Emails']['base']['view']['create'] = array(
                 ),
                 array(
                     'name' => 'description_html',
-                    'type' => 'htmleditable_tinymce',
                     'dismiss_label' => true,
                     'span' => 12,
                     'fieldSelector' => 'archive_html_body',
