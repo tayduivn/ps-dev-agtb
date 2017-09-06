@@ -10,12 +10,19 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\StrategyInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
+
 /**
  * Class EmailsVisibility
  *
  * Additional visibility check for the Emails module.
  */
-class EmailsVisibility extends SugarVisibility
+class EmailsVisibility extends SugarVisibility implements StrategyInterface
 {
     /**
      * Draft emails are only accessible by their assigned user.
@@ -53,5 +60,67 @@ class EmailsVisibility extends SugarVisibility
         }
 
         return $query;
+    }
+
+    /**
+     * No special analyzers are needed.
+     *
+     * {@inheritdoc}
+     */
+    public function elasticBuildAnalysis(AnalysisBuilder $analysisBuilder, Visibility $provider)
+    {
+    }
+
+    /**
+     * Creates a field for the {@link Email::$state} property in the ElasticSearch index.
+     *
+     * {@inheritdoc}
+     */
+    public function elasticBuildMapping(Mapping $mapping, Visibility $provider)
+    {
+        $property = new MultiFieldProperty();
+        $property->setType('keyword');
+        $mapping->addModuleField('state', 'emails_state', $property);
+    }
+
+    /**
+     * The {@link Email::$state} property is already set. No additional work is needed.
+     *
+     * {@inheritdoc}
+     */
+    public function elasticProcessDocumentPreIndex(Document $document, SugarBean $bean, Visibility $provider)
+    {
+    }
+
+    /**
+     * Allows the {@link Email::$state} property to be retrieved directly from the database to improve indexing
+     * performance.
+     *
+     * {@inheritdoc}
+     */
+    public function elasticGetBeanIndexFields($module, Visibility $provider)
+    {
+        return ['state' => 'enum'];
+    }
+
+    /**
+     * Draft emails are only accessible by their assigned user.
+     *
+     * {@inheritdoc}
+     */
+    public function elasticAddFilters(User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider)
+    {
+        $draftFilter = new \Elastica\Query\BoolQuery();
+        $draftFilter->addMust($provider->createFilter('EmailsState', ['state' => Email::STATE_DRAFT]));
+        $draftFilter->addMust($provider->createFilter('Owner', ['user' => $user]));
+
+        $nonDraftFilter = new \Elastica\Query\BoolQuery();
+        $nonDraftFilter->addMustNot($provider->createFilter('EmailsState', ['state' => Email::STATE_DRAFT]));
+
+        $visibilityFilter = new \Elastica\Query\BoolQuery();
+        $visibilityFilter->addShould($draftFilter);
+        $visibilityFilter->addShould($nonDraftFilter);
+
+        $filter->addMust($visibilityFilter);
     }
 }
