@@ -51,7 +51,7 @@ describe('Reports.DataAccuracy.Bool', function() {
             }}
         ];
 
-        leads = yield Fixtures.create(records, {module: module});
+        let leads = yield Fixtures.create(records, {module: module});
         [this.lead1, this.lead2, this.lead3, this.lead4] = leads.Leads;
 
         // Report filtered on records starting with 'DataAccuracy'
@@ -97,17 +97,33 @@ describe('Reports.DataAccuracy.Bool', function() {
                     value: module,
                     module: module,
                     label: 'Leads'
+                },
+                'Leads:assigned_user_link': {
+                    name: 'Leads  \u003E  Assigned to User',
+                    parent: 'self',
+                    link_def: {
+                        name: 'assigned_user_link',
+                        relationship_name: 'leads_assigned_user',
+                        bean_is_lhs: false,
+                        link_type: 'one',
+                        label: 'Assigned to User',
+                        module: 'Users',
+                        table_key: 'Leads:assigned_user_link'
+                    },
+                    dependents: ['Filter.1_table_filter_row_1'],
+                    module: 'Users',
+                    label: 'Assigned to User'
                 }
             },
             filters_def: {
                 Filter_1: {
                     operator: 'AND',
                     0: {
-                        name: 'last_name',
-                        table_key: 'self',
-                        qualifier_name: 'starts_with',
-                        input_name0: 'DataAccuracyLead',
-                        input_name1: 'on'
+                        name: 'id',
+                        table_key: 'Leads:assigned_user_link',
+                        qualifier_name: 'is',
+                        input_name0: this.johnId,
+                        input_name1: 'Smith'
                     }
                 }
             },
@@ -196,7 +212,7 @@ describe('Reports.DataAccuracy.Bool.Runtime', function() {
             }}
         ];
 
-        leads = yield Fixtures.create(records, {module: module});
+        let leads = yield Fixtures.create(records, {module: module});
         [this.lead1, this.lead2, this.lead3, this.lead4] = leads.Leads;
 
         // Report filtered on records starting with 'DataAccuracy'
@@ -242,6 +258,22 @@ describe('Reports.DataAccuracy.Bool.Runtime', function() {
                     value: module,
                     module: module,
                     label: 'Leads'
+                },
+                'Leads:assigned_user_link': {
+                    name: 'Leads  \u003E  Assigned to User',
+                    parent: 'self',
+                    link_def: {
+                        name: 'assigned_user_link',
+                        relationship_name: 'leads_assigned_user',
+                        bean_is_lhs: false,
+                        link_type: 'one',
+                        label: 'Assigned to User',
+                        module: 'Users',
+                        table_key: 'Leads:assigned_user_link'
+                    },
+                    dependents: ['Filter.1_table_filter_row_2'],
+                    module: 'Users',
+                    label: 'Assigned to User'
                 }
             },
             filters_def: {
@@ -262,11 +294,11 @@ describe('Reports.DataAccuracy.Bool.Runtime', function() {
                         input_name0: ['Cold Call']
                     },
                     2: {
-                        name: 'last_name',
-                        table_key: 'self',
-                        qualifier_name: 'starts_with',
-                        input_name0: 'DataAccuracyLead',
-                        input_name1: 'on'
+                        name: 'id',
+                        table_key: 'Leads:assigned_user_link',
+                        qualifier_name: 'is',
+                        input_name0: this.johnId,
+                        input_name1: 'Smith'
                     }
                 }
             },

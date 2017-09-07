@@ -13,7 +13,7 @@ const {Agent, Fixtures} = require('@sugarcrm/thorn');
 const chakram = require('chakram');
 const expect = require('chakram').expect;
 
-describe('Reports.Enum', function() {
+describe('Reports.Int', function() {
     before(function*() {
         let records = {attributes: {user_name: 'John', last_name: 'Smith', status: 'Active'}};
 
@@ -22,34 +22,50 @@ describe('Reports.Enum', function() {
         let johnId = records.Users[0].id;
 
         records = [
-            {attributes: {name: 'accuracy_opp1', opportunity_type: 'New Business',
-                lead_source: 'Cold Call', assigned_user_id: johnId}},
-            {attributes: {name: 'accuracy_opp2', opportunity_type: 'Existing Business',
-                lead_source: 'Existing Customer', assigned_user_id: johnId}},
-            {attributes: {name: 'accuracy_opp3', opportunity_type: 'New Business',
-                lead_source: 'Partner', assigned_user_id: johnId}},
-            {attributes: {name: 'accuracy_opp4', opportunity_type: 'New Business',
-                lead_source: 'Cold Call', assigned_user_id: johnId}},
-            {attributes: {name: 'accuracy_opp5', opportunity_type: 'Existing Business',
-                lead_source: 'Cold Call', assigned_user_id: johnId}}
-        ];
+            /* RevenueLineItems */
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli100', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli200', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli300', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli400', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli500', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli600', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli700', assigned_user_id: johnId}},
 
-        let opportunities = yield Fixtures.create(records, {module: 'Opportunities'});
-        [this.opp1, this.opp2, this.opp3, this.opp4, this.opp5] = opportunities.Opportunities;
+            /* Opportunities */
+            {module: 'Opportunities', attributes: {name: 'accuracy_opp100', opportunity_type: 'Existing Business',
+                assigned_user_id: johnId}},
+            {module: 'Opportunities', attributes: {name: 'accuracy_opp200', opportunity_type: 'New Business',
+                assigned_user_id: johnId}},
+            {module: 'Opportunities', attributes: {name: 'accuracy_opp300', opportunity_type: 'Existing Business',
+                assigned_user_id: johnId}}
+        ];
+        this.records = yield Fixtures.create(records);
+        [this.opp100, this.opp200, this.opp300] = this.records.Opportunities;
+
+        yield Promise.all([
+            Fixtures.link(this.records.RevenueLineItems[0], 'opportunities', this.records.Opportunities[0]),
+            Fixtures.link(this.records.RevenueLineItems[1], 'opportunities', this.records.Opportunities[0]),
+            Fixtures.link(this.records.RevenueLineItems[2], 'opportunities', this.records.Opportunities[1]),
+            Fixtures.link(this.records.RevenueLineItems[3], 'opportunities', this.records.Opportunities[1]),
+            Fixtures.link(this.records.RevenueLineItems[4], 'opportunities', this.records.Opportunities[2]),
+            Fixtures.link(this.records.RevenueLineItems[5], 'opportunities', this.records.Opportunities[2]),
+            Fixtures.link(this.records.RevenueLineItems[6], 'opportunities', this.records.Opportunities[2])
+        ]);
 
         let content = {
             'display_columns': [],
             'module': 'Opportunities',
             'group_defs': [
-                {'name': 'opportunity_type', 'label': 'Type', 'table_key': 'self', 'type': 'enum'},
-                {'name': 'lead_source', 'label': 'Lead Source', 'table_key': 'self', 'type': 'enum'}
+                {'name': 'total_revenue_line_items', 'label': '# of Total Revenue Line Items',
+                    'table_key': 'self', 'type': 'int'},
+                {'name': 'opportunity_type', 'label': 'Type', 'table_key': 'self', 'type': 'enum'}
             ],
             'summary_columns': [
+                {'name': 'total_revenue_line_items', 'label': '# of Total Revenue Line Items', 'table_key': 'self'},
                 {'name': 'opportunity_type', 'label': 'Type', 'table_key': 'self'},
-                {'name': 'lead_source', 'label': 'Lead Source', 'table_key': 'self'},
                 {'name': 'count', 'label': 'Count', 'field_type': '', 'group_function': 'count', 'table_key': 'self'}
             ],
-            'report_name': 'test_enum',
+            'report_name': 'test_int',
             'chart_type': 'vBarF',
             'do_round': 1,
             'chart_description': '',
@@ -95,7 +111,7 @@ describe('Reports.Enum', function() {
         };
 
         let report = {
-            name: 'test_enum',
+            name: 'test_int',
             module: 'Opportunities',
             report_type: 'summary',
             chart_type: 'vBarF',
@@ -112,25 +128,23 @@ describe('Reports.Enum', function() {
         yield Fixtures.cleanup();
     });
 
-    it('should return report data for given 2 grouped by enum fields', function*() {
+    it('should return report data for given grouped by int field', function*() {
         let filter = {
             group_filters: [
-                {'self:opportunity_type': 'New Business'},
-                {'self:lead_source': 'Cold Call'}
+                {'self:total_revenue_line_items': '2'},
+                {'self:opportunity_type': 'Existing Business'}
             ]
         };
         let response = yield Agent.as('John').get('Reports/' + this.reportId + '/records', {qs: filter});
         expect(response).to.have.json('records', (records) => {
-            expect(records).to.have.length(2);
-            let opp1 = records.find((r) => r.id === this.opp1.id);
-            let opp4 = records.find((r) => r.id === this.opp4.id);
-            expect(opp1).to.exist;
-            expect(opp4).to.exist;
+            expect(records).to.have.length(1);
+            let opp100 = records.find((r) => r.id === this.opp100.id);
+            expect(opp100).to.exist;
         });
     });
 });
 
-describe('Reports.Enum.Runtime', function() {
+describe('Reports.Int.Runtime', function() {
     before(function*() {
         let records = {attributes: {user_name: 'John', last_name: 'Smith', status: 'Active'}};
 
@@ -140,24 +154,21 @@ describe('Reports.Enum.Runtime', function() {
 
         records = [
             /* RevenueLineItems */
-            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli100', sales_stage: 'Prospecting',
-                likely_case: '100.0', assigned_user_id: johnId}},
-            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli200', sales_stage: 'Prospecting',
-                likely_case: '200.0', assigned_user_id: johnId}},
-            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli300', sales_stage: 'Prospecting',
-                likely_case: '300.0', assigned_user_id: johnId}},
-            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli400', sales_stage: 'Prospecting',
-                likely_case: '400.0', assigned_user_id: johnId}},
-            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli500', sales_stage: 'Prospecting',
-                likely_case: '500.0', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli100', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli200', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli300', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli400', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli500', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli600', assigned_user_id: johnId}},
+            {module: 'RevenueLineItems', attributes: {name: 'accuracy_rli700', assigned_user_id: johnId}},
 
             /* Opportunities */
             {module: 'Opportunities', attributes: {name: 'accuracy_opp100', opportunity_type: 'Existing Business',
-                lead_source: 'Existing Customer', assigned_user_id: johnId}},
+                assigned_user_id: johnId}},
             {module: 'Opportunities', attributes: {name: 'accuracy_opp200', opportunity_type: 'New Business',
-                lead_source: 'Existing Customer', assigned_user_id: johnId}},
+                assigned_user_id: johnId}},
             {module: 'Opportunities', attributes: {name: 'accuracy_opp300', opportunity_type: 'Existing Business',
-                lead_source: 'Cold Call', assigned_user_id: johnId}}
+                assigned_user_id: johnId}}
         ];
         this.records = yield Fixtures.create(records);
         [this.opp100, this.opp200, this.opp300] = this.records.Opportunities;
@@ -167,33 +178,32 @@ describe('Reports.Enum.Runtime', function() {
             Fixtures.link(this.records.RevenueLineItems[1], 'opportunities', this.records.Opportunities[0]),
             Fixtures.link(this.records.RevenueLineItems[2], 'opportunities', this.records.Opportunities[1]),
             Fixtures.link(this.records.RevenueLineItems[3], 'opportunities', this.records.Opportunities[1]),
-            Fixtures.link(this.records.RevenueLineItems[4], 'opportunities', this.records.Opportunities[2])
+            Fixtures.link(this.records.RevenueLineItems[4], 'opportunities', this.records.Opportunities[2]),
+            Fixtures.link(this.records.RevenueLineItems[5], 'opportunities', this.records.Opportunities[2]),
+            Fixtures.link(this.records.RevenueLineItems[6], 'opportunities', this.records.Opportunities[2])
         ]);
 
         let content = {
             'display_columns': [],
             'module': 'Opportunities',
             'group_defs': [
-                {'name': 'opportunity_type', 'label': 'Type', 'table_key': 'self', 'type': 'enum'},
-                {'name': 'lead_source', 'label': 'Lead Source', 'table_key': 'self', 'type': 'enum'}
+                {'name': 'total_revenue_line_items', 'label': '# of Total Revenue Line Items',
+                    'table_key': 'self', 'type': 'int'},
+                {'name': 'opportunity_type', 'label': 'Type', 'table_key': 'self', 'type': 'enum'}
             ],
             'summary_columns': [
+                {'name': 'total_revenue_line_items', 'label': '# of Total Revenue Line Items',
+                    'table_key': 'self'},
                 {'name': 'opportunity_type', 'label': 'Type', 'table_key': 'self'},
-                {'name': 'lead_source', 'label': 'Lead Source', 'table_key': 'self'},
-                {
-                    'name': 'amount',
-                    'label': 'SUM: Likely',
-                    'field_type': 'currency',
-                    'group_function': 'sum',
-                    'table_key': 'self'
-                }
+                {'name': 'count', 'label': 'Count', 'field_type': '', 'group_function': 'count',
+                    'table_key': 'self'}
             ],
-            'report_name': 'test_enum1',
+            'report_name': 'test_int1',
             'chart_type': 'vBarF',
             'do_round': 1,
             'chart_description': '',
-            'numerical_chart_column': 'self:amount:sum',
-            'numerical_chart_column_type': 'currency',
+            'numerical_chart_column': 'self:count',
+            'numerical_chart_column_type': '',
             'assigned_user_id': johnId,
             'report_type': 'summary',
             'full_table_list': {
@@ -223,14 +233,19 @@ describe('Reports.Enum.Runtime', function() {
                 'Filter_1': {
                     'operator': 'AND',
                     '0': {
-                        'name': 'opportunity_type', 'table_key': 'self', 'qualifier_name': 'not_empty', 'runtime': 1,
-                        'input_name0': 'not_empty', 'input_name1': 'on'
+                        'name': 'total_revenue_line_items',
+                        'table_key': 'self',
+                        'qualifier_name': 'greater',
+                        'runtime': 1,
+                        'input_name0': '1',
+                        'input_name1': 'on'
                     },
                     '1': {
-                        'name': 'lead_source',
+                        'name': 'opportunity_type',
                         'table_key': 'self',
-                        'qualifier_name': 'is_not',
-                        'input_name0': ['Cold Call']
+                        'qualifier_name': 'not_empty',
+                        'input_name0': 'not_empty',
+                        'input_name1': 'on'
                     },
                     '2': {
                         'name': 'id',
@@ -242,8 +257,9 @@ describe('Reports.Enum.Runtime', function() {
                 }
             }
         };
+
         let report = {
-            name: 'test_enum1',
+            name: 'test_int1',
             module: 'Opportunities',
             report_type: 'summary',
             chart_type: 'vBarF',
@@ -260,18 +276,18 @@ describe('Reports.Enum.Runtime', function() {
         yield Fixtures.cleanup();
     });
 
-    it('should return report data for given 2 grouped by enum fields - runtime enabled', function*() {
+    it('should return report data for given grouped by int field - runtime enabled', function*() {
         let filter = {
             group_filters: [
-                {'self:opportunity_type': 'Existing Business'},
-                {'self:lead_source': 'Existing Customer'}
+                {'self:total_revenue_line_items': '3'},
+                {'self:opportunity_type': 'Existing Business'}
             ]
         };
         let response = yield Agent.as('John').get('Reports/' + this.reportId + '/records', {qs: filter});
         expect(response).to.have.json('records', (records) => {
             expect(records).to.have.length(1);
-            let opp100 = records.find((r) => r.id === this.opp100.id);
-            expect(opp100).to.exist;
+            let opp300 = records.find((r) => r.id === this.opp300.id);
+            expect(opp300).to.exist;
         });
     });
 });

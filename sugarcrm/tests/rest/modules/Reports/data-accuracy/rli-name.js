@@ -15,7 +15,7 @@ const expect = require('chakram').expect;
 
 describe('Reports.Name', function() {
     before(function*() {
-        let records = {attributes: {user_name: 'John', status: 'Active'}};
+        let records = {attributes: {user_name: 'John', last_name: 'Smith', status: 'Active'}};
 
         records = yield Fixtures.create(records, {module: 'Users'});
 
@@ -59,6 +59,22 @@ describe('Reports.Name', function() {
                     'value': 'RevenueLineItems',
                     'module': 'RevenueLineItems',
                     'label': 'RevenueLineItems'
+                },
+                'RevenueLineItems:assigned_user_link': {
+                    'name': 'Revenue Line Items  \u003E  Assigned to User',
+                    'parent': 'self',
+                    'link_def': {
+                        'name': 'assigned_user_link',
+                        'relationship_name': 'revenuelineitems_assigned_user',
+                        'bean_is_lhs': false,
+                        'link_type': 'one',
+                        'label': 'Assigned to User',
+                        'module': 'Users',
+                        'table_key': 'RevenueLineItems:assigned_user_link'
+                    },
+                    'dependents': ['Filter.1_table_filter_row_2'],
+                    'module': 'Users',
+                    'label': 'Assigned to User'
                 }
             },
             'filters_def': {
@@ -70,6 +86,13 @@ describe('Reports.Name', function() {
                         'qualifier_name': 'starts_with',
                         'input_name0': 'accuracy_rli',
                         'input_name1': 'on'
+                    },
+                    '1': {
+                        'name': 'id',
+                        'table_key': 'RevenueLineItems:assigned_user_link',
+                        'qualifier_name': 'is',
+                        'input_name0': johnId,
+                        'input_name1': 'Smith'
                     }
                 }
             }
@@ -111,7 +134,7 @@ describe('Reports.Name', function() {
 
 describe('Reports.Name.Runtime', function() {
     before(function*() {
-        let records = {attributes: {user_name: 'John', status: 'Active'}};
+        let records = {attributes: {user_name: 'John', last_name: 'Smith', status: 'Active'}};
 
         records = yield Fixtures.create(records, {module: 'Users'});
 
@@ -128,7 +151,7 @@ describe('Reports.Name.Runtime', function() {
                 likely_case: '400.0', assigned_user_id: johnId}}
         ];
 
-        let rli = yield Fixtures.create(records, {module: 'Opportunities'});
+        let rli = yield Fixtures.create(records, {module: 'RevenueLineItems'});
         [this.rli1, this.rli2, this.rli3, this.rli4] = rli.RevenueLineItems;
 
         let content = {
@@ -157,6 +180,22 @@ describe('Reports.Name.Runtime', function() {
                     'value': 'RevenueLineItems',
                     'module': 'RevenueLineItems',
                     'label': 'RevenueLineItems'
+                },
+                'RevenueLineItems:assigned_user_link': {
+                    'name': 'Revenue Line Items  \u003E  Assigned to User',
+                    'parent': 'self',
+                    'link_def': {
+                        'name': 'assigned_user_link',
+                        'relationship_name': 'revenuelineitems_assigned_user',
+                        'bean_is_lhs': false,
+                        'link_type': 'one',
+                        'label': 'Assigned to User',
+                        'module': 'Users',
+                        'table_key': 'RevenueLineItems:assigned_user_link'
+                    },
+                    'dependents': ['Filter.1_table_filter_row_2'],
+                    'module': 'Users',
+                    'label': 'Assigned to User'
                 }
             },
             'filters_def': {
@@ -176,6 +215,13 @@ describe('Reports.Name.Runtime', function() {
                         'qualifier_name': 'not_empty',
                         'input_name0': 'not_empty',
                         'input_name1': 'on'
+                    },
+                    '2': {
+                        'name': 'id',
+                        'table_key': 'RevenueLineItems:assigned_user_link',
+                        'qualifier_name': 'is',
+                        'input_name0': johnId,
+                        'input_name1': 'Smith'
                     }
                 }
             }

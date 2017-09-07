@@ -26,7 +26,7 @@ describe('Reports.DataAccuracy.Date.Opp', function() {
 
         this.now = new Date().valueOf();
 
-        records = [
+        let records = [
             // close date 2017-08, type New Business
             {
                 attributes: {
@@ -144,17 +144,33 @@ describe('Reports.DataAccuracy.Date.Opp', function() {
                     value: module,
                     module: module,
                     label: module
+                },
+                'Opportunities:assigned_user_link': {
+                    name: 'Opportunities  \u003E  Assigned to User',
+                    parent: 'self',
+                    link_def: {
+                        name: 'assigned_user_link',
+                        relationship_name: 'opportunities_assigned_user',
+                        bean_is_lhs: false,
+                        link_type: 'one',
+                        label: 'Assigned to User',
+                        module: 'Users',
+                        table_key: 'Opportunities:assigned_user_link'
+                    },
+                    dependents: ['Filter.1_table_filter_row_1'],
+                    module: 'Users',
+                    label: 'Assigned to User'
                 }
             },
             filters_def: {
                 Filter_1: {
                     operator: 'AND',
                     0: {
-                        name: 'name',
-                        table_key: 'self',
-                        qualifier_name: 'starts_with',
-                        input_name0: this.now + '_Opp',
-                        input_name1: 'on'
+                        name: 'id',
+                        table_key: 'Opportunities:assigned_user_link',
+                        qualifier_name: 'is',
+                        input_name0: this.johnId,
+                        input_name1: 'Smith'
                     }
                 }
             },
@@ -207,7 +223,7 @@ describe('Reports.DataAccuracy.Date.RLI', function() {
 
         this.now = new Date().valueOf();
 
-        records = [
+        let records = [
             {attributes:
                 {
                     name: this.now + '_RLI1',
@@ -294,24 +310,40 @@ describe('Reports.DataAccuracy.Date.RLI', function() {
                     value: module,
                     module: module,
                     label: module
+                },
+                'RevenueLineItems:assigned_user_link': {
+                    name: 'Revenue Line Items  \u003E  Assigned to User',
+                    parent: 'self',
+                    link_def: {
+                        name: 'assigned_user_link',
+                        relationship_name: 'revenuelineitems_assigned_user',
+                        bean_is_lhs: false,
+                        link_type: 'one',
+                        label: 'Assigned to User',
+                        module: 'Users',
+                        table_key: 'RevenueLineItems:assigned_user_link'
+                    },
+                    dependents: ['Filter.1_table_filter_row_1'],
+                    module: 'Users',
+                    label: 'Assigned to User'
                 }
             },
             filters_def: {
                 Filter_1: {
                     operator: 'AND',
                     0: {
-                        name: 'name',
-                        table_key: 'self',
-                        qualifier_name: 'starts_with',
-                        input_name0: this.now + '_RLI',
-                        input_name1: 'on'
-                    },
-                    1: {
                         name: 'date_closed',
                         table_key: 'self',
                         qualifier_name: 'after',
                         input_name0: '2017-08-31',
                         input_name1: 'on'
+                    },
+                    1: {
+                        name: 'id',
+                        table_key: 'RevenueLineItems:assigned_user_link',
+                        qualifier_name: 'is',
+                        input_name0: this.johnId,
+                        input_name1: 'Smith'
                     }
                 }
             },
