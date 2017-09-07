@@ -1171,6 +1171,16 @@
             }
         });
 
+        // Note: #businessruledesigner is the current element that scrolls.
+        // Once the fixed header feature is implemented this might need to be changed.
+        $('#businessruledesigner').on('scroll', function() {
+            if (self.globalCBControl && self.globalCBControl.isOpen()) {
+                self.globalCBControl.close();
+            }
+            if (self.globalDDSelector && self.globalDDSelector.isOpen()) {
+                self.globalDDSelector.close();
+            }
+        });
 
         return this;
     };
