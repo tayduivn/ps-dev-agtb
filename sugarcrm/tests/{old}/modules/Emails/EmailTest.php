@@ -901,25 +901,27 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         // Need a configuration to use to send the email, even when faking the send.
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
 
+        $contact = SugarTestContactUtilities::createContact();
+
         // Create a draft that will be sent.
         $data = array(
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => $config->getConfigId(),
-            'name' => 'foo',
-            'description_html' => '<b>bar</b>',
-            'description' => 'bar',
+            'name' => 'Welcome $contact_first_name',
+            'description_html' => 'Hello <b>$contact_first_name</b>',
+            'parent_type' => 'Contacts',
+            'parent_id' => $contact->id,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
 
-        // Send to an arbitrary email address.
+        // Send to the contact.
         $email->load_relationship('to');
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
         $ep = BeanFactory::newBean('EmailParticipants');
         $ep->new_with_id = true;
         $ep->id = Uuid::uuid1();
         BeanFactory::registerBean($ep);
-        $ep->email_address_id = $address->id;
-        $ep->email_address = $address->email_address;
+        $ep->parent_type = 'Contacts';
+        $ep->parent_id = $contact->id;
         $email->to->add($ep);
 
         // Send the email.
@@ -933,10 +935,16 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame('out', $email->type, 'Should be out');
         $this->assertSame('sent', $email->status, 'Should be sent');
         $this->assertNotEmpty($email->message_id, 'Should have a Message-ID');
+        $this->assertSame("Welcome {$contact->first_name}", $email->name, 'Incorrect subject');
+
+        $email->retrieveEmailText();
+        $this->assertSame("Hello <b>{$contact->first_name}</b>", $email->description_html, 'Incorrect HTML part');
+        $this->assertSame("Hello {$contact->first_name}", $email->description, 'Incorrect text part');
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->to_addrs_names);
 
         // Restore the environment.
         OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
-        SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         $td->allow_cache = $tdCache;
     }
 

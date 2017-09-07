@@ -4251,6 +4251,11 @@ eoq;
         $this->description = $this->decodeDuringSend(from_html($this->description));
         $this->description_html = $this->decodeDuringSend(from_html($this->description_html));
 
+        // A plain-text part must be sent with the HTML part.
+        if (!empty($this->description_html) && empty($this->description)) {
+            $this->description = strip_tags(br2nl($this->description_html));
+        }
+
         try {
             $mailer = MailerFactory::getMailer($config);
             $mailer->setSubject($this->name);
