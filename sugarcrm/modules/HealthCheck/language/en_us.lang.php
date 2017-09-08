@@ -243,6 +243,10 @@ $mod_strings = array(
     'LBL_SCAN_552_TITLE' => 'Use of removed Underscore APIs in %s',
     'LBL_SCAN_553_TITLE' => 'Use of removed Sidecar Bean APIs in %s',
     'LBL_SCAN_554_TITLE' => 'Sidecar controller %s extends from removed Sidecar controller',
+    'LBL_SCAN_570_TITLE' => 'Unexpected values found in emails',
+    'LBL_SCAN_571_TITLE' => 'Custom file contains code that has been deprecated',
+    'LBL_SCAN_572_TITLE' => 'There is a name conflict with a custom file',
+    'LBL_SCAN_573_TITLE' => 'There is a name conflict with a custom help file',
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_TITLE' => 'Unsupported Upgrader version',
