@@ -501,7 +501,8 @@ class QueueManager
         $beanFields[] = 'deleted';
 
         $sq = new \SugarQuery();
-        $sq->from($bean, array('add_deleted' => false));
+        // disable team security
+        $sq->from($bean, array('add_deleted' => false, 'team_security' => false));
         $sq->select($beanFields);
         $sq->limit($this->maxBulkQueryThreshold);
 
