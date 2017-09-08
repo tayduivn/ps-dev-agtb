@@ -79,30 +79,25 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                '{"error":"IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared] missing]","status":400}',
-                "0e787f44c65e77fc6ac2c4fac1a01c65_shared/",
+                '{"error":{"reason":"no such index","index":"0e787f44_shared"},"status":404}',
+                "0e787f44_shared/",
                 "DELETE",
                 true,
             ),
+            // not 'DELETE' method
             array(
-                '{"error":"IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65] missing]","status":400}',
-                "0e787f44c65e77fc6ac2c4fac1a01c65/",
-                "DELETE",
-                true,
-            ),
-            array(
-                '{"error":"IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared] missing]","status":400}',
-                "0e787f44c65e77fc6ac2c4fac1a01c65_shared/",
+                '{"error":{"reason":"no such index","index":"0e787f44_shared"},"status":404}',
+                "0e787f44_shared/",
                 "GET",
                 false,
             ),
+            // not 'no such index' error
             array(
-                '{"error":"IndexAlreadyExistsException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared]]","status":400}',
-                "0e787f44c65e77fc6ac2c4fac1a01c65_shared/",
+                '{"error":{"reason":"unknown reason","index":"0e787f44_shared"},"status":404}',
+                "0e787f44_shared/",
                 "DELETE",
                 false,
             )
         );
     }
-
 }

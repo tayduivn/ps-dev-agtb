@@ -101,9 +101,9 @@ class Logger extends BaseLogger
             $method = $e->getRequest()->getMethod();
             $expMsg = $e->getMessage();
 
-            // Method expected to be "DELETE" and contains IndexMissingException
-            // example: "IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared] missing]"
-            if ($method === Request::DELETE && strpos($expMsg, "IndexMissingException") !== false) {
+            // Method expected to be "DELETE" and contains msg as 'no such index'
+            // example: "no such index [index: ee8562926e4403e4d990035a1b1e407d_shared]"
+            if ($method === Request::DELETE && strpos($expMsg, "no such index") !== false) {
                 return true;
             }
         }
