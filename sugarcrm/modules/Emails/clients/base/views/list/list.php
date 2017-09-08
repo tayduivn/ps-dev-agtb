@@ -71,6 +71,13 @@ $viewdefs['Emails']['base']['view']['list'] = array(
                     'default' => true,
                     'sortable' => false,
                 ),
+                array(
+                    'name' => 'mailbox_name',
+                    'enabled' => true,
+                    'default' => false,
+                    'link' => false,
+                    'sortable' => false,
+                ),
             ),
         ),
     ),

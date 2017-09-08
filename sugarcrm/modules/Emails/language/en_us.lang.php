@@ -463,4 +463,5 @@ You may apply a predefined template using the Template button or include one of 
     'LBL_OUTBOUND_EMAIL_ID_HELP' => 'An asterisk (*) indicates the system account.',
 
     'LBL_SHORTCUT_EMAIL_SEND' => 'Send email',
+    'LBL_MAILBOX' => 'Inbound Account',
 );
