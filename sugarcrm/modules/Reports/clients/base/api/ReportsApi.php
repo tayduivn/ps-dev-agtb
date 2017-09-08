@@ -167,7 +167,6 @@ class ReportsApi extends ModuleApi
                                 $filterRow['input_name1'] = $value[1];
                             }
                             break;
-                        // TODO: more types
                         case 'radioenum':
                         case 'id':
                             $filterRow['qualifier_name'] = 'is';
