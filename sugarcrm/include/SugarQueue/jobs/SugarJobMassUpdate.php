@@ -281,7 +281,7 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
                 // triggered start events so they can continue to trigger.
                 Registry\Registry::getInstance()->drop('triggered_starts');
                 $bean->save($check_notify);
-            } catch ( SugarApiExceptionNotAuthorized $e ) {
+            } catch (SugarApiException $e) {
                 // ACL's might not let them modify this bean, but we should still do the rest
                 $failed++;
                 continue;
