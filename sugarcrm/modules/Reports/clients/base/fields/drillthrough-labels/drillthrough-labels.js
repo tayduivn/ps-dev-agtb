@@ -30,15 +30,22 @@
     format: function(value) {
         var params = this.context.get('dashConfig');
         var reportDef = this.context.get('reportData');
-        var groupDefs = SUGAR.charts.getGrouping(reportDef);
         var chartModule = this.context.get('chartModule');
-
-        var group = SUGAR.charts.getFieldDef(groupDefs[0], reportDef);
-        this.groupName = app.lang.get(group.vname, group.module || chartModule) + ': ';
-        this.groupValue = params.groupLabel;
-
+        var filterDef = this.context.get('filterDef');
+        var filterFields = _.flatten(_.map(filterDef, function(filter) {
+            return _.keys(filter);
+        }));
+        var groupDefs = _.filter(reportDef.group_defs, function(groupDef) {
+            var groupField = groupDef.table_key + ':' + groupDef.name;
+            return _.contains(filterFields, groupField);
+        });
+        if (groupDefs.length > 0) {
+            var group = SUGAR.charts.getFieldDef(groupDefs[0], reportDef);
+            this.groupName = app.lang.get(group.vname, group.module || chartModule) + ': ';
+            this.groupValue = params.groupLabel;
+        }
         if (groupDefs.length > 1) {
-            var series = SUGAR.charts.getFieldDef(_.last(groupDefs), reportDef);
+            var series = SUGAR.charts.getFieldDef(groupDefs[1], reportDef);
             this.seriesName = app.lang.get(series.vname, series.module || chartModule) + ': ';
             this.seriesValue = params.seriesLabel;
         }

@@ -74,7 +74,11 @@ describe('Reports.Fields.DrillthroughLabels', function() {
             }];
             field.context.set('reportData', {group_defs: groupDefs});
 
-            getGroupingStub.returns(groupDefs);
+            var filterDef = [{
+                'self:industry': 'Biotechnology'
+            }];
+            field.context.set('filterDef', filterDef);
+
             getFieldDefStub.withArgs(groupDefs[0]).returns({
                     name: 'industry',
                     type: 'enum',
@@ -124,7 +128,12 @@ describe('Reports.Fields.DrillthroughLabels', function() {
             ];
             field.context.set('reportData', {group_defs: groupDefs});
 
-            getGroupingStub.returns(groupDefs);
+            var filterDef = [
+                {'self:industry': 'Biotechnology'},
+                {'self:account_type': 'Customer'}
+            ];
+            field.context.set('filterDef', filterDef);
+
             getFieldDefStub.withArgs(groupDefs[0]).returns({
                 name: 'industry',
                 type: 'enum',
@@ -145,6 +154,66 @@ describe('Reports.Fields.DrillthroughLabels', function() {
             expect(field.seriesName).toBe('Type: ');
             expect(field.seriesValue).toBe('Customer');
         });
-    });
 
+        it('should set group only when both are present but only filter by one', function() {
+            var meta = {
+                fields: {
+                    industry: {
+                        name: 'industry',
+                        type: 'enum',
+                        vname: 'LBL_INDUSTRY'
+                    },
+                    account_type: {
+                        name: 'account_type',
+                        type: 'enum',
+                        vname: 'LBL_TYPE'
+                    }
+                }
+            };
+            SugarTest.testMetadata.updateModuleMetadata(chartModule, meta);
+            SugarTest.testMetadata.set();
+
+            var dashConfig = {groupLabel: 'Biotechnology'};
+            field.context.set('dashConfig', dashConfig);
+
+            var groupDefs = [
+                {
+                    name: 'industry',
+                    table_key: 'self',
+                    label: 'Industry'
+                },
+                {
+                    name: 'account_type',
+                    table_key: 'self',
+                    label: 'Type'
+                }
+            ];
+            field.context.set('reportData', {group_defs: groupDefs});
+
+            var filterDef = [
+                {'self:industry': 'Biotechnology'}
+            ];
+            field.context.set('filterDef', filterDef);
+
+            getFieldDefStub.withArgs(groupDefs[0]).returns({
+                name: 'industry',
+                type: 'enum',
+                vname: 'LBL_INDUSTRY',
+                module: 'Accounts'
+            });
+
+            getFieldDefStub.withArgs(groupDefs[1]).returns({
+                name: 'account_type',
+                type: 'enum',
+                vname: 'LBL_TYPE',
+                module: 'Accounts'
+            });
+
+            field.format();
+            expect(field.groupName).toBe('Industry: ');
+            expect(field.groupValue).toBe('Biotechnology');
+            expect(field.seriesName).toBe(undefined);
+            expect(field.seriesValue).toBe(undefined);
+        });
+    });
 });

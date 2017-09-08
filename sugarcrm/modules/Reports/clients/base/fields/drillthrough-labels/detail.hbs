@@ -11,10 +11,12 @@
  */
 --}}
 <div {{#if seriesValue}}class="series-adjust"{{/if}}>
-    <div class="ellipsis_inline">
-        <span class="record-label">{{groupName}}</span>
-        <span>{{groupValue}}</span>
-    </div>
+    {{#if groupValue}}
+        <div class="ellipsis_inline">
+            <span class="record-label">{{groupName}}</span>
+            <span>{{groupValue}}</span>
+        </div>
+    {{/if}}
     {{#if seriesValue}}
         <div class="ellipsis_inline">
             <span class="record-label">{{seriesName}}</span>
