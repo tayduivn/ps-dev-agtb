@@ -31,6 +31,7 @@ describe('htmleditable_tinymce', function() {
                 return $textarea;
             });
             sandbox.stub(field, 'destroyTinyMCEEditor', $.noop());
+            sandbox.stub(field, '_iframeHasBody').returns(false);
             tinymce = $.fn.tinymce;
             $.fn.tinymce = $.noop;
         });
@@ -46,7 +47,7 @@ describe('htmleditable_tinymce', function() {
             sandbox.stub(field, 'initTinyMCEEditor', $.noop());
             field.render();
 
-            expect(edit.calledOnce).toBeTruthy();
+            expect(edit.called).toBeTruthy();
             expect(view.called).toBeFalsy();
         });
 
@@ -124,6 +125,7 @@ describe('htmleditable_tinymce', function() {
             sandbox.stub(field, '_getHtmlEditableField', function() {
                 return $textarea;
             });
+            sandbox.stub(field, '_iframeHasBody').returns(false);
             sandbox.stub(field, 'destroyTinyMCEEditor', $.noop());
         });
 
@@ -138,7 +140,7 @@ describe('htmleditable_tinymce', function() {
             field.render();
 
             expect(edit.called).toBeFalsy();
-            expect(view.calledOnce).toBeTruthy();
+            expect(view.called).toBeTruthy();
         });
 
         it('should not return TinyMCE editor', function() {
@@ -195,7 +197,7 @@ describe('htmleditable_tinymce', function() {
                     }
                 };
             });
-
+            sandbox.stub(field, '_iframeHasBody').returns(true);
             sandbox.stub(field, '_getHtmlEditableField', function() {
                 return $textarea;
             });

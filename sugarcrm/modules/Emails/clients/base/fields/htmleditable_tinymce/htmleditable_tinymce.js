@@ -142,6 +142,77 @@
     },
 
     /**
+     * Suppress calling the sidecar _render method in detail view
+     *
+     * @inheritdoc
+     */
+    _render: function() {
+        if (this._isEditView()) {
+            this._super('_render');
+        } else {
+            this.destroyTinyMCEEditor();
+            this._renderView();
+        }
+        return this;
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _renderEdit: function(options) {
+        this.$el.toggleClass('detail', false).toggleClass('edit', true);
+        this._super('_renderEdit');
+    },
+
+    /**
+     * Replicate the sidecar render logic for detail view except for
+     * manually appending an iframe instead of invoking the template
+     *
+     * @inheritdoc
+     */
+    _renderView: function() {
+        var iFrame;
+
+        // sets this.tplName and this.action
+        this._loadTemplate();
+
+        if (this.model instanceof Backbone.Model) {
+            this.value = this.getFormattedValue();
+        }
+
+        this.dir = _.result(this, 'direction');
+
+        if (app.lang.direction === this.dir) {
+            delete this.dir;
+        }
+
+        this.unbindDom();
+
+        // begin custom rendering
+        this.$el.toggleClass('detail', true).toggleClass('edit', false);
+
+        if (this.$el.find('iframe').length === 0) {
+            iFrame = $('<iframe>', {
+                src: '',
+                class: 'htmleditable' + (this.def.span ? ' span' + this.def.span : ''),
+                frameborder: 0,
+                name: this.name
+            });
+            iFrame.appendTo(this.$el);
+        }
+
+        this.setViewContent(this.value);
+        // end custom rendering
+
+        if (this.def && this.def.css_class) {
+            this.getFieldElement().addClass(this.def.css_class);
+        }
+
+        this.$(this.fieldTag).attr('dir', this.dir);
+        this.bindDomChange();
+    },
+
+    /**
      * @inheritdoc
      *
      * Resize the field's container based on the height of the iframe content
@@ -181,10 +252,10 @@
      * @return {number} Returns 0 if the iframe isn't found.
      */
     _getContentHeight: function() {
-        var field = this._getHtmlEditableField();
+        var editable = this._getHtmlEditableField();
 
-        if (!_.isUndefined(field.get(0)) && !_.isEmpty(field.get(0).contentDocument)) {
-            return field.contents().find('body')[0].offsetHeight;
+        if (this._iframeHasBody(editable)) {
+            return editable.contents().find('body')[0].offsetHeight;
         }
 
         return 0;

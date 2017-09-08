@@ -280,6 +280,8 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
                         null,
                         true
                     );
+
+                    sandbox.stub(field, '_iframeHasBody').returns(false);
                     sandbox.stub(field, '_getHtmlEditableField').returns($textarea);
                     sandbox.stub(field, 'destroyTinyMCEEditor');
                     sandbox.stub(field, '_getContentHeight').returns(contentHeight);
@@ -308,6 +310,8 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
                 null,
                 true
             );
+
+            sandbox.stub(field, '_iframeHasBody').returns(false);
             sandbox.stub(field, '_getHtmlEditableField').returns($textarea);
             sandbox.stub(field, 'destroyTinyMCEEditor');
 
