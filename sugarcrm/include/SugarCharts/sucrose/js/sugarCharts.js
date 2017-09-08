@@ -691,7 +691,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             fiscalYear = new Date().getFullYear();
 
             sugarApp.api.call('GET', sugarApp.api.buildURL('TimePeriods/' + fiscalYear + '-01-01'), null, {
-                success: _.bind(this.setFiscalStateDate, this),
+                success: _.bind(this.setFiscalStartDate, this),
                 error: _.bind(function() {
                     // Needed to catch the 404 in case there isnt a current timeperiod
                 }, this)
@@ -703,7 +703,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          *
          * @param firstQuarter the currently configured fiscal time period
          */
-        setFiscalStateDate: function(firstQuarter) {
+        setFiscalStartDate: function(firstQuarter) {
             var sugarApp = SUGAR.App || SUGAR.app || app;
             var fiscalYear = new Date().getFullYear();
             var quarterNumber = firstQuarter.name.match(/.*Q(\d{1})/)[1];  // [1-4]
@@ -848,9 +848,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             } else {
                 switch (type) {
                     case 'bool':
-                        if (sugarApp.lang.getAppListStrings('dom_switch_bool').on == label) {
+                        if (sugarApp.lang.getAppListStrings('dom_switch_bool').on === label) {
                             values.push('1');
-                        } else if (sugarApp.lang.getAppListStrings('dom_switch_bool').off == label) {
+                        } else if (sugarApp.lang.getAppListStrings('dom_switch_bool').off === label) {
                             values.push('0');
                         }
                         break;
@@ -1126,6 +1126,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     return SUGAR.App.lang.get(appString, module);
                 } else {
                     return SUGAR.App.lang.get(appString);
+                }
+            } else if (app) {
+                if (module) {
+                    return app.lang.get(appString, module);
+                } else {
+                    return app.lang.get(appString);
                 }
             } else {
                 return appString;

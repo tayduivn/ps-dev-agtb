@@ -14,5 +14,6 @@
     "tests/unit-js/modules/**/clients/base/**/*.js",
     "tests/unit-js/include/javascript/sugar7/*.js",
     "tests/unit-js/include/javascript/sugar7/**/*.js",
-    "tests/unit-js/include/javascript/twitterbootstrap/**/*.js"
+    "tests/unit-js/include/javascript/twitterbootstrap/**/*.js",
+    "tests/unit-js/include/SugarCharts/sucrose/js/*.js"
 ]
