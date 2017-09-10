@@ -658,7 +658,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * @param labels an array of grouping labels
          */
         extractGroupLabel: function(state, labels) {
-            return _.isEmpty(labels) ? null : labels[state.groupIndex];
+            return _.isEmpty(labels) ? null : labels[state.pointIndex || state.groupIndex];
         },
 
         /**
