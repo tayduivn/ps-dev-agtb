@@ -18,14 +18,20 @@ class Bug49614Test extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
 	{
         $this->package = new MBPackage('SugarTestPackage');
-        $this->orgSoftFail = $GLOBALS['sugar_config']['validation']['soft_fail'];
+        if (isset($GLOBALS['sugar_config']['validation']['soft_fail'])) {
+            $this->orgSoftFail = $GLOBALS['sugar_config']['validation']['soft_fail'];
+        }
         $GLOBALS['sugar_config']['validation']['soft_fail'] = false;
 	}
 	
 	public function tearDown()
 	{
         unset($this->package);
-        $GLOBALS['sugar_config']['validation']['soft_fail'] = $this->orgSoftFail;
+        if (isset($this->orgSoftFail)) {
+            $GLOBALS['sugar_config']['validation']['soft_fail'] = $this->orgSoftFail;
+        } else {
+            unset($GLOBALS['sugar_config']['validation']['soft_fail']);
+        }
 	}
 
     public function testPopulateFromPostKeyValueWithInvalidChars()
