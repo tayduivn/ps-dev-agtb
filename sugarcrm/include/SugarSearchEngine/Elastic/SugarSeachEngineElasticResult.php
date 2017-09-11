@@ -12,7 +12,7 @@
 
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
-use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Result\ParserInterface;
 
 /**
  * Adapter class to Elastica Result
@@ -34,9 +34,9 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
     protected $elasticaResult;
 
     /**
-     * @var HighlighterInterface
+     * @var ParserInterface
      */
-    protected $highlighter;
+    protected $resultParser;
 
     /**
      * @param \Elastica\Result $result
@@ -105,10 +105,8 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
     {
         $ret = array();
 
-        if (isset($this->highlighter)) {
-            $parsedResult = new Result($this->elasticaResult);
-            $parsedResult->setHighlighter($this->highlighter);
-            $highlights = $parsedResult->getHighlights();
+        if (isset($this->resultParser)) {
+            $highlights = $this->resultParser->parseHighlights($this->elasticaResult);
         } else {
             $highlights = $this->elasticaResult->getHighlights();
         }
@@ -135,11 +133,11 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
     }
 
     /**
-     * Set highlighter
-     * @param HighlighterInterface $highlighter
+     * Set result parser
+     * @param ParserInterface $parser
      */
-    public function setHighlighter(HighlighterInterface $highlighter)
+    public function setResultParser(ParserInterface $parser)
     {
-        $this->highlighter = $highlighter;
+        $this->resultParser = $parser;
     }
 }

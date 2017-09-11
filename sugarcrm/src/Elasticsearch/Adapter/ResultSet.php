@@ -57,6 +57,15 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
     }
 
     /**
+     * Get result parser
+     * @return ParserInterface $parser
+     */
+    public function getResultParser()
+    {
+        return $this->resultParser;
+    }
+
+    /**
      * Set aggregation stack
      * @param AggregationStack $aggregations
      */
