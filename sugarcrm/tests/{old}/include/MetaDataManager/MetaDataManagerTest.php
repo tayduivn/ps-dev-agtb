@@ -579,7 +579,7 @@ PLATFORMS;
     public static function cacheStaticProvider()
     {
         return array(
-            array('getPlatformsWithCachesInDatabase', array('some-key'), 'getConnection'),
+            array('getPlatformsWithCachesInDatabase', array(), 'getConnection'),
         );
     }
 
@@ -676,20 +676,79 @@ PLATFORMS;
     {
         return array(
             array(
-                'meta_hash_public_base',
+                'meta:hash:public:base',
                 array(
-                    'base' => 'base',
+                    'base',
                 ),
             ),
             array(
-                'meta_hash_base_mobile',
+                'meta:hash:base,mobile',
                 array(
-                    'base' => 'base',
-                    'mobile' => 'mobile',
+                    'base',
+                    'mobile',
+                ),
+            ),
+            array(
+                'meta:hash:contexthash1234:base,custom_platform-with_underscores-and_dashes',
+                array(
+                    'base',
+                    'custom_platform-with_underscores-and_dashes',
                 ),
             ),
         );
     }
+
+    /**
+     * @dataProvider getCachedMetadataHashKeyProvider
+     *
+     * @param bool $public
+     * @param array $platforms
+     * @param string $contextHash
+     * @param string $expected
+     */
+    public function testGetCachedMetadataHashKey($public, $platforms, $contextHash, $expected)
+    {
+        $contextMock = $this->createPartialMock('MetaDataContextDefault', array('getHash'));
+        $contextMock->method('getHash')->willReturn($contextHash);
+
+        $mm = new MetaDataManager($platforms, $public);
+        $cacheKey = SugarTestReflection::callProtectedMethod($mm, 'getCachedMetadataHashKey', [$contextMock]);
+
+        $this->assertEquals($expected, $cacheKey);
+    }
+
+    public static function getCachedMetadataHashKeyProvider()
+    {
+        return array(
+            array(
+                true,
+                ['base'],
+                null,
+                'meta:hash:public:base',
+            ),
+            array(
+                false,
+                ['base','mobile'],
+                null,
+                'meta:hash:base,mobile',
+            ),
+            array(
+                true,
+                ['base','mobile'],
+                'contextHash123',
+                'meta:hash:public:base,mobile',
+            ),
+            array(
+                false,
+                ['base','mobile'],
+                'contextHash123',
+                'meta:hash:contextHash123:base,mobile',
+            ),
+        );
+    }
+
+
+
 // BEGIN SUGARCRM flav=ent ONLY
 
     /**

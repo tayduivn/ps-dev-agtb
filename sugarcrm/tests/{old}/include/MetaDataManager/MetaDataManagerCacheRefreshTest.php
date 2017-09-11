@@ -98,13 +98,13 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Start by wiping out everything
         TestMetaDataManager::clearAPICache();
-        $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_public_base'"));
-        $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_base'"));
+        $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta:hash:public:base'"));
+        $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta:hash:base'"));
 
         // Refresh the cache and ensure that there are file in place
         TestMetaDataManager::refreshCache(array('base'), true);
-        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_public_base'"));
-        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_base'"));
+        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta:hash:public:base'"));
+        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta:hash:base'"));
     }
 
     /**
@@ -124,9 +124,9 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         // Get the current metadata to ensure there is a cache built
         $mm->getMetadata();
 
-        $key = "meta_hash_{$platform}";
+        $key = "meta:hash:{$platform}";
         if ($platform != "base") {
-            $key .= "_base";
+            $key .= ",base";
         }
 
         $date = $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'");
@@ -167,7 +167,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $db = DBManagerFactory::getInstance();
 
-        $key = $public ? "meta_hash_public_base" : "meta_hash_base";
+        $key = $public ? "meta:hash:public:base" : "meta:hash:base";
         // Get the metadata manager for use in this test
         $mm = MetaDataManager::getManager(array('base'), $public);
 

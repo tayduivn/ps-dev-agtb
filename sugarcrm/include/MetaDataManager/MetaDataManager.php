@@ -1276,8 +1276,9 @@ class MetaDataManager implements LoggerAwareInterface
             self::getPlatformsWithCachesInDatabase()
         );
 
-        //Filter the list by known platforms to prevent builds of dead or invalid platforms
-        return array_intersect($platforms, static::getPlatformList());
+        // TODO - Re-Filter the list by known platforms to prevent builds of dead or invalid platforms
+        // once unknown platforms are no longer allowed across the board
+        return $platforms;
     }
 
     /**
@@ -1301,15 +1302,17 @@ class MetaDataManager implements LoggerAwareInterface
             }
         }
 
-        return $platforms;
+        return array_values($platforms);
     }
 
     /**
      * Returns list of platforms that have cached metadata in database cache.
      *
+     * @param MetaDataCache $cache (optional)
+     *
      * @return array
      */
-    protected static function getPlatformsWithCachesInDatabase()
+    protected static function getPlatformsWithCachesInDatabase(MetaDataCache $cache = null)
     {
         $platforms = array();
 
@@ -1317,23 +1320,25 @@ class MetaDataManager implements LoggerAwareInterface
             return $platforms;
         }
 
-        // Get the listing of files in the cache directory
-        $db = DBManagerFactory::getInstance();
-        $cache = static::newCache($db);
+        if (!$cache) {
+            $db = DBManagerFactory::getInstance();
+            $cache = static::newCache($db);
+        }
+
         $types = $cache->getKeys();
-        foreach($types as $type) {
+        foreach ($types as $type) {
             // If the cache key fits the pattern of a metadata cache key get the
             // platforms for the cache entry
             // @see static::getCachedMetadataHashKey()
-            if (preg_match('/^meta_hash(_public)?_(.*)$/', $type, $matches)) {
-                $key_platforms = explode('_', $matches[2]);
+            if (preg_match('/^meta:hash(:public)?:(.*)$/', $type, $matches)) {
+                $key_platforms = explode(',', substr($type, strrpos($type, ':') + 1));
                 foreach ($key_platforms as $platform) {
                     $platforms[$platform] = $platform;
                 }
             }
         }
 
-        return $platforms;
+        return array_values($platforms);
     }
 
     /**
@@ -3640,17 +3645,17 @@ class MetaDataManager implements LoggerAwareInterface
     protected function getCachedMetadataHashKey(MetaDataContextInterface $context)
     {
         if ($this->public) {
-            $prefix = 'public_';
+            $prefix = 'public:';
         } else {
             $hash = $context->getHash();
             if ($hash) {
-                $prefix = $hash . '_';
+                $prefix = $hash . ':';
             } else {
                 $prefix = '';
             }
         }
 
-        $key = "meta_hash_$prefix" . implode("_", $this->platforms);
+        $key = "meta:hash:$prefix" . implode(",", $this->platforms);
         return $key;
     }
 

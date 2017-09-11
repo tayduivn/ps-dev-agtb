@@ -57,7 +57,7 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
         $data = $mm->getMetadata();
         
         // Assert that there is a private base metadata cache
-        $dateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
+        $dateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta:hash:base'");
         $this->assertNotEmpty($dateModified);
         
         // Test that currencies are in the metadata
@@ -75,7 +75,7 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
         $data = $mm->getMetadata();
         
         // Test the file first
-        $newDateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
+        $newDateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta:hash:base'");
         $this->assertNotEmpty($newDateModified);
         
         // Test the time on the new file

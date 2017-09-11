@@ -24,8 +24,8 @@ class ValidMetadataHashTest extends Sugar_PHPUnit_Framework_TestCase
     public function testHashValid()
     {
         $hashes = array(
-            'meta_hash_base' => $this->baseHash,
-            'meta_hash_portal_base' => $this->portalHash,
+            'meta:hash:base' => $this->baseHash,
+            'meta:hash:portal,base' => $this->portalHash,
         );
 
         // If we are getting a system level warning the hashes won't match up
