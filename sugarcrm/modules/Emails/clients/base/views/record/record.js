@@ -34,9 +34,7 @@
 
         this._super('initialize', [options]);
 
-        if (this.model.get('state') === this.STATE_DRAFT) {
-            this._alertUserDraftState();
-        }
+        this._alertUserDraftState();
 
         this.on('loading_collection_field', function() {
             loadingRequests++;
@@ -79,7 +77,10 @@
         }
 
         if (this.model) {
-            this.listenTo(this.model, 'change:state', this._alertUserDraftState);
+            this.listenTo(this.model, 'change:state', function() {
+                this._alertUserDraftState();
+                this.setButtonStates(this.getCurrentButtonState());
+            });
 
             this.listenTo(this.model, 'change:from_collection', function() {
                 renderRecipientsField('from_collection');
@@ -93,7 +94,6 @@
             this.listenTo(this.model, 'change:bcc_collection', function() {
                 renderRecipientsField('bcc_collection');
             });
-
         }
 
         this._super('bindDataChange');
@@ -115,6 +115,62 @@
     },
 
     /**
+     * @inheritdoc
+     *
+     * Switches to the email compose route if the email is a draft.
+     */
+    editClicked: function() {
+        if (this._isEditableDraft()) {
+            this._navigateToEmailCompose();
+        } else {
+            this._super('editClicked');
+        }
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Hides the Reply and Reply All buttons if the email is a draft.
+     */
+    setButtonStates: function(state) {
+        var buttons;
+        var replyButtons;
+
+        /**
+         * Some buttons contain other buttons, like ActiondropdownField. This
+         * function recursively finds all buttons starting at the root.
+         *
+         * @param {Array} allButtons The set of buttons that have been found so
+         * far. Begin with an empty array to prime the set.
+         * @param {Object|Array} root A collection of button fields.
+         * @return {Array}
+         */
+        function getAllButtons(allButtons, root) {
+            var nestedButtons = _.flatten(_.compact(_.pluck(root, 'fields')));
+
+            if (nestedButtons.length > 0) {
+                allButtons = allButtons.concat(nestedButtons);
+                allButtons = getAllButtons(allButtons, nestedButtons);
+            }
+
+            return allButtons;
+        }
+
+        this._super('setButtonStates', [state]);
+
+        if (this.model.get('state') === this.STATE_DRAFT) {
+            buttons = getAllButtons([], this.buttons);
+            replyButtons = _.filter(buttons, function(field) {
+                return _.contains(['reply_button', 'reply_all_button'], field.name);
+            });
+
+            _.each(replyButtons, function(field) {
+                field.hide();
+            });
+        }
+    },
+
+    /**
      * Alerts the user if a draft was opened in the record view, so the user
      * can switch to composing the email instead of simply viewing it.
      *
@@ -123,17 +179,15 @@
     _alertUserDraftState: function() {
         app.alert.dismiss('email-draft-alert');
 
-        if (this.model.get('state') === this.STATE_DRAFT) {
+        if (this._isEditableDraft()) {
             app.alert.show('email-draft-alert', {
                 level: 'warning',
                 autoClose: false,
                 title: ' ',
                 messages: app.lang.get('LBL_OPEN_DRAFT_ALERT', this.module, {subject: this.model.get('name')}),
                 onLinkClick: _.bind(function(event) {
-                    var route = '#' + app.router.buildRoute(this.model.module, this.model.get('id'), 'compose');
-
                     app.alert.dismiss('email-draft-alert');
-                    app.router.navigate(route, {trigger: true});
+                    this._navigateToEmailCompose();
                 }, this)
             });
         }
@@ -152,5 +206,30 @@
         }
 
         return name;
+    },
+
+    /**
+     * Determines the email is a draft and the user can edit it.
+     *
+     * @return {boolean}
+     * @private
+     */
+    _isEditableDraft: function() {
+        return this.model.get('state') === this.STATE_DRAFT && app.acl.hasAccessToModel('edit', this.model);
+    },
+
+    /**
+     * Switches to the email compose route for the email. This method should
+     * only be used if the email is a draft.
+     *
+     * @private
+     */
+    _navigateToEmailCompose: function() {
+        var route;
+
+        if (this._isEditableDraft()) {
+            route = '#' + app.router.buildRoute(this.model.module, this.model.get('id'), 'compose');
+            app.router.navigate(route, {trigger: true});
+        }
     }
 })
