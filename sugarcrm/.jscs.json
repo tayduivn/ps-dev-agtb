@@ -13,7 +13,6 @@
         "include/javascript/nprogress/**",
         "include/javascript/nvd3/**",
         "include/javascript/d3-sugar/**",
-        "include/javascript/d3fc-rebind/**",
         "include/javascript/sucrose/**",
         "include/javascript/phpjs/**",
         "include/javascript/select2/**",

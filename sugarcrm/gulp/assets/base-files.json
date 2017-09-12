@@ -57,7 +57,6 @@
     "include/javascript/nvd3/lib/d3.min.js",
     "include/javascript/nvd3/nv.d3.min.js",
     "include/javascript/d3-sugar/d3-sugar.min.js",
-    "include/javascript/d3fc-rebind/d3fc-rebind.min.js",
     "include/SugarCharts/sucrose/js/sugarCharts.js",
     "include/javascript/sucrose/sucrose.min.js",
     "include/javascript/tiny_mce/tiny_mce.js",
