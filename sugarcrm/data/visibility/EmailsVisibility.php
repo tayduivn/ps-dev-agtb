@@ -25,28 +25,30 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 class EmailsVisibility extends SugarVisibility implements StrategyInterface
 {
     /**
-     * Draft emails are only accessible by their assigned user.
+     * Draft emails are only accessible by their assigned user, administrators, and developers.
      *
      * {@inheritdoc}
      */
     public function addVisibilityWhere(&$query)
     {
-        $alias = $this->getOption('table_alias');
-        $ownerWhere = $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $alias);
+        if (!$this->isUserAnAdmin($GLOBALS['current_user'])) {
+            $alias = $this->getOption('table_alias');
+            $ownerWhere = $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $alias);
 
-        if (empty($alias)) {
-            $alias = $this->bean->getTableName();
+            if (empty($alias)) {
+                $alias = $this->bean->getTableName();
+            }
+
+            $where = "({$alias}.state<>" . $GLOBALS['db']->quoted(Email::STATE_DRAFT) .
+                " OR ({$alias}.state=" . $GLOBALS['db']->quoted(Email::STATE_DRAFT) . " AND{$ownerWhere}))";
+            $query = empty($query) ? $where : "{$query} AND {$where}";
         }
-
-        $where = "({$alias}.state<>" . $GLOBALS['db']->quoted(Email::STATE_DRAFT) .
-            " OR ({$alias}.state=" . $GLOBALS['db']->quoted(Email::STATE_DRAFT) . " AND{$ownerWhere}))";
-        $query = empty($query) ? $where : "{$query} AND {$where}";
 
         return $query;
     }
 
     /**
-     * Draft emails are only accessible by their assigned user.
+     * Draft emails are only accessible by their assigned user, administrators, and developers.
      *
      * {@inheritdoc}
      */
@@ -104,23 +106,36 @@ class EmailsVisibility extends SugarVisibility implements StrategyInterface
     }
 
     /**
-     * Draft emails are only accessible by their assigned user.
+     * Draft emails are only accessible by their assigned user, administrators, and developers.
      *
      * {@inheritdoc}
      */
     public function elasticAddFilters(User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider)
     {
-        $draftFilter = new \Elastica\Query\BoolQuery();
-        $draftFilter->addMust($provider->createFilter('EmailsState', ['state' => Email::STATE_DRAFT]));
-        $draftFilter->addMust($provider->createFilter('Owner', ['user' => $user]));
+        if (!$this->isUserAnAdmin($user)) {
+            $draftFilter = new \Elastica\Query\BoolQuery();
+            $draftFilter->addMust($provider->createFilter('EmailsState', ['state' => Email::STATE_DRAFT]));
+            $draftFilter->addMust($provider->createFilter('Owner', ['user' => $user]));
 
-        $nonDraftFilter = new \Elastica\Query\BoolQuery();
-        $nonDraftFilter->addMustNot($provider->createFilter('EmailsState', ['state' => Email::STATE_DRAFT]));
+            $nonDraftFilter = new \Elastica\Query\BoolQuery();
+            $nonDraftFilter->addMustNot($provider->createFilter('EmailsState', ['state' => Email::STATE_DRAFT]));
 
-        $visibilityFilter = new \Elastica\Query\BoolQuery();
-        $visibilityFilter->addShould($draftFilter);
-        $visibilityFilter->addShould($nonDraftFilter);
+            $visibilityFilter = new \Elastica\Query\BoolQuery();
+            $visibilityFilter->addShould($draftFilter);
+            $visibilityFilter->addShould($nonDraftFilter);
 
-        $filter->addMust($visibilityFilter);
+            $filter->addMust($visibilityFilter);
+        }
+    }
+
+    /**
+     * Is the current user an administrator or developer for the Emails module?
+     *
+     * @param User $user
+     * @return bool
+     */
+    private function isUserAnAdmin(User $user)
+    {
+        return $user->isAdminForModule('Emails') || $user->isDeveloperForModule('Emails');
     }
 }

@@ -19,6 +19,68 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
  */
 class EmailsVisibilityTest extends \PHPUnit_Framework_TestCase
 {
+    public function doesNotAugmentTheQueryForAdminsProvider()
+    {
+        return [
+            'admin_but_not_dev' => [
+                true,
+                false,
+            ],
+            'dev_but_not_admin' => [
+                false,
+                true,
+            ],
+            'admin_and_dev' => [
+                true,
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::addVisibilityWhere
+     * @covers ::isUserAnAdmin
+     * @dataProvider doesNotAugmentTheQueryForAdminsProvider
+     */
+    public function testAddVisibilityWhere_DoesNotAugmentTheQueryForAdmins($isAdmin, $isDev)
+    {
+        $GLOBALS['current_user'] = $this->createPartialMock('\\User', ['isAdminForModule', 'isDeveloperForModule']);
+        $GLOBALS['current_user']->method('isAdminForModule')->willReturn($isAdmin);
+        $GLOBALS['current_user']->method('isDeveloperForModule')->willReturn($isDev);
+
+        $email = $this->createMock('\\Email');
+        $query = '';
+
+        $strategy = new \EmailsVisibility($email);
+        $result = $strategy->addVisibilityWhere($query);
+
+        $this->assertEmpty($query, '$query should not have changed');
+        $this->assertEmpty($result, 'The return value should be empty');
+
+        unset($GLOBALS['current_user']);
+    }
+
+    /**
+     * @covers ::addVisibilityWhereQuery
+     * @covers ::isUserAnAdmin
+     * @dataProvider doesNotAugmentTheQueryForAdminsProvider
+     */
+    public function testAddVisibilityWhereQuery_DoesNotAugmentTheQueryForAdmins($isAdmin, $isDev)
+    {
+        $GLOBALS['current_user'] = $this->createPartialMock('\\User', ['isAdminForModule', 'isDeveloperForModule']);
+        $GLOBALS['current_user']->method('isAdminForModule')->willReturn($isAdmin);
+        $GLOBALS['current_user']->method('isDeveloperForModule')->willReturn($isDev);
+
+        $email = $this->createMock('\\Email');
+        $query = $this->createPartialMock('\\SugarQuery', ['where']);
+        $query->expects($this->never())->method('where');
+
+        $strategy = new \EmailsVisibility($email);
+        $result = $strategy->addVisibilityWhereQuery($query);
+
+        unset($GLOBALS['current_user']);
+    }
+
     /**
      * @covers ::elasticBuildMapping
      */
@@ -73,7 +135,9 @@ class EmailsVisibilityTest extends \PHPUnit_Framework_TestCase
      */
     public function testElasticAddFilters()
     {
-        $user = $this->createMock('\\User');
+        $user = $this->createPartialMock('\\User', ['isAdminForModule', 'isDeveloperForModule']);
+        $user->method('isAdminForModule')->willReturn(false);
+        $user->method('isDeveloperForModule')->willReturn(false);
         $user->id = Uuid::uuid1();
 
         $email = $this->createMock('\\Email');
@@ -134,5 +198,26 @@ class EmailsVisibilityTest extends \PHPUnit_Framework_TestCase
             ],
         ];
         $this->assertEquals($expected, $query);
+    }
+
+    /**
+     * @covers ::elasticAddFilters
+     * @covers ::isUserAnAdmin
+     * @dataProvider doesNotAugmentTheQueryForAdminsProvider
+     */
+    public function testElasticAddFilters_DoesNotAugmentTheQueryForAdmins($isAdmin, $isDev)
+    {
+        $user = $this->createPartialMock('\\User', ['isAdminForModule', 'isDeveloperForModule']);
+        $user->method('isAdminForModule')->willReturn($isAdmin);
+        $user->method('isDeveloperForModule')->willReturn($isDev);
+
+        $filter = $this->createPartialMock('\\Elastica\\Query\\BoolQuery', ['addMust']);
+        $filter->expects($this->never())->method('addMust');
+
+        $email = $this->createMock('\\Email');
+        $provider = new \Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility();
+
+        $strategy = new \EmailsVisibility($email);
+        $strategy->elasticAddFilters($user, $filter, $provider);
     }
 }
