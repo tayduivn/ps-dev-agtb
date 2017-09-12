@@ -88,6 +88,7 @@ describe('Emails.Routes', function() {
 
         it('should open the compose drawer when routing from another page in the app', function() {
             model.set('state', 'Draft');
+            sandbox.stub(app.acl, 'hasAccessToModel').withArgs('edit').returns(true);
 
             // Routing from layout.
             app.controller.context.set('layout', 'foo');
@@ -100,6 +101,7 @@ describe('Emails.Routes', function() {
 
         it('should open the full page composer when routing from login', function() {
             model.set('state', 'Draft');
+            sandbox.stub(app.acl, 'hasAccessToModel').withArgs('edit').returns(true);
 
             // Routing from login.
             app.controller.context.set('layout', 'login');
@@ -114,6 +116,7 @@ describe('Emails.Routes', function() {
 
         it('should open the full page composer when routing directly', function() {
             model.set('state', 'Draft');
+            sandbox.stub(app.acl, 'hasAccessToModel').withArgs('edit').returns(true);
 
             // Routing from outside the app.
             app.controller.context.unset('layout');
@@ -128,11 +131,22 @@ describe('Emails.Routes', function() {
 
         it('should open the record view if the email is not a draft', function() {
             model.set('state', 'Archived');
-            sandbox.stub(app.router, 'record');
+            sandbox.stub(app.acl, 'hasAccessToModel').withArgs('edit').returns(true);
+            sandbox.stub(app.router, 'redirect');
 
             app.router.navigate('Emails/123/compose', {trigger: true});
 
-            expect(app.router.record).toHaveBeenCalled();
+            expect(app.router.redirect).toHaveBeenCalled();
+        });
+
+        it('should open the record view if the user cannot edit the draft', function() {
+            model.set('state', 'Draft');
+            sandbox.stub(app.acl, 'hasAccessToModel').withArgs('edit').returns(false);
+            sandbox.stub(app.router, 'redirect');
+
+            app.router.navigate('Emails/123/compose', {trigger: true});
+
+            expect(app.router.redirect).toHaveBeenCalled();
         });
     });
 });

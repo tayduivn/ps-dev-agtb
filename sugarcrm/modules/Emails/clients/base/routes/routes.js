@@ -61,12 +61,16 @@
                     model.fetch({
                         view: 'compose-email',
                         success: function(model) {
-                            if (model.get('state') === 'Draft') {
+                            var route;
+
+                            if (model.get('state') === 'Draft' && app.acl.hasAccessToModel('edit', model)) {
                                 openEmailCompose(model);
                             } else {
                                 // Handle routing for an email that used to be
-                                // a draft.
-                                app.router.record(module, id);
+                                // a draft or a draft the current user cannot
+                                // edit.
+                                route = '#' + app.router.buildRoute(model.module, model.get('id'));
+                                app.router.redirect(route);
                             }
                         }
                     });
