@@ -180,7 +180,7 @@ class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
             $override->mail_smtpauth_req,
             'The auth requirements should match'
         );
-        $this->assertSame($system->mail_smtpssl, $override->mail_smtpssl, 'The security settings should match');
+        $this->assertEquals($system->mail_smtpssl, $override->mail_smtpssl, 'The security settings should match');
         $this->assertEquals(0, $override->deleted, 'Should not be deleted');
     }
 

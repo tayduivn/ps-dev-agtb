@@ -152,6 +152,7 @@ $dictionary['OutboundEmail'] = array (
 			'name' => 'mail_smtpssl',
 			'vname' => 'LBL_MAIL_SMTPSSL',
             'type' => 'enum',
+            'dbType' => 'int',
             'options' => 'email_settings_for_ssl',
 			'len' => 1,
             'default' => 1,
