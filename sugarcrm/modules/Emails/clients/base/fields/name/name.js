@@ -31,8 +31,8 @@
     },
 
     /**
-     * Build email record route depending on whether the email is a draft or
-     * not and whether the user has the Sugar Email Client enabled
+     * Build email record route depending on whether or not the email is a
+     * draft and whether the user has the Sugar Email Client option enabled.
      *
      * @return {string}
      */
@@ -40,7 +40,11 @@
         var action = this.def.route && this.def.route.action ? this.def.route.action : null;
         var module = this.model.module || this.context.get('module');
 
-        if (this.model.get('state') === 'Draft' && this._useSugarEmailClient() && !action) {
+        if (this.model.get('state') === 'Draft' &&
+            app.acl.hasAccessToModel('edit', this.model) &&
+            this._useSugarEmailClient() &&
+            !action
+        ) {
             action = 'compose';
         }
 

@@ -93,6 +93,7 @@ describe('Emails.Field.Name', function() {
                 it('should return the correct href', function() {
                     field.model.set('state', state);
                     sandbox.stub(field, '_useSugarEmailClient').returns(useSugarClient);
+                    sandbox.stub(app.acl, 'hasAccessToModel').withArgs('edit').returns(true);
 
                     field.buildHref();
                     expect(app.router.buildRoute).toHaveBeenCalledWith('Emails', field.model.get('id'), action);
@@ -106,9 +107,19 @@ describe('Emails.Field.Name', function() {
             };
             field.model.set('state', 'Draft');
             sandbox.stub(field, '_useSugarEmailClient').returns(true);
+            sandbox.stub(app.acl, 'hasAccessToModel').withArgs('edit').returns(true);
 
             field.buildHref();
             expect(app.router.buildRoute).toHaveBeenCalledWith('Emails', field.model.get('id'), field.def.route.action);
+        });
+
+        it('should not add the compose action if the current user cannot edit the draft', function() {
+            field.model.set('state', 'Draft');
+            sandbox.stub(field, '_useSugarEmailClient').returns(true);
+            sandbox.stub(app.acl, 'hasAccessToModel').withArgs('edit').returns(false);
+
+            field.buildHref();
+            expect(app.router.buildRoute).toHaveBeenCalledWith('Emails', field.model.get('id'), null);
         });
     });
 });
