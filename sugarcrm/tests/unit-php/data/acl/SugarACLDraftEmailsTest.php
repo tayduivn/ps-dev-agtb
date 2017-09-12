@@ -11,39 +11,74 @@
  */
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\acl;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @coversDefaultClass \SugarACLDraftEmails
  */
 class SugarACLDraftEmailsTest extends \PHPUnit_Framework_TestCase
 {
-    public function checkAccessNoTestProvider()
+    public function checkViewAccessProvider()
     {
         return [
-            ['access'],
-            ['team_security'],
-            ['list'],
-            ['view'],
+            'access is a read operation' => [
+                'access',
+                true,
+            ],
+            'team security is a read operation' => [
+                'team_security',
+                true,
+            ],
+            'list is a read operation' => [
+                'list',
+                true,
+            ],
+            'view is a read operation' => [
+                'view',
+                true,
+            ],
+            'edit is a write operation' => [
+                'edit',
+                false,
+            ],
+            'delete is the only write operation a non-owner can perform' => [
+                'delete',
+                true,
+            ],
+            'import is a write operation' => [
+                'import',
+                false,
+            ],
+            'massupdate is a write operation' => [
+                'massupdate',
+                false,
+            ],
         ];
     }
 
     /**
      * @covers ::checkAccess
-     * @dataProvider checkAccessNoTestProvider
+     * @dataProvider checkViewAccessProvider
      */
-    public function testCheckAccess_AllowOtherChecksToDetermineAccess($view)
+    public function testViewCheckAccess($view, $expected)
     {
-        $bean = $this->createMock('\\Email');
+        $user = $this->createMock('\\User');
+        $user->id = Uuid::uuid1();
+
+        $bean = $this->createPartialMock('\\Email', ['isOwner']);
+        $bean->method('isOwner')->willReturn(false);
         $bean->state = \Email::STATE_DRAFT;
+        $bean->assigned_user_id = Uuid::uuid1();
 
         $context = [
+            'user' => $user,
             'action' => $view,
             'bean' => $bean,
         ];
 
         $acl = new \SugarACLDraftEmails();
         $actual = $acl->checkAccess('Emails', $view, $context);
-        $this->assertTrue($actual);
+        $this->assertSame($expected, $actual);
     }
 
     public function checkFieldAccessReadableProvider()
@@ -253,12 +288,18 @@ class SugarACLDraftEmailsTest extends \PHPUnit_Framework_TestCase
      * @covers ::checkAccess
      * @dataProvider checkFieldAccessWritableProvider
      */
-    public function testFieldCheckAccess_WritableFields($field, $isWritable)
+    public function testFieldCheckAccess_WritableFieldsWhenUserIsOwner($field, $isWritable)
     {
-        $bean = $this->createMock('\\Email');
+        $user = $this->createMock('\\User');
+        $user->id = Uuid::uuid1();
+
+        $bean = $this->createPartialMock('\\Email', ['isOwner']);
+        $bean->method('isOwner')->willReturn(true);
         $bean->state = \Email::STATE_DRAFT;
+        $bean->assigned_user_id = $user->id;
 
         $context = [
+            'user' => $user,
             'bean' => $bean,
             'field' => $field,
         ];
@@ -268,6 +309,33 @@ class SugarACLDraftEmailsTest extends \PHPUnit_Framework_TestCase
 
         $actual = $acl->checkAccess('Emails', 'field', $context);
         $this->assertSame($isWritable, $actual);
+    }
+
+    /**
+     * @covers ::checkAccess
+     * @dataProvider checkFieldAccessReadableProvider
+     */
+    public function testFieldCheckAccess_WritableFieldsWhenUserIsNotOwner($field)
+    {
+        $user = $this->createMock('\\User');
+        $user->id = Uuid::uuid1();
+
+        $bean = $this->createPartialMock('\\Email', ['isOwner']);
+        $bean->method('isOwner')->willReturn(false);
+        $bean->state = \Email::STATE_DRAFT;
+        $bean->assigned_user_id = Uuid::uuid1();
+
+        $context = [
+            'user' => $user,
+            'bean' => $bean,
+            'field' => $field,
+        ];
+
+        $acl = $this->createPartialMock('\\SugarACLDraftEmails', ['isWriteOperation']);
+        $acl->method('isWriteOperation')->willReturn(true);
+
+        $actual = $acl->checkAccess('Emails', 'field', $context);
+        $this->assertFalse($actual);
     }
 
     /**
