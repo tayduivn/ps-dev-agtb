@@ -1265,8 +1265,8 @@ class HealthCheckScanner
         if (version_compare($version, '7.10.0.0', '<')) {
             $sql = "SELECT DISTINCT emails.status, emails.type
                     FROM emails
-                    WHERE(
-                        NOT(emails.type='draft' AND emails.status='draft')
+                    WHERE NOT(
+                           (emails.type='draft' AND emails.status='draft')
                         OR (emails.type='out' AND emails.status='sent')
                         OR (emails.type='out' AND emails.status='send_error')
                         OR (emails.type='inbound' AND emails.status='replied')
