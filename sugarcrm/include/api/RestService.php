@@ -266,6 +266,16 @@ class RestService extends ServiceBase
     }
 
     /**
+     * to get site url string
+     *
+     * @return url string
+     */
+    protected function getSiteUrl()
+    {
+        return SugarConfig::getInstance()->get('site_url');
+    }
+
+    /**
      * Gets the leading portion of the URI for a resource
      *
      * @param array|string $resource The resource to fetch a URI for as an array
@@ -278,7 +288,7 @@ class RestService extends ServiceBase
 
         // Empty resources are simply the URI for the current request
         if (empty($resource)) {
-            $siteUrl = SugarConfig::getInstance()->get('site_url');
+            $siteUrl = $this->getSiteUrl();
             return $siteUrl . (empty($this->request)?$_SERVER['REQUEST_URI']:$this->request->getRequestURI());
         }
 
@@ -678,11 +688,11 @@ class RestService extends ServiceBase
             // This is for our URI return value
             $siteUrl = '';
             if (isset($options['relative']) && $options['relative'] == false) {
-                $siteUrl = SugarConfig::getInstance()->get('site_url');
+                $siteUrl = $this->getSiteUrl();
             }
 
-            // Get the file uri bas
-            $this->resourceURIBase = $siteUrl . $apiBase;
+            // Get the file uri base
+            $this->resourceURIBase = $siteUrl . $apiBase . '/';
         }
     }
 
