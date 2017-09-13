@@ -1180,14 +1180,20 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 
 	var callback = {
 		success:function(o){
-			var sqs_objects = JSON.parse(o.responseText);
-            if(typeof sqs_objects == 'undefined')
+            var CBObject = JSON.parse(o.responseText);
+            if (typeof sqs_objects == 'undefined') {
                 sqs_objects = new Array();
-			var populate_list = new Array();
-			populate_list.push(field_name_name);
-			populate_list.push(field_id_name);
-			sqs_objects[sqs_field_name]['populate_list']=populate_list;
-			enableQS(false);
+            }
+            var populate_list = new Array();
+            if (!_.isUndefined(sqs_objects) && CBObject[sqs_field_name] && _.isString(CBObject[sqs_field_name])) {
+                sqs_objects[sqs_field_name] = JSON.parse(CBObject[sqs_field_name]);
+            }
+            populate_list.push(field_name_name);
+            populate_list.push(field_id_name);
+            if (!_.isUndefined(sqs_objects) && !_.isUndefined(sqs_objects[sqs_field_name])) {
+                sqs_objects[sqs_field_name].populate_list = populate_list;
+            }
+            enableQS(false);
 		},
 		failure: function(o){}
 	}
