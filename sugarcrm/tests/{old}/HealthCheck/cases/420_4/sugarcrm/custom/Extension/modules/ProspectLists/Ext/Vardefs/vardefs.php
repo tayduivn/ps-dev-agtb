@@ -15,7 +15,6 @@ $dictionary['ProspectList'] = array(
         'test' => array(
             'name' => 'test',
             'type' => 'relate',
-            'module' => 'ProspectLists',
         ),
     ),
 );

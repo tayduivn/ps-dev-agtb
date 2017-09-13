@@ -4445,8 +4445,9 @@ ENDP;
                                 break;
                             }
                         }
-                        if ((empty($value['link_type']) || $value['link_type'] != 'relationship_info') &&
-                            empty($value['module'])) {
+                        if (!$this->hasValidLinkAndModule($value)
+                            && (empty($stockFieldsDef[$key])
+                                || $this->hasValidLinkAndModule($stockFieldsDef[$key]))) {
                             $this->updateStatus("badVardefsRelate", $key, $module);
                         }
                         break;
@@ -4479,6 +4480,13 @@ ENDP;
     }
 
     /* END of copypaste from 6_ScanModules */
+
+    private function hasValidLinkAndModule($value)
+    {
+        return !((empty($value['link_type'])
+                || $value['link_type'] != 'relationship_info')
+                && empty($value['module']));
+    }
 
     /**
      * Ping feedback url
