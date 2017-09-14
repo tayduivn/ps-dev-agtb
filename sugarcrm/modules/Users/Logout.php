@@ -10,11 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-if (isset($_REQUEST['SAMLRequest'])) {
-    if (empty($_GET['logout'])) {
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+$inputValidation = InputValidation::getService();
+$samlRequest = $inputValidation->getValidInputRequest('SAMLRequest');
+$logout = $inputValidation->getValidInputRequest('logout');
+$relayState = $inputValidation->getValidInputRequest('RelayState');
+if ($samlRequest) {
+    if (!$logout) {
         $smarty = new Sugar_Smarty();
+        $redirectUrl = 'index.php?module=Users&action=Logout&logout=1&SAMLRequest=' . urlencode($samlRequest);
+        if ($relayState) {
+            $redirectUrl .= '&RelayState=' . urlencode($relayState);
+        }
         $smarty->assign(array(
-                'REDIRECT_URL'  => 'index.php?module=Users&action=Logout&logout=1&SAMLRequest=' . urlencode($_REQUEST['SAMLRequest']),
+                'REDIRECT_URL'  => $redirectUrl,
         ));
         $smarty->display('modules/Users/tpls/Logout.tpl');
     } else {
