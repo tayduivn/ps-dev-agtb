@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b720da5d87e0d5e24c1376542328b60d",
+    "content-hash": "1dbfbcdbebc1eb5dfc0447ebfea46733",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -150,17 +150,17 @@
         },
         {
             "name": "doctrine/cache",
-            "version": "v1.6.1",
+            "version": "v1.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "557e44fa9ee20e4f2601844d37ea25229265a72e"
+                "reference": "fcaefc41da9c6da19578ac5b4f6d1c8c11125927"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-cache-v1.6.1-ef2436.tar",
-                "reference": "557e44fa9ee20e4f2601844d37ea25229265a72e",
-                "shasum": "148ddae1315ecb1f3910d7a5e1dab40bcce602d4"
+                "url": "https://satis.sugardev.team/dist/doctrine-cache-v1.6.2-8f5b62.tar",
+                "reference": "fcaefc41da9c6da19578ac5b4f6d1c8c11125927",
+                "shasum": "bea2dae3e26075ceff83a8f75451b01056a7d299"
             },
             "require": {
                 "php": "~5.5|~7.0"
@@ -220,7 +220,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2016-10-29T11:16:17+00:00"
+            "time": "2017-07-22T12:49:21+00:00"
         },
         {
             "name": "doctrine/collections",
@@ -295,17 +295,17 @@
         },
         {
             "name": "doctrine/common",
-            "version": "v2.6.2",
+            "version": "v2.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/common.git",
-                "reference": "34be47a0e169fbc850f0b93cfbeb273eb6e89d06"
+                "reference": "a9e955831132758be6ae3ee74019658663e7aa05"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-common-v2.6.2-aba0ad.tar",
-                "reference": "34be47a0e169fbc850f0b93cfbeb273eb6e89d06",
-                "shasum": "3a66cc58a1412bcc70764c6e7de27a167309afad"
+                "url": "https://satis.sugardev.team/dist/doctrine-common-v2.7.3-257025.tar",
+                "reference": "a9e955831132758be6ae3ee74019658663e7aa05",
+                "shasum": "94ef04e5cfb402109fc55c13f6ba4280b7ac4d42"
             },
             "require": {
                 "doctrine/annotations": "1.*",
@@ -313,10 +313,10 @@
                 "doctrine/collections": "1.*",
                 "doctrine/inflector": "1.*",
                 "doctrine/lexer": "1.*",
-                "php": "~5.5|~7.0"
+                "php": "~5.6|~7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.8|~5.0"
+                "phpunit/phpunit": "^5.4.6"
             },
             "type": "library",
             "extra": {
@@ -363,7 +363,7 @@
                 "persistence",
                 "spl"
             ],
-            "time": "2016-11-30T16:50:46+00:00"
+            "time": "2017-07-22T08:35:12+00:00"
         },
         {
             "name": "doctrine/dbal",
@@ -1749,16 +1749,11 @@
         },
         {
             "name": "sugarcrm/identity-provider",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:sugarcrm/IdentityProvider.git",
-                "reference": "5dd124749c516ead17c0bd5534849e69a2c33434"
-            },
+            "version": "1.0.2",
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "5dd124749c516ead17c0bd5534849e69a2c33434",
+                "reference": "f1498e865cefb7aa10d801561de2e136d061e964",
                 "shasum": null
             },
             "require": {
@@ -1820,17 +1815,17 @@
         },
         {
             "name": "symfony/asset",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/asset",
-                "reference": "573d0ee04039be94d4043bfab259dfd350f5d3f2"
+                "reference": "604d676a9b43039ad2411e70617d9d82a854c3d6"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-asset-v3.3.0-ba1113.tar",
-                "reference": "573d0ee04039be94d4043bfab259dfd350f5d3f2",
-                "shasum": "8b6ecf28daa9191c14f7696abd114ebf24e98c37"
+                "url": "https://satis.sugardev.team/dist/symfony-asset-v3.3.6-9ea77b.tar",
+                "reference": "604d676a9b43039ad2411e70617d9d82a854c3d6",
+                "shasum": "376d0fdc08b1db51cdf316cefe195aec7728b3a6"
             },
             "require": {
                 "php": ">=5.5.9"
@@ -1875,17 +1870,17 @@
         },
         {
             "name": "symfony/cache",
-            "version": "v3.2.9",
+            "version": "v3.2.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache",
-                "reference": "00cdfe7137c15307a18372ae32779f8d10732265"
+                "reference": "60b2d160654a33c248c04ca5441cf3526feadbf4"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-cache-v3.2.9-746180.tar",
-                "reference": "00cdfe7137c15307a18372ae32779f8d10732265",
-                "shasum": "5f9a52104a32d1854ffb73856ded59800cf52b58"
+                "url": "https://satis.sugardev.team/dist/symfony-cache-v3.2.13-1ec897.tar",
+                "reference": "60b2d160654a33c248c04ca5441cf3526feadbf4",
+                "shasum": "47173e856ad3dd67c8346db9d6d3c1c939b895c4"
             },
             "require": {
                 "php": ">=5.5.9",
@@ -1937,21 +1932,21 @@
                 "caching",
                 "psr6"
             ],
-            "time": "2017-05-28T10:47:43+00:00"
+            "time": "2017-07-14T12:26:39+00:00"
         },
         {
             "name": "symfony/class-loader",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/class-loader",
-                "reference": "90497dfd57ea5ffbb8860f068c140a872cbdf7e7"
+                "reference": "ba4b25d374cd13ccae0149f84daa27ef50c6bc49"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-class-loader-v3.3.0-f1f507.tar",
-                "reference": "90497dfd57ea5ffbb8860f068c140a872cbdf7e7",
-                "shasum": "99467af4b21d8075658929e52a370e502e4fcc21"
+                "url": "https://satis.sugardev.team/dist/symfony-class-loader-v3.3.6-e98e36.tar",
+                "reference": "ba4b25d374cd13ccae0149f84daa27ef50c6bc49",
+                "shasum": "0699b7447c2258aa07f426dce387b2073ccf913c"
             },
             "require": {
                 "php": ">=5.5.9"
@@ -1992,31 +1987,33 @@
             ],
             "description": "Symfony ClassLoader Component",
             "homepage": "https://symfony.com",
-            "time": "2017-04-12T14:14:56+00:00"
+            "time": "2017-06-02T09:51:43+00:00"
         },
         {
             "name": "symfony/config",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
-                "reference": "c4217a887bdd196d1148aeb8a9e51816537a450d"
+                "reference": "a6efb121eab038c2bde16377485ac6ec95b1b3b9"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-config-v3.3.0-22d436.tar",
-                "reference": "c4217a887bdd196d1148aeb8a9e51816537a450d",
-                "shasum": "a56ed8f33999a7936334c89299f4d8a5f5c0a62a"
+                "url": "https://satis.sugardev.team/dist/symfony-config-v3.3.6-ba8d1b.tar",
+                "reference": "a6efb121eab038c2bde16377485ac6ec95b1b3b9",
+                "shasum": "a4e2311cace2c9ed2d59c10b3e45001eb830d055"
             },
             "require": {
                 "php": ">=5.5.9",
                 "symfony/filesystem": "~2.8|~3.0"
             },
             "conflict": {
-                "symfony/dependency-injection": "<3.3"
+                "symfony/dependency-injection": "<3.3",
+                "symfony/finder": "<3.3"
             },
             "require-dev": {
                 "symfony/dependency-injection": "~3.3",
+                "symfony/finder": "~3.3",
                 "symfony/yaml": "~3.0"
             },
             "suggest": {
@@ -2051,7 +2048,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-29T08:09:00+00:00"
+            "time": "2017-07-19T07:37:29+00:00"
         },
         {
             "name": "symfony/console",
@@ -2170,24 +2167,24 @@
         },
         {
             "name": "symfony/dependency-injection",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "26cb3522e7a90a4229a184a89484f73a48092d5e"
+                "reference": "71c55352286ab6f7da33977d39a53474fda7e99f"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-dependency-injection-v3.3.0-0bf9f2.tar",
-                "reference": "26cb3522e7a90a4229a184a89484f73a48092d5e",
-                "shasum": "78599a74279e327be4c90e717b37e061b2faf6bf"
+                "url": "https://satis.sugardev.team/dist/symfony-dependency-injection-v3.3.6-15cfde.tar",
+                "reference": "71c55352286ab6f7da33977d39a53474fda7e99f",
+                "shasum": "9d52a739a409b6738c7b22122dafaa85ef838558"
             },
             "require": {
                 "php": ">=5.5.9",
                 "psr/container": "^1.0"
             },
             "conflict": {
-                "symfony/config": "<=3.3-beta1",
+                "symfony/config": "<3.3.1",
                 "symfony/finder": "<3.3",
                 "symfony/yaml": "<3.3"
             },
@@ -2235,7 +2232,7 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-25T23:10:31+00:00"
+            "time": "2017-07-28T15:27:31+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -2298,17 +2295,17 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "4a2180d1e5d8a87263a47e1a7485aa9fcb234335"
+                "reference": "8f82f8e04b75d2896d7ec41005a52ffba66542ef"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-filesystem-v3.3.0-90d06a.tar",
-                "reference": "4a2180d1e5d8a87263a47e1a7485aa9fcb234335",
-                "shasum": "3c222974c23f939926c26f9f20aedd06335358a4"
+                "url": "https://satis.sugardev.team/dist/symfony-filesystem-v3.3.6-fc6e6a.tar",
+                "reference": "8f82f8e04b75d2896d7ec41005a52ffba66542ef",
+                "shasum": "fa8ff1c9d3350be0f842fa81a690c444cec847f3"
             },
             "require": {
                 "php": ">=5.5.9"
@@ -2342,21 +2339,21 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-28T14:08:56+00:00"
+            "time": "2017-07-11T07:17:58+00:00"
         },
         {
             "name": "symfony/finder",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "95cf580ac0e2abf05c24bb4c3fd891e345f84fc0"
+                "reference": "51d0b6c84378d04b52c1ba0be5c75892b3718386"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-finder-v3.3.0-78d6c8.tar",
-                "reference": "95cf580ac0e2abf05c24bb4c3fd891e345f84fc0",
-                "shasum": "4f7922ee95bd9d35436c4246c8f12ebc5c318d77"
+                "url": "https://satis.sugardev.team/dist/symfony-finder-v3.3.6-eb0b73.tar",
+                "reference": "51d0b6c84378d04b52c1ba0be5c75892b3718386",
+                "shasum": "e1ade8948262056428603521e87f99e429f180cb"
             },
             "require": {
                 "php": ">=5.5.9"
@@ -2390,7 +2387,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-25T23:10:31+00:00"
+            "time": "2017-06-01T21:01:25+00:00"
         },
         {
             "name": "symfony/framework-bundle",
@@ -2737,17 +2734,17 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.4.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "936bb1d3612f58a5ca9d25ab93c845100771608e"
+                "reference": "b4ed5689395dff6fd7073cf36ef4e3506d6fa561"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-polyfill-mbstring-v1.4.0-445c27.tar",
-                "reference": "936bb1d3612f58a5ca9d25ab93c845100771608e",
-                "shasum": "c343b28e037223f14db227d5bf0f0e800ce5cf7f"
+                "url": "https://satis.sugardev.team/dist/symfony-polyfill-mbstring-v1.5.0-b19f90.tar",
+                "reference": "b4ed5689395dff6fd7073cf36ef4e3506d6fa561",
+                "shasum": "b57df9f2074e222a68664b52803ce617f00a248b"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -2758,7 +2755,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "1.5-dev"
                 }
             },
             "autoload": {
@@ -2791,21 +2788,21 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-09T14:24:12+00:00"
+            "time": "2017-06-14T15:44:48+00:00"
         },
         {
             "name": "symfony/polyfill-php56",
-            "version": "v1.4.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php56.git",
-                "reference": "248766a2e61c038d2cd0cfb9b5eb8fb07d8bc197"
+                "reference": "8644ad0e9d4f757775d3b965ffb260fd615e9224"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-polyfill-php56-v1.4.0-fdaefb.tar",
-                "reference": "248766a2e61c038d2cd0cfb9b5eb8fb07d8bc197",
-                "shasum": "7036d2b9e37fe2dcfdab56b9cb540d36247baa23"
+                "url": "https://satis.sugardev.team/dist/symfony-polyfill-php56-v1.5.0-1bc99d.tar",
+                "reference": "8644ad0e9d4f757775d3b965ffb260fd615e9224",
+                "shasum": "d8b72009a10614c6c45ebba0cf740383990eca95"
             },
             "require": {
                 "php": ">=5.3.3",
@@ -2814,7 +2811,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "1.5-dev"
                 }
             },
             "autoload": {
@@ -2846,21 +2843,21 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-08T19:03:39+00:00"
+            "time": "2017-06-14T15:44:48+00:00"
         },
         {
             "name": "symfony/polyfill-php70",
-            "version": "v1.3.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php70.git",
-                "reference": "291ad33d8d5463716ca1395a1c2e362f7607f62a"
+                "reference": "ed2527e525d1129cbe882e51e60bdac3017a2ed8"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-polyfill-php70-v1.3.0-9945fb.tar",
-                "reference": "291ad33d8d5463716ca1395a1c2e362f7607f62a",
-                "shasum": "bfaaa1e8b6b060499e500765c3c50e400b084b93"
+                "url": "https://satis.sugardev.team/dist/symfony-polyfill-php70-v1.5.0-51f703.tar",
+                "reference": "ed2527e525d1129cbe882e51e60bdac3017a2ed8",
+                "shasum": "cded96a68384cb996aa6876b37e4d8dead725891"
             },
             "require": {
                 "paragonie/random_compat": "~1.0|~2.0",
@@ -2869,7 +2866,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.3-dev"
+                    "dev-master": "1.5-dev"
                 }
             },
             "autoload": {
@@ -2904,21 +2901,21 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14T01:06:16+00:00"
+            "time": "2017-06-14T15:44:48+00:00"
         },
         {
             "name": "symfony/polyfill-util",
-            "version": "v1.4.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-util.git",
-                "reference": "f7b5fe9a99af3d7bcbec5fdba57a141ff593c325"
+                "reference": "8ecd47fa904ace9b7ecf3a19c03f5c8de6faf4f8"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-polyfill-util-v1.4.0-8a5c2a.tar",
-                "reference": "f7b5fe9a99af3d7bcbec5fdba57a141ff593c325",
-                "shasum": "06e82837c1fb456128bbcec8995c50dd18c58db3"
+                "url": "https://satis.sugardev.team/dist/symfony-polyfill-util-v1.5.0-a7ba4c.tar",
+                "reference": "8ecd47fa904ace9b7ecf3a19c03f5c8de6faf4f8",
+                "shasum": "e879898abf0d9df95bd381d1eb1ccaa5ba0b6c11"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -2926,7 +2923,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "1.5-dev"
                 }
             },
             "autoload": {
@@ -2955,7 +2952,7 @@
                 "polyfill",
                 "shim"
             ],
-            "time": "2017-06-08T19:03:39+00:00"
+            "time": "2017-06-19T12:59:05+00:00"
         },
         {
             "name": "symfony/routing",
@@ -3158,17 +3155,17 @@
         },
         {
             "name": "symfony/stopwatch",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/stopwatch",
-                "reference": "40a019d065467095f7ef89408fcfc186ccc264a0"
+                "reference": "64c16f3b5cc25fe71fae3b4c6e9a523ef0414019"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-stopwatch-v3.3.0-307fce.tar",
-                "reference": "40a019d065467095f7ef89408fcfc186ccc264a0",
-                "shasum": "2437f577f8a2e5eca3d183f3b530e94fd8d35cfd"
+                "url": "https://satis.sugardev.team/dist/symfony-stopwatch-v3.3.6-8e8de0.tar",
+                "reference": "64c16f3b5cc25fe71fae3b4c6e9a523ef0414019",
+                "shasum": "69f08a68f80e7002b945ea301682c55c806fac20"
             },
             "require": {
                 "php": ">=5.5.9"
@@ -3206,17 +3203,17 @@
         },
         {
             "name": "symfony/templating",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/templating",
-                "reference": "8ac627777708ce6c706ab485c573ed9403e96efd"
+                "reference": "9b68500c4daaceea90f15bccf73cc255cf045836"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-templating-v3.3.0-986e39.tar",
-                "reference": "8ac627777708ce6c706ab485c573ed9403e96efd",
-                "shasum": "3937f965fa04d5d7cc1c3b1814222ad48e11ddae"
+                "url": "https://satis.sugardev.team/dist/symfony-templating-v3.3.6-012154.tar",
+                "reference": "9b68500c4daaceea90f15bccf73cc255cf045836",
+                "shasum": "7a035ce4f9a68f6ba80e74732d11944113afabf5"
             },
             "require": {
                 "php": ">=5.5.9"
@@ -3953,230 +3950,6 @@
             "time": "2017-04-03T19:08:52+00:00"
         },
         {
-            "name": "doctrine/doctrine-bundle",
-            "version": "1.6.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/DoctrineBundle",
-                "reference": "6e96577cbbdbb5b6dcca2ff203d665976b51beb0"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-doctrine-bundle-1.6.8-1679ec.tar",
-                "reference": "6e96577cbbdbb5b6dcca2ff203d665976b51beb0",
-                "shasum": "8a1abd14ca52f9325f777e27c4442f15a4897e29"
-            },
-            "require": {
-                "doctrine/dbal": "~2.3",
-                "doctrine/doctrine-cache-bundle": "~1.2",
-                "jdorn/sql-formatter": "~1.1",
-                "php": ">=5.5.9",
-                "symfony/console": "~2.7|~3.0|~4.0",
-                "symfony/dependency-injection": "~2.7|~3.0|~4.0",
-                "symfony/doctrine-bridge": "~2.7|~3.0|~4.0",
-                "symfony/framework-bundle": "~2.7|~3.0|~4.0"
-            },
-            "require-dev": {
-                "doctrine/orm": "~2.3",
-                "phpunit/phpunit": "~4",
-                "satooshi/php-coveralls": "^1.0",
-                "symfony/phpunit-bridge": "~2.7|~3.0|~4.0",
-                "symfony/property-info": "~2.8|~3.0|~4.0",
-                "symfony/validator": "~2.7|~3.0|~4.0",
-                "symfony/yaml": "~2.7|~3.0|~4.0",
-                "twig/twig": "~1.12|~2.0"
-            },
-            "suggest": {
-                "doctrine/orm": "The Doctrine ORM integration is optional in the bundle.",
-                "symfony/web-profiler-bundle": "To use the data collector."
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.6.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Doctrine\\Bundle\\DoctrineBundle\\": ""
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Benjamin Eberlei",
-                    "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
-                    "name": "Doctrine Project",
-                    "homepage": "http://www.doctrine-project.org/"
-                }
-            ],
-            "description": "Symfony DoctrineBundle",
-            "homepage": "http://www.doctrine-project.org",
-            "keywords": [
-                "DBAL",
-                "Database",
-                "ORM",
-                "Persistence"
-            ],
-            "time": "2017-05-18T08:15:18+00:00"
-        },
-        {
-            "name": "doctrine/doctrine-cache-bundle",
-            "version": "1.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/DoctrineCacheBundle",
-                "reference": "18c600a9b82f6454d2e81ca4957cdd56a1cf3504"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-doctrine-cache-bundle-1.3.0-f9920f.tar",
-                "reference": "18c600a9b82f6454d2e81ca4957cdd56a1cf3504",
-                "shasum": "3fc0f624a1c65d530ba8c2fcc73268b5911db3d5"
-            },
-            "require": {
-                "doctrine/cache": "^1.4.2",
-                "doctrine/inflector": "~1.0",
-                "php": ">=5.3.2",
-                "symfony/doctrine-bridge": "~2.2|~3.0"
-            },
-            "require-dev": {
-                "instaclick/coding-standard": "~1.1",
-                "instaclick/object-calisthenics-sniffs": "dev-master",
-                "instaclick/symfony2-coding-standard": "dev-remaster",
-                "phpunit/phpunit": "~4",
-                "predis/predis": "~0.8",
-                "satooshi/php-coveralls": "~0.6.1",
-                "squizlabs/php_codesniffer": "~1.5",
-                "symfony/console": "~2.2|~3.0",
-                "symfony/finder": "~2.2|~3.0",
-                "symfony/framework-bundle": "~2.2|~3.0",
-                "symfony/phpunit-bridge": "~2.7|~3.0",
-                "symfony/security-acl": "~2.3|~3.0",
-                "symfony/validator": "~2.2|~3.0",
-                "symfony/yaml": "~2.2|~3.0"
-            },
-            "suggest": {
-                "symfony/security-acl": "For using this bundle to cache ACLs"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Doctrine\\Bundle\\DoctrineCacheBundle\\": ""
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Benjamin Eberlei",
-                    "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Fabio B. Silva",
-                    "email": "fabio.bat.silva@gmail.com"
-                },
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@hotmail.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
-                    "name": "Doctrine Project",
-                    "homepage": "http://www.doctrine-project.org/"
-                }
-            ],
-            "description": "Symfony Bundle for Doctrine Cache",
-            "homepage": "http://www.doctrine-project.org",
-            "keywords": [
-                "cache",
-                "caching"
-            ],
-            "time": "2016-01-26T17:28:51+00:00"
-        },
-        {
-            "name": "doctrine/doctrine-migrations-bundle",
-            "version": "1.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/DoctrineMigrationsBundle.git",
-                "reference": "303a576e2124efb07ec215e34ea2480b841cf5e4"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-doctrine-migrations-bundle-1.1.1-2f4da0.tar",
-                "reference": "303a576e2124efb07ec215e34ea2480b841cf5e4",
-                "shasum": "d0f1e8d2c89cfc5a5ac4d274bdf526aa57187097"
-            },
-            "require": {
-                "doctrine/doctrine-bundle": "~1.0",
-                "doctrine/migrations": "~1.0",
-                "php": ">=5.3.2",
-                "symfony/framework-bundle": "~2.3|~3.0"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Doctrine\\Bundle\\MigrationsBundle\\": ""
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Doctrine Project",
-                    "homepage": "http://www.doctrine-project.org"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony DoctrineMigrationsBundle",
-            "homepage": "http://www.doctrine-project.org",
-            "keywords": [
-                "DBAL",
-                "Migrations",
-                "Schema"
-            ],
-            "time": "2015-11-04T13:45:30+00:00"
-        },
-        {
             "name": "doctrine/instantiator",
             "version": "1.0.5",
             "source": {
@@ -4235,315 +4008,6 @@
                 "instantiate"
             ],
             "time": "2015-06-14T21:17:01+00:00"
-        },
-        {
-            "name": "doctrine/migrations",
-            "version": "v1.2.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/migrations",
-                "reference": "6b70c2c4484c02878743929bb3cd3fdbf41193a6"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-migrations-v1.2.2-ed76df.tar",
-                "reference": "6b70c2c4484c02878743929bb3cd3fdbf41193a6",
-                "shasum": "9eed64179804fbee952b3116ab0c6ffa4883e1b8"
-            },
-            "require": {
-                "doctrine/dbal": "~2.2",
-                "php": ">=5.4.0",
-                "symfony/console": "~2.3|~3.0",
-                "symfony/yaml": "~2.3|~3.0"
-            },
-            "require-dev": {
-                "doctrine/coding-standard": "dev-master",
-                "doctrine/orm": "2.*",
-                "johnkary/phpunit-speedtrap": "~1.0@dev",
-                "mockery/mockery": "^0.9.4",
-                "phpunit/phpunit": "~4.7",
-                "satooshi/php-coveralls": "0.6.*"
-            },
-            "bin": [
-                "bin/doctrine-migrations"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "v1.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Doctrine\\DBAL\\Migrations\\": "lib/Doctrine/DBAL/Migrations"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Doctrine\\DBAL\\Migrations\\Tests\\": "tests/Doctrine/DBAL/Migrations/Tests"
-                }
-            },
-            "license": [
-                "LGPL-2.1"
-            ],
-            "authors": [
-                {
-                    "name": "Benjamin Eberlei",
-                    "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Jonathan Wage",
-                    "email": "jonwage@gmail.com"
-                },
-                {
-                    "name": "Michael Simonson",
-                    "email": "contact@mikesimonson.com"
-                }
-            ],
-            "description": "Database Schema migrations using Doctrine DBAL",
-            "homepage": "http://www.doctrine-project.org",
-            "keywords": [
-                "database",
-                "migrations"
-            ],
-            "time": "2016-01-07T21:28:50+00:00"
-        },
-        {
-            "name": "guzzlehttp/guzzle",
-            "version": "6.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/guzzle/guzzle",
-                "reference": "3e48590719c7acb38492a90c24743a1389ec28b2"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/guzzlehttp-guzzle-6.2.3-5cebe3.tar",
-                "reference": "3e48590719c7acb38492a90c24743a1389ec28b2",
-                "shasum": "bd8569c7928270cf6803bf7010b24c5f820246c5"
-            },
-            "require": {
-                "guzzlehttp/promises": "^1.0",
-                "guzzlehttp/psr7": "^1.4",
-                "php": ">=5.5"
-            },
-            "require-dev": {
-                "ext-curl": "*",
-                "phpunit/phpunit": "^4.0",
-                "psr/log": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "6.2-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/functions_include.php"
-                ],
-                "psr-4": {
-                    "GuzzleHttp\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "GuzzleHttp\\Tests\\": "tests/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Dowling",
-                    "email": "mtdowling@gmail.com",
-                    "homepage": "https://github.com/mtdowling"
-                }
-            ],
-            "description": "Guzzle is a PHP HTTP client library",
-            "homepage": "http://guzzlephp.org/",
-            "keywords": [
-                "HTTP client",
-                "client",
-                "curl",
-                "framework",
-                "http",
-                "rest",
-                "web service"
-            ],
-            "time": "2017-02-23T10:16:59+00:00"
-        },
-        {
-            "name": "guzzlehttp/promises",
-            "version": "v1.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/guzzle/promises",
-                "reference": "c6741431576c19774dc593b100db56b7c264344e"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/guzzlehttp-promises-v1.3.1-540948.tar",
-                "reference": "c6741431576c19774dc593b100db56b7c264344e",
-                "shasum": "aa4d3a138ad1a9b5cc226166d0c320150e641c78"
-            },
-            "require": {
-                "php": ">=5.5.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\Promise\\": "src/"
-                },
-                "files": [
-                    "src/functions_include.php"
-                ]
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-ci": [
-                    "vendor/bin/phpunit --coverage-text"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Dowling",
-                    "email": "mtdowling@gmail.com",
-                    "homepage": "https://github.com/mtdowling"
-                }
-            ],
-            "description": "Guzzle promises library",
-            "keywords": [
-                "promise"
-            ],
-            "time": "2016-12-20T10:07:11+00:00"
-        },
-        {
-            "name": "guzzlehttp/psr7",
-            "version": "1.4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/guzzle/psr7",
-                "reference": "3f236a2abc7e63b71f2d572a3a794badd69a5798"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/guzzlehttp-psr7-1.4.2-964be7.tar",
-                "reference": "3f236a2abc7e63b71f2d572a3a794badd69a5798",
-                "shasum": "bd799d10e4a56ed75a246f7ba8c2170f342b80dd"
-            },
-            "require": {
-                "php": ">=5.4.0",
-                "psr/http-message": "~1.0"
-            },
-            "provide": {
-                "psr/http-message-implementation": "1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\Psr7\\": "src/"
-                },
-                "files": [
-                    "src/functions_include.php"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Dowling",
-                    "email": "mtdowling@gmail.com",
-                    "homepage": "https://github.com/mtdowling"
-                },
-                {
-                    "name": "Tobias Schultze",
-                    "homepage": "https://github.com/Tobion"
-                }
-            ],
-            "description": "PSR-7 message implementation that also provides common utility methods",
-            "keywords": [
-                "http",
-                "message",
-                "request",
-                "response",
-                "stream",
-                "uri",
-                "url"
-            ],
-            "time": "2017-03-20T17:10:46+00:00"
-        },
-        {
-            "name": "jdorn/sql-formatter",
-            "version": "v1.2.17",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jdorn/sql-formatter",
-                "reference": "e7c34d03601c55947de618931ef9384343392b2c"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/jdorn-sql-formatter-v1.2.17-09649f.tar",
-                "reference": "e7c34d03601c55947de618931ef9384343392b2c",
-                "shasum": "1ee2b8b6dc3c9318e1d3471be62a843b42de14fc"
-            },
-            "require": {
-                "php": ">=5.2.4"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "3.7.*"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.3.x-dev"
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "lib"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jeremy Dorn",
-                    "email": "jeremy@jeremydorn.com",
-                    "homepage": "http://jeremydorn.com/"
-                }
-            ],
-            "description": "a PHP SQL highlighting library",
-            "homepage": "https://github.com/jdorn/sql-formatter/",
-            "keywords": [
-                "highlight",
-                "sql"
-            ],
-            "time": "2014-01-12T16:20:24+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -4716,22 +4180,22 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "3.1.1",
+            "version": "3.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e"
+                "reference": "4aada1f93c72c35e22fb1383b47fee43b8f1d157"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpdocumentor-reflection-docblock-3.1.1-319752.tar",
-                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e",
-                "shasum": "4ace020ec9ae8215babb5e7664f292f7d40ddc09"
+                "url": "https://satis.sugardev.team/dist/phpdocumentor-reflection-docblock-3.2.2-e3ca8e.tar",
+                "reference": "4aada1f93c72c35e22fb1383b47fee43b8f1d157",
+                "shasum": "048dd3c8dd2d9f1c8739a528184c89caddf44ec1"
             },
             "require": {
                 "php": ">=5.5",
                 "phpdocumentor/reflection-common": "^1.0@dev",
-                "phpdocumentor/type-resolver": "^0.2.0",
+                "phpdocumentor/type-resolver": "^0.3.0",
                 "webmozart/assert": "^1.0"
             },
             "require-dev": {
@@ -4763,24 +4227,24 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2016-09-30T07:12:33+00:00"
+            "time": "2017-08-07T03:56:26+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "0.2.1",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver",
-                "reference": "e224fb2ea2fba6d3ad6fdaef91cd09a172155ccb"
+                "reference": "fb3933512008d8162b3cdf9e18dba9309b7c3773"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpdocumentor-type-resolver-0.2.1-e5468a.tar",
-                "reference": "e224fb2ea2fba6d3ad6fdaef91cd09a172155ccb",
-                "shasum": "7f81efdc46e12f4f52806e857e9f03343af2c269"
+                "url": "https://satis.sugardev.team/dist/phpdocumentor-type-resolver-0.3.0-8901fb.tar",
+                "reference": "fb3933512008d8162b3cdf9e18dba9309b7c3773",
+                "shasum": "bf4a5b85ad7a08f5224d8fabce5b45b933dfe00c"
             },
             "require": {
-                "php": ">=5.5",
+                "php": "^5.5 || ^7.0",
                 "phpdocumentor/reflection-common": "^1.0"
             },
             "require-dev": {
@@ -4816,7 +4280,7 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2016-11-25T06:54:22+00:00"
+            "time": "2017-06-03T08:32:36+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -5241,17 +4705,17 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "3.4.3",
+            "version": "3.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "27069611c76d38f1e5f9872c7b266b87ee722132"
+                "reference": "1802543a80b22a7592215833c333c61c4280a6a1"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit-phpunit-mock-objects-3.4.3-9fcf42.tar",
-                "reference": "27069611c76d38f1e5f9872c7b266b87ee722132",
-                "shasum": "83e82c027a4525cebf782dd69e3dd4cd5fcacc09"
+                "url": "https://satis.sugardev.team/dist/phpunit-phpunit-mock-objects-3.4.4-49ff45.tar",
+                "reference": "1802543a80b22a7592215833c333c61c4280a6a1",
+                "shasum": "53806ef7897b4a541324454f1961b2fe68ded865"
             },
             "require": {
                 "doctrine/instantiator": "^1.0.2",
@@ -5304,56 +4768,7 @@
                 "issues": "https://github.com/sebastianbergmann/phpunit-mock-objects/issues",
                 "irc": "irc://irc.freenode.net/phpunit"
             },
-            "time": "2016-12-08T20:27:08+00:00"
-        },
-        {
-            "name": "psr/http-message",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/http-message",
-                "reference": "5ffd088ec254f9a393dcfa22531e11f3be9c0d2b"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/psr-http-message-1.0.1-a95977.tar",
-                "reference": "5ffd088ec254f9a393dcfa22531e11f3be9c0d2b",
-                "shasum": "18e11deb7d8ebc90399ec7c51d2b02754b8f2989"
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Http\\Message\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for HTTP messages",
-            "homepage": "https://github.com/php-fig/http-message",
-            "keywords": [
-                "http",
-                "http-message",
-                "psr",
-                "psr-7",
-                "request",
-                "response"
-            ],
-            "time": "2016-08-06T14:39:51+00:00"
+            "time": "2017-06-30T06:27:17+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -5920,17 +5335,17 @@
         },
         {
             "name": "seld/jsonlint",
-            "version": "1.6.0",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/jsonlint.git",
-                "reference": "791f8c594f300d246cdf01c6b3e1e19611e301d8"
+                "reference": "50d63f2858d87c4738d5b76a7dcbb99fa8cf7c77"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/seld-jsonlint-1.6.0-641197.tar",
-                "reference": "791f8c594f300d246cdf01c6b3e1e19611e301d8",
-                "shasum": "5ec76d82913b5f60214d14085b009d0f28201ad1"
+                "url": "https://satis.sugardev.team/dist/seld-jsonlint-1.6.1-971430.tar",
+                "reference": "50d63f2858d87c4738d5b76a7dcbb99fa8cf7c77",
+                "shasum": "63614a1df5191e1a7c28240e10672a67a335733a"
             },
             "require": {
                 "php": "^5.3 || ^7.0"
@@ -5964,7 +5379,7 @@
                 "parser",
                 "validator"
             ],
-            "time": "2017-03-06T16:42:24+00:00"
+            "time": "2017-06-18T15:11:04+00:00"
         },
         {
             "name": "seld/phar-utils",
@@ -6010,96 +5425,18 @@
             "time": "2015-10-13T18:44:15+00:00"
         },
         {
-            "name": "symfony/doctrine-bridge",
-            "version": "v3.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/doctrine-bridge",
-                "reference": "bd0bfadcd260d7affd93d69fcdde1f0ed685f2f7"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-doctrine-bridge-v3.3.0-e17f78.tar",
-                "reference": "bd0bfadcd260d7affd93d69fcdde1f0ed685f2f7",
-                "shasum": "027ca47fa7d68f21dc6968311285e862ff77fc62"
-            },
-            "require": {
-                "doctrine/common": "~2.4",
-                "php": ">=5.5.9",
-                "symfony/polyfill-mbstring": "~1.0"
-            },
-            "conflict": {
-                "phpunit/phpunit": "<4.8.35|<5.4.3,>=5.0",
-                "symfony/dependency-injection": "<3.3"
-            },
-            "require-dev": {
-                "doctrine/data-fixtures": "1.0.*",
-                "doctrine/dbal": "~2.4",
-                "doctrine/orm": "^2.4.5",
-                "symfony/dependency-injection": "~3.3",
-                "symfony/expression-language": "~2.8|~3.0",
-                "symfony/form": "^3.2.5",
-                "symfony/http-kernel": "~2.8|~3.0",
-                "symfony/property-access": "~2.8|~3.0",
-                "symfony/property-info": "~2.8|3.0",
-                "symfony/proxy-manager-bridge": "~2.8|~3.0",
-                "symfony/security": "~2.8|~3.0",
-                "symfony/stopwatch": "~2.8|~3.0",
-                "symfony/translation": "~2.8|~3.0",
-                "symfony/validator": "^2.8.18|^3.2.5"
-            },
-            "suggest": {
-                "doctrine/data-fixtures": "",
-                "doctrine/dbal": "",
-                "doctrine/orm": "",
-                "symfony/form": "",
-                "symfony/property-info": "",
-                "symfony/validator": ""
-            },
-            "type": "symfony-bridge",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.3-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Bridge\\Doctrine\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Doctrine Bridge",
-            "homepage": "https://symfony.com",
-            "time": "2017-04-12T09:13:52+00:00"
-        },
-        {
             "name": "symfony/process",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Process.git",
-                "reference": "1fc41e77c41e57e8d206937913cf5976cb3f7057"
+                "reference": "01b80704c08ae33264afca7d3dd92503f1eeb8a5"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-process-v3.3.0-f25ef8.tar",
-                "reference": "1fc41e77c41e57e8d206937913cf5976cb3f7057",
-                "shasum": "f0d568e3b50a13df1cc767d81457882879f23281"
+                "url": "https://satis.sugardev.team/dist/symfony-process-v3.3.6-92966b.tar",
+                "reference": "01b80704c08ae33264afca7d3dd92503f1eeb8a5",
+                "shasum": "5b5c5045fe5c88b8c5e4961a97dd027ad734d2f1"
             },
             "require": {
                 "php": ">=5.5.9"
@@ -6133,21 +5470,21 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-02T18:18:44+00:00"
+            "time": "2017-07-13T12:40:01+00:00"
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.3.0",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "0afb32e0dfada120818ccec12871f9d704ebf2c3"
+                "reference": "2163a7922f8ff6870945f7e7c105574f4c69822d"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-yaml-v3.3.0-bdaf3e.tar",
-                "reference": "0afb32e0dfada120818ccec12871f9d704ebf2c3",
-                "shasum": "0b7c9f7770063bb336b4e798b1728b419796dae1"
+                "url": "https://satis.sugardev.team/dist/symfony-yaml-v3.3.6-b97f75.tar",
+                "reference": "2163a7922f8ff6870945f7e7c105574f4c69822d",
+                "shasum": "a39632e674a6a0d5334886d3621722ced4396476"
             },
             "require": {
                 "php": ">=5.5.9"
@@ -6187,7 +5524,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-28T10:56:20+00:00"
+            "time": "2017-07-23T12:40:01+00:00"
         },
         {
             "name": "webmozart/assert",
