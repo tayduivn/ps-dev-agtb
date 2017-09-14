@@ -28,6 +28,20 @@ $viewdefs['Reports']['base']['layout']['drillthrough-drawer'] = array(
                                 ),
                                 array(
                                     'layout' => 'drillthrough-list',
+                                    'xmeta' => array(
+                                        'components' => array(
+                                            array(
+                                                'view' => 'recordlist',
+                                                'primary' => true,
+                                                'xmeta' => array(
+                                                    'favorite' => true,
+                                                ),
+                                            ),
+                                            array(
+                                                'view' => 'list-bottom',
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                         ),
