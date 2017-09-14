@@ -295,4 +295,70 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * @covers ::formatForApi
+     */
+    public function testFormatForApi_TheSystemAccountCanBeUsedByUsers_OverwritesTheNameAndEmailAddressForTheSystemAccount()
+    {
+        $bean = $this->getMockBuilder('OutboundEmail')
+            ->setMethods(array('isAllowUserAccessToSystemDefaultOutbound'))->getMock();
+        $bean->method('isAllowUserAccessToSystemDefaultOutbound')->willReturn(true);
+
+        $row = [
+            'id' => Uuid::uuid1(),
+            'name' => 'SugarCRM',
+            'type' => 'system',
+            'user_id' => '1',
+            'email_address' => 'admin@sugarcrm.com',
+            'email_address_id' => Uuid::uuid1(),
+        ];
+        $bean->populateFromRow($row);
+
+        $primaryId = $GLOBALS['current_user']->emailAddress->getGuid($GLOBALS['current_user']->email1);
+
+        $helper = new OutboundEmailApiHelper(SugarTestRestUtilities::getRestServiceMock());
+        $actual = $helper->formatForApi($bean, ['name', 'email_address', 'email_address_id']);
+
+        $this->assertSame($GLOBALS['current_user']->name, $bean->name, 'The names should match');
+        $this->assertSame($GLOBALS['current_user']->email1, $bean->email_address, 'The email addresses should match');
+        $this->assertSame($primaryId, $bean->email_address_id, 'The email address IDs should match');
+    }
+
+    public function typeProvider()
+    {
+        return [
+            'system_account_cannot_be_used_by_users' => ['system'],
+            'system_override_account' => ['system-override'],
+            'user_account' => ['user'],
+        ];
+    }
+
+    /**
+     * @dataProvider typeProvider
+     * @covers ::formatForApi
+     */
+    public function testFormatForApi_DoesNotOverwriteTheNameAndEmailAddress($type)
+    {
+        $bean = $this->getMockBuilder('OutboundEmail')
+            ->setMethods(array('isAllowUserAccessToSystemDefaultOutbound'))->getMock();
+        $bean->method('isAllowUserAccessToSystemDefaultOutbound')->willReturn(false);
+
+        $row = [
+            'id' => Uuid::uuid1(),
+            'name' => 'SugarCRM',
+            'type' => $type,
+            'user_id' => '1',
+            'email_address' => 'admin@sugarcrm.com',
+            'email_address_id' => Uuid::uuid1(),
+        ];
+        $bean->populateFromRow($row);
+
+        $helper = new OutboundEmailApiHelper(SugarTestRestUtilities::getRestServiceMock());
+        $actual = $helper->formatForApi($bean, ['name', 'email_address', 'email_address_id']);
+
+        $this->assertSame($row['name'], $bean->name, 'The names should match');
+        $this->assertSame($row['email_address'], $bean->email_address, 'The email addresses should match');
+        $this->assertSame($row['email_address_id'], $bean->email_address_id, 'The email address IDs should match');
+    }
 }

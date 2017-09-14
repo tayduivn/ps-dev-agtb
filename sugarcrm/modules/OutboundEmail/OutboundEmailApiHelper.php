@@ -55,6 +55,20 @@ class OutboundEmailApiHelper extends SugarBeanApiHelper
      */
     public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array())
     {
+        /*
+         * When retrieving a list of OutboundEmail records that includes the system account, FilterApi::populateRelatedFields()
+         * creates an instance of an EmailAddress bean on $bean->related_beans for the system account, which contains
+         * the email_address field with the value of the email address for the system account. When formatting
+         * the system account for the response, the system account's email address value is then set on the
+         * response object by SugarFieldRelate::apiFormatField(). This overwrites the email address that
+         * might have been set on the bean by the logic from OutboundEmail::populateFromRow() and
+         * OutboundEmail::populateFromUser() when the bean was first loaded by SugarBean::fetchFromQuery().
+         * We want to respond with the data that is already on set on the bean. Unsetting the related bean for the
+         * email_address link guarantees that SugarFieldRelate::apiFormatField() will fall back to using the existing
+         * value on the bean instead of using the value from the related bean.
+         */
+        unset($bean->related_beans['email_addresses']);
+
         $record = parent::formatForApi($bean, $fieldList, $options);
 
         if (isset($record['mail_smtppass'])) {
