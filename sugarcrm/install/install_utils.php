@@ -947,6 +947,7 @@ RedirectMatch 403 {$ignoreCase}/+vendor/(?!ytree.*\.(css|js|gif|png))
 RedirectMatch 403 {$ignoreCase}/+bin/
 RedirectMatch 403 {$ignoreCase}/+src/
 RedirectMatch 403 {$ignoreCase}.*/\.git
+RedirectMatch 403 {$ignoreCase}/+dist/
 
 # Fix mimetype for logo.svg (SP-1395)
 AddType     image/svg+xml     .svg
