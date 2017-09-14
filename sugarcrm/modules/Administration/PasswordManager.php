@@ -116,7 +116,7 @@ if (!empty($_POST['saveConfig'])) {
                     break;
                 }
             }
-            if (empty($_POST['SAML_idp_entityId'])) {
+            if (empty(InputValidation::getService()->getValidInputPost('SAML_idp_entityId'))) {
                 $configurator->addError($config_strings['ERR_EMPTY_SAML_IDP_ENTITY_ID']);
                 break;
             }
@@ -136,7 +136,8 @@ if (!empty($_POST['saveConfig'])) {
             } else {
                 $_POST['SAML_SAME_WINDOW'] = false;
             }
-            if (isset($_REQUEST['SAML_provisionUser'])) {
+            $provisionUserInput = InputValidation::getService()->getValidInputRequest('SAML_provisionUser');
+            if (!is_null($provisionUserInput)) {
                 $_POST['SAML_provisionUser'] = true;
             } else {
                 $_POST['SAML_provisionUser'] = false;
@@ -190,7 +191,8 @@ if (!empty($_POST['saveConfig'])) {
             }
 
             foreach (['SAML_sign_authn', 'SAML_sign_logout_request', 'SAML_sign_logout_response'] as $signOption) {
-                $_POST[$signOption] = isset($_REQUEST[$signOption]);
+                $signOptionInput = InputValidation::getService()->getValidInputRequest($signOption);
+                $_POST[$signOption] = !is_null($signOptionInput);
             }
         }
 
