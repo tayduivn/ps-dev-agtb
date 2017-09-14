@@ -100,6 +100,9 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
             WHERE tst.team_set_id = {$tableAlias}.acl_team_set_id AND tst.deleted = 0";
 
         $ow = new OwnerVisibility($this->bean, $this->params);
+        if (!empty($this->getOption('table_alias'))) {
+            $ow->setOptions(array('table_alias' => $this->getOption('table_alias')));
+        }
         $ownerVisibilityRaw = '';
         $ow->addVisibilityWhere($ownerVisibilityRaw);
 

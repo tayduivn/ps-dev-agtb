@@ -63,7 +63,11 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
             //BEGIN SUGARCRM flav=ent ONLY
             } elseif ($this->tbaConfig->isValidAccess($actualAccess)) {
                 $tbaVisibility = new TeamBasedACLVisibility($this->bean);
-                $tbaVisibility->setOptions(array('where_condition' => true));
+                $options = array('where_condition' => true);
+                if (!empty($this->getOption('table_alias'))) {
+                    $options['table_alias'] = $this->getOption('table_alias');
+                }
+                $tbaVisibility->setOptions($options);
                 $tbaVisibility->addVisibilityWhere($queryPart);
             //END SUGARCRM flav=ent ONLY
             }

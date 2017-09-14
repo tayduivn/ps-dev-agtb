@@ -38,6 +38,11 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected $bean;
 
+    /**
+     * @var Lead Bean
+     */
+    protected $leadBean;
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user', array(true, true));
@@ -65,11 +70,15 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->team->add_user_to_team($this->user->id);
 
         SugarTestAccountUtilities::setCreatedAccount(array($this->bean->id));
+
+        // Mocks Leads Bean
+        $this->leadBean = SugarTestLeadUtilities::createLead();
     }
 
     public function tearDown()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
         $this->teamSet->mark_deleted($this->teamSet->id);
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -125,5 +134,32 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['current_user'] = $oldCurrentUser;
         return $record ? true : false;
+    }
+
+    /**
+     * Check table alias is applied to where query statement
+     * for TBA visibility
+     */
+    public function testTableAliasForTBAVisibility()
+    {
+        $oldCurrentUser = $GLOBALS['current_user'];
+        $GLOBALS['current_user'] = $this->user;
+
+        $aclData['module']['list']['aclaccess'] = ACL_ALLOW_SELECTED_TEAMS;
+        ACLAction::setACLData($this->user->id, 'Leads', $aclData);
+
+        // TeamBasedACL
+        $this->leadBean->acl_team_set_id = $this->teamSet->id;
+        $this->leadBean->save();
+
+        $bv = new ACLVisibility($this->leadBean);
+        $options = array('table_alias' => 'l1');
+        $query = '';
+        $bv->setOptions($options)->addVisibilityWhere($query);
+
+        $GLOBALS['current_user'] = $oldCurrentUser;
+
+        $this->assertContains("l1.assigned_user_id", $query);
+        $this->assertContains("l1.acl_team_set_id", $query);
     }
 }
