@@ -65,5 +65,5 @@ $viewdefs['Products']['base']['layout']['list-dashboard'] = array(
                     ),
                 ),
         ),
-    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
+    'name' => 'LBL_QUOTED_LINE_ITEMS_LIST_DASHBOARD',
 );

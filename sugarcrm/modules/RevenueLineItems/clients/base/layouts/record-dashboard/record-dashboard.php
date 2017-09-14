@@ -62,5 +62,5 @@ $viewdefs['RevenueLineItems']['base']['layout']['record-dashboard'] = array(
                     ),
                 ),
         ),
-    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
+    'name' => 'LBL_REVENUE_LINE_ITEMS_RECORD_DASHBOARD',
 );

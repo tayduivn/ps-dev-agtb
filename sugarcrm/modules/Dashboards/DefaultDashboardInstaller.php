@@ -96,7 +96,8 @@ class DefaultDashboardInstaller
      * @param SugarBean $dashboardBean The dashboard bean to populate.
      * @param array $properties The properties to store to the dashboard bean.
      */
-    public function storeDashboard($dashboardBean, $properties) {
+    public function storeDashboard($dashboardBean, $properties)
+    {
         foreach ($properties as $key => $value) {
             $dashboardBean->$key = $value;
         }
@@ -108,8 +109,23 @@ class DefaultDashboardInstaller
      *
      * @return SugarBean
      */
-    public function getNewDashboardBean() {
+    public function getNewDashboardBean()
+    {
         return BeanFactory::newBean('Dashboards');
+    }
+
+    /**
+     * Retrieve a system user.
+     *
+     * @return User A system user.
+     */
+    public function getAdminUser()
+    {
+        $user = BeanFactory::newBean('Users');
+        if (empty($user)) {
+            throw new SugarException('Unable to retrieve user bean.');
+        }
+        return $user->getSystemUser();
     }
 
     /**
@@ -119,6 +135,9 @@ class DefaultDashboardInstaller
      */
     public function buildDashboardsFromMetadata(array $metadata)
     {
+        $adminUser = $this->getAdminUser();
+        $adminUserId = $adminUser->id;
+
         // Maps between the name of the old OOTB dashboard layout name and the
         // view_name to which it refers.
         $layoutToNameMap = array(
@@ -147,6 +166,11 @@ class DefaultDashboardInstaller
                     'metadata' => json_encode($dashboardContents['metadata']),
                     'default_dashboard' => true,
                     'team_id' => $this->globalTeamId,
+                    'assigned_user_id' => $adminUserId,
+                    'set_created_by' => false,
+                    'created_by' => $adminUserId,
+                    'update_modified_by' => false,
+                    'modified_user_id' => $adminUserId,
                 );
 
                 $dashboardBean = $this->getNewDashboardBean();

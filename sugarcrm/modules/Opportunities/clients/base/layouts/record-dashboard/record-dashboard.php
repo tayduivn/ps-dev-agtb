@@ -97,5 +97,5 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                     ),
                 ),
         ),
-    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
+    'name' => 'LBL_OPPORTUNITIES_RECORD_DASHBOARD',
 );

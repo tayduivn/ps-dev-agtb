@@ -42,5 +42,5 @@ $viewdefs['Cases']['base']['layout']['record-dashboard'] = array(
                     ),
                 ),
         ),
-    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
+    'name' => 'LBL_CASES_RECORD_DASHBOARD',
 );

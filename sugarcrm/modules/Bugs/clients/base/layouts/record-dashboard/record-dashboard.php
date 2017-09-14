@@ -42,5 +42,5 @@ $viewdefs['Bugs']['base']['layout']['record-dashboard'] = array(
                     ),
                 ),
         ),
-    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
+    'name' => 'LBL_BUGS_RECORD_DASHBOARD',
 );

@@ -61,5 +61,5 @@ $viewdefs['Quotes']['base']['layout']['record-dashboard'] = array(
             ),
         ),
     ),
-    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
+    'name' => 'LBL_QUOTES_RECORD_DASHBOARD',
 );

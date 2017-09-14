@@ -44,5 +44,5 @@ $viewdefs['ProspectLists']['base']['layout']['list-dashboard'] = array(
                     ),
                 ),
         ),
-    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
+    'name' => 'LBL_TARGET_LISTS_LIST_DASHBOARD',
 );

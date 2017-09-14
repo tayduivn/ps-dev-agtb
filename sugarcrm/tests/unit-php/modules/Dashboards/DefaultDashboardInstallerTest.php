@@ -128,6 +128,7 @@ class DefaultDashboardInstallerTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array(
                 'storeDashboard',
                 'getNewDashboardBean',
+                'getAdminUser',
             ))
             ->getMock();
 
@@ -136,6 +137,14 @@ class DefaultDashboardInstallerTest extends \PHPUnit_Framework_TestCase
         $defaultDashboardInstaller->method('getNewDashboardBean')
             ->willReturn('beanStub');
 
+        $adminUserMock = $this->getMockBuilder('User')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $adminUserMock->id = 'adminId';
+
+        $defaultDashboardInstaller->method('getAdminUser')
+            ->willReturn($adminUserMock);
+
         $expectTestModule = array(
             'name' => 'Dashboard Name',
             'dashboard_module' => 'TestModule',
@@ -143,6 +152,11 @@ class DefaultDashboardInstallerTest extends \PHPUnit_Framework_TestCase
             'metadata' => '{"metadata":"dashboard metadata"}',
             'default_dashboard' => true,
             'team_id' => '1',
+            'assigned_user_id' => 'adminId',
+            'set_created_by' => false,
+            'created_by' => 'adminId',
+            'update_modified_by' => false,
+            'modified_user_id' => 'adminId',
         );
         $expectHomeModule = array(
             'name' => 'Dashboard Name',
@@ -151,6 +165,11 @@ class DefaultDashboardInstallerTest extends \PHPUnit_Framework_TestCase
             'metadata' => '{"metadata":"dashboard metadata"}',
             'default_dashboard' => true,
             'team_id' => '1',
+            'assigned_user_id' => 'adminId',
+            'set_created_by' => false,
+            'created_by' => 'adminId',
+            'update_modified_by' => false,
+            'modified_user_id' => 'adminId',
         );
 
         $defaultDashboardInstaller->expects($this->exactly(2))

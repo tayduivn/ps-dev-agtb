@@ -43,5 +43,5 @@ $viewdefs['Leads']['base']['layout']['record-dashboard'] = array(
                     ),
                 ),
         ),
-    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
+    'name' => 'LBL_LEADS_RECORD_DASHBOARD',
 );
