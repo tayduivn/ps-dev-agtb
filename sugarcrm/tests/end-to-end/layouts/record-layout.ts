@@ -21,7 +21,7 @@ import RecordView from '../views/record-view';
 export default class RecordLayout extends BaseView {
 
     public HeaderView: HeaderView;
-    private type: string;
+    protected type: string;
     public RecordView: RecordView;
     public defaultView: RecordView;
 

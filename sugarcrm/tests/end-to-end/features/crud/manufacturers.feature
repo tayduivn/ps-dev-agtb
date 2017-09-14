@@ -137,14 +137,14 @@ Feature: Manufacturers module verification
     Then I should see #Alex1Record view
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #ManufacturersRecord.HeaderView view
+    When I provide input for #ManufacturersDrawer.HeaderView view
       | *     | name  |
       | Alex2 | Alex2 |
-    When I provide input for #ManufacturersRecord.RecordView view
+    When I provide input for #ManufacturersDrawer.RecordView view
       | list_order | status   |
       | 5          | Inactive |
     # Cancel copying record
-    When I click Cancel button on #ManufacturersRecord header
+    When I click Cancel button on #ManufacturersDrawer header
     Then I verify fields on #Alex1Record.HeaderView
       | fieldName | value |
       | name      | Alex1 |
@@ -165,13 +165,13 @@ Feature: Manufacturers module verification
     Then I should see #Alex1Record view
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #ManufacturersRecord.HeaderView view
+    When I provide input for #ManufacturersDrawer.HeaderView view
       | *     | name  |
       | Alex2 | Alex2 |
-    When I provide input for #ManufacturersRecord.RecordView view
+    When I provide input for #ManufacturersDrawer.RecordView view
       | list_order | status   |
       | 5          | Inactive |
-    When I click Save button on #ManufacturersRecord header
+    When I click Save button on #ManufacturersDrawer header
     Then I verify fields on #Alex1Record.HeaderView
       | fieldName | value |
       | name      | Alex2 |
@@ -195,23 +195,23 @@ Feature: Manufacturers module verification
     Given I open about view and login
     When I go to "Manufacturers" url
     When I click Create button on #ManufacturersList header
-    When I provide input for #ManufacturersRecord.HeaderView view
+    When I provide input for #ManufacturersDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #ManufacturersRecord.RecordView view
+    When I provide input for #ManufacturersDrawer.RecordView view
       | *        | status | list_order |
       | RecordID | Active | 123        |
-    When I click Cancel button on #ManufacturersRecord header
+    When I click Cancel button on #ManufacturersDrawer header
     # TODO: find the way to verify that record is not created if creation is canceled
     # Then I should not see *Alex2 in #ManufacturersList.ListView
     When I click Create button on #ManufacturersList header
-    When I provide input for #ManufacturersRecord.HeaderView view
+    When I provide input for #ManufacturersDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #ManufacturersRecord.RecordView view
+    When I provide input for #ManufacturersDrawer.RecordView view
       | *        | status | list_order |
       | RecordID | Active | 123        |
-    When I click Save button on #ManufacturersRecord header
+    When I click Save button on #ManufacturersDrawer header
     Then I should see *RecordID in #ManufacturersList.ListView
     When I click on preview button on *RecordID in #ManufacturersList.ListView
     Then I should see #RecordIDPreview view

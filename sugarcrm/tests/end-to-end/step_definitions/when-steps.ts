@@ -10,164 +10,162 @@
  */
 
 import ModuleMenuCmp from '../components/module-menu-cmp';
-import {seedbed, whenStepsHelper, stepsHelper, Utils} from '@sugarcrm/seedbed';
+import {seedbed, whenStepsHelper, stepsHelper, Utils, When} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
 import RecordView from '../views/record-view';
 import RecordLayout from '../layouts/record-layout';
+import ListView from '../views/list-view';
 
-const whenSteps = function () {
+/**
+ * Select module in modules menu
+ *
+ * If "itemName" is visible, it means that it can be located in main menu.
+ * If not - trying to open modules dropdown menu and find this module there
+ *
+ * @example "I choose Accounts in modules menu"
+ */
+When(/^I choose (\w+) in modules menu$/,
+    async (itemName) => {
 
-    /**
-     * Select module in modules menu
-     *
-     * If "itemName" is visible, it means that it can be located in main menu.
-     * If not - trying to open modules dropdown menu and find this module there
-     *
-     * @example "I choose Accounts in modules menu"
-     */
-    this.When(/^I choose (\w+) in modules menu$/,
-        async(itemName) => {
+        let moduleMenuCmp = new ModuleMenuCmp({});
 
-            let moduleMenuCmp = new ModuleMenuCmp({});
+        let isVisible = await moduleMenuCmp.isVisible(itemName);
 
-            let isVisible = await moduleMenuCmp.isVisible(itemName);
+        if (isVisible) {
+            await moduleMenuCmp.clickItem(itemName);
 
-            if (isVisible) {
-                await moduleMenuCmp.clickItem(itemName);
+        } else {
 
-            } else {
-
-                await moduleMenuCmp.showAllModules();
-                await moduleMenuCmp.clickItem(itemName, true);
-            }
+            await moduleMenuCmp.showAllModules();
+            await moduleMenuCmp.clickItem(itemName, true);
+        }
             // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
             await seedbed.client.pause(1000);
 
-        }, true);
+    }, {waitForApp: true});
 
-    /**
-     * Select item from cached View
-     */
-    this.When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-        (record, view) => {
-            let listItem = view.getListItem({id: record.id});
-            return listItem.clickListItem();
-        }, true);
+/**
+ * Select item from cached View
+ */
+When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
+    (record: {id: string}, view: ListView) => {
+        let listItem = view.getListItem({id: record.id});
+        return listItem.clickListItem();
+    }, {waitForApp: true});
 
-    /**
-     * Open the preview for the record
-     *
-     * @example I click on preview button on *Account_A in #AccountsList.ListView
-     */
-    this.When(/^I click on preview button on (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-        async (record, view) => {
-            let listItem = view.getListItem({id: record.id});
-            await listItem.clickPreviewButton();
-        }, true);
+/**
+ * Open the preview for the record
+ *
+ * @example I click on preview button on *Account_A in #AccountsList.ListView
+ */
+When(/^I click on preview button on (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
+    async (record: { id: string }, view: ListView) => {
+        let listItem = view.getListItem({id: record.id});
+        await listItem.clickPreviewButton();
+    }, {waitForApp: true});
 
 
-    this.When(/^I wait for (\d+) seconds$/,
-            (delay: string): Promise<void> =>
-                whenStepsHelper.waitStep(parseInt(delay, 10)));
+When(/^I wait for (\d+) seconds$/,
+    (delay: string): Promise<void> =>
+        whenStepsHelper.waitStep(parseInt(delay, 10)));
 
-    this.When(/^I open ([\w,\/]+) view and login$/,
-            (module: string): Promise<void> =>
-                whenStepsHelper.setUrlHashAndLogin(module), true);
+When(/^I open ([\w,\/]+) view and login$/,
+    (module: string): Promise<void> =>
+        whenStepsHelper.setUrlHashAndLogin(module), {waitForApp: true});
 
-    this.When(/^I go to "([^"]*)" url$/,
-        async (urlHash): Promise<void> => {
+    When(/^I go to "([^"]*)" url$/,
+            async(urlHash): Promise<void> => {
             await seedbed.client.setUrlHash(urlHash);
             // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
             await seedbed.client.pause(1500);
-        }, true);
 
-    // The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
-    this.When(/^I provide input for (#\S+) view$/,
-        async(view: RecordView, data: TableDefinition): Promise<void> => {
+        }, {waitForApp: true});
 
-            if (data.hashes.length > 1) {
-                throw new Error('One line data table entry is expected');
-            }
+// The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
+When(/^I provide input for (#\S+) view$/,
+    async (view: RecordView, data: TableDefinition): Promise<void> => {
 
-            let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
 
-            // check for * marked column and cache the record and view if needed
-            let uidInfo = Utils.computeRecordUID(inputData);
+        let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
 
-            seedbed.scenario.recordsInfo[uidInfo.uid] = {
-                uid: uidInfo.uid,
-                originInput: JSON.parse(JSON.stringify(inputData)),
-                input: inputData,
-                module: view.module,
-            };
+        // check for * marked column and cache the record and view if needed
+        let uidInfo = Utils.computeRecordUID(inputData);
 
-            await view.setFieldsValue(inputData);
+        seedbed.scenario.recordsInfo[uidInfo.uid] = {
+            uid: uidInfo.uid,
+            originInput: JSON.parse(JSON.stringify(inputData)),
+            input: inputData,
+            module: view.module,
+        };
 
-        }, true);
+        await view.setFieldsValue(inputData);
 
-    this.When(/^I click show more button on (#\S+) view$/, async (layout: RecordLayout) => {
-        await layout.showMore();
-    });
+    }, {waitForApp: true});
 
-    this.When(/^I click show less button on (#\S+) view$/, async (layout: RecordLayout) => {
-        await layout.showLess();
-    });
+When(/^I click show more button on (#\S+) view$/, async (layout: RecordLayout) => {
+    await layout.showMore();
+}, {waitForApp: true});
 
-    this.When(/^I toggle (Business_Card|Billing_and_Shipping|Quote_Settings|Show_More) panel on (#\S+) view$/, async (panelName: string, view: RecordView) =>  {
+When(/^I click show less button on (#\S+) view$/, async (layout: RecordLayout) => {
+    await layout.showLess();
+}, {waitForApp: true});
 
-        await view.togglePanel(panelName);
+When(/^I toggle (Business_Card|Billing_and_Shipping|Quote_Settings|Show_More) panel on (#\S+) view$/, async (panelName: string, view: RecordView) => {
 
-    });
+    await view.togglePanel(panelName);
 
-    /**
-     * Click on a list view action button
-     *
-     * @example I click on edit button for *Account_A in #AccountsList.ListView
-     */
-    this.When(/^I click on (\w+) button for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-        async (button, record, view) => {
-            let listItem = view.getListItem({id: record.id});
+}, {waitForApp: true});
 
-            let isVisible = await listItem.isVisible(button);
+/**
+ * Click on a list view action button
+ *
+ * @example I click on edit button for *Account_A in #AccountsList.ListView
+ */
+When(/^I click on (\w+) button for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
+    async (button, record: {id}, view: ListView) => {
+        let listItem = view.getListItem({id: record.id});
 
-            if (isVisible) {
-                await listItem.clickListButton(button);
+        let isVisible = await listItem.isVisible(button);
 
-            } else {
+        if (isVisible) {
+            await listItem.clickListButton(button);
 
-                await listItem.openDropdown();
-                await listItem.clickListButton(button);
-            }
-        }, true);
+        } else {
 
-    /**
-     * Set field values from data
-     *
-     * @example I set values for *Account_A in #AccountsList.ListView
-     */
-    this.When(/^I set values for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-        async (record, view, data) => {
-            let listItem = view.getListItem({id: record.id});
-            for (let row of data.hashes()) {
-                let field = await listItem.getField(row.fieldName);
-                await field.setValue(row.value);
-            }
-        }, true);
+            await listItem.openDropdown();
+            await listItem.clickListButton(button);
+        }
+    }, {waitForApp: true});
 
-    this.When(/^I click (\S+) field on (#\S+) view$/,
-        (fieldName, layout) => {
-            let view = layout.type ? layout.defaultView : layout;
-            return view.clickField(fieldName);
-        }, true);
+/**
+ * Set field values from data
+ *
+ * @example I set values for *Account_A in #AccountsList.ListView
+ */
+When(/^I set values for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
+    async (record: {id: string}, view: ListView, data: TableDefinition) => {
+        let listItem = view.getListItem({id: record.id});
+        for (let row of data.hashes()) {
+            let field = await listItem.getField(row.fieldName);
+            await field.setValue(row.value);
+        }
+    }, {waitForApp: true});
 
-    this.When(/^I click (\S+) field on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) view$/,
-        async (fieldName, record, listView) => {
+When(/^I click (\S+) field on (#\S+) view$/,
+    (fieldName, layout: any) => {
+        let view = layout.type ? layout.defaultView : layout;
+        return view.clickField(fieldName);
+    }, {waitForApp: true});
 
-            let listItem = listView.getListItem({id: record.id}, record);
+When(/^I click (\S+) field on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) view$/,
+    async (fieldName: string, record: { id: string }, listView: ListView) => {
 
-            await listItem.clickField(fieldName);
+        let listItem = listView.getListItem({id: record.id});
 
-        }, true);
-};
+        await listItem.clickField(fieldName);
 
-module.exports = whenSteps;
+    }, {waitForApp: true});
+

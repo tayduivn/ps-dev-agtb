@@ -10,22 +10,18 @@
  */
 
 import AlertCmp from '../components/alert-cmp';
-
-const whenStepsAlert = function () {
+import {When} from '@sugarcrm/seedbed';
 
     /**
      * Delete confirmation alert
      */
-    this.When(/^I (Cancel|Confirm) confirmation alert$/, choice => {
+    When(/^I (Cancel|Confirm) confirmation alert$/, (choice: string) => {
         let alert = new AlertCmp({type: 'warning'});
         return alert.clickButton(choice.toLowerCase());
-    }, true);
+    }, {waitForApp: true});
 
-    this.When(/^I close alert$/, async () => {
+    When(/^I close alert$/, async () => {
         let alert = new AlertCmp({});
         await alert.close();
-    }, true);
+    }, {waitForApp: true});
 
-};
-
-module.exports = whenStepsAlert;

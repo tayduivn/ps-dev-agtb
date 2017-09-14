@@ -19,7 +19,6 @@ var gutil = require('gulp-util');
 var os = require('os');
 var todo = require('gulp-todo');
 var insert = require('gulp-insert');
-const tslint = require('gulp-tslint');
 const path = require('path');
 const execa = require('execa');
 
@@ -580,19 +579,6 @@ gulp.task('find-todos', function() {
     } catch (e) {
         console.error(e.toString());
     }
-});
-
-gulp.task('cukes-ts', function() {
-
-    var tsProcess = execa('./node_modules/.bin/gulp',
-        ['ts', '--color', '--cukes-path', `${path.resolve(__dirname, './tests/end-to-end/**/*.ts')}`],
-        {
-            stdio: 'inherit',
-            cwd: path.resolve(__dirname, './node_modules/@sugarcrm/seedbed'),
-        });
-
-    return tsProcess;
-
 });
 
 gulp.task('copy-sucrose', function() {

@@ -8,20 +8,26 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-let testSchemes = {
-    default: {
-        env: 'e2e',
-        logger: {
-            level: 'debug',
-        },
-        analytics: {
-            enabled: false
-        },
-        logLevel: 'debug',
-    },
-    skipTutorial: {
-        skipTutorial: true
-    }
-};
+import RecordLayout from './record-layout';
 
-module.exports = testSchemes;
+/**
+ * Represents a Detail/Record page layout.
+ *
+ * @class RecordLayout
+ * @extends BaseView
+ */
+export default class DrawerLayout extends RecordLayout {
+
+    constructor(options) {
+
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            $: '.drawer.active',
+        });
+
+        this.type = 'drawer';
+
+    }
+
+}

@@ -20,7 +20,7 @@ const CI_RESULTS_FOLDER = path.resolve(CUKES_PATH, 'results', 'ci-results');
 const CUKES_STDOUT_PATH = path.join(CI_RESULTS_FOLDER, 'cukes.stdout');
 const CUKES_STDERR_PATH = path.join(CI_RESULTS_FOLDER, 'cukes.stderr');
 
-var tasks = [];
+let tasks = [];
 
 tasks.push({
     name: 'runSugarScenarios',
@@ -30,7 +30,7 @@ tasks.push({
     app: 'Sugar',
     args: _.concat(process.argv, [
         '--sp', utils.getArgument('-u', '--url'),
-        '--cfg', CUKES_PATH + '/' + utils.getConfigFile(),
+        '--cfg', `${CUKES_PATH}/config-ci.js`,
     ]),
     extendsArgv: true
 });
@@ -40,6 +40,8 @@ module.exports = {
 
     // store ci-results.zip
     resultsFolder: CI_RESULTS_FOLDER,
+
+    inactiveProcessTimeout: 600000,
 
     // output log files for stdout and stderr
     outs: {

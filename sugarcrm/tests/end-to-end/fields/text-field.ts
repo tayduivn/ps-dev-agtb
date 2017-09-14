@@ -51,7 +51,7 @@ export class Detail extends TextField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'span'
+                selector: ''
             }
         });
 

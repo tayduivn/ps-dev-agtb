@@ -15,7 +15,7 @@ import {BaseField} from './base-field';
  * @class CurrencyField
  * @extends BaseField
  */
-export default class CurrencyField extends BaseField {
+class CurrencyField extends BaseField {
 
     constructor(options) {
         super(options);

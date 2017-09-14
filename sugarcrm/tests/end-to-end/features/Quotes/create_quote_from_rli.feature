@@ -21,11 +21,11 @@ Feature: Create Quote From RLI
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
       | RLI_1 | 2018-10-19T19:20:22+00:00 | 3000        | 3000      | Prospecting | 3        |
     # Create Opportunity
-    Given Opportunities records exist related via opportunities link:
-      | name  |
+    Given Opportunities records exist related via opportunities link to *RLI_1:
+      | *name  |
       | Opp_1 |
     # Create Account. (the linking part does not work)
-    Given Accounts records exist related via accounts link:
+    Given Accounts records exist related via accounts link to *Opp_1:
       | name  |
       | Acc_1 |
     Given Contacts records exist:
@@ -164,6 +164,7 @@ Feature: Create Quote From RLI
       | *        | date_quote_expected_closed |
       | RecordID | 12/12/2018                 |
     When I click Save button on #QuotesRecord header
+    When I close alert
     # Verify that RLI has a link to generated quote
     When I choose RevenueLineItems in modules menu
     When I select *RLI_1 in #RevenueLineItemsList.ListView

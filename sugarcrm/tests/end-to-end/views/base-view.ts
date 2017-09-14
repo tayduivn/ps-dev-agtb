@@ -11,28 +11,11 @@
 
 import {BaseView, seedbed} from '@sugarcrm/seedbed';
 
-
 import * as _ from 'lodash';
+import * as chalk from 'chalk';
 import * as TextField from '../fields/text-field';
-import * as TextareaField from '../fields/textarea-field';
-import * as NameField from '../fields/name-field';
-import * as EnumField from '../fields/enum-field';
-import * as IntField from '../fields/int-field';
-import * as FloatField from '../fields/float-field';
-import * as DateField from '../fields/date-field';
-import * as RelateField from '../fields/relate-field';
-import * as CopyField from '../fields/copy-field';
-import * as CurrencyField from '../fields/currency-field';
-import * as UrlField from '../fields/url-field';
-import * as FullnameField from '../fields/fullname-field';
-import * as TagField from '../fields/tag-field';
 import {BaseField} from '../fields/base-field';
-
-const classify = name => _.upperFirst(_.camelCase(name));
-
-export const TEMPLATES = {
-    EDIT: 'edit'
-};
+import {FIELD_TYPES__MAP} from './field-types-map';
 
 /**
  * @extends BaseView
@@ -49,107 +32,86 @@ export default class extends BaseView {
 
     public async getField(name: string, type?: string): Promise<BaseField> {
 
-        let selector = this.$('field', {name});
-        let templateName: string;
+        let selector = '';
         try {
-            templateName = await this.getAttribute(selector, 'field-tpl-name');
-        } catch (e) {
-            templateName = 'edit';
-        }
+            selector = this.$('field', {name});
+            let field = this.fields[name];
 
-        let field = this.fields[name];
-        templateName = this.getFieldTemplateName(templateName);
+            if (field) {
 
-        if (field && field.templateName === templateName) {
+                console.log(`field ${name}, template ${field.constructor.name}`);
+
+                let isCorrectTemplate = await seedbed.client.isVisible(
+                    field.$('field.selector')
+                );
+                if (isCorrectTemplate) {
+                    return field;
+                }
+            }
+
+            let fieldTypeAttr = await seedbed.client.getAttribute<string>(
+                selector,
+                'field-type'
+            );
+
+            type = _.isArray(fieldTypeAttr) ? fieldTypeAttr[0] : fieldTypeAttr;
+
+            field = await this.createField(name, type);
+
+            console.log(`field ${name}, template ${field.constructor.name}`);
+
             return field;
+        } catch (err) {
+            throw new Error(
+                `Field '${name}' is missing on ${this.constructor.name}
+                via selector: '${chalk.yellow(selector)}'`
+            );
         }
-
-        let fieldTypeAttr = await seedbed.client.getAttribute(selector, 'field-type');
-
-        type = _.isArray(fieldTypeAttr) ? fieldTypeAttr[0] : fieldTypeAttr;
-
-        field = this.createField(name, type, templateName);
-
-        return field;
     }
 
-    protected createField(name: string, type: string, templateName?: string): BaseField {
+    protected async createField(name: string, type: string): Promise<BaseField> {
 
         let options = {
             module: this.module,
             layout: this.parent,
             name,
             type,
-            templateName,
         };
-        let field: BaseField;
-        let Clazz;
 
-        switch (type) {
-            case 'name':
-                Clazz = NameField[templateName];
-                break;
-            case 'url':
-                Clazz = UrlField[templateName];
-                break;
-            case 'fullname':
-                Clazz = FullnameField[templateName];
-                break;
-            case 'phone':
-            case 'text':
-                Clazz = TextField[templateName];
-                break;
-            case 'textarea':
-                Clazz = TextareaField[templateName];
-                break;
-            case 'enum':
-                Clazz = EnumField[templateName];
-                break;
-            case 'int':
-                Clazz = IntField[templateName];
-                break;
-            case 'date':
-                Clazz = DateField[templateName];
-                break;
-            case 'float':
-                Clazz = FloatField[templateName];
-                break;
-            case 'email-recipients':
-            case 'relate':
-                Clazz = RelateField[templateName];
-                break;
-            case 'checkbox':
-            case 'copy':
-                Clazz = CopyField[templateName];
-                break;
-            case 'currency':
-                Clazz = CurrencyField[templateName];
-                break;
-            case 'tag':
-                Clazz = TagField[templateName];
-                break;
-            default:
-                throw new Error(`Field type '${type}' is not found`);
-        }
+        let field: BaseField;
+
+        let Clazz = FIELD_TYPES__MAP[type];
 
         if (!Clazz) {
-            console.error(`Type: ${type} of field is not recognized. Falling back to base field type: ${templateName} or Edit`);
-            Clazz = BaseField;
+            console.error(
+                `Type: ${type} of field is not recognized. Falling back to 'TextField' field type`
+            );
+            Clazz = TextField;
         }
 
-        field = this.createComponent<BaseField>(Clazz, options);
+        let fieldClass: any;
 
-        this.fields[name] = field;
+        // we check a selector for each field template (Edit, Disabled ...) to find the needed one
+        for (fieldClass of _.values(Clazz)) {
+            field = this.createComponent<BaseField>(fieldClass, options);
+            let selector = field.$('field.selector');
 
-        return field;
+            // check for existense because field can have placeholder that overlaps the element pointed by selector
+            let isCorrectFieldInstance = await seedbed.client.isElementExist(
+                selector
+            );
+            if (isCorrectFieldInstance) {
+                this.fields[name] = field;
+                return field;
+            }
+        }
+
+        throw new Error(`Failed to create '${name}' field of '${type}' type`);
     }
 
-    private getFieldTemplateName(templateName: string = TEMPLATES.EDIT): string {
-        return classify(templateName);
-    }
 
     public async getAttribute(sel: string, attr: string): Promise<string> {
-        let templateName: string | string[] = await seedbed.client.getAttribute(sel, attr);
+        let templateName: string | string[] = await seedbed.client.getAttribute<string>(sel, attr);
         if (_.isArray(templateName)) {
             throw new Error(`Please verify selector: ${sel}. It matched ${templateName.length} elements`);
         }

@@ -128,25 +128,25 @@ Feature: productTypes module verification
     Then I should see #Alex1Record view
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #ProductTypesRecord.HeaderView view
+    When I provide input for #ProductTypesDrawer.HeaderView view
       | name  |
       | Alex2 |
-    When I provide input for #ProductTypesRecord.RecordView view
+    When I provide input for #ProductTypesDrawer.RecordView view
       | list_order | description |
       | 5          | Great Type  |
-    When I click Cancel button on #ProductTypesRecord header
+    When I click Cancel button on #ProductTypesDrawer header
     Then I verify fields on #ProductTypesRecord.HeaderView
       | fieldName | value |
       | name      | Alex1 |
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #ProductTypesRecord.HeaderView view
+    When I provide input for #ProductTypesDrawer.HeaderView view
       | name  |
       | Alex2 |
-    When I provide input for #ProductTypesRecord.RecordView view
+    When I provide input for #ProductTypesDrawer.RecordView view
       | list_order | description |
       | 5          | Great Type  |
-    When I click Save button on #ProductTypesRecord header
+    When I click Save button on #ProductTypesDrawer header
     Then I verify fields on #ProductTypesRecord.HeaderView
       | fieldName | value |
       | name      | Alex2 |
@@ -160,13 +160,13 @@ Feature: productTypes module verification
     Given I open about view and login
     When I go to "ProductTypes" url
     When I click Create button on #ProductTypesList header
-    When I provide input for #ProductTypesRecord.HeaderView view
+    When I provide input for #ProductTypesDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #ProductTypesRecord.RecordView view
+    When I provide input for #ProductTypesDrawer.RecordView view
       | *        | description | list_order |
       | RecordID | Alex2       | 123        |
-    When I click Save button on #ProductTypesRecord header
+    When I click Save button on #ProductTypesDrawer header
     Then I should see *RecordID in #ProductTypesList.ListView
     When I click on preview button on *RecordID in #ProductTypesList.ListView
     Then I should see #RecordIDPreview view

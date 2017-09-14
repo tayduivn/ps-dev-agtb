@@ -12,7 +12,7 @@ var path = require('path');
 
 var temp_folder = path.resolve(__dirname, './tmp');
 
-var settings = {
+var config = {
 
     temp_folder: temp_folder,
 
@@ -106,6 +106,12 @@ var settings = {
         screenshots: path.resolve(__dirname, '../screenshots'),
     },
 
+    log: {
+        level: 'debug',
+        requests: true,
+        responses: true,
+    },
+
     require: [
         path.resolve(__dirname, 'seedbed')
     ],
@@ -126,7 +132,7 @@ var settings = {
                 chrome: {
                     // check for more recent versions of chrome driver here:
                     // http://chromedriver.storage.googleapis.com/index.html
-                    version: '2.25',
+                    version: '2.29',
                     arch: process.arch,
                     baseURL: 'http://chromedriver.storage.googleapis.com'
                 }
@@ -162,4 +168,4 @@ var settings = {
     apiUrl: '/rest/v10',
 };
 
-module.exports = settings;
+module.exports = {config};

@@ -12,69 +12,78 @@
 /* jshint -W018 */
 
 import {TableDefinition} from 'cucumber';
+import {When} from '@sugarcrm/seedbed';
 
-const whenStepsHeader = function () {
+const openMenuAndCheck = async function(layout, needToCheck, data?: TableDefinition) {
 
-    /**
-     * Click header panel buttons
-     *
-     * @example "I click Save button on #AccountsDrawer header"
-     */
-    this.When(/^I click (Create|Edit|Cancel|Save) button on (#[a-zA-Z](?:\w|\S)*) header$/,
-        (btnName, layout) => {
-            return layout.HeaderView.clickButton(btnName.toLowerCase());
-        }, true);
+    await layout.HeaderView.clickButton('actions');
 
-    /**
-     * Open header panel actions menu
-     *
-     * @example "I open actions menu in #Account_ARecord"
-     */
-    this.When(/^I open actions menu in (#[a-zA-Z]\w+)\s*(and check:)?$/,
-        async (layout, needToCheck, data: TableDefinition) => {
+    if (needToCheck) {
 
-            await layout.HeaderView.clickButton('actions');
+        let rows = data.rows();
 
-            if (needToCheck) {
+        for (let i = 0; i < rows.length; i++) {
 
-                let rows = data.rows();
+            let row = rows[i];
+            let buttonName = row[0];
 
-                for (let i = 0; i < rows.length; i++) {
+            let isButtonActive = await layout.HeaderView.checkIsButtonActive(buttonName);
 
-                    let row = rows[i];
-                    let buttonName = row[0];
+            if (row[1] !== isButtonActive.toString()) {
 
-                    let isButtonActive = await layout.HeaderView.checkIsButtonActive(buttonName);
+                let errMessage = null;
 
-                    if (row[1] !== isButtonActive.toString()) {
-
-                        let errMessage = null;
-
-                        if (row[1] === 'true') {
-                            errMessage = `menu item '${buttonName}' expected to be active, but it's disabled`;
-                        } else {
-                            errMessage = `menu item '${buttonName}' expected to be disabled, but it's active`;
-                        }
-
-                        throw new Error(errMessage);
-
-                    }
-
+                if (row[1] === 'true') {
+                    errMessage = `menu item '${buttonName}' expected to be active, but it's disabled`;
+                } else {
+                    errMessage = `menu item '${buttonName}' expected to be disabled, but it's active`;
                 }
+
+                throw new Error(errMessage);
 
             }
 
-        }, true);
+        }
 
-    /**
-     * Choose Actions menu options
-     *
-     * @example "I choose Delete from actions menu in #Account_ARecord"
-     */
-    this.When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote|Convert) from actions menu in (#[a-zA-Z]\w+)\s*$/,
-        (action, layout) => {
-            return layout.HeaderView.clickButton(action);
-        }, true);
+    }
 };
 
-module.exports = whenStepsHeader;
+/**
+ * Click header panel buttons
+ *
+ * @example "I click Save button on #AccountsDrawer header"
+ */
+When(/^I click (Create|Edit|Cancel|Save) button on (#[a-zA-Z](?:\w|\S)*) header$/,
+    (btnName: string, layout: any) => {
+        return layout.HeaderView.clickButton(btnName.toLowerCase());
+    }, {waitForApp: true});
+
+/**
+ * Open header panel actions menu
+ *
+ * @example "I open actions menu in #Account_ARecord"
+ */
+When(/^I open actions menu in (#[a-zA-Z]\w+) and check:?$/,
+    async (layout, data: TableDefinition) => {
+
+    await openMenuAndCheck(layout, true, data);
+
+    }, {waitForApp: true});
+
+When(/^I open actions menu in (#[a-zA-Z]\w+)$/,
+    async (layout) => {
+
+        await openMenuAndCheck(layout, false);
+
+    }, {waitForApp: true});
+
+/**
+ * Choose Actions menu options
+ *
+ * @example "I choose Delete from actions menu in #Account_ARecord"
+ */
+When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote|Convert) from actions menu in (#[a-zA-Z]\w+)\s*$/,
+    (action, layout: any) => {
+        return layout.HeaderView.clickButton(action);
+    }, {waitForApp: true});
+

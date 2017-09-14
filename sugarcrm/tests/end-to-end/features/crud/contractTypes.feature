@@ -136,13 +136,13 @@ Feature: Contract Types module verification
     Then I should see #Alex1Record view
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #ContractTypesRecord.HeaderView view
+    When I provide input for #ContractTypesDrawer.HeaderView view
       | name  |
       | Alex2 |
-    When I provide input for #ContractTypesRecord.RecordView view
+    When I provide input for #ContractTypesDrawer.RecordView view
       | list_order |
       | 5          |
-    When I click Cancel button on #ContractTypesRecord header
+    When I click Cancel button on #ContractTypesDrawer header
     Then I verify fields on #Alex1Record.HeaderView
       | fieldName | value |
       | name      | Alex1 |
@@ -162,13 +162,13 @@ Feature: Contract Types module verification
     Then I should see #Alex1Record view
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #ContractTypesRecord.HeaderView view
+    When I provide input for #ContractTypesDrawer.HeaderView view
       | name  |
       | Alex2 |
-    When I provide input for #ContractTypesRecord.RecordView view
+    When I provide input for #ContractTypesDrawer.RecordView view
       | list_order |
       | 5          |
-    When I click Save button on #ContractTypesRecord header
+    When I click Save button on #ContractTypesDrawer header
     Then I verify fields on #ContractTypesRecord.HeaderView
       | fieldName | value |
       | name      | Alex2 |
@@ -182,23 +182,23 @@ Feature: Contract Types module verification
     Given I open about view and login
     When I go to "ContractTypes" url
     When I click Create button on #ContractTypesList header
-    When I provide input for #ContractTypesRecord.HeaderView view
+    When I provide input for #ContractTypesDrawer.HeaderView view
       | *         | name  |
       | RecordID1 | Alex3 |
-    When I provide input for #ContractTypesRecord.RecordView view
+    When I provide input for #ContractTypesDrawer.RecordView view
       | *         | list_order |
       | RecordID1 | 123        |
-    When I click Cancel button on #ContractTypesRecord header
+    When I click Cancel button on #ContractTypesDrawer header
     Then I should see #ContractTypesList.ListView view
     When I go to "ContractTypes" url
     When I click Create button on #ContractTypesList header
-    When I provide input for #ContractTypesRecord.HeaderView view
+    When I provide input for #ContractTypesDrawer.HeaderView view
       | *         | name  |
       | RecordID1 | Alex3 |
-    When I provide input for #ContractTypesRecord.RecordView view
+    When I provide input for #ContractTypesDrawer.RecordView view
       | *         | list_order |
       | RecordID1 | 123        |
-    When I click Save button on #ContractTypesRecord header
+    When I click Save button on #ContractTypesDrawer header
     Then I should see *RecordID1 in #ContractTypesList.ListView
     When I click on preview button on *RecordID1 in #ContractTypesList.ListView
     Then I should see #RecordID1Preview view

@@ -10,55 +10,54 @@
  */
 
 import * as _ from 'lodash';
-import {thenStepsHelper} from '@sugarcrm/seedbed';
+import {thenStepsHelper, Then} from '@sugarcrm/seedbed';
+import ListView from '../views/list-view';
+import {TableDefinition} from 'cucumber';
 
-const steps = function () {
+/**
+ * Step verifies fields visible on a cached list view for the cached record.
+ *
+ * @example "I verify fields for *Account_A in #AccountsList:"
+ */
+Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
+    async (record: { id: string }, view: ListView, data: TableDefinition) => {
 
-    /**
-     * Step verifies fields visible on a cached list view for the cached record.
-     *
-     * @example "I verify fields for *Account_A in #AccountsList:"
-     */
-    this.Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
-        async(record, view, data) => {
+        let listItem = view.getListItem({id: record.id});
 
-            let listItem = view.getListItem({id: record.id});
+        let fildsData: any = data.hashes();
 
-            let errors = await listItem.checkFields(data.hashes());
+        let errors = await listItem.checkFields(fildsData);
 
-            let message = '';
-            _.each(errors, (item) => {
-                message += item;
-            });
-
-            if (message) {
-                throw new Error(message);
-            }
-
+        let message = '';
+        _.each(errors, (item) => {
+            message += item;
         });
 
-    /**
-     * Verify record exists on #View
-     *
-     * @example "I should see *Account_A in #AccountsList"
-     */
-    this.Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
-        async(not, record, view) => {
+        if (message) {
+            throw new Error(message);
+        }
 
-            let listItem = view.getListItem({id: record.id}, record);
+    });
 
-            let value = await listItem.isVisibleView();
+/**
+ * Verify record exists on #View
+ *
+ * @example "I should see *Account_A in #AccountsList"
+ */
+Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
+    async (not, record: { id: string }, view: ListView) => {
 
-            if (_.isEmpty(not) !== value) {
-                throw new Error('Expected ' + (not || '') + ' to see list item (' + listItem.$() + ')');
-            }
+        let listItem = view.getListItem({id: record.id});
 
-        });
+        let value = await listItem.isVisibleView();
 
-    this.Then(/^I should be redirected to \"(.*)\" route/,
-        (expectedRoute: string): Promise<void> =>
-            thenStepsHelper.checkUrlHash(expectedRoute));
+        if (_.isEmpty(not) !== value) {
+            throw new Error('Expected ' + (not || '') + ' to see list item (' + listItem.$() + ')');
+        }
 
-};
+    });
 
-module.exports = steps;
+Then(/^I should be redirected to \"(.*)\" route/,
+    (expectedRoute: string): Promise<void> =>
+        thenStepsHelper.checkUrlHash(expectedRoute));
+

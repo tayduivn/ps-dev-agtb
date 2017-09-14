@@ -9,25 +9,22 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-const whenStepsFilter = function () {
+import {When} from '@sugarcrm/seedbed';
+import FilterView from '../views/filter-view';
 
-    /**
-     * Search for "value" in list view search filter
-     *
-     * @example "I search for "Account_Search" in #AccountsList:FilterView view"
-     */
-    this.When(/^I search for "([^"]*)" in (#\S+) view$/,
-        async (value, view) => {
-            await view.setSearchField(value);
-        }, true);
+/**
+ * Search for "value" in list view search filter
+ *
+ * @example "I search for "Account_Search" in #AccountsList:FilterView view"
+ */
+When(/^I search for "([^"]*)" in (#\S+) view$/,
+    async (value, view: FilterView) => {
+        await view.setSearchField(value);
+    }, {waitForApp: true});
 
-    this.When(/^I choose for (\w+) in (#\S+) view$/,
-        async (filterName, view) => {
+When(/^I choose for (\w+) in (#\S+) view$/,
+    async (filterName: string, view: FilterView) => {
 
-            await view.selectFilter(filterName);
+        await view.selectFilter(filterName);
 
-        }, true);
-
-};
-
-module.exports = whenStepsFilter;
+    }, {waitForApp: true});

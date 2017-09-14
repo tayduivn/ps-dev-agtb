@@ -226,7 +226,7 @@ Feature: RLI module verification
     Then I should see #RLI_1Record view
     When I open actions menu in #RLI_1Record
     When I choose Copy from actions menu in #RLI_1Record
-    When I provide input for #RevenueLineItemsRecord.HeaderView view
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
       | *         | name  |
       | RecordID1 | RLI_2 |
     When I click Save button on #RevenueLineItemsRecord header
@@ -249,19 +249,19 @@ Feature: RLI module verification
     Given I open about view and login
     When I choose RevenueLineItems in modules menu
     When I click Create button on #RevenueLineItemsList header
-    When I click show more button on #RevenueLineItemsRecord view
+    When I click show more button on #RevenueLineItemsDrawer view
 
     # Provide RLI name in Header View
-    When I provide input for #RevenueLineItemsRecord.HeaderView view
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
       | *        | name |
       | RecordID | Test |
     # Fill-out some fields in the record view
-    When I provide input for #RevenueLineItemsRecord.RecordView view
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *        | date_closed | quantity      | discount_price | opportunity_name |
       | RecordID | 11/20/2018  | <myQuoantity> | <myUnitPrice>  | Opp_1            |
 
     # Verification before discount is set
-    Then I verify fields on #RevenueLineItemsRecord.RecordView
+    Then I verify fields on #RevenueLineItemsDrawer.RecordView
       | fieldName    | value                    |
       | likely_case  | <expectedValue>          |
       | best_case    | <expectedValue>          |
@@ -269,12 +269,12 @@ Feature: RLI module verification
       | total_amount | <expectedValueFormatted> |
 
     # Add some discount
-    When I provide input for #RevenueLineItemsRecord.RecordView view
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *        | discount_amount | sales_stage   |
       | RecordID | <myDiscount>    | Qualification |
 
     # Verification after discount is set that only Calculated RLI value is changed but likely/best/worst value stayed the same
-    Then I verify fields on #RevenueLineItemsRecord.RecordView
+    Then I verify fields on #RevenueLineItemsDrawer.RecordView
       | fieldName    | value                  |
       | likely_case  | <expectedValue>        |
       | best_case    | <expectedValue>        |
@@ -282,11 +282,11 @@ Feature: RLI module verification
       | total_amount | <totalAmountFormatted> |
 
     # Overwrite calculated likely value
-    When I provide input for #RevenueLineItemsRecord.RecordView view
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *        | likely_case |
       | RecordID | 100.00      |
-    When I click show less button on #RevenueLineItemsRecord view
-    When I click Save button on #RevenueLineItemsRecord header
+    When I click show less button on #RevenueLineItemsDrawer view
+    When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
 
     # Going back to record view

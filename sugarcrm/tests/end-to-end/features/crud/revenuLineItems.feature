@@ -158,13 +158,13 @@ Feature: Revenue Line Items module verification
     Then I should see #RLI_1Record view
     When I open actions menu in #RLI_1Record
     When I choose Copy from actions menu in #RLI_1Record
-    When I provide input for #RevenueLineItemsRecord.HeaderView view
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
       | name     |
       | RLI_1234 |
-    When I provide input for #RevenueLineItemsRecord.RecordView view
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
       | likely_case | sales_stage   |
       | 400.00      | Qualification |
-    When I click Cancel button on #RevenueLineItemsRecord header
+    When I click Cancel button on #RevenueLineItemsDrawer header
     Then I verify fields on #RLI_1Record.HeaderView
       | fieldName | value |
       | name      | RLI_1 |
@@ -188,13 +188,13 @@ Feature: Revenue Line Items module verification
     Then I should see #RLI_1Record view
     When I open actions menu in #RLI_1Record
     When I choose Copy from actions menu in #RLI_1Record
-    When I provide input for #RevenueLineItemsRecord.HeaderView view
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
       | name     |
       | RLI_1234 |
-    When I provide input for #RevenueLineItemsRecord.RecordView view
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
       | likely_case | sales_stage   | date_closed |
       | 400.00      | Qualification | 11/01/2018  |
-    When I click Save button on #RevenueLineItemsRecord header
+    When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
     Then I verify fields on #RLI_1Record.HeaderView
       | fieldName | value    |
@@ -284,23 +284,23 @@ Feature: Revenue Line Items module verification
     Given I open about view and login
     When I choose RevenueLineItems in modules menu
     When I click Create button on #RevenueLineItemsList header
-    When I provide input for #RevenueLineItemsRecord.HeaderView view
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
       | *        | name  |
       | RecordID | RLI_1 |
-    When I provide input for #RevenueLineItemsRecord.RecordView view
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *        | date_closed | likely_case | opportunity_name | sales_stage    | quantity |
       | RecordID | 11/20/2018  | 1000        | Opp_1            | Needs Analysis | 5        |
     # Cancel RLI record creation
-    When I click Cancel button on #RevenueLineItemsRecord header
+    When I click Cancel button on #RevenueLineItemsDrawer header
     When I click Create button on #RevenueLineItemsList header
-    When I provide input for #RevenueLineItemsRecord.HeaderView view
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
       | *        | name  |
       | RecordID | RLI_1 |
-    When I provide input for #RevenueLineItemsRecord.RecordView view
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *        | date_closed | likely_case | opportunity_name | sales_stage    | quantity |
       | RecordID | 11/20/2018  | 1000        | Opp_1            | Needs Analysis | 5        |
     # Save RLI record
-    When I click Save button on #RevenueLineItemsRecord header
+    When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
     Then I verify fields for *RecordID in #RevenueLineItemsList.ListView
       | fieldName | value |

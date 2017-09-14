@@ -155,13 +155,13 @@ Feature: Contracts module verification
     Then I should see #Contract_3Record view
     When I open actions menu in #Contract_3Record
     When I choose Copy from actions menu in #Contract_3Record
-    When I provide input for #ContractsRecord.HeaderView view
+    When I provide input for #ContractsDrawer.HeaderView view
       | name          |
       | Contract_1234 |
-    When I provide input for #ContractsRecord.RecordView view
+    When I provide input for #ContractsDrawer.RecordView view
       | status | start_date | end_date   |
       | Signed | 09/19/2018 | 10/19/2018 |
-    When I click Cancel button on #ContractsRecord header
+    When I click Cancel button on #ContractsDrawer header
     Then I verify fields on #Contract_3Record.HeaderView
       | fieldName | value      |
       | name      | Contract_3 |
@@ -185,13 +185,13 @@ Feature: Contracts module verification
     Then I should see #Contract_3Record view
     When I open actions menu in #Contract_3Record
     When I choose Copy from actions menu in #Contract_3Record
-    When I provide input for #ContractsRecord.HeaderView view
+    When I provide input for #ContractsDrawer.HeaderView view
       | name          |
       | Contract_1234 |
-    When I provide input for #ContractsRecord.RecordView view
+    When I provide input for #ContractsDrawer.RecordView view
       | status | start_date | end_date   |
       | Signed | 09/19/2018 | 10/19/2018 |
-    When I click Save button on #Contract_3Record header
+    When I click Save button on #Contract_3Drawer header
     Then I verify fields on #ContractsRecord.HeaderView
       | fieldName | value         |
       | name      | Contract_1234 |
@@ -201,7 +201,7 @@ Feature: Contracts module verification
       | start_date | 09/19/2018 |
       | end_date   | 10/19/2018 |
 
-  @edit_cancel @T_34334 @scenario-stress-test
+  @edit_cancel @T_34334
   Scenario: Contracts > Record View > Edit > Cancel
     Given Contracts records exist:
       | *name      | status     | start_date                | end_date                  |
@@ -278,25 +278,25 @@ Feature: Contracts module verification
     Given I open about view and login
     When I go to "Contracts" url
     When I click Create button on #ContractsList header
-    When I provide input for #ContractsRecord.HeaderView view
+    When I provide input for #ContractsDrawer.HeaderView view
       | *        | name         |
       | RecordID | New_Contract |
-    When I provide input for #ContractsRecord.RecordView view
+    When I provide input for #ContractsDrawer.RecordView view
       | *        | start_date | end_date   | status | account_name | type_name | reference_code | company_signed_date | customer_signed_date | description   |
       | RecordID | 10/10/2017 | 10/11/2017 | Signed | myAccount    | Type1     | 123test        | 10/01/2017          | 10/02/2017           | Amazing Deal! |
     # Cancel Contract creation
-    When I click Cancel button on #ContractsRecord header
+    When I click Cancel button on #ContractsDrawer header
     Then I should see #ContractsList.ListView view
     When I go to "Contracts" url
     When I click Create button on #ContractsList header
-    When I provide input for #ContractsRecord.HeaderView view
+    When I provide input for #ContractsDrawer.HeaderView view
       | *        | name         |
       | RecordID | New_Contract |
-    When I provide input for #ContractsRecord.RecordView view
+    When I provide input for #ContractsDrawer.RecordView view
       | *        | start_date | end_date   | status | account_name | type_name | reference_code | company_signed_date | customer_signed_date | description   |
       | RecordID | 10/10/2017 | 10/11/2017 | Signed | myAccount    | Type1     | 123test        | 10/01/2017          | 10/02/2017           | Amazing Deal! |
     # Save Contract record
-    When I click Save button on #ContractsRecord header
+    When I click Save button on #ContractsDrawer header
     Then I should see *RecordID in #ContractsList.ListView
     When I click on preview button on *RecordID in #ContractsList.ListView
     # Verify the new record values in preview

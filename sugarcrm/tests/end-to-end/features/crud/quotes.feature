@@ -170,28 +170,28 @@ Feature: Quotes module verification
     Given I open about view and login
     When I choose Quotes in modules menu
     When I click Create button on #QuotesList header
-    When I toggle Billing_and_Shipping panel on #QuotesRecord.RecordView view
-    When I provide input for #QuotesRecord.HeaderView view
+    When I toggle Billing_and_Shipping panel on #QuotesDrawer.RecordView view
+    When I provide input for #QuotesDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #QuotesRecord.RecordView view
+    When I provide input for #QuotesDrawer.RecordView view
       | *        | date_quote_expected_closed | billing_account_name |
       | RecordID | 12/12/2017                 | myAccount            |
     When I Confirm confirmation alert
     # Cancel quote record creation
-    When I click Cancel button on #QuotesRecord header
+    When I click Cancel button on #QuotesDrawer header
     # TODO: Remove next line after sfa-5069 is fixed
     When I Confirm confirmation alert
     When I click Create button on #QuotesList header
-    When I toggle Billing_and_Shipping panel on #QuotesRecord.RecordView view
-    When I provide input for #QuotesRecord.HeaderView view
+    When I toggle Billing_and_Shipping panel on #QuotesDrawer.RecordView view
+    When I provide input for #QuotesDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #QuotesRecord.RecordView view
+    When I provide input for #QuotesDrawer.RecordView view
       | *        | date_quote_expected_closed | billing_account_name |
       | RecordID | 12/12/2017                 | myAccount            |
     When I Confirm confirmation alert
-    When I click Save button on #QuotesRecord header
+    When I click Save button on #QuotesDrawer header
     When I toggle Billing_and_Shipping panel on #RecordIDRecord.RecordView view
     Then I verify fields on #RecordIDRecord.RecordView
       | fieldName                   | value               |

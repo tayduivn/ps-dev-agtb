@@ -1,0 +1,31 @@
+{
+  "private": true,
+  "scripts": {
+    "prepublish": "./node_modules/gulp/bin/gulp.js ts"
+  },
+  "devDependencies": {
+    "@sugarcrm/seedbed": "0.7.14",
+    "@types/async": "1.4.28",
+    "@types/bluebird": "3.0.37",
+    "@types/chalk": "0.4.31",
+    "@types/fs-extra": "0.0.35",
+    "@types/lodash": "4.14.54",
+    "@types/moment": "2.13.0",
+    "@types/node": "6.0.51",
+    "async": "0.9.0",
+    "bluebird": "3.4.1",
+    "colors": "0.6.2",
+    "execa": "0.5.0",
+    "freeport": "1.0.5",
+    "fs-extended": "0.2.0",
+    "fs-extra": "0.30.0",
+    "gulp": "3.9.0",
+    "lodash": "4.16.4",
+    "moment": "2.10.6",
+    "socket.io": "0.9.16",
+    "typescript": "2.5.1",
+    "underscore": "1.6.0",
+    "underscore.string": "2.3.3",
+    "zip-folder": "1.0.0"
+  }
+}

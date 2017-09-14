@@ -147,13 +147,13 @@ Feature: TaxRates module verification
     Then I should see #Alex1Record view
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #Alex1Record.HeaderView view
+    When I provide input for #Alex1Drawer.HeaderView view
       | name  |
       | Alex2 |
-    When I provide input for #Alex1Record.RecordView view
+    When I provide input for #Alex1Drawer.RecordView view
       | list_order | status   | value |
       | 5          | Inactive | 5.52  |
-    When I click Cancel button on #TaxRatesRecord header
+    When I click Cancel button on #TaxRatesDrawer header
     Then I verify fields on #Alex1Record.HeaderView
       | fieldName | value |
       | name      | Alex1 |
@@ -175,13 +175,13 @@ Feature: TaxRates module verification
     Then I should see #Alex1Record view
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #TaxRatesRecord.HeaderView view
+    When I provide input for #TaxRatesDrawer.HeaderView view
       | *     | name  |
       | Alex2 | Alex2 |
-    When I provide input for #TaxRatesRecord.RecordView view
+    When I provide input for #TaxRatesDrawer.RecordView view
       | list_order | status   | value |
       | 5          | Inactive | 5.52  |
-    When I click Save button on #Alex1Record header
+    When I click Save button on #Alex1Drawer header
     Then I verify fields on #Alex1Record.HeaderView
       | fieldName | value |
       | name      | Alex2 |
@@ -206,13 +206,13 @@ Feature: TaxRates module verification
     Given I open about view and login
     When I go to "TaxRates" url
     When I click Create button on #TaxRatesList header
-    When I provide input for #TaxRatesRecord.HeaderView view
+    When I provide input for #TaxRatesDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #TaxRatesRecord.RecordView view
+    When I provide input for #TaxRatesDrawer.RecordView view
       | *        | status | list_order | value |
       | RecordID | Active | 123        | 12.12 |
-    When I click Save button on #TaxRatesRecord header
+    When I click Save button on #TaxRatesDrawer header
     Then I should see *RecordID in #TaxRatesList.ListView
     When I click on preview button on *RecordID in #TaxRatesList.ListView
     Then I should see #RecordIDPreview view

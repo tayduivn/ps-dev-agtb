@@ -25,7 +25,7 @@ x11vnc -display "${DISPLAY}" -bg -nopw -xkb -usepw -shared -repeat -loop -foreve
 cd /sugarcrm
 
 if [[ -z "${DEV}" ]]; then
-    cd tests/end-to-end && node ci.js "$@"
+    cd tests/end-to-end && yarn --pure-lockfile && node ci.js "$@"
 else
     /bin/bash
 fi

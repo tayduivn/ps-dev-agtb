@@ -10,24 +10,39 @@
  */
 'use strict';
 
-import {givenStepsHelper, stepsHelper} from '@sugarcrm/seedbed';
-import { TableDefinition } from 'cucumber';
+import {givenStepsHelper, stepsHelper, Given} from '@sugarcrm/seedbed';
+import {TableDefinition} from 'cucumber';
 
-module.exports = function() {
+Given(/^I (launch|update) (?:App)\s*(?:(?:with)?\s*config\s*(?:with)?: "([^"]*)")?$/,
+    (launch: string, schemesList: string): Promise<void> =>
+        givenStepsHelper.launchOrUpdate(launch, schemesList));
 
-    this.Given(/^I (launch|update) (?:App)\s*(?:(?:with)?\s*config\s*(?:with)?: "([^"]*)")?$/,
-        (launch: string, schemesList: string): Promise<void> =>
-            givenStepsHelper.launchOrUpdate(launch, schemesList));
+Given(/^I use\s*(default)?\s*account\s*(?:"([^"]*)"(?:\/"([^"]*)")?)?$/,
+    (isDefaultAccount: string, username: string, password: string): Promise<void> =>
+        givenStepsHelper.useAccount(isDefaultAccount, username, password));
 
-    this.Given(/^I use\s*(default)?\s*account\s*(?:"([^"]*)"(?:\/"([^"]*)")?)?$/,
-        (isDefaultAccount: string, username: string, password: string): Promise<void> =>
-            givenStepsHelper.useAccount(isDefaultAccount, username, password));
+Given(/^(?:(\d+) )?(\w+) records exist( created by bulk)?:$/,
+    (count: number, module: string, byBulk: boolean, table: TableDefinition): Promise<void> =>
+        stepsHelper.createRecords(count, module, byBulk, table));
 
-    this.Given(/^(?:(\d+) )?(\w+) records exist( created by bulk)?:$/,
-        (count: number, module: string, byBulk: boolean, table: TableDefinition): Promise<void> =>
-            stepsHelper.createRecords(count, module, byBulk, table));
-
-    this.Given(/^(?:(\d+) )?(\w+) records exist related via (\w+) link:$/,
-        (countStr: string, module: string, link: string, table: TableDefinition): Promise<void> =>
-            givenStepsHelper.createRelatedRecord(countStr, module, link, table));
-};
+Given<
+    string,
+    string
+    >(
+    /^(?:(\d+) )?(\w+) records exist related via (\w+) link\s*(?:to (\*\S+))?:$/,
+    function(
+        countStr: string,
+        module: string,
+        link: string,
+        record: any,
+        table: TableDefinition
+    ): Promise<void> {
+        return givenStepsHelper.createRelatedRecord(
+            countStr,
+            module,
+            link,
+            table,
+            record
+        );
+    }
+);

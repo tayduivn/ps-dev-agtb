@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import BaseField from './enum-field';
+import BaseField from './text-field';
 import {seedbed} from '@sugarcrm/seedbed';
 
 /**
@@ -17,9 +17,7 @@ import {seedbed} from '@sugarcrm/seedbed';
  * @extends BaseField
  */
 
-export default BaseField;
-
-export class Edit extends BaseField {
+export default class extends BaseField {
 
     private matchInput: String;
 

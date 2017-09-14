@@ -141,14 +141,14 @@ Feature: ShippingProviders module verification
     Then I should see #Alex1Record view
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #ShippersRecord.HeaderView view
+    When I provide input for #ShippersDrawer.HeaderView view
       | *     | name  |
       | Alex2 | Alex2 |
-    When I provide input for #ShippersRecord.RecordView view
+    When I provide input for #ShippersDrawer.RecordView view
       | status   | list_order |
       | Inactive | 5          |
     # Cancel copying record
-    When I click Cancel button on #ShippersRecord header
+    When I click Cancel button on #ShippersDrawer header
     Then I verify fields on #Alex1Record.HeaderView
       | fieldName | value |
       | name      | Alex1 |
@@ -169,13 +169,13 @@ Feature: ShippingProviders module verification
     Then I should see #Alex1Record view
     When I open actions menu in #Alex1Record
     When I choose Copy from actions menu in #Alex1Record
-    When I provide input for #ShippersRecord.HeaderView view
+    When I provide input for #ShippersDrawer.HeaderView view
       | *     | name  |
       | Alex2 | Alex2 |
-    When I provide input for #ShippersRecord.RecordView view
+    When I provide input for #ShippersDrawer.RecordView view
       | status   | list_order |
       | Inactive | 5          |
-    When I click Save button on #ShippersRecord header
+    When I click Save button on #ShippersDrawer header
     Then I verify fields on #Alex1Record.HeaderView
       | fieldName | value |
       | name      | Alex2 |
@@ -198,25 +198,25 @@ Feature: ShippingProviders module verification
     Given I open about view and login
     When I go to "Shippers" url
     When I click Create button on #ShippersList header
-    When I provide input for #ShippersRecord.HeaderView view
+    When I provide input for #ShippersDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #ShippersRecord.RecordView view
+    When I provide input for #ShippersDrawer.RecordView view
       | *        | status | list_order |
       | RecordID | Active | 123        |
     # Cancel record creation
-    When I click Cancel button on #ShippersRecord header
+    When I click Cancel button on #ShippersDrawer header
     Then I should see #ShippersList.ListView view
     # TODO: find the way to verify that record is not created if creation is canceled
     # Then I should not see *Alex2 in #ShippersList.ListView
     When I click Create button on #ShippersList header
-    When I provide input for #ShippersRecord.HeaderView view
+    When I provide input for #ShippersDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #ShippersRecord.RecordView view
+    When I provide input for #ShippersDrawer.RecordView view
       | *        | status | list_order |
       | RecordID | Active | 123        |
-    When I click Save button on #ShippersRecord header
+    When I click Save button on #ShippersDrawer header
     Then I should see *RecordID in #ShippersList.ListView
     When I click on preview button on *RecordID in #ShippersList.ListView
     Then I should see #RecordIDPreview view

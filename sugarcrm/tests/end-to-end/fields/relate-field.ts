@@ -17,8 +17,6 @@ import {seedbed} from '@sugarcrm/seedbed';
  * @extends BaseField
  */
 
-export default BaseField;
-
 export class Detail extends BaseField {
 
     constructor(options) {
@@ -26,7 +24,7 @@ export class Detail extends BaseField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'a.ellipsis_inline'
             }
         });
     }
@@ -47,7 +45,7 @@ export class List extends BaseField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'a.ellipsis_inline'
             }
         });
 

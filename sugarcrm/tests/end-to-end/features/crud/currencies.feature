@@ -19,13 +19,13 @@ Feature: Currrencies module verification
     Given I open about view and login
     When I go to "Currencies" url
     When I click Create button on #CurrenciesList header
-    When I provide input for #CurrenciesRecord.HeaderView view
+    When I provide input for #CurrenciesDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex1 |
-    When I provide input for #CurrenciesRecord.RecordView view
+    When I provide input for #CurrenciesDrawer.RecordView view
       | *        | symbol | conversion_rate | status |
       | RecordID | F      | 1.25            | Active |
-    When I click Save button on #TaxRatesRecord header
+    When I click Save button on #TaxRatesDrawer header
     Then I should see *RecordID in #CurrenciesList.ListView
     Then I verify fields for *RecordID in #CurrenciesList.ListView
       | fieldName | value |
@@ -44,13 +44,13 @@ Feature: Currrencies module verification
     Given I open about view and login
     When I go to "Currencies" url
     When I click Create button on #CurrenciesList header
-    When I provide input for #CurrenciesRecord.HeaderView view
+    When I provide input for #CurrenciesDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex1 |
-    When I provide input for #CurrenciesRecord.RecordView view
+    When I provide input for #CurrenciesDrawer.RecordView view
       | *        | symbol | conversion_rate | status |
       | RecordID | F      | 1.25            | Active |
-    When I click Save button on #TaxRatesRecord header
+    When I click Save button on #TaxRatesDrawer header
     When I close alert
     Then I should see *RecordID in #CurrenciesList.ListView
     When I click on Edit button for *RecordID in #CurrenciesList.ListView
@@ -81,13 +81,13 @@ Feature: Currrencies module verification
     Given I open about view and login
     When I go to "Currencies" url
     When I click Create button on #CurrenciesList header
-    When I provide input for #CurrenciesRecord.HeaderView view
+    When I provide input for #CurrenciesDrawer.HeaderView view
       | *     | name  |
       | Alex1 | Alex1 |
-    When I provide input for #CurrenciesRecord.RecordView view
+    When I provide input for #CurrenciesDrawer.RecordView view
       | *     | symbol | conversion_rate | status |
       | Alex1 | F      | 1.25            | Active |
-    When I click Save button on #TaxRatesRecord header
+    When I click Save button on #TaxRatesDrawer header
     When I select *Alex1 in #TaxRatesList.ListView
     When I close alert
     Then I should see #Alex1Record view
@@ -114,13 +114,13 @@ Feature: Currrencies module verification
     Given I open about view and login
     When I go to "Currencies" url
     When I click Create button on #CurrenciesList header
-    When I provide input for #CurrenciesRecord.HeaderView view
+    When I provide input for #CurrenciesDrawer.HeaderView view
       | *     | name  |
       | Alex1 | Alex1 |
-    When I provide input for #CurrenciesRecord.RecordView view
+    When I provide input for #CurrenciesDrawer.RecordView view
       | *     | symbol | conversion_rate | status |
       | Alex1 | F      | 1.25            | Active |
-    When I click Save button on #TaxRatesRecord header
+    When I click Save button on #TaxRatesDrawer header
     When I select *Alex1 in #TaxRatesList.ListView
     When I close alert
     Then I should see #Alex1Record view
@@ -147,13 +147,13 @@ Feature: Currrencies module verification
     Given I open about view and login
     When I go to "Currencies" url
     When I click Create button on #CurrenciesList header
-    When I provide input for #CurrenciesRecord.HeaderView view
+    When I provide input for #CurrenciesDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex1 |
-    When I provide input for #CurrenciesRecord.RecordView view
+    When I provide input for #CurrenciesDrawer.RecordView view
       | *        | symbol | conversion_rate | status |
       | RecordID | F      | 1.25            | Active |
-    When I click Save button on #CurrenciesRecord header
+    When I click Save button on #CurrenciesDrawer header
     Then I should see *RecordID in #CurrenciesList.ListView
     When I click on preview button on *RecordID in #CurrenciesList.ListView
     Then I should see #RecordIDPreview view
@@ -170,30 +170,30 @@ Feature: Currrencies module verification
     Given I open about view and login
     When I go to "Currencies" url
     When I click Create button on #CurrenciesList header
-    When I provide input for #CurrenciesRecord.HeaderView view
+    When I provide input for #CurrenciesDrawer.HeaderView view
       | *        | name  |
       | RecordID | Alex1 |
     # Japanese Yen
-    When I provide input for #CurrenciesRecord.RecordView view
+    When I provide input for #CurrenciesDrawer.RecordView view
       | *        | iso4217 | conversion_rate | status |
       | RecordID | JPY     | 1.25            | Active |
-    Then I verify fields on #CurrenciesRecord.HeaderView
+    Then I verify fields on #CurrenciesDrawer.HeaderView
       | fieldName | value |
       | name      | Yen   |
-    Then I verify fields on #CurrenciesRecord.RecordView
+    Then I verify fields on #CurrenciesDrawer.RecordView
       | fieldName | value |
       | symbol    | ¥     |
     # Russian Rubbles
-    When I provide input for #CurrenciesRecord.RecordView view
+    When I provide input for #CurrenciesDrawer.RecordView view
       | *        | iso4217 | conversion_rate | status |
       | RecordID | RUB     | 1.26            | Active |
-    Then I verify fields on #CurrenciesRecord.HeaderView
+    Then I verify fields on #CurrenciesDrawer.HeaderView
       | fieldName | value  |
       | name      | Rubles |
-    Then I verify fields on #CurrenciesRecord.RecordView
+    Then I verify fields on #CurrenciesDrawer.RecordView
       | fieldName | value |
       | symbol    | руб   |
-    When I click Save button on #CurrenciesRecord header
+    When I click Save button on #CurrenciesDrawer header
     Then I should see *RecordID in #CurrenciesList.ListView
     When I click on preview button on *RecordID in #CurrenciesList.ListView
     Then I should see #RecordIDPreview view

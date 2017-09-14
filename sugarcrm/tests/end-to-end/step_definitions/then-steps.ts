@@ -9,47 +9,47 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {BaseView} from '@sugarcrm/seedbed';
+import BaseView from '../views/base-view';
+import {Then} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
+import {TableDefinition} from 'cucumber';
 
-const thenSteps = function () {
+/**
+ * Check whether the cached view is visible
+ * Note: for *Edit and *Detail views the opened url is checked to have an id form the cached record
+ *
+ * @example "I should see #AccountsList view"
+ */
+Then(/^I should (not )?see (#\S+) view$/,
+    async (not, view: BaseView) => {
+        let isVisible = await view.isVisibleView();
 
-    /**
-     * Check whether the cached view is visible
-     * Note: for *Edit and *Detail views the opened url is checked to have an id form the cached record
-     *
-     * @example "I should see #AccountsList view"
-     */
-    this.Then(/^I should (not )?see (#\S+) view$/,
-        async(not, view: BaseView) => {
-            let isVisible = await view.isVisibleView();
+        if (!not !== isVisible) {
+            throw new Error('Expected ' + (not || '') + 'to see "' + view.$() + '" view(layout)');
+        }
 
-            if (!not !== isVisible) {
-                throw new Error('Expected ' + (not || '') + 'to see "' + view.$() + '" view(layout)');
-            }
+    });
 
+/**
+ * Verifies fields visible on a cached view for the cached record.
+ *
+ * @example "I verify fields on #Account_APreview.PreviewView"
+ */
+Then(/^I verify fields on (#[a-zA-Z](?:\w|\S)*)$/,
+    async (view: BaseView, data: TableDefinition) => {
+
+        let fildsData: any = data.hashes();
+
+        let errors = await view.checkFields(fildsData);
+
+        let message = '';
+        _.each(errors, (item) => {
+            message += item;
         });
 
-    /**
-     * Verifies fields visible on a cached view for the cached record.
-     *
-     * @example "I verify fields on #Account_APreview.PreviewView"
-     */
-    this.Then(/^I verify fields on (#[a-zA-Z](?:\w|\S)*)$/,
-        async(view, data) => {
+        if (message) {
+            throw new Error(message);
+        }
 
-            let errors = await view.checkFields(data.hashes());
+    });
 
-            let message = '';
-            _.each(errors, (item) => {
-                message += item;
-            });
-
-            if (message) {
-                throw new Error(message);
-            }
-
-        });
-};
-
-module.exports = thenSteps;

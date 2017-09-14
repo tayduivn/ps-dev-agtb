@@ -23,8 +23,8 @@ Feature: Accounts module verification
     When I choose Accounts in modules menu
     Then I should see *Account_A in #AccountsList.ListView
     Then I verify fields for *Account_A in #AccountsList.ListView
-      | fieldName               | value     |
-      | name                    | Account_A |
+      | fieldName | value     |
+      | name      | Account_A |
 
   @list-preview
   Scenario: Accounts > List View > Preview > Check fields
@@ -36,8 +36,8 @@ Feature: Accounts module verification
     When I click on preview button on *Account_A in #AccountsList.ListView
     Then I should see #Account_APreview view
     Then I verify fields on #Account_APreview.PreviewView
-      | fieldName               | value      |
-      | name                    | Account_A  |
+      | fieldName | value     |
+      | name      | Account_A |
 
 
   @list-search
@@ -51,8 +51,8 @@ Feature: Accounts module verification
     When I search for "Account_Search" in #AccountsList.FilterView view
     Then I should see *Account_Search in #AccountsList.ListView
     Then I verify fields for *Account_Search in #AccountsList.ListView
-      | fieldName               | value          |
-      | name                    | Account_Search |
+      | fieldName | value          |
+      | name      | Account_Search |
 
   @delete
   Scenario: Accounts > Delete > Delete account from Record View

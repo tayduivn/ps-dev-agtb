@@ -12,8 +12,9 @@
 
 import * as path from 'path';
 const ciConfig = require('./ci-config.js');
-import {CIUtils, Utils, ci} from '@sugarcrm/seedbed';
-const chalk = Utils.chalk;
+import {ci} from '@sugarcrm/seedbed/ci';
+import CIUtils from '@sugarcrm/seedbed/ci-utils';
+const chalk = require('chalk');
 import * as Bluebird from 'bluebird';
 const fs = Bluebird.promisifyAll(require('fs-extra'));
 
