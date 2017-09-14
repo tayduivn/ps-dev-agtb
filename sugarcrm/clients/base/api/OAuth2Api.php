@@ -14,6 +14,11 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 
 class OAuth2Api extends SugarApi
 {
+    /**
+     * Oauth consumer uri
+     */
+    const OAUTH2_CONSUMER = '/oauth2/consumer';
+
     public function registerApiRest()
     {
         return array(
@@ -40,6 +45,17 @@ class OAuth2Api extends SugarApi
                 'ignoreMetaHash' => true,
                 'ignoreSystemStatusError' => true,
             ),
+            'oauth_consumer' => [
+                'reqType' => 'GET',
+                'path' => ['oauth2','consumer'], // Please change OAUTH2_CONSUMER constant too
+                'pathVars' => ['',''],
+                'method' => 'consumer',
+                'shortHelp' => 'OAuth2 consumer.',
+                'longHelp' => '',
+                'keepSession' => true,
+                'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
+            ],
             'oauth_bwc_login' => array(
                 'reqType' => 'POST',
                 'path' => array('oauth2','bwc', 'login'),
@@ -176,6 +192,17 @@ class OAuth2Api extends SugarApi
         }
 
         return $res;
+    }
+
+    /**
+     * oauth2 consumer
+     * @param ServiceBase $api
+     * @param array $args
+     * @return mixed
+     */
+    public function consumer(ServiceBase $api, array $args)
+    {
+        return;
     }
 
     /**

@@ -151,14 +151,21 @@ abstract class ServiceBase implements LoggerAwareInterface
            // @TODO Localize exception strings
            $message = "No valid authentication for user.";
        }
-       $login_exc = new SugarApiExceptionNeedLogin($message);
-       $auth = AuthenticationController::getInstance();
-       if($auth->isExternal()) {
-            $login_exc->setExtraData("url", $auth->getLoginUrl(array(
-                'platform' => $this->platform,
-            )))->setExtraData('platform', $this->platform);
-       }
-       throw $login_exc;
+        $loginExc = new SugarApiExceptionNeedLogin($message);
+        $oauthConfig = \SugarConfig::getInstance()->get('oidc_oauth');
+        if ($this->platform == 'opi' && !empty($oauthConfig)) {
+            $auth = AuthenticationController::getInstance('OAuth2Authenticate');
+            $loginExc->setExtraData('oidc_url', $auth->authController->getOidcUrl());
+        } else {
+            $auth = AuthenticationController::getInstance();
+        }
+
+        if ($auth->isExternal()) {
+            $loginExc
+                ->setExtraData("url", $auth->getLoginUrl(['platform' => $this->platform]))
+                ->setExtraData('platform', $this->platform);
+        }
+        throw $loginExc;
     }
 
     /**
