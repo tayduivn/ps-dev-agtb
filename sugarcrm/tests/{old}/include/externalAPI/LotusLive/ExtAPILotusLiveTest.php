@@ -95,5 +95,36 @@ class ExtAPILotusLiveTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('An error occurred when trying to save to the external account.', $msg);
     }
 
+    /**
+     *  This method tests if a cache file was included without issues
+     *  @covers ExtAPILotusLive::loadDocCache
+     */
+    public function testLotusLoadDocCache()
+    {
+        $current_user = $GLOBALS['current_user'];
+
+        $GLOBALS['current_user'] = $this->createMock('User');
+        $GLOBALS['current_user']->id = 'LOTUS_TEST';
+
+        $testDir = 'cache/include/externalAPI/';
+        $testFile = $testDir . 'docCache_LOTUS_TEST_LotusLiveDirect.php';
+        $testData = '<?php
+            $docCache = array(
+                "loadTime" => ' . time() . ',
+                "results" => "LotusLiveTest",
+            );';
+
+        sugar_mkdir($testDir, null, true);
+        file_put_contents($testFile, $testData);
+
+        $externalAPILotusLiveMock = new ExtAPILotusLiveMock();
+        $actual = $externalAPILotusLiveMock->loadDocCache();
+
+        $this->assertEquals('LotusLiveTest', $actual);
+
+        $GLOBALS['current_user'] = $current_user;
+        unlink($testFile);
+        rmdir($testDir);
+    }
 }
 
