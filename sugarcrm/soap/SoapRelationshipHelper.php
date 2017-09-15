@@ -147,13 +147,19 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 		$module_2 = $row['rhs_module'];
 		$mod2_key = $row['rhs_key'];
 		$has_join = false;
-	}
-	else{
-		$module_1 = $row['lhs_module'];
-		$mod_key = $row['join_key_lhs'];
-		$module_2 = $row['rhs_module'];
-		$mod2_key = $row['join_key_rhs'];
-	}
+    } else {
+        if ($row['lhs_module'] == 'Users') {
+            $module_1 = $row['rhs_module'];
+            $mod_key = $row['join_key_rhs'];
+            $module_2 = $row['lhs_module'];
+            $mod2_key = $row['join_key_lhs'];
+        } else {
+            $module_1 = $row['lhs_module'];
+            $mod_key = $row['join_key_lhs'];
+            $module_2 = $row['rhs_module'];
+            $mod2_key = $row['join_key_rhs'];
+        }
+    }
 
 	$mod = BeanFactory::newBean($module_1);
 	$mod2 = BeanFactory::newBean($module_2);
