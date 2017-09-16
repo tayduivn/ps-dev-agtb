@@ -4074,7 +4074,11 @@ eoq;
 			    return;
 			}
             $upload = new UploadFile();
-			$this->description_html = preg_replace("#class=\"image\" src=\"cid:$noteId\.(.+?)\"#", "class=\"image\" src=\"{$this->imagePrefix}{$noteId}.\\1\"", $this->description_html);
+            $this->description_html = preg_replace(
+                "#class=\"image\" src=\"cid:" . preg_quote($noteId, '#') . "\.(.+?)\"#",
+                "class=\"image\" src=\"{$this->imagePrefix}{$noteId}.\\1\"",
+                $this->description_html
+            );
 	        // ensure the image is in the cache
             sugar_mkdir(sugar_cached("images/"));
 			$imgfilename = sugar_cached("images/")."$noteId.".strtolower($subtype);
