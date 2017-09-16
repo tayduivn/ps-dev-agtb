@@ -544,18 +544,30 @@ class HealthCheckScannerMeta
         570 => array(
             'report' => 'invalidStatusAndTypeForEmails',
             'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Invalid_Status_and_Type_for_Emails/',
+            //@codingStandardsIgnoreEnd
         ),
         571 => array(
             'report' => 'deprecatedFileHasCustomizations',
             'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Deprecated_File_Has_Customizations/',
+            //@codingStandardsIgnoreEnd
         ),
         572 => array(
             'report' => 'customFileHasNameConflict',
             'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Custom_File_Has_Name_Conflict/',
+            //@codingStandardsIgnoreEnd
         ),
         573 => array(
             'report' => 'customHelpFileHasNameConflict',
             'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Custom_Help_File_Has_Name_Conflict/',
+            //@codingStandardsIgnoreEnd
         ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
