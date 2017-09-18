@@ -236,6 +236,11 @@ $dictionary['InboundEmail'] = array('table' => 'inbound_email', 'comment' => 'In
 				'id'
 			)
 		),
+        array(
+            'name' => 'idx_deleted',
+            'type' => 'index',
+            'fields' => array('deleted'),
+        ),
 	), /* end indices */
 	'relationships' => array (
 		'inbound_email_created_by' => array(

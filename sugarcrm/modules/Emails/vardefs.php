@@ -976,6 +976,11 @@ $dictionary['Email'] = array(
             'type' => 'index',
             'fields' => array('state', 'id'),
         ),
+        array(
+            'name' => 'idx_mailbox_id',
+            'type' => 'index',
+            'fields' => array('mailbox_id'),
+        ),
     ), // end indices
     'uses' => array(
         'favorite',
