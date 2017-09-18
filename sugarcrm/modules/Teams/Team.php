@@ -654,7 +654,17 @@ AND team_memberships.deleted = 0';
 		$user->reports_to_id = $old_reports_to_id;
 
         //keep track of team memberships too.
-
+        $membership = BeanFactory::newBean('TeamMemberships');
+        $query = new SugarQuery();
+        $query->from($membership, array(
+                        'team_security' => false,
+                        'add_deleted' => true,
+        ));
+        $query->where()->equals('user_id', $user_id);
+        $data = $query->execute();
+        foreach ($data as $row) {
+            $this->my_memberships[$row['team_id']] = $row;
+        };
 		// Step1: For each team that the focus is a member of:
 		$team_array = $this->get_teams_for_user($user_id);
 		foreach($team_array as $team)
@@ -677,7 +687,7 @@ AND team_memberships.deleted = 0';
         //make sure the user has same memberships as before. If not, update them accordingly.
         if (count($this->my_memberships) > 0) {
             $conn = $this->db->getConnection();
-            $query = 'SELECT explicit_assign, implicit_assign
+            $query = 'SELECT id, explicit_assign, implicit_assign
 FROM team_memberships
 WHERE user_id = ?
 AND team_id = ?';
@@ -688,7 +698,7 @@ AND team_id = ?';
 
                 if ($after_row['explicit_assign'] != $before_row['explicit_assign']
                     || $after_row['implicit_assign'] != $before_row['implicit_assign']) {
-                    $this->db->updateParams('team_memberships', $dictionary['team_memberships']['fields'], array(
+                    $this->db->updateParams('team_memberships', $dictionary['TeamMembership']['fields'], array(
                         'explicit_assign' => $before_row['explicit_assign'],
                         'implicit_assign' => $before_row['implicit_assign'],
                     ), array(
