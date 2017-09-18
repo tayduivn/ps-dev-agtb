@@ -15,6 +15,8 @@ namespace Sugarcrm\SugarcrmTestsUnit\League\OAuth2\Client\Provider\HttpBasicAuth
 use League\OAuth2\Client\Grant\ClientCredentials;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
 use Psr\Http\Message\RequestInterface;
+use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Tool\RequestFactory;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider
@@ -103,5 +105,66 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
         $provider->expects($this->once())->method('createAccessToken');
 
         $provider->getAccessToken('client_credentials');
+    }
+
+    /**
+     * @covers ::introspectToken
+     */
+    public function testIntrospectToken()
+    {
+        $authUrl = 'http://testUrlAuth';
+
+        $token = new AccessToken(['access_token' => 'token']);
+        $request = $this->createMock(RequestInterface::class);
+
+        $factory = $this->getMockBuilder(RequestFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRequestWithOptions'])
+            ->getMock();
+
+        $factory->expects($this->once())
+            ->method('getRequestWithOptions')
+            ->with(
+                $this->equalTo(GenericProvider::METHOD_POST),
+                $this->equalTo($authUrl),
+                $this->callback(function ($options) {
+                    $this->assertEquals('Basic dGVzdDp0ZXN0U2VjcmV0', $options['headers']['Authorization']);
+                    $this->assertEquals('token=token', $options['body']);
+                    return true;
+                })
+            )
+            ->willReturn($request);
+
+        $provider = $this->getMockBuilder(GenericProvider::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([[
+                'clientId' => 'test',
+                'clientSecret' => 'testSecret',
+                'redirectUri' => '',
+                'urlAuthorize' => $authUrl,
+                'urlAccessToken' => 'http://testUrlAccessToken',
+                'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+            ]])
+            ->setMethods([
+                'getResourceOwnerDetailsUrl',
+                'getRequestFactory',
+                'getParsedResponse',
+            ])
+            ->getMock();
+
+        $provider->expects($this->once())
+            ->method('getResourceOwnerDetailsUrl')
+            ->willReturn($authUrl);
+
+        $provider->expects($this->once())
+            ->method('getRequestFactory')
+            ->willReturn($factory);
+
+        $provider->expects($this->once())
+            ->method('getParsedResponse')
+            ->with($this->isInstanceOf(RequestInterface::class))
+            ->willReturn(['sub' => 'max']);
+
+        $provider->introspectToken($token);
     }
 }

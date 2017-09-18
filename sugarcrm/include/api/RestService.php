@@ -11,6 +11,8 @@
  */
 
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User as IdmUser;
 
 /** @noinspection PhpInconsistentReturnPointsInspection */
 class RestService extends ServiceBase
@@ -457,24 +459,39 @@ class RestService extends ServiceBase
 
         $token = $this->grabToken();
 
+        $platform = !empty($_REQUEST['platform']) ? $_REQUEST['platform'] : 'base';
         if ( !empty($token) ) {
             try {
-                $oauthServer = SugarOAuth2Server::getOAuth2Server();
-                $oauthServer->verifyAccessToken($token);
+                if ($platform == 'opi') {
+                    $auth = AuthenticationController::getInstance('OAuth2Authenticate');
+                    $userData = $auth->authController->introspectAccessToken($token);
 
-                if (isset($_SESSION['authenticated_user_id'])) {
-                    $authController = AuthenticationController::getInstance();
-                    // This will return false if anything is wrong with the session
-                    // (mismatched IP, mismatched unique_key, etc)
-                    $valid = $authController->apiSessionAuthenticate();
-
-                    if ($valid) {
-                        $valid = $this->userAfterAuthenticate($_SESSION['authenticated_user_id'],$oauthServer);
+                    if (!is_array($userData) || empty($userData['sub'])) {
+                        throw new \RuntimeException('Bad OIDC response. User credentials does not found.');
                     }
-                    if (!$valid) {
-                        // Need to populate the exception here so later code
-                        // has it and can send the correct status back to the client
-                        $e = new SugarApiExceptionInvalidGrant();
+                    $user = (new SugarLocalUserProvider())->loadUserByUsername($userData['sub']);
+                    if ($user instanceof IdmUser) {
+                        $valid = true;
+                        $GLOBALS['current_user'] = $user->getSugarUser();
+                    }
+                } else {
+                    $oauthServer = SugarOAuth2Server::getOAuth2Server();
+                    $oauthServer->verifyAccessToken($token);
+
+                    if (isset($_SESSION['authenticated_user_id'])) {
+                        $authController = AuthenticationController::getInstance();
+                        // This will return false if anything is wrong with the session
+                        // (mismatched IP, mismatched unique_key, etc)
+                        $valid = $authController->apiSessionAuthenticate();
+
+                        if ($valid) {
+                            $valid = $this->userAfterAuthenticate($_SESSION['authenticated_user_id'], $oauthServer);
+                        }
+                        if (!$valid) {
+                            // Need to populate the exception here so later code
+                            // has it and can send the correct status back to the client
+                            $e = new SugarApiExceptionInvalidGrant();
+                        }
                     }
                 }
             } catch ( OAuth2AuthenticateException $e ) {
@@ -528,6 +545,11 @@ class RestService extends ServiceBase
             // So we have to go for a hunt
             $headers = apache_request_headers();
             foreach ($headers as $key => $value) {
+                // Check for oAuth 2.0 header
+                if ($token = $this->getOAuth2AccessToken($key, $value)) {
+                    $sessionId = $token;
+                    break;
+                }
                 $check = strtolower($key);
                 if ( $check == 'oauth_token' || $check == 'oauth-token') {
                     $sessionId = $value;
@@ -537,6 +559,25 @@ class RestService extends ServiceBase
         }
 
         return $sessionId;
+    }
+
+    /**
+     * Check oAuth 2.0 header
+     * @param $header
+     * @param $value
+     * @return string
+     */
+    protected function getOAuth2AccessToken($header, $value)
+    {
+        $token = false;
+        $platform = !empty($_REQUEST['platform']) ? $_REQUEST['platform'] : 'base';
+        $config = SugarConfig::getInstance()->get('oidc_oauth', false);
+        $preCheck = is_array($config) && $platform == 'opi' && $header == 'Authorization';
+
+        if ($preCheck && preg_match('~^Bearer (.*)$~i', $value, $matches)) {
+            $token = $matches[1];
+        }
+        return $token;
     }
 
     /**

@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use League\OAuth2\Client\Provider\GenericProvider;
+use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
+use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Provider\AbstractProvider;
 
 /**
  * Auth user using in hydra oauth2-client library
@@ -24,6 +26,8 @@ use League\OAuth2\Client\Provider\GenericProvider;
 
 class OAuth2Authenticate implements SugarAuthenticateExternal
 {
+    const OAUTH2_SCOPE_OFFLINE = 'offline';
+
     /**
      * @var GenericProvider
      */
@@ -70,11 +74,22 @@ class OAuth2Authenticate implements SugarAuthenticateExternal
     }
 
     /**
+     * set custom oAuth provider
+     * @param AbstractProvider $provider
+     * @return OAuth2Authenticate
+     */
+    public function setOAuthProvider(AbstractProvider $provider)
+    {
+        $this->oAuthProvider = $provider;
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getLoginUrl($returnQueryVars = [])
     {
-        return $this->oAuthProvider->getAuthorizationUrl();
+        return $this->oAuthProvider->getAuthorizationUrl(['scope' => self::OAUTH2_SCOPE_OFFLINE]);
     }
 
     /**
@@ -93,6 +108,26 @@ class OAuth2Authenticate implements SugarAuthenticateExternal
         return $this->oidcUrl;
     }
 
+    /**
+     * return access token by authorization code
+     * @param $code
+     * @return AccessToken
+     */
+    public function getAccessToken($code)
+    {
+        return $this->oAuthProvider->getAccessToken('authorization_code', ['code' => $code]);
+    }
+
+    /**
+     * get resource owner and verify token
+     * @param $token
+     * @return string
+     */
+    public function introspectAccessToken($token)
+    {
+        $token = new AccessToken(['access_token' => $token]);
+        return $this->oAuthProvider->introspectToken($token);
+    }
 
     /**
      * prepare config for oAuth2 client

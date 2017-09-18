@@ -15,6 +15,8 @@ namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\OAuth2Authentic
 use SugarConfig;
 use PHPUnit_Framework_TestCase as TestCase;
 use OAuth2Authenticate;
+use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
+use League\OAuth2\Client\Token\AccessToken;
 
 /**
  * @coversDefaultClass OAuth2Authenticate
@@ -68,5 +70,47 @@ class OAuth2AuthenticateTest extends TestCase
         $this->assertContains('client_id=testLocal', $this->auth->getLoginUrl());
         $this->assertFalse($this->auth->getLogoutUrl());
         $this->assertEquals('http://sts.sugarcrm.local', $this->auth->getOidcUrl());
+    }
+
+    /**
+     * @covers ::getAccessToken
+     */
+    public function testGetAccessToken()
+    {
+        $code = 'test';
+        $token = new AccessToken(['access_token' => 'token']);
+        $provider = $this->getMockBuilder(GenericProvider::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAccessToken'])
+            ->getMock();
+        $provider->expects($this->once())
+            ->method('getAccessToken')
+            ->with($this->equalTo('authorization_code'), $this->equalTo(['code' => $code]))
+            ->willReturn($token);
+
+        $this->auth->setOAuthProvider($provider);
+        $this->auth->getAccessToken($code);
+    }
+    /**
+     * @covers ::introspectAccessToken
+     */
+    public function testIntrospectAccessToken()
+    {
+        $code = 'test';
+
+        $provider = $this->getMockBuilder(GenericProvider::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['introspectToken'])
+            ->getMock();
+        $provider->expects($this->once())
+            ->method('introspectToken')
+            ->with($this->callback(function (AccessToken $token) {
+                $this->assertEquals('test', $token->getToken());
+                return true;
+            }))
+            ->willReturn(['sub' => 'max']);
+
+        $this->auth->setOAuthProvider($provider);
+        $this->auth->introspectAccessToken($code);
     }
 }
