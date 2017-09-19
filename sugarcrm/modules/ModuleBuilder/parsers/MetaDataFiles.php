@@ -11,6 +11,8 @@
  */
 require_once 'modules/ModuleBuilder/parsers/constants.php';
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 class MetaDataFiles
 {
     /**
@@ -1134,7 +1136,7 @@ class MetaDataFiles
                             $extensionName = "sidecar{$type}{$fileInfo['platform']}{$fileInfo['subPath']}";
                             $extFile = SugarAutoLoader::loadExtension($extensionName, $module);
                             if ($extFile) {
-                                include $extFile;
+                                include FileLoader::validateFilePath($extFile);
                             }
                         }
                         if ( empty($module) ) {
