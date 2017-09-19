@@ -71,9 +71,18 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
             $from = $this->query->getFromBean();
             $nameFields = Localization::getObject()->getNameFormatFields($this->moduleName);
             foreach ($nameFields as $partOfName) {
-                $alias = $from->getRelateAlias(!empty($this->alias) ? $this->alias : $this->def['name'], $partOfName);
-                $this->addToSelect(array(array("{$this->table}.{$partOfName}", $alias)));
+                $fqn = sprintf('%s.%s', $this->table, $partOfName);
+
+                // check if the field belongs to the primary table
+                if ($this->table === $this->query->getFromAlias()) {
+                    $this->addToSelect($fqn);
+                } else {
+                    $fieldAlias = $this->alias ?: $this->def['name'];
+                    $columnAlias = $from->getRelateAlias($fieldAlias, $partOfName);
+                    $this->addToSelect([[$fqn, $columnAlias]]);
+                }
             }
+
             $this->markNonDb();
             return;
         }

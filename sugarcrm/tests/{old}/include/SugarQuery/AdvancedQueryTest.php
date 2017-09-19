@@ -46,6 +46,8 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        SugarTestContactUtilities::removeAllCreatedContacts();
+
         BeanFactory::setBeanClass('Contacts');
 
         if ( !empty($this->contacts) ) {
@@ -591,6 +593,34 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $row = array_shift($data);
         $this->assertEquals($billingAccount->name, $row['billing_account_name']);
         $this->assertEquals($shippingAccount->name, $row['shipping_account_name']);
+    }
+
+    public function testFetchPrimaryAndRelateFullNamesFromQuery()
+    {
+        $jim = SugarTestContactUtilities::createContact(null, [
+            'first_name' => 'Jim',
+            'last_name' => 'Brennan',
+        ]);
+
+        $max = SugarTestContactUtilities::createContact(null, [
+            'first_name' => 'Max',
+            'last_name' => 'Jensen',
+        ]);
+
+        $max->load_relationship('reports_to_link');
+        $max->reports_to_link->add($jim);
+
+        $query = new SugarQuery();
+        $query->from($max);
+        $query->where()
+            ->equals('id', $max->id);
+
+        $contacts = $max->fetchFromQuery($query, ['name', 'report_to_name']);
+        $this->assertCount(1, $contacts);
+
+        $contact = array_shift($contacts);
+        $this->assertEquals($max->name, $contact->name);
+        $this->assertEquals($jim->name, $contact->report_to_name);
     }
 }
 
