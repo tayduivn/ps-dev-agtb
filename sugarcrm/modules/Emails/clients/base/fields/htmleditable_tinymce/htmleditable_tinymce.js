@@ -149,19 +149,13 @@
     _render: function() {
         if (this._isEditView()) {
             this._super('_render');
+            this.$el.toggleClass('detail', false).toggleClass('edit', true);
         } else {
             this.destroyTinyMCEEditor();
             this._renderView();
+            this.$el.toggleClass('detail', true).toggleClass('edit', false);
         }
         return this;
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _renderEdit: function(options) {
-        this.$el.toggleClass('detail', false).toggleClass('edit', true);
-        this._super('_renderEdit');
     },
 
     /**
@@ -189,8 +183,6 @@
         this.unbindDom();
 
         // begin custom rendering
-        this.$el.toggleClass('detail', true).toggleClass('edit', false);
-
         if (this.$el.find('iframe').length === 0) {
             iFrame = $('<iframe>', {
                 src: '',
