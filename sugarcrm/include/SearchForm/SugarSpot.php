@@ -410,6 +410,7 @@ class SugarSpot
                 continue;
             }
 
+            $return_fields = array();
             if (isset($seed->field_defs['name'])) {
                 $return_fields['name'] = $seed->field_defs['name'];
             }
@@ -463,7 +464,7 @@ class SugarSpot
                 }
                 if (empty($extraFields)) {
                     // We set the 'fields' parameter, but left it blank, we should fetch all fields
-                    $return_fields = '';
+                    $return_fields = array();
                 } else {
 
                     foreach ( $extraFields as $extraField ) {
