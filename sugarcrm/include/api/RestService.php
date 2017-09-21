@@ -11,8 +11,6 @@
  */
 
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User as IdmUser;
 
 /** @noinspection PhpInconsistentReturnPointsInspection */
 class RestService extends ServiceBase
@@ -462,36 +460,21 @@ class RestService extends ServiceBase
         $platform = !empty($_REQUEST['platform']) ? $_REQUEST['platform'] : 'base';
         if ( !empty($token) ) {
             try {
-                if ($platform == 'opi') {
-                    $auth = AuthenticationController::getInstance('OAuth2Authenticate');
-                    $userData = $auth->authController->introspectAccessToken($token);
+                $oauthServer = $this->getSugarOAuth2Server($platform);
+                $oauthServer->verifyAccessToken($token);
+                if (isset($_SESSION['authenticated_user_id'])) {
+                    $authController = AuthenticationController::getInstance();
+                    // This will return false if anything is wrong with the session
+                    // (mismatched IP, mismatched unique_key, etc)
+                    $valid = $authController->apiSessionAuthenticate();
 
-                    if (!is_array($userData) || empty($userData['sub'])) {
-                        throw new \RuntimeException('Bad OIDC response. User credentials does not found.');
+                    if ($valid) {
+                        $valid = $this->userAfterAuthenticate($_SESSION['authenticated_user_id'], $oauthServer);
                     }
-                    $user = (new SugarLocalUserProvider())->loadUserByUsername($userData['sub']);
-                    if ($user instanceof IdmUser) {
-                        $valid = true;
-                        $GLOBALS['current_user'] = $user->getSugarUser();
-                    }
-                } else {
-                    $oauthServer = SugarOAuth2Server::getOAuth2Server();
-                    $oauthServer->verifyAccessToken($token);
-
-                    if (isset($_SESSION['authenticated_user_id'])) {
-                        $authController = AuthenticationController::getInstance();
-                        // This will return false if anything is wrong with the session
-                        // (mismatched IP, mismatched unique_key, etc)
-                        $valid = $authController->apiSessionAuthenticate();
-
-                        if ($valid) {
-                            $valid = $this->userAfterAuthenticate($_SESSION['authenticated_user_id'], $oauthServer);
-                        }
-                        if (!$valid) {
-                            // Need to populate the exception here so later code
-                            // has it and can send the correct status back to the client
-                            $e = new SugarApiExceptionInvalidGrant();
-                        }
+                    if (!$valid) {
+                        // Need to populate the exception here so later code
+                        // has it and can send the correct status back to the client
+                        $e = new SugarApiExceptionInvalidGrant();
                     }
                 }
             } catch ( OAuth2AuthenticateException $e ) {
@@ -954,6 +937,22 @@ class RestService extends ServiceBase
     protected function getMetadataManager()
     {
         return MetaDataManager::getManager(array($this->platform));
+    }
+
+    /**
+     * Get proper SugarOAuth2Server.
+     *
+     * @param string $platform
+     * @return OAuth2
+     */
+    protected function getSugarOAuth2Server($platform)
+    {
+        // ToDo: IDM: probably we should not depend on $platform here.
+        if ($platform == 'opi') {
+            return $oauthServer = SugarOAuth2Server::getOAuth2ServerOIDC();
+        } else {
+            return $oauthServer = SugarOAuth2Server::getOAuth2Server();
+        }
     }
 }
 

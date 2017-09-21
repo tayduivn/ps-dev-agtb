@@ -24,7 +24,7 @@ use League\OAuth2\Client\Provider\AbstractProvider;
  * ];
  */
 
-class OAuth2Authenticate implements SugarAuthenticateExternal
+class OAuth2Authenticate extends SugarAuthenticate implements SugarAuthenticateExternal
 {
     const OAUTH2_SCOPE_OFFLINE = 'offline';
 
@@ -59,6 +59,8 @@ class OAuth2Authenticate implements SugarAuthenticateExternal
      */
     public function __construct()
     {
+        parent::__construct();
+
         $config = SugarConfig::getInstance()->get('oidc_oauth');
 
         if (empty($config) || empty($config['oidcUrl'])) {

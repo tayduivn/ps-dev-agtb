@@ -48,6 +48,33 @@ class SugarOAuth2Server extends OAuth2
         return $currentOAuth2Server;
     }
 
+    /**
+     * ToDo: IDM: move to ::getOAuth2Server when we assure that platform is present in the request.
+     * Therefore we can return getOAuth2ServerOIDC from ::getOAuth2Server based on Sugar config's
+     * enabled OIDC and enabled platforms.
+     */
+    public static function getOAuth2ServerOIDC()
+    {
+        static $currentOAuth2Server = null;
+
+        if (!isset($currentOAuth2Server)) {
+            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage.php');
+            $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2Storage');
+            $oauthStorage = new $oauthStorageName();
+
+            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2ServerOIDC.php');
+            $oauthServerName = SugarAutoLoader::customClass('SugarOAuth2ServerOIDC');
+
+            $config = SugarConfig::getInstance()->get('oauth2', []);
+
+            $auth = AuthenticationController::getInstance('OAuth2Authenticate');
+
+            $currentOAuth2Server = new $oauthServerName($oauthStorage, $config, $auth);
+        }
+
+        return $currentOAuth2Server;
+    }
+
     protected function createAccessToken($client_id, $user_id, $scope = null)
     {
         $timeLimit = $this->getVariable(self::CONFIG_MAX_SESSION);
