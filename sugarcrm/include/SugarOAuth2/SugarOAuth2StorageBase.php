@@ -187,10 +187,11 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
      * split out so that portal can load users properly
      *
      * @param string $username The name of the user you want to load
+     * @param array $extraData Some optional extra data for retrieve user
      *
      * @return SugarBean The user from the name
      */
-    public function loadUserFromName($username)
+    public function loadUserFromName($username, array $extraData = [])
     {
         if (!empty($GLOBALS['current_user']) &&
                 (empty($username) || $GLOBALS['current_user']->user_name == $username)) {

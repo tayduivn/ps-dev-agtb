@@ -69,8 +69,7 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
             throw new \RuntimeException('Bad OIDC response. User credentials were not found.');
         }
 
-        // ToDo: IDM: move it to OIDC storage and find user by field and identityField there.
-        $user = (new SugarLocalUserProvider())->loadUserByUsername($userData['sub'])->getSugarUser();
+        $user = $this->storage->loadUserFromName($userData['sub'], $userData);
 
         // Check if we already created session for this User based on token. Otherwise create a new one.
         $tokenSessionId = base64_encode($token);

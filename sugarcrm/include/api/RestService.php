@@ -948,8 +948,10 @@ class RestService extends ServiceBase
     protected function getSugarOAuth2Server($platform)
     {
         // ToDo: IDM: probably we should not depend on $platform here.
-        if ($platform == 'opi') {
-            return $oauthServer = SugarOAuth2Server::getOAuth2ServerOIDC();
+        if (in_array($platform, SugarOAuth2Server::$oidcPlatforms)) {
+            $oauthServer = SugarOAuth2Server::getOAuth2ServerOIDC();
+            $oauthServer->setPlatform($platform);
+            return $oauthServer;
         } else {
             return $oauthServer = SugarOAuth2Server::getOAuth2Server();
         }

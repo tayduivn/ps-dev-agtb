@@ -23,6 +23,14 @@ class SugarOAuth2Server extends OAuth2
     const CONFIG_MAX_SESSION = 'max_session_lifetime';
 
     /**
+     * List of supported OIDC platforms.
+     * @var array
+     */
+    public static $oidcPlatforms = [
+        'opi',
+    ];
+
+    /**
      * This function will return the OAuth2Server class, it will check
      * the custom/ directory so users can customize the authorization
      * types and storage
