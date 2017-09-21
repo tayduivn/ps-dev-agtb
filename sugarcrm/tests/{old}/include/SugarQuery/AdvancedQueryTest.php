@@ -677,4 +677,39 @@ class Contact_Mock_Bug62961 extends Contact
     {
         return true;
     }
+
+    public function testTagsDoNotProduceDuplicates()
+    {
+        $contacts = [
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        ];
+
+        $tags = [
+            SugarTestTagUtilities::createTag(),
+            SugarTestTagUtilities::createTag(),
+        ];
+
+        $count = count($contacts);
+
+        foreach ($contacts as $contact) {
+            $contact->load_relationship('tag_link');
+            foreach ($tags as $tag) {
+                $contact->tag_link->add($tag);
+            }
+        }
+
+        $seed = BeanFactory::getDefinition('Contacts');
+
+        $query = new SugarQuery();
+        $query->from($seed);
+        $query->orderBy('id');
+        $query->where()
+            ->in('id', array_map(function (Contact $contact) {
+                return $contact->id;
+            }, $contacts));
+        $query->limit($count);
+
+        $this->assertCount($count, $seed->fetchFromQuery($query));
+    }
 }

@@ -3323,6 +3323,7 @@ class SugarBean
     {
         $beans = array();
 
+        /** @var SugarFieldBase[] $secondaryFields */
         list($queryFields, $additionalQueryFields, $secondaryFields) = $this->getQueryFields($query, $fields, $options);
 
         $query->select($queryFields);

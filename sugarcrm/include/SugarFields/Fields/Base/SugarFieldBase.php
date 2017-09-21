@@ -29,7 +29,8 @@ class SugarFieldBase {
     var $ss; // Sugar Smarty Object
     var $hasButton = false;
     protected static $base = array();
-    public $needsSecondaryQuery = false;
+
+    protected $needsSecondaryQuery = false;
 
     /**
      * The name of the module the field belongs to

@@ -15,6 +15,16 @@
  */
 class SugarFieldTag extends SugarFieldRelatecollection
 {
+    public function __construct($type)
+    {
+        // fetching tags is implemented in apiFormatField(), so the second query is not really needed,
+        // but this attribute is required to prevent the relationship table from being joined to SugarQuery
+        // which will result in duplicate records in the query
+        $this->needsSecondaryQuery = true;
+
+        parent::__construct($type);
+    }
+
     /**
      * Override of parent apiSave to force the custom save to be run from API
      * @param SugarBean $bean
