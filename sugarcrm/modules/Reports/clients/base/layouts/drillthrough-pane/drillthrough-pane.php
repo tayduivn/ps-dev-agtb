@@ -26,7 +26,17 @@ $viewdefs['Reports']['base']['layout']['drillthrough-pane'] = array(
                         'type' => 'text',
                     ),
                 ),
-                'buttons' => array(),
+                'buttons' => array(
+                    array(
+                        'type' => 'button',
+                        'icon' => 'fa-refresh',
+                        'css_class' => 'btn',
+                        'tooltip' => 'LBL_REFRESH_LIST_AND_CHART',
+                        'events' => array(
+                            'click' => 'click:refresh_list_chart',
+                        ),
+                    ),
+                ),
             ),
         ),
     ),

@@ -69,6 +69,7 @@
                 ]
             }
         }], this.context);
+        this.on('click:refresh_list_chart', this.refreshListChart, this);
     },
 
     /**
@@ -84,6 +85,8 @@
         var config = this.context.get('dashConfig');
         var chartData = this.context.get('chartData');
         var reportData = this.context.get('reportData');
+        var chartLabels = {groupLabel: config.groupLabel, seriesLabel: config.seriesLabel};
+        this.context.set('chartLabels', chartLabels);
         var title = dashlet.$('.dashlet-title');
 
         // This will allow scrolling when drilling thru from Report detail view
@@ -101,5 +104,15 @@
         this.$el.find('span.headerpane').removeClass('headerpane');
 
         return this;
+    },
+
+    /**
+     * Refresh list and chart
+     */
+    refreshListChart: function() {
+        var drawer = this.closestComponent('drawer').getComponent('drillthrough-drawer');
+        drawer.updateList();
+        var dashlet = this.getComponent('dashlet').getComponent('saved-reports-chart');
+        dashlet.loadData();
     }
 })

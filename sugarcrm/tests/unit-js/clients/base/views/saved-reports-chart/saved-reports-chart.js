@@ -133,4 +133,159 @@ describe('Base.View.Saved-Reports-Chart', function() {
             expect(field.displayNoData).toHaveBeenCalled();
         });
     });
+
+    describe('getChartState()', function() {
+        var chartLabels;
+        var dashConfig;
+        var reportData;
+        beforeEach(function() {
+            chartLabels = context.get('chartLabels');
+            dashConfig = context.get('dashConfig');
+            reportData = context.get('reportData');
+        });
+
+        afterEach(function() {
+            if (!_.isUndefined(chartLabels)) {
+                context.set('chartLabels', chartLabels);
+            } else if (!_.isUndefined(context.get('chartLabels'))) {
+                context.unset('chartLabels');
+            }
+            if (!_.isUndefined(dashConfig)) {
+                context.set('dashConfig', dashConfig);
+            } else if (!_.isUndefined(context.get('dashConfig'))) {
+                context.unset('dashConfig');
+            }
+            if (!_.isUndefined(reportData)) {
+                context.set('reportData', reportData);
+            } else if (!_.isUndefined(context.get('reportData'))) {
+                context.unset('reportData');
+            }
+        });
+
+        using('various chart types', [
+            // funnel chart, 2 groupbys
+            {
+                testCase: 'funnel chart, 2 groupbys',
+                chartState: {seriesIndex: 1},
+                chartLabels: {seriesLabel: 'Customer'},
+                dashConfig: {chart_type: 'funnel chart'},
+                reportData: {group_defs: [{name: 'account_type'}, {name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                    values: [{label: 'Customer'}, {label: 'Analyst'}]
+                }
+            },
+            // funnel chart, 1 groupby
+            {
+                testCase: 'funnel chart, 1 groupby',
+                chartState: {seriesIndex: 0},
+                chartLabels: {seriesLabel: 'Education'},
+                dashConfig: {chart_type: 'funnel chart'},
+                reportData: {group_defs: [{name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                }
+            },
+            // bar chart, 2 groupbys
+            {
+                testCase: 'bar chart, 2 groupbys',
+                chartState: {groupIndex: 0, pointIndex: 0, seriesIndex: 0},
+                chartLabels: {seriesLabel: 'Customer'},
+                dashConfig: {chart_type: 'bar chart'},
+                reportData: {group_defs: [{name: 'account_type'}, {name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                    values: [{label: 'Customer'}, {label: 'Analyst'}]
+                }
+            },
+            // bar chart, 1 groupby
+            {
+                testCase: 'bar chart, 1 groupby',
+                chartState: {groupIndex: 1, pointIndex: 1, seriesIndex: 0},
+                chartLabels: {groupLabel: 'Education'},
+                dashConfig: {chart_type: 'bar chart'},
+                reportData: {group_defs: [{name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                }
+            },
+            // group by chart, 2 groupbys
+            {
+                testCase: 'group by chart, 2 groupbys',
+                chartState: {groupIndex: 0, pointIndex: 0, seriesIndex: 1},
+                chartLabels: {groupLabel: 'Customer', seriesLabel: 'Education'},
+                dashConfig: {chart_type: 'group by chart'},
+                reportData: {group_defs: [{name: 'account_type'}, {name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                    values: [{label: 'Customer'}, {label: 'Analyst'}]
+                }
+            },
+            // group by chart, 1 groupby
+            {
+                testCase: 'group by chart, 1 groupby',
+                chartState: {groupIndex: 1, pointIndex: 1, seriesIndex: 1},
+                chartLabels: {groupLabel: 'Education'},
+                dashConfig: {chart_type: 'group by chart'},
+                reportData: {group_defs: [{name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                }
+            },
+            // line chart, 2 groupbys
+            {
+                testCase: 'line chart, 2 groupbys',
+                chartState: {groupIndex: 1, pointIndex: 1, seriesIndex: 0},
+                chartLabels: {groupLabel: 'Customer', seriesLabel: 'Education'},
+                dashConfig: {chart_type: 'line chart'},
+                reportData: {group_defs: [{name: 'account_type'}, {name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                    values: [{label: 'Customer'}, {label: 'Analyst'}]
+                }
+            },
+            // line chart, 1 groupby
+            {
+                testCase: 'line chart, 1 groupby',
+                chartState: {groupIndex: 1, pointIndex: 0, seriesIndex: 1},
+                chartLabels: {groupLabel: 'Education'},
+                dashConfig: {chart_type: 'line chart'},
+                reportData: {group_defs: [{name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                }
+            },
+            // pie chart, 2 groupbys
+            {
+                testCase: 'pie chart, 2 groupbys',
+                chartState: {seriesIndex: 1},
+                chartLabels: {seriesLabel: 'Customer'},
+                dashConfig: {chart_type: 'pie chart'},
+                reportData: {group_defs: [{name: 'account_type'}, {name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                    values: [{label: 'Customer'}, {label: 'Analyst'}]
+                }
+            },
+            // pie chart, 1 groupby
+            {
+                testCase: 'pie chart, 1 groupby',
+                chartState: {seriesIndex: 0},
+                chartLabels: {seriesLabel: 'Education'},
+                dashConfig: {chart_type: 'pie chart'},
+                reportData: {group_defs: [{name: 'industry'}]},
+                chartData: {
+                    label: ['', 'Education'],
+                }
+            }
+        ], function(value) {
+            it('get chart state from labels for ' + value.testCase, function() {
+                context.set('chartLabels', value.chartLabels);
+                context.set('dashConfig', value.dashConfig);
+                context.set('reportData', value.reportData);
+                var chartState = view.getChartState(value.chartData);
+                expect(chartState).toEqual(value.chartState);
+            });
+        });
+    });
 });

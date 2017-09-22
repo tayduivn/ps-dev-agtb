@@ -270,8 +270,100 @@
         // update the settings model for use by chart field
         this.settings.set(settings);
 
+        // update chart state for drillthru
+        if (this.context && this.context.get('chartState') && this.context.get('chartLabels')) {
+            var newState = this.getChartState(serverData.chartData);
+            if (newState) {
+                this.context.set('chartState', newState);
+            } else {
+                this.context.unset('chartState');
+                this.context.unset('chartLabels');
+            }
+        }
+
         // toggle display of chart display option controls based on chart type
         this._toggleChartFields();
+    },
+
+    /**
+     * Gets chart state
+     * @param {Object} chartData chart data
+     * @return {Object} chart state
+     */
+    getChartState: function(chartData) {
+        var chartState = null;
+        var chartLabels = this.context.get('chartLabels');
+        var config = this.context.get('dashConfig');
+        var reportData = this.context.get('reportData');
+        switch (config.chart_type) {
+            case 'funnel chart':
+            case 'pie chart':
+                if (reportData.group_defs.length > 1) {
+                    var seriesIndex = _.findIndex(chartData.values, function(value) {
+                        return value.label === chartLabels.seriesLabel;
+                    });
+                    if (seriesIndex >= 0) {
+                        chartState = {seriesIndex: chartData.values.length - seriesIndex - 1};
+                    }
+                } else {
+                    var seriesIndex = _.indexOf(chartData.label, chartLabels.seriesLabel);
+                    if (seriesIndex >= 0) {
+                        chartState = {seriesIndex: chartData.label.length - seriesIndex - 1};
+                    }
+                }
+                break;
+            case 'horizontal bar chart':
+            case 'bar chart':
+                if (reportData.group_defs.length > 1) {
+                    var seriesIndex = _.findIndex(chartData.values, function(value) {
+                        return value.label === chartLabels.seriesLabel;
+                    });
+                    if (seriesIndex >= 0) {
+                        chartState = {groupIndex: seriesIndex, pointIndex: seriesIndex, seriesIndex: seriesIndex};
+                    }
+                } else {
+                    var groupIndex = _.indexOf(chartData.label, chartLabels.groupLabel);
+                    if (groupIndex >= 0) {
+                        chartState = {groupIndex: groupIndex, pointIndex: groupIndex, seriesIndex: 0};
+                    }
+                }
+                break;
+            case 'horizontal group by chart':
+            case 'group by chart':
+            case 'stacked group by chart':
+                if (reportData.group_defs.length > 1) {
+                    var groupIndex = _.findIndex(chartData.values, function(value) {
+                        return value.label === chartLabels.groupLabel;
+                    });
+                    var seriesIndex = _.indexOf(chartData.label, chartLabels.seriesLabel);
+                    if (groupIndex >= 0 && seriesIndex >= 0) {
+                        chartState = {groupIndex: groupIndex, pointIndex: groupIndex, seriesIndex: seriesIndex};
+                    }
+                } else {
+                    var groupIndex = _.indexOf(chartData.label, chartLabels.groupLabel);
+                    if (groupIndex >= 0) {
+                        chartState = {groupIndex: groupIndex, pointIndex: groupIndex, seriesIndex: groupIndex};
+                    }
+                }
+                break;
+            case 'line chart':
+                if (reportData.group_defs.length > 1) {
+                    var seriesIndex = _.findIndex(chartData.values, function(value) {
+                        return value.label === chartLabels.groupLabel;
+                    });
+                    var groupIndex = _.indexOf(chartData.label, chartLabels.seriesLabel);
+                    if (groupIndex >= 0 && seriesIndex >= 0) {
+                        chartState = {groupIndex: groupIndex, pointIndex: groupIndex, seriesIndex: seriesIndex};
+                    }
+                } else {
+                    var groupIndex = _.indexOf(chartData.label, chartLabels.groupLabel);
+                    if (groupIndex >= 0) {
+                        chartState = {groupIndex: groupIndex, pointIndex: 0, seriesIndex: groupIndex};
+                    }
+                }
+                break;
+        }
+        return chartState;
     },
 
     /**
@@ -395,6 +487,16 @@
                 chart.seriesActivate(state);
             } else {
                 chart.dataSeriesActivate(eo);
+            }
+            // keep track of chart state for refresh
+            // needed for drillthru chart only
+            if (this.context.get('chartState')) {
+                this.context.set('chartState', state);
+                var chartLabels = {
+                    groupLabel: params.groupLabel,
+                    seriesLabel: params.seriesLabel
+                };
+                this.context.set('chartLabels', chartLabels);
             }
             chart.dispatch.call('tooltipHide', this);
 
