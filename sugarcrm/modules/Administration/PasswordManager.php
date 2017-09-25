@@ -205,13 +205,15 @@ if (!empty($_POST['saveConfig'])) {
 		// Clean API cache since we may have changed the authentication settings
 		MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CONFIG));
 
-        try {
-            $configSender = new IDMConfigSender(new IDMConfig(\SugarConfig::getInstance()), new HttpClient());
-            $configSender->send();
-        } catch (\Exception $e) {
-            $GLOBALS['log']->fatal('Sending config to Sugar Identity Provider:' . $e->getMessage());
-            $configurator->addError($config_strings['ERR_SAVE_PASSWORD_SETTINGS_TO_IDP']);
-            break;
+        if (!empty($sugarConfig->get('oidc_oauth')['idpUrl'])) {
+            try {
+                $configSender = new IDMConfigSender(new IDMConfig(\SugarConfig::getInstance()), new HttpClient());
+                $configSender->send();
+            } catch (\Exception $e) {
+                $GLOBALS['log']->fatal('Sending config to Sugar Identity Provider:' . $e->getMessage());
+                $configurator->addError($config_strings['ERR_SAVE_PASSWORD_SETTINGS_TO_IDP']);
+                break;
+            }
         }
         die("
             <script>
