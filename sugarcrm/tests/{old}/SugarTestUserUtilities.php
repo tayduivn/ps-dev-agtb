@@ -36,7 +36,7 @@ class SugarTestUserUtilities
         $user->user_name = $userId . $time;
         $user->user_hash = md5($userId.$time);
         $user->first_name = $userId;
-        $user->last_name = $time;
+        $user->last_name = (string) $time;
         $user->status='Active';
         $user->is_group = 0;
         //BEGIN SUGARCRM flav=ent ONLY

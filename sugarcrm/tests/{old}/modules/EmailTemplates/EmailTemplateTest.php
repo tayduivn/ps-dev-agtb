@@ -10,8 +10,29 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * @coversDefaultClass EmailTemplate
+ */
 class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
+    }
+
+    protected function tearDown()
+    {
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        parent::tearDown();
+    }
+
+    /**
+     * @coversNothing
+     */
     public function testSystemTemplates_ProperConfiguration_ExistWithProperTypes()
     {
         $this->assertNotEmpty(
@@ -38,7 +59,7 @@ class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderTemplateStringVariables
-     * @covers EmailTemplate::checkStringHasVariables
+     * @covers ::checkStringHasVariables
      */
     public function testCheckStringHasVariables($tplString, $expected, $msg)
     {
@@ -104,5 +125,47 @@ class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
                 'Assert that template string has $module_field1 with numbers',
             ),
         );
+    }
+
+    /**
+     * @covers ::parse_template_bean
+     * @covers ::add_replacement
+     * @covers ::_convertToType
+     * @covers ::_parseUserValues
+     */
+    public function testParseTemplateBean_BeanIsContact()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $contact = SugarTestContactUtilities::createContact('', [
+            'account_id' => $account->id,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+            // Need to set the name because we're pretending that all data has been read from the database.
+            'account_name' => $account->name,
+        ]);
+
+        $template = 'Welcome $contact_first_name from $contact_account_name, ' .
+            'I am your account manager $contact_user_name.';
+        $expected = "Welcome {$contact->first_name} from {$account->name}, " .
+            "I am your account manager {$GLOBALS['current_user']->name}.";
+        $actual = EmailTemplate::parse_template_bean($template, 'Contacts', $contact);
+
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @covers ::parse_template_bean
+     * @covers ::add_replacement
+     * @covers ::_convertToType
+     * @covers ::_parseUserValues
+     */
+    public function testParseTemplateBean_BeanIsUser()
+    {
+        $template = 'Welcome $contact_user_first_name $contact_user_last_name, ' .
+            'Your username is $contact_user_user_name.';
+        $expected = "Welcome {$GLOBALS['current_user']->first_name} {$GLOBALS['current_user']->last_name}, " .
+            "Your username is {$GLOBALS['current_user']->user_name}.";
+        $actual = EmailTemplate::parse_template_bean($template, 'Users', $GLOBALS['current_user']);
+
+        $this->assertSame($expected, $actual);
     }
 }

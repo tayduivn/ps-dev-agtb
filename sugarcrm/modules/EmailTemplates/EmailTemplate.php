@@ -413,7 +413,7 @@ class EmailTemplate extends SugarBean {
 			} else {
                 if (isset($user->{$field_def['name']})) {
                     // bug 47647 - allow for fields to translate before adding to template
-                    $repl_arr['contact_user_' . $field_def['name']] = self::_convertToType($field_def['type'], $user->{$field_def['name']});
+                    $repl_arr['contact_user_' . $field_def['name']] = $this->_convertToType($field_def['type'], $user->{$field_def['name']});
 				} else {
 					$repl_arr["contact_user_".$field_def['name']] = "";
 				}
@@ -428,6 +428,9 @@ class EmailTemplate extends SugarBean {
 		global $current_user;
 		global $beanFiles, $beanList;
 		$repl_arr = array();
+
+        // Can't call instance methods statically, so we need an EmailTemplate instance to make method calls.
+        $template = BeanFactory::newBean('EmailTemplates');
 
 		// cn: bug 9277 - create a replace array with empty strings to blank-out invalid vars
 		$acct = BeanFactory::newBean('Accounts');
@@ -505,7 +508,7 @@ class EmailTemplate extends SugarBean {
 						}
 					} else {
                         // bug 47647 - allow for fields to translate before adding to template
-                        $translated = self::_convertToType($field_def['type'], $acct->{$field_def['name']});
+                        $translated = $template->_convertToType($field_def['type'], $acct->{$field_def['name']});
                         $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
                             'account_'         . $field_def['name'] => $translated,
                             'contact_account_' . $field_def['name'] => $translated,
@@ -516,7 +519,7 @@ class EmailTemplate extends SugarBean {
 
 			if(!empty($focus->assigned_user_id)) {
 				$user = BeanFactory::getBean('Users', $focus->assigned_user_id);
-				$repl_arr = EmailTemplate::_parseUserValues($repl_arr, $user);
+                $repl_arr = $template->_parseUserValues($repl_arr, $user);
 			}
 		} elseif($bean_name == 'Users') {
 			/**
@@ -524,7 +527,7 @@ class EmailTemplate extends SugarBean {
 			 * etc. is passed in to parse the contact_* vars.  At this point,
 			 * $current_user will be used to fill in the blanks.
 			 */
-			$repl_arr = EmailTemplate::_parseUserValues($repl_arr, $current_user);
+            $repl_arr = $template->_parseUserValues($repl_arr, $current_user);
 		} else {
 			// assumed we have an Account in focus
 			foreach($contact->field_defs as $field_def) {
@@ -548,7 +551,7 @@ class EmailTemplate extends SugarBean {
 					}
                 } elseif (isset($contact->{$field_def['name']})) {
                     // bug 47647 - allow for fields to translate before adding to template
-                    $translated = self::_convertToType($field_def['type'], $contact->{$field_def['name']});
+                    $translated = $template->_convertToType($field_def['type'], $contact->{$field_def['name']});
                     $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
                         'contact_'         . $field_def['name'] => $translated,
                         'contact_account_' . $field_def['name'] => $translated,
@@ -581,7 +584,7 @@ class EmailTemplate extends SugarBean {
                     // bug 47647 - translate currencies to appropriate values
                     $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
                         strtolower($beanList[$bean_name]) . '_' . $field_def['name']
-                            => self::_convertToType($field_def['type'], $focus->{$field_def['name']}),
+                            => $template->_convertToType($field_def['type'], $focus->{$field_def['name']}),
                     ));
 				}
 			} else {
