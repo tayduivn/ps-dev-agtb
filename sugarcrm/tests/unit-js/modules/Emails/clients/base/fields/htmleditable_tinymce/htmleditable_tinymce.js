@@ -245,7 +245,7 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
         var $textarea;
 
         beforeEach(function() {
-            $textarea = $('<iframe class="htmleditable" frameborder="0"></iframe>');
+            $textarea = $('<iframe class="htmleditable" frameborder="0" height="0"></iframe>');
         });
 
         using(
@@ -295,9 +295,10 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
             }
         );
 
-        it('should not set iframe height when template is not preview', function() {
+        it('should not change the iframe height when template is not preview', function() {
             var cssHeight;
             var htmlEditor;
+            var preRenderHeight;
 
             field = SugarTest.createField(
                 'base',
@@ -315,11 +316,12 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
             sandbox.stub(field, '_getHtmlEditableField').returns($textarea);
             sandbox.stub(field, 'destroyTinyMCEEditor');
 
+            preRenderHeight = $textarea.css('height');
             field.render();
             htmlEditor = field._getHtmlEditableField();
             cssHeight = htmlEditor.css('height');
 
-            expect(cssHeight).toBe('0px');
+            expect(cssHeight).toBe(preRenderHeight);
         });
     });
 
@@ -750,7 +752,7 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
                     var tinymce = {
                         execCommand: function(command, ui, value) {
                             expect(command).toBe('mceInsertContent');
-                            this.content = '<p>Some <div></div>' + value + '<div></div>content</p>';
+                            this.content = '<p>Some </p><div></div>' + value + '<div></div>content<p></p>';
                         },
                         getContent: function() {
                             return this.content;
