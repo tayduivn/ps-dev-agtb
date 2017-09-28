@@ -46,7 +46,9 @@ class DynamicField {
         } else {
             $this->module = $this->request->getValidInputRequest('module', 'Assert\ComponentName', '');
         }
-        $this->base_path = "custom/Extension/modules/{$this->module}/Ext/Vardefs";
+
+        $moduleDir = BeanFactory::getModuleDir($this->module);
+        $this->base_path = "custom/Extension/modules/{$moduleDir}/Ext/Vardefs";
     }
 
    function getModuleName()

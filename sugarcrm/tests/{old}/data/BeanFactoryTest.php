@@ -191,7 +191,7 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             array(
                 "Group",
-                false,
+                "Groups",
             ),
             array(
                 "aCase",

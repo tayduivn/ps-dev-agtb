@@ -204,7 +204,7 @@ abstract class OpportunitySetup
 
         // regenerate the Opportunity Vardefs
         VardefManager::loadVardef(
-            $this->bean->module_dir,
+            $this->bean->getModuleName(),
             $this->bean->object_name,
             true,
             array('bean' => $this->bean)

@@ -162,6 +162,7 @@ $beanList['Contracts']  = 'Contract';
 $beanList['ContractTypes']  = 'ContractType';
 $beanList['Holidays'] = 'Holiday';
 $beanList['System'] = 'System';
+$beanList['SessionManager'] = 'SessionManager';
 
 //BEGIN SUGARCRM flav=ent ONLY
 $beanList['CustomQueries']  = 'CustomQuery';
@@ -587,7 +588,7 @@ $modInvisList[] = 'Categories';
 //No future module should need an entry here.
 $objectList = array();
 $objectList['Cases'] =  'Case';
-$objectList['Groups'] =  'User';
+$objectList['Groups'] =  'Group';
 $objectList['Users'] =  'User';
 $objectList['ActivityStream/Activities'] = 'Activities';
 $objectList['ActivityStream/Comments'] = 'Comments';

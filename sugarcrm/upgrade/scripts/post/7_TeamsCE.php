@@ -157,7 +157,7 @@ class SugarUpgradeTeamsCE extends UpgradeScript
     		//now let's merge back into vardefs.ext.php
     		$mi = new ModuleInstaller();
     		$mi->merge_files('Ext/Vardefs/', 'vardefs.ext.php');
-    		VardefManager::loadVardef($bean->module_dir, $bean->object_name, true);
+            VardefManager::loadVardef($bean->getModuleName(), $bean->object_name, true);
     		$bean->field_defs = $GLOBALS['dictionary'][$bean->object_name]['fields'];
     	}
 

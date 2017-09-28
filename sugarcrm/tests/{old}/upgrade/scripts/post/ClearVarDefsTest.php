@@ -86,6 +86,7 @@ class ClearVarDefsTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 //good link
                 'link' => array(
+                    'name' => 'link',
                     'type' => 'link',
                     'relationship' => 'b',
                     'side' => 'RHS',
@@ -133,7 +134,8 @@ class ClearVarDefsTest extends Sugar_PHPUnit_Framework_TestCase
         $script->expects($this->once())
             ->method('cleanCache');
 
-        $script->expects($this->exactly(3))
+        //fields with no type are stripped by vardef manager, so we will only remove 2 with this script.
+        $script->expects($this->exactly(2))
             ->method('deleteFieldFile');
 
         $script->expects($this->once())

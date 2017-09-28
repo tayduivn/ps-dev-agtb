@@ -334,6 +334,34 @@ class BeanFactory {
     }
 
     /**
+     * Returns module dir based on it's name
+     *
+     * @param $moduleName
+     * @return string
+     */
+    public static function getModuleDir($moduleName)
+    {
+        static $cache = array();
+
+        if (!isset($cache[$moduleName])) {
+            $beanClass = static::getBeanClass($moduleName);
+
+            // assume module dir to be equal to module name if we can't load the proper class
+            // or the class doesn't define module_dir property or the property value is empty
+            if (empty($beanClass) || !class_exists($beanClass)) {
+                $cache[$moduleName] = $moduleName;
+            } else {
+                $properties = (new ReflectionClass($beanClass))->getDefaultProperties();
+                $cache[$moduleName] = !empty($properties['module_dir'])
+                    ? $properties['module_dir']
+                    : $moduleName;
+            }
+        }
+
+        return $cache[$moduleName];
+    }
+
+    /**
      * @static
      * This function registers a bean with the bean factory so that it can be access from accross the code without doing
      * multiple retrieves. Beans should be registered as soon as they have an id.

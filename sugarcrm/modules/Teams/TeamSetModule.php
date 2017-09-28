@@ -30,7 +30,7 @@ class TeamSetModule extends SugarBean{
 
     var $table_name = "team_sets_modules";
     var $object_name = "TeamSetModule";
-    var $module_name = 'TeamSetModule';
+    public $module_name = 'TeamSetModules';
     var $module_dir = 'Teams';
     var $disable_custom_fields = true;
 

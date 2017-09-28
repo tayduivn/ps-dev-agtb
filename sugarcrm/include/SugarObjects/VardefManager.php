@@ -660,16 +660,17 @@ class VardefManager{
             return;
         }
         self::$inReload[$guard_name] = true;
+        $moduleDir = BeanFactory::getModuleDir($module);
         //Do not force reloading from vardefs if we are only updating calc_fields
         if (empty($dictionary[$object]) || empty($params['related_calc_fields_only'])) {
             if ($includeExtension === true) {
                 $vardef_paths = array(
-                    'modules/'.$module.'/vardefs.php',
-                    SugarAutoLoader::loadExtension("vardefs", $module),
-                    'custom/Extension/modules/'.$module.'/Ext/Vardefs/vardefs.php'
+                    'modules/' . $moduleDir . '/vardefs.php',
+                    SugarAutoLoader::loadExtension("vardefs", $moduleDir),
+                    'custom/Extension/modules/' . $moduleDir . '/Ext/Vardefs/vardefs.php',
                 );
             } else {
-                $vardef_paths = array('modules/'.$module.'/vardefs.php');
+                $vardef_paths = array('modules/' . $moduleDir . '/vardefs.php');
             }
 
             // Add in additional search paths if they were provided.
@@ -689,28 +690,10 @@ class VardefManager{
                 self::addSugarACLStatic($object, $module);
             }
 
-            if(!empty($params['bean'])) {
-                $bean = $params['bean'];
-        } else { // to avoid extra refresh - we'll fill it in later
-            static::$ignoreRelationshipsForModule[$module] = true;
-            // we will instantiate here even though dictionary may not be there,
-            // since in case somebody calls us with wrong module name we need bean
-            // to get $module_dir. This may cause a loop but since the second call will
-            // have the right module name the loop should be short.
-            $bean = BeanFactory::newBean($module);
-            static::$ignoreRelationshipsForModule[$module] = false;
-            }
-            //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
-            if(!$found){
-                if ($bean instanceof SugarBean) // weed out non-bean modules
-                {
-                    $object_name = BeanFactory::getObjectName($bean->module_dir);
-                    if ($bean->module_dir != $bean->module_name && !empty($object_name))
-                    {
-                        unset($params["bean"]); // don't pass this bean down - it may be wrong bean for that module
-                        self::refreshVardefs($bean->module_dir, $object_name, $additional_search_paths, $cacheCustom, $params);
-                    }
-                }
+            if (!$found) {
+                $GLOBALS['log']->warn("Failed to locate vardef files of $module:$object object");
+                unset(self::$inReload[$guard_name]);
+                return;
             }
 
             //Some modules like cases have a bean name that doesn't match the object name
@@ -732,9 +715,7 @@ class VardefManager{
         // as it will fail when trying to look up relationships as they my have not been loaded into the
         // cache yet
         $rebuildingRelationships = (isset($GLOBALS['buildingRelCache']) && $GLOBALS['buildingRelCache'] === true);
-        if (empty($params['ignore_rel_calc_fields']) && $rebuildingRelationships === false
-            && empty(static::$ignoreRelationshipsForModule[$module])
-        ) {
+        if (empty($params['ignore_rel_calc_fields']) && $rebuildingRelationships === false) {
             self::updateRelCFModules($module, $object);
         }
 
@@ -766,10 +747,14 @@ class VardefManager{
         if(!empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])){
             // $beanList is a mess. most of its keys are module names (Cases, etc.),
             // but some are object names (ForecastOpportunities), so we check both
-            $bean = BeanFactory::newBean($object) ?: BeanFactory::newBean($module);
-            if ($bean && ($bean instanceof SugarBean) && $bean->bean_implements('ACL')) {
-                $dictionary[$object]['acls']['SugarACLStatic'] = true;
-                SugarACL::resetACLs($module);
+            $class = BeanFactory::getBeanClass($module) ?: BeanFactory::getBeanClass($object);
+            if ($class) {
+                $ref = new ReflectionClass($class);
+                $instance = $ref->newInstanceWithoutConstructor();
+                if (($instance instanceof SugarBean) && $instance->bean_implements('ACL')) {
+                    $dictionary[$object]['acls']['SugarACLStatic'] = true;
+                    SugarACL::resetACLs($module);
+                }
             }
         }
     }

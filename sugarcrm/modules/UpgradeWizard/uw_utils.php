@@ -3375,7 +3375,7 @@ function upgradeTeamColumn($bean, $column_name) {
         $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
         $mi = new $moduleInstallerClass();
 		$mi->merge_files('Ext/Vardefs/', 'vardefs.ext.php');
-		VardefManager::loadVardef($bean->module_dir, $bean->object_name, true);
+        VardefManager::loadVardef($bean->getModuleName(), $bean->object_name, true);
 		$bean->field_defs = $GLOBALS['dictionary'][$bean->object_name]['fields'];
 	}
 
