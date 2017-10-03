@@ -146,6 +146,7 @@
         collection.module = chartModule;
         collection.model = app.data.getBeanClass(chartModule);
         collection.setOption('endpoint', endpoint);
+        collection.setOption('fields', this.context.get('fields'));
         collection.fetch(callbacks);
     }
 })
