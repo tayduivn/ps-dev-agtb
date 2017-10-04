@@ -194,6 +194,8 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCompileWhere($options, $expectedWhere, $expectedParams, $expectedTypes)
     {
+        $options['team_security'] = false;
+
         $query = new SugarQuery();
         $query->from($this->account, $options);
         $query->where()

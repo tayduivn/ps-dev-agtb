@@ -120,6 +120,8 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
      * @param string $user_id
      *
      * @see static::getJoin(), should be kept synced
+     * @throws SugarQueryException
+     * @throws Exception
      */
     protected function join(SugarQuery $query, $user_id)
     {
@@ -131,21 +133,26 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
             $table_alias = $this->bean->table_name;
         }
 
-        $user_id = $query->getDBManager()->quoted($user_id);
         $tf_alias = $this->bean->db->getValidDBName($table_alias . '_tf', true, 'alias');
-        $table = <<<SQL
-(
-  SELECT tst.team_set_id
-  FROM team_sets_teams tst
-  INNER JOIN team_memberships $team_table_alias
-  ON tst.team_id = $team_table_alias.team_id
-    AND $team_table_alias.user_id = $user_id
-    AND $team_table_alias.deleted = 0
-  GROUP BY tst.team_set_id
-)
-SQL;
+        $conn = $this->bean->db->getConnection();
+        $subQuery = $conn->createQueryBuilder();
+        $subQuery
+            ->select('tst.team_set_id')
+            ->from('team_sets_teams', 'tst')
+            ->join(
+                'tst',
+                'team_memberships',
+                $team_table_alias,
+                $subQuery->expr()->andX(
+                    $team_table_alias . '.team_id = tst.team_id',
+                    $team_table_alias . '.user_id = ' . $subQuery->createPositionalParameter($user_id),
+                    $team_table_alias . '.deleted = 0'
+                )
+            )
+            ->groupBy('tst.team_set_id');
+
         $query->joinTable(
-            $table,
+            $subQuery,
             array(
                 'alias' => $tf_alias,
             )

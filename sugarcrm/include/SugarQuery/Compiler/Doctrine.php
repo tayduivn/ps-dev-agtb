@@ -118,6 +118,7 @@ class SugarQuery_Compiler_Doctrine
      * @param QueryBuilder $builder Query builder
      * @param SugarQuery $query The query being compiled
      * @return QueryBuilder
+     * @throws SugarQueryException
      */
     protected function compileSelectQuery(QueryBuilder $builder, SugarQuery $query)
     {

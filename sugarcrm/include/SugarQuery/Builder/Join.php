@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-class SugarQuery_Builder_Join {
-
+/**
+ * @internal
+ */
+class SugarQuery_Builder_Join
+{
     /**
      * @var array
      */
@@ -58,11 +60,12 @@ class SugarQuery_Builder_Join {
     /**
      * Create the JOIN Object
      * @param string $table
-     * @param string $type
+     * @param array $options
+     * @throws SugarQueryException
      */
-    public function __construct($table = null, array $options = array())
+    public function __construct($table, array $options = array())
     {
-        if ($table instanceof SugarQuery && !isset($options['alias'])) {
+        if (!is_string($table) && !isset($options['alias'])) {
             throw new SugarQueryException('Joined sub-query must have alias');
         }
 
