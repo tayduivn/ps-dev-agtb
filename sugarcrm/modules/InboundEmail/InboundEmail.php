@@ -3388,47 +3388,49 @@ class InboundEmail extends SugarBean {
 		}
 	}
 
-	/**
-	 * tries to figure out what character set a given filename is using and
-	 * decode based on that
-	 *
-	 * @param string name Name of attachment
-	 * @return string decoded name
-	 */
-	function handleEncodedFilename($name) {
-		$imapDecode = imap_mime_header_decode($name);
-		/******************************
-		$imapDecode => stdClass Object
-			(
-				[charset] => utf-8
-				[text] => wï¿½hlen.php
-			)
+    /**
+     * Decodes the filename using whatever encodings are found in it.
+     *
+     * @param string $encodedName
+     * @return string
+     */
+    public function handleEncodedFilename($encodedName)
+    {
+        $decodedName = '';
+        $imapDecodedName = imap_mime_header_decode($encodedName);
 
-					OR
+        foreach ($imapDecodedName as $element) {
+            $encoding = strtolower($element->charset);
+            $text = $element->text;
 
-		$imapDecode => stdClass Object
-			(
-				[charset] => default
-				[text] => UTF-8''%E3%83%8F%E3%82%99%E3%82%A4%E3%82%AA%E3%82%AF%E3%82%99%E3%83%A9%E3%83%95%E3%82%A3%E3%83%BC.txt
-			)
-		*******************************/
-		if($imapDecode[0]->charset != 'default') { // mime-header encoded charset
-			$encoding = $imapDecode[0]->charset;
-			$name = $imapDecode[0]->text; // encoded in that charset
-		} else {
-			/* encoded filenames are formatted as [encoding]''[filename] */
-			if(strpos($name, "''") !== false) {
+            if ($encoding === 'default') {
+                // Use UTF-8 as the default.
+                $encoding = 'utf-8';
 
-				$encoding = substr($name, 0, strpos($name, "'"));
+                // Encoded file names are formatted as [encoding]''[filename].
+                if (strpos($text, "''") !== false) {
+                    $encoding = strtolower(substr($text, 0, strpos($text, "'")));
 
-				while(strpos($name, "'") !== false) {
-					$name = trim(substr($name, (strpos($name, "'")+1), strlen($name)));
-				}
-			}
-			$name = urldecode($name);
-		}
-		return (strtolower($encoding) == 'utf-8') ? $name : $GLOBALS['locale']->translateCharset($name, $encoding, 'UTF-8');
-	}
+                    while (strpos($text, "'") !== false) {
+                        $text = trim(substr($text, (strpos($text, "'") + 1), strlen($text)));
+                    }
+                }
+
+                $text = urldecode($text);
+            }
+
+            // Need to trim the encoding so we don't end up with something like " utf-8".
+            $encoding = trim($encoding);
+
+            if ($encoding !== 'utf-8') {
+                $text = $GLOBALS['locale']->translateCharset($text, strtoupper($encoding), 'UTF-8');
+            }
+
+            $decodedName .= $text;
+        }
+
+        return $decodedName;
+    }
 
 	/*
 		Primary body types for a part of a mail structure (imap_fetchstructure returned object)
