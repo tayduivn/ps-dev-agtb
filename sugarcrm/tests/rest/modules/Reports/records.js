@@ -27,7 +27,8 @@ describe('Reports.Records', function() {
             {attributes: {name: '_Test_Account3', industry: 'Apparel', assigned_user_id: johnId}}
         ];
 
-        yield Fixtures.create(records, {module: 'Accounts'});
+        let createdRecords = yield Fixtures.create(records, {module: 'Accounts'});
+        [this.account1, this.account2, this.account3] = createdRecords.Accounts;
 
         let content = {
             display_columns: [{name: 'name', label: 'Name', table_key: 'self'}],
@@ -86,11 +87,28 @@ describe('Reports.Records', function() {
 
     it('should paginate records', function*() {
         let filter = 'group_filters%5B0%5D%5Bindustry%5D=Banking';
+
         let url = 'Reports/' + this.reportId + '/records?view=list&fields=industry&offset=0&max_num=1&' + filter;
         let response = yield Agent.as('John').get(url);
         expect(response).to.have.json('records', (records) => {
             expect(records).to.have.length(1);
             expect(records[0].industry).to.be.equal('Banking');
+        });
+    });
+
+    it('should show previously favorited records', function*() {
+        yield Agent.as('John').put('Accounts/' + this.account3.id + '/favorite');
+        let filter = {
+            group_filters: [{industry: 'Apparel'}],
+            view: 'list',
+            fields: 'my_favorite'
+        };
+        let url = 'Reports/' + this.reportId + '/records';
+        let response = yield Agent.as('John').get(url, {qs: filter});
+        expect(response).to.have.json('records', (records) => {
+            expect(records).to.have.length(1);
+            expect(records[0].id).to.be.equal(this.account3.id);
+            expect(records[0].my_favorite).to.be.equal(true);
         });
     });
 });
