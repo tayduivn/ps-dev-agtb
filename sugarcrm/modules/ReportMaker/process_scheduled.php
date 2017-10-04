@@ -17,6 +17,7 @@
 $modListHeader = array();
 
 require_once('modules/Reports/templates/templates_pdf.php');
+require_once 'modules/Reports/config.php';
 
 global $sugar_config;
 
