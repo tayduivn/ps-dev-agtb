@@ -32,7 +32,7 @@ class GenericProvider extends BasicGenericProvider
     public function __construct(array $options = [], array $collaborators = [])
     {
         if (!array_key_exists('httpClient', $collaborators)) {
-            $collaborators['httpClient'] = $this->createHttpClient();
+            $collaborators['httpClient'] = $this->createHttpClient($options);
         }
         parent::__construct($options, $collaborators);
     }
@@ -171,12 +171,12 @@ class GenericProvider extends BasicGenericProvider
 
     /**
      * Creates HttpClient with retry policy.
+     *
+     * @param array $config
      * @return HttpClient
      */
-    protected function createHttpClient()
+    protected function createHttpClient(array $config)
     {
-        $config = $this->getSugarConfig()->get('oidc_oauth', []);
-
         $retryCount = (isset($config['http_client']['retry_count'])) ? (int) $config['http_client']['retry_count'] : 0;
 
         $handlerStack = HandlerStack::create(GuzzleHttp\choose_handler());
@@ -190,14 +190,5 @@ class GenericProvider extends BasicGenericProvider
         return new HttpClient(
             array_intersect_key($options, array_flip($this->getAllowedClientOptions($options)))
         );
-    }
-
-    /**
-     * Get Sugar config.
-     * @return \SugarConfig
-     */
-    protected function getSugarConfig()
-    {
-        return \SugarConfig::getInstance();
     }
 }

@@ -38,6 +38,9 @@ class AuthProviderManagerBuilderTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->once())
             ->method('getLdapConfig')
             ->willReturn($data['auth']['ldap']);
+        $config->expects($this->once())
+               ->method('getOIDCConfig')
+               ->willReturn($data['auth']['oidc_oauth']);
         $manager = (new AuthProviderManagerBuilder($config))->buildAuthProviders();
         $this->assertInstanceOf(AuthenticationProviderManager::class, $manager);
     }
@@ -61,6 +64,21 @@ class AuthProviderManagerBuilderTest extends \PHPUnit_Framework_TestCase
             'dnString' => '',
             'uidKey' => 'userPrincipalName',
             'filter' => '({uid_key}={username})',
+        ];
+
+        $oidcUrl = 'http://oidc.url';
+        $sugar_config['auth']['oidc_oauth'] = [
+            'clientId' => 'clientId',
+            'clientSecret' => 'clientSecret',
+            'oidcUrl' => $oidcUrl,
+            'redirectUri' => 'http://sugar.url',
+            'urlAuthorize' => $oidcUrl . '/oauth2/auth',
+            'urlAccessToken' => $oidcUrl . '/oauth2/token',
+            'urlResourceOwnerDetails' => $oidcUrl . '/oauth2/introspect',
+            'http_client' => [
+                'retry_count' => 5,
+                'delay_strategy' => 'exponential',
+            ],
         ];
 
         $sugar_config['auth']['saml']['Okta'] = [

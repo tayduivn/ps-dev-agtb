@@ -59,6 +59,31 @@ class Config
     }
 
     /**
+     * Gets OIDC configuration
+     * @return array
+     */
+    public function getOIDCConfig()
+    {
+        $config = $this->get('oidc_oauth');
+        if (empty($config)) {
+            return [];
+        }
+
+        $oidcUrl = rtrim($config['oidcUrl'], '/ ');
+
+        return [
+            'clientId' => $config['clientId'],
+            'clientSecret' => $config['clientSecret'],
+            'oidcUrl' => $oidcUrl,
+            'redirectUri' => rtrim($this->get('site_url'), '/'),
+            'urlAuthorize' => $oidcUrl . '/oauth2/auth',
+            'urlAccessToken' => $oidcUrl . '/oauth2/token',
+            'urlResourceOwnerDetails' => $oidcUrl . '/oauth2/introspect',
+            'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
+        ];
+    }
+
+    /**
      * Get default config for php-saml library
      *
      * @return array

@@ -10,8 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
  * Sugar OAuth2.0 server that connects Sugar and OpenID Connect server (e.g. Hydra authentication).
@@ -20,21 +22,19 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 class SugarOAuth2ServerOIDC extends SugarOAuth2Server
 {
     /**
-     * @var OAuth2Authenticate
+     * @var string
      */
-    protected $auth;
+    protected $platform;
 
     /**
      * SugarOAuth2ServerOIDC constructor.
      *
      * @param IOAuth2Storage $storage
      * @param array $config
-     * @param AuthenticationController $auth
      */
-    public function __construct(IOAuth2Storage $storage, array $config, AuthenticationController $auth)
+    public function __construct(IOAuth2Storage $storage, array $config)
     {
         parent::__construct($storage, $config);
-        $this->auth = $auth;
     }
 
     /**
@@ -46,7 +46,24 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
      */
     public function grantAccessToken(array $inputData = null, array $authHeaders = null)
     {
-        throw new \Exception('Not implemented. Get access token directly from OpenID Connect server.');
+        throw new \BadMethodCallException('Not implemented. Get access token directly from OpenID Connect server.');
+    }
+
+    /**
+     * Sets the platform
+     *
+     * @param string $platform
+     */
+    public function setPlatform($platform)
+    {
+        $this->platform = $platform;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setupVisibility()
+    {
     }
 
     /**
@@ -57,32 +74,37 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
      * @param string|null $scope
      *
      * @return array
-     *
-     * @throws UsernameNotFoundException|\RuntimeException
      */
     public function verifyAccessToken($token, $scope = null)
     {
-        // ToDo: IDM we should cache these requests so that we do not degrade performance.
-        $userData = $this->auth->authController->introspectAccessToken($token);
-
-        if (!is_array($userData) || empty($userData['sub'])) {
-            throw new \RuntimeException('Bad OIDC response. User credentials were not found.');
+        $userToken = null;
+        try {
+            $authManager = $this->getAuthProviderBuilder(new Config(\SugarConfig::getInstance()))->buildAuthProviders();
+            $introspectToken = new IntrospectToken($token);
+            $introspectToken->setAttribute('platform', $this->platform);
+            /** @var IntrospectToken $userToken */
+            $userToken = $authManager->authenticate($introspectToken);
+        } catch (AuthenticationException $e) {
+            return [];
         }
 
-        $user = $this->storage->loadUserFromName($userData['sub'], $userData);
-
-        // Check if we already created session for this User based on token. Otherwise create a new one.
-        $tokenSessionId = base64_encode($token);
-        if (!$this->storage->getAccessToken($tokenSessionId)) {
-            $this->storage->setAccessToken(
-                $tokenSessionId,
-                'sugar', // ToDo: IDM: it should be value from $userData['client_id']. Currently only 'sugar' is supported
-                $user->id,
-                $userData['exp'],
-                $userData['scope']
-            );
+        if (!$userToken->isAuthenticated()) {
+            return [];
         }
 
-        return $userData;
+        return [
+            'client_id' => $userToken->getAttribute('client_id'),
+            'user_id' => $userToken->getUser()->getSugarUser()->id,
+            'expires' => $userToken->getAttribute('exp'),
+        ];
+    }
+
+    /**
+     * @param Config $config
+     * @return AuthProviderOIDCManagerBuilder
+     */
+    protected function getAuthProviderBuilder(Config $config)
+    {
+        return new AuthProviderOIDCManagerBuilder($config);
     }
 }

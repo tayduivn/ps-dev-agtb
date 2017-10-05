@@ -12,6 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\MixedAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker;
@@ -26,6 +29,7 @@ use Sugarcrm\IdentityProvider\Encoder\EncoderBuilder;
 use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider;
 use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider;
 
+use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Ldap\Adapter\ExtLdap\Adapter;
 use Symfony\Component\Ldap\Ldap;
@@ -57,6 +61,11 @@ class AuthProviderBasicManagerBuilder
     protected $samlConfig;
 
     /**
+     * @var array
+     */
+    protected $oidcConfig;
+
+    /**
      * __construct
      * @param Config $config
      */
@@ -68,6 +77,7 @@ class AuthProviderBasicManagerBuilder
         }
         $this->ldapConfig = $config->getLdapConfig();
         $this->samlConfig = $config->getSAMLConfig();
+        $this->oidcConfig = $config->getOIDCConfig();
     }
 
     /**
@@ -79,9 +89,12 @@ class AuthProviderBasicManagerBuilder
      */
     public function buildAuthProviders(EventDispatcherInterface $eventDispatcher = null)
     {
-        $providers = array_filter(
-            [$this->getLocalAuthProvider(), $this->getLdapAuthProvider(), $this->getSamlAuthIDP()]
-        );
+        $providers = array_filter([
+                                      $this->getLocalAuthProvider(),
+                                      $this->getLdapAuthProvider(),
+                                      $this->getSamlAuthIDP(),
+                                      $this->getOidcAuthProvider(),
+                                  ]);
         $providers[] = new MixedAuthenticationProvider($providers, static::PROVIDER_KEY_MIXED);
         $manager = new AuthenticationProviderManager($providers);
 
@@ -173,6 +186,23 @@ class AuthProviderBasicManagerBuilder
             new SugarSAMLUserChecker(new SugarLocalUserProvider()),
             new SessionProxy(),
             new UserMapping($this->samlConfig)
+        );
+    }
+
+    /**
+     * Gets OIDC Authentication provider
+     * @return null|OIDCAuthenticationProvider
+     */
+    protected function getOidcAuthProvider()
+    {
+        if (empty($this->oidcConfig)) {
+            return null;
+        }
+
+        return new OIDCAuthenticationProvider(
+            new GenericProvider($this->oidcConfig),
+            new SugarOIDCUserProvider(),
+            new SugarOIDCUserChecker(new SugarLocalUserProvider())
         );
     }
 

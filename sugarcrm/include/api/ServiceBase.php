@@ -152,14 +152,8 @@ abstract class ServiceBase implements LoggerAwareInterface
            $message = "No valid authentication for user.";
        }
         $loginExc = new SugarApiExceptionNeedLogin($message);
-        $oauthConfig = \SugarConfig::getInstance()->get('oidc_oauth');
-        if ($this->platform == 'opi' && !empty($oauthConfig)) {
-            $auth = AuthenticationController::getInstance('OAuth2Authenticate');
-            $loginExc->setExtraData('oidc_url', $auth->authController->getOidcUrl());
-        } else {
-            $auth = AuthenticationController::getInstance();
-        }
-
+        $authType = $this->isOidcEnabled($this->platform) ? 'OAuth2Authenticate' : null;
+        $auth = AuthenticationController::getInstance($authType);
         if ($auth->isExternal()) {
             $loginExc
                 ->setExtraData("url", $auth->getLoginUrl(['platform' => $this->platform]))
@@ -214,5 +208,16 @@ abstract class ServiceBase implements LoggerAwareInterface
         if ($raiseException) {
             throw new SugarApiExceptionInvalidParameter("EXCEPTION_INVALID_PLATFORM");
         }
+    }
+
+    /**
+     * Platform support OIDC or not?
+     * @param $platform
+     * @return bool
+     */
+    protected function isOidcEnabled($platform)
+    {
+        $oauthConfig = \SugarConfig::getInstance()->get('oidc_oauth');
+        return !empty($oauthConfig['enabledPlatforms']) && in_array($platform, $oauthConfig['enabledPlatforms']);
     }
 }

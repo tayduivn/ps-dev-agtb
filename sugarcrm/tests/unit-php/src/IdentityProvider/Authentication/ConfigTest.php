@@ -480,4 +480,94 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $result = $config->getLdapConfig();
         $this->assertEquals($expectedFilter, $result['filter']);
     }
+
+    /**
+     * Provides data for testGetOidcConfig
+     *
+     * @return array
+     */
+    public function getOidcConfigProvider()
+    {
+        return [
+            'sugarConfigEmpty' => [
+                'configSugar' => null,
+                'siteUrl' => 'http://site.url/',
+                'expectedConfig' => [],
+            ],
+            'httpClientEmpty' => [
+                'configSugar' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'enabledPlatforms' => [
+                        'opi',
+                    ],
+                ],
+                'siteUrl' => 'http://site.url/',
+                'expectedConfig' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'redirectUri' => 'http://site.url',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'http_client' => [],
+                ],
+            ],
+            'httpClientNotEmpty' => [
+                'configSugar' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'enabledPlatforms' => [
+                        'opi',
+                    ],
+                    'http_client' => [
+                        'retry_count' => 5,
+                        'delay_strategy' => 'exponential',
+                    ],
+                ],
+                'siteUrl' => 'http://site.url/',
+                'expectedConfig' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'redirectUri' => 'http://site.url',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'http_client' => [
+                        'retry_count' => 5,
+                        'delay_strategy' => 'exponential',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param $configSugar
+     * @param $siteUrl
+     * @param $expectedConfig
+     *
+     * @dataProvider getOidcConfigProvider
+     *
+     * @covers ::getOIDCConfig
+     */
+    public function testGetOidcConfig($configSugar, $siteUrl, $expectedConfig)
+    {
+        $sugarConfig = $this->createMock(\SugarConfig::class);
+        $config = new Config($sugarConfig);
+        $sugarConfig->method('get')->willReturnMap(
+            [
+                ['oidc_oauth', null, $configSugar],
+                ['site_url', null, $siteUrl],
+            ]
+        );
+
+        $this->assertEquals($expectedConfig, $config->getOIDCConfig());
+    }
 }

@@ -360,6 +360,10 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
                 'urlAuthorize' => '',
                 'urlAccessToken' => 'http://testUrlAccessToken',
                 'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+                'http_client' => [
+                    'retry_count' => 5,
+                    'delay_strategy' => 'exponential',
+                ],
             ]])
             ->setMethods(['verifyGrant'])
             ->getMock();

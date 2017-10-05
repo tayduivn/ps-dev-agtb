@@ -23,64 +23,33 @@ class SugarOAuth2Server extends OAuth2
     const CONFIG_MAX_SESSION = 'max_session_lifetime';
 
     /**
-     * List of supported OIDC platforms.
-     * @var array
+     * @var null
      */
-    public static $oidcPlatforms = [
-        'opi',
-    ];
+    protected static $currentOAuth2Server = null;
 
     /**
      * This function will return the OAuth2Server class, it will check
      * the custom/ directory so users can customize the authorization
      * types and storage
+     *
+     * @param bool $oidcEnabled
+     * @return null
      */
-    public static function getOAuth2Server()
+    public static function getOAuth2Server($oidcEnabled = false)
     {
-        static $currentOAuth2Server = null;
-
-        if (!isset($currentOAuth2Server)) {
-            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage.php');
-            $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2Storage');
+        $oidcPostfix = $oidcEnabled ? 'OIDC' : '';
+        if (!isset(static::$currentOAuth2Server)) {
+            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage'.$oidcPostfix.'.php');
+            $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2Storage'.$oidcPostfix);
             $oauthStorage = new $oauthStorageName();
 
-            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Server.php');
-            $oauthServerName = SugarAutoLoader::customClass('SugarOAuth2Server');
-            $config = array();
-            if (!empty($GLOBALS['sugar_config']['oauth2'])) {
-                $config = $GLOBALS['sugar_config']['oauth2'];
-            }
-            $currentOAuth2Server = new $oauthServerName($oauthStorage, $config);
-        }
-
-        return $currentOAuth2Server;
-    }
-
-    /**
-     * ToDo: IDM: move to ::getOAuth2Server when we assure that platform is present in the request.
-     * Therefore we can return getOAuth2ServerOIDC from ::getOAuth2Server based on Sugar config's
-     * enabled OIDC and enabled platforms.
-     */
-    public static function getOAuth2ServerOIDC()
-    {
-        static $currentOAuth2Server = null;
-
-        if (!isset($currentOAuth2Server)) {
-            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage.php');
-            $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2Storage');
-            $oauthStorage = new $oauthStorageName();
-
-            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2ServerOIDC.php');
-            $oauthServerName = SugarAutoLoader::customClass('SugarOAuth2ServerOIDC');
-
+            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Server'.$oidcPostfix.'.php');
+            $oauthServerName = SugarAutoLoader::customClass('SugarOAuth2Server'.$oidcPostfix);
             $config = SugarConfig::getInstance()->get('oauth2', []);
-
-            $auth = AuthenticationController::getInstance('OAuth2Authenticate');
-
-            $currentOAuth2Server = new $oauthServerName($oauthStorage, $config, $auth);
+            static::$currentOAuth2Server = new $oauthServerName($oauthStorage, $config);
         }
 
-        return $currentOAuth2Server;
+        return static::$currentOAuth2Server;
     }
 
     protected function createAccessToken($client_id, $user_id, $scope = null)

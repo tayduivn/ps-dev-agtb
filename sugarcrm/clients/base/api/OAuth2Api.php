@@ -15,12 +15,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class OAuth2Api extends SugarApi
 {
-    /**
-     * Oauth consumer uri
-     * @todo look up for generate route methods
-     */
-    const OAUTH2_CONSUMER = '/rest/v11/oauth2/consumer';
-
     public function registerApiRest()
     {
         return array(
@@ -47,18 +41,6 @@ class OAuth2Api extends SugarApi
                 'ignoreMetaHash' => true,
                 'ignoreSystemStatusError' => true,
             ),
-            'oauth_consumer' => [
-                'reqType' => 'GET',
-                'path' => ['oauth2','consumer'], // Please change OAUTH2_CONSUMER constant too
-                'pathVars' => ['',''],
-                'method' => 'consumer',
-                'shortHelp' => 'OAuth2 consumer.',
-                'longHelp' => '',
-                'noLoginRequired' => true,
-                'keepSession' => true,
-                'ignoreMetaHash' => true,
-                'ignoreSystemStatusError' => true,
-            ],
             'oauth_bwc_login' => array(
                 'reqType' => 'POST',
                 'path' => array('oauth2','bwc', 'login'),
@@ -195,26 +177,6 @@ class OAuth2Api extends SugarApi
         }
 
         return $res;
-    }
-
-    /**
-     * oauth2 consumer
-     * @param ServiceBase $api
-     * @param array $args
-     * @throws RuntimeException
-     * @return mixed
-     */
-    public function consumer(ServiceBase $api, array $args)
-    {
-        /** @var $api RestService */
-        if (empty($args['code'])) {
-            throw new RuntimeException('Wrong OIDC response.');
-        }
-        $auth = AuthenticationController::getInstance('OAuth2Authenticate');
-        /** @var League\OAuth2\Client\Token\AccessToken $token */
-        $token = $auth->authController->getAccessToken($args['code']);
-
-        return ['access_token' => $token->getToken()];
     }
 
     /**

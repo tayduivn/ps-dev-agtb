@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvide
 use League\OAuth2\Client\Token\AccessToken;
 
 /**
- * @coversDefaultClass OAuth2Authenticate
+ * @coversDefaultClass \OAuth2Authenticate
  */
 class OAuth2AuthenticateTest extends TestCase
 {
@@ -41,12 +41,6 @@ class OAuth2AuthenticateTest extends TestCase
         $this->savedConfig['site_url'] = SugarConfig::getInstance()->get('site_url');
         $this->savedConfig['oidc_oauth'] = SugarConfig::getInstance()->get('oidc_oauth');
         SugarConfig::getInstance()->_cached_values['site_url'] = 'http://test.sugarcrm.local';
-        SugarConfig::getInstance()->_cached_values['oidc_oauth'] = [
-             'clientId' => 'testLocal',
-             'clientSecret' => 'testLocalSecret',
-             'redirectUri' => '',
-             'oidcUrl' => 'http://sts.sugarcrm.local',
-        ];
         $this->auth = new OAuth2Authenticate();
     }
 
@@ -60,57 +54,43 @@ class OAuth2AuthenticateTest extends TestCase
     }
 
     /**
-     * @covers ::__construct
      * @covers ::getLoginUrl
+     */
+    public function testGetLoginUrlWithValidConfig()
+    {
+        SugarConfig::getInstance()->_cached_values['oidc_oauth'] = [
+            'clientId' => 'testLocal',
+            'clientSecret' => 'testLocalSecret',
+            'redirectUri' => '',
+            'oidcUrl' => 'http://sts.sugarcrm.local',
+        ];
+        $this->assertEquals('http://sts.sugarcrm.local', $this->auth->getLoginUrl());
+    }
+
+    /**
+     * @covers ::getLoginUrl
+     *
+     * @expectedException \RuntimeException
+     */
+    public function testGetLoginUrlWithEmptyConfig()
+    {
+        SugarConfig::getInstance()->_cached_values['oidc_oauth'] = null;
+        $this->auth->getLoginUrl();
+    }
+
+    /**
      * @covers ::getLogoutUrl
-     * @covers ::getOidcUrl
      */
-    public function testConstructAndGetters()
+    public function testGetLogoutUrl()
     {
-        $this->assertContains('client_id=testLocal', $this->auth->getLoginUrl());
         $this->assertFalse($this->auth->getLogoutUrl());
-        $this->assertEquals('http://sts.sugarcrm.local', $this->auth->getOidcUrl());
     }
 
     /**
-     * @covers ::getAccessToken
+     * @covers ::loginAuthenticate
      */
-    public function testGetAccessToken()
+    public function testLoginAuthenticate()
     {
-        $code = 'test';
-        $token = new AccessToken(['access_token' => 'token']);
-        $provider = $this->getMockBuilder(GenericProvider::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getAccessToken'])
-            ->getMock();
-        $provider->expects($this->once())
-            ->method('getAccessToken')
-            ->with($this->equalTo('authorization_code'), $this->equalTo(['code' => $code]))
-            ->willReturn($token);
-
-        $this->auth->setOAuthProvider($provider);
-        $this->auth->getAccessToken($code);
-    }
-    /**
-     * @covers ::introspectAccessToken
-     */
-    public function testIntrospectAccessToken()
-    {
-        $code = 'test';
-
-        $provider = $this->getMockBuilder(GenericProvider::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['introspectToken'])
-            ->getMock();
-        $provider->expects($this->once())
-            ->method('introspectToken')
-            ->with($this->callback(function (AccessToken $token) {
-                $this->assertEquals('test', $token->getToken());
-                return true;
-            }))
-            ->willReturn(['sub' => 'max']);
-
-        $this->auth->setOAuthProvider($provider);
-        $this->auth->introspectAccessToken($code);
+        $this->assertFalse($this->auth->loginAuthenticate('testUser', 'testPassword'));
     }
 }
