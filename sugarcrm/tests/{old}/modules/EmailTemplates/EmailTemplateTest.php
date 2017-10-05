@@ -130,8 +130,8 @@ class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @covers ::parse_template_bean
      * @covers ::add_replacement
-     * @covers ::_convertToType
-     * @covers ::_parseUserValues
+     * @covers ::convertToType
+     * @covers ::parseUserValues
      */
     public function testParseTemplateBean_BeanIsContact()
     {
@@ -155,8 +155,8 @@ class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @covers ::parse_template_bean
      * @covers ::add_replacement
-     * @covers ::_convertToType
-     * @covers ::_parseUserValues
+     * @covers ::convertToType
+     * @covers ::parseUserValues
      */
     public function testParseTemplateBean_BeanIsUser()
     {
