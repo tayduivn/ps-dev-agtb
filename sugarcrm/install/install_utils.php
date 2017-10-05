@@ -934,21 +934,6 @@ EOQ;
 
     // @codingStandardsIgnoreStart
     $restrict_str .= <<<EOQ
-RedirectMatch 403 {$ignoreCase}.*\.log$
-RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
-RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules|clients|jssource|ModuleInstall)/+.*\.(php|tpl)
-RedirectMatch 403 {$ignoreCase}/+emailmandelivery\.php
-RedirectMatch 403 {$ignoreCase}/+upload/
-RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
-RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
-RedirectMatch 403 {$ignoreCase}/+files\.md5$
-RedirectMatch 403 {$ignoreCase}/+composer\.(json|lock)
-RedirectMatch 403 {$ignoreCase}/+vendor/(?!ytree.*\.(css|js|gif|png))
-RedirectMatch 403 {$ignoreCase}/+bin/
-RedirectMatch 403 {$ignoreCase}/+src/
-RedirectMatch 403 {$ignoreCase}.*/\.git
-RedirectMatch 403 {$ignoreCase}/+dist/
-
 # Fix mimetype for logo.svg (SP-1395)
 AddType     image/svg+xml     .svg
 AddType     application/json  .json
@@ -958,6 +943,21 @@ AddType     application/javascript  .js
     Options +FollowSymLinks
     RewriteEngine On
     RewriteBase {$basePath}
+
+    RewriteRule {$ignoreCase}\.git - [F]
+    RewriteRule {$ignoreCase}\.log$ - [F]
+    RewriteRule {$ignoreCase}^bin/ - [F]
+    RewriteRule {$ignoreCase}^cache/+diagnostic - [F]
+    RewriteRule {$ignoreCase}^composer\.(json|lock)$ - [F]
+    RewriteRule {$ignoreCase}^custom/+blowfish - [F]
+    RewriteRule {$ignoreCase}^dist/ - [F]
+    RewriteRule {$ignoreCase}^emailmandelivery\.php$ - [F]
+    RewriteRule {$ignoreCase}^files\.md5$ - [F]
+    RewriteRule {$ignoreCase}^src/ - [F]
+    RewriteRule {$ignoreCase}^upload/ - [F]
+    RewriteRule {$ignoreCase}^vendor/+(?!ytree.*\.(css|gif|js|png)$) - [F]
+    RewriteRule {$ignoreCase}^(cache|clients|data|examples|include|jssource|log4php|metadata|ModuleInstall|modules|soap|xtemplate)/.*\.(php|tpl)$ - [F]
+
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
