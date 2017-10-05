@@ -1034,10 +1034,20 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          */
         openDrawer: function(drawerContext) {
             var sugarApp = SUGAR.App || SUGAR.app || app;
+            var currentModule = sugarApp.drawer.context.get('module');
+
+            // This needs to set to target module for Merge to show the target module fields
+            sugarApp.drawer.context.set('module', drawerContext.chartModule);
+
             sugarApp.drawer.open({
                 layout: 'drillthrough-drawer',
                 context: drawerContext
-            });
+            }, _.bind(function() {
+                // reset the drawer module
+                if (currentModule) {
+                    sugarApp.drawer.context.set('module', currentModule);
+                }
+            }, this, currentModule));
         },
 
         /**

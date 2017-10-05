@@ -20,7 +20,15 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        options.module = options.context.get('chartModule');
+        // from this level down we should use target module instead of Reports
+        // model needs to be a target module bean so some list level operations can work
+        // for different module
+        // for example, the function _filterMeta relies on the correct model
+        var chartModule = options.context.get('chartModule');
+        options.context.set('model', app.data.createBean(chartModule));
+        options.context.set('collection', app.data.createBeanCollection(chartModule));
+
+        options.module = chartModule;
         options = this._removeFieldSorting(options);
         this._super('initialize', [options]);
     },
@@ -41,7 +49,7 @@
         });
 
         var panels = [{fields: unsortableFields}];
-        options.meta.components[0].xmeta.panels = panels;
+        options.meta.components[2].xmeta.panels = panels;
         return options;
     }
 })

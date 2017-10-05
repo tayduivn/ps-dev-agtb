@@ -31,6 +31,12 @@ $viewdefs['Reports']['base']['layout']['drillthrough-drawer'] = array(
                                     'xmeta' => array(
                                         'components' => array(
                                             array(
+                                                'view' => 'massupdate',
+                                            ),
+                                            array(
+                                                'view' => 'massaddtolist',
+                                            ),
+                                            array(
                                                 'view' => 'recordlist',
                                                 'primary' => true,
                                                 'xmeta' => array(

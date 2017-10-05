@@ -18,7 +18,6 @@ $viewdefs['Reports']['base']['layout']['drillthrough-pane'] = array(
         array(
             'view' => array(
                 'name' => 'drillthrough-pane-headerpane',
-                'type'=> 'headerpane',
                 'template' => 'headerpane',
                 'fields' => array(
                     array(

@@ -557,10 +557,20 @@
      * @param {Object} drawerContext drillthrough content and display parameters
      */
     openDrawer: function(drawerContext) {
+        var currentModule = app.drawer.context.get('module');
+
+        // This needs to set to target module for Merge to show the target module fields
+        app.drawer.context.set('module', drawerContext.chartModule);
+
         app.drawer.open({
             layout: 'drillthrough-drawer',
             context: drawerContext
-        });
+        }, _.bind(function() {
+            if (currentModule) {
+                // reset the drawer module
+                app.drawer.context.set('module', currentModule);
+            }
+        }, this, currentModule));
     },
 
     /**

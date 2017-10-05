@@ -100,9 +100,6 @@
         // this will trigger chart.js' change:rawChartData and the chart will update
         dashlet.reportData.set('rawChartData', chartData);
 
-        // remove the headerpane class because it contains a bunch of junk we don't need
-        this.$el.find('span.headerpane').removeClass('headerpane');
-
         return this;
     },
 
