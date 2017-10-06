@@ -15,7 +15,8 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 /**
  * Class OAuth2Authenticate
  */
-class OAuth2Authenticate extends SugarAuthenticate implements SugarAuthenticateExternal
+
+class OAuth2Authenticate extends BaseAuthenticate implements SugarAuthenticateExternal
 {
     /**
      * {@inheritdoc}

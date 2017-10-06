@@ -25,7 +25,7 @@ use Sugarcrm\IdentityProvider\Authentication\Token\SAML\InitiateToken;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class IdMSAMLAuthenticate extends SAMLAuthenticate
+class IdMSAMLAuthenticate extends BaseAuthenticate implements Login
 {
     /**
      * Get URL to follow to get logged in
@@ -67,7 +67,12 @@ class IdMSAMLAuthenticate extends SAMLAuthenticate
         return $url;
     }
 
-    public function loginAuthenticate($username, $password, $fallback = false, $params = [])
+    /**
+     * AuthN User via SAML.
+     *
+     * @inheritdoc
+     */
+    public function loginAuthenticate($username, $password, $fallback = false, array $params = [])
     {
         if (empty($_POST['SAMLResponse'])) {
             return $this->getSugarAuthenticate()->loginAuthenticate($username, $password, $fallback, $params);

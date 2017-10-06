@@ -11,9 +11,6 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordTokenFactory;
 
 /**
  * This file is used to control the authentication process.
@@ -371,26 +368,5 @@ class SugarAuthenticate{
     protected function updateUserLastLogin(User $user)
     {
         $user->updateLastLogin();
-    }
-
-    /**
-     * @param Config $config
-     *
-     * @return AuthProviderManagerBuilder
-     */
-    protected function getAuthProviderBuilder(Config $config)
-    {
-        return new AuthProviderManagerBuilder($config);
-    }
-
-    /**
-     * @param $username
-     * @param $password
-     * @param $params
-     * @return UsernamePasswordTokenFactory
-     */
-    protected function getUsernamePasswordTokenFactory($username, $password, $params)
-    {
-        return new UsernamePasswordTokenFactory($username, $password, $params);
     }
 }

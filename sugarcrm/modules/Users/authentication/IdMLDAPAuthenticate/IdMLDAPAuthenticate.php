@@ -14,17 +14,14 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 /**
  * IdM LDAP login
  */
-class IdMLDAPAuthenticate extends \LDAPAuthenticate
+class IdMLDAPAuthenticate extends BaseAuthenticate implements Login
 {
     /**
-     * auth user over ldap service
-     * @param string $username
-     * @param string $password
-     * @param bool $fallback
-     * @param array $params
-     * @return bool
+     * AuthN user over ldap service.
+     *
+     * @inheritdoc
      */
-    public function loginAuthenticate($username, $password, $fallback = false, $params = [])
+    public function loginAuthenticate($username, $password, $fallback = false, array $params = [])
     {
         $authManager = $this->getAuthProviderBuilder(new Config(\SugarConfig::getInstance()))->buildAuthProviders();
         $tokenFactory = $this->getUsernamePasswordTokenFactory($username, $password, $params);

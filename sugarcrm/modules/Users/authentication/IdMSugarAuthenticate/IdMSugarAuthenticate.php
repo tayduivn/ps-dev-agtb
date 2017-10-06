@@ -12,21 +12,16 @@
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
-class IdMSugarAuthenticate extends SugarAuthenticate
+class IdMSugarAuthenticate extends BaseAuthenticate implements Login
 {
     /**
      * Authenticates a user based on the username and password
      * returns true if the user was authenticated false otherwise
      * it also will load the user into current user if he was authenticated
      *
-     * @param string $username
-     * @param string $password
-     * @param boolean $fallback
-     * @param array $params
-     * @throws SugarApiExceptionNeedLogin
-     * @return boolean
+     * @inheritdoc
      */
-    public function loginAuthenticate($username, $password, $fallback = false, $params = [])
+    public function loginAuthenticate($username, $password, $fallback = false, array $params = [])
     {
         $authManager = $this->getAuthProviderBuilder(new Config(\SugarConfig::getInstance()))->buildAuthProviders();
         $token = $this->getUsernamePasswordTokenFactory($username, $password, $params)
