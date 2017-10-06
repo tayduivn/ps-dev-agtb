@@ -17,6 +17,8 @@ use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvide
 use Psr\Http\Message\RequestInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\RequestFactory;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider
@@ -166,5 +168,204 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(['sub' => 'max']);
 
         $provider->introspectToken($token);
+    }
+
+    /**
+     * @return array
+     */
+    public function delayExponentialProvider()
+    {
+        return [
+            [0, 0],
+            [1, 1000],
+            [2, 2000],
+            [3, 4000],
+            [4, 8000],
+            [5, 16000],
+        ];
+    }
+
+    /**
+     * @covers ::retryDelayExponential
+     * @param int $attempt
+     * @param int $delay
+     *
+     * @dataProvider delayExponentialProvider
+     */
+    public function testRetryDelayExponential($attempt, $delay)
+    {
+        $provider = $this->getMockBuilder(GenericProvider::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['verifyGrant'])
+            ->getMock();
+
+        $function = $provider->retryDelayExponential();
+        $this->assertEquals($delay, $function($attempt));
+    }
+
+    /**
+     * @return array
+     */
+    public function delayLinearProvider()
+    {
+        return [
+            [0, 0],
+            [1, 1000],
+            [2, 2000],
+            [3, 3000],
+            [4, 4000],
+            [5, 5000],
+        ];
+    }
+
+    /**
+     * @covers ::retryDelayLinear
+     * @param int $attempt
+     * @param int $delay
+     *
+     * @dataProvider delayLinearProvider
+     */
+    public function testRetryDelayLinear($attempt, $delay)
+    {
+        $provider = $this->getMockBuilder(GenericProvider::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['verifyGrant'])
+            ->getMock();
+
+        $function = $provider->retryDelayLinear();
+        $this->assertEquals($delay, $function($attempt));
+    }
+
+    /**
+     * @return array
+     */
+    public function getDelayStrategyProvider()
+    {
+        return [
+            [[], 5000],
+            [
+                [
+                    'http_client' => [
+                        'delay_strategy' => '',
+                    ],
+                ],
+                5000,
+            ],
+            [
+                [
+                    'http_client' => [
+                        'delay_strategy' => 'linear',
+                    ],
+                ],
+                5000,
+            ],
+            [
+                [
+                    'http_client' => [
+                        'delay_strategy' => 'exponential',
+                    ],
+                ],
+                16000,
+            ],
+            [
+                [
+                    'http_client' => [
+                        'delay_strategy' => 'some_weird_unknown_strategy',
+                    ],
+                ],
+                5000,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getDelayStrategy
+     * @param array $config
+     * @param int $expectedDelay for attempt = 5
+     *
+     * @dataProvider getDelayStrategyProvider
+     */
+    public function testGetDelayStrategy($config, $expectedDelay)
+    {
+        $provider = $this->getMockBuilder(GenericProvider::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['verifyGrant'])
+            ->getMock();
+
+        $function = $provider->getDelayStrategy($config);
+        $this->assertEquals($expectedDelay, $function(5));
+    }
+
+    /**
+     * @return array
+     */
+    public function retryDeciderProvider()
+    {
+        return [
+            'ZeroMaxAttemptsZeroAttempt' => [0, 0, 500, false],
+            'ZeroMaxAttempts' => [0, 2, 500, false],
+            'MaxAttemptsMoreThanCurrentAttempt' => [3, 2, 500, true],
+            'MaxAttemptsLessThanCurrentAttempt' => [2, 3, 500, false],
+            'MaxAttemptsEqualsCurrentAttempt' => [3, 3, 500, false], // it's a zero-based start
+            'Code102' => [2, 0, 102, false],
+            'Code10' => [2, 0, 200, false],
+            'Code404' => [2, 0, 404, false],
+            'Code302' => [2, 0, 302, false],
+            'Code500' => [2, 0, 500, true],
+            'Code502' => [2, 0, 502, true],
+            'Code503' => [2, 0, 504, true],
+        ];
+    }
+
+    /**
+     * @covers ::retryDecider
+     * @param int $attempts
+     * @param int $currentAttempt
+     * @param int $responseCode
+     * @param bool $continueRetry
+     *
+     * @dataProvider retryDeciderProvider
+     */
+    public function testRetryDecider($attempts, $currentAttempt, $responseCode, $continueRetry)
+    {
+        $provider = $this->getMockBuilder(GenericProvider::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['verifyGrant'])
+            ->getMock();
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $response->method('getStatusCode')->willReturn($responseCode);
+
+        $decider = $provider->retryDecider($attempts);
+        $this->assertEquals($continueRetry, $decider($currentAttempt, $request, $response));
+    }
+
+    /**
+     * @covers ::__construct
+     */
+    public function testProviderUsesOwnHttpClient()
+    {
+        $provider = $this->getMockBuilder(GenericProvider::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([[
+                'clientId' => 'test',
+                'clientSecret' => 'testSecret',
+                'redirectUri' => '',
+                'urlAuthorize' => '',
+                'urlAccessToken' => 'http://testUrlAccessToken',
+                'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+            ]])
+            ->setMethods(['verifyGrant'])
+            ->getMock();
+
+        $httpClient = $provider->getHttpClient();
+        $this->assertArrayHasKey('handler', $httpClient->getConfig());
+        $this->assertRegexp('/retryDecider.*?Function/', (string)$httpClient->getConfig()['handler']);
     }
 }
