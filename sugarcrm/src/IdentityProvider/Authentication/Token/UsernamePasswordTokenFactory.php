@@ -16,6 +16,8 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Encoder\SugarPreAuthPassEncoder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
+use Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
+
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**

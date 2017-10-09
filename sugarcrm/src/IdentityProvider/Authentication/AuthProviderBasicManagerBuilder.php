@@ -16,7 +16,6 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticatio
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\MixedAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarSAMLUserProvider;
@@ -28,6 +27,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLdapUser
 use Sugarcrm\IdentityProvider\Encoder\EncoderBuilder;
 use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider;
 use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider;
+use Sugarcrm\IdentityProvider\Authentication\Provider\MixedAuthenticationProvider;
 
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

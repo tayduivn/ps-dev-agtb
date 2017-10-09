@@ -13,7 +13,8 @@ namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMLDAPAuthenti
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
+
+use Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
 
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
