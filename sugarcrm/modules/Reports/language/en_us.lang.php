@@ -545,5 +545,4 @@ $mod_strings = array (
 
     'ERROR_RETRIEVING_DRILLTHRU_DATA' => 'Error retrieving Drillthrough Report data for this action. Contact the report owner for assistance.',
     'LBL_CHART_NO_DRILLTHRU' => 'Drill through not available',
-    'LBL_REFRESH_LIST_AND_CHART' => 'Refresh List and Chart',
   );

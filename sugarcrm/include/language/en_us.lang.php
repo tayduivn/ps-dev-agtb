@@ -4691,6 +4691,7 @@ Sincerely, SugarCRM',
     'LBL_REPORT_SELECT' => 'Select a Report',
     'LBL_REPORT_AUTO_REFRESH' => 'Auto Refresh',
     'LBL_REPORT_EDIT' => 'Edit Selected Report',
+    'LBL_REFRESH_LIST_AND_CHART' => 'Refresh List and Chart',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
