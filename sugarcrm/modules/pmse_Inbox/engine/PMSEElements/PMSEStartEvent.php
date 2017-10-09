@@ -175,22 +175,15 @@ class PMSEStartEvent extends PMSEEvent
 
         $case->save();
 
-        $cas_id = $case->db->getOne(sprintf(
-            'SELECT cas_id FROM %s WHERE id = %s',
-            $case->getTableName(),
-            $case->db->quoted($case->id)
-        ));
-        $case->cas_id = $cas_id;
-
         if (!$case->in_save && $addCaseNumber) {
-            $case->cas_title = "Process # $cas_id";
+            $case->cas_title = "Process # {$case->cas_id}";
             $case->new_with_id = false;
             $case->save();
         }
 
         $flowData = array();
 
-        $flowData['cas_id'] = $cas_id;
+        $flowData['cas_id'] = $case->cas_id;
         $flowData['cas_index'] = 1;
         $flowData['cas_previous'] = 0;
         $flowData['pro_id'] = $pro_id;

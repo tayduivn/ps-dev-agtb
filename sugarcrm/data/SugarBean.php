@@ -1928,6 +1928,9 @@ class SugarBean
         } elseif ($this->db->insert($this)) {
             //Now that the record has been saved, we don't want to insert again on further saves
             $this->new_with_id = false;
+
+            // We also need to get our autoincrement values if there are any
+            $this->loadAutoIncrementValues();
         }
 
         if (!empty($auditDataChanges) && is_array($auditDataChanges))
@@ -1968,6 +1971,76 @@ class SugarBean
 
         $this->in_save = false;
         return $this->id;
+    }
+
+    /**
+     * Loads values for autoincrement fields onto the bean after a save
+     */
+    protected function loadAutoIncrementValues()
+    {
+        // We are only interested in auto_increment values
+        $fields = $this->getFieldDefinitions('auto_increment', [true]);
+
+        // This defines the list of fields that are affected. Realistically,
+        // this should be one col for any bean
+        $cols = [];
+        foreach ($fields as $field) {
+            $cols[] = $field['name'];
+        }
+
+        // We only have work to do if there are columns to work with
+        if ($cols) {
+            // Grab our values for the $cols for this bean
+            $data = $this->getDBValuesForFields($cols);
+
+            // Loop and set
+            foreach ($data as $field => $value) {
+                $this->{$field} = $value;
+            }
+        }
+    }
+
+    /**
+     * Gets a new SugarQuery object
+     * @return SugarQuery
+     */
+    protected function getSugarQueryObject()
+    {
+        return new \SugarQuery();
+    }
+
+    /**
+     * Gets DB values for a collection of fields. Used by
+     * {@see loadAutoIncrementValues} to get autoincrement field values.
+     *
+     * NOTE: This method is specific to setting auto increment values on the bean.
+     * When setting values on a bean from an array of data, the
+     * {@see populateFromRow} method should be used as it contains all logic
+     * necessary to properly set all field type data values onto the bean.
+     *
+     * @param array $fields Array of fields to get values for
+     * @return array
+     */
+    private function getDBValuesForFields(array $fields)
+    {
+        // If for some reason this is called without a set ID for the bean
+        if (empty($this->id) || empty($fields)) {
+            return [];
+        }
+
+        // Build the query that will get our auto increment field value
+        $query = $this->getSugarQueryObject();
+        $query->from($this);
+        $query->select($fields);
+        $query->where()->equals('id', $this->id);
+
+        // Run it
+        $data = $query->execute();
+
+        // Since this should be filtered to a single record we really
+        // only need to work on the first result row if there is one,
+        // otherwise return an empty array
+        return !empty($data[0]) && is_array($data[0]) ? $data[0] : [];
     }
 
     /**

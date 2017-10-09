@@ -613,6 +613,7 @@ class EmailTest extends \PHPUnit_Framework_TestCase
             'updateRelatedCalcFields',
             'process_workflow_alerts',
             'track_view',
+            'loadAutoIncrementValues', // This could be fixed by allowing mock beans to set $field_defs to an array
         ];
     }
 
