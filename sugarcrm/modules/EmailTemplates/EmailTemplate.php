@@ -769,6 +769,6 @@ class EmailTemplate extends SugarBean {
     public static function checkStringHasVariables($tplStr)
     {
         $pattern = '/\$[a-zA-Z]+_[a-zA-Z0-9_]+/';
-        return preg_match($pattern, $tplStr);
+        return !!preg_match($pattern, $tplStr);
     }
 }
