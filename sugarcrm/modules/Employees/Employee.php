@@ -59,6 +59,7 @@ class Employee extends Person {
 	var $error_string;
 
 	var $module_dir = "Employees";
+    public $module_name = 'Employees';
 
 	var $default_team;
 

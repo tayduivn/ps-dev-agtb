@@ -70,6 +70,7 @@ class User extends Person {
 	var $table_name = "users";
 	var $module_dir = 'Users';
 	var $object_name = "User";
+    public $module_name = 'Users';
 	var $user_preferences;
 
 	var $importable = true;
