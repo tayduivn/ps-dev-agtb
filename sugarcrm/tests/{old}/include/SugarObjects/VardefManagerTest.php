@@ -278,5 +278,101 @@ class VardefManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = VardefManager::getLinkFieldsForCollection('Meetings', 'Meeting', 'invitees');
         $this->assertEquals($expected, $actual);
     }
-}
 
+    public function usesTemplateProvider()
+    {
+        return [
+            [
+                'Contacts',
+                'assignable',
+                true,
+            ],
+            [
+                'Contacts',
+                'basic',
+                true,
+            ],
+            [
+                'Contacts',
+                'favorite',
+                true,
+            ],
+            [
+                'Contacts',
+                'email_address',
+                true,
+            ],
+            [
+                'Contacts',
+                'person',
+                true,
+            ],
+            [
+                'Contacts',
+                'taggable',
+                true,
+            ],
+            [
+                '',
+                'basic',
+                false,
+            ],
+            [
+                'Contacts',
+                '',
+                false,
+            ],
+            [
+                'Contacts',
+                'company',
+                false,
+            ],
+            [
+                'ACLRole',
+                'basic',
+                false,
+            ],
+            [
+                'Calls',
+                'person',
+                false,
+            ],
+            [
+                'Foo',
+                'basic',
+                false,
+            ],
+            [
+                'Tasks',
+                'issue',
+                false,
+            ],
+            [
+                'Contacts',
+                [
+                    'assignable',
+                    'person',
+                ],
+                true,
+            ],
+            [
+                'Contacts',
+                [
+                    'person',
+                    'company',
+                ],
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::usesTemplate
+     * @dataProvider usesTemplateProvider
+     */
+    public function testUsesTemplate($module, $template, $expected)
+    {
+        $actual = VardefManager::usesTemplate($module, $template);
+        $this->assertSame($expected, $actual);
+    }
+}

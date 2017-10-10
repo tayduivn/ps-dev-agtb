@@ -1161,4 +1161,27 @@ class VardefManager{
         return "vardefs::{$module}_{$object}";
     }
 
+    /**
+     * Does the specified module use the specified templates?
+     *
+     * @param string $module
+     * @param string|array $templates
+     * @return bool The module must use all of the specified templates to return true.
+     */
+    public static function usesTemplate($module, $templates)
+    {
+        if (!is_array($templates)) {
+            $templates = array($templates);
+        }
+
+        $objectName = BeanFactory::getObjectName($module);
+
+        foreach ($templates as $template) {
+            if (empty($GLOBALS['dictionary'][$objectName]['templates'][$template])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
