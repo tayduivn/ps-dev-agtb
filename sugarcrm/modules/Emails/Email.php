@@ -1451,9 +1451,9 @@ class Email extends SugarBean {
 			$this->cc_addrs_names = $this->cleanEmails($this->cc_addrs_names);
 			$this->bcc_addrs_names = $this->cleanEmails($this->bcc_addrs_names);
 			$this->reply_to_addr = $this->cleanEmails($this->reply_to_addr);
-			$this->description = SugarCleaner::cleanHtml($this->description);
-            $this->description_html = SugarCleaner::cleanHtml($this->description_html, true);
-            $this->raw_source = SugarCleaner::cleanHtml($this->raw_source, true);
+            $this->description = $this->cleanContent($this->description);
+            $this->description_html = $this->cleanContent($this->description_html, true);
+            $this->raw_source = $this->cleanContent($this->raw_source, true);
 
 			$GLOBALS['log']->debug('-------------------------------> Email called save()');
 
@@ -1499,33 +1499,11 @@ class Email extends SugarBean {
 			$parentSaveResult = parent::save($check_notify);
 
             // Add the current user as the sender when the email is a draft.
-            if ($this->state === static::STATE_DRAFT && $this->load_relationship('from')) {
-                $ep = BeanFactory::newBean('EmailParticipants');
-                $ep->new_with_id = true;
-                $ep->id = Uuid::uuid1();
-                BeanFactory::registerBean($ep);
-                $ep->parent_type = $GLOBALS['current_user']->getModuleName();
-                $ep->parent_id = $GLOBALS['current_user']->id;
-                $this->from->add($ep);
+            if ($this->state === static::STATE_DRAFT) {
+                $this->setSender($GLOBALS['current_user']);
             }
 
-			if(!empty($this->parent_type) && !empty($this->parent_id)) {
-                if(!empty($this->fetched_row) && !empty($this->fetched_row['parent_id']) && !empty($this->fetched_row['parent_type'])) {
-                    if($this->fetched_row['parent_id'] != $this->parent_id || $this->fetched_row['parent_type'] != $this->parent_type) {
-                        $mod = strtolower($this->fetched_row['parent_type']);
-                        $rel = array_key_exists($mod, $this->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
-                        if($this->load_relationship($rel) ) {
-                            $this->$rel->delete($this->id, $this->fetched_row['parent_id']);
-                        }
-                    }
-                }
-                $mod = strtolower($this->parent_type);
-                $rel = array_key_exists($mod, $this->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
-                if($this->load_relationship($rel) ) {
-                    $this->$rel->add($this->parent_id);
-                }
-			}
-
+            $this->linkParentBeanUsingRelationship();
             $this->saveEmailText();
             $this->updateAttachmentsVisibility();
 
@@ -1533,6 +1511,92 @@ class Email extends SugarBean {
 		}
 		$GLOBALS['log']->debug('-------------------------------> Email save() done');
 	}
+
+    /**
+     * Clean string from potential XSS problems.
+     *
+     * @see SugarCleaner::cleanHtml()
+     * @param string $content
+     * @param bool $encoded
+     * @return string
+     */
+    protected function cleanContent($content, $encoded = false)
+    {
+        return SugarCleaner::cleanHtml($content, $encoded);
+    }
+
+    /**
+     * Sets the bean as the sender of the email. The bean's module must use the "email_address" template because only
+     * beans with an email address can be used as a sender.
+     *
+     * @param SugarBean $bean
+     * @return bool
+     */
+    protected function setSender(SugarBean $bean)
+    {
+        $success = false;
+        $moduleName = BeanFactory::getModuleName($bean);
+        $moduleHasEmailAddress = $moduleName === 'Users' || VardefManager::usesTemplate($moduleName, 'email_address');
+
+        if ($moduleHasEmailAddress && $this->load_relationship('from')) {
+            $ep = BeanFactory::newBean('EmailParticipants');
+            $ep->new_with_id = true;
+            $ep->id = Uuid::uuid1();
+            BeanFactory::registerBean($ep);
+            $ep->parent_type = $moduleName;
+            $ep->parent_id = $bean->id;
+            $success = $this->from->add($ep);
+
+            if ($success !== true) {
+                $success = false;
+                BeanFactory::unregisterBean($ep);
+            }
+        }
+
+        return $success;
+    }
+
+    /**
+     * If the parent fields are set, then link the email to the bean on the emails_beans join table, as long as there is
+     * an link that matches the module name (or <module_name>_activities_emails for custom modules).
+     *
+     * @see SI Bug 22504
+     */
+    protected function linkParentBeanUsingRelationship()
+    {
+        $fieldDefs = $this->field_defs;
+
+        $getRelationshipName = function ($module) use ($fieldDefs) {
+            $module = strtolower($module);
+            $hasModuleLinkName = array_key_exists($module, $fieldDefs);
+            $name = $hasModuleLinkName ? $module : "{$module}_activities_emails"; // Custom modules relationship name.
+
+            return $name;
+        };
+
+        if (!empty($this->parent_type) && !empty($this->parent_id)) {
+            if (!empty($this->fetched_row) &&
+                !empty($this->fetched_row['parent_id']) &&
+                !empty($this->fetched_row['parent_type'])
+            ) {
+                if ($this->fetched_row['parent_id'] != $this->parent_id ||
+                    $this->fetched_row['parent_type'] != $this->parent_type
+                ) {
+                    $rel = $getRelationshipName($this->fetched_row['parent_type']);
+
+                    if ($this->load_relationship($rel)) {
+                        $this->$rel->delete($this->id, $this->fetched_row['parent_id']);
+                    }
+                }
+            }
+
+            $rel = $getRelationshipName($this->parent_type);
+
+            if ($this->load_relationship($rel)) {
+                $this->$rel->add($this->parent_id);
+            }
+        }
+    }
 
     /**
      * Updates the visibility on all attachments to match the visibility of the email.
@@ -4225,16 +4289,8 @@ eoq;
             throw new SugarException("Cannot send an email with state: {$this->state}");
         }
 
-        if ($this->load_relationship('from')) {
-            $ep = BeanFactory::newBean('EmailParticipants');
-            $ep->new_with_id = true;
-            $ep->id = Uuid::uuid1();
-            BeanFactory::registerBean($ep);
-            $ep->parent_type = $GLOBALS['current_user']->getModuleName();
-            $ep->parent_id = $GLOBALS['current_user']->id;
-            $this->from->add($ep);
-        } else {
-            throw new SugarException('Could not find a relationship named: from');
+        if (!$this->setSender($GLOBALS['current_user'])) {
+            throw new SugarException('Failed to set the current user as the sender');
         }
 
         // Resolve variables in the subject and content.
