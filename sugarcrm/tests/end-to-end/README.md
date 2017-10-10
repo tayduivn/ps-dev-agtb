@@ -46,9 +46,9 @@ As a matter of fact you can perform a yarn install and use nodejs without ever i
 
 # Running Tests Without Docker
 
-To run all Seedbed tests locally outside of Docker you'll need to install some external dependencies. [Click here](https://github.com/sugarcrm/Seedbed) to view those instructions. Once you've got all the external dependencies installed you'll need to do a yarn install inside sugarcrm/:
+To run all Seedbed tests locally outside of Docker you'll need to install some external dependencies. [Click here](https://github.com/sugarcrm/Seedbed) to view those instructions. Once you've got all the external dependencies installed you'll need to do a yarn install inside 'sugarcrm/tests/end-to-end' folder:
 ```
-yarn install
+yarn install --pure-lockfile
 ```
 The yarn install actually installs Seedbed and all of its nodejs dependencies. Finally you can execute the following command inside of sugarcrm/tests/end-to-end to run your tests:
 ```
