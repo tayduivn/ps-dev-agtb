@@ -744,7 +744,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 year: 'YYYY', // 2017
                 quarter: 'Q YYYY', // Q3 2017
                 month: 'MMMM YYYY', // March 2017
-                week: 'W YYYY' // W56 2017
+                week: 'W YYYY', // W56 2017
+                day: 'YYYY-MM-DD' //2017-12-31
             };
             var startDate;
             var endDate;
@@ -794,8 +795,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     break;
 
                 case 'day':
-                    // use moment to parse 2017.12.31 vs 12/31/2017
-                    var pattern = sugarApp.date.getUserDateFormat();
+                    var pattern = datePatterns[type];
                     var parsedDate = dateParser(label, pattern, userLangPref);
                     startDate = parsedDate.format('YYYY-MM-DD'); //2017-12-31
                     endDate = 'on';
