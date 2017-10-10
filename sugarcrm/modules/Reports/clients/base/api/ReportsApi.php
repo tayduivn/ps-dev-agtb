@@ -344,12 +344,12 @@ class ReportsApi extends ModuleApi
      */
     public function getSavedReportChartById($api, $args)
     {
-        $chartReport = $this->getReportRecord($api, $args);
+        $chartReport = $this->getReportDef($api, $args);
 
         $returnData = array();
 
-        $reporter = new Report($chartReport->content);
-        $reporter->saved_report_id = $chartReport->id;
+        $reporter = new Report($chartReport);
+        $reporter->saved_report_id = $args['record'];
 
         if ($reporter && !$reporter->has_summary_columns()) {
             return '';

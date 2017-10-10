@@ -673,8 +673,9 @@
             // manually set the icon class to spiny
             this.$('[data-action=loading]').removeClass(dt.cssIconDefault).addClass(dt.cssIconRefresh);
         }
-
-        app.api.call('read', app.api.buildURL('Reports/' + reportId + '/chart'), null, {
+        var useSavedFilters = this.context && this.context.get('useSavedFilters') ? 'true' : 'false';
+        var url = app.api.buildURL('Reports/' + reportId + '/chart?use_saved_filters=' + useSavedFilters);
+        app.api.call('read', url, null, {
             success: _.bind(function(serverData) {
                 if (options && options.success) {
                     // usually setChartParams()
