@@ -179,7 +179,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'cost_price',
-                    'readonly' => true,
                     'type' => 'currency',
                     'related_fields' => array(
                         'cost_price',
@@ -192,7 +191,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'base_rate_field' => 'base_rate',
                 ),array(
                     'name' => 'list_price',
-                    'readonly' => true,
                     'type' => 'currency',
                     'related_fields' => array(
                         'list_price',

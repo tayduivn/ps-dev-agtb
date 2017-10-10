@@ -11,7 +11,8 @@
  */
 $fields = array(
     'category_name',
-    'discount_price',
+    'list_price',
+    'cost_price',
     'tax_class',
     'mft_part_num',
     'weight'

@@ -57,7 +57,6 @@ $viewdefs['Products']['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'cost_price',
-                    'readonly' => true,
                     'type' => 'currency',
                     'related_fields' => array(
                         'cost_price',
