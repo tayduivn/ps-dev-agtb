@@ -854,6 +854,102 @@ AdamEvent.prototype.updateEventMarker = function (options) {
     return this;
 };
 
+/**
+ * Creates a new CriteriaField for ConfigureActions.
+ *
+ * @return {Object} The constructed CriteriaField object.
+ */
+AdamEvent.prototype._makeCriteriaField = function() {
+    // Start with the shared settings.
+    var configObject = {
+        name: 'evn_criteria',
+        label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
+        required: false,
+        fieldWidth: 414,
+        decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
+        numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+        currencies: project.getMetadata('currencies'),
+        dateFormat: App.date.getUserDateFormat(),
+        timeFormat: App.user.getPreference('timepref'),
+    };
+
+    var extraConfig = {};
+
+    switch (this.evn_type){
+        case 'START':
+            extraConfig = {
+                fieldHeight: 80,
+                panelContext: '#container',
+                operators: {
+                    logic: true,
+                    group: true
+                },
+                constant: false
+            };
+            break;
+        case 'INTERMEDIATE':
+            if (this.evn_marker === 'MESSAGE' && this.evn_behavior !== 'THROW') {
+                extraConfig = {
+                    operators: {
+                        logic: true,
+                        group: true
+                    },
+                    constant: false,
+                    evaluation: {
+                        module: {
+                            dataURL: 'pmse_Project/CrmData/related/' + PROJECT_MODULE,
+                            dataRoot: 'result',
+                            fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                            fieldDataRoot: 'result'
+                        },
+                        user: {
+                            defaultUsersDataURL: 'pmse_Project/CrmData/defaultUsersList',
+                            defaultUsersDataRoot: 'result',
+                            userRolesDataURL: 'pmse_Project/CrmData/rolesList',
+                            userRolesDataRoot: 'result',
+                            usersDataURL: 'pmse_Project/CrmData/users',
+                            usersDataRoot: 'result'
+                        }
+                    }
+                };
+            }
+            if (this.evn_marker === 'TIMER') {
+                extraConfig =
+                    {
+                        fieldHeight: 80,
+                        operators:
+                            {
+                                arithmetic: ['+', '-']
+                            },
+                        constant:
+                            {
+                                datetime: true,
+                                timespan: true
+                            },
+                        variable:
+                            {
+                                dataURL: project.getMetadata('fieldsDataSource')
+                                    .url.replace('{MODULE}', project.process_definition.pro_module),
+                                dataRoot: project.getMetadata('fieldsDataSource').root,
+                                dataFormat: 'hierarchical',
+                                dataChildRoot: 'fields',
+                                textField: 'text',
+                                valueField: 'value',
+                                typeField: 'type',
+                                typeFilter: ['Datetime'],
+                                moduleTextField: 'text',
+                                moduleValueField: 'value'
+                            }
+                    };
+            }
+            break;
+    }
+
+    $.extend(configObject, extraConfig);
+
+    return new CriteriaField(configObject);
+};
+
 AdamEvent.prototype.createConfigureAction = function () {
     var action, w, f, proxy, items, wWidth, wHeight, changeModule, initialValue = null, disabled = false,
         oldModule, mp, cancelInformation, actiontimerType, durationRadio, i,
@@ -883,24 +979,7 @@ AdamEvent.prototype.createConfigureAction = function () {
 
     switch (this.evn_type) {
     case 'START':
-        criteriaField = new CriteriaField({
-            name: 'evn_criteria',
-            label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
-            required: false,
-            fieldWidth: 414,
-            fieldHeight: 80,
-            dateFormat: App.date.getUserDateFormat(),
-            timeFormat: App.user.getPreference("timepref"),
-            panelContext: '#container',
-            decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
-            numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
-            currencies: project.getMetadata("currencies"),
-            operators: {
-                logic: true,
-                group: true
-            },
-            constant: false
-        });
+        criteriaField = this._makeCriteriaField();
 
         ddlModules = new ComboboxField({
             jtype: 'combobox',
@@ -1300,38 +1379,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 };
             } else {
                 items = [
-                    {
-                        jtype: 'criteria',
-                        name: 'evn_criteria',
-                        label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
-                        required: false,
-                        fieldWidth: 414,
-                        operators: {
-                          logic: true,
-                          group: true
-                        },
-                        constant: false,
-                        evaluation: {
-                          module: {
-                            dataURL: "pmse_Project/CrmData/related/" + PROJECT_MODULE,
-                            dataRoot: 'result',
-                            fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
-                            fieldDataRoot: 'result'
-                          },
-                          user: {
-                              defaultUsersDataURL: "pmse_Project/CrmData/defaultUsersList",
-                              defaultUsersDataRoot: "result",
-                              userRolesDataURL: "pmse_Project/CrmData/rolesList",
-                              userRolesDataRoot: "result",
-                              usersDataURL: "pmse_Project/CrmData/users",
-                              usersDataRoot: "result"
-                          }
-                        },
-                        decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
-                        numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
-                        dateFormat: App.date.getUserDateFormat(),
-                        timeFormat: App.user.getPreference("timepref")
-                    }
+                    this._makeCriteriaField()
                 ];
                 wHeight = 185;
                 wWidth = 690;
@@ -1449,37 +1497,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 }
             });
 
-            datecriteria = new CriteriaField({
-                name: 'evn_criteria',
-                label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
-                required: false,
-                fieldWidth: 414,
-                fieldHeight: 80,
-                decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
-                numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
-                currencies: project.getMetadata("currencies"),
-                operators: {
-                    arithmetic: ['+', '-']
-                },
-                constant: {
-                    datetime: true,
-                    timespan: true
-                },
-                variable: {
-                    dataURL: project.getMetadata("fieldsDataSource").url.replace("{MODULE}", project.process_definition.pro_module),
-                    dataRoot: project.getMetadata("fieldsDataSource").root,
-                    dataFormat: "hierarchical",
-                    dataChildRoot: "fields",
-                    textField: "text",
-                    valueField: "value",
-                    typeField: "type",
-                    typeFilter: ['Datetime'],
-                    moduleTextField: "text",
-                    moduleValueField: "value"
-                },
-                dateFormat: App.date.getUserDateFormat(),
-                timeFormat: App.user.getPreference("timepref")
-            });
+            datecriteria = this._makeCriteriaField();
 
             cyclicRadio = new RadiobuttonField({
                 jtype: 'radio',
