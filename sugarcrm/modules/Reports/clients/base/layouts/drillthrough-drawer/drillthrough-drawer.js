@@ -148,5 +148,9 @@
         collection.setOption('endpoint', endpoint);
         collection.setOption('fields', this.context.get('fields'));
         collection.fetch(callbacks);
+        var massCollection = this.context.get('mass_collection');
+        if (massCollection) {
+            massCollection.setOption('endpoint', endpoint);
+        }
     }
 })
