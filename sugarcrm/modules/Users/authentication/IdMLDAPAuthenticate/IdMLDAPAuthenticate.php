@@ -14,7 +14,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 /**
  * IdM LDAP login
  */
-class IdMLDAPAuthenticate extends BaseAuthenticate implements Login
+class IdMLDAPAuthenticate extends BaseAuthenticate implements LoginInterface
 {
     /**
      * AuthN user over ldap service.

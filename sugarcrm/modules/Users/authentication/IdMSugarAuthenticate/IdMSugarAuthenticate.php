@@ -12,7 +12,7 @@
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
-class IdMSugarAuthenticate extends BaseAuthenticate implements Login
+class IdMSugarAuthenticate extends BaseAuthenticate implements LoginInterface
 {
     /**
      * Authenticates a user based on the username and password

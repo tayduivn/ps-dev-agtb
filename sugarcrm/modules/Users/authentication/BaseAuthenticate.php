@@ -53,14 +53,57 @@ class BaseAuthenticate
     }
 
     /**
+     * On every page hit this will be called to ensure a user is authenticated
+     *
+     * @return boolean
+     */
+    public function sessionAuthenticate()
+    {
+        global $module, $action, $allowed_actions;
+        $authenticated = false;
+        $allowed_actions = array ("Authenticate", "Login"); // these are actions where the user/server keys aren't compared
+        if (isset($_SESSION['authenticated_user_id'])) {
+            $GLOBALS['log']->debug("We have an authenticated user id: ".$_SESSION["authenticated_user_id"]);
+            $authenticated = $this->postSessionAuthenticate();
+            if (!$authenticated) {
+                // postSessionAuthenticate failed, nuke the session
+                if (session_id()) {
+                    session_destroy();
+                }
+                header("Location: index.php?action=Login&module=Users&loginErrorMessage=LBL_SESSION_EXPIRED");
+                sugar_cleanup(true);
+            }
+        } else {
+            if (isset($action) && isset($module) && $action == "Authenticate" && $module == "Users") {
+                $GLOBALS['log']->debug("We are authenticating user now");
+            } else {
+                $GLOBALS['log']->debug("The current user does not have a session.  Going to the login page");
+                $action = "Login";
+                $module = "Users";
+                $_REQUEST['action'] = $action;
+                $_REQUEST['module'] = $module;
+            }
+        }
+        if (empty($GLOBALS['current_user']->id) && !in_array($action, $allowed_actions)) {
+            $GLOBALS['log']->debug("The current user is not logged in going to login page");
+            $action = "Login";
+            $module = "Users";
+            $_REQUEST['action'] = $action;
+            $_REQUEST['module'] = $module;
+        }
+
+        return $authenticated;
+    }
+
+    /**
      * Loads the current user based on the given user_id.
      *
      * @param string $user_id
      * @return boolean
      */
-    public function loadUserOnSession($user_id='')
+    public function loadUserOnSession($user_id = '')
     {
-        if (!empty($user_id)){
+        if (!empty($user_id)) {
             $_SESSION['authenticated_user_id'] = $user_id;
         }
 

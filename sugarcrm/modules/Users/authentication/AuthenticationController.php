@@ -295,7 +295,8 @@ class AuthenticationController implements LoggerAwareInterface
 	 */
 	public function isExternal()
 	{
-	    return $this->authController instanceof SugarAuthenticateExternal;
+        return $this->authController instanceof SugarAuthenticateExternal
+            || $this->authController instanceof ExternalLoginInterface;
 	}
 
 	/**

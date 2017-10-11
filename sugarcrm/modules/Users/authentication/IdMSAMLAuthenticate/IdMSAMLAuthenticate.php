@@ -24,8 +24,9 @@ use Sugarcrm\IdentityProvider\Authentication\Token\SAML\InitiateToken;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
-class IdMSAMLAuthenticate extends BaseAuthenticate implements Login
+class IdMSAMLAuthenticate extends BaseAuthenticate implements ExternalLoginInterface
 {
     /**
      * Get URL to follow to get logged in
