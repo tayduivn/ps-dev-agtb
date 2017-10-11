@@ -430,7 +430,6 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_MOBILE_MOD_REPORTS_RESTRICTION2' => '* The Reports module is not available for the browser-based mobile view.',
 
 // Password settings
-    'ERR_SAVE_PASSWORD_SETTINGS_TO_IDP' => 'Can not save Password settings to Sugar Identity Provider',
     'ERR_EMPTY_SAML_LOGIN' => 'SAML Login URL can not be empty',
     'ERR_EMPTY_SAML_CERT' => 'SAML certificate can not be empty',
     'ERR_EMPTY_SAML_IDP_ENTITY_ID' => 'SAML Entity ID cannot be empty',

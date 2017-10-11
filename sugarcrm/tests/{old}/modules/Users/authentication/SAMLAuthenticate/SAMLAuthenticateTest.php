@@ -41,7 +41,6 @@ class SAMLAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         $sugar_config['SAML_loginurl'] = 'http://loginURL.example.com/';
         $sugar_config['SAML_X509Cert'] = 'TestCert';
         $sugar_config['SAML_issuer'] = 'testIssuer';
-        $sugar_config['authenticationClass'] = 'SAMLAuthenticate';
 
         $authc = new AuthenticationController('SAMLAuthenticate');
         $login = $authc->getLoginUrl(array("platform" => "myplatform", "other" => "stuff"));

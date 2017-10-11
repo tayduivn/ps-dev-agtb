@@ -53,21 +53,9 @@ class Config
      */
     public function getSAMLConfig()
     {
-        if (!$this->isSamlEnabled()) {
-            return [];
-        }
         $defaultConfig = $this->getSAMLDefaultConfig();
         $defaultConfig = array_merge_recursive($defaultConfig, $this->getSugarCustomSAMLSettings());
         return array_replace_recursive($defaultConfig, $this->get('SAML', [])); //update with values from config
-    }
-
-    /**
-     * Is SAML enabled?
-     * @return bool
-     */
-    protected function isSamlEnabled()
-    {
-        return 'SAMLAuthenticate' == $this->get('authenticationClass');
     }
 
     /**
@@ -147,7 +135,7 @@ class Config
         $ldap = [
             'adapter_config' => [
                 'host' => $host,
-                'port' => intval($this->getLdapSetting('ldap_port', 389)),
+                'port' => $this->getLdapSetting('ldap_port', 389),
                 'options' => [
                     'network_timeout' => 60,
                     'timelimit' => 60,
@@ -160,7 +148,7 @@ class Config
             'filter' => $this->buildLdapSearchFilter(),
             'dnString' => null,
             'entryAttribute' => $this->getLdapSetting('ldap_bind_attr'),
-            'autoCreateUser' => boolval($this->getLdapSetting('ldap_auto_create_users', false)),
+            'autoCreateUser' => $this->getLdapSetting('ldap_auto_create_users', false),
         ];
         if (!empty($this->getLdapSetting('ldap_authentication'))) {
             $ldap['searchDn'] = $this->getLdapSetting('ldap_admin_user');

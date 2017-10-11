@@ -13,9 +13,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-use Sugarcrm\Sugarcrm\IdentityProvider\ConfigSender as IDMConfigSender;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IDMConfig;
-use Guzzle\Http\Client as HttpClient;
 
 if(!is_admin($current_user)){
     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
@@ -205,16 +202,6 @@ if (!empty($_POST['saveConfig'])) {
 		// Clean API cache since we may have changed the authentication settings
 		MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CONFIG));
 
-        if (!empty($sugarConfig->get('oidc_oauth')['idpUrl'])) {
-            try {
-                $configSender = new IDMConfigSender(new IDMConfig(\SugarConfig::getInstance()), new HttpClient());
-                $configSender->send();
-            } catch (\Exception $e) {
-                $GLOBALS['log']->fatal('Sending config to Sugar Identity Provider:' . $e->getMessage());
-                $configurator->addError($config_strings['ERR_SAVE_PASSWORD_SETTINGS_TO_IDP']);
-                break;
-            }
-        }
         die("
             <script>
             var app = window.parent.SUGAR.App;

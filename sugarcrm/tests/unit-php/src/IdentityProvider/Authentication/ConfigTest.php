@@ -36,16 +36,15 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'no override in config' => [
-                'expectedConfig' => [
+                [
                     'default' => 'config',
                 ],
-                'defaultConfig' => ['default' => 'config'],
-                'configValues' => [],
-                'customSettings' => [],
-                'authenticationClass' => 'SAMLAuthenticate',
+                ['default' => 'config'],
+                [],
+                [],
             ],
             'saml config provided' => [
-                'expectedConfig' => [
+                [
                     'default' => 'overridden config',
                     'sp' => [
                         'assertionConsumerService' => [
@@ -54,8 +53,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                'defaultConfig' => ['default' => 'config'],
-                'configValues' => [
+                ['default' => 'config'],
+                [
                     'default' => 'overridden config',
                     'sp' => [
                         'assertionConsumerService' => [
@@ -64,11 +63,10 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                'customSettings' => [],
-                'authenticationClass' => 'SAMLAuthenticate',
+                [],
             ],
             'saml config and sugar custom settings provided' => [
-                'expectedConfig' => [
+                [
                     'default' => 'overridden config',
                     'sp' => [
                         'foo' => 'bar',
@@ -78,14 +76,14 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                'defaultConfig' => ['default' => 'config'],
-                'configValues' => [
+                ['default' => 'config'],
+                [
                     'default' => 'overridden config',
                     'sp' => [
                         'foo' => 'bar',
                     ],
                 ],
-                'customSettings' => [
+                [
                     'sp' => [
                         'sugarCustom' => [
                             'useXML' => true,
@@ -93,26 +91,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                'authenticationClass' => 'SAMLAuthenticate',
-            ],
-            'saml not configured' => [
-                'expectedConfig' => [],
-                'defaultConfig' => ['default' => 'config'],
-                'configValues' => [
-                    'default' => 'overridden config',
-                    'sp' => [
-                        'foo' => 'bar',
-                    ],
-                ],
-                'customSettings' => [
-                    'sp' => [
-                        'sugarCustom' => [
-                            'useXML' => true,
-                            'id' => 'first_name',
-                        ],
-                    ],
-                ],
-                'authenticationClass' => '',
             ],
         ];
     }
@@ -122,7 +100,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      * @param array $defaultConfig
      * @param array $configValues
      * @param array $customSettings
-     * @param string $authenticationClass
      *
      * @covers ::getSAMLConfig
      * @dataProvider getSAMLConfigDataProvider
@@ -131,8 +108,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         array $expectedConfig,
         array $defaultConfig,
         array $configValues,
-        array $customSettings,
-        $authenticationClass
+        array $customSettings
     ) {
         $config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
@@ -142,14 +118,13 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->any())
             ->method('get')
             ->withConsecutive(
-                ['authenticationClass', null],
                 ['SAML', []]
             )
             ->willReturnOnConsecutiveCalls(
-                $authenticationClass,
                 $configValues
             );
-        $config->method('getSAMLDefaultConfig')
+        $config->expects($this->once())
+            ->method('getSAMLDefaultConfig')
             ->willReturn($defaultConfig);
         $samlConfig = $config->getSAMLConfig();
         $this->assertEquals($expectedConfig, $samlConfig);
@@ -204,9 +179,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         ];
         $config = $this->getMockBuilder(Config::class)
                        ->disableOriginalConstructor()
-                       ->setMethods(['get', 'getSugarCustomSAMLSettings', 'isSamlEnabled'])
+                       ->setMethods(['get', 'getSugarCustomSAMLSettings'])
                        ->getMock();
-        $config->method('isSamlEnabled')->willReturn(true);
         $config->method('getSugarCustomSAMLSettings')->willReturn([]);
         $config->method('get')
                ->willReturnMap(
