@@ -222,6 +222,7 @@ class PMSEEmailHandler
         if (isset($addresses->bcc) && is_array($addresses->bcc)) {
             $result->bcc = $this->processEmailsAndExpand($bean, $addresses->bcc, $flowData);
         }
+
         return $result;
     }
 
@@ -315,6 +316,17 @@ class PMSEEmailHandler
         return $userBean;
     }
 
+    /**
+     * Checks if a User bean is for an active user
+     * @param $userBean
+     * @return bool
+     */
+    public function isUserActiveForEmail(User $userBean)
+    {
+        // Emails should only be sent when Employee Status is Active AND User Status is Active
+        return PMSEEngineUtils::isUserActive($userBean) && !empty($userBean->full_name) && !empty($userBean->email1);
+    }
+
     public function getUserEmails($userBean, $entry)
     {
         $res = array();
@@ -323,7 +335,7 @@ class PMSEEmailHandler
             $user = $this->getSupervisor($userBean);
         }
 
-        if (isset($user->full_name) && isset($user->email1)) {
+        if ($this->isUserActiveForEmail($user)) {
             $item = new stdClass();
             $item->name = $user->full_name;
             $item->address = $user->email1;
@@ -357,7 +369,7 @@ class PMSEEmailHandler
         $members = $team->get_team_members();
         foreach ($members as $user) {
             $userBean = $this->retrieveBean("Users", $user->id);
-            if (isset($userBean->full_name) && isset($userBean->email1)) {
+            if ($this->isUserActiveForEmail($userBean)) {
                 $item = new stdClass();
                 $item->name = $userBean->full_name;
                 $item->address = $userBean->email1;
@@ -373,7 +385,7 @@ class PMSEEmailHandler
         $role = $this->retrieveBean('ACLRoles', $entry->value);
         $userList = $role->get_linked_beans('users','User');
         foreach ($userList as $user) {
-            if (isset($user->full_name) && isset($user->email1)) {
+            if ($this->isUserActiveForEmail($user)) {
                 $item = new stdClass();
                 $item->name = $user->full_name;
                 $item->address = $user->email1;
@@ -443,6 +455,10 @@ class PMSEEmailHandler
     public function sendTemplateEmail($moduleName, $beanId, $addresses, $templateId)
     {
         $mailTransmissionProtocol = "unknown";
+        if (PMSEEngineUtils::isEmailRecipientEmpty($addresses)) {
+            $this->getLogger()->alert('All email recipients are filtered out of the email recipient list.');
+            return;
+        }
         try {
             $bean = $this->retrieveBean($moduleName, $beanId);
             $templateObject = $this->retrieveBean('pmse_Emails_Templates');

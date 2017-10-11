@@ -1883,4 +1883,24 @@ class PMSEEngineUtils
         $msg = "$method is deprecated as of $version and will be removed in a future release";
         LoggerManager::getLogger()->deprecated($msg);
     }
+
+    /**
+     * Returns whether the user status and employee_status are both active
+     * @param User $user
+     * @return boolean
+     */
+    public static function isUserActive(User $user)
+    {
+        return $user->status === 'Active' && $user->employee_status === 'Active';
+    }
+
+    /**
+     * Returns whether the email recipient is empty
+     * @param \StdClass $addresses
+     * @return boolean
+     */
+    public static function isEmailRecipientEmpty(stdClass $addresses)
+    {
+        return empty($addresses->to) && empty($addresses->cc) && empty($addresses->bcc);
+    }
 }

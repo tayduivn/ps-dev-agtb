@@ -122,7 +122,7 @@ class PMSEEmailHandlerTest extends PHPUnit_Framework_TestCase
 
         $beanId = 'bean01';
 
-        $addresses = array ();
+        $addresses = new stdClass();
 
         $templateId = 'template01';
 
