@@ -490,6 +490,18 @@
         return this;
     };
 
+    /**
+     * Remove the data attribute previndex after deleting row/s
+     */
+    DecisionTable.prototype.removePrevIndexOnDeleteRow = function() {
+        var self = this;
+        $(self.decisionTableBodyClassId)
+            .children('tr.' + self.decisionTableRowClassName)
+            .each(function() {
+                $(this).closest('tr').removeAttr('data-previndex');
+            });
+    };
+
     DecisionTable.prototype.removeDecisionRow = function(index) {
         var i,
             ask = false,
@@ -543,6 +555,8 @@
                 .index(this);
             self.removeDecisionRowWithoutConfirmation(removeIndex);
         });
+
+        this.removePrevIndexOnDeleteRow();
         $('#trash-button').addClass('decision-table-btn-hidden');
     };
 
