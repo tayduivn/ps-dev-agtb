@@ -1500,7 +1500,15 @@ class Email extends SugarBean {
 
             // Add the current user as the sender when the email is a draft.
             if ($this->state === static::STATE_DRAFT) {
-                $this->setSender($GLOBALS['current_user']);
+                // Don't allow exceptions to bubble up for this action. No user input is used in this action, so there
+                // is not a need to report errors due to invalid data in the REST API request and no exceptions from
+                // EmailSenderRelationship should cause the save operation to halt. It is safe to allow the email to be
+                // fully saved and for any errors to be corrected on subsequent saves.
+                try {
+                    $this->setSender($GLOBALS['current_user']);
+                } catch (Exception $e) {
+                    $GLOBALS['log']->error('Failed to set the current user as the sender when saving a draft email');
+                }
             }
 
             $this->linkParentBeanUsingRelationship();
@@ -1530,30 +1538,21 @@ class Email extends SugarBean {
      * beans with an email address can be used as a sender.
      *
      * @param SugarBean $bean
-     * @return bool
+     * @throws SugarException if the "from" relationship could not be loaded.
      */
     protected function setSender(SugarBean $bean)
     {
-        $success = false;
-        $moduleName = BeanFactory::getModuleName($bean);
-        $moduleHasEmailAddress = $moduleName === 'Users' || VardefManager::usesTemplate($moduleName, 'email_address');
-
-        if ($moduleHasEmailAddress && $this->load_relationship('from')) {
-            $ep = BeanFactory::newBean('EmailParticipants');
-            $ep->new_with_id = true;
-            $ep->id = Uuid::uuid1();
-            BeanFactory::registerBean($ep);
-            $ep->parent_type = $moduleName;
-            $ep->parent_id = $bean->id;
-            $success = $this->from->add($ep);
-
-            if ($success !== true) {
-                $success = false;
-                BeanFactory::unregisterBean($ep);
-            }
+        if (!$this->load_relationship('from')) {
+            throw new SugarException('Could not find a relationship named: from');
         }
 
-        return $success;
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        BeanFactory::registerBean($ep);
+        $ep->parent_type = BeanFactory::getModuleName($bean);
+        $ep->parent_id = $bean->id;
+        $this->from->add($ep);
     }
 
     /**
@@ -4289,9 +4288,8 @@ eoq;
             throw new SugarException("Cannot send an email with state: {$this->state}");
         }
 
-        if (!$this->setSender($GLOBALS['current_user'])) {
-            throw new SugarException('Failed to set the current user as the sender');
-        }
+        // An exception will bubble up if the "from" relationship can't be loaded.
+        $this->setSender($GLOBALS['current_user']);
 
         // Resolve variables in the subject and content.
         // The parent must be listed prior to the current user or any variables associated with the parent will be

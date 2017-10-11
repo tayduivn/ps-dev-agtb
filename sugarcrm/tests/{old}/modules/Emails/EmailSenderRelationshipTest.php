@@ -36,6 +36,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
+        SugarTestTaskUtilities::removeAllCreatedTasks();
         OutboundEmailConfigurationTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
@@ -65,6 +66,21 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $contact = SugarTestContactUtilities::createContact();
 
         $this->relationship->add($email, $this->createEmailParticipant($contact));
+    }
+
+    /**
+     * Only modules that use the email_address template can be used as parents of an EmailParticipants bean.
+     *
+     * @covers ::add
+     * @covers ::assertParentModule
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testAdd_CannotLinkParticipantWhoseParentModuleDoesNotUseTheEmailAddressTemplate()
+    {
+        $email = SugarTestEmailUtilities::createEmail();
+        $task = SugarTestTaskUtilities::createTask();
+
+        $this->relationship->add($email, $this->createEmailParticipant($task));
     }
 
     /**

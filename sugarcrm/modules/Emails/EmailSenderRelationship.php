@@ -75,6 +75,7 @@ class EmailSenderRelationship extends EmailRecipientRelationship
         }
 
         $this->fixParentModule($rhs);
+        $this->assertParentModule($rhs);
         $this->setEmailAddress($lhs, $rhs);
 
         if (empty($lhs->{$this->lhsLink}) && !$lhs->load_relationship($this->lhsLink)) {

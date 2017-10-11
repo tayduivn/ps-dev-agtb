@@ -37,6 +37,7 @@ class EmailRecipientRelationship extends One2MBeanRelationship
         }
 
         $this->fixParentModule($rhs);
+        $this->assertParentModule($rhs);
         $this->setEmailAddress($lhs, $rhs);
 
         if (empty($lhs->{$this->lhsLink}) && !$lhs->load_relationship($this->lhsLink)) {
@@ -183,6 +184,34 @@ class EmailRecipientRelationship extends One2MBeanRelationship
 
             if ($parent && $parent->id && !empty($parent->user_name)) {
                 $bean->parent_type = 'Users';
+            }
+        }
+    }
+
+    /**
+     * Only modules that use the email_address template can be used as parents of an EmailParticipants bean. Users and
+     * Employees are the only exceptions to this rule.
+     *
+     * @param SugarBean $bean The EmailParticipants bean.
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    protected function assertParentModule(SugarBean $bean)
+    {
+        if (!empty($bean->parent_type)) {
+            $objectName = BeanFactory::getObjectName($bean->parent_type);
+            $moduleName = BeanFactory::getModuleName($objectName);
+            $usesTemplate = in_array($moduleName, ['Users', 'Employees']) ||
+                VardefManager::usesTemplate($moduleName, 'email_address');
+
+            if (!$usesTemplate) {
+                throw new SugarApiExceptionNotAuthorized(
+                    sprintf(
+                        'Cannot add %s records to %s: %s must use the email_address template',
+                        $moduleName,
+                        $this->name,
+                        $moduleName
+                    )
+                );
             }
         }
     }
