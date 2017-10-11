@@ -602,10 +602,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSendEmail()
     {
-        // Don't use the cached NOW in order to verify that Email::date_sent is changed after sending.
+        // Cache a consistent now() for some time prior to when the email will be sent.
         $td = TimeDate::getInstance();
-        $tdCache = $td->allow_cache;
-        $td->allow_cache = false;
+        $tz = new DateTimeZone('UTC');
+        $now = SugarDateTime::createFromFormat(TimeDate::DB_DATETIME_FORMAT, '2016-08-13 07:33:00', $tz);
+        $td->setNow($now);
 
         // Need a configuration to use to send the email, even when faking the send.
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
@@ -633,14 +634,16 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $ep->parent_id = $contact->id;
         $email->to->add($ep);
 
+        // Change the value of now() to simulate the send occurring some time after the draft was first created.
+        $now = SugarDateTime::createFromFormat(TimeDate::DB_DATETIME_FORMAT, '2016-08-14 09:19:00', $tz);
+        $td->setNow($now);
+        $now = $td->getNow()->format('Y-m-d h:i:s');
+
         // Send the email.
         $email->sendEmail($config);
 
         $this->assertSame(Email::STATE_ARCHIVED, $email->state, 'Should be archived');
-        //FIXME: Even with TimeDate::allow_cache disabled, the following assertion would fail if the test executes in
-        // less than one second. For now, the best we can do is to verify that Email::date_sent is not empty.
-        //$this->assertNotEquals($draftDate, $email->date_sent, 'Should reflect the date/time that the email was sent');
-        $this->assertNotEmpty($email->date_sent, 'Should reflect the date/time that the email was sent');
+        $this->assertSame($now, $email->date_sent, 'Should reflect the date/time that the email was sent');
         $this->assertSame('out', $email->type, 'Should be out');
         $this->assertSame('sent', $email->status, 'Should be sent');
         $this->assertNotEmpty($email->message_id, 'Should have a Message-ID');
@@ -654,7 +657,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         // Restore the environment.
         OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        $td->allow_cache = $tdCache;
     }
 
     public function theCurrentUserIsTheSenderForDraftsProvider()
