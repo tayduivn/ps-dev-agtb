@@ -62,7 +62,6 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNull(sugar_cache_retrieve($defaultPaths['hashKey']));
 
         $urls = $theme->getCSSURL();
-        $this->assertArrayHasKey('bootstrap', $urls);
         $this->assertArrayHasKey('sugar', $urls);
         foreach ($urls as $url) {
             $this->assertFileExists($url, 'The CSS (' . $url . ') file should be found');
@@ -90,7 +89,6 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFileNotExists($themePaths['cache']);
         $files = $theme->compileTheme();
 
-        $this->assertArrayHasKey('bootstrap', $files);
         $this->assertArrayHasKey('sugar', $files);
 
         foreach ($files as $lessFile => $hash) {
@@ -121,10 +119,10 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $files = glob($themePaths['cache'] . '*.css');
         $this->assertEquals(sizeof($files), 0, 'There should be 0 css file');
 
-        $this->assertFileNotExists($themePaths['cache'] . 'boostrap');
-        $hash = $theme->compileFile('bootstrap');
+        $this->assertFileNotExists($themePaths['cache'] . 'sugar');
+        $hash = $theme->compileFile('sugar');
 
-        $this->assertFileNotExists($themePaths['cache'] . 'boostrap_' . $hash .'.css', 'The css file should have been created.');
+        $this->assertFileExists($themePaths['cache'] . 'sugar_' . $hash .'.css', 'The css file should have been created.');
     }
 
     /**
@@ -355,19 +353,11 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $files = SugarTestReflection::callProtectedMethod($theme, 'retrieveCssFilesInCache');
         $this->assertEmpty($files, 'Should have found 0 file');
 
-        $testCacheFile = $themePaths['cache'] . 'bootstrap_unittest.css';
-        file_put_contents($testCacheFile, 'This is a unit test CSS file.');
-
-        $files = SugarTestReflection::callProtectedMethod($theme, 'retrieveCssFilesInCache');
-        $this->assertArrayHasKey('bootstrap', $files, 'Should have found 1 file');
-        $this->assertEquals($files['bootstrap'], 'unittest', 'Should retrieve the hash');
-
         $testCacheFile = $themePaths['cache'] . 'sugar_unittest2.css';
         file_put_contents($testCacheFile, 'This is a unit test CSS file.');
 
         $files = SugarTestReflection::callProtectedMethod($theme, 'retrieveCssFilesInCache');
-        $this->assertArrayHasKey('bootstrap', $files, 'Should have found 2 files');
-        $this->assertArrayHasKey('sugar', $files, 'Should have found 2 files');
+        $this->assertArrayHasKey('sugar', $files, 'Should have found 1 file');
         $this->assertEquals($files['sugar'], 'unittest2', 'Should retrieve the hash');
     }
 
@@ -377,19 +367,18 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetLessFileLocation()
     {
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
-        $themePaths = $theme->getPaths();
 
-        $url = SugarTestReflection::callProtectedMethod($theme,'getLessFileLocation',array('bootstrap'));
-        $this->assertEquals($url, 'styleguide/less/clients/base/bootstrap.less');
+        $url = SugarTestReflection::callProtectedMethod($theme,'getLessFileLocation',array('sugar'));
+        $this->assertEquals($url, 'styleguide/less/clients/base/sugar.less');
 
         //Save the file
         $path = 'styleguide/less/clients/' . $this->platformTest . '/';
         sugar_mkdir($path, null, true);
-        sugar_file_put_contents($path . 'bootstrap.less', '');
+        sugar_file_put_contents($path . 'sugar.less', '');
 
         //Make sure
-        $url = SugarTestReflection::callProtectedMethod($theme,'getLessFileLocation',array('bootstrap'));
-        $this->assertEquals($url, 'styleguide/less/clients/' . $this->platformTest . '/bootstrap.less');
+        $url = SugarTestReflection::callProtectedMethod($theme,'getLessFileLocation',array('sugar'));
+        $this->assertEquals($url, 'styleguide/less/clients/' . $this->platformTest . '/sugar.less');
 
         // Remove our temporary
         if (is_dir($path)) {

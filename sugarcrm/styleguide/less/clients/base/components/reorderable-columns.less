@@ -18,8 +18,8 @@ table.reorderable-columns {
       vertical-align: middle;
       text-overflow: initial;
       padding: 0;
-      .box-sizing(border-box);
-      .calcWidth(~"100% - 16px");
+      box-sizing: border-box;
+      width: calc(~"100% - 16px");
       margin-left: 8px;
 
       > div {
@@ -32,7 +32,7 @@ table.reorderable-columns {
             cursor: ew-resize;
           }
         }
-        .box-sizing(border-box);
+        box-sizing: border-box;
 
         /* Brings back styling of table.dataTable th > *   */
         > span {

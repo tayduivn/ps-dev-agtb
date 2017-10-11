@@ -15,17 +15,15 @@
       margin-right: 25%;
       margin-left: 0;
       &.active {
-        .box-shadow(~"3px 0 4px rgba(0,0,0,0.1)");
+        box-shadow: 3px 0 4px rgba(0,0,0,0.1);
       }
     }
     .preview-pane.active {
       right: 0;
-      -webkit-animation: preview-in-rtl .3s;
       animation-name: preview-in-rtl;
       animation-duration: .3s;
     }
     .preview-pane {
-      -webkit-animation: preview-out-rtl .3s;
       animation-name: preview-out-rtl;
       animation-duration: .3s;
       display: block;

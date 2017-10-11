@@ -1,5 +1,5 @@
 .span8 .headerpane {
-  .calcWidth(~"65.957446802% - 1px");
+  width: calc(~"65.957446802% - 1px");
   left: 0;
 }
 
@@ -10,7 +10,7 @@
   z-index: @zindexHeaderpane;
   background: @grayLighter;
   border-bottom: @borderWidget;
-  .box-sizing(border-box);
+  box-sizing: border-box;
   display: table;
   position: fixed;
   top: 48px;
@@ -28,7 +28,7 @@
 
   h1 {
     width: 100%;
-    .box-sizing(border-box);
+    box-sizing: border-box;
     display: table-row;
     margin: 0;
     vertical-align: top;
@@ -174,7 +174,7 @@
     }
     .image_rounded img {
       border: 2px solid rgba(0,0,0,.4);
-      .border-radius(23px);
+      border-radius: 23px;
     }
   }
   span[data-type="name"] .table-cell-wrapper {
@@ -236,7 +236,7 @@
       background-image: none;
       background-color: transparent;
       padding-left: 0;
-      .box-shadow(none);
+      box-shadow: none;
     }
   }
   h1 > .record-cell.edit {
@@ -287,7 +287,7 @@
   input[type="text"] {
     font-size: @fontSizeHeader;
     width: 100%;
-    .box-sizing(border-box);
+    box-sizing: border-box;
     height: @fontSizeHeader + 13px;
     margin: 0;
     position: relative;
@@ -327,11 +327,11 @@
       text-decoration: none;
     }
     &.pull-right {
-      .border-radius(0 2px 2px 0);
+      border-radius: 0 2px 2px 0;
       position: relative;
     }
     &.pull-left {
-      .border-radius(2px);
+      border-radius: 2px;
       margin-right: 0;
       padding: 4px 4px 0 4px;
       position: absolute;

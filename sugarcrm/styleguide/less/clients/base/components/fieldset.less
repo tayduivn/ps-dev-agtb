@@ -25,7 +25,7 @@
       input[type="text"] {
         border-width: 1px;
         padding: 6px;
-        .border-radius(@baseBorderRadius);
+        border-radius: @baseBorderRadius;
         margin-right: 14px;
         width: 210px;
         font-size: @fontSizeLarge;
@@ -38,7 +38,7 @@
       input[type="text"],
       textarea {
         margin-top: -1px;
-        .border-radius(0);
+        border-radius: 0;
         &:focus {
           z-index: 2;
         }
@@ -48,18 +48,18 @@
       }
       &:first-child input[type="text"],
       &:first-child textarea {
-        .border-top-left-radius(@baseBorderRadius);
-        .border-top-right-radius(@baseBorderRadius);
+        border-top-left-radius: @baseBorderRadius;
+        border-top-right-radius: @baseBorderRadius;
       }
       &:last-child input[type="text"],
       &:last-child textarea,
       .address_country {
-        .border-bottom-left-radius(@baseBorderRadius);
-        .border-bottom-right-radius(@baseBorderRadius);
+        border-bottom-left-radius: @baseBorderRadius;
+        border-bottom-right-radius: @baseBorderRadius;
       }
       .record-label + .edit input[type="text"],
       .record-label + .edit textarea {
-        .border-radius(@baseBorderRadius);
+        border-radius: @baseBorderRadius;
       }
     }
     &:not(.edit) .fieldset-field {

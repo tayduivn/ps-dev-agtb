@@ -81,7 +81,7 @@
       display: block;
       min-height: 28px;
       margin-bottom: 16px;
-      .box-sizing(border-box);
+      box-sizing: border-box;
     }
     > .detail {
       padding: 5px 7px;
@@ -157,7 +157,7 @@
     position: relative;
     width: 100%;
     min-height: 28px;
-    .box-sizing(border-box);
+    box-sizing: border-box;
     font-size: @fontSizeLarge;
     font-weight: 400;
     z-index: 1;
@@ -171,18 +171,18 @@
 
   &[data-type="change-password"] {
     [type="password"] {
-      .border-radius(0);
+      border-radius: 0;
       &:first-of-type {
         z-index: 2;
-        .border-top-left-radius(@inputBorderRadius);
-        .border-top-right-radius(@inputBorderRadius);
+        border-top-left-radius: @inputBorderRadius;
+        border-top-right-radius: @inputBorderRadius;
       }
       &:not(:first-of-type) {
         margin-top: -1px;
       }
       &:last-of-type {
-        .border-bottom-left-radius(@inputBorderRadius);
-        .border-bottom-right-radius(@inputBorderRadius);
+        border-bottom-left-radius: @inputBorderRadius;
+        border-bottom-right-radius: @inputBorderRadius;
       }
     }
   }
@@ -333,12 +333,12 @@
     .datepicker {
       min-width: 0;
       width: 50%;
-      .calcWidth(~"55% - 4px");
+      width: calc(~"55% - 4px");
     }
     .ui-timepicker-input {
       min-width: 0;
       width: 40%;
-      .calcWidth(~"45% - 4px");
+      width: calc(~"45% - 4px");
     }
   }
 
@@ -347,8 +347,8 @@
   &[data-name="alt_address"],
   &[data-name="altaddress"] {
     .address.edit > .fieldset-field:nth-last-of-type(2) input {
-      .border-bottom-left-radius(@baseBorderRadius);
-      .border-bottom-right-radius(@baseBorderRadius);
+      border-bottom-left-radius: @baseBorderRadius;
+      border-bottom-right-radius: @baseBorderRadius;
     }
     .edit label {
       padding: 4px 0 0;
@@ -363,7 +363,7 @@
   &[data-type="file"] {
     input[type="file"] {
       padding: 5px 6px 3px 0;
-      .box-sizing(border-box);
+      box-sizing: border-box;
       width: 100%;
     }
     .add-on {
@@ -395,7 +395,7 @@
   &:not([data-type="recipients"]):not([data-type="email-recipients"]) {
     .select2-container {
       &.select2-container-disabled {
-        .opacity(35);
+        opacity: 0.35;
         .select2-choice {
           cursor: not-allowed;
           .select2-arrow {
@@ -479,8 +479,8 @@
 .show-hide-toggle {
   padding: 0 20px 6px 13px;
   margin-top: -9px;
-  .box-sizing(border-box);
   clear: both;
+  box-sizing: border-box;
 }
 
 /* Special treatment for the address fields */
@@ -523,7 +523,7 @@
     padding: 0 5px 0 15px;
     width: auto !important;
     border-top: 1px solid rgba(220,220,220,1);
-    .box-shadow(~"inset 0px 1px 0px 0px white");
+    box-shadow: inset 0px 1px 0px 0px white;
     border-bottom: 1px solid #cfcfcf;
     cursor: pointer;
     &:hover {
@@ -548,7 +548,7 @@
 // for Product dropdowns in RLI subpanel in Opps Create view
 .create-subpanel {
   .select2-container.select2-container-disabled {
-    .opacity(35);
+    opacity: 0.35;
     .select2-choice {
       cursor: not-allowed;
       .select2-arrow {

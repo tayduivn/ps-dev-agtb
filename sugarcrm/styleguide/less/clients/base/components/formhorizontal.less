@@ -11,7 +11,7 @@
   // email compose
   .mceLayout {
     width: 100% !important;
-    .border-radius(4px);
+    border-radius: 4px;
   }
 
   .control-group {
@@ -71,19 +71,19 @@
     .control-group {
       &:first-child .control-label-background ,
       .control-label.begin-fieldgroup .control-label-background {
-        .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
+        border-radius: @baseBorderRadius @baseBorderRadius 0 0;
         border-top: @borderWidget;
       }
       &:last-of-type .control-label-background,
       .control-label.end-fieldgroup .control-label-background {
         padding-bottom: 4px;
-        .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+        border-radius: 0 0 @baseBorderRadius @baseBorderRadius;
         border-bottom: @borderWidget;
         height: auto;
       }
       &.single .control-label .control-label-background {
         height: 0;
-        .border-radius(@baseBorderRadius);
+        border-radius: @baseBorderRadius;
         border-top: @borderWidget;
         border-bottom: @borderWidget;
       }

@@ -1,5 +1,5 @@
 // Email compose specific styles
-// Deprecated. Use sugar-specific/emails.less instead along with the
+// Deprecated. Use sugar/emails.less instead along with the
 // Emails/create view. This file will be removed in a future release.
 
 .record {
@@ -10,7 +10,7 @@
       .select2-choices {
         max-height: 45px;
         overflow-y: auto;
-        .border-radius(@baseBorderRadius);
+        border-radius: @baseBorderRadius;
       }
       .select2-search-field input {
         padding: 0 6px;
@@ -48,8 +48,8 @@
         .select2-choices {
           max-height: 45px;
           overflow-y: auto;
-          .border-radius(@baseBorderRadius);
-          .box-shadow(0 0 1px transparent);
+          border-radius: @baseBorderRadius;
+          box-shadow: 0 0 1px transparent;
         }
         .select2-search-field input {
           padding: 0 6px;
@@ -59,7 +59,7 @@
         }
         &.drop-highlight {
           .select2-choices {
-            .box-shadow(0 0 1px transparent);
+            box-shadow: 0 0 1px transparent;
             background-color: rgba(23,109,229,.075);
           }
           &.drop-hover {
