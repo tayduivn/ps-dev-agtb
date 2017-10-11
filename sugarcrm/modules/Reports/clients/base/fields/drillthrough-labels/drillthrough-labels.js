@@ -41,12 +41,14 @@
         });
         if (groupDefs.length > 0) {
             var group = SUGAR.charts.getFieldDef(groupDefs[0], reportDef);
-            this.groupName = app.lang.get(group.vname, group.module || chartModule) + ': ';
+            var module = group.custom_module || group.module || chartModule;
+            this.groupName = app.lang.get(group.vname, module) + ': ';
             this.groupValue = params.groupLabel;
         }
         if (groupDefs.length > 1) {
             var series = SUGAR.charts.getFieldDef(groupDefs[1], reportDef);
-            this.seriesName = app.lang.get(series.vname, series.module || chartModule) + ': ';
+            var module = series.custom_module || series.module || chartModule;
+            this.seriesName = app.lang.get(series.vname, module) + ': ';
             this.seriesValue = params.seriesLabel;
         }
 
