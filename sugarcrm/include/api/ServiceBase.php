@@ -214,6 +214,8 @@ abstract class ServiceBase implements LoggerAwareInterface
      * Platform support OIDC or not?
      * @param $platform
      * @return bool
+     *
+     * @todo Platform check should be removed in future because we want to enable OIDC for all platforms.
      */
     protected function isOidcEnabled($platform)
     {

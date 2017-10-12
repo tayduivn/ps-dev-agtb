@@ -12,6 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
+use Sugarcrm\IdentityProvider\Hydra\EndpointInterface;
+use Sugarcrm\IdentityProvider\Hydra\EndpointService;
+
 /**
  * Configuration glue for IdM
  */
@@ -71,14 +74,16 @@ class Config
 
         $oidcUrl = rtrim($config['oidcUrl'], '/ ');
 
+        $endpointService = new EndpointService(['host' => $oidcUrl]);
+
         return [
             'clientId' => $config['clientId'],
             'clientSecret' => $config['clientSecret'],
             'oidcUrl' => $oidcUrl,
             'redirectUri' => rtrim($this->get('site_url'), '/'),
-            'urlAuthorize' => $oidcUrl . '/oauth2/auth',
-            'urlAccessToken' => $oidcUrl . '/oauth2/token',
-            'urlResourceOwnerDetails' => $oidcUrl . '/oauth2/introspect',
+            'urlAuthorize' => $endpointService->getOAuth2Endpoint(EndpointInterface::AUTH_ENDPOINT),
+            'urlAccessToken' => $endpointService->getOAuth2Endpoint(EndpointInterface::TOKEN_ENDPOINT),
+            'urlResourceOwnerDetails' => $endpointService->getOAuth2Endpoint(EndpointInterface::INTROSPECT_ENDPOINT),
             'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
         ];
     }

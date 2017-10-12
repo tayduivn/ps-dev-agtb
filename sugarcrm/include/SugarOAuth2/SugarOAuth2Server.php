@@ -32,13 +32,13 @@ class SugarOAuth2Server extends OAuth2
      * the custom/ directory so users can customize the authorization
      * types and storage
      *
-     * @param bool $oidcEnabled
+     * @param bool $oidcEnabled If true - new oAuth2/OIDC flow will be used for token validation or grant
      * @return null
      */
     public static function getOAuth2Server($oidcEnabled = false)
     {
-        $oidcPostfix = $oidcEnabled ? 'OIDC' : '';
         if (!isset(static::$currentOAuth2Server)) {
+            $oidcPostfix = $oidcEnabled ? 'OIDC' : '';
             SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage'.$oidcPostfix.'.php');
             $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2Storage'.$oidcPostfix);
             $oauthStorage = new $oauthStorageName();
