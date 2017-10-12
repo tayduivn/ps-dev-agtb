@@ -210,6 +210,41 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
         });
     });
 
+    describe('_render()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_setRowFields', function() {});
+            sinon.collection.stub(view, 'toggleRow', function() {});
+        });
+
+        it('should call _setRowFields', function() {
+            view._render();
+
+            expect(view._setRowFields).toHaveBeenCalled();
+        });
+
+        it('should call toggleRow if there are items in toggledModels', function() {
+            view.toggledModels = [{
+                module: 'testModule'
+            }];
+            view._render();
+
+            expect(view.toggleRow).toHaveBeenCalledWith('testModule', 0, true);
+        });
+
+        it('should call toggleRow if this group header was just saved', function() {
+            view.isFirstRender = true;
+            view.model.set('_justSaved', true);
+            view.model.module = 'Quotes';
+            view.model.cid = 'quotesCid';
+
+            view._render();
+
+            expect(view.toggleRow).toHaveBeenCalledWith('Quotes', 'quotesCid', true);
+            expect(view.isFirstRender).toBeFalsy();
+            expect(view.model.has('_justSaved')).toBeFalsy();
+        });
+    });
+
     describe('_onGroupSaveStart()', function() {
         var showStub;
         beforeEach(function() {
@@ -283,16 +318,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
         });
     });
 
-    describe('_onDeleteBundleBtnClicked()', function() {
-        it('should trigger quotes:group:delete event', function() {
-            view.context.parent = SugarTest.app.context.getContext();
-            sinon.collection.spy(view.context.parent, 'trigger');
-            view._onDeleteBundleBtnClicked();
-
-            expect(view.context.parent.trigger).toHaveBeenCalledWith('quotes:group:delete');
-        });
-    });
-
     describe('_onCreateQLIBtnClicked()', function() {
         it('should trigger quotes:group:delete event', function() {
             sinon.collection.spy(view.layout, 'trigger');
@@ -311,5 +336,119 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
 
             expect(view.layout.trigger).toHaveBeenCalledWith('quotes:group:create:note');
         });
+    });
+
+    describe('_onDeleteBundleBtnClicked()', function() {
+        it('should trigger quotes:group:delete event', function() {
+            view.context.parent = SugarTest.app.context.getContext();
+            sinon.collection.spy(view.context.parent, 'trigger');
+            view._onDeleteBundleBtnClicked();
+
+            expect(view.context.parent.trigger).toHaveBeenCalledWith('quotes:group:delete');
+        });
+    });
+
+    describe('toggleRow()', function() {
+        var addClassSpy;
+        var removeClassStub;
+        var toggleClassStub;
+        var rowFields;
+        var modelId;
+
+        beforeEach(function() {
+            view.model.modelView = 'testModelView';
+
+            modelId = 'testModel1';
+            view.model.set('id', modelId);
+            view.model.id = modelId;
+
+            rowFields = ['fieldA', 'fieldB'];
+            view.rowFields[modelId] = rowFields;
+
+            removeClassStub = sinon.collection.stub();
+            toggleClassStub = sinon.collection.stub();
+
+            addClassSpy = sinon.collection.spy(function() {
+                return {
+                    removeClass: removeClassStub
+                };
+            });
+
+            sinon.collection.stub(view, '$', function() {
+                return {
+                    addClass: addClassSpy,
+                    toggleClass: toggleClassStub
+                };
+            });
+            sinon.collection.stub(view, 'toggleFields', function() {});
+            sinon.collection.stub(view.context, 'trigger', function() {});
+
+        });
+
+        afterEach(function() {
+            modelId = null;
+            rowFields = null;
+            addClassSpy = null;
+            removeClassStub = null;
+            toggleClassStub = null;
+        });
+
+        describe('isEdit = true', function() {
+            beforeEach(function() {
+                view.toggleRow('Quotes', modelId, true);
+            });
+
+            it('should set model.modelView to be edit', function() {
+                expect(view.model.modelView).toBe('edit');
+            });
+
+            it('should add model to toggledModels', function() {
+                expect(view.toggledModels[modelId]).toBe(view.model);
+            });
+
+            it('should call toggleClass with tr-inline-edit, true', function() {
+                expect(toggleClassStub).toHaveBeenCalledWith('tr-inline-edit', true);
+            });
+
+            it('should call toggleFields with models rowFields and true', function() {
+                expect(view.toggleFields).toHaveBeenCalledWith(rowFields, true);
+            });
+
+            it('should call row.addClass with not-sortable', function() {
+                expect(addClassSpy).toHaveBeenCalledWith('not-sortable');
+            });
+
+            it('should call row.removeClass with sortable ui-sortable', function() {
+                expect(removeClassStub).toHaveBeenCalledWith('sortable ui-sortable');
+            });
+
+            it('should call context.trigger with list:editgroup:fire', function() {
+                expect(view.context.trigger).toHaveBeenCalledWith('list:editgroup:fire');
+            });
+        });
+
+        describe('isEdit = false', function() {
+            beforeEach(function() {
+                view.toggledModels[modelId] = view.model;
+                view.toggleRow('Quotes', modelId, false);
+            });
+
+            it('should set model.modelView to be detail', function() {
+                expect(view.model.modelView).toBe('list');
+            });
+
+            it('should remove model from toggledModels', function() {
+                expect(view.toggledModels[modelId]).toBeUndefined();
+            });
+
+            it('should call toggleClass with tr-inline-edit, false', function() {
+                expect(toggleClassStub).toHaveBeenCalledWith('tr-inline-edit', false);
+            });
+
+            it('should call toggleFields with models rowFields and true', function() {
+                expect(view.toggleFields).toHaveBeenCalledWith(rowFields, false);
+            });
+        });
+
     });
 });

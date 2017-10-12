@@ -70,6 +70,11 @@
     saveQueue: undefined,
 
     /**
+     * If this is initializing from a Quote's "Copy" functionality
+     */
+    isCopy: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -81,6 +86,7 @@
         this.quoteDataGroupMeta = app.metadata.getLayout('ProductBundles', 'quote-data-group');
         this.bundlesBeingSavedCt = 0;
         this.isCreateView = this.context.get('create') || false;
+        this.isCopy = this.context.get('copy') || false;
 
         //Setup the neccesary child context before data is populated so that child views/layouts are correctly linked
         var pbContext = this.context.getChildContext({link: 'product_bundles'});
@@ -106,6 +112,10 @@
         // check if this is create mode, in which case add an empty array to bundles
         if (this.isCreateView) {
             this._onProductBundleChange(this.model.get('bundles'));
+
+            if (this.isCopy) {
+                this._setCopyQuoteData();
+            }
         } else {
             this.model.once('sync', function(model) {
                 var bundles = this.model.get('bundles');
@@ -116,6 +126,73 @@
                 }
             }, this);
         }
+    },
+
+    /**
+     * Handles grabbing the relatedRecords passed in from the context, creating the ProductBundle groups,
+     * and adding items into those groups
+     *
+     * @private
+     */
+    _setCopyQuoteData: function() {
+        var relatedRecords = this.context.get('relatedRecords');
+        var defaultGroup = this._getComponentByGroupId(this.defaultGroupId);
+
+        // loop over the bundles
+        _.each(relatedRecords, function(record) {
+            // check if this record is the "default group"
+            if (record.default_group) {
+                _.each(record.product_bundle_items, function(pbItem) {
+                    // set the item to use the edit template for quote-data-editablelistbutton
+                    pbItem.modelView = 'edit';
+                    // add the item as a row model starting in edit mode
+                    defaultGroup.addRowModel(pbItem, true);
+                    // update the group line number counts
+                    defaultGroup.trigger('quotes:line_nums:reset');
+                }, this);
+
+                // update the existing default group
+                this._updateDefaultGroupWithNewData(defaultGroup, record);
+            } else {
+                // listen for a new group being created during the _onCreateQuoteGroup function
+                this.context.once(
+                    'quotes:group:create:success',
+                    _.bind(this._onCopyQuoteDataNewGroupedCreateSuccess, this, record),
+                    this
+                );
+
+                // create a new quote group
+                this._onCreateQuoteGroup();
+            }
+        }, this);
+    },
+
+    /**
+     * Called during a Quote record "Copy" to set a group's record data on the model
+     * and adds any items to the group's collection
+     *
+     * @param {Object} record The ProductBundle JSON data to set on the model
+     * @param {Data.Bean} pbModel The ProductBundle Model
+     * @private
+     */
+    _onCopyQuoteDataNewGroupedCreateSuccess: function(record, pbModel) {
+        var group = this._getComponentByGroupId(pbModel.cid);
+
+        // set the group's name on the model
+        group.model.set({
+            name: record.name
+        });
+
+        // loop over each product bundle item and add it to the group rows
+        _.each(record.product_bundle_items, function(pbItem) {
+            // set the item to use the edit template for quote-data-editablelistbutton
+            pbItem.modelView = 'edit';
+            // add the item as a row model starting in edit mode
+            group.addRowModel(pbItem, true);
+        }, this);
+
+        // update the group line number counts
+        group.trigger('quotes:line_nums:reset');
     },
 
     /**
@@ -1146,6 +1223,8 @@
             newBundle.ignoreUserPrefCurrency = true;
             // add the new bundle which will add it to the layout and groupIds
             bundles.add(newBundle);
+            // trigger that the group create was successful and pass the new group data
+            this.context.trigger('quotes:group:create:success', newBundle);
         } else {
             app.alert.show('adding_bundle_alert', {
                 level: 'info',

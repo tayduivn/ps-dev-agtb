@@ -83,6 +83,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             sinon.collection.spy(layout.context, 'on');
             sinon.collection.spy(layout.model, 'on');
             sinon.collection.stub(layout, '_onProductBundleChange', function() {});
+            sinon.collection.stub(layout, '_setCopyQuoteData', function() {});
             sinon.collection.stub(layout, '_checkProductsQuoteLink', function() {});
         });
 
@@ -142,6 +143,25 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             });
         });
 
+        describe('when in create view from Copying a Quote', function() {
+            beforeEach(function() {
+                layout.isCreateView = true;
+                layout.isCopy = true;
+                bundles = $.noop;
+                layout.model.set({
+                    bundles: bundles
+                }, {
+                    silent: true
+                });
+            });
+
+            it('should call _onProductBundleChange with bundles', function() {
+                layout.bindDataChange();
+
+                expect(layout._setCopyQuoteData).toHaveBeenCalled();
+            });
+        });
+
         describe('when not in create view - on model sync', function() {
             beforeEach(function() {
                 layout.isCreateView = false;
@@ -187,6 +207,145 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
                 expect(layout._checkProductsQuoteLink).toHaveBeenCalled();
             });
+        });
+    });
+
+    describe('_setCopyQuoteData()', function() {
+        var relatedRecords;
+        var defaultGroup;
+
+        beforeEach(function() {
+            sinon.collection.stub(layout, '_getComponentByGroupId', function() {
+                return defaultGroup;
+            });
+            sinon.collection.stub(layout, '_updateDefaultGroupWithNewData', function() {});
+            sinon.collection.stub(layout.context, 'once', function() {});
+            sinon.collection.stub(layout, '_onCreateQuoteGroup', function() {});
+        });
+
+        afterEach(function() {
+            relatedRecords = null;
+            defaultGroup = null;
+        });
+
+        describe('when relatedRecords is a default group', function() {
+            var addRowModelStub;
+            var triggerStub;
+            var pbItem1;
+
+            beforeEach(function() {
+                addRowModelStub = sinon.collection.stub();
+                triggerStub = sinon.collection.stub();
+
+                pbItem1 = {
+                    modelView: 'test'
+                };
+                relatedRecords = [{
+                    default_group: true,
+                    product_bundle_items: [pbItem1]
+                }];
+                defaultGroup = {
+                    addRowModel: addRowModelStub,
+                    trigger: triggerStub
+                };
+                layout.context.set('relatedRecords', relatedRecords);
+
+                layout._setCopyQuoteData();
+            });
+
+            afterEach(function() {
+                addRowModelStub = null;
+                triggerStub = null;
+                pbItem1 = null;
+            });
+
+            it('should set any product_bundle_items modelView to edit', function() {
+                expect(pbItem1.modelView).toBe('edit');
+            });
+
+            it('should call addRowModel on the default group', function() {
+                expect(addRowModelStub).toHaveBeenCalledWith(pbItem1, true);
+            });
+
+            it('should call trigger on the default group with quotes:line_nums:reset', function() {
+                expect(triggerStub).toHaveBeenCalledWith('quotes:line_nums:reset');
+            });
+        });
+
+        describe('when relatedRecords is not the default group', function() {
+            beforeEach(function() {
+                relatedRecords = [{
+                    default_group: false
+                }];
+                layout.context.set('relatedRecords', relatedRecords);
+
+                layout._setCopyQuoteData();
+            });
+
+            it('should call context.once with quotes:group:create:success', function() {
+                expect(layout.context.once).toHaveBeenCalledWith('quotes:group:create:success');
+            });
+
+            it('should call _onCreateQuoteGroup', function() {
+                expect(layout._onCreateQuoteGroup).toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('_onCopyQuoteDataNewGroupedCreateSuccess()', function() {
+        var group;
+        var pbItem1;
+        var addRowModelStub;
+        var triggerStub;
+        var groupModel;
+        var record;
+
+        beforeEach(function() {
+            addRowModelStub = sinon.collection.stub();
+            triggerStub = sinon.collection.stub();
+            pbItem1 = {
+                modelView: 'test'
+            };
+            groupModel = new Backbone.Model();
+            group = {
+                addRowModel: addRowModelStub,
+                model: groupModel,
+                trigger: triggerStub
+            };
+            sinon.collection.stub(layout, '_getComponentByGroupId', function() {
+                return group;
+            });
+            record = {
+                name: 'testRecord',
+                product_bundle_items: [pbItem1]
+            };
+
+            layout._onCopyQuoteDataNewGroupedCreateSuccess(record, {});
+        });
+
+        afterEach(function() {
+            group = null;
+            pbItem1 = null;
+            addRowModelStub = null;
+            triggerStub = null;
+            groupModel = null;
+            record = null;
+        });
+
+        it('should set the record name on the group model', function() {
+            expect(groupModel.get('name')).toBe('testRecord');
+        });
+
+        it('should set the product_bundle_items modelView to edit', function() {
+            expect(pbItem1.modelView).toBe('edit');
+        });
+
+        it('should set the record name on the group model', function() {
+            expect(addRowModelStub).toHaveBeenCalledWith(pbItem1, true);
+        });
+
+        it('should call trigger on the default group with quotes:line_nums:reset', function() {
+            expect(triggerStub).toHaveBeenCalledWith('quotes:line_nums:reset');
         });
     });
 
@@ -2179,6 +2338,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
     describe('_onCreateQuoteGroup()', function() {
         var callArgs;
         var bundles;
+
         beforeEach(function() {
             bundles = new Backbone.Collection([{
                 id: 'testId1',
@@ -2187,65 +2347,108 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 id: 'testId2',
                 position: 1
             }]);
-            layout.model.set('id', 'testQuoteLayoutId');
-            layout.model.set('bundles', bundles);
             layout.model.set({
+                id: 'testQuoteLayoutId',
+                bundles: bundles,
                 currency_id: 'currency_id_1',
                 base_rate: '50.37'
             });
 
             sinon.collection.stub(app.alert, 'show', function() {});
             sinon.collection.stub(app.api, 'relationships', function() {});
-            layout._onCreateQuoteGroup();
-            callArgs = app.api.relationships.firstCall;
         });
 
         afterEach(function() {
             callArgs = null;
+            bundles = null;
         });
 
-        it('should call app.alert.show', function() {
-            expect(app.alert.show).toHaveBeenCalled();
+        describe('when in create view', function() {
+            var newBundle;
+
+            beforeEach(function() {
+                newBundle = new Backbone.Model();
+                sinon.collection.stub(layout.context, 'trigger', function() {});
+                sinon.collection.stub(layout, '_createNewProductBundleBean', function() {
+                    return newBundle;
+                });
+                sinon.collection.spy(bundles, 'add', function() {});
+                layout.isCreateView = true;
+
+                layout._onCreateQuoteGroup();
+                callArgs = app.api.relationships.firstCall;
+            });
+
+            afterEach(function() {
+                newBundle = null;
+            });
+
+            it('should set _justSaved to true', function() {
+                expect(newBundle.get('_justSaved')).toBeTruthy();
+            });
+
+            it('should set ignoreUserPrefCurrency on the new bundle to true', function() {
+                expect(newBundle.ignoreUserPrefCurrency).toBeTruthy();
+            });
+
+            it('should add the new bundle to bundles', function() {
+                expect(bundles.add).toHaveBeenCalledWith(newBundle);
+            });
+
+            it('should call context.trigger with quotes:group:create:success, newBundle', function() {
+                expect(layout.context.trigger).toHaveBeenCalledWith('quotes:group:create:success', newBundle);
+            });
         });
 
-        it('should call app.api.relationships', function() {
-            expect(app.api.relationships).toHaveBeenCalled();
-        });
+        describe('when not in create view', function() {
+            beforeEach(function() {
+                layout._onCreateQuoteGroup();
+                callArgs = app.api.relationships.firstCall;
+            });
 
-        it('should call app.api.relationships with method create', function() {
-            expect(callArgs.args[0]).toBe('create');
-        });
+            it('should call app.alert.show', function() {
+                expect(app.alert.show).toHaveBeenCalled();
+            });
 
-        it('should call app.api.relationships with module Quotes', function() {
-            expect(callArgs.args[1]).toBe('Quotes');
-        });
+            it('should call app.api.relationships', function() {
+                expect(app.api.relationships).toHaveBeenCalled();
+            });
 
-        it('should call app.api.relationships with proper link payload Quote ID', function() {
-            expect(callArgs.args[2].id).toBe('testQuoteLayoutId');
-        });
+            it('should call app.api.relationships with method create', function() {
+                expect(callArgs.args[0]).toBe('create');
+            });
 
-        it('should call app.api.relationships with proper link payload link name', function() {
-            expect(callArgs.args[2].link).toBe('product_bundles');
-        });
+            it('should call app.api.relationships with module Quotes', function() {
+                expect(callArgs.args[1]).toBe('Quotes');
+            });
 
-        it('should call app.api.relationships with proper link payload position', function() {
-            expect(callArgs.args[2].related.position).toBe(2);
-        });
+            it('should call app.api.relationships with proper link payload Quote ID', function() {
+                expect(callArgs.args[2].id).toBe('testQuoteLayoutId');
+            });
 
-        it('should call app.api.relationships with proper link payload currency', function() {
-            expect(callArgs.args[2].related.currency_id).toBe('currency_id_1');
-            expect(callArgs.args[2].related.base_rate).toBe('50.37');
-        });
+            it('should call app.api.relationships with proper link payload link name', function() {
+                expect(callArgs.args[2].link).toBe('product_bundles');
+            });
 
-        it('should call app.api.relationships with payload position of 1 when no bundles exist', function() {
-            // because default group is 0, any new create could get a position of 1
-            layout.model.set('bundles', new Backbone.Collection());
-            layout.bundlesBeingSavedCt = 0;
-            layout._onCreateQuoteGroup();
+            it('should call app.api.relationships with proper link payload position', function() {
+                expect(callArgs.args[2].related.position).toBe(2);
+            });
 
-            callArgs = app.api.relationships.lastCall;
+            it('should call app.api.relationships with proper link payload currency', function() {
+                expect(callArgs.args[2].related.currency_id).toBe('currency_id_1');
+                expect(callArgs.args[2].related.base_rate).toBe('50.37');
+            });
 
-            expect(callArgs.args[2].related.position).toBe(1);
+            it('should call app.api.relationships with payload position of 1 when no bundles exist', function() {
+                // because default group is 0, any new create could get a position of 1
+                layout.model.set('bundles', new Backbone.Collection());
+                layout.bundlesBeingSavedCt = 0;
+                layout._onCreateQuoteGroup();
+
+                callArgs = app.api.relationships.lastCall;
+
+                expect(callArgs.args[2].related.position).toBe(1);
+            });
         });
     });
 

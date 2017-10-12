@@ -15,6 +15,7 @@ describe('Quotes.Base.Fields.CopyField', function() {
     var fieldDef;
     var view;
     var layout;
+    var fieldContext;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -30,9 +31,14 @@ describe('Quotes.Base.Fields.CopyField', function() {
             }
         };
 
+        fieldContext = app.context.getContext({
+            module: 'Quotes'
+        });
+        fieldContext.prepare();
+
         layout = SugarTest.createLayout('base', 'Quotes', 'record', {});
         view = SugarTest.createView('base', 'Quotes', 'record', null, null, true, layout);
-        field = SugarTest.createField('base', 'copy', 'copy', 'edit', fieldDef, 'Quotes', model, null, true);
+        field = SugarTest.createField('base', 'copy', 'copy', 'edit', fieldDef, 'Quotes', model, fieldContext, true);
         sinon.collection.stub(field, '_super', function() {});
     });
 
@@ -59,9 +65,14 @@ describe('Quotes.Base.Fields.CopyField', function() {
             };
         });
 
+        it('should set firstRun to true', function() {
+            expect(field.firstRun).toBeTruthy();
+        });
+
         it('should set isConvertingFromShipping true when view is shipping', function() {
             field.dispose();
             view.isConvertFromShippingOrBilling = 'shipping';
+            field.context = fieldContext;
             field.view = view;
             field.initialize(initOptions);
 
@@ -71,10 +82,31 @@ describe('Quotes.Base.Fields.CopyField', function() {
         it('should set isConvertingFromShipping false when view is not shipping', function() {
             field.dispose();
             view.isConvertFromShippingOrBilling = 'billing';
+            field.context = fieldContext;
             field.view = view;
             field.initialize(initOptions);
 
             expect(field.isConvertingFromShipping).toBeFalsy();
+        });
+
+        it('should set isCopy true when copy is passed thru the context', function() {
+            field.dispose();
+            field.view = view;
+            fieldContext.set('copy', true);
+            field.context = fieldContext;
+            field.initialize(initOptions);
+
+            expect(field.isCopy).toBeTruthy();
+        });
+
+        it('should set isCopy true when copy is passed thru the context', function() {
+            field.dispose();
+            field.view = view;
+            fieldContext.set('copy', false);
+            field.context = fieldContext;
+            field.initialize(initOptions);
+
+            expect(field.isCopy).toBeFalsy();
         });
     });
 
@@ -133,7 +165,7 @@ describe('Quotes.Base.Fields.CopyField', function() {
                 });
                 field.sync(true);
 
-                expect(shippingFieldSetDisabledSpy).not.toHaveBeenCalled();
+                expect(shippingFieldSetDisabledSpy).toHaveBeenCalledWith(false);
             });
 
             it('should call setDisabled on shipping field when copy is checked', function() {

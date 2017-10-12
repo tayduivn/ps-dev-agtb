@@ -145,6 +145,167 @@ describe('Quotes.Base.Views.Record', function() {
         });
     });
 
+    describe('duplicateClicked()', function() {
+        var bundles;
+        var pbModel;
+        var pbItem1;
+        var pbItem2;
+        var contextCollection;
+
+        beforeEach(function() {
+            pbItem1 = app.data.createBean('Products', {
+                id: 'testId1',
+                name: 'qliName1',
+                quote_id: 'testQuoteId1',
+                _module: 'Products'
+            });
+            pbItem2 = app.data.createBean('Products', {
+                id: 'testId2',
+                name: 'qliName2',
+                product_template_name: 'prodTemplateName2',
+                quote_id: 'testQuoteId2',
+                _module: 'Products'
+            });
+
+            pbModel = app.data.createBean('ProductBundles', {
+                id: 'bundleId1',
+                product_bundle_items: [],
+                '_products-rel_exp_values': 'test'
+            });
+            pbModel.get('product_bundle_items').add([pbItem1, pbItem2]);
+
+            bundles = app.data.createMixedBeanCollection();
+            bundles.add(pbModel);
+            view.model.set({
+                bundles: bundles,
+                name: 'Test Quote'
+            });
+
+            contextCollection = new Backbone.Collection();
+            view.context.set('collection', contextCollection);
+            sinon.collection.stub(app.controller, 'loadView', function() {});
+            app.router = {
+                navigate: function() {}
+            };
+            sinon.collection.stub(app.router, 'navigate', function() {});
+        });
+
+        afterEach(function() {
+            delete app.router;
+        });
+
+        describe('when there are items in edit mode', function() {
+            beforeEach(function() {
+                view.editCount = 1;
+                sinon.collection.stub(app.alert, 'show', function() {});
+
+                view.duplicateClicked();
+            });
+
+            it('should call app.alert.show', function() {
+                expect(app.alert.show).toHaveBeenCalled();
+            });
+        });
+
+        describe('when no items are in edit mode', function() {
+            var callArgs;
+
+            beforeEach(function() {
+                view.editCount = 0;
+                sinon.collection.stub(app.alert, 'show', function() {});
+
+                view.duplicateClicked();
+                callArgs = app.controller.loadView.lastCall.args[0];
+            });
+
+            afterEach(function() {
+                callArgs = null;
+            });
+
+            it('should call app.controller.loadView with correct action', function() {
+                expect(callArgs.action).toBe('edit');
+            });
+
+            it('should call app.controller.loadView with correct collection', function() {
+                expect(callArgs.collection).toBe(contextCollection);
+            });
+
+            it('should call app.controller.loadView with correct copy param', function() {
+                expect(callArgs.copy).toBeTruthy();
+            });
+
+            it('should call app.controller.loadView with correct create param', function() {
+                expect(callArgs.create).toBeTruthy();
+            });
+
+            it('should call app.controller.loadView with correct layout name', function() {
+                expect(callArgs.layout).toBe('create');
+            });
+
+            it('should call app.controller.loadView with correct model', function() {
+                expect(callArgs.model.get('name')).toBe('Test Quote');
+            });
+
+            it('should call app.controller.loadView with correct module', function() {
+                expect(callArgs.module).toBe('Quotes');
+            });
+
+            describe('when copying bundle', function() {
+                var bundle;
+
+                beforeEach(function() {
+                    bundle = callArgs.relatedRecords[0];
+                });
+
+                afterEach(function() {
+                    bundle = null;
+                });
+
+                it('should remove id', function() {
+                    expect(bundle.id).toBeUndefined();
+                });
+
+                it('should remove _products-rel_exp_values', function() {
+                    expect(bundle['_products-rel_exp_values']).toBeUndefined();
+                });
+            });
+
+            describe('when copying QLIs', function() {
+                var qliModel1;
+                var qliModel2;
+
+                beforeEach(function() {
+                    qliModel1 = callArgs.relatedRecords[0].product_bundle_items[0];
+                    qliModel2 = callArgs.relatedRecords[0].product_bundle_items[1];
+                });
+
+                afterEach(function() {
+                    qliModel1 = null;
+                });
+
+                it('should remove id', function() {
+                    expect(qliModel1.id).toBeUndefined();
+                });
+
+                it('should remove quote_id', function() {
+                    expect(qliModel1.quote_id).toBeUndefined();
+                });
+
+                it('should set product_template_name to the QLI name if product_template_name is empty', function() {
+                    expect(qliModel1.product_template_name).toBe(qliModel1.name);
+                });
+
+                it('should set name to the QLI product_template_name if name is empty', function() {
+                    expect(qliModel2.name).toBe(qliModel2.product_template_name);
+                });
+            });
+
+            it('should call app.router.navigate', function() {
+                expect(app.router.navigate).toHaveBeenCalledWith('#Quotes/create', {trigger: false});
+            });
+        });
+    });
+
     describe('_handleItemToggled', function() {
         it('should have an edit count equal to 0', function() {
             view.editCount = 0;
