@@ -11,6 +11,7 @@
 // jscs:disable
 var ExpressionControl = function (settings) {
     Element.call(this, settings);
+    this._name = null;
     this._panel = null;
     this._operatorSettings = {};
     this._operatorPanel = null;
@@ -214,6 +215,7 @@ ExpressionControl.prototype.init = function(settings) {
     var module = 'pmse_Project';
     ExpressionControl.prototype.initComparisonOperators(module);
     var defaults = {
+        name: null,
         width: 200,
         itemContainerHeight: 80, //only applicable when it is not external
         height: 'auto',
@@ -242,6 +244,8 @@ ExpressionControl.prototype.init = function(settings) {
     };
 
     jQuery.extend(true, defaults, settings);
+
+    this._name = defaults.name;
 
     this._proxy = new SugarProxy();
     if (defaults.itemContainer instanceof ItemContainer) {
@@ -1682,11 +1686,15 @@ ExpressionControl.prototype._createModulePanel = function () {
                                 if (that.EXTRA_OPERATORS[labelField]) {
                                     operators = operators.concat(that.EXTRA_OPERATORS[labelField]);
                                 }
-                                if (selVal == 'updated' || selVal == 'allupdates') {
-                                    var url = parentField._dataURL,
-                                        base = parentField._attributes ? parentField._attributes.base_module : false;
-                                    if (url && base && url.endsWith(base)) {
+                                if (that._name == 'evn_criteria') {
+                                    if (!selVal) {
                                         operators = operators.concat(that.OPERATORS.changes);
+                                    } else if (selVal == 'updated' || selVal == 'allupdates') {
+                                        var url = parentField._dataURL,
+                                            base = parentField._attributes ? parentField._attributes.base_module : false;
+                                        if (url && base && url.endsWith(base)) {
+                                            operators = operators.concat(that.OPERATORS.changes);
+                                        }
                                     }
                                 }
                                 operatorField.setLabelField(labelField);
@@ -2460,8 +2468,12 @@ ExpressionControl.prototype.isValid = function() {
                 (current.expOperator == 'changes' ||
                     current.expOperator == 'changes_from' ||
                     current.expOperator == 'changes_to')) {
-                var selVal = $('#evn_params').val();
-                valid = selVal == 'updated' || selVal == 'allupdates';
+                if (this._name == 'evn_criteria') {
+                    var selVal = $('#evn_params').val();
+                    valid = !selVal || selVal == 'updated' || selVal == 'allupdates';
+                } else {
+                    valid = false;
+                }
             }
         } else {
             valid = prev && ((prev.expType === "GROUP" && prev.expValue === ")") || (pIsEval || cIsEval));

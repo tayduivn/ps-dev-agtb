@@ -24,6 +24,7 @@ CriteriaField.prototype.type = "CriteriaField";
 
 CriteriaField.prototype.init = function(settings) {
     var that = this, defaults = {
+        name: null,
         operators: {},
         evaluation: false,
         variable: false,
@@ -60,6 +61,7 @@ CriteriaField.prototype.init = function(settings) {
     });
 
     this._panel = new ExpressionControl({
+        name: defaults.name,
         parent: this,
         itemContainer: this.controlObject,
         owner: this.controlObject,
