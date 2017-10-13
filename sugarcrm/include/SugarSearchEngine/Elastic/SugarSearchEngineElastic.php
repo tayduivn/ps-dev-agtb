@@ -13,6 +13,7 @@
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
  *
@@ -83,8 +84,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 return null;
             }
 
-            $filters[] = new \Elastica\Query\Terms(array(
-                'owner_id' => $current_user->id,
+            $ownerField = Mapping::PREFIX_COMMON . 'owner_id.owner';
+            $filters[] = new \Elastica\Query\Term(array(
+                $ownerField => $current_user->id,
             ));
         }
 
@@ -97,8 +99,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 return null;
             }
 
-            $filters[] = new \Elastica\Query\Terms(array(
-                'user_favorites' => $current_user->id,
+            $favField = Mapping::PREFIX_COMMON . 'user_favorites.agg';
+            $filters[] = new \Elastica\Query\Term(array(
+                $favField => $current_user->id,
             ));
         }
 
