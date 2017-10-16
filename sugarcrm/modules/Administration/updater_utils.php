@@ -60,6 +60,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 	if(!$response_data){
 
         $systemInfo = SugarSystemInfo::getInstance();
+        SugarAutoLoader::requireWithCustom('include/SugarHeartbeat/SugarHeartbeatClient.php', true);
         $sclientClass = SugarAutoLoader::customClass('SugarHeartbeatClient');
         $sclient = new $sclientClass();
 
