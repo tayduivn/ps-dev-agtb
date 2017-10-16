@@ -15,12 +15,12 @@
  */
 ({
     extendsFrom: 'QuickcreateField',
-    plugins: ['EmailClientLaunch'],
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
+        this.plugins = _.union(this.plugins || [], ['EmailClientLaunch']);
         this._super('initialize', [options]);
 
         if (this.context && this.context.has('model')) {

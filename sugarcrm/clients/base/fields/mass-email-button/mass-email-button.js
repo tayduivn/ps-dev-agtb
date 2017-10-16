@@ -32,7 +32,7 @@
      * templates.
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins, ['EmailClientLaunch']);
+        this.plugins = _.union(this.plugins || [], ['EmailClientLaunch']);
         this._super('initialize', [options]);
     },
 
