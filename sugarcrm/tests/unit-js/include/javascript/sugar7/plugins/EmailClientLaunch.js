@@ -314,6 +314,35 @@ describe('EmailClientLaunch Plugin', function() {
                 baz: 'no'
             });
         });
+
+        it('should compact email options to remove key-value pairs where the value is undefined', function() {
+            field.emailOptions = {
+                foo: 'bar',
+                biz: 'baz',
+                yak: 'yuk'
+            };
+            field.addEmailOptions({
+                // "fizz" should be added.
+                fizz: 'buzz',
+                // "foo" should be removed.
+                foo: undefined,
+                // The existing value for "biz" should be replaced.
+                biz: null,
+                qux: '',
+                // "qwerty" should not be added at all.
+                qwerty: undefined,
+                // The existing value for "yak" should be replaced.
+                yak: 'yook'
+            });
+
+            expect(_.keys(field.emailOptions).sort()).toEqual(['biz', 'fizz', 'qux', 'yak']);
+            expect(field.emailOptions).toEqual({
+                biz: null,
+                fizz: 'buzz',
+                qux: '',
+                yak: 'yook'
+            });
+        });
     });
 
     describe('Build mailto: Url', function() {
@@ -618,5 +647,159 @@ describe('EmailClientLaunch Plugin', function() {
             field.trigger('render');
             expect(field.$('a').attr('href')).toEqual('javascript:void(0)');
         });
+    });
+
+    describe('updating email options on changes to the model', function() {
+        var contact;
+        var email;
+
+        beforeEach(function() {
+            contact = app.data.createBean('Contacts', {id: _.uniqueId()});
+            email = app.data.createBean('Emails', {id: _.uniqueId()});
+
+            sandbox.spy(field, 'render');
+            sandbox.spy(field, 'addEmailOptions');
+            field.emailOptionTo = sandbox.spy();
+            field.emailOptionCc = sandbox.spy();
+            field.emailOptionBcc = sandbox.spy();
+            field.emailOptionSubject = sandbox.spy();
+            field.emailOptionDescription = sandbox.spy();
+            field.emailOptionDescriptionHtml = sandbox.spy();
+            field.emailOptionAttachments = sandbox.spy();
+            field.emailOptionRelated = sandbox.spy();
+            field.emailOptionTeams = sandbox.spy();
+        });
+
+        it('should update email options when the field is initialized', function() {
+            // Set the context's model and initialize the field.
+            field.context.set('model', contact);
+            field.trigger('init');
+
+            expect(field.emailOptionTo).toHaveBeenCalledWith(contact);
+            expect(field.emailOptionCc).toHaveBeenCalledWith(contact);
+            expect(field.emailOptionBcc).toHaveBeenCalledWith(contact);
+            expect(field.emailOptionSubject).toHaveBeenCalledWith(contact);
+            expect(field.emailOptionDescription).toHaveBeenCalledWith(contact);
+            expect(field.emailOptionDescriptionHtml).toHaveBeenCalledWith(contact);
+            expect(field.emailOptionAttachments).toHaveBeenCalledWith(contact);
+            expect(field.emailOptionRelated).toHaveBeenCalledWith(contact);
+            expect(field.emailOptionTeams).toHaveBeenCalledWith(contact);
+            expect(field.addEmailOptions).toHaveBeenCalled();
+            expect(field.render).not.toHaveBeenCalled();
+        });
+
+        using(
+            'model change events',
+            [
+                'change',
+                'change:from_collection',
+                'change:to_collection',
+                'change:cc_collection',
+                'change:bcc_collection'
+            ],
+            function(event) {
+                it('should update email options when the model changes', function() {
+                    // Set the context's model and initialize the field.
+                    field.context.set('model', contact);
+                    field.trigger('init');
+
+                    // Change the model.
+                    contact.trigger(event);
+
+                    expect(field.emailOptionTo).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionTo).toHaveBeenCalledTwice();
+                    expect(field.emailOptionCc).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionCc).toHaveBeenCalledTwice();
+                    expect(field.emailOptionBcc).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionBcc).toHaveBeenCalledTwice();
+                    expect(field.emailOptionSubject).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionSubject).toHaveBeenCalledTwice();
+                    expect(field.emailOptionDescription).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionDescription).toHaveBeenCalledTwice();
+                    expect(field.emailOptionDescriptionHtml).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionDescriptionHtml).toHaveBeenCalledTwice();
+                    expect(field.emailOptionAttachments).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionAttachments).toHaveBeenCalledTwice();
+                    expect(field.emailOptionRelated).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionRelated).toHaveBeenCalledTwice();
+                    expect(field.emailOptionTeams).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionTeams).toHaveBeenCalledTwice();
+                    expect(field.addEmailOptions).toHaveBeenCalledTwice();
+                    expect(field.render).toHaveBeenCalledOnce();
+                });
+
+                it('should update email options when the parent model changes', function() {
+                    // Set the context's model.
+                    field.context.set('model', email);
+
+                    // Create a new context for the parent context.
+                    field.context.parent = new app.Bean();
+                    field.context.parent.set('model', contact);
+
+                    // Initialize the field.
+                    field.trigger('init');
+
+                    // Change the parent model.
+                    contact.trigger(event);
+
+                    expect(field.emailOptionTo).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionTo).toHaveBeenCalledTwice();
+                    expect(field.emailOptionCc).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionCc).toHaveBeenCalledTwice();
+                    expect(field.emailOptionBcc).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionBcc).toHaveBeenCalledTwice();
+                    expect(field.emailOptionSubject).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionSubject).toHaveBeenCalledTwice();
+                    expect(field.emailOptionDescription).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionDescription).toHaveBeenCalledTwice();
+                    expect(field.emailOptionDescriptionHtml).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionDescriptionHtml).toHaveBeenCalledTwice();
+                    expect(field.emailOptionAttachments).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionAttachments).toHaveBeenCalledTwice();
+                    expect(field.emailOptionRelated).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionRelated).toHaveBeenCalledTwice();
+                    expect(field.emailOptionTeams).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionTeams).toHaveBeenCalledTwice();
+                    expect(field.addEmailOptions).toHaveBeenCalledTwice();
+                    expect(field.render).toHaveBeenCalledOnce();
+                });
+
+                it('should not update email options when the model changes', function() {
+                    // Set the context's model.
+                    field.context.set('model', email);
+
+                    // Create a new context for the parent context.
+                    field.context.parent = new app.Bean();
+                    field.context.parent.set('model', contact);
+
+                    // Initialize the field.
+                    field.trigger('init');
+
+                    // Change the model.
+                    email.trigger(event);
+
+                    expect(field.emailOptionTo).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionTo).toHaveBeenCalledOnce();
+                    expect(field.emailOptionCc).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionCc).toHaveBeenCalledOnce();
+                    expect(field.emailOptionBcc).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionBcc).toHaveBeenCalledOnce();
+                    expect(field.emailOptionSubject).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionSubject).toHaveBeenCalledOnce();
+                    expect(field.emailOptionDescription).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionDescription).toHaveBeenCalledOnce();
+                    expect(field.emailOptionDescriptionHtml).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionDescriptionHtml).toHaveBeenCalledOnce();
+                    expect(field.emailOptionAttachments).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionAttachments).toHaveBeenCalledOnce();
+                    expect(field.emailOptionRelated).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionRelated).toHaveBeenCalledOnce();
+                    expect(field.emailOptionTeams).toHaveBeenCalledWith(contact);
+                    expect(field.emailOptionTeams).toHaveBeenCalledOnce();
+                    expect(field.addEmailOptions).toHaveBeenCalledOnce();
+                    expect(field.render).not.toHaveBeenCalled();
+                });
+            }
+        );
     });
 });

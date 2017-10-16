@@ -179,10 +179,34 @@
             },
 
             /**
-             * Extends existing email options, adding the specified ones
-             * Also clones the related model passed so we don't modify the original
+             * Adds email options to `this.emailOptions`. If any of the keys
+             * already exist in `this.emailOptions`, then the value is
+             * replaced.
              *
-             * @param options
+             * Any keys with undefined values are removed before they are
+             * added.
+             *
+             * @param {Object} [options] Attributes to set on the email.
+             * @param {Array} [options.outbound_email_id] The email account to
+             * use to send the email.
+             * @param {Array} [options.to] The recipients in the To field.
+             * @param {Array} [options.cc] The recipients in the CC field.
+             * @param {Array} [options.bcc] The recipients in the BCC field.
+             * @param {string} [options.name] The email's subject.
+             * @param {string} [options.description] The email's plain-text
+             * body.
+             * @param {string} [options.description_html] The email's HTML
+             * body.
+             * @param {Array} [options.attachments] The email's attachments.
+             * @param {Data.Bean} [options.related] The record to which the
+             * email is related. The model is cloned so the original model
+             * is not modified.
+             * @param {Array} [options.team_name] The teams assigned to the
+             * email.
+             * @param {string} [options.assigned_user_id] The ID of the
+             * assigned user.
+             * @param {string} [options.assigned_user_name] The name of the
+             * assigned user.
              */
             addEmailOptions: function(options) {
                 this.emailOptions = this.emailOptions || {};
@@ -193,6 +217,15 @@
                 }
 
                 this.emailOptions = _.extend({}, this.emailOptions, options);
+
+                // Removes undefined key/value pairs.
+                this.emailOptions = _.reduce(this.emailOptions, function(memo, value, key) {
+                    if (!_.isUndefined(value)) {
+                        memo[key] = value;
+                    }
+
+                    return memo;
+                }, {});
             },
 
             /**
@@ -332,9 +365,129 @@
 
             /**
              * @inheritdoc
-             * On render, modify the href appropriately for the correct email client
+             *
+             * On render, set each email link's href attribute to a mailto for
+             * users that use an external email client and javascript:void(0)
+             * for users that use Sugar's email compose.
+             *
+             * On init, set up a listener for changes to the component's model
+             * that updates the email options on those changes. Some components
+             * are in child context's, like subpanels, and use the parent
+             * context's model.
+             *
+             * A component can implement any of the following methods to
+             * customize what data is provided to the plugin. Each method takes
+             * a model as a parameter. That model is the same model that the
+             * plugin is using to gather data. Components should make sure they
+             * use this model when producing the value they give to the plugin.
+             * Return `undefined` to prevent an email option from being set.
+             *
+             * @example
+             * emailOptionTo
+             * Returns an array of recipients to be added to the email's To
+             * field.
+             *
+             * @example
+             * emailOptionCc
+             * Returns an array of recipients to be added to the email's CC
+             * field.
+             *
+             * @example
+             * emailOptionBcc
+             * Returns an array of recipients to be added to the email's BCC
+             * field.
+             *
+             * @example
+             * emailOptionSubject
+             * Returns a string to be used as the email's subject.
+             *
+             * @example
+             * emailOptionDescription
+             * Returns a string to be used as the email's plain-text body.
+             *
+             * @example
+             * emailOptionDescriptionHtml
+             * Returns a string to be used as the email's HTML body.
+             *
+             * @example
+             * emailOptionAttachments
+             * Returns an array of attachments to be attached to the email.
+             *
+             * @example
+             * emailOptionRelated
+             * Returns a bean to be used as the email's related record.
+             *
+             * @example
+             * emailOptionTeams
+             * Returns an array of teams to be used as the email's teams.
              */
-            onAttach: function () {
+            onAttach: function() {
+                var updateEmailOptions = _.bind(function(model) {
+                    var options = {};
+
+                    if (_.isFunction(this.emailOptionTo)) {
+                        options.to = this.emailOptionTo(model);
+                    }
+
+                    if (_.isFunction(this.emailOptionCc)) {
+                        options.cc = this.emailOptionCc(model);
+                    }
+
+                    if (_.isFunction(this.emailOptionBcc)) {
+                        options.bcc = this.emailOptionBcc(model);
+                    }
+
+                    if (_.isFunction(this.emailOptionSubject)) {
+                        options.name = this.emailOptionSubject(model);
+                    }
+
+                    if (_.isFunction(this.emailOptionDescription)) {
+                        options.description = this.emailOptionDescription(model);
+                    }
+
+                    if (_.isFunction(this.emailOptionDescriptionHtml)) {
+                        options.description_html = this.emailOptionDescriptionHtml(model);
+                    }
+
+                    if (_.isFunction(this.emailOptionAttachments)) {
+                        options.attachments = this.emailOptionAttachments(model);
+                    }
+
+                    if (_.isFunction(this.emailOptionRelated)) {
+                        options.related = this.emailOptionRelated(model);
+                    }
+
+                    if (_.isFunction(this.emailOptionTeams)) {
+                        options.team_name = this.emailOptionTeams(model);
+                    }
+
+                    this.addEmailOptions(options);
+                }, this);
+
+                this.on('init', function() {
+                    var self = this;
+                    var context = this.context.parent || this.context;
+                    var model = context.get('model');
+                    var events = [
+                        'change',
+                        'change:from_collection',
+                        'change:to_collection',
+                        'change:cc_collection',
+                        'change:bcc_collection',
+                        'change:attachments_collection'
+                    ];
+                    var onChange = _.debounce(function(model) {
+                        updateEmailOptions(model);
+                        self.render();
+                    }, 200);
+
+                    if (model instanceof app.Bean) {
+                        this.listenTo(model, events.join(' '), onChange);
+                    }
+
+                    updateEmailOptions(model);
+                }, this);
+
                 this.on('render', this.updateEmailLinks, this);
             }
         });
