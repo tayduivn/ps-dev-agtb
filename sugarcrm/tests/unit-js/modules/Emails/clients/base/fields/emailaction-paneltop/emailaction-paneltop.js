@@ -10,20 +10,53 @@
  */
 describe('Emails.Fields.EmailactionPaneltop', function() {
     var app, field, sandbox;
+    var context;
+    var model;
 
-    beforeEach(function() {
-        app = SugarTest.app;
-        field = SugarTest.createField({
+    function createField(fieldDef) {
+        var def = {
+            icon: 'fa-plus',
+            name: 'email_compose_button',
+            acl_action: 'create',
+            tooltip: 'LBL_CREATE_BUTTON_LABEL'
+        };
+
+        def = _.extend(def, fieldDef || {});
+
+        return SugarTest.createField({
             client: 'base',
             name: 'paneltop',
             type: 'emailaction-paneltop',
             viewName: 'detail',
             module: 'Emails',
-            loadFromModule: true
+            model: model,
+            context: context,
+            loadFromModule: true,
+            fieldDef: def
         });
-        field.plugins = ['EmailClientLaunch'];
+    }
+
+    beforeEach(function() {
+        app = SugarTest.app;
+
+        SugarTest.testMetadata.init();
         SugarTest.loadPlugin('EmailClientLaunch');
-        SugarTest.app.plugins.attach(field, 'field');
+        SugarTest.loadComponent('base', 'field', 'button');
+        SugarTest.loadComponent('base', 'field', 'rowaction');
+        SugarTest.loadComponent('base', 'field', 'emailaction');
+        SugarTest.loadComponent('base', 'field', 'emailaction-paneltop', 'Emails');
+        SugarTest.testMetadata.set();
+
+        app.data.declareModels();
+
+        context = app.context.getContext({module: 'Contacts'});
+        context.prepare(true);
+        model = context.get('model');
+        model.set({
+            id: _.uniqueId(),
+            first_name: 'Bobby',
+            last_name: 'Francis'
+        });
 
         sandbox = sinon.sandbox.create();
     });
@@ -36,38 +69,9 @@ describe('Emails.Fields.EmailactionPaneltop', function() {
         field = null;
     });
 
-    describe('launching the email client', function() {
-        describe('getting options from the field', function() {
-            var bean, $el;
-
-            beforeEach(function() {
-                bean = app.data.createBean('Contacts', {id: '123', name: 'Foo', email: 'foo@bar.com'});
-                field.context.set('model', bean);
-
-                $el = $('<a href="#" data-action="email" data-placement="bottom">' + bean.get('email') + '</a>');
-            });
-
-            it('should return the email options', function() {
-                var actual;
-
-                field.emailOptions = {
-                    to: [bean.toJSON()],
-                    related: bean
-                };
-
-                actual = field._retrieveEmailOptions($el);
-                expect(actual.to).toBeDefined();
-                expect(actual.related).toBeDefined();
-            });
-
-            it('should return an empty object', function() {
-                expect(field._retrieveEmailOptionsFromLink($el)).toEqual({});
-            });
-        });
-    });
-
     describe('closing the email client', function() {
         it('should trigger paneltop:refresh events on the context', function() {
+            field = createField();
             field.context.parent = undefined;
             sandbox.spy(field.context, 'trigger');
 
@@ -81,6 +85,7 @@ describe('Emails.Fields.EmailactionPaneltop', function() {
         });
 
         it('should trigger the events on the parent context', function() {
+            field = createField();
             field.context.parent = {
                 trigger: sandbox.spy()
             };
@@ -88,6 +93,39 @@ describe('Emails.Fields.EmailactionPaneltop', function() {
             field.trigger('emailclient:close');
 
             expect(field.context.parent.trigger.callCount).toBe(2);
+        });
+    });
+
+    describe('Email Options', function() {
+        using(
+            'field defs',
+            [
+                {set_recipient_to_parent: false},
+                {set_related_to_parent: false},
+                {}
+            ],
+            function(def) {
+                it('should not add the model as a recipient', function() {
+                    field = createField(def);
+                    expect(field.emailOptions.to).toBeUndefined();
+                });
+
+                it('should not add the model as the related record', function() {
+                    field = createField(def);
+                    expect(field.emailOptions.related).toBeUndefined();
+                });
+            }
+        );
+
+        it('should add the model as a recipient', function() {
+            field = createField({set_recipient_to_parent: true});
+            expect(field.emailOptions.to.length).toBe(1);
+            expect(field.emailOptions.to[0].bean.get('id')).toBe(model.get('id'));
+        });
+
+        it('should add the model as the related record', function() {
+            field = createField({set_related_to_parent: true});
+            expect(field.emailOptions.related.get('id')).toBe(model.get('id'));
         });
     });
 });

@@ -42,8 +42,47 @@
      * @param {jQuery} [$link] The element from which to get options.
      * @return {Object}
      * @private
+     * @deprecated Use
+     * View.Fields.Base.Emails.EmailactionPaneltopField#emailOptionTo and
+     * View.Fields.Base.Emails.EmailactionPaneltopField#emailOptionRelated
+     * instead.
      */
     _retrieveEmailOptionsFromLink: function($link) {
+        app.logger.warn('View.Fields.Base.Emails.EmailactionPaneltopField#_retrieveEmailOptionsFromLink is ' +
+            'deprecated. Use View.Fields.Base.Emails.EmailactionPaneltopField#emailOptionTo and ' +
+            'View.Fields.Base.Emails.EmailactionPaneltopField#emailOptionRelated instead.');
         return {};
+    },
+
+    /**
+     * Returns the recipients to use in the To field of the email. If
+     * `this.def.set_recipient_to_parent` is true, then the model is added to
+     * the email's To field.
+     *
+     * @see EmailClientLaunch plugin.
+     * @param {Data.Bean} model Use this model when identifying the recipients.
+     * @return {undefined|Array}
+     */
+    emailOptionTo: function(model) {
+        if (this.def.set_recipient_to_parent) {
+            return [{
+                bean: model
+            }];
+        }
+    },
+
+    /**
+     * Returns the bean to use as the email's related record. If
+     * `this.def.set_related_to_parent` is true, then the model is used.
+     *
+     * @see EmailClientLaunch plugin.
+     * @param {Data.Bean} model This model's parent is used as the email's
+     * related record.
+     * @return {undefined|Data.Bean}
+     */
+    emailOptionRelated: function(model) {
+        if (this.def.set_related_to_parent) {
+            return model;
+        }
     }
 })
