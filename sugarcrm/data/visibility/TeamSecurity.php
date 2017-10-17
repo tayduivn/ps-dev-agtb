@@ -102,10 +102,11 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
         } else {
             $table_alias = $this->bean->table_name;
         }
+        $tf_alias = $this->bean->db->getValidDBName($table_alias . '_tf', true, 'alias');
         $query = " INNER JOIN (select tst.team_set_id from team_sets_teams tst";
         $query .= " INNER JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
                     AND {$team_table_alias}.user_id = '$current_user_id'
-                    AND {$team_table_alias}.deleted=0 group by tst.team_set_id) {$table_alias}_tf on {$table_alias}_tf.team_set_id  = {$table_alias}.team_set_id ";
+                    AND {$team_table_alias}.deleted=0 group by tst.team_set_id) {$tf_alias} on {$tf_alias}.team_set_id  = {$table_alias}.team_set_id ";
         if ($this->getOption('join_teams')) {
             $query .= " INNER JOIN teams ON teams.id = {$team_table_alias}.team_id AND teams.deleted=0 ";
         }
@@ -131,6 +132,7 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
         }
 
         $user_id = $query->getDBManager()->quoted($user_id);
+        $tf_alias = $this->bean->db->getValidDBName($table_alias . '_tf', true, 'alias');
         $table = <<<SQL
 (
   SELECT tst.team_set_id
@@ -145,9 +147,9 @@ SQL;
         $query->joinTable(
             $table,
             array(
-                'alias' => $table_alias . '_tf',
+                'alias' => $tf_alias,
             )
-        )->on()->equalsField($table_alias . '_tf.team_set_id', $table_alias . '.team_set_id');
+        )->on()->equalsField($tf_alias . '.team_set_id', $table_alias . '.team_set_id');
 
         if ($this->getOption('join_teams')) {
             $query->joinTable('teams')
