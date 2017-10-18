@@ -15,8 +15,29 @@ describe('Emails.Field.ReplyAction', function() {
     var sandbox;
     var context;
 
+    function createParticipant(link, email, parentType, parentName) {
+        var parentId = _.uniqueId();
+
+        return app.data.createBean('EmailParticipants', {
+            _link: link,
+            id: _.uniqueId(),
+            parent: {
+                _acl: {},
+                type: parentType,
+                id: parentId,
+                name: parentName
+            },
+            parent_type: parentType,
+            parent_id: parentId,
+            parent_name: parentName,
+            email_address_id: _.uniqueId(),
+            email_address: email
+        });
+    }
+
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
+        var parent;
 
         SugarTest.testMetadata.init();
 
@@ -34,13 +55,66 @@ describe('Emails.Field.ReplyAction', function() {
         app.data.declareModels();
         app.routing.start();
 
-        //used by formatDate in the reply header template
-        app.user.setPreference('datepref', 'Y-m-d');
+        // Used by formatDate in the reply header template.
+        app.user.setPreference('datepref', 'm/d/Y');
         app.user.setPreference('timepref', 'H:i');
+
+        parent = app.data.createBean('Contacts', {
+            id: _.uniqueId(),
+            name: 'Eric Johns'
+        });
 
         context = app.context.getContext({module: 'Emails'});
         context.prepare(true);
         model = context.get('model');
+        model.set({
+            id: _.uniqueId(),
+            name: 'My Subject',
+            // Create a datetime string that will work in any timezone.
+            date_sent: app.date('2012-03-27 01:48').format(),
+            description: 'this is the plain-text body',
+            description_html: '<p>this is the <b>html</b> body</p>',
+            parent: {
+                _acl: {},
+                type: parent.module,
+                id: parent.get('id'),
+                name: parent.get('name')
+            },
+            parent_type: parent.module,
+            parent_id: parent.get('id'),
+            parent_name: parent.get('name'),
+            team_name: [
+                {
+                    id: 'West',
+                    name: 'West',
+                    primary: false
+                },
+                {
+                    id: 'East',
+                    name: 'East',
+                    primary: true
+                }
+            ]
+        });
+        model.set('from_collection', [
+            createParticipant('from', 'rturner@example.com', 'Contacts', 'Ralph Turner')
+        ]);
+        model.set('to_collection', [
+            createParticipant('to', 'gearl@example.com', 'Contacts', 'Georgia Earl'),
+            createParticipant('to', 'nholman@example.com', 'Contacts', 'Nancy Holman'),
+            app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                id: _.uniqueId(),
+                email_address_id: _.uniqueId(),
+                email_address: 'bhunter@example.com'
+            })
+        ]);
+        model.set('cc_collection', [
+            createParticipant('cc', 'wbibby@example.com', 'Contacts', 'Wally Bibby')
+        ]);
+        model.set('bcc_collection', [
+            createParticipant('bcc', 'rwithers@example.com', 'Contacts', 'Rhonda Withers')
+        ]);
 
         field = SugarTest.createField({
             name: 'reply_action',
@@ -65,200 +139,73 @@ describe('Emails.Field.ReplyAction', function() {
         sandbox.restore();
     });
 
-    describe('_getReplyRecipients', function() {
-        beforeEach(function() {
-            var parentId = _.uniqueId();
-            var from = app.data.createBean('EmailParticipants', {
-                _link: 'from',
-                id: _.uniqueId(),
-                parent: {
-                    _acl: {},
-                    type: 'Contacts',
-                    id: parentId,
-                    name: 'Ralph Turner'
-                },
-                parent_type: 'Contacts',
-                parent_id: parentId,
-                parent_name: 'Ralph Turner',
-                email_address_id: _.uniqueId(),
-                email_address: 'rturner@example.com'
-            });
-
-            field.model.set('from_collection', from);
-        });
-
-        it('should return the original sender in the to field if reply', function() {
-            var sender = field.model.get('from_collection').first();
-            var actual = field._getReplyRecipients(false);
-
-            expect(actual.to.length).toBe(1);
-            expect(actual.to[0].email.get('id')).toBe(sender.get('email_address_id'));
-            expect(actual.to[0].email.get('email_address')).toBe(sender.get('email_address'));
-            expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
-            expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
-            expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(actual.cc.length).toBe(0);
-        });
-
-        it('should return the original from, to and cc recipients if reply all', function() {
-            var parentId1 = _.uniqueId();
-            var parentId2 = _.uniqueId();
-            var parentId3 = _.uniqueId();
-            var parentId4 = _.uniqueId();
-            var sender = field.model.get('from_collection').first();
-            var to = [
-                app.data.createBean('EmailParticipants', {
-                    _link: 'to',
-                    id: _.uniqueId(),
-                    parent: {
-                        _acl: {},
-                        type: 'Contacts',
-                        id: parentId1,
-                        name: 'Georgia Earl'
-                    },
-                    parent_type: 'Contacts',
-                    parent_id: parentId1,
-                    parent_name: 'Georgia Earl',
-                    email_address_id: _.uniqueId(),
-                    email_address: 'a@b.com'
-                }),
-                app.data.createBean('EmailParticipants', {
-                    _link: 'to',
-                    id: _.uniqueId(),
-                    parent: {
-                        _acl: {},
-                        type: 'Contacts',
-                        id: parentId2,
-                        name: 'Nancy Holman'
-                    },
-                    parent_type: 'Contacts',
-                    parent_id: parentId2,
-                    parent_name: 'Nancy Holman',
-                    email_address_id: _.uniqueId(),
-                    email_address: 'b@c.com'
-                })
-            ];
-            var cc = [
-                app.data.createBean('EmailParticipants', {
-                    _link: 'cc',
-                    id: _.uniqueId(),
-                    parent: {
-                        _acl: {},
-                        type: 'Contacts',
-                        id: parentId3,
-                        name: 'Wally Bibby'
-                    },
-                    parent_type: 'Contacts',
-                    parent_id: parentId3,
-                    parent_name: 'Wally Bibby',
-                    email_address_id: _.uniqueId(),
-                    email_address: 'c@d.com'
-                })
-            ];
-            var bcc = [
-                app.data.createBean('EmailParticipants', {
-                    _link: 'bcc',
-                    id: _.uniqueId(),
-                    parent: {
-                        _acl: {},
-                        type: 'Contacts',
-                        id: parentId4,
-                        name: 'Rhonda Withers'
-                    },
-                    parent_type: 'Contacts',
-                    parent_id: parentId4,
-                    parent_name: 'Rhonda Withers',
-                    email_address_id: _.uniqueId(),
-                    email_address: 'e@f.com'
-                })
-            ];
-            var actual;
-
-            field.model.set('to_collection', to);
-            field.model.set('cc_collection', cc);
-            field.model.set('bcc_collection', bcc);
-
-            actual = field._getReplyRecipients(true);
-
-            expect(actual.to.length).toBe(3);
-            expect(actual.to[0].email.get('id')).toBe(sender.get('email_address_id'));
-            expect(actual.to[0].email.get('email_address')).toBe(sender.get('email_address'));
-            expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
-            expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
-            expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(actual.to[1].email.get('id')).toBe(field.model.get('to_collection').at(0).get('email_address_id'));
-            expect(actual.to[1].email.get('email_address'))
-                .toBe(field.model.get('to_collection').at(0).get('email_address'));
-            expect(actual.to[1].bean.module).toBe(field.model.get('to_collection').at(0).get('parent_type'));
-            expect(actual.to[1].bean.get('id')).toBe(field.model.get('to_collection').at(0).get('parent_id'));
-            expect(actual.to[1].bean.get('name')).toBe(field.model.get('to_collection').at(0).get('parent_name'));
-            expect(actual.to[2].email.get('id')).toBe(field.model.get('to_collection').at(1).get('email_address_id'));
-            expect(actual.to[2].email.get('email_address'))
-                .toBe(field.model.get('to_collection').at(1).get('email_address'));
-            expect(actual.to[2].bean.module).toBe(field.model.get('to_collection').at(1).get('parent_type'));
-            expect(actual.to[2].bean.get('id')).toBe(field.model.get('to_collection').at(1).get('parent_id'));
-            expect(actual.to[2].bean.get('name')).toBe(field.model.get('to_collection').at(1).get('parent_name'));
-            expect(actual.cc.length).toBe(1);
-            expect(actual.cc[0].email.get('id')).toBe(field.model.get('cc_collection').at(0).get('email_address_id'));
-            expect(actual.cc[0].email.get('email_address'))
-                .toBe(field.model.get('cc_collection').at(0).get('email_address'));
-            expect(actual.cc[0].bean.module).toBe(field.model.get('cc_collection').at(0).get('parent_type'));
-            expect(actual.cc[0].bean.get('id')).toBe(field.model.get('cc_collection').at(0).get('parent_id'));
-            expect(actual.cc[0].bean.get('name')).toBe(field.model.get('cc_collection').at(0).get('parent_name'));
-        });
-
-        it('should correctly return email address only recipients during reply all', function() {
-            var sender = field.model.get('from_collection').first();
-            var to = [
-                app.data.createBean('EmailParticipants', {
-                    _link: 'to',
-                    id: _.uniqueId(),
-                    email_address_id: _.uniqueId(),
-                    email_address: 'foo@bar.com'
-                })
-            ];
-            var actual;
-
-            field.model.set('to_collection', to);
-
-            actual = field._getReplyRecipients(true);
-
-            expect(actual.to.length).toBe(2);
-            expect(actual.to[0].email.get('id')).toBe(sender.get('email_address_id'));
-            expect(actual.to[0].email.get('email_address')).toBe(sender.get('email_address'));
-            expect(actual.to[0].bean.module).toBe(sender.get('parent_type'));
-            expect(actual.to[0].bean.get('id')).toBe(sender.get('parent_id'));
-            expect(actual.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(actual.to[1].email.get('id')).toBe(field.model.get('to_collection').at(0).get('email_address_id'));
-            expect(actual.to[1].email.get('email_address'))
-                .toBe(field.model.get('to_collection').at(0).get('email_address'));
-            expect(actual.to[1].bean).toBeUndefined();
-            expect(actual.cc.length).toBe(0);
-        });
+    it('should use the emailaction templates', function() {
+        expect(field.type).toBe('emailaction');
     });
 
-    describe('getting the team names', function() {
-        var teams = [
-            {id: 'West', name: 'West', primary: false},
-            {id: 'East', name: 'East', primary: true}
-        ];
-
-        beforeEach(function() {
-            field.model.set('team_name', teams);
+    describe('email options', function() {
+        it('should set the email signature location to above', function() {
+            expect(field.emailOptions.signature_location).toBe('above');
         });
 
-        afterEach(function() {
-            field.model.unset('team_name');
+        it('should add the reply_to_id', function() {
+            expect(field.emailOptions.reply_to_id).toBe(model.get('id'));
         });
 
-        it('should return the original teams in the team_name field if reply', function() {
-            field.model.trigger('change');
-            expect(field.model.get('team_name')).toEqual(teams);
-        });
-    });
+        it('should add the sender to the To field', function() {
+            var sender = model.get('from_collection').first();
 
-    describe('_getReplySubject', function() {
-        using('original subjects', [
+            expect(field.emailOptions.to.length).toBe(1);
+            expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
+            expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
+            expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
+            expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
+            expect(field.emailOptions.to[0].bean.get('name')).toBe(sender.get('parent_name'));
+            expect(field.emailOptions.cc).toBeUndefined();
+        });
+
+        it('should add the sender and To recipients to the To field and CC recipients to the CC field', function() {
+            var sender = model.get('from_collection').first();
+
+            field.def.reply_all = true;
+            model.trigger('change', model);
+
+            expect(field.emailOptions.to.length).toBe(4);
+            expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
+            expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
+            expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
+            expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
+            expect(field.emailOptions.to[0].bean.get('name')).toBe(sender.get('parent_name'));
+            expect(field.emailOptions.to[1].email.get('id'))
+                .toBe(model.get('to_collection').at(0).get('email_address_id'));
+            expect(field.emailOptions.to[1].email.get('email_address'))
+                .toBe(model.get('to_collection').at(0).get('email_address'));
+            expect(field.emailOptions.to[1].bean.module).toBe(model.get('to_collection').at(0).get('parent_type'));
+            expect(field.emailOptions.to[1].bean.get('id')).toBe(model.get('to_collection').at(0).get('parent_id'));
+            expect(field.emailOptions.to[1].bean.get('name')).toBe(model.get('to_collection').at(0).get('parent_name'));
+            expect(field.emailOptions.to[2].email.get('id'))
+                .toBe(model.get('to_collection').at(1).get('email_address_id'));
+            expect(field.emailOptions.to[2].email.get('email_address'))
+                .toBe(model.get('to_collection').at(1).get('email_address'));
+            expect(field.emailOptions.to[2].bean.module).toBe(model.get('to_collection').at(1).get('parent_type'));
+            expect(field.emailOptions.to[2].bean.get('id')).toBe(model.get('to_collection').at(1).get('parent_id'));
+            expect(field.emailOptions.to[2].bean.get('name')).toBe(model.get('to_collection').at(1).get('parent_name'));
+            expect(field.emailOptions.to[3].email.get('id'))
+                .toBe(model.get('to_collection').at(2).get('email_address_id'));
+            expect(field.emailOptions.to[3].email.get('email_address'))
+                .toBe(model.get('to_collection').at(2).get('email_address'));
+            expect(field.emailOptions.to[3].bean).toBeUndefined();
+            expect(field.emailOptions.cc.length).toBe(1);
+            expect(field.emailOptions.cc[0].email.get('id'))
+                .toBe(model.get('cc_collection').at(0).get('email_address_id'));
+            expect(field.emailOptions.cc[0].email.get('email_address'))
+                .toBe(model.get('cc_collection').at(0).get('email_address'));
+            expect(field.emailOptions.cc[0].bean.module).toBe(model.get('cc_collection').at(0).get('parent_type'));
+            expect(field.emailOptions.cc[0].bean.get('id')).toBe(model.get('cc_collection').at(0).get('parent_id'));
+            expect(field.emailOptions.cc[0].bean.get('name')).toBe(model.get('cc_collection').at(0).get('parent_name'));
+        });
+
+        using('subjects', [
             {
                 original: '',
                 reply: 'Re: '
@@ -284,190 +231,170 @@ describe('Emails.Field.ReplyAction', function() {
                 reply: 'Re: My Subject'
             }
         ], function(data) {
-            it('should build the appropriate reply subject', function() {
-                var actual = field._getReplySubject(data.original);
-                expect(actual).toEqual(data.reply);
-            });
-        });
-    });
-
-    describe('_getReplyHeaderParams', function() {
-        it('should produce proper reply header params', function() {
-            var actual;
-            var date = '2012-03-27 01:48';
-            var expected = {
-                from: '',
-                to: '',
-                cc: '',
-                date: date,
-                name: 'My Subject'
-            };
-
-            field.model.set({
-                from: [], //_formatEmailList tested separately
-                to: [], //_formatEmailList tested separately
-                cc: [], //_formatEmailList tested separately
-                date_sent: expected.date,
-                name: expected.name
-            });
-
-            actual = field._getReplyHeaderParams();
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_getReplyHeader', function() {
-        using('various reply header parameters', [
-            {
-                params: {
-                    from: 'A',
-                    date: '2001-01-01 01:01:01',
-                    to: 'B, C',
-                    cc: 'D',
-                    name: 'My Subject'
-                },
-                replyHeader: '-----\n' +
-                    'From: A\n' +
-                    'Date: 2001-01-01 01:01\n' +
-                    'To: B, C\n' +
-                    'Cc: D\n' +
-                    'Subject: My Subject\n'
-            },
-            {
-                params: {
-                    from: 'A',
-                    to: 'B, C',
-                    name: 'My Subject'
-                },
-                replyHeader: '-----\n' +
-                    'From: A\n' +
-                    'To: B, C\n' +
-                    'Subject: My Subject\n'
-            },
-            {
-                params: {},
-                replyHeader: '-----\n' +
-                    'From: \n' +
-                    'To: \n' +
-                    'Subject: \n'
-            }
-        ], function(data) {
-            it('should build the appropriate reply header', function() {
-                var actual = field._getReplyHeader(data.params);
-                expect(actual).toEqual(data.replyHeader);
+            it('should add the reply subject', function() {
+                model.set('name', data.original);
+                expect(field.emailOptions.name).toBe(data.reply);
             });
         });
 
-    });
+        describe('building the reply content', function() {
+            it('should add the email body', function() {
+                var expected = "\n-----\n" +
+                    "From: Ralph Turner <rturner@example.com>\n" +
+                    "Date: 03/27/2012 01:48\n" +
+                    "To: Georgia Earl <gearl@example.com>, Nancy Holman <nholman@example.com>, bhunter@example.com\n" +
+                    "Cc: Wally Bibby <wbibby@example.com>\n" +
+                    "Subject: My Subject\n\n" +
+                    'Here is my plain-text content.';
 
-    describe('_formatEmailList', function() {
-        it('should return empty string if recipient list is empty', function() {
-            var actual = field._formatEmailList([]);
-            expect(actual).toEqual('');
+                sandbox.stub(field, 'useSugarEmailClient').returns(false);
+
+                model.set('description', 'Here is my plain-text content.');
+
+                expect(field.emailOptions.description).toBe(expected);
+            });
+
+            it('should not add the email body', function() {
+                sandbox.stub(field, 'useSugarEmailClient').returns(true);
+
+                model.set('description', 'Here is my plain-text content.');
+
+                expect(field.emailOptions.description).toBeUndefined();
+            });
+
+            it('should add the email HTML body', function() {
+                var body = 'And this is my <b>HTML</b> content.<br /><br />' +
+                    '<div class="signature">My signature</div><br />' +
+                    '<div id="replycontent">Some reply content</div>';
+                var expected = '<div></div><div id="replycontent">' + "\n" +
+                    "<hr>\n" +
+                    "<p>\n" +
+                    "    <strong>From:</strong> Ralph Turner &lt;rturner@example.com&gt;<br/>\n" +
+                    "    <strong>Date:</strong> 03/27/2012 01:48<br/>\n" +
+                    '    <strong>To:</strong> Georgia Earl &lt;gearl@example.com&gt;, ' +
+                    "Nancy Holman &lt;nholman@example.com&gt;, bhunter@example.com<br/>\n" +
+                    "    <strong>Cc:</strong> Wally Bibby &lt;wbibby@example.com&gt;<br/>\n" +
+                    "    <strong>Subject:</strong> My Subject<br/>\n" +
+                    "</p>\n" +
+                    'And this is my <b>HTML</b> content.<br /><br />' +
+                    '<div>My signature</div><br />' +
+                    '<div>Some reply content</div>' +
+                    '</div>';
+
+                model.set('description_html', body);
+
+                expect(field.emailOptions.description_html).toBe(expected);
+            });
+
+            it('should not include Date in the email body', function() {
+                var expected = "\n-----\n" +
+                    "From: Ralph Turner <rturner@example.com>\n" +
+                    "To: Georgia Earl <gearl@example.com>, Nancy Holman <nholman@example.com>, bhunter@example.com\n" +
+                    "Cc: Wally Bibby <wbibby@example.com>\n" +
+                    "Subject: My Subject\n\n" +
+                    'this is the plain-text body';
+
+                sandbox.stub(field, 'useSugarEmailClient').returns(false);
+
+                model.unset('date_sent');
+
+                expect(field.emailOptions.description).toBe(expected);
+            });
+
+            it('should not include Date in the email HTML body', function() {
+                var expected = '<div></div><div id="replycontent">' + "\n" +
+                    "<hr>\n" +
+                    "<p>\n" +
+                    "    <strong>From:</strong> Ralph Turner &lt;rturner@example.com&gt;<br/>\n" +
+                    // The template includes whitespace, but it won't be rendered in the client.
+                    "    \n" +
+                    '    <strong>To:</strong> Georgia Earl &lt;gearl@example.com&gt;, ' +
+                    "Nancy Holman &lt;nholman@example.com&gt;, bhunter@example.com<br/>\n" +
+                    "    <strong>Cc:</strong> Wally Bibby &lt;wbibby@example.com&gt;<br/>\n" +
+                    "    <strong>Subject:</strong> My Subject<br/>\n" +
+                    "</p>\n" +
+                    '<p>this is the <b>html</b> body</p>' +
+                    '</div>';
+
+                model.unset('date_sent');
+
+                expect(field.emailOptions.description_html).toBe(expected);
+            });
+
+            it('should not include CC in the email body', function() {
+                var expected = "\n-----\n" +
+                    "From: Ralph Turner <rturner@example.com>\n" +
+                    "Date: 03/27/2012 01:48\n" +
+                    "To: Georgia Earl <gearl@example.com>, Nancy Holman <nholman@example.com>, bhunter@example.com\n" +
+                    "Subject: My Subject\n\n" +
+                    'this is the plain-text body';
+
+                sandbox.stub(field, 'useSugarEmailClient').returns(false);
+                model.get('cc_collection').reset([]);
+
+                expect(field.emailOptions.description).toBe(expected);
+            });
+
+            it('should not include CC in the email HTML body', function() {
+                var expected = '<div></div><div id="replycontent">' + "\n" +
+                    "<hr>\n" +
+                    "<p>\n" +
+                    "    <strong>From:</strong> Ralph Turner &lt;rturner@example.com&gt;<br/>\n" +
+                    "    <strong>Date:</strong> 03/27/2012 01:48<br/>\n" +
+                    '    <strong>To:</strong> Georgia Earl &lt;gearl@example.com&gt;, ' +
+                    "Nancy Holman &lt;nholman@example.com&gt;, bhunter@example.com<br/>\n" +
+                    // The template includes whitespace, but it won't be rendered in the client.
+                    "    \n" +
+                    "    <strong>Subject:</strong> My Subject<br/>\n" +
+                    "</p>\n" +
+                    '<p>this is the <b>html</b> body</p>' +
+                    '</div>';
+
+                model.get('cc_collection').reset([]);
+
+                expect(field.emailOptions.description_html).toBe(expected);
+            });
         });
 
-        it('should format email list properly', function() {
-            var parentId = _.uniqueId();
-            var to = [
-                app.data.createBean('EmailParticipants', {
-                    _link: 'to',
+        describe('adding the related record', function() {
+            it('should add the parent', function() {
+                expect(field.emailOptions.related.module).toBe(model.get('parent').type);
+                expect(field.emailOptions.related.get('id')).toBe(model.get('parent').id);
+                expect(field.emailOptions.related.get('name')).toBe(model.get('parent').name);
+            });
+
+            it('should add using the parent fields', function() {
+                var parent = app.data.createBean('Contacts', {
                     id: _.uniqueId(),
-                    parent: {
-                        _acl: {},
-                        type: 'Contacts',
-                        id: parentId,
-                        name: 'Brandon Hunter'
-                    },
-                    parent_type: 'Contacts',
-                    parent_id: parentId,
-                    parent_name: 'Brandon Hunter',
-                    email_address_id: _.uniqueId(),
-                    email_address: 'foo@bar.com'
-                }),
-                app.data.createBean('EmailParticipants', {
-                    _link: 'to',
-                    id: _.uniqueId(),
-                    email_address_id: _.uniqueId(),
-                    email_address: 'bar@foo.com'
-                })
-            ];
-            var actual;
-
-            field.model.set('to_collection', to);
-            actual = field._formatEmailList(field.model.get('to_collection'));
-
-            expect(actual).toEqual('Brandon Hunter <foo@bar.com>, bar@foo.com');
-        });
-    });
-
-    describe('_getReplyBodyHtml', function() {
-        it('should strip the signature class from any div tags', function() {
-            var original = 'My Content <div class="signature">My Signature</div>';
-            var expected = 'My Content <div>My Signature</div>';
-            var actual;
-
-            field.model.set('description_html', original);
-            actual = field._getReplyBodyHtml();
-            expect(actual).toEqual(expected);
-        });
-
-        it('should strip the reply content class from any div tags', function() {
-            var original = 'My Content <div id="replycontent">My Reply Content</div>';
-            var expected = 'My Content <div>My Reply Content</div>';
-            var actual;
-
-            field.model.set('description_html', original);
-            actual = field._getReplyBodyHtml();
-            expect(actual).toEqual(expected);
-        });
-
-        it('should return an empty string if email body is not set', function() {
-            field.model.unset('description_html');
-            expect(field._getReplyBodyHtml()).toEqual('');
-        });
-    });
-
-    describe('_updateEmailOptions', function() {
-        beforeEach(function() {
-            sandbox.stub(app.user, 'getPreference')
-                .withArgs('timepref')
-                .returns('H:i');
-
-            app.user.getPreference.withArgs('datepref').returns('Y-m-d');
-        });
-
-        using('client preferences', [
-            {
-                test: 'should not set description in email options when using sugar email client',
-                type: 'sugar',
-                expected: undefined
-            },
-            {
-                test: 'should set description in email options when using external email client',
-                type: 'external',
-                expected: "\n-----\nFrom: \nTo: \nSubject: \n\n\Hello World!"
-            }
-        ], function(data) {
-            it(data.test, function() {
-                var newField;
-
-                app.user.getPreference.withArgs('email_client_preference').returns({type: data.type});
-
-                newField = SugarTest.createField({
-                    name: 'reply_action',
-                    type: 'reply-action',
-                    viewName: 'record',
-                    module: 'Emails',
-                    loadFromModule: true,
-                    model: model,
-                    context: context
+                    name: 'Cedric Harper'
                 });
 
-                model.set('description', 'Hello World!');
+                model.unset('parent');
+                model.set({
+                    parent_type: parent.module,
+                    parent_id: parent.get('id'),
+                    parent_name: parent.get('name')
+                });
 
-                expect(newField.emailOptions.description).toBe(data.expected);
-                newField.dispose();
+                expect(field.emailOptions.related.module).toBe(parent.module);
+                expect(field.emailOptions.related.get('id')).toBe(parent.get('id'));
+                expect(field.emailOptions.related.get('name')).toBe(parent.get('name'));
             });
+        });
+
+        it('should add the selected teams', function() {
+            expect(field.emailOptions.team_name).toEqual([
+                {
+                    id: 'West',
+                    name: 'West',
+                    primary: false
+                },
+                {
+                    id: 'East',
+                    name: 'East',
+                    primary: true
+                }
+            ]);
         });
     });
 });
