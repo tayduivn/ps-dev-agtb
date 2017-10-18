@@ -9,14 +9,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Base.Field.Shareaction', function() {
-
-    var app, field, sinonSandbox;
+    var app;
+    var field;
+    var sinonSandbox;
+    var context;
+    var model;
 
     beforeEach(function() {
         app = SugarTest.app;
         app.drawer = { open: $.noop };
 
         SugarTest.testMetadata.init();
+        SugarTest.loadPlugin('EmailClientLaunch');
         SugarTest.loadHandlebarsTemplate('share', 'view', 'base', 'subject');
         SugarTest.loadHandlebarsTemplate('share', 'view', 'base', 'body');
         SugarTest.loadHandlebarsTemplate('share', 'view', 'base', 'body-html');
@@ -27,6 +31,24 @@ describe('Base.Field.Shareaction', function() {
         SugarTest.testMetadata.set();
 
         sinonSandbox = sinon.sandbox.create();
+
+        context = app.context.getContext({module: 'Contacts'});
+        context.prepare(true);
+        model = context.get('model');
+        model.set({
+            id: _.uniqueId(),
+            first_name: 'Bobby',
+            last_name: 'Francis'
+        });
+
+        field = SugarTest.createField({
+            name: 'share',
+            type: 'shareaction',
+            viewName: 'detail',
+            module: model.module,
+            model: model,
+            context: context
+        });
     });
 
     afterEach(function() {
@@ -40,34 +62,52 @@ describe('Base.Field.Shareaction', function() {
         Handlebars.templates = {};
     });
 
-    it('should set up email options with subject, html body, and text body', function() {
-        field = SugarTest.createField('base', 'shareaction', 'shareaction', 'edit');
+    it('should use the emailaction templates', function() {
+        expect(field.type).toBe('emailaction');
+    });
+
+    it('should set the email signature location to below', function() {
+        expect(field.emailOptions.signature_location).toBe('below');
+    });
+
+    it('should set the email subject using the subject template', function() {
         expect(field.emailOptions.name).toContain('TPL_RECORD_SHARE_SUBJECT');
-        expect(field.emailOptions.description_html).toContain('TPL_RECORD_SHARE_BODY');
+    });
+
+    it('should set the email body using the body template', function() {
         expect(field.emailOptions.description).toContain('TPL_RECORD_SHARE_BODY');
     });
 
-    it('should retrieve the appropriate name for the share parameters', function() {
-        var shareParams;
-
-        field = SugarTest.createField('base', 'shareaction', 'shareaction', 'edit');
-        field.model.set({
-            first_name: 'Foo',
-            last_name: 'Bar'
-        });
-        shareParams = field._getShareParams();
-        expect(shareParams.name.toString()).toEqual('Foo Bar');
+    it('should set the email HTML body using the HTML body template', function() {
+        expect(field.emailOptions.description_html).toContain('TPL_RECORD_SHARE_BODY');
     });
 
-    it('should re-retrieve the share parameters when the model changes', function() {
-        var getShareParamsSpy;
+    describe('getting the share params', function() {
+        it('should use the model parameter', function() {
+            var contact = app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                first_name: 'Tammy',
+                last_name: 'Smith'
+            });
+            var params = field._getShareParams(contact);
 
-        field = SugarTest.createField('base', 'shareaction', 'shareaction', 'edit');
-        getShareParamsSpy = sinonSandbox.spy(field, '_getShareParams');
-        field.model.set({
-            first_name: 'Foo',
-            last_name: 'Bar'
+            expect(params.appId).toBe(app.config.appId);
+            expect(params.url).toBe(window.location.href);
+            expect(params.id).toBe(contact.get('id'));
+            expect(params.first_name).toBe('Tammy');
+            expect(params.last_name).toBe('Smith');
+            expect(params.name.toString()).toBe('Tammy Smith');
         });
-        expect(getShareParamsSpy.callCount).toEqual(1);
+
+        it('should fall back to this.model', function() {
+            var params = field._getShareParams();
+
+            expect(params.appId).toBe(app.config.appId);
+            expect(params.url).toBe(window.location.href);
+            expect(params.id).toBe(model.get('id'));
+            expect(params.first_name).toBe('Bobby');
+            expect(params.last_name).toBe('Francis');
+            expect(params.name.toString()).toBe('Bobby Francis');
+        });
     });
 });

@@ -201,6 +201,9 @@ describe("sugar7.extensions.bwc", function() {
             });
             sinonSandbox.stub(app.bwc, '_launchExternalEmail');
             SugarTest.loadPlugin('EmailClientLaunch');
+            SugarTest.loadComponent('base', 'field', 'button');
+            SugarTest.loadComponent('base', 'field', 'rowaction');
+            SugarTest.loadComponent('base', 'field', 'emailaction');
             SugarTest.loadComponent('base', 'field', 'shareaction');
             sinonSandbox.stub(app.utils, 'openEmailCreateDrawer');
         });
