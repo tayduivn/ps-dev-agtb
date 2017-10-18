@@ -83,7 +83,7 @@ class ArchivedEmailsBeanLink extends ArchivedEmailsLink
             // Assigned to contacts
             $source = $this->addSource ? ", 4 /* contact */ source" : "";
             $subQuery .= " UNION ".
-                "SELECT DISTINCT eb.bean_id AS id, eb.email_id $source FROM emails_beans eb
+                "SELECT DISTINCT $bean_id AS id, eb.email_id $source FROM emails_beans eb
                 $rel_join AND link_bean.id = eb.bean_id
                 where eb.bean_module = '$rel_module' AND eb.deleted=0\n";
             // Related by email to linked contact

@@ -16,73 +16,81 @@
  * Tests emails subpanel query can fetch emails.
  */
 
+/**
+ * @covers ArchivedEmailsBeanLink
+ */
 class ArchivedEmailsBeanLinkTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Account
+     */
+    private $account;
 
-    // store ids of generated objects so we can delete them in tearDown
-    private $email_id = '';
-    private $opp_id = '';
-    private $contact_id = '';
-    private $account_id = '';
-    private $hide_history_contacts_emails_orig = '';
+    protected function setUp()
+    {
+        parent::setUp();
+
+        SugarTestHelper::setUp('current_user');
+
+        // turn on admin setting "Enable/Disable emails from related (or linked) contacts to show in Email Subpanel."
+        $GLOBALS['sugar_config']['hide_history_contacts_emails']['Opportunities'] = false;
+
+        $this->account = SugarTestAccountUtilities::createAccount();
+    }
 
     public function testRelatedEmails()
     {
-        $opp = BeanFactory::getBean('Opportunities', $this->opp_id);
+        $emailAddress = 'testRelatedEmails@testRelatedEmails.com';
 
-        $query = new SugarQuery();
-        $emailsBean = BeanFactory::newBean('Emails');
-        $query->select('*');
-        $query->from($emailsBean);
-        $query->joinSubpanel($opp, 'archived_emails', array('joinType' => 'INNER'));
+        // create contact and email related (via to_addr) to contact
+        $contact = SugarTestContactUtilities::createContact(null, array(
+            'email' => $emailAddress,
+        ));
 
-        $emails = array_values($emailsBean->fetchFromQuery($query));
+        $email = SugarTestEmailUtilities::createEmail(null, array(
+            'parent_type' => 'Contacts',
+            'parent_id' => $contact->id,
+            'to_addrs' => $emailAddress,
+        ));
 
-        $actual_email_id = $emails[0]->id;
-        $this->assertEquals($this->email_id, $actual_email_id, "Email in the sub-panel is not the same as email related.");
-    }
-
-    public function setUp()
-    {
-        SugarTestHelper::setUp("current_user");
-
-        // turn on admin setting "Enable/Disable emails from related (or linked) contacts to show in Email Subpanel."
-        $this->hide_history_contacts_emails_orig = $GLOBALS['sugar_config']['hide_history_contacts_emails']['Opportunities'];
-        $GLOBALS['sugar_config']['hide_history_contacts_emails']['Opportunities'] = false;
-
-        // create Opportunity, account, contact and email related (via to_addr) to contact
-        $account = SugarTestAccountUtilities::createAccount();
-        $account->name = "testRelateOpportunity";
-        $account->save(false);
-        $this->account_id = $account->id;
-
-        $opportunity = SugarTestOpportunityUtilities::createOpportunity(null, $account);
-        $this->opp_id = $opportunity->id;
-
-        $contactValues = array(
-            'first_name' => 'testRelateOpportunityFirst',
-            'last_name' => 'testRelateOpportunityLast',
-            'email' => 'testRelateOpportunity@testRelateOpportunity.com',
-        );
-
-        $contact = SugarTestContactUtilities::createContact('', $contactValues);
-        $this->contact_id = $contact->id;
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity(null, $this->account);
         $opportunity->load_relationship('contacts');
         $opportunity->contacts->add($contact);
-        $opportunity->save();
 
-        $override = array(
-            'parent_type' => 'Contacts',
-            'parent_id' => $this->contact_id,
-            'to_addrs' => 'testRelateOpportunity@testRelateOpportunity.com',
-        );
-        $email = SugarTestEmailUtilities::createEmail(null, $override);
-        $this->email_id = $email->id;
+        $emails = $this->fetchEmails($opportunity);
+
+        $this->assertArrayHasKey($email->id, $emails, 'Email is not displayed in the sub-panel');
+    }
+
+    public function testContactEmails()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+        $contact->load_relationship('accounts');
+        $contact->accounts->add($this->account);
+
+        $email = SugarTestEmailUtilities::createEmail();
+        $email->load_relationship('contacts');
+        $email->contacts->add($contact);
+
+        $emails = $this->fetchEmails($this->account);
+
+        $this->assertArrayHasKey($email->id, $emails);
+    }
+
+    private function fetchEmails(SugarBean $bean)
+    {
+        $email = BeanFactory::newBean('Emails');
+
+        $query = new SugarQuery();
+        $query->select('id');
+        $query->from($email);
+        $query->joinSubpanel($bean, 'archived_emails');
+
+        return $email->fetchFromQuery($query);
     }
 
     public function tearDown()
     {
-        $GLOBALS['sugar_config']['hide_history_contacts_emails']['Opportunities'] = $this->hide_history_contacts_emails_orig;
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestContactUtilities::removeAllCreatedContacts();
