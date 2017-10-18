@@ -136,6 +136,7 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         return $record ? true : false;
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Check table alias is applied to where query statement
      * for TBA visibility
@@ -162,4 +163,5 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains("l1.assigned_user_id", $query);
         $this->assertContains("l1.acl_team_set_id", $query);
     }
+    //END SUGARCRM flav=ent ONLY
 }
