@@ -31,6 +31,7 @@ class PMSEEmailHandler
 
     /**
      * The Localization Bean
+     * @deprecated Will be removed in a future release
      * @var PMSELogger
      */
     private $locale;
@@ -52,8 +53,8 @@ class PMSEEmailHandler
      */
     public function __construct()
     {
-        $msg = 'The __construct method will be removed from %s in a future release and should not be extended';
-        LoggerManager::getLogger()->deprecated(sprintf($msg, __CLASS__));
+        $msg = 'The %s method will be removed in a future release and should no longer be used';
+        LoggerManager::getLogger()->deprecated(sprintf($msg, __METHOD__));
     }
 
     /**
@@ -105,17 +106,17 @@ class PMSEEmailHandler
 
     /**
      * Gets the localization object
+     * @deprecated Will be removed in a future release
      * @return type
      * @codeCoverageIgnore
      */
     public function getLocale()
     {
-        if (empty($this->locale)) {
-            global $locale;
-            $this->locale = $locale;
-        }
+        $msg = 'The %s method will be removed in a future release and should no longer be used';
+        LoggerManager::getLogger()->deprecated(sprintf($msg, __METHOD__));
 
-        return $this->locale;
+        global $locale;
+        return $locale;
     }
 
     /**
@@ -167,11 +168,15 @@ class PMSEEmailHandler
 
     /**
      * Sets the localization object
+     * @deprecated Will be removed in a future release
      * @param type $locale
      * @codeCoverageIgnore
      */
     public function setLocale($locale)
     {
+        $msg = 'The %s method will be removed in a future release and should no longer be used';
+        LoggerManager::getLogger()->deprecated(sprintf($msg, __METHOD__));
+
         $this->locale = $locale;
     }
 
@@ -183,19 +188,6 @@ class PMSEEmailHandler
     public function setLogger(PMSELogger $logger)
     {
         $this->logger = $logger;
-    }
-
-    /**
-     *
-     * @param type $param
-     * @return \SugarPHPMailer
-     * @codeCoverageIgnore
-     * @deprecated Will be removed in a future release
-     */
-    public function retrieveSugarPHPMailer()
-    {
-        LoggerManager::getLogger()->deprecated('The retrieveSugarPHPMailer method is no longer used and will be removed in a future release.');
-        return new SugarPHPMailer();
     }
 
     /**
@@ -430,42 +422,6 @@ class PMSEEmailHandler
         }
 
         return $res;
-    }
-
-    /**
-     * filling the mail object with all the administrative settings and configurations
-     * @global type $sugar_version
-     * @global type $sugar_config
-     * @global type $app_list_strings
-     * @global type $current_user
-     * @param type $mailObject
-     * @deprecated Will be removed in a future release
-     */
-    public function setupMailObject($mailObject)
-    {
-        LoggerManager::getLogger()->deprecated('The setupMailObject method is no longer used and will be removed in a future release.');
-        $this->getAdmin()->retrieveSettings();
-        if ($this->getAdmin()->settings['mail_sendtype'] == "SMTP") {
-            $mailObject->Mailer = "smtp";
-            $mailObject->Host = $this->getAdmin()->settings['mail_smtpserver'];
-            $mailObject->Port = $this->getAdmin()->settings['mail_smtpport'];
-            $mailObject->SMTPSecure = '';
-            if ($this->getAdmin()->settings['mail_smtpssl'] == 1) {
-                $mailObject->SMTPSecure = 'ssl';
-            }
-            if ($this->getAdmin()->settings['mail_smtpssl'] == 2) {
-                $mailObject->SMTPSecure = 'tls';
-            }
-            if ($this->getAdmin()->settings['mail_smtpauth_req']) {
-                $mailObject->SMTPAuth = true;
-                $mailObject->Username = $this->getAdmin()->settings['mail_smtpuser'];
-                $mailObject->Password = $this->getAdmin()->settings['mail_smtppass'];
-            }
-        } else {
-            $mailObject->Mailer = 'sendmail';
-        }
-        $mailObject->From = $this->getAdmin()->settings['notify_fromaddress'];
-        $mailObject->FromName = (empty($this->getAdmin()->settings['notify_fromname'])) ? "" : $this->getAdmin()->settings['notify_fromname'];
     }
 
     /**
