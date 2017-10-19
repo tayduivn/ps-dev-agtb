@@ -74,59 +74,28 @@ class PMSEEmailHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testSendTemplateEmailAddressesNotDefined()
     {
+        // The mock object to be tested
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('addRecipients', 'retrieveBean', 'retrieveMailer'))
+            ->setMethods(array('getLogger'))
             ->getMock();
 
-        $beanUtilsMock = $this->getMockBuilder('PMSEBeanHandler')
-            ->disableOriginalConstructor()
-            ->setMethods(array('mergeBeanInTemplate'))
-            ->getMock();
-
-        $sugarMailerMock = $this->getMockBuilder('SmtpMailer')
-            ->disableOriginalConstructor()
-            ->setMethods(array('addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
-                'setSubject', 'setHeader', 'send'))
-            ->getMock();
-
+        // The logger mock, needed because no addresses means a log write
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning'))
-            ->getMock();
-        $templateMock = $this->getMockBuilder('pmse_Emails_Templates')
-            ->disableAutoload()
-            ->disableOriginalConstructor()
-            ->setMethods(array('retrieve'))
+            ->setMethods(array('alert'))
             ->getMock();
 
-        $beanMock = new stdClass();
+        // The log should write an alert, one time
+        $loggerMock->expects($this->once())
+            ->method('alert')
+            ->will($this->returnValue(true));
 
-        $emailHandlerMock->expects($this->at(0))
-            ->method('retrieveBean')
-            ->will($this->returnValue($beanMock));
+        // The getLogger method should return our mock logger
+        $emailHandlerMock->method('getLogger')->will($this->returnValue($loggerMock));
 
-        $emailHandlerMock->expects($this->at(1))
-            ->method('retrieveBean')
-            ->with('pmse_Emails_Templates')
-            ->will($this->returnValue($templateMock));
-
-        $emailHandlerMock->expects($this->once())
-            ->method('retrieveMailer')
-            ->will($this->returnValue($sugarMailerMock));
-
-        $emailHandlerMock->setLogger($loggerMock);
-        $emailHandlerMock->setBeanUtils($beanUtilsMock);
-
-        $moduleName = 'Leads';
-
-        $beanId = 'bean01';
-
-        $addresses = new stdClass();
-
-        $templateId = 'template01';
-
-        $emailHandlerMock->sendTemplateEmail($moduleName, $beanId, $addresses, $templateId);
+        // Updated to Leads module, bean01 link, empty addresses array and template01 Template ID
+        $emailHandlerMock->sendTemplateEmail('Leads', 'bean01', new stdClass(), 'template01');
     }
     
     public function testSendTemplateEmailAddressesDefined()
