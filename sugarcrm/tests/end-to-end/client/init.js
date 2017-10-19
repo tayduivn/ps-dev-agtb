@@ -50,4 +50,19 @@
                 e.target.id : '') + (e.target.className ? ' className - ' + e.target.className : '')));
     });
 
+    let originalAlertShow = app.alert.show;
+
+    app.alert.show = function show(...args) {
+
+        if (!args[1]) {
+            args[1] = {};
+        }
+
+        const options = args[1];
+
+        options.autoClose = false;
+
+        originalAlertShow.apply(this, args);
+    };
+
 })(SUGAR && SUGAR.App ? SUGAR.App : null);
