@@ -159,8 +159,7 @@ class PMSECasesListApi extends FilterApi
         // use of DISTINCT should be added
         $q->joinTable('pmse_bpm_flow', array('alias' => 'pf', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
-            ->equalsField('pf.cas_id', 'a.cas_id')
-            ->isNull('pf.cas_finish_date');
+            ->equalsField('pf.cas_id', 'a.cas_id');
 
         $fields[] = array("pf.cas_sugar_module", 'cas_sugar_module');
         $fields[] = array("pf.cas_sugar_object_id", 'cas_sugar_object_id');
@@ -172,8 +171,13 @@ class PMSECasesListApi extends FilterApi
         $q->select($fields);
 
         $q->where()
+            // Filtered for supported PMSE modules
             ->in('prj.prj_module', PMSEEngineUtils::getSupportedModules())
-            ->equals('u.deleted', 0);
+            // Filtered for not deleted records
+            ->equals('u.deleted', 0)
+            // Filtered for cas_index = 1 to maintain uniqueness of records and
+            // for performance
+            ->equals('pf.cas_index', 1);
 
         if (!empty($args['q'])) {
             $qLike = $q->getDBManager()->quoted('%' . $args['q'] . '%');
