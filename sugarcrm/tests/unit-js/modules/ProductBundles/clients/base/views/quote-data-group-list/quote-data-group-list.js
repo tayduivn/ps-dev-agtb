@@ -1331,6 +1331,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         var addClassStub;
         var removeClassStub;
         var jqueryStub;
+        var attrStub;
 
         beforeEach(function() {
             view.toggledModels = {};
@@ -1348,14 +1349,16 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             sortableStub = sinon.collection.stub();
             addClassStub = sinon.collection.stub();
             removeClassStub = sinon.collection.stub();
+            attrStub = sinon.collection.stub();
             jqueryStub = {
                 toggleClass: toggleClassStub,
                 hasClass: function() {
-                    return false;
+                    return true;
                 },
                 parent: function() {},
                 addClass: addClassStub,
-                removeClass: removeClassStub
+                removeClass: removeClassStub,
+                attr: attrStub
             };
 
             sinon.collection.stub(view, '$', function() {
@@ -1437,6 +1440,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             it('should trigger quotes:item:toggle with false and the rowid', function() {
                 view.toggleRow(rowModule, rowModelId, false);
                 expect(view.context.parent.trigger).toHaveBeenCalledWith('quotes:item:toggle', false, rowModelId);
+            });
+
+            it('should have called attr on the row to add the id', function() {
+                view.toggleRow(rowModule, rowModelId, false);
+                expect(attrStub).toHaveBeenCalledWith('record-id', rowModelId);
             });
 
             describe('with jquery not stubbed', function() {

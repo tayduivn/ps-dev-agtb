@@ -729,11 +729,11 @@
         var $row;
 
         this.context.parent.trigger('quotes:item:toggle', isEdit, rowModelId);
+        toggleModel = this.collection.find(function(model) {
+            return (model.cid == rowModelId || model.id == rowModelId);
+        });
 
         if (isEdit) {
-            toggleModel = this.collection.find(function(model) {
-                return (model.cid == rowModelId || model.id == rowModelId);
-            });
             if (_.isUndefined(toggleModel)) {
                 // its not there any more, so remove it from the toggledModels and return out from this method
                 delete this.toggledModels[rowModelId];
@@ -766,9 +766,11 @@
         } else if ($row.hasClass('not-sortable')) {
             // if this is not edit mode and row still has not-sortable (from being a brand new row)
             // then remove the not-sortable and add the sortable classes
-            $row
-                .removeClass('not-sortable')
-                .addClass('sortable ui-sortable');
+            $row.removeClass('not-sortable');
+            $row.addClass('sortable ui-sortable');
+
+            //since this is a new row, we also need to set the record-id attribute on the row
+            $row.attr('record-id', toggleModel.get('id'));
         }
     },
 
