@@ -897,17 +897,17 @@ class M2MRelationship extends SugarRelationship
     public function getFields()
     {
         global $dictionary;
-        
-        if (isset($this->def['fields'])) {
+
+        if (!empty($this->def['fields'])) {
             return $this->def['fields'];
         }
-        
+
         // in case if relationship uses another entity's table
         $table = $this->getRelationshipTable();
         if (isset($dictionary[$table])) {
             return $dictionary[$table]['fields'];
         }
-        
+
         return $this->getStandardFields();
     }
 
