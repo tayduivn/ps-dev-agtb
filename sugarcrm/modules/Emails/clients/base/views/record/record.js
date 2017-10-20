@@ -130,11 +130,11 @@
     /**
      * @inheritdoc
      *
-     * Hides the Reply and Reply All buttons if the email is a draft.
+     * Hides the Forward, Reply, and Reply All buttons if the email is a draft.
      */
     setButtonStates: function(state) {
         var buttons;
-        var replyButtons;
+        var buttonsToHideOnDrafts;
 
         /**
          * Some buttons contain other buttons, like ActiondropdownField. This
@@ -160,11 +160,11 @@
 
         if (this.model.get('state') === this.STATE_DRAFT) {
             buttons = getAllButtons([], this.buttons);
-            replyButtons = _.filter(buttons, function(field) {
-                return _.contains(['reply_button', 'reply_all_button'], field.name);
+            buttonsToHideOnDrafts = _.filter(buttons, function(field) {
+                return _.contains(['reply_button', 'reply_all_button', 'forward_button'], field.name);
             });
 
-            _.each(replyButtons, function(field) {
+            _.each(buttonsToHideOnDrafts, function(field) {
                 field.hide();
             });
         }

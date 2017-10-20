@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Emails.Field.ReplyAction', function() {
+describe('Emails.Field.ForwardAction', function() {
     var app;
     var field;
     var model;
@@ -45,18 +45,17 @@ describe('Emails.Field.ReplyAction', function() {
             SugarTest.testMetadata.updateModuleMetadata(module, def);
         });
 
-        SugarTest.loadHandlebarsTemplate('reply-action', 'field', 'base', 'reply-header-html', 'Emails');
+        SugarTest.loadHandlebarsTemplate('forward-action', 'field', 'base', 'forward-header-html', 'Emails');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'emailaction');
-        SugarTest.loadComponent('base', 'field', 'forward-action', 'Emails');
         SugarTest.testMetadata.set();
 
         app = SugarTest.app;
         app.data.declareModels();
         app.routing.start();
 
-        // Used by formatDate in the reply header template.
+        // Used by formatDate in the forward header template.
         app.user.setPreference('datepref', 'm/d/Y');
         app.user.setPreference('timepref', 'H:i');
 
@@ -69,7 +68,6 @@ describe('Emails.Field.ReplyAction', function() {
         context.prepare(true);
         model = context.get('model');
         model.set({
-            id: _.uniqueId(),
             name: 'My Subject',
             // Create a datetime string that will work in any timezone.
             date_sent: app.date('2012-03-27 01:48').format(),
@@ -147,8 +145,8 @@ describe('Emails.Field.ReplyAction', function() {
         ]);
 
         field = SugarTest.createField({
-            name: 'reply_action',
-            type: 'reply-action',
+            name: 'forward_button',
+            type: 'forward-action',
             viewName: 'record',
             module: 'Emails',
             loadFromModule: true,
@@ -178,166 +176,85 @@ describe('Emails.Field.ReplyAction', function() {
             expect(field.emailOptions.signature_location).toBe('above');
         });
 
-        it('should add the reply_to_id', function() {
-            expect(field.emailOptions.reply_to_id).toBe(model.get('id'));
-        });
-
-        it('should add the sender to the To field', function() {
-            var sender = model.get('from_collection').first();
-
-            expect(field.emailOptions.to.length).toBe(1);
-            expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
-            expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
-            expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
-            expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
-            expect(field.emailOptions.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(field.emailOptions.cc).toBeUndefined();
-        });
-
-        it('should add the sender and To recipients to the To field and CC recipients to the CC field', function() {
-            var sender = model.get('from_collection').first();
-
-            field.def.reply_all = true;
-            model.trigger('change', model);
-
-            expect(field.emailOptions.to.length).toBe(4);
-            expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
-            expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
-            expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
-            expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
-            expect(field.emailOptions.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(field.emailOptions.to[1].email.get('id'))
-                .toBe(model.get('to_collection').at(0).get('email_address_id'));
-            expect(field.emailOptions.to[1].email.get('email_address'))
-                .toBe(model.get('to_collection').at(0).get('email_address'));
-            expect(field.emailOptions.to[1].bean.module).toBe(model.get('to_collection').at(0).get('parent_type'));
-            expect(field.emailOptions.to[1].bean.get('id')).toBe(model.get('to_collection').at(0).get('parent_id'));
-            expect(field.emailOptions.to[1].bean.get('name')).toBe(model.get('to_collection').at(0).get('parent_name'));
-            expect(field.emailOptions.to[2].email.get('id'))
-                .toBe(model.get('to_collection').at(1).get('email_address_id'));
-            expect(field.emailOptions.to[2].email.get('email_address'))
-                .toBe(model.get('to_collection').at(1).get('email_address'));
-            expect(field.emailOptions.to[2].bean.module).toBe(model.get('to_collection').at(1).get('parent_type'));
-            expect(field.emailOptions.to[2].bean.get('id')).toBe(model.get('to_collection').at(1).get('parent_id'));
-            expect(field.emailOptions.to[2].bean.get('name')).toBe(model.get('to_collection').at(1).get('parent_name'));
-            expect(field.emailOptions.to[3].email.get('id'))
-                .toBe(model.get('to_collection').at(2).get('email_address_id'));
-            expect(field.emailOptions.to[3].email.get('email_address'))
-                .toBe(model.get('to_collection').at(2).get('email_address'));
-            expect(field.emailOptions.to[3].bean).toBeUndefined();
-            expect(field.emailOptions.cc.length).toBe(1);
-            expect(field.emailOptions.cc[0].email.get('id'))
-                .toBe(model.get('cc_collection').at(0).get('email_address_id'));
-            expect(field.emailOptions.cc[0].email.get('email_address'))
-                .toBe(model.get('cc_collection').at(0).get('email_address'));
-            expect(field.emailOptions.cc[0].bean.module).toBe(model.get('cc_collection').at(0).get('parent_type'));
-            expect(field.emailOptions.cc[0].bean.get('id')).toBe(model.get('cc_collection').at(0).get('parent_id'));
-            expect(field.emailOptions.cc[0].bean.get('name')).toBe(model.get('cc_collection').at(0).get('parent_name'));
-        });
-
         using('subjects', [
             {
                 original: '',
-                expected: 'Re: '
+                expected: 'FW: '
             },
             {
                 original: undefined,
-                expected: 'Re: '
+                expected: 'FW: '
             },
             {
                 original: 'My Subject',
-                expected: 'Re: My Subject'
+                expected: 'FW: My Subject'
             },
             {
                 original: 'Re: My Subject',
-                expected: 'Re: My Subject'
+                expected: 'FW: My Subject'
             },
             {
                 original: 'FW: My Subject',
-                expected: 'Re: My Subject'
+                expected: 'FW: My Subject'
             },
             {
                 original: 'FWD: My Subject',
-                expected: 'Re: My Subject'
+                expected: 'FW: My Subject'
             },
             {
                 original: 'RE: re: Re: rE: My Subject',
-                expected: 'Re: My Subject'
+                expected: 'FW: My Subject'
             },
             {
                 original: 'FW: fw: Fw: fW: My Subject',
-                expected: 'Re: My Subject'
+                expected: 'FW: My Subject'
             },
             {
                 original: 'FWD: fwd: Fwd: fWD: My Subject',
-                expected: 'Re: My Subject'
+                expected: 'FW: My Subject'
             },
             {
                 original: 'RE: FWD: re: fwd: Re: Fwd: rE: fwD: fw: FW: fW: My Subject',
-                expected: 'Re: My Subject'
+                expected: 'FW: My Subject'
             },
             {
                 original: 'My Re: Subject',
-                expected: 'Re: My Re: Subject'
+                expected: 'FW: My Re: Subject'
             },
             {
                 original: 'My FW: Subject',
-                expected: 'Re: My FW: Subject'
+                expected: 'FW: My FW: Subject'
             },
             {
                 original: 'My FWD: Subject',
-                expected: 'Re: My FWD: Subject'
+                expected: 'FW: My FWD: Subject'
             },
             {
                 original: 'My Subject Re:',
-                expected: 'Re: My Subject Re:'
+                expected: 'FW: My Subject Re:'
             },
             {
                 original: 'My Subject FW:',
-                expected: 'Re: My Subject FW:'
+                expected: 'FW: My Subject FW:'
             },
             {
                 original: 'My Subject FWD:',
-                expected: 'Re: My Subject FWD:'
+                expected: 'FW: My Subject FWD:'
             }
         ], function(data) {
-            it('should add the reply subject', function() {
+            it('should add the forward subject', function() {
                 model.set('name', data.original);
                 expect(field.emailOptions.name).toBe(data.expected);
             });
         });
 
-        describe('building the reply content', function() {
-            it('should add the email body', function() {
-                var expected = '\n-----\n' +
-                    'From: Ralph Turner <rturner@example.com>\n' +
-                    'Date: 03/27/2012 01:48\n' +
-                    'To: Georgia Earl <gearl@example.com>, Nancy Holman <nholman@example.com>, bhunter@example.com\n' +
-                    'Cc: Wally Bibby <wbibby@example.com>\n' +
-                    'Subject: My Subject\n\n' +
-                    'Here is my plain-text content.';
-
-                sandbox.stub(field, 'useSugarEmailClient').returns(false);
-
-                model.set('description', 'Here is my plain-text content.');
-
-                expect(field.emailOptions.description).toBe(expected);
-            });
-
-            it('should not add the email body', function() {
-                sandbox.stub(field, 'useSugarEmailClient').returns(true);
-
-                model.set('description', 'Here is my plain-text content.');
-
-                expect(field.emailOptions.description).toBeUndefined();
-            });
-
+        describe('building the forward content', function() {
             using('content id\'s', ['forwardcontent', 'replycontent'], function(id) {
                 it('should add the email HTML body', function() {
                     var body = 'And this is my <b>HTML</b> content.<br /><br />' +
                         '<div class="signature">My signature</div><br />' +
-                        '<div id="' + id + '">Some reply content</div>';
-                    var expected = '<div></div><div id="replycontent">\n' +
+                        '<div id="' + id + '">Some forward content</div>';
+                    var expected = '<div></div><div id="forwardcontent">\n' +
                         '<hr>\n' +
                         '<p>\n' +
                         '    <strong>From:</strong> Ralph Turner &lt;rturner@example.com&gt;<br/>\n' +
@@ -349,7 +266,7 @@ describe('Emails.Field.ReplyAction', function() {
                         '</p>\n' +
                         'And this is my <b>HTML</b> content.<br /><br />' +
                         '<div>My signature</div><br />' +
-                        '<div>Some reply content</div>' +
+                        '<div>Some forward content</div>' +
                         '</div>';
 
                     model.set('description_html', body);
@@ -358,23 +275,8 @@ describe('Emails.Field.ReplyAction', function() {
                 });
             });
 
-            it('should not include Date in the email body', function() {
-                var expected = '\n-----\n' +
-                    'From: Ralph Turner <rturner@example.com>\n' +
-                    'To: Georgia Earl <gearl@example.com>, Nancy Holman <nholman@example.com>, bhunter@example.com\n' +
-                    'Cc: Wally Bibby <wbibby@example.com>\n' +
-                    'Subject: My Subject\n\n' +
-                    'this is the plain-text body';
-
-                sandbox.stub(field, 'useSugarEmailClient').returns(false);
-
-                model.unset('date_sent');
-
-                expect(field.emailOptions.description).toBe(expected);
-            });
-
             it('should not include Date in the email HTML body', function() {
-                var expected = '<div></div><div id="replycontent">\n' +
+                var expected = '<div></div><div id="forwardcontent">\n' +
                     '<hr>\n' +
                     '<p>\n' +
                     '    <strong>From:</strong> Ralph Turner &lt;rturner@example.com&gt;<br/>\n' +
@@ -393,22 +295,8 @@ describe('Emails.Field.ReplyAction', function() {
                 expect(field.emailOptions.description_html).toBe(expected);
             });
 
-            it('should not include CC in the email body', function() {
-                var expected = '\n-----\n' +
-                    'From: Ralph Turner <rturner@example.com>\n' +
-                    'Date: 03/27/2012 01:48\n' +
-                    'To: Georgia Earl <gearl@example.com>, Nancy Holman <nholman@example.com>, bhunter@example.com\n' +
-                    'Subject: My Subject\n\n' +
-                    'this is the plain-text body';
-
-                sandbox.stub(field, 'useSugarEmailClient').returns(false);
-                model.get('cc_collection').reset([]);
-
-                expect(field.emailOptions.description).toBe(expected);
-            });
-
             it('should not include CC in the email HTML body', function() {
-                var expected = '<div></div><div id="replycontent">\n' +
+                var expected = '<div></div><div id="forwardcontent">\n' +
                     '<hr>\n' +
                     '<p>\n' +
                     '    <strong>From:</strong> Ralph Turner &lt;rturner@example.com&gt;<br/>\n' +
@@ -428,8 +316,73 @@ describe('Emails.Field.ReplyAction', function() {
             });
         });
 
-        it('should not add the attachments', function() {
-            expect(field.emailOptions.attachments).toBeUndefined();
+        it('should add the attachments', function() {
+            var attachments = model.get('attachments_collection');
+            var options = field.emailOptions.attachments;
+
+            expect(options.length).toBe(3);
+            expect(options[0].id).toBeUndefined();
+            expect(options[0].name).toBe(attachments.at(0).get('filename'));
+            expect(options[0].filename).toBe(attachments.at(0).get('filename'));
+            expect(options[0].file_mime_type).toBe(attachments.at(0).get('file_mime_type'));
+            expect(options[0].file_size).toBe(attachments.at(0).get('file_size'));
+            expect(options[0].file_ext).toBe(attachments.at(0).get('file_ext'));
+            expect(options[0].upload_id).toBe(attachments.at(0).get('id'));
+            expect(options[1].id).toBeUndefined();
+            expect(options[1].name).toBe(attachments.at(1).get('filename'));
+            expect(options[1].filename).toBe(attachments.at(1).get('filename'));
+            expect(options[1].file_mime_type).toBe(attachments.at(1).get('file_mime_type'));
+            expect(options[1].file_size).toBe(attachments.at(1).get('file_size'));
+            expect(options[1].file_ext).toBe(attachments.at(1).get('file_ext'));
+            expect(options[1].upload_id).toBe(attachments.at(1).get('upload_id'));
+            expect(options[2].id).toBeUndefined();
+            expect(options[2].name).toBe(attachments.at(2).get('name'));
+            expect(options[2].filename).toBe(attachments.at(2).get('name'));
+            expect(options[2].file_mime_type).toBe(attachments.at(2).get('file_mime_type'));
+            expect(options[2].file_size).toBe(attachments.at(2).get('file_size'));
+            expect(options[2].file_ext).toBe(attachments.at(2).get('file_ext'));
+            expect(options[2].upload_id).toBe(attachments.at(2).get('id'));
+        });
+
+        describe('adding the related record', function() {
+            it('should add the parent', function() {
+                expect(field.emailOptions.related.module).toBe(model.get('parent').type);
+                expect(field.emailOptions.related.get('id')).toBe(model.get('parent').id);
+                expect(field.emailOptions.related.get('name')).toBe(model.get('parent').name);
+            });
+
+            it('should add using the parent fields', function() {
+                var parent = app.data.createBean('Contacts', {
+                    id: _.uniqueId(),
+                    name: 'Cedric Harper'
+                });
+
+                model.unset('parent');
+                model.set({
+                    parent_type: parent.module,
+                    parent_id: parent.get('id'),
+                    parent_name: parent.get('name')
+                });
+
+                expect(field.emailOptions.related.module).toBe(parent.module);
+                expect(field.emailOptions.related.get('id')).toBe(parent.get('id'));
+                expect(field.emailOptions.related.get('name')).toBe(parent.get('name'));
+            });
+        });
+
+        it('should add the selected teams', function() {
+            expect(field.emailOptions.team_name).toEqual([
+                {
+                    id: 'West',
+                    name: 'West',
+                    primary: false
+                },
+                {
+                    id: 'East',
+                    name: 'East',
+                    primary: true
+                }
+            ]);
         });
     });
 });

@@ -36,9 +36,12 @@
           "LBL_SUBJECT": "Subject",
           "LBL_FROM": "From",
           "LBL_TO_ADDRS": "To",
-          "LBL_CC": "CC",
-          "LBL_BCC": "BCC",
-          "LBL_ATTACHMENTS": "Attachments"
+          "LBL_CC": "Cc",
+          "LBL_BCC": "Bcc",
+          "LBL_ATTACHMENTS": "Attachments",
+          "LBL_DATE": "Date",
+          "LBL_RE": "Re:",
+          "LBL_FW": "FW:"
         },
         "Opportunities": {
             "LBL_MODULE_NAME": "Opportunities"

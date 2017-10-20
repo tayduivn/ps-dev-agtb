@@ -15,35 +15,29 @@
  *
  * @class View.Fields.Base.Emails.ReplyActionField
  * @alias SUGAR.App.view.fields.EmailsBaseReplyActionField
- * @extends View.Fields.Base.EmailactionField
+ * @extends View.Fields.Base.Emails.ForwardActionField
  */
 ({
-    extendsFrom: 'EmailactionField',
+    extendsFrom: 'EmailsForwardActionField',
 
     /**
-     * Template for reply header.
+     * The name of the template for the reply header.
      *
-     * @private
+     * @inheritdoc
      */
-    _tplHeaderHtml: null,
+    _tplHeaderHtmlName: 'reply-header-html',
 
     /**
      * @inheritdoc
-     *
-     * The reply content is built ahead of the button click to support the
-     * option of doing a mailto link which needs to be built and set in the DOM
-     * at render time.
      */
-    initialize: function(options) {
-        this._super('initialize', [options]);
+    _subjectPrefix: 'LBL_RE',
 
-        //Use field template from emailaction
-        this.type = 'emailaction';
-
-        // If there is a default signature in email compose, it should be
-        // placed above the reply content in the email body.
-        this.addEmailOptions({signature_location: 'above'});
-    },
+    /**
+     * The element ID to use to identify the reply content.
+     *
+     * @inheritdoc
+     */
+    _contentId: 'replycontent',
 
     /**
      * @inheritdoc
@@ -114,19 +108,6 @@
     },
 
     /**
-     * Returns the subject to use in the email.
-     *
-     * @see EmailClientLaunch plugin.
-     * @param {Data.Bean} model Use this model when constructing the subject.
-     * @return {undefined|string}
-     */
-    emailOptionSubject: function(model) {
-        var subject = this._getReplySubject(model.get('name'));
-
-        return subject;
-    },
-
-    /**
      * Returns the plain-text body to use in the email.
      *
      * @see EmailClientLaunch plugin.
@@ -140,7 +121,7 @@
         var description;
 
         if (!this.useSugarEmailClient()) {
-            headerParams = this._getReplyHeaderParams(model);
+            headerParams = this._getHeaderParams(model);
             replyHeader = this._getReplyHeader(headerParams);
             replyBody = this._getReplyBody(model);
             description = '\n' + replyHeader + '\n' + replyBody;
@@ -150,61 +131,11 @@
     },
 
     /**
-     * Returns the HTML body to use in the email.
+     * Attachments are not carried over to replies.
      *
-     * @see EmailClientLaunch plugin.
-     * @param {Data.Bean} model Use this model when constructing the body.
-     * @return {undefined|string}
+     * @inheritdoc
      */
-    emailOptionDescriptionHtml: function(model) {
-        var tplHeaderHtml = this._getHeaderHtmlTemplate();
-        var headerParams = this._getReplyHeaderParams(model);
-        var replyHeaderHtml = tplHeaderHtml(headerParams);
-        var replyBodyHtml = this._getReplyBodyHtml(model);
-        // The "replycontent" ID is added to the div wrapper around the reply
-        // content for later identifying the portion of the email body which is
-        // the reply content (e.g., when inserting templates into an email, but
-        // maintaining the reply content).
-        var descriptionHtml = '<div></div><div id="replycontent">' + replyHeaderHtml + replyBodyHtml + '</div>';
-
-        return descriptionHtml;
-    },
-
-    /**
-     * Returns the bean to use as the email's related record.
-     *
-     * @see EmailClientLaunch plugin.
-     * @param {Data.Bean} model This model's parent is used as the email's
-     * related record.
-     * @return {undefined|Data.Bean}
-     */
-    emailOptionRelated: function(model) {
-        var parent;
-
-        if (model.get('parent') && model.get('parent').type && model.get('parent').id) {
-            // We omit type because it is actually the module name and should
-            // not be treated as an attribute.
-            parent = app.data.createBean(model.get('parent').type, _.omit(model.get('parent'), 'type'));
-        } else if (model.get('parent_type') && model.get('parent_id')) {
-            parent = app.data.createBean(model.get('parent_type'), {
-                id: model.get('parent_id'),
-                name: model.get('parent_name')
-            });
-        }
-
-        return parent;
-    },
-
-    /**
-     * Returns the teamset array to seed the email's teams.
-     *
-     * @see EmailClientLaunch plugin.
-     * @param {Data.Bean} model This model's teams is used as the email's
-     * teams.
-     * @return {undefined|Array}
-     */
-    emailOptionTeams: function(model) {
-        return model.get('team_name');
+    emailOptionAttachments: function(model) {
     },
 
     /**
@@ -217,20 +148,6 @@
     _updateEmailOptions: function() {
         app.logger.warn('View.Fields.Base.Emails.ReplyActionField#_updateEmailOptions is deprecated. ' +
             'The EmailClientLaunch plugin handles email options.');
-    },
-
-    /**
-     * Return the HTML reply header template if it exists, or retrieves it.
-     *
-     * @return {Function}
-     * @private
-     */
-    _getHeaderHtmlTemplate: function() {
-        // Use `this.def.type` because `this.type` was changed to `emailaction`
-        // during initialization.
-        this._tplHeaderHtml = this._tplHeaderHtml ||
-            app.template.getField(this.def.type, 'reply-header-html', this.module);
-        return this._tplHeaderHtml;
     },
 
     /**
@@ -262,32 +179,29 @@
      *
      * @param {string} subject
      * @protected
+     * @deprecated Use
+     * View.Fields.Base.Emails.ReplyActionField#emailOptionSubject instead.
      */
     _getReplySubject: function(subject) {
-        var pattern = /^((?:re|fwd): *)*/i;
-        subject = subject || '';
-        return 'Re: ' + (subject.replace(pattern, '') || '');
+        app.logger.warn('View.Fields.Base.Emails.ReplyActionField#_getReplySubject is deprecated. Use ' +
+            'View.Fields.Base.Emails.ReplyActionField#emailOptionSubject instead.');
+
+        return this.emailOptionSubject(this.model);
     },
 
     /**
-     * Get the params required to run the reply header template.
+     * Get the data required by the header template.
      *
-     * @param {Data.Bean} model The params come from this model's attributes.
-     * EmailClientLaunch plugin should dictate the model based on the context.
      * @return {Object}
      * @protected
+     * @deprecated Use
+     * View.Fields.Base.Emails.ReplyActionField#_getHeaderParams instead.
      */
-    _getReplyHeaderParams: function(model) {
-        // Falls back to the `this.model` for backward compatibility.
-        model = model || this.model;
+    _getReplyHeaderParams: function() {
+        app.logger.warn('View.Fields.Base.Emails.ReplyActionField#_getReplyHeaderParams is deprecated. Use ' +
+            'View.Fields.Base.Emails.ReplyActionField#_getHeaderParams instead.');
 
-        return {
-            from: this._formatEmailList(model.get('from_collection')),
-            date: model.get('date_sent'),
-            to: this._formatEmailList(model.get('to_collection')),
-            cc: this._formatEmailList(model.get('cc_collection')),
-            name: model.get('name')
-        };
+        return this._getHeaderParams(this.model);
     },
 
     /**
@@ -303,45 +217,23 @@
      * @private
      */
     _getReplyHeader: function(params) {
-        var date = app.date(params.date).formatUser();
-        var header = '-----\n' + 'From: ' + (params.from || '') + '\n';
+        var header = '-----\n' + app.lang.get('LBL_FROM', params.module) + ': ' + (params.from || '') + '\n';
+        var date;
 
         if (params.date) {
-            header += 'Date: ' + date + '\n';
+            date = app.date(params.date).formatUser();
+            header += app.lang.get('LBL_DATE', params.module) + ': ' + date + '\n';
         }
 
-        header += 'To: ' + (params.to || '') + '\n';
+        header += app.lang.get('LBL_TO_ADDRS', params.module) + ': ' + (params.to || '') + '\n';
 
         if (params.cc) {
-            header += 'Cc: ' + params.cc + '\n';
+            header += app.lang.get('LBL_CC', params.module) + ': ' + params.cc + '\n';
         }
 
-        header += 'Subject: ' + (params.name || '') + '\n';
+        header += app.lang.get('LBL_SUBJECT', params.module) + ': ' + (params.name || '') + '\n';
 
         return header;
-    },
-
-    /**
-     * Given a list of people, format a text only list for use in a reply
-     * header.
-     *
-     * @param {Data.BeanCollection} collection A list of models
-     * @protected
-     */
-    _formatEmailList: function(collection) {
-        return collection.map(function(model) {
-            var name = model.get('parent_name') || '';
-
-            if (_.isEmpty(name)) {
-                return model.get('email_address') || '';
-            }
-
-            if (_.isEmpty(model.get('email_address'))) {
-                return name;
-            }
-
-            return name + ' <' + model.get('email_address') + '>';
-        }).join(', ');
     },
 
     /**
@@ -399,29 +291,24 @@
     },
 
     /**
-     * Retrieve the HTML version of the reply body.
+     * Retrieve the HTML version of the email body.
      *
      * Ensure the result is a defined string and strip any signature wrapper
      * tags to ensure it doesn't get stripped if we insert a signature above
-     * the reply content. Also strip any reply content class if this is a
-     * reply to a previous reply.
+     * the forward content. Also strip any reply content class if this is a
+     * forward to a previous reply. And strip any forward content class if this
+     * is a forward to a previous forward.
      *
-     * @param {Data.Bean} model The body should come from this model's
-     * attributes. EmailClientLaunch plugin should dictate the model based on
-     * the context.
-     * @return {string} The reply body
-     * @private
+     * @return {string}
+     * @protected
+     * @deprecated Use
+     * View.Fields.Base.Emails.ReplyActionField#emailOptionDescriptionHtml
+     * instead.
      */
-    _getReplyBodyHtml: function(model) {
-        var body;
+    _getReplyBodyHtml: function() {
+        app.logger.warn('View.Fields.Base.Emails.ReplyActionField#_getReplyBodyHtml is deprecated. Use ' +
+            'View.Fields.Base.Emails.ReplyActionField#emailOptionDescriptionHtml instead.');
 
-        // Falls back to the `this.model` for backward compatibility.
-        model = model || this.model;
-
-        body = model.get('description_html') || '';
-        body = body.replace('<div class="signature">', '<div>');
-        body = body.replace('<div id="replycontent">', '<div>');
-
-        return body;
+        return this.emailOptionDescriptionHtml(this.model);
     }
 })

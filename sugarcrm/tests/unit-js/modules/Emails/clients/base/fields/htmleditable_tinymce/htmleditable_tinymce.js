@@ -565,6 +565,21 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
                 });
 
                 describe('applying the template', function() {
+                    var modelData = {
+                        nonReply: {
+                            name: 'original subject',
+                            description_html: '<div><b>original</b> content</div>'
+                        },
+                        reply: {
+                            name: 'RE: original subject',
+                            description_html: '<div>My Content</div><div id="replycontent">My Reply Content</div>'
+                        },
+                        forward: {
+                            name: 'FW: original subject',
+                            description_html: '<div>My Content</div><div id="forwardcontent">My Forwarded Content</div>'
+                        }
+                    };
+
                     beforeEach(function() {
                         // Skip the confirmation. The user accepts.
                         sandbox.stub(app.alert, 'show', function(name, options) {
@@ -572,67 +587,108 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
                         });
                     });
 
-                    describe('for a non-reply', function() {
-                        beforeEach(function() {
-                            model.set('name', 'original subject');
-                            model.set('description_html', '<div><b>original</b> content</div>');
-                        });
+                    describe('Subject line for non-reply, reply, and forward', function() {
+                        var dataProvider = [
+                            {
+                                message: 'should use the template subject for a non-reply',
+                                name: modelData.nonReply.name,
+                                description_html: modelData.nonReply.description_html,
+                                expected: 'Welcome to our portal'
+                            },
+                            {
+                                message: 'should use the template subject for a reply',
+                                name: modelData.reply.name,
+                                description_html: modelData.reply.description_html,
+                                expected: modelData.reply.name
+                            },
+                            {
+                                message: 'should use the template subject for a forward',
+                                name: modelData.forward.name,
+                                description_html: modelData.forward.description_html,
+                                expected: modelData.forward.name
+                            }
+                        ];
 
-                        it('should use the template subject', function() {
-                            button.onclick($.Event());
+                        _.each(dataProvider, function(data) {
+                            it(data.message, function() {
+                                model.set('name', data.name);
+                                model.set('description_html', data.description_html);
+                                button.onclick($.Event());
 
-                            expect(model.get('name')).toBe('Welcome to our portal');
-                        });
-
-                        it('should use the html body', function() {
-                            button.onclick($.Event());
-
-                            expect(model.get('description_html')).toBe('<h1>Template Content</h1>');
-                        });
-
-                        it('should use the text body', function() {
-                            template.text_only = true;
-
-                            button.onclick($.Event());
-
-                            expect(model.get('description_html')).toBe('Template Content');
-                        });
+                                expect(model.get('name')).toBe(data.expected);
+                            });
+                        }, this);
                     });
 
-                    describe('for a reply', function() {
-                        beforeEach(function() {
-                            model.set('name', 'RE: original subject');
-                            model.set(
-                                'description_html',
-                                '<div>My Content</div><div id="replycontent">My Reply Content</div>'
-                            );
-                        });
+                    describe('HTML body for non-reply, reply, and forward', function() {
+                        var dataProvider = [
+                            {
+                                message: 'should use the html body for a non-reply',
+                                name: modelData.nonReply.name,
+                                description_html: modelData.nonReply.description_html,
+                                expected: '<h1>Template Content</h1>'
+                            },
+                            {
+                                message: 'should use the html body for a reply',
+                                name: modelData.reply.name,
+                                description_html: modelData.reply.description_html,
+                                expected: '<h1>Template Content</h1>' +
+                                    '<div></div><div id="replycontent">My Reply Content</div><div></div>'
+                            },
+                            {
+                                message: 'should use the html body for a forward',
+                                name: modelData.forward.name,
+                                description_html: modelData.forward.description_html,
+                                expected: '<h1>Template Content</h1>' +
+                                    '<div></div><div id="forwardcontent">My Forwarded Content</div><div></div>'
+                            }
+                        ];
 
-                        it('should not change the subject', function() {
-                            button.onclick($.Event());
+                        _.each(dataProvider, function(data) {
+                            it(data.message, function() {
+                                model.set('name', data.name);
+                                model.set('description_html', data.description_html);
+                                button.onclick($.Event());
 
-                            expect(model.get('name')).toBe('RE: original subject');
-                        });
+                                expect(model.get('description_html')).toBe(data.expected);
+                            });
+                        }, this);
+                    });
 
-                        it('should append the reply content after the template html content is inserted', function() {
-                            var expected = '<h1>Template Content</h1>' +
-                                '<div></div><div id="replycontent">My Reply Content</div><div></div>';
+                    describe('Text body for non-reply, reply, and forward', function() {
+                        var dataProvider = [
+                            {
+                                message: 'should use the text body for a non-reply',
+                                name: modelData.nonReply.name,
+                                description_html: modelData.nonReply.description_html,
+                                expected: 'Template Content'
+                            },
+                            {
+                                message: 'should use the text body for a reply',
+                                name: modelData.reply.name,
+                                description_html: modelData.reply.description_html,
+                                expected: 'Template Content' +
+                                    '<div></div><div id="replycontent">My Reply Content</div><div></div>'
+                            },
+                            {
+                                message: 'should use the text body for a forward',
+                                name: modelData.forward.name,
+                                description_html: modelData.forward.description_html,
+                                expected: 'Template Content' +
+                                    '<div></div><div id="forwardcontent">My Forwarded Content</div><div></div>'
+                            }
+                        ];
 
-                            button.onclick($.Event());
+                        _.each(dataProvider, function(data) {
+                            it(data.message, function() {
+                                model.set('name', data.name);
+                                model.set('description_html', data.description_html);
+                                template.text_only = true;
+                                button.onclick($.Event());
 
-                            expect(model.get('description_html')).toBe(expected);
-                        });
-
-                        it('should append the reply content after the template text content is inserted', function() {
-                            var expected = 'Template Content' +
-                                '<div></div><div id="replycontent">My Reply Content</div><div></div>';
-
-                            template.text_only = true;
-
-                            button.onclick($.Event());
-
-                            expect(model.get('description_html')).toBe(expected);
-                        });
+                                expect(model.get('description_html')).toBe(data.expected);
+                            });
+                        }, this);
                     });
 
                     it('should trigger an event so the attachments field can apply template attachments', function() {

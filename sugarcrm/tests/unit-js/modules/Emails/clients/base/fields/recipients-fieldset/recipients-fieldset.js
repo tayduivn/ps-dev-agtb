@@ -197,7 +197,7 @@ describe('Emails.RecipientsFieldsetField', function() {
         });
 
         it('should not add the label for TO', function() {
-            var expected = 'Herbert Yates, Walter Quigley; CC: Wyatt Archer; BCC: Earl Hatcher';
+            var expected = 'Herbert Yates, Walter Quigley; Cc: Wyatt Archer; Bcc: Earl Hatcher';
             var actual;
 
             field.model.set('to_collection', to);
@@ -221,7 +221,7 @@ describe('Emails.RecipientsFieldsetField', function() {
         });
 
         it('should only show CC', function() {
-            var expected = 'CC: Wyatt Archer';
+            var expected = 'Cc: Wyatt Archer';
             var actual;
 
             field.model.set('cc_collection', cc);
@@ -232,7 +232,7 @@ describe('Emails.RecipientsFieldsetField', function() {
         });
 
         it('should only show BCC', function() {
-            var expected = 'BCC: Earl Hatcher';
+            var expected = 'Bcc: Earl Hatcher';
             var actual;
 
             field.model.set('bcc_collection', bcc);
@@ -408,7 +408,7 @@ describe('Emails.RecipientsFieldsetField', function() {
             $bcc = field.$('button[data-toggle-field=bcc]');
             $fieldsetGroups = field.$('.fieldset-group');
 
-            expect($scroll.text()).toBe('Herbert Yates, Walter Quigley; CC: Wyatt Archer; BCC: Earl Hatcher');
+            expect($scroll.text()).toBe('Herbert Yates, Walter Quigley; Cc: Wyatt Archer; Bcc: Earl Hatcher');
             expect($cc.length).toBe(0);
             expect($bcc.length).toBe(0);
             expect($fieldsetGroups.length).toBe(0);

@@ -117,6 +117,17 @@ describe('Emails.Views.Record', function() {
                     hide: sandbox.spy(),
                     setDisabled: sandbox.spy()
                 }, {
+                    name: 'forward_button',
+                    type: 'forward-action',
+                    label: 'LBL_BUTTON_FORWARD',
+                    def: {
+                        acl_module: 'Emails',
+                        acl_action: 'create'
+                    },
+                    show: sandbox.spy(),
+                    hide: sandbox.spy(),
+                    setDisabled: sandbox.spy()
+                }, {
                     type: 'rowaction',
                     name: 'edit_button',
                     label: 'LBL_EDIT_BUTTON_LABEL',
@@ -287,7 +298,7 @@ describe('Emails.Views.Record', function() {
             });
         });
 
-        it('should show the Reply and Reply All buttons', function() {
+        it('should show the Forward, Reply, and Reply All buttons', function() {
             view.setButtonStates(view.STATE.VIEW);
 
             // cancel_button should be hidden
@@ -314,17 +325,23 @@ describe('Emails.Views.Record', function() {
             expect(view.buttons[2].fields[1].show).not.toHaveBeenCalled();
             expect(view.buttons[2].fields[1].hide).not.toHaveBeenCalled();
 
-            // edit_button should be shown
+            // forward_button should be shown
             // show isn't called because it's visibility is controlled by
             // hiding or showing main_dropdown
             expect(view.buttons[2].fields[2].show).not.toHaveBeenCalled();
             expect(view.buttons[2].fields[2].hide).not.toHaveBeenCalled();
 
-            // delete_button should be shown
+            // edit_button should be shown
             // show isn't called because it's visibility is controlled by
             // hiding or showing main_dropdown
             expect(view.buttons[2].fields[3].show).not.toHaveBeenCalled();
             expect(view.buttons[2].fields[3].hide).not.toHaveBeenCalled();
+
+            // delete_button should be shown
+            // show isn't called because it's visibility is controlled by
+            // hiding or showing main_dropdown
+            expect(view.buttons[2].fields[4].show).not.toHaveBeenCalled();
+            expect(view.buttons[2].fields[4].hide).not.toHaveBeenCalled();
         });
     });
 
@@ -368,7 +385,7 @@ describe('Emails.Views.Record', function() {
             });
         });
 
-        it('should hide the Reply and Reply All buttons', function() {
+        it('should hide the Forward, Reply, and Reply All buttons', function() {
             view.setButtonStates(view.STATE.VIEW);
 
             // cancel_button should be hidden
@@ -395,17 +412,23 @@ describe('Emails.Views.Record', function() {
             expect(view.buttons[2].fields[1].show).not.toHaveBeenCalled();
             expect(view.buttons[2].fields[1].hide).toHaveBeenCalled();
 
-            // edit_button should be shown
+            // forward_button should be shown
             // show isn't called because it's visibility is controlled by
             // hiding or showing main_dropdown
             expect(view.buttons[2].fields[2].show).not.toHaveBeenCalled();
-            expect(view.buttons[2].fields[2].hide).not.toHaveBeenCalled();
+            expect(view.buttons[2].fields[2].hide).toHaveBeenCalled();
 
-            // delete_button should be shown
+            // edit_button should be shown
             // show isn't called because it's visibility is controlled by
             // hiding or showing main_dropdown
             expect(view.buttons[2].fields[3].show).not.toHaveBeenCalled();
             expect(view.buttons[2].fields[3].hide).not.toHaveBeenCalled();
+
+            // delete_button should be shown
+            // show isn't called because it's visibility is controlled by
+            // hiding or showing main_dropdown
+            expect(view.buttons[2].fields[4].show).not.toHaveBeenCalled();
+            expect(view.buttons[2].fields[4].hide).not.toHaveBeenCalled();
         });
     });
 });

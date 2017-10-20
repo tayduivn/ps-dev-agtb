@@ -12,7 +12,7 @@
 
 $mod_strings = array(
     'LBL_FW' => 'FW:',
-    'LBL_RE' => 'RE:',
+    'LBL_RE' => 'Re:',
     'LBL_BUTTON_CREATE' => 'Create',
     'LBL_BUTTON_EDIT' => 'Edit',
     'LBL_QS_DISABLED' => '(QuickSearch is not availible for this module. Please use the select button.)',
@@ -230,6 +230,7 @@ $mod_strings = array(
     'LBL_BUTTON_REPLY_TITLE' => 'Reply',
     'LBL_BUTTON_REPLY' => 'Reply',
     'LBL_BUTTON_REPLY_ALL' => 'Reply All',
+    'LBL_BUTTON_FORWARD' => 'Forward',
     'LBL_CASES_SUBPANEL_TITLE' => 'Cases',
     'LBL_INBOUND_TITLE' => 'Inbound Email',
     'LBL_INTENT' => 'Intent',

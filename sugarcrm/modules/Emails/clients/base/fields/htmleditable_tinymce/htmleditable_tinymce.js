@@ -644,7 +644,7 @@
      *
      * The template's subject does not overwrite the existing subject if:
      *
-     * 1. The email is a reply.
+     * 1. The email is a forward or reply.
      * 2. The template does not have a subject.
      *
      * @private
@@ -656,29 +656,30 @@
     _applyTemplate: function(template) {
         var body;
         var replyContent;
+        var forwardContent;
         var subject;
         var signature = this.context.get('current_signature');
 
         /**
-         * Check the email body and pull out any reply content from a draft
-         * email.
+         * Check the email body and pull out any forward/reply content from a
+         * draft email.
          *
          * @param {string} body The full content to search.
-         * @return {string} The reply content.
+         * @return {string} The forward/reply content.
          */
-        function getReplyContent(body) {
-            var reply = '';
-            var $reply;
+        function getForwardReplyContent(body, id) {
+            var content = '';
+            var $content;
 
             if (body) {
-                $reply = $('<div>' + body + '</div>').find('div#replycontent');
+                $content = $('<div>' + body + '</div>').find('div#' + id);
 
-                if ($reply.length > 0) {
-                    reply = $reply[0].outerHTML;
+                if ($content.length > 0) {
+                    content = $content[0].outerHTML;
                 }
             }
 
-            return reply;
+            return content;
         }
 
         if (this.disposed === true) {
@@ -688,11 +689,12 @@
         // Track applying an email template.
         app.analytics.trackEvent('email_template', 'apply', template);
 
-        replyContent = getReplyContent(this.model.get(this.name));
+        replyContent = getForwardReplyContent(this.model.get(this.name), 'replycontent');
+        forwardContent = getForwardReplyContent(this.model.get(this.name), 'forwardcontent');
         subject = template.get('subject');
 
-        // Only use the subject if it's not a reply.
-        if (subject && !replyContent) {
+        // Only use the subject if it's not a forward or reply.
+        if (subject && !(replyContent || forwardContent)) {
             this.model.set('name', subject);
         }
 
@@ -710,6 +712,11 @@
         // Append the reply content to the end of the email.
         if (replyContent) {
             this._insertInEditor(replyContent, this.BELOW_CONTENT);
+        }
+
+        // Append the forward content to the end of the email.
+        if (forwardContent) {
+            this._insertInEditor(forwardContent, this.BELOW_CONTENT);
         }
     },
 
