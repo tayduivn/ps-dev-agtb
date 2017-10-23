@@ -9,9 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * Reply or reply all action.
+ * Reply action.
  *
- * This allows an user to "reply" or "reply all" to an existing email.
+ * This allows a user to "reply" to an existing email.
  *
  * @class View.Fields.Base.Emails.ReplyActionField
  * @alias SUGAR.App.view.fields.EmailsBaseReplyActionField
@@ -64,10 +64,8 @@
     },
 
     /**
-     * Returns the recipients to use in the To field of the email.
-     *
-     * If `this.def.reply_all` is true, then the recipients in the To field
-     * from the original email are included.
+     * Returns the recipients to use in the To field of the email. The sender
+     * from the original email is included.
      *
      * @see EmailClientLaunch plugin.
      * @param {Data.Bean} model Use this model when identifying the recipients.
@@ -79,6 +77,8 @@
         var to = this._createRecipients(originalSender);
 
         if (this.def.reply_all) {
+            app.logger.warn('The reply_all option is deprecated. Use View.Fields.Base.Emails.ReplyAllActionField ' +
+                'instead.');
             originalTo = model.get('to_collection');
             to = _.union(to, this._createRecipients(originalTo));
         }
@@ -87,9 +87,9 @@
     },
 
     /**
-     * Returns the recipients to use in the CC field of the email, if
-     * `this.def.reply_all` is true. These recipients are the same ones who
-     * appeared in the original email's CC field.
+     * Returns the recipients to use in the CC field of the email. The
+     * `reply_all` option is deprecated. Use
+     * View.Fields.Base.Emails.ReplyAllActionField instead.
      *
      * @see EmailClientLaunch plugin.
      * @param {Data.Bean} model Use this model when identifying the recipients.
@@ -100,6 +100,8 @@
         var cc;
 
         if (this.def.reply_all) {
+            app.logger.warn('The reply_all option is deprecated. Use View.Fields.Base.Emails.ReplyAllActionField ' +
+                'instead.');
             originalCc = model.get('cc_collection');
             cc = this._createRecipients(originalCc);
         }
@@ -167,6 +169,11 @@
         app.logger.warn('View.Fields.Base.Emails.ReplyActionField#_getReplyRecipients is deprecated. Use ' +
             'View.Fields.Base.Emails.ReplyActionField#emailOptionTo and ' +
             'View.Fields.Base.Emails.ReplyActionField#emailOptionCc instead.');
+
+        if (all) {
+            app.logger.warn('The reply_all option is deprecated. Use View.Fields.Base.Emails.ReplyAllActionField ' +
+                'instead.');
+        }
 
         return {
             to: this.emailOptionTo(this.model) || [],

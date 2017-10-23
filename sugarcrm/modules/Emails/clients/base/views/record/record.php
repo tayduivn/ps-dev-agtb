@@ -46,12 +46,11 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'reply_all_button',
-                    'type' => 'reply-action',
+                    'type' => 'reply-all-action',
                     'event' => 'button:reply_all_button:click',
                     'label' => 'LBL_BUTTON_REPLY_ALL',
                     'acl_module' => 'Emails',
                     'acl_action' => 'create',
-                    'reply_all' => true,
                 ),
                 array(
                     'name' => 'forward_button',

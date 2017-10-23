@@ -194,47 +194,6 @@ describe('Emails.Field.ReplyAction', function() {
             expect(field.emailOptions.cc).toBeUndefined();
         });
 
-        it('should add the sender and To recipients to the To field and CC recipients to the CC field', function() {
-            var sender = model.get('from_collection').first();
-
-            field.def.reply_all = true;
-            model.trigger('change', model);
-
-            expect(field.emailOptions.to.length).toBe(4);
-            expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
-            expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
-            expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
-            expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
-            expect(field.emailOptions.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(field.emailOptions.to[1].email.get('id'))
-                .toBe(model.get('to_collection').at(0).get('email_address_id'));
-            expect(field.emailOptions.to[1].email.get('email_address'))
-                .toBe(model.get('to_collection').at(0).get('email_address'));
-            expect(field.emailOptions.to[1].bean.module).toBe(model.get('to_collection').at(0).get('parent_type'));
-            expect(field.emailOptions.to[1].bean.get('id')).toBe(model.get('to_collection').at(0).get('parent_id'));
-            expect(field.emailOptions.to[1].bean.get('name')).toBe(model.get('to_collection').at(0).get('parent_name'));
-            expect(field.emailOptions.to[2].email.get('id'))
-                .toBe(model.get('to_collection').at(1).get('email_address_id'));
-            expect(field.emailOptions.to[2].email.get('email_address'))
-                .toBe(model.get('to_collection').at(1).get('email_address'));
-            expect(field.emailOptions.to[2].bean.module).toBe(model.get('to_collection').at(1).get('parent_type'));
-            expect(field.emailOptions.to[2].bean.get('id')).toBe(model.get('to_collection').at(1).get('parent_id'));
-            expect(field.emailOptions.to[2].bean.get('name')).toBe(model.get('to_collection').at(1).get('parent_name'));
-            expect(field.emailOptions.to[3].email.get('id'))
-                .toBe(model.get('to_collection').at(2).get('email_address_id'));
-            expect(field.emailOptions.to[3].email.get('email_address'))
-                .toBe(model.get('to_collection').at(2).get('email_address'));
-            expect(field.emailOptions.to[3].bean).toBeUndefined();
-            expect(field.emailOptions.cc.length).toBe(1);
-            expect(field.emailOptions.cc[0].email.get('id'))
-                .toBe(model.get('cc_collection').at(0).get('email_address_id'));
-            expect(field.emailOptions.cc[0].email.get('email_address'))
-                .toBe(model.get('cc_collection').at(0).get('email_address'));
-            expect(field.emailOptions.cc[0].bean.module).toBe(model.get('cc_collection').at(0).get('parent_type'));
-            expect(field.emailOptions.cc[0].bean.get('id')).toBe(model.get('cc_collection').at(0).get('parent_id'));
-            expect(field.emailOptions.cc[0].bean.get('name')).toBe(model.get('cc_collection').at(0).get('parent_name'));
-        });
-
         using('subjects', [
             {
                 original: '',
