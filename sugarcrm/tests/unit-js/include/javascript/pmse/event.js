@@ -176,7 +176,7 @@ describe('includes.javascript.pmse.event', function() {
                         textField: 'text',
                         valueField: 'value',
                         typeField: 'type',
-                        typeFilter: ['Datetime'],
+                        typeFilter: ['Date', 'Datetime'],
                         moduleTextField: 'text',
                         moduleValueField: 'value'
                     }
