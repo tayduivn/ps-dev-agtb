@@ -1147,7 +1147,7 @@ expressions in the regex. Regular expressions should not include any delimiters.
     'LBL_SAML_REQUEST_SIGNING_CERT' => 'Request Signing Certificate',
     'LBL_SAML_REQUEST_SIGNING_CERT_DESC' => 'Upload PEM file containing x.509 certificate to be used for AuthN/Logout request signing. Certificate should match uploaded private key',
     'LBL_SAML_REQUEST_SIGNING_METHOD' => 'Request Signing method',
-    'LBL_SAML_REQUEST_SIGNING_METHOD_DESC' => 'Select signing method, RSA-SHA1 and RSA-SHA256 are recommended',
+    'LBL_SAML_REQUEST_SIGNING_METHOD_DESC' => 'Algorithm for signing request and responses to SAML provider',
     'LBL_SAML_SIGN_AUTHN' => 'Sign AuthN Request',
     'LBL_SAML_SIGN_AUTHN_DESC' => 'AuthN Requests will be signed with provided private key',
     'LBL_SAML_SIGN_LOGOUT_REQUEST' => 'Sign Logout Request',
