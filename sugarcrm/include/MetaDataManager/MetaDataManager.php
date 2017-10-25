@@ -2395,7 +2395,7 @@ class MetaDataManager implements LoggerAwareInterface
         $data =  $this->getMetadataInternal($args, $context);
         //update the hash before returning to ensure the base and context hashes are incorperated.
         //Internally this hash is not stored with a context cache.
-        $data['_hash'] = $this->getCachedMetadataHash($context);
+        $data['_hash'] = $this->getMetadataHash(false, $context);
 
         return $data;
     }
@@ -2427,7 +2427,6 @@ class MetaDataManager implements LoggerAwareInterface
             // Something is up with the system status
             // We need to tack it on and refresh the hash
             $data['config']['system_status'] = $systemStatus;
-            $data['_hash'] = md5($data['_hash'] . serialize($systemStatus));
         }
 
         return $data;
