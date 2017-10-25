@@ -594,6 +594,83 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
 };
 
 /**
+ * Get the panel type filter
+ * @param {Object} self
+ * @param {Object} field
+ * @param {Object} fieldType
+ * @param {Object} constantPanelCfg
+ */
+UpdaterField.prototype._getPanelTypeFilter = function(self, field, fieldType, constantPanelCfg) {
+    var panelTypeFilter = field._fieldType === 'Datetime' ? ['Date', 'Datetime'] : field._fieldType;
+    this.setOperatorPanelForm(self, field, fieldType, constantPanelCfg, panelTypeFilter);
+    return panelTypeFilter;
+};
+
+/**
+ * Set the operator panel form
+ * @param {Object} self
+ * @param {Object} field
+ * @param {Object} fieldType
+ * @param {Object} constantPanelCfg
+ * @param {Object} panelTypeFilter
+ */
+UpdaterField.prototype.setOperatorPanelForm = function(self, field, fieldType, constantPanelCfg, panelTypeFilter) {
+    if (self._datePanel && (!self.currentField || self.currentField !== field)) {
+        if (field instanceof DateUpdaterItem) {
+            if (fieldType === 'Date') {
+                constantPanelCfg = {
+                    date: true,
+                    datespan: true
+                };
+            } else {
+                constantPanelCfg = {
+                    datetime: true,
+                    timespan: true
+                };
+            }
+            self._datePanel.setOperators({
+                arithmetic: ['+', '-']
+            }).setConstantPanel(constantPanelCfg);
+        } else {
+            self._datePanel.setOperators({
+                arithmetic: true,
+                group: true
+            });
+            if (field.isCurrency()) {
+                self._datePanel.setConstantPanel({
+                    currency: true,
+                    basic: {
+                        number: true
+                    }
+                });
+            } else {
+                self._datePanel.setConstantPanel({
+                    basic: {
+                        number: true
+                    }
+                });
+            }
+        }
+        self._datePanel.setVariablePanel({
+            data: [{
+                name: App.lang.getModuleName(PROJECT_MODULE),
+                value: PROJECT_MODULE,
+                items: self._variables
+            }],
+            dataFormat: 'hierarchical',
+            typeField: 'type',
+            typeFilter: panelTypeFilter,
+            textField: 'text',
+            valueField: 'value',
+            dataChildRoot: 'items',
+            moduleTextField: 'name',
+            moduleValueField: 'value'
+        });
+    }
+    return self;
+};
+
+/**
  * Displays and create the control panel with filled with the possibilities
  * of the sugar variables, change the panel z-index to show correctly,
  * finally add a windows close event for close the control panel
@@ -602,7 +679,8 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
 UpdaterField.prototype.openPanelOnItem = function (field) {
     var that = this, settings, inputPos, textSize, subjectInput, i,
         variablesDataSource = project.getMetadata("targetModuleFieldsDataSource"), currentFilters, list, targetPanel,
-        currentOwner, fieldType = field.getFieldType(), constantPanelCfg;
+        currentOwner, fieldType = field.getFieldType();
+    var constantPanelCfg = {};
     if (!(field instanceof DateUpdaterItem || field instanceof NumberUpdaterItem)) {
         if (!this._variablesList) {
             this._variablesList = new FieldPanel({
@@ -665,60 +743,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 }
             });
         }
-        //Check if the panel is already configured for the current field's type
-        //in order to do it, we verify if the current field class is the same that the previous field's.
-        if (!this.currentField || this.currentField !== field) {
-            if (field instanceof DateUpdaterItem) {
-                if (fieldType === 'Date') {
-                    constantPanelCfg = {
-                        date: true,
-                        datespan: true
-                    };
-                } else {
-                    constantPanelCfg = {
-                        datetime: true,
-                        timespan: true
-                    };
-                }
-                this._datePanel.setOperators({
-                    arithmetic: ["+", "-"]
-                }).setConstantPanel(constantPanelCfg);
-            } else {
-                this._datePanel.setOperators({
-                    arithmetic: true,
-                    group: true
-                });
-                if (field.isCurrency()) {
-                    this._datePanel.setConstantPanel({
-                        currency: true,
-                        basic: {
-                            number: true
-                        }
-                    });
-                } else {
-                    this._datePanel.setConstantPanel({
-                        basic: {
-                            number: true
-                        }
-                    });
-                }
-            }
-            this._datePanel.setVariablePanel({
-                data: [{
-                    name: App.lang.getModuleName(PROJECT_MODULE),
-                    value: PROJECT_MODULE,
-                    items: this._variables
-                }],
-                dataFormat: "hierarchical",
-                typeField: "type",
-                typeFilter: field._fieldType,
-                textField: "text",
-                valueField: "value",
-                dataChildRoot: "items",
-                moduleTextField: "name",
-                moduleValueField: "value"
-            });
-        }
+        var panelTypeFilter = this._getPanelTypeFilter(this, field, fieldType, constantPanelCfg);
         this.currentField = field;
         //We can't send an empty string since JSON can't parse it
         this._datePanel.setValue(field.getValue() || [], true);
