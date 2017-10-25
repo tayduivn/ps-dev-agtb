@@ -95,6 +95,13 @@
     initialize: function(options) {
         var signature;
         var location;
+        // We insert an empty <p> node in the tinyMCE editor and use that to
+        // focus the cursor to the bottom of the tinyMCE editor. This is
+        // because if the last element in the editor has content
+        // (i.e. <p>Sincercely, John Doe</p>) and we select that element, the
+        // cursor would be placed at the beginning of the content
+        // (in the example, the cursor would be before the "S" in Sincerely).
+        var emptyNode;
 
         this._super('initialize', [options]);
 
@@ -128,13 +135,22 @@
                 this._insertSignature(signature, location);
             }
 
-            // Focus editor at top of the content for replies.
-            if (!_.isEmpty(this.model.get('reply_to_id'))) {
+            // Focus the editor and place the cursor at the desired location.
+            if (!_.isEmpty(this.context.get('cursor_location'))) {
                 this.listenToOnce(this.context, 'tinymce:oninit', function() {
                     if (this._htmleditor) {
-                        $(this._htmleditor).focus();
-                        this._htmleditor.selection.select(this._htmleditor.getBody(), true);
-                        this._htmleditor.selection.collapse(true);
+                        this._htmleditor.focus();
+
+                        // Move the cursor to the bottom of the editor by
+                        // inserting an empty node and selecting it.
+                        if (this.context.get('cursor_location') == this.BELOW_CONTENT) {
+                            emptyNode = this._insertNodeInEditor();
+
+                            if (emptyNode) {
+                                this._htmleditor.selection.setCursorLocation(emptyNode);
+                                this._htmleditor.selection.collapse(true);
+                            }
+                        }
                     }
                 });
             }
@@ -413,6 +429,30 @@
         this.model.set(this.name, emailBody);
 
         return emailBody;
+    },
+
+    /**
+     * Inserts a unique element into the TinyMCE editor to the end of the
+     * <body>.
+     *
+     * @private
+     * @return {HTMLElement|boolean} The inserted element or false if an
+     * element can't be inserted.
+     */
+    _insertNodeInEditor: function() {
+        var body;
+        var uniqueId;
+
+        if (this._htmleditor) {
+            body = this._htmleditor.getBody();
+            uniqueId = this._htmleditor.dom.uniqueId();
+            $('<p id="' + uniqueId + '"><br /></p>').appendTo(body);
+
+            return this._htmleditor.dom.select('p#' + uniqueId)[0];
+        }
+
+        // There is no editor to insert the element into.
+        return false;
     },
 
     /**

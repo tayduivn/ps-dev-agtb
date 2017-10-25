@@ -66,9 +66,14 @@
         // Use field templates from emailaction.
         this.type = 'emailaction';
 
-        // If there is a default signature in email compose, it should be
-        // placed above the forward content in the email body.
-        this.addEmailOptions({signature_location: 'above'});
+        this.addEmailOptions({
+            // If there is a default signature in email compose, it should be
+            // placed above the forward content in the email body.
+            signature_location: 'above',
+            // Focus the editor and place the cursor at the beginning of all
+            // content.
+            cursor_location: 'above'
+        });
     },
 
     /**

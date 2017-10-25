@@ -184,7 +184,14 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
                 getBody: sandbox.stub().returns('<p>Some content</p>'),
                 selection: {
                     select: sandbox.stub(),
-                    collapse: sandbox.stub()
+                    collapse: sandbox.stub(),
+                    setCursorLocation: sandbox.stub()
+                },
+                dom: {
+                    select: sandbox.stub().returns(function(selector) {
+                        return ['<p></p>'];
+                    }),
+                    uniqueId: sandbox.stub().returns('mce-0')
                 }
             };
         });
@@ -194,6 +201,10 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
         });
 
         it('should focus the editor', function() {
+            context.set({
+                cursor_location: 'above'
+            });
+
             field = SugarTest.createField({
                 name: 'description_html',
                 type: 'htmleditable_tinymce',
@@ -211,9 +222,32 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
             context.trigger('tinymce:oninit');
 
             expect(htmlEditor.focus).toHaveBeenCalledOnce();
-            expect(htmlEditor.getBody).toHaveBeenCalledOnce();
-            expect(htmlEditor.selection.select).toHaveBeenCalledOnce();
-            expect(htmlEditor.selection.select).toHaveBeenCalledWith('<p>Some content</p>', true);
+        });
+
+        it('should focus the editor and set the cursor to the bottom of the editor', function() {
+            context.set({
+                cursor_location: 'below'
+            });
+
+            field = SugarTest.createField({
+                name: 'description_html',
+                type: 'htmleditable_tinymce',
+                viewName: 'edit',
+                module: 'Emails',
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+            field._htmleditor = htmlEditor;
+            sandbox.stub(field, '_insertNodeInEditor').returns('<p id="mce-0"></p>');
+
+            // Trigger it twice to prove that it will only happen once.
+            context.trigger('tinymce:oninit');
+            context.trigger('tinymce:oninit');
+
+            expect(htmlEditor.focus).toHaveBeenCalledOnce();
+            expect(htmlEditor.selection.setCursorLocation).toHaveBeenCalledOnce();
+            expect(htmlEditor.selection.setCursorLocation).toHaveBeenCalledWith('<p id="mce-0"></p>');
             expect(htmlEditor.selection.collapse).toHaveBeenCalledOnce();
             expect(htmlEditor.selection.collapse).toHaveBeenCalledWith(true);
         });
