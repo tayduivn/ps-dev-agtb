@@ -4,7 +4,7 @@
 
 "@sugarcrm/d3-sugar@4.9.1":
   version "4.9.1"
-  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/d3-sugar/-/d3-sugar-4.9.1.tgz#552849bbb54fd4f44c119646c7712e5f40a0bc2f"
+  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/d3-sugar/-/d3-sugar-4.9.1.tgz#02960ee7604d13a4ee61b9b49dc5b5167d6bedab"
   dependencies:
     d3-array "1.2.0"
     d3-axis "1.0.7"
@@ -34,7 +34,7 @@
 
 "@sugarcrm/sucrose-sugar@^0.6.12":
   version "0.6.12"
-  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/sucrose-sugar/-/sucrose-sugar-0.6.12.tgz#2530e3cdac10ecf29ca76c04e410f95d2a4c56d4"
+  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/sucrose-sugar/-/sucrose-sugar-0.6.12.tgz#73737bd8114dc89f557253815266e196e3951776"
   dependencies:
     "@sugarcrm/d3-sugar" "4.9.1"
 
