@@ -74,7 +74,7 @@ gulp.task('karma', function(done) {
     var karmaOptions = {
         files: karmaAssets,
         configFile: __dirname + '/gulp/karma.conf.js',
-        browsers: ['PhantomJS'],
+        browsers: ['ChromeHeadless'],
         autoWatch: false,
         singleRun: true,
         reporters: ['dots'],

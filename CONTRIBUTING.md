@@ -424,8 +424,8 @@ IE 11 (on Windows 7) is currently the default when no `--browsers` option is pro
 The following options are available to all Karma tasks:
 
 By specifying `--browsers` you are able to tell against which browsers this task should run against.
-If no browser is specified, `Chrome` is used by default for the `dev` task and `PhantomJS` is used by default for
-almost everything else. Currently supported browsers are: `Chrome`, `Firefox`, `Safari`, and `PhantomJS`, except for
+If no browser is specified, `Chrome` is used by default for the `dev` task and `ChromeHeadless` is used by default for
+almost everything else. Currently supported browsers are: `Chrome`, `Firefox`, `Safari`, and `ChromeHeadless`, except for
 the `sauce` task, which has other options.
 
 By specifying `--team` you're reducing the scope of each test run by only running tests relevant to the given team.
