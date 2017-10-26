@@ -352,16 +352,9 @@ class SugarFieldTag extends SugarFieldRelatecollection
     /**
      * Define custom filters for Tags
      *
-     * @param $value - the value that needs fixing
-     * @param $fieldName - the field we are fixing
-     * @param SugarBean $bean - the Bean
-     * @param SugarQuery $q - the Query
-     * @param SugarQuery_Builder_Where $where - the Where statement
-     * @param $op - the filter operand
-     * @return bool - true if everything can pass as normal,
-     *                false if new filters needed to be added to override the existing $op
+     * {@inheritdoc}
      */
-    public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
+    public function fixForFilter(&$value, $columnName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
     {
         // We only need to doctor the where clause is the operator is not_in
         if ($op === '$not_in') {

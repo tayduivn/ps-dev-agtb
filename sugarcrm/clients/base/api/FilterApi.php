@@ -936,7 +936,19 @@ class FilterApi extends SugarApi
              * doing an operation on a datetime field and only send in a date, we need to fix that field to
              * be a dateTime then unFormat it so that its in GMT ready for DB use
              */
-            if ($sugarField->fixForFilter($value, $field, $fieldInfo['bean'], $q, $where, $op) == false) {
+
+            if (strpos($field, '.') === false) {
+                if (isset($fieldInfo['def']['source']) && $fieldInfo['def']['source'] === 'custom_fields') {
+                    $tableName = $fieldInfo['bean']->get_custom_table_name();
+                } else {
+                    $tableName = $fieldInfo['bean']->getTableName();
+                }
+                $columnName = $tableName . '.' . $field;
+            } else {
+                $columnName = $field;
+            }
+
+            if ($sugarField->fixForFilter($value, $columnName, $fieldInfo['bean'], $q, $where, $op) == false) {
                 continue;
             }
 
