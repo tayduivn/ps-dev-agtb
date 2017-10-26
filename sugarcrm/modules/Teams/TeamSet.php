@@ -22,7 +22,7 @@
  *
  */
 
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager;
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
 
 require_once('vendor/ytree/Tree.php');
 require_once('vendor/ytree/Node.php');
@@ -162,7 +162,8 @@ class TeamSet extends SugarBean{
                 $this->_addTeamToSet($team_id);
             }
 
-            DenormManager::getInstance()->addTeamSetsTeams($this->id, $team_ids);
+            $listener = Manager::getInstance()->getListener();
+            $listener->teamSetCreated($this->id, $team_ids);
 
             return $this->id;
         }else{

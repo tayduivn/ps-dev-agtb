@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager;
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
 
 class TeamSetManager {
 
@@ -385,6 +385,7 @@ WHERE tst.team_id = ?';
     	}
 
         $teamSet = BeanFactory::newBean('TeamSets');
+        $listener = Manager::getInstance()->getListener();
 
         foreach ($team_set_id_modules as $team_set_id => $tables) {
             $teamSet->id = $team_set_id;
@@ -396,7 +397,7 @@ WHERE tst.team_id = ?';
             $query = 'SELECT id FROM team_sets WHERE team_md5 = ? AND id != ?';
             $stmt = $conn->executeQuery($query, array($teamSet->team_md5, $teamSet->id));
 
-            while (($existing_team_set_id = $stmt->fetchColumn())) {
+            if (($existing_team_set_id = $stmt->fetchColumn())) {
                 //Update the records
                 foreach ($tables as $table) {
                     $conn->update($table, array(
@@ -421,15 +422,10 @@ WHERE tst.team_id = ?';
                     'team_set_id' => $teamSet->id,
                 ));
 
-                $deletedTeamSets[$team_set_id] = $row[$team_set_id];
+                $listener->teamSetReplaced($team_set_id, $existing_team_set_id);
+            } else {
+                $listener->teamSetDeleted($team_set_id);
             }
-
-    	      $affectedTeamSets[$team_set_id] = $row[$team_set_id];
     	}
-
-        DenormManager::getInstance()->removeTeamSets(array_values($deletedTeamSets));
-        DenormManager::getInstance()->removeTeamFromTeamSets(array_diff($affectedTeamSets, $deletedTeamSets), $team_id);
-
-	    return $affectedTeamSets;
     }
 }

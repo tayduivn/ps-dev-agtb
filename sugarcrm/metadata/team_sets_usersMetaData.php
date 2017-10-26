@@ -12,12 +12,11 @@
 
 /**
  * Denormalized team_sets vs users to optimize TeamSecurity
- * There are two different tables "denorm1" and "denorm2"
- * involved. You are not looking at a copy/paste failure !
+ * There are two different tables. You are not looking at a copy/paste failure !
  */
 
-$dictionary['team_sets_users_denorm1'] = array(
-    'table' => 'team_sets_users_denorm1',
+$dictionary['team_sets_users_1'] = array(
+    'table' => 'team_sets_users_1',
     'fields' => array(
         'team_set_id' => array(
             'name' => 'team_set_id',
@@ -49,8 +48,8 @@ $dictionary['team_sets_users_denorm1'] = array(
     ),
 );
 
-$dictionary['team_sets_users_denorm2'] = array(
-    'table' => 'team_sets_users_denorm2',
+$dictionary['team_sets_users_2'] = array(
+    'table' => 'team_sets_users_2',
     'fields' => array(
         'team_set_id' => array(
             'name' => 'team_set_id',
@@ -82,8 +81,8 @@ $dictionary['team_sets_users_denorm2'] = array(
     ),
 );
 
-$dictionary['team_set_denorm_queue'] = array(
-    'table' => 'team_set_denorm_queue',
+$dictionary['team_set_events'] = array(
+    'table' => 'team_set_events',
     'fields' => array(
         'id' => array(
             'name' => 'id',

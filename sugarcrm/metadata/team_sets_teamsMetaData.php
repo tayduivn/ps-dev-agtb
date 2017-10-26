@@ -59,6 +59,7 @@ $dictionary['team_sets_teams'] = array(
             'type' => 'index',
             'fields' => array(
                 'team_id',
+                'deleted',
             ),
         ),
         array(

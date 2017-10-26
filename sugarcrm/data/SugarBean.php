@@ -697,6 +697,8 @@ class SugarBean
      * @param string $query
      * @param null|array $options
      * @return string
+     *
+     * @deprecated Use SugarQuery and SugarBean::addVisibilityQuery() instead
      */
     public function addVisibilityFrom(&$query, $options = null)
     {
@@ -708,6 +710,8 @@ class SugarBean
      * @param string $query
      * @param null|array $options
      * @return string
+     *
+     * @deprecated Use SugarQuery and SugarBean::addVisibilityQuery() instead
      */
     public function addVisibilityWhere(&$query, $options = null)
     {

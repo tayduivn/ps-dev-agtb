@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Jobs\SugarJobRebuildTeamSecurityDenormTable;
+
 /**
  * Set up an array of Jobs with the appropriate metadata
  * 'jobName' => array (
@@ -51,11 +53,10 @@ $job_strings = array (
     23 => 'class::\Sugarcrm\Sugarcrm\Elasticsearch\Queue\Scheduler',
     24 => 'class::SugarJobRemoveDiagnosticFiles',
     25 => 'class::SugarJobRemoveTmpFiles',
-    26 => 'class::Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Jobs\SugarJobRebuildTeamSecurityDenormTable',
+    26 => 'class::' . SugarJobRebuildTeamSecurityDenormTable::class,
     //BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
     //END SUGARCRM flav=int ONLY
-
 );
 
 /**

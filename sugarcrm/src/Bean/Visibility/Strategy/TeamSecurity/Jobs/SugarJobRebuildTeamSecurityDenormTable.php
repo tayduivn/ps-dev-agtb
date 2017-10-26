@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Jobs;
 
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager;
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
 
 /**
  *
@@ -27,17 +27,17 @@ class SugarJobRebuildTeamSecurityDenormTable implements \RunnableSchedulerJob
     protected $job;
 
     /**
-     * @var Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager
+     * @var \Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager
      */
     protected $denormManager;
 
     /**
      * Ctor
-     * @param DenormManager $denormManager
+     * @param Manager $manager
      */
-    public function __construct(DenormManager $denormManager = null)
+    public function __construct(Manager $manager = null)
     {
-        $this->denormManager = $denormManager ?: DenormManager::getInstance();
+        $this->denormManager = $manager ?: Manager::getInstance();
     }
 
     /**
@@ -53,26 +53,16 @@ class SugarJobRebuildTeamSecurityDenormTable implements \RunnableSchedulerJob
      */
     public function run($data)
     {
-        // We need to only run if Team Security denormalized table rebuild is required
-        if (!$this->denormManager->getIsRebuildRequired()) {
-            $msg = 'Team Security denormalized table rebuild not required at this time.';
-            return $this->job->succeedJob($msg);
+        $start = time();
+        list($status, $message) = $this->denormManager->rebuild();
+        $duration = time() - $start;
+
+        $message .= sprintf(' (%s second(s) taken)', $duration);
+
+        if ($status) {
+            return $this->job->succeedJob($message);
         }
 
-        // Check if Team Security use denormalized table config is enabled
-        if (!($this->denormManager->isEnabledAdminActionUpdate() || $this->denormManager->isEnabledUseDenorm())) {
-            $msg = 'Team Security use of denormalized table is not enabled. No need to run the job.';
-            return $this->job->succeedJob($msg);
-        }
-
-        list($success, $duration, $errorMsg) = $this->denormManager->initializeAndRebuild();
-
-        if ($success) {
-            $msg = sprintf("Team Security denormalized table rebuild completed in %s second(s)", $duration);
-            return $this->job->succeedJob($msg);
-        } else {
-            $msg = sprintf("Team Security denormalized table rebuild failed with error '%s'", $errorMsg);
-            return $this->job->failJob($msg);
-        }
+        return $this->job->failJob($message);
     }
 }

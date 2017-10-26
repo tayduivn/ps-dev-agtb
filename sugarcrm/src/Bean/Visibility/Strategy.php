@@ -10,13 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Exception;
+namespace Sugarcrm\Sugarcrm\Bean\Visibility;
 
-/**
- *
- * Denormalization Manager Exception
- *
- */
-class DenormManagerException extends \RuntimeException implements ExceptionInterface
+use Sugarcrm\Sugarcrm\Bean\Visibility\Layer\Sql;
+use Sugarcrm\Sugarcrm\Bean\Visibility\Layer\SugarQuery;
+
+interface Strategy extends SugarQuery, Sql/*, ElasticSearch*/
 {
 }

@@ -16,7 +16,7 @@ use Sugarcrm\Sugarcrm\Console\CommandRegistry\Mode\InstanceModeInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager;
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
 
 /**
  *
@@ -25,20 +25,6 @@ use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager
  */
 class RebuildDenormTableCommand extends Command implements InstanceModeInterface
 {
-    /**
-     * @var Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\DenormManager
-     */
-    protected $denormManager;
-
-    /**
-     * Ctor
-     */
-    public function __construct()
-    {
-        $this->denormManager = DenormManager::getInstance();
-        parent::__construct();
-    }
-
     /**
      * {inheritdoc}
      */
@@ -54,6 +40,9 @@ class RebuildDenormTableCommand extends Command implements InstanceModeInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->denormManager->initializeAndRebuild();
+        list($status, $message) = Manager::getInstance()->rebuild();
+        $output->writeln($message);
+
+        return $status ? 0 : 1;
     }
 }
