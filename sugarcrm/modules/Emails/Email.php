@@ -833,7 +833,7 @@ class Email extends SugarBean {
                     $object_arr = array('Contacts' => '123');
                 }
                 $object_arr['Users'] = $current_user->id;
-                $this->description_html = EmailTemplate::parse_template($this->description_html, $object_arr);
+                $this->description_html = EmailTemplate::parse_template($this->description_html, $object_arr, true);
                 $this->name = EmailTemplate::parse_template($this->name, $object_arr);
                 $this->description = EmailTemplate::parse_template($this->description, $object_arr);
             }
@@ -4303,7 +4303,7 @@ eoq;
         $related['Users'] = $GLOBALS['current_user']->id;
 
         $this->name = EmailTemplate::parse_template($this->name, $related);
-        $this->description_html = EmailTemplate::parse_template($this->description_html, $related);
+        $this->description_html = EmailTemplate::parse_template($this->description_html, $related, true);
         $this->description = EmailTemplate::parse_template($this->description, $related);
 
         $this->description = $this->decodeDuringSend(from_html($this->description));

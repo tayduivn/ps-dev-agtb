@@ -109,7 +109,7 @@ if($focus->type != 'draft' && count($object_arr) > 0) {
 	require_once($beanFiles['EmailTemplate']);
 	$focus->name = EmailTemplate::parse_template($focus->name, $object_arr);
 	$focus->description = EmailTemplate::parse_template($focus->description, $object_arr);
-	$focus->description_html = EmailTemplate::parse_template($focus->description_html, $object_arr);
+    $focus->description_html = EmailTemplate::parse_template($focus->description_html, $object_arr, true);
 }
 ////	END TEMPLATE PARSING
 ///////////////////////////////////////////////////////////////////////////////

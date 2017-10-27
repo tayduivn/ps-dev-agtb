@@ -98,4 +98,82 @@ class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertSame($expected, $actual);
     }
+
+    /**
+     * @covers ::parse_template_bean
+     * @covers ::add_replacement
+     * @covers ::convertToType
+     */
+    public function testParseTemplateBean_BeanIsAccount_Description_Has_Multiple_Lines_TargetIsHtml()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $account->description = <<<EOD1
+Description Line One
+Description Line Two
+Description Line Three
+EOD1;
+
+        $template = <<<EOT1
+        <html>
+        <body>
+           <div> This is some HTML followed by a template variable that refers to the account description field </div>
+\$account_description
+           <div> And this is more HTML </div>
+        </body>
+        </html>
+EOT1;
+
+        $expected = <<<EOR1
+        <html>
+        <body>
+           <div> This is some HTML followed by a template variable that refers to the account description field </div>
+Description Line One<br />Description Line Two<br />Description Line Three
+           <div> And this is more HTML </div>
+        </body>
+        </html>
+EOR1;
+
+        $actual = EmailTemplate::parse_template_bean($template, 'Accounts', $account, true);
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @covers ::parse_template_bean
+     * @covers ::add_replacement
+     * @covers ::convertToType
+     */
+    public function testParseTemplateBean_BeanIsAccount_Description_Has_Multiple_Lines_TargetIsNotHtml()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $account->description = <<<EOD2
+Description Line One
+Description Line Two
+Description Line Three
+EOD2;
+
+        $template = <<<EOT2
+        <html>
+        <body>
+           <div> This is some HTML followed by a template variable that refers to the account description field </div>
+\$account_description
+           <div> And this is more HTML </div>
+        </body>
+        </html>
+EOT2;
+
+        $expected = <<<EOR2
+        <html>
+        <body>
+           <div> This is some HTML followed by a template variable that refers to the account description field </div>
+Description Line One
+Description Line Two
+Description Line Three
+           <div> And this is more HTML </div>
+        </body>
+        </html>
+EOR2;
+
+        $actual = EmailTemplate::parse_template_bean($template, 'Accounts', $account, false);
+        $this->assertSame($expected, $actual);
+    }
 }

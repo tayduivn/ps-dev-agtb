@@ -283,6 +283,72 @@ class PMSEBeanHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         
         $beanHandlerMock->mergeBeanInTemplate($bean, $template);
     }
+
+    /**
+     * @covers PMSEBeanHandler::mergingTemplate
+     * @covers PMSEFieldsUtils::bpminbox_get_display_text
+     */
+    public function testMergeTemplate_Description_Has_Multiple_Lines()
+    {
+        $description = <<<EOD1
+Description Line One
+Description Line Two
+Description Line Three
+EOD1;
+        $template = <<<EOT1
+        <html>
+        <body>
+           <div> This is some HTML followed by a template variable that refers to the call description field </div>
+{::Calls::description::}
+           <div> And this is more HTML </div>
+        </body>
+        </html>
+EOT1;
+        $expected = <<<EOR1
+        <html>
+        <body>
+           <div> This is some HTML followed by a template variable that refers to the call description field </div>
+Description Line One<br />Description Line Two<br />Description Line Three
+           <div> And this is more HTML </div>
+        </body>
+        </html>
+EOR1;
+
+        $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(array('get_href_link'))
+            ->getMock();
+
+        $beanHandlerMock->setLogger($this->loggerMock);
+
+        $beanMock = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $beanMock->module_dir = 'Calls';
+        $beanMock->id = 'Call01';
+        $beanMock->name = 'Test Call';
+        $beanMock->description = $description;
+        $beanMock->link_field = 'linked_somewhere';
+
+        $beanMock->field_defs = array(
+            'description' => array('name' => 'description', 'type' => 'text', 'dbType' => 'text'),
+        );
+
+        $componentArray = array(
+            'Calls' => array(
+                'Calls_description_future' => array(
+                    'name' => 'description',
+                    'value_type' => 'future',
+                    'original' => '{::Calls::description::}',
+                ),
+            ),
+        );
+
+        $actual = $beanHandlerMock->mergingTemplate($beanMock, $template, $componentArray, false);
+        $this->assertSame($expected, $actual);
+    }
     
     public function testMergeTemplateNotEvaluated()
     {

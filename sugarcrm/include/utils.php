@@ -2952,6 +2952,19 @@ function br2nl($str)
 }
 
 /**
+ * Convert New Lines to Html
+ * This works slightly different than PHP's builtin nl2br in that it replaces
+ * the New Lines with the <br /> tags rather than simply inserting a <br /> tag.
+ * Since the <br /> characters are a replacement for the existing New line character(s),
+ * the function can be safely called multiple times while processing a source string
+ * without inadvertently adding additional blank lines.
+ */
+function nl2html($str)
+{
+    return str_replace(["\r\n", "\n\r", "\n", "\r"], '<br />', $str);
+}
+
+/**
  * Private helper function for displaying the contents of a given variable.
  * This function is only intended to be used for SugarCRM internal development.
  * The ppd stands for Pre Print Die.

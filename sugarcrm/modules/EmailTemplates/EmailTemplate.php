@@ -398,13 +398,17 @@ class EmailTemplate extends SugarBean {
      *
      * @param string $type
      * @param string $value
+     * @param bool $htmlTarget text values only get converted if true
      * @return string
      */
-    private static function convertToType($type, $value)
+    private static function convertToType($type, $value, $htmlTarget = false)
     {
         switch ($type) {
             case 'currency':
                 return currency_format_number($value);
+            case 'text':
+            case 'longtext':
+                return $htmlTarget ? nl2html($value) : $value;
             default:
                 return $value;
         }
@@ -466,7 +470,16 @@ class EmailTemplate extends SugarBean {
         return $replacementsArray;
     }
 
-    public static function parse_template_bean($string, $bean_name, &$focus)
+    /**
+     * Process template variables replacing them with their appropriate data values from supplied bean
+     *
+     * @param string $string
+     * @param string $bean_name
+     * @param SugarBean $focus
+     * @param bool $htmlTarget - set to true only if the destination of the merge is an html field
+     * @return mixed
+     */
+    public static function parse_template_bean($string, $bean_name, &$focus, $htmlTarget = false)
     {
 		global $current_user;
 		global $beanFiles, $beanList;
@@ -548,7 +561,7 @@ class EmailTemplate extends SugarBean {
 						}
 					} else {
                         // bug 47647 - allow for fields to translate before adding to template
-                        $translated = self::convertToType($field_def['type'], $acct->{$field_def['name']});
+                        $translated = self::convertToType($field_def['type'], $acct->{$field_def['name']}, $htmlTarget);
                         $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
                             'account_'         . $field_def['name'] => $translated,
                             'contact_account_' . $field_def['name'] => $translated,
@@ -591,7 +604,7 @@ class EmailTemplate extends SugarBean {
 					}
                 } elseif (isset($contact->{$field_def['name']})) {
                     // bug 47647 - allow for fields to translate before adding to template
-                    $translated = self::convertToType($field_def['type'], $contact->{$field_def['name']});
+                    $translated = self::convertToType($field_def['type'], $contact->{$field_def['name']}, $htmlTarget);
                     $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
                         'contact_'         . $field_def['name'] => $translated,
                         'contact_account_' . $field_def['name'] => $translated,
@@ -624,7 +637,7 @@ class EmailTemplate extends SugarBean {
                     // bug 47647 - translate currencies to appropriate values
                     $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
                         strtolower($beanList[$bean_name]) . '_' . $field_def['name']
-                            => self::convertToType($field_def['type'], $focus->{$field_def['name']}),
+                            => self::convertToType($field_def['type'], $focus->{$field_def['name']}, $htmlTarget),
                     ));
 				}
 			} else {
@@ -682,7 +695,15 @@ class EmailTemplate extends SugarBean {
         return $data;
     }
 
-    public static function parse_template($string, $bean_arr)
+    /**
+     * Iterate over an array of Beans and invoke parse_template_bean for each Bean in array
+     *
+     * @param string $string
+     * @param array $bean_arr
+     * @param bool $htmlTarget - indicates whether the destination field is an Html field
+     * @return mixed
+     */
+    public static function parse_template($string, $bean_arr, $htmlTarget = false)
     {
 		foreach($bean_arr as $bean_name => $bean_id) {
 		    $focus = BeanFactory::getBean($bean_name, $bean_id);
@@ -691,7 +712,7 @@ class EmailTemplate extends SugarBean {
 				$bean_name = 'Contacts';
 			}
 
-            $string = EmailTemplate::parse_template_bean($string, $bean_name, $focus);
+            $string = EmailTemplate::parse_template_bean($string, $bean_name, $focus, $htmlTarget);
 		}
 		return $string;
 	}
