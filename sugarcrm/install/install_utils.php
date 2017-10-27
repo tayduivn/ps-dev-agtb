@@ -823,6 +823,16 @@ function handleSugarConfig() {
         }
     }
 
+    // REMOVE ME: enable team security denormalization to run tests in CI
+    $sugar_config['perfProfile'] = [
+        'TeamSecurity' => [
+            'default' => [
+                'use_denorm' => true,
+            ],
+            'inline_update' => true,
+        ],
+    ];
+
     ksort($sugar_config);
     $sugar_config_string = "<?php\n" .
         '// created: ' . date('Y-m-d H:i:s') . "\n" .

@@ -281,6 +281,11 @@ class Manager
     {
         $components = [];
 
+        // REMOVE ME: enable team security denormalization to run tests in CI
+        if ($this->isEnabled && !$this->isUpToDate()) {
+            $this->rebuild();
+        }
+
         if ($this->isUpToDate()) {
             if ($this->isEnabled) {
                 if ($this->isAvailable()) {
