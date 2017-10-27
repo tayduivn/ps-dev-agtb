@@ -458,7 +458,12 @@ class Team extends SugarBean
      */
     public function addManagerToTeam($manager_id)
     {
-        $manager = BeanFactory::getBean('Users', $manager_id);
+        $manager = BeanFactory::retrieveBean('Users', $manager_id);
+
+        if (!$manager) {
+            return;
+        }
+
         $managers_membership = BeanFactory::newBean('TeamMemberships');
         $result = $managers_membership->retrieve_by_user_and_team($manager->id, $this->id);
 
