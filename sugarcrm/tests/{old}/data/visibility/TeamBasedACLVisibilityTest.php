@@ -151,10 +151,12 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $beanVisibility = new BeanVisibility($this->bean, $visibilities);
         $this->bean->expects($this->any())->method('loadVisibility')->will(
-            $this->returnValue($beanVisibility)
+            $this->returnCallback(function () use ($visibilities) {
+                return new BeanVisibility($this->bean, $visibilities);
+            })
         );
+
         $this->bean->__construct();
         $this->bean->team_id = $this->team->id;
         $this->bean->team_set_id = $this->teamSet->id;
