@@ -602,6 +602,8 @@ class SugarTestHelper
         }
         $GLOBALS['current_user'] = call_user_func_array('SugarTestUserUtilities::createAnonymousUser', $params);
 
+        BeanFactory::clearCache();
+
         return $GLOBALS['current_user'];
     }
 
