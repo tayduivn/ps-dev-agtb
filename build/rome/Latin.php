@@ -38,7 +38,9 @@ class Latin
 
         $translationBranch = "master";
 
-        if (version_compare($this->ver, "7.10", ">=")) {
+        if (version_compare($this->ver, "7.11", ">=")) {
+            $translationBranch = "7_11";     // 7_11 is the branch for 7.11.x train
+        } elseif (version_compare($this->ver, "7.10", ">=")) {
             $translationBranch = "7_10";     // 7_10 is the branch for 7.10.x train
         } elseif (version_compare($this->ver, "7.9", ">=")) {
             $translationBranch = "7_9";     // 7_9 is the branch for 7.9.x train
