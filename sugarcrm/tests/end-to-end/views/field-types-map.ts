@@ -21,6 +21,7 @@ import * as CurrencyField from '../fields/currency-field';
 import * as UrlField from '../fields/url-field';
 import * as FullnameField from '../fields/fullname-field';
 import * as TagField from '../fields/tag-field';
+import * as EmailField from '../fields/email-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -38,5 +39,6 @@ export const FIELD_TYPES__MAP = {
     checkbox: CopyField,
     copy: CopyField,
     currency: CurrencyField,
+    email: EmailField,
 };
 

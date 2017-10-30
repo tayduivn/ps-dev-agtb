@@ -22,6 +22,9 @@ export default class FullnameField extends BaseField {
 
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}]',
+            field: {
+                selector: 'span'
+            }
         });
     }
 
