@@ -1333,17 +1333,10 @@ eoq;
 
 	function createCopyOfInboundAttachment($ie, $ret, $uid) {
 		global $sugar_config;
-		if ($ie->isPop3Protocol()) {
-			// get the UIDL from database;
-			$cachedUIDL = md5($uid);
-			$cache = sugar_cached("modules/Emails/{$ie->id}/messages/{$ie->mailbox}{$cachedUIDL}.php");
-		} else {
-			$cache = sugar_cached("modules/Emails/{$ie->id}/messages/{$ie->mailbox}{$uid}.php");
-		}
-		if(file_exists($cache)) {
-			$cacheFile = FileLoader::varFromInclude($cache, 'cacheFile'); // provides $cacheFile
-            $metaOut = Serialized::unserialize($cacheFile['out']);
-			$meta = $metaOut['meta']['email'];
+
+        if ($this->mboxCacheExists($ie->id, $ie->mailbox, $uid)) {
+            $metaOut = $this->getMboxCacheValue($ie->id, $ie->mailbox, $uid);
+            $meta = $metaOut['meta']['email'];
 			if (isset($meta['attachments'])) {
 				$attachmentHtmlData = $meta['attachments'];
 				$actualAttachmentInfo = array();
@@ -2132,22 +2125,17 @@ function getSingleMessage($ie) {
 		global $app_strings,$mod_strings;
 
         $ieId = $this->request->getValidInputRequest('ieId', 'Assert\Guid');
-        $mbox = $this->request->getValidInputRequest('mbox', 'Assert\Guid');
+        $mbox = $this->request->getValidInputRequest('mbox');
         $uid = $this->request->getValidInputRequest('uid', 'Assert\Guid');
 
 		$ie->retrieve($ieId);
 		$noCache = true;
 
 		$ie->mailbox = $mbox;
-		$filename = $mbox.$uid.".php";
-		$md5uidl = "";
-		if ($ie->isPop3Protocol()) {
-			$md5uidl = md5($uid);
-			$filename = $mbox.$md5uidl.".php";
-		} // if
 
-		if($this->validCacheFileExists($ieId, 'messages', $filename)) {
-			$out = $this->getCacheValue($ieId, 'messages', $filename, 'out');
+
+        if ($this->mboxCacheExists($ieId, $mbox, $uid)) {
+            $out = $this->getMboxCacheValue($ieId, $mbox, $uid);
 			$noCache = false;
 
 			// something fubar'd the cache?
@@ -2175,11 +2163,7 @@ function getSingleMessage($ie) {
 				$writeToCacheFile = false;
 			}
 			if ($writeToCacheFile) {
-				if ($ie->isPop3Protocol()) {
-					$this->writeCacheFile('out', $out, $ieId, 'messages', "{$mbox}{$md5uidl}.php");
-				} else {
-					$this->writeCacheFile('out', $out, $ieId, 'messages', "{$mbox}{$uid}.php");
-				} // else
+                $this->writeMboxCacheValue($ieId, $mbox, $uid, $out);
 			// restore date in the users preferred format to be send on to UI for diaply
 			$out['meta']['email']['date_start'] = $dateTimeInUserFormat;
 			} // if
@@ -2206,12 +2190,6 @@ eoq;
         if (empty($out['meta']['email']['description'])) {
             $out['meta']['email']['description'] = $mod_strings['LBL_EMPTY_EMAIL_BODY'];
         }
-
-		if($noCache) {
-			$GLOBALS['log']->debug("EMAILUI: getSingleMessage() NOT using cache file");
-		} else {
-			$GLOBALS['log']->debug("EMAILUI: getSingleMessage() using cache file [ ".$mbox.$uid.".php ]");
-		}
 
 		$this->setReadFlag($ieId, $mbox, $uid);
 		return $out;
@@ -3125,6 +3103,31 @@ eoq;
 		echo $this->smarty->fetch("modules/Emails/templates/successMessage.tpl");
 	}
 
+
+    /**
+     * Returns a filename for a cache file based on a hashed mbox and uid
+     *
+     * @param string $mbox Mailbox folder label
+     * @param string $uid Unique ID of message
+     * @return string Filename
+     */
+    private function getMboxCacheFilename($mbox, $uid)
+    {
+        return hash('sha256', $mbox . $uid) . '.php';
+    }
+
+    /**
+     * Generates a filepath for a cache file
+     * @param string $ieId InboundEmail id
+     * @param string $type Type of cache (messages|folders)
+     * @param string $filename Filename
+     * @return string Cache filepath
+     */
+    private function getCacheFilePath($ieId, $type, $filename)
+    {
+        return sugar_cached("modules/Emails/{$ieId}/{$type}/{$filename}");
+    }
+
 	/**
 	 * Validates existence and expiration of a cache file
 	 * @param string $ieId
@@ -3140,16 +3143,26 @@ eoq;
 			$refreshOffset = $this->cacheTimeouts[$type]; // use defaults
 		}
 
-		$cleanIeId = cleanDirName($ieId);
-		$cleanType = cleanDirName($type);
-		$cleanFile = cleanFileName($file);
-		$cacheFilePath = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
-		if(file_exists($cacheFilePath)) {
+        $cacheFilename = $this->getCacheFilePath($ieId, $type, $file);
+        if (file_exists($cacheFilename)) {
 			return true;
 		}
 
 		return false;
 	}
+
+    /**
+     * Checks existence of a cache entry for Mbox and Message id
+     * @param string $ieId Inbound Email Id
+     * @param string $mbox Mailbox folder label
+     * @param string $uid Unique ID of message
+     * @return boolean
+     */
+    public function mboxCacheExists($ieId, $mbox, $uid)
+    {
+        $filename = $this->getMboxCacheFilename($mbox, $uid);
+        return $this->validCacheFileExists($ieId, 'messages', $filename);
+    }
 
 	/**
 	 * retrieves the cached value
@@ -3162,10 +3175,7 @@ eoq;
 	function getCacheValue($ieId, $type, $file, $key) {
 		global $sugar_config;
 
-		$cleanIeId = cleanDirName($ieId);
-		$cleanType = cleanDirName($type);
-		$cleanFile = cleanFileName($file);
-		$cacheFilePath = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
+        $cacheFilePath = $this->getCacheFilePath($ieId, $type, $file);
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
@@ -3183,6 +3193,19 @@ eoq;
 		return null;
 	}
 
+    /**
+     * Retrieves the cached value for Mbox and message Id
+     * @param string $ieId Inbound Email id
+     * @param string $mbox Mailbox folder label
+     * @param string $uid Unique ID of message
+     * @return mixed
+     */
+    public function getMboxCacheValue($ieId, $mbox, $uid)
+    {
+        $filename = $this->getMboxCacheFilename($mbox, $uid);
+        return $this->getCacheValue($ieId, 'messages', $filename, 'out');
+    }
+
 	/**
 	 * retrieves the cache file last touched time
 	 * @param string $ieId
@@ -3193,11 +3216,7 @@ eoq;
 	function getCacheTimestamp($ieId, $type, $file) {
 		global $sugar_config;
 
-		$cleanIeId = cleanDirName($ieId);
-		$cleanType = cleanDirName($type);
-		$cleanFile = cleanFileName($file);
-		$cacheFilePath = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
-
+        $cacheFilePath = $this->getCacheFilePath($ieId, $type, $file);
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
@@ -3222,10 +3241,7 @@ eoq;
 	function setCacheTimestamp($ieId, $type, $file) {
 		global $sugar_config;
 
-		$cleanIeId = cleanDirName($ieId);
-		$cleanType = cleanDirName($type);
-		$cleanFile = cleanFileName($file);
-		$cacheFilePath = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
+        $cacheFilePath = $this->getCacheFilePath($ieId, $type, $file);
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
@@ -3251,10 +3267,7 @@ eoq;
 	function writeCacheFile($key, $var, $ieId, $type, $file) {
 		global $sugar_config;
 
-		$cleanIeId = cleanDirName($ieId);
-		$cleanType = cleanDirName($type);
-		$cleanFile = cleanFileName($file);
-		$the_file = sugar_cached("modules/Emails/{$cleanIeId}/{$cleanType}/{$cleanFile}");
+        $the_file = $this->getCacheFilePath($ieId, $type, $file);
 		$timestamp = strtotime('now');
 		$array = array();
 		$array['timestamp'] = $timestamp;
@@ -3262,6 +3275,20 @@ eoq;
 
 		return $this->_writeCacheFile($array, $the_file);
 	}
+
+    /**
+     * Writes a variable to a mbox cache entry
+     * @param string $ieId InboundEmail Id
+     * @param string $mbox Mailbox folder label
+     * @param string $uid Unique ID of message
+     * @param mixed $var Variable to be cached
+     *@return boolean
+     */
+    public function writeMboxCacheValue($ieId, $mbox, $uid, $var)
+    {
+        $filename = $this->getMboxCacheFilename($mbox, $uid);
+        return $this->writeCacheFile('out', $var, $ieId, 'messages', $filename);
+    }
 
 	/**
 	 * Performs the actual file write.  Abstracted from writeCacheFile() for
@@ -3290,6 +3317,23 @@ eoq;
 	        return false;
 	    }
 	}
+
+    /**
+     * Delete a cache entry
+     *
+     * @param string $ieId InboundEmail ID
+     * @param string $mbox Mailbox folder label
+     * @param string $uid Unique ID of message
+     */
+    public function deleteMboxCache($ieId, $mbox, $uid)
+    {
+        $filename = $this->getMboxCacheFilename($mbox, $uid);
+        $cacheFilename = $this->getCacheFilePath($ieId, 'messages', $filename);
+        if (file_exists($cacheFilename)) {
+            $msgCacheFile = FileLoader::validateFilePath($cacheFilename);
+            unlink($msgCacheFile);
+        }
+    }
 
 	/**
 	 * Generate JSON encoded data to be consumed by yui datatable.

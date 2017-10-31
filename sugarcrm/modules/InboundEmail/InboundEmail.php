@@ -22,7 +22,13 @@ class temp {
 }
 
 class InboundEmail extends SugarBean {
-	// module specific
+
+    /**
+     * @var EmailUI
+     */
+    private $ui;
+
+    // module specific
 	var $conn;
 	var $purifier; // HTMLPurifier object placeholder
 	var $email;
@@ -485,14 +491,7 @@ class InboundEmail extends SugarBean {
 		$cacheUIDLs = $this->pop3_getCacheUidls();
 		foreach($cacheUIDLs as $msgNo => $msgId) {
 			if (!in_array($msgId, $UIDLs)) {
-				$md5msgIds = md5($msgId);
-				$file = "{$this->EmailCachePath}/{$this->id}/messages/INBOX{$md5msgIds}.PHP";
-				$GLOBALS['log']->debug("INBOUNDEMAIL: deleting file [ {$file} ] ");
-				if(file_exists($file)) {
-					if(!unlink($file)) {
-						$GLOBALS['log']->debug("INBOUNDEMAIL: Could not delete [ {$file} ] ");
-					} // if
-				} // if
+                $this->getEmailUI()->deleteMboxCache($this->id, 'INBOX', $msgId);
                 $q = "DELETE from email_cache where imap_uid = {$msgNo} AND msgno = {$msgNo} AND ie_id = " .
                     $this->db->quoted($this->id) . " AND message_id = " . $this->db->quoted($msgId);
 				$r = $this->db->query($q);
@@ -1073,8 +1072,7 @@ class InboundEmail extends SugarBean {
 				// new email cache values we should deal with
 				$diff = array_diff_assoc($UIDLs, $cacheUIDLs);
 				$diff = $this->pop3_shiftCache($diff, $cacheUIDLs);
-                $ui = new EmailUI();
-                $ui->preflightEmailCache("{$this->EmailCachePath}/{$this->id}");
+                $this->getEmailUI()->preflightEmailCache("{$this->EmailCachePath}/{$this->id}");
 
 				if (count($diff)> 50) {
                 	$newDiff = array_slice($diff, 50, count($diff), true);
@@ -1753,20 +1751,10 @@ class InboundEmail extends SugarBean {
 	function deleteCachedMessages($uids, $fromFolder) {
 		global $sugar_config;
 
-		if(!isset($this->email) && !isset($this->email->et)) {
-			$this->email = BeanFactory::newBean('Emails');
-			$this->email->email2init();
-		}
-
-		$uids = $this->email->et->_cleanUIDList($uids);
+        $uids = $this->getEmailUI()->_cleanUIDList($uids);
 
 		foreach($uids as $uid) {
-            $fileName = "{$this->EmailCachePath}/{$this->id}/messages/{$fromFolder}{$uid}.php";
-            $file = FileLoader::validateFilePath($fileName);
-
-            if (!unlink($file)) {
-                $GLOBALS['log']->debug("INBOUNDEMAIL: Could not delete [ {$file} ]");
-            }
+            $this->getEmailUI()->deleteMboxCache($this->id, $fromFolder, $uid);
 		}
 	}
 
@@ -1780,12 +1768,8 @@ class InboundEmail extends SugarBean {
 	 */
 	function getOverviewsFromCacheFile($uids, $mailbox='', $remove=false) {
 		global $app_strings;
-		if(!isset($this->email) && !isset($this->email->et)) {
-			$this->email = BeanFactory::newBean('Emails');
-			$this->email->email2init();
-		}
 
-		$uids = $this->email->et->_cleanUIDList($uids, true);
+        $uids = $this->getEmailUI()->_cleanUIDList($uids, true);
 
 		// load current cache file
 		$mailbox = empty($mailbox) ? $this->mailbox : $mailbox;
@@ -1870,18 +1854,11 @@ class InboundEmail extends SugarBean {
 				if($overview->size < 10000) {
 
 					$uid = $overview->imap_uid;
-
 					if(!empty($uid)) {
-						$file = "{$this->mailbox}{$uid}.php";
-						$cacheFile = clean_path("{$this->EmailCachePath}/{$this->id}/messages/{$file}");
-
-						if(!file_exists($cacheFile)) {
-							$GLOBALS['log']->info("INBOUNDEMAIL: Prefetching email [ {$file} ]");
+                        if (!$this->getEmailUI()->mboxCacheExists($this->id, $this->mailbox, $uid)) {
 							$this->setEmailForDisplay($uid);
 							$out = $this->displayOneEmail($uid, $this->mailbox);
-							$this->email->et->writeCacheFile('out', $out, $this->id, 'messages', "{$this->mailbox}{$uid}.php");
-						} else {
-							$GLOBALS['log']->debug("INBOUNDEMAIL: Trying to prefetch an email we already fetched! [ {$cacheFile} ]");
+                            $this->getEmailUI()->writeMboxCacheValue($this->id, $this->mailbox, $uid, $out);
 						}
 					} else {
 						$GLOBALS['log']->debug("*** INBOUNDEMAIL: prefetch has a message with no UID");
@@ -5372,7 +5349,7 @@ eoq;
 					$_REQUEST['showTeam'] = false;
 					$_REQUEST['showAssignTo'] = false;
 				}
-	            $ret = $this->email->et->getImportForm($_REQUEST, $this->email);
+                $ret = $this->getEmailUI()->getImportForm($_REQUEST, $this->email);
 	            $ret['move'] = true;
 	            $ret['srcFolder'] = $fromFolder;
 	            $ret['srcIeId']   = $fromIe;
@@ -5626,21 +5603,10 @@ eoq;
 		global $app_strings;
 
 		// if its a pop3 then get the UIDL and see if this file name exist or not
-		if ($this->isPop3Protocol()) {
-			// get the UIDL from database;
-			$cachedUIDL = md5($uid);
-			$cache = "{$this->EmailCachePath}/{$this->id}/messages/{$this->mailbox}{$cachedUIDL}.php";
-		} else {
-			$cache = "{$this->EmailCachePath}/{$this->id}/messages/{$this->mailbox}{$uid}.php";
-		}
 
-		if(file_exists($cache) && !$forceRefresh) {
+        if ($this->getEmailUI()->mboxCacheExists($this->id, $this->mailbox, $uid) && !$forceRefresh) {
 			$GLOBALS['log']->info("INBOUNDEMAIL: Using cache file for setEmailForDisplay()");
-
-			include($cache); // profides $cacheFile
-            /** @var $cacheFile array */
-
-            $metaOut = Serialized::unserialize($cacheFile['out']);
+            $metaOut = $this->getEmailUI()->getMboxCacheValue($this->id, $this->mailbox, $uid);
 			$meta = $metaOut['meta']['email'];
 			$email = BeanFactory::newBean('Emails');
 
@@ -5761,12 +5727,8 @@ eoq;
 			if ($this->isPop3Protocol()) {
 				$uid = md5($uid);
 			} // if
-            $fileName = "{$this->EmailCachePath}/{$this->id}/messages/{$this->mailbox}{$uid}.php";
-            $msgCacheFile = FileLoader::validateFilePath($fileName);
 
-            if (!unlink($msgCacheFile)) {
-                $GLOBALS['log']->error("***ERROR: InboundEmail could not delete the cache file [ {$msgCacheFile} ]");
-            }
+            $this->getEmailUI()->deleteMboxCache($this->id, $this->mailbox, $uid);
 		}
 	}
 
@@ -6122,7 +6084,9 @@ eoq;
 
 		// save sort order
 		if(!empty($_REQUEST['sort']) && !empty($_REQUEST['dir'])) {
-			$this->email->et->saveListViewSortOrder($_REQUEST['ieId'], $_REQUEST['mbox'], $_REQUEST['sort'], $_REQUEST['dir']);
+            $ieId = InputValidation::getService()->getValidInputRequest('ieId', 'Assert\Guid');
+            $mbox = InputValidation::getService()->getValidInputRequest('mbox');
+            $this->getEmailUI()->saveListViewSortOrder($ieId, $mbox, $_REQUEST['sort'], $_REQUEST['dir']);
 			$sort = $_REQUEST['sort'];
 			$direction = $_REQUEST['dir'];
 		} else {
@@ -6638,6 +6602,19 @@ eoq;
                 $html = "<style>p.MsoNormal {margin: 0;}</style>\n" . $html;
         }
         return $html;
+    }
+
+    /**
+     * Returns an instance of EmailUI
+     * @return EmailUI
+     */
+    public function getEmailUI()
+    {
+        if (empty($this->ui)) {
+            $this->ui = new EmailUI();
+        }
+
+        return $this->ui;
     }
 
 } // end class definition

@@ -825,20 +825,20 @@ eoq;
 
         $exUids = $request->getValidInputRequest('uid', array('Assert\Delimited' => array('constraints' => 'Assert\Guid')));
         $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
-        $mbox = $request->getValidInputRequest('mbox', 'Assert\Guid');
+            $mbox = $request->getValidInputRequest('mbox');
 
         if (!empty($exUids) && !empty($ieId)) {
 
             $out = array();
             foreach($exUids as $k => $uid) {
-                if($email->et->validCacheFileExists($ieId, 'messages', $mbox.$uid.".php")) {
-                    $msg = $email->et->getCacheValue($ieId, 'messages', $mbox.$uid.".php", 'out');
+                    if ($email->et->mboxCacheExists($ieId, $mbox, $uid)) {
+                        $msg = $email->et->getMboxCacheValue($ieId, $mbox, $uid);
                 } else {
                     $ie->retrieve($ieId);
                     $ie->mailbox = $mbox;
                     $ie->setEmailForDisplay($uid, false, true);
                     $msg = $ie->displayOneEmail($uid, $mbox);
-                    $email->et->writeCacheFile('out', $msg, $ieId, 'messages', "{$mbox}{$uid}.php");
+                        $email->et->writeMboxCacheValue($ieId, $mbox, $uid, $msg);
                 }
 
                 $out[] = $msg;
