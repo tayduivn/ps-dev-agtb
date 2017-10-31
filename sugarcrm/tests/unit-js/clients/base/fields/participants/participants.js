@@ -642,6 +642,40 @@ describe('View.Fields.Base.ParticipantsField', function() {
             expect($blocks.index($busyBlocks.eq(3))).toBe(27);
         });
 
+        it('should mark busy indicators on timeslots where start/end times not on 15 minute boundaries', function() {
+            var $blocks;
+            var $busyBlocks;
+
+            field.render();
+            field.fillInFreeBusyInformation({
+                id: '1',
+                module: 'Users',
+                freebusy: [{
+                    start: '2014-08-27T08:50:00-04:00',
+                    end: '2014-08-27T09:30:00-04:00'
+                }, {
+                    start: '2014-08-27T10:00:00-04:00',
+                    end: '2014-08-27T10:35:00-04:00'
+                }, {
+                    start: '2014-08-27T11:55:00-04:00',
+                    end: '2014-08-27T12:05:00-04:00'
+                }]
+            });
+
+            $blocks = field.getTimelineBlocks('Users', '1');
+            $busyBlocks = $blocks.filter('.busy');
+
+            expect($busyBlocks.length).toBe(8);
+            expect($blocks.index($busyBlocks.eq(0))).toBe(19);
+            expect($blocks.index($busyBlocks.eq(1))).toBe(20);
+            expect($blocks.index($busyBlocks.eq(2))).toBe(21);
+            expect($blocks.index($busyBlocks.eq(3))).toBe(24);
+            expect($blocks.index($busyBlocks.eq(4))).toBe(25);
+            expect($blocks.index($busyBlocks.eq(5))).toBe(26);
+            expect($blocks.index($busyBlocks.eq(6))).toBe(31);
+            expect($blocks.index($busyBlocks.eq(7))).toBe(32);
+        });
+
         it('should not show any busy timeslots if other meetings are outside the displayed timeline range', function() {
             var $blocks, $busyBlocks;
 

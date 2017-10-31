@@ -499,6 +499,12 @@
             busyStartDate = app.date(startAndEndDates.timelineStart);
         }
 
+        // Shift Start and End Times backward/forward to the next 15 minute interval as needed
+        busyStartDate.subtract(busyStartDate.minutes() % 15, 'minutes');
+        if (busyEndDate.minutes() % 15 > 0) {
+            busyEndDate.add((15 - (busyEndDate.minutes() % 15)), 'minutes');
+        }
+
         while (busyStartDate.isBefore(busyEndDate) && busyStartDate.isBefore(startAndEndDates.timelineEnd)) {
             diffInHours = busyStartDate.diff(startAndEndDates.timelineStart, 'hours', true);
 
