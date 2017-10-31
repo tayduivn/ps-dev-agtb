@@ -323,28 +323,6 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
             ),
         );
     }
-
-    /**
-     * BR-1514
-     * @coversNothing
-     */
-    public function testFilterRelatedSetup()
-    {
-        $opp_id = $this->opportunities[0]->id;
-        $serviceMock = new RelateApiServiceMockUp();
-        list(, $q) = $this->relateApi->filterRelatedSetup(
-            $serviceMock,
-            array(
-                'module' => 'Opportunities',
-                'record' => $opp_id,
-                'link_name' => 'contacts',
-                'fields' => 'id, name, opportunity_role',
-                'order_by' => 'opportunity_role:DESC'
-            )
-        );
-
-        $this->assertArrayHasKey('contacts_tf', $q->join, 'Should have team security join applied');
-    }
 }
 
 class RelateApiServiceMockUp extends RestService
