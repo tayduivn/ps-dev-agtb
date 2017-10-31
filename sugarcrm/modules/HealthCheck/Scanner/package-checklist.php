@@ -324,7 +324,7 @@ return array(
     ],
     'Tenfold Number Fields' => [
         [
-            'version' => '*',
+            'version' => '1.7',
         ],
     ],
     'wMaps' => [
