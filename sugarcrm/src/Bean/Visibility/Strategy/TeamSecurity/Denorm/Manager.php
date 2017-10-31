@@ -277,6 +277,14 @@ class Manager
         return self::$instance;
     }
 
+    /**
+     * Welcome to the world of singletones!
+     */
+    public static function resetInstance()
+    {
+        self::$instance = null;
+    }
+
     private function createListener()
     {
         $components = [];

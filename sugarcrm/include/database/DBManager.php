@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -4531,6 +4532,10 @@ protected function checkQuery($sql, $object_name = false)
             $this->conn->close();
             $this->conn = null;
         }
+
+        // the denormalization manager holds a reference to the underlying DBAL connection,
+        // so it should be re-instantiated after re-connection
+        Manager::resetInstance();
     }
 
 	/**
