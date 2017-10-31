@@ -1,5 +1,6 @@
 [
     ".htaccess",
+    ".idea",
     "LICENSE",
     "SugarCRM_Basic_Development_Rules",
     "cache/",
@@ -70,6 +71,7 @@
     "tests/docker/",
     "tests/end-to-end/features/",
     "tests/end-to-end/ci.sh",
+    "tests/end-to-end/node_modules/",
     "tests/{old}/HealthCheck/cases/433_1/sugarcrm/custom/include/SugarSearchEngine/Elastic/Facets/FacetBar.php",
     "tests/{old}/HealthCheck/cases/433_1/sugarcrm/custom/include/SugarSearchEngine/Elastic/Facets/FacetFoo.php",
     "tests/{old}/HealthCheck/cases/433_1/sugarcrm/custom/include/SugarSearchEngine/Elastic/SugarSearchEngineElastic.php",
