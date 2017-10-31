@@ -186,18 +186,21 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $options FROM options
+     * @param boolean $addDeleted The value of the 'add_deleted' option
      * @param string $expectedWhere Expected WHERE expression
      * @param array $expectedParams Expected statement parameters
      * @param array $expectedTypes Expected types
      * @dataProvider compileWhereProvider
      */
-    public function testCompileWhere($options, $expectedWhere, $expectedParams, $expectedTypes)
+    public function testCompileWhere($addDeleted, $expectedWhere, $expectedParams, $expectedTypes)
     {
         $options['team_security'] = false;
 
         $query = new SugarQuery();
-        $query->from($this->account, $options);
+        $query->from($this->account, [
+            'add_deleted' => $addDeleted,
+            'team_security' => false,
+        ]);
         $query->where()
             ->equals('industry', 'Apparel');
         $builder = $query->compile();
@@ -214,7 +217,7 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             'consider-deleted-flag' => array(
-                array(),
+                true,
                 // we don't enforce parentheses around simple expressions, but Doctrine CompositeExpression adds them
                 '(accounts.industry = ?) AND (accounts.deleted = ?)',
                 array(
@@ -227,9 +230,7 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
             'ignore-deleted-flag' => array(
-                array(
-                    'add_deleted' => false,
-                ),
+                false,
                 'accounts.industry = ?',
                 array(
                     1 => 'Apparel',
