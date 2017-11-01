@@ -110,29 +110,6 @@
     },
 
     /**
-     * Returns the plain-text body to use in the email.
-     *
-     * @see EmailClientLaunch plugin.
-     * @param {Data.Bean} model Use this model when constructing the body.
-     * @return {undefined|string}
-     */
-    emailOptionDescription: function(model) {
-        var headerParams;
-        var replyHeader;
-        var replyBody;
-        var description;
-
-        if (!this.useSugarEmailClient()) {
-            headerParams = this._getHeaderParams(model);
-            replyHeader = this._getReplyHeader(headerParams);
-            replyBody = this._getReplyBody(model);
-            description = '\n' + replyHeader + '\n' + replyBody;
-        }
-
-        return description;
-    },
-
-    /**
      * Attachments are not carried over to replies.
      *
      * @inheritdoc
@@ -222,25 +199,14 @@
      * @param {string} params.name The subject of the original email.
      * @return {string}
      * @private
+     * @deprecated Use
+     * View.Fields.Base.Emails.ReplyActionField#_getHeader instead.
      */
     _getReplyHeader: function(params) {
-        var header = '-----\n' + app.lang.get('LBL_FROM', params.module) + ': ' + (params.from || '') + '\n';
-        var date;
+        app.logger.warn('View.Fields.Base.Emails.ReplyActionField#_getReplyHeader is deprecated. Use ' +
+            'View.Fields.Base.Emails.ReplyActionField#_getHeader instead.');
 
-        if (params.date) {
-            date = app.date(params.date).formatUser();
-            header += app.lang.get('LBL_DATE', params.module) + ': ' + date + '\n';
-        }
-
-        header += app.lang.get('LBL_TO_ADDRS', params.module) + ': ' + (params.to || '') + '\n';
-
-        if (params.cc) {
-            header += app.lang.get('LBL_CC', params.module) + ': ' + params.cc + '\n';
-        }
-
-        header += app.lang.get('LBL_SUBJECT', params.module) + ': ' + (params.name || '') + '\n';
-
-        return header;
+        return this._getHeader(params);
     },
 
     /**

@@ -94,6 +94,29 @@
     },
 
     /**
+     * Returns the plain-text body to use in the email.
+     *
+     * @see EmailClientLaunch plugin.
+     * @param {Data.Bean} model Use this model when constructing the body.
+     * @return {undefined|string}
+     */
+    emailOptionDescription: function(model) {
+        var headerParams;
+        var header;
+        var body;
+        var description;
+
+        if (!this.useSugarEmailClient()) {
+            headerParams = this._getHeaderParams(model);
+            header = this._getHeader(headerParams);
+            body = model.get('description') || '';
+            description = '\n' + header + '\n' + body;
+        }
+
+        return description;
+    },
+
+    /**
      * Returns the HTML body to use in the email.
      *
      * Ensure the result is a defined string and strip any signature wrapper
@@ -177,6 +200,38 @@
      */
     emailOptionTeams: function(model) {
         return model.get('team_name');
+    },
+
+    /**
+     * Build the header for text only emails.
+     *
+     * @param {Object} params
+     * @param {string} params.from
+     * @param {string} [params.date] Date original email was sent
+     * @param {string} params.to
+     * @param {string} [params.cc]
+     * @param {string} params.name The subject of the original email.
+     * @return {string}
+     * @private
+     */
+    _getHeader: function(params) {
+        var header = '-----\n' + app.lang.get('LBL_FROM', params.module) + ': ' + (params.from || '') + '\n';
+        var date;
+
+        if (params.date) {
+            date = app.date(params.date).formatUser();
+            header += app.lang.get('LBL_DATE', params.module) + ': ' + date + '\n';
+        }
+
+        header += app.lang.get('LBL_TO_ADDRS', params.module) + ': ' + (params.to || '') + '\n';
+
+        if (params.cc) {
+            header += app.lang.get('LBL_CC', params.module) + ': ' + params.cc + '\n';
+        }
+
+        header += app.lang.get('LBL_SUBJECT', params.module) + ': ' + (params.name || '') + '\n';
+
+        return header;
     },
 
     /**

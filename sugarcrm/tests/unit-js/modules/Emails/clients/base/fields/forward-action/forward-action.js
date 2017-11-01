@@ -249,6 +249,30 @@ describe('Emails.Field.ForwardAction', function() {
         });
 
         describe('building the forward content', function() {
+            it('should add the plain text version of email body', function() {
+                var expected = '\n-----\n' +
+                    'From: Ralph Turner <rturner@example.com>\n' +
+                    'Date: 03/27/2012 01:48\n' +
+                    'To: Georgia Earl <gearl@example.com>, Nancy Holman <nholman@example.com>, bhunter@example.com\n' +
+                    'Cc: Wally Bibby <wbibby@example.com>\n' +
+                    'Subject: My Subject\n\n' +
+                    'Here is my plain-text content.';
+
+                sandbox.stub(field, 'useSugarEmailClient').returns(false);
+
+                model.set('description', 'Here is my plain-text content.');
+
+                expect(field.emailOptions.description).toBe(expected);
+            });
+
+            it('should not add the plain text version of email body', function() {
+                sandbox.stub(field, 'useSugarEmailClient').returns(true);
+
+                model.set('description', 'Here is my plain-text content.');
+
+                expect(field.emailOptions.description).toBeUndefined();
+            });
+
             using('content id\'s', ['forwardcontent', 'replycontent'], function(id) {
                 it('should add the email HTML body', function() {
                     var body = 'And this is my <b>HTML</b> content.<br /><br />' +
