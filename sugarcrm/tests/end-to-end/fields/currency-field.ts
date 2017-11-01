@@ -48,6 +48,49 @@ export class Edit extends CurrencyField {
     }
 }
 
+export class DetailQLIPercent extends CurrencyField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div.quote-totals-row-value .percent-discount'
+            }
+        });
+
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await seedbed.client.getText(this.$('field.selector'));
+
+        return value.toString().trim();
+
+    }
+}
+
+export class DetailQLI extends CurrencyField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'div.quote-totals-row-value'
+            }
+        });
+
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await seedbed.client.getText(this.$('field.selector'));
+
+        return value.toString().trim();
+
+    }
+}
 
 export class Detail extends CurrencyField {
 

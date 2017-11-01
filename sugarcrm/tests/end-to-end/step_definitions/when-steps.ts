@@ -15,6 +15,9 @@ import {TableDefinition} from 'cucumber';
 import RecordView from '../views/record-view';
 import RecordLayout from '../layouts/record-layout';
 import ListView from '../views/list-view';
+import QliRecord from '../views/qli-record';
+import CommentRecord from '../views/comment-record';
+import GroupRecord from '../views/group-record';
 
 /**
  * Select module in modules menu
@@ -169,3 +172,24 @@ When(/^I click (\S+) field on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) view$/,
 
     }, {waitForApp: true});
 
+When(/^I choose (createLineItem|createComment|createGroup) on QLI section on (#\S+) view$/, async function (itemName, layout: RecordLayout) {
+    await layout.QliTable.openMenu();
+    await seedbed.client.waitForApp();
+    await layout.QliTable.clickMenuItem(itemName);
+}, {waitForApp: true});
+
+When(/^I click on (save|cancel) button on QLI (#\S+) record$/, async function (buttonName, record: QliRecord) {
+    await record.pressButton(buttonName);
+}, {waitForApp: true});
+
+When(/^I click on (save|cancel) button on Comment (#\S+) record$/, async function (buttonName, record: CommentRecord) {
+    await record.pressButton(buttonName);
+}, {waitForApp: true});
+
+When(/^I click on (save|cancel) button on Group (#\S+) record$/, async function (buttonName, record: GroupRecord) {
+    await record.pressButton(buttonName);
+}, {waitForApp: true});
+
+When(/^I dismiss alert$/, async function () {
+    await seedbed.client.alertDismiss();
+}, {waitForApp: true});

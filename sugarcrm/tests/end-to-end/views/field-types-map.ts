@@ -16,6 +16,7 @@ import * as IntField from '../fields/int-field';
 import * as FloatField from '../fields/float-field';
 import * as DateField from '../fields/date-field';
 import * as RelateField from '../fields/relate-field';
+import * as QuoteDataRelateField from '../fields/quote-data-relate';
 import * as CopyField from '../fields/copy-field';
 import * as CurrencyField from '../fields/currency-field';
 import * as UrlField from '../fields/url-field';
@@ -36,6 +37,7 @@ export const FIELD_TYPES__MAP = {
     date: DateField,
     float: FloatField,
     relate: RelateField,
+    'quote-data-relate': QuoteDataRelateField,
     checkbox: CopyField,
     copy: CopyField,
     currency: CurrencyField,

@@ -11,6 +11,7 @@
 import HeaderView from '../views/header-view';
 import {BaseView, seedbed} from '@sugarcrm/seedbed';
 import RecordView from '../views/record-view';
+import QliTable from '../views/qli-table';
 
 /**
  * Represents a Detail/Record page layout.
@@ -21,6 +22,7 @@ import RecordView from '../views/record-view';
 export default class RecordLayout extends BaseView {
 
     public HeaderView: HeaderView;
+    public QliTable: QliTable;
     protected type: string;
     public RecordView: RecordView;
     public defaultView: RecordView;
@@ -43,6 +45,10 @@ export default class RecordLayout extends BaseView {
         });
 
         this.HeaderView = this.createComponent<HeaderView>(HeaderView, {
+            module: options.module,
+        });
+
+        this.QliTable = this.createComponent<QliTable>(QliTable, {
             module: options.module,
         });
 

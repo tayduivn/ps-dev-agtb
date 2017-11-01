@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @ci-excluded
+@quotes @ci-excluded
 Feature: Quotes module verification
 
   Background:
@@ -170,28 +170,28 @@ Feature: Quotes module verification
     Given I open about view and login
     When I choose Quotes in modules menu
     When I click Create button on #QuotesList header
-    When I toggle Billing_and_Shipping panel on #QuotesDrawer.RecordView view
-    When I provide input for #QuotesDrawer.HeaderView view
+    When I toggle Billing_and_Shipping panel on #QuotesRecord.RecordView view
+    When I provide input for #QuotesRecord.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #QuotesDrawer.RecordView view
+    When I provide input for #QuotesRecord.RecordView view
       | *        | date_quote_expected_closed | billing_account_name |
       | RecordID | 12/12/2017                 | myAccount            |
     When I Confirm confirmation alert
     # Cancel quote record creation
-    When I click Cancel button on #QuotesDrawer header
+    When I click Cancel button on #QuotesRecord header
     # TODO: Remove next line after sfa-5069 is fixed
     When I Confirm confirmation alert
     When I click Create button on #QuotesList header
-    When I toggle Billing_and_Shipping panel on #QuotesDrawer.RecordView view
-    When I provide input for #QuotesDrawer.HeaderView view
+    When I toggle Billing_and_Shipping panel on #QuotesRecord.RecordView view
+    When I provide input for #QuotesRecord.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #QuotesDrawer.RecordView view
+    When I provide input for #QuotesRecord.RecordView view
       | *        | date_quote_expected_closed | billing_account_name |
       | RecordID | 12/12/2017                 | myAccount            |
     When I Confirm confirmation alert
-    When I click Save button on #QuotesDrawer header
+    When I click Save button on #QuotesRecord header
     When I toggle Billing_and_Shipping panel on #RecordIDRecord.RecordView view
     Then I verify fields on #RecordIDRecord.RecordView
       | fieldName                   | value               |
@@ -208,3 +208,150 @@ Feature: Quotes module verification
       | shipping_address_postalcode | 220051              |
       | shipping_address_state      | WA                  |
       | shipping_address_country    | USA                 |
+
+
+  @copy
+  Scenario: Quotes > Record View > Edit > Save
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+    # Create a product bundle
+    Given ProductBundles records exist related via product_bundles link to *Quote_3:
+      | *name   |
+      | Group_1 |
+    # Add QLI
+    Given Products records exist related via products link:
+      | *name | discount_price | discount_amount | quantity |
+      | QLI_1 | 100            | 2               | 2        |
+      | QLI_2 | 200            | 2               | 3        |
+    Given I open about view and login
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+    When I open actions menu in #Quote_3Record
+    * I choose Copy from actions menu in #Quote_3Record
+    When I provide input for #QuotesRecord.HeaderView view
+      | *        | name      |
+      | RecordID | Quote_3.1 |
+    When I click Save button on #QuotesRecord header
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value   |
+      | deal_tot  | 2.00%   |
+      | new_sub   | $784.00 |
+      | tax       | $0.00   |
+      | shipping  | $0.00   |
+      | total     | $784.00 |
+
+
+  @quote @add_new_QLI
+  Scenario: Quotes > Record View > QLI Table > Add QLI > Cancel/Save
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+    # Create a product bundle
+    Given ProductBundles records exist related via product_bundles link to *Quote_3:
+      | *name   |
+      | Group_1 |
+    # Add QLI
+    Given Products records exist related via products link:
+      | *name | discount_price | discount_amount | quantity |
+      | QLI_1 | 100            | 2               | 2        |
+      | QLI_2 | 200            | 2               | 3        |
+    Given ProductTemplates records exist:
+      | *name          | discount_price | cost_price | list_price | quantity | mft_part_num                 |
+      | Kamalal Gadget | 922            | 922        | 922        | 1        | B.H. Edwards Inc 72868XYZ987 |
+    Given I open about view and login
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+    # Add new Line Item
+    When I choose createLineItem on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.QliRecord view
+      | quantity | product_template_name | discount_price | discount_amount |
+      | 2.00     | XXcccvvv              | 100            | 2.00            |
+    # Cancel and Verify
+    When I click on cancel button on QLI #Quote_3Record.QliTable.QliRecord record
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value   |
+      | deal_tot  | 2.00%   |
+      | new_sub   | $784.00 |
+      | tax       | $0.00   |
+      | shipping  | $0.00   |
+      | total     | $784.00 |
+    # Add New Line Item
+    When I choose createLineItem on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.QliRecord view
+      | quantity | product_template_name | discount_price | discount_amount |
+      | 2.00     | Kamalal Gadget        | 100            | 2.00            |
+    #Save and verify
+    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    Then I verify fields for 1 row for #Quote_3Record.QliTable
+      | fieldName      | value   |
+      | discount_price | $100.00 |
+      | total_amount   | $196.00 |
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value   |
+      | deal_tot  | 2.00%   |
+      | new_sub   | $980.00 |
+      | tax       | $0.00   |
+      | shipping  | $0.00   |
+      | total     | $980.00 |
+
+
+  @quote @add_new_comment
+  Scenario: Quotes > Record View > QLI Table > Add Comment > Cancel/Save
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+    Given I open about view and login
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+    # Add comment and cancel
+    When I choose createComment on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.CommentRecord view
+      | description   |
+      | Alex Nisevich |
+    When I click on cancel button on Comment #Quote_3Record.QliTable.CommentRecord record
+    # Add another comment and Save
+    When I choose createComment on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.CommentRecord view
+      | description     |
+      | Ruslan Golovach |
+    When I click on save button on Comment #Quote_3Record.QliTable.CommentRecord record
+
+
+  @quote @add_new_group
+  Scenario: Quotes > Record View > QLI Table > Add Group > Cancel/Save
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+    Given I open about view and login
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+    # Add new group and cancel
+    When I choose createGroup on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | name            |
+      | Ruslan Golovach |
+    When I click on cancel button on Group #Quote_3Record.QliTable.GroupRecord record
+    When I Confirm confirmation alert
+    # Add new group and Save
+    When I choose createGroup on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | name      |
+      | New Group |
+    When I click on save button on Group #Quote_3Record.QliTable.GroupRecord record
