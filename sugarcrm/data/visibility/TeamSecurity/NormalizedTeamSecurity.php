@@ -188,9 +188,10 @@ class NormalizedTeamSecurity extends SugarVisibility implements StrategyInterfac
     public function addVisibilityFrom(&$query)
     {
         // We'll get it on where clause
-        if ($this->getOption('where_condition')) {
+        if ($this->useCondition()) {
             return $query;
         }
+
         $this->addVisibility($query);
         return $query;
     }
@@ -200,9 +201,10 @@ class NormalizedTeamSecurity extends SugarVisibility implements StrategyInterfac
      */
     public function addVisibilityWhere(&$query)
     {
-        if (!$this->getOption('where_condition')) {
+        if (!$this->useCondition()) {
             return $query;
         }
+
         $this->addVisibility($query);
         return $query;
     }
@@ -267,7 +269,7 @@ class NormalizedTeamSecurity extends SugarVisibility implements StrategyInterfac
     public function addVisibilityFromQuery(SugarQuery $sugarQuery, array $options = array())
     {
         // We'll get it on where clause
-        if ($this->getOption('where_condition')) {
+        if ($this->useCondition()) {
             return $sugarQuery;
         }
 
@@ -295,9 +297,10 @@ class NormalizedTeamSecurity extends SugarVisibility implements StrategyInterfac
      */
     public function addVisibilityWhereQuery(SugarQuery $sugarQuery, array $options = array())
     {
-        if (!$this->getOption('where_condition')) {
+        if (!$this->useCondition()) {
             return $sugarQuery;
         }
+
         $cond = '';
         $this->addVisibility($cond);
         if (!empty($cond)) {

@@ -38,7 +38,12 @@ class Report
     var $group_by;
     var $group_order_by = '';
     var $module = 'Accounts';
+
+    /**
+     * @var SugarBean
+     */
     var $focus;
+
     var $currency_symbol;
 
     /** @var Currency */
@@ -1178,21 +1183,12 @@ class Report
     protected function addSecurity($query, $focus, $alias)
     {
         $from = ''; $where = '';
-        /*
-         * Here we have a hack because MySQL hates subqueries in joins, see bug #60288 for details
-         */
-        $as_condition = $focus->db->supports("fix:report_as_condition");
-        $options = $this->visibilityOpts;
-        if($as_condition) {
-            $options['table_alias'] = $alias;
-            $options['as_condition'] = true;
-        } else {
-            $options['where_condition'] = true;
-        }
+        $options = $this->getVisibilityOptions();
+        $options['table_alias'] = $alias;
         $focus->addVisibilityWhere($where, $options);
         $focus->addVisibilityFrom($from, $options);
         if(!empty($from) || !empty($where)) {
-            if($as_condition && strtolower(substr(ltrim($from), 0, 5)) != "inner") {
+            if (!empty($options['as_condition']) && strtolower(substr(ltrim($from), 0, 5)) != "inner") {
                 // check that we indeed got condition in FROM - it should not start with joins
                 if (!empty($from)) {
                     $from = 'AND ' . ltrim($from);
@@ -1214,17 +1210,11 @@ class Report
 
     function create_where()
     {
-        $where_arr = array();
         $this->layout_manager->setAttribute('context', 'Filter');
         $filters = $this->report_def['filters_def'];
         $where_clause = "";
         if (isset($filters['Filter_1']))
             Report::filtersIterate($filters['Filter_1'], $where_clause);
-        // Bug63958 Go back to using where clause team restrictions instead of INNER JOINS for performance reasons on SugarInternal
-        $options = $this->visibilityOpts;
-        $options['where_condition'] = true;
-        $options['action'] = 'list';
-        $where_clause = $this->focus->addVisibilityWhere($where_clause, $options);
         $this->where = $where_clause;
     }
 
@@ -1241,6 +1231,18 @@ class Report
                 $verdef_arr_for_filters[$fieldDef['name']] = $fieldDef;
             }
         }
+    }
+
+    private function getVisibilityOptions()
+    {
+        $options = $this->visibilityOpts;
+
+        // Here we have a hack because MySQL hates subqueries in joins, see bug #60288 for details
+        if ($this->focus->db->supports('fix:report_as_condition')) {
+            $options['as_condition'] = true;
+        }
+
+        return $options;
     }
 
     function createFilterStringForUI()
@@ -1669,6 +1671,7 @@ class Report
         $this->full_table_list['self']['params']['join_table_link_alias'] = $this->focus->table_name . "_l";
 
         $this->from = "\nFROM " . $this->focus->table_name . "\n";
+        $this->focus->addVisibilityFrom($this->from, $this->getVisibilityOptions());
 
         $this->jtcount = 0;
         foreach ($this->full_table_list as $table_key => $table_def)
@@ -1882,6 +1885,10 @@ class Report
             $aclVisibility->addVisibilityWhere($where_auto);
         }
         // End ACL check
+
+        $options = $this->getVisibilityOptions();
+        $options['action'] = 'list';
+        $where_auto = $this->focus->addVisibilityWhere($where_auto, $options);
 
         if (!empty($this->where)) {
             $query .= " WHERE ($this->where) \nAND " . $where_auto;
