@@ -230,14 +230,6 @@
   .dropdown-toggle:active,
   &.open {
     outline: 0;
-    .btn.dropdown-toggle,
-    .btn.btn-invisible:not(.disabled):hover {
-      background: @gray;
-      color: @white;
-      > .fa {
-        color: @grayLighter;
-      }
-    }
     .btn.btn-primary.dropdown-toggle {
       background-color: darken(@btnPrimaryBackgroundHighlight,10%);
     }
@@ -257,7 +249,6 @@
 // Remove top embossing
 .btn-group > .btn + .dropdown-toggle {
   box-shadow: none;
-  width: 12px;
   padding: 4px 7px;
 }
 
@@ -288,3 +279,36 @@
 .touch .dashlet-header .btn-group.open {
   position: static;
 }
+
+/* NEW SKIN START */
+
+.btn-group {
+  /* selector changes */
+  .btn.dropdown-toggle:active,
+  &.btn.open {
+    .dropdown-toggle {
+      box-shadow: none;
+    }
+  }
+
+  .dropdown-toggle:active,
+  &.open {
+    .btn.dropdown-toggle,
+    .btn.btn-invisible:not(.disabled):hover {
+      /* override */
+      background: @white;
+      /* override */
+      color: initial;
+      > .fa {
+        /* override */
+        color: initial;
+      }
+    }
+  }
+  > .btn + .dropdown-toggle {
+    /* override */
+    width: 10px;
+  }
+}
+
+/* NEW SKIN END */

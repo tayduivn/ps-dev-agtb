@@ -2,21 +2,15 @@
   ----------------*/
 .navbar ul.nav.megamenu li.dropdown.notification-list {
   .dropdown-toggle {
-    border-radius: 3px;
     text-align: center;
-    min-width: 20px;
-    min-height: 28px;
     box-shadow: none;
     &:not(.btn-danger)  {
       background: darken(@navbarBackground, 5%);
     }
     &:active {
-	  background: none;
-	}
+      background: none;
+    }
   }
-  // .btn-group {
-  //   padding: 4px 8px;
-  // }
   .btn-group.open {
 	.dropdown-menu {
 	  width: 400px;
@@ -43,7 +37,6 @@
 			}
             time {
               font-size: @fontSizeSmall;
-              color: @grayLight;
               text-align: right;
               padding-right: 14px;
               white-space: normal;
@@ -126,3 +119,48 @@ ul.notification-list {
 [data-action="toggle"].label {
   cursor: pointer;
 }
+
+/* NEW SKIN START */
+
+.navbar ul.nav.megamenu li.dropdown.notification-list {
+  .dropdown-toggle {
+    /* override */
+    border-radius: 24px;
+
+    /* override with variable */
+    min-width: @sizeButton;
+    min-height: @sizeButton;
+    &:hover {
+      /* override */
+      background: @red;
+      /* override */
+      color: @white;
+    }
+  }
+
+  .btn-group.open {
+    /* additive */
+    .dropdown-toggle {
+      .buttonBackground(@btnDangerBackground, @btnDangerBackgroundHighlight);
+    }
+
+    .dropdown-menu {
+      ul {
+        li {
+          a {
+            time {
+              /* override */
+              color: initial
+            }
+          }
+        }
+      }
+    }
+  }
+  &:hover button.dropdown-toggle {
+    /* override */
+    color: @white;
+  }
+}
+
+/* NEW SKIN END */

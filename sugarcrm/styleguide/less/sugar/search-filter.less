@@ -12,7 +12,6 @@
   .control-group {
     padding: 5px 8px;
     margin-bottom: 0;
-    background: @grayLighter;
     border-top: @borderWidget;
   }
 }
@@ -38,14 +37,8 @@
   }
   border-radius: @baseBorderRadius;
   .user-select(none);
-  //not working because only input can have focus
-  // &:focus {
-  //   border-color: @linkColor !important;
-  // }
-  // non-select2 filter pills
   .choice-related,
   .choice-filter {
-    border-radius: 0 10px 10px 0;
     padding: 4px;
     display: inline-block;
     height: 20px;
@@ -57,7 +50,6 @@
     font-weight: bold;
     line-height: 10px;
     border-width: 0;
-    background: @gray;
     color: @white;
     cursor: text;
     &.choice-filter-clickable:focus {
@@ -540,3 +532,42 @@
   margin-left: 0 !important;
 }
 
+/* NEW SKIN START */
+
+// search filter widget
+.search-filter {
+  // outer wrapper
+  .control-group {
+    /* override with variable */
+    background: @contentBackground;
+  }
+}
+
+// search filter inputs
+.filter-view {
+  .choice-related,
+  .choice-filter {
+    /* additive */
+    position: relative;
+    top: -1px;
+
+    /* override */
+    border-radius: 4px;
+
+    /* override */
+    background: @PrimaryButton;
+  }
+
+  // select2 filter pills
+  .select2-container {
+    .select2-search-choice,
+    .select2-choice {
+      .select2-chosen {
+        /* override */
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+/* NEW SKIN END */

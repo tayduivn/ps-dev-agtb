@@ -4,16 +4,13 @@
 }
 
 .headerpane {
-  min-height: 60px;
   width: 100%;
-  height: 61px;
   z-index: @zindexHeaderpane;
   background: @grayLighter;
   border-bottom: @borderWidget;
   box-sizing: border-box;
   display: table;
   position: fixed;
-  top: 48px;
 
   .list-headerpane.headerpane {
     position: relative;
@@ -38,7 +35,6 @@
       display: table-cell;
       vertical-align: top;
       position: relative;
-      padding: 18px 18px 0 20px;
 
       &.hide {
         display: none;
@@ -297,7 +293,6 @@
   //action buttons
 
   .btn-toolbar {
-    padding: 15px 8px 0 0;
     margin: 0;
     white-space: nowrap;
     display: table-cell;
@@ -339,7 +334,6 @@
       top: 0;
     }
     .fa {
-      font-size: @fontSizeHeader;
       font-weight: 500;
     }
     .fa-angle-double-right {
@@ -350,3 +344,134 @@
     }
   }
 }
+
+/* NEW SKIN START */
+
+/* additive */
+.main-pane {
+  .headerpane {
+    .btn-toolbar {
+      padding-right: 24px;
+    }
+  }
+}
+
+.headerpane {
+  /* override */
+  min-height: 52px;
+  height: 52px;
+
+  /* override */
+  top: 45px;
+
+  /* structure */
+  .list-headerpane{
+    /* additive */
+    .count {
+      font-size: inherit;
+    }
+  }
+
+  h1 {
+
+    /* additive */
+    .btn {
+      font-size: @fontSizeMedium + 1;
+    }
+
+    > .record-cell {
+      /* override */
+      padding: 15px 0 0 20px;
+
+      &[data-type="image"],
+      &[data-type="avatar"] {
+        /* override */
+        padding: 4px 0 0 20px;
+
+        &.edit {
+          /* additive */
+          padding-top: 8px;
+        }
+      }
+
+      &.edit {
+        .select2 {
+          font-size: @fontSizeHeaderEditFields;
+        }
+
+      }
+
+      input[type="text"] {
+        /* override */
+        height: auto;
+      }
+    }
+
+    span[data-type="follow"]:not(.edit) .label,
+    span[data-type="badge"]:not(.edit) .label,
+    span[data-type="badge-select"]:not(.edit) .label,
+    span[data-type="event-status"]:not(.edit) .label,
+    span[data-type="status"]:not(.edit) .label {
+      /* override */
+      height: 20px;
+    }
+  }
+
+  span[data-type="follow"],
+  span[data-type="badge"],
+  span[data-type="badge-select"],
+  span[data-type="event-status"],
+  span[data-type="status"] {
+    /* override */
+    padding: 16px 16px 0 0;
+  }
+
+  span[data-type="favorite"] {
+    /* override */
+    font-size: @fontSizeLarge + 1;
+    padding: 11px 16px 0 0;
+
+    /* additive */
+    .btn.active {
+      .fa {
+        color: @black !important;
+      }
+    }
+  }
+
+  //action buttons
+  .btn-toolbar {
+    /* override */
+    padding: 12px 8px 0 0;
+
+    /* additive */
+    .btn-group {
+      .btn:not(.btn-primary),
+      .btn:not(.btn-primary).dropdown-toggle .fa {
+        color: @linkColor;
+      }
+    }
+  }
+
+  .btn.sidebar-toggle {
+
+    /* additive */
+    background: @headerpaneSideToggleBackground;
+    border-radius: 0;
+    position: absolute;
+    top: 0;
+    right: -1px;
+    height: 51px;
+    width: 15px;
+    padding: 0;
+
+    .fa {
+      /* override */
+      font-size: @fontSizeHeader - 8;
+      /* additive */
+      color: @headerpaneSideToggleColor
+    }
+  }
+}
+
+/* NEW SKIN END */

@@ -27,9 +27,7 @@
     font-weight: normal;
     font-size: @fontSizeSmall;
     color: @tableHeader;
-    border-right: @tableBorder;
     border-bottom: none;
-    background-color: @white;
     &.cell-xxsmall {
       min-width: @cell-xxsmall;
       max-width: @cell-xxsmall;
@@ -125,7 +123,6 @@
     white-space: nowrap;
     vertical-align: middle;
     text-overflow: ellipsis;
-    background: @white;
     border-top: none;
     border-bottom: none;
     &:last-child {
@@ -281,7 +278,6 @@
   /* ---------
   TABLE ROW (specific) */
   tbody tr {
-    border-top: @tableBorder;
     //for preview
     &.highlighted {
       &.current {
@@ -477,11 +473,6 @@
       }
     }
   }
-
-  &.table-striped tbody > tr:not(.current):not(.tr-inline-edit):nth-child(odd) > td {
-    background: @grayLighter;
-  }
-
 }
 
 //Search and Select lists
@@ -663,24 +654,16 @@ FLEXLIST GENERIC */
       .dropdown,
       > span {
         z-index: 11;
-        border-right: @tableBorder;
         &.open {
           z-index: 999;
-        }
-        &:after {
-          .right-shadow(43px);
         }
       }
     }
     td:first-child {
       > span {
         z-index: 10;
-        border-right: @tableBorder;
         &.open {
           z-index: 999;
-        }
-        &:after {
-          .right-shadow(37px);
         }
       }
     }
@@ -692,24 +675,16 @@ FLEXLIST GENERIC */
       .dropdown,
       > span {
         z-index: 11;
-        border-left: @tableBorder;
         &.open {
           z-index: 999;
-        }
-        &:before {
-          .left-shadow(43px);
         }
       }
     }
     td:last-child {
       > span {
         z-index: 10;
-        border-left: @tableBorder;
         &.open {
           z-index: 999;
-        }
-        &:before {
-          .left-shadow(37px);
         }
       }
     }
@@ -1066,3 +1041,146 @@ table th.nosort span:after {
 span.email-has-attachments {
   float: right;
 }
+
+/* NEW SKIN START */
+
+.dataTable {
+  /* ---------
+  TABLE HEADER CELL (specific) */
+  th {
+    /* new variable */
+    border-right: 1px solid @tableTheadRowBorderColor;
+
+    /* new variable */
+    background-color: @tableBackground;
+  }
+
+  /* ---------
+  TABLE BODY CELL (specific) */
+  td {
+    /* new variable */
+    background: @tableBackground;
+  }
+
+  /* ---------
+  TABLE ROW (specific) */
+  tbody tr {
+    /* new variable */
+    border-top: 1px solid @tableTbodyRowBorderColor;
+
+    //for preview
+    &.highlighted {
+      &.current {
+        td {
+          /* new variable */
+          background: @tableRowHighlighted;
+        }
+      }
+    }
+  }
+
+  &.table-striped {
+    tbody {
+
+      tr[name]:not(.current):not(.tr-inline-edit):not(.highlighted):hover {
+        td {
+          /* additive */
+          background: @tableRowHover;
+        }
+      }
+
+      > tr:not(.current):not(.tr-inline-edit):nth-child(odd) > td {
+          /* override */
+          background: @tableBackground;
+        }
+      }
+
+    }
+  }
+
+/* ---------
+FLEXLIST GENERIC */
+.flex-list-view {
+
+  /*LEFT ACTIONS ONLY*/
+  &.left-actions .dataTable {
+    th:first-child {
+      > span {
+        /* new variable */
+        border-right: 1px solid @tableFixedColumnsBorderColor;
+      }
+    }
+
+    td:first-child {
+
+      > span {
+        /* override */
+        border-bottom: 1px solid @tableTbodyRowBorderColor;
+
+        .btn.btn-invisible {
+          &.active {
+            /* additive */
+            .fa {
+              color: initial !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &.left-actions.scroll-width .dataTable {
+    th,
+    td {
+      &:first-child {
+        > span {
+          /* override */
+          border-right: 1px solid @tableFixedColumnsBorderColor;
+
+          /* additive */
+          border-right: 1px solid @tableFixedColumnsBorderColor;
+        }
+      }
+    }
+  }
+
+  /*RIGHT ACTIONS ONLY*/
+  &.right-actions .dataTable {
+    td:last-child {
+
+      > span {
+        /* override */
+        border-bottom: 1px solid @tableTbodyRowBorderColor;
+      }
+    }
+  }
+
+  /*ADD SHADOW TO RIGHT ACTION COLUMN*/
+  &.right-actions.scroll-width .dataTable {
+    th,
+    td {
+      &:last-child {
+        .dropdown,
+        > span {
+          /* override */
+          border-left: 1px solid @tableFixedColumnsBorderColor;
+        }
+      }
+    }
+  }
+
+  th:last-child.morecol.nosort {
+    > .dropdown {
+      padding: 0;
+      width: 70px;
+      height: 43px;
+      > .dropdown-toggle,
+      > .btn.btn-invisible {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
+/* NEW SKIN END */

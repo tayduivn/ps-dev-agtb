@@ -196,7 +196,6 @@ input[type="button"] {
     font-size: @baseFontSize + 2;
     position: relative;
     top: 1px;
-    color: @grayLight;
   }
   // Hover state
   &:not(.disabled):hover,
@@ -214,7 +213,6 @@ input[type="button"] {
   &.active {
     color: @white !important;
     text-shadow: none;
-    background: @gray !important;
     box-shadow: none;
     > .fa {
       color: @grayLighter !important;
@@ -372,3 +370,65 @@ input.required + .btn.btn-input-addon {
   border-top: 1px solid @grayLight;
   border-right: 1px solid @grayLight;
 }
+
+/* NEW SKIN START */
+
+.btn {
+  /* override */
+  > .fa {
+    color: @btnIconColor;
+  }
+  &:not(.disabled):not(.btn-invisible):active {
+    box-shadow: inset 0 3px 4px fade(@black, 15%), 0 0 10px fade(@black, 5%);
+  }
+  /* override */
+  &.active {
+    background: @btnActiveBackground !important;
+  }
+  /* override */
+  &.btn-invisible.disabled {
+    background: none;
+  }
+  &.disabled {
+    > .fa {
+      color: @btnDisabledIconColor;
+    }
+    &.btn-primary {
+      > .fa {
+        /* override */
+        color: inherit;
+      }
+    }
+  }
+}
+
+/* additive */
+.btn-primary {
+  border-color: @PrimaryButtonBorder;
+  background-color: @PrimaryButton;
+
+  &:not(.disabled):not(.btn-invisible):hover {
+    box-shadow: none;
+    border: solid 1px @btnPrimaryHoverBorder;
+    background: @btnPrimaryHoverBackground;
+  }
+
+  &:not(.disabled):not(.btn-invisible):active.btn {
+    /* .btn at the end of this selector is necessary to override default theme */
+    box-shadow: inset 0 1px 3px @btnPrimaryHoverActiveBgGrad;
+    border: solid 1px @btnPrimaryActiveBorder;
+    background-color: @btnPrimaryActiveBackground;
+  }
+}
+
+.btn-group {
+  &,
+  &.open {
+    .btn-primary.dropdown-toggle .fa {
+      /* override */
+      color: @white;
+    }
+  }
+}
+
+/* NEW SKIN END */

@@ -76,9 +76,6 @@
       }
       > span {
         z-index: 11;
-        &:after {
-          .right-shadow(46px);
-        }
       }
     }
   }
@@ -289,10 +286,11 @@
         &.product-bundle-notes-row.tr-inline-edit {
           td:first-child {
             vertical-align: top;
+            padding: 0;
             > span {
-              height: 46px;
-              margin-top: -4px;
-              border-bottom: none;
+              border: 0;
+              margin-top: 0;
+              box-sizing: border-box;
               &:after {
                 top: 0;
                 height: 55px;

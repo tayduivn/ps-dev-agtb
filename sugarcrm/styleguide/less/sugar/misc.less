@@ -296,9 +296,7 @@ hr.soften {
       font-weight: normal;
       text-align: center;
       width: 100%;
-      color: @white;
       border-radius: 3px;
-      border: 2px solid @black;
       background-color: @navbarBackground;
       padding: 10px;
       margin-left: -12px;
@@ -306,14 +304,6 @@ hr.soften {
     }
     .resource-list {
       text-align: left;
-      .resource-info {
-        a {
-          color: @white;
-        }
-        .details {
-          color: darken(@grayLighter, 10%);
-        }
-      }
     }
   }
 
@@ -566,3 +556,55 @@ only screen and (-moz-os-version:windows-win8) {
     }
   }
 }
+
+/* NEW SKIN START */
+
+#tutorial {
+  .text-container {
+    .text {
+      /* override */
+      border: 1px solid @black;
+    }
+
+    .resource-list {
+      .resource-info {
+        /* override */
+        a {
+          color: @PrimaryButton;
+        }
+      }
+    }
+  }
+
+  #tutorial-controls {
+
+    .btn {
+      &.done-btn {
+        /* additive */
+        color: inherit;
+      }
+    }
+
+    .disabled {
+      /* override */
+      background-color: lighten(@grayLight, 25%);
+    }
+
+    /* additive */
+    :not(.disabled) {
+      .fa {
+        color: initial;
+      }
+    }
+  }
+}
+
+.vcard-import {
+  margin-left: @fluidGridGutterWidth;
+  margin-right: @fluidGridGutterWidth;
+  > div {
+    line-height: 30px;
+  }
+}
+
+/* NEW SKIN END */

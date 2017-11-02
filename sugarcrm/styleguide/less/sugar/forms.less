@@ -791,17 +791,6 @@ input[type=radio] {
 }
 .datepicker {
   margin-top: 0;
-  span.year.active:hover,
-  span.year.active,
-  span.month.active:hover,
-  span.month.active,
-  td > .active,
-  td > .active:hover {
-    color: @white;
-    background-color: @gray;
-    border-color: @gray;
-    box-shadow: @shadowWidget;
-  }
   table th:first-child, table td:first-child {
     padding-left: 5px;
   }
@@ -1102,3 +1091,53 @@ input.required {
   display: inline-block;
   margin-left: @fluidGridGutterWidth;
 }
+
+/* NEW SKIN START */
+
+.datepicker {
+  span.year,
+  span.month {
+    /* additive */
+    margin-bottom: 14px;
+  }
+  span.year.active:hover,
+  span.year.active,
+  span.month.active:hover,
+  span.month.active,
+  td.active,
+  td.active:hover {
+    /* overrides */
+    background-color: @red;
+    box-shadow: none;
+    border-radius: 50%;
+  }
+
+  /* additive */
+  td.day:hover,
+  span.month:hover,
+  span.year:hover {
+    border-radius: 50%;
+  }
+}
+
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input {
+  /* additive */
+  border-radius: 2px;
+}
+
+/* NEW SKIN END */

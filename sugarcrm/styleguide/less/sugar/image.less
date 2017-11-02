@@ -29,7 +29,6 @@
 //Add border
 .image_field.image_edit {
   border: 3px dashed #CCC;
-  border-radius: 4px;
   top: -3px;
   left: -3px;
   z-index: 1;
@@ -68,9 +67,6 @@
 .image_field > label:hover {
   cursor: pointer !important;
   _cursor: hand;
-}
-.image_rounded img {
-  border-radius: 4px;
 }
 
 .image_btn {
@@ -140,3 +136,55 @@
   }
 }
 
+/* NEW SKIN START */
+
+.image_field {
+  &.image_edit {
+    /* override */
+    border-radius: 50%;
+    min-height: 42px !important;
+
+    /* additive */
+    box-sizing: border-box;
+    .image_preview img {
+      /* additive */
+      border-radius: 50%;
+      max-height: 36px;
+    }
+  }
+}
+
+.image_rounded img {
+  /* override */
+  border-radius: 50%;
+}
+
+.headerpane span[data-type="image"] .image_rounded img,
+.headerpane span[data-type="avatar"] .image_rounded img {
+  /* override */
+  border-radius: 50%;
+  border: none;
+
+  /* additive */
+  min-height: 42px; /* prevents (out of proportion) stretching of the uploaded avatar */
+}
+
+.merge-interface {
+  .merge-row {
+    .image_field {
+      /* override (to prevent incorrectly shaped circle, while actual img is still editing http://imgur.com/a/C3T7r */
+      min-height: auto !important;
+
+      /* override */
+      height: 50px !important;
+      width: 50px !important;
+      img {
+        /* override */
+        max-width: 44px;
+        max-height: 44px;
+      }
+    }
+  }
+}
+
+/* NEW SKIN END */

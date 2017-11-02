@@ -282,3 +282,22 @@ a .label-dark-text {
 .disabled .label-module-mini.label {
   box-shadow: none;
 }
+
+/* NEW SKIN START */
+
+.label-module,
+.label-module-md,
+.label-module-sm,
+.label-module-mini {
+  /* override */
+  border-radius: @labelBorderRadius;
+  text-align: center;
+  padding: 0;
+  display: inline-flex;
+
+  /* additive */
+  justify-content: center;
+  align-items: center;
+}
+
+/* NEW SKIN END */

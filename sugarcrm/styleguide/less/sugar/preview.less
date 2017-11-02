@@ -2,22 +2,18 @@
   ----------------*/
 
 .preview-pane {
-  background: url(@textureSecondary);
 
  .preview-headerbar {
     width: calc(~"34.042553198%");
     position: fixed;
     right: 0;
-    top: 48px;
-    height: 60px;
     border-bottom: @borderWidget;
     border-left: @borderWidget;
-    background: url(@textureSecondary);
+    background: @white;
     z-index: 1002;
 
     h1 {
       float: left;
-      margin: 18px 0 9px 20px;
       font-size: @fontSizeHeader;
       max-width: 50%;
     }
@@ -27,51 +23,28 @@
     }
 
     .btn-toolbar {
-      margin: 16px 10px 9px;
       padding-left: 0;
     }
   }
 }
 
 .preview-data {
-  padding: 70px 1.5% 0;
   margin: 0 7px;
 
   .field-row {
-    display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-    -webkit-flex-wrap: nowrap;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: stretch;
 
     &.hide {
       display: none;
     }
 
     .field-label {
-      text-align: right;
-      padding: 5px 6px 5px 0;
       font-size: 11px;
       color: @gray;
-      -webkit-order: 1;
-      order: 1;
-      -webkit-flex-basis: 40%;
-      width: 37%;
-      flex-basis: 40%;
     }
 
     .field-value {
-      -webkit-order: 2;
-      order: 2;
-      -webkit-flex-grow: 1;
-      flex-grow: 1;
       position: relative;
       width: 100%;
-      max-width: 60%;
-      min-height: 28px;
-      margin-bottom: 5px;
 
       &.no-label {
         max-width: 100%;
@@ -214,3 +187,142 @@
     padding-right: 0;
   }
 }
+
+/* NEW SKIN START */
+
+.preview-pane {
+  /* override */
+  background: @white;
+
+ .preview-headerbar {
+
+    /* override */
+    top: 45px;
+    height: 51px;
+
+    h1 {
+      /* override */
+      margin: 12px 0 9px 20px;
+    }
+
+    .btn-toolbar {
+      /* override */
+      margin: 10px 10px 9px;
+    }
+  }
+}
+
+.preview-data {
+  /* override */
+  padding: 60px 12px 10px;
+
+  .field-row {
+    /* override */
+    display: block;
+
+    /* additive */
+    &:not(:first-child) {
+      border-top: 1px solid @previewFieldSeparator;
+    }
+
+    .field-label {
+      /* additive*/
+      display: block;
+      width: 100%;
+      text-align: left;
+      height: 17px;
+      padding: 0;
+      margin-top: 7px;
+
+      /* override */
+      font-size: @previewLabelFontSize;
+    }
+    .field-value {
+      /* override */
+      max-width: initial;
+      min-height: auto;
+      margin: 0;
+
+      /* additive */
+      font-size: @previewValueFontSize;
+      min-height: 19px;
+      margin-bottom: 7px;
+
+      > .detail {
+        /* override */
+        padding: 0;
+      }
+    }
+  }
+}
+
+/* HACKS START */
+
+/*
+Temporary hacks
+These will be removed with completion of ticket https://sugarcrm.atlassian.net/browse/SC-5144
+*/
+
+.preview-pane {
+  .preview-data {
+    .field-label {
+      &[data-name=picture] {
+        display: none !important;
+      }
+    }
+    .field-value {
+      &[data-name=picture] {
+        position: absolute;
+        top: 2px;
+        .label,
+        .image_field .image_preview {
+          width: 32px;
+          height: 32px;
+        }
+        .image_field {
+          .image_preview {
+
+            /* additive */
+            border-radius: 50%;
+            overflow: hidden;
+            img {
+
+              /* override */
+              width: inherit !important;
+              height: inherit !important;
+            }
+          }
+        }
+      }
+    }
+
+    .field-label,
+    .field-value {
+      &[data-name=name] > span,
+      &[data-name=full_name] > span {
+        margin-left: 40px;
+        display: inline-block;
+      }
+    }
+    .field-row > span + .field-label.ellipsis_inline[data-name=name] {
+      margin-left: 40px;
+    }
+  }
+  .field-row:nth-child(2) {
+    border-top: 0;
+    .field-label {
+      margin-top: 0;
+    }
+  }
+  .show-hide-toggle {
+    display: block !important;
+    margin-top: 0 !important;
+    > button {
+      padding-left: 0;
+    }
+  }
+}
+
+/* HACKS END */
+
+/* NEW SKIN END */

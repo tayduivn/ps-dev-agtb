@@ -97,8 +97,6 @@
 
 .loading .progress {
   width: 100%;
-  height: 4px;
-  margin-top: 6px;
   .bar {
     height: 4px;
     background: @BorderColor;
@@ -119,13 +117,11 @@
 }
 
 .progress {
-  margin: 5px 0 0;
   height: 8px;
 }
 
 #nprogress {
   position: fixed;
-  top: 35px;
   height: 0;
   width: 100%;
   z-index: 1040;
@@ -308,7 +304,6 @@
 }
 
 #nprogress .bar {
-  background: @BorderColor;
   width: 100%;
 }
 
@@ -323,3 +318,39 @@
   opacity: 1.0;
   transform: rotate(3deg) translate(0px, -4px);
 }
+
+/* NEW SKIN START */
+
+.loading .progress {
+  /* override */
+  margin-top: 0;
+
+  /* override */
+  height: 1px;
+}
+
+
+.progress {
+  /* unset */
+  margin: 0;
+}
+
+#nprogress {
+  /* override */
+  top: 32px;
+
+  .loading.gate {
+    .progress {
+      /* additive */
+      background: @white;
+      box-shadow: none;
+    }
+  }
+}
+
+#nprogress .bar {
+  /* override with variable */
+  background: @navbarBorder;
+}
+
+/* NEW SKIN END */

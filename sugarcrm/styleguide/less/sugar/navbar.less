@@ -97,8 +97,7 @@
   margin-bottom: 0;
   .search-query {
     margin-bottom: 0;
-    #font > .sans-serif(13px, normal, 1);
-    border-radius: 15px; // redeclare because of specificity of the type attribute
+    font-size: 13px;
   }
 }
 
@@ -114,7 +113,6 @@
   margin-bottom: 0; // remove 18px margin for default navbar
   top: 0;
   .navbar-inner {
-    box-shadow: 0 1px 10px rgba(0,0,0,.1);
     border-width: 0 0 1px;
     padding-left:  0;
     padding-right: 0;
@@ -280,7 +278,6 @@
   // ==============
   .navbar-inner {
     border: none;
-    box-shadow: 0 4px 0 @BorderColor;
     width: 100%;
     display: table;
     min-height: 0;
@@ -295,9 +292,6 @@
       vertical-align: top;
       &.module-list {
         width: 100%;
-        .nav .dropdown > .btn-group:not(.home) .dropdown-menu {
-          margin-left: -8px;
-        }
         .dropdown-menu {
           max-width: 240px;
         }
@@ -312,7 +306,6 @@
     margin: 0;
   }
   .fa {
-    color: @white;
     font-size: 14px;
   }
 
@@ -323,12 +316,6 @@
   .btn-group:hover > .btn .fa,
   .btn-group > .btn:focus .fa {
     color: @navbarLinkColorActive;
-  }
-  .dropdown .fa {
-    color: fade(@navbarLinkColor, 35%);
-  }
-  .dropdown.open .fa {
-    color: @navbarLinkColor;
   }
 }
 
@@ -341,10 +328,6 @@
 
     &.active {
       .btn-group:not(.open) {
-        background-color: darken(@navbarBackground, 10%);
-        .fa-caret-down {
-          color: @white;
-        }
         .dropdown-toggle:not(.cube) {
           color: @navbarLinkColorActive;
           border-radius: 0 !important;
@@ -359,7 +342,6 @@
 
     /*This is the actual content in nav item*/
     .btn-group {
-      padding: 8px;
       margin: 0;
 
       /*This is the link text or image*/
@@ -371,7 +353,6 @@
         text-shadow: none;
         box-sizing: content-box;
         &:hover {
-          background: none;
           text-decoration: none;
         }
         &:active {
@@ -395,16 +376,12 @@
       }
 
       &.open {
-        background: darken(@navbarBackground, 15%);
         .dropdown-toggle {
           background: none;
           box-shadow: none;
           &:hover {
             background: none;
             text-decoration: none;
-          }
-          &> .fa {
-            color: @white;
           }
         }
       }
@@ -413,7 +390,6 @@
     /*Menu position and menu carets*/
     .dropdown-menu {
       position: fixed;
-      top: 50px;
       left: auto;
       right: auto;
       border-radius: 0 0 @baseBorderRadius @baseBorderRadius;
@@ -451,20 +427,10 @@
         padding: 8px 10px;
         text-indent: 16px;
         position: relative;
-        &:focus,
-        &:hover {
-          color: @dropdownLinkColorHover;
-          text-decoration: none;
-          background: @dropdownLinkBackgroundHover;
-          i.fa {
-            color: @dropdownLinkColorHover;
-          }
-        }
         i.fa {
           position: relative;
           top: -1px;
           text-indent: -12px;
-          color: @grayLight;
           vertical-align: middle;
         }
         &.module-list-link {
@@ -496,28 +462,17 @@
       .btn-group {
         padding: 8px 2px;
       }
-      .fa {
-        color: @grayLighter !important;
-      }
-      &:focus,
-      &:hover {
-        .fa {
-          color: @white !important;
-        }
-      }
     }
     &.hidden.more {
       display: inline-block; /* UIUX-1610 */
     }
     .btn-group {
-      padding: 8px 4px 8px 8px;
       .dropdown-toggle {
-        padding: 5px 8px;
+        padding: 5px 0 5px 8px;
         margin-left: 1px;
       }
       /*cube container*/
       &.home {
-        padding: 7px 10px 7px 16px;
         .dropdown-menu {
           left: 0;
           right: auto;
@@ -545,13 +500,7 @@
     }
     // module name link buttons
     .module-name {
-      color: @grayLighter;
       padding: 0;
-      &:focus,
-      &:hover {
-        color: @white;
-        text-decoration: none;
-      }
     }
     &[data-module="Forecasts"] {
       .btn-group {
@@ -605,6 +554,198 @@
     height: 28px;
     line-height: 28px;
     top: -1px;
-    color: @white !important;
   }
 }
+
+/* NEW SKIN START */
+
+.navbar {
+
+  // General layout
+  // ==============
+  .navbar-inner {
+    /* additive */
+    border-bottom: 1px solid @BorderColor;
+  }
+
+  .nav {
+    /* additive */
+    #createList {
+      border-left: 1px solid @navbarSearchBorder;
+    }
+  }
+
+  /* additive */
+  .btn-group:hover > .btn.btn-invisible {
+    color: @navbarLinkColorActive;
+  }
+
+  .nav-collapse > div.module-list .nav .dropdown {
+    > .btn-group:not(.home) {
+      .dropdown-menu {
+        /* override */
+        margin-left: -10px;
+      }
+    }
+    &.more .btn-group.open .dropdown-menu {
+      margin-left: -2px;
+    }
+  }
+}
+
+// Nav links (both module list and other)
+// ======================================
+
+.navbar .megamenu {
+  > .dropdown {
+
+    &.active {
+      .btn-group {
+        &:not(.open) {
+          &:not(.home) {
+            /* override */
+            background-color: @navbarLinkBackgroundActive;
+            .fa-caret-down {
+              color: @black;
+            }
+          }
+          &.home {
+            background: none;
+            .fa-caret-down {
+              color: @black;
+            }
+          }
+        }
+      }
+    }
+
+    &:hover {
+      /* additive */
+      background: @navbarDropdownBackgroundHover;
+      .btn-group {
+        > .btn,
+        > .btn:hover {
+          /* additive */
+          color: @navbarLinkColorHover;
+        }
+        &> .dropdown-toggle {
+          .fa {
+            /* additive */
+            color: @navbarLinkColorHover;
+          }
+        }
+      }
+    }
+
+    /*This is the actual content in nav item*/
+    .btn-group {
+      padding: 8px 10px 8px 10px;
+
+      &.home {
+        padding: 7px 20px 7px 20px;
+      }
+
+      &> .dropdown-toggle {
+        .fa {
+          /* additive */
+          width: 10px;
+        }
+      }
+
+      &.open {
+        /* new variable */
+        background-color: @navbarLinkBackgroundActive;
+        /* additive */
+        .btn.btn-invisible:not(.disabled):hover {
+          background: none;
+          color: inherit;
+        }
+      }
+    }
+
+    /*Menu position and menu carets*/
+    .dropdown-menu {
+      /* override */
+      top: 44px;
+
+      li a {
+        /* additive */
+        color: initial;
+
+        &:focus,
+        &:hover {
+          /* new variable */
+          color: @navbarDropdownLinkHover;
+
+          /* new variable */
+          background: @navbarDropdownItemHover;
+          i.fa {
+            /* new variable */
+            color: @navbarDropdownLinkHover;
+          }
+        }
+        /* additive */
+        &:active {
+          color: @navbarDropdownLinkHover;
+          background: @navbarDropdownBackgroundActive;
+          i.fa {
+            color: @navbarDropdownLinkHover;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Styling specific to module list
+// ======================================
+.module-list .megamenu {
+  > .dropdown {
+    &.more {
+      /* override */
+      .fa {
+        color: @black !important;
+        &:before {
+          content: "\f142";
+        }
+      }
+      /* override */
+      &:focus,
+      &:hover {
+        .fa {
+          color: @grayDark !important;
+        }
+      }
+      .btn-group {
+        /* override */
+        padding-top: 13px;
+        padding-bottom: 13px;
+        .dropdown-toggle {
+          padding: 0 6px;
+        }
+      }
+    }
+    // module name link buttons
+    .module-name {
+      /* override */
+      color: @black;
+      &:focus,
+      &:hover {
+        /* override */
+        color: @grayDark;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+#userActions {
+  .dropdown-toggle {
+    .avatar {
+      /* override */
+      min-width: 24px;
+    }
+  }
+}
+
+/* NEW SKIN END */

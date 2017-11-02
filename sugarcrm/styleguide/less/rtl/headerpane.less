@@ -13,9 +13,6 @@
             padding-left: 0;
             padding-right: 8px;
         }
-        > .btn-toolbar {
-            padding: 15px 0 0 8px;
-        }
         > .record-cell .record-cell {
             padding: 0 0 0 4px;
         }
@@ -26,23 +23,9 @@
     span[data-type="name"]:not(.edit), span[data-type="fullname"]:not(.edit) {
         padding-left: 0;
     }
-    span[data-type="favorite"] {
-        padding: 19px 20px 0 16px;
-    }
-    span[data-type="follow"],
-    span[data-type="badge"] {
-        padding: 18px 0 0 16px;
-    }
-    .btn-toolbar {
-        padding: 15px 0 0 8px;
-    }
     h1 .btn-toolbar .btn-group {
         padding-right: 8px;
         padding-left: 0;
-    }
-    h1 span[data-type="image"],
-    h1 span[data-type="avatar"] {
-        padding: 9px 20px 0 0;
     }
     span[data-type="fullname"].edit {
         padding: 2px 10px 0 13px;
@@ -55,3 +38,42 @@
         }
     }
 }
+
+/* NEW SKIN START */
+
+.main-pane {
+    .headerpane {
+        .btn-toolbar {
+            padding: 15px 0 0 24px;
+            .btn.sidebar-toggle {
+                right: auto;
+                margin: 0;
+                left: -1px;
+            }
+        }
+        h1 {
+            > .record-cell {
+                padding-left: 0;
+                padding-right: 20px;
+            }
+            > .btn-toolbar {
+                padding-top: 12px;
+            }
+            span {
+                &[data-type="image"],
+                &[data-type="avatar"] {
+                    padding: 4px 20px 0 0;
+                }
+                &[data-type="follow"],
+                &[data-type="badge"] {
+                    padding: 15px 0 0 16px;
+                }
+                &[data-type="favorite"] {
+                    padding: 11px 0 0 16px;
+                }
+            }
+        }
+    }
+}
+
+/* NEW SKIN END */

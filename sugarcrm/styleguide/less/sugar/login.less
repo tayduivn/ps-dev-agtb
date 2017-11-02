@@ -6,7 +6,6 @@
   width: 100%;
   top: 0;
   bottom: 0;
-  background: @white;
   .modal-header {
     padding: 9px 10px;
     .step-circle .fa-check-circle {
@@ -98,7 +97,6 @@
   margin: 0 auto;
   padding: 20px;
   margin-top: 4px;
-  box-shadow: @shadowWidget;
   .brand {
     margin-top: 0;
   }
@@ -141,3 +139,22 @@
 .signup .control-group > .edit > .input-append {
   width: 219px;
 }
+
+/* NEW SKIN START */
+
+.thumbnail.signup,
+.thumbnail.login {
+  /* additive */
+  border-radius: 0;
+  background: @white;
+
+  form {
+      > .help-block,
+      .signup-footer {
+        /* additive */
+        margin-left: 10px
+      }
+  }
+}
+
+/* NEW SKIN END */

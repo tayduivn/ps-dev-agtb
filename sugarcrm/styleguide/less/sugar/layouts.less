@@ -24,14 +24,12 @@
 #content {
   position: fixed;
   width: 100%;
-  top: 47px;
   right: 0;
   bottom: 44px;
   left: 0;
   margin: 0;
   padding: 0;
   overflow-y: hidden;
-  background: url(@textureSecondary);
   -webkit-overflow-scrolling: touch;
 }
 #content:empty,
@@ -41,7 +39,6 @@
 
 .main-pane {
   position: absolute;
-  top: 61px;
   bottom: 0;
   overflow-y: auto;
   overflow-x: hidden;
@@ -92,3 +89,18 @@
 #footer footer {
   min-width: 320px !important;
 }
+
+/* NEW SKIN START */
+
+#content {
+  /* override */
+  top: 45px;
+  /* override */
+  background: none;
+}
+
+.main-pane {
+  /* override */
+  top: 51px;
+}
+/* NEW SKIN END */

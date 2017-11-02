@@ -60,7 +60,6 @@
       right: -1px;
       left: 1px;
       overflow: hidden;
-      max-height: 333px;
       border-radius: @baseBorderRadius;
       li {
         min-width: 120px;
@@ -85,9 +84,6 @@
       .navbar-search {
         border-bottom: none;
         border-radius: 5px 5px 0 0;
-        .search-query {
-          border-radius: 0 @baseBorderRadius 0 0;
-        }
       }
       .quicksearch-tags-wrapper:after {
         content: "";
@@ -111,15 +107,11 @@
 // Navbar search input and controls
 .navbar-search {
   float: none;
-  height: 28px;
   margin: 0;
   white-space: nowrap;
   background: @white;
-  border: 1px solid @NavigationBar;
-  border-radius: 5px;
   // Module type table cell
   .quicksearch-modulelist-wrapper {
-    padding: 4px 0 0px 4px;
     vertical-align: top;
     cursor: pointer;
     .module-dropdown {
@@ -178,9 +170,7 @@
       -ms-user-select: none;
       user-select: none;
       &:focus, &:hover {
-        color: #176de5;
         text-decoration: none;
-        background: #f3f8fe;
         filter: none;
       }
       .fa.fa-check {
@@ -258,13 +248,10 @@
     border: none;
     float: none;
     color: @gray;
-    margin: 0;
-    padding: 0 20px 0 6px;
     min-height: 28px;
     min-width: 140px;
     text-overflow: ellipsis;
     width: 100%;
-    border-radius: @baseBorderRadius;
     box-sizing: border-box;
     transition: none;
     .placeholder(@grayLight);
@@ -282,7 +269,6 @@
   }
   > .btn .fa-search {
     display: inline-block;
-    color: @grayLight;
     text-shadow: none;
   }
   &:hover > .btn .fa-search {
@@ -425,4 +411,78 @@ li.search-result {
   }
 }
 
+/* NEW SKIN START */
 
+.navbar {
+  .search {
+    .typeahead {
+      /* override */
+      max-height: 343px;
+    }
+  }
+}
+
+// Navbar search input and controls
+.navbar-search {
+  /* override */
+  height: 44px;
+
+  /* override */
+  border-radius: 0;
+
+  /* override */
+  border: none;
+
+  /* additive */
+  border-left: 1px solid @navbarSearchBorder;
+
+  // Module type table cell
+  .quicksearch-modulelist-wrapper {
+    /* override */
+    padding: 12px 0 0px 4px;
+
+    .menu-item {
+
+      &:focus,
+      &:hover {
+        /* override */
+        color: @navbarDropdownLinkHover;
+
+        /* additive */
+        background: @navbarDropdownItemHover;
+
+        i.fa {
+          /* additive */
+          color: @navbarDropdownLinkHover;
+        }
+      }
+
+      &:active {
+        /* additive */
+        color: @navbarDropdownLinkHover;
+        background: @navbarDropdownBackgroundActive;
+        i.fa {
+          color: @navbarDropdownLinkHover;
+        }
+
+      }
+    }
+  }
+
+  // Input field
+  .search-query {
+    /* override */
+    margin: 15px 0 0;
+    padding: 0 20px 14px 6px;
+
+    /* additive */
+    box-shadow: none;
+  }
+}
+
+/* additive */
+.search-query {
+  .placeholder(@navbarSearchPlaceholderColor) !important;
+}
+
+/* NEW SKIN END */

@@ -6,7 +6,6 @@ footer {
   border-radius: 0;
   bottom: 0;
   border: none;
-  background: @grayLighter;
   width: 100%;
   min-height: 44px;
   border-top: @borderWidget;
@@ -93,3 +92,21 @@ footer {
     }
   }
 }
+
+/* NEW SKIN START */
+
+footer {
+  /* new variable */
+  background: @footerBackgroundColor;
+
+  .table-row {
+    .table-cell {
+      button:not(.btn-primary) {
+        /* additive */
+        color: @footerButtonColor;
+      }
+    }
+  }
+}
+
+/* NEW SKIN END */

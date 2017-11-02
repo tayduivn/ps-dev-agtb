@@ -1,16 +1,10 @@
 /* DASHBOARD
   ----------------*/
-
-.home-dashboard.main-pane {
-    background: url(@textureSecondary);
-  }
 .touch .dashboard {
   top: 0;
-  padding-top: 60px;
   overflow-x: auto;
 }
 .touch .sidebar-content .dashboard {
-  padding-top: 60px;
   top: 1px;
 }
 
@@ -18,12 +12,7 @@
   padding-top: 0;
 }
 
-.side .dashboard {
-  top: 61px;
-}
-
 .dashboard {
-  top: 8px;
   width: 100%;
   border-right: none;
   position: absolute;
@@ -34,7 +23,6 @@
   .headerpane {
     h1 {
       > .record-cell {
-        padding-top: 15px;
         &:first-child {
           width: 100%;
           max-width: 100px; //temp until better fix for ellipsis
@@ -203,11 +191,9 @@
 //FIXME: UIUX-2174 will refactor this part.
 .sidebar-content {
   .dashboard {
-    padding-top: 10px;
     .headerpane {
       width: calc(~"34.042553198% + 1px");
       border-left: @borderWidget;
-      background: url(@textureSecondary);
       right: auto;
       padding: 0 5px;
       margin-left: -1px;
@@ -356,3 +342,49 @@
     }
   }
 }
+
+/* NEW SKIN START */
+
+.dashboard {
+  /* override */
+  top: 2px;
+
+  .headerpane {
+    h1 {
+      > .record-cell {
+        /* override */
+        padding-top: 10px;
+      }
+    }
+  }
+}
+
+/* Dashboard inside right hand side panel */
+.sidebar-content {
+  .dashboard {
+  /* override */
+  padding-top: 0;
+
+    .headerpane {
+      .record-cell:first-child {
+        /* override */
+        padding-top: 11px;
+      }
+    }
+  }
+}
+
+.side .dashboard {
+  /* override */
+  top: 56px;
+}
+
+.touch {
+  .sidebar-content .dashboard,
+  .dashboard {
+    /* override */
+    padding-top: 53px;
+  }
+}
+
+/* NEW SKIN END */

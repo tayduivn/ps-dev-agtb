@@ -61,7 +61,7 @@
 
 // Typography
 // -------------------------
-@sansFontFamily:        "Helvetica Neue", Arial, sans-serif;
+@sansFontFamily:        "Open Sans", "Helvetica Neue", Arial, sans-serif;
 @serifFontFamily:       Georgia, "Times New Roman", Times, serif;
 @monoFontFamily:        Menlo, Monaco, Consolas, "Courier New", monospace;
 @baseFontSize:          12px;
@@ -201,8 +201,6 @@
 
 // textures
 // -------------------------
-@texturePrimary:          "@{baseUrl}/img/texture/triangles.png";
-@textureSecondary:        "@{baseUrl}/img/texture/furley_bg.png";
 @textureTertiary:         "@{baseUrl}/img/texture/texture-noise.png";
 
 // Input placeholder text color
@@ -379,3 +377,122 @@
 @stroke12: @pink;
 @stroke13: @coral;
 
+/* NEW SKIN START */
+
+// Variables.less
+// Variables to customize the look and feel of Bootstrap
+// -----------------------------------------------------
+
+// Primary Color:
+// 3 pixel line on the navbar
+// -------------------------
+// was @primary
+@BorderColor:                 #D3DBE1;
+
+
+// Secondary Color:
+// color of the navbar
+// -------------------------
+// was @secondary
+@NavigationBar:                 #FFFFFF;
+
+
+// Primary Button Color:
+// color of the primary button
+// -------------------------
+// was @primaryBtn
+@PrimaryButton:                 #0679c8;
+
+
+// Open Sans Font Path
+// -------------------------
+@os-font-path: "../../../../styleguide/assets/fonts/opensans";
+
+// New Theme Variables
+// -------------------------
+@fontSizeHeader:               @baseFontSize + 8px; // 20px
+@fontSizeHeaderEditFields:     @baseFontSize + 3px; // 15px
+@contentBackground:            #f7f8f9;
+@linkColorHover:               @PrimaryButton;
+@labelBorderRadius:            50%;
+
+// Buttons
+// -------------------------
+@PrimaryButtonBorder:          #055993;
+@btnPrimaryActiveBackground:   #005087;
+@btnPrimaryActiveBorder:       #033d64;
+@btnPrimaryHoverBackground:    #0463a4;
+@btnPrimaryHoverActiveBgGrad:  rgba(0, 21, 35, 0.1);
+@btnPrimaryHoverBorder:        #033d64;
+@btnBackground:                @white;
+@btnBackgroundHighlight:       @white;
+@btnActiveBackground:          #021e32;
+@btnIconColor:                 @black;
+@btnDisabledIconColor:         #b2b2b2;
+@inputBorderColor:             #ebedef;
+
+// Select2
+// -------------------------
+@zindexSelect2mask:            1051;
+@zindexSelect2menu:            1052;
+@select2Background:            #f8fafd;
+@select2Border:                #d3dbe1;
+@select2BackgroundHover:       #f2f5f9;
+@select2BorderHover:           #d3dbe1;
+@select2LinkColorHover:        @white;
+@select2LinkBackgroundHover:   @PrimaryButton;
+@select2LinkBackgroundActive:  #005087;
+
+@navbarLinkColorHover:            #6b7479;
+@navbarLinkBackgroundActive:      #e4e9ed;
+@navbarSearchBorder:              #ebedef;
+@navbarSearchPlaceholderColor:    #9aa5ad;
+@navbarBorder:                    #d3dbe1;
+
+@navbarDropdownItemHover:   @PrimaryButton;
+@navbarDropdownBackgroundHover:   #f7f8f9;
+@navbarDropdownBackgroundActive:  #005087;
+@navbarDropdownLinkHover:         @white;
+
+// Headerpane
+// -------------------------
+@headerBackground:                @white;
+@headerpaneSideToggleColor:       #9aa5ad;
+@headerpaneSideToggleBackground:  #ebedef;
+
+// Footer
+// -------------------------
+@footerButtonColor:               #6b7479;
+@footerBackgroundColor:           #f7f8f9;
+
+// Subpanels
+// -------------------------
+@subpabelBackground:              #ebedef;
+@subpabelClosedBackground:        #ebedef;
+@subpabelHoverBackground:         #e3e5e8;
+
+// Tables
+// -------------------------
+@tableHeader:                  @black; // table headers
+@tableBackground:              @white; // overall background-color
+@tableTbodyRowBorderColor:     #ebedef;
+@tableTheadRowBorderColor:     #d3dbe1;
+@tableFixedColumnsBorderColor: @tableTheadRowBorderColor;
+@tableRowHover:                #e2f2fe;
+@tableRowHighlighted:          @tableRowHover; // i.e. being previewed
+
+// List view preview
+// -------------------------
+@previewLabelFontSize:         @baseFontSize;
+@previewValueFontSize:         @baseFontSize + 2px;
+@previewFieldSeparator:        #ebedef;
+
+// Loading
+// -------------------------
+@loadingColor:                 #717175;
+
+// Input placeholder text color
+// -------------------------
+@placeholderText:              #9aa5ad;
+
+/* NEW SKIN END */

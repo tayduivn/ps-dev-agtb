@@ -49,6 +49,12 @@
     display: inline-block;
     min-height: 1px;
   }
+  :focus {
+    outline: none;
+  }
+  ::-moz-focus-inner {
+    border: 0;
+  }
 }
 
 
@@ -71,8 +77,6 @@
     display: none;
   }
   .record-label {
-    font-size: @fontSizeSmall;
-    line-height: @fontSizeSmall;
     color: lighten(@gray, 12%);
     margin-left: 7px;
   }
@@ -557,3 +561,15 @@
     }
   }
 }
+
+/* NEW SKIN START */
+
+.record-cell {
+   .record-label {
+     font-size: @fontSizeSmall + 1;
+     line-height: @fontSizeSmall + 1;
+     margin-bottom: 3px;
+   }
+}
+
+/* NEW SKIN END */

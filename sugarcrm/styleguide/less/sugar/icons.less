@@ -9,9 +9,6 @@
   color: @yellow;
 }
 
-a > .fa {
-  color: @grayLight;
-}
 a:not(.disabled):hover > .fa {
   color: @gray;
 }
@@ -20,12 +17,6 @@ a:not(.disabled):active > .fa {
   color: @black;
 }
 
-
-.fa-favorite,
-.btn > .fa-favorite,
-.btn.active > .fa-favorite {
-  color: @grayLight !important;
-}
 .btn.active:focus > .fa-favorite,
 .btn.active:hover > .fa-favorite {
   color: @gray !important;
@@ -53,8 +44,23 @@ a:not(.disabled):active > .fa {
 }
 
 i.fa-white,
-btn.fa-white,
+.btn.fa-white,
 span.fa-white {
   color: @white !important;
 }
 
+/* NEW SKIN START */
+
+a > .fa {
+  /* override */
+  color: @black;
+}
+
+/* override */
+.fa-favorite,
+.btn > .fa-favorite,
+.btn.active > .fa-favorite {
+  color: @black !important;
+}
+
+/* NEW SKIN END */

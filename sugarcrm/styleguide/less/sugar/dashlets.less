@@ -97,7 +97,6 @@
   box-shadow: @shadowWidget;
   position: relative;
   margin-bottom: 0 !important;
-  background: @white;
   transition: 0;
 
   &:not(.collapsed):not(.empty) {
@@ -128,7 +127,6 @@
     background: @grayLighter;
   }
   h4 {
-    font-weight: 500;
     font-size: @fontSizeLarge;
     padding: 7px 80px 8px 10px;
     cursor: move;
@@ -547,3 +545,54 @@
 .side .block .listed {
   margin: -10px 0 0;
 }
+
+/* NEW SKIN START */
+
+.dashlet-container {
+  /* additive */
+  .thumbnail {
+    box-shadow: none;
+  }
+}
+
+.dashlet {
+  /* override */
+  box-shadow: none;
+
+  h4,
+  .dashlet-options {
+    /* override */
+    color: @black;
+    /* override */
+    background: @headerBackground;
+    a {
+      /* override */
+      color: @black;
+    }
+  }
+
+  .dashlet-header {
+    /* override */
+    background: @headerBackground;
+  }
+
+  h4 {
+    /* override */
+    font-weight: 600;
+  }
+
+  /* restructure */
+  .btn-toolbar {
+    &.pull-right {
+      margin: 3px;
+    }
+    .btn {
+      margin-left: 0;
+      span {
+        display: inline-block;
+      }
+    }
+  }
+}
+
+/* NEW SKIN END */

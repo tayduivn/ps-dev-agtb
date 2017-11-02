@@ -376,7 +376,6 @@ and (orientation: portrait) {
     overflow-x: visible;
     overflow-y: visible;
     width: 100%;
-    margin-top: 61px;
     border-bottom: @borderWidget;
     z-index: initial;
   }
@@ -450,7 +449,6 @@ and (orientation: portrait) {
 
   .preview-pane {
     position: fixed;
-    top: 48px;
     left: 100%;
     margin-left: 25%;
     width: 75%;
@@ -556,3 +554,30 @@ and (orientation: portrait) {
     }
   }
 }
+
+/* NEW SKIN START */
+
+@media (max-width: 768px) {
+
+  .main-pane.span8,
+  .main-pane.span12 {
+    /* override */
+    margin-top: 52px;
+  }
+
+  .preview-pane {
+    /* override */
+    top: 45px;
+  }
+
+  /* additive */
+  .megamenu > .dropdown .btn-group > .dropdown-toggle .fa-caret-down,
+  th.sorting_asc span:after,
+  th.sorting_desc span:after,
+  th.sorting span:after,
+  .dashlet .btn-toolbar {
+    visibility: visible;
+  }
+}
+
+/* NEW SKIN END */

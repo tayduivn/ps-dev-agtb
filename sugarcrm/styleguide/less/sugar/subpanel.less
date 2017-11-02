@@ -2,9 +2,7 @@
   ----------------*/
 .subpanels-layout {
   .subpanel {
-    background-color: @white;
     &.closed {
-      background-color: @grayLighter;
       .subpanel-list {
         display: none;
       }
@@ -35,7 +33,6 @@
   }
 
   .subpanel-header {
-    border-bottom: @borderWidget;
     height: 42px;
     display: block;
     cursor: pointer;
@@ -45,7 +42,6 @@
     }
     h4 {
       line-height: 24px;
-      font-weight: normal;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -129,3 +125,34 @@
     display: none;
   }
 }
+
+/* NEW SKIN START */
+
+.subpanels-layout {
+  .subpanel {
+    /* override with variable */
+    background-color: @subpabelBackground;
+    &.closed {
+      /* override */
+      background-color: @subpabelClosedBackground;
+    }
+  }
+  .subpanel-header {
+    /* override */
+    border-bottom: 1px solid @white;
+    h4 {
+      /* override */
+      font-weight: bold;
+
+      /* additive */
+      font-size: @fontSizeMedium + 1;
+      text-transform: uppercase;
+    }
+    &:hover {
+      /* override */
+      background-color: @subpabelHoverBackground;
+    }
+  }
+}
+
+/* NEW SKIN END */
