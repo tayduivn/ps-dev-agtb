@@ -164,9 +164,6 @@ SQL
      *
      * For every team set which the given team belongs to only by means of the given team,
      * remove corresponding record.
-     *
-     * Currently, instead of the above, removes the records corresponding to the team sets
-     * which the user doesn't belong to (i.e. w/o using the actual team ID)
      */
     public function userRemovedFromTeam($userId, $teamId)
     {
@@ -174,18 +171,38 @@ SQL
             <<<SQL
 DELETE FROM %s
  WHERE user_id = ?
-   AND team_set_id NOT IN (
+   AND team_set_id IN (
     SELECT tst.team_set_id
       FROM team_sets_teams tst
 INNER JOIN team_memberships tm
         ON tm.team_id = tst.team_id
-     WHERE tm.user_id = user_id
        AND tm.deleted = 0
+ LEFT JOIN (
+        SELECT tst.team_set_id
+          FROM team_sets_teams tst
+    INNER JOIN team_memberships tm
+            ON tm.team_id = tst.team_id
+           AND tm.deleted = 0
+         WHERE tm.user_id = ?
+           AND tm.team_id != ?
+           AND tst.deleted = 0
+    ) q
+        ON q.team_set_id = tst.team_set_id
+     WHERE tm.user_id = ?
+       AND tm.team_id = ?
+       AND tst.deleted = 0
+       AND q.team_set_id IS NULL
     )
 SQL
         );
 
-        $this->conn->executeUpdate($query, [$userId]);
+        $this->conn->executeUpdate($query, [
+            $userId,
+            $userId,
+            $teamId,
+            $userId,
+            $teamId,
+        ]);
     }
 
     /**
