@@ -22,7 +22,7 @@ $vardefs = array(
             'db_field' => array(
                 'id',
             ),
-            'vname' =>'LBL_ANY_EMAIL',
+            'vname' =>'LBL_EMAIL_ADDRESS',
             'studio' => array(
                 'visible' => true,
                 'searchview' => true,

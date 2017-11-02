@@ -199,7 +199,7 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
             'email' => array(
                 'text' => 'woo@baz.com',
                 'module' => 'Contacts',
-                'label' => 'LBL_ANY_EMAIL',
+                'label' => 'LBL_EMAIL_ADDRESS',
             ),
         );
 
