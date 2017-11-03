@@ -181,7 +181,11 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
             if ($redirect_url !== null) {
                 $params = array();
                 foreach ($_REQUEST as $param => $_) {
-                    $params[$param] = $request->getValidInputRequest($param);
+                    if (is_array($_)) {
+                        $params[$param] = $request->getValidInputRequest($param, 'Assert\ArrayRecursive');
+                    } else {
+                        $params[$param] = $request->getValidInputRequest($param);
+                    }
                 }
                 unset($params['redirect_url'], $params['submit']);
                 if (empty($lead)) {
