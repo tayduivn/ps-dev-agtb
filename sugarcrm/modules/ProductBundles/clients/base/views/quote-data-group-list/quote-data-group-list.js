@@ -136,6 +136,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        var parentModelModule;
         this.pbnListMetadata = app.metadata.getView('ProductBundleNotes', 'quote-data-group-list');
         this.qliListMetadata = app.metadata.getView('Products', 'quote-data-group-list');
 
@@ -165,7 +166,16 @@
         this.isDefaultGroupList = this.model.get('default_group');
 
         this.isCreateView = this.context.parent.get('create') || false;
-        this.isOppsConvert = this.isCreateView && this.context.parent.get('convert');
+
+        parentModelModule = this.context.parent.get('parentModel') ?
+            this.context.parent.get('parentModel').get('_module') : '';
+
+        this.isOppsConvert = this.isCreateView &&
+            this.context.parent.get('convert') &&
+            (parentModelModule == 'RevenueLineItems' ||
+            parentModelModule == 'Opportunities') &&
+            this.context.parent.get('fromLink') != 'quotes';
+
         this.addedConvertModels = this.context.parent.get('addedConvertModels') || false;
 
         this.action = 'list';

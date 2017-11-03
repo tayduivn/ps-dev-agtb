@@ -189,9 +189,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         describe('setting isCreateView and isOppsConvert', function() {
             var initModel;
             var collection;
+            var parentModel;
 
             beforeEach(function() {
                 sinon.collection.stub(view, 'addMultiSelectionAction', function() {});
+                parentModel = new Backbone.Model();
                 initModel = new Backbone.Model();
                 initModel.fields = {
                     product_bundle_items: {
@@ -219,13 +221,52 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 expect(view.isCreateView).toBeTruthy();
             });
 
-            it('should set isOppsConvert true if isCreateView is true and convert is on parent context', function() {
+            it('should set isOppsConvert true if isCreateView parent.convert is on the context ' +
+                'and parentModelModule is RevenueLineItems', function() {
+                parentModel.set('_module', 'RevenueLineItems');
                 viewParentContext.set({
                     create: true,
-                    convert: true
+                    convert: true,
+                    parentModel: parentModel
                 });
                 view.initialize(initOptions);
                 expect(view.isOppsConvert).toBeTruthy();
+            });
+
+            it('should set isOppsConvert true if isCreateView parent.convert is on the context ' +
+                'and parentModelModule is Opportunities', function() {
+                parentModel.set('_module', 'Opportunities');
+                viewParentContext.set({
+                    create: true,
+                    convert: true,
+                    parentModel: parentModel,
+                    fromLink: 'foo'
+                });
+                view.initialize(initOptions);
+                expect(view.isOppsConvert).toBeTruthy();
+            });
+
+            it('should set isOppsConvert false if isCreateView parent.convert is on the context ' +
+                'and parentModelModule is Opportunities but fromLink is quotes', function() {
+                parentModel.set('_module', 'Opportunities');
+                viewParentContext.set({
+                    create: true,
+                    convert: true,
+                    parentModel: parentModel,
+                    fromLink: 'quotes'
+                });
+                view.initialize(initOptions);
+                expect(view.isOppsConvert).toBeFalsy();
+            });
+
+            it('should set isOppsConvert false if the parentModel is not defined', function() {
+                viewParentContext.set({
+                    create: true,
+                    convert: true,
+                    fromLink: 'foo'
+                });
+                view.initialize(initOptions);
+                expect(view.isOppsConvert).toBeFalsy();
             });
 
             it('should set isCreateView false if create is not on parent context', function() {
