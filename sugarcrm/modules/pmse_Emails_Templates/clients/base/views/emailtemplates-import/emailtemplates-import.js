@@ -76,7 +76,7 @@
         // Check if a file was chosen
         if (_.isEmpty(projectFile.val())) {
             app.alert.show('error_validation_emailtemplates', {
-                level:'error',
+                level: 'error',
                 messages: app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_EMPTY_WARNING', self.module),
                 autoClose: false
             });
@@ -85,7 +85,7 @@
 
             var callbacks =
                 {
-                    success: self._onImportEmailTemplatesSuccess,
+                    success: _.bind(self._onImportEmailTemplatesSuccess, self),
                     error:  self._onImportEmailTemplatesError
                 };
 
@@ -107,7 +107,7 @@
         app.router.goBack();
         app.alert.show('process-import-saved', {
             level: 'success',
-            messages: app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_IMPORT_SUCCESS', self.module),
+            messages: app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_IMPORT_SUCCESS', this.module),
             autoClose: true
         });
     },
