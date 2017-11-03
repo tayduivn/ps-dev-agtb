@@ -22,10 +22,12 @@ $dictionary['team_sets_teams'] = array(
         'team_set_id' => array(
             'name' => 'team_set_id',
             'type' => 'id',
+            'required' => true,
         ),
         'team_id' => array(
             'name' => 'team_id',
             'type' => 'id',
+            'required' => true,
         ),
         'date_modified' => array(
             'name' => 'date_modified',
@@ -48,7 +50,7 @@ $dictionary['team_sets_teams'] = array(
         ),
         array(
             'name' => 'idx_ud_set_id',
-            'type' => 'index',
+            'type' => 'unique',
             'fields' => array(
                 'team_set_id',
                 'team_id',
@@ -59,7 +61,6 @@ $dictionary['team_sets_teams'] = array(
             'type' => 'index',
             'fields' => array(
                 'team_id',
-                'deleted',
             ),
         ),
         array(

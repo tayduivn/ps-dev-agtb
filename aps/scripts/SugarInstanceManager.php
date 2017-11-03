@@ -412,8 +412,8 @@ class SugarInstanceManager{
 		}
 		
 		$team_set_team_query = "INSERT into team_sets_teams ".
-									"(team_set_id,team_id,deleted,date_modified,id) VALUES ".
-									"('$team_set_id}','{$team_id}','0','".gmdate('Y-m-d H:i:s')."','{$team_set_team_id}')";
+            "(team_set_id,team_id,date_modified,id) VALUES ".
+            "('$team_set_id}','{$team_id}','".gmdate('Y-m-d H:i:s')."','{$team_set_team_id}')";
 		if(!mysql_query($team_set_team_query, $this->db_links['main'])){
 			echo "Could not create team set to team relationship";
 			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);

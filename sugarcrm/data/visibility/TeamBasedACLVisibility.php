@@ -97,7 +97,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
             FROM team_sets_teams tst
             INNER JOIN team_memberships {$teamTableAlias} ON {$teamTableAlias}.team_id = tst.team_id
                 AND {$teamTableAlias}.user_id = '{$current_user->id}' AND {$teamTableAlias}.deleted = 0
-            WHERE tst.team_set_id = {$tableAlias}.acl_team_set_id AND tst.deleted = 0";
+            WHERE tst.team_set_id = {$tableAlias}.acl_team_set_id";
 
         $ow = new OwnerVisibility($this->bean, $this->params);
         if (!empty($this->getOption('table_alias'))) {

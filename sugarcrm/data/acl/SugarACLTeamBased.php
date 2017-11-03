@@ -206,7 +206,6 @@ class SugarACLTeamBased extends SugarACLStrategy
             'alias' => 'tst',
         ));
         $join->on()->equalsField('tst.team_set_id', 'bean.acl_team_set_id');
-        $join->on()->equals('tst.deleted', 0);
 
         $join = $sq->joinTable('team_memberships', array(
             'alias' => 'tm',

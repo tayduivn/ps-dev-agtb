@@ -142,7 +142,6 @@ SELECT tst.team_set_id,
        ?
   FROM team_sets_teams tst
  WHERE tst.team_id = ?
-   AND tst.deleted = 0
    AND NOT EXISTS (
     SELECT NULL
       FROM %1$s
@@ -185,12 +184,10 @@ INNER JOIN team_memberships tm
            AND tm.deleted = 0
          WHERE tm.user_id = ?
            AND tm.team_id != ?
-           AND tst.deleted = 0
     ) q
         ON q.team_set_id = tst.team_set_id
      WHERE tm.user_id = ?
        AND tm.team_id = ?
-       AND tst.deleted = 0
        AND q.team_set_id IS NULL
     )
 SQL

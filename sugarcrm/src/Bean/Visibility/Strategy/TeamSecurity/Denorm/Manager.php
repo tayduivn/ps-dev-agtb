@@ -353,7 +353,6 @@ SELECT
 FROM team_sets ts
 INNER JOIN team_sets_teams tst
     ON ts.id = tst.team_set_id
-    AND tst.deleted = 0
 INNER JOIN teams t
     ON tst.team_id = t.id
     AND t.deleted = 0

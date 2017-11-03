@@ -840,6 +840,34 @@ WHERE tst.team_id = ?';
                     $old_team_id,
                     $this->id
                 ));
+
+                // delete old team entries which are contained with the new team in the same set
+                // in order to avoid duplicates after the following update
+                $conn->executeUpdate(
+                    <<<SQL
+DELETE FROM team_sets_teams
+ WHERE team_set_id IN (
+    SELECT *
+    FROM (
+        SELECT t1.team_set_id
+          FROM team_sets_teams t1
+         WHERE team_id = ?
+           AND EXISTS (
+               SELECT NULL
+                 FROM team_sets_teams t2
+                WHERE t2.team_set_id = t1.team_set_id
+                  AND t2.team_id = ?
+        )
+    ) t
+)
+SQL
+                    ,
+                    [
+                        $old_team_id,
+                        $this->id,
+                    ]
+                );
+
                 $conn->update('team_sets_teams', array(
                     'team_id' => $this->id,
                 ), array(
