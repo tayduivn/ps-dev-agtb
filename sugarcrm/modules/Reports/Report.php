@@ -1184,7 +1184,7 @@ class Report
     {
         $from = ''; $where = '';
         $options = $this->getVisibilityOptions();
-        $options['table_alias'] = $alias;
+        $options['table_alias'] = $focus->table_name;
         $focus->addVisibilityWhere($where, $options);
         $focus->addVisibilityFrom($from, $options);
         if(!empty($from) || !empty($where)) {
