@@ -142,6 +142,7 @@ abstract class ServiceBase implements LoggerAwareInterface
      * Handle the situation where the API needs login
      * @param Exception $e Exception that caused the login problem, if any
      * @throws SugarApiExceptionNeedLogin
+     * @throws SugarApiExceptionError
      */
     public function needLogin(Exception $e = null)
     {
@@ -151,6 +152,9 @@ abstract class ServiceBase implements LoggerAwareInterface
            // @TODO Localize exception strings
            $message = "No valid authentication for user.";
        }
+        if ($this->isOidcEnabled($this->platform) && !extension_loaded('gmp')) {
+            throw new SugarApiExceptionError('ERR_FOR_OIDC_GMP_REQUIRED', null, 'Users');
+        }
         $loginExc = new SugarApiExceptionNeedLogin($message);
         $authType = $this->isOidcEnabled($this->platform) ? 'OAuth2Authenticate' : null;
         $auth = AuthenticationController::getInstance($authType);

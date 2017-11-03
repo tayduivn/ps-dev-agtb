@@ -225,6 +225,7 @@ $mod_strings = array (
     'LBL_LOGIN_LOGIN_TIME_MINUTES'      => 'min.',
    	'LBL_LOGIN_LOGIN_TIME_SECONDS'      => 'sec.',
     'LBL_LOGIN_ADMIN_CALL'              => 'Please contact the system administrator.',
+    'ERR_FOR_OIDC_GMP_REQUIRED'         => 'For authentication with OpenID Connect (OIDC) please install GMP PHP extension.',
 	// END LOGIN PAGE STRINGS
     'LBL_LOGGED_OUT_1' => 'You have been logged out. To login again please click ',
     'LBL_LOGGED_OUT_2' => 'here',
