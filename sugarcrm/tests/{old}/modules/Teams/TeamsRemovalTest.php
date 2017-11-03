@@ -25,12 +25,16 @@ class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
     var $_teamSetId = null;
     var $_contactId = null;
     var $_contact2Id = null;
-    
-    //Team A
+
+    /**
+     * @var Team
+     */
     var $_teamA = null;
     var $_teamAId = null;
-    
-    //Team B
+
+    /**
+     * @var Team
+     */
     var $_teamB = null;
     var $_teamBId = null;
 
