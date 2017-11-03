@@ -23,6 +23,12 @@ export SEEDBED_IMAGE_TAG='node8'
 
 SEEDBED_IMAGE_TAG="${SEEDBED_IMAGE_TAG:?latest}" 
 
+echo 'LOG: Memory Info (start)'
+  free -m
+
+echo 'LOG: System Log (start)'
+    dmesg -T
+
 docker pull "${SEEDBED_IMAGE_NAME}:${SEEDBED_IMAGE_TAG}"
 
 docker run \
@@ -31,3 +37,9 @@ docker run \
    -p 5900:5900 \
    --net=host \
    "${SEEDBED_IMAGE_NAME}:${SEEDBED_IMAGE_TAG}" "$@"
+
+echo 'LOG: System Log (end)'
+    dmesg -T
+
+echo 'LOG: Memory Info (start)'
+  free -m
