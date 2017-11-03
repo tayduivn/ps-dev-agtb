@@ -140,7 +140,6 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
      *
      * @param string $username The name of the user you want to load
      * @return SugarBean The user from the name
-     * @internal param array $extraData Some optional extra data for retrieve user
      */
     public function loadUserFromName($username)
     {

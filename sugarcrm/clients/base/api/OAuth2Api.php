@@ -11,7 +11,6 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class OAuth2Api extends SugarApi
 {

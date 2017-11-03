@@ -23,7 +23,7 @@ class SugarOAuth2Server extends OAuth2
     const CONFIG_MAX_SESSION = 'max_session_lifetime';
 
     /**
-     * @var null
+     * @var SugarOAuth2Server
      */
     protected static $currentOAuth2Server = null;
 
@@ -33,7 +33,7 @@ class SugarOAuth2Server extends OAuth2
      * types and storage
      *
      * @param bool $oidcEnabled If true - new oAuth2/OIDC flow will be used for token validation or grant
-     * @return null
+     * @return SugarOAuth2Server
      */
     public static function getOAuth2Server($oidcEnabled = false)
     {
