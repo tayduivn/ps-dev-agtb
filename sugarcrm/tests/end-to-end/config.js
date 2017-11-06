@@ -103,7 +103,7 @@ var config = {
 
     output: {
         resultsFailures: path.resolve(__dirname, './'),
-        screenshots: path.resolve(__dirname, '../screenshots'),
+        screenshots: path.resolve(__dirname, './screenshots'),
     },
 
     log: {
@@ -116,6 +116,9 @@ var config = {
         path.resolve(__dirname, 'seedbed')
     ],
     clientScripts: require('./client/client-scripts.js'),
+    client: {
+        devicePixelRatio: 1,
+    },
     selenium: {
         debug: false,
 

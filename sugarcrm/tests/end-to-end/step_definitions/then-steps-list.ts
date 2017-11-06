@@ -10,7 +10,7 @@
  */
 
 import * as _ from 'lodash';
-import {thenStepsHelper, Then} from '@sugarcrm/seedbed';
+import {thenStepsHelper, Then, stepsHelper} from '@sugarcrm/seedbed';
 import ListView from '../views/list-view';
 import {TableDefinition} from 'cucumber';
 
@@ -61,3 +61,12 @@ Then(/^I should be redirected to \"(.*)\" route/,
     (expectedRoute: string): Promise<void> =>
         thenStepsHelper.checkUrlHash(expectedRoute));
 
+Then<
+    string,
+    string
+    >(/^I verify that (#\S+) still looks like (.*)$/, async function(
+    component: any,
+    fileName: any
+): Promise<void> {
+    await stepsHelper.verifyElementByImage(component, fileName);
+});
