@@ -79,9 +79,7 @@
     // If we are emulating what the real app will see, we need to include our hacks
     "include/javascript/sugar7/hacks.js",
 
-    {"pattern": "clients/base/**/*.js", "included": false, "served": true, "watched": true},
-    {"pattern": "modules/**/clients/base/**/*.js", "included": false, "served": true, "watched": true},
-
+    // BEGIN SUGARCRM flav=ent ONLY
     // pmse stuff
     "tests/unit-js/jshelpers/pmse-app-crutch.js",
     "include/javascript/pmse/utils.js",
@@ -173,5 +171,10 @@
     "include/javascript/pmse/ListContainer.js",
     "include/javascript/pmse/ErrorListItem.js",
     "include/javascript/pmse/ErrorListPanel.js",
-    "include/javascript/pmse/designer.js"
+    "include/javascript/pmse/designer.js",
+    // END SUGARCRM flav=ent ONLY
+
+    {"pattern": "clients/base/**/*.js", "included": false, "served": true, "watched": true},
+    {"pattern": "modules/**/clients/base/**/*.js", "included": false, "served": true, "watched": true}
+
 ]
