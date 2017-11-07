@@ -23,6 +23,7 @@ $viewdefs['Emails']['base']['filter']['default'] = array(
         'parent_name' => array(),
         'tag' => array(),
         'mailbox_name' => array(),
+        'total_attachments' => array(),
         '$owner' => array(
             'predefined_filter' => true,
             'vname' => 'LBL_CURRENT_USER_FILTER',
