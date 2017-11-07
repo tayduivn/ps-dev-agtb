@@ -2203,9 +2203,10 @@ class SugarBean
         {
             if ($this->$lname->getRelatedModuleName() == $this->fetched_row['parent_type'])
             {
-                SugarRelationship::addToResaveList(
-                    BeanFactory::getBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id'])
-                );
+                $bean = BeanFactory::retrieveBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id']);
+                if ($bean) {
+                    SugarRelationship::addToResaveList($bean);
+                }
             }
         }
         //If we have a new parent record that uses this link, make sure to resave that one as well
@@ -2214,9 +2215,10 @@ class SugarBean
             && isset($this->parent_id) && $this->parent_id != $this->fetched_row['parent_id']
             && isset($this->parent_type) && $this->$lname->getRelatedModuleName() == $this->parent_type
         ) {
-            SugarRelationship::addToResaveList(
-                BeanFactory::getBean($this->parent_type, $this->parent_id)
-            );
+            $bean =  BeanFactory::retrieveBean($this->parent_type, $this->parent_id);
+            if ($bean) {
+                SugarRelationship::addToResaveList($bean);
+            }
         }
     }
 
