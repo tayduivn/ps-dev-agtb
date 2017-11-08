@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
+use PDO;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\Dbal\Connection;
 
@@ -101,36 +102,50 @@ SQL
      */
     public function teamDeleted($teamId)
     {
-        $query = $this->query(
+        // temporarily use two queries instead of one because the previous implementation
+        // doesn't use the denormalized table PK during deletion
+        $select = $this->query(
             <<<SQL
-DELETE FROM %s
- WHERE (team_set_id, user_id) IN (
+SELECT tst.team_set_id
+  FROM team_sets_teams tst
+ INNER JOIN team_memberships tm
+    ON tm.team_id = tst.team_id
+   AND tm.deleted = 0
+  LEFT JOIN (
     SELECT tst.team_set_id,
            tm.user_id
       FROM team_sets_teams tst
 INNER JOIN team_memberships tm
         ON tm.team_id = tst.team_id
        AND tm.deleted = 0
- LEFT JOIN (
-        SELECT tst.team_set_id,
-               tm.user_id
-          FROM team_sets_teams tst
-    INNER JOIN team_memberships tm
-            ON tm.team_id = tst.team_id
-           AND tm.deleted = 0
-         WHERE tm.team_id != ?
-    ) q
-        ON q.team_set_id = tst.team_set_id
-        AND q.user_id = tm.team_id
-     WHERE tm.team_id = ?
-       AND q.team_set_id IS NULL
-    )
+     WHERE tm.team_id != ?
+) q
+    ON q.team_set_id = tst.team_set_id
+    AND q.user_id = tm.team_id
+ WHERE tm.team_id = ?
+   AND q.team_set_id IS NULL
 SQL
         );
 
-        $this->conn->executeUpdate($query, [
+        $teamSetIds = $this->conn->executeQuery($select, [
             $teamId,
             $teamId,
+        ])->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!count($teamSetIds)) {
+            return;
+        }
+
+        $delete = $this->query(
+            <<<SQL
+DELETE FROM %s WHERE team_set_id IN (?)
+SQL
+        );
+
+        $this->conn->executeUpdate($delete, [
+            array_unique($teamSetIds),
+        ], [
+            Connection::PARAM_STR_ARRAY,
         ]);
     }
 
