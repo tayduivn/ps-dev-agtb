@@ -10,13 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener;
+namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Psr\Log\LoggerInterface;
 use Rhumsaa\Uuid\Uuid;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use TimeDate;
 
 /**

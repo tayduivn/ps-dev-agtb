@@ -10,8 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
 class Team extends SugarBean
 {

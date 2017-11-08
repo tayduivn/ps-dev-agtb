@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener;
+namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
 /**
  * Composite listener

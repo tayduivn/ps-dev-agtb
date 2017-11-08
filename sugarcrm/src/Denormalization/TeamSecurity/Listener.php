@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm;
+namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity;
 
 /**
  * Listener of the changes in team security related data.

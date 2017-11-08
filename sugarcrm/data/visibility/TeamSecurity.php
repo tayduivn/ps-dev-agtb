@@ -13,7 +13,7 @@
 use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy;
 use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\AllowAll;
 use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\DenyAll;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 /**
  * Team security visibility

@@ -22,7 +22,7 @@
  *
  */
 
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 require_once('vendor/ytree/Tree.php');
 require_once('vendor/ytree/Node.php');

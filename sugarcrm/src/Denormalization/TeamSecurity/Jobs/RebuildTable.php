@@ -10,40 +10,42 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Jobs;
+namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Jobs;
 
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
+use SchedulersJob;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 /**
  *
  * Handle the rebuild of Team Security denormalized table.
  *
  */
-class SugarJobRebuildTeamSecurityDenormTable implements \RunnableSchedulerJob
+class RebuildTable implements \RunnableSchedulerJob
 {
     /**
-     * @var \SchedulersJob
+     * @var SchedulersJob
      */
     protected $job;
 
     /**
-     * @var \Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager
+     * @var Manager
      */
-    protected $denormManager;
+    protected $manager;
 
     /**
-     * Ctor
+     * Constructor
+     *
      * @param Manager $manager
      */
     public function __construct(Manager $manager = null)
     {
-        $this->denormManager = $manager ?: Manager::getInstance();
+        $this->manager = $manager ?: Manager::getInstance();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setJob(\SchedulersJob $job)
+    public function setJob(SchedulersJob $job)
     {
         $this->job = $job;
     }
@@ -54,7 +56,7 @@ class SugarJobRebuildTeamSecurityDenormTable implements \RunnableSchedulerJob
     public function run($data)
     {
         $start = time();
-        list($status, $message) = $this->denormManager->rebuild();
+        list($status, $message) = $this->manager->rebuild();
         $duration = time() - $start;
 
         $message .= sprintf(' (%s second(s) taken)', $duration);

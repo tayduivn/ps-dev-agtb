@@ -16,7 +16,7 @@ use Sugarcrm\Sugarcrm\Console\CommandRegistry\Mode\InstanceModeInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 /**
  *

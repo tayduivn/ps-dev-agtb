@@ -10,20 +10,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm;
+namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity;
 
 use DBManagerFactory;
 use Doctrine\DBAL\DBALException;
 use Psr\Log\LoggerInterface;
 use SugarConfig;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener\Composite;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener\Invalidator;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener\NullListener;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener\Recorder;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener\Updater;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener\UserOnlyListener;
 use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denormalized;
 use Sugarcrm\Sugarcrm\Dbal\Connection;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Composite;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Invalidator;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\NullListener;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Recorder;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Updater;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\UserOnlyListener;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use User;
 

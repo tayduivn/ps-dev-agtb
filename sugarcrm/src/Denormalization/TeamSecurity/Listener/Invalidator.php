@@ -10,11 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener;
+namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Listener;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\State;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denorm\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 /**
  * Invalidates denormalized data upon any change
