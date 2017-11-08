@@ -55,17 +55,17 @@ class Recorder implements Listener
     /**
      * {@inheritDoc}
      */
-    public function teamSetReplaced($teamSetId, $replacementId)
+    public function teamSetDeleted($teamSetId)
     {
-        $this->record(__FUNCTION__, $teamSetId, $replacementId);
+        $this->record(__FUNCTION__, $teamSetId);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function teamSetDeleted($teamSetId)
+    public function teamDeleted($teamId)
     {
-        $this->record(__FUNCTION__, $teamSetId);
+        $this->record(__FUNCTION__, $teamId);
     }
 
     /**

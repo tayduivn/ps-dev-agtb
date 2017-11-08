@@ -47,7 +47,7 @@ final class Invalidator implements Listener
     /**
      * {@inheritDoc}
      */
-    public function teamSetReplaced($teamSetId, $replacementId)
+    public function teamSetDeleted($teamSetId)
     {
         $this->markOutOfDate();
     }
@@ -55,7 +55,7 @@ final class Invalidator implements Listener
     /**
      * {@inheritDoc}
      */
-    public function teamSetDeleted($teamSetId)
+    public function teamDeleted($teamId)
     {
         $this->markOutOfDate();
     }

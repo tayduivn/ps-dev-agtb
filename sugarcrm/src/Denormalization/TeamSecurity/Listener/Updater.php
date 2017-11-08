@@ -81,39 +81,6 @@ SQL
     /**
      * {@inheritDoc}
      *
-     * Update all records containing the old ID with the new one
-     */
-    public function teamSetReplaced($teamSetId, $replacementId)
-    {
-        $query = $this->query(
-            <<<'SQL'
-DELETE FROM %1$s
- WHERE team_id = ?
-   AND EXISTS (
-    SELECT NULL
-      FROM %1$s
-     WHERE team_id = ?
-       AND user_id = user_id
-)
-SQL
-        );
-
-        $this->conn->executeUpdate($query, [$teamSetId, $replacementId]);
-
-        $query = $this->query(
-            <<<'SQL'
-UPDATE %1$s
-   SET team_id = ?
- WHERE team_id = ?
-SQL
-        );
-
-        $this->conn->executeUpdate($query, [$replacementId, $teamSetId]);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * Delete all records with the given team set ID.
      */
     public function teamSetDeleted($teamSetId)
@@ -125,6 +92,46 @@ SQL
         );
 
         $this->conn->executeUpdate($query, [$teamSetId]);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Same as ::userRemovedFromTeam() but for all users
+     */
+    public function teamDeleted($teamId)
+    {
+        $query = $this->query(
+            <<<SQL
+DELETE FROM %s
+ WHERE (team_set_id, user_id) IN (
+    SELECT tst.team_set_id,
+           tm.user_id
+      FROM team_sets_teams tst
+INNER JOIN team_memberships tm
+        ON tm.team_id = tst.team_id
+       AND tm.deleted = 0
+ LEFT JOIN (
+        SELECT tst.team_set_id,
+               tm.user_id
+          FROM team_sets_teams tst
+    INNER JOIN team_memberships tm
+            ON tm.team_id = tst.team_id
+           AND tm.deleted = 0
+         WHERE tm.team_id != ?
+    ) q
+        ON q.team_set_id = tst.team_set_id
+        AND q.user_id = tm.team_id
+     WHERE tm.team_id = ?
+       AND q.team_set_id IS NULL
+    )
+SQL
+        );
+
+        $this->conn->executeUpdate($query, [
+            $teamId,
+            $teamId,
+        ]);
     }
 
     /**

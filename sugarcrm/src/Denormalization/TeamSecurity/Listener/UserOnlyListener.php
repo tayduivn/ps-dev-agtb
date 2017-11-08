@@ -54,17 +54,17 @@ final class UserOnlyListener implements Listener
     /**
      * {@inheritDoc}
      */
-    public function teamSetReplaced($teamSetId, $replacementId)
+    public function teamSetDeleted($teamSetId)
     {
-        $this->nonMatchingListener->teamSetReplaced($teamSetId, $replacementId);
+        $this->nonMatchingListener->teamSetDeleted($teamSetId);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function teamSetDeleted($teamSetId)
+    public function teamDeleted($teamId)
     {
-        $this->nonMatchingListener->teamSetDeleted($teamSetId);
+        $this->nonMatchingListener->teamDeleted($teamId);
     }
 
     /**

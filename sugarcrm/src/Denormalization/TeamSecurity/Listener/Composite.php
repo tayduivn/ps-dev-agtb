@@ -49,20 +49,20 @@ final class Composite implements Listener
     /**
      * {@inheritDoc}
      */
-    public function teamSetReplaced($teamSetId, $replacementId)
+    public function teamSetDeleted($teamSetId)
     {
-        $this->invoke(function (Listener $listener) use ($teamSetId, $replacementId) {
-            $listener->teamSetReplaced($teamSetId, $replacementId);
+        $this->invoke(function (Listener $listener) use ($teamSetId) {
+            $listener->teamSetDeleted($teamSetId);
         });
     }
 
     /**
      * {@inheritDoc}
      */
-    public function teamSetDeleted($teamSetId)
+    public function teamDeleted($teamId)
     {
-        $this->invoke(function (Listener $listener) use ($teamSetId) {
-            $listener->teamSetDeleted($teamSetId);
+        $this->invoke(function (Listener $listener) use ($teamId) {
+            $listener->teamDeleted($teamId);
         });
     }
 

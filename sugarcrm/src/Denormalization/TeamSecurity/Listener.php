@@ -28,16 +28,6 @@ interface Listener
     public function teamSetCreated($teamSetId, array $teamIds);
 
     /**
-     * Handles replacement of a team set by another one
-     *
-     * @param string $teamSetId Team set ID
-     * @param string $replacementId The ID of the replacing team set
-     *
-     * @return void
-     */
-    public function teamSetReplaced($teamSetId, $replacementId);
-
-    /**
      * Handles deletion of a team set
      *
      * @param string $teamSetId Team set ID
@@ -45,6 +35,14 @@ interface Listener
      * @return void
      */
     public function teamSetDeleted($teamSetId);
+
+    /**
+     * Handles deletion of a team
+     *
+     * @param $teamId
+     * @return void
+     */
+    public function teamDeleted($teamId);
 
     /**
      * Handles assignment of a user to a team

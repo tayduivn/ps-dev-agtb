@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\DBALException;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 class TeamSetManager {
@@ -363,7 +364,7 @@ class TeamSetManager {
      * Given a particular team id, remove the team from all team sets that it belongs to
      *
      * @param string $team_id The team's id to remove from the team sets
-     * @return Array of team_set ids that were affected
+     * @throws DBALException
      */
     public static function removeTeamFromSets($team_id)
     {
@@ -376,8 +377,6 @@ ON tsm.team_set_id = tst.team_set_id
 WHERE tst.team_id = ?';
         $stmt = $conn->executeQuery($query, array($team_id));
 
-        $affectedTeamSets = array();
-        $deletedTeamSets = array();
         $team_set_id_modules = array();
 
         while (($row = $stmt->fetch())) {
@@ -386,6 +385,8 @@ WHERE tst.team_id = ?';
 
         $teamSet = BeanFactory::newBean('TeamSets');
         $listener = Manager::getInstance()->getListener();
+
+        $teamSetModified = false;
 
         foreach ($team_set_id_modules as $team_set_id => $tables) {
             $teamSet->id = $team_set_id;
@@ -422,10 +423,17 @@ WHERE tst.team_id = ?';
                     'team_set_id' => $teamSet->id,
                 ));
 
-                $listener->teamSetReplaced($team_set_id, $existing_team_set_id);
-            } else {
                 $listener->teamSetDeleted($team_set_id);
+            } else {
+                $teamSetModified = true;
             }
-    	}
+        }
+
+        // performance optimization: handle team deletion in the denormalized table
+        // only if at leas once team set was modified (thus, user relationships to team sets need to be updated)
+        // otherwise, all affected team sets will have been removed from the denormalized table by this moment
+        if ($teamSetModified) {
+            $listener->teamDeleted($team_id);
+        }
     }
 }
