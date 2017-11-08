@@ -45,7 +45,7 @@ final class Updater implements Listener
     /**
      * {@inheritDoc}
      *
-     * For every user which belongs to any of the teams in the team, create a record with team set ID and user ID
+     * For every user which belongs to any of the teams in the team set, create a record with team set ID and user ID
      * ignoring already existing records.
      */
     public function teamSetCreated($teamSetId, array $teamIds)
@@ -130,7 +130,7 @@ SQL
     /**
      * {@inheritDoc}
      *
-     * For every team set which the given team belongs to and the given user,
+     * For every team set which the given user belongs to and the given user,
      * create a record ignoring already existing records.
      */
     public function userAddedToTeam($userId, $teamId)
@@ -161,7 +161,7 @@ SQL
     /**
      * {@inheritDoc}
      *
-     * For every team set which the given team belongs to only by means of the given team,
+     * For every team set which the given user belongs to only by means of the given team,
      * remove corresponding record.
      */
     public function userRemovedFromTeam($userId, $teamId)
