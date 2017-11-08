@@ -17,6 +17,8 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $current_user;
 $workflow_modules = get_workflow_admin_modules_for_user($current_user);
 if (!is_admin($current_user) && empty($workflow_modules))
@@ -144,10 +146,9 @@ $xtpl->assign('ATTACHMENTS_JAVASCRIPT', $attJs);
 
 
 
-
-if(!empty($_REQUEST['base_module']) && $_REQUEST['base_module']!=""){
-
-	$focus->base_module = $_REQUEST['base_module'];
+$base_module = InputValidation::getService()->getValidInputRequest('base_module', 'Assert\Mvc\ModuleName');
+if (!empty($base_module)) {
+    $focus->base_module = $base_module;
 }
 //
 $xtpl->assign("BASE_MODULE", $focus->base_module);

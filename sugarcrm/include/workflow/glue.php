@@ -577,6 +577,9 @@ class WorkFlowGlue {
      */
     function write_workflow_alerts_file($module, $contents){
         global $beanlist;
+        if (!\BeanFactory::getBeanClass($module)) {
+            throw new \RuntimeException(sprintf('Invalid module %s', $module));
+        }
         $file = "modules/".$module."/workflow/workflow_alerts.php";
         $file = create_custom_directory($file);
        $fp = sugar_fopen($file, 'wb');

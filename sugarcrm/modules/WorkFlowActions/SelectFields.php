@@ -9,6 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $theme;
 
 
@@ -68,9 +71,9 @@ if(isset($_REQUEST['action_type']) && $_REQUEST['action_type']!=""){
 
 }
 
-if(isset($_REQUEST['action_module']) && $_REQUEST['action_module']!=""){
-	$focus->action_module = $_REQUEST['action_module'];
-
+$action_module = InputValidation::getService()->getValidInputRequest('action_module', 'Assert\Mvc\ModuleName');
+if (!empty($action_module)) {
+    $focus->action_module = $action_module;
 }
 if(isset($_REQUEST['rel_module']) && $_REQUEST['rel_module']!=""){
 	$focus->rel_module = $_REQUEST['rel_module'];
