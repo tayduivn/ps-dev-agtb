@@ -9,8 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 // jscs:disable
+var PMSE = PMSE || {};
 var ExpressionControl = function (settings) {
-    Element.call(this, settings);
+    PMSE.Element.call(this, settings);
     this._name = null;
     this._panel = null;
     this._operatorSettings = {};
@@ -50,7 +51,7 @@ var ExpressionControl = function (settings) {
     ExpressionControl.prototype.init.call(this, settings);
 };
 
-ExpressionControl.prototype = new Element();
+ExpressionControl.prototype = new PMSE.Element();
 ExpressionControl.prototype.constructor = ExpressionControl;
 ExpressionControl.prototype.type = "ExpressionControl";
 ExpressionControl.prototype._regex = {

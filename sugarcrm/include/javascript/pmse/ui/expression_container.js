@@ -8,8 +8,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+var PMSE = PMSE || {};
 var ExpressionContainer = function (options, parent) {
-    Element.call(this, options);
+    PMSE.Element.call(this, options);
     //this.isCBOpen = null;
     //this.isDDOpen = null;
     this.tooltipHandler = null;
@@ -23,7 +24,7 @@ var ExpressionContainer = function (options, parent) {
     ExpressionContainer.prototype.init.call(this, options, parent);
 };
 
-ExpressionContainer.prototype = new Element();
+ExpressionContainer.prototype = new PMSE.Element();
 
 ExpressionContainer.prototype.type = 'ExpressionContainer';
 

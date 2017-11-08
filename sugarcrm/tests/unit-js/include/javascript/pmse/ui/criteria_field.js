@@ -10,6 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('includes.javascript.pmse.ui.criteria_field', function() {
+    var _PMSE;
+    beforeEach(function() {
+        // Get the global PMSE classes variable.
+        _PMSE = PMSE || {};
+    });
+
     afterEach(function() {
         sinon.collection.restore();
     });
@@ -18,7 +24,7 @@ describe('includes.javascript.pmse.ui.criteria_field', function() {
         var expressionControlMock;
 
         beforeEach(function() {
-            sinon.collection.stub(window, 'Field');
+            sinon.collection.stub(_PMSE, 'Field');
             sinon.collection.stub(CriteriaField.prototype, 'setEvaluations').returnsThis();
             sinon.collection.stub(CriteriaField.prototype, 'setFieldWidth').returnsThis();
             sinon.collection.stub(CriteriaField.prototype, 'setFieldHeight').returnsThis();

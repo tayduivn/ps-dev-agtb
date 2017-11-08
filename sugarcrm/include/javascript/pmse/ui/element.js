@@ -8,18 +8,20 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+// jscs:disable
+var PMSE = PMSE || {};
 /**
- * @class Element
+ * @class PMSE.Element
  * Base class to handle HTML Divs
- * @extend Base
+ * @extends PMSE.Base
  *
  *
  * @constructor
- * Create a new instace of the class 'Element'
+ * Create a new instace of the class 'PMSE.Element'
  * @param {Object} options
  */
-var Element = function (options) {
-    Base.call(this, options);
+PMSE.Element = function(options) {
+    PMSE.Base.call(this, options);
     /**
      * Absolute X position of the HTML Element
      * @type {Number}
@@ -71,29 +73,29 @@ var Element = function (options) {
      */
     this.template2 = null;
 
-    Element.prototype.initObject.call(this, options);
+    PMSE.Element.prototype.initObject.call(this, options);
 };
-Element.prototype = new Base();
+PMSE.Element.prototype = new PMSE.Base();
 
 /**
  * Defines the object type
  * @type {String}
  * @private
  */
-Element.prototype.type = "Base";
+PMSE.Element.prototype.type = 'Base';
 /**
  * Defines the object family
  * @type {String}
  * @private
  */
-Element.prototype.family = "Base";
+PMSE.Element.prototype.family = 'Base';
 
 /**
  * Initialize the object with the default values
  * @param {Object} options
  * @private
  */
-Element.prototype.initObject = function (options) {
+PMSE.Element.prototype.initObject = function(options) {
     var defaults = {
         //id : (options && options.id) || jCore.Utils.generateUniqueId(),
         style : {
@@ -112,7 +114,7 @@ Element.prototype.initObject = function (options) {
     $.extend(defaults, options);
 
     this//.setId(defaults.id)
-        .setStyle(new Style({
+        .setStyle(new PMSE.Style({
             belongsTo: this,
             cssProperties: defaults.style.cssProperties,
             cssClasses: defaults.style.cssClasses
@@ -128,7 +130,7 @@ Element.prototype.initObject = function (options) {
 * @param {String} newID
 * @return {*}
 */
-Element.prototype.setId = function (newID) {
+PMSE.Element.prototype.setId = function(newID) {
     this.id = newID;
     if (this.html) {
         this.html.id = this.id;
@@ -140,7 +142,7 @@ Element.prototype.setId = function (newID) {
  * @param {Number} x
  * @return {*}
  */
-Element.prototype.setX = function (x) {
+PMSE.Element.prototype.setX = function(x) {
     if (typeof x === 'number') {
         this.x = x;
         if (this.html) {
@@ -157,7 +159,7 @@ Element.prototype.setX = function (x) {
  * @param {Number} y
  * @return {*}
  */
-Element.prototype.setY = function (y) {
+PMSE.Element.prototype.setY = function(y) {
     if (typeof y === 'number') {
         this.y = y;
         if (this.html) {
@@ -174,7 +176,7 @@ Element.prototype.setY = function (y) {
  * @param {Number} w
  * @return {*}
  */
-Element.prototype.setWidth = function (w) {
+PMSE.Element.prototype.setWidth = function(w) {
     if (typeof w === 'number') {
         this.width = w;
         if (this.html) {
@@ -191,7 +193,7 @@ Element.prototype.setWidth = function (w) {
  * @param {Number} h
  * @return {*}
  */
-Element.prototype.setHeight = function (h) {
+PMSE.Element.prototype.setHeight = function(h) {
     if (typeof h === 'number') {
         this.height = h;
         if (this.html) {
@@ -209,7 +211,7 @@ Element.prototype.setHeight = function (h) {
  * @param {Number} y
  * @return {*}
  */
-Element.prototype.setPosition = function (x, y) {
+PMSE.Element.prototype.setPosition = function(x, y) {
     this.setX(x);
     this.setY(y);
     return this;
@@ -221,7 +223,7 @@ Element.prototype.setPosition = function (x, y) {
  * @param {Number} h
  * @return {*}
  */
-Element.prototype.setDimension = function (w, h) {
+PMSE.Element.prototype.setDimension = function(w, h) {
     this.setWidth(w);
     this.setHeight(h);
     return this;
@@ -232,7 +234,7 @@ Element.prototype.setDimension = function (w, h) {
  * @param {Number} z
  * @return {*}
  */
-Element.prototype.setZOrder = function (z) {
+PMSE.Element.prototype.setZOrder = function(z) {
     if (typeof z === 'number' && z > 0) {
         this.zOrder = z;
         if (this.html) {
@@ -247,7 +249,7 @@ Element.prototype.setZOrder = function (z) {
  * @param {Boolean} value
  * @return {*}
  */
-Element.prototype.setVisible = function (value) {
+PMSE.Element.prototype.setVisible = function(value) {
     if (_.isBoolean(value)) {
         this.visible = value;
         if (this.html) {
@@ -266,8 +268,8 @@ Element.prototype.setVisible = function (value) {
  * @param {Object} style Instance of jCore.Style
  * @return {*}
  */
-Element.prototype.setStyle = function (style) {
-    if (style instanceof Style) {
+PMSE.Element.prototype.setStyle = function(style) {
+    if (style instanceof PMSE.Style) {
         this.style = style;
     }
     return this;
@@ -278,7 +280,7 @@ Element.prototype.setStyle = function (style) {
  * @param {String} type
  * @return {HTMLElement}
  */
-Element.prototype.createHTMLElement = function (type) {
+PMSE.Element.prototype.createHTMLElement = function(type) {
     return document.createElement(type);
 };
 
@@ -286,7 +288,7 @@ Element.prototype.createHTMLElement = function (type) {
  * Creates the hmtl object
  * @return {HTMLElement}
  */
-Element.prototype.createHTML = function () {
+PMSE.Element.prototype.createHTML = function() {
     if (!this.html) {
         this.html = this.createHTMLElement('div');
         this.html.id = this.id;
@@ -309,14 +311,14 @@ Element.prototype.createHTML = function () {
  * Defines the functionality to paint the HTML element
  * @abstract
  */
-Element.prototype.paint = function () {
+PMSE.Element.prototype.paint = function() {
 };
 
 /**
  * Returns the html pointer
  * @return {HTMLElement}
  */
-Element.prototype.getHTML = function () {
+PMSE.Element.prototype.getHTML = function() {
     if (!this.html) {
         this.createHTML();
     }
@@ -328,7 +330,7 @@ Element.prototype.getHTML = function () {
  * @param {string} template
  * @return {Object}
  */
-Element.prototype.compileTemplate = function(template) {
+PMSE.Element.prototype.compileTemplate = function(template) {
     var source = App
         .metadata
         .getView('pmse_Business_Rules')
@@ -344,7 +346,7 @@ Element.prototype.compileTemplate = function(template) {
  * @param {Object} context
  * @return {HTMLElement}
  */
-Element.prototype.getHTMLFromTemplate = function(template, context) {
+PMSE.Element.prototype.getHTMLFromTemplate = function(template, context) {
     if (template) {
         var html = template(context);
         var parsed = $.parseHTML(html);
@@ -359,7 +361,7 @@ Element.prototype.getHTMLFromTemplate = function(template, context) {
  * @param {String} [font]
  * @return {*}
  */
-Element.prototype.calculateWidth = function (text, font) {
+PMSE.Element.prototype.calculateWidth = function(text, font) {
     //TODO Improve the div creation (maybe we can use a singleton for this)
     var f = font || '12px arial',
         $o = $(this.createHTMLElement('div')), w;

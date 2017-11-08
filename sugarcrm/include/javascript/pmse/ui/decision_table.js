@@ -9,8 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 // jscs:disable
+var PMSE = PMSE || {};
     var DecisionTable = function(options) {
-        Element.call(this, {id: options.id});
+        PMSE.Element.call(this, {id: options.id});
         this.base_module = null;
         this.hitType = null;
         this.dom = null;
@@ -56,7 +57,7 @@
         DecisionTable.prototype.initObject.call(this, options || {});
     };
 
-    DecisionTable.prototype = new Element();
+    DecisionTable.prototype = new PMSE.Element();
 
     DecisionTable.prototype.type = 'DecisionTable';
 
@@ -1473,7 +1474,7 @@
 
 //DecisionTableVariable
     var DecisionTableVariable = function(options) {
-        Element.call(this);
+        PMSE.Element.call(this);
 
         this.parent = null;
 
@@ -1502,7 +1503,7 @@
         DecisionTableVariable.prototype.initObject.call(this, options);
     };
 
-    DecisionTableVariable.prototype = new Element();
+    DecisionTableVariable.prototype = new PMSE.Element();
 
     DecisionTableVariable.prototype.initObject = function(options) {
         var defaults = {
@@ -2069,7 +2070,7 @@
 //Value Cells for DecisionTable
 //DecisionTableValue
     var DecisionTableValue = function(settings) {
-        Element.call(this, settings);
+        PMSE.Element.call(this, settings);
         this.value = null;
         this.expression = null;
         this.onBeforeOpenPanel = null;
@@ -2079,7 +2080,7 @@
         DecisionTableValue.prototype.initObject.call(this, settings);
     };
 
-    DecisionTableValue.prototype = new Element();
+    DecisionTableValue.prototype = new PMSE.Element();
 
     DecisionTableValue.prototype.initObject = function(settings) {
         var defaults = {

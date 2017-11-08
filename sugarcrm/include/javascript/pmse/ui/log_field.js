@@ -8,18 +8,19 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+var PMSE = PMSE || {};
 /**
  * @class LabelField
  * Handles the Label fields
- * @extend Field
+ * @extends PMSE.Field
  *
  * @constructor
  * Creates a new instance of the class
  * @param {Object} options
- * @param {Form} parent
+ * @param {PMSE.Form} parent
  */
 var LogField = function (options, parent) {
-    Field.call(this, options, parent);
+    PMSE.Field.call(this, options, parent);
     this.submit = false;
     this.items = [];
     this.deleteBtn = false;
@@ -27,7 +28,7 @@ var LogField = function (options, parent) {
     LogField.prototype.initObject.call(this, options);
     //$.extend(true, this.defaults, options);
 };
-LogField.prototype = new Field();
+LogField.prototype = new PMSE.Field();
 
 /**
  * Defines the object's type
@@ -112,7 +113,7 @@ LogField.prototype.setDeleteBtn = function (val) {
  */
 LogField.prototype.createHTML = function () {
     var fieldLabel, logPicture, newsItem, datetime, detailDiv, durationDiv,buttonAnchor, labelSpan, that = this;
-    Field.prototype.createHTML.call(this);
+    PMSE.Field.prototype.createHTML.call(this);
     this.html.style.fontSize = "12px";
     this.html.style.display = 'table';
     this.html.style.width = '98%';

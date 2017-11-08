@@ -8,6 +8,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+// jscs:disable
+var PMSE = PMSE || {};
 //FormPanel
 var FormPanel = function (settings) {
     CollapsiblePanel.call(this, settings);
@@ -369,7 +371,7 @@ FormPanel.prototype.createHTML = function () {
 
 //FormPanelItem
 var FormPanelItem = function (settings) {
-    Element.call(this, settings);
+    PMSE.Element.call(this, settings);
     this._name = null;
     this._label = null;
     this._disabled = null;
@@ -377,7 +379,7 @@ var FormPanelItem = function (settings) {
     FormPanelItem.prototype.init.call(this, settings);
 };
 
-FormPanelItem.prototype = new Element();
+FormPanelItem.prototype = new PMSE.Element();
 FormPanelItem.prototype.constructor = FormPanelItem;
 FormPanelItem.prototype.type = "FormPanelItem";
 
@@ -1304,8 +1306,8 @@ FormPanelDate.prototype.init = function (settings) {
 };
 
 FormPanelDate.prototype.setAppendTo = function (appendTo) {
-    if (!(appendTo instanceof Element || isHTMLElement(appendTo) || typeof appendTo === 'function')) {
-        throw new Error("setAppendTo(): The parameter must be a HTMLElement, a function or an instance of Element");
+    if (!(appendTo instanceof PMSE.Element || isHTMLElement(appendTo) || typeof appendTo === 'function')) {
+        throw new Error("setAppendTo(): The parameter must be a HTMLElement, a function or an instance of PMSE.Element");
     }
     this._appendTo = appendTo;
     if (this._dateFormat) {
@@ -1316,7 +1318,7 @@ FormPanelDate.prototype.setAppendTo = function (appendTo) {
 
 FormPanelDate.prototype._getAppendToHTML = function () {
     var appendTo = this._appendTo;
-    if (appendTo instanceof Element) {
+    if (appendTo instanceof PMSE.Element) {
         return appendTo.getHTML();
     } else if (typeof appendTo === 'function') {
         return appendTo(this);
@@ -1630,7 +1632,7 @@ FormPanelDropdown.prototype.init = function (settings) {
     this._proxy = new SugarProxy();
 
     FormPanelField.prototype.setValue.call(this, defaults.value);
-    this._options = new ArrayList();
+    this._options = new PMSE.ArrayList();
 
     this.setOptionsFilter(defaults.optionsFilter)
         .setDataURL(defaults.dataURL)

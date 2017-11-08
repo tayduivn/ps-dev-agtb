@@ -8,12 +8,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+// jscs:disable
+var PMSE = PMSE || {};
 var FieldPanel = function (settings) {
-    Element.call(this, settings);
+    PMSE.Element.call(this, settings);
     this._open = null;
     this._massiveAction = false;
     this._onItemValueAction = null;
-    this._items = new ArrayList();
+    this._items = new PMSE.ArrayList();
     this._open = false;
     this._owner = null;
     this._matchOwnerWidth = true;
@@ -29,7 +31,7 @@ var FieldPanel = function (settings) {
     FieldPanel.prototype.init.call(this, settings);
 };
 
-FieldPanel.prototype = new Element();
+FieldPanel.prototype = new PMSE.Element();
 FieldPanel.prototype.constructor = FieldPanel;
 
 FieldPanel.prototype.init = function (settings) {
@@ -150,8 +152,8 @@ FieldPanel.prototype.setMatchOwnerWidth = function (match) {
 };
 
 FieldPanel.prototype.setAppendTo = function (appendTo) {
-    if (!(isHTMLElement(appendTo) || typeof appendTo === 'function' || appendTo instanceof Base)) {
-        throw new Error("setAppendTo(): The parameter must be an HTML element or an instance of Base.");
+    if (!(isHTMLElement(appendTo) || typeof appendTo === 'function' || appendTo instanceof PMSE.Base)) {
+        throw new Error("setAppendTo(): The parameter must be an HTML element or an instance of PMSE.Base.");
     }
     this._appendTo = appendTo;
     if (this.isOpen()) {
@@ -161,7 +163,7 @@ FieldPanel.prototype.setAppendTo = function (appendTo) {
 };
 
 FieldPanel.prototype.setWidth = function (w) {
-    Element.prototype.setWidth.call(this, w);
+    PMSE.Element.prototype.setWidth.call(this, w);
     if (this.html && typeof w === "number") {
         this.style.addProperties({"min-width": this.width});
     }
@@ -265,8 +267,8 @@ FieldPanel.prototype._append = function () {
 };
 
 FieldPanel.prototype.setOwner = function (owner) {
-    if(!(owner === null || owner instanceof Element || isHTMLElement(owner))) {
-        throw new Error("setOwner(): The parameter must be an instance of Element or null.");
+    if(!(owner === null || owner instanceof PMSE.Element || isHTMLElement(owner))) {
+        throw new Error("setOwner(): The parameter must be an instance of PMSE.Element or null.");
     }
 
     this._owner = owner;
@@ -375,7 +377,7 @@ FieldPanel.prototype.attachListeners = function () {
 
 FieldPanel.prototype.createHTML = function () {
     if(!this.html) {
-        Element.prototype.createHTML.call(this);
+        PMSE.Element.prototype.createHTML.call(this);
         this.html.className = 'adam field-panel';
         this._paintItems();
 

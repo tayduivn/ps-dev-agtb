@@ -11,6 +11,12 @@
  */
 
 describe('pmse.ui.decision-table', function() {
+    var _PMSE;
+    beforeEach(function() {
+        // Get the global PMSE classes variable.
+        _PMSE = PMSE || {};
+    });
+
     describe('removePrevIndexOnDeleteRow', function() {
         var decisionTable;
         var div;
@@ -20,7 +26,7 @@ describe('pmse.ui.decision-table', function() {
                     '</div>');
         });
         it('should remove data attribute prev-index', function() {
-            decisionTable = new DecisionTable(new Element());
+            decisionTable = new DecisionTable(new PMSE.Element());
             decisionTable.removePrevIndexOnDeleteRow();
             expect(div).not.toHaveAttr('data-previndex', '0');
         });
