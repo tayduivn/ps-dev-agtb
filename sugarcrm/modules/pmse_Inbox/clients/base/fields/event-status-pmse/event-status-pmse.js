@@ -57,7 +57,7 @@
                 $label.addClass('label label-success');
                 break;
             case 'TERMINATED':
-                $label.addClass('label label-success');
+                $label.addClass('label label-terminate');
                 break;
             case 'CANCELLED':
                 $label.addClass('label label-warning');
