@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-define('TEAM_SET_CACHE_KEY', 'TeamSetsCache');
-define('TEAM_SET_MD5_CACHE_KEY', 'TeamSetsMD5Cache');
-
 class TeamSetManager {
 
 	private static $instance;
@@ -121,9 +118,6 @@ class TeamSetManager {
                 'team_set_id' => $team_set_id,
             ));
 		}
-
-		//clear out the cache
-		self::flushBackendCache();
 	}
 
 	/**
@@ -195,8 +189,6 @@ class TeamSetManager {
         $query = 'DELETE FROM team_sets_modules WHERE team_set_id = ? AND module_table_name = ?';
         DBManagerFactory::getConnection()
             ->executeQuery($query, array($teamSetId, $focus->table_name));
-
-        self::flushBackendCache();
     }
 
 	/**
@@ -238,113 +230,27 @@ class TeamSetManager {
 	}
 
 	/**
-	 * Check if we have an md5 relationship to a team set id
-	 *
-	 * @param unknown_type $md5
-	 * @return unknown
-	 */
-	public static function getTeamSetIdFromMD5($md5){
-		$teamSetsMD5 = sugar_cache_retrieve(TEAM_SET_MD5_CACHE_KEY);
-        if ( $teamSetsMD5 != null && !empty($teamSetsMD5[$md5])) {
-            return $teamSetsMD5[$md5];
-        }
-
-	 	if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php') )) {
-            require_once($cachefile);
-            sugar_cache_put(TEAM_SET_MD5_CACHE_KEY,$teamSetsMD5);
-            if(!empty($teamSetsMD5[$md5])){
-            	return $teamSetsMD5[$md5];
-            }
-        }
-        return null;
-	}
-
-	public static function addTeamSetMD5($team_set_id, $md5){
-		$teamSetsMD5 = sugar_cache_retrieve(TEAM_SET_MD5_CACHE_KEY);
-		if(empty($teamSetsMD5) || !is_array($teamSetsMD5)){
-			$teamSetsMD5 = array();
-		}
-        if ( $teamSetsMD5 != null && !empty($teamSetsMD5[$md5])) {
-            return;
-        }
-
-	 	if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php')) ) {
-            require_once($cachefile);
-            sugar_cache_put(TEAM_SET_MD5_CACHE_KEY,$teamSetsMD5);
-            if(!empty($teamSetsMD5[$md5])){
-            	return;
-            }
-        }
-
-        $teamSetsMD5[$md5] = $team_set_id;
-        sugar_cache_put(TEAM_SET_MD5_CACHE_KEY,$teamSetsMD5);
-
-        if ( ! file_exists($cachefile) ) {
-            mkdir_recursive(dirname($cachefile));
-        }
-
-        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSetsMD5 = '.var_export($teamSetsMD5,true).";\n ?>") === false)
-        {
-            $GLOBALS['log']->error("File $cachefile could not be written");
-        }
-	}
-
-	/**
-	 * Retrieve a list of team associated with a set
+     * Retrieve a list of team associated with a set ordered by name
 	 *
 	 * @param $team_set_id string
 	 * @return array of teams array('id', 'name');
 	 */
 	public static function getUnformattedTeamsFromSet($team_set_id){
 		if(empty($team_set_id)) return array();
-		// Stored in a cache somewhere
-        $teamSets = sugar_cache_retrieve(TEAM_SET_CACHE_KEY);
-        if ( $teamSets != null && !empty($teamSets[$team_set_id])) {
-            return $teamSets[$team_set_id];
+
+        /** @var TeamSet $teamSet */
+        $teamSet = BeanFactory::newBean('TeamSets');
+
+        $teams = [];
+        foreach ($teamSet->getTeams($team_set_id) as $team) {
+            $teams[] = [
+                'id' => $team->id,
+                'name' => $team->name,
+                'name_2' => $team->name_2,
+            ];
         }
 
-        // Already stored in a file
-        if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetCache.php')) ) {
-            require_once($cachefile);
-
-            if(!empty($teamSets[$team_set_id])){
-            	sugar_cache_put(TEAM_SET_CACHE_KEY,$teamSets);
-            	return $teamSets[$team_set_id];
-            }
-        }
-
-
-		$teamSet = BeanFactory::newBean('TeamSets');
-		$teams = $teamSet->getTeams($team_set_id);
-		$team_names = array();
-		foreach($teams as $id => $team){
-			$team_names[$id] = $team->name;
-		}
-		asort($team_names);
-		if(!is_array($teamSets)){
-			$teamSets = array();
-		}
-        foreach ($team_names as $team_id => $team_name) {
-            $tm = $teams[$team_id];
-            $teamSets[$team_set_id][] = array(
-                'id' => (string) $team_id,
-                'name' => $team_name,
-                'name_2' => $tm->name_2,
-            );
-        }
-
-	 	sugar_cache_put(TEAM_SET_CACHE_KEY,$teamSets);
-
-        if ( ! file_exists($cachefile) ) {
-            mkdir_recursive(dirname($cachefile));
-        }
-
-        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSets = '.var_export($teamSets,true).";\n ?>") === false)
-        {
-            $GLOBALS['log']->error("File $cachefile could not be written");
-        }
-
-        return isset($teamSets[$team_set_id])?$teamSets[$team_set_id]:'';
+        return $teams;
 	}
 
 	/**
@@ -449,21 +355,6 @@ class TeamSetManager {
 	 *
 	 */
 	public static function flushBackendCache( ) {
-        // This function will flush the cache files used for the module list and the link type lists
-
-        // TeamSetCache
-        sugar_cache_clear(TEAM_SET_CACHE_KEY);
-        $cachefile = sugar_cached('modules/Teams/TeamSetCache.php');
-        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSets = array();'."\n ?>") === false) {
-            $GLOBALS['log']->error("File $cachefile could not be written (flush)");
-        }
-
-        // TeamSetMD5Cache
-        sugar_cache_clear(TEAM_SET_MD5_CACHE_KEY);
-        $cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php');
-        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSetsMD5 = array();'."\n ?>") === false) {
-            $GLOBALS['log']->error("File $cachefile could not be written (flush)");
-        }
     }
 
     /**

@@ -24,6 +24,12 @@ class Team extends SugarBean
 	var $associated_user_id;
 
 	var $name;
+
+    /**
+     * @var string
+     */
+    public $name_2;
+
 	var $description;
 	var $description_head;
 	var $private;
@@ -62,8 +68,6 @@ class Team extends SugarBean
 
 	function save($check_notify = false)
 	{
-		require_once('modules/Teams/TeamSetManager.php');
-		TeamSetManager::flushBackendCache();
 		sugar_cache_put("teamname_{$this->id}",$this->name);
 		return parent::save($check_notify);
 	}
@@ -328,8 +332,6 @@ class Team extends SugarBean
 		$this->deleted = 1;
 		$this->save();
 
-		require_once('modules/Teams/TeamSetManager.php');
-		TeamSetManager::flushBackendCache();
 		//clean up any team sets that use this team id
 		TeamSetManager::removeTeamFromSets($this->id);
 

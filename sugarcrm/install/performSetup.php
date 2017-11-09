@@ -92,15 +92,6 @@ $setup_site_log_file = 'sugarcrm.log';  // may be an option later
 $setup_site_session_path = isset($_SESSION['setup_site_custom_session_path']) ? $_SESSION['setup_site_session_path'] : '';
 $setup_site_log_level = 'fatal';
 
-sugar_cache_clear('TeamSetsCache');
-if (file_exists($cache_dir . 'modules/Teams/TeamSetCache.php')) {
-    unlink($cache_dir . 'modules/Teams/TeamSetCache.php');
-}
-
-sugar_cache_clear('TeamSetsMD5Cache');
-if (file_exists($cache_dir . 'modules/Teams/TeamSetMD5Cache.php')) {
-    unlink($cache_dir . 'modules/Teams/TeamSetMD5Cache.php');
-}
 $langHeader = get_language_header();
 $out = <<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

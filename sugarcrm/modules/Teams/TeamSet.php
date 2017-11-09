@@ -73,16 +73,17 @@ class TeamSet extends SugarBean{
     }
 
     /**
-    * Returns an array of Team objects for the given team_set_id
-    *
-    * @param id $team_set_id
-    * @return array of Team objects
-    */
+     * Returns an array of Team objects for the given team_set_id ordered by name
+     *
+     * @param string $team_set_id
+     * @return Team[]
+     */
     public function getTeams($team_set_id){
         ///TODO CONCAT
         $sql = 'SELECT teams.id, teams.name, teams.name_2 FROM teams
             INNER JOIN team_sets_teams ON team_sets_teams.team_id = teams.id
-            WHERE team_sets_teams.team_set_id = ?';
+            WHERE team_sets_teams.team_set_id = ?
+            ORDER BY teams.name';
         $stmt = $this->db->getConnection()->executeQuery($sql, array($team_set_id));
         $teams = array();
 
@@ -127,14 +128,6 @@ class TeamSet extends SugarBean{
         $this->primary_team_id = $stats['primary_team_id'];
         $team_ids = $stats['team_ids'];
 
-        //we may already have this team set id in cache, so let's not bother to run a select
-        //just return
-        $teamSetIdFromMD5 = TeamSetManager::getTeamSetIdFromMD5($team_md5);
-
-        if(!is_null($teamSetIdFromMD5)){
-            return $teamSetIdFromMD5;
-        }
-
         $sql = "SELECT id FROM $this->table_name WHERE team_md5 = ?";
         $stmt = $this->db->getConnection()->executeQuery($sql, [$team_md5]);
         $row = $stmt->fetch();
@@ -165,10 +158,9 @@ class TeamSet extends SugarBean{
             foreach($team_ids as $team_id){
                 $this->_addTeamToSet($team_id);
             }
-            TeamSetManager::addTeamSetMD5($this->id, $this->team_md5);
+
             return $this->id;
         }else{
-            TeamSetManager::addTeamSetMD5($row['id'], $team_md5);
             return $row['id'];
         }
     }

@@ -154,6 +154,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 
 	    if( ! empty($focus->team_set_id) )
 	    {
+            /** @var TeamSet $ts */
     	    $ts = BeanFactory::newBean('TeamSets');
     	    $teams = $ts->getTeams($focus->team_set_id);
 	    }
