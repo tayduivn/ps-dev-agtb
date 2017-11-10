@@ -26,7 +26,7 @@ You'll need to install Docker if you haven't already, so download and run the ap
 
 Start in your fork of Mango, inside the sugarcrm directory. You don't need to perform a yarn install because the docker image will do this for you automatically before running any tests. You *do* however need to mount your sugarcrm directory inside the docker container as /sugarcrm. To start a docker container with your sugarcrm directory mounted inside and run *all* of your Seedbed tests:
 ```
-docker run --rm -p 5900:5900 -v ${PWD}:/sugarcrm registry.sugarcrm.net/seedbed/seedbed:latest -u http://your.sugar/instance
+docker run --rm -p 5900:5900 -v ${PWD}:/sugarcrm registry.sugarcrm.net/seedbed/seedbed:node8 -u http://your.sugar/instance
 ```
 This starts a Docker container and runs Seedbed. By passing the -u argument only, you are running all of the end-to-end tests that reside in your fork of Mango on the specified sugar instance. Note that you can pass any other command-line arguments that are supported by Seedbed, such as -t "@create,@delete" to run all tests with the "create" or "delete" tags. Results and failures are stored in sugarcrm/tests/end-to-end/results and sugarcrm/tests/end-to-end/results_failures respectively.
 
@@ -40,7 +40,7 @@ Remember that you won't be able to connect to the VNC server until the tests beg
 
 To run the Docker container and drop into an interactive root shell with your local fork of Mango mounted and ready for any sort of interactive work you might want to do:
 ```
-docker run -it --env DEV=true --rm -p 5900:5900 -v ${PWD}:/sugarcrm registry.sugarcrm.net/seedbed/seedbed:latest
+docker run -it --env DEV=true --rm -p 5900:5900 -v ${PWD}:/sugarcrm registry.sugarcrm.net/seedbed/seedbed:node8
 ```
 As a matter of fact you can perform a yarn install and use nodejs without ever installing them on your Mac. Simply run the container in developer mode, as shown above, then fire away! All changes persist in your local Mango sugarcrm directory.
 
