@@ -22,6 +22,20 @@ final class NullListener implements Listener
     /**
      * {@inheritDoc}
      */
+    public function userDeleted($userId)
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function teamDeleted($teamId)
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function teamSetCreated($teamSetId, array $teamIds)
     {
     }
@@ -30,13 +44,6 @@ final class NullListener implements Listener
      * {@inheritDoc}
      */
     public function teamSetDeleted($teamSetId)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function teamDeleted($teamId)
     {
     }
 

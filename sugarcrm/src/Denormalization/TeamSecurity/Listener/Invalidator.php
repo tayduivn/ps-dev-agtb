@@ -27,6 +27,24 @@ final class Invalidator implements Listener
     private $state;
 
     /**
+     * {@inheritDoc}
+     *
+     * No need to invalidate the data, since the deleted user is not going to interact with the system anymore.
+     * Corresponding records will be removed during full rebuild.
+     */
+    public function userDeleted($userId)
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function teamDeleted($teamId)
+    {
+        $this->markOutOfDate();
+    }
+
+    /**
      * Constructor
      *
      * @param State $state
@@ -48,14 +66,6 @@ final class Invalidator implements Listener
      * {@inheritDoc}
      */
     public function teamSetDeleted($teamSetId)
-    {
-        $this->markOutOfDate();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function teamDeleted($teamId)
     {
         $this->markOutOfDate();
     }

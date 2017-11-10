@@ -46,6 +46,74 @@ final class Updater implements Listener
     /**
      * {@inheritDoc}
      *
+     * Delete all records with the given user ID.
+     */
+    public function userDeleted($userId)
+    {
+        $query = $this->query(
+            <<<SQL
+DELETE FROM %s WHERE user_id = ?
+SQL
+        );
+
+        $this->conn->executeUpdate($query, [$userId]);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Same as ::userRemovedFromTeam() but for all users
+     */
+    public function teamDeleted($teamId)
+    {
+        // temporarily use two queries instead of one because the previous implementation
+        // doesn't use the denormalized table PK during deletion
+        $select = $this->query(
+            <<<SQL
+SELECT tst.team_set_id,
+       tm.user_id
+  FROM team_sets_teams tst
+ INNER JOIN team_memberships tm
+    ON tm.team_id = tst.team_id
+   AND tm.deleted = 0
+  LEFT JOIN (
+    SELECT tst.team_set_id,
+           tm.user_id,
+           tm.team_id
+      FROM team_sets_teams tst
+INNER JOIN team_memberships tm
+        ON tm.team_id = tst.team_id
+       AND tm.deleted = 0
+     WHERE tm.team_id != ?
+) q
+    ON q.team_set_id = tst.team_set_id
+    AND q.user_id = tm.user_id
+ WHERE tm.team_id = ?
+   AND q.team_id IS NULL
+SQL
+        );
+
+        $stmt = $this->conn->executeQuery($select, [
+            $teamId,
+            $teamId,
+        ]);
+
+        $delete = $this->query(
+            <<<SQL
+DELETE FROM %s
+ WHERE team_set_id = ?
+   AND user_id = ?
+SQL
+        );
+
+        while (($row = $stmt->fetch(PDO::FETCH_NUM))) {
+            $this->conn->executeUpdate($delete, $row);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * For every user which belongs to any of the teams in the team set, create a record with team set ID and user ID
      * ignoring already existing records.
      */
@@ -98,60 +166,6 @@ SQL
     /**
      * {@inheritDoc}
      *
-     * Same as ::userRemovedFromTeam() but for all users
-     */
-    public function teamDeleted($teamId)
-    {
-        // temporarily use two queries instead of one because the previous implementation
-        // doesn't use the denormalized table PK during deletion
-        $select = $this->query(
-            <<<SQL
-SELECT tst.team_set_id
-  FROM team_sets_teams tst
- INNER JOIN team_memberships tm
-    ON tm.team_id = tst.team_id
-   AND tm.deleted = 0
-  LEFT JOIN (
-    SELECT tst.team_set_id,
-           tm.user_id
-      FROM team_sets_teams tst
-INNER JOIN team_memberships tm
-        ON tm.team_id = tst.team_id
-       AND tm.deleted = 0
-     WHERE tm.team_id != ?
-) q
-    ON q.team_set_id = tst.team_set_id
-    AND q.user_id = tm.team_id
- WHERE tm.team_id = ?
-   AND q.team_set_id IS NULL
-SQL
-        );
-
-        $teamSetIds = $this->conn->executeQuery($select, [
-            $teamId,
-            $teamId,
-        ])->fetchAll(PDO::FETCH_COLUMN);
-
-        if (!count($teamSetIds)) {
-            return;
-        }
-
-        $delete = $this->query(
-            <<<SQL
-DELETE FROM %s WHERE team_set_id IN (?)
-SQL
-        );
-
-        $this->conn->executeUpdate($delete, [
-            array_unique($teamSetIds),
-        ], [
-            Connection::PARAM_STR_ARRAY,
-        ]);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * For every team set which the given user belongs to and the given user,
      * create a record ignoring already existing records.
      */
@@ -199,7 +213,8 @@ INNER JOIN team_memberships tm
         ON tm.team_id = tst.team_id
        AND tm.deleted = 0
  LEFT JOIN (
-        SELECT tst.team_set_id
+        SELECT tst.team_set_id,
+               tm.team_id
           FROM team_sets_teams tst
     INNER JOIN team_memberships tm
             ON tm.team_id = tst.team_id
@@ -210,7 +225,7 @@ INNER JOIN team_memberships tm
         ON q.team_set_id = tst.team_set_id
      WHERE tm.user_id = ?
        AND tm.team_id = ?
-       AND q.team_set_id IS NULL
+       AND q.team_id IS NULL
     )
 SQL
         );

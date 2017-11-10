@@ -46,6 +46,24 @@ class Recorder implements Listener
 
     /**
      * {@inheritDoc}
+     *
+     * No need to record the event, since the deleted user is not going to interact with the system anymore.
+     * Corresponding records will be removed during full rebuild.
+     */
+    public function userDeleted($userId)
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function teamDeleted($teamId)
+    {
+        $this->record(__FUNCTION__, $teamId);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function teamSetCreated($teamSetId, array $teamIds)
     {
@@ -58,14 +76,6 @@ class Recorder implements Listener
     public function teamSetDeleted($teamSetId)
     {
         $this->record(__FUNCTION__, $teamSetId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function teamDeleted($teamId)
-    {
-        $this->record(__FUNCTION__, $teamId);
     }
 
     /**

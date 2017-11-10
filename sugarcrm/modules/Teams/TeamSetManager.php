@@ -370,26 +370,17 @@ class TeamSetManager {
     {
         $conn = DBManagerFactory::getConnection();
 
-        $query = 'SELECT tsm.team_set_id, tsm.module_table_name
-FROM team_sets_modules tsm
-INNER JOIN team_sets_teams tst
-ON tsm.team_set_id = tst.team_set_id
-WHERE tst.team_id = ?';
-        $stmt = $conn->executeQuery($query, array($team_id));
-
-        $team_set_id_modules = array();
-
-        while (($row = $stmt->fetch())) {
-    		  $team_set_id_modules[$row['team_set_id']][] = $row['module_table_name'];
-    	}
-
+        /** @var TeamSet $teamSet */
         $teamSet = BeanFactory::newBean('TeamSets');
         $listener = Manager::getInstance()->getListener();
 
-        $teamSetModified = false;
+        $query = 'SELECT team_set_id
+FROM team_sets_teams
+WHERE team_id = ?';
+        $stmt1 = $conn->executeQuery($query, array($team_id));
 
-        foreach ($team_set_id_modules as $team_set_id => $tables) {
-            $teamSet->id = $team_set_id;
+        while (($teamSetId = $stmt1->fetchColumn())) {
+            $teamSet->id = $teamSetId;
             $teamSet->removeTeamFromSet($team_id);
 
             // Now check if the new team_md5 value already exists.  If it does, we have to go and
@@ -398,42 +389,42 @@ WHERE tst.team_id = ?';
             $query = 'SELECT id FROM team_sets WHERE team_md5 = ? AND id != ?';
             $stmt = $conn->executeQuery($query, array($teamSet->team_md5, $teamSet->id));
 
-            if (($existing_team_set_id = $stmt->fetchColumn())) {
-                //Update the records
-                foreach ($tables as $table) {
-                    $conn->update($table, array(
-                        'team_set_id' => $existing_team_set_id,
-                    ), array(
-                        'team_set_id' => $teamSet->id,
-                    ));
-                }
-
-                //Remove the team set entry
-                $conn->delete('team_sets', array(
-                    'id' => $teamSet->id,
-                ));
-
-                //Remove the team_sets_teams entries
-                $conn->delete('team_sets_teams', array(
-                    'team_set_id' => $teamSet->id,
-                ));
-
-                //Remove the team_sets_modules entries
-                $conn->delete('team_sets_modules', array(
-                    'team_set_id' => $teamSet->id,
-                ));
-
-                $listener->teamSetDeleted($team_set_id);
-            } else {
-                $teamSetModified = true;
+            if (!($existing_team_set_id = $stmt->fetchColumn())) {
+                continue;
             }
-        }
 
-        // performance optimization: handle team deletion in the denormalized table
-        // only if at leas once team set was modified (thus, user relationships to team sets need to be updated)
-        // otherwise, all affected team sets will have been removed from the denormalized table by this moment
-        if ($teamSetModified) {
-            $listener->teamDeleted($team_id);
+            $query = <<<SQL
+SELECT module_table_name
+ FROM team_sets_modules
+ WHERE team_set_id = ?
+SQL;
+            $stmt2 = $conn->executeQuery($query, [$teamSetId]);
+
+            //Update the records
+            while (($table = $stmt2->fetchColumn())) {
+                $conn->update($table, array(
+                    'team_set_id' => $existing_team_set_id,
+                ), array(
+                    'team_set_id' => $teamSet->id,
+                ));
+            }
+
+            //Remove the team set entry
+            $conn->delete('team_sets', array(
+                'id' => $teamSetId,
+            ));
+
+            //Remove the team_sets_teams entries
+            $conn->delete('team_sets_teams', array(
+                'team_set_id' => $teamSetId,
+            ));
+
+            //Remove the team_sets_modules entries
+            $conn->delete('team_sets_modules', array(
+                'team_set_id' => $teamSetId,
+            ));
+
+            $listener->teamSetDeleted($teamSetId);
         }
     }
 }

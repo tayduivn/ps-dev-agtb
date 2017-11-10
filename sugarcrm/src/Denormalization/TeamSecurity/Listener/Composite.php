@@ -39,6 +39,26 @@ final class Composite implements Listener
     /**
      * {@inheritDoc}
      */
+    public function userDeleted($userId)
+    {
+        $this->invoke(function (Listener $listener) use ($userId) {
+            $listener->userDeleted($userId);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function teamDeleted($teamId)
+    {
+        $this->invoke(function (Listener $listener) use ($teamId) {
+            $listener->teamDeleted($teamId);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function teamSetCreated($teamSetId, array $teamIds)
     {
         $this->invoke(function (Listener $listener) use ($teamSetId, $teamIds) {
@@ -53,16 +73,6 @@ final class Composite implements Listener
     {
         $this->invoke(function (Listener $listener) use ($teamSetId) {
             $listener->teamSetDeleted($teamSetId);
-        });
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function teamDeleted($teamId)
-    {
-        $this->invoke(function (Listener $listener) use ($teamId) {
-            $listener->teamDeleted($teamId);
         });
     }
 

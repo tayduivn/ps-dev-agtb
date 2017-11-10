@@ -18,6 +18,22 @@ namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity;
 interface Listener
 {
     /**
+     * Handles deletion of a user
+     *
+     * @param $userId
+     * @return void
+     */
+    public function userDeleted($userId);
+
+    /**
+     * Handles deletion of a team
+     *
+     * @param $teamId
+     * @return void
+     */
+    public function teamDeleted($teamId);
+
+    /**
      * Handles creation of a team set
      *
      * @param string $teamSetId Team set ID
@@ -35,14 +51,6 @@ interface Listener
      * @return void
      */
     public function teamSetDeleted($teamSetId);
-
-    /**
-     * Handles deletion of a team
-     *
-     * @param $teamId
-     * @return void
-     */
-    public function teamDeleted($teamId);
 
     /**
      * Handles assignment of a user to a team

@@ -43,6 +43,22 @@ final class UserOnlyListener implements Listener
 
     /**
      * {@inheritDoc}
+     */
+    public function userDeleted($userId)
+    {
+        $this->nonMatchingListener->userDeleted($userId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function teamDeleted($teamId)
+    {
+        $this->nonMatchingListener->teamDeleted($teamId);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * A team set is created upon assignment of a new unique set of teams to a record (a user initiated event).
      */
@@ -57,14 +73,6 @@ final class UserOnlyListener implements Listener
     public function teamSetDeleted($teamSetId)
     {
         $this->nonMatchingListener->teamSetDeleted($teamSetId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function teamDeleted($teamId)
-    {
-        $this->nonMatchingListener->teamDeleted($teamId);
     }
 
     /**

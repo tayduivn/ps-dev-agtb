@@ -12,7 +12,7 @@
 
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
-
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 /**
  * User is used to store customer information.
@@ -2785,5 +2785,15 @@ class User extends Person {
             $tz = $gmtTZ;
         }
         return $tz;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function mark_deleted($id)
+    {
+        parent::mark_deleted($id);
+
+        Manager::getInstance()->getListener()->userDeleted($id);
     }
 }

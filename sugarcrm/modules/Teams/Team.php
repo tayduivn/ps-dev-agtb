@@ -325,6 +325,8 @@ class Team extends SugarBean
             return false;
 		}
 
+        $this->getListener()->teamDeleted($this->id);
+
 		// Update team_memberships table and set deleted = 1
         $query = "UPDATE team_memberships SET deleted = 1 WHERE team_id = ?";
         $conn = $this->db->getConnection();
@@ -584,8 +586,8 @@ class Team extends SugarBean
                 //delete   explcit implicit
                 //             1     0
                 //             0     0
-                $this->users->delete($this->id,$user_id);
                 $this->getListener()->userRemovedFromTeam($user_id, $this->id);
+                $this->users->delete($this->id, $user_id);
             }
             $manager = BeanFactory::newBean('Users');
             $manager->reports_to_id = $focus->reports_to_id;
