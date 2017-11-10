@@ -64,7 +64,7 @@ $dictionary['TaxRate'] = array(
             'lhs_key' => 'id',
             'rhs_module' => 'Quotes',
             'rhs_table' => 'quotes',
-            'rhs_key' => 'quote_id',
+            'rhs_key' => 'taxrate_id',
             'relationship_type' => 'one-to-many',
         ),
     ),
