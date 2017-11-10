@@ -86,6 +86,7 @@
 
         // add the group id to the bundle level tbody
         this.$el.attr('data-group-id', this.groupId);
+        this.$el.attr('data-record-id', this.model.id);
 
         // set the product bundle ID on all the QLI/Notes rows
         this.$('tr.quote-data-group-list').attr('data-group-id', this.groupId);
