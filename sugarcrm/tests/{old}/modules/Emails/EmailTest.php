@@ -224,6 +224,8 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($replyto->getEmail(), $headers['Reply-To'][0]);
         $this->assertEquals($replyto->getName(),  $headers['Reply-To'][1]);
 
+        $this->assertEquals($from->getEmail(), $headers['Sender']);
+
         $recipients = $mockMailer->getRecipients();
 
         $actual_to=array_values($recipients['to']);

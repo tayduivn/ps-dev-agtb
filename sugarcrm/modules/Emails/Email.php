@@ -3010,6 +3010,7 @@ class Email extends SugarBean {
             }
 
             $mailer->setHeader(EmailHeaders::From, new EmailIdentity($this->from_addr, $this->from_name));
+            $mailer->setHeader(EmailHeaders::Sender, new EmailIdentity($this->from_addr, $this->from_name));
             $mailer->setHeader(EmailHeaders::ReplyTo, new EmailIdentity($this->reply_to_addr, $this->reply_to_name));
             $mailer->setSubject($this->name);
 
