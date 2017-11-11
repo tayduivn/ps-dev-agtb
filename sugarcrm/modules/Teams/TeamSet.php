@@ -162,8 +162,7 @@ class TeamSet extends SugarBean{
                 $this->_addTeamToSet($team_id);
             }
 
-            $listener = Manager::getInstance()->getListener();
-            $listener->teamSetCreated($this->id, $team_ids);
+            Manager::getInstance()->teamSetCreated($this->id, $team_ids);
 
             return $this->id;
         }else{

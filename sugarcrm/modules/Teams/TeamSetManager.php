@@ -372,7 +372,7 @@ class TeamSetManager {
 
         /** @var TeamSet $teamSet */
         $teamSet = BeanFactory::newBean('TeamSets');
-        $listener = Manager::getInstance()->getListener();
+        $listener = Manager::getInstance();
 
         $query = 'SELECT team_set_id
 FROM team_sets_teams

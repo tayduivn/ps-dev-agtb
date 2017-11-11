@@ -30,7 +30,7 @@ use User;
 /**
  * Denormalization Manager
  */
-class Manager
+class Manager implements Listener
 {
     /**
      * $sugar_config to determine if use of denormalized table is enabled
@@ -141,18 +141,6 @@ class Manager
         }
 
         return false;
-    }
-
-    /**
-     * @return Listener
-     */
-    public function getListener()
-    {
-        if (!$this->listener) {
-            $this->listener = $this->createListener();
-        }
-
-        return $this->listener;
     }
 
     public function createStrategy(User $user)
@@ -283,6 +271,66 @@ class Manager
     public static function resetInstance()
     {
         self::$instance = null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function userDeleted($userId)
+    {
+        $this->getListener()->userDeleted($userId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function teamDeleted($teamId)
+    {
+        $this->getListener()->teamDeleted($teamId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function teamSetCreated($teamSetId, array $teamIds)
+    {
+        $this->getListener()->teamSetCreated($teamSetId, $teamIds);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function teamSetDeleted($teamSetId)
+    {
+        $this->getListener()->teamSetDeleted($teamSetId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function userAddedToTeam($userId, $teamId)
+    {
+        $this->getListener()->userAddedToTeam($userId, $teamId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function userRemovedFromTeam($userId, $teamId)
+    {
+        $this->getListener()->userRemovedFromTeam($userId, $teamId);
+    }
+
+    /**
+     * @return Listener
+     */
+    private function getListener()
+    {
+        if (!$this->listener) {
+            $this->listener = $this->createListener();
+        }
+
+        return $this->listener;
     }
 
     private function createListener()
