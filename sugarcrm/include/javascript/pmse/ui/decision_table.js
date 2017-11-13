@@ -680,7 +680,7 @@
                     item.addClass('selected');
                 }
                 // Clone selected items before hiding
-                var elements = $('.selected').not('.ui-sortable-placeholder').clone();
+                var elements = $('#businessruledesigner .selected').not('.ui-sortable-placeholder').clone();
                 // Hide selected items
                 item.siblings('.selected').addClass('hidden');
 
