@@ -431,6 +431,13 @@ class AdministrationController extends SugarController
             }
 
             if (!$errors) {
+                $x509cert = '';
+                // in case of multiple certs we need just the signing one
+                if (!empty($parseResult['idp']['x509certMulti']['signing'][0])) {
+                    $x509cert = $parseResult['idp']['x509certMulti']['signing'][0];
+                } elseif (!empty($parseResult['idp']['x509cert'])) {
+                    $x509cert = $parseResult['idp']['x509cert'];
+                }
                 $response->setStatusCode(Response::HTTP_OK);
                 $response->setData([
                     'SAML_loginurl' => !empty($parseResult['idp']['singleSignOnService']['url']) ?
@@ -443,8 +450,7 @@ class AdministrationController extends SugarController
                         $parseResult['idp']['singleLogoutService']['binding'] : '',
                     'SAML_idp_entityId' => !empty($parseResult['idp']['entityId']) ?
                         $parseResult['idp']['entityId'] : '',
-                    'SAML_X509Cert' => !empty($parseResult['idp']['x509cert']) ?
-                        $parseResult['idp']['x509cert'] : '',
+                    'SAML_X509Cert' => $x509cert,
                 ]);
             } else {
                 $response->setData(['error' => implode(', ', $errors)]);

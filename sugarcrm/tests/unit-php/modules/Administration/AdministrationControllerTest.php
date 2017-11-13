@@ -184,10 +184,38 @@ class AdministrationControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('error', $content);
     }
 
+    public function parseImportSamlXmlFileDataProvider()
+    {
+        return [
+            'single cert' => [
+                [
+                    'idp' => [
+                        'entityId' => 'SomeEntityID',
+                        'singleSignOnService' => ['url' => 'http://sso.com'],
+                        'x509cert' => 'x509cert==',
+                    ],
+                ],
+            ],
+            'multi cert' => [
+                [
+                    'idp' => [
+                        'entityId' => 'SomeEntityID',
+                        'singleSignOnService' => ['url' => 'http://sso.com'],
+                        'x509certMulti' => [
+                            'signing' => ['x509cert=='],
+                            'encryption' => ['x509certEncryption=='],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     /**
+     * @dataProvider parseImportSamlXmlFileDataProvider
      * @covers ::action_parseImportSamlXmlFile
      */
-    public function testAction_parseImportSamlXmlFile()
+    public function testAction_parseImportSamlXmlFile($parsedMetadata)
     {
         $this->controller->expects($this->once())
             ->method('translateModuleError')
@@ -201,19 +229,14 @@ class AdministrationControllerTest extends \PHPUnit_Framework_TestCase
         $this->controller->expects($this->once())
             ->method('getParsedIdPMetadata')
             ->with($this->equalTo('dump'))
-            ->willReturn([
-                'idp' => [
-                    'entityId' => 'SomeEntityID',
-                    'singleSignOnService' => [
-                        'url' => 'http://sso.com',
-                    ],
-                ],
-            ]);
+            ->willReturn($parsedMetadata);
 
         ob_start();
         $this->controller->action_parseImportSamlXmlFile();
         $content = ob_get_clean();
-        $this->assertContains('url', $content);
-        $this->assertContains('entityId', $content);
+        $content = json_decode($content);
+        $this->assertEquals('http://sso.com', $content->SAML_loginurl);
+        $this->assertEquals('SomeEntityID', $content->SAML_idp_entityId);
+        $this->assertEquals('x509cert==', $content->SAML_X509Cert);
     }
 }
