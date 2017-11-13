@@ -23,6 +23,41 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
             ),
         )
     ),
+    'custom_toolbar' => array(
+        'buttons' => array(
+            array(
+                "type" => "dashletaction",
+                "css_class" => "btn btn-invisible dashlet-toggle minify",
+                "icon" => "fa-chevron-up",
+                "action" => "toggleMinify",
+                "tooltip" => "LBL_DASHLET_TOGGLE",
+            ),
+            array(
+                'dropdown_buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'editClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'viewReportClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_VIEW_REPORT',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'refreshClicked',
+                        'label' => 'LBL_DASHLET_REFRESH_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'removeClicked',
+                        'label' => 'LBL_DASHLET_REMOVE_LABEL',
+                    ),
+                ),
+            ),
+        ),
+    ),
     'dashlet_config_panels' => array(
         array(
             'name' => 'panel_body',
@@ -54,11 +89,6 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                 ),
 
                 array(
-                    'name' => 'editReport',
-                    'label' => 'LBL_REPORT_EDIT',
-                    'type' => 'button',
-                    'css_class' => 'btn-invisible btn-link btn-inline',
-                    'dismiss_label' => true,
                 ),
 
                 array(

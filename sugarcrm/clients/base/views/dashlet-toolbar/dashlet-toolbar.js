@@ -19,6 +19,7 @@
     cssIconRefresh: 'fa-refresh fa-spin',
     defaultActions: {
         'dashlet:edit:clicked' : 'editClicked',
+        'dashlet:viewReport:clicked': 'viewReportClicked',
         'dashlet:refresh:clicked' : 'refreshClicked',
         'dashlet:delete:clicked' : 'removeClicked',
         'dashlet:toggle:clicked' : 'toggleMinify'
@@ -74,6 +75,15 @@
                 this.layout.removeDashlet();
             }, this)
         });
+    },
+
+    /**
+     * View report.
+     *
+     * @param {Event} evt Mouse event.
+     */
+    viewReportClicked: function(evt) {
+        this.layout.viewReport();
     },
 
     editClicked: function(evt) {

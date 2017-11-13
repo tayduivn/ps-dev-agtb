@@ -399,6 +399,18 @@
     },
 
     /**
+     * Open Report detail view on a new tab
+     */
+    viewReport: function() {
+        let meta = app.utils.deepCopy(_.first(this.meta.components));
+
+        if (meta.view && meta.view.saved_report_id) {
+            let link = app.bwc.buildRoute('Reports', meta.view.saved_report_id);
+            window.open('index.php#' + link, '_blank');
+        }
+    },
+
+    /**
      * Fold/Unfold the dashlet
      *
      * @param {Boolean} true if it needs to be collapsed
