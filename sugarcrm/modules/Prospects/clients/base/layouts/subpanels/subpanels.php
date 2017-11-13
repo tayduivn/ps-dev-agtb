@@ -49,6 +49,7 @@ $viewdefs['Prospects']['base']['layout']['subpanels'] = array (
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_EMAILS_SUBPANEL_TITLE',
+            'override_subpanel_list_view' => 'subpanel-for-prospects-archived-emails',
             'context' => array(
                 'link' => 'archived_emails',
             ),

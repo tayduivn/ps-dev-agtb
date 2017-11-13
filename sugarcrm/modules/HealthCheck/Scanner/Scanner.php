@@ -828,6 +828,9 @@ class HealthCheckScanner
         // Check Email Customizations for Files that may have name conflicts with New Files being introduced
         $this->checkEmailCustomizationsForNewFilenameConflicts();
 
+        // Check for presence of subpanel-for-emails in the custom directory
+        $this->checkPresenceOfCustomEmailSubpanel();
+
         if (version_compare($sugar_version, '7.9.0.0', '<')) {
             $calls = array();
             $this->scanCustomPhpFiles(array(
@@ -1261,7 +1264,7 @@ class HealthCheckScanner
     {
         // Make sure we need to run this first
         list($version, $flavor) = $this->getVersionAndFlavor();
-        
+
         if (version_compare($version, '7.10.0.0', '<')) {
             $sql = "SELECT DISTINCT emails.status, emails.type
                     FROM emails
@@ -1485,6 +1488,46 @@ class HealthCheckScanner
                 if (file_exists($customFile)) {
                     $this->updateStatus('customFileHasNameConflict', $customFile);
                 }
+            }
+        }
+    }
+
+    /**
+     * Check for the presence of subpanel-for-emails in the custom directory.
+     * Report if exists in Bucket E.
+     */
+    protected function checkPresenceOfCustomEmailSubpanel()
+    {
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        if (version_compare($version, '7.11.0.0', '<')) {
+            $customFiles = array(
+                'custom/modules/Emails/clients/base/views/subpanel-list/subpanel-list.php',
+                'custom/modules/Emails/clients/base/views/subpanel-for-accounts-archived-emails/subpanel-for-accounts-archived-emails.php',
+                'custom/modules/Emails/clients/base/views/subpanel-for-cases-archived-emails/subpanel-for-cases-archived-emails.php',
+                'custom/modules/Emails/clients/base/views/subpanel-for-contacts-archived-emails/subpanel-for-contacts-archived-emails.php',
+                'custom/modules/Emails/clients/base/views/subpanel-for-leads-archived-emails/subpanel-for-leads-archived-emails.php',
+                'custom/modules/Emails/clients/base/views/subpanel-for-prospects-archived-emails/subpanel-for-prospects-archived-emails.php',
+                'custom/modules/Emails/clients/base/views/subpanel-for-opportunities-archived-emails/subpanel-for-opportunities-archived-emails.php',
+                'custom/modules/Accounts/clients/base/layouts/subpanels/subpanels.php',
+                'custom/modules/Cases/clients/base/layouts/subpanels/subpanels.php',
+                'custom/modules/Contacts/clients/base/layouts/subpanels/subpanels.php',
+                'custom/modules/Leads/clients/base/layouts/subpanels/subpanels.php',
+                'custom/modules/Prospects/clients/base/layouts/subpanels/subpanels.php',
+                'custom/modules/Opportunities/clients/base/layouts/subpanels/subpanels.php',
+            );
+
+            // Check if they are using the old subpanel-for-contacts
+            $customSubpanelContacts = 'custom/modules/Emails/clients/base/views/subpanel-for-contacts/subpanel-for-contacts.php';
+
+            foreach ($customFiles as $customFile) {
+                if (file_exists($customFile)) {
+                    $this->updateStatus('emailsSubpanelExistsCustomDirectory', $customFile);
+                }
+            }
+
+            if (file_exists($customSubpanelContacts)) {
+                $this->updateStatus('emailsSubpanelContactsExistsCustomDirectory', $customSubpanelContacts);
             }
         }
     }

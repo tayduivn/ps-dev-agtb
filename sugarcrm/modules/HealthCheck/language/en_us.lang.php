@@ -107,6 +107,8 @@ $mod_strings = array(
     'LBL_SCAN_571_LOG' => 'Deprecated file has customizations: %s',
     'LBL_SCAN_572_LOG' => 'Custom file has name conflict: %s',
     'LBL_SCAN_573_LOG' => 'Custom help file has name conflict: %s',
+    'LBL_SCAN_574_LOG' => 'Emails Subpanel Exists Custom Directory: %s',
+    'LBL_SCAN_575_LOG' => 'Contacts Subpanel for Emails needs to be changed to use subpanel-for-contacts-archived-emails: %s',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',
@@ -247,6 +249,8 @@ $mod_strings = array(
     'LBL_SCAN_571_TITLE' => 'Custom file contains code that has been deprecated',
     'LBL_SCAN_572_TITLE' => 'There is a name conflict with a custom file',
     'LBL_SCAN_573_TITLE' => 'There is a name conflict with a custom help file',
+    'LBL_SCAN_574_TITLE' => 'There are customizations to the Emails subpanel',
+    'LBL_SCAN_575_TITLE' => 'There are customizations to the Contacts subpanel in Emails',
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_TITLE' => 'Unsupported Upgrader version',

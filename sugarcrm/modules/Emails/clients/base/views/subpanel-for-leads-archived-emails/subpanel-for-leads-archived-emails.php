@@ -9,7 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Emails']['base']['view']['subpanel-list'] = array(
+$viewdefs['Emails']['base']['view']['subpanel-for-leads-archived-emails'] = array(
+    'type' => 'subpanel-list',
     'panels' => array(
         array(
             'name' => 'panel_header',
@@ -79,11 +80,6 @@ $viewdefs['Emails']['base']['view']['subpanel-list'] = array(
                 'icon' => 'fa-eye',
                 'acl_action' => 'view',
                 'allow_bwc' => false,
-            ),
-            array(
-                'type' => 'unlink-action',
-                'icon' => 'fa-chain-broken',
-                'label' => 'LBL_UNLINK_BUTTON',
             ),
         ),
     ),

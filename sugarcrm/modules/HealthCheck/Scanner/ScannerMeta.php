@@ -569,6 +569,14 @@ class HealthCheckScannerMeta
             'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Custom_Help_File_Has_Name_Conflict/',
             //@codingStandardsIgnoreEnd
         ),
+        574 => array(
+            'report' => 'emailsSubpanelExistsCustomDirectory',
+            'bucket' => self::CUSTOM,
+        ),
+        575 => array(
+            'report' => 'emailsSubpanelContactsExistsCustomDirectory',
+            'bucket' => self::CUSTOM,
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(
