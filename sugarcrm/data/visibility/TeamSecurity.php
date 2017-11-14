@@ -105,17 +105,7 @@ class TeamSecurity extends NormalizedTeamSecurity
             return new AllowAll();
         }
 
-        if ($this->preferDenormalized) {
-            $manager = Manager::getInstance();
-
-            if ($manager->isAvailable()) {
-                return $manager->createStrategy($this->user);
-            }
-        }
-
-        $normalized = new NormalizedTeamSecurity($this->bean);
-        $normalized->setOptions($this->options);
-
-        return $normalized;
+        return Manager::getInstance()
+            ->createStrategy($this->user, $this->bean, $this->options);
     }
 }

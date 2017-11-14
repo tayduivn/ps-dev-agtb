@@ -18,10 +18,12 @@ final class TablePair
 {
     const STATE_VARIABLE = 'active_table';
 
-    /**
-     * @var string[]
+    /**#@+
+     * @var string
      */
-    private $tables;
+    private $table1;
+    private $table2;
+    /**#@-*/
 
     /**
      * @var string|null
@@ -35,10 +37,8 @@ final class TablePair
 
     public function __construct($table1, $table2, State $state)
     {
-        $this->tables = [
-            $table1 => true,
-            $table2 => true,
-        ];
+        $this->table1 = $table1;
+        $this->table2 = $table2;
 
         $this->state = $state;
 
@@ -72,15 +72,11 @@ final class TablePair
 
     public function getTargetTable()
     {
-        $tables = $this->tables;
-
-        if ($this->activeTable !== null) {
-            unset($tables[$this->activeTable]);
+        if ($this->activeTable === $this->table1) {
+            return $this->table2;
         }
 
-        reset($tables);
-
-        return key($tables);
+        return $this->table1;
     }
 
     public function updateState()
@@ -90,6 +86,7 @@ final class TablePair
 
     private function isValidTable($table)
     {
-        return isset($this->tables[$table]);
+        return $table === $this->table1
+            || $table === $this->table2;
     }
 }

@@ -14,7 +14,9 @@ namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity;
 
 use DBManagerFactory;
 use Doctrine\DBAL\DBALException;
+use NormalizedTeamSecurity;
 use Psr\Log\LoggerInterface;
+use SugarBean;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denormalized;
 use Sugarcrm\Sugarcrm\Dbal\Connection;
@@ -122,30 +124,32 @@ class Manager implements Listener
      * Verify if denormalization setup is available for use.
      * @return boolean
      */
-    public function isAvailable()
+    private function isAvailable()
     {
-        $isAvailable = (bool) $this->getActiveTable();
+        $hasActiveTable = $this->getActiveTable() !== null;
 
-        if (!$this->isEnabled && $isAvailable) {
-            $this->disable();
-
-            return false;
-        }
-
-        if ($this->getActiveTable()) {
+        if ($this->isEnabled && $hasActiveTable) {
             return true;
         }
 
-        if ($this->isEnabled) {
+        if (!$this->isEnabled && $hasActiveTable) {
+            $this->disable();
+        }
+
+        if ($this->isEnabled && !$hasActiveTable) {
             $this->logger->critical("Team Security is enabled but the normalized table not setup. Run full rebuild.");
         }
 
         return false;
     }
 
-    public function createStrategy(User $user)
+    public function createStrategy(User $user, SugarBean $bean, array $options)
     {
-        return new Denormalized($this->getActiveTable(), $user);
+        if (!empty($options['use_denorm']) && $this->isAvailable()) {
+            return new Denormalized($this->getActiveTable(), $user);
+        }
+
+        return (new NormalizedTeamSecurity($bean))->setOptions($options);
     }
 
     /**
