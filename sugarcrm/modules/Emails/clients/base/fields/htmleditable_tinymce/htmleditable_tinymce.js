@@ -181,6 +181,7 @@
      * @inheritdoc
      */
     _renderView: function() {
+        var self = this;
         var iFrame;
 
         // sets this.tplName and this.action
@@ -206,7 +207,11 @@
                 frameborder: 0,
                 name: this.name
             });
-            iFrame.appendTo(this.$el);
+            // Perform it on load for Firefox.
+            iFrame.appendTo(this.$el).on('load', function() {
+                self._setIframeBaseTarget(iFrame, '_blank');
+            });
+            this._setIframeBaseTarget(iFrame, '_blank');
         }
 
         this.setViewContent(this.value);
@@ -267,6 +272,21 @@
         }
 
         return 0;
+    },
+
+    /**
+     * Set iframe base target value
+     *
+     * @param {jQuery} iFrame The iframe element that the target will be added to.
+     * @param {string} targetValue e.g. _self, _blank, _parent, _top or frameName
+     * @private
+     */
+    _setIframeBaseTarget: function(iFrame, targetValue) {
+        var target = $('<base>', {
+            target: targetValue
+        });
+
+        target.appendTo(iFrame.contents().find('head'));
     },
 
     /**

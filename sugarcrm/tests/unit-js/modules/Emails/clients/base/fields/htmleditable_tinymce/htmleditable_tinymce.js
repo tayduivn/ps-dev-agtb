@@ -275,7 +275,7 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
         });
     });
 
-    describe('readonly view for preview pane', function() {
+    describe('rendering the field', function() {
         var $textarea;
 
         beforeEach(function() {
@@ -319,6 +319,7 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
                     sandbox.stub(field, '_getHtmlEditableField').returns($textarea);
                     sandbox.stub(field, 'destroyTinyMCEEditor');
                     sandbox.stub(field, '_getContentHeight').returns(contentHeight);
+                    sandbox.stub(field, '_setIframeBaseTarget');
 
                     field.render();
                     htmlEditor = field._getHtmlEditableField();
@@ -349,6 +350,7 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
             sandbox.stub(field, '_iframeHasBody').returns(false);
             sandbox.stub(field, '_getHtmlEditableField').returns($textarea);
             sandbox.stub(field, 'destroyTinyMCEEditor');
+            sandbox.stub(field, '_setIframeBaseTarget');
 
             preRenderHeight = $textarea.css('height');
             field.render();
@@ -356,6 +358,43 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
             cssHeight = htmlEditor.css('height');
 
             expect(cssHeight).toBe(preRenderHeight);
+        });
+
+        using('view names', [
+            [
+                'edit',
+                0,
+                'should not set the base target to "_blank" for the iFrame'
+            ],
+            [
+                'detail',
+                1,
+                'should set the base target to "_blank" for the iFrame'
+            ]
+        ], function(viewName, callCount, should) {
+            it(should, function() {
+                field = SugarTest.createField(
+                    'base',
+                    'description_html',
+                    'htmleditable_tinymce',
+                    viewName,
+                    {},
+                    'Emails',
+                    null,
+                    null,
+                    true
+                );
+                field.action = viewName;
+
+                sandbox.stub(field, '_iframeHasBody').returns(false);
+                sandbox.stub(field, '_getHtmlEditableField').returns($textarea);
+                sandbox.stub(field, 'destroyTinyMCEEditor');
+                sandbox.stub(field, '_setIframeBaseTarget');
+
+                field.render();
+
+                expect(field._setIframeBaseTarget.callCount).toBe(callCount);
+            });
         });
     });
 
