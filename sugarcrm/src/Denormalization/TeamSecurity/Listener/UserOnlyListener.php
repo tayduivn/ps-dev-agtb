@@ -60,7 +60,7 @@ final class UserOnlyListener implements Listener
     /**
      * {@inheritDoc}
      *
-     * A team set is created upon assignment of a new unique set of teams to a record (a user initiated event).
+     * A team set is created upon assignment of a new unique set of teams to a record (a user-initiated event).
      */
     public function teamSetCreated($teamSetId, array $teamIds)
     {

@@ -22,7 +22,7 @@ use TeamSet;
 use User;
 
 /**
- * @covers Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Updater
+ * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Updater
  */
 class UpdaterTest extends \PHPUnit_Framework_TestCase
 {

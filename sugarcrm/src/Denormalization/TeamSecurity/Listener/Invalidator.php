@@ -27,6 +27,16 @@ final class Invalidator implements Listener
     private $state;
 
     /**
+     * Constructor
+     *
+     * @param State $state
+     */
+    public function __construct(State $state)
+    {
+        $this->state = $state;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * No need to invalidate the data, since the deleted user is not going to interact with the system anymore.
@@ -45,16 +55,6 @@ final class Invalidator implements Listener
     }
 
     /**
-     * Constructor
-     *
-     * @param State $state
-     */
-    public function __construct(State $state)
-    {
-        $this->state = $state;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function teamSetCreated($teamSetId, array $teamIds)
@@ -64,10 +64,12 @@ final class Invalidator implements Listener
 
     /**
      * {@inheritDoc}
+     *
+     * No need to invalidate the data, since the deleted team set is not going to be associated with any record anymore.
+     * Corresponding records will be removed during full rebuild.
      */
     public function teamSetDeleted($teamSetId)
     {
-        $this->markOutOfDate();
     }
 
     /**

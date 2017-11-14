@@ -16,6 +16,8 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
 /**
  * Null implementation of the listener
+ *
+ * @codeCoverageIgnore
  */
 final class NullListener implements Listener
 {

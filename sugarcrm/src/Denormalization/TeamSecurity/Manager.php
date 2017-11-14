@@ -70,7 +70,7 @@ class Manager implements Listener
     private $state;
 
     /**
-     * @var Tables
+     * @var TablePair
      */
     private $tables;
 
@@ -93,7 +93,7 @@ class Manager implements Listener
         $this->isEnabled = $this->getIsEnabledUseDenormOption($config);
         $this->syncAdminChanges = $config->get(self::CONFIG_KEY . '.inline_update');
         $this->state = new State();
-        $this->tables = new Tables(
+        $this->tables = new TablePair(
             'team_sets_users_1',
             'team_sets_users_2',
             $this->state
@@ -178,7 +178,7 @@ class Manager implements Listener
 
         try {
             $this->markRebuildRunning();
-            $targetTable = $this->tables->getTarget();
+            $targetTable = $this->tables->getTargetTable();
             $this->doRebuild($targetTable);
             $this->replayChanges($targetTable);
             $this->markUpToDate();
@@ -208,7 +208,7 @@ class Manager implements Listener
      */
     private function getActiveTable()
     {
-        return $this->tables->getActive();
+        return $this->tables->getActiveTable();
     }
 
     private function disable()

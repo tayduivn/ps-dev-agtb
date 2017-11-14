@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity;
 
 use BeanFactory;
 
-final class State
+/* final */class State
 {
     const ADMIN_CATEGORY = 'TeamSecurityDenorm';
 

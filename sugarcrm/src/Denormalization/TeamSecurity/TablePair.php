@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity;
 
 use DomainException;
 
-final class Tables
+final class TablePair
 {
     const STATE_VARIABLE = 'active_table';
 
@@ -49,18 +49,18 @@ final class Tables
         }
     }
 
-    public function getActive()
+    public function getActiveTable()
     {
         return $this->activeTable;
     }
 
-    public function activate($activeTable)
+    public function activate($table)
     {
-        if (!$this->isValidTable($activeTable)) {
+        if (!$this->isValidTable($table)) {
             throw new DomainException('Invalid table name');
         }
 
-        $this->activeTable = $activeTable;
+        $this->activeTable = $table;
         $this->updateState();
     }
 
@@ -70,7 +70,7 @@ final class Tables
         $this->updateState();
     }
 
-    public function getTarget()
+    public function getTargetTable()
     {
         $tables = $this->tables;
 

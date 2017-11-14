@@ -72,10 +72,12 @@ class Recorder implements Listener
 
     /**
      * {@inheritDoc}
+     *
+     * No need to record the event, since the deleted team set is not going to be associated with any record anymore.
+     * Corresponding records will be removed during full rebuild.
      */
     public function teamSetDeleted($teamSetId)
     {
-        $this->record(__FUNCTION__, $teamSetId);
     }
 
     /**
