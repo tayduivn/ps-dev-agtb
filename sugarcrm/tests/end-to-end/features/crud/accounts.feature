@@ -14,7 +14,7 @@ Feature: Accounts module verification
     Given I use default account
     Given I launch App with config: "skipTutorial"
 
-  @list @screenshot-example
+  @list
   Scenario: Accounts > List View > Contain pre-created record
     Given Accounts records exist:
       | *name     | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
@@ -22,7 +22,6 @@ Feature: Accounts module verification
     Given I open about view and login
     When I choose Accounts in modules menu
     Then I should see *Account_A in #AccountsList.ListView
-    Then I verify that #AccountsList.HeaderView still looks like xxx
     Then I verify fields for *Account_A in #AccountsList.ListView
       | fieldName | value     |
       | name      | Account_A |
