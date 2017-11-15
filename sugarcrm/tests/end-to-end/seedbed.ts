@@ -16,6 +16,7 @@ import ListLayout from './layouts/list-layout';
 import PreviewLayout from './layouts/preview-layout';
 import {Seedbed} from '@sugarcrm/seedbed';
 import DrawerLayout from './layouts/drawer-layout';
+import QliRecord from "./views/qli-record";
 
 
 export default (seedbed: Seedbed) => {
@@ -90,15 +91,19 @@ export default (seedbed: Seedbed) => {
 
         let recordInfo: any = null;
 
+        createdRecords = _.filter(createdRecords, (createdRecord: any) => !seedbed.cachedRecords.findAlias(item => item.id === createdRecord.id));
+
         let item = _.find(createdRecords, (createdRecord: any) => {
 
-            recordInfo = _.find(recordsInfo, (record: any) => {
+            recordInfo = _.find(recordsInfo, (_recordInfo: any) => {
                 /*
                  We need to make sure we find correct record to be updated
                  Why need this fix: Sugar do POST requests on Dashboards to create them, if not available (for new installs)
                  Those POST requests are pushed to clientInfo.create and assigned to wrong seedbed.scenario.recordsInfo[] elements
                  */
-                return createdRecord._module && createdRecord._module === record.module;
+                return _recordInfo.uid &&
+                    createdRecord._module &&
+                    createdRecord._module === _recordInfo.module;
             });
             return !!recordInfo;
 
@@ -114,6 +119,17 @@ export default (seedbed: Seedbed) => {
                     module: recordInfo.module
                 }
             );
+
+            recordInfo.recordId = item.id;
+
+            if (recordInfo.module === 'Products') {
+
+                seedbed.defineComponent(`${recordInfo.uid}QLIRecord`, QliRecord, {
+                    id: item.id,
+                });
+
+                return;
+            }
 
             seedbed.defineComponent(`${recordInfo.uid}Record`, RecordLayout, {
                 module: recordInfo.module,
@@ -184,6 +200,13 @@ export default (seedbed: Seedbed) => {
                         id: responseRecord.id,
                         module: recordInfo.module
                     });
+
+                    if (record.module === 'Products') {
+                        seedbed.defineComponent(`${recordInfo.uid}QLIRecord`, QliRecord, {
+                            id: recordInfo.id,
+                        });
+                        return;
+                    }
 
                     seedbed.defineComponent(`${recordInfo.uid}Record`, RecordLayout, {
                         module: record.module,

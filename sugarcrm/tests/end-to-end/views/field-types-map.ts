@@ -37,10 +37,12 @@ export const FIELD_TYPES__MAP = {
     date: DateField,
     float: FloatField,
     relate: RelateField,
+    taxrate: RelateField,
     'quote-data-relate': QuoteDataRelateField,
     checkbox: CopyField,
     copy: CopyField,
     currency: CurrencyField,
     email: EmailField,
+    'currency-type-dropdown': EnumField,
 };
 

@@ -21,15 +21,16 @@ import {underline} from "chalk";
  */
 export default class QliRecord extends BaseView {
 
-    public recordIndex: any;
+    public id: string;
 
     constructor(options) {
         super(options);
 
-        this.recordIndex = options.recordIndex;
+        this.id = options.id || '';
+        this.module = 'Products';
 
         this.selectors = this.mergeSelectors({
-            $: this.recordIndex ? `.quote-data-group tr:nth-child(${this.recordIndex})` : '[record-id=""]',
+            $: `[record-id="${this.id}"]`,
             buttons: {
                 save: '.btn.inline-save',
                 cancel: '.btn.inline-cancel'

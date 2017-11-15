@@ -274,7 +274,7 @@ Feature: Quotes module verification
     When I choose createLineItem on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.QliRecord view
       | quantity | product_template_name | discount_price | discount_amount |
-      | 2.00     | XXcccvvv              | 100            | 2.00            |
+      | 2.00     | Some random name      | 100            | 2.00            |
     # Cancel and Verify
     When I click on cancel button on QLI #Quote_3Record.QliTable.QliRecord record
     Then I verify fields on QLI total header on #Quote_3Record view
@@ -287,11 +287,11 @@ Feature: Quotes module verification
     # Add New Line Item
     When I choose createLineItem on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.QliRecord view
-      | quantity | product_template_name | discount_price | discount_amount |
-      | 2.00     | Kamalal Gadget        | 100            | 2.00            |
+      | *        | quantity | product_template_name | discount_price | discount_amount |
+      | RecordID | 2.00     | Kamalal Gadget        | 100            | 2.00            |
     #Save and verify
     When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
-    Then I verify fields for 1 row for #Quote_3Record.QliTable
+    Then I verify fields on #RecordIDQLIRecord
       | fieldName      | value   |
       | discount_price | $100.00 |
       | total_amount   | $196.00 |
