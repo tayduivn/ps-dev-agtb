@@ -1176,6 +1176,10 @@ class VardefManager{
 
         $objectName = BeanFactory::getObjectName($module);
 
+        if (empty($GLOBALS['dictionary'][$objectName])) {
+            static::loadVardef($module, $objectName);
+        }
+
         foreach ($templates as $template) {
             if (empty($GLOBALS['dictionary'][$objectName]['templates'][$template])) {
                 return false;
