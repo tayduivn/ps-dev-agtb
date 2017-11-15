@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage;
 
+use Administration;
 use BeanFactory;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage;
 
@@ -20,41 +21,67 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage;
  */
 final class AdminSettingsStorage implements Storage
 {
-    const ADMIN_CATEGORY = 'TeamSecurityDenorm';
+    /**#@+
+     * @var string
+     */
+    const CATEGORY = 'team_security';
+    const NAME = 'denormalization_state';
+    /**#@-*/
 
+    /**
+     * @var Administration
+     */
     private $admin;
 
-    private $isLoaded = false;
+    /**
+     * @var array|null
+     */
+    private $data;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         $this->admin = BeanFactory::newBean('Administration');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function get($var)
     {
-        if (!$this->isLoaded) {
-            $this->admin->retrieveSettings(self::ADMIN_CATEGORY);
-            $this->isLoaded = true;
+        if ($this->data === null) {
+            $this->data = $this->load();
         }
 
-        $key = self::ADMIN_CATEGORY . '_' . $var;
-
-        if (isset($this->admin->settings[$key])) {
-            return $this->admin->settings[$key];
+        if (isset($this->data[$var])) {
+            return $this->data[$var];
         }
 
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function update($var, $value)
     {
-        if (is_bool($value)) {
-            $value = (int) $value;
+        $this->data[$var] = $value;
+        $this->admin->saveSetting(self::CATEGORY, self::NAME, $this->data);
+    }
+
+    private function load()
+    {
+        $this->admin->retrieveSettings(self::CATEGORY);
+
+        $key = self::CATEGORY . '_' . self::NAME;
+
+        if (!isset($this->admin->settings[$key])
+            || !is_array($this->admin->settings[$key])) {
+            return [];
         }
 
-        // TODO: move to admin
-        $this->admin->settings[self::ADMIN_CATEGORY . '_' . $var] = $value;
-        $this->admin->saveSetting(self::ADMIN_CATEGORY, $var, $value);
+        return $this->admin->settings[$key];
     }
 }

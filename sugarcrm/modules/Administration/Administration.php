@@ -110,7 +110,7 @@ class Administration extends SugarBean {
             if ($key == 'ldap_admin_password' || $key == 'proxy_password') {
                 $this->settings[$key] = $this->decrypt_after_retrieve($row['value']);
             } else {
-                $this->settings[$key] = $row['value'];
+                $this->settings[$key] = $this->decodeConfigVar($row['value']);
             }
         }
         $this->settings[$category] = true;
@@ -175,7 +175,7 @@ class Administration extends SugarBean {
      *
      * @param string $category      Category for the config value
      * @param string $key           Key for the config value
-     * @param string $value         Value of the config param
+     * @param string|array $value   Value of the config param
      * @param string $platform      Which platform this belongs to (API use only, If platform is empty it will not be returned in the API calls)
      * @return int                  Number of records Returned
      */
