@@ -12,45 +12,198 @@
 
 namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity;
 
-use BeanFactory;
+use DomainException;
+use Psr\Log\LoggerInterface;
+use SplObjectStorage;
+use SplObserver;
+use SplSubject;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage;
 
-/* final */class State
+class State implements SplSubject
 {
-    const ADMIN_CATEGORY = 'TeamSecurityDenorm';
+    // defines if the denormalized data is up to date with the source
+    const STATE_UP_TO_DATE = 'up_to_date';
+    // defines if currently full rebuild of denormalized table is in progress
+    const STATE_REBUILD_RUNNING = 'rebuild_running';
+    const STATE_ACTIVE_TABLE = 'active_table';
 
-    private $admin;
+    /**
+     * @var bool
+     */
+    private $isEnabled;
 
-    private $isLoaded = false;
+    /**#@+
+     * @var string
+     */
+    private $table1 = 'team_sets_users_1';
+    private $table2 = 'team_sets_users_2';
+    /**#@-*/
 
-    public function __construct()
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var State
+     */
+    private $storage;
+
+    /**
+     * @var string|null
+     */
+    private $activeTable;
+
+    /**
+     * @var SplObjectStorage|SplObserver[]
+     */
+    private $observers;
+
+    public function __construct($isEnabled, Storage $storage, LoggerInterface $logger)
     {
-        $this->admin = BeanFactory::newBean('Administration');
+        $this->isEnabled = $isEnabled;
+
+        $this->storage = $storage;
+        $this->logger = $logger;
+
+        $activeTable = $this->storage->get(self::STATE_ACTIVE_TABLE);
+
+        if ($activeTable !== null && $this->isValidTable($activeTable)) {
+            $this->activeTable = $activeTable;
+        }
+
+        $this->observers = new SplObjectStorage();
     }
 
-    public function get($var)
+    public function isEnabled()
     {
-        if (!$this->isLoaded) {
-            $this->admin->retrieveSettings(self::ADMIN_CATEGORY);
-            $this->isLoaded = true;
-        }
-
-        $key = self::ADMIN_CATEGORY . '_' . $var;
-
-        if (isset($this->admin->settings[$key])) {
-            return $this->admin->settings[$key];
-        }
-
-        return null;
+        return $this->isEnabled;
     }
 
-    public function update($var, $value)
+    /**
+     * Verify if denormalization setup is available for use.
+     * @return boolean
+     */
+    public function isAvailable()
     {
-        if (is_bool($value)) {
-            $value = (int) $value;
+        $hasActiveTable = $this->activeTable !== null;
+
+        if ($this->isEnabled && $hasActiveTable) {
+            return true;
         }
 
-        // TODO: move to admin
-        $this->admin->settings[self::ADMIN_CATEGORY . '_' . $var] = $value;
-        $this->admin->saveSetting(self::ADMIN_CATEGORY, $var, $value);
+        if (!$this->isEnabled && $hasActiveTable) {
+            $this->deactivate();
+        }
+
+        if ($this->isEnabled && !$hasActiveTable) {
+            $this->logger->critical("Team Security is enabled but the normalized table not setup. Run full rebuild.");
+        }
+
+        return false;
+    }
+
+    public function getActiveTable()
+    {
+        return $this->activeTable;
+    }
+
+    public function getTargetTable()
+    {
+        if ($this->activeTable === $this->table1) {
+            return $this->table2;
+        }
+
+        return $this->table1;
+    }
+
+    public function activateTable($table)
+    {
+        if (!$this->isValidTable($table)) {
+            throw new DomainException('Invalid table name');
+        }
+
+        $this->activeTable = $table;
+        $this->update(self::STATE_ACTIVE_TABLE, $table);
+        $this->update(self::STATE_UP_TO_DATE, true);
+    }
+
+    private function deactivate()
+    {
+        $this->activeTable = null;
+        $this->update(self::STATE_ACTIVE_TABLE, null);
+    }
+
+    private function isValidTable($table)
+    {
+        return $table === $this->table1
+            || $table === $this->table2;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isUpToDate()
+    {
+        return (bool) $this->storage->get(self::STATE_UP_TO_DATE);
+    }
+
+    /**
+     * Mark the denormalized data out of date. This flag is used to determine
+     * if full rebuild should be run during the next scheduler run.
+     */
+    public function markOutOfDate()
+    {
+        $this->update(self::STATE_UP_TO_DATE, false);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRebuildRunning()
+    {
+        return $this->storage->get(self::STATE_REBUILD_RUNNING);
+    }
+
+    public function markRebuildRunning()
+    {
+        $this->update(self::STATE_REBUILD_RUNNING, true);
+    }
+
+    public function markRebuildNotRunning()
+    {
+        $this->update(self::STATE_REBUILD_RUNNING, false);
+    }
+
+    private function update($var, $value)
+    {
+        $this->storage->update($var, $value);
+        $this->notify();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function attach(SplObserver $observer)
+    {
+        $this->observers->attach($observer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function detach(SplObserver $observer)
+    {
+        $this->observers->detach($observer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function notify()
+    {
+        foreach ($this->observers as $observer) {
+            $observer->update($this);
+        }
     }
 }

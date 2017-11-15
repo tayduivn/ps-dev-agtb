@@ -55,8 +55,10 @@ class RebuildTable implements \RunnableSchedulerJob
      */
     public function run($data)
     {
+        $command = $this->manager->getRebuildCommand();
+
         $start = time();
-        list($status, $message) = $this->manager->rebuild();
+        list($status, $message) = $command();
         $duration = time() - $start;
 
         $message .= sprintf(' (%s second(s) taken)', $duration);

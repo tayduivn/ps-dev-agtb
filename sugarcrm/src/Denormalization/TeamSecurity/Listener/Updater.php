@@ -12,9 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
+use Doctrine\DBAL\Connection;
 use PDO;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
-use Sugarcrm\Sugarcrm\Dbal\Connection;
 
 /**
  * Updates denormalized data set with the changes made to the original data

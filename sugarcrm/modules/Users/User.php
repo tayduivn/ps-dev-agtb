@@ -2794,6 +2794,6 @@ class User extends Person {
     {
         parent::mark_deleted($id);
 
-        Manager::getInstance()->userDeleted($id);
+        Manager::getInstance()->getListener()->userDeleted($id);
     }
 }

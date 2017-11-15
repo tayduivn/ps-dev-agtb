@@ -1043,6 +1043,6 @@ ORDER BY t.private, t.name';
      */
     private function getListener()
     {
-        return Manager::getInstance();
+        return Manager::getInstance()->getListener();
     }
 }

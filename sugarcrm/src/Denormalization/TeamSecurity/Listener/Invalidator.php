@@ -14,7 +14,6 @@ namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 /**
  * Invalidates denormalized data upon any change
@@ -51,7 +50,7 @@ final class Invalidator implements Listener
      */
     public function teamDeleted($teamId)
     {
-        $this->markOutOfDate();
+        $this->invalidate();
     }
 
     /**
@@ -59,7 +58,7 @@ final class Invalidator implements Listener
      */
     public function teamSetCreated($teamSetId, array $teamIds)
     {
-        $this->markOutOfDate();
+        $this->invalidate();
     }
 
     /**
@@ -77,7 +76,7 @@ final class Invalidator implements Listener
      */
     public function userAddedToTeam($userId, $teamId)
     {
-        $this->markOutOfDate();
+        $this->invalidate();
     }
 
     /**
@@ -85,15 +84,15 @@ final class Invalidator implements Listener
      */
     public function userRemovedFromTeam($userId, $teamId)
     {
-        $this->markOutOfDate();
+        $this->invalidate();
     }
 
     /**
      * Mark the denormalized data out of date. This flag is used to determine
      * if full rebuild should be run during the next scheduler run.
      */
-    private function markOutOfDate()
+    private function invalidate()
     {
-        $this->state->update(Manager::STATE_UP_TO_DATE, false);
+        $this->state->markOutOfDate();
     }
 }

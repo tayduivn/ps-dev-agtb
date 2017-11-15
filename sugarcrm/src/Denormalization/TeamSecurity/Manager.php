@@ -13,26 +13,18 @@
 namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity;
 
 use DBManagerFactory;
-use Doctrine\DBAL\DBALException;
-use NormalizedTeamSecurity;
 use Psr\Log\LoggerInterface;
-use SugarBean;
 use SugarConfig;
-use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denormalized;
 use Sugarcrm\Sugarcrm\Dbal\Connection;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Composite;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Invalidator;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\NullListener;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Recorder;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Updater;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\UserOnlyListener;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\RebuildIfNeeded;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateBasedListener;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
-use User;
 
 /**
  * Denormalization Manager
  */
-class Manager implements Listener
+class Manager
 {
     /**
      * $sugar_config to determine if use of denormalized table is enabled
@@ -40,31 +32,10 @@ class Manager implements Listener
      */
     const CONFIG_KEY = "perfProfile.TeamSecurity";
 
-    // defines if the denormalized data is up to date with the source
-    const STATE_UP_TO_DATE = 'up_to_date';
-    // defines if currently full rebuild of denormalized table is in progress
-    const STATE_REBUILD_RUNNING = 'rebuild_running';
-
     /**
      * @var self
      */
     private static $instance;
-
-    /**
-     * @var Connection
-     */
-    private $conn;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var boolean
-     */
-    private $isEnabled;
-    private $syncAdminChanges;
 
     /**
      * @var State
@@ -72,9 +43,14 @@ class Manager implements Listener
     private $state;
 
     /**
-     * @var TablePair
+     * @var LoggerInterface
      */
-    private $tables;
+    private $logger;
+
+    /**
+     * @var Connection
+     */
+    private $conn;
 
     /**
      * @var Listener
@@ -92,13 +68,17 @@ class Manager implements Listener
     {
         $this->conn = $conn;
         $this->logger = $logger;
-        $this->isEnabled = $this->getIsEnabledUseDenormOption($config);
-        $this->syncAdminChanges = $config->get(self::CONFIG_KEY . '.inline_update');
-        $this->state = new State();
-        $this->tables = new TablePair(
-            'team_sets_users_1',
-            'team_sets_users_2',
-            $this->state
+
+        $this->state = new State(
+            $this->getIsEnabledUseDenormOption($config),
+            new AdminSettingsStorage(),
+            $logger
+        );
+
+        $this->listener = new StateBasedListener(
+            $this->state,
+            $conn,
+            $config->get(self::CONFIG_KEY . '.inline_update')
         );
     }
 
@@ -121,134 +101,27 @@ class Manager implements Listener
     }
 
     /**
-     * Verify if denormalization setup is available for use.
-     * @return boolean
+     * @return Listener
      */
-    private function isAvailable()
+    public function getListener()
     {
-        $hasActiveTable = $this->getActiveTable() !== null;
-
-        if ($this->isEnabled && $hasActiveTable) {
-            return true;
-        }
-
-        if (!$this->isEnabled && $hasActiveTable) {
-            $this->disable();
-        }
-
-        if ($this->isEnabled && !$hasActiveTable) {
-            $this->logger->critical("Team Security is enabled but the normalized table not setup. Run full rebuild.");
-        }
-
-        return false;
-    }
-
-    public function createStrategy(User $user, SugarBean $bean, array $options)
-    {
-        if (!empty($options['use_denorm']) && $this->isAvailable()) {
-            return new Denormalized($this->getActiveTable(), $user);
-        }
-
-        return (new NormalizedTeamSecurity($bean))->setOptions($options);
+        return $this->listener;
     }
 
     /**
-     * Rebuilds denormalized data
-     *
-     * @return array
+     * @return State
      */
-    public function rebuild()
+    public function getState()
     {
-        if (!$this->isEnabled) {
-            return array(
-                true,
-                'The use of denormalized table is not enabled. No need to run the job.',
-            );
-        }
-
-        if ($this->isRebuildRunning()) {
-            return array(
-                true,
-                'Denormalized table rebuild is already running.',
-            );
-        }
-
-        if ($this->isUpToDate()) {
-            return array(
-                true,
-                'Denormalized data is up to date.',
-            );
-        }
-
-        try {
-            $this->markRebuildRunning();
-            $targetTable = $this->tables->getTargetTable();
-            $this->doRebuild($targetTable);
-            $this->replayChanges($targetTable);
-            $this->markUpToDate();
-            $this->tables->activate($targetTable);
-        } catch (\Exception $e) {
-            $this->logger->critical($e);
-
-            return array(
-                false,
-                sprintf(
-                    'Denormalized table rebuild failed with error: %s',
-                    $e->getMessage()
-                ),
-            );
-        } finally {
-            $this->markRebuildNotRunning();
-        }
-
-        return array(
-            true,
-            'Denormalized table rebuild completed',
-        );
+        return $this->state;
     }
 
     /**
-     * @return string
+     * @return RebuildIfNeeded
      */
-    private function getActiveTable()
+    public function getRebuildCommand()
     {
-        return $this->tables->getActiveTable();
-    }
-
-    private function disable()
-    {
-        $this->tables->deactivate();
-    }
-
-    /**
-     * @return boolean
-     */
-    private function isUpToDate()
-    {
-        return (bool) $this->state->get(self::STATE_UP_TO_DATE);
-    }
-
-    private function markUpToDate()
-    {
-        $this->state->update(self::STATE_UP_TO_DATE, true);
-    }
-
-    /**
-     * @return boolean
-     */
-    private function isRebuildRunning()
-    {
-        return $this->state->get(self::STATE_REBUILD_RUNNING);
-    }
-
-    private function markRebuildRunning()
-    {
-        $this->state->update(self::STATE_REBUILD_RUNNING, true);
-    }
-
-    private function markRebuildNotRunning()
-    {
-        $this->state->update(self::STATE_REBUILD_RUNNING, false);
+        return new RebuildIfNeeded($this->state, $this->conn, $this->logger);
     }
 
     /**
@@ -275,158 +148,5 @@ class Manager implements Listener
     public static function resetInstance()
     {
         self::$instance = null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function userDeleted($userId)
-    {
-        $this->getListener()->userDeleted($userId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function teamDeleted($teamId)
-    {
-        $this->getListener()->teamDeleted($teamId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function teamSetCreated($teamSetId, array $teamIds)
-    {
-        $this->getListener()->teamSetCreated($teamSetId, $teamIds);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function teamSetDeleted($teamSetId)
-    {
-        $this->getListener()->teamSetDeleted($teamSetId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function userAddedToTeam($userId, $teamId)
-    {
-        $this->getListener()->userAddedToTeam($userId, $teamId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function userRemovedFromTeam($userId, $teamId)
-    {
-        $this->getListener()->userRemovedFromTeam($userId, $teamId);
-    }
-
-    /**
-     * @return Listener
-     */
-    private function getListener()
-    {
-        if (!$this->listener) {
-            $this->listener = $this->createListener();
-        }
-
-        return $this->listener;
-    }
-
-    private function createListener()
-    {
-        $components = [];
-
-        // REMOVE ME: enable team security denormalization to run tests in CI
-        if ($this->isEnabled && !$this->isUpToDate()) {
-            $this->rebuild();
-        }
-
-        if ($this->isUpToDate()) {
-            if ($this->isEnabled) {
-                if ($this->isAvailable()) {
-                    $updater = new Updater(
-                        $this->conn,
-                        $this->getActiveTable()
-                    );
-
-                    if (!$this->syncAdminChanges) {
-                        $updater = new UserOnlyListener(
-                            $updater,
-                            new Invalidator($this->state)
-                        );
-                    }
-
-                    $components[] = $updater;
-                }
-            } else {
-                $components[] = new Invalidator($this->state);
-            }
-        }
-
-        if ($this->isRebuildRunning()) {
-            $components[] = new Recorder($this->conn);
-        }
-
-        if (count($components) === 0) {
-            return new NullListener();
-        }
-
-        if (count($components) === 1) {
-            return $components[0];
-        }
-
-        return new Composite(...$components);
-    }
-
-    /**
-     * Rebuild table
-     *
-     * @param string $table
-     *
-     * @throws DBALException
-     */
-    private function doRebuild($table)
-    {
-        $this->conn->executeQuery(<<<SQL
-DELETE FROM $table
-SQL
-        );
-
-        $this->conn->executeQuery(<<<SQL
-INSERT INTO $table
-SELECT
-    ts.id AS team_set_id,
-    tm.user_id AS user_id
-FROM team_sets ts
-INNER JOIN team_sets_teams tst
-    ON ts.id = tst.team_set_id
-INNER JOIN teams t
-    ON tst.team_id = t.id
-    AND t.deleted = 0
-INNER JOIN team_memberships tm
-    ON t.id = tm.team_id
-    AND tm.deleted = 0
-GROUP BY ts.id, tm.user_id
-SQL
-        );
-    }
-
-    /**
-     * Replay all actions added to denorm queue table after rebuild.
-     *
-     * @param string $targetTable
-     *
-     * @throws DBALException
-     */
-    private function replayChanges($targetTable)
-    {
-        $recorder = new Recorder($this->conn);
-        $updater = new Updater($this->conn, $targetTable);
-        $recorder->replay($updater, $this->logger);
     }
 }

@@ -40,7 +40,9 @@ class RebuildDenormTableCommand extends Command implements InstanceModeInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        list($status, $message) = Manager::getInstance()->rebuild();
+        $command = Manager::getInstance()->getRebuildCommand();
+
+        list($status, $message) = $command();
         $output->writeln($message);
 
         return $status ? 0 : 1;
