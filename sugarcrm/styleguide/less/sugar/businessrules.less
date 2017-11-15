@@ -8,6 +8,14 @@
 @br-table-active-cell-border: @br-table-container;
 @br-table-dummy-highlight: #babfc7;
 
+#content {
+	overflow: auto;
+}
+
+.main-pane {
+	overflow-x: visible;
+}
+
 #businessrulecontainer {
   padding: 0;
 }
@@ -15,7 +23,7 @@
 #businessruledesigner {
   background: @br-table-container;
   padding-bottom: 28px;
-
+  display: inline-block;
   .decision-table .table-split {
     border-right: 14px solid @br-table-container;
   }

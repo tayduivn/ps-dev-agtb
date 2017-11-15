@@ -677,6 +677,10 @@
      */
     DecisionTable.prototype.makeDecisionRowsSortable = function() {
         var self = this;
+        // Variables used to stop the helper from being dragged over the end of the table.
+        // Defined here so it can be set at drag start and used while sorting.
+        var tableBottomPosition;
+        var tableTopPosition;
         $(self.decisionTableBodyClassId).sortable({
             cancel: 'tr:not(.selected)',
             items: 'tr.' + self.decisionTableRowClassName,
@@ -684,6 +688,25 @@
             cursor: 'move',
             delay: 150,
             revert: 0,
+            axis: 'y',
+            scroll: true,
+            cursorAt: {bottom: 0},
+
+            // Manually force it to not go over.
+            sort: function(event, ui) {
+
+                //Check if we've gone over the ends of the table.
+                if (ui.position.top > tableBottomPosition) {
+                    ui.helper.css({top: tableBottomPosition});
+                    // Move the placeholder to the bottom.
+                    ui.placeholder.appendTo(self.dom.decisionTableBody);
+                }
+                else if (ui.position.top < tableTopPosition) {
+                    ui.helper.css({top: tableTopPosition});
+                    // Move the placeholder to the top.
+                    ui.placeholder.insertAfter(self.dom.decisionRowHeader);
+                }
+            },
 
             // In order to do multi-select drag and drop:
             // 1. create a custom helper with the selected items
@@ -696,7 +719,7 @@
                 // Clone selected items before hiding
                 var elements = $('#businessruledesigner .selected').not('.ui-sortable-placeholder').clone();
                 // Hide selected items
-                item.siblings('.selected').addClass('hidden');
+                item.siblings('.selected').addClass('hidden').css('display', 'none');
 
                 // Use the widths of the header row to set widths of the cloned td
                 var widths = [];
@@ -711,6 +734,8 @@
 
                 // Combine the cloned rows for multi-select drag and drop
                 var helper = $('<tr/>');
+                // Force its width to match the rows.
+                helper.width(elements.eq(0).width());
                 return helper.append(elements);
             },
 
@@ -718,6 +743,21 @@
                 var elements = ui.item.siblings('.selected.hidden').not('.ui-sortable-placeholder');
                 // Store the selected items to item being dragged
                 ui.item.data('items', elements);
+
+                // Calculate how far the helper can be dragged down.
+                tableBottomPosition = self.dom.decisionTable.height() -
+                    // Account for larger helpers by finding out how many rows are in it.
+                    (ui.helper.height() * ui.helper.children().size()) +
+                    // Allow for dragging over the footer to give more leeway.
+                    (self.dom.businessRulesFooter.height());
+
+                // Calculate how far the helper can be dragged up.
+                tableTopPosition = self.dom.businessRulesHeader.height() -
+                    // Account for larger helpers by finding out how many rows are in it.
+                    (ui.helper.height() * ui.helper.children().size()) +
+                    // Account for the two rows of header stuff at the top.
+                    (self.dom.decisionRowHeader.height() * 2);
+
             },
 
             receive: function (e, ui) {
@@ -738,7 +778,7 @@
                 });
 
                 // Show the selected items after the operation
-                ui.item.siblings('.selected').removeClass('hidden');
+                ui.item.siblings('.selected').removeClass('hidden').css('display', '');
 
                 // Save the mappings between old and new index of the moved elements
                 var decisionRowMappings = [];

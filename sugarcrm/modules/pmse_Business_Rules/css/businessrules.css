@@ -22,8 +22,6 @@
 }
 
 #businessruledesigner {
-  display: block;
-  overflow: auto;
 
   // conflicts with businessrules.less
   /*background-color: #efefef;*/
