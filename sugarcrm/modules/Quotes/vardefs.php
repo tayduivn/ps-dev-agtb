@@ -449,7 +449,7 @@ $dictionary['Quote'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'formula' => 'currencyAdd(
-                rollupCurrencySum($product_bundles, "total"),
+                rollupCurrencySum($product_bundles, "new_sub"),
                 ifElse(isNumeric($tax), $tax, "0"),
                 ifElse(isNumeric($shipping), $shipping, "0")
             )',
