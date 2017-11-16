@@ -1,7 +1,7 @@
 {
   "private": true,
   "devDependencies": {
-    "@sugarcrm/sucrose-sugar": "^0.6.12",
+    "@sugarcrm/sucrose-sugar": "^0.7.3",
     "@sugarcrm/thorn": "0.6.0",
     "co-mocha": "^1.1.3",
     "colors": "0.6.2",
