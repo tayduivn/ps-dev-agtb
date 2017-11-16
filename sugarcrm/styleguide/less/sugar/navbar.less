@@ -33,7 +33,6 @@
   overflow: visible;
 }
 
-
 // Brand: website or project name
 // -------------------------
 .navbar .brand {
@@ -46,6 +45,7 @@
   font-weight: 200;
   color: @navbarBrandColor;
   text-shadow: 0 1px 0 @navbarBackgroundHighlight;
+
   &:hover {
     text-decoration: none;
   }
@@ -63,6 +63,7 @@
 // -------------------------
 .navbar-link {
   color: @navbarLinkColor;
+
   &:hover {
     color: @navbarLinkColorHover;
   }
@@ -83,6 +84,7 @@
 .navbar .btn-group {
   .navbarVerticalAlign(30px); // Vertically center in navbar
 }
+
 .navbar .btn-group .btn,
 .navbar .input-prepend .btn,
 .navbar .input-append .btn {
@@ -94,7 +96,10 @@
 .navbar-search {
   position: relative;
   .navbarVerticalAlign(30px); // Vertically center in navbar
+
+
   margin-bottom: 0;
+
   .search-query {
     margin-bottom: 0;
     font-size: 13px;
@@ -112,9 +117,10 @@
   z-index: @zindexFixedNavbar;
   margin-bottom: 0; // remove 18px margin for default navbar
   top: 0;
+
   .navbar-inner {
     border-width: 0 0 1px;
-    padding-left:  0;
+    padding-left: 0;
     padding-right: 0;
     border-radius: 0;
   }
@@ -130,6 +136,7 @@
   float: left;
   margin: 0 10px 0 0;
 }
+
 .navbar .nav.pull-right {
   float: right; // redeclare due to specificity
   margin-right: 0; // remove margin on float right nav
@@ -144,9 +151,9 @@
   text-decoration: none;
   text-shadow: 0 1px 0 @navbarBackgroundHighlight;
 }
+
 .navbar .nav .dropdown-toggle .caret {
   margin-top: 8px;
-
 }
 
 // Hover
@@ -164,7 +171,7 @@
   color: @navbarLinkColorActive;
   text-decoration: none;
   background-color: @navbarLinkBackgroundActive;
-  box-shadow: inset 0 3px 8px rgba(0,0,0,.125);
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
 }
 
 // Navbar button for toggling navbar items in responsive layouts
@@ -176,43 +183,45 @@
   margin-left: 5px;
   margin-right: 5px;
   .buttonBackground(darken(@navbarBackgroundHighlight, 5%), darken(@navbarBackground, 5%));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.075);
+
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075);
 }
+
 .navbar .btn-navbar .fa-bar {
   display: block;
   width: 18px;
   height: 2px;
   background-color: #f5f5f5;
   border-radius: 1px;
-  box-shadow: 0 1px 0 rgba(0,0,0,.25);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
 }
+
 .btn-navbar .fa-bar + .fa-bar {
   margin-top: 3px;
 }
-
-
 
 // Dropdown menus
 // --------------
 
 // Menu position and menu carets
 .navbar .nav > li > .dropdown-menu {
-  &:before {
+  &::before {
     content: '';
     display: inline-block;
-    border-left:   7px solid transparent;
-    border-right:  7px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
     border-bottom: 7px solid #ccc;
     border-bottom-color: @dropdownBorder;
     position: absolute;
     top: -7px;
     left: 9px;
   }
-  &:after {
+
+  &::after {
     content: '';
     display: inline-block;
-    border-left:   6px solid transparent;
-    border-right:  6px solid transparent;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
     border-bottom: 6px solid @dropdownBackground;
     position: absolute;
     top: -6px;
@@ -233,10 +242,12 @@
   background-color: @navbarLinkBackgroundActive;
   color: @navbarLinkColorActive;
 }
+
 .navbar .nav li.dropdown > .dropdown-toggle .caret {
   border-top-color: @navbarLinkColor;
   border-bottom-color: @navbarLinkColor;
 }
+
 .navbar .nav li.dropdown.open > .dropdown-toggle .caret,
 .navbar .nav li.dropdown.active > .dropdown-toggle .caret,
 .navbar .nav li.dropdown.open.active > .dropdown-toggle .caret {
@@ -249,14 +260,17 @@
 .navbar .nav > li > .dropdown-menu.pull-right {
   left: auto;
   right: 0;
-  &:before {
+
+  &::before {
     left: auto;
     right: 12px;
   }
-  &:after {
+
+  &::after {
     left: auto;
     right: 13px;
   }
+
   .dropdown-menu {
     left: auto;
     right: 100%;
@@ -284,27 +298,34 @@
     padding: 0;
     margin: 0;
   }
+
   .nav-collapse {
     display: table-row;
+
     > div {
       display: table-cell;
       float: none;
       vertical-align: top;
+
       &.module-list {
         width: 100%;
+
         .dropdown-menu {
           max-width: 240px;
         }
       }
     }
   }
+
   .nav {
     margin: 0;
   }
+
   .btn,
   .btn-group {
     margin: 0;
   }
+
   .fa {
     font-size: 14px;
   }
@@ -313,12 +334,12 @@
   .btn-group > .routeLink:focus {
     color: @navbarLinkColorActive !important;
   }
+
   .btn-group:hover > .btn .fa,
   .btn-group > .btn:focus .fa {
     color: @navbarLinkColorActive;
   }
 }
-
 
 // Nav links (both module list and other)
 // ======================================
@@ -332,8 +353,10 @@
           color: @navbarLinkColorActive;
           border-radius: 0 !important;
           outline: none;
+
           &:focus {
             .tab-focus-light();
+
             outline-offset: 3px;
           }
         }
@@ -345,16 +368,18 @@
       margin: 0;
 
       /*This is the link text or image*/
-      &> .dropdown-toggle {
+      & > .dropdown-toggle {
         margin: 0;
         padding: 0;
         font-weight: normal;
         border: none;
         text-shadow: none;
         box-sizing: content-box;
+
         &:hover {
           text-decoration: none;
         }
+
         &:active {
           box-shadow: none !important;
           border-color: transparent;
@@ -364,14 +389,18 @@
 
       /*This is all buttons not in the mega menu*/
       &:not(.open) {
-        &> .btn:focus, .btn.module-name:focus {
+        & > .btn:focus,
+        .btn.module-name:focus {
           .tab-focus-light();
         }
-        &> .btn.module-name:focus {
+
+        & > .btn.module-name:focus {
           outline-offset: 3px;
         }
-        &> .btn:active, .btn:active:focus {
-          outline-width: 0px;
+
+        & > .btn:active,
+        .btn:active:focus {
+          outline-width: 0;
         }
       }
 
@@ -379,6 +408,7 @@
         .dropdown-toggle {
           background: none;
           box-shadow: none;
+
           &:hover {
             background: none;
             text-decoration: none;
@@ -403,36 +433,45 @@
       background: none;
       box-shadow: none;
       min-width: 160px;
+
       &.pull-right {
         left: auto;
         right: 0;
       }
-      &> ul {
+
+      & > ul {
         background: @white;
       }
-      &:before {
-        border-bottom-color: rgba(0,0,0,.2);
+
+      &::before {
+        border-bottom-color: rgba(0, 0, 0, 0.2);
       }
+
       li.divider {
         border-bottom: none;
       }
+
       li.divider + li a {
         border-top: @borderWidget;
       }
+
       li.hidden {
         display: none;
       }
+
       li a {
         display: block;
         padding: 8px 10px;
         text-indent: 16px;
         position: relative;
+
         i.fa {
           position: relative;
           top: -1px;
           text-indent: -12px;
           vertical-align: middle;
         }
+
         &.module-list-link {
           text-indent: 0;
           padding-right: 20px;
@@ -452,45 +491,56 @@
 .module-list .megamenu {
   max-height: 44px;
   white-space: nowrap;
+
   > .dropdown {
     float: none;
     display: inline-block;
+
     &.hidden {
       display: none;
     }
+
     &.more {
       .btn-group {
         padding: 8px 2px;
       }
     }
+
     &.hidden.more {
       display: inline-block; /* UIUX-1610 */
     }
+
     .btn-group {
       .dropdown-toggle {
         padding: 5px 0 5px 8px;
         margin-left: 1px;
       }
+
       /*cube container*/
       &.home {
         .dropdown-menu {
           left: 0;
           right: auto;
         }
+
         .dropdown-toggle {
           padding: 5px 2px;
           margin-left: 0;
         }
+
         /*img*/
         .cube {
           z-index: 2000;
           padding: 3px;
+
           &.hide {
             display: none;
           }
+
           &:hover {
             text-decoration: none;
           }
+
           img {
             height: 22px;
             width: 22px;
@@ -502,6 +552,7 @@
     .module-name {
       padding: 0;
     }
+
     &[data-module="Forecasts"] {
       .btn-group {
         padding-right: 14px;
@@ -513,17 +564,21 @@
 #userActions {
   .dropdown-menu {
     min-width: 0;
+
     ul.dropdown-insert {
       display: none;
     }
   }
-  &> .btn-group {
+
+  & > .btn-group {
     padding-right: 6px;
   }
+
   .dropdown-toggle {
     .avatar {
       min-width: 26px;
     }
+
     .fa-user {
       width: 26px;
       height: 26px;
@@ -532,12 +587,14 @@
       font-size: 16px;
     }
   }
+
   .profileactions-profile {
     > a {
       > span {
-          display: inline-block;
-          width: 14px;
-          height: 0;
+        display: inline-block;
+        width: 14px;
+        height: 0;
+
         .avatar {
           position: absolute;
           left: 11px;
@@ -587,6 +644,7 @@
         margin-left: -10px;
       }
     }
+
     &.more .btn-group.open .dropdown-menu {
       margin-left: -2px;
     }
@@ -598,19 +656,21 @@
 
 .navbar .megamenu {
   > .dropdown {
-
     &.active {
       .btn-group {
         &:not(.open) {
           &:not(.home) {
             /* override */
             background-color: @navbarLinkBackgroundActive;
+
             .fa-caret-down {
               color: @black;
             }
           }
+
           &.home {
             background: none;
+
             .fa-caret-down {
               color: @black;
             }
@@ -622,13 +682,15 @@
     &:hover {
       /* additive */
       background: @navbarDropdownBackgroundHover;
+
       .btn-group {
         > .btn,
         > .btn:hover {
           /* additive */
           color: @navbarLinkColorHover;
         }
-        &> .dropdown-toggle {
+
+        & > .dropdown-toggle {
           .fa {
             /* additive */
             color: @navbarLinkColorHover;
@@ -639,13 +701,13 @@
 
     /*This is the actual content in nav item*/
     .btn-group {
-      padding: 8px 10px 8px 10px;
+      padding: 8px 10px;
 
       &.home {
-        padding: 7px 20px 7px 20px;
+        padding: 7px 20px;
       }
 
-      &> .dropdown-toggle {
+      & > .dropdown-toggle {
         .fa {
           /* additive */
           width: 10px;
@@ -655,6 +717,7 @@
       &.open {
         /* new variable */
         background-color: @navbarLinkBackgroundActive;
+
         /* additive */
         .btn.btn-invisible:not(.disabled):hover {
           background: none;
@@ -679,15 +742,18 @@
 
           /* new variable */
           background: @navbarDropdownItemHover;
+
           i.fa {
             /* new variable */
             color: @navbarDropdownLinkHover;
           }
         }
+
         /* additive */
         &:active {
           color: @navbarDropdownLinkHover;
           background: @navbarDropdownBackgroundActive;
+
           i.fa {
             color: @navbarDropdownLinkHover;
           }
@@ -705,10 +771,12 @@
       /* override */
       .fa {
         color: @black !important;
-        &:before {
+
+        &::before {
           content: "\f142";
         }
       }
+
       /* override */
       &:focus,
       &:hover {
@@ -716,10 +784,12 @@
           color: @grayDark !important;
         }
       }
+
       .btn-group {
         /* override */
         padding-top: 13px;
         padding-bottom: 13px;
+
         .dropdown-toggle {
           padding: 0 6px;
         }
@@ -729,6 +799,7 @@
     .module-name {
       /* override */
       color: @black;
+
       &:focus,
       &:hover {
         /* override */

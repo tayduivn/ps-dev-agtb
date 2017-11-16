@@ -4,54 +4,63 @@
 //mixin
 .smallTreeLi {
   margin-left: 18px;
-  padding: 1px 0px 1px 0px;
+  padding: 1px 0;
   line-height: @smallTreeHeight;
   min-height: @smallTreeHeight;
   font-size: @smallTreeFont;
   display: table;
 }
+
 .smallTreeA {
   line-height: @smallTreeHeight;
   height: @smallTreeHeight;
   min-height: @smallTreeHeight;
   font-size: @smallTreeFont;
-  border-top: 0px;
+  border-top: 0;
 }
 //.mixin
 .jstree-sugar {
   &.tree-component {
     padding: 0 8px;
+
     ul {
       li {
         padding: 5px 0;
         white-space: inherit;
+
         &:nth-last-child(1) {
           border-bottom: none;
         }
+
         &.jstree-leaf > ins {
-          &:before {
+          &::before {
             content: "\f114";
           }
-          &.leaf:before {
+
+          &.leaf::before {
             content: "\f15c";
           }
         }
       }
     }
+
     li > a {
-      padding: 0px;
+      padding: 0;
       display: inline-table;
       color: @folderTreeColor !important;
     }
+
     ins {
-      &:before {
+      &::before {
         display: inline;
       }
+
       &.jstree-icon {
         padding: 5px;
         color: @folderTreeColor !important;
       }
     }
+
     li {
       &.jstree-leaf {
         a {
@@ -62,6 +71,7 @@
           }
         }
       }
+
       &.jstree-open,
       &.jstree-closed,
       &.jstree-leaf {
@@ -74,19 +84,23 @@
         }
       }
     }
+
     &.btn-group {
       padding-right: 6px;
     }
+
     a {
       &.jstree-clicked {
-        color: #003366 !important;
+        color: #036 !important;
       }
+
       &.btn {
         &.jstree-contextmenu,
         &.jstree-addnode {
           padding: 4px;
         }
       }
+
       &.jstree-search {
         font-weight: bold;
       }
@@ -96,20 +110,24 @@
 
 #vakata-contextmenu {
   border-radius: 3px;
+
   li {
     a {
       color: @folderTreeColor !important;
+
       ul {
         background: @white;
         border-radius: 3px;
       }
     }
+
     &.jstree-contextmenu-disabled {
       a {
-        color: #aaaaaa !important;
+        color: #aaa !important;
       }
     }
   }
+
   ul {
     background: @white;
     border-radius: 3px;
@@ -120,14 +138,16 @@
   ins {
     background: transparent !important;
     font-size: 16px;
+
     &.jstree-ok {
-      &:before {
+      &::before {
         font-family: FontAwesome;
         content: "\f00c";
       }
     }
+
     &.jstree-invalid {
-      &:before {
+      &::before {
         font-family: FontAwesome;
         content: "\f00d";
       }
@@ -153,16 +173,21 @@
   line-height: 22px;
   background-color: @white;
   border-radius: 3px;
-  &.error{
+
+  &.error {
     border-color: @error;
+
     .divinput {
       color: @error;
     }
+
     .clear-field {
       right: 36px;
     }
   }
+
   border: 1px solid @btnBorder;
+
   .divinput {
     display: block;
     width: 100%;
@@ -178,16 +203,20 @@
     background-color: #f6f6f6;
     cursor: pointer;
     box-sizing: border-box;
+
     .error-tooltip {
       display: inline-block;
       position: absolute;
       right: 18px;
+
       &.top4 {
         top: 4px;
       }
+
       &.top0 {
-        top: 0px;
+        top: 0;
       }
+
       .fa {
         color: @error;
         line-height: 16px;
@@ -195,6 +224,7 @@
       }
     }
   }
+
   .dropdown-menu {
     border: 1px solid @linkColor;
     border-top: none;
@@ -202,6 +232,7 @@
     box-sizing: border-box;
     border-radius: 0 0 3px 3px;
     margin-top: 0;
+
     li {
       display: block;
       padding: 6px;
@@ -209,81 +240,102 @@
       font-weight: normal;
       color: @gray;
       white-space: nowrap;
+
       &.tree {
         overflow-x: auto;
         overflow-y: auto;
         max-height: 200px;
-        padding:0px;
+        padding: 0;
+
         span.jstree-sugar {
           padding: 0;
         }
+
         .tree-component {
           ul {
-            li{
+            li {
               .smallTreeLi;
-              >ins {
-                margin-right: 0px !important;
+
+              > ins {
+                margin-right: 0 !important;
                 height: @smallTreeHeight;
+
                 &.jstree-icon {
-                  padding: 2px 2px 2px 0px;
+                  padding: 2px 2px 2px 0;
                 }
-                &:before {
+
+                &::before {
                   font-size: @smallTreeFont + 2;
                 }
               }
+
               > a {
                 .smallTreeA;
               }
             }
           }
+
           > ul > li {
             margin-left: 0;
           }
         }
       }
+
       &.st {
         padding: 0;
+
         .input-append {
           padding: 6px;
         }
+
         [data-role=secondinput] {
           // z-index: 1 !important;
           min-width: 0;
           width: calc(~"100% - 12px");
         }
+
         [data-action=create-label-cover] {
           padding: 8px;
         }
+
         [data-action=create-new] {
           display: inline;
         }
+
         [data-action=full-screen] {
           padding: 7px;
         }
+
         [data-role=pseudo] {
           color: @folderTreeColor;
           padding: 8px 7px;
         }
+
         [data-place=bottom-create] .span10 {
           padding: 4px 4px 4px 0;
         }
+
         .fa-folder-open {
           padding-right: 5px;
         }
       }
     }
+
     li[disabled=disabled] {
       a {
-        color: #AAAAAA !important;
+        color: #aaa !important;
       }
     }
   }
+
   &.open {
     border-color: @linkColor;
-    border-radius: 3px 3px 0px 0px;
+    border-radius: 3px 3px 0 0;
     border-bottom: none;
   }
-  .select-arrow, .clear-field {
+
+  .select-arrow,
+  .clear-field {
     display: inline-block;
     width: 18px;
     height: 100%;
@@ -294,12 +346,14 @@
     padding-left: 4px;
     border-radius: 0;
     box-sizing: border-box;
+
     .fa {
       color: @gray;
       font-size: @smallTreeFont;
       cursor: pointer;
     }
   }
+
   .clear-field {
     right: 18px;
   }
@@ -309,25 +363,30 @@
   .jstree-sugar {
     &.tree-component {
       padding: 0;
+
       > ul {
-        background:url("@{baseUrl}/img/bg.jpg") left top repeat;
+        background: url("@{baseUrl}/img/bg.jpg") left top repeat;
         padding: 0 10px;
         border-bottom: 1px solid @tableBorderColor;
       }
+
       ul {
         li {
           min-height: 37px;
           padding: 0;
+
           > a {
             line-height: 37px;
             height: 37px;
             display: inline;
           }
+
           > div {
             line-height: 37px;
           }
         }
       }
+
       input {
         &.jstree-rename-input {
           height: 25px !important;
@@ -342,58 +401,72 @@
   .jstree {
     &.tree-component {
       ul {
-        li{
+        li {
           .smallTreeLi;
-          >ins {
-            margin-right: 0px !important;
+
+          > ins {
+            margin-right: 0 !important;
             height: @smallTreeHeight;
+
             &.jstree-icon {
-              padding: 2px 2px 2px 0px;
+              padding: 2px 2px 2px 0;
             }
-            &:before {
+
+            &::before {
               font-size: @smallTreeFont + 2;
               color: @linkColor;
             }
           }
+
           > a {
             .smallTreeA;
+
             color: @blue !important;
           }
+
           &.jstree-open {
             > ins {
-              &:before {
+              &::before {
                 color: @textColor !important;
               }
             }
+
             > a {
               font-weight: bold;
               color: @textColor !important;
             }
           }
+
           &.jstree-leaf {
             ins {
               & + a:hover {
                 cursor: default;
               }
+
               &.leaf {
                 + a:hover {
                   cursor: pointer;
                 }
+
                 cursor: pointer;
               }
             }
+
             &.disabled {
               > a {
                 color: @textColor !important;
               }
+
               .leaf {
                 + a:hover {
                   cursor: default;
                 }
+
                 cursor: default;
               }
+
               > ins {
-                &:before {
+                &::before {
                   color: @textColor !important;
                 }
               }
@@ -401,6 +474,7 @@
           }
         }
       }
+
       > ul > li {
         margin-left: 0;
       }
@@ -410,15 +484,18 @@
 
 .record .record-cell[data-type="nestedset"] {
   z-index: 2;
+
   .parenttree {
     .divinput {
       font-size: 15px;
     }
   }
+
   input[type="text"][data-role=add-item] {
     font-size: 12px;
     font-weight: 400;
   }
+
   input[type="text"][data-role=secondinput] {
     font-size: 12px;
     font-weight: 400;
@@ -435,6 +512,7 @@ tr.tr-inline-edit [data-type="nestedset"] {
         margin-top: 0;
         font-size: @smallTreeFont;
       }
+
       .fa-folder-open {
         font-size: @smallTreeFont;
       }
@@ -444,7 +522,8 @@ tr.tr-inline-edit [data-type="nestedset"] {
 //hide arrows in filter.
 .filter-definition-container {
   [data-role=treeinput] {
-    .clear-field, .select-arrow {
+    .clear-field,
+    .select-arrow {
       display: none;
     }
   }
@@ -460,29 +539,35 @@ tr.tr-inline-edit [data-type="nestedset"] {
 html.rtl {
   .jstree {
     ul li {
-      margin-left: 0px;
+      margin-left: 0;
       margin-right: 18px;
     }
+
     input {
       &.jstree-rename-input {
-        left: 0px !important;
+        left: 0 !important;
         right: 34px !important;
       }
     }
   }
+
   .parenttree {
-    .select-arrow, .clear-field {
+    .select-arrow,
+    .clear-field {
       right: auto;
-      left: 0px;
-      padding-right: 0px;
+      left: 0;
+      padding-right: 0;
       padding-left: 4px;
     }
+
     .clear-field {
       left: 18px;
     }
+
     .divinput {
-      padding: 0px 6px 0px 34px;
+      padding: 0 6px 0 34px;
     }
+
     .dropdown-menu {
       left: -1px;
       right: auto;

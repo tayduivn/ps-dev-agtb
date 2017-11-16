@@ -16,6 +16,7 @@
 .nav > li > a {
   display: block;
 }
+
 .nav > li > a:hover {
   text-decoration: none;
   background-color: @grayLighter;
@@ -34,15 +35,13 @@
   font-weight: bold;
   line-height: @baseLineHeight;
   color: @grayLight;
-  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
 }
 // Space them out when they follow another list item (link)
 .nav li + .nav-header {
   margin-top: 9px;
 }
-
-
 
 // NAV LIST
 // --------
@@ -52,21 +51,25 @@
   padding-right: 15px;
   margin-bottom: 0;
 }
+
 .nav-list > li > a,
 .nav-list .nav-header {
-  margin-left:  -15px;
+  margin-left: -15px;
   margin-right: -15px;
-  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
+
 .nav-list > li > a {
   padding: 3px 15px;
 }
+
 .nav-list > .active > a,
 .nav-list > .active > a:hover {
   color: @white;
-  text-shadow: 0 -1px 0 rgba(0,0,0,.2);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
   background-color: @linkColor;
 }
+
 .nav-list .fa {
   margin-right: 2px;
 }
@@ -74,8 +77,6 @@
 .nav-list .divider {
   .nav-divider();
 }
-
-
 
 // TABS AND PILLS
 // -------------
@@ -85,10 +86,12 @@
 .nav-pills {
   .clearfix();
 }
+
 .nav-tabs > li,
 .nav-pills > li {
   float: left;
 }
+
 .nav-tabs > li > a,
 .nav-pills > li > a {
   padding-right: 12px;
@@ -115,6 +118,7 @@
   line-height: @baseLineHeight;
   border: 1px solid transparent;
   border-radius: 4px 4px 0 0;
+
   &:hover {
     border-color: @grayLighter @grayLighter #ddd;
   }
@@ -128,7 +132,6 @@
   border-bottom-color: transparent;
   cursor: default;
 }
-
 
 // PILLS
 // -----
@@ -149,8 +152,6 @@
   background-color: @linkColor;
 }
 
-
-
 // STACKED NAV
 // -----------
 
@@ -158,6 +159,7 @@
 .nav-stacked > li {
   float: none;
 }
+
 .nav-stacked > li > a {
   margin-right: 0; // no need for the gap between nav items
 }
@@ -166,18 +168,22 @@
 .nav-tabs.nav-stacked {
   border-bottom: 0;
 }
+
 .nav-tabs.nav-stacked > li > a {
   border: 1px solid #ddd;
   border-radius: 0;
 }
+
 .nav-tabs.nav-stacked > li:first-child > a {
   border-top-right-radius: 4px;
   border-top-left-radius: 4px;
 }
+
 .nav-tabs.nav-stacked > li:last-child > a {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
 }
+
 .nav-tabs.nav-stacked > li > a:hover {
   border-color: #ddd;
   z-index: 2;
@@ -187,11 +193,10 @@
 .nav-pills.nav-stacked > li > a {
   margin-bottom: 3px;
 }
+
 .nav-pills.nav-stacked > li:last-child > a {
   margin-bottom: 1px; // decrease margin to match sizing of stacked tabs
 }
-
-
 
 // DROPDOWNS
 // ---------
@@ -199,6 +204,7 @@
 .nav-tabs .dropdown-menu {
   border-radius: 0 0 6px 6px; // remove the top rounded corners here since there is a hard edge above the menu
 }
+
 .nav-pills .dropdown-menu {
   border-radius: 6px; // make rounded corners match the pills
 }
@@ -211,10 +217,12 @@
   border-bottom-color: @linkColor;
   margin-top: 6px;
 }
+
 .nav .dropdown-toggle:hover .caret {
   border-top-color: @linkColorHover;
   border-bottom-color: @linkColorHover;
 }
+
 /* move down carets for tabs */
 .nav-tabs .dropdown-toggle .caret {
   margin-top: 8px;
@@ -226,6 +234,7 @@
   border-top-color: #fff;
   border-bottom-color: #fff;
 }
+
 .nav-tabs .active .dropdown-toggle .caret {
   border-top-color: @gray;
   border-bottom-color: @gray;
@@ -246,6 +255,7 @@
   background-color: @grayLight;
   border-color: @grayLight;
 }
+
 .nav li.dropdown.open .caret,
 .nav li.dropdown.open.active .caret,
 .nav li.dropdown.open a:hover .caret {
@@ -259,8 +269,6 @@
   border-color: @grayLight;
 }
 
-
-
 // TABBABLE
 // --------
 
@@ -272,6 +280,7 @@
 .tabbable {
   .clearfix();
 }
+
 .tab-content {
   overflow: auto; // prevent content from running below tabs
 }
@@ -288,11 +297,11 @@
 .pill-content > .pill-pane {
   display: none;
 }
+
 .tab-content > .active,
 .pill-content > .active {
   display: block;
 }
-
 
 // BOTTOM
 // ------
@@ -300,20 +309,24 @@
 .tabs-below > .nav-tabs {
   border-top: 1px solid #ddd;
 }
+
 .tabs-below > .nav-tabs > li {
   margin-top: -1px;
   margin-bottom: 0;
 }
+
 .tabs-below > .nav-tabs > li > a {
   border-radius: 0 0 4px 4px;
+
   &:hover {
     border-bottom-color: transparent;
     border-top-color: #ddd;
   }
 }
+
 .tabs-below > .nav-tabs > .active > a,
 .tabs-below > .nav-tabs > .active > a:hover {
-  border-color: transparent #ddd #ddd #ddd;
+  border-color: transparent #ddd #ddd;
 }
 
 // LEFT & RIGHT
@@ -324,6 +337,7 @@
 .tabs-right > .nav-tabs > li {
   float: none;
 }
+
 .tabs-left > .nav-tabs > li > a,
 .tabs-right > .nav-tabs > li > a {
   min-width: 74px;
@@ -337,13 +351,16 @@
   margin-right: 19px;
   border-right: 1px solid #ddd;
 }
+
 .tabs-left > .nav-tabs > li > a {
   margin-right: -1px;
   border-radius: 4px 0 0 4px;
 }
+
 .tabs-left > .nav-tabs > li > a:hover {
   border-color: @grayLighter #ddd @grayLighter @grayLighter;
 }
+
 .tabs-left > .nav-tabs .active > a,
 .tabs-left > .nav-tabs .active > a:hover {
   border-color: #ddd transparent #ddd #ddd;
@@ -355,19 +372,20 @@
   margin-left: 19px;
   border-left: 1px solid #ddd;
 }
+
 .tabs-right > .nav-tabs > li > a {
   margin-left: -1px;
   border-radius: 0 4px 4px 0;
 }
+
 .tabs-right > .nav-tabs > li > a:hover {
   border-color: @grayLighter @grayLighter @grayLighter #ddd;
 }
+
 .tabs-right > .nav-tabs .active > a,
 .tabs-right > .nav-tabs .active > a:hover {
   border-color: #ddd #ddd #ddd transparent;
 }
-
-
 
 // DISABLED STATES
 // ---------------
@@ -390,21 +408,25 @@
   .nav-tabs {
     margin-bottom: 0;
     border: none;
+
     > li {
       margin: 0;
       text-align: center;
       width: 33.333%;
+
       > a {
         background-color: @tableBackgroundAccent;
-        border: 1px solid darken(@tableBackgroundAccent,5%);
+        border: 1px solid darken(@tableBackgroundAccent, 5%);
         font-size: 11px;
         margin: 0;
         border-radius: 0;
+
         &:hover {
           background: @dropdownLinkBackgroundHover;
-          border: 1px solid darken(@tableBackgroundAccent,5%);
+          border: 1px solid darken(@tableBackgroundAccent, 5%);
         }
       }
+
       &.active {
         > a {
           background-color: @white;
@@ -413,9 +435,11 @@
       }
     }
   }
+
   .listed li {
     padding: 12px;
   }
+
   &.two {
     .nav-tabs {
       > li {
@@ -423,6 +447,7 @@
       }
     }
   }
+
   &.three {
     .nav-tabs {
       > li {
@@ -430,6 +455,7 @@
       }
     }
   }
+
   &.tabs-four,
   &.four {
     .nav-tabs {
@@ -438,6 +464,7 @@
       }
     }
   }
+
   &.five {
     .nav-tabs {
       > li {
@@ -497,11 +524,13 @@
 .tabs-below > .nav-tabs {
   border-top: 1px solid @grayLight;
 }
+
 .tabs-below > .nav-tabs > li > a {
   &:hover {
     border-top-color: @grayLight;
   }
 }
+
 .tabs-below > .nav-tabs > .active > a,
 .tabs-below > .nav-tabs > .active > a:hover {
   border-color: transparent @grayLight @grayLight @grayLight;
@@ -511,9 +540,11 @@
 .tabs-left > .nav-tabs {
   border-right: 1px solid @grayLight;
 }
+
 .tabs-left > .nav-tabs > li > a:hover {
   border-color: @grayLight @grayLight @grayLight @grayLight;
 }
+
 .tabs-left > .nav-tabs .active > a,
 .tabs-left > .nav-tabs .active > a:hover {
   border-color: @grayLight transparent @grayLight @grayLight;
@@ -534,9 +565,11 @@
 .tabs-right > .nav-tabs > li > a {
   min-width: 0;
 }
+
 .tabs-right > .nav-tabs > li > a:hover {
   border-color: @grayLight @grayLight @grayLight @grayLight;
 }
+
 .tabs-right > .nav-tabs .active > a,
 .tabs-right > .nav-tabs .active > a:hover {
   border-color: @grayLight @grayLight @grayLight transparent;
@@ -551,8 +584,10 @@
 .dashlet-tabs {
   display: table;
   width: 100%;
+
   .dashlet-tabs-row {
     display: table-row;
+
     .dashlet-tab {
       display: table-cell;
       vertical-align: middle;
@@ -562,23 +597,27 @@
       color: @gray;
       background-color: @grayLighter;
       border: @borderWidgetLight;
+
       &.active {
         font-weight: bold;
         border-bottom: transparent;
         background: @white;
       }
+
       &:first-child {
         border-left: 0;
       }
+
       &:last-child {
         border-right: 0;
       }
+
       a {
         color: @gray;
         display: inline-block;
         width: 100%;
         height: 100%;
-        padding-top: .5em;
+        padding-top: 0.5em;
         text-decoration: none;
       }
     }
@@ -611,22 +650,26 @@
 .record.tab-layout {
   padding: 0;
 }
+
 .content-tabs {
   .nav.nav-tabs {
     margin-bottom: 0;
     background-color: @grayLighter;
     border-top: 1px solid @white;
     padding-left: 20px;
+
     .tab {
       &.active {
         border: @borderWidgetLight;
         border-bottom: 1px solid @white;
         background: @white;
         margin-top: -2px;
+
         a {
-          padding: 12px 8px 10px 8px;
+          padding: 12px 8px 10px;
         }
       }
+
       a {
         font-size: 11px;
         border: none;
@@ -636,10 +679,12 @@
       }
     }
   }
+
   .tab-pane {
     padding-top: 13px;
-    >.row-fluid.panel_body,
-    >.row-fluid.panel_hidden {
+
+    > .row-fluid.panel_body,
+    > .row-fluid.panel_hidden {
       padding: 0 13px;
       box-sizing: border-box;
     }

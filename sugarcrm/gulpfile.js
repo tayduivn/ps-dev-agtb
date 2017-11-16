@@ -562,6 +562,17 @@ gulp.task('jshint', function() {
 
 gulp.task('lint', ['jshint', 'jscs']);
 
+gulp.task('lint:css', function() {
+    var stylelint = require('gulp-stylelint');
+    return gulp
+        .src(['styleguide/less/**/*.less', '!styleguide/less/lib/**/*.less'])
+        .pipe(stylelint({
+            reporters: [
+              {formatter: 'string', console: true},
+            ],
+        }));
+});
+
 gulp.task('find-todos', function() {
     var teams = require('./gulp/plugins/team/team.js');
     commander

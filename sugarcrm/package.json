@@ -15,6 +15,7 @@
     "gulp-jscs": "~3.0.2",
     "gulp-jshint": "^2.0.0",
     "gulp-spawn-mocha": "^3.1.0",
+    "gulp-stylelint": "^5.0.0",
     "gulp-todo": "~4.1.0",
     "gulp-util": "~3.0.7",
     "jasmine-sinon": "0.3.2",
@@ -36,6 +37,7 @@
     "sinon": "1.6.0",
     "socket.io": "0.9.16",
     "strip-json-comments": "^2.0.1",
+    "stylelint-config-standard": "^17.0.0",
     "zip-folder": "1.0.0"
   }
 }

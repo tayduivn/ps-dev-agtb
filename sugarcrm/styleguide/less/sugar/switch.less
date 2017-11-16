@@ -22,48 +22,58 @@
 
   &.switch-mini {
     min-width: 72px;
-      &.round-switch {
-          min-width: 50px;
-          span {
-              width: 30%;
-          }
-          > div {
-             height: 20px;
-             width: 195%;
-          }
-          border-radius: 10px;
-          .switch-on {
-              background-color: @green;
-              label {
-                  left: 3px;
-              }
-          }
 
-          .switch-off {
-              background-color: @gray;
-              label {
-                  left: -3px;
-              }
-          }
-          span.switch-mini {
-              padding: 0;
-              top: 2px;
-          }
-          span.switch-right,span.switch-left {
-              background-image: none;
-              background-color: transparent;
-              color: @white;
-          }
+    &.round-switch {
+      min-width: 50px;
 
-          label {
-              border-radius: 8px;
-              min-width: 14px;
-              height: 16px;
-              width: 16px;
-              margin-top: 0;
-              top: 2px;
-          }
+      span {
+        width: 30%;
       }
+
+      > div {
+        height: 20px;
+        width: 195%;
+      }
+
+      border-radius: 10px;
+
+      .switch-on {
+        background-color: @green;
+
+        label {
+          left: 3px;
+        }
+      }
+
+      .switch-off {
+        background-color: @gray;
+
+        label {
+          left: -3px;
+        }
+      }
+
+      span.switch-mini {
+        padding: 0;
+        top: 2px;
+      }
+
+      span.switch-right,
+      span.switch-left {
+        background-image: none;
+        background-color: transparent;
+        color: @white;
+      }
+
+      label {
+        border-radius: 8px;
+        min-width: 14px;
+        height: 16px;
+        width: 16px;
+        margin-top: 0;
+        top: 2px;
+      }
+    }
   }
 
   &.switch-small {
@@ -74,14 +84,16 @@
     min-width: 120px;
   }
 
-
   &.deactivate {
     opacity: 0.5;
     cursor: default !important;
-    label, span {
+
+    label,
+    span {
       cursor: default !important;
     }
   }
+
   > div {
     display: inline-block;
     width: 150%;
@@ -91,13 +103,16 @@
     &.switch-animate {
       transition: left 0.5s;
     }
+
     &.switch-off {
       left: -49%;
     }
+
     &.switch-on {
       left: 0;
     }
   }
+
   input[type=checkbox] {
     //debug
     display: none;
@@ -106,7 +121,8 @@
     //z-index: 123;
   }
 
-  span, label {
+  span,
+  label {
     box-sizing: border-box;
     cursor: pointer;
     position: relative;
@@ -164,7 +180,8 @@
       .buttonBackground(@btnBackgroundHighlight, @btnBackground, @grayDark, 0 1px 1px rgba(255,255,255,.75));
     }
 
-    &.switch-primary, &.switch-left {
+    &.switch-primary,
+    &.switch-left {
       .buttonBackground(@btnPrimaryBackgroundHighlight, @btnPrimaryBackground);
     }
 

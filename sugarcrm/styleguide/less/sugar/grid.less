@@ -10,7 +10,6 @@
   }
   .spanXCore(@index - 1);
 }
-.spanXCore (0) {}
 
 .offsetXCore (@index) when (@index > 0) {
   .offset@{index} {
@@ -18,7 +17,6 @@
   }
   .offsetXCore(@index - 1);
 }
-.offsetXCore (0) {}
 
 .row {
   margin-left: @gridGutterWidth * -1;
@@ -47,27 +45,29 @@
   }
   .spanXFluid(@index - 1);
 }
-.spanXFluid (0) {}
 
 .offsetXFluid (@index) when (@index > 0) {
   .offset@{index} {
     margin-left: (@fluidGridColumnWidth * @index) + (@fluidGridGutterWidth * (@index - 1)) + (@fluidGridGutterWidth*2);
   }
+
   .offset@{index}:first-child {
     margin-left: (@fluidGridColumnWidth * @index) + (@fluidGridGutterWidth * (@index - 1)) + (@fluidGridGutterWidth);
   }
   .offsetXFluid(@index - 1);
 }
-.offsetXFluid (0) {}
 
 .row-fluid {
   width: 100%;
   .clearfix();
+
   [class*="span"] {
     .input-block-level();
+
     float: left;
     margin-left: @fluidGridGutterWidth;
   }
+
   [class*="span"]:first-child {
     margin-left: 0;
   }
@@ -81,7 +81,6 @@
   .spanXFluid (@gridColumns);
   .offsetXFluid (@gridColumns);
 }
-
 
 // Reset utility classes due to specificity
 [class*="span"].hide,

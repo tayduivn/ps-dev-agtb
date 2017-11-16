@@ -9,147 +9,150 @@
 @br-table-dummy-highlight: #babfc7;
 
 #businessrulecontainer {
-	padding: 0;
+  padding: 0;
 }
 
 #businessruledesigner {
-	background: @br-table-container;
-	padding-bottom: 28px;
-	.decision-table .table-split {
-		border-right: 14px solid @br-table-container;
-	}
+  background: @br-table-container;
+  padding-bottom: 28px;
+
+  .decision-table .table-split {
+    border-right: 14px solid @br-table-container;
+  }
 }
 
 .businessrules {
+  .decision-table {
+    td {
+      border-color: @br-table-active-cell-border;
 
-	.decision-table {
+      &.decision-table-conclusion-column {
+        min-width: 126px;
+      }
 
-		td {
-			border-color: @br-table-active-cell-border;
+      &.row-index {
+        border-color: transparent;
+      }
 
-			&.decision-table-conclusion-column {
-		    min-width: 126px;
-			}
+      table {
+        .decision-table-operator,
+        .decision-table-conclusion-column {
+          border: none;
+        }
+      }
+    }
 
-			&.row-index {
-				border-color: transparent;
-			}
+    th {
+      border-color: transparent;
+      background: transparent;
+      font-weight: normal;
+      text-shadow: none;
+      white-space: nowrap;
+      text-align: left;
+    }
 
-			table {
-				.decision-table-operator,
-				.decision-table-conclusion-column {
-					border: none;
-				}
-			}
-		}
+    tfoot {
+      tr td {
+        background: @br-table-cell;
+        border-bottom: transparent;
 
-		th {
-			border-color: transparent;
-			background: transparent;
-			font-weight: normal;
-			text-shadow: none;
-			white-space: nowrap;
-			text-align: left;
-		}
+        &:first-child {
+          border-color: transparent;
+          background: transparent;
+        }
 
-		tfoot {
-			tr td {
-				background: @br-table-cell;
-				border-bottom: transparent;
-				&:first-child {
-					border-color: transparent;
-					background: transparent;
-				}
-				&:nth-child(2) .btn {
-					color: white;
-					padding: 0;
-					line-height: 26px;
-				}
-			}
-		}
+        &:nth-child(2) .btn {
+          color: white;
+          padding: 0;
+          line-height: 26px;
+        }
+      }
+    }
 
-		tbody.ui-sortable tr:hover:not(#decision-row-header) {
-			td:not(:first-child),
-				.decision-table-conclusion-column {
-				background-color: @br-table-row-hover;
-			}
-		}
+    tbody.ui-sortable tr:hover:not(#decision-row-header) {
+      td:not(:first-child),
+      .decision-table-conclusion-column {
+        background-color: @br-table-row-hover;
+      }
+    }
 
-		tbody.ui-sortable tr.selected {
-			&:not(#decision-row-header) td:not(:first-child),
-			&:not(#decision-row-header) .decision-table-conclusion-column {
-		    background-color: @br-table-row-hover;
-			}
-			&:hover {
-				&:not(#decision-row-header) td:not(:first-child),
-				&:not(#decision-row-header) .decision-table-conclusion-column {
-			    background-color: @br-table-row-selected-hover;
-				}
-			}
-		}
+    tbody.ui-sortable tr.selected {
+      &:not(#decision-row-header) td:not(:first-child),
+      &:not(#decision-row-header) .decision-table-conclusion-column {
+        background-color: @br-table-row-hover;
+      }
 
-		.btn {
-			border: none;
-			margin: 0;
-			border-radius: 0;
-			border: 1px solid transparent;
-			&:not(.btn-primary) {
-				background: @br-table-btn;
-			}
-			&:hover {
-				background: @br-table-btn-hover;
-			}
-			.fa {
-				color: @white;
-			}
-		}
+      &:hover {
+        &:not(#decision-row-header) td:not(:first-child),
+        &:not(#decision-row-header) .decision-table-conclusion-column {
+          background-color: @br-table-row-selected-hover;
+        }
+      }
+    }
 
-		.decision-table-row {
-			.table-split,
-			td:last-child:not(.decision-table-conclusion-column) {
-				background: @br-table-cell;
-			}
+    .btn {
+      margin: 0;
+      border-radius: 0;
+      border: 1px solid transparent;
 
-			&:hover .table-split,
-			&:hover td:last-child:not(.decision-table-conclusion-column),
-			&.selected .table-split,
-			&.selected td:last-child:not(.decision-table-conclusion-column) {
-				background: @br-table-dummy-highlight !important;
-			}
+      &:not(.btn-primary) {
+        background: @br-table-btn;
+      }
 
-		}
+      &:hover {
+        background: @br-table-btn-hover;
+      }
 
-		.decision-table-row:not(:hover) .decision-table-condition-column,
-		.decision-table-conclusion-column,
-		.decision-table-row:not(:hover) .checkbox-td {
-			background: @white;
-		}
+      .fa {
+        color: @white;
+      }
+    }
 
-		.decision-table-conditions-header,
-		.decision-table-conclusions-header {
-			background: @white;
-			width: calc(~"100% - 28px");
-		}
+    .decision-table-row {
+      .table-split,
+      td:last-child:not(.decision-table-conclusion-column) {
+        background: @br-table-cell;
+      }
 
-		div.decision-table-conditions-header select,
-		div.decision-table-conclusions-header select {
-			background: none;
-		}
+      &:hover .table-split,
+      &:hover td:last-child:not(.decision-table-conclusion-column),
+      &.selected .table-split,
+      &.selected td:last-child:not(.decision-table-conclusion-column) {
+        background: @br-table-dummy-highlight !important;
+      }
+    }
 
-		tr#decision-row-header {
-			.table-split + td {
-				background: @br-table-cell;
-			}
-			td:first-child {
-				border-color: transparent;
-			}
-		}
+    .decision-table-row:not(:hover) .decision-table-condition-column,
+    .decision-table-conclusion-column,
+    .decision-table-row:not(:hover) .checkbox-td {
+      background: @white;
+    }
 
-		:not(.select2-dropdown-open) .select2-container:not(.select2-dropdown-open) .select2-choice {
-			border-radius: 0;
-			border-color: transparent;
-			background: none;
-		}
+    .decision-table-conditions-header,
+    .decision-table-conclusions-header {
+      background: @white;
+      width: calc(~"100% - 28px");
+    }
 
-	}
+    div.decision-table-conditions-header select,
+    div.decision-table-conclusions-header select {
+      background: none;
+    }
+
+    tr#decision-row-header {
+      .table-split + td {
+        background: @br-table-cell;
+      }
+
+      td:first-child {
+        border-color: transparent;
+      }
+    }
+
+    :not(.select2-dropdown-open) .select2-container:not(.select2-dropdown-open) .select2-choice {
+      border-radius: 0;
+      border-color: transparent;
+      background: none;
+    }
+  }
 }

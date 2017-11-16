@@ -30,7 +30,7 @@ legend {
 
   // Small
   small {
-    font-size: @baseLineHeight * .75;
+    font-size: @baseLineHeight * 0.75;
     color: @grayLight;
   }
 }
@@ -43,6 +43,7 @@ select,
 textarea {
   #font > .shorthand(@baseFontSize,normal,@baseLineHeight); // Set size, weight, line-height here
 }
+
 input,
 button,
 select,
@@ -118,14 +119,14 @@ input[type="color"],
 .uneditable-input {
   background-color: @inputBackground;
   border: @inputBorder;
-  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-  transition: border linear .2s, box-shadow linear .2s;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  transition: border linear 0.2s, box-shadow linear 0.2s;
 
   // Focus state
   &:focus {
-    border-color: rgba(82,168,236,.8);
+    border-color: rgba(82, 168, 236, 0.8);
     outline: 0;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
   }
 }
 
@@ -175,7 +176,6 @@ input[type="checkbox"]:focus {
   .tab-focus();
 }
 
-
 // Uneditable inputs
 // -------------------------
 
@@ -185,7 +185,7 @@ input[type="checkbox"]:focus {
   color: @grayLight;
   background-color: darken(@inputBackground, 1%);
   border-color: @inputBorder;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,.025);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
   cursor: not-allowed;
 }
 
@@ -201,7 +201,6 @@ input[type="checkbox"]:focus {
   height: auto;
 }
 
-
 // Placeholder
 // -------------------------
 
@@ -210,7 +209,6 @@ input,
 textarea {
   .placeholder();
 }
-
 
 // CHECKBOXES & RADIOS
 // -------------------
@@ -222,7 +220,7 @@ textarea {
   padding-left: 20px;
 }
 .radio input[type="radio"],
-.checkbox input[type="checkbox"] {
+  .checkbox input[type="checkbox"] {
   margin-left: -20px;
 }
 
@@ -241,23 +239,22 @@ textarea {
   margin-bottom: 0;
   vertical-align: middle;
 }
+
 .radio.inline + .radio.inline,
 .checkbox.inline + .checkbox.inline {
   margin-left: 10px; // space out consecutive inline controls
 }
 
-
-
 // INPUT SIZES
 // -----------
 
 // General classes for quick sizes
-.input-mini       { width: 60px; }
-.input-small      { width: 90px; }
-.input-medium     { width: 150px; }
-.input-large      { width: 210px; }
-.input-xlarge     { width: 270px; }
-.input-xxlarge    { width: 530px; }
+.input-mini { width: 60px; }
+.input-small { width: 90px; }
+.input-medium { width: 150px; }
+.input-large { width: 210px; }
+.input-xlarge { width: 270px; }
+.input-xxlarge { width: 530px; }
 
 // Grid style input sizes
 input[class*="span"],
@@ -274,19 +271,17 @@ textarea[class*="span"],
 }
 // Ensure input-prepend/append never wraps
 .input-append input[class*="span"],
-.input-append .uneditable-input[class*="span"],
-.input-prepend input[class*="span"],
-.input-prepend .uneditable-input[class*="span"],
-.row-fluid input[class*="span"],
-.row-fluid select[class*="span"],
-.row-fluid textarea[class*="span"],
-.row-fluid .uneditable-input[class*="span"],
-.row-fluid .input-prepend [class*="span"],
-.row-fluid .input-append [class*="span"] {
+  .input-append .uneditable-input[class*="span"],
+  .input-prepend input[class*="span"],
+  .input-prepend .uneditable-input[class*="span"],
+  .row-fluid input[class*="span"],
+  .row-fluid select[class*="span"],
+  .row-fluid textarea[class*="span"],
+  .row-fluid .uneditable-input[class*="span"],
+  .row-fluid .input-prepend [class*="span"],
+  .row-fluid .input-append [class*="span"] {
   display: inline-block;
 }
-
-
 
 // GRID SIZING FOR INPUTS
 // ----------------------
@@ -298,18 +293,14 @@ textarea[class*="span"],
 
 // Float to collapse white-space for proper grid alignment
 .controls-row [class*="span"],
-// Redeclare the fluid grid collapse since we undo the float for inputs
-.row-fluid .controls-row [class*="span"] {
+  .row-fluid .controls-row [class*="span"] {
   float: left;
 }
 // Explicity set top padding on all checkboxes/radios, not just first-child
 .controls-row .checkbox[class*="span"],
-.controls-row .radio[class*="span"] {
+  .controls-row .radio[class*="span"] {
   padding-top: 5px;
 }
-
-
-
 
 // DISABLED STATE
 // --------------
@@ -331,9 +322,6 @@ input[type="radio"][readonly],
 input[type="checkbox"][readonly] {
   background-color: transparent;
 }
-
-
-
 
 // FORM FIELD FEEDBACK STATES
 // --------------------------
@@ -362,13 +350,12 @@ textarea:focus:invalid,
 select:focus:invalid {
   color: #b94a48;
   border-color: #ee5f5b;
+
   &:focus {
     border-color: darken(#ee5f5b, 10%);
     box-shadow: 0 0 6px lighten(#ee5f5b, 20%);
   }
 }
-
-
 
 // HELP TEXT
 // ---------
@@ -387,8 +374,6 @@ select:focus:invalid {
   vertical-align: middle;
   padding-left: 5px;
 }
-
-
 
 // INPUT GROUPS
 // ------------
@@ -420,6 +405,7 @@ select:focus:invalid {
       z-index: 2;
     }
   }
+
   .add-on {
     display: inline-block;
     width: auto;
@@ -434,12 +420,14 @@ select:focus:invalid {
     background-color: @grayLighter;
     border: 1px solid #ccc;
   }
+
   .add-on,
   .btn,
   .btn-group > .dropdown-toggle {
     vertical-align: top;
     border-radius: 0;
   }
+
   .active {
     background-color: lighten(@green, 30);
     border-color: @green;
@@ -451,6 +439,7 @@ select:focus:invalid {
   .btn {
     margin-right: -1px;
   }
+
   .add-on:first-child,
   .btn:first-child {
     // FYI, .btn:first-child accounts for a button group that is prepended
@@ -463,15 +452,18 @@ select:focus:invalid {
   select,
   .uneditable-input {
     border-radius: @inputBorderRadius 0 0 @inputBorderRadius;
+
     + .btn-group .btn:last-child {
       border-radius: 0 @inputBorderRadius @inputBorderRadius 0;
     }
   }
+
   .add-on,
   .btn,
   .btn-group {
     margin-left: -1px;
   }
+
   .add-on:last-child,
   .btn:last-child,
   .btn-group:last-child > .dropdown-toggle {
@@ -485,27 +477,28 @@ select:focus:invalid {
   select,
   .uneditable-input {
     border-radius: 0;
+
     + .btn-group .btn {
       border-radius: 0 @inputBorderRadius @inputBorderRadius 0;
     }
   }
+
   .add-on:first-child,
   .btn:first-child {
     margin-right: -1px;
     border-radius: @inputBorderRadius 0 0 @inputBorderRadius;
   }
+
   .add-on:last-child,
   .btn:last-child {
     margin-left: -1px;
     border-radius: 0 @inputBorderRadius @inputBorderRadius 0;
   }
+
   .btn-group:first-child {
     margin-left: 0;
   }
 }
-
-
-
 
 // SEARCH FORM
 // -----------
@@ -522,21 +515,22 @@ input.search-query {
 .form-search .input-prepend .search-query {
   border-radius: 0; // Override due to specificity
 }
+
 .form-search .input-append .search-query {
   border-radius: 14px 0 0 14px;
 }
+
 .form-search .input-append .btn {
   border-radius: 0 14px 14px 0;
 }
+
 .form-search .input-prepend .search-query {
   border-radius: 0 14px 14px 0;
 }
+
 .form-search .input-prepend .btn {
   border-radius: 14px 0 0 14px;
 }
-
-
-
 
 // HORIZONTAL & VERTICAL FORMS
 // ---------------------------
@@ -563,6 +557,7 @@ input.search-query {
     display: none;
   }
 }
+
 .form-search label,
 .form-inline label,
 .form-search .btn-group,
@@ -587,9 +582,9 @@ input.search-query {
 }
 // Remove float and margin, set to inline-block
 .form-search .radio input[type="radio"],
-.form-search .checkbox input[type="checkbox"],
-.form-inline .radio input[type="radio"],
-.form-inline .checkbox input[type="checkbox"] {
+  .form-search .checkbox input[type="checkbox"],
+  .form-inline .radio input[type="radio"],
+  .form-inline .checkbox input[type="checkbox"] {
   float: left;
   margin-right: 3px;
   margin-left: 0;
@@ -643,7 +638,7 @@ legend + .control-group {
 //In IE10+, there is a clear icon on inputs to allow user to clear the input field. We want to prevent that because
 //it messes up with our javascript code that listens to `keyup` events
 input::-ms-clear {
-    display: none;
+  display: none;
 }
 
 legend {
@@ -731,10 +726,25 @@ input[type="hidden"] {
 
 // Placeholder text gets special styles; can't be bundled together though for some reason
 //.placeholder(@grayLight);
-::-webkit-input-placeholder { color: @grayLight; font-weight: normal; }
-::-moz-placeholder { color: @grayLight; font-weight: normal; } /* firefox 19+ */
-:-ms-input-placeholder { color: @grayLight; font-weight: normal; } /* ie */
-input:-moz-placeholder { color: @grayLight; font-weight: normal; }
+::-webkit-input-placeholder {
+  color: @grayLight;
+  font-weight: normal;
+}
+
+::-moz-placeholder { /* firefox 19+ */
+  color: @grayLight;
+  font-weight: normal;
+}
+
+:-ms-input-placeholder { /* ie */
+  color: @grayLight;
+  font-weight: normal;
+}
+
+input:-moz-placeholder {
+  color: @grayLight;
+  font-weight: normal;
+}
 
 input[disabled],
 select[disabled],
@@ -777,21 +787,26 @@ input[type=radio] {
     width: 100%;
   }
 }
+
 .datetime {
   input[type="text"].datepicker {
     min-width: 0;
     width: 50%;
     width: calc(~"55% - 4px");
   }
+
   input[type="text"].ui-timepicker-input {
     min-width: 0;
     width: 40%;
     width: calc(~"45% - 4px");
   }
 }
+
 .datepicker {
   margin-top: 0;
-  table th:first-child, table td:first-child {
+
+  table th:first-child,
+  table td:first-child {
     padding-left: 5px;
   }
 }
@@ -803,27 +818,31 @@ input[type=radio] {
   width: 100%;
   margin-bottom: 0;
   font-size: inherit;
+
   .add-on {
     top: 3px;
     left: -28px;
     margin-left: 0;
     height: 16px;
-    padding: 3px 3px;
+    padding: 3px;
     position: relative;
     border: none;
     background: @white;
     line-height: 16px;
     border-radius: 0;
     z-index: 2;
+
     i {
       line-height: 16px;
     }
   }
+
   &.textarea,
   &.select,
   &.checkbox,
   &.radio {
     padding-left: 0;
+
     .add-on {
       background: transparent !important;
       border: none;
@@ -832,31 +851,37 @@ input[type=radio] {
   //not working so adding this
   input[type="checkbox"] + .add-on,
   &.checkbox .add-on,
-  &.radio .add-on{
+  &.radio .add-on {
     padding: 0;
     top: 0;
     left: 7px;
     display: inline;
   }
+
   &.widget {
     width: 100%;
+
     .add-on {
       position: absolute;
       top: 1px;
       right: 0;
     }
   }
-  input{
+
+  input {
     border-radius: @inputBorderRadius;
     padding: 4px 6px;
   }
+
   input:focus,
   select:focus,
   .uneditable-input:focus {
     z-index: inherit;
-    &+ .add-on {
+
+    & + .add-on {
       visibility: hidden;
-      &+ .add-on {
+
+      & + .add-on {
         visibility: hidden;
       }
     }
@@ -865,40 +890,50 @@ input[type=radio] {
   .ui-timepicker-input {
     margin-left: -22px;
   }
+
   .ui-timepicker-list {
     margin-left: -22px;
     font-size: @baseFontSize;
+
     li {
       color: @gray;
     }
   }
+
   &.error {
     font-size: @fontSizeLarge;
+
     .add-on {
       left: -23px;
       color: @errorText;
       z-index: 1;
+
       .fa {
         color: @errorText;
       }
     }
+
     .ui-timepicker-input,
     .ui-timepicker-list {
       margin-left: -44px;
     }
+
     textarea,
     input[type="password"],
     input[type="text"] {
       .placeholder(@errorText);
     }
   }
+
   &.date,
   &.datetime {
     &.error {
       .add-on {
         left: -28px;
+
         &.error-tooltip {
           left: -41px;
+
           & + .add-on {
             left: -50px;
           }
@@ -906,57 +941,68 @@ input[type=radio] {
       }
     }
   }
-
 }
 
 .radio input[type="radio"],
-.checkbox input[type="checkbox"] {
+  .checkbox input[type="checkbox"] {
   float: none;
 }
 
 .control-group {
   margin-bottom: 4px;
+
   &:last-of-type {
     margin-bottom: 0;
   }
+
   .btn-toolbar {
     margin: 0 0 0 8px;
     display: inline;
+
     .btn-group {
       float: left;
     }
   }
+
   .wide {
     text-align: left;
   }
+
   label {
     padding: 0 1em 0 0;
     cursor: default;
     display: inline-block;
     float: none;
+
     &.hide {
       display: none;
     }
+
     &.btn {
       padding: 4px 6px;
     }
+
     input {
       display: inline-block;
       float: none;
     }
   }
+
   &.email {
     padding-right: 127px;
     position: relative;
-    &> span,
-    &> del {
+
+    & > span,
+    & > del {
       color: @grayLight;
     }
+
     input[type="text"] {
       width: 100%;
       box-sizing: border-box;
       height: 28px;
     }
+
     .btn-toolbar {
       position: absolute;
       right: 0;
@@ -976,6 +1022,7 @@ input[type=radio] {
     min-height: 28px;
     box-sizing: border-box;
   }
+
   textarea.inherit-width { /* some modern browsers let you resize textarea, this ensures it doesn't go beyond parent container */
     max-width: 100%;
   }
@@ -984,51 +1031,66 @@ input[type=radio] {
 // for use by controls not in form-horizontal
 .controls {
   padding: 0;
+
   &.btn-fit {
     position: relative;
     box-sizing: border-box;
+
     &.controls-four {
       padding-right: 144px;
     }
+
     &.controls-three {
       padding-right: 108px;
     }
+
     &.controls-two {
       padding-right: 72px;
     }
+
     &.controls-one {
       padding-right: 36px;
     }
+
     .btn {
       position: absolute;
       top: 0;
       right: 0;
+
       &.fourth {
         right: 108px;
       }
+
       &.third {
         right: 72px;
       }
+
       &.second {
         right: 36px;
       }
+
       &.first {
         /* right:___; default  */
       }
     }
   }
+
   &.btn-group-fit {
     position: relative;
     box-sizing: border-box;
+
     &.controls-four {
       padding-right: 118px;
     }
+
     &.controls-three {
       padding-right: 90px;
     }
+
     &.controls-two {
       padding-right: 63px;
     }
+
     .btn-group {
       position: absolute;
       top: 0;
@@ -1075,7 +1137,6 @@ input[type="color"],
   margin-bottom: 0;
 }
 
-
 input.required {
   border: 1px solid @grayLight;
 }
@@ -1086,6 +1147,7 @@ input.required {
   display: inline-block;
   width: 40.425531911%;
 }
+
 .flex-relate-record {
   width: 57.446808505%;
   display: inline-block;
@@ -1100,6 +1162,7 @@ input.required {
     /* additive */
     margin-bottom: 14px;
   }
+
   span.year.active:hover,
   span.year.active,
   span.month.active:hover,

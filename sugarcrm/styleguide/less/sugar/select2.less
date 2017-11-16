@@ -3,21 +3,26 @@
 
 .select2-search {
   padding: 4px;
-  &:after {
+
+  &::after {
     .fontawesome();
+
     content: "\f002";
     position: absolute;
     top: 10px;
     right: 9px;
     z-index: 1;
   }
+
   input[type="text"] {
     border: @inputBorder !important;
     position: relative;
+
     &:focus {
       box-shadow: none;
       border: 1px solid @linkColor !important;
     }
+
     &.select2-active {
       z-index: 2;
     }
@@ -26,46 +31,56 @@
 
 .select2-container {
   .select2-single-with-drop div b {
-    background-position: 0 0;
     background: none;
+    background-position: 0 0;
   }
+
   &.select2-dropdown-open {
     z-index: @zindexDropdown;
     filter: none;
+
     .select2-choice,
     .select2-choices {
       border-radius: @baseBorderRadius @baseBorderRadius 0 0;
       filter: none;
     }
   }
+
   &.inherit-width {
     width: 100%;
   }
+
   &.select2-dropdown-open.select2-drop-above {
     .select2-choices {
       border-radius: 0 0 @baseBorderRadius @baseBorderRadius;
     }
+
     .select2-choice,
     .select2-choices {
       filter: none;
     }
   }
+
   .select2-choices {
     padding: 2px 4px 2px 2px;
     min-height: 22px;
     border: @inputBorder;
     background-image: none;
     border-radius: @baseBorderRadius;
+
     &:focus {
       border: 1px solid @linkColor !important;
     }
   }
+
   .select2-search-field {
     height: 20px;
+
     input {
       padding: 0 6px;
     }
   }
+
   .select2-choice-type {
     margin: 0 2px 0 0;
   }
@@ -83,26 +98,32 @@
     color: @white;
     padding: 2px 4px 2px 6px;
     white-space: nowrap;
+
     &.select2-search-choice-focus {
       outline: 0;
       background: @grayDark;
     }
+
     &.drag-drop-selected {
       outline: 0;
       background: @blue;
     }
+
     &.select2-choice-danger {
       background-color: @btnDangerBackground;
-      span:before {
+
+      span::before {
         content: "\f06a";
         font-family: 'FontAwesome';
         color: @white;
         padding-right: 3px;
       }
     }
+
     &.select2-choice-danger {
       background-color: @btnDangerBackground;
-      span:before {
+
+      span::before {
         content: "\f06a";
         font-family: 'FontAwesome';
         color: @white;
@@ -115,6 +136,7 @@
     div {
       padding: 2px 0;
     }
+
     span {
       border-radius: 10px 0 0 10px;
       background: darken(@grayLighter, 10%);
@@ -122,19 +144,25 @@
       padding: 2px 4px 2px 6px;
       margin-right: 2px;
     }
-    a, span:last-child {
+
+    a,
+    span:last-child {
       border-radius: 0 10px 10px 0;
       padding: 2px 6px 2px 4px;
     }
+
     span:last-child {
       background: @grayLighter;
     }
+
     a {
-      background: #E5F4FB;
+      background: #e5f4fb;
     }
+
     a:hover {
       text-decoration: none;
     }
+
     a.select2-search-choice-close {
       display: none;
     }
@@ -147,6 +175,7 @@
         line-height: 13px;
         display: inline;
       }
+
       a.select2-search-choice-close {
         font-family: FontAwesome;
         font-size: 12px;
@@ -159,32 +188,39 @@
         display: inline;
         vertical-align: middle;
       }
+
       a,
       a.select2-search-choice-close:hover {
         color: @white;
       }
+
       a.select2-search-choice-close::before {
         content: "\f057";
       }
+
       &.select2-locked {
         padding: 1px 4px !important; //overide bootstrap
         background: @gray;
         border: 1px solid @gray;
+
         div {
           color: @white;
         }
       }
+
       &.more {
         background-color: @blue;
         cursor: pointer;
       }
     }
+
     &.attachments {
       &:not(.select2-container-active) {
         .select2-choices {
           border: 1px solid transparent;
         }
       }
+
       .select2-search-choice {
         border-radius: 3px;
         padding: 4px 24px 4px 6px;
@@ -194,35 +230,43 @@
         margin: 1px 4px 1px 0;
         position: relative;
         line-height: 1px;
+
         &.select2-search-choice-focus {
           background-color: darken(@grayLighter, 20%);
         }
+
         div {
           max-width: 200px;
           font-size: 13px;
           line-height: 20px;
+
           .ellipsis-value {
             display: inline-block !important;
             float: left;
             max-width: 136px;
           }
+
           .ellipsis-extra {
             padding-left: 3px;
           }
         }
+
         a.select2-search-choice-close {
           position: absolute;
           top: 8px;
           right: 6px;
           left: auto;
           color: inherit;
+
           &::before {
             content: "\f00d";
           }
+
           &:hover {
             color: @grayDarker;
           }
         }
+
         .select2-search-field input {
           margin: 0;
           min-height: 19px;
@@ -232,15 +276,17 @@
     //forecasts
     &.search-filter .select2-search-choice {
       height: 24px;
-      margin: 0 0 4px 0;
+      margin: 0 0 4px;
       background: none;
       padding: 0;
       position: relative;
+
       a.select2-search-choice-close {
         position: absolute;
         top: 1px;
         right: 4px;
         left: auto;
+
         &::before {
           line-height: 14px;
           height: 14px;
@@ -250,16 +296,19 @@
           font-size: 14px;
         }
       }
+
       div {
         background: none;
-        padding: 2px 0 2px 0;
+        padding: 2px 0;
       }
     }
+
     &.select2-container-disabled .select2-choices {
       .select2-search-choice {
         div {
           padding-right: 6px;
         }
+
         &.select2-locked div {
           padding-right: 0;
         }
@@ -274,12 +323,14 @@
       }
     }
   }
+
   .select2-select-legend {
     .fa-plus {
       margin-top: 3px;
       line-height: 4px;
     }
   }
+
   .select2-choice {
     filter: none;
     line-height: 26px;
@@ -288,9 +339,11 @@
     //TODO: added by UIUX-1795
     padding-left: 6px;
     box-shadow: none;
+
     &:focus {
       border-color: @linkColor;
     }
+
     .select2-arrow {
       border: none;
       background: none;
@@ -300,40 +353,50 @@
       top: 0;
       padding-left: 4px;
       box-sizing: border-box;
+
       b {
         .fontawesome();
+
         position: relative;
         top: 0;
-        &:before{
+
+        &::before {
           content: "\f0d7";
         }
       }
     }
+
     abbr {
       .fontawesome();
+
       position: absolute;
       top: 6px;
       right: 18px;
       font-size: 12px;
       display: none;
-      &:before{
+
+      &::before {
         content: "\f00D";
       }
     }
   }
+
   &.select2-container-active {
     &.required .select2-choice {
       border-color: @linkColor;
     }
+
     .select2-choice {
       border-color: @linkColor;
       outline: 0;
     }
   }
+
   &.required .select2-choice {
     //TODO: find out why this was set to light gray
     //border-color: darken(@grayLighter, 10%);
-    border-color: @grayLight;;
+    border-color: @grayLight;
+
     &:focus {
       border-color: @linkColor !important;
     }
@@ -354,19 +417,23 @@
   border-color: @inputBorderColor;
   z-index: @zindexSelect2menu;
   border-radius: 0 0 @baseBorderRadius @baseBorderRadius;
+
   &.select2-drop-active {
     min-width: 50px;
     border-color: @linkColor;
     outline: 0;
+
     &.select2-narrow {
       border-top: 1px solid @linkColor;
       width: auto !important;
       max-width: 200px;
+
       &.select2-parent {
         margin-left: -84px;
       }
     }
   }
+
   .select2-results:last-child {
     border-radius: 0 0 @baseBorderRadius @baseBorderRadius;
   }
@@ -375,6 +442,7 @@
 .select2-menu-only.select2-drop {
   border-radius: @baseBorderRadius;
   border-top: 1px solid @linkColor;
+
   .select2-search-hidden + .select2-results {
     border-radius: @baseBorderRadius;
   }
@@ -386,13 +454,13 @@
 
 .select2-container-multi .select2-choices {
   .select2-search-field input {
-    margin:0;
     padding: 0 6px;
     box-sizing: border-box;
     position: absolute;
     height: 19px;
     margin: 2px 0;
   }
+
   .select2-search-choice {
     filter: none;
     min-height: 15px;
@@ -401,9 +469,11 @@
 
 .select2-drop-bootstrap {
   border: none;
+
   .select2-results {
     margin-top: 8px;
     border: @inputBorder;
+
     .result-selected {
       display: block;
       font-weight: bold;
@@ -415,15 +485,18 @@
   margin: 0;
   padding: 0;
   max-height: 235px;
+
   .select2-result-label {
     padding: 8px 10px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+
     .label-module-mini {
       margin: 1px 4px 0 0;
       float: left;
     }
+
     .select2-result-status {
       float: right;
       max-width: 40%;
@@ -431,14 +504,17 @@
       text-overflow: ellipsis;
     }
   }
+
   li div {
     line-height: 18px;
   }
+
   li:last-child {
     border-bottom: none;
     border-radius: 0 0 @baseBorderRadius @baseBorderRadius;
   }
 }
+
 .select2-no-results,
 .select2-searching {
   padding: 0 0 0 8px;
@@ -452,6 +528,7 @@
       border-top: none;
       border-radius: @baseBorderRadius @baseBorderRadius 0 0;
     }
+
     li:last-child {
       border-bottom: none;
       border-radius: 0;
@@ -466,13 +543,16 @@
   height: 20px;
   margin-right: 10px;
 }
+
 .chart-results .select2-results {
   max-height: 290px;
 }
+
 .select2-results svg {
   display: inline;
   vertical-align: middle;
 }
+
 .select2-container svg {
   display: block;
   padding: 3px;
@@ -496,11 +576,13 @@
     margin-right: 20px;
   }
 }
+
 .select2-container.select2-allowclear .select2-choice {
   .select2-chosen {
     margin-right: 36px;
   }
 }
+
 .currency .select2-container .select2-choice {
   .select2-chosen {
     min-width: 8px;
@@ -512,25 +594,30 @@
     .select2-choice > .select2-chosen {
       margin-right: 38px;
     }
+
     &.select2-allowclear .select2-choice {
       .select2-chosen {
         margin-right: 55px;
       }
+
       abbr {
         right: 36px;
       }
     }
   }
+
   .currency .select2-container {
     .select2-choice .select2-chosen {
       margin-right: 20px;
       min-width: 8px;
     }
   }
+
   .select2-container + .input-append {
     position: static;
     font-size: inherit;
   }
+
   .select2-container + .input-append .add-on.error-tooltip,
   input.select2 + .add-on.error-tooltip {
     position: absolute;
@@ -539,6 +626,7 @@
     left: auto;
     background: transparent;
   }
+
   .input-append .add-on.select2 {
     left: -38px;
   }
@@ -548,16 +636,19 @@
 // a select2 field at end of input
 .select2-addon {
   min-height: 28px;
+
   .input-append {
     width: 50%;
     width: calc(~"100% - 100px");
     float: left;
+
     input[type="text"] {
       width: 95%;
       width: calc(~"100% - 14px");
       border-radius: 0 @baseBorderRadius @baseBorderRadius 0;
     }
   }
+
   > input[type="text"] {
     width: 50%;
     width: calc(~"100% - 100px") !important;
@@ -566,15 +657,18 @@
     box-sizing: border-box;
     height: 28px;
   }
+
   .edit {
     float: left;
     width: 100px;
   }
+
   .select2-container .select2-choice {
     border-radius: @baseBorderRadius 0 0 @baseBorderRadius;
     border-right: none;
   }
 }
+
 .error .select2-addon .select2-choice > div {
   margin-right: 0;
 }
@@ -582,6 +676,7 @@
 .tags {
   margin: 0;
   .clearfix();
+
   .tag-wrapper {
     float: left;
     max-width: 100%;
@@ -590,6 +685,7 @@
     background: @gray;
     box-sizing: border-box;
     border-radius: 9px;
+
     .tag-name {
       font-size: @fontSizeSmall;
       line-height: 12px;
@@ -599,12 +695,11 @@
   }
 }
 
-
 .square-pill {
   position: relative;
   display: inline-block;
   max-width: 100%;
-  margin: 0 0 3px 0;
+  margin: 0 0 3px;
   padding: 3px 6px;
   box-sizing: border-box;
   color: @gray;
@@ -615,31 +710,38 @@
   border: 1px solid darken(@grayLighter, 10%);
   border-radius: 3px;
   cursor: default;
-  div, a {
+
+  div,
+  a {
     max-width: 100%;
     color: inherit;
     font-size: 13px;
     font-weight: normal;
     line-height: 20px;
   }
+
   a:hover {
     color: @grayDarker;
     text-decoration: none;
   }
+
   span.fa {
     position: absolute;
     top: 7px;
     right: 7px;
     color: inherit;
+
     &:hover {
       color: @grayDarker;
     }
   }
+
   .ellipsis-value {
     display: inline-block !important;
     float: left;
     max-width: 136px;
   }
+
   .ellipsis-extra {
     padding-left: 3px;
   }
@@ -650,9 +752,11 @@
   .select2-choices {
     max-height: 60px;
     overflow-y: auto;
+
     .select2-search-choice {
       padding-right: 15px;
       width: 70px;
+
       .select2-search-choice-close {
         position: absolute;
         right: 2px;
@@ -668,6 +772,7 @@
   background: transparent;
   border-radius: 11px;
   z-index: 2;
+
   span {
     font-size: 11px;
     font-weight: bold;
@@ -680,11 +785,13 @@
     white-space: nowrap;
     outline: 0;
     display: none;
+
     &:nth-child(1) {
       display: block;
       position: relative;
       z-index: 3;
     }
+
     &:nth-child(2) {
       top: 2px;
       background: #aaa;
@@ -692,6 +799,7 @@
       right: -2px;
       z-index: 2;
     }
+
     &:nth-child(3) {
       top: 4px;
       background: #ccc;
@@ -699,11 +807,13 @@
       right: -4px;
       z-index: 1;
     }
-    &:nth-child(2), &:nth-child(3) {
+
+    &:nth-child(2),
+    &:nth-child(3) {
       display: block;
       position: absolute;
       overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
       color: transparent;
     }
   }
@@ -716,7 +826,6 @@
 /* NEW SKIN START */
 
 .select2-container {
-
   /* override */
   .select2-choice.select2-default {
     color: @placeholderText !important;
@@ -735,6 +844,7 @@
       background-color: @select2BackgroundHover;
       border-color: @select2BorderHover;
     }
+
     .select2-arrow {
       b {
         /* additive */
@@ -750,19 +860,22 @@
     /* override with variables */
     background: @select2LinkBackgroundHover;
     color: @select2LinkColorHover;
+
     .fa {
       /* additive */
       color: inherit;
     }
   }
+
   li div:active {
     background: @select2LinkBackgroundActive;
     color: @select2LinkColorHover;
   }
 }
 
-.select2-search:after {
+.select2-search::after {
   /* override */
   color: initial;
 }
+
 /* NEW SKIN END */

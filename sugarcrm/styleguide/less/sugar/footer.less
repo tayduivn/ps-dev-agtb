@@ -13,6 +13,7 @@ footer {
   height: 44px;
   position: fixed;
   z-index: @zindexFixedFooter;
+
   .table-row {
     .table-cell {
       &:first-child {
@@ -20,14 +21,17 @@ footer {
         height: 44px;
         vertical-align: middle;
       }
+
       &:last-child {
         .btn-toolbar {
           white-space: nowrap;
         }
       }
+
       button {
         &:focus {
           .tab-focus-light();
+
           &:active {
             outline: none;
           }
@@ -35,30 +39,36 @@ footer {
       }
     }
   }
+
   p {
     margin-bottom: 0;
     color: @gray;
   }
+
   .btn-toolbar.pull-right {
     margin: 8px 8px 0 0;
     height: 20px;
     padding-left: 0;
   }
+
   .btn-toolbar.pull-left {
     margin: 8px 0 0 8px;
     height: 20px;
   }
+
   .logo {
     margin-left: 10px;
-    padding: 0px;
+    padding: 0;
     height: auto;
+
     img {
       display: inline-block;
       margin-top: 0;
-      width: auto;      
-      max-height: 18px;      
+      width: auto;
+      max-height: 18px;
     }
   }
+
   .copyright {
     color: @grayLight;
     text-decoration: none;
@@ -68,15 +78,19 @@ footer {
     height: 18px;
     line-height: 18px;
     vertical-align: text-top;
+
     a {
       color: @grayLight;
     }
   }
-  .dropdown-menu.help  {
+
+  .dropdown-menu.help {
     right: 72px;
+
     li {
       .control-group {
         padding: 10px 20px;
+
         label.control-label {
           font-weight: bold;
           position: relative;
@@ -84,8 +98,7 @@ footer {
           color: @gray;
         }
       }
-      .control-group:first-child{
-      }
+
       .controls {
         display: inline-block;
       }

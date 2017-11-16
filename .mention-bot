@@ -213,7 +213,10 @@
             "sugarcrm/**/include/javascript/sugar7/utils.js",
             "sugarcrm/**/include/javascript/sugar7/utils-filters.js",
             "sugarcrm/**/include/javascript/sugar7/utils-search.js",
-            "sugarcrm/**/include/javascript/sugar7/tooltip.js"
+            "sugarcrm/**/include/javascript/sugar7/tooltip.js",
+
+            "sugarcrm/styleguide/less/!(lib)/**/*.less",
+            "sugarcrm/styleguide/less/fixed_variables.less"
         ]
     },
     {

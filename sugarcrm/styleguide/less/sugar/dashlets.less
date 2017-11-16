@@ -3,48 +3,58 @@
 
 .dashlet-container {
   padding: 5px;
+
   .empty {
     padding: 16px 0;
-    border: 3px dashed lighten(@grayLight,8%);
+    border: 3px dashed lighten(@grayLight, 8%);
     background-color: @white;
     cursor: pointer;
+
     p {
       font-size: @fontSizeMedium;
       font-weight: 500;
       text-align: center;
-      color: lighten(@grayLight,8%);
+      color: lighten(@grayLight, 8%);
+
       &.header {
         line-height: 40px;
       }
     }
+
     .add-dashlet {
-      color: lighten(@grayLight,8%);
+      color: lighten(@grayLight, 8%);
       text-align: center;
+
       small {
         font-size: @baseFontSize;
       }
+
       strong {
         font-size: 60px;
         font-weight: 900;
+
         i {
-          color: lighten(@grayLight,8%);
+          color: lighten(@grayLight, 8%);
           display: inline-block;
           width: auto;
         }
       }
     }
   }
+
   &.active {
     .dashlet.empty {
-      background: lighten(@grayLight,8%);
+      background: lighten(@grayLight, 8%);
       border-color: @white;
+
       p,
       strong i {
         color: @white;
       }
     }
+
     .dashlet:not(.empty) {
-      &:after {
+      &::after {
         content: "";
         position: absolute;
         left: 0;
@@ -55,6 +65,7 @@
         opacity: 0.5;
         z-index: 0;
       }
+
       .swappable-dashlet {
         display: block;
         position: absolute;
@@ -76,15 +87,18 @@
   overflow: hidden;
   width: 100%;
   border-radius: 0 0 @baseBorderRadius @baseBorderRadius;
+
   & > div {
     overflow-x: hidden;
     overflow-y: auto;
   }
+
   .rss-feed {
     ul {
       list-style-type: none;
-      margin: 0 0 9px 0;
+      margin: 0 0 9px;
     }
+
     h4 {
       font-size: 12px;
     }
@@ -102,14 +116,17 @@
   &:not(.collapsed):not(.empty) {
     min-height: 140px;
   }
+
   &.collapsed {
     .dashlet-header {
       border-radius: 4px;
     }
+
     h4 {
       border-radius: @baseBorderRadius 0 0 @baseBorderRadius;
     }
   }
+
   h4,
   .dashlet-options {
     font-size: @baseFontSize;
@@ -118,14 +135,17 @@
     background: @grayLighter;
     border-bottom: @borderWidget;
     margin: 0;
+
     a {
       color: @gray;
     }
   }
+
   .dashlet-header {
     border-radius: @baseBorderRadius @baseBorderRadius 0 0;
     background: @grayLighter;
   }
+
   h4 {
     font-size: @fontSizeLarge;
     padding: 7px 80px 8px 10px;
@@ -135,15 +155,18 @@
 
   .dashlet-options {
     padding: 5px 8px;
+
     &.control-group {
       .row-fluid {
         [class*="span"] {
           max-width: 280px;
         }
       }
+
       [class*="span"]:first-of-type:last-of-type {
         min-width: 108px;
       }
+
       .span6.hide + .span6 {
         min-width: 108px;
       }
@@ -152,14 +175,17 @@
 
   &.out {
     padding: 0;
+
     h4 {
       border-radius: @baseBorderRadius;
       border-bottom: 0 !important;
     }
+
     .dashlet-content,
     .dashlet-options {
       display: none;
     }
+
     i.fa-chevron-down::before {
       content: "\f077";
     }
@@ -177,6 +203,7 @@
   .btn.loading {
     .center-block();
     .clearfix();
+
     width: 200px;
     float: none;
     margin-bottom: 20px;
@@ -193,6 +220,7 @@
 
   .btn-toolbar .btn {
     margin-left: 0;
+
     span {
       display: inline-block;
     }
@@ -200,20 +228,25 @@
 
   .unstyled {
     margin: 5px;
+
     li {
       margin: 10px;
+
       .label,
       .filetype-thumbnail {
         margin: 3px 12px 12px 0;
       }
+
       .label.pull-right {
         margin-right: 0;
       }
+
       .progress,
       .progress .bar {
         height: 12px;
       }
     }
+
     li:last-child {
       border-bottom: none;
     }
@@ -228,6 +261,7 @@
   .listed {
     margin: 0;
     padding: 0;
+
     li {
       list-style: none;
       position: relative;
@@ -236,69 +270,86 @@
       //from .unstyled
       //margin: 10px;
       padding: 14px;
+
       &:last-child {
         border-bottom: none;
       }
+
       .planned-activities {
         .label {
           margin-bottom: 0;
         }
+
         .btn {
           margin-left: 0;
         }
       }
+
       .fa-stack,
       img {
         margin: 0 12px 0 0;
         text-align: center;
       }
+
       .avatar {
         text-align: center;
         margin-bottom: 12px;
       }
+
       .pull-left.avatar {
         font-size: 0;
         line-height: 0;
         margin-left: -44px;
       }
+
       p > .pull-left.label-module {
         margin-left: -44px;
       }
+
       .pull-left.fa-stack {
         margin-left: -55px;
+
         > i {
           left: 5px;
         }
       }
+
       .fa-stack {
         font-size: 21px;
         width: 2em;
+
         .fa-user + .fa-question-circle {
           top: 9px;
           color: @white;
         }
       }
+
       .label,
       .filetype-thumbnail {
         margin: 3px 12px 12px 0;
       }
+
       p {
         padding-left: 44px;
         margin-bottom: 4px;
         font-size: @baseFontSize + 2px;
         line-height: 16px;
       }
+
       .details {
         padding-left: 44px;
         line-height: 14px;
       }
+
       .progress,
       .progress .bar {
         height: 12px;
       }
     }
+
     .dropdown-menu li {
-      padding:0;
+      padding: 0;
+
       a:hover {
         color: @dropdownLinkColorHover;
       }
@@ -309,15 +360,18 @@
   .jstree-sugar ul.list {
     border-top: none;
     border-bottom: @borderWidgetLight;
+
     li {
       padding: 0;
-      &> a {
+
+      & > a {
         padding: 12px 0;
         height: auto;
       }
     }
+
     li.jstree-leaf {
-      &> a {
+      & > a {
         padding-left: 12px;
       }
     }
@@ -329,22 +383,25 @@
     border: none;
     border-bottom: @borderWidgetLight;
   }
+
   .accordion-inner {
     div.dnb-subtitle {
       margin: 10px 0;
       line-height: 15px;
       overflow: hidden;
-      padding: 0px;
+      padding: 0;
       font-weight: bold;
       color: @gray;
     }
+
     h4 {
       font-weight: bold;
       margin: 0 0 0 -10px;
-      color: #759EEF;
+      color: #759eef;
     }
+
     .dnb-inner-nav {
-      padding: 0px;
+      padding: 0;
     }
   }
 
@@ -355,6 +412,7 @@
   .webpage {
     display: block;
     line-height: 0;
+
     iframe {
       border: 0;
       width: 100%;
@@ -364,9 +422,11 @@
 
   .dataTable tr:last-child {
     border-bottom-width: 0;
+
     td:first-child {
       border-bottom-left-radius: @baseBorderRadius;
     }
+
     td:last-child {
       border-bottom-right-radius: @baseBorderRadius;
     }
@@ -375,8 +435,10 @@
   .actions {
     top: 3px;
     position: relative;
+
     &.btn-group.dashlet-toolbar {
       top: 0;
+
       &.btn-group + .btn-group {
         margin-left: 0;
       }
@@ -391,6 +453,7 @@
     bottom: 45px;
     z-index: 1000;
     margin: 0 !important;
+
     .dashlet-content {
       position: absolute;
       top: 60px;
@@ -399,40 +462,51 @@
       bottom: 0;
       padding: 20px;
     }
+
     svg {
       max-height: none;
     }
+
     svg text {
       font-size: 14px;
     }
+
     .sucrose .sc-x.sc-axis text,
     .nvd3 .nv-x.nv-axis text {
       font-size: 12px;
     }
+
     a[data-toggle="dashlet"] {
       display: none;
     }
+
     h4.headerpane {
       font-size: 24px;
       padding: 20px 0 0 20px;
       box-sizing: border-box;
     }
+
     .btn-toolbar {
       margin: 16px 20px 0 8px;
     }
+
     &.with-options .dashlet-content {
       top: 108px;
     }
+
     .dashlet-options {
       padding: 10px 20px;
     }
   }
+
   .help-dashlet-content {
     padding: 10px;
   }
+
   .help-body {
-    padding: 10px 0px;
+    padding: 10px 0;
   }
+
   .help-more {
     margin-top: 20px;
   }
@@ -441,13 +515,16 @@
 .news-article {
   padding: 10px;
   border-bottom: 1px solid @grayLighter;
+
   &:first-child {
     margin-top: 0;
   }
+
   h5 {
     padding: 0;
     margin: 0;
   }
+
   .avatar {
     float: left;
     width: auto;
@@ -462,45 +539,51 @@
       h5 {
         font-weight: normal;
         font-size: @fontSizeSmall;
-        &> a:first-child {
+
+        & > a:first-child {
           float: left;
           padding: 0 6px 0 0;
         }
       }
+
       .follow-button {
         padding-top: 8px;
       }
+
       a {
         color: darken(@grayLight, 10%);
         font-weight: 200;
       }
     }
+
     .body {
-      margin: 0 0 6px 0;
+      margin: 0 0 6px;
     }
+
     .details {
       a {
         color: darken(@grayLight, 10%);
         margin-right: 4px;
+
         &:hover i {
           text-decoration: none;
         }
       }
     }
+
     .footer {
       display: none;
-      timestamp {
-        font-size: @fontSizeMini;
-        display: inline-block;
-      }
-      timestamp,
+
       a {
         color: darken(@grayLight, 10%);
-        &:hover, &:active {
+
+        &:hover,
+        &:active {
           color: darken(@grayLight, 20%) !important;
           text-decoration: none;
         }
       }
+
       .btn-mini {
         margin-left: 0;
         padding-right: 0;
@@ -508,23 +591,28 @@
       }
     }
   }
-  &+.block-footer {
+
+  & + .block-footer {
     border-radius: 0 0 4px 4px;
     background-color: @white;
     border-top: 1px solid @grayLighter;
+
     .fa-large {
       vertical-align: middle;
       margin-left: 2px;
     }
   }
+
   aside {
     margin: 0;
     padding-top: 6px;
     height: 30px;
+
     input {
       width: auto;
       margin-left: 10px;
     }
+
     iframe {
       padding: 2px 0 0 2px;
     }
@@ -534,6 +622,7 @@
 .side.sidebar-content {
   .thumbnail.dashlet.ui-draggable-dragging:not(.collapsed) {
     max-height: 440px !important;
+
     .block-footer {
       font-weight: 500;
       text-align: left;
@@ -563,8 +652,10 @@
   .dashlet-options {
     /* override */
     color: @black;
+
     /* override */
     background: @headerBackground;
+
     a {
       /* override */
       color: @black;
@@ -586,8 +677,10 @@
     &.pull-right {
       margin: 3px;
     }
+
     .btn {
       margin-left: 0;
+
       span {
         display: inline-block;
       }

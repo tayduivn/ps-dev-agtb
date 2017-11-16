@@ -8,6 +8,7 @@
   //this is the container
   .controls {
     float: left;
+
     .control-label {
       margin-bottom: 0;
     }
@@ -46,7 +47,7 @@
     font-size: @fontSizeLarge;
     line-height: 28px;
     display: inline-block;
-    margin-right: 0px;
+    margin-right: 0;
   }
 
   hr {
@@ -58,6 +59,7 @@
   table {
     margin: 0;
   }
+
   .btn {
     position: absolute;
     right: 10px;
@@ -73,22 +75,25 @@
   .datapoints {
     float: right;
     text-align: right;
-      div.pull-right .info:last-child .datapoint {
-          border-right: 0;
-          padding-right: 0;
-          padding-left: 10px;
-      }
-      div.pull-right .info:nth-last-of-type(2) .datapoint {
-          padding-left: 10px;
-      }
+
+    div.pull-right .info:last-child .datapoint {
+      border-right: 0;
+      padding-right: 0;
+      padding-left: 10px;
+    }
+
+    div.pull-right .info:nth-last-of-type(2) .datapoint {
+      padding-left: 10px;
+    }
   }
+
   .datapoint {
-      float: left;
-      padding-top: 35px;
-      padding-bottom: 5px;
-      padding-right: 10px;
-      min-width: 120px;
-      border-right: @borderWidgetLight;
+    float: left;
+    padding-top: 35px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    min-width: 120px;
+    border-right: @borderWidgetLight;
   }
 
   .datapoint1 {
@@ -97,31 +102,38 @@
     min-width: 120px;
     padding-right: 20px;
   }
+
   .datapoint2 {
     float: right;
     margin-top: 10px;
     min-width: 120px;
   }
+
   .log {
     position: absolute;
     overflow: hidden;
     top: 57px;
     color: lighten(@gray, 20%) !important;
+
     .datapoint1,
     .datapoint2 {
       position: absolute;
       top: 0;
       width: 120px;
     }
+
     .datapoint1 {
       right: 150px;
     }
+
     .datapoint2 {
       right: 20px;
     }
+
     .title {
       padding: 0 10px 10px 0;
     }
+
     .toggle {
       padding-top: 3px;
     }
@@ -132,6 +144,7 @@
   .log .datapoint1 {
     right: -20px;
   }
+
   .datapoint2,
   .log .datapoint2 {
     right: 110px;
@@ -148,53 +161,59 @@
     padding-left: 13px;
     margin-right: 10px;
   }
+
   .row-fluid {
     margin: 0;
     padding: 0;
   }
+
   .fa.committed_arrow {
     line-height: 28px;
     float: left;
     margin-right: 8px;
+  }
 
-  }
   .span4 {
-      margin-left: 2% !important;
-      width: 29.914893614%;
-      padding: 10px 10px 0 0;
-      &:before {
-          width: 6px;
-          background-color: @blue;
-          height: 80px;
-          left: 5px;
-          content: "";
-          top: 3px;
-          position: absolute;
-      }
+    margin-left: 2% !important;
+    width: 29.914893614%;
+    padding: 10px 10px 0 0;
+
+    &::before {
+      width: 6px;
+      background-color: @blue;
+      height: 80px;
+      left: 5px;
+      content: "";
+      top: 3px;
+      position: absolute;
+    }
   }
-  .span8{
-      width: 63.957447%;
-      margin-right: 2%;
+
+  .span8 {
+    width: 63.957447%;
+    margin-right: 2%;
   }
+
   .span12 {
-      width: 96%;
-      margin-right: 2%;
+    width: 96%;
+    margin-right: 2%;
   }
 
   .hr {
-      width: 100%;
-      height: 1px;
-      border-bottom: @borderWidgetLight;
-      float: left;
+    width: 100%;
+    height: 1px;
+    border-bottom: @borderWidgetLight;
+    float: left;
   }
 }
 
 .topline,
 .info .results.extend {
-  .fa-arrow-down:before {
+  .fa-arrow-down::before {
     color: @red;
   }
-  .fa-arrow-up:before {
+
+  .fa-arrow-up::before {
     color: @green;
   }
 }
@@ -210,78 +229,88 @@
 }
 
 .info {
-    .results.extend {
-        max-height: 118px;
-        overflow-y: scroll;
-        background-color: darken(@gray, 10%);
-        background-color: darken(@gray, 15%) e("\9");
-        background-image: none;
-        color: @grayLighter !important;
-        text-shadow: 0 1px 1px rgba(0,0,0,.75);
-        outline: 0;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
-        position: relative;
-        margin: 0 0 0 0;
-        padding: 0;
-    }
-    .relativetime {
-      position: relative;
-      top: -2px;
-    }
-    .last-commit {
-        .datapoint {
-            float: left;
-            padding: 8px 7px 8px 0px;
-            min-width: 120px;
-            border-right: @borderWidgetLight;
-            text-align: right;
-        }
-        .datapoint:last-child {
-            border-right: 0;
-            padding-right: 0;
-        }
-        .span8 {
-            width: 63.957447%;
-            margin-right: 2%;
-            margin-left: 2%;
-            float: right;
-        }
-        .span12 {
-            width: 96%;
-            margin-left: 2%;
-            margin-right: 2%;
-            &.commit-date {
-                min-height: inherit;
-                padding: 8px 18px;
-                margin-left: 0px;
-            }
-        }
-        .hr {
-            width: 100%;
-            height: 1px;
-            border-top: @borderWidgetLight;
-            float: left;
-        }
+  .results.extend {
+    max-height: 118px;
+    overflow-y: scroll;
+    background-color: darken(@gray, 10%);
+    background-color: darken(@gray, 15%) e("\9");
+    background-image: none;
+    color: @grayLighter !important;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+    outline: 0;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+    position: relative;
+    margin: 0;
+    padding: 0;
+  }
+
+  .relativetime {
+    position: relative;
+    top: -2px;
+  }
+
+  .last-commit {
+    .datapoint {
+      float: left;
+      padding: 8px 7px 8px 0;
+      min-width: 120px;
+      border-right: @borderWidgetLight;
+      text-align: right;
     }
 
-    .row-fluid .span4 {
+    .datapoint:last-child {
+      border-right: 0;
+      padding-right: 0;
+    }
+
+    .span8 {
+      width: 63.957447%;
+      margin-right: 2%;
+      margin-left: 2%;
+      float: right;
+    }
+
+    .span12 {
+      width: 96%;
+      margin-left: 2%;
+      margin-right: 2%;
+
+      &.commit-date {
         min-height: inherit;
         padding: 8px 18px;
-        margin-left: 0px;
+        margin-left: 0;
+      }
     }
+
+    .hr {
+      width: 100%;
+      height: 1px;
+      border-top: @borderWidgetLight;
+      float: left;
+    }
+  }
+
+  .row-fluid .span4 {
+    min-height: inherit;
+    padding: 8px 18px;
+    margin-left: 0;
+  }
 }
 
 .topline-timeperiod-dropdown {
   border: 1px solid @grayLight;
   width: auto;
   margin-top: 5px;
+
   .result-selected {
     display: block;
     font-weight: bold;
   }
+
   .select2-search {
     padding-top: 4px;
   }
+
   .select2-results {
     margin: 0;
     padding: 0;
@@ -291,6 +320,7 @@
       line-height: 26px;
       border-bottom: @borderWidgetLight;
     }
+
     li:hover,
     .select2-highlighted {
       background: @dropdownLinkBackgroundHover;

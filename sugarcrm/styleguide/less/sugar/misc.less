@@ -2,38 +2,42 @@
   ----------------*/
 
 ul.list {
+  list-style: none;
+  border-top: 2px solid @grayLighter;
+  padding: 0;
+  margin: 0 0 10px;
+
+  li {
     list-style: none;
-    border-top: 2px solid @grayLighter;
-    padding: 0;
-    margin: 0 0 10px;
-    li {
-        list-style: none;
-        border-top: 1px solid @grayLighter;
-        padding: 10px 0;
-        margin: 0;
-    }
+    border-top: 1px solid @grayLighter;
+    padding: 10px 0;
+    margin: 0;
+  }
 }
 
 dl.list {
   border-top: 2px solid @grayLighter;
   padding: 0;
   margin: 0 0 10px;
+
   dt {
     border-top: 1px solid @grayLighter;
-    padding: 10px 0 0 0;
+    padding: 10px 0 0;
   }
+
   dd {
-    padding: 0 0 10px 0;
+    padding: 0 0 10px;
     margin: 0;
   }
 }
 
 .dash h4 {
-    font-size: @fontSizeLarge;
-    font-weight: normal;
+  font-size: @fontSizeLarge;
+  font-weight: normal;
 }
+
 .dash .btn-toolbar.pull-right {
-    margin-top: 5px;
+  margin-top: 5px;
 }
 
 .main-pane .vcard2 {
@@ -41,22 +45,27 @@ dl.list {
   position: relative;
 }
 
-.more, .less {
+.more,
+.less {
   margin-left: 0;
+
   &.padded {
     padding: 8px 6px;
     display: inline-block;
   }
+
   &:hover {
     box-shadow: none;
     color: @linkMore;
     text-decoration: none;
   }
+
   .fa {
     display: inline-block;
     width: 1.25em;
     text-align: center;
   }
+
   &:hover .fa {
     text-decoration: none;
   }
@@ -66,12 +75,14 @@ dl.list {
   > div > div > .block-footer {
     border-top: none;
   }
+
   .more.padded.btn-link {
     display: inline-block;
     width: 100%;
     margin-left: 0;
     padding-left: 15px;
     text-align: left;
+
     &:hover {
       text-decoration: none;
       background: @dropdownLinkBackgroundHover;
@@ -102,32 +113,37 @@ dl.list {
 img.pull-right {
   margin: 0 0 8px 8px;
 }
+
 img.pull-left {
   margin: 0 8px 8px 0;
 }
 
 .ui-sortable-helper {
-  opacity: 0.30;
+  opacity: 0.3;
 }
+
 .ui-sortable .ui-sortable-placeholder:first-child {
-  margin:0;
+  margin: 0;
 }
+
 .ui-sortable .ui-sortable-placeholder {
   visibility: visible !important;
   background: @grayLight;
-  box-shadow: inset 0 3px 5px rgba(0,0,0,.1), inset 2px 2px 0 rgba(0,0,0,.05), inset -2px -2px 0 rgba(0,0,0,.05);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.1), inset 2px 2px 0 rgba(0, 0, 0, 0.05), inset -2px -2px 0 rgba(0, 0, 0, 0.05);
 }
+
 .ui-sortable-placeholder * {
   visibility: hidden;
 }
 
 .ui-draggable-dragging {
-  box-shadow: 0 2px 10px rgba(0,0,0,.1), 0 0 10px rgba(0,0,0,.4), -1px -1px 20px rgba(0,0,0,.1), 1px 1px 20px rgba(0,0,0,.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.4), -1px -1px 20px rgba(0, 0, 0, 0.1), 1px 1px 20px rgba(0, 0, 0, 0.1);
   z-index: 2;
 }
 
 .titlebar {
   .buttonBackground(@white, @grayLight);
+
   border-radius: @baseBorderRadius @baseBorderRadius 0 0;
 }
 
@@ -151,10 +167,11 @@ h2 + .row {
 
 /* For input sizes, make them display block */
 .docs-input-sizes select,
-.docs-input-sizes input[type=text] {
+  .docs-input-sizes input[type=text] {
   display: block;
   margin-bottom: 9px;
 }
+
 .width-auto {
   width: auto;
 }
@@ -169,14 +186,17 @@ hr.soften {
 
 .filter_init.duplicates {
   background: darken(@grayLighter, 5%);
+
   article#search_option_.filter-body {
-    padding:10px 10px 0 10px;
-    &>div {
+    padding: 10px 10px 0;
+
+    & > div {
       margin: 0;
     }
+
     &.new {
       .removeme {
-        display:none;
+        display: none;
       }
     }
   }
@@ -185,10 +205,12 @@ hr.soften {
 .logo {
   margin-left: 10px;
   height: 24px;
+
   img {
     height: inherit;
     vertical-align: middle;
   }
+
   #sugarcrm-logo {
     .sc-left,
     .sc-right,
@@ -196,16 +218,19 @@ hr.soften {
       fill: #ccc;
       stroke-width: 0;
     }
+
     .sc-top {
-      fill: #D1232A;
+      fill: #d1232a;
     }
+
     .sc-right,
     .sc-light {
-      fill: #C8C7C1;
+      fill: #c8c7c1;
     }
+
     .sc-left,
     .sc-dark {
-      fill: #2F2F2C;
+      fill: #2f2f2c;
     }
   }
 }
@@ -215,15 +240,16 @@ hr.soften {
   padding-left: 2%;
   margin-right: -2.3%;
 }
+
 .divleft .block {
   margin-right: 15px;
 }
-
 
 .no-link {
   text-decoration: none;
   color: @textColor;
   cursor: text;
+
   &:hover,
   &:active,
   &:visited {
@@ -233,8 +259,7 @@ hr.soften {
   }
 }
 
-.toggle-link .dupcheck {margin-right: 5px;}
-
+.toggle-link .dupcheck { margin-right: 5px; }
 
 /* BWC layout and views */
 .bwc-frame {
@@ -258,21 +283,24 @@ hr.soften {
   font-weight: bold;
   text-align: center;
   text-shadow: 0 0 1em @black, 0 0 1em @black;
+
   .mask {
     width: 100%;
     height: 100%;
-    position:absolute;
+    position: absolute;
     left: 0;
     top: 0;
-    background-color:@black;
+    background-color: @black;
     opacity: 0.4;
   }
+
   #highlight {
     border-radius: 50%;
     width: 44px;
     height: 44px;
     border: 3px solid @white;
-    position:absolute;
+    position: absolute;
+
     #highlight-text {
       position: absolute;
       width: 200px;
@@ -281,14 +309,16 @@ hr.soften {
       padding: 8px;
       border-radius: 3px;
       line-height: 1.25;
-      background-color: rgba(0,0,0,.6);
+      background-color: rgba(0, 0, 0, 0.6);
     }
   }
+
   .text-container {
     top: 15%;
-    position:absolute;
+    position: absolute;
     left: 50%;
-    width:316px;
+    width: 316px;
+
     .text {
       position: relative;
       left: -50%;
@@ -302,20 +332,23 @@ hr.soften {
       margin-left: -12px;
       text-shadow: none;
     }
+
     .resource-list {
       text-align: left;
     }
   }
 
   #tutorial-controls {
-    position:absolute;
+    position: absolute;
     bottom: 40px;
     left: 0;
-    width:100%;
-    text-align:center;
+    width: 100%;
+    text-align: center;
+
     .btn-group {
       display: inline-block;
     }
+
     .btn {
       min-width: 22px;
       min-height: 34px;
@@ -324,18 +357,21 @@ hr.soften {
       border-color: @black;
       background-color: @navbarBackground;
       background-image: none;
+
       & span {
         margin-top: 3px;
       }
+
       &.done-btn {
         min-width: 80px;
       }
-
     }
+
     .disabled {
       opacity: 1;
       background-color: darken(@navbarBackground, 20%);
       color: @navbarBackground;
+
       .fa {
         opacity: 0.2;
       }
@@ -361,30 +397,36 @@ hr.soften {
   0% { -moz-transform: rotate(0deg); }
   100% { -moz-transform: rotate(359deg); }
 }
+
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }
   100% { -webkit-transform: rotate(359deg); }
 }
+
 @-o-keyframes spin {
   0% { -o-transform: rotate(0deg); }
   100% { -o-transform: rotate(359deg); }
 }
+
 @-ms-keyframes spin {
   0% { -ms-transform: rotate(0deg); }
   100% { -ms-transform: rotate(359deg); }
 }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(359deg); }
 }
+
 @-moz-document url-prefix() {
-  .fa-spin { height: .9em; }
+  .fa-spin { height: 0.9em; }
 }
 
 .noaccess a {
   i {
     color: @linkColor;
   }
+
   &:hover i {
     color: @linkColor !important;
   }
@@ -399,7 +441,7 @@ hr.soften {
 
 .preview-headerbar,
 .headerpane {
-  &.shadow:after {
+  &.shadow::after {
     .headerpane-shadow; /* located in sugar/mixins.less */
   }
 }
@@ -411,7 +453,8 @@ hr.soften {
 }
 
 #languageList {
-   display: inline-block;
+  display: inline-block;
+
   .dropdown-menu {
     overflow-x: hidden;
     overflow-y: auto;
@@ -428,9 +471,11 @@ hr.soften {
   text-align: center;
   border-top: @borderWidgetLight;
   .clearfix();
+
   .btn {
     margin: 0 auto !important;
   }
+
   a {
     margin: 0 auto !important;
     display: block;
@@ -444,12 +489,15 @@ hr.soften {
 .leading-h1 {
   padding-top: 40px;
 }
+
 .leading-h2 {
   padding-top: 54px;
 }
+
 .leading-h3 {
   padding-top: 54px;
 }
+
 .leading-h4 {
   padding-top: 36px;
 }
@@ -459,6 +507,7 @@ hr.soften {
     &.controls-two {
       padding-right: 93px;
     }
+
     .btn-group {
       &.refresh {
         right: 60px;
@@ -471,55 +520,67 @@ hr.soften {
   background: @white;
   width: 370px;
   font-size: small;
+
   .popover-content {
     padding: 12px 12px 6px;
   }
+
   .fa.fa-times.feedback-close {
     color: @gray !important;
     position: absolute;
     top: 10px;
     right: 10px;
   }
+
   .fa.fa-times.feedback-close {
     color: @gray !important;
     position: absolute;
     top: 10px;
     right: 10px;
   }
+
   .popover-title {
     background: @white;
     color: @gray;
     border-bottom-color: lighten(@grayLight, 40%);
   }
+
   .controls.span12 {
     margin-left: 0;
+
     textarea {
       width: 100%;
       min-height: 70px;
       box-sizing: border-box;
-     }
+    }
   }
+
   span.field-rating.edit {
     text-align: center;
     display: inherit;
+
     > i {
       font-size: 1.4em;
-      margin: 0 2px 0;
+      margin: 0 2px;
       cursor: pointer;
-      &:before {
+
+      &::before {
         color: @blue;
       }
+
       &:hover {
-        &:before {
+        &::before {
           color: @linkColorHover;
         }
       }
     }
   }
+
   .feedback-footer {
     line-height: 2em;
     margin-top: 10px;
   }
+
   aside {
     margin-top: 10px;
     line-height: 13px;
@@ -534,6 +595,7 @@ hr.soften {
 .force-ltr {
   direction: ltr;
 }
+
 .force-rtl {
   direction: rtl;
 }
@@ -547,8 +609,8 @@ hr.soften {
     - first line targets webkit on windows;
     - second line targets firefox on windows.
 */
-@media only screen and (-webkit-min-device-pixel-ratio:0),
-only screen and (-moz-os-version:windows-win8) {
+@media only screen and (-webkit-min-device-pixel-ratio: 0),
+  only screen and (-moz-os-version: windows-win8) {
   html.touch {
     .bwc-frame,
     .bwc.layout {
@@ -577,7 +639,6 @@ only screen and (-moz-os-version:windows-win8) {
   }
 
   #tutorial-controls {
-
     .btn {
       &.done-btn {
         /* additive */
@@ -602,6 +663,7 @@ only screen and (-moz-os-version:windows-win8) {
 .vcard-import {
   margin-left: @fluidGridGutterWidth;
   margin-right: @fluidGridGutterWidth;
+
   > div {
     line-height: 30px;
   }

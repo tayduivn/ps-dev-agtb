@@ -8,19 +8,20 @@
 .badge {
   display: inline-block;
   padding: 2px 4px;
-  font-size: @baseFontSize * .846;
+  font-size: @baseFontSize * 0.846;
   font-weight: bold;
   line-height: 14px; // ensure proper line-height if floated
   color: @white;
   vertical-align: baseline;
   white-space: nowrap;
-  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: @grayLight;
 }
 // Set unique padding and border-radius
 .label {
   border-radius: 3px;
 }
+
 .badge {
   padding-left: 9px;
   padding-right: 9px;
@@ -50,20 +51,20 @@ a {
 .label,
 .badge {
   // Important (red)
-  &-important         { background-color: @errorText; }
-  &-important[href]   { background-color: darken(@errorText, 10%); }
+  &-important { background-color: @errorText; }
+  &-important[href] { background-color: darken(@errorText, 10%); }
   // Warnings (orange)
-  &-warning           { background-color: @orange; }
-  &-warning[href]     { background-color: darken(@orange, 10%); }
+  &-warning { background-color: @orange; }
+  &-warning[href] { background-color: darken(@orange, 10%); }
   // Success (green)
-  &-success           { background-color: @successText; }
-  &-success[href]     { background-color: darken(@successText, 10%); }
+  &-success { background-color: @successText; }
+  &-success[href] { background-color: darken(@successText, 10%); }
   // Info (turquoise)
-  &-info              { background-color: @infoText; }
-  &-info[href]        { background-color: darken(@infoText, 10%); }
+  &-info { background-color: @infoText; }
+  &-info[href] { background-color: darken(@infoText, 10%); }
   // Inverse (black)
-  &-inverse           { background-color: @grayDark; }
-  &-inverse[href]     { background-color: darken(@grayDark, 10%); }
+  &-inverse { background-color: @grayDark; }
+  &-inverse[href] { background-color: darken(@grayDark, 10%); }
 }
 
 // Quick fix for labels/badges in buttons
@@ -74,6 +75,7 @@ a {
     top: -1px;
   }
 }
+
 .btn-mini {
   .label,
   .badge {
@@ -115,14 +117,15 @@ a > .label,
 }
 
 .disabled .label-Users,
-.inactive [class*="label-"],
-[data-type="follow"] .label,
-[data-type="follow"] .label:hover {
+  .inactive [class*="label-"],
+  [data-type="follow"] .label,
+  [data-type="follow"] .label:hover {
   background-color: transparent;
   border: 1px solid @gray;
   color: @grayDark;
   font-weight: 500;
 }
+
 [data-type="follow"] {
   .label[class*="label-"] {
     background-color: @gray;
@@ -132,6 +135,7 @@ a > .label,
     width: 100%;
   }
 }
+
 [data-type="follow"],
 [data-type="badge"] {
   .label:not([class*="label-"]) {
@@ -163,6 +167,7 @@ a > .label,
   border-radius: @baseBorderRadius;
   box-sizing: border-box;
 }
+
 .label-module-lg {
   height: @sizeLarge;
   width: @sizeLarge;
@@ -171,6 +176,7 @@ a > .label,
   line-height: 16px;
   padding: 4px 0 0 5px;
 }
+
 .label-module-md {
   height: @sizeMedium;
   width: @sizeMedium;
@@ -178,6 +184,7 @@ a > .label,
   line-height: 13px;
   padding: 3px 0 0 4px;
 }
+
 .label-module-btn {
   height: @sizeButton;
   width: @sizeButton;
@@ -185,6 +192,7 @@ a > .label,
   line-height: 11px;
   padding: 3px 0 0 4px;
 }
+
 .label-module-sm {
   height: @sizeSmall;
   width: @sizeSmall;
@@ -193,6 +201,7 @@ a > .label,
   line-height: 10px;
   padding: 2px 0 0 2px;
 }
+
 .label-module-mini {
   height: @sizeMini;
   width: @sizeMini;
@@ -217,58 +226,74 @@ a > .label,
 }
 
 .label {
-  &-important {background-color: @errorBackground; border: 1px solid @errorBackground;}
-  &-warning {background-color: @warningBackground; color: @warningAlertText; border: 1px solid @warningBorder;}
-  &-pending {background-color: transparent; color: @grayDark; border: 1px solid @gray;}
-  &-success {background-color: @successBackground; border: 1px solid @successBackground;}
-  &-info {background-color: @infoBackground; border: 1px solid @infoBackground;}
-  &-inverse, &-unknown {background-color: @gray;}
-  &-log {background-color: @black;}
+  &-important {
+    background-color: @errorBackground;
+    border: 1px solid @errorBackground;
+  }
 
-/* Modules */
-  &-Bugs {background-color: @red;}
-  &-Cases {background-color: darken(@red, 20%);}
+  &-warning {
+    background-color: @warningBackground;
+    color: @warningAlertText;
+    border: 1px solid @warningBorder;
+  }
 
-  &-Prospects {background-color: @army;}
-  &-ProspectLists {background-color: @army;}
-  &-Targets {background-color: @army;}
-  &-TargetLists {background-color: @army;}
-  &-Campaigns {background-color: darken(@army, 10%);}
-  &-CampaignLog {background-color: darken(@army, 10%);}
+  &-pending {
+    background-color: transparent;
+    color: @grayDark;
+    border: 1px solid @gray;
+  }
 
-  &-Opportunities {background-color: @purple}
-  &-RevenueLineItems {background-color: darken(@purple,20%);}
-  &-Products {background-color: @night;}
+  &-success {
+    background-color: @successBackground;
+    border: 1px solid @successBackground;
+  }
 
-  &-Forecasts {background-color: @mint;}
-  &-Quotas {background-color: @mint;}
-  &-Quotes {background-color: darken(@mint, 15%);}
+  &-info {
+    background-color: @infoBackground;
+    border: 1px solid @infoBackground;
+  }
 
-  &-Accounts {background-color: @green;}
-  &-Contacts {background-color: darken(@green, 10%);}
-  &-Leads {background-color: @blue;}
+  &-inverse,
+  &-unknown { background-color: @gray; }
+  &-log { background-color: @black; }
 
-  &-Reports {background-color: @orange;}
-  &-Files {background-color: darken(@orange, 20%);}
-  &-Documents {background-color: darken(@orange, 20%);}
-
-  &-Calendar {background-color: @teal;}
-  &-Meetings {background-color: darken(@teal, 10%);}
-  &-Calls {background-color: darken(@blue, 25%);}
-  &-Emails {background-color: darken(@blue, 10%);}
-
-  &-Tasks {background-color: @pink;}
-  &-Notes {background-color: @pacific;}
-
-  &-Workflow {background-color: @ocean;}
-
-  &-Users {background-color: @grayDarker;}
-
-  &-KBDocuments {background-color: darken(@orange,20%);}
-  &-KBArticles {background-color: darken(@orange,20%);}
-  &-KBContents {background-color: darken(@orange,20%);}
-  &-KBLocalizations {background-color: darken(@blue,20%);}
-  &-KBRevisions {background-color: darken(@purple,20%);}
+  /* Modules */
+  &-Accounts { background-color: @el-accounts; }
+  &-Bugs { background-color: @el-bugs; }
+  &-Calendar { background-color: @el-calendar; }
+  &-Calls { background-color: @el-calls; }
+  &-Campaigns { background-color: @el-campaigns; }
+  &-CampaignLog { background-color: @el-campaignlog; }
+  &-Cases { background-color: @el-cases; }
+  &-Contacts { background-color: @el-contacts; }
+  &-Documents { background-color: @el-documents; }
+  &-Emails { background-color: @el-emails; }
+  &-Files { background-color: @el-files; }
+  &-Forecasts { background-color: @el-forecasts; }
+  &-KBArticles { background-color: @el-kbarticles; }
+  &-KBContents { background-color: @el-kbcontents; }
+  &-KBDocuments { background-color: @el-kbdocuments; }
+  &-KBLocalizations { background-color: @el-kblocalizations; }
+  &-KBRevisions { background-color: @el-kbrevisions; }
+  &-Leads { background-color: @el-leads; }
+  &-Meetings { background-color: @el-meetings; }
+  &-Notes { background-color: @el-notes; }
+  &-Opportunities { background-color: @el-opportunities; }
+  &-pmse_Business_Rules { background-color: @el-pmse; }
+  &-pmse_Emails_Templates { background-color: @el-pmse; }
+  &-pmse_Inbox { background-color: @el-pmse; }
+  &-pmse_Project { background-color: @el-pmse; }
+  &-Products { background-color: @el-products; }
+  &-Prospects { background-color: @el-prospects; }
+  &-ProspectLists { background-color: @el-prospectlists; }
+  &-Quotas { background-color: @el-quotas; }
+  &-Quotes { background-color: @el-quotes; }
+  &-Reports { background-color: @el-reports; }
+  &-RevenueLineItems { background-color: @el-rli; }
+  &-Tags { background-color: @el-tags; }
+  &-Tasks { background-color: @el-tasks; }
+  &-Users { background-color: @el-users; }
+  &-Workflow { background-color: @el-workflow; }
 }
 
 // had to move &-dark-text out because a > .label was overriding

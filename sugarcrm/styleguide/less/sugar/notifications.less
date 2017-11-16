@@ -4,37 +4,47 @@
   .dropdown-toggle {
     text-align: center;
     box-shadow: none;
-    &:not(.btn-danger)  {
+
+    &:not(.btn-danger) {
       background: darken(@navbarBackground, 5%);
     }
+
     &:active {
       background: none;
     }
   }
+
   .btn-group.open {
-	.dropdown-menu {
-	  width: 400px;
-	  ul {
-		li {
+    .dropdown-menu {
+      width: 400px;
+
+      ul {
+        li {
           &.read {
             background: lighten(@gray, 56%);
-            a, a:hover {
-				color: lighten(@gray,25%);
+
+            a,
+            a:hover {
+              color: lighten(@gray, 25%);
             }
+
             a .label {
-				background-color: lighten(@gray,25%);
+              background-color: lighten(@gray, 25%);
             }
           }
-		  a {
-			text-indent: inherit;
-			padding-top: 10px;
-			padding-bottom: 0;
-			.label {
-				min-width: 50px;
-				text-align: center;
-				margin-right: 10px;
-				cursor: inherit;
-			}
+
+          a {
+            text-indent: inherit;
+            padding-top: 10px;
+            padding-bottom: 0;
+
+            .label {
+              min-width: 50px;
+              text-align: center;
+              margin-right: 10px;
+              cursor: inherit;
+            }
+
             time {
               font-size: @fontSizeSmall;
               text-align: right;
@@ -43,72 +53,84 @@
               padding-top: 3px;
               line-height: 1.25em;
               display: table;
+
               .relativetime {
                 display: table-cell;
                 vertical-align: middle;
               }
             }
-		  }
-  		  .fa-bars {
-			line-height: 20px;
-			text-indent: 0 !important;
-		  }
-		}
-	  }
-	}
+          }
+
+          .fa-bars {
+            line-height: 20px;
+            text-indent: 0 !important;
+          }
+        }
+      }
+    }
   }
 }
 
 ul.notification-list {
   border-top: 2px solid @tableBorderColor;
   margin: 0;
+
   li {
-	list-style: none;
-	line-height: 34px;
-	padding: 0 16px;
-	&:not(:last-child) {
-	  border-bottom: @tableBorder;
-	}
-	.ellipsis_inline {
-	  display: inline-block !important;
-	}
-	.date {
-	  margin-right: 28px;
-	}
-	.rowaction {
-	  position: absolute;
-	  right: 18px;
-	}
-	.label {
-	  min-width: 50px;
-	  text-align: center;
-	  margin-right: 10px;
-	}
-	span.raw {
-	  &.level {
-		position: absolute;
-		margin-top: 9px;
-	  }
-	  &.name {
-		position: relative;
-		line-height: normal;
-		padding-top: 10px;
-		margin-left: 70px;
-		.ellipsis_inline {
-		  width: 42%;
-      width: calc(~"100% - 225px");
-		  line-height: normal;
-		  padding-top: 10px;
-		  cursor: pointer;
-		}
-	  }
-	  &.expanded.name {
-		.ellipsis_inline {
-		  white-space: normal;
-		  cursor: default;
-		}
-	  }
-	}
+    list-style: none;
+    line-height: 34px;
+    padding: 0 16px;
+
+    &:not(:last-child) {
+      border-bottom: @tableBorder;
+    }
+
+    .ellipsis_inline {
+      display: inline-block !important;
+    }
+
+    .date {
+      margin-right: 28px;
+    }
+
+    .rowaction {
+      position: absolute;
+      right: 18px;
+    }
+
+    .label {
+      min-width: 50px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    span.raw {
+      &.level {
+        position: absolute;
+        margin-top: 9px;
+      }
+
+      &.name {
+        position: relative;
+        line-height: normal;
+        padding-top: 10px;
+        margin-left: 70px;
+
+        .ellipsis_inline {
+          width: 42%;
+          width: calc(~"100% - 225px");
+          line-height: normal;
+          padding-top: 10px;
+          cursor: pointer;
+        }
+      }
+
+      &.expanded.name {
+        .ellipsis_inline {
+          white-space: normal;
+          cursor: default;
+        }
+      }
+    }
   }
 }
 
@@ -130,9 +152,11 @@ ul.notification-list {
     /* override with variable */
     min-width: @sizeButton;
     min-height: @sizeButton;
+
     &:hover {
       /* override */
       background: @red;
+
       /* override */
       color: @white;
     }
@@ -150,13 +174,14 @@ ul.notification-list {
           a {
             time {
               /* override */
-              color: initial
+              color: initial;
             }
           }
         }
       }
     }
   }
+
   &:hover button.dropdown-toggle {
     /* override */
     color: @white;

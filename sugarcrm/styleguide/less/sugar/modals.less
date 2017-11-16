@@ -40,6 +40,7 @@
   }
   &.fade.in { top: 10%; }
 }
+
 .modal-header {
   padding: 9px 15px;
   border-bottom: 1px solid #eee;
@@ -95,13 +96,14 @@
 
 //Generate fixed spanX modal widths
 .spanModalX (@index) when (@index > 0) {
-  .modal.span@{index},.row-fluid .modal.span@{index} { .spanModal(@index); }
+  .modal.span@{index},
+  row-fluid .modal.span@{index} { .spanModal(@index); }
   .spanModalX(@index - 1);
 }
-.spanModalX (0) {}
+
 .spanModal (@columns) {
-  width: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1)) ;
-  margin-left: -( (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1)) )/2;
+  width: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1));
+  margin-left: -((@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1)))/2;
 }
 .spanModalX (@gridColumns);
 
@@ -123,7 +125,7 @@
 }
 
 .modal-body {
-  padding: 0 0 58px 0;
+  padding: 0 0 58px;
   max-height: 400px;
   // no navigation
   .modal-content {
@@ -137,6 +139,7 @@
   &.with-nav {
     padding-top: 56px;
     overflow-y: hidden;
+
     .modal-content {
       max-height: 350px;
     }
@@ -146,15 +149,16 @@
   &.with-tab-nav {
     padding-top: 40px;
     overflow-y: hidden;
+
     .modal-content {
       height: 330px;
     }
   }
+
   textarea {
     text-align: left;
   }
 }
-
 
 // created for admin settings
 .modal-wizard-start {
@@ -167,25 +171,31 @@
   top: 0;
   width: 100%;
   background-color: @grayLighter;
+
   .nav-tabs {
     margin: 8px 0 0;
     padding-left: 10px;
   }
+
   .breadcrumb.two {
     padding: 2px 0 3px;
+
     li {
       padding: 0 1em;
       width: 34%;
       margin: 0;
       box-sizing: border-box;
+
       &:first-child {
         padding-left: 0;
         width: 33%;
       }
+
       &:last-child {
         padding-right: 0;
         width: 33%;
       }
+
       a {
         padding: 16px;
         width: 100%;
@@ -224,6 +234,7 @@ body.modal-open {
   .progress-label {
     line-height: 40px;
   }
+
   .progress {
     margin-bottom: 22px;
   }

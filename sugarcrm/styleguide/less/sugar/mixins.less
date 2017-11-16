@@ -10,15 +10,16 @@
 // --------
 // For clearing floats like a boss h5bp.com/q
 .clearfix {
-  &:before,
-  &:after {
+  &::before,
+  &::after {
     display: table;
     content: "";
     // Fixes Opera/contenteditable bug:
     // http://nicolasgallagher.com/micro-clearfix-hack/#comment-36952
     line-height: 0;
   }
-  &:after {
+
+  &::after {
     clear: both;
   }
 }
@@ -59,9 +60,11 @@
   &::-moz-placeholder {
     color: @color;
   }
+
   &:-ms-input-placeholder {
     color: @color;
   }
+
   &::-webkit-input-placeholder {
     color: @color;
   }
@@ -86,7 +89,6 @@
   background-color: transparent;
   border: 0;
 }
-
 
 // FONTS
 // --------------------------------------------------
@@ -122,7 +124,6 @@
   }
 }
 
-
 // FORMS
 // --------------------------------------------------
 
@@ -133,8 +134,6 @@
   min-height: @inputHeight; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
   box-sizing: border-box; // Makes inputs behave like true block-level elements
 }
-
-
 
 // Mixin for form field states
 .formFieldState(@textColor: #555, @borderColor: #ccc, @backgroundColor: #f5f5f5) {
@@ -152,14 +151,15 @@
   textarea {
     color: @textColor;
   }
+
   input,
   select,
   textarea {
     border-color: @borderColor;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075); // Redeclare so transitions work
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); // Redeclare so transitions work
     &:focus {
       border-color: darken(@borderColor, 10%);
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten(@borderColor, 20%);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px lighten(@borderColor, 20%);
     }
   }
   // Give a small background color for input-prepend/-append
@@ -171,8 +171,6 @@
   }
 }
 
-
-
 // CSS3 PROPERTIES
 // --------------------------------------------------
 
@@ -180,10 +178,10 @@
 // For selecting text on the page
 .user-select(@select) {
   -webkit-user-select: @select;
-     -moz-user-select: @select;
-      -ms-user-select: @select;
-       -o-user-select: @select;
-          user-select: @select;
+  -moz-user-select: @select;
+  -ms-user-select: @select;
+  -o-user-select: @select;
+  user-select: @select;
 }
 
 // Resize anything
@@ -211,8 +209,9 @@
   color: @textColor;
   text-shadow: @textShadow;
   #gradient > .vertical(@primaryColor, @secondaryColor);
+
   border-color: @secondaryColor @secondaryColor darken(@secondaryColor, 15%);
-  border-color: rgba(0,0,0,.1) rgba(0,0,0,.1) fadein(rgba(0,0,0,.1), 15%);
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) fadein(rgba(0, 0, 0, 0.1), 15%);
 }
 
 // Gradients
@@ -244,11 +243,9 @@
   }
   .striped(@color: #555, @angle: 45deg) {
     background-color: @color;
-    background-image: linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(@angle, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
   }
 }
-
-
 
 // COMPONENT MIXINS
 // --------------------------------------------------
@@ -270,7 +267,11 @@
   .gradientBar(@startColor, @endColor, @textColor, @textShadow);
 
   // in these cases the gradient won't cover the background, so we override
-  &:hover, &:active, &.active, &.disabled, &[disabled] {
+  &:hover,
+  &:active,
+  &.active,
+  &.disabled,
+  &[disabled] {
     color: @textColor;
     background-color: @endColor;
   }
@@ -283,8 +284,6 @@
 .navbarVerticalAlign(@elementHeight) {
   margin-top: (@navbarHeight - @elementHeight) / 2;
 }
-
-
 
 // Grid System
 // -----------
@@ -324,38 +323,41 @@
 }
 
 .caret-top(@afterLeftCaretPos: 10px, @beforeLeftCaretPos: 9px,@afterRightCaretPos: auto, @beforeRightCaretPos: auto) {
-  &:after {
+  &::after {
     content: '';
     display: inline-block;
-    border-left:   6px solid transparent;
-    border-right:  6px solid transparent;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
     border-bottom: 6px solid @white;
     position: absolute;
     top: -6px;
     left: @afterLeftCaretPos;
     right: @afterRightCaretPos;
   }
-  &:before {
+
+  &::before {
     content: '';
     display: inline-block;
-    border-left:   7px solid transparent;
-    border-right:  7px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
     border-bottom: 7px solid #ccc;
-    border-bottom-color: rgba(0,0,0,.2);
+    border-bottom-color: rgba(0, 0, 0, 0.2);
     position: absolute;
     top: -7px;
     left: @beforeLeftCaretPos;
     right: @beforeRightCaretPos;
   }
+
   &.bottom-up {
-    &:after {
+    &::after {
       border-top: 6px solid @white;
       border-bottom: none;
       top: auto;
       left: @afterLeftCaretPos;
       right: @afterRightCaretPos;
     }
-    &:before {
+
+    &::before {
       border-top: 7px solid @white;
       border-bottom: none;
       top: auto;
@@ -393,6 +395,7 @@
   left: 0;
   top: auto;
   #gradient > .vertical(rgba(0,0,0,0.1), rgba(255,255,255,0));
+
   background-color: transparent; /* gradient function form twitter bootstrap adds background color, we needn't that fallback for shadow */
 }
 
@@ -406,7 +409,8 @@
   font-family: FontAwesome;
   font-weight: normal;
   -webkit-font-smoothing: antialiased;
-  &:before{
+
+  &::before {
     text-decoration: inherit;
     display: inline-block;
     speak: none;
@@ -416,6 +420,7 @@
 .information-underline {
   border-bottom: 1px dotted @black;
   cursor: pointer;
+
   &:hover {
     border-bottom: 1px solid @black;
   }
@@ -423,10 +428,8 @@
 
 .tab-focus-light() {
   // Default
+  outline: dotted 1px #589bda;
   outline-offset: -2px;
-  outline-width: 1px;
-  outline-style: dotted;
-  outline-color: #589bda;
   // Firefox
   outline-color: -moz-mac-focusring;
   // Webkit

@@ -7,12 +7,15 @@
 .image_preview img {
   z-index: 900;
 }
+
 .image_btn {
   z-index: 901;
 }
+
 .image_input {
   z-index: 902;
 }
+
 .image_btn.delete {
   z-index: 903 !important;
 }
@@ -21,6 +24,7 @@
   margin: 0;
   padding: 0;
 }
+
 .image_field {
   text-align: center;
   position: relative;
@@ -28,7 +32,7 @@
 //Specific to edit mode
 //Add border
 .image_field.image_edit {
-  border: 3px dashed #CCC;
+  border: 3px dashed #ccc;
   top: -3px;
   left: -3px;
   z-index: 1;
@@ -41,7 +45,8 @@
   height: 100%;
   width: 100%;
 }
-.image_input  {
+
+.image_input {
   position: relative;
   height: 100%;
   width: 100%;
@@ -51,7 +56,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  float:right;
+  float: right;
   height: 100%;
   font-size: 600px;
   border: none;
@@ -110,20 +115,24 @@
   left: 0;
   width: 100%;
   height: 100%;
-  color: #CCC;
+  color: #ccc;
 }
+
 .image_preview img {
   vertical-align: top !important;
 }
+
 .image_preview i.fa-plus {
   display: block;
 }
 
 .error .image_field {
   border: 3px dashed @errorText;
+
   .image_preview > i {
     color: @errorText !important;
   }
+
   .add-on.error-tooltip {
     position: absolute;
     top: -1px;
@@ -146,6 +155,7 @@
 
     /* additive */
     box-sizing: border-box;
+
     .image_preview img {
       /* additive */
       border-radius: 50%;
@@ -160,7 +170,7 @@
 }
 
 .headerpane span[data-type="image"] .image_rounded img,
-.headerpane span[data-type="avatar"] .image_rounded img {
+  .headerpane span[data-type="avatar"] .image_rounded img {
   /* override */
   border-radius: 50%;
   border: none;
@@ -178,6 +188,7 @@
       /* override */
       height: 50px !important;
       width: 50px !important;
+
       img {
         /* override */
         max-width: 44px;

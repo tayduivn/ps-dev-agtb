@@ -8,6 +8,7 @@
           border-radius: @baseBorderRadius;
           box-shadow: 0 0 1px transparent;
         }
+
         .select2-search-field input {
           padding: 0 6px;
           position: absolute;
@@ -15,30 +16,35 @@
           min-height: 22px;
           margin: 0;
         }
+
         &.drop-highlight {
           .select2-choices {
             box-shadow: 0 0 1px transparent;
-            background-color: rgba(23,109,229,.075);
+            background-color: rgba(23, 109, 229, 0.075);
           }
+
           &.drop-hover {
             .select2-choices {
               background-color: @white;
-              border-color: rgba(23,109,229,.5);
+              border-color: rgba(23, 109, 229, 0.5);
             }
           }
         }
       }
     }
   }
+
   div[data-type="email-attachments"].controls {
     input[type="file"] {
       display: none;
     }
+
     .select2-container {
       .select2-choices {
         padding-left: 0;
         border: none;
       }
+
       .select2-search-field input {
         padding: 0;
         min-height: 26px;
@@ -52,39 +58,47 @@
   width: 100%;
   margin-bottom: 8px;
 }
+
 .email-recipients.fieldset {
   .fieldset-group {
     display: table-row;
+
     &.hide {
       display: none;
     }
   }
+
   .fieldset-label,
   .fieldset-field {
     display: table-cell;
     vertical-align: top;
     box-sizing: border-box;
   }
+
   .fieldset-label {
     padding: 8px 6px 8px 7px;
     font-size: 11px;
     line-height: 12px;
     color: @gray;
   }
+
   .fieldset-field {
     width: 100%;
     padding-bottom: 8px;
+
     &.detail {
       padding-bottom: 4px;
       padding-left: 8px;
       vertical-align: middle;
       font-size: 12px;
+
       .scroll {
         display: block;
         max-height: 45px;
         overflow: auto;
       }
     }
+
     .controls .select2-container {
       .select2-choices {
         max-height: 45px;
@@ -93,6 +107,7 @@
       }
     }
   }
+
   &.edit {
     div[data-type="enum"].fieldset-field {
       position: relative;
@@ -100,6 +115,7 @@
       min-height: 28px;
     }
   }
+
   .compose-recipient-options {
     position: absolute;
     z-index: 2;
@@ -107,6 +123,7 @@
     top: 0;
     right: 0;
     background-color: @white;
+
     .btn {
       position: relative;
       right: 0;
@@ -114,5 +131,5 @@
   }
 }
 .record-cell[data-type="email-attachments"] .edit {
-    margin-bottom: 11px;
+  margin-bottom: 11px;
 }

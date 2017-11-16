@@ -24,8 +24,8 @@
       margin: 8px;
     }
     //448 (chart height) - 41 (dashlet options) = 407
-    .dashlet-options+.sc-chart,
-    .dashlet-options+.nv-chart,
+    .dashlet-options + .sc-chart,
+    .dashlet-options + .nv-chart,
     .process-users-chart .sc-chart,
     .process-users-chart .nv-chart,
     .sales-pipeline-chart,
@@ -52,6 +52,7 @@
     .dashlet-content .list-view {
       max-height: 326px;
     }
+
     .dashlet-content .activitystream-list {
       max-height: 326px;
     }
@@ -62,8 +63,8 @@
       margin: 8px;
     }
     //350 (chart height) - 41 (dashlet options) = 309
-    .dashlet-options+.sc-chart,
-    .dashlet-options+.nv-chart,
+    .dashlet-options + .sc-chart,
+    .dashlet-options + .nv-chart,
     .process-users-chart .sc-chart,
     .process-users-chart .nv-chart,
     .sales-pipeline-chart,
@@ -96,6 +97,7 @@
 span.count {
   font-size: 16px;
   display: block;
+
   &.label {
     font-size: 14px;
     display: inline-block;
@@ -109,6 +111,7 @@ span.count {
 .rotatedLabel {
   transform: rotate(-90deg);
 }
+
 .rotatedLabelReverse {
   transform: rotate(90deg);
 }
@@ -116,19 +119,22 @@ span.count {
 // org tree chart
 
 @-webkit-keyframes animaopacity {
-  0%   { opacity: 0; }
+  0% { opacity: 0; }
   100% { opacity: 1; }
 }
+
 @-moz-keyframes animaopacity {
-  0%   { opacity: 0; }
+  0% { opacity: 0; }
   100% { opacity: 1; }
 }
+
 @-o-keyframes animaopacity {
-  0%   { opacity: 0; }
+  0% { opacity: 0; }
   100% { opacity: 1; }
 }
+
 @keyframes animaopacity {
-  0%   { opacity: 0; }
+  0% { opacity: 0; }
   100% { opacity: 1; }
 }
 
@@ -139,24 +145,23 @@ span.count {
     stroke: darken(@grayLighter, 15%);
     stroke-width: 2px;
   }
+
   .sc-org-node,
   .nv-org-node {
     text {
-      font-style: normal;
-      font-variant: normal;
-      font-weight: 300;
+      font: normal normal 300 10px/normal "Helvetica Neue", Arial, sans-serif;
       font-stretch: normal;
-      font-size: 10px;
-      line-height: normal;
-      font-family: "Helvetica Neue", Arial, sans-serif;
+
       &.sc-org-name,
       &.nv-org-name {
         font-size: 10px;
         fill: @linkColor;
+
         &.hover {
           text-decoration: underline;
         }
       }
+
       &.sc-org-title,
       &.nv-org-title {
         font-size: 8px;
@@ -169,6 +174,7 @@ span.count {
 .btn-slider {
   display: inline-block;
   padding: 5px;
+
   .noUiSlider {
     width: 50px;
     height: 4px;
@@ -177,34 +183,42 @@ span.count {
     position: relative;
     top: -1px;
   }
+
   .noUiSliderEnds {
     width: 50px;
     margin: 0 30px 0 0;
+
     .zoom-control {
       position: absolute;
       top: 1px;
       font-size: 18px;
       cursor: pointer;
+
       &.disabled {
-        color: lighten(@grayLight,10%) !important;
+        color: lighten(@grayLight, 10%) !important;
       }
     }
+
     i[data-control="zoom-out"] {
       left: -26px;
     }
+
     i[data-control="zoom-in"] {
       right: -26px;
     }
-    &:before,
-    &:after {
+
+    &::before,
+    &::after {
       top: 6px;
       height: 4px;
     }
-    &:before {
+
+    &::before {
       border-radius: 2px 0 0 2px;
       left: -6px;
     }
-    &:after {
+
+    &::after {
       border-radius: 0 2px 2px 0;
       right: -6px;
     }
@@ -223,33 +237,43 @@ span.count {
 .stage_closedwon {
   fill: #2ca02c;
 }
+
 .stage_prospecting {
   fill: darken(#ff7f0e, 35%);
 }
+
 .stage_closedlost {
   fill: #d62728;
 }
+
 .stage_qualification {
   fill: #ff7f0e;
 }
+
 .stage_thisopp {
   fill: #1f77b4;
 }
+
 .stage_negotiationreview {
   fill: darken(#2ca02c, 40%);
 }
+
 .stage_perceptionanalysis {
   fill: darken(#2ca02c, 30%);
 }
+
 .stage_proposalpricequote {
   fill: darken(#2ca02c, 45%);
 }
+
 .stage_valueproposition {
   fill: #ff7f0e;
 }
-.stage_iddecisionmakers{
+
+.stage_iddecisionmakers {
   fill: #9467bd;
 }
-.stage_needsanalysis{
+
+.stage_needsanalysis {
   fill: darken(@yellow, 10%);
 }

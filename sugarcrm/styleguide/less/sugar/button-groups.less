@@ -17,6 +17,7 @@
   font-size: 0; // Hack to remove whitespace that results from using inline-block
   margin-top: @baseLineHeight / 2;
   margin-bottom: @baseLineHeight / 2;
+
   > .btn + .btn {
     margin-left: 5px;
   }
@@ -27,9 +28,11 @@
   position: relative;
   border-radius: 0;
 }
+
 .btn-group > .btn + .btn {
   margin-left: -1px;
 }
+
 .btn-group > .btn,
 .btn-group > .dropdown-menu,
 .btn-group > .popover {
@@ -40,9 +43,11 @@
 .btn-group > .btn-mini {
   font-size: @fontSizeMini;
 }
+
 .btn-group > .btn-small {
   font-size: @fontSizeSmall;
 }
+
 .btn-group > .btn-large {
   font-size: @fontSizeLarge;
 }
@@ -65,6 +70,7 @@
   border-top-left-radius: @borderRadiusLarge;
   border-bottom-left-radius: @borderRadiusLarge;
 }
+
 .btn-group > .btn.large:last-child,
 .btn-group > .large.dropdown-toggle {
   border-top-right-radius: @borderRadiusLarge;
@@ -85,8 +91,6 @@
   outline: 0;
 }
 
-
-
 // Split button dropdowns
 // ----------------------
 
@@ -94,6 +98,7 @@
   padding-left: 5px;
   padding-right: 5px;
 }
+
 .btn-group > .btn-large + .dropdown-toggle {
   padding-left: 12px;
   padding-right: 12px;
@@ -105,33 +110,38 @@
   // Remove the gradient and set the same inset shadow as the :active state
   .dropdown-toggle {
     background-image: none;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
   // Keep the hover's background when dropdown is open
   .btn.dropdown-toggle {
     background-color: @btnBackgroundHighlight;
   }
+
   .btn-primary.dropdown-toggle {
     background-color: @btnPrimaryBackgroundHighlight;
   }
+
   .btn-warning.dropdown-toggle {
     background-color: @btnWarningBackgroundHighlight;
   }
+
   .btn-danger.dropdown-toggle {
     background-color: @btnDangerBackgroundHighlight;
   }
+
   .btn-success.dropdown-toggle {
     background-color: @btnSuccessBackgroundHighlight;
   }
+
   .btn-info.dropdown-toggle {
     background-color: @btnInfoBackgroundHighlight;
   }
+
   .btn-inverse.dropdown-toggle {
     background-color: @btnInverseBackgroundHighlight;
   }
 }
-
 
 // Reposition the caret
 .btn .caret {
@@ -144,17 +154,16 @@
 .btn-large .caret {
   margin-top: 6px;
 }
+
 .btn-large .caret {
-  border-left-width:  5px;
+  border-left-width: 5px;
   border-right-width: 5px;
-  border-top-width:   5px;
+  border-top-width: 5px;
 }
 // Upside down carets for .dropup
 .dropup .btn-large .caret {
   border-bottom-width: 5px;
 }
-
-
 
 // Account for other colors
 .btn-primary,
@@ -190,10 +199,7 @@
   span:first-child .btn,
   & > .btn:first-child:not(:last-of-type) {
     margin-left: 0;
-    border-top-left-radius: @baseBorderRadius;
-    border-bottom-left-radius: @baseBorderRadius;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-radius: @baseBorderRadius 0 0 @baseBorderRadius;
   }
   // Need .dropdown-toggle since :last-child doesn't apply given a .dropdown-menu immediately after it
   span:last-child .btn,
@@ -201,6 +207,7 @@
   & > .dropdown-toggle {
     border-top-right-radius: @baseBorderRadius;
     border-bottom-right-radius: @baseBorderRadius;
+
     .fa-caret-down {
       opacity: 1;
     }
@@ -212,6 +219,7 @@
     border-top-left-radius: @baseBorderRadius;
     border-bottom-left-radius: @baseBorderRadius;
   }
+
   .btn.large:last-child,
   .large.dropdown-toggle {
     border-top-right-radius: @baseBorderRadius;
@@ -223,6 +231,7 @@
   .btn.active {
     z-index: 0;
   }
+
   .btn:focus {
     z-index: 1;
   }
@@ -230,8 +239,9 @@
   .dropdown-toggle:active,
   &.open {
     outline: 0;
+
     .btn.btn-primary.dropdown-toggle {
-      background-color: darken(@btnPrimaryBackgroundHighlight,10%);
+      background-color: darken(@btnPrimaryBackgroundHighlight, 10%);
     }
     // Reposition menu on open and round all corners
     .dropdown-menu {
@@ -241,7 +251,6 @@
     }
   }
 }
-
 
 // Split button dropdowns
 // ----------------------
@@ -260,16 +269,19 @@
 // Optional: Group multiple button groups together for a toolbar
 .btn-toolbar {
   padding-left: 20px;
+
   label,
   .label,
   .btn,
   .dropdown-menu {
     font-size: @baseFontSize; // redeclare as part 2 of font-size inline-block hack
   }
+
   .btn-group + .btn,
   .btn + .btn-group {
     margin-left: 8px;
   }
+
   .dashlet-toolbar .label {
     font-size: @baseFontSize;
     font-weight: normal;
@@ -297,14 +309,17 @@
     .btn.btn-invisible:not(.disabled):hover {
       /* override */
       background: @white;
+
       /* override */
       color: initial;
+
       > .fa {
         /* override */
         color: initial;
       }
     }
   }
+
   > .btn + .dropdown-toggle {
     /* override */
     width: 10px;
