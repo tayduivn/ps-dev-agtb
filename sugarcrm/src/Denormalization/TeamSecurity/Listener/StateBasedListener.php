@@ -129,13 +129,6 @@ final class StateBasedListener implements Listener, SplObserver
     {
         $components = [];
 
-        // REMOVE ME: enable team security denormalization to run tests in CI
-        if ($this->state->isEnabled() && !$this->state->isUpToDate()) {
-            $manager = Manager::getInstance();
-            $command = $manager->getRebuildCommand();
-            $command();
-        }
-
         if ($this->state->isUpToDate()) {
             if ($this->state->isEnabled()) {
                 if ($this->state->isAvailable()) {
