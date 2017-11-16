@@ -177,4 +177,12 @@ SQL
 
         $this->conn->executeUpdate($query, [$id]);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __toString()
+    {
+        return sprintf('Recorder()');
+    }
 }

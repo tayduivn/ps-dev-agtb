@@ -67,6 +67,10 @@ final class AdminSettingsStorage implements Storage
      */
     public function update($var, $value)
     {
+        if ($this->data === null) {
+            $this->data = $this->load();
+        }
+
         $this->data[$var] = $value;
         $this->admin->saveSetting(self::CATEGORY, self::NAME, $this->data);
     }

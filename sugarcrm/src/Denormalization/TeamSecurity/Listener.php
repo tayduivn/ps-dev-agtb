@@ -71,4 +71,11 @@ interface Listener
      * @return void
      */
     public function userRemovedFromTeam($userId, $teamId);
+
+    /**
+     * Returns textual representation of the listener's behavior for debugging/introspection purposes.
+     *
+     * @return string
+     */
+    public function __toString();
 }

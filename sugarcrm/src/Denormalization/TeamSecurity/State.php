@@ -27,10 +27,12 @@ class State implements SplSubject
     const STATE_REBUILD_RUNNING = 'rebuild_running';
     const STATE_ACTIVE_TABLE = 'active_table';
 
-    /**
+    /**#@+
      * @var bool
      */
     private $isEnabled;
+    private $shouldHandleAdminUpdatesInline;
+    /**#@-*/
 
     /**#@+
      * @var string
@@ -59,9 +61,10 @@ class State implements SplSubject
      */
     private $observers;
 
-    public function __construct($isEnabled, Storage $storage, LoggerInterface $logger)
+    public function __construct($isEnabled, $shouldHandleAdminUpdatesInline, Storage $storage, LoggerInterface $logger)
     {
         $this->isEnabled = $isEnabled;
+        $this->shouldHandleAdminUpdatesInline = $shouldHandleAdminUpdatesInline;
 
         $this->storage = $storage;
         $this->logger = $logger;
@@ -78,6 +81,11 @@ class State implements SplSubject
     public function isEnabled()
     {
         return $this->isEnabled;
+    }
+
+    public function shouldHandleAdminUpdatesInline()
+    {
+        return $this->shouldHandleAdminUpdatesInline;
     }
 
     /**

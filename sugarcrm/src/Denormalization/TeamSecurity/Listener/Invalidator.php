@@ -95,4 +95,12 @@ final class Invalidator implements Listener
     {
         $this->state->markOutOfDate();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __toString()
+    {
+        return sprintf('Invalidator()');
+    }
 }

@@ -249,4 +249,12 @@ SQL
     {
         return sprintf($template, $this->table);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __toString()
+    {
+        return sprintf('Updater("%s")', $this->table);
+    }
 }

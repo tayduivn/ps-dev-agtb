@@ -131,6 +131,6 @@ class StateTest extends \PHPUnit_Framework_TestCase
 
     private function createState(Storage $storage)
     {
-        return new State(true, $storage, $this->createLogger());
+        return new State(true, true, $storage, $this->createLogger());
     }
 }

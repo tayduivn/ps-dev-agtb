@@ -17,7 +17,8 @@ use Psr\Log\LoggerInterface;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Dbal\Connection;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\RebuildIfNeeded;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateBasedListener;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateBasedBuilder;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Proxy;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 
@@ -70,16 +71,20 @@ class Manager
         $this->logger = $logger;
 
         $this->state = new State(
+            $config->get(self::CONFIG_KEY . '.inline_update'),
             $this->getIsEnabledUseDenormOption($config),
             new AdminSettingsStorage(),
             $logger
         );
 
-        $this->listener = new StateBasedListener(
-            $this->state,
+        $builder = new StateBasedBuilder(
             $conn,
-            $config->get(self::CONFIG_KEY . '.inline_update')
+            $this->state
         );
+
+        $this->listener = new Proxy($builder);
+
+        $this->state->attach($this->listener);
     }
 
     /**

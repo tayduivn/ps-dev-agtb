@@ -12,33 +12,33 @@
 
 namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
+use SplObserver;
+use SplSubject;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
 /**
- * Routes user initiated events to one of the listeners and the rest to the other
+ * Proxies calls to the underlying listener and rebuilds it when requested
  */
-final class UserOnlyListener implements Listener
+final class Proxy implements Listener, SplObserver
 {
     /**
-     * @var Listener
+     * @var Builder
      */
-    private $matchingListener;
+    private $builder;
 
     /**
      * @var Listener
      */
-    private $nonMatchingListener;
+    private $listener;
 
     /**
      * Constructor
      *
-     * @param Listener $matchingListener
-     * @param Listener $nonMatchingListener
+     * @param Builder $builder
      */
-    public function __construct(Listener $matchingListener, Listener $nonMatchingListener)
+    public function __construct(Builder $builder)
     {
-        $this->matchingListener = $matchingListener;
-        $this->nonMatchingListener = $nonMatchingListener;
+        $this->builder = $builder;
     }
 
     /**
@@ -46,7 +46,7 @@ final class UserOnlyListener implements Listener
      */
     public function userDeleted($userId)
     {
-        $this->nonMatchingListener->userDeleted($userId);
+        $this->getListener()->userDeleted($userId);
     }
 
     /**
@@ -54,17 +54,15 @@ final class UserOnlyListener implements Listener
      */
     public function teamDeleted($teamId)
     {
-        $this->nonMatchingListener->teamDeleted($teamId);
+        $this->getListener()->teamDeleted($teamId);
     }
 
     /**
      * {@inheritDoc}
-     *
-     * A team set is created upon assignment of a new unique set of teams to a record (a user-initiated event).
      */
     public function teamSetCreated($teamSetId, array $teamIds)
     {
-        $this->matchingListener->teamSetCreated($teamSetId, $teamIds);
+        $this->getListener()->teamSetCreated($teamSetId, $teamIds);
     }
 
     /**
@@ -72,7 +70,7 @@ final class UserOnlyListener implements Listener
      */
     public function teamSetDeleted($teamSetId)
     {
-        $this->nonMatchingListener->teamSetDeleted($teamSetId);
+        $this->getListener()->teamSetDeleted($teamSetId);
     }
 
     /**
@@ -80,7 +78,7 @@ final class UserOnlyListener implements Listener
      */
     public function userAddedToTeam($userId, $teamId)
     {
-        $this->nonMatchingListener->userAddedToTeam($userId, $teamId);
+        $this->getListener()->userAddedToTeam($userId, $teamId);
     }
 
     /**
@@ -88,6 +86,34 @@ final class UserOnlyListener implements Listener
      */
     public function userRemovedFromTeam($userId, $teamId)
     {
-        $this->nonMatchingListener->userRemovedFromTeam($userId, $teamId);
+        $this->getListener()->userRemovedFromTeam($userId, $teamId);
+    }
+
+    /**
+     * @return Listener
+     */
+    private function getListener()
+    {
+        if (!$this->listener) {
+            $this->listener = $this->builder->createListener();
+        }
+
+        return $this->listener;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function update(SplSubject $subject)
+    {
+        $this->listener = null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __toString()
+    {
+        return (string) $this->getListener();
     }
 }

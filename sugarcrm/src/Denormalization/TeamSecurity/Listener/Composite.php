@@ -29,11 +29,13 @@ final class Composite implements Listener
     /**
      * Constructor
      *
+     * @param Listener $listener1
+     * @param Listener $listener2
      * @param Listener[] $listeners
      */
-    public function __construct(Listener ...$listeners)
+    public function __construct(Listener $listener1, Listener $listener2, Listener ...$listeners)
     {
-        $this->listeners = $listeners;
+        $this->listeners = array_merge([$listener1, $listener2], $listeners);
     }
 
     /**
@@ -41,7 +43,7 @@ final class Composite implements Listener
      */
     public function userDeleted($userId)
     {
-        $this->invoke(function (Listener $listener) use ($userId) {
+        array_walk($this->listeners, function (Listener $listener) use ($userId) {
             $listener->userDeleted($userId);
         });
     }
@@ -51,7 +53,7 @@ final class Composite implements Listener
      */
     public function teamDeleted($teamId)
     {
-        $this->invoke(function (Listener $listener) use ($teamId) {
+        array_walk($this->listeners, function (Listener $listener) use ($teamId) {
             $listener->teamDeleted($teamId);
         });
     }
@@ -61,7 +63,7 @@ final class Composite implements Listener
      */
     public function teamSetCreated($teamSetId, array $teamIds)
     {
-        $this->invoke(function (Listener $listener) use ($teamSetId, $teamIds) {
+        array_walk($this->listeners, function (Listener $listener) use ($teamSetId, $teamIds) {
             $listener->teamSetCreated($teamSetId, $teamIds);
         });
     }
@@ -71,7 +73,7 @@ final class Composite implements Listener
      */
     public function teamSetDeleted($teamSetId)
     {
-        $this->invoke(function (Listener $listener) use ($teamSetId) {
+        array_walk($this->listeners, function (Listener $listener) use ($teamSetId) {
             $listener->teamSetDeleted($teamSetId);
         });
     }
@@ -81,7 +83,7 @@ final class Composite implements Listener
      */
     public function userAddedToTeam($userId, $teamId)
     {
-        $this->invoke(function (Listener $listener) use ($userId, $teamId) {
+        array_walk($this->listeners, function (Listener $listener) use ($userId, $teamId) {
             $listener->userAddedToTeam($userId, $teamId);
         });
     }
@@ -91,18 +93,16 @@ final class Composite implements Listener
      */
     public function userRemovedFromTeam($userId, $teamId)
     {
-        $this->invoke(function (Listener $listener) use ($userId, $teamId) {
+        array_walk($this->listeners, function (Listener $listener) use ($userId, $teamId) {
             $listener->userRemovedFromTeam($userId, $teamId);
         });
     }
 
     /**
-     * Invokes the given callback on all underlying listeners
-     *
-     * @param callable $callback
+     * {@inheritDoc}
      */
-    private function invoke(callable $callback)
+    public function __toString()
     {
-        array_walk($this->listeners, $callback);
+        return sprintf('Composite(%s)', implode(', ', $this->listeners));
     }
 }

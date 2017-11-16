@@ -12,14 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\UserOnlyListener;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Invalidator;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
- * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\UserOnlyListener
+ * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Invalidator
  */
-class UserOnlyListenerTest extends \PHPUnit_Framework_TestCase
+class InvalidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -28,7 +28,7 @@ class UserOnlyListenerTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::uuid1();
 
-        $listener = $this->createListener(false, 'userDeleted', $id);
+        $listener = $this->createInvalidator(false);
         $listener->userDeleted($id);
     }
 
@@ -39,7 +39,7 @@ class UserOnlyListenerTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::uuid1();
 
-        $listener = $this->createListener(false, 'teamDeleted', $id);
+        $listener = $this->createInvalidator(true);
         $listener->teamDeleted($id);
     }
 
@@ -52,7 +52,7 @@ class UserOnlyListenerTest extends \PHPUnit_Framework_TestCase
         $id2 = Uuid::uuid1();
         $id3 = Uuid::uuid1();
 
-        $listener = $this->createListener(true, 'teamSetCreated', $id1, [$id2, $id3]);
+        $listener = $this->createInvalidator(true);
         $listener->teamSetCreated($id1, [$id2, $id3]);
     }
 
@@ -63,7 +63,7 @@ class UserOnlyListenerTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::uuid1();
 
-        $listener = $this->createListener(false, 'teamSetDeleted', $id);
+        $listener = $this->createInvalidator(false);
         $listener->teamSetDeleted($id);
     }
 
@@ -75,7 +75,7 @@ class UserOnlyListenerTest extends \PHPUnit_Framework_TestCase
         $id1 = Uuid::uuid1();
         $id2 = Uuid::uuid1();
 
-        $listener = $this->createListener(false, 'userAddedToTeam', $id1, $id2);
+        $listener = $this->createInvalidator(true);
         $listener->userAddedToTeam($id1, $id2);
     }
 
@@ -87,25 +87,23 @@ class UserOnlyListenerTest extends \PHPUnit_Framework_TestCase
         $id1 = Uuid::uuid1();
         $id2 = Uuid::uuid1();
 
-        $listener = $this->createListener(false, 'userRemovedFromTeam', $id1, $id2);
+        $listener = $this->createInvalidator(true);
         $listener->userRemovedFromTeam($id1, $id2);
     }
 
-    private function createListener($shoudMatch, $method, ...$args)
+    private function createInvalidator($shouldMarkOutOfDate)
     {
-        $invokedListener = $this->createMock(Listener::class);
-        $invokedListener->expects($this->once())
-            ->method($method)
-            ->with(...$args);
+        $state = $this->createMock(State::class);
 
-        $nonInvokedListener = $this->createMock(Listener::class);
-        $nonInvokedListener->expects($this->never())
-            ->method($method);
-
-        if ($shoudMatch) {
-            return new UserOnlyListener($invokedListener, $nonInvokedListener);
+        if ($shouldMarkOutOfDate) {
+            $matcher = $this->once();
+        } else {
+            $matcher = $this->never();
         }
 
-        return new UserOnlyListener($nonInvokedListener, $invokedListener);
+        $state->expects($matcher)
+            ->method('markOutOfDate');
+
+        return new Invalidator($state);
     }
 }

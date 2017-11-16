@@ -15,17 +15,38 @@ namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
 /**
- * Null implementation of the listener
- *
- * @codeCoverageIgnore
+ * Routes user initiated events to one of the listeners and the rest to the other
  */
-final class NullListener implements Listener
+final class UserOnly implements Listener
 {
+    /**
+     * @var Listener
+     */
+    private $matchingListener;
+
+    /**
+     * @var Listener
+     */
+    private $nonMatchingListener;
+
+    /**
+     * Constructor
+     *
+     * @param Listener $matchingListener
+     * @param Listener $nonMatchingListener
+     */
+    public function __construct(Listener $matchingListener, Listener $nonMatchingListener)
+    {
+        $this->matchingListener = $matchingListener;
+        $this->nonMatchingListener = $nonMatchingListener;
+    }
+
     /**
      * {@inheritDoc}
      */
     public function userDeleted($userId)
     {
+        $this->nonMatchingListener->userDeleted($userId);
     }
 
     /**
@@ -33,13 +54,17 @@ final class NullListener implements Listener
      */
     public function teamDeleted($teamId)
     {
+        $this->nonMatchingListener->teamDeleted($teamId);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * A team set is created upon assignment of a new unique set of teams to a record (a user-initiated event).
      */
     public function teamSetCreated($teamSetId, array $teamIds)
     {
+        $this->matchingListener->teamSetCreated($teamSetId, $teamIds);
     }
 
     /**
@@ -47,6 +72,7 @@ final class NullListener implements Listener
      */
     public function teamSetDeleted($teamSetId)
     {
+        $this->nonMatchingListener->teamSetDeleted($teamSetId);
     }
 
     /**
@@ -54,6 +80,7 @@ final class NullListener implements Listener
      */
     public function userAddedToTeam($userId, $teamId)
     {
+        $this->nonMatchingListener->userAddedToTeam($userId, $teamId);
     }
 
     /**
@@ -61,6 +88,7 @@ final class NullListener implements Listener
      */
     public function userRemovedFromTeam($userId, $teamId)
     {
+        $this->nonMatchingListener->userRemovedFromTeam($userId, $teamId);
     }
 
     /**
@@ -68,6 +96,6 @@ final class NullListener implements Listener
      */
     public function __toString()
     {
-        return sprintf('Null()');
+        return sprintf('UserOnly(%s, %s)', $this->matchingListener, $this->nonMatchingListener);
     }
 }
