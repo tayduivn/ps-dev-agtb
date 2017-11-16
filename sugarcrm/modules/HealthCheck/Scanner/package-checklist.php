@@ -407,4 +407,9 @@ return array(
             'version' => '99999999',
         ],
     ],
+    'Bug 79365 79076 Workaround' => [
+        [
+            'version' => '99999999',
+        ],
+    ],
 );
