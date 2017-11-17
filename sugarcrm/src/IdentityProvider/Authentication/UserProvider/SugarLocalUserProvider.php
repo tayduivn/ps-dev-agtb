@@ -65,7 +65,7 @@ class SugarLocalUserProvider implements UserProviderInterface
 
     /**
      * Search and return mango base user.
-     * Search can be performed by any User field; 'username' by default.
+     * Search can be performed by any User field; 'user_name' by default.
      *
      * @param string $nameIdentifier Value to search by.
      * @param string $field Field name to search by.
@@ -73,8 +73,18 @@ class SugarLocalUserProvider implements UserProviderInterface
      */
     protected function getUser($nameIdentifier, $field = 'user_name')
     {
+        global $current_user;
+
         /** @var \User $sugarUser */
         $sugarUser = $this->createUserBean();
+
+        $isUserSet = false;
+        if (empty($current_user) || !$current_user->id) {
+            // make sure we use correct user datetime preferences
+            $timedate = \TimeDate::getInstance();
+            $timedate->setUser($sugarUser);
+            $isUserSet = true;
+        }
 
         if ($field == 'email') {
             $sugarUser->retrieve_by_email_address($nameIdentifier);
@@ -85,6 +95,11 @@ class SugarLocalUserProvider implements UserProviderInterface
             $query->where()->equals($field, $nameIdentifier);
             $sugarUserId = $query->getOne();
             $sugarUser->retrieve($sugarUserId, true, false);
+        }
+
+        if ($isUserSet) {
+            // clear our temporary user just in case
+            $timedate->setUser(null);
         }
 
         if (!$sugarUser->id) {
