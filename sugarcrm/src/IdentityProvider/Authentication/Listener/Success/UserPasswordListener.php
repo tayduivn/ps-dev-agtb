@@ -86,13 +86,13 @@ class UserPasswordListener
      */
     protected function checkPasswordTime(User $user)
     {
-        $now = $this->getTimeDate()->nowDb();
         $userPasswordType = $user->getPasswordType();
         $lastChangeDate = $user->getPasswordLastChangeDate();
         if ($lastChangeDate) {
             $lastChangeDate = $this->getTimeDate()->fromUser($lastChangeDate, $user->getSugarUser());
         } else {
-            $user->setPasswordLastChangeDate($lastChangeDate = $now);
+            $lastChangeDate = $this->getTimeDate()->nowDb();
+            $user->setPasswordLastChangeDate($lastChangeDate);
             $user->allowUpdateDateModified(false);
             $user->getSugarUser()->save();
             $lastChangeDate = $this->getTimeDate()->fromDb($lastChangeDate);
@@ -104,7 +104,7 @@ class UserPasswordListener
         // greater, however, expirationtype defaults to following values: 0/day, 7/week, 30/month
         // (See and {debug} PasswordManager.tpl for more info)
         $daysInterval = $multiplier * $this->getConfigValue($userPasswordType, 'expirationtime', 1);
-        if ($now->ts < $lastChangeDate->get("+$daysInterval days")->ts) {
+        if ($this->getTimeDate()->getNow()->ts < $lastChangeDate->get("+$daysInterval days")->ts) {
             return false;
         } else {
             $this->setSessionVariable('expiration_label', 'LBL_PASSWORD_EXPIRATION_TIME');
