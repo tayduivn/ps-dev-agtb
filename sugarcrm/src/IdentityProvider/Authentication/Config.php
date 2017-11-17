@@ -123,14 +123,23 @@ class Config
             return [];
         }
 
+        // make sure host is in symfony/ldap format
+        $host = $this->getLdapSetting('ldap_hostname', '127.0.0.1');
+        $encryption = 'none';
+        if (strpos($host, 'ldaps://') === 0) {
+            $host = substr($host, strlen('ldaps://'));
+            $encryption = 'ssl';
+        }
+
         $ldap = [
             'adapter_config' => [
-                'host' => $this->getLdapSetting('ldap_hostname', '127.0.0.1'),
+                'host' => $host,
                 'port' => $this->getLdapSetting('ldap_port', 389),
                 'options' => [
                     'network_timeout' => 60,
                     'timelimit' => 60,
                 ],
+                'encryption' => $encryption,
             ],
             'adapter_connection_protocol_version' => 3,
             'baseDn' => $this->getLdapSetting('ldap_base_dn', ''),

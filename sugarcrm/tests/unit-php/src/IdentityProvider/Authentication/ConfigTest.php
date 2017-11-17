@@ -226,10 +226,138 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEmpty($config->getLdapConfig());
     }
+
+    public function getLdapConfigDataProvider()
+    {
+        return [
+            'regular LDAP' => [
+                [
+                    'user' => [
+                        'mapping' => [
+                            'givenName' => 'first_name',
+                            'sn' => 'last_name',
+                            'mail' => 'email1',
+                            'telephoneNumber' => 'phone_work',
+                            'facsimileTelephoneNumber' => 'phone_fax',
+                            'mobile' => 'phone_mobile',
+                            'street' => 'address_street',
+                            'l' => 'address_city',
+                            'st' => 'address_state',
+                            'postalCode' => 'address_postalcode',
+                            'c' => 'address_country',
+                        ],
+                    ],
+                    'adapter_config' => [
+                        'host' => '127.0.0.1',
+                        'port' => '389',
+                        'options' => [
+                            'network_timeout' => 60,
+                            'timelimit' => 60,
+                        ],
+                        'encryption' => 'none',
+                    ],
+                    'adapter_connection_protocol_version' => 3,
+                    'baseDn' => 'dn',
+                    'uidKey' => 'uidKey',
+                    'filter' => '({uid_key}={username})',
+                    'dnString' => null,
+                    'entryAttribute' => 'ldap_bind_attr',
+                    'autoCreateUser' => true,
+                    'searchDn' => 'admin',
+                    'searchPassword' => 'test',
+                    'groupMembership' => true,
+                    'groupDn' => 'group,group_dn',
+                    'groupAttribute' => 'group_attr',
+                    'userUniqueAttribute' => 'ldap_group_user_attr',
+                    'includeUserDN' => true,
+                ],
+                [
+                    ['ldap_hostname', '127.0.0.1', '127.0.0.1'],
+                    ['ldap_port', 389, 389],
+                    ['ldap_base_dn', '', 'dn'],
+                    ['ldap_login_attr', '', 'uidKey'],
+                    ['ldap_login_filter', '', ''],
+                    ['ldap_bind_attr', null, 'ldap_bind_attr'],
+                    ['ldap_auto_create_users', false, true],
+                    ['ldap_authentication', null, true],
+                    ['ldap_admin_user', null, 'admin'],
+                    ['ldap_admin_password', null, 'test'],
+                    ['ldap_group', null, true],
+                    ['ldap_group_name', null, 'group'],
+                    ['ldap_group_dn', null, 'group_dn'],
+                    ['ldap_group_attr', null, 'group_attr'],
+                    ['ldap_group_user_attr', null, 'ldap_group_user_attr'],
+                    ['ldap_group_attr_req_dn', false, '1'],
+                ],
+            ],
+            'LDAP over SSL' => [
+                [
+                    'user' => [
+                        'mapping' => [
+                            'givenName' => 'first_name',
+                            'sn' => 'last_name',
+                            'mail' => 'email1',
+                            'telephoneNumber' => 'phone_work',
+                            'facsimileTelephoneNumber' => 'phone_fax',
+                            'mobile' => 'phone_mobile',
+                            'street' => 'address_street',
+                            'l' => 'address_city',
+                            'st' => 'address_state',
+                            'postalCode' => 'address_postalcode',
+                            'c' => 'address_country',
+                        ],
+                    ],
+                    'adapter_config' => [
+                        'host' => '127.0.0.1',
+                        'port' => 636,
+                        'options' => [
+                            'network_timeout' => 60,
+                            'timelimit' => 60,
+                        ],
+                        'encryption' => 'ssl',
+                    ],
+                    'adapter_connection_protocol_version' => 3,
+                    'baseDn' => 'dn',
+                    'uidKey' => 'uidKey',
+                    'filter' => '({uid_key}={username})',
+                    'dnString' => null,
+                    'entryAttribute' => 'ldap_bind_attr',
+                    'autoCreateUser' => true,
+                    'searchDn' => 'admin',
+                    'searchPassword' => 'test',
+                    'groupMembership' => true,
+                    'groupDn' => 'group,group_dn',
+                    'groupAttribute' => 'group_attr',
+                    'userUniqueAttribute' => 'ldap_group_user_attr',
+                    'includeUserDN' => true,
+                ],
+                [
+                    ['ldap_hostname', '127.0.0.1', 'ldaps://127.0.0.1'],
+                    ['ldap_port', 389, 636],
+                    ['ldap_base_dn', '', 'dn'],
+                    ['ldap_login_attr', '', 'uidKey'],
+                    ['ldap_login_filter', '', ''],
+                    ['ldap_bind_attr', null, 'ldap_bind_attr'],
+                    ['ldap_auto_create_users', false, true],
+                    ['ldap_authentication', null, true],
+                    ['ldap_admin_user', null, 'admin'],
+                    ['ldap_admin_password', null, 'test'],
+                    ['ldap_group', null, true],
+                    ['ldap_group_name', null, 'group'],
+                    ['ldap_group_dn', null, 'group_dn'],
+                    ['ldap_group_attr', null, 'group_attr'],
+                    ['ldap_group_user_attr', null, 'ldap_group_user_attr'],
+                    ['ldap_group_attr_req_dn', false, '1'],
+                ],
+            ],
+        ];
+    }
+
     /**
+     * @dataProvider getLdapConfigDataProvider
      * @covers ::getLdapConfig
      */
-    public function testGetLdapConfig()
+    public function testGetLdapConfig($expected, $returnValueMap)
     {
         $config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
@@ -240,82 +368,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $config->expects($this->exactly(16))
             ->method('getLdapSetting')
-            ->withConsecutive(
-                [$this->equalTo('ldap_hostname'), $this->equalTo('127.0.0.1')],
-                [$this->equalTo('ldap_port'), $this->equalTo(389)],
-                [$this->equalTo('ldap_base_dn'), $this->identicalTo('')],
-                [$this->equalTo('ldap_login_attr'), $this->identicalTo('')],
-                [$this->equalTo('ldap_login_filter'), $this->identicalTo('')],
-                [$this->equalTo('ldap_bind_attr')],
-                [$this->equalTo('ldap_auto_create_users'), $this->isFalse()],
-                [$this->equalTo('ldap_authentication')],
-                [$this->equalTo('ldap_admin_user')],
-                [$this->equalTo('ldap_admin_password')],
-                [$this->equalTo('ldap_group')],
-                [$this->equalTo('ldap_group_name')],
-                [$this->equalTo('ldap_group_dn')],
-                [$this->equalTo('ldap_group_attr')],
-                [$this->equalTo('ldap_group_user_attr')],
-                [$this->equalTo('ldap_group_attr_req_dn'), $this->isFalse()]
-            )
-            ->willReturnOnConsecutiveCalls(
-                '127.0.0.1',
-                '389',
-                'dn',
-                'uidKey',
-                '',
-                'ldap_bind_attr',
-                true,
-                true,
-                'admin',
-                'test',
-                true,
-                'group',
-                'group_dn',
-                'group_attr',
-                'ldap_group_user_attr',
-                "1"
-            );
+            ->willReturnMap($returnValueMap);
 
-        $expected = [
-            'user' => [
-                'mapping' => [
-                    'givenName' => 'first_name',
-                    'sn' => 'last_name',
-                    'mail' => 'email1',
-                    'telephoneNumber' => 'phone_work',
-                    'facsimileTelephoneNumber' => 'phone_fax',
-                    'mobile' => 'phone_mobile',
-                    'street' => 'address_street',
-                    'l' => 'address_city',
-                    'st' => 'address_state',
-                    'postalCode' => 'address_postalcode',
-                    'c' => 'address_country',
-                ],
-            ],
-            'adapter_config' => [
-                'host' => '127.0.0.1',
-                'port' => '389',
-                'options' => [
-                    'network_timeout' => 60,
-                    'timelimit' => 60,
-                ],
-            ],
-            'adapter_connection_protocol_version' => 3,
-            'baseDn' => 'dn',
-            'uidKey' => 'uidKey',
-            'filter' => '({uid_key}={username})',
-            'dnString' => null,
-            'entryAttribute' => 'ldap_bind_attr',
-            'autoCreateUser' => true,
-            'searchDn' => 'admin',
-            'searchPassword' => 'test',
-            'groupMembership' => true,
-            'groupDn' => 'group,group_dn',
-            'groupAttribute' => 'group_attr',
-            'userUniqueAttribute' => 'ldap_group_user_attr',
-            'includeUserDN' => true,
-        ];
         $this->assertEquals($expected, $config->getLdapConfig());
     }
 
