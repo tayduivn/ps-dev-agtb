@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 
+use Psr\Log\LoggerInterface;
 use SplObserver;
 use SplSubject;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
@@ -27,6 +28,11 @@ final class Proxy implements Listener, SplObserver
     private $builder;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var Listener
      */
     private $listener;
@@ -35,10 +41,12 @@ final class Proxy implements Listener, SplObserver
      * Constructor
      *
      * @param Builder $builder
+     * @param LoggerInterface $logger
      */
-    public function __construct(Builder $builder)
+    public function __construct(Builder $builder, LoggerInterface $logger)
     {
         $this->builder = $builder;
+        $this->logger = $logger;
     }
 
     /**
@@ -96,6 +104,7 @@ final class Proxy implements Listener, SplObserver
     {
         if (!$this->listener) {
             $this->listener = $this->builder->createListener();
+            $this->logger->info(sprintf('Using %s listener', $this));
         }
 
         return $this->listener;

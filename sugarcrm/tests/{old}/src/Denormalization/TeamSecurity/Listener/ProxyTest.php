@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 
+use Psr\Log\LoggerInterface;
 use SplSubject;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder;
@@ -108,7 +109,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
                 $this->onConsecutiveCalls($listener1, $listener2)
             );
 
-        $proxy = new Proxy($builder);
+        $proxy = new Proxy($builder, $this->createMock(LoggerInterface::class));
 
         $this->assertSame('Test1()', (string) $proxy);
 
@@ -130,7 +131,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
             ->method('createListener')
             ->willReturn($listener);
 
-        return new Proxy($builder);
+        return new Proxy($builder, $this->createMock(LoggerInterface::class));
     }
 
     private function createNamedListener($name)

@@ -82,7 +82,7 @@ class Manager
             $this->state
         );
 
-        $this->listener = new Proxy($builder);
+        $this->listener = new Proxy($builder, $this->logger);
 
         $this->state->attach($this->listener);
     }

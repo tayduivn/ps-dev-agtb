@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\State\Storage;
 
+use Administration;
 use BeanFactory;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage as Storage;
 use Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\State\StorageTest;
@@ -21,6 +22,35 @@ use Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\State\StorageTest;
  */
 class AdminSettingsStorageTest extends StorageTest
 {
+    /**
+     * @var Administration
+     */
+    private $admin;
+
+    /**
+     * @var Administration
+     */
+    private $settings;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->admin = BeanFactory::newBean('Administration');
+        $this->admin->retrieveSettings(Storage::CATEGORY);
+
+        $key = Storage::CATEGORY . '_' . Storage::NAME;
+        $this->settings = isset($this->admin->settings[$key])
+            ? $this->admin->settings[$key] : null;
+    }
+
+    protected function tearDown()
+    {
+        $this->admin->saveSetting(Storage::CATEGORY, Storage::NAME, $this->settings);
+
+        parent::tearDown();
+    }
+
     protected function createStorage()
     {
         return new Storage();
@@ -31,8 +61,7 @@ class AdminSettingsStorageTest extends StorageTest
      */
     public function unexpectedValueStored()
     {
-        $admin = BeanFactory::newBean('Administration');
-        $admin->saveSetting(Storage::CATEGORY, Storage::NAME, 'garbage');
+        $this->admin->saveSetting(Storage::CATEGORY, Storage::NAME, 'garbage');
 
         $this->assertNull($this->storage->get('whatever'));
     }
