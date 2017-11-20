@@ -12,17 +12,13 @@
 
 namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command;
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Recorder;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Updater;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 
 /**
- * Performs full denormalized data rebuild, if needed
+ * Performs full denormalized data rebuild if required in the current state and updates the state accordingly
  */
-final class RebuildIfNeeded
+final class StateAwareRebuild
 {
     /**
      * @var State
@@ -30,9 +26,9 @@ final class RebuildIfNeeded
     private $state;
 
     /**
-     * @var Connection
+     * @var callable
      */
-    private $conn;
+    private $command;
 
     /**
      * @var LoggerInterface
@@ -43,13 +39,13 @@ final class RebuildIfNeeded
      * Constructor
      *
      * @param State $state
-     * @param Connection $conn
+     * @param callable $command
      * @param LoggerInterface $logger
      */
-    public function __construct(State $state, Connection $conn, LoggerInterface $logger)
+    public function __construct(State $state, callable $command, LoggerInterface $logger)
     {
         $this->state = $state;
-        $this->conn = $conn;
+        $this->command = $command;
         $this->logger = $logger;
     }
 
@@ -84,8 +80,7 @@ final class RebuildIfNeeded
         try {
             $targetTable = $this->state->getTargetTable();
             $this->state->markRebuildRunning();
-            $this->rebuild($targetTable);
-            $this->replayChanges($targetTable);
+            ($this->command)($targetTable);
             $this->state->activateTable($targetTable);
         } catch (\Exception $e) {
             $this->logger->critical($e);
@@ -105,52 +100,5 @@ final class RebuildIfNeeded
             true,
             'Denormalized table rebuild completed',
         );
-    }
-
-    /**
-     * Rebuild table
-     *
-     * @param string $table
-     *
-     * @throws DBALException
-     */
-    private function rebuild($table)
-    {
-        $this->conn->executeQuery(<<<SQL
-DELETE FROM $table
-SQL
-        );
-
-        $this->conn->executeQuery(<<<SQL
-INSERT INTO $table
-SELECT
-    ts.id AS team_set_id,
-    tm.user_id AS user_id
-FROM team_sets ts
-INNER JOIN team_sets_teams tst
-    ON ts.id = tst.team_set_id
-INNER JOIN teams t
-    ON tst.team_id = t.id
-    AND t.deleted = 0
-INNER JOIN team_memberships tm
-    ON t.id = tm.team_id
-    AND tm.deleted = 0
-GROUP BY ts.id, tm.user_id
-SQL
-        );
-    }
-
-    /**
-     * Replay all actions added to denorm queue table after rebuild.
-     *
-     * @param string $targetTable
-     *
-     * @throws DBALException
-     */
-    private function replayChanges($targetTable)
-    {
-        $recorder = new Recorder($this->conn);
-        $updater = new Updater($this->conn, $targetTable);
-        $recorder->replay($updater, $this->logger);
     }
 }

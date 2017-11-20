@@ -16,7 +16,8 @@ use DBManagerFactory;
 use Psr\Log\LoggerInterface;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Dbal\Connection;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\RebuildIfNeeded;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\Rebuild;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateBasedBuilder;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Proxy;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
@@ -122,11 +123,15 @@ class Manager
     }
 
     /**
-     * @return RebuildIfNeeded
+     * @return StateAwareRebuild
      */
     public function getRebuildCommand()
     {
-        return new RebuildIfNeeded($this->state, $this->conn, $this->logger);
+        return new StateAwareRebuild(
+            $this->state,
+            new Rebuild($this->conn, $this->logger),
+            $this->logger
+        );
     }
 
     /**

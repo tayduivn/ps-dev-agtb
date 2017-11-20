@@ -200,7 +200,7 @@ class State implements SplSubject
      */
     public function isUpToDate()
     {
-        return $this->storage->get(self::STATE_UP_TO_DATE);
+        return (bool) $this->storage->get(self::STATE_UP_TO_DATE);
     }
 
     /**
@@ -218,7 +218,7 @@ class State implements SplSubject
      */
     public function isRebuildRunning()
     {
-        return $this->storage->get(self::STATE_REBUILD_RUNNING);
+        return (bool) $this->storage->get(self::STATE_REBUILD_RUNNING);
     }
 
     /**

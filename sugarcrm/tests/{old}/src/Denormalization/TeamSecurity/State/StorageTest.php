@@ -53,18 +53,6 @@ abstract class StorageTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($value, $stored);
     }
 
-    /**
-     * @test
-     */
-    public function stateIsShared()
-    {
-        $this->storage->update('test', 'foo');
-        $anotherInstance = $this->createStorage();
-        $this->storage->update('test', 'bar');
-
-        $this->assertSame('bar', $anotherInstance->get('test'));
-    }
-
     public static function updateAndGetProvider()
     {
         return [

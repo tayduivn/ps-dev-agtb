@@ -28,9 +28,9 @@ class AdminSettingsStorageTest extends StorageTest
     private $admin;
 
     /**
-     * @var Administration
+     * @var array|null
      */
-    private $settings;
+    private $backup;
 
     protected function setUp()
     {
@@ -40,13 +40,13 @@ class AdminSettingsStorageTest extends StorageTest
         $this->admin->retrieveSettings(Storage::CATEGORY);
 
         $key = Storage::CATEGORY . '_' . Storage::NAME;
-        $this->settings = isset($this->admin->settings[$key])
+        $this->backup = isset($this->admin->settings[$key])
             ? $this->admin->settings[$key] : null;
     }
 
     protected function tearDown()
     {
-        $this->admin->saveSetting(Storage::CATEGORY, Storage::NAME, $this->settings);
+        $this->admin->saveSetting(Storage::CATEGORY, Storage::NAME, $this->backup);
 
         parent::tearDown();
     }
@@ -54,6 +54,18 @@ class AdminSettingsStorageTest extends StorageTest
     protected function createStorage()
     {
         return new Storage();
+    }
+
+    /**
+     * @test
+     */
+    public function stateIsShared()
+    {
+        $this->storage->update('test', 'foo');
+        $anotherInstance = $this->createStorage();
+        $this->storage->update('test', 'bar');
+
+        $this->assertSame('bar', $anotherInstance->get('test'));
     }
 
     /**
