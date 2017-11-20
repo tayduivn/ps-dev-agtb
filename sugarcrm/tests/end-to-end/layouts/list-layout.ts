@@ -12,7 +12,7 @@
 import {BaseView} from '@sugarcrm/seedbed';
 import ListView from '../views/list-view';
 import FilterView from '../views/filter-view';
-import HeaderView from '../views/header-view';
+import HeaderView from '../views/record-header-view';
 
 /**
  * Represents List page layout.

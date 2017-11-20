@@ -14,10 +14,10 @@ Represents header view PageObject
 import BaseView from './base-view';
 import {seedbed} from '@sugarcrm/seedbed';
 /**
- * @class HeaderView
+ * @class RecordHeaderView
  * @extends BaseView
  */
-export default class HeaderView extends BaseView {
+export default class RecordHeaderView extends BaseView {
 
     constructor(options) {
         super(options);

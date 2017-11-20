@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import HeaderView from '../views/header-view';
+import HeaderView from '../views/record-header-view';
 import {BaseView, seedbed} from '@sugarcrm/seedbed';
 import RecordView from '../views/record-view';
 import QliTable from '../views/qli-table';
