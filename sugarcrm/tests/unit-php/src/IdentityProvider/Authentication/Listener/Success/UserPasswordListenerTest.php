@@ -129,16 +129,16 @@ class UserPasswordListenerTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->timeDate->expects($this->once())
-            ->method('nowDb')
+            ->method('getNow')
             ->willReturn($now);
 
         $this->user->expects($this->once())
             ->method('getPasswordLastChangeDate')
-            ->willReturn($lastChange);
+            ->willReturn('2017-11-20 00:00:00 /*user password change date*/');
 
         $this->timeDate->expects($this->once())
             ->method('fromUser')
-            ->with($this->isInstanceOf(\SugarDateTime::class), $this->isInstanceOf(\User::class))
+            ->with($this->equalTo('2017-11-20 00:00:00 /*user password change date*/'), $this->isInstanceOf(\User::class))
             ->willReturn($lastChange);
 
         $this->listener->execute($this->event);
@@ -178,15 +178,18 @@ class UserPasswordListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->timeDate->expects($this->once())
             ->method('nowDb')
+            ->willReturn('2017-11-20 01:00:00 /*current time*/');
+        $this->timeDate->expects($this->once())
+            ->method('getNow')
             ->willReturn($now);
 
         $this->user->expects($this->once())
             ->method('getPasswordLastChangeDate')
-            ->willReturn(null);
+            ->willReturn('');
 
         $this->user->expects($this->once())
             ->method('setPasswordLastChangeDate')
-            ->with($this->isInstanceOf(\SugarDateTime::class));
+            ->with($this->equalTo('2017-11-20 01:00:00 /*current time*/'));
 
         $this->user->expects($this->once())
             ->method('allowUpdateDateModified')
@@ -197,7 +200,7 @@ class UserPasswordListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->timeDate->expects($this->once())
             ->method('fromDb')
-            ->with($this->isInstanceOf(\SugarDateTime::class))
+            ->with($this->equalTo('2017-11-20 01:00:00 /*current time*/'))
             ->willReturn($lastChange);
 
         $this->listener->expects($this->exactly(2))
