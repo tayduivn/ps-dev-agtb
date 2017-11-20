@@ -227,23 +227,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that when assigned user is not a current one new Meeting will contain them both.
-     * @covers \Meeting::save
-     */
-    public function testMeetingIsNewTheAssignedUserIsNotTheCurrentUserBothUsersAreInvited()
-    {
-        $user2 = SugarTestUserUtilities::createAnonymousUser();
-
-        $meeting = SugarTestMeetingUtilities::createMeeting(create_guid(), $user2);
-
-        $meeting->load_relationship('users');
-        $invitees = $meeting->users->get();
-        $this->assertCount(2, $invitees, 'Should include both the assigned user and current user');
-        $this->assertContains($meeting->assigned_user_id, $invitees, 'Should contain assigned user');
-        $this->assertContains($GLOBALS['current_user']->id, $invitees, 'Should contain current user user');
-    }
-
-    /**
      * Test that when assigned user is not a current one re-saved Meeting will contain only assigned user.
      * @covers \Meeting::save
      */

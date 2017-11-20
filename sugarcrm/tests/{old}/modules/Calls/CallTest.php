@@ -188,28 +188,6 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that when assigned user is not a current one new Call will contain them both.
-     * @covers \Call::save
-     */
-    public function testCallIsNewTheAssignedUserIsNotTheCurrentUserBothUsersAreInvited()
-    {
-        $user2 = SugarTestUserUtilities::createAnonymousUser();
-
-        $call = new Call();
-        $this->callid = $call->id = create_guid();
-        $call->new_with_id = true;
-        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
-        $call->assigned_user_id = $user2->id;
-        $call->save();
-
-        $call->load_relationship('users');
-        $invitees = $call->users->get();
-        $this->assertCount(2, $invitees, 'Should include both the assigned user and current user');
-        $this->assertContains($call->assigned_user_id, $invitees, 'Should contain assigned user');
-        $this->assertContains($GLOBALS['current_user']->id, $invitees, 'Should contain current user user');
-    }
-
-    /**
      * Test that when assigned user is not a current one re-saved Call will contain only assigned user.
      * @covers \Call::save
      */

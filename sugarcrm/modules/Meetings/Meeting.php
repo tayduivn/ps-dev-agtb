@@ -861,12 +861,6 @@ class Meeting extends SugarBean {
         if (isset($this->assigned_user_id) && !in_array($this->assigned_user_id, $existingUsers)) {
             $this->users->add($this->assigned_user_id);
         }
-
-        if (!$isUpdate && isset($GLOBALS['current_user']->id) &&
-            $this->assigned_user_id !== $GLOBALS['current_user']->id &&
-            !in_array($GLOBALS['current_user']->id, $existingUsers)) {
-            $this->users->add($GLOBALS['current_user']->id);
-        }
     }
 
 } // end class def
