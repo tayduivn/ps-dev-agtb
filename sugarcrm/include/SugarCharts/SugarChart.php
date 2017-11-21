@@ -177,6 +177,10 @@ class SugarChart
             if (is_array($value)) {
                 continue;
             }
+            if ($key == 'label') {
+                $value = htmlspecialchars($value, ENT_XML1 | ENT_QUOTES);
+                $this->chart_properties[$key] = $value;
+            }
             $properties .= $this->tab("<$key>$value</$key>", 2);
         }
 
