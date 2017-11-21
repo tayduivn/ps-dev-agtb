@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Console\Command\TeamSecurity;
+namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console;
 
 use Sugarcrm\Sugarcrm\Console\CommandRegistry\Mode\InstanceModeInterface;
 use Symfony\Component\Console\Command\Command;
@@ -20,10 +20,10 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 /**
  *
- * Cleanup and rebuild Team Security denormalized table.
+ * Rebuild denormalized team security data.
  *
  */
-class RebuildDenormTableCommand extends Command implements InstanceModeInterface
+class RebuildCommand extends Command implements InstanceModeInterface
 {
     /**
      * {inheritdoc}
@@ -31,8 +31,8 @@ class RebuildDenormTableCommand extends Command implements InstanceModeInterface
     protected function configure()
     {
         $this
-            ->setName('team:rebuild_denorm_table')
-            ->setDescription('Cleanup and rebuild Team Security denormalized table.');
+            ->setName('team-security:rebuild')
+            ->setDescription('Rebuild denormalized team security data');
     }
 
     /**

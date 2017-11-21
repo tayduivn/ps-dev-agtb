@@ -31,7 +31,8 @@ use Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\CleanupQueueCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ModuleCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\SilentReindexCommand;
-use Sugarcrm\Sugarcrm\Console\Command\TeamSecurity\RebuildDenormTableCommand;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\RebuildCommand;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -106,7 +107,8 @@ class Application extends BaseApplication
             new PasswordResetCommand(),
 
             //Team Security
-            new RebuildDenormTableCommand(),
+            new RebuildCommand(),
+            new StatusCommand(),
         ));
 
         $app = new Application();
