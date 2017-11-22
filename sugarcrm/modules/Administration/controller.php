@@ -526,6 +526,11 @@ class AdministrationController extends SugarController
         if (empty($config['idp']['singleLogoutService']['url'])) {
             $config['idp']['singleSignOnService']['url'] = $config['sp']['assertionConsumerService']['url'];
         }
+        // Unset security for default SAML settings
+        if (empty($config['idp']['x509cert'])) {
+            unset($config['security']);
+        }
+
         return new \OneLogin_Saml2_Settings($config);
     }
 
