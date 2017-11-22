@@ -17,25 +17,23 @@ use Psr\Log\LoggerInterface;
 use SplObjectStorage;
 use SplObserver;
 use SplSubject;
+use SugarConfig;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage;
 
-class State implements SplSubject
+class State implements SplObserver, SplSubject
 {
+    /**
+     * $sugar_config to determine if use of denormalized table is enabled
+     * @var string
+     */
+    const CONFIG_KEY = "perfProfile.TeamSecurity";
+
     /**#@+
      * State parameters
      */
     const STATE_UP_TO_DATE = 'up_to_date';
     const STATE_REBUILD_RUNNING = 'rebuild_running';
     const STATE_ACTIVE_TABLE = 'active_table';
-    /**#@-*/
-
-    /**#@+
-     * Configuration parameters
-     *
-     * @var bool
-     */
-    const CONFIG_IS_ENABLED = 'is_enabled';
-    const CONFIG_HANDLE_ADMIN_UPDATES_INLINE = 'handle_admin_updates_inline';
     /**#@-*/
 
     /**#@+
@@ -46,9 +44,14 @@ class State implements SplSubject
     /**#@-*/
 
     /**
-     * @var array<string>
+     * @var SugarConfig
      */
     private $config;
+
+    /**
+     * @var bool
+     */
+    private $isEnabled;
 
     /**
      * @var LoggerInterface
@@ -73,18 +76,13 @@ class State implements SplSubject
     /**
      * Constructor
      *
-     * @param bool $isEnabled
-     * @param bool $shouldHandleAdminUpdatesInline
+     * @param SugarConfig $config
      * @param Storage $storage
      * @param LoggerInterface $logger
      */
-    public function __construct($isEnabled, $shouldHandleAdminUpdatesInline, Storage $storage, LoggerInterface $logger)
+    public function __construct(SugarConfig $config, Storage $storage, LoggerInterface $logger)
     {
-        $this->config = [
-            self::CONFIG_IS_ENABLED => $isEnabled,
-            self::CONFIG_HANDLE_ADMIN_UPDATES_INLINE => $shouldHandleAdminUpdatesInline,
-        ];
-
+        $this->config = $config;
         $this->storage = $storage;
         $this->logger = $logger;
         $this->observers = new SplObjectStorage();
@@ -94,11 +92,11 @@ class State implements SplSubject
         if ($activeTable !== null) {
             if (!$this->isValidTable($activeTable)) {
                 $activeTable = null;
-            } elseif (!$isEnabled) {
+            } elseif (!$this->isEnabled()) {
                 $this->deactivate();
                 $activeTable = null;
             }
-        } elseif ($isEnabled) {
+        } elseif ($this->isEnabled()) {
             $logger->critical('Denormalization is enabled but the denormalized data is unavailable.');
         }
 
@@ -112,23 +110,21 @@ class State implements SplSubject
      */
     public function isEnabled()
     {
-        return $this->config[self::CONFIG_IS_ENABLED];
-    }
+        if ($this->isEnabled !== null) {
+            return $this->isEnabled;
+        }
 
-    /**
-     * Enables usage of denormalized data
-     */
-    public function enable()
-    {
-        $this->updateConfig(self::CONFIG_IS_ENABLED, true);
-    }
+        $this->isEnabled = false;
+        $modules = $this->config->get(self::CONFIG_KEY, array());
 
-    /**
-     * Disables usage of denormalized data
-     */
-    public function disable()
-    {
-        $this->updateConfig(self::CONFIG_IS_ENABLED, false);
+        foreach ($modules as $value) {
+            if (!empty($value['use_denorm'])) {
+                $this->isEnabled = true;
+                break;
+            }
+        }
+
+        return $this->isEnabled;
     }
 
     /**
@@ -138,23 +134,7 @@ class State implements SplSubject
      */
     public function shouldHandleAdminUpdatesInline()
     {
-        return $this->config[self::CONFIG_HANDLE_ADMIN_UPDATES_INLINE];
-    }
-
-    /**
-     * Enables inline handling of admin updates
-     */
-    public function enableHandlingAdminUpdatesInline()
-    {
-        $this->updateConfig(self::CONFIG_HANDLE_ADMIN_UPDATES_INLINE, true);
-    }
-
-    /**
-     * Disables inline handling of admin updates
-     */
-    public function disableHandlingAdminUpdatesInline()
-    {
-        $this->updateConfig(self::CONFIG_HANDLE_ADMIN_UPDATES_INLINE, false);
+        return $this->config->get(self::CONFIG_KEY . '.inline_update');
     }
 
     /**
@@ -277,22 +257,6 @@ class State implements SplSubject
     }
 
     /**
-     * Updates configuration parameter and notifies the observer if the parameter has changed
-     *
-     * @param string $param
-     * @param mixed $value
-     */
-    private function updateConfig($param, $value)
-    {
-        if ($this->config[$param] === $value) {
-            return;
-        }
-
-        $this->config[$param] = $value;
-        $this->notify();
-    }
-
-    /**
      * Updates the given state parameter and notifies the observer if the parameter has changed
      *
      * @param string $var
@@ -320,6 +284,17 @@ class State implements SplSubject
         ));
 
         $this->storage->update($var, $value);
+        $this->notify();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Handles configuration update
+     */
+    public function update(SplSubject $config)
+    {
+        $this->isEnabled = null;
         $this->notify();
     }
 

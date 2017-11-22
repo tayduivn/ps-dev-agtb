@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Command;
 
 use Psr\Log\LoggerInterface;
 use stdClass;
+use SugarConfig;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\InMemoryStorage;
@@ -137,11 +138,16 @@ class StateAwareRebuildTest extends \PHPUnit_Framework_TestCase
 
     private function createState($isEnabled)
     {
+        global $sugar_config;
+        $sugar_config['perfProfile']['TeamSecurity']['default']['use_denorm'] = $isEnabled;
+
+        $config = SugarConfig::getInstance();
+        $config->clearCache();
+
         $storage = new InMemoryStorage();
 
         $state = new State(
-            $isEnabled,
-            false,
+            $config,
             $storage,
             $this->createMock(LoggerInterface::class)
         );

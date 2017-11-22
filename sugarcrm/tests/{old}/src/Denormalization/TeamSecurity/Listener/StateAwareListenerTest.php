@@ -16,13 +16,13 @@ use Psr\Log\LoggerInterface;
 use SplSubject;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Proxy;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
- * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Proxy
+ * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener
  */
-class ProxyTest extends \PHPUnit_Framework_TestCase
+class StateAwareListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -31,7 +31,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::uuid1();
 
-        $listener = $this->createProxy('userDeleted', $id);
+        $listener = $this->createStateAwareListener('userDeleted', $id);
         $listener->userDeleted($id);
     }
 
@@ -42,7 +42,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::uuid1();
 
-        $listener = $this->createProxy('teamDeleted', $id);
+        $listener = $this->createStateAwareListener('teamDeleted', $id);
         $listener->teamDeleted($id);
     }
 
@@ -55,7 +55,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
         $id2 = Uuid::uuid1();
         $id3 = Uuid::uuid1();
 
-        $listener = $this->createProxy('teamSetCreated', $id1, [$id2, $id3]);
+        $listener = $this->createStateAwareListener('teamSetCreated', $id1, [$id2, $id3]);
         $listener->teamSetCreated($id1, [$id2, $id3]);
     }
 
@@ -66,7 +66,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::uuid1();
 
-        $listener = $this->createProxy('teamSetDeleted', $id);
+        $listener = $this->createStateAwareListener('teamSetDeleted', $id);
         $listener->teamSetDeleted($id);
     }
 
@@ -78,7 +78,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
         $id1 = Uuid::uuid1();
         $id2 = Uuid::uuid1();
 
-        $listener = $this->createProxy('userAddedToTeam', $id1, $id2);
+        $listener = $this->createStateAwareListener('userAddedToTeam', $id1, $id2);
         $listener->userAddedToTeam($id1, $id2);
     }
 
@@ -90,7 +90,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
         $id1 = Uuid::uuid1();
         $id2 = Uuid::uuid1();
 
-        $listener = $this->createProxy('userRemovedFromTeam', $id1, $id2);
+        $listener = $this->createStateAwareListener('userRemovedFromTeam', $id1, $id2);
         $listener->userRemovedFromTeam($id1, $id2);
     }
 
@@ -109,17 +109,17 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
                 $this->onConsecutiveCalls($listener1, $listener2)
             );
 
-        $proxy = new Proxy($builder, $this->createMock(LoggerInterface::class));
+        $listener = new StateAwareListener($builder, $this->createMock(LoggerInterface::class));
 
-        $this->assertSame('Test1()', (string) $proxy);
+        $this->assertSame('Test1()', (string) $listener);
 
         $subject = $this->createMock(SplSubject::class);
-        $proxy->update($subject);
+        $listener->update($subject);
 
-        $this->assertSame('Test2()', (string) $proxy);
+        $this->assertSame('Test2()', (string) $listener);
     }
 
-    private function createProxy($method, ...$args)
+    private function createStateAwareListener($method, ...$args)
     {
         $listener = $this->createMock(Listener::class);
         $listener->expects($this->once())
@@ -131,7 +131,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
             ->method('createListener')
             ->willReturn($listener);
 
-        return new Proxy($builder, $this->createMock(LoggerInterface::class));
+        return new StateAwareListener($builder, $this->createMock(LoggerInterface::class));
     }
 
     private function createNamedListener($name)

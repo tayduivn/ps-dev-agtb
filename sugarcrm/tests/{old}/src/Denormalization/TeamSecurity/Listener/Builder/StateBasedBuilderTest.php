@@ -22,7 +22,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Invalidator::__toString
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\NullListener::__toString
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Recorder::__toString
- * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Proxy::__toString
+ * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener::__toString
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\UserOnly::__toString
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Updater::__toString
  */

@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\Dbal\Connection;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\Rebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateBasedBuilder;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Proxy;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 
@@ -28,12 +28,6 @@ use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
  */
 class Manager
 {
-    /**
-     * $sugar_config to determine if use of denormalized table is enabled
-     * @var string
-     */
-    const CONFIG_KEY = "perfProfile.TeamSecurity";
-
     /**
      * @var self
      */
@@ -72,38 +66,20 @@ class Manager
         $this->logger = $logger;
 
         $this->state = new State(
-            $config->get(self::CONFIG_KEY . '.inline_update'),
-            $this->getIsEnabledUseDenormOption($config),
+            $config,
             new AdminSettingsStorage(),
             $logger
         );
+        $config->attach($this->state);
 
         $builder = new StateBasedBuilder(
             $conn,
             $this->state
         );
 
-        $this->listener = new Proxy($builder, $this->logger);
+        $this->listener = new StateAwareListener($builder, $this->logger);
 
         $this->state->attach($this->listener);
-    }
-
-    /**
-     * Check if use_denorm is enabled for any module and returns the value.
-     *
-     * @return boolean
-     */
-    private function getIsEnabledUseDenormOption(SugarConfig $config)
-    {
-        $moduleConfigs = $config->get(self::CONFIG_KEY, array());
-
-        foreach ($moduleConfigs as $value) {
-            if (!empty($value['use_denorm'])) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

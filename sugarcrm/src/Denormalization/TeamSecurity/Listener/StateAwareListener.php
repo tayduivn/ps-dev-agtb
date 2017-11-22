@@ -20,7 +20,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 /**
  * Proxies calls to the underlying listener and rebuilds it when requested
  */
-final class Proxy implements Listener, SplObserver
+final class StateAwareListener implements Listener, SplObserver
 {
     /**
      * @var Builder
@@ -113,7 +113,7 @@ final class Proxy implements Listener, SplObserver
     /**
      * {@inheritDoc}
      */
-    public function update(SplSubject $subject)
+    public function update(SplSubject $state)
     {
         $this->listener = null;
     }

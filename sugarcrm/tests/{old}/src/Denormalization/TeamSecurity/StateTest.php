@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity;
 use DomainException;
 use Psr\Log\LoggerInterface;
 use SplObserver;
+use SugarConfig;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage;
 
@@ -121,6 +122,12 @@ class StateTest extends \PHPUnit_Framework_TestCase
      */
     public function deactivation()
     {
+        global $sugar_config;
+        $sugar_config['perfProfile']['TeamSecurity']['default']['use_denorm'] = false;
+
+        $config = SugarConfig::getInstance();
+        $config->clearCache();
+
         $storage = $this->createStorage([
             State::STATE_ACTIVE_TABLE => 'team_sets_users_1',
         ]);
@@ -129,7 +136,7 @@ class StateTest extends \PHPUnit_Framework_TestCase
             ->method('update')
             ->with(State::STATE_ACTIVE_TABLE, null);
 
-        $state = new State(false, true, $storage, $this->createLogger());
+        $state = new State($config, $storage, $this->createLogger());
         $this->assertFalse($state->isEnabled());
         $this->assertFalse($state->isAvailable());
     }
@@ -278,6 +285,13 @@ class StateTest extends \PHPUnit_Framework_TestCase
 
     private function createState(Storage $storage)
     {
-        return new State(true, true, $storage, $this->createLogger());
+        global $sugar_config;
+        $sugar_config['perfProfile']['TeamSecurity']['default']['use_denorm'] = true;
+        $sugar_config['perfProfile']['TeamSecurity']['inline_update'] = true;
+
+        $config = SugarConfig::getInstance();
+        $config->clearCache();
+
+        return new State($config, $storage, $this->createLogger());
     }
 }
