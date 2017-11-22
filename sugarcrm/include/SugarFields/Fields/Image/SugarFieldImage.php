@@ -91,10 +91,9 @@ class SugarFieldImage extends SugarFieldBase
                 $imgInfo = !empty($_FILES[$field]['tmp_name']) ? getimagesize($_FILES[$field]['tmp_name']) : false;
                 // if file is image then this image is no longer supported.
                 if (false !== $imgInfo) {
-                    $ext = pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION);
                     $this->error = string_format(
                         $GLOBALS['app_strings']['LBL_UPLOAD_IMAGE_FILE_NOT_SUPPORTED'],
-                        array($ext)
+                        array($imgInfo['mime'])
                     );
                 } else {
                     $this->error = $GLOBALS['app_strings']["LBL_UPLOAD_IMAGE_FILE_INVALID"];

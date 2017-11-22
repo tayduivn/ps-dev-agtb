@@ -5123,28 +5123,33 @@ function verify_image_file($path, $jpeg = false)
 }
 
 /**
- * Verify uploaded image
- * Verifies that image has proper extension, MIME type and doesn't contain hostile content
+ * Verifies that image has proper MIME type and doesn't contain hostile content
+ *
  * @param string $path  Image path
  * @param bool $jpeg_only  Accept only JPEGs?
+ *
+ * @return bool
  */
 function verify_uploaded_image($path, $jpeg_only = false)
 {
-    $supportedExtensions = array('jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg');
-    if (!$jpeg_only) {
-        $supportedExtensions['png'] = 'image/png';
-    }
-
-    if (!file_exists($path) || !is_file($path)) {
+    if (strpos($path, '..') !== false) {
         return false;
     }
 
+    if (!is_file($path)) {
+        return false;
+    }
+
+    $supportedTypes = array('image/jpeg');
+
+    if (!$jpeg_only) {
+        $supportedTypes[] = 'image/png';
+    }
+
     $img_size = getimagesize($path);
-    $filetype = $img_size['mime'];
-    $ext = pathinfo($path, PATHINFO_EXTENSION);
-    if(substr_count('..', $path) > 0 || ($ext !== $path && !isset($supportedExtensions[strtolower($ext)])) ||
-        !in_array($filetype, array_values($supportedExtensions))) {
-            return false;
+
+    if (!in_array($img_size['mime'], $supportedTypes)) {
+        return false;
     }
 
     return verify_image_file($path, $jpeg_only);
