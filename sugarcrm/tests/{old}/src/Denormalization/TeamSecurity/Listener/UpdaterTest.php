@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 use BeanFactory;
 use DBManagerFactory;
 use Doctrine\DBAL\Connection;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 use SugarTestTeamUtilities;
 use SugarTestUserUtilities;
 use Team;
@@ -36,16 +37,32 @@ class UpdaterTest extends \PHPUnit_Framework_TestCase
      */
     private $table;
 
+    public static function setUpBeforeClass()
+    {
+        $manager = Manager::getInstance();
+        $state = $manager->getState();
+
+        $state->enable();
+        $state->enableHandlingAdminUpdatesInline();
+
+        $command = $manager->getRebuildCommand();
+        $command();
+
+        parent::setUpBeforeClass();
+    }
+
     protected function setUp()
     {
         $this->conn = DBManagerFactory::getConnection();
-        $this->table = 'team_sets_users_1';
+        $this->table = Manager::getInstance()->getState()->getActiveTable();
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
+
+        Manager::resetInstance();
 
         parent::tearDownAfterClass();
     }

@@ -34,8 +34,8 @@ class State implements SplSubject
      *
      * @var bool
      */
-    private $isEnabled;
-    private $shouldHandleAdminUpdatesInline;
+    const CONFIG_IS_ENABLED = 'is_enabled';
+    const CONFIG_HANDLE_ADMIN_UPDATES_INLINE = 'handle_admin_updates_inline';
     /**#@-*/
 
     /**#@+
@@ -44,6 +44,11 @@ class State implements SplSubject
     private $table1 = 'team_sets_users_1';
     private $table2 = 'team_sets_users_2';
     /**#@-*/
+
+    /**
+     * @var array<string>
+     */
+    private $config;
 
     /**
      * @var LoggerInterface
@@ -75,8 +80,10 @@ class State implements SplSubject
      */
     public function __construct($isEnabled, $shouldHandleAdminUpdatesInline, Storage $storage, LoggerInterface $logger)
     {
-        $this->isEnabled = $isEnabled;
-        $this->shouldHandleAdminUpdatesInline = $shouldHandleAdminUpdatesInline;
+        $this->config = [
+            self::CONFIG_IS_ENABLED => $isEnabled,
+            self::CONFIG_HANDLE_ADMIN_UPDATES_INLINE => $shouldHandleAdminUpdatesInline,
+        ];
 
         $this->storage = $storage;
         $this->logger = $logger;
@@ -99,13 +106,29 @@ class State implements SplSubject
     }
 
     /**
-     * Returns whether the usage of denormalized data is enabled by configuration
+     * Returns whether the usage of denormalized data is enabled
      *
      * @return bool
      */
     public function isEnabled()
     {
-        return $this->isEnabled;
+        return $this->config[self::CONFIG_IS_ENABLED];
+    }
+
+    /**
+     * Enables usage of denormalized data
+     */
+    public function enable()
+    {
+        $this->updateConfig(self::CONFIG_IS_ENABLED, true);
+    }
+
+    /**
+     * Disables usage of denormalized data
+     */
+    public function disable()
+    {
+        $this->updateConfig(self::CONFIG_IS_ENABLED, false);
     }
 
     /**
@@ -115,7 +138,23 @@ class State implements SplSubject
      */
     public function shouldHandleAdminUpdatesInline()
     {
-        return $this->shouldHandleAdminUpdatesInline;
+        return $this->config[self::CONFIG_HANDLE_ADMIN_UPDATES_INLINE];
+    }
+
+    /**
+     * Enables inline handling of admin updates
+     */
+    public function enableHandlingAdminUpdatesInline()
+    {
+        $this->updateConfig(self::CONFIG_HANDLE_ADMIN_UPDATES_INLINE, true);
+    }
+
+    /**
+     * Disables inline handling of admin updates
+     */
+    public function disableHandlingAdminUpdatesInline()
+    {
+        $this->updateConfig(self::CONFIG_HANDLE_ADMIN_UPDATES_INLINE, false);
     }
 
     /**
@@ -169,8 +208,8 @@ class State implements SplSubject
         }
 
         $this->activeTable = $table;
-        $this->update(self::STATE_ACTIVE_TABLE, $table);
-        $this->update(self::STATE_UP_TO_DATE, true);
+        $this->updateState(self::STATE_ACTIVE_TABLE, $table);
+        $this->updateState(self::STATE_UP_TO_DATE, true);
     }
 
     /**
@@ -178,7 +217,7 @@ class State implements SplSubject
      */
     private function deactivate()
     {
-        $this->update(self::STATE_ACTIVE_TABLE, null);
+        $this->updateState(self::STATE_ACTIVE_TABLE, null);
     }
 
     /**
@@ -200,7 +239,7 @@ class State implements SplSubject
      */
     public function isUpToDate()
     {
-        return (bool) $this->storage->get(self::STATE_UP_TO_DATE);
+        return $this->isAvailable() && $this->storage->get(self::STATE_UP_TO_DATE);
     }
 
     /**
@@ -208,7 +247,7 @@ class State implements SplSubject
      */
     public function markOutOfDate()
     {
-        $this->update(self::STATE_UP_TO_DATE, false);
+        $this->updateState(self::STATE_UP_TO_DATE, false);
     }
 
     /**
@@ -222,26 +261,44 @@ class State implements SplSubject
     }
 
     /**
+     * Marks rebuild running
      */
     public function markRebuildRunning()
     {
-        $this->update(self::STATE_REBUILD_RUNNING, true);
+        $this->updateState(self::STATE_REBUILD_RUNNING, true);
     }
 
     /**
+     * Marks rebuild not running
      */
     public function markRebuildNotRunning()
     {
-        $this->update(self::STATE_REBUILD_RUNNING, false);
+        $this->updateState(self::STATE_REBUILD_RUNNING, false);
     }
 
     /**
-     * Updates the given state parameter
+     * Updates configuration parameter and notifies the observer if the parameter has changed
+     *
+     * @param string $param
+     * @param mixed $value
+     */
+    private function updateConfig($param, $value)
+    {
+        if ($this->config[$param] === $value) {
+            return;
+        }
+
+        $this->config[$param] = $value;
+        $this->notify();
+    }
+
+    /**
+     * Updates the given state parameter and notifies the observer if the parameter has changed
      *
      * @param string $var
      * @param mixed $value
      */
-    private function update($var, $value)
+    private function updateState($var, $value)
     {
         $oldValue = $this->storage->get($var);
 

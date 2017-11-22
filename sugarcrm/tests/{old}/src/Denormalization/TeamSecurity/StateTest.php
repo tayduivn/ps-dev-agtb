@@ -140,6 +140,7 @@ class StateTest extends \PHPUnit_Framework_TestCase
     public function testInvalidation()
     {
         $storage = $this->createStorage([
+            State::STATE_ACTIVE_TABLE => 'team_sets_users_1',
             State::STATE_UP_TO_DATE => true,
         ]);
         $storage->expects($this->once())
