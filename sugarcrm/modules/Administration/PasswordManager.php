@@ -217,6 +217,11 @@ if (!empty($_POST['saveConfig'])) {
 
 $focus->retrieveSettings();
 
+// Force sync LDAP flag if form errors were found.
+if (isset($_POST['system_ldap_enabled'])) {
+    $focus->settings['system_ldap_enabled'] = $_POST['system_ldap_enabled'];
+}
+
 if (!empty($focus->settings['ldap_admin_password'])) {
     $focus->settings['ldap_admin_password'] = Administration::$passwordPlaceholder;
 }
