@@ -14,7 +14,8 @@ use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy;
 use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\AllowAll;
 use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\DenyAll;
 use Sugarcrm\Sugarcrm\Bean\Visibility\Strategy\TeamSecurity\Denormalized;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 
 /**
  * Team security visibility
@@ -107,7 +108,7 @@ class TeamSecurity extends NormalizedTeamSecurity
         }
 
         if (!empty($this->options['use_denorm'])) {
-            $state = Manager::getInstance()->getState();
+            $state = Container::getInstance()->get(State::class);
 
             if ($state->isAvailable()) {
                 return new Denormalized($state->getActiveTable(), $this->user);

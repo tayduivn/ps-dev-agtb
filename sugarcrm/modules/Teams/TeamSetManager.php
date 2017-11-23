@@ -11,7 +11,8 @@
  */
 
 use Doctrine\DBAL\DBALException;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 class TeamSetManager {
 
@@ -372,7 +373,7 @@ class TeamSetManager {
 
         /** @var TeamSet $teamSet */
         $teamSet = BeanFactory::newBean('TeamSets');
-        $listener = Manager::getInstance()->getListener();
+        $listener = Container::getInstance()->get(Listener::class);
 
         $query = 'SELECT team_set_id
 FROM team_sets_teams

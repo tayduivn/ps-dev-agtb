@@ -10,8 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 class Team extends SugarBean
 {
@@ -1043,6 +1043,6 @@ ORDER BY t.private, t.name';
      */
     private function getListener()
     {
-        return Manager::getInstance()->getListener();
+        return Container::getInstance()->get(Listener::class);
     }
 }

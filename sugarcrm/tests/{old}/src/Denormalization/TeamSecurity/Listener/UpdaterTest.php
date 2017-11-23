@@ -13,10 +13,11 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 
 use BeanFactory;
-use DBManagerFactory;
 use Doctrine\DBAL\Connection;
 use SugarConfig;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use SugarTestTeamUtilities;
 use SugarTestUserUtilities;
 use Team;
@@ -44,19 +45,24 @@ class UpdaterTest extends \PHPUnit_Framework_TestCase
         $sugar_config['perfProfile']['TeamSecurity']['default']['use_denorm'] = true;
         $sugar_config['perfProfile']['TeamSecurity']['inline_update'] = true;
 
-        $config = SugarConfig::getInstance();
+        $container = Container::getInstance();
+
+        $config = $container->get(SugarConfig::class);
         $config->clearCache();
 
-        $rebuild = Manager::getInstance()->getRebuildCommand();
-        $rebuild();
+        $command = $container->get(StateAwareRebuild::class);
+        $command();
 
         parent::setUpBeforeClass();
     }
 
     protected function setUp()
     {
-        $this->conn = DBManagerFactory::getConnection();
-        $this->table = Manager::getInstance()->getState()->getActiveTable();
+        $container = Container::getInstance();
+        $state = $container->get(State::class);
+
+        $this->conn = $container->get(Connection::class);
+        $this->table = $state->getActiveTable();
     }
 
     public static function tearDownAfterClass()

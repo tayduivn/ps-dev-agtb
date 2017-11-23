@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Jobs\RebuildTable;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Job\RebuildJob;
 
 /**
  * Set up an array of Jobs with the appropriate metadata
@@ -53,7 +53,7 @@ $job_strings = array (
     23 => 'class::\Sugarcrm\Sugarcrm\Elasticsearch\Queue\Scheduler',
     24 => 'class::SugarJobRemoveDiagnosticFiles',
     25 => 'class::SugarJobRemoveTmpFiles',
-    26 => 'class::' . RebuildTable::class,
+    26 => 'class::' . RebuildJob::class,
     //BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
     //END SUGARCRM flav=int ONLY

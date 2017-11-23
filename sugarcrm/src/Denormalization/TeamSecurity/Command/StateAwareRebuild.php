@@ -80,7 +80,8 @@ final class StateAwareRebuild
         try {
             $targetTable = $this->state->getTargetTable();
             $this->state->markRebuildRunning();
-            ($this->command)($targetTable);
+            $command = $this->command;
+            $command($targetTable);
             $this->state->activateTable($targetTable);
         } catch (\Exception $e) {
             $this->logger->critical($e);

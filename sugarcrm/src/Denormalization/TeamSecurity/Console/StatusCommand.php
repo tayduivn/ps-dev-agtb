@@ -17,7 +17,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 /**
  * Display the status of the denormalized data.
@@ -39,7 +40,7 @@ class StatusCommand extends Command implements InstanceModeInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $state = Manager::getInstance()->getState();
+        $state = Container::getInstance()->get(State::class);
 
         $table = new Table($output);
         $table->setHeaders(['Parameter', 'Value']);

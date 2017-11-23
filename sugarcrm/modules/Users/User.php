@@ -12,7 +12,8 @@
 
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 /**
  * User is used to store customer information.
@@ -2794,6 +2795,6 @@ class User extends Person {
     {
         parent::mark_deleted($id);
 
-        Manager::getInstance()->getListener()->userDeleted($id);
+        Container::getInstance()->get(Listener::class)->userDeleted($id);
     }
 }

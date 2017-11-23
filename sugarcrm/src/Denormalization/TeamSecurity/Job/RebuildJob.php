@@ -10,17 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Jobs;
+namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Job;
 
 use SchedulersJob;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 /**
- *
- * Handle the rebuild of Team Security denormalized table.
- *
+ * Handle the rebuild of Team Security denormalized data.
  */
-class RebuildTable implements \RunnableSchedulerJob
+class RebuildJob implements \RunnableSchedulerJob
 {
     /**
      * @var SchedulersJob
@@ -28,18 +25,18 @@ class RebuildTable implements \RunnableSchedulerJob
     protected $job;
 
     /**
-     * @var Manager
+     * @var callable
      */
-    protected $manager;
+    private $command;
 
     /**
      * Constructor
      *
-     * @param Manager $manager
+     * @param callable $command
      */
-    public function __construct(Manager $manager = null)
+    public function __construct(callable $command)
     {
-        $this->manager = $manager ?: Manager::getInstance();
+        $this->command = $command;
     }
 
     /**
@@ -55,9 +52,8 @@ class RebuildTable implements \RunnableSchedulerJob
      */
     public function run($data)
     {
-        $command = $this->manager->getRebuildCommand();
-
         $start = time();
+        $command = $this->command;
         list($status, $message) = $command();
         $duration = time() - $start;
 

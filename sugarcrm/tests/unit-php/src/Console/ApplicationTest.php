@@ -14,6 +14,8 @@ namespace Sugarcrm\SugarcrmTestsUnit\Console;
 
 use Sugarcrm\Sugarcrm\Console\Application;
 use Sugarcrm\Sugarcrm\Console\CommandRegistry\CommandRegistry;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\RebuildCommand;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
 use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\ApplicationTestCommandA;
 use Symfony\Component\Console\Tester\ApplicationTester;
 
@@ -79,7 +81,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                     'password:config' => $ns . '\Password\PasswordConfigCommand',
                     'password:reset' => $ns . '\Password\PasswordResetCommand',
                     'password:weak' => $ns . '\Password\WeakHashesCommand',
-                    'team:rebuild_denorm_table' => $ns . '\TeamSecurity\RebuildDenormTableCommand',
+                    'team-security:rebuild' => RebuildCommand::class,
+                    'team-security:status' => StatusCommand::class,
                 ),
             ),
         );

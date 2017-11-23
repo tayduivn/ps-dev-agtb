@@ -18,6 +18,7 @@ use SplObserver;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\InMemoryStorage;
 
 /**
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State
@@ -69,11 +70,8 @@ class StateTest extends \PHPUnit_Framework_TestCase
      */
     public function validTableCanBeActivated()
     {
-        $state = $this->createStorage([
-            State::STATE_UP_TO_DATE => false,
-        ]);
-
-        $state = $this->createState($state);
+        $storage = new InMemoryStorage();
+        $state = $this->createState($storage);
 
         $state->activateTable('team_sets_users_2');
 

@@ -33,6 +33,7 @@ use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ModuleCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\SilentReindexCommand;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\RebuildCommand;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -79,6 +80,8 @@ class Application extends BaseApplication
      */
     public static function create($mode)
     {
+        $container = Container::getInstance();
+
         $registry = CommandRegistry::getInstance();
 
         $registry->addCommands(array(

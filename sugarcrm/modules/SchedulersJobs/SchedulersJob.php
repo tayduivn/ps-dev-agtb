@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+
 /**
  * Job queue job
  * @api
@@ -544,7 +546,15 @@ class SchedulersJob extends Basic
 			    $this->resolveJob(self::JOB_FAILURE, translate('ERR_CURL', 'SchedulersJobs'));
 			}
 		} elseif ($exJob[0] == 'class') {
-            $tmpJob = new $exJob[1]();
+            $container = Container::getInstance();
+            $class = $exJob[1];
+
+            if ($container->has($class)) {
+                $tmpJob = $container->get($class);
+            } else {
+                $tmpJob = new $class();
+            }
+
             if ($tmpJob instanceof RunnableSchedulerJob)
             {
                 // set up the current user and drop session

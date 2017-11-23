@@ -13,15 +13,14 @@
 namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console;
 
 use Sugarcrm\Sugarcrm\Console\CommandRegistry\Mode\InstanceModeInterface;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
 
 /**
- *
  * Rebuild denormalized team security data.
- *
  */
 class RebuildCommand extends Command implements InstanceModeInterface
 {
@@ -40,8 +39,7 @@ class RebuildCommand extends Command implements InstanceModeInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $command = Manager::getInstance()->getRebuildCommand();
-
+        $command = Container::getInstance()->get(StateAwareRebuild::class);
         list($status, $message) = $command();
         $output->writeln($message);
 

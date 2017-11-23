@@ -64,11 +64,6 @@ class State implements SplObserver, SplSubject
     private $storage;
 
     /**
-     * @var string|null
-     */
-    private $activeTable;
-
-    /**
      * @var SplObjectStorage|SplObserver[]
      */
     private $observers;
@@ -86,21 +81,6 @@ class State implements SplObserver, SplSubject
         $this->storage = $storage;
         $this->logger = $logger;
         $this->observers = new SplObjectStorage();
-
-        $activeTable = $this->storage->get(self::STATE_ACTIVE_TABLE);
-
-        if ($activeTable !== null) {
-            if (!$this->isValidTable($activeTable)) {
-                $activeTable = null;
-            } elseif (!$this->isEnabled()) {
-                $this->deactivate();
-                $activeTable = null;
-            }
-        } elseif ($this->isEnabled()) {
-            $logger->critical('Denormalization is enabled but the denormalized data is unavailable.');
-        }
-
-        $this->activeTable = $activeTable;
     }
 
     /**
@@ -144,7 +124,7 @@ class State implements SplObserver, SplSubject
      */
     public function isAvailable()
     {
-        return $this->activeTable !== null;
+        return $this->getActiveTable() !== null;
     }
 
     /**
@@ -154,7 +134,20 @@ class State implements SplObserver, SplSubject
      */
     public function getActiveTable()
     {
-        return $this->activeTable;
+        $activeTable = $this->storage->get(self::STATE_ACTIVE_TABLE);
+
+        if ($activeTable !== null) {
+            if (!$this->isValidTable($activeTable)) {
+                $activeTable = null;
+            } elseif (!$this->isEnabled()) {
+                $this->deactivate();
+                $activeTable = null;
+            }
+        } elseif ($this->isEnabled()) {
+            $this->logger->critical('Denormalization is enabled but the denormalized data is unavailable.');
+        }
+
+        return $activeTable;
     }
 
     /**
@@ -164,7 +157,7 @@ class State implements SplObserver, SplSubject
      */
     public function getTargetTable()
     {
-        if ($this->activeTable === $this->table1) {
+        if ($this->getActiveTable() === $this->table1) {
             return $this->table2;
         }
 
@@ -187,7 +180,6 @@ class State implements SplObserver, SplSubject
             ));
         }
 
-        $this->activeTable = $table;
         $this->updateState(self::STATE_ACTIVE_TABLE, $table);
         $this->updateState(self::STATE_UP_TO_DATE, true);
     }

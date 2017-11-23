@@ -22,7 +22,8 @@
  *
  */
 
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 require_once('vendor/ytree/Tree.php');
 require_once('vendor/ytree/Node.php');
@@ -162,7 +163,7 @@ class TeamSet extends SugarBean{
                 $this->_addTeamToSet($team_id);
             }
 
-            Manager::getInstance()->getListener()->teamSetCreated($this->id, $team_ids);
+            Container::getInstance()->get(Listener::class)->teamSetCreated($this->id, $team_ids);
 
             return $this->id;
         }else{

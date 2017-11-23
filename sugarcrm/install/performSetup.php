@@ -10,7 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Manager;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
@@ -306,8 +307,7 @@ foreach ($rel_dictionary as $rel_name => $rel_data) {
 SugarRelationshipFactory::rebuildCache();
 
 // rebuild denormalized team security data at the earliest possible stage, if needed
-$manager = Manager::getInstance();
-$command = $manager->getRebuildCommand();
+$command = Container::getInstance()->get(StateAwareRebuild::class);
 $command();
 
 ///////////////////////////////////////////////////////////////////////////////
