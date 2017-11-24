@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 class RemoveMeTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /** @var Campaign */
@@ -26,6 +28,7 @@ class RemoveMeTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCampaignUtilities::removeAllCreatedCampaignLogs();
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
 
         parent::tearDown();
     }
@@ -40,8 +43,7 @@ class RemoveMeTest extends Sugar_PHPUnit_Framework_TestCase
             'targeted',
             $contact
         );
-
-        $trackerKey = create_guid();
+        $trackerKey = Uuid::uuid1();
         $log->target_tracker_key = $trackerKey;
         $log->save();
 
@@ -55,6 +57,51 @@ class RemoveMeTest extends Sugar_PHPUnit_Framework_TestCase
 
         foreach ($emails as $email) {
             $this->assertEquals(1, $email['opt_out']);
+        }
+    }
+
+    public function testOptOut_LeadAndContactHaveSameId_RemoveProperRecipient()
+    {
+        global $mod_strings;
+
+        $contact = SugarTestContactUtilities::createContact();
+        $log1 = SugarTestCampaignUtilities::createCampaignLog(
+            $this->campaign->id,
+            'targeted',
+            $contact
+        );
+
+        $trackerKey1 = Uuid::uuid1();
+        $log1->target_tracker_key = $trackerKey1;
+        $log1->save();
+
+        /* Lead and Contact have Same Bean Id */
+        $lead = SugarTestLeadUtilities::createLead($contact->id);
+        $log2 = SugarTestCampaignUtilities::createCampaignLog(
+            $this->campaign->id,
+            'targeted',
+            $lead
+        );
+
+        $trackerKey2 = Uuid::uuid1();
+        $log2->target_tracker_key = $trackerKey2;
+        $log2->save();
+
+        $this->expectOutputString('*' . $mod_strings['LBL_ELECTED_TO_OPTOUT']);
+
+        $_REQUEST['identifier'] = $trackerKey1;
+        require 'modules/Campaigns/RemoveMe.php';
+
+        $contactEmails = $contact->emailAddress->getAddressesForBean($contact, true);
+        $this->assertNotEmpty($contactEmails);
+        foreach ($contactEmails as $contactEmail) {
+            $this->assertEquals(1, $contactEmail['opt_out']);
+        }
+
+        $leadEmails = $lead->emailAddress->getAddressesForBean($lead, true);
+        $this->assertNotEmpty($leadEmails);
+        foreach ($leadEmails as $leadEmail) {
+            $this->assertEquals(0, $leadEmail['opt_out']);
         }
     }
 }
