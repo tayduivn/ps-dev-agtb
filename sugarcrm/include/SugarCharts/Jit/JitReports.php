@@ -277,9 +277,6 @@ class JitReports extends Jit {
 			$name = "unsavedReport";
 		}
 
-		parent::display($name, $xmlFile, $width, $height, $resize=false);
-
-		return $this->ss->fetch('include/SugarCharts/Jit/tpls/chart.tpl');
-
+                return parent::display($name, $xmlFile, $width, $height, $resize = false);
 	}
 }

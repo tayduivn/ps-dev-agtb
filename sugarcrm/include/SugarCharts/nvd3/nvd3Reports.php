@@ -291,9 +291,7 @@ class nvd3Reports extends nvd3
             $name = "unsavedReport";
         }
 
-        parent::display($name, $xmlFile, $width, $height, $resize = false);
-
-        return $this->ss->fetch('include/SugarCharts/nvd3/tpls/chart.tpl');
+        return parent::display($name, $xmlFile, $width, $height, $resize = false);
 
     }
 }
