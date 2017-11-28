@@ -1183,10 +1183,26 @@ class Report
     protected function addSecurity($query, $focus, $alias)
     {
         $from = ''; $where = '';
-        $options = $this->getVisibilityOptions();
-        $options['table_alias'] = $focus->table_name;
-        $focus->addVisibilityWhere($where, $options);
-        $focus->addVisibilityFrom($from, $options);
+        $fromOptions = $whereOptions = $options = $this->getVisibilityOptions();
+
+        // Right now, both the FROM and WHERE filters are applied to the query in the single addSecurity() call
+        // which is made from create_from(). In the case, when the visibility produces a JOIN, it gets wrapped
+        // in a sub-query to be able to order to accomodate a potentially existing WHERE which is not being built
+        // by the repot yet.
+        // A proper solution will be to split addSecurity() into two parts and call them independenly from create_from()
+        // and create_where().
+        // It's not the best time for that, so see the logic below.
+
+        // if applied to the FROM, the alias should be equal to the table name because the table
+        // will be joined within a sub-query where the alias is unavailable
+        $fromOptions['table_alias'] = $focus->table_name;
+
+        // if applied to the WHERE, the alias should be equal to the actual alias because the WHERE
+        // will be applied to the top-level query where the alias is effective
+        $whereOptions['table_alias'] = $alias;
+
+        $focus->addVisibilityWhere($where, $whereOptions);
+        $focus->addVisibilityFrom($from, $fromOptions);
         if(!empty($from) || !empty($where)) {
             if (!empty($options['as_condition']) && strtolower(substr(ltrim($from), 0, 5)) != "inner") {
                 // check that we indeed got condition in FROM - it should not start with joins
