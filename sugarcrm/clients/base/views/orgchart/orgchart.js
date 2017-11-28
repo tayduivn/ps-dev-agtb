@@ -59,7 +59,6 @@
                 })
                 .nodeSize(this.nodeSize)
                 .nodeRenderer(_.bind(this.nodeRenderer, this))
-                .nodeCallback(_.bind(this.nodeCallback, this))
                 .nodeClick(function(d) {
                     var nodeData = d.data.metadata;
                     app.router.navigate(nodeData.url, {trigger: true});
@@ -92,6 +91,7 @@
         if (!nodeData.img || nodeData.img === '') {
             nodeData.img = 'include/images/user.svg';
         }
+
         node.append('rect').attr('class', 'sc-org-bkgd')
             .attr('x', 0)
             .attr('y', 0)
@@ -105,7 +105,10 @@
             .attr('height', '32px')
             .attr('transform', 'translate(3, 3)')
             .on('error', function() {
-                d3.select(this).attr('xlink:href', 'include/images/user.svg');
+                d3.select(this)
+                    .style('width', 'auto')
+                    .attr('x', '4')
+                    .attr('xlink:href', 'include/images/user.svg');
             });
         node.append('text').attr('class', 'sc-org-name')
             .attr('data-url', d.data.url)
@@ -119,31 +122,20 @@
             .text(function() {
                 return sucrose.utility.stringEllipsify(nodeData.title, container, 96);
             });
-        return node;
-    },
 
-    /**
-     * Node event assignment post rendering.
-     * @param {Object} nodes A collection of D3 selected nodes.
-     */
-    nodeCallback: function(nodes) {
-        var container = d3sugar.select('svg#' + this.cid);
-        // nodes is the array of enter nodes
-        nodes
-            .on('mouseover', function(d) {
-                var useId = d3.select(this).attr('href');
-                container
-                    .select(useId)
+        node
+            .on('mouseenter', function(d) {
+                d3.select(this)
                     .select('.sc-org-name')
-                    .classed('hover', true);
+                        .style('text-decoration', 'underline');
             })
-            .on('mouseout', function(d) {
-                var useId = d3.select(this).attr('href');
-                container
-                    .select(useId)
+            .on('mouseleave', function(d) {
+                d3.select(this)
                     .select('.sc-org-name')
-                    .classed('hover', false);
+                        .style('text-decoration', 'none');
             });
+
+        return node;
     },
 
     /**
@@ -256,9 +248,9 @@
             $(this).removeClass('loaded').addClass('loaded');
         });
 
-        this.$('img').on('error', function() {
-            $(this).attr('src', 'include/images/user.svg');
-        });
+        // this.$('img').on('error', function() {
+        //     $(this).attr('src', 'include/images/user.svg');
+        // });
     },
 
     /**
