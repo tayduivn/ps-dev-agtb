@@ -75,6 +75,9 @@ class AuthProviderManagerBuilderTest extends \PHPUnit_Framework_TestCase
             'urlAuthorize' => $oidcUrl . '/oauth2/auth',
             'urlAccessToken' => $oidcUrl . '/oauth2/token',
             'urlResourceOwnerDetails' => $oidcUrl . '/oauth2/introspect',
+            'urlKeys' => $oidcUrl . '/keys/setId',
+            'keySetId' => 'setId',
+            'idpUrl' => 'http://idp.url',
             'http_client' => [
                 'retry_count' => 5,
                 'delay_strategy' => 'exponential',

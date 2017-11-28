@@ -20,6 +20,23 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 class SugarOAuth2ServerTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var \SugarConfig
+     */
+    protected $sugarConfig;
+
+    /**
+     * @inheritdoc
+     */
+    protected function setUp()
+    {
+        $this->sugarConfig = \SugarConfig::getInstance();
+    }
+
+    protected function tearDown()
+    {
+        $this->sugarConfig->_cached_values = [];
+    }
+    /**
      * Provides data for testGetOAuth2Server
      * @return array
      */
@@ -27,12 +44,18 @@ class SugarOAuth2ServerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'oldOAuthServer' => [
-                'oidcEnabled' => false,
+                'oidcOauth' => [],
                 'expectedServerClass' => \SugarOAuth2Server::class,
                 'expectedStorageClass' => \SugarOAuth2Storage::class,
             ],
             'oidcOAuthServer' => [
-                'oidcEnabled' => true,
+                'oidcOauth' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://localhost:4444',
+                    'idpUrl' => 'http://sugar.dolbik.dev/idm205idp/web/',
+                    'oidcKeySetId' => 'testkey2',
+                ],
                 'expectedServerClass' => \SugarOAuth2ServerOIDC::class,
                 'expectedStorageClass' => \SugarOAuth2StorageOIDC::class,
             ],
@@ -40,16 +63,17 @@ class SugarOAuth2ServerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $platformType
+     * @param array $oidcOauth
      * @param $expectedServerClass
      * @param $expectedStorageClass
      *
      * @dataProvider getOAuth2ServerProvider
      * @covers ::getOAuth2Server
      */
-    public function testGetOAuth2Server($platformType, $expectedServerClass, $expectedStorageClass)
+    public function testGetOAuth2Server(array $oidcOauth, $expectedServerClass, $expectedStorageClass)
     {
-        $oAuthServer = SugarOAuth2ServerMock::getOAuth2Server($platformType);
+        $this->sugarConfig->_cached_values['oidc_oauth'] = $oidcOauth;
+        $oAuthServer = SugarOAuth2ServerMock::getOAuth2Server();
         $this->assertInstanceOf($expectedServerClass, $oAuthServer);
         $this->assertInstanceOf(
             $expectedStorageClass,
@@ -64,12 +88,12 @@ class SugarOAuth2ServerTest extends \PHPUnit_Framework_TestCase
 class SugarOAuth2ServerMock extends \SugarOAuth2Server
 {
     /**
-     * @param bool $oidcEnabled
+     * @param string $platform
      * @return \SugarOAuth2Server
      */
-    public static function getOAuth2Server($oidcEnabled = false)
+    public static function getOAuth2Server($platform = null)
     {
         parent::$currentOAuth2Server = null;
-        return parent::getOAuth2Server($oidcEnabled);
+        return parent::getOAuth2Server();
     }
 }

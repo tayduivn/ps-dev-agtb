@@ -12,13 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Provider;
 
+use League\OAuth2\Client\Token\AccessToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider
@@ -37,7 +40,7 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider = null;
 
     /**
-     * @var UserProviderInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var SugarOIDCUserProvider | \PHPUnit_Framework_MockObject_MockObject
      */
     protected $userProvider = null;
 
@@ -59,7 +62,7 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->userChecker = $this->createMock(UserCheckerInterface::class);
-        $this->userProvider = $this->createMock(UserProviderInterface::class);
+        $this->userProvider = $this->createMock(SugarOIDCUserProvider::class);
         $this->oAuthProvider = $this->createMock(GenericProvider::class);
         $this->user = new User();
         $this->provider =new OIDCAuthenticationProvider(
@@ -70,13 +73,32 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Provides data for testSupportsWithSupportedToken
+     *
+     * @return array
+     */
+    public function supportsWithSupportedTokenProvider()
+    {
+        return [
+            'introspectToken' => [
+                'tokenClass' => new IntrospectToken('test'),
+                ],
+            'jwtToken' => [
+                'tokenClass' => new JWTBearerToken('testId'),
+            ],
+        ];
+    }
+
+    /**
      * Checks supports logic.
      *
+     * @param TokenInterface $token
+     *
      * @covers ::supports
+     * @dataProvider supportsWithSupportedTokenProvider
      */
-    public function testSupportsWithSupportedToken()
+    public function testSupportsWithSupportedToken(TokenInterface $token)
     {
-        $token = new IntrospectToken('test');
         $this->assertTrue($this->provider->supports($token));
     }
 
@@ -138,7 +160,7 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::authenticate
      */
-    public function testAuthenticate()
+    public function testAuthenticateWithIntrospectToken()
     {
         $introspectResult = [
             'active' => true,
@@ -171,5 +193,54 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         foreach ($introspectResult as $key => $expectedValue) {
             $this->assertEquals($expectedValue, $resultToken->getAttribute($key));
         }
+    }
+
+    /**
+     * @covers ::authenticate
+     */
+    public function testAuthenticateWithJwtBearerToken()
+    {
+        $keySetInfo = [
+            'keys' => [
+                'private' => ['kid' => 'private'],
+                'public' => ['kid' => 'public'],
+            ],
+            'keySetId' => 'setId',
+            'clientId' => 'testLocal',
+        ];
+
+        $accessToken = new AccessToken(
+            [
+                'access_token' => 'accessToken',
+                'expires_in' => 100,
+
+            ]
+        );
+
+        $token = $this->getMockBuilder(JWTBearerToken::class)
+                      ->enableOriginalConstructor()
+                      ->setConstructorArgs(['userId'])
+                      ->setMethods(['__toString'])
+                      ->getMock();
+        $token->expects($this->once())->method('__toString')->willReturn('assertion');
+        $this->oAuthProvider->expects($this->once())->method('getKeySet')->willReturn($keySetInfo);
+        $this->oAuthProvider->expects($this->once())
+                            ->method('getBaseAccessTokenUrl')
+                            ->willReturn('http://test.url');
+        $this->oAuthProvider->expects($this->once())
+                            ->method('getJwtBearerAccessToken')
+                            ->with('assertion')
+                            ->willReturn($accessToken);
+
+        $this->userProvider->expects($this->once())
+                           ->method('loadUserByField')
+                           ->with('userId', 'id')
+                           ->willReturn($this->user);
+
+        $result = $this->provider->authenticate($token);
+
+        $this->assertEquals('accessToken', $result->getAttribute('token'));
+        $this->assertNotEmpty($result->getAttribute('expires_in'));
+        $this->assertNotEmpty($result->getAttribute('exp'));
     }
 }

@@ -63,6 +63,8 @@ class OAuth2AuthenticateTest extends TestCase
             'clientSecret' => 'testLocalSecret',
             'redirectUri' => '',
             'oidcUrl' => 'http://sts.sugarcrm.local',
+            'idpUrl' => 'http://idp.url',
+            'oidcKeySetId' => 'keySetId',
         ];
         $this->assertEquals('http://sts.sugarcrm.local', $this->auth->getLoginUrl());
     }

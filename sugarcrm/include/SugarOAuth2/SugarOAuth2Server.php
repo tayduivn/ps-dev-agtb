@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 /**
  * Sugar OAuth2.0 server, is a wrapper around the php-oauth2 library
@@ -32,21 +33,27 @@ class SugarOAuth2Server extends OAuth2
      * the custom/ directory so users can customize the authorization
      * types and storage
      *
-     * @param bool $oidcEnabled If true - new oAuth2/OIDC flow will be used for token validation or grant
+     * @param string $platform
+     *
      * @return SugarOAuth2Server
      */
-    public static function getOAuth2Server($oidcEnabled = false)
+    public static function getOAuth2Server($platform = null)
     {
         if (!isset(static::$currentOAuth2Server)) {
-            $oidcPostfix = $oidcEnabled ? 'OIDC' : '';
+            $idpConfig = new Config(\SugarConfig::getInstance());
+            $isOidcEnabled = $idpConfig->isOIDCEnabled();
+            $oidcPostfix = $isOidcEnabled ? 'OIDC' : '';
             SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage'.$oidcPostfix.'.php');
             $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2Storage'.$oidcPostfix);
             $oauthStorage = new $oauthStorageName();
 
             SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Server'.$oidcPostfix.'.php');
             $oauthServerName = SugarAutoLoader::customClass('SugarOAuth2Server'.$oidcPostfix);
-            $config = SugarConfig::getInstance()->get('oauth2', []);
+            $config = $idpConfig->get('oauth2', []);
             static::$currentOAuth2Server = new $oauthServerName($oauthStorage, $config);
+            if ($isOidcEnabled) {
+                static::$currentOAuth2Server->setPlatform($platform);
+            }
         }
 
         return static::$currentOAuth2Server;

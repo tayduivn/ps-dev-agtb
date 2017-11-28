@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\IdPAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
@@ -42,6 +43,7 @@ class AuthProviderBasicManagerBuilder
     const PROVIDER_KEY_LOCAL = 'SugarLocalProvider';
     const PROVIDER_KEY_LDAP = 'SugarLdapProvider';
     const PROVIDER_KEY_MIXED = 'SugarMixedProvider';
+    const PROVIDER_KEY_IDP = 'SugarIdPProvider';
     /**
      * Encoders config
      * @var array|null
@@ -94,6 +96,7 @@ class AuthProviderBasicManagerBuilder
                                       $this->getLdapAuthProvider(),
                                       $this->getSamlAuthIDP(),
                                       $this->getOidcAuthProvider(),
+                                      $this->getIdpAuthProvider(),
                                   ]);
         $providers[] = new MixedAuthenticationProvider($providers, static::PROVIDER_KEY_MIXED);
         $manager = new AuthenticationProviderManager($providers);
@@ -199,10 +202,32 @@ class AuthProviderBasicManagerBuilder
             return null;
         }
 
+        $sugarLocalUserProvider = new SugarLocalUserProvider();
+
         return new OIDCAuthenticationProvider(
             new GenericProvider($this->oidcConfig),
-            new SugarOIDCUserProvider(),
-            new SugarOIDCUserChecker(new SugarLocalUserProvider())
+            new SugarOIDCUserProvider($sugarLocalUserProvider),
+            new SugarOIDCUserChecker($sugarLocalUserProvider)
+        );
+    }
+
+    /**
+     * Gets IdP Authentication provider
+     * @return null|IdPAuthenticationProvider
+     */
+    protected function getIdpAuthProvider()
+    {
+        if (empty($this->oidcConfig)) {
+            return null;
+        }
+
+        $sugarLocalUserProvider = new SugarLocalUserProvider();
+
+        return new IdPAuthenticationProvider(
+            new GenericProvider($this->oidcConfig),
+            new SugarOIDCUserProvider($sugarLocalUserProvider),
+            new SugarOIDCUserChecker($sugarLocalUserProvider),
+            static::PROVIDER_KEY_IDP
         );
     }
 

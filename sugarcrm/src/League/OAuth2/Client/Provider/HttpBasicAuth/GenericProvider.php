@@ -21,9 +21,29 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
 
 class GenericProvider extends BasicGenericProvider
 {
+
+    /**
+     * Identity provider endpoint
+     * @var string
+     */
+    protected $idpUrl;
+
+    /**
+     * Public/private keys endpoint
+     * @var string
+     */
+    protected $urlKeys;
+
+    /**
+     * ID of key set to retrieve
+     * @var string
+     */
+    protected $keySetId;
+
     /**
      * Adds HttpClient with retry policy.
      *
@@ -64,7 +84,7 @@ class GenericProvider extends BasicGenericProvider
      */
     protected function getRequiredOptions()
     {
-        return array_merge(parent::getRequiredOptions(), ['clientId', 'clientSecret']);
+        return array_merge(parent::getRequiredOptions(), ['clientId', 'clientSecret', 'urlKeys', 'keySetId', 'idpUrl']);
     }
 
     /**
@@ -96,6 +116,83 @@ class GenericProvider extends BasicGenericProvider
 
         $request = $this->getRequestFactory()->getRequestWithOptions(self::METHOD_POST, $url, $options);
         return $this->getParsedResponse($request);
+    }
+
+    /**
+     * Remote user authentication on IdP
+     *
+     * @param string $username
+     * @param string $password
+     * @return array
+     */
+    public function remoteIdpAuthenticate($username, $password)
+    {
+        /**
+         * @todo scope need to be defined in future
+         */
+        $accessToken = $this->getAccessToken('client_credentials', ['scope' => 'offline']);
+        $authHeaders = $this->getAuthorizationHeaders($accessToken->getToken());
+        $options = [
+            'headers' => [
+                'content-type' => 'application/x-www-form-urlencoded',
+            ] + $authHeaders,
+            'body' => $this->buildQueryString(['user_name' => $username, 'password' => $password]),
+        ];
+
+
+        $request = $this->getRequestFactory()->getRequestWithOptions(
+            self::METHOD_POST,
+            $this->idpUrl . '/authenticate',
+            $options
+        );
+        return $this->getParsedResponse($request);
+    }
+
+
+    /**
+     * Obtaining access token through JWT bearer flow.
+     *
+     * @param $assertion
+     * @return AccessToken
+     */
+    public function getJwtBearerAccessToken($assertion)
+    {
+        /**
+         * @todo scope need to be defined in future
+         */
+        return $this->getAccessToken(
+            new JwtBearer(),
+            ['scope' => 'offline', 'assertion' => $assertion]
+        );
+    }
+
+    /**
+     * Get oauth2 public or private key from specified endpoint.
+     *
+     * @return array
+     * @throws RequestException
+     * @throws \UnexpectedValueException
+     */
+    public function getKeySet()
+    {
+        $accessToken = $this->getAccessToken('client_credentials', ['scope' => 'hydra.keys.get']);
+        $keyRequest = $this->getAuthenticatedRequest(
+            self::METHOD_GET,
+            $this->urlKeys,
+            $accessToken,
+            ['scope' => 'hydra.keys.get']
+        );
+        $keyResponse = $this->getParsedResponse($keyRequest);
+
+        if (!isset($keyResponse['keys'])) {
+            throw new \UnexpectedValueException('Keys not found');
+        }
+
+        return [
+            'keys' => $keyResponse['keys'],
+            'keySetId' => $this->keySetId,
+            'clientId' => $this->clientId,
+        ];
     }
 
     /**

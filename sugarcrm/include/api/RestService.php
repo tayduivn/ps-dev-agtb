@@ -460,7 +460,7 @@ class RestService extends ServiceBase
         $platform = !empty($_REQUEST['platform']) ? $_REQUEST['platform'] : 'base';
         if ( !empty($token) ) {
             try {
-                $oauthServer = $this->getSugarOAuth2Server($platform);
+                $oauthServer = \SugarOAuth2Server::getOAuth2Server($platform);
                 $oauthServer->verifyAccessToken($token);
                 if (isset($_SESSION['authenticated_user_id'])) {
                     $authController = AuthenticationController::getInstance();
@@ -937,22 +937,5 @@ class RestService extends ServiceBase
     protected function getMetadataManager()
     {
         return MetaDataManager::getManager(array($this->platform));
-    }
-
-    /**
-     * Get proper SugarOAuth2Server.
-     *
-     * @param string $platform
-     * @return OAuth2
-     */
-    protected function getSugarOAuth2Server($platform)
-    {
-        if ($this->isOidcEnabled($platform)) {
-            $oauthServer = SugarOAuth2Server::getOAuth2Server(true);
-            $oauthServer->setPlatform($platform);
-        } else {
-            $oauthServer = SugarOAuth2Server::getOAuth2Server();
-        }
-        return $oauthServer;
     }
 }

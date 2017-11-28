@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\UserProvider;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 
 /**
@@ -25,9 +26,15 @@ class SugarOIDCUserProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $userProvider = null;
 
+    /**
+     * @var SugarLocalUserProvider | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localUserProvider = null;
+
     protected function setUp()
     {
-        $this->userProvider = new SugarOIDCUserProvider();
+        $this->localUserProvider = $this->createMock(SugarLocalUserProvider::class);
+        $this->userProvider = new SugarOIDCUserProvider($this->localUserProvider);
     }
 
     /**
@@ -79,5 +86,14 @@ class SugarOIDCUserProviderTest extends \PHPUnit_Framework_TestCase
     public function testSupportsClass($className, $expectedResult)
     {
         $this->assertEquals($expectedResult, $this->userProvider->supportsClass($className));
+    }
+
+    /**
+     * @covers ::loadUserByField
+     */
+    public function testLoadUserByField()
+    {
+        $this->localUserProvider->expects($this->once())->method('loadUserByField')->with('value', 'field');
+        $this->userProvider->loadUserByField('value', 'field');
     }
 }

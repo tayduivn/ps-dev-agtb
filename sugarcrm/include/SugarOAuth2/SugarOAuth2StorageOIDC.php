@@ -10,58 +10,47 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordTokenFactory;
+
 /**
- * The old Sugar oauth2 flow used storage object
- * We cannot create SugarOAuth2ServerOIDC without storage
- * This class provides required interface but all methods are not allowed
+ * Provides legacy clients support which do not support oauth2/OIDC protocol
+ * and uses username/password for authentication
  */
-class SugarOAuth2StorageOIDC implements IOAuth2GrantUser
+class SugarOAuth2StorageOIDC extends SugarOAuth2Storage
 {
     /**
      * @inheritdoc
      */
     public function checkUserCredentials($client_id, $username, $password)
     {
-        throw new BadMethodCallException('Unsupported method for OIDC');
+        try {
+            $token = (new UsernamePasswordTokenFactory($username, $password))->createIdPAuthenticationToken();
+            $manager = $this->getAuthProviderBasicBuilder(new Config(\SugarConfig::getInstance()))
+                                  ->buildAuthProviders();
+            $resultToken = $manager->authenticate($token);
+            if ($resultToken->isAuthenticated()) {
+                return [
+                    'user_id' => $resultToken->getUser()->getSugarUser()->id,
+                    'scope' => null,
+                ];
+            }
+        } catch (AuthenticationException $e) {
+            throw new SugarApiExceptionNeedLogin($e->getMessage());
+        }
+
+        throw new SugarApiExceptionNeedLogin(translate('ERR_INVALID_PASSWORD', 'Users'));
     }
 
     /**
-     * @inheritdoc
+     * @param Config $config
+     *
+     * @return AuthProviderBasicManagerBuilder
      */
-    public function checkClientCredentials($client_id, $client_secret = null)
+    protected function getAuthProviderBasicBuilder(Config $config)
     {
-        throw new BadMethodCallException('Unsupported method for OIDC');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getClientDetails($client_id)
-    {
-        throw new BadMethodCallException('Unsupported method for OIDC');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getAccessToken($oauth_token)
-    {
-        throw new BadMethodCallException('Unsupported method for OIDC');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setAccessToken($oauth_token, $client_id, $user_id, $expires, $scope = null)
-    {
-        throw new BadMethodCallException('Unsupported method for OIDC');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function checkRestrictedGrantType($client_id, $grant_type)
-    {
-        throw new BadMethodCallException('Unsupported method for OIDC');
+        return new AuthProviderBasicManagerBuilder($config);
     }
 }

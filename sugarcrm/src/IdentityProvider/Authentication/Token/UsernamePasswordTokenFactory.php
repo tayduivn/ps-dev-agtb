@@ -96,6 +96,21 @@ class UsernamePasswordTokenFactory
     }
 
     /**
+     * Create token for remote IdP auth.
+     *
+     * @return UsernamePasswordToken
+     */
+    public function createIdPAuthenticationToken()
+    {
+        return new UsernamePasswordToken(
+            $this->username,
+            $this->password,
+            AuthProviderManagerBuilder::PROVIDER_KEY_IDP,
+            User::getDefaultRoles()
+        );
+    }
+
+    /**
      * Create token for mixed auth.
      *
      * @return MixedUsernamePasswordToken

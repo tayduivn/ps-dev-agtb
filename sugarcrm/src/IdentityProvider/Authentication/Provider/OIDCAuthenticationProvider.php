@@ -15,7 +15,9 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 
+use Sugarcrm\IdentityProvider\Hydra\EndpointInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
@@ -29,6 +31,7 @@ use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
+ * @internal
  * Class OIDCAuthenticationProvider
  * Provides all authentication operations on OIDC server.
  */
@@ -57,8 +60,15 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
      */
     protected $handlers = [
         IntrospectToken::class => 'introspectToken',
+        JWTBearerToken::class => 'jwtBearerGrantTypeAuth',
     ];
 
+    /**
+     * OIDCAuthenticationProvider constructor.
+     * @param AbstractProvider $oAuthProvider
+     * @param UserProviderInterface $userProvider
+     * @param UserCheckerInterface $userChecker
+     */
     public function __construct(
         AbstractProvider $oAuthProvider,
         UserProviderInterface $userProvider,
@@ -125,10 +135,48 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
     }
 
     /**
+     * Provides JWT Bearer oauth2 flow
+     *
+     * @param TokenInterface $token
+     * @return TokenInterface
+     */
+    protected function jwtBearerGrantTypeAuth(TokenInterface $token)
+    {
+        $user = $this->userProvider->loadUserByField($token->getIdentity(), 'id');
+        $token->setUser($user);
+
+        $keySetInfo = $this->oAuthProvider->getKeySet();
+        $privateKey = array_filter($keySetInfo['keys'], function ($value) {
+            return $value['kid'] == EndpointInterface::PRIVATE_KEY;
+        });
+
+        $token->setAttribute('privateKey', array_shift($privateKey));
+        $token->setAttribute('aud', $this->oAuthProvider->getBaseAccessTokenUrl([]));
+        $token->setAttribute('iss', $keySetInfo['clientId']);
+        $token->setAttribute('kid', $keySetInfo['keySetId']);
+        $token->setAttribute('iat', time());
+
+        $accessToken = $this->oAuthProvider->getJwtBearerAccessToken((string)$token);
+        $extraValues = $accessToken->getValues();
+
+        $resultToken = clone $token;
+        $resultToken->setAttribute('token', $accessToken->getToken());
+        $resultToken->setAttribute('exp', $accessToken->getExpires());
+        $resultToken->setAttribute('expires_in', $accessToken->getExpires() - time());
+        $resultToken->setAttribute('scope', isset($extraValues['scope']) ? $extraValues['scope'] : null);
+        $resultToken->setAttribute(
+            'token_type',
+            isset($extraValues['token_type']) ? $extraValues['token_type'] : 'bearer'
+        );
+        $resultToken->setAuthenticated(true);
+        return $resultToken;
+    }
+
+    /**
      * @inheritdoc
      */
     public function supports(TokenInterface $token)
     {
-        return $token instanceof IntrospectToken;
+        return array_key_exists(get_class($token), $this->handlers);
     }
 }

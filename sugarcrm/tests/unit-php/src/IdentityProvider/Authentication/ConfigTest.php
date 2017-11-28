@@ -500,9 +500,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'clientSecret' => 'testLocalSecret',
                     'oidcUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'enabledPlatforms' => [
-                        'opi',
-                    ],
+                    'oidcKeySetId' => 'keySetId',
                 ],
                 'siteUrl' => 'http://site.url/',
                 'expectedConfig' => [
@@ -513,7 +511,10 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
                     'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/keySetId',
+                    'keySetId' => 'keySetId',
                     'http_client' => [],
+                    'idpUrl' => 'http://login.sugarcrm.local',
                 ],
             ],
             'httpClientNotEmpty' => [
@@ -522,9 +523,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'clientSecret' => 'testLocalSecret',
                     'oidcUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'enabledPlatforms' => [
-                        'opi',
-                    ],
+                    'oidcKeySetId' => 'keySetId',
                     'http_client' => [
                         'retry_count' => 5,
                         'delay_strategy' => 'exponential',
@@ -539,10 +538,13 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
                     'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/keySetId',
+                    'keySetId' => 'keySetId',
                     'http_client' => [
                         'retry_count' => 5,
                         'delay_strategy' => 'exponential',
                     ],
+                    'idpUrl' => 'http://login.sugarcrm.local',
                 ],
             ],
         ];
@@ -569,5 +571,54 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals($expectedConfig, $config->getOIDCConfig());
+    }
+
+    /**
+     * Provides data for testIsOIDCEnabled
+     *
+     * @return array
+     */
+    public function isOIDCEnabledProvider()
+    {
+        return [
+            'sugarConfigEmpty' => [
+                'configSugar' => null,
+                'siteUrl' => 'http://site.url/',
+                'expectedResult' => false,
+            ],
+            'sugarConfigNotEmpty' => [
+                'configSugar' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'oidcKeySetId' => 'keySetId',
+                ],
+                'siteUrl' => 'http://site.url/',
+                'expectedResult' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param $configSugar
+     * @param $siteUrl
+     * @param $expectedResult
+     *
+     * @dataProvider isOIDCEnabledProvider
+     * @covers ::isOIDCEnabled
+     */
+    public function testIsOIDCEnabled($configSugar, $siteUrl, $expectedResult)
+    {
+        $sugarConfig = $this->createMock(\SugarConfig::class);
+        $config = new Config($sugarConfig);
+        $sugarConfig->method('get')->willReturnMap(
+            [
+                ['oidc_oauth', null, $configSugar],
+                ['site_url', null, $siteUrl],
+            ]
+        );
+
+        $this->assertEquals($expectedResult, $config->isOIDCEnabled());
     }
 }

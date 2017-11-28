@@ -12,7 +12,10 @@
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
@@ -35,18 +38,6 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
     public function __construct(IOAuth2Storage $storage, array $config)
     {
         parent::__construct($storage, $config);
-    }
-
-    /**
-     * Method is not relevant. Clients should get access token directly from OpenID Connect server.
-     *
-     * {@inheritdoc}
-     *
-     * @throws \Exception
-     */
-    public function grantAccessToken(array $inputData = null, array $authHeaders = null)
-    {
-        throw new \BadMethodCallException('Not implemented. Get access token directly from OpenID Connect server.');
     }
 
     /**
@@ -100,11 +91,49 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
     }
 
     /**
+     * @inheritdoc
+     */
+    protected function createAccessToken($client_id, $user_id, $scope = null)
+    {
+        try {
+            $authManager = $this->getAuthProviderBasicBuilder(new Config(\SugarConfig::getInstance()))
+                                ->buildAuthProviders();
+
+            $jwtBearerToken = new JWTBearerToken($user_id);
+            $accessToken = $authManager->authenticate($jwtBearerToken);
+
+            $token = array(
+                'access_token' => $accessToken->getAttribute('token'),
+                'expires_in' => $accessToken->getAttribute('expires_in'),
+                'token_type' => $accessToken->getAttribute('token_type'),
+                'scope' => $accessToken->getAttribute('scope'),
+            );
+
+            if ($this->storage instanceof IOAuth2RefreshTokens) {
+            }
+
+            return $token;
+        } catch (AuthenticationException $e) {
+            throw new \SugarApiExceptionNeedLogin($e->getMessage());
+        }
+    }
+
+    /**
      * @param Config $config
      * @return AuthProviderOIDCManagerBuilder
      */
     protected function getAuthProviderBuilder(Config $config)
     {
         return new AuthProviderOIDCManagerBuilder($config);
+    }
+
+    /**
+     * @param Config $config
+     *
+     * @return AuthProviderBasicManagerBuilder
+     */
+    protected function getAuthProviderBasicBuilder(Config $config)
+    {
+        return new AuthProviderBasicManagerBuilder($config);
     }
 }

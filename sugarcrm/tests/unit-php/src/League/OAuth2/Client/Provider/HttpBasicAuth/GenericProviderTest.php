@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\League\OAuth2\Client\Provider\HttpBasicAuth;
 
 use League\OAuth2\Client\Grant\ClientCredentials;
+use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
 use Psr\Http\Message\RequestInterface;
 use League\OAuth2\Client\Token\AccessToken;
@@ -26,18 +27,119 @@ use GuzzleHttp\Psr7\Response;
 class GenericProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var RequestFactory | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $requestFactory;
+
+    /**
+     * @var RequestInterface | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $request;
+
+    /**
+     * @var array
+     */
+    protected $oidcConfig;
+
+    /**
+     * @inheritdoc
+     */
+    protected function setUp()
+    {
+        $this->requestFactory = $this->getMockBuilder(RequestFactory::class)
+                                     ->disableOriginalConstructor()
+                                     ->setMethods(['getRequestWithOptions'])
+                                     ->getMock();
+
+        $this->request = $this->createMock(RequestInterface::class);
+
+        $this->oidcConfig = [
+            'clientId' => 'test',
+            'clientSecret' => 'testSecret',
+            'redirectUri' => '',
+            'urlAuthorize' => 'http://testUrlAuth',
+            'urlAccessToken' => 'http://testUrlAccessToken',
+            'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+            'keySetId' => 'testSet',
+            'urlKeys' => 'http://sts.sugarcrm.local/keys/testSet',
+            'idpUrl' => 'http://idp.test',
+        ];
+    }
+    public function getRequiredOptionsProvider()
+    {
+        return [
+            'missingClientSecret' => [
+                [
+                    'clientId' => 'testLocal',
+                    'redirectUri' => '',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'keySetId' => 'test',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                    'idpUrl' => 'http://idp.test',
+                ],
+            ],
+            'missingClientId' => [
+                [
+                    'clientSecret' => 'test',
+                    'redirectUri' => '',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'keySetId' => 'test',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                    'idpUrl' => 'http://idp.test',
+                ],
+            ],
+            'missingKeySetId' => [
+                [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'test',
+                    'redirectUri' => '',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                    'idpUrl' => 'http://idp.test',
+                ],
+            ],
+            'missingUrlKeys' => [
+                [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'test',
+                    'redirectUri' => '',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'keySetId' => 'test',
+                    'idpUrl' => 'http://idp.test',
+                ],
+            ],
+            'missingIdpUrl' => [
+                [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'test',
+                    'redirectUri' => '',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'keySetId' => 'test',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @covers ::getRequiredOptions
      * @expectedException \InvalidArgumentException
+     *
+     * @dataProvider getRequiredOptionsProvider
      */
-    public function testGetRequiredOptions()
+    public function testGetRequiredOptions(array $options)
     {
-        new GenericProvider([
-            'clientId' => 'testLocal',
-            'redirectUri' => '',
-            'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
-            'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
-            'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
-        ]);
+        new GenericProvider($options);
     }
 
     /**
@@ -66,14 +168,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider = $this->getMockBuilder(GenericProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([[
-                'clientId' => 'test',
-                'clientSecret' => 'testSecret',
-                'redirectUri' => '',
-                'urlAuthorize' => $authUrl,
-                'urlAccessToken' => 'http://testUrlAccessToken',
-                'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
-            ]])
+            ->setConstructorArgs([$this->oidcConfig])
             ->setMethods([
                 'verifyGrant',
                 'getAccessTokenUrl',
@@ -117,36 +212,26 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
         $authUrl = 'http://testUrlAuth';
 
         $token = new AccessToken(['access_token' => 'token']);
-        $request = $this->createMock(RequestInterface::class);
 
-        $factory = $this->getMockBuilder(RequestFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getRequestWithOptions'])
-            ->getMock();
-
-        $factory->expects($this->once())
-            ->method('getRequestWithOptions')
-            ->with(
-                $this->equalTo(GenericProvider::METHOD_POST),
-                $this->equalTo($authUrl),
-                $this->callback(function ($options) {
-                    $this->assertEquals('Basic dGVzdDp0ZXN0U2VjcmV0', $options['headers']['Authorization']);
-                    $this->assertEquals('token=token', $options['body']);
-                    return true;
-                })
-            )
-            ->willReturn($request);
+        $this->requestFactory->expects($this->once())
+                             ->method('getRequestWithOptions')
+                             ->with(
+                                 $this->equalTo(GenericProvider::METHOD_POST),
+                                 $this->equalTo($authUrl),
+                                 $this->callback(function ($options) {
+                                     $this->assertEquals(
+                                         'Basic dGVzdDp0ZXN0U2VjcmV0',
+                                         $options['headers']['Authorization']
+                                     );
+                                     $this->assertEquals('token=token', $options['body']);
+                                     return true;
+                                 })
+                             )
+                             ->willReturn($this->request);
 
         $provider = $this->getMockBuilder(GenericProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([[
-                'clientId' => 'test',
-                'clientSecret' => 'testSecret',
-                'redirectUri' => '',
-                'urlAuthorize' => $authUrl,
-                'urlAccessToken' => 'http://testUrlAccessToken',
-                'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
-            ]])
+            ->setConstructorArgs([$this->oidcConfig])
             ->setMethods([
                 'getResourceOwnerDetailsUrl',
                 'getRequestFactory',
@@ -160,7 +245,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider->expects($this->once())
             ->method('getRequestFactory')
-            ->willReturn($factory);
+            ->willReturn($this->requestFactory);
 
         $provider->expects($this->once())
             ->method('getParsedResponse')
@@ -168,6 +253,124 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(['sub' => 'max']);
 
         $provider->introspectToken($token);
+    }
+
+    /**
+     * @covers ::remoteIdpAuthenticate
+     */
+    public function testRemoteIdpAuthenticate()
+    {
+        $expectedResult = ['result' => 'success'];
+        $accessToken = new AccessToken(['access_token' => 'testToken', 'expires_in' => '900']);
+
+        $provider = $this->getMockBuilder(GenericProvider::class)
+                         ->enableOriginalConstructor()
+                         ->setConstructorArgs([$this->oidcConfig])
+                         ->setMethods(
+                             ['getRequestWithOptions', 'getRequestFactory', 'getParsedResponse', 'getAccessToken']
+                         )
+                         ->getMock();
+
+        $provider->expects($this->once())
+                 ->method('getRequestFactory')
+                 ->willReturn($this->requestFactory);
+
+        $provider->expects($this->once())
+                 ->method('getAccessToken')
+                 ->with('client_credentials', ['scope' => 'offline'])
+                 ->willReturn($accessToken);
+
+        $this->requestFactory->expects($this->once())
+                ->method('getRequestWithOptions')
+                ->with(
+                    $this->equalTo(GenericProvider::METHOD_POST),
+                    $this->equalTo('http://idp.test/authenticate'),
+                    $this->callback(function ($options) {
+                        $this->assertEquals('Bearer testToken', $options['headers']['Authorization']);
+                        $this->assertEquals('user_name=test&password=test1', $options['body']);
+                        return true;
+                    })
+                )
+                ->willReturn($this->request);
+
+        $provider->expects($this->once())
+                 ->method('getParsedResponse')
+                 ->with($this->request)
+                 ->willReturn($expectedResult);
+
+        $this->assertEquals($expectedResult, $provider->remoteIdpAuthenticate('test', 'test1'));
+    }
+
+    /**
+     * @covers ::getJwtBearerAccessToken
+     */
+    public function testGetJwtBearerAccessToken()
+    {
+        $provider = $this->getMockBuilder(GenericProvider::class)
+                         ->enableOriginalConstructor()
+                         ->setConstructorArgs([$this->oidcConfig])
+                         ->setMethods(['getAccessToken'])
+                         ->getMock();
+
+        $provider->expects($this->once())->method('getAccessToken')->willReturnCallback(
+            function ($token, $options) {
+                $this->assertInstanceOf(JwtBearer::class, $token);
+                $this->assertEquals(
+                    ['scope' => 'offline', 'assertion' => 'assertion'],
+                    $options
+                );
+            }
+        );
+        $provider->getJwtBearerAccessToken('assertion');
+    }
+
+    /**
+     * @covers ::getKeySet
+     */
+    public function testGetKeySet()
+    {
+        $expectedKeys = [
+            'keys' => [
+                ['private'],
+                ['public'],
+            ],
+        ];
+        $expectedResult = [
+            'keys' => [
+                ['private'],
+                ['public'],
+            ],
+            'keySetId' => 'testSet',
+            'clientId' => 'test',
+        ];
+        $provider = $this->getMockBuilder(GenericProvider::class)
+                         ->enableOriginalConstructor()
+                         ->setConstructorArgs([$this->oidcConfig])
+                         ->setMethods(['getAccessToken', 'getAuthenticatedRequest', 'getParsedResponse'])
+                         ->getMock();
+
+        $accessToken = new AccessToken(['access_token' => 'testToken', 'expires_in' => '900']);
+
+        $provider->expects($this->once())
+                 ->method('getAccessToken')
+                 ->with('client_credentials', ['scope' => 'hydra.keys.get'])
+                 ->willReturn($accessToken);
+
+        $provider->expects($this->once())
+                 ->method('getAuthenticatedRequest')
+                 ->with(
+                     GenericProvider::METHOD_GET,
+                     'http://sts.sugarcrm.local/keys/testSet',
+                     $accessToken,
+                     ['scope' => 'hydra.keys.get']
+                 )->willReturn($this->request);
+
+        $provider->expects($this->once())
+                 ->method('getParsedResponse')
+                 ->with($this->request)
+                 ->willReturn($expectedKeys);
+
+        $this->assertEquals($expectedResult, $provider->getKeySet());
     }
 
     /**
@@ -360,6 +563,9 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
                 'urlAuthorize' => '',
                 'urlAccessToken' => 'http://testUrlAccessToken',
                 'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+                'keySetId' => 'test',
+                'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                'idpUrl' => 'http://idp.test',
                 'http_client' => [
                     'retry_count' => 5,
                     'delay_strategy' => 'exponential',

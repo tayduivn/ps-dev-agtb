@@ -19,12 +19,37 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class SugarOIDCUserProvider implements UserProviderInterface
 {
     /**
+     * @var SugarLocalUserProvider
+     */
+    protected $sugarLocalUserProvider;
+    /**
+     * SugarOIDCUserProvider constructor.
+     * @param UserProviderInterface $sugarLocalUserProvider
+     */
+    public function __construct(UserProviderInterface $sugarLocalUserProvider)
+    {
+        $this->sugarLocalUserProvider = $sugarLocalUserProvider;
+    }
+
+    /**
      * @param string $username
      * @return User
      */
     public function loadUserByUsername($username)
     {
         return new User($username);
+    }
+
+    /**
+     * Get user by field value.
+     *
+     * @param string $value
+     * @param string $field
+     * @return User
+     */
+    public function loadUserByField($value, $field)
+    {
+        return $this->sugarLocalUserProvider->loadUserByField($value, $field);
     }
 
     /**

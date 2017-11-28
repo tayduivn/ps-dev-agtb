@@ -14,6 +14,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedU
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\PermanentLockedUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 
@@ -84,9 +85,13 @@ class AuthenticationController implements LoggerAwareInterface
      */
     public static function getInstance($type = null)
     {
-        global $sugar_config;
         if (empty($type)) {
-            $type = !empty($sugar_config['authenticationClass']) ? $sugar_config['authenticationClass'] : 'SugarAuthenticate';
+            $idpConfig = new Config(\SugarConfig::getInstance());
+            if ($idpConfig->isOIDCEnabled()) {
+                $type = 'OAuth2Authenticate';
+            } else {
+                $type = $idpConfig->get('authenticationClass', 'SugarAuthenticate');
+            }
         }
         if (empty(static::$authcontrollerinstance)) {
             SugarAutoLoader::requireWithCustom('modules/Users/authentication/AuthenticationController.php');

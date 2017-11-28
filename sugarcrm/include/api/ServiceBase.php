@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Platform as PlatformConstraint;
 use Psr\Log\LoggerAwareInterface;
@@ -152,12 +154,12 @@ abstract class ServiceBase implements LoggerAwareInterface
            // @TODO Localize exception strings
            $message = "No valid authentication for user.";
        }
-        if ($this->isOidcEnabled($this->platform) && !extension_loaded('gmp')) {
+        $isOidcEnabled = (new Config(\SugarConfig::getInstance()))->isOIDCEnabled();
+        if ($isOidcEnabled && !extension_loaded('gmp')) {
             throw new SugarApiExceptionError('ERR_FOR_OIDC_GMP_REQUIRED', null, 'Users');
         }
         $loginExc = new SugarApiExceptionNeedLogin($message);
-        $authType = $this->isOidcEnabled($this->platform) ? 'OAuth2Authenticate' : null;
-        $auth = AuthenticationController::getInstance($authType);
+        $auth = AuthenticationController::getInstance();
         if ($auth->isExternal()) {
             $loginExc
                 ->setExtraData("url", $auth->getLoginUrl(['platform' => $this->platform]))
@@ -212,18 +214,5 @@ abstract class ServiceBase implements LoggerAwareInterface
         if ($raiseException) {
             throw new SugarApiExceptionInvalidParameter("EXCEPTION_INVALID_PLATFORM");
         }
-    }
-
-    /**
-     * Platform support OIDC or not?
-     * @param $platform
-     * @return bool
-     *
-     * @todo Platform check should be removed in future because we want to enable OIDC for all platforms.
-     */
-    protected function isOidcEnabled($platform)
-    {
-        $oauthConfig = \SugarConfig::getInstance()->get('oidc_oauth');
-        return !empty($oauthConfig['enabledPlatforms']) && in_array($platform, $oauthConfig['enabledPlatforms']);
     }
 }

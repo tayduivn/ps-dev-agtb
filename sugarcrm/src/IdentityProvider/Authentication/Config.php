@@ -73,19 +73,39 @@ class Config
         }
 
         $oidcUrl = rtrim($config['oidcUrl'], '/ ');
+        $ipdUrl = rtrim($config['idpUrl'], '/ ');
+        $oidcKeySetId = isset($config['oidcKeySetId']) ? $config['oidcKeySetId'] : null;
+        $urlKeys = $oidcKeySetId ? $oidcUrl . '/keys/' . $oidcKeySetId : null;
 
         $endpointService = new EndpointService(['host' => $oidcUrl]);
 
-        return [
+        $oidcConfig = [
             'clientId' => $config['clientId'],
             'clientSecret' => $config['clientSecret'],
             'oidcUrl' => $oidcUrl,
+            'idpUrl' => $ipdUrl,
             'redirectUri' => rtrim($this->get('site_url'), '/'),
             'urlAuthorize' => $endpointService->getOAuth2Endpoint(EndpointInterface::AUTH_ENDPOINT),
             'urlAccessToken' => $endpointService->getOAuth2Endpoint(EndpointInterface::TOKEN_ENDPOINT),
             'urlResourceOwnerDetails' => $endpointService->getOAuth2Endpoint(EndpointInterface::INTROSPECT_ENDPOINT),
             'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
         ];
+
+        if ($oidcKeySetId) {
+            $oidcConfig['keySetId'] = $oidcKeySetId;
+            $oidcConfig['urlKeys'] = $urlKeys;
+        }
+
+        return $oidcConfig;
+    }
+
+    /**
+     * Checks OIDC config is present
+     * @return bool
+     */
+    public function isOIDCEnabled()
+    {
+        return !empty($this->getOIDCConfig());
     }
 
     /**
