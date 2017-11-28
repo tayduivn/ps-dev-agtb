@@ -580,6 +580,49 @@ class EmailTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function isArchivedProvider()
+    {
+        return [
+            [
+                \Email::STATE_ARCHIVED,
+                true,
+                true,
+            ],
+            [
+                \Email::STATE_ARCHIVED,
+                false,
+                false,
+            ],
+            [
+                \Email::STATE_DRAFT,
+                true,
+                false,
+            ],
+            [
+                \Email::STATE_DRAFT,
+                false,
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::isArchived
+     * @dataProvider isArchivedProvider
+     * @param string $state
+     * @param bool $isUpdate
+     * @param bool $expected
+     */
+    public function testIsArchived($state, $isUpdate, $expected)
+    {
+        $email = $this->createPartialMock('\\Email', ['isUpdate']);
+        $email->method('isUpdate')->willReturn($isUpdate);
+        $email->state = $state;
+
+        $actual = $email->isArchived();
+        $this->assertSame($expected, $actual);
+    }
+
     /**
      * Returns all of the method names from Email::save() and SugarBean::save() that we want to avoid calling in unit
      * tests for Email::save().

@@ -18,6 +18,16 @@ class Email extends SugarBean {
     const STATE_DRAFT = 'Draft';
     const STATE_ARCHIVED = 'Archived';
 
+    /**
+     * A flag to toggle when synchronizing the email's sender and recipients. See
+     * {@link Email::synchronizeEmailParticipants()} for a full description.
+     *
+     * @var bool
+     * @internal Do not use or override this property.
+     * @deprecated This property will be removed once the sender and recipients for all emails have been synchronized.
+     */
+    private $isSynchronizingEmailParticipants = false;
+
 	/* SugarBean schema */
 	var $id;
 	var $date_entered;
@@ -417,6 +427,19 @@ class Email extends SugarBean {
         }
 
         return false;
+    }
+
+    /**
+     * Some data -- like the sender, recipients, subject, body, and attachments -- cannot be changed after an email is
+     * archived. This method is used to determine if that data can be changed.
+     *
+     * @return bool
+     */
+    public function isArchived()
+    {
+        $isUpdateOfArchivedEmail = $this->isUpdate() && $this->state === static::STATE_ARCHIVED;
+
+        return !$this->isSynchronizingEmailParticipants && $isUpdateOfArchivedEmail;
     }
 
 	/**
@@ -1826,7 +1849,7 @@ class Email extends SugarBean {
         $logger->deprecated('Email::linkEmailToAddress() has been deprecated. Use Email::$to, Email::$cc, and ' .
             'Email::$bcc to link recipients to the email. Use Email::$from to link the sender to the email.');
 
-        if ($this->isUpdate() && $this->state === static::STATE_ARCHIVED) {
+        if ($this->isArchived()) {
             $logger->warn("Cannot add EmailAddresses/{$id} to link {$type} when Emails/{$this->id} is archived");
             return '';
         }
@@ -2032,6 +2055,7 @@ class Email extends SugarBean {
         $bean->retrieveEmailText();
         $bean->description = to_html($bean->description);
         $bean->retrieveEmailAddresses();
+        $bean->synchronizeEmailParticipants();
 
         $bean->date_start = '';
         $bean->time_start = '';
@@ -2047,6 +2071,70 @@ class Email extends SugarBean {
                 $this->$k = $v;
             }
         }
+    }
+
+    /**
+     * From 7.0.x through 7.9.x, REST API clients, like OPI/LPI, could create emails using Emails API by specifying the
+     * sender and recipients with from_addr_name, to_addrs_names, cc_addrs_names, and bcc_addrs_names in the request
+     * body. This led to the sender and recipients being stored in the emails_text table but not synchronized to the
+     * emails_email_addr_rel table. This method will test the email to determine if the sender and recipients need to be
+     * synchronized and then perform the synchronization.
+     *
+     * @internal This method is called when retrieving the email to perform a lazy upgrade of the email's data. It will
+     * only need to synchronize the data once, on the first retrieval. Do not call or override this method.
+     * @uses Email::saveEmailAddresses()
+     * @deprecated This method will be removed once the sender and recipients for all emails have been synchronized.
+     */
+    public function synchronizeEmailParticipants()
+    {
+        if ($this->isSynchronizingEmailParticipants) {
+            return;
+        }
+
+        BeanFactory::registerBean($this);
+        $this->isSynchronizingEmailParticipants = true;
+
+        // Find address types that aren't represented in emails_email_addr_rel.
+        $sql = "SELECT address_type FROM emails_email_addr_rel WHERE email_id=? AND deleted=? GROUP BY address_type";
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($sql, [$this->id, 0]);
+        $missingAddressTypes = [
+            'from' => true,
+            'to' => true,
+            'cc' => true,
+            'bcc' => true,
+        ];
+
+        while ($row = $stmt->fetch()) {
+            $missingAddressTypes[$row['address_type']] = false;
+        }
+
+        $fromNeedsUpgrade = !empty($this->from_addr_name) && !!$missingAddressTypes['from'];
+        $toNeedsUpgrade = !empty($this->to_addrs_names) && !!$missingAddressTypes['to'];
+        $ccNeedsUpgrade = !empty($this->cc_addrs_names) && !!$missingAddressTypes['cc'];
+        $bccNeedsUpgrade = !empty($this->bcc_addrs_names) && !!$missingAddressTypes['bcc'];
+
+        if ($fromNeedsUpgrade || $toNeedsUpgrade || $ccNeedsUpgrade || $bccNeedsUpgrade) {
+            if ($fromNeedsUpgrade) {
+                $this->from_addr = $this->from_addr_name;
+            }
+
+            if ($toNeedsUpgrade) {
+                $this->to_addrs = $this->to_addrs_names;
+            }
+
+            if ($ccNeedsUpgrade) {
+                $this->cc_addrs = $this->cc_addrs_names;
+            }
+
+            if ($bccNeedsUpgrade) {
+                $this->bcc_addrs = $this->bcc_addrs_names;
+            }
+
+            $this->saveEmailAddresses();
+        }
+
+        $this->isSynchronizingEmailParticipants = false;
     }
 
     /**

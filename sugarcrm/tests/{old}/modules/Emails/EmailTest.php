@@ -724,12 +724,13 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('bill@example.com');
 
         $email->retrieveEmailText();
-        $this->assertEquals('sam@example.com', $email->from_addr_name);
-        $expected = ['tom@example.com', 'wendy@example.com'];
-        $this->assertEquals($expected, $this->emailAddrsToArray($email->to_addrs_names));
-        $this->assertEquals('randy@example.com', $email->cc_addrs_names);
-        $expected = ['bill@example.com', 'bonnie@example.com', 'tara@example.com'];
-        $this->assertEquals($expected, $this->emailAddrsToArray($email->bcc_addrs_names));
+        $this->assertEmailAddresses(['sam@example.com'], $email->from_addr_name);
+        $this->assertEmailAddresses(['tom@example.com', 'wendy@example.com'], $email->to_addrs_names);
+        $this->assertEmailAddresses(['randy@example.com'], $email->cc_addrs_names);
+        $this->assertEmailAddresses(
+            ['bill@example.com', 'bonnie@example.com', 'tara@example.com'],
+            $email->bcc_addrs_names
+        );
     }
 
     /**
@@ -820,6 +821,230 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         unset($email->from);
     }
 
+    /**
+     * @covers ::retrieve
+     * @covers ::loadAdditionalEmailData
+     * @covers ::retrieveEmailText
+     * @covers ::retrieveEmailAddresses
+     * @covers ::synchronizeEmailParticipants
+     */
+    public function testRetrieveAndSynchronizeEmailParticipants()
+    {
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_ARCHIVED]);
+
+        // The emails_text table should have data but not emails_email_addr_rel.
+        $sql = "UPDATE emails_text SET from_addr='Norman Jones <norman@example.com>', " .
+            "to_addrs='Rick Johns <rick@example.com>, Stacy Towns <stacy@example.com>', " .
+            "cc_addrs='Betsy Williams <betsy@example.com>', " .
+            "bcc_addrs='Jake Marr <jake@example.com>, frannie@example.com, paul@example.com' " .
+            "WHERE email_id='{$email->id}'";
+        $email->db->query($sql);
+
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('norman@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('rick@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('stacy@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('betsy@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('jake@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('frannie@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('paul@example.com');
+
+        // Verify the data in the emails_text table.
+        $email->retrieveEmailText();
+        $this->assertEmailAddresses(['Norman Jones <norman@example.com>'], $email->from_addr_name);
+        $this->assertEmailAddresses(
+            ['Rick Johns <rick@example.com>', 'Stacy Towns <stacy@example.com>'],
+            $email->to_addrs_names
+        );
+        $this->assertEmailAddresses(['Betsy Williams <betsy@example.com>'], $email->cc_addrs_names);
+        $this->assertEmailAddresses(
+            ['Jake Marr <jake@example.com>', 'frannie@example.com', 'paul@example.com'],
+            $email->bcc_addrs_names
+        );
+
+        // Verify there is no data in the emails_email_addr_rel table.
+        $email->retrieveEmailAddresses();
+        $this->assertEmpty($email->from_addr);
+        $this->assertEmpty($email->to_addrs);
+        $this->assertEmpty($email->cc_addrs);
+        $this->assertEmpty($email->bcc_addrs);
+
+        // Trigger the synchronization to emails_email_addr_rel.
+        $email->retrieve();
+
+        // Verify the data in the emails_text table again. After synchronization, only the email addresses remain.
+        $email->retrieveEmailText();
+        $this->assertEmailAddresses(['norman@example.com'], $email->from_addr_name);
+        $this->assertEmailAddresses(['rick@example.com', 'stacy@example.com'], $email->to_addrs_names);
+        $this->assertEmailAddresses(['betsy@example.com'], $email->cc_addrs_names);
+        $this->assertEmailAddresses(
+            ['jake@example.com', 'frannie@example.com', 'paul@example.com'],
+            $email->bcc_addrs_names
+        );
+
+        // Verify the data in the emails_email_addr_rel table.
+        $email->retrieveEmailAddresses();
+        $this->assertEmailAddresses(['norman@example.com'], $email->from_addr);
+        $this->assertEmailAddresses(['rick@example.com', 'stacy@example.com'], $email->to_addrs);
+        $this->assertEmailAddresses(['betsy@example.com'], $email->cc_addrs);
+        $this->assertEmailAddresses(
+            ['jake@example.com', 'frannie@example.com', 'paul@example.com'],
+            $email->bcc_addrs
+        );
+
+        // Change something and resave the email to show that no data is lost on save.
+        $email->assigned_user_id = Uuid::uuid1();
+        $email->save();
+
+        // Verify the data in the emails_text table once more.
+        $email->retrieveEmailText();
+        $this->assertEmailAddresses(['norman@example.com'], $email->from_addr_name);
+        $this->assertEmailAddresses(['rick@example.com', 'stacy@example.com'], $email->to_addrs_names);
+        $this->assertEmailAddresses(['betsy@example.com'], $email->cc_addrs_names);
+        $this->assertEmailAddresses(
+            ['jake@example.com', 'frannie@example.com', 'paul@example.com'],
+            $email->bcc_addrs_names
+        );
+
+        // Verify the data in the emails_email_addr_rel table again.
+        $email->retrieveEmailAddresses();
+        $this->assertEmailAddresses(['norman@example.com'], $email->from_addr);
+        $this->assertEmailAddresses(['rick@example.com', 'stacy@example.com'], $email->to_addrs);
+        $this->assertEmailAddresses(['betsy@example.com'], $email->cc_addrs);
+        $this->assertEmailAddresses(
+            ['jake@example.com', 'frannie@example.com', 'paul@example.com'],
+            $email->bcc_addrs
+        );
+    }
+
+    /**
+     * @covers ::retrieve
+     * @covers ::loadAdditionalEmailData
+     * @covers ::retrieveEmailText
+     * @covers ::retrieveEmailAddresses
+     * @covers ::synchronizeEmailParticipants
+     */
+    public function testRetrieveAndSynchronizeEmailParticipants_SenderOrRecipientFieldsAlreadyWithDataAreLeftUntouched()
+    {
+        $data = [
+            'state' => Email::STATE_ARCHIVED,
+            'to_addrs' => 'lacy@example.com',
+        ];
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+
+        // emails_text.from_addr should have data that emails_email_addr_rel does not have. emails_text.to_addrs should
+        // have data that does not match what emails_email_addr_rel has for address_type=to.
+        $sql = "UPDATE emails_text SET from_addr='Dillon Trace <dillon@example.com>', " .
+            "to_addrs='Vance Martin <vance@example.com>, Alice Chapman <alice@example.com>' " .
+            "WHERE email_id='{$email->id}'";
+        $email->db->query($sql);
+
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('dillon@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('lacy@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('vance@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('alice@example.com');
+
+        // Verify the data in the emails_text table.
+        $email->retrieveEmailText();
+        $this->assertEmailAddresses(['Dillon Trace <dillon@example.com>'], $email->from_addr_name);
+        $this->assertEmailAddresses(
+            ['Vance Martin <vance@example.com>', 'Alice Chapman <alice@example.com>'],
+            $email->to_addrs_names
+        );
+
+        // Verify there is no sender in the emails_email_addr_rel table.
+        $email->retrieveEmailAddresses();
+        $this->assertEmpty($email->from_addr);
+        $this->assertEmailAddresses(['lacy@example.com'], $email->to_addrs);
+
+        // Trigger the synchronization to emails_email_addr_rel.
+        $email->retrieve();
+
+        // Verify the data in the emails_text table again.
+        $email->retrieveEmailText();
+        $this->assertEmailAddresses(['dillon@example.com'], $email->from_addr_name);
+        $this->assertEmailAddresses(['lacy@example.com'], $email->to_addrs_names);
+
+        // Verify the data in the emails_email_addr_rel table.
+        $email->retrieveEmailAddresses();
+        $this->assertEmailAddresses(['dillon@example.com'], $email->from_addr);
+        $this->assertEmailAddresses(['lacy@example.com'], $email->to_addrs);
+
+        // Change something and resave the email to show that no data is lost on save.
+        $email->assigned_user_id = Uuid::uuid1();
+        $email->save();
+
+        // emails_text.to_addrs should reflect the data in emails_email_addr_rel after saving.
+        $email->retrieveEmailText();
+        $this->assertEmailAddresses(['dillon@example.com'], $email->from_addr_name);
+        $this->assertEmailAddresses(['lacy@example.com'], $email->to_addrs_names);
+
+        // Verify the data in the emails_email_addr_rel table again.
+        $email->retrieveEmailAddresses();
+        $this->assertEmailAddresses(['dillon@example.com'], $email->from_addr);
+        $this->assertEmailAddresses(['lacy@example.com'], $email->to_addrs);
+    }
+
+    /**
+     * @covers ::retrieve
+     * @covers ::loadAdditionalEmailData
+     * @covers ::retrieveEmailText
+     * @covers ::retrieveEmailAddresses
+     * @covers ::synchronizeEmailParticipants
+     */
+    public function testRetrieveAndSynchronizeEmailParticipants_ParticipantsWithoutEmailAddressAreLeftUntouched()
+    {
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
+
+        // This recipient will be stored without an email address selected since it is a draft and no email address is
+        // defined. emails_text.to_addrs will include an email address along with the contact's name.
+        $contact = SugarTestContactUtilities::createContact();
+        $ep = BeanFactory::newBean('EmailParticipants');
+        $ep->new_with_id = true;
+        $ep->id = Uuid::uuid1();
+        BeanFactory::registerBean($ep);
+        $ep->parent_type = $contact->getModuleName();
+        $ep->parent_id = $contact->id;
+        $email->load_relationship('to');
+        $email->to->add($ep);
+
+        // Verify the data in the emails_text table.
+        $email->retrieveEmailText();
+        $this->assertEmailAddresses(["{$contact->name} <{$contact->email1}>"], $email->to_addrs_names);
+
+        // Verify there is no recorded email address in the emails_email_addr_rel table for the recipient.
+        $email->retrieveEmailAddresses();
+        $this->assertEmpty($email->to_addrs);
+
+        // Trigger the synchronization to emails_email_addr_rel.
+        $email->retrieve();
+
+        // Verify the data in the emails_text table again.
+        $email->retrieveEmailText();
+        $this->assertEmailAddresses(["{$contact->name} <{$contact->email1}>"], $email->to_addrs_names);
+
+        // Verify the data in the emails_email_addr_rel table again.
+        $email->retrieveEmailAddresses();
+        $this->assertEmpty($email->to_addrs);
+
+        // Change something and resave the email to show that no data is lost on save.
+        $email->description_html = '<p>foo bar</p>';
+        $email->save();
+
+        // emails_text.to_addrs should reflect the data in emails_email_addr_rel after saving.
+        $email->retrieveEmailText();
+        $this->assertEmailAddresses(["{$contact->name} <{$contact->email1}>"], $email->to_addrs_names);
+
+        // Verify the data in the emails_email_addr_rel table once more.
+        $email->retrieveEmailAddresses();
+        $this->assertEmpty($email->to_addrs);
+    }
+
+    /**
+     * Splits a comma-separated list of email addresses and returns them as an array.
+     *
+     * @param string $emailAddrs
+     * @return array
+     */
     private function emailAddrsToArray($emailAddrs)
     {
         $emailAddresses = array();
@@ -827,8 +1052,25 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         foreach ($temp as $emailAddr) {
             $emailAddresses[] = $emailAddr;
         }
-        sort($emailAddresses);
+
         return $emailAddresses;
+    }
+
+    /**
+     * Asserts that all of the expected email addresses are found in the value, regardless of their order.
+     *
+     * @param array $expected Expected email addresses.
+     * @param string $value Comma-separated list of email addresses.
+     * @param string $message Error message to report.
+     */
+    private function assertEmailAddresses(array $expected, $value, $message = '')
+    {
+        $arrayOfAddresses = $this->emailAddrsToArray($value);
+
+        sort($expected);
+        sort($arrayOfAddresses);
+
+        $this->assertEquals($expected, $arrayOfAddresses, $message);
     }
 }
 
