@@ -80,7 +80,11 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         $this->storage = $this->createMock(\SugarOAuth2StorageOIDC::class);
         $this->oAuth2Server = $this->getMockBuilder(\SugarOAuth2ServerOIDC::class)
                                    ->setConstructorArgs([$this->storage, []])
-                                   ->setMethods(['getAuthProviderBuilder', 'getAuthProviderBasicBuilder'])
+                                   ->setMethods([
+                                       'getAuthProviderBuilder',
+                                       'getAuthProviderBasicBuilder',
+                                       'genAccessToken',
+                                   ])
                                    ->getMock();
 
         $this->authProviderBuilder = $this->createMock(AuthProviderOIDCManagerBuilder::class);
@@ -283,6 +287,8 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
     public function testGrantAccessTokenWithValidUsernameOrPasswordUser()
     {
         $this->storage->refreshToken = $this->createMock(\OAuthToken::class);
+        $this->storage->refreshToken->expects($this->once())->method('save');
+
         $this->storage->expects($this->once())
                       ->method('checkClientCredentials')
                       ->with($this->inputData['client_id'], $this->inputData['client_secret'])
@@ -298,12 +304,19 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
                       ->with($this->inputData['client_id'], $this->inputData['username'], $this->inputData['password'])
                       ->willReturn(['user_id' => 'testId', 'scope' => null]);
 
+        $this->storage->expects($this->once())
+                     ->method('unsetRefreshToken')
+                     ->with($this->equalTo('testOldRefreshTokenId'));
+
         $this->oAuth2Server->expects($this->once())->method('getAuthProviderBasicBuilder')->willReturnCallback(
             function ($config) {
                 $this->assertInstanceOf(Config::class, $config);
                 return $this->authProviderBasicBuilder;
             }
         );
+
+        $refreshTokenId = 'testRefreshTokenId';
+        $this->oAuth2Server->expects($this->once())->method('genAccessToken')->willReturn($refreshTokenId);
 
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
@@ -317,6 +330,8 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
             }
         );
 
+        $this->oAuth2Server->setOldRefreshToken('testOldRefreshTokenId');
+
         $result = $this->oAuth2Server->grantAccessToken($this->inputData);
 
         $expectedResult = [
@@ -324,15 +339,19 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
             'expires_in' => '1',
             'token_type' => 'bearer',
             'scope' => 'offline',
+            'refresh_token' => $refreshTokenId,
         ];
         foreach ($expectedResult as $key => $value) {
             $this->assertEquals($value, $result[$key]);
         }
+
+        $this->assertEquals('resultToken', $this->storage->refreshToken->download_token);
     }
 
     /**
      * @covers ::verifyAccessToken
      * @covers ::setPlatform
+     * @expectedException \OAuth2AuthenticateException
      */
     public function testVerifyAccessTokenWithAuthenticationException()
     {
@@ -352,8 +371,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->oAuth2Server->setPlatform('testPlatform');
-        $result = $this->oAuth2Server->verifyAccessToken('test');
-        $this->assertEquals([], $result);
+        $this->oAuth2Server->verifyAccessToken('test');
     }
 
     /**

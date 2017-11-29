@@ -64,6 +64,7 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
      * @param string $token OIDC Access Token
      * @param string|null $scope
      *
+     * @throws OAuth2AuthenticateException
      * @return array
      */
     public function verifyAccessToken($token, $scope = null)
@@ -76,7 +77,14 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
             /** @var IntrospectToken $userToken */
             $userToken = $authManager->authenticate($introspectToken);
         } catch (AuthenticationException $e) {
-            return [];
+            throw new OAuth2AuthenticateException(
+                self::HTTP_UNAUTHORIZED,
+                $this->getVariable(self::CONFIG_TOKEN_TYPE),
+                $this->getVariable(self::CONFIG_WWW_REALM),
+                self::ERROR_INVALID_GRANT,
+                'The access token provided has expired.',
+                $scope
+            );
         }
 
         if (!$userToken->isAuthenticated()) {
@@ -110,6 +118,20 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
             );
 
             if ($this->storage instanceof IOAuth2RefreshTokens) {
+                $token['refresh_token'] = $this->genAccessToken();
+                $this->storage->setRefreshToken(
+                    $token['refresh_token'],
+                    $client_id,
+                    $user_id,
+                    time() + $this->getVariable(self::CONFIG_REFRESH_LIFETIME),
+                    $token['scope']
+                );
+                $this->storage->refreshToken->download_token = $token['access_token'];
+                $this->storage->refreshToken->save();
+                if ($this->oldRefreshToken) {
+                    $this->storage->unsetRefreshToken($this->oldRefreshToken);
+                    unset($this->oldRefreshToken);
+                }
             }
 
             return $token;
@@ -135,5 +157,17 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
     protected function getAuthProviderBasicBuilder(Config $config)
     {
         return new AuthProviderBasicManagerBuilder($config);
+    }
+
+    /**
+     * Set old refresh token
+     * This is required for unit tests
+     * @param $refreshToken
+     * @return SugarOAuth2ServerOIDC
+     */
+    public function setOldRefreshToken($refreshToken)
+    {
+        $this->oldRefreshToken = $refreshToken;
+        return $this;
     }
 }
