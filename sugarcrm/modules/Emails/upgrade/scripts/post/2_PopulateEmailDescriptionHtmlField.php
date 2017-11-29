@@ -42,7 +42,7 @@ class SugarUpgradePopulateEmailDescriptionHtmlField extends UpgradeDBScript
     {
         $this->log('Set description_html field to description field value with <br /> replacing CRLF characters');
 
-        $sql = 'UPDATE emails_text SET description_html = REPLACE(REPLACE(description, "\r", \'\'), "\n", "<br />")' .
+        $sql = "UPDATE emails_text SET description_html = REPLACE(REPLACE(description, '\r', ''), '\n', '<br />')" .
                ' WHERE ' . $this->db->getEmptyFieldSQL('description_html') .
                ' AND ' . $this->db->getNotEmptyFieldSQL('description');
         $this->executeUpdate($sql);

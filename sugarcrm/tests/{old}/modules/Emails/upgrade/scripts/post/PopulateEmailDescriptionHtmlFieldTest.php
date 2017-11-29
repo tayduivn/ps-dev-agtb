@@ -107,7 +107,7 @@ class PopulateEmailDescriptionHtmlFieldTest extends UpgradeTestCase
         $stmt = DBManagerFactory::getConnection()->executeQuery($sql);
         $results = array();
         while ($row = $stmt->fetch()) {
-            $results[$row['email_id']] = $row;
+            $results[trim($row['email_id'])] = $row;
         }
 
         /**
