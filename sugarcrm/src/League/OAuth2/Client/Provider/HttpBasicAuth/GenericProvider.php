@@ -21,7 +21,9 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
 class GenericProvider extends BasicGenericProvider
 {
@@ -43,6 +45,21 @@ class GenericProvider extends BasicGenericProvider
      * @var string
      */
     protected $keySetId;
+
+    /**
+     * @var string
+     */
+    protected $responseError = 'error';
+
+    /**
+     * @var string
+     */
+    protected $responseErrorCode = 'code';
+
+    /**
+     * @var string
+     */
+    protected $responseErrorMessage = 'message';
 
     /**
      * Adds HttpClient with retry policy.
@@ -287,5 +304,19 @@ class GenericProvider extends BasicGenericProvider
         return new HttpClient(
             array_intersect_key($options, array_flip($this->getAllowedClientOptions($options)))
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function checkResponse(ResponseInterface $response, $data)
+    {
+        if (!empty($data[$this->responseError]) && is_array($data[$this->responseError])) {
+            $error = $data[$this->responseError];
+            $message = !empty($error[$this->responseErrorMessage]) ? $error[$this->responseErrorMessage] : '';
+            $code = !empty($error[$this->responseErrorCode]) ? $error[$this->responseErrorCode] : '';
+            throw new IdentityProviderException($message, $code, $data);
+        }
+        return parent::checkResponse($response, $data);
     }
 }
