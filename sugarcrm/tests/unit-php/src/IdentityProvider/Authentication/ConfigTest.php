@@ -143,11 +143,11 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             'sp' => [
                 'entityId' => 'SAML_issuer',
                 'assertionConsumerService' => [
-                    'url' => 'site_url/index.php?module=Users&amp;action=Authenticate',
+                    'url' => 'site_url/index.php?module=Users&action=Authenticate',
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
                 ],
                 'singleLogoutService' => [
-                    'url' => 'site_url/index.php?module=Users&amp;action=Logout',
+                    'url' => 'site_url/index.php?module=Users&action=Logout',
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'NameIDFormat' => \OneLogin_Saml2_Constants::NAMEID_EMAIL_ADDRESS,

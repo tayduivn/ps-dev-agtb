@@ -68,8 +68,8 @@ class Config
         $isSPPrivateKeyCertSet = (bool)$this->get('SAML_request_signing_pkey')
             && (bool)$this->get('SAML_request_signing_x509');
         $siteUrl = rtrim($this->get('site_url'), '/');
-        $acsUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Authenticate', ENT_XML1));
-        $sloUrl = sprintf('%s/index.php?%s', $siteUrl, htmlentities('module=Users&action=Logout', ENT_XML1));
+        $acsUrl = sprintf('%s/index.php?module=Users&action=Authenticate', $siteUrl);
+        $sloUrl = sprintf('%s/index.php?module=Users&action=Logout', $siteUrl);
         $idpSsoUrl = $this->get('SAML_loginurl');
         return [
             'strict' => false,
