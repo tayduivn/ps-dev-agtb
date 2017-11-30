@@ -18,7 +18,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Job\RebuildJob;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateBasedBuilder;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateAwareBuilder;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
@@ -49,7 +49,7 @@ $services = [
     },
     Listener::class => function (ContainerInterface $container) {
         $state = $container->get(State::class);
-        $builder = new StateBasedBuilder(
+        $builder = new StateAwareBuilder(
             $container->get(Connection::class),
             $state
         );

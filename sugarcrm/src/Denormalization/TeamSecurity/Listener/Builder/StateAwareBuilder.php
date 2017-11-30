@@ -25,7 +25,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 /**
  * Creates a listener implementation according to the current state
  */
-final class StateBasedBuilder implements Builder
+final class StateAwareBuilder implements Builder
 {
     /**
      * @var Connection

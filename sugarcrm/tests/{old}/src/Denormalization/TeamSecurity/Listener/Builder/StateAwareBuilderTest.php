@@ -13,11 +13,11 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener\Builder;
 
 use Doctrine\DBAL\Connection;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateBasedBuilder;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateAwareBuilder;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 
 /**
- * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateBasedBuilder
+ * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateAwareBuilder
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Composite::__toString
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Invalidator::__toString
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\NullListener::__toString
@@ -26,7 +26,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\UserOnly::__toString
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Updater::__toString
  */
-class StateBasedBuilderTest extends \PHPUnit_Framework_TestCase
+class StateAwareBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -157,7 +157,7 @@ class StateBasedBuilderTest extends \PHPUnit_Framework_TestCase
         $isRebuildRunning,
         $shouldHandleAdminUpdatesInline
     ) {
-        return (new StateBasedBuilder(
+        return (new StateAwareBuilder(
             $this->createMock(Connection::class),
             $this->createState([
                 'isEnabled' => $isEnabled,
