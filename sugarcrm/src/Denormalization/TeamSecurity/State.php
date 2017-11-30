@@ -128,7 +128,8 @@ class State implements SplObserver, SplSubject
     }
 
     /**
-     * Returns the name of the table containing denormalizated data or NULL if the data is unavailable
+     * Returns the name of the table which should be used for building queries and can be used for a full rebuild
+     * or NULL if such table is unavailable
      *
      * @return string|null
      */
@@ -151,11 +152,11 @@ class State implements SplObserver, SplSubject
     }
 
     /**
-     * Returns the name of the table which should be used for storing denormalized data during full rebuild
+     * Returns the name of the table which is not currently used for building queries and can be used for a full rebuild
      *
      * @return string|null
      */
-    public function getTargetTable()
+    public function getStandbyTable()
     {
         if ($this->getActiveTable() === $this->table1) {
             return $this->table2;

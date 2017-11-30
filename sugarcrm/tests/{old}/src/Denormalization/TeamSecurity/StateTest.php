@@ -95,7 +95,7 @@ class StateTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider targetIsRotatedProvider
      */
-    public function targetIsRotated($activeTable, $expectedTarget)
+    public function tablesAreRotated($activeTable, $expectedStandby)
     {
         $state = $this->createState(
             $this->createStorage([
@@ -103,7 +103,7 @@ class StateTest extends \PHPUnit_Framework_TestCase
             ])
         );
 
-        $this->assertSame($expectedTarget, $state->getTargetTable());
+        $this->assertSame($expectedStandby, $state->getStandbyTable());
     }
 
     public static function targetIsRotatedProvider()
