@@ -1156,6 +1156,13 @@ input.required {
 
 /* NEW SKIN START */
 
+input[type="checkbox"][disabled],
+input[type="radio"][disabled],
+input[type="checkbox"][readonly],
+input[type="radio"][readonly] {
+  cursor: not-allowed;
+}
+
 .datepicker {
   span.year,
   span.month {

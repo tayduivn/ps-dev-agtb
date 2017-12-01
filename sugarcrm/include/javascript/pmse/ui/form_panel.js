@@ -2383,24 +2383,27 @@ FormPanelFriendlyDropdown.prototype._getValueFromControl = function () {
 };
 
 FormPanelFriendlyDropdown.prototype._openSearchMore = function() {
-    var that = this, zIndex;
+    var self = this;
+
     return function () {
-        zIndex = $(that.html).closest(".adam-modal").zIndex();
-        that._htmlControl[0].select2("close");
-        $(that.html).closest(".adam-modal").zIndex(-1);
+        self._htmlControl[0].select2('close');
+        $(self.html).closest('.adam-modal').hide();
+
         App.drawer.open({
-                layout: "selection-list",
-                context: that._searchMore
+                layout: 'selection-list',
+                context: self._searchMore
             },
             _.bind(function (drawerValues) {
-                var oldValue = that.getValue();
-                $(that.html).closest(".adam-modal").zIndex(zIndex);
+                var oldValue = self.getValue();
+
+                $(self.html).closest('.adam-modal').show();
+
                 if (!_.isUndefined(drawerValues)) {
-                    that.setValue({text: drawerValues.value, value: drawerValues.id}, true);
-                    if (typeof that.onChange === 'function') {
-                        that.onChange(that, newValue, oldValue);
+                    self.setValue({text: drawerValues.value, value: drawerValues.id}, true);
+                    if (typeof self.onChange === 'function') {
+                        self.onChange(self, newValue, oldValue);
                     }
-                    that.fireDependentFields();
+                    self.fireDependentFields();
                 }
             }, this));
     };

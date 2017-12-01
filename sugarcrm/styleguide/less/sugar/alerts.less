@@ -35,6 +35,7 @@ div.alert { /* rules here do not apply to alert in a list view (<table>) header 
   background-color: @white;
   border: 1px solid darken(@grayLighter, 15%);
   box-shadow: @shadowWidget;
+  font-size: @alertFontSize;
 
   &.closeable {
     padding-right: 40px;
@@ -86,11 +87,11 @@ div.alert { /* rules here do not apply to alert in a list view (<table>) header 
 
 .alert-success,
 .alert-success .alert-heading {
-  border-color: @successBorder;
+  border-color: @alertSuccess;
 
   .indicator {
-    background-color: @successBackground;
-    color: @successAlertText;
+    background-color: @alertSuccess;
+    color: @alertSuccessText;
 
     i {
       color: inherit;
@@ -102,11 +103,11 @@ div.alert { /* rules here do not apply to alert in a list view (<table>) header 
 .alert-error,
 .alert-danger .alert-heading,
 .alert-error .alert-heading {
-  border-color: @errorBorder;
+  border-color: @alertError;
 
   .indicator {
-    background: @errorBackground;
-    color: @errorAlertText;
+    background: @alertError;
+    color: @alertErrorText;
 
     i {
       color: inherit;
@@ -127,11 +128,11 @@ div.alert { /* rules here do not apply to alert in a list view (<table>) header 
 
 .alert-warning,
 .alert-warning .alert-heading {
-  border-color: @warningBorder;
+  border-color: @alertWarning;
 
   .indicator {
-    background-color: @warningBackground;
-    color: @warningAlertText;
+    background-color: @alertWarning;
+    color: @alertWarningText;
 
     i {
       color: inherit;
@@ -141,11 +142,11 @@ div.alert { /* rules here do not apply to alert in a list view (<table>) header 
 
 .alert-info,
 .alert-info .alert-heading {
-  border-color: @infoBorder;
+  border-color: @alertInfo;
 
   .indicator {
-    background-color: @infoBackground;
-    color: @infoAlertText;
+    background-color: @alertInfo;
+    color: @alertInfoText;
 
     i {
       color: inherit;
@@ -215,17 +216,16 @@ div.alert { /* rules here do not apply to alert in a list view (<table>) header 
     min-width: 280px;
     width: auto;
     max-width: 430px;
-    background: @confirmationBackground;
+    background: @alertConfirmationBackground;
 
     .indicator {
       display: block;
       width: 100%;
       height: 48px;
       line-height: 48px;
-      font-size: 15px;
 
       .fa {
-        font-size: inherit;
+        font-size: @alertIconFontSize;
         position: relative;
         display: inline-block;
         width: auto;

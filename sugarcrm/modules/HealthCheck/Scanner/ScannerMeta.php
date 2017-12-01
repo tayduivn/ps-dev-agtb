@@ -435,6 +435,14 @@ class HealthCheckScannerMeta
             'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_of_Removed_Sidecar_Metadata_APIs/',
             //@codingStandardsIgnoreEnd
         ),
+        // 7.11
+        576 => array (
+            'report' => 'foundSkinCustomizationFile',
+            'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Skin_Customizations_Were_Detected',
+            //@codingStandardsIgnoreEnd
+        ),
 
         // Deprecated method, bucket E
         548 => array(

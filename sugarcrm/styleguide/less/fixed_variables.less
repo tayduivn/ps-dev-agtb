@@ -9,6 +9,7 @@
 @grayLighter: #f6f6f6;
 @white: #fff;
 @transparent: rgba(0, 0, 0, 0);
+@slate: #9aa5ad;
 
 // Accent colors (auto)
 // For @color values we spin based off the @BorderColor from the theme
@@ -48,6 +49,11 @@
 @pacific: #198cc6;
 @teal: #1cc8d3;
 @coral: #da3eac;
+@moss: #33800d;
+@stone: #0f7799;
+@cider: #7e6017;
+@rose: #ebaaaa;
+@cream: #fdf8ee;
 
 // Elemental labels colors
 // -------------------------------------------------------------
@@ -419,28 +425,6 @@
 
 /* NEW SKIN START */
 
-// Variables.less
-// Variables to customize the look and feel of Bootstrap
-// -----------------------------------------------------
-
-// Primary Color:
-// 3 pixel line on the navbar
-// -------------------------
-// was @primary
-@BorderColor: #d3dbe1;
-
-// Secondary Color:
-// color of the navbar
-// -------------------------
-// was @secondary
-@NavigationBar: #fff;
-
-// Primary Button Color:
-// color of the primary button
-// -------------------------
-// was @primaryBtn
-@PrimaryButton: #0679c8;
-
 // Open Sans Font Path
 // -------------------------
 @os-font-path: "../../../../styleguide/assets/fonts/opensans";
@@ -526,6 +510,8 @@
 @previewLabelFontSize: @baseFontSize;
 @previewValueFontSize: @baseFontSize + 2px;
 @previewFieldSeparator: #ebedef;
+@previewHeaderBackground: #f7f8f9;
+@previewDataBackground: @white;
 
 // Loading
 // -------------------------
@@ -543,5 +529,19 @@
 // Upgrade
 // -------------------------
 @upgradeFontSizeHeader: @baseFontSize + 4px;  // 16px
+
+// Alert
+// -------------------------
+@alertFontSize: @baseFontSize + 2px; // 14px
+@alertIconFontSize: @baseFontSize + 3px; // 15px
+@alertError: @rose;
+@alertErrorText: @red;
+@alertInfo: @ocean;
+@alertInfoText: @stone;
+@alertSuccess: @green;
+@alertSuccessText: @moss;
+@alertWarning: @orange;
+@alertWarningText: @cider;
+@alertConfirmationBackground: @cream;
 
 /* NEW SKIN END */

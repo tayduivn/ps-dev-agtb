@@ -831,6 +831,9 @@ class HealthCheckScanner
         // Check for presence of subpanel-for-emails in the custom directory
         $this->checkPresenceOfCustomEmailSubpanel();
 
+        // Check for existing skin customizations when updating to a new skin
+        $this->checkForExistingSkinCustomizations();
+
         if (version_compare($sugar_version, '7.9.0.0', '<')) {
             $calls = array();
             $this->scanCustomPhpFiles(array(
@@ -1550,6 +1553,24 @@ class HealthCheckScanner
                     $this->updateStatus('invalidPAFieldUse', $warning['count'], $warning['type']);
                 }
             }
+        }
+    }
+
+    /**
+     * Check for existing `custom/themes/custom.less` file in versions < 7.11
+     */
+    protected function checkForExistingSkinCustomizations()
+    {
+        // Get Version & Flavors
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        // Applies only to versions < 7.11
+        if (version_compare($version, '7.11.0.0', '>=')) {
+            return;
+        }
+
+        if (file_exists('custom/themes/custom.less')) {
+            $this->updateStatus('foundSkinCustomizationFile', 'custom/themes/custom.less');
         }
     }
 

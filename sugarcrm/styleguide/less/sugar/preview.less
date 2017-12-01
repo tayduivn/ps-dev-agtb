@@ -211,13 +211,11 @@
 /* NEW SKIN START */
 
 .preview-pane {
-  /* override */
-  background: @white;
-
   .preview-headerbar {
     /* override */
     top: 45px;
     height: 51px;
+    background: @previewHeaderBackground;
 
     h1 {
       /* override */
@@ -234,6 +232,10 @@
 .preview-data {
   /* override */
   padding: 60px 12px 10px;
+
+  &.block {
+    background: @previewDataBackground;
+  }
 
   .field-row {
     /* override */
@@ -270,6 +272,10 @@
       > .detail {
         /* override */
         padding: 0;
+
+        .htmleditable {
+          float: none;
+        }
       }
     }
   }

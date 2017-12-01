@@ -280,7 +280,7 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
             'colors' => array(
                 'BorderColor' => '#000000',
                 'NavigationBar' => '#111111',
-                'PrimaryButton' => '#176de5', //base theme var
+                'PrimaryButton' => '#0679c8', //base theme var
                 "testColor" => "#cccccc",
                 'testRgba' => 'rgba(100, 101, 102)'
             ),
@@ -320,8 +320,8 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedArray = array(
             'colors' => array(
                 'BorderColor' => '#FFFFFF',
-                'NavigationBar' => '#282828',
-                'PrimaryButton' => '#176de5',
+                'NavigationBar' => '#fff',
+                'PrimaryButton' => '#0679c8',
             ),
         );
 

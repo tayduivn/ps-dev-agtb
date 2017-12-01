@@ -7,10 +7,13 @@
 
     &:not(.btn-danger) {
       background: darken(@navbarBackground, 5%);
+      color: @white;
     }
+  }
 
-    &:active {
-      background: none;
+  &:hover {
+    .dropdown-toggle:not(.btn-danger) {
+      background: @slate;
     }
   }
 
@@ -152,33 +155,33 @@ ul.notification-list {
     /* override with variable */
     min-width: @sizeButton;
     min-height: @sizeButton;
-
-    &:hover {
-      /* override */
-      background: @red;
-
-      /* override */
-      color: @white;
-    }
   }
 
-  .btn-group.open {
-    /* additive */
-    .dropdown-toggle {
-      .buttonBackground(@btnDangerBackground, @btnDangerBackgroundHighlight);
-    }
+  .btn-group {
+    &.open {
+      .dropdown-toggle.btn-danger {
+        &,
+        &:active {
+          .buttonBackground(@btnDangerBackground, @btnDangerBackgroundHighlight);
+        }
+      }
 
-    .dropdown-menu {
-      ul {
-        li {
-          a {
-            time {
-              /* override */
-              color: initial;
+      .dropdown-menu {
+        ul {
+          li {
+            a {
+              time {
+                /* override */
+                color: initial;
+              }
             }
           }
         }
       }
+    }
+
+    .dropdown-toggle.btn-danger:active {
+      .buttonBackground(@btnDangerBackground, @btnDangerBackgroundHighlight);
     }
   }
 
