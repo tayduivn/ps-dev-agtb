@@ -65,7 +65,6 @@ class Bug65044Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["db"]->query("DELETE FROM inbound_email WHERE id = '{$this->ie->id}'");
         $GLOBALS["db"]->query("DELETE FROM cases WHERE name = '{$this->ie->casename}'");
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
     }

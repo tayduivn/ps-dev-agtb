@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\Connection;
 
 class SugarTestContactUtilities
 {
@@ -63,10 +64,21 @@ class SugarTestContactUtilities
 
     public static function removeAllCreatedContacts()
     {
-        $contact_ids = self::getCreatedContactIds();
-        if ($contact_ids) {
-            $GLOBALS['db']->query('DELETE FROM contacts WHERE id IN (\'' . implode("', '", $contact_ids) . '\')');
+        $ids = self::getCreatedContactIds();
+
+        if (count($ids)) {
+            $conn = DBManagerFactory::getConnection();
+            $tables = [
+                'accounts_contacts' => 'contact_id',
+                'contacts' => 'id',
+            ];
+
+            foreach ($tables as $table => $key) {
+                $query = sprintf('DELETE FROM %s WHERE %s IN (?)', $table, $key);
+                $conn->executeUpdate($query, [$ids], [Connection::PARAM_STR_ARRAY]);
+            }
         }
+
         static::removeCreatedContactsEmailAddresses();
     }
 
@@ -78,7 +90,7 @@ class SugarTestContactUtilities
      * @static
      * @return void
      */
-    public static function removeCreatedContactsEmailAddresses()
+    private static function removeCreatedContactsEmailAddresses()
     {
         $contact_ids = self::getCreatedContactIds();
         if ($contact_ids) {

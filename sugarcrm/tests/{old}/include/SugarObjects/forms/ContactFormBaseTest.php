@@ -42,7 +42,6 @@ public function tearDown()
 {
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     SugarTestContactUtilities::removeAllCreatedContacts();
-    SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
     unset($this->form);
     unset($this->contact1);
 }
@@ -86,5 +85,4 @@ public function testCreatingDuplicateContact($first_name, $last_name, $hasDuplic
         $this->assertTrue(empty($rows), 'Assert that checkForDuplicates returned no matches');
     }
 }
-
 }

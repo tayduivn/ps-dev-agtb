@@ -114,7 +114,6 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestContactUtilities::setCreatedContact(array($results['vcard_import']));
         SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
 
         if(!empty($contact->account_id)) {
             SugarTestAccountUtilities::setCreatedAccount(array($contact->account_id));

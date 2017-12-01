@@ -17,13 +17,10 @@ class SugarTestUserUtilities
     private static $_createdUserSignatures = array();
 
     private function __construct() {}
-    
-    public function __destruct()
-    {
-        self::removeAllCreatedAnonymousUsers();
-        self::removeAllCreatedUserSignatures();
-    }
 
+    /**
+     * @return User
+     */
     public static function createAnonymousUser($save = true, $is_admin=0, $fields=array())
     {
         if (isset($_REQUEST['action'])) { 

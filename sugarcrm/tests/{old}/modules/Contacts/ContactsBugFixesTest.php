@@ -29,7 +29,6 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
             $contact->mark_deleted($contact->id);
         }
 
-        SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
         SugarTestContactUtilities::removeAllCreatedContacts();
 
         SugarTestHelper::tearDown();
@@ -103,4 +102,3 @@ class ContactsBugFixesServiceMockup extends ServiceBase {
     public function execute() {}
     protected function handleException(Exception $exception) {}
 }
-?>

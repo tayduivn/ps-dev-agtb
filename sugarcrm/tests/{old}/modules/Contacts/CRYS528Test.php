@@ -21,7 +21,6 @@ class CRYS528Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
         parent::tearDown();
