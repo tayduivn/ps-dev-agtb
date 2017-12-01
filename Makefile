@@ -188,7 +188,7 @@ DOCKER_IMAGE = $(DOCKER_REGISTRY)/$(DOCKER_REGISTRY_REPO)/$(DOCKER_REGISTRY_IMAG
 # on client machines
 docker_build: check
 	@echo "=====> Building Sugar In Docker Container <====="
-	$Q docker run -it --rm \
+	$Q docker run --rm \
 		-e SUGAR_VERSION=$(SUGAR_VERSION) \
 		-e SUGAR_FLAVOR=$(SUGAR_FLAVOR) \
 		-e SUGAR_BUILD_NUMBER=$(SUGAR_BUILD_NUMBER) \
@@ -197,13 +197,13 @@ docker_build: check
 		-e SUGAR_PACKAGE_NAME=$(SUGAR_PACKAGE_NAME) \
 		-v $(CURDIR):/sugar \
 		-v $(SUGAR_BUILD_DIR):/build \
-		$(DOCKER_IMAGE) clean build
+		$(DOCKER_IMAGE) clean build package
 
 # build sugar inside of a docker container, this will be used in CI, but it's a lot slower
 # on client machines
 docker_release_build: check
 	@echo "=====> Building Sugar In Docker Container <====="
-	$Q docker run -it --rm \
+	$Q docker run --rm \
 		-e SUGAR_VERSION=$(SUGAR_VERSION) \
 		-e SUGAR_FLAVOR=$(SUGAR_FLAVOR) \
 		-e SUGAR_BUILD_NUMBER=$(SUGAR_BUILD_NUMBER) \
@@ -212,7 +212,7 @@ docker_release_build: check
 		-e SUGAR_PACKAGE_NAME=$(SUGAR_PACKAGE_NAME) \
 		-v $(CURDIR):/sugar \
 		-v $(SUGAR_BUILD_DIR):/build \
-		$(DOCKER_IMAGE) clean release_build
+		$(DOCKER_IMAGE) clean release_build package
 
 # This step is a bit more complicated than it should be, we have to create a temp directroy so
 # it doesn't include all the mango files while building since they are not need for this image
