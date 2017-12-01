@@ -196,7 +196,7 @@
         var defaults = {
                 allowScroll:     true,
                 auto_refresh:    0,
-                colorData:       'default',
+                colorData:       'class',
                 config:          true,
                 direction:       'ltr',
                 hideEmptyGroups: true,

@@ -38,7 +38,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         baseModule: 'Reports',
         barType: configBarType,
         chart_type: 'bar chart',
-        colorData: 'default',
+        colorData: 'class',
         direction: 'ltr',
         groupType: configBarType,
         hideEmptyGroups: true,
