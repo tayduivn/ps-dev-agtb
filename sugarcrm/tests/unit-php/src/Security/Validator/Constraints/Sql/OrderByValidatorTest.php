@@ -74,6 +74,22 @@ class OrderByValidatorTest extends AbstractConstraintValidatorTest
         return array(
             array('date_modified'),
             array('Accounts.date_modified'),
+            array('0a0'),
+            array('a0a'),
+            array('0_a_0'),
+            array('a_0_a'),
+            array('a_.0_a'),
+            array('a_0._a'),
+            array('0a0.0a0'),
+            array('a0a.a0a'),
+            array('a0a_._a0a'),
+            array('0dsd.f0'),
+            array('dsd_1.f_2'),
+            array('0a0.0a0'),
+            array('a0.a0'),
+            array('a0.0a'),
+            array('0a.a0'),
+            array('0a.0a'),
         );
     }
 
@@ -101,6 +117,71 @@ class OrderByValidatorTest extends AbstractConstraintValidatorTest
         return array(
             array(
                 'date_modified (WHERE foo = bar)',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                0.0,
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                '12',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                12,
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                '0.0',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                '_._',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                '0_._0',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                'a_._0',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                'a0.0',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                '0.0a',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                'dd.dd.aa',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                'tbl.',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                '.col',
+                OrderBy::ERROR_ILLEGAL_FORMAT,
+                'illegal format',
+            ),
+            array(
+                'tbl.col1.',
                 OrderBy::ERROR_ILLEGAL_FORMAT,
                 'illegal format',
             ),
