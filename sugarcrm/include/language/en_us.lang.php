@@ -4902,6 +4902,10 @@ Sincerely, SugarCRM',
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
 
+    'LBL_PRODUCT_CATALOG_NAME' => 'Product Catalog',
+    'LBL_PRODUCT_CATALOG_DASHLET_NAME' => 'Product Catalog',
+    'LBL_PRODUCT_CATALOG_DESC' => 'View and add items from your Product Catalog.',
+    'LBL_PRODUCT_CATALOG_DASHLET_DESC' => 'View and add items from your Product Catalog.',
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',

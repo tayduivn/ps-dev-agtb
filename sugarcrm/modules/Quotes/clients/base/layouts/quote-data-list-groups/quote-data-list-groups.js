@@ -108,6 +108,7 @@
         this.context.on('quotes:selected:delete', this._onDeleteSelectedItems, this);
         this.context.on('quotes:defaultGroup:create', this._onCreateDefaultQuoteGroup, this);
         this.context.on('quotes:defaultGroup:save', this._onSaveDefaultQuoteGroup, this);
+        this.context.on('productCatalogDashlet:add', this._onProductCatalogDashletAddItem, this);
 
         // check if this is create mode, in which case add an empty array to bundles
         if (this.isCreateView) {
@@ -193,6 +194,24 @@
 
         // update the group line number counts
         group.trigger('quotes:line_nums:reset');
+    },
+
+    /**
+     * Listens for the Product Catalog Dashlet to sent ProductTemplate data
+     *
+     * @param {Object} productData The ProductTemplate data to convert to a QLI
+     * @private
+     */
+    _onProductCatalogDashletAddItem: function(productData) {
+        var defaultGroup = this._getComponentByGroupId(this.defaultGroupId);
+
+        if (defaultGroup) {
+            // trigger event on default group to add the product data
+            defaultGroup.trigger('quotes:group:create:qli', 'products', productData);
+        }
+
+        // trigger event on the context to let dashlet know this is done adding the product
+        this.context.trigger('productCatalogDashlet:add:complete');
     },
 
     /**

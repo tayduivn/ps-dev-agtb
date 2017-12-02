@@ -23,7 +23,6 @@
 
     /**
      * @inheritdoc
-     * @override
      */
     _initHowTo: function() {
         this.viewOppsByTitle = app.lang.get('LBL_OPPS_CONFIG_VIEW_BY_LABEL', 'Opportunities');
@@ -49,7 +48,6 @@
     },
     /**
      * @inheritdoc
-     * @override
      */
     _switchHowToData: function(helpId) {
         switch(helpId) {

@@ -34,7 +34,6 @@
      * specifically need it based off the modelView set by the parent layout for this row model
      *
      * @inheritdoc
-     * @override
      */
     _loadTemplate: function() {
         this.tplName = this.model.modelView || 'list';
@@ -51,7 +50,6 @@
      * the quote data group header
      *
      * @inheritdoc
-     * @override
      */
     cancelEdit: function() {
         var modelModule = this.model.module;
@@ -94,7 +92,6 @@
      * create view or the group was just saved
      *
      * @inheritdoc
-     * @override
      */
     cancelClicked: function() {
         var syncedAttribs = this.model.getSynced();

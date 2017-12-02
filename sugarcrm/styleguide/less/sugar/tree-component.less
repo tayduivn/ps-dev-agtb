@@ -535,6 +535,67 @@ tr.tr-inline-edit [data-type="nestedset"] {
   position: relative;
   display: block;
 }
+// ProductCatalog Dashlet-specific tree changes
+.product-catalog-view {
+  .product-catalog-no-results {
+    padding: 8px;
+    text-align: center;
+  }
+  .product-catalog-search {
+    text-align: center;
+    padding: 10px 8px 0px;
+
+    .product-catalog-search-term {
+      width: 90%;
+    }
+  }
+  .jstree-sugar {
+    &:not(.disabled) {
+      li[rel=product] .jstree-clicked {
+        color: @blue !important;
+      }
+    }
+    li[rel=category] {
+      &.jstree-open > ins::before {
+        content: "\f115";
+      }
+      > ins,
+      > a {
+        color: @black !important;
+      }
+    }
+    li[rel=product] {
+      > ins::before {
+        content: "\f022";
+      }
+      ins,
+      a {
+        color: @blue;
+      }
+      ins {
+        cursor: pointer;
+      }
+    }
+    &.disabled {
+      cursor: progress;
+
+      li[rel=category] {
+        > ins,
+        > a {
+          color: @gray;
+          cursor: progress;
+        }
+      }
+      li[rel=product] {
+        ins,
+        a {
+          color: @gray;
+          cursor: progress;
+        }
+      }
+    }
+  }
+}
 
 html.rtl {
   .jstree {

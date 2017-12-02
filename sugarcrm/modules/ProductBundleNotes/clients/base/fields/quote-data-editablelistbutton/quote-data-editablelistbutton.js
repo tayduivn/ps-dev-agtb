@@ -49,7 +49,6 @@
      * specifically need it based off the modelView set by the parent layout for this row model
      *
      * @inheritdoc
-     * @override
      */
     _loadTemplate: function() {
         this.tplName = this.model.modelView || 'list';

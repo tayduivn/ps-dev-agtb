@@ -19,11 +19,9 @@
     extendsFrom: 'SubpanelListCreateView',
 
     /**
-     * @inheritdoc
-     *
      * Overriding to add the commit_stage field to the bean
      *
-     * @override
+     * @inheritdoc
      */
     _addCustomFieldsToBean: function(bean) {
         if (bean.has('sales_stage')) {

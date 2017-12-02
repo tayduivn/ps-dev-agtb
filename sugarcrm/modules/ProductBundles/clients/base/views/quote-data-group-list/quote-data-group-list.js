@@ -456,12 +456,13 @@
         var position = 0;
         var $relatedRow;
         var moduleName = linkName === 'products' ? 'Products' : 'ProductBundleNotes';
-        var modelData;
+        var modelData = {};
         var groupLineNumObj;
         // these quoteModel values will be overwritten if prepopulateData
         // already has currency_id or base_rate already set
         var currencyId = quoteModel.get('currency_id');
         var baseRate = quoteModel.get('base_rate');
+        var newLineNum;
 
         prepopulateData = prepopulateData || {};
 
@@ -480,6 +481,45 @@
             delete prepopulateData._module;
         }
 
+        if (prepopulateData && prepopulateData._forcePosition) {
+            // initialize new line_num to 0
+            newLineNum = 0;
+
+            // increment the new line number to 1 and set that on prepopulateData
+            prepopulateData.line_num = ++newLineNum;
+
+            // since we're forcing a new position, we need to update all models in the collection with
+            // a new position and new line_num
+            _.each(this.collection.models, function(model) {
+                var pos = model.get('position');
+                // if an existing model's position is >= prepopulateData's position,
+                // we want to move all those positions up one so prepopulateData can fit
+                if (pos >= prepopulateData.position) {
+                    // increment the position by one and set on the model
+                    model.set('position', ++pos);
+                    this.collection._resavePositions = true;
+                }
+                if (this.showLineNums && model.module === 'Products') {
+                    // if this is also a Product row, update the line_num for the row
+                    model.set('line_num', ++newLineNum);
+                }
+            }, this);
+
+            // set position to be the prepopulateData position for later
+            position = prepopulateData.position;
+
+            // remove this property
+            delete prepopulateData._forcePosition;
+        } else {
+            // if there's no propopulate data nor _forcePosition
+            if (this.showLineNums && relatedModel.module === 'Products') {
+                // get the line_num count object from QuotesLineNumHelper plugin
+                groupLineNumObj = this.getGroupLineNumCount(this.model.cid);
+                // add the new line number to the model
+                modelData.line_num = groupLineNumObj.ct++;
+            }
+        }
+
         // defers to prepopulateData
         modelData = _.extend({
             _module: moduleName,
@@ -491,13 +531,6 @@
         }, prepopulateData);
 
         relatedModel.module = moduleName;
-
-        if (this.showLineNums && relatedModel.module === 'Products') {
-            // get the line_num count object from QuotesLineNumHelper plugin
-            groupLineNumObj = this.getGroupLineNumCount(this.model.cid);
-            // add the new line number to the model
-            modelData.line_num = groupLineNumObj.ct++;
-        }
 
         // set a few items on the model
         relatedModel.set(modelData);
@@ -594,7 +627,6 @@
      * quote data group header
      *
      * @inheritdoc
-     * @override
      */
     _renderHtml: function() {
         var $el = this.$('tr.quote-data-group-header');
@@ -806,7 +838,6 @@
      * Overriding to allow panels to come from whichever module was passed in
      *
      * @inheritdoc
-     * @override
      */
     getFieldNames: function(module) {
         var fields = [];

@@ -341,7 +341,6 @@
      * Overriding to make the router go back to previous view, not Quotes module list
      *
      * @inheritdoc
-     * @override
      */
     cancel: function() {
         //Clear unsaved changes on cancel.

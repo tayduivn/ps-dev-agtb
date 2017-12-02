@@ -744,6 +744,12 @@ $renamedefs = array(
             array('name' => 'LBL_QUOTE_DATA_GRAND_TOTALS_FOOTER', 'type' => 'singular', 'source' => 'Quotes'),
             array('name' => 'LBL_CREATE_QLI_BUTTON_LABEL', 'type' => 'singular', 'source' => 'Products'),
             array('name' => 'LBL_CREATE_QLI_BUTTON_TOOLTIP', 'type' => 'singular', 'source' => 'Products'),
+            array('name' => 'LBL_SEARCH_CATALOG_PLACEHOLDER', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_NO_PRODUCT_CATALOG_RESULTS', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PRODUCT_CATALOG_NAME', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PRODUCT_CATALOG_DASHLET_NAME', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PRODUCT_CATALOG_DESC', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PRODUCT_CATALOG_DASHLET_DESC', 'type' => 'singular', 'source' => 'ProductTemplates'),
         ),
         'Quotas' => array(
             array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),

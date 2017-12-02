@@ -123,6 +123,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             it('should listen on layout.context for quotes:defaultGroup:save', function() {
                 expect(layout.context.on).toHaveBeenCalledWith('quotes:defaultGroup:save');
             });
+
+            it('should listen on layout.context for quotes:defaultGroup:save', function() {
+                expect(layout.context.on).toHaveBeenCalledWith('productCatalogDashlet:add');
+            });
         });
 
         describe('when in create view', function() {
@@ -346,6 +350,44 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         it('should call trigger on the default group with quotes:line_nums:reset', function() {
             expect(triggerStub).toHaveBeenCalledWith('quotes:line_nums:reset');
+        });
+    });
+
+    describe('_onProductCatalogDashletAddItem()', function() {
+        var defaultGroupId;
+        var defaultGroupMock;
+        var defaultGroupTriggerStub;
+
+        beforeEach(function() {
+            defaultGroupId = 'default1';
+            defaultGroupTriggerStub = sinon.collection.stub();
+            defaultGroupMock = {
+                name: 'quote-data-group',
+                groupId: defaultGroupId,
+                trigger: defaultGroupTriggerStub,
+                dispose: $.noop
+            };
+            layout._components.push(defaultGroupMock);
+            layout.defaultGroupId = defaultGroupId;
+            sinon.collection.stub(layout.context, 'trigger', function() {});
+        });
+
+        afterEach(function() {
+            defaultGroupId = null;
+            defaultGroupMock = null;
+            defaultGroupTriggerStub = null;
+        });
+
+        it('should call trigger on default group', function() {
+            layout._onProductCatalogDashletAddItem({});
+
+            expect(defaultGroupTriggerStub).toHaveBeenCalledWith('quotes:group:create:qli');
+        });
+
+        it('should call trigger on layout context', function() {
+            layout._onProductCatalogDashletAddItem({});
+
+            expect(layout.context.trigger).toHaveBeenCalledWith('productCatalogDashlet:add:complete');
         });
     });
 

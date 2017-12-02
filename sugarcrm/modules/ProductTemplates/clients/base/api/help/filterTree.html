@@ -1,0 +1,67 @@
+<!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+-->
+<div class="longHelpTitle">ProductTemplate API - filterTree</div>
+<div class="summary">
+    <h2>Summary:</h2>
+    This endpoint is designed to return a paged recordset of one level of product templates and product categories in
+    a N-level deep tree representing the relationship between categories and templates.  The results are loosely
+    filtered (wildcard before and after) by the last parameter of the url. Each page is 100 records.
+</div>
+<div class="params">
+    <h2>Query Parameters:</h2>
+    <table>
+        <tr>
+            <td><strong>Param</strong></td>
+            <td><strong>Description</strong></td>
+            <td><strong>Optional</strong></td>
+        </tr>
+        <tr>
+            <td>filter</td>
+            <td>The filter used to search Product Template and Product Category names.  %filter% </td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>root</td>
+            <td>The ID of the root node you wish to retrieve.  Defaults to null (the root level)</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>page</td>
+            <td>Specifies the numeric value of the page number you wish to retrieve</td>
+            <td>true</td>
+        </tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+    </code>
+</div>
+
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+        {
+            "attr":
+            {
+                "id": "d467fbe6-6bd2-11e7-93b9-56847afe9799",
+                "rel": "category"
+            },
+            "children":[],
+            "data": "Desktops",
+            "state": "closed",
+            "total": "256",
+            "index": 0
+        }
+    </code>
+</div>

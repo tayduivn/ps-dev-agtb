@@ -59,6 +59,7 @@
     "include/javascript/d3-sugar/d3-sugar.min.js",
     "include/SugarCharts/sucrose/js/sugarCharts.js",
     "include/javascript/sucrose/sucrose.min.js",
+    "include/javascript/phaser/phaser-sugar.min.js",
     "include/javascript/tiny_mce/tiny_mce.js",
     "include/javascript/mousetrap/mousetrap.js",
     "include/javascript/sugar7/shortcuts.js",

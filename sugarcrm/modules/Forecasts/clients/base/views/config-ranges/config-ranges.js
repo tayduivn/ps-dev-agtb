@@ -104,7 +104,6 @@
 
     /**
      * @inheritdoc
-     * @override
      */
     _updateTitleValues: function() {
         var forecastRanges = this.model.get('forecast_ranges'),
@@ -141,7 +140,6 @@
 
     /**
      * @inheritdoc
-     * @override
      */
     _updateTitleTemplateVars: function() {
         this.titleTemplateVars = {

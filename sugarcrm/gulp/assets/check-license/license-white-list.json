@@ -22,6 +22,7 @@
     "include/javascript/mousetrap",
     "include/javascript/nprogress/nprogress.js",
     "include/javascript/nvd3/",
+    "include/javascript/phaser/phaser-sugar.min.js",
     "include/javascript/d3-sugar/",
     "include/javascript/sucrose/",
     "include/javascript/phpjs/",

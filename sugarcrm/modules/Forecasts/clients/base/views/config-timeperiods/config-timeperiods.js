@@ -68,7 +68,6 @@
 
     /**
      * @inheritdoc
-     * @override
      */
     _updateTitleValues: function() {
         this.titleSelectedValues = (this.tpStartDate) ? this.tpStartDate.formatUser(true) : '';

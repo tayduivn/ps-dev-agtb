@@ -81,7 +81,6 @@
 
     /**
      * @inheritdoc
-     * @override
      */
     _updateTitleValues: function() {
         var items = this._getFieldOptions();

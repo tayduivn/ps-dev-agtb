@@ -17,6 +17,15 @@ return array(
                     array(
                         array(
                             'view' => array(
+                                'type' => 'product-catalog-dashlet',
+                                'label' => 'LBL_PRODUCT_CATALOG_DASHLET_NAME',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' => array(
                                 'type' => 'planned-activities',
                                 'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
                             ),

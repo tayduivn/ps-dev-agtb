@@ -181,8 +181,9 @@
     },
 
     /**
-     * override the save clicked function to check if things are in edit mode before saving.
-     * @override
+     * Override the save clicked function to check if things are in edit mode before saving.
+     *
+     * @inheritdoc
      */
     saveClicked: function() {
         //if we don't have any qlis in edit mode, save.  If we do, show a warning.
@@ -199,8 +200,9 @@
     },
 
     /**
-     * override the cancel clicked function to retrigger sugarlogic.
-     * @override
+     * Override the cancel clicked function to retrigger sugarlogic.
+     *
+     * @inheritdoc
      */
     cancelClicked: function() {
         this._super('cancelClicked');
