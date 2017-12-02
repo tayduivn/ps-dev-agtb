@@ -212,6 +212,7 @@ $mod_strings = array(
     'LBL_OPEN_DRAFT_ALERT' => 'Email is a draft. Click '.
         '<a href="javascript:void(0);" data-action="email-draft">"{{subject}}"</a>'.
         '  to edit.',
+    'LBL_EMAIL_BODY' => 'Email Message',
 
     // for All emails
     'LBL_BUTTON_RAW_TITLE' => 'Show Raw Message',

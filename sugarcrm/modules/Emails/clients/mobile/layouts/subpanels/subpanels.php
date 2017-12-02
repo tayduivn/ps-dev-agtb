@@ -9,36 +9,41 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Quotes']['mobile']['layout']['subpanels'] = array(
+$viewdefs['Emails']['mobile']['layout']['subpanels'] = array(
     'components' => array(
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_CALLS_SUBPANEL_TITLE',
+            'label' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',
             'context' => array(
-                'link' => 'calls',
+                'link' => 'accounts',
             ),
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_MEETINGS_SUBPANEL_TITLE',
+            'label' => 'LBL_LEADS_SUBPANEL_TITLE',
             'context' => array(
-                'link' => 'meetings',
+                'link' => 'leads',
             ),
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_EMAILS_SUBPANEL_TITLE',
-            'linkable' => false,
-            'unlinkable' => false,
+            'label' => 'LBL_CONTACTS_SUBPANEL_TITLE',
             'context' => array(
-                'link' => 'archived_emails',
+                'link' => 'contacts',
             ),
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_TASKS_SUBPANEL_TITLE',
+            'label' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
             'context' => array(
-                'link' => 'tasks',
+                'link' => 'opportunities',
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_CASES_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'cases',
             ),
         ),
         array(
@@ -50,9 +55,16 @@ $viewdefs['Quotes']['mobile']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+            'label' => 'LBL_TASKS_SUBPANEL_TITLE',
             'context' => array(
-                'link' => 'documents',
+                'link' => 'tasks',
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_QUOTES_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'quotes',
             ),
         ),
     ),
