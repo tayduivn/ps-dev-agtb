@@ -418,7 +418,7 @@
             preload: function() {
                 this.groups = [];
                 this.gameWorldHeight = 0;
-                this.gameWorldWidth = 0;
+                this.gameWorldWidth = this.game._view.$('.product-catalog-dashlet').width();
                 this.cameraY = 0;
                 this.isLoading = false;
                 this.cubeTweens = [];
@@ -449,7 +449,7 @@
              * After preload is done, create runs and lets us let the Sugar.App know our tree is ready
              */
             create: function() {
-                this.game.world.setBounds(0, 0, 1920, 1080);
+                this._updateGameWorldSize();
                 this.game.events.onTreeReady.dispatch();
             },
 
@@ -525,7 +525,7 @@
              * @private
              */
             _initLoadingAnimation: function() {
-                var xPos = this.game.width >> 1;
+                var xPos = this.gameWorldWidth >> 1;
                 var yPos = 100;
                 var padding = 5;
                 var tween;
@@ -588,16 +588,16 @@
              */
             _toggleLoadingAnimation: function(showLoading) {
                 if (showLoading) {
-                    if (this.rootGroup) {
-                        this.rootGroup.visible = false;
+                    if (this.rootGroup && this.rootGroup.childGroup) {
+                        this.rootGroup.childGroup.visible = false;
                     }
                     this.cubeGroup.visible = true;
                     _.each(this.cubeTweens, function(t) {
                         t.resume();
                     }, this);
                 } else {
-                    if (this.rootGroup) {
-                        this.rootGroup.visible = true;
+                    if (this.rootGroup && this.rootGroup.childGroup) {
+                        this.rootGroup.childGroup.visible = true;
                     }
                     this.cubeGroup.visible = false;
                     _.each(this.cubeTweens, function(t) {
@@ -616,7 +616,7 @@
             _setTreeData: function(treeData) {
                 var groupIndex = 0;
 
-                this.gameWorldWidth = 500;
+                this.gameWorldWidth = this.game._view.$('.product-catalog-dashlet').width();
                 this.gameWorldHeight = 15;
                 this.cameraY = 0;
                 this.game.camera.y = 0;
@@ -1138,6 +1138,7 @@
 
         if (this.phaser) {
             $el = this.$('.product-catalog-container');
+            this.phaser.gameWorldWidth = $el.width();
             this.phaser.scale.setGameSize($el.width(), $el.height());
         }
     },
