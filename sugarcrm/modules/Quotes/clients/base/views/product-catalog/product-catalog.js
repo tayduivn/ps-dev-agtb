@@ -141,7 +141,7 @@
 
         url = app.api.buildURL(url, method);
 
-        this.toggleLoading(true, true);
+        this.toggleLoading(true);
 
         callbacks = {
             context: this,
@@ -149,7 +149,7 @@
             complete: _.bind(function() {
                 // when complete, remove the spinning refresh icon from the cog
                 // and add back the cog icon
-                this.toggleLoading(false, false);
+                this.toggleLoading(false);
             }, this)
         };
 
@@ -162,15 +162,11 @@
      *
      * @param {boolean} startLoading If we should start the spinning icon or hide it
      */
-    toggleLoading: function(startLoading, showPhaserLoading) {
+    toggleLoading: function(startLoading) {
         if (startLoading) {
             this.$('.loading-icon').show();
         } else {
             this.$('.loading-icon').hide();
-        }
-
-        if (this.phaser) {
-            this.phaser.events.onToggleLoading.dispatch(showPhaserLoading);
         }
     },
 
@@ -279,13 +275,6 @@
             onScrollWheel: new Phaser.Signal(),
 
             /**
-             * Event called outside Phaser to trigger loading animation start and stop
-             *
-             * @param boolean
-             */
-            onToggleLoading: new Phaser.Signal(),
-
-            /**
              * Handles disposing any Signal events and listeners
              */
             destroy: function() {
@@ -297,25 +286,14 @@
             }
         };
 
-        // use 100% for the width and 282px for the height
-        this.phaser = new Phaser.Game(
-            '100',
-            282,
-            Phaser.CANVAS,
-            'product-catalog-canvas',
-            {
-                preload: function preload() {
-                    console.log('_phaserPreload');
-                },
-                create: function create() {
-                    console.log('_phaser create');
-                },
-                update: function update() {
-                    console.log('_phaser update');
-                }
-            },
-            true
-        );
+        // use 100% for the width and 260px for the height
+        this.phaser = new Phaser.Game({
+            height: 260,
+            parent: 'product-catalog-canvas',
+            renderer: Phaser.CANVAS,
+            transparent: true,
+            width: '100'
+        });
 
         this.phaser._view = this;
 
@@ -402,11 +380,6 @@
             gameWorldWidth: undefined,
             cameraY: undefined,
             GroupEventHub: undefined,
-            cube1: undefined,
-            cube2: undefined,
-            cube3: undefined,
-            cubeGroup: undefined,
-            cubeTweens: undefined,
             showMoreNode: {
                 data: 'Show More',
                 type: 'showMore'
@@ -421,11 +394,9 @@
                 this.gameWorldWidth = this.game._view.$('.product-catalog-dashlet').width();
                 this.cameraY = 0;
                 this.isLoading = false;
-                this.cubeTweens = [];
 
                 this.game.events.onSetTreeData.add(this._setTreeData, this);
                 this.game.events.onScrollWheel.add(this._onScrollWheel, this);
-                this.game.events.onToggleLoading.add(this._toggleLoadingAnimation, this);
 
                 this.GroupEventHub = function() {
                     return {
@@ -439,7 +410,6 @@
                         }
                     };
                 };
-                this._initLoadingAnimation();
 
                 if (this.game.hasTreeData) {
                     this._setTreeData(this.game.treeData);
@@ -520,93 +490,6 @@
             },
 
             /**
-             * This function sets up the Sugar Cube images and tween animations
-             *
-             * @private
-             */
-            _initLoadingAnimation: function() {
-                var xPos = this.gameWorldWidth >> 1;
-                var yPos = 100;
-                var padding = 5;
-                var tween;
-
-                this.cubeGroup = this.game.add.group();
-                this.cube1 = this.game.add.image(xPos, yPos, 'prodCatTS', 'sugar-red-top');
-                this.cube2 = this.game.add.image(xPos, yPos, 'prodCatTS', 'sugar-dark-left');
-                this.cube3 = this.game.add.image(xPos, yPos, 'prodCatTS', 'sugar-light-right');
-                this.cube1.anchor.setTo(0.5, 0.5);
-                this.cube2.anchor.setTo(0.5, 0.5);
-                this.cube3.anchor.setTo(0.5, 0.5);
-
-                this.cube1._startX = this.cube1.x;
-                this.cube1._startY = this.cube1.y;
-
-                this.cube2.x -= (this.cube2.width >> 1) + 1;
-                this.cube2.y += this.cube1.height + padding;
-                this.cube2._startX = this.cube2.x;
-                this.cube2._startY = this.cube2.y;
-
-                this.cube3.x += (this.cube3.width >> 1) + 1;
-                this.cube3.y += this.cube1.height + padding;
-                this.cube3._startX = this.cube3.x;
-                this.cube3._startY = this.cube3.y;
-
-                this.cubeGroup.add(this.cube1);
-                this.cubeGroup.add(this.cube2);
-                this.cubeGroup.add(this.cube3);
-
-                tween = this.game.add.tween(this.cube1);
-                tween.to({
-                    y: this.cube1._startY - 10,
-                    angle: 360
-                }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 200, -1, true);
-                this.cubeTweens.push(tween);
-
-                tween = this.game.add.tween(this.cube2);
-                tween.to({
-                    x: this.cube2._startX - 10,
-                    y: this.cube2._startY + 10,
-                    angle: -360
-                }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 200, -1, true);
-                this.cubeTweens.push(tween);
-
-                tween = this.game.add.tween(this.cube3);
-                tween.to({
-                    x: this.cube3._startX + 10,
-                    y: this.cube3._startY + 10,
-                    angle: 360
-                }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 200, -1, true);
-                this.cubeTweens.push(tween);
-            },
-
-            /**
-             * This function handles if we should be showing the Sugar cube tween animations and hiding
-             * the rootGroup items on the stage, or if we should hide the animation and show the rootGroup
-             *
-             * @param showLoading
-             * @private
-             */
-            _toggleLoadingAnimation: function(showLoading) {
-                if (showLoading) {
-                    if (this.rootGroup && this.rootGroup.childGroup) {
-                        this.rootGroup.childGroup.visible = false;
-                    }
-                    this.cubeGroup.visible = true;
-                    _.each(this.cubeTweens, function(t) {
-                        t.resume();
-                    }, this);
-                } else {
-                    if (this.rootGroup && this.rootGroup.childGroup) {
-                        this.rootGroup.childGroup.visible = true;
-                    }
-                    this.cubeGroup.visible = false;
-                    _.each(this.cubeTweens, function(t) {
-                        t.pause();
-                    }, this);
-                }
-            },
-
-            /**
              * Sets the main tree data and starts building the levels and nodes.
              * This is called when the page loads and when a user types in to search for data.
              *
@@ -630,8 +513,6 @@
                     this.rootGroup._events.destroy();
                     this.rootGroup.destroy();
                 }
-
-                this._toggleLoadingAnimation(false);
 
                 this.rootGroup = this.game.add.group();
                 this.rootGroup.name = 'rootGroup';
@@ -1047,7 +928,7 @@
             payload.filter = this.currentFilterTerm;
         }
 
-        this.toggleLoading(true, false);
+        this.toggleLoading(true);
 
         callbacks = {
             context: this,
@@ -1056,7 +937,7 @@
                 this.activeFetchCt--;
                 // when complete, remove the spinning refresh icon from the cog
                 // and add back the cog icon
-                this.toggleLoading(false, false);
+                this.toggleLoading(false);
             }, this)
         };
 
@@ -1138,7 +1019,6 @@
 
         if (this.phaser) {
             $el = this.$('.product-catalog-container');
-            this.phaser.gameWorldWidth = $el.width();
             this.phaser.scale.setGameSize($el.width(), $el.height());
         }
     },

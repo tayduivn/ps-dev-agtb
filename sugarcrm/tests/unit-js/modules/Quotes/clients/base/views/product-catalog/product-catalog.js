@@ -127,7 +127,7 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         it('should call toggleLoading with true, true', function() {
             view.loadData();
 
-            expect(view.toggleLoading).toHaveBeenCalledWith(true, true);
+            expect(view.toggleLoading).toHaveBeenCalledWith(true);
         });
 
         it('should increment activeFetchCt', function() {
@@ -161,12 +161,10 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
     describe('toggleLoading()', function() {
         var showStub;
         var hideStub;
-        var dispatchStub;
 
         beforeEach(function() {
             showStub = sinon.collection.stub();
             hideStub = sinon.collection.stub();
-            dispatchStub = sinon.collection.stub();
 
             sinon.collection.stub(view, '$', function() {
                 return {
@@ -174,49 +172,25 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
                     hide: hideStub
                 };
             });
-
-            view.phaser = {
-                destroy: function() {},
-                events: {
-                    destroy: function() {},
-                    onToggleLoading: {
-                        dispatch: dispatchStub
-                    }
-                }
-            };
         });
 
         afterEach(function() {
             showStub = null;
             hideStub = null;
-            dispatchStub = null;
-            view.phaser = null;
         });
 
         it('should call show if startLoading is true', function() {
-            view.toggleLoading(true, false);
+            view.toggleLoading(true);
 
             expect(view.$).toHaveBeenCalledWith('.loading-icon');
             expect(showStub).toHaveBeenCalled();
         });
 
         it('should call show if startLoading is false', function() {
-            view.toggleLoading(false, false);
+            view.toggleLoading(false);
 
             expect(view.$).toHaveBeenCalledWith('.loading-icon');
             expect(hideStub).toHaveBeenCalled();
-        });
-
-        it('should trigger phaser onToggleLoading false', function() {
-            view.toggleLoading(true, false);
-
-            expect(dispatchStub).toHaveBeenCalledWith(false);
-        });
-
-        it('should trigger phaser onToggleLoading true', function() {
-            view.toggleLoading(true, true);
-
-            expect(dispatchStub).toHaveBeenCalledWith(true);
         });
     });
 
@@ -491,7 +465,7 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         it('should call toggleLoading with true, false', function() {
             view._fetchMoreRecords('record1', undefined, function() {});
 
-            expect(view.toggleLoading).toHaveBeenCalledWith(true, false);
+            expect(view.toggleLoading).toHaveBeenCalledWith(true);
         });
 
         it('should increment activeFetchCt', function() {

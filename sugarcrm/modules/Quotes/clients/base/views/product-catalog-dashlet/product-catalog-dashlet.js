@@ -59,9 +59,5 @@
             $el.removeClass('fa-refresh fa-spin');
             $el.addClass('fa-cog');
         }
-
-        if (this.phaser) {
-            this.phaser.events.onToggleLoading.dispatch(showPhaserLoading);
-        }
     }
 })
