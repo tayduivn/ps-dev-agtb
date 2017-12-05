@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-import {BaseView, seedbed} from '@sugarcrm/seedbed';
+import {BaseView} from '@sugarcrm/seedbed';
 
 /**
  * Represents Modules Top Menu.
@@ -61,7 +61,7 @@ export default class extends BaseView {
     public async clickItem (link, dropdown?) {
         let itemSelector = this.getModuleButtonSelector(link, dropdown);
 
-        await seedbed.client
+        await this.driver
             .waitForVisible(itemSelector)
             .click(itemSelector);
 
@@ -74,14 +74,14 @@ export default class extends BaseView {
      * @param itemName
      */
     public async isVisible(itemName) {
-        return await seedbed.client.isVisible(this.getModuleButtonSelector(itemName));
+        return await this.driver.isVisible(this.getModuleButtonSelector(itemName));
     }
 
     /**
      * Click on Modules Mege Menu dropdown to show all modules
      */
     public async showAllModules() {
-        await seedbed.client
+        await this.driver
             .click(this.$('moduleList.moreIcon'));
     }
-};
+}

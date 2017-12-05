@@ -10,7 +10,6 @@
  */
 
 import BaseView from '../base-view';
-import seedbed from "@sugarcrm/seedbed/seedbed";
 
 /**
  * Represents Enriched-preview of Hint.
@@ -31,7 +30,7 @@ export default class EnrichedView extends BaseView {
     }
 
     public async checkLogo() {
-        return seedbed.client.isVisible(this.$('logo'));
+        return this.driver.isVisible(this.$('logo'));
 
     }
 }

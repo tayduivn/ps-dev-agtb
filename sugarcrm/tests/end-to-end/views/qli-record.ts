@@ -11,7 +11,7 @@
 
 import BaseView from './base-view';
 import {seedbed} from '@sugarcrm/seedbed';
-import {underline} from "chalk";
+import {underline} from 'chalk';
 
 /**
  * Represents Record view.
@@ -39,14 +39,14 @@ export default class QliRecord extends BaseView {
     }
 
     public async pressButton(buttonName) {
-        await seedbed.client.click(this.$(`buttons.${buttonName.toLowerCase()}`));
+        await this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
     }
 
     public async getLineItemTotal(recordName) {
 
         // $("div[data-original-title='{}']").closest('tr').find('td:last').find('div.currency-field').data('original-title');
 
-        await seedbed.client.getText();
+        await this.driver.getText();
     }
 
 }

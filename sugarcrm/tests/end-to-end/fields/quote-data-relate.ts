@@ -36,7 +36,7 @@ export class Edit extends BaseField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(selector);
+        let value: string | string[] = await this.driver.getText(selector);
 
         return value.toString().trim();
 
@@ -44,19 +44,19 @@ export class Edit extends BaseField {
 
     public async setValue(val: any): Promise<void> {
 
-        await seedbed.client.click(this.$('field.selector'));
-        await seedbed.client.setValue(this.inputSelector, val);
+        await this.driver.click(this.$('field.selector'));
+        await this.driver.setValue(this.inputSelector, val);
 
         // TODO remove this pause later!!!, waitForApp should handle this case for select2 control
-        await seedbed.client.pause(4000);
-        await seedbed.client.waitForApp();
+        await this.driver.pause(4000);
+        await this.driver.waitForApp();
 
-        const isExist = await seedbed.client.isElementExist(`${this.itemSelector}${val}`);
+        const elementExists = await this.driver.isExisting(`${this.itemSelector}${val}`);
 
-        if (isExist) {
-            await seedbed.client.click(`${this.itemSelector}${val}`);
+        if (elementExists) {
+            await this.driver.click(`${this.itemSelector}${val}`);
         } else {
-            await seedbed.client.click(`${this.newItemSelector}`);
+            await this.driver.click(`${this.newItemSelector}`);
         }
     }
 

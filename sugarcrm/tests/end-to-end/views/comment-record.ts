@@ -33,7 +33,7 @@ export default class CommentRecord extends BaseView {
     }
 
     public async pressButton(buttonName) {
-        await seedbed.client.click(this.$(`buttons.${buttonName.toLowerCase()}`));
+        await this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
     }
 
 }

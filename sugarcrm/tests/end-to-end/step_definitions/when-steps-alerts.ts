@@ -15,12 +15,12 @@ import {When} from '@sugarcrm/seedbed';
     /**
      * Delete confirmation alert
      */
-    When(/^I (Cancel|Confirm) confirmation alert$/, (choice: string) => {
+    When(/^I (Cancel|Confirm) confirmation alert$/, async function(choice: string) {
         let alert = new AlertCmp({type: 'warning'});
-        return alert.clickButton(choice.toLowerCase());
+        await alert.clickButton(choice.toLowerCase());
     }, {waitForApp: true});
 
-    When(/^I close alert$/, async () => {
+    When(/^I close alert$/, async function() {
         let alert = new AlertCmp({});
         await alert.close();
     }, {waitForApp: true});

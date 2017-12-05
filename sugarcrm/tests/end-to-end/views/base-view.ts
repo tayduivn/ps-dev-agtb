@@ -41,7 +41,7 @@ export default class extends BaseView {
 
                 console.log(`field ${name}, template ${field.constructor.name}`);
 
-                let isCorrectTemplate = await seedbed.client.isVisible(
+                let isCorrectTemplate = await this.driver.isVisible(
                     field.$('field.selector')
                 );
                 if (isCorrectTemplate) {
@@ -49,7 +49,7 @@ export default class extends BaseView {
                 }
             }
 
-            let fieldTypeAttr = await seedbed.client.getAttribute<string>(
+            let fieldTypeAttr = await this.driver.getAttribute<string>(
                 selector,
                 'field-type'
             );
@@ -97,7 +97,7 @@ export default class extends BaseView {
             let selector = field.$('field.selector');
 
             // check for existense because field can have placeholder that overlaps the element pointed by selector
-            let isCorrectFieldInstance = await seedbed.client.isElementExist(
+            let isCorrectFieldInstance = await this.driver.isElementExist(
                 selector
             );
             if (isCorrectFieldInstance) {
@@ -111,7 +111,7 @@ export default class extends BaseView {
 
 
     public async getAttribute(sel: string, attr: string): Promise<string> {
-        let templateName: string | string[] = await seedbed.client.getAttribute<string>(sel, attr);
+        let templateName: string | string[] = await this.driver.getAttribute<string>(sel, attr);
         if (_.isArray(templateName)) {
             throw new Error(`Please verify selector: ${sel}. It matched ${templateName.length} elements`);
         }

@@ -14,30 +14,33 @@ import {givenStepsHelper, stepsHelper, Given} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
 
 Given(/^I (launch|update) (?:App)\s*(?:(?:with)?\s*config\s*(?:with)?: "([^"]*)")?$/,
-    (launch: string, schemesList: string): Promise<void> =>
-        givenStepsHelper.launchOrUpdate(launch, schemesList));
+    async function (launch: string, schemesList: string): Promise<void> {
+        await givenStepsHelper.launchOrUpdate(launch, schemesList);
+    });
 
 Given(/^I use\s*(default)?\s*account\s*(?:"([^"]*)"(?:\/"([^"]*)")?)?$/,
-    (isDefaultAccount: string, username: string, password: string): Promise<void> =>
-        givenStepsHelper.useAccount(isDefaultAccount, username, password));
+    async function (isDefaultAccount: string, username: string, password: string): Promise<void> {
+        await givenStepsHelper.useAccount(isDefaultAccount, username, password);
+    });
 
 Given(/^(?:(\d+) )?(\w+) records exist( created by bulk)?:$/,
-    (count: number, module: string, byBulk: boolean, table: TableDefinition): Promise<void> =>
-        stepsHelper.createRecords(count, module, byBulk, table));
+    async function(count: number, module: string, byBulk: boolean, table: TableDefinition): Promise<void> {
+        await stepsHelper.createRecords(count, module, byBulk, table);
+    });
 
 Given<
     string,
     string
     >(
     /^(?:(\d+) )?(\w+) records exist related via (\w+) link\s*(?:to (\*\S+))?:$/,
-    function(
+    async function(
         countStr: string,
         module: string,
         link: string,
         record: any,
         table: TableDefinition
     ): Promise<void> {
-        return givenStepsHelper.createRelatedRecord(
+        await givenStepsHelper.createRelatedRecord(
             countStr,
             module,
             link,

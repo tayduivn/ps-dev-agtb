@@ -54,7 +54,7 @@ const openMenuAndCheck = async function(layout, needToCheck, data?: TableDefinit
  * @example "I click Save button on #AccountsDrawer header"
  */
 When(/^I click (Create|Edit|Cancel|Save) button on (#[a-zA-Z](?:\w|\S)*) header$/,
-    (btnName: string, layout: any) => {
+    async function(btnName: string, layout: any) {
         return layout.HeaderView.clickButton(btnName.toLowerCase());
     }, {waitForApp: true});
 
@@ -64,14 +64,14 @@ When(/^I click (Create|Edit|Cancel|Save) button on (#[a-zA-Z](?:\w|\S)*) header$
  * @example "I open actions menu in #Account_ARecord"
  */
 When(/^I open actions menu in (#[a-zA-Z]\w+) and check:?$/,
-    async (layout, data: TableDefinition) => {
+    async function(layout, data: TableDefinition) {
 
     await openMenuAndCheck(layout, true, data);
 
     }, {waitForApp: true});
 
 When(/^I open actions menu in (#[a-zA-Z]\w+)$/,
-    async (layout) => {
+    async function(layout) {
 
         await openMenuAndCheck(layout, false);
 
@@ -83,7 +83,7 @@ When(/^I open actions menu in (#[a-zA-Z]\w+)$/,
  * @example "I choose Delete from actions menu in #Account_ARecord"
  */
 When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote|Convert) from actions menu in (#[a-zA-Z]\w+)\s*$/,
-    (action, layout: any) => {
-        return layout.HeaderView.clickButton(action);
+    async function(action, layout: any) {
+        await layout.HeaderView.clickButton(action);
     }, {waitForApp: true});
 

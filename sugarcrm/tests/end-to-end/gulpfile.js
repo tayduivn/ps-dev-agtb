@@ -9,22 +9,43 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 const gulp = require('gulp');
-const execa = require('execa');
 const path = require('path');
+const tslint = require('gulp-tslint');
+const gulpts = require('gulp-typescript');
+const gutil = require('gulp-util');
+const ts = require('typescript');
+const os = require('os');
 
-gulp.task('ts', function() {
+gulp.task('tslint', () => {
 
-    let tsProcess = execa('./node_modules/.bin/gulp',
-        [
-            'ts', '--color',
-            '--include', `${path.resolve(__dirname, './**/*.ts')}`,
-            '--exclude', `${path.resolve(__dirname, 'node_modules/**')}`,
-        ],
-        {
-            stdio: 'inherit',
-            cwd: path.resolve(__dirname, './node_modules/@sugarcrm/seedbed'),
+    let src = ['./**/*.ts', '!node_modules/**/*.ts'];
+
+    return gulp.src(src)
+        .pipe(
+            tslint({
+                formatter: 'stylish',
+                configuration: "./tslint.json",
+            })
+        )
+        .pipe(tslint.report());
+});
+
+gulp.task('ts', () => {
+
+    let project = gulpts.createProject('tsconfig.json', {
+        typescript: ts,
+    });
+
+    const tsResult = project.src().pipe(project())
+        .on('error', function (error) {
+
+            let colors = gutil.colors;
+
+            console.log(colors.red(error));
+
+            process.exit(1);
         });
 
-    return tsProcess;
+    return tsResult.pipe(gulp.dest(path.resolve(os.tmpdir(), 'cukests')));
 
 });

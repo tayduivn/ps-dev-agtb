@@ -10,7 +10,7 @@
  */
 
 import ModuleMenuCmp from '../components/module-menu-cmp';
-import {seedbed, whenStepsHelper, stepsHelper, Utils, When} from '@sugarcrm/seedbed';
+import {whenStepsHelper, stepsHelper, Utils, When, seedbed} from '@sugarcrm/seedbed';
 import {TableDefinition} from 'cucumber';
 import RecordView from '../views/record-view';
 import RecordLayout from '../layouts/record-layout';
@@ -28,7 +28,12 @@ import GroupRecord from '../views/group-record';
  * @example "I choose Accounts in modules menu"
  */
 When(/^I choose (\w+) in modules menu$/,
-    async (itemName) => {
+    async function (itemName) {
+
+        await this.driver.waitForApp();
+
+        // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
+        await this.driver.pause(2000);
 
         let moduleMenuCmp = new ModuleMenuCmp({});
 
@@ -42,8 +47,9 @@ When(/^I choose (\w+) in modules menu$/,
             await moduleMenuCmp.showAllModules();
             await moduleMenuCmp.clickItem(itemName, true);
         }
-            // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-            await seedbed.client.pause(1000);
+
+        // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
+        await this.driver.pause(1000);
 
     }, {waitForApp: true});
 
@@ -51,9 +57,9 @@ When(/^I choose (\w+) in modules menu$/,
  * Select item from cached View
  */
 When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-    (record: {id: string}, view: ListView) => {
+    async function (record: {id: string}, view: ListView) {
         let listItem = view.getListItem({id: record.id});
-        return listItem.clickListItem();
+        await listItem.clickListItem();
     }, {waitForApp: true});
 
 /**
@@ -62,31 +68,33 @@ When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
  * @example I click on preview button on *Account_A in #AccountsList.ListView
  */
 When(/^I click on preview button on (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-    async (record: { id: string }, view: ListView) => {
+    async function (record: { id: string }, view: ListView) {
         let listItem = view.getListItem({id: record.id});
         await listItem.clickPreviewButton();
     }, {waitForApp: true});
 
 
 When(/^I wait for (\d+) seconds$/,
-    (delay: string): Promise<void> =>
-        whenStepsHelper.waitStep(parseInt(delay, 10)));
+    async function(delay: string): Promise<void> {
+        await whenStepsHelper.waitStep(parseInt(delay, 10));
+    });
 
 When(/^I open ([\w,\/]+) view and login$/,
-    (module: string): Promise<void> =>
-        whenStepsHelper.setUrlHashAndLogin(module), {waitForApp: true});
+    async function(module: string): Promise<void> {
+        await whenStepsHelper.setUrlHashAndLogin(module);
+    }, {waitForApp: true});
 
     When(/^I go to "([^"]*)" url$/,
-            async(urlHash): Promise<void> => {
-            await seedbed.client.setUrlHash(urlHash);
+            async function(urlHash): Promise<void> {
+            await this.driver.setUrlHash(urlHash);
             // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-            await seedbed.client.pause(1500);
+            await this.driver.pause(1500);
 
         }, {waitForApp: true});
 
 // The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
 When(/^I provide input for (#\S+) view$/,
-    async (view: RecordView, data: TableDefinition): Promise<void> => {
+    async function (view: RecordView, data: TableDefinition): Promise<void> {
 
         if (data.hashes.length > 1) {
             throw new Error('One line data table entry is expected');
@@ -97,7 +105,7 @@ When(/^I provide input for (#\S+) view$/,
         // check for * marked column and cache the record and view if needed
         let uidInfo = Utils.computeRecordUID(inputData);
 
-        seedbed.scenario.recordsInfo[uidInfo.uid] = {
+        seedbed.cucumber.scenario.recordsInfo[uidInfo.uid] = {
             uid: uidInfo.uid,
             originInput: JSON.parse(JSON.stringify(inputData)),
             input: inputData,
@@ -108,15 +116,15 @@ When(/^I provide input for (#\S+) view$/,
 
     }, {waitForApp: true});
 
-When(/^I click show more button on (#\S+) view$/, async (layout: RecordLayout) => {
+When(/^I click show more button on (#\S+) view$/, async function(layout: RecordLayout) {
     await layout.showMore();
 }, {waitForApp: true});
 
-When(/^I click show less button on (#\S+) view$/, async (layout: RecordLayout) => {
+When(/^I click show less button on (#\S+) view$/, async function(layout: RecordLayout) {
     await layout.showLess();
 }, {waitForApp: true});
 
-When(/^I toggle (Business_Card|Billing_and_Shipping|Quote_Settings|Show_More) panel on (#\S+) view$/, async (panelName: string, view: RecordView) => {
+When(/^I toggle (Business_Card|Billing_and_Shipping|Quote_Settings|Show_More) panel on (#\S+) view$/, async function (panelName: string, view: RecordView) {
 
     await view.togglePanel(panelName);
 
@@ -128,7 +136,7 @@ When(/^I toggle (Business_Card|Billing_and_Shipping|Quote_Settings|Show_More) pa
  * @example I click on edit button for *Account_A in #AccountsList.ListView
  */
 When(/^I click on (\w+) button for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-    async (button, record: {id}, view: ListView) => {
+    async function(button, record: {id}, view: ListView) {
         let listItem = view.getListItem({id: record.id});
 
         let isVisible = await listItem.isVisible(button);
@@ -149,22 +157,26 @@ When(/^I click on (\w+) button for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
  * @example I set values for *Account_A in #AccountsList.ListView
  */
 When(/^I set values for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
-    async (record: {id: string}, view: ListView, data: TableDefinition) => {
+    async function(record: {id: string}, view: ListView, data: TableDefinition) {
         let listItem = view.getListItem({id: record.id});
-        for (let row of data.hashes()) {
+
+        let row: any;
+
+        for (row of data.hashes()) {
             let field = await listItem.getField(row.fieldName);
             await field.setValue(row.value);
         }
+
     }, {waitForApp: true});
 
 When(/^I click (\S+) field on (#\S+) view$/,
-    (fieldName, layout: any) => {
+    async function(fieldName, layout: any) {
         let view = layout.type ? layout.defaultView : layout;
         return view.clickField(fieldName);
     }, {waitForApp: true});
 
 When(/^I click (\S+) field on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) view$/,
-    async (fieldName: string, record: { id: string }, listView: ListView) => {
+    async function(fieldName: string, record: { id: string }, listView: ListView) {
 
         let listItem = listView.getListItem({id: record.id});
 
@@ -174,7 +186,7 @@ When(/^I click (\S+) field on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) view$/,
 
 When(/^I choose (createLineItem|createComment|createGroup) on QLI section on (#\S+) view$/, async function (itemName, layout: RecordLayout) {
     await layout.QliTable.openMenu();
-    await seedbed.client.waitForApp();
+    await this.driver.waitForApp();
     await layout.QliTable.clickMenuItem(itemName);
 }, {waitForApp: true});
 
@@ -191,5 +203,5 @@ When(/^I click on (save|cancel) button on Group (#\S+) record$/, async function 
 }, {waitForApp: true});
 
 When(/^I dismiss alert$/, async function () {
-    await seedbed.client.alertDismiss();
+    await this.driver.alertDismiss();
 }, {waitForApp: true});

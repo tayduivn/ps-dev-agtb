@@ -14,7 +14,7 @@ import {Then} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
 import RecordLayout from '../layouts/record-layout';
-import QliTable from "../views/qli-table";
+import QliTable from '../views/qli-table';
 
 /**
  * Check whether the cached view is visible
@@ -23,7 +23,7 @@ import QliTable from "../views/qli-table";
  * @example "I should see #AccountsList view"
  */
 Then(/^I should (not )?see (#\S+) view$/,
-    async (not, view: BaseView) => {
+    async function (not, view: BaseView) {
         let isVisible = await view.isVisibleView();
 
         if (!not !== isVisible) {
@@ -38,7 +38,7 @@ Then(/^I should (not )?see (#\S+) view$/,
  * @example "I verify fields on #Account_APreview.PreviewView"
  */
 Then(/^I verify fields on (#[a-zA-Z](?:\w|\S)*)$/,
-    async (view: BaseView, data: TableDefinition) => {
+    async function (view: BaseView, data: TableDefinition) {
 
         let fildsData: any = data.hashes();
 

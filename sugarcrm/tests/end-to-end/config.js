@@ -135,7 +135,7 @@ var config = {
                 chrome: {
                     // check for more recent versions of chrome driver here:
                     // http://chromedriver.storage.googleapis.com/index.html
-                    version: '2.29',
+                    version: '2.33',
                     arch: process.arch,
                     baseURL: 'http://chromedriver.storage.googleapis.com'
                 }

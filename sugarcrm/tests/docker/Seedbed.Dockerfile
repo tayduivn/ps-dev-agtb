@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-FROM node:8.1.2
+FROM node:8.9.1
 MAINTAINER Engineering Automation "engineering-automation@sugarcrm.com"
 
 ENV GEOMETRY 1920x1080x24

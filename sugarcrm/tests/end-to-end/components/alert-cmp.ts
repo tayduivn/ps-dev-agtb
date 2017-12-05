@@ -48,10 +48,10 @@ export default class AlertCmp extends BaseView {
      * Close Alert
      */
     public async close() {
-        return seedbed.client.waitForVisibleAndClick(this.$('closeIcon'));
+        return this.driver.waitForVisibleAndClick(this.$('closeIcon'));
     }
 
     public async clickButton(selectorName) {
-        return seedbed.client.click(this.$(`buttons.${selectorName.toLowerCase()}`));
+        return this.driver.click(this.$(`buttons.${selectorName.toLowerCase()}`));
     }
-};
+}

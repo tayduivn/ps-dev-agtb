@@ -63,7 +63,7 @@ export default class RecordView extends BaseView {
 
         }
 
-        await seedbed.client.click(panelSelector);
+        await this.driver.click(panelSelector);
 
     }
 }

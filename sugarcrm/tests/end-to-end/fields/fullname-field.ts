@@ -30,7 +30,7 @@ export default class FullnameField extends BaseField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(this.$('field.selector'));
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
 
         return value.toString().trim();
 

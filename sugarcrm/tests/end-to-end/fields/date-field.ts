@@ -29,7 +29,7 @@ export default class DateField extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
-        await seedbed.client.setValue(this.$('field.selector'), val);
+        await this.driver.setValue(this.$('field.selector'), val);
     }
 }
 

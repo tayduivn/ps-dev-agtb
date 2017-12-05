@@ -16,12 +16,11 @@ import ListLayout from './layouts/list-layout';
 import PreviewLayout from './layouts/preview-layout';
 import {Seedbed} from '@sugarcrm/seedbed';
 import DrawerLayout from './layouts/drawer-layout';
-import QliRecord from "./views/qli-record";
-
+import QliRecord from './views/qli-record';
 
 export default (seedbed: Seedbed) => {
 
-    seedbed.addAsyncHandler(seedbed.events.BEFORE_SCENARIO, async () => {
+    seedbed.cucumber.addAsyncHandler('Before', async ({ scenario }) => {
         seedbed.cachedRecords.clear();
     });
 
@@ -82,16 +81,15 @@ export default (seedbed: Seedbed) => {
     });
 
 // is called after waitForApp, each time
-    seedbed.addAsyncHandler(seedbed.events.SYNC, (clientInfo) => {
-
+    seedbed.addAsyncHandler(seedbed.events.SYNC, clientInfo => {
 
         let createdRecords = clientInfo.create;
 
-        let recordsInfo = _.filter(seedbed.scenario.recordsInfo, (recordInfo: any) => !recordInfo.recordId);
+        let recordsInfo = _.filter(seedbed.cucumber.scenario.recordsInfo, (_recordInfo: any) => !_recordInfo.recordId);
 
         let recordInfo: any = null;
 
-        createdRecords = _.filter(createdRecords, (createdRecord: any) => !seedbed.cachedRecords.findAlias(item => item.id === createdRecord.id));
+        createdRecords = _.filter(createdRecords, (createdRecord: any) => !seedbed.cachedRecords.findAlias(_item => _item.id === createdRecord.id));
 
         let item = _.find(createdRecords, (createdRecord: any) => {
 
@@ -157,7 +155,7 @@ export default (seedbed: Seedbed) => {
             responseRecord = responseRecord.record;
 
             /* find record info for created record */
-            let recordInfo: any = _.find(seedbed.scenario.recordsInfo, (record: any) => {
+            let recordInfo: any = _.find(seedbed.cucumber.scenario.recordsInfo, (record: any) => {
                 return responseRecord && responseRecord.id && responseRecord.id === record.recordId;
             });
 
@@ -188,7 +186,7 @@ export default (seedbed: Seedbed) => {
             if (_.includes(['POST'], req.method) && url.indexOf('/file/filename') === -1) {
 
                 /*find record info for created record*/
-                let recordInfo: any = _.find(seedbed.scenario.recordsInfo, (record: any) => {
+                let recordInfo: any = _.find(seedbed.cucumber.scenario.recordsInfo, (record: any) => {
                     return responseRecord && responseRecord.id && responseRecord.id === record.recordId;
                 });
 

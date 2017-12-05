@@ -20,7 +20,7 @@ import {TableDefinition} from 'cucumber';
  * @example "I verify fields for *Account_A in #AccountsList:"
  */
 Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
-    async (record: { id: string }, view: ListView, data: TableDefinition) => {
+    async function(record: { id: string }, view: ListView, data: TableDefinition) {
 
         let listItem = view.getListItem({id: record.id});
 
@@ -45,7 +45,7 @@ Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
  * @example "I should see *Account_A in #AccountsList"
  */
 Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
-    async (not, record: { id: string }, view: ListView) => {
+    async function(not, record: { id: string }, view: ListView) {
 
         let listItem = view.getListItem({id: record.id});
 
@@ -58,8 +58,9 @@ Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
     });
 
 Then(/^I should be redirected to \"(.*)\" route/,
-    (expectedRoute: string): Promise<void> =>
-        thenStepsHelper.checkUrlHash(expectedRoute));
+    async function(expectedRoute: string): Promise<void> {
+        thenStepsHelper.checkUrlHash(expectedRoute);
+    });
 
 Then<
     string,

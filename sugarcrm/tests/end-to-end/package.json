@@ -4,7 +4,7 @@
     "prepublish": "./node_modules/gulp/bin/gulp.js ts"
   },
   "devDependencies": {
-    "@sugarcrm/seedbed": "0.7.14",
+    "@sugarcrm/seedbed": "0.8.1",
     "@types/async": "1.4.28",
     "@types/bluebird": "3.0.37",
     "@types/chalk": "0.4.31",
@@ -15,6 +15,7 @@
     "async": "0.9.0",
     "bluebird": "3.4.1",
     "colors": "0.6.2",
+    "gulp-util": "3.0.8",
     "execa": "0.5.0",
     "freeport": "1.0.5",
     "fs-extended": "0.2.0",
@@ -23,9 +24,10 @@
     "lodash": "4.16.4",
     "moment": "2.10.6",
     "socket.io": "0.9.16",
-    "typescript": "2.5.1",
+    "typescript": "2.6.1",
+    "gulp-tslint": "8.1.2",
+    "gulp-typescript": "3.2.3",
     "underscore": "1.6.0",
-    "underscore.string": "2.3.3",
-    "zip-folder": "1.0.0"
+    "underscore.string": "2.3.3"
   }
 }

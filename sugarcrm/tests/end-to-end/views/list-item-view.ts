@@ -60,7 +60,7 @@ export default class ListItemView extends BaseView {
         let selector = this.$('listItem.listItemName', {id: this.id});
         let rowSelector = this.$();
 
-        return seedbed.client
+        return this.driver
             .execSync('scrollToSelector', [rowSelector])
             .click(selector);
     }
@@ -70,7 +70,7 @@ export default class ListItemView extends BaseView {
         let selector = this.$('listItem.buttons.preview', {id: this.id});
         let rowSelector = this.$();
 
-        return seedbed.client
+        return this.driver
             .execSync('scrollToSelector', [rowSelector])
             .click(selector);
     }
@@ -82,7 +82,7 @@ export default class ListItemView extends BaseView {
      * @returns {Promise<Client<boolean>>}
      */
     public async isVisible(itemName) {
-        return seedbed.client.isVisible(this.$('listItem.buttons.' + itemName.toLowerCase()));
+        return this.driver.isVisible(this.$('listItem.buttons.' + itemName.toLowerCase()));
     }
 
     /**
@@ -95,7 +95,7 @@ export default class ListItemView extends BaseView {
         let selector = this.$('listItem.buttons.' + buttonName.toLowerCase(), {id: this.id});
         let rowSelector = this.$();
 
-        return seedbed.client
+        return this.driver
             .execSync('scrollToSelector', [rowSelector])
             .click(selector);
     }

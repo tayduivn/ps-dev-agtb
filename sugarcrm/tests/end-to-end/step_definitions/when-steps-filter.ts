@@ -18,12 +18,12 @@ import FilterView from '../views/filter-view';
  * @example "I search for "Account_Search" in #AccountsList:FilterView view"
  */
 When(/^I search for "([^"]*)" in (#\S+) view$/,
-    async (value, view: FilterView) => {
+    async function(value, view: FilterView) {
         await view.setSearchField(value);
     }, {waitForApp: true});
 
 When(/^I choose for (\w+) in (#\S+) view$/,
-    async (filterName: string, view: FilterView) => {
+    async function(filterName: string, view: FilterView) {
 
         await view.selectFilter(filterName);
 

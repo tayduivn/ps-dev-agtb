@@ -29,7 +29,7 @@ class CurrencyField extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
-        await seedbed.client.setValue(this.$('field.selector'), val);
+        await this.driver.setValue(this.$('field.selector'), val);
     }
 }
 
@@ -41,7 +41,7 @@ export class Edit extends CurrencyField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getValue(this.$('field.selector'));
+        let value: string | string[] = await this.driver.getValue(this.$('field.selector'));
 
         return value.toString().trim();
 
@@ -63,7 +63,7 @@ export class DetailQLIPercent extends CurrencyField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(this.$('field.selector'));
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
 
         return value.toString().trim();
 
@@ -85,7 +85,7 @@ export class DetailQLI extends CurrencyField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(this.$('field.selector'));
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
 
         return value.toString().trim();
 
@@ -104,7 +104,7 @@ export class Detail extends CurrencyField {
         });
 
     }
-};
+}
 
 export class List extends CurrencyField {
 
@@ -119,7 +119,7 @@ export class List extends CurrencyField {
 
     }
 
-};
+}
 
 export const Preview = Detail;
 

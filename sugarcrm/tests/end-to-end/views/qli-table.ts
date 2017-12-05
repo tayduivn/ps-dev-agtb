@@ -48,16 +48,16 @@ export default class QliTable extends BaseView {
 
     }
 
-    getRecord(recordIndex) {
+    public getRecord(recordIndex) {
         return this.createComponent<QliRecord>(QliRecord, {recordIndex});
     }
 
-    async openMenu() {
-        await seedbed.client.click(this.$('plusButton'));
+    public async openMenu() {
+        await this.driver.click(this.$('plusButton'));
     }
 
-    async clickMenuItem(itemName) {
-        await seedbed.client.click(this.$(`menu.${itemName}`));
+    public async clickMenuItem(itemName) {
+        await this.driver.click(this.$(`menu.${itemName}`));
     }
 
 }

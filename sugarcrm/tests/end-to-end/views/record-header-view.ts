@@ -45,11 +45,11 @@ export default class RecordHeaderView extends BaseView {
     }
 
     public async clickButton(buttonName) {
-        return seedbed.client.click(this.$(`buttons.${buttonName.toLowerCase()}`));
+        return this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
     }
 
     public async checkIsButtonActive(buttonName) {
-        let isDisabled = await seedbed.client.isExisting(this.$(`buttons.${buttonName.toLowerCase()}`) + '.disabled');
+        let isDisabled = await this.driver.isExisting(this.$(`buttons.${buttonName.toLowerCase()}`) + '.disabled');
         return !isDisabled;
     }
 }

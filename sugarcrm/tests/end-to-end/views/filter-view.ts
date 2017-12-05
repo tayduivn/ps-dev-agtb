@@ -54,18 +54,18 @@ export default class FilterView extends BaseView {
 
         let locator = this.$('searchField');
 
-        await seedbed.client.waitForVisible(locator);
-        await seedbed.client.setValue(locator, value);
+        await this.driver.waitForVisible(locator);
+        await this.driver.setValue(locator, value);
     }
 
     public async selectFilter(filterName: string) {
 
         let locator = this.$('filter');
 
-        await seedbed.client.click(locator);
+        await this.driver.click(locator);
 
-        await seedbed.client.waitForVisible(locator);
-        await seedbed.client.click(this.globalSelectors[filterName]);
+        await this.driver.waitForVisible(locator);
+        await this.driver.click(this.globalSelectors[filterName]);
 
     }
 }

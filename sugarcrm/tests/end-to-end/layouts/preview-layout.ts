@@ -13,7 +13,7 @@ import {BaseView, seedbed} from '@sugarcrm/seedbed';
 import PreviewView from '../views/preview-view';
 import PreviewHeaderView from '../views/preview-header-view';
 import EnrichedView from '../views/hint/enriched-view';
-import NewsView from "../views/hint/news-view";
+import NewsView from '../views/hint/news-view';
 
 /**
  * Represents Preview page layout.
@@ -46,13 +46,13 @@ export default class PreviewLayout extends BaseView {
 
     }
     public async showMore() {
-        if (await seedbed.client.isVisible(this.$('showMoreBtn'))) {
-            await seedbed.client.click(this.$('showMoreBtn'));
+        if (await this.driver.isVisible(this.$('showMoreBtn'))) {
+            await this.driver.click(this.$('showMoreBtn'));
         }
     }
     public async showLess() {
-        if (await seedbed.client.isVisible(this.$('showLessBtn'))) {
-            await seedbed.client.click(this.$('showLessBtn'));
+        if (await this.driver.isVisible(this.$('showLessBtn'))) {
+            await this.driver.click(this.$('showLessBtn'));
         }
     }
 }

@@ -55,13 +55,13 @@ export default class RecordLayout extends BaseView {
     }
 
     public async showMore() {
-        if (await seedbed.client.isVisible(this.$('showMoreBtn'))) {
-            await seedbed.client.click(this.$('showMoreBtn'));
+        if (await this.driver.isVisible(this.$('showMoreBtn'))) {
+            await this.driver.click(this.$('showMoreBtn'));
         }
     }
     public async showLess() {
-        if (await seedbed.client.isVisible(this.$('showLessBtn'))) {
-            await seedbed.client.click(this.$('showLessBtn'));
+        if (await this.driver.isVisible(this.$('showLessBtn'))) {
+            await this.driver.click(this.$('showLessBtn'));
         }
     }
 }

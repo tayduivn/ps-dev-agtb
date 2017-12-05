@@ -32,13 +32,13 @@ export default class EmailField extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
-        await seedbed.client.click(this.$('field'));
-        await seedbed.client.setValue(this.$('field.input'), val);
-        await seedbed.client.waitForApp();
+        await this.driver.click(this.$('field'));
+        await this.driver.setValue(this.$('field.input'), val);
+        await this.driver.waitForApp();
 
     }
 
-};
+}
 
 export class Detail extends EmailField {
 
@@ -55,7 +55,7 @@ export class Detail extends EmailField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(this.$('field.selector'));
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
 
         return value.toString().trim();
 

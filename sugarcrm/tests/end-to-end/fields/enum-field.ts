@@ -31,12 +31,12 @@ export class Detail extends BaseField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(selector);
+        let value: string | string[] = await this.driver.getText(selector);
 
         return value.toString().trim();
 
     }
-};
+}
 
 export class List extends BaseField {
 
@@ -53,13 +53,13 @@ export class List extends BaseField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(selector);
+        let value: string | string[] = await this.driver.getText(selector);
 
         return value.toString().trim();
 
     }
 
-};
+}
 
 
 export class Edit extends BaseField {
@@ -82,11 +82,11 @@ export class Edit extends BaseField {
 
     public async setValue(val: any): Promise<void> {
 
-        await seedbed.client.click(this.$('field.selector'));
-        await seedbed.client.waitForApp();
-        await seedbed.client.click(`${this.itemSelector}${val}`);
+        await this.driver.click(this.$('field.selector'));
+        await this.driver.waitForApp();
+        await this.driver.click(`${this.itemSelector}${val}`);
     }
 
-};
+}
 
 export const Preview = Detail;

@@ -29,12 +29,12 @@ export default class UrlField extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
-        await seedbed.client.setValue(this.$('field.selector'), val);
+        await this.driver.setValue(this.$('field.selector'), val);
     }
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getValue(this.$('field.selector'));
+        let value: string | string[] = await this.driver.getValue(this.$('field.selector'));
 
         return value.toString().trim();
 
@@ -59,12 +59,12 @@ export class Detail extends UrlField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(this.$('field.selector'));
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
 
         return value.toString().trim();
 
     }
-};
+}
 
 export class List extends Detail {
 
@@ -79,7 +79,7 @@ export class List extends Detail {
 
     }
 
-};
+}
 
 export const Preview = Detail;
 

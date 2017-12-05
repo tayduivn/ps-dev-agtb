@@ -29,8 +29,8 @@ export default class CopyField extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
-        await seedbed.client.scroll(this.$('field.selector'));
-        await seedbed.client.click(this.$('field.selector'));
+        await this.driver.scroll(this.$('field.selector'));
+        await this.driver.click(this.$('field.selector'));
     }
 }
 

@@ -37,10 +37,10 @@ export default class LoginView extends BaseView {
 
     public async login(username, password) {
 
-        await seedbed.client
+        await this.driver
             .setValue(this.$('username'), username)
             .setValue(this.$('password'), password);
 
-        return seedbed.client.click(this.$('buttons.login'));
+        return this.driver.click(this.$('buttons.login'));
     }
 }

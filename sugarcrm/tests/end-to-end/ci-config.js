@@ -43,6 +43,8 @@ module.exports = {
 
     inactiveProcessTimeout: 600000,
 
+    versionsConfig: {},
+
     // output log files for stdout and stderr
     outs: {
         stdout: CUKES_STDOUT_PATH,

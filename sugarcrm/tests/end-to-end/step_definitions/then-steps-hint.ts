@@ -10,8 +10,8 @@
  */
 
 import {Then} from '@sugarcrm/seedbed';
-import EnrichedView from "../views/hint/enriched-view";
-import NewsView from "../views/hint/news-view";
+import EnrichedView from '../views/hint/enriched-view';
+import NewsView from '../views/hint/news-view';
 
 /**
  * Check whether the hint logo is visible in Enriched view
@@ -20,7 +20,7 @@ import NewsView from "../views/hint/news-view";
  */
 
 Then(/^I should see Logo on (#\S+)$/,
-    async(view:EnrichedView) => {
+    async function(view: EnrichedView) {
         let isView = await view.isVisibleView();
         if (!isView) {
             throw new Error('Expected to see "' + view.$() + '" view');
@@ -39,7 +39,7 @@ Then(/^I should see Logo on (#\S+)$/,
  */
 
 Then(/^I should see News on (#\S+)$/,
-    async(view:NewsView) => {
+    async function(view: NewsView) {
         let isNewsListVisible = await view.checkNewsList();
         if (!isNewsListVisible) {
             throw new Error('Expected to see News List on "' + view.$() + '" view');

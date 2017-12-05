@@ -10,7 +10,6 @@
  */
 
 import BaseView from '../base-view';
-import seedbed from "@sugarcrm/seedbed/seedbed";
 
 /**
  * Represents news view of Hint.
@@ -32,11 +31,11 @@ export default class NewsView extends BaseView {
     }
 
     public async checkNewsList() {
-        return seedbed.client.isVisible(this.$('newsList'));
+        return this.driver.isVisible(this.$('newsList'));
 
     }
 
     public async checkEmptyNews() {
-        return seedbed.client.isVisible(this.$('emptyNews'));
+        return this.driver.isVisible(this.$('emptyNews'));
     }
 }

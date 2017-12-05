@@ -20,7 +20,7 @@ export class BaseField extends BaseSeedbedField {
     public async click(): Promise<void> {
         let selector = this.$('field', {name: this.name});
 
-        await seedbed.client.scroll(selector)
+        await this.driver.scroll(selector)
             .click(selector);
     }
 

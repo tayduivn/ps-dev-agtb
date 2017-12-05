@@ -33,12 +33,12 @@ export class Detail extends BaseField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(selector);
+        let value: string | string[] = await this.driver.getText(selector);
 
         return value.toString().trim();
 
     }
-};
+}
 
 export class List extends BaseField {
 
@@ -55,13 +55,13 @@ export class List extends BaseField {
 
     public async getText(selector: string): Promise<string> {
 
-        let value: string | string[] = await seedbed.client.getText(selector);
+        let value: string | string[] = await this.driver.getText(selector);
 
         return value.toString().trim();
 
     }
 
-};
+}
 
 
 export class Edit extends BaseField {
@@ -85,9 +85,9 @@ export class Edit extends BaseField {
      * @returns {Promise<Client<void>>}
      */
     public async setValue(val: any): Promise<void> {
-        await seedbed.client.setValue(this.$('field.selector'), val);
+        await this.driver.setValue(this.$('field.selector'), val);
     }
 
-};
+}
 
 export const Preview = Detail;

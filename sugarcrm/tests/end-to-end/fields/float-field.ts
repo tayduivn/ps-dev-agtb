@@ -29,7 +29,7 @@ export default class FloatField extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
-        await seedbed.client.setValue(this.$('field.selector'), val);
+        await this.driver.setValue(this.$('field.selector'), val);
     }
 }
 
@@ -47,7 +47,7 @@ export class Detail extends FloatField {
         });
 
     }
-};
+}
 
 export class List extends FloatField {
 
@@ -62,7 +62,7 @@ export class List extends FloatField {
 
     }
 
-};
+}
 
 export const Preview = Detail;
 
