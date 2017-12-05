@@ -316,7 +316,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
                 100,
                 101,
                 false,
-                0
+                0,
             ),
             array(
                 array('max_num' => 50),
@@ -325,7 +325,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
                 0,
                 1,
                 true,
-                50
+                50,
             ),
             array(
                 array('max_num' => -1),
@@ -334,7 +334,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
                 0,
                 1,
                 true,
-                200
+                200,
             ),
         );
     }

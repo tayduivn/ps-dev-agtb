@@ -73,9 +73,9 @@ class ProductTemplateTreeApi extends SugarApi
         $offset = ($offset == -1) ? 0 : $offset;
 
         if ($offset < $total) {
-            if($max_num != -1) {
+            if ($max_num != -1) {
                 $data = array_slice($data, $offset, $max_num);
-            }           
+            }
 
             //build the treedata
             foreach ($data as $node) {
