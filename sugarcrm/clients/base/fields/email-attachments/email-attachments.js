@@ -111,9 +111,9 @@
             bytes = attachments.reduce(function(total, attachment) {
                 var fileSize = attachment.get('file_size');
 
-                if (!_.isNumber(fileSize)) {
+                if (_.isNaN(fileSize) || !_.isNumber(fileSize)) {
                     try {
-                        fileSize = parseInt(fileSize, 10);
+                        fileSize = parseInt(fileSize, 10) || 0;
                     } catch (err) {
                         // If failed conversion, treat attachment as 0 bytes.
                         fileSize = 0;

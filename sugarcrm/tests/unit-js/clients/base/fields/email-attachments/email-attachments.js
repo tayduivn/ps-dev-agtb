@@ -605,6 +605,37 @@ describe('BaseEmailAttachmentsField', function() {
                 expect(spyUnder.firstCall.args[2]).toBe(1682822);
             });
 
+            using('unknown file sizes', ['', null, undefined, 0, NaN], function(fileSize) {
+                it('should treat an unknown file size as 0 bytes', function() {
+                    // Remove any existing attachments to clearly show that the
+                    // total file size is not changed.
+                    attachments.reset();
+
+                    field.model.on('attachments_collection:over_max_total_bytes', spyOver);
+                    field.model.on('attachments_collection:under_max_total_bytes', spyUnder);
+
+                    // Add an attachment without a file size.
+                    attachments.add([{
+                        _module: 'Notes',
+                        _link: 'attachments',
+                        filename_guid: _.uniqueId(),
+                        name: 'Disclosure Agreement.pdf',
+                        filename: 'Disclosure Agreement.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: fileSize,
+                        file_ext: 'pdf'
+                    }]);
+
+                    // The attachment should have been added with 0 bytes as its size.
+                    expect(attachments.length).toBe(1);
+                    expect(spyOver).not.toHaveBeenCalled();
+                    expect(spyUnder).toHaveBeenCalledOnce();
+                    expect(spyUnder.firstCall.args[0]).toBe(0);
+                    expect(spyUnder.firstCall.args[1]).toBe(app.config.maxAggregateEmailAttachmentsBytes);
+                    expect(spyUnder.firstCall.args[2]).toBe(app.config.maxAggregateEmailAttachmentsBytes);
+                });
+            });
+
             it(
                 'should trigger the under_max_total_bytes event when removing an attachment brings the total under max',
                 function() {
