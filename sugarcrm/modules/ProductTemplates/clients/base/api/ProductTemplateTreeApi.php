@@ -49,6 +49,7 @@ class ProductTemplateTreeApi extends SugarApi
         $max_num = $this->getSugarConfig()->get('list_max_entries_per_page', 20);
         $offset = -1;
         $total = 0;
+        $max_limit = $this->getSugarConfig()->get('max_list_limit');
 
         //set parameters
         if (array_key_exists('filter', $args)) {
@@ -63,7 +64,10 @@ class ProductTemplateTreeApi extends SugarApi
             $offset = $args['offset'];
         }
 
-        if (array_key_exists('max_num', $args)) {
+        //if the max_num is in-between 1 and $max_limit, set it, otherwise use max_limit
+        if (array_key_exists('max_num', $args) && ($args['max_num'] < 1 || $args['max_num'] > $max_limit)) {
+            $max_num = $max_limit;
+        } elseif (array_key_exists('max_num', $args)) {
             $max_num = $args['max_num'];
         }
 
@@ -73,10 +77,8 @@ class ProductTemplateTreeApi extends SugarApi
         $offset = ($offset == -1) ? 0 : $offset;
 
         if ($offset < $total) {
-            if ($max_num != -1) {
-                $data = array_slice($data, $offset, $max_num);
-            }
-
+            $data = array_slice($data, $offset, $max_num);
+            
             //build the treedata
             foreach ($data as $node) {
                 //create new leaf
