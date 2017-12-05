@@ -18,19 +18,19 @@ class ProductTemplateTreeApi extends SugarApi
         return array(
             'tree' => array(
                 'reqType' => 'GET',
-                'path' => array('ProductTemplates', 'tree'),
-                'pathVars' => array('module', 'type'),
+                'path' => array('ProductTemplates', 'tree',),
+                'pathVars' => array('module', 'type',),
                 'method' => 'getTemplateTree',
-                'shortHelp' => 'Returns a tree structure of all Product Templates and Product Categories',
+                'shortHelp' => 'Returns a filterable tree structure of all Product Templates and Product Categories',
                 'longHelp' => 'modules/ProductTemplates/clients/base/api/help/tree.html',
             ),
             'filterTree' => array(
                 'reqType' => 'POST',
-                'path' => array('ProductTemplates', 'tree'),
-                'pathVars' => array('module', 'type', 'action', 'filter', 'root', 'page'),
+                'path' => array('ProductTemplates', 'tree',),
+                'pathVars' => array('module', 'type',),
                 'method' => 'getTemplateTree',
-                'shortHelp' => 'Returns a filtered tree structure of all Product Templates and Product Categories',
-                'longHelp' => 'modules/ProductTemplates/clients/base/api/help/filterTree.html',
+                'shortHelp' => 'Returns a filterable tree structure of all Product Templates and Product Categories',
+                'longHelp' => 'modules/ProductTemplates/clients/base/api/help/tree.html',
             ),
         );
     }
