@@ -2608,7 +2608,7 @@ function repairDBForUpgrade($execute=false,$path=''){
 	foreach ($dictionary as $meta) {
 		$tablename = $meta['table'];
 		$fielddefs = $meta['fields'];
-		$indices = $meta['indices'];
+        $indices = isset($meta['indices']) ? $meta['indices'] : [];
 		$sql .= $db->repairTableParams($tablename, $fielddefs, $indices, $execute);
 	}
 	 $qry_str = "";

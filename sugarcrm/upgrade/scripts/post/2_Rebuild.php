@@ -65,7 +65,7 @@ class SugarUpgradeRebuild extends UpgradeScript
 
             $tablename = $meta['table'];
             $fielddefs = $meta['fields'];
-	        $indices = $meta['indices'];
+            $indices = isset($meta['indices']) ? $meta['indices'] : [];
 	        $sql = $this->db->repairTableParams($tablename, $fielddefs, $indices, true);
 	        if(!empty($sql)) {
 	            $this->log('Running sql: '. $sql);

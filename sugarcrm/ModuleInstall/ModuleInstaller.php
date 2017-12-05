@@ -1432,7 +1432,8 @@ class ModuleInstaller{
                 $table = $rel_data['table'];
 
                 if (!$this->db->tableExists($table)) {
-                    $this->db->createTableParams($table, $rel_data['fields'], $rel_data['indices']);
+                    $indices = isset($rel_data['indices']) ? $rel_data['indices'] : [];
+                    $this->db->createTableParams($table, $rel_data['fields'], $indices);
                 }
             }
 
@@ -1467,7 +1468,8 @@ class ModuleInstaller{
                 $field['name'] = $db->getValidDBName($field['name']);
             }
         }
-        if (is_array($item['indices'])) {
+
+        if (isset($item['indices']) && is_array($item['indices'])) {
             foreach ($item['indices'] as &$index) {
                 $index['name'] = $db->getValidDBName($index['name'], false, 'index');
             }

@@ -679,7 +679,10 @@ protected function checkQuery($sql, $object_name = false)
 	if (empty($indices)) {
 		foreach ( $GLOBALS['dictionary'] as $current ) {
 			if ($current['table'] == $table){
-				$indices = $current['indices'];
+                if (isset($current['indices'])) {
+                    $indices = $current['indices'];
+                }
+
 				break;
 			}
 		}
