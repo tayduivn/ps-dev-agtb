@@ -46,7 +46,7 @@ class ProductTemplateTreeApi extends SugarApi
         $data = [];
         $tree = [];
         $records = [];
-        $limit = $this->getSugarConfig()->get('list_max_entries_per_page', 20);
+        $max_num = $this->getSugarConfig()->get('list_max_entries_per_page', 20);
         $offset = -1;
         $total = 0;
 
@@ -63,8 +63,8 @@ class ProductTemplateTreeApi extends SugarApi
             $offset = $args['offset'];
         }
 
-        if (array_key_exists('limit', $args)) {
-            $limit = $args['limit'];
+        if (array_key_exists('max_num', $args)) {
+            $max_num = $args['max_num'];
         }
 
         // get total records in this set, calculate start position, slice data to current page
@@ -73,7 +73,9 @@ class ProductTemplateTreeApi extends SugarApi
         $offset = ($offset == -1) ? 0 : $offset;
 
         if ($offset < $total) {
-            $data = array_slice($data, $offset, $limit);
+            if($max_num != -1) {
+                $data = array_slice($data, $offset, $max_num);
+            }           
 
             //build the treedata
             foreach ($data as $node) {

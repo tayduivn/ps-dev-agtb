@@ -219,7 +219,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
      * @covers ::getTemplateTree
      * @covers ::addLeaf
      */
-    public function testGetTemplateTree($args, $filteredTreeCallCount, $rootedTreeCallCount, $index, $id, $data)
+    public function testGetTemplateTree($args, $filteredTreeCallCount, $rootedTreeCallCount, $index, $id, $data, $total)
     {
         //build tree data
         $treeData = [];
@@ -275,6 +275,8 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
         } else {
             $this->assertEquals([], $results['records']);
         }
+
+        $this->assertEquals($total, count($results['records']));
     }
 
     public function getTemplateTreeProvider()
@@ -287,6 +289,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
                 0,
                 1,
                 true,
+                20,
             ),
             array(
                 array('root' => 'foo'),
@@ -295,6 +298,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
                 0,
                 1,
                 true,
+                20,
             ),
             array(
                 array('filter' => 'foo', 'offset' => 100),
@@ -303,6 +307,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
                 100,
                 101,
                 true,
+                20,
             ),
             array(
                 array('offset' => 201),
@@ -311,6 +316,25 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
                 100,
                 101,
                 false,
+                0
+            ),
+            array(
+                array('max_num' => 50),
+                0,
+                1,
+                0,
+                1,
+                true,
+                50
+            ),
+            array(
+                array('max_num' => -1),
+                0,
+                1,
+                0,
+                1,
+                true,
+                200
             ),
         );
     }
