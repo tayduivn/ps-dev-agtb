@@ -744,6 +744,8 @@ class Email extends SugarBean {
 		global $current_user;
 		global $timedate;
 
+        $this->in_save = true;
+
         LoggerManager::getLogger()->deprecated('Email::email2Send() has been deprecated. Use Email::sendEmail() to ' .
             'send the email and Email::save() to save a draft.');
 
