@@ -15,11 +15,11 @@
     <h2>Summary:</h2>
     This endpoint is designed to return a paged recordset of one level of product templates and product categories in
     a N-level deep tree representing the relationship between categories and templates.  The results are loosely
-    filtered (wildcard before and after) by the last parameter of the url. Each page is 100 records.
+    filtered (wildcard before and after).
 </div>
 <div class="params">
     <h2>Query Parameters:</h2>
-    <table>
+    <table class="table hover">
         <tr>
             <td><strong>Param</strong></td>
             <td><strong>Description</strong></td>
@@ -47,15 +47,35 @@
         </tr>
     </table>
 </div>
-<div class="input">
-    <h2>Input Example:</h2>
-    <code class="codesample">
-    </code>
-</div>
 
+<div class="params">
+    <h2>Response Parameters:</h2>
+    <table class="table hover">
+        <tr>
+            <td><strong>Param</strong></td>
+            <td><strong>Description</strong></td>
+        </tr>
+        <tr>
+            <td>id</td>
+            <td>The id of the item (Product Category/Template) </td>
+        </tr>
+        <tr>
+            <td>Data</td>
+            <td>The name of the item</td>
+        </tr>
+        <tr>
+            <td>state</td>
+            <td>Specifies the open or closed state of the element. (used for categories)</td>
+        </tr>
+        <tr>
+            <td>index</td>
+            <td>Specifies the index of this element in the current level.</td>
+        </tr>
+    </table>
+</div>
 <div class="output">
-    <h2>Output Example:</h2>
-    <code class="codesample">
+    <h2>Response:</h2>
+    <pre class="scrollable">
         { 
             "records":[
                 {
@@ -75,5 +95,5 @@
             ],
             "next_offset":2
         }
-    </code>
+    </pre>
 </div>
