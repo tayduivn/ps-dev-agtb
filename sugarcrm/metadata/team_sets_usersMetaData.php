@@ -102,4 +102,5 @@ $dictionary['team_set_events'] = array(
             'type' => 'datetime',
         ),
     ),
+    'indices' => array(),
 );
