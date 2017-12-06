@@ -654,7 +654,7 @@ abstract class DBManager
 		}
 	}
 
-/**
+   /**
 	* Scans order by to ensure that any field being ordered by is.
 	*
 	* It will throw a warning error to the log file - fatal if slow query logging is enabled
@@ -663,61 +663,81 @@ abstract class DBManager
 	* @param  bool   $object_name optional, object to look up indices in
 	* @return bool   true if an index is found false otherwise
 	*/
-protected function checkQuery($sql, $object_name = false)
-{
-	$match = array();
-	preg_match_all("'.* FROM ([^ ]*).* ORDER BY (.*)'is", $sql, $match);
-	$indices = false;
-	if (!empty($match[1][0]))
-		$table = $match[1][0];
-	else
-		return false;
+    protected function checkQuery($sql, $object_name = false)
+    {
+        preg_match_all("'.* FROM ([^ ]*).* ORDER BY (.*)'is", $sql, $match);
 
-	if (!empty($object_name) && !empty($GLOBALS['dictionary'][$object_name]))
-		$indices = $GLOBALS['dictionary'][$object_name]['indices'];
+        if (empty($match[1][0])) {
+            return false;
+        }
 
-	if (empty($indices)) {
-		foreach ( $GLOBALS['dictionary'] as $current ) {
-			if ($current['table'] == $table){
-                if (isset($current['indices'])) {
-                    $indices = $current['indices'];
+        $indices = false;
+
+        if (!empty($object_name) && !empty($GLOBALS['dictionary'][$object_name])) {
+            $indices = $GLOBALS['dictionary'][$object_name]['indices'];
+        }
+
+        $table = $match[1][0];
+
+        if (empty($indices)) {
+            foreach ($GLOBALS['dictionary'] as $current) {
+                if ($current['table'] == $table) {
+                    if (isset($current['indices'])) {
+                        $indices = $current['indices'];
+                    }
+
+                    break;
                 }
+            }
+        }
 
-				break;
-			}
-		}
-	}
-	if (empty($indices)) {
-		$this->log->warn('CHECK QUERY: Could not find index definitions for table ' . $table);
-		return false;
-	}
-	if (!empty($match[2][0])) {
-		$orderBys = explode(' ', $match[2][0]);
-		foreach ($orderBys as $orderBy){
-			$orderBy = trim($orderBy);
-			if (empty($orderBy))
-				continue;
-			$orderBy = strtolower($orderBy);
-			if ($orderBy == 'asc' || $orderBy == 'desc')
-				continue;
+        if (empty($indices)) {
+            $this->log->warn('CHECK QUERY: Could not find index definitions for table ' . $table);
+            return false;
+        }
 
-			$orderBy = str_replace(array($table . '.', ','), '', $orderBy);
+        if (empty($match[2][0])) {
+            return false;
+        }
 
-			foreach ($indices as $index)
-				if (empty($index['db']) || $index['db'] == $this->dbType)
-					foreach ($index['fields'] as $field)
-						if ($field == $orderBy)
-							return true;
+        $orderBys = explode(' ', $match[2][0]);
 
-			$warning = 'Missing Index For Order By Table: ' . $table . ' Order By:' . $orderBy ;
-			if (!empty($GLOBALS['sugar_config']['dump_slow_queries']))
-				$this->log->fatal('CHECK QUERY:' .$warning);
-			else
-				$this->log->warn('CHECK QUERY:' .$warning);
-		}
-	}
-	return false;
-	}
+        foreach ($orderBys as $orderBy) {
+            $orderBy = trim($orderBy);
+
+            if (empty($orderBy)) {
+                continue;
+            }
+
+            $orderBy = strtolower($orderBy);
+
+            if ($orderBy == 'asc' || $orderBy == 'desc') {
+                continue;
+            }
+
+            $orderBy = str_replace(array($table . '.', ','), '', $orderBy);
+
+            foreach ($indices as $index) {
+                if (empty($index['db']) || $index['db'] == $this->dbType) {
+                    foreach ($index['fields'] as $field) {
+                        if ($field == $orderBy) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            $warning = 'Missing Index For Order By Table: ' . $table . ' Order By:' . $orderBy ;
+
+            if (!empty($GLOBALS['sugar_config']['dump_slow_queries'])) {
+                $this->log->fatal('CHECK QUERY:' .$warning);
+            } else {
+                $this->log->warn('CHECK QUERY:' .$warning);
+            }
+        }
+
+        return false;
+    }
 
 	/**
 	 * Returns the time the last query took to execute
