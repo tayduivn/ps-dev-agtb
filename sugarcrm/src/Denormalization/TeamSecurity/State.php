@@ -174,10 +174,10 @@ class State implements SplObserver, SplSubject
     {
         if (!$this->isValidTable($table)) {
             throw new DomainException(sprintf(
-                'The table should be either %s or %s, %s given',
+                "The table should be either '%s' or '%s', %s given",
                 $this->table1,
                 $this->table2,
-                $table
+                var_export($table, true)
             ));
         }
 
@@ -261,7 +261,7 @@ class State implements SplObserver, SplSubject
 
         if ($oldValue === $value) {
             $this->logger->warning(sprintf(
-                'Unexpected state transition. State parameter %s is already %s',
+                "Unexpected state transition. State parameter '%s' is already %s",
                 $var,
                 var_export($value, true)
             ));
@@ -270,7 +270,7 @@ class State implements SplObserver, SplSubject
         }
 
         $this->logger->info(sprintf(
-            'State parameter %s changed from %s to %s.',
+            "State parameter '%s' changed from %s to %s.",
             $var,
             var_export($oldValue, true),
             var_export($value, true)

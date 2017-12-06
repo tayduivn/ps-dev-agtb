@@ -19,6 +19,8 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Job\RebuildJob;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateAwareBuilder;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Composite;
+use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Logger;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
@@ -54,13 +56,15 @@ $services = [
             $state
         );
 
-        $listener = new StateAwareListener(
-            $builder,
-            $container->get(LoggerInterface::class . '-denorm')
-        );
+        $logger = $container->get(LoggerInterface::class . '-denorm');
+
+        $listener = new StateAwareListener($builder, $logger);
         $state->attach($listener);
 
-        return $listener;
+        return new Composite(
+            new Logger($logger),
+            $listener
+        );
     },
     StateAwareRebuild::class => function (ContainerInterface $container) {
         $logger = $container->get(LoggerInterface::class . '-denorm');
