@@ -225,8 +225,12 @@
      * @private
      */
     _onMouseWheelChange: function(mouseEvent) {
+        var delta = mouseEvent.type === 'mousewheel' ?
+            mouseEvent.originalEvent.wheelDelta / 20 :
+            mouseEvent.originalEvent.deltaY;
+
         mouseEvent.preventDefault();
-        this.phaser.events.onScrollWheel.dispatch(mouseEvent.originalEvent.deltaY);
+        this.phaser.events.onScrollWheel.dispatch(delta);
     },
 
     /**

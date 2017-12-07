@@ -398,6 +398,14 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
 
             expect(dispatchStub).toHaveBeenCalledWith(4.71);
         });
+
+        it('should send phaser the scroll delta for IE 11', function() {
+            mouseEvent.type = 'mousewheel';
+            mouseEvent.originalEvent.wheelDelta = 120;
+            view._onMouseWheelChange(mouseEvent);
+
+            expect(dispatchStub).toHaveBeenCalledWith(6);
+        });
     });
 
     describe('onPhaserTreeReadyHandler()', function() {
