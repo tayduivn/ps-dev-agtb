@@ -595,5 +595,6 @@
     "actions": [
         "opened",
         "synchronize"
-    ]
+    ],
+    "message": "By analyzing the changes on this pull request, we identified @reviewers to be potential reviewers"
 }
