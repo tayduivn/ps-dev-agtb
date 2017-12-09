@@ -801,108 +801,21 @@ AND team_id = ?';
 	 * This function accepts an Array of team ids that have records that should be reassigned
 	 * to the team instance.
 	 *
-	 * @param $old_teams Array of team ids whose records will be reassigned to the team instance id
+     * @param array $oldTeamIds Team ids whose records will be reassigned to the team instance id
 	 */
-	function reassign_team_records($old_teams = array())
-	{
-		$logger = \LoggerManager::getLogger();
-        $conn = $this->db->getConnection();
+    public function reassign_team_records(array $oldTeamIds = array())
+    {
+        /** @var Team[] $oldTeams */
+        $oldTeams = array_map(function ($id) {
+            return BeanFactory::retrieveBean('Teams', $id);
+        }, $oldTeamIds);
 
-		foreach ($old_teams as $old_team_id) {
-            $query = 'SELECT tsm.module_table_name
-FROM team_sets_modules tsm
-INNER JOIN team_sets_teams tst
-ON tst.team_set_id = tsm.team_set_id
-WHERE tst.team_id = ?';
+        TeamSetManager::reassignRecords($oldTeams, $this);
 
-            $modules_with_team = $conn->executeQuery($query, array($old_team_id))
-                ->fetchAll(PDO::FETCH_COLUMN);
-            $modules_with_team = array_unique($modules_with_team);
-
-            foreach ($modules_with_team as $module) {
-                // skip users module, will process it below
-                if ($module === 'users') {
-                    continue;
-                }
-
-                $logger->info(sprintf(
-                    "Updating team_id column values in %s table from '%s' to '%s'",
-                    $module,
-                    $old_team_id,
-                    $this->id
-                ));
-                $conn->update($module, array(
-                    'team_id' => $this->id,
-                ), array(
-                    'team_id' => $old_team_id,
-                ));
-
-                $logger->info(sprintf(
-                    "Updating team_id column values in team_sets_teams table from '%s' to '%s'",
-                    $old_team_id,
-                    $this->id
-                ));
-
-                // delete old team entries which are contained with the new team in the same set
-                // in order to avoid duplicates after the following update
-                $conn->executeUpdate(
-                    <<<SQL
-DELETE FROM team_sets_teams
- WHERE team_set_id IN (
-    SELECT *
-    FROM (
-        SELECT t1.team_set_id
-          FROM team_sets_teams t1
-         WHERE team_id = ?
-           AND EXISTS (
-               SELECT NULL
-                 FROM team_sets_teams t2
-                WHERE t2.team_set_id = t1.team_set_id
-                  AND t2.team_id = ?
-        )
-    ) t
-)
-SQL
-                    ,
-                    [
-                        $old_team_id,
-                        $this->id,
-                    ]
-                );
-
-                $conn->update('team_sets_teams', array(
-                    'team_id' => $this->id,
-                ), array(
-                    'team_id' => $old_team_id,
-                ));
-            }
-
-            // find affected users
-            $query = 'SELECT id FROM users WHERE default_team = ?';
-            $userIds = $conn->executeQuery($query, array($old_team_id))
-                ->fetchAll(PDO::FETCH_COLUMN);
-
-            // for User bean team_id is default_team
-            $logger->info(sprintf(
-                "Updating default_team column values in users table from '%s' to '%s'",
-                $old_team_id,
-                $this->id
-            ));
-            $conn->update('users', array(
-                'default_team' => $this->id,
-            ), array(
-                'default_team' => $old_team_id,
-            ));
-
-            // make sure users are members of the assigned team
-            foreach ($userIds as $userId) {
-                $this->add_user_to_team($userId);
-            }
-
-            $old_team = BeanFactory::getBean('Teams', $old_team_id);
-            $old_team->delete_team();
-		}
-	}
+        foreach ($oldTeams as $oldTeam) {
+            $oldTeam->delete_team();
+        }
+    }
 
 	/**
 	 * Return the proper display name of the team given the user's preferred format.

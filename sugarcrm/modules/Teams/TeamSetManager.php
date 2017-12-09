@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Teams\TeamSet;
 
 class TeamSetManager {
 
@@ -371,7 +373,6 @@ class TeamSetManager {
     {
         $conn = DBManagerFactory::getConnection();
 
-        /** @var TeamSet $teamSet */
         $teamSet = BeanFactory::newBean('TeamSets');
         $listener = Container::getInstance()->get(Listener::class);
 
@@ -426,6 +427,208 @@ SQL;
             ));
 
             $listener->teamSetDeleted($teamSetId);
+        }
+    }
+
+    public static function reassignRecords(array $oldTeams, Team $newTeam)
+    {
+        if (!count($oldTeams)) {
+            return;
+        }
+
+        $conn = DBManagerFactory::getConnection();
+
+        $query = <<<SQL
+SELECT tst.team_set_id,
+       tst.team_id
+  FROM team_sets_teams tst
+ INNER JOIN (
+    SELECT DISTINCT team_set_id
+      FROM team_sets_teams
+     WHERE team_id IN(?)
+) q
+    ON q.team_set_id = tst.team_set_id
+SQL;
+
+        $oldTeamIds = array_map(function (Team $team) {
+            return $team->id;
+        }, $oldTeams);
+
+        $stmt = $conn->executeQuery($query, [$oldTeamIds], [Connection::PARAM_STR_ARRAY]);
+        $data = [];
+
+        while (($row = $stmt->fetch())) {
+            $data[$row['team_set_id']][] = $row['team_id'];
+        }
+
+        if (!count($data)) {
+            return;
+        }
+
+        $query = <<<SQL
+SELECT DISTINCT tsm.module_table_name
+  FROM team_sets_modules tsm
+ INNER JOIN team_sets_teams tst
+    ON tst.team_set_id = tsm.team_set_id
+ WHERE tst.team_id IN(?)
+   AND tsm.module_table_name != 'users'
+SQL;
+
+        $stmt = $conn->executeQuery($query, [$oldTeamIds], [Connection::PARAM_STR_ARRAY]);
+        $modules = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($data as $oldTeamSetId => $teamIds) {
+            $teamSetTeams = array_map(function ($id) {
+                $team = BeanFactory::newBean('Teams');
+                $team->id = $id;
+
+                return $team;
+            }, $teamIds);
+
+            $teamSet = new TeamSet(...$teamSetTeams);
+
+            foreach ($oldTeams as $oldTeam) {
+                $teamSet = $teamSet->withoutTeam($oldTeam);
+            }
+
+            $teamSet = $teamSet->withTeam($newTeam);
+            $newTeamSetId = $teamSet->persist();
+
+            self::replaceTeamSet($oldTeamSetId, $newTeamSetId, $modules);
+        }
+
+        foreach ($oldTeams as $oldTeam) {
+            self::replaceRecordTeam($oldTeam, $newTeam, $modules);
+            self::replaceUserTeam($oldTeam, $newTeam);
+        }
+    }
+
+    /**
+     * Replaces old team set with the new one in the records of the given modules
+     *
+     * @param string $oldTeamSetId
+     * @param string$newTeamSetId
+     * @param array $modules
+     */
+    private static function replaceTeamSet($oldTeamSetId, $newTeamSetId, array $modules)
+    {
+        $conn = DBManagerFactory::getConnection();
+
+        // udpate module tables
+        foreach ($modules as $module) {
+            // update team sets in module records
+            $conn->update($module, array(
+                'team_set_id' => $newTeamSetId,
+            ), array(
+                'team_set_id' => $oldTeamSetId,
+            ));
+        }
+
+        // select the records with the old team set for which the one with the new team set already exists
+        // with the same module so that when we don't create duplicates
+        $stmt = $conn->executeQuery(<<<SQL
+SELECT module_table_name
+  FROM team_sets_modules t1
+ WHERE team_set_id = ?
+   AND EXISTS (
+       SELECT NULL
+         FROM team_sets_modules t2
+        WHERE t2.module_table_name = t1.module_table_name
+          AND t2.team_set_id = ?
+)
+SQL
+            , [
+                $oldTeamSetId,
+                $newTeamSetId,
+            ]);
+
+        // delete the records which would produce duplicates after update
+        while (($module = $stmt->fetchColumn())) {
+            $conn->executeUpdate(<<<SQL
+DELETE FROM team_sets_modules
+ WHERE team_set_id = ?
+   AND module_table_name = ?
+SQL
+                , [$oldTeamSetId, $module]);
+        }
+
+        $conn->update('team_sets_modules', array(
+            'team_set_id' => $newTeamSetId,
+        ), array(
+            'team_set_id' => $oldTeamSetId,
+        ));
+
+        Container::getInstance()->get(Listener::class)
+            ->teamSetDeleted($oldTeamSetId);
+    }
+
+    /**
+     * Replaces old team with the new one in the records of the given modules
+     *
+     * @param Team $oldTeam
+     * @param Team $newTeam
+     * @param array $modules
+     *
+     * @throws DBALException
+     */
+    private static function replaceRecordTeam(Team $oldTeam, Team $newTeam, array $modules)
+    {
+        $conn = DBManagerFactory::getConnection();
+        $logger = LoggerManager::getLogger();
+
+        foreach ($modules as $module) {
+            $logger->info(sprintf(
+                "Updating team_id column values in %s table from '%s' to '%s'",
+                $module,
+                $oldTeam->id,
+                $newTeam->id
+            ));
+
+            $conn->update($module, array(
+                'team_id' => $newTeam->id,
+            ), array(
+                'team_id' => $oldTeam->id,
+            ));
+        }
+    }
+
+    /**
+     * Reassigns users from the old team to the new one
+     *
+     * @param Team $oldTeam
+     * @param Team $newTeam
+     *
+     * @throws DBALException
+     */
+    private static function replaceUserTeam(Team $oldTeam, Team $newTeam)
+    {
+        $conn = DBManagerFactory::getConnection();
+        $logger = LoggerManager::getLogger();
+
+        // find affected users
+        $query = 'SELECT id FROM users WHERE default_team = ?';
+        $userIds = $conn->executeQuery($query, array($oldTeam->id))
+            ->fetchAll(PDO::FETCH_COLUMN);
+
+        // for User bean team_id is default_team
+        $logger->info(sprintf(
+            "Updating default_team column values in users table from '%s' to '%s'",
+            $oldTeam->id,
+            $newTeam->id
+        ));
+
+        $conn->update('users', array(
+            'default_team' => $newTeam->id,
+        ), array(
+            'default_team' => $oldTeam->id,
+        ));
+
+        /** @var Team $newTeam */
+        $newTeam = BeanFactory::retrieveBean('Teams', $newTeam->id);
+
+        // make sure users are members of the assigned team
+        foreach ($userIds as $userId) {
+            $newTeam->add_user_to_team($userId);
         }
     }
 }
