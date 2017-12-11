@@ -214,4 +214,40 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
             expect(field._saveRowModel).toHaveBeenCalled();
         });
     });
+
+    describe('_validationComplete()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(field, '_save', function() {});
+            sinon.collection.stub(field, 'setDisabled', function() {});
+            sinon.collection.stub(field, 'cancelEdit', function() {});
+        });
+
+        it('should trigger cancelEdit only if both this.changed and this.model.changed are empty', function() {
+            field.changed = undefined;
+            field.model.changed = undefined;
+            field._validationComplete(true);
+
+            expect(field.cancelEdit).toHaveBeenCalled();
+        });
+
+        it('should not trigger cancelEdit if this.changed is not empty', function() {
+            field.changed = {
+                name: 'new'
+            };
+            field.model.changed = undefined;
+            field._validationComplete(true);
+
+            expect(field.cancelEdit).not.toHaveBeenCalled();
+        });
+
+        it('should not trigger cancelEdit if this.model.changed is not empty', function() {
+            field.changed = undefined;
+            field.model.changed = {
+                name: 'new'
+            };
+            field._validationComplete(true);
+
+            expect(field.cancelEdit).not.toHaveBeenCalled();
+        });
+    });
 });

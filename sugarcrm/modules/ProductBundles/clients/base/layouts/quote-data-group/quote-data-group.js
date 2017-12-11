@@ -57,6 +57,8 @@
         this.collection.comparator = function(model) {
             return model.get('position');
         };
+        // sort the collection by model position
+        this.collection.sort();
 
         var listMeta = app.metadata.getView('Products', 'quote-data-group-list');
         if (listMeta && listMeta.panels && listMeta.panels[0].fields) {
