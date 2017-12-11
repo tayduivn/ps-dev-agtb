@@ -34,7 +34,7 @@ $viewdefs['Emails']['mobile']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
+            'label' => 'LBL_OPPORTUNITY_SUBPANEL_TITLE',
             'context' => array(
                 'link' => 'opportunities',
             ),
