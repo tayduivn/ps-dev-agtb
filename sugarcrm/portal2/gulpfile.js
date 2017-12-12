@@ -124,7 +124,7 @@ gulp.task('karma', function(done) {
 
         karmaOptions.junitReporter = {
             outputDir: path,
-            outputFile: '/test-results.xml',
+            outputFile: 'test-results.xml',
             useBrowserName: false,
         };
     }

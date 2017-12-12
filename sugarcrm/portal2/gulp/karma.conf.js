@@ -20,6 +20,7 @@ module.exports = function(config) {
             'karma-chrome-launcher',
             'karma-firefox-launcher',
             'karma-safari-launcher',
+            'karma-sauce-launcher',
             'karma-coverage',
             'karma-junit-reporter',
         ],
@@ -34,5 +35,24 @@ module.exports = function(config) {
         reportSlowerThan: 500,
         browserDisconnectTimeout: 5000,
         browserDisconnectTolerance: 5,
+        sauceLabs: {
+            testName: 'Portal Karma Tests',
+        },
+        customLaunchers: {
+            dockerChromeHeadless: {
+                base: 'ChromeHeadless',
+                flags: ['--no-sandbox'],
+            },
+            docker_chrome: {
+                base: 'Chrome',
+                flags: ['--no-sandbox'],
+            },
+            sl_ie: {
+                base: 'SauceLabs',
+                browserName: 'internet explorer',
+                platform: 'Windows 7',
+                version: '11.0',
+            },
+        },
     });
 };
