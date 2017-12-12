@@ -23,17 +23,6 @@ class TeamSetTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function uniqueTeams()
-    {
-        $team1 = $this->createTeam();
-
-        $this->expectException(\DomainException::class);
-        new TeamSet($team1, $team1);
-    }
-
-    /**
-     * @test
-     */
     public function withTeam()
     {
         $team1 = $this->createTeam();

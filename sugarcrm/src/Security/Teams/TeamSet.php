@@ -24,11 +24,6 @@ final class TeamSet
     public function __construct(Team ...$teams)
     {
         foreach ($teams as $team) {
-            $id = $team->id;
-            if (isset($this->teams[$id])) {
-                throw new \DomainException('The teams in the set are not unique');
-            }
-
             $this->teams[$team->id] = $team;
         }
     }

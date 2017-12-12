@@ -22,6 +22,7 @@ use SugarTestTeamUtilities;
 use SugarTestUserUtilities;
 use Team;
 use TeamSet;
+use TeamSetManager;
 use User;
 
 /**
@@ -185,6 +186,29 @@ class UpdaterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertUserNotBelongsToTeamSet($user, $teamSet1);
         $this->assertUserBelongsToTeamSet($user, $teamSet12);
+    }
+
+    /**
+     * @test
+     */
+    public function teamRecordsReassigned()
+    {
+        $user = $this->createUser();
+
+        $team1 = $this->createTeam();
+        $team2 = $this->createTeam();
+
+        $this->addUserToTeams($user, $team1, $team2);
+
+        $teamSet1 = $this->createTeamSet($team1);
+        $teamSet2 = $this->createTeamSet($team2);
+        $teamSet12 = $this->createTeamSet($team1, $team2);
+
+        TeamSetManager::reassignRecords([$team2], $team1);
+
+        $this->assertUserBelongsToTeamSet($user, $teamSet1);
+        $this->assertUserNotBelongsToTeamSet($user, $teamSet2);
+        $this->assertUserNotBelongsToTeamSet($user, $teamSet12);
     }
 
     /**

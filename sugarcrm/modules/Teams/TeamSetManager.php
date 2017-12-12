@@ -439,15 +439,13 @@ SQL;
         $conn = DBManagerFactory::getConnection();
 
         $query = <<<SQL
-SELECT tst.team_set_id,
-       tst.team_id
-  FROM team_sets_teams tst
- INNER JOIN (
-    SELECT DISTINCT team_set_id
-      FROM team_sets_teams
-     WHERE team_id IN(?)
-) q
-    ON q.team_set_id = tst.team_set_id
+SELECT DISTINCT
+       tst1.team_set_id,
+       tst1.team_id
+  FROM team_sets_teams tst1
+ INNER JOIN team_sets_teams tst2
+    ON tst2.team_set_id = tst1.team_set_id
+ WHERE tst2.team_id IN(?)
 SQL;
 
         $oldTeamIds = array_map(function (Team $team) {
@@ -577,7 +575,7 @@ SQL
         $logger = LoggerManager::getLogger();
 
         foreach ($modules as $module) {
-            $logger->info(sprintf(
+            $logger->debug(sprintf(
                 "Updating team_id column values in %s table from '%s' to '%s'",
                 $module,
                 $oldTeam->id,
@@ -611,7 +609,7 @@ SQL
             ->fetchAll(PDO::FETCH_COLUMN);
 
         // for User bean team_id is default_team
-        $logger->info(sprintf(
+        $logger->debug(sprintf(
             "Updating default_team column values in users table from '%s' to '%s'",
             $oldTeam->id,
             $newTeam->id
