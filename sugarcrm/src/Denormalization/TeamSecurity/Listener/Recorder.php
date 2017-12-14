@@ -15,8 +15,8 @@ namespace Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Psr\Log\LoggerInterface;
-use Rhumsaa\Uuid\Uuid;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 use TimeDate;
 
 /**
