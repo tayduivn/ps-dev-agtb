@@ -60,7 +60,7 @@ final class Denormalized implements Strategy
     {
         $alias = $this->buildAlias($db, $table);
 
-        return $query . ' INNER JOIN ' . $this->table . ' ' . $alias
+        return $query . ' INNER JOIN ' . $this->table . ' AS ' . $alias
             . ' ON ' . $alias . '.team_set_id = ' . $table . '.team_set_id'
             . ' AND ' . $alias . '.user_id = ' . $db->quoted($this->user->id);
     }
