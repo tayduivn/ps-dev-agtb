@@ -32,13 +32,21 @@ class JWTBearerToken extends AbstractToken
     protected $identity;
 
     /**
+     * Tenant SRN
+     * @var string
+     */
+    protected $tenant;
+
+    /**
      * JWTBearerToken constructor.
      * @param string $identity
+     * @param string $tenant Tenant SRN
      * @param array $roles
      */
-    public function __construct($identity, $roles = array())
+    public function __construct($identity, $tenant, $roles = array())
     {
         $this->identity = $identity;
+        $this->tenant = $tenant;
         parent::__construct($roles);
     }
 
@@ -72,6 +80,8 @@ class JWTBearerToken extends AbstractToken
             'aud' => $this->getAttribute('aud'),
             'sub' => $this->getUser()->getSugarUser()->user_name,
             'iss' => $this->getAttribute('iss'),
+            'id_ext' => ['tid' => $this->tenant],
+            'at_ext' => ['tid' => $this->tenant],
         ];
         return JWSFactory::createJWSToCompactJSON(
             $claims,

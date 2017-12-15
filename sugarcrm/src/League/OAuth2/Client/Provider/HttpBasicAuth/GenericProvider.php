@@ -140,9 +140,10 @@ class GenericProvider extends BasicGenericProvider
      *
      * @param string $username
      * @param string $password
+     * @param string $tenant Tenant SRN
      * @return array
      */
-    public function remoteIdpAuthenticate($username, $password)
+    public function remoteIdpAuthenticate($username, $password, $tenant)
     {
         /**
          * @todo scope need to be defined in future
@@ -153,7 +154,7 @@ class GenericProvider extends BasicGenericProvider
             'headers' => [
                 'content-type' => 'application/x-www-form-urlencoded',
             ] + $authHeaders,
-            'body' => $this->buildQueryString(['user_name' => $username, 'password' => $password]),
+            'body' => $this->buildQueryString(['user_name' => $username, 'password' => $password, 'tid' => $tenant]),
         ];
 
 

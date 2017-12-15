@@ -14,9 +14,11 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Provider;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\IdPAuthenticationProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\IdpUsernamePasswordToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
+
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 
@@ -76,7 +78,8 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsWithSupportedToken()
     {
-        $token = new UsernamePasswordToken(
+        $token = new IdpUsernamePasswordToken(
+            'SRN:tenant',
             'test',
             'test',
             AuthProviderBasicManagerBuilder::PROVIDER_KEY_IDP
@@ -91,7 +94,7 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsWithUnsupportedToken()
     {
-        $token = new UsernamePasswordToken('test', 'test', 'test');
+        $token = new IdpUsernamePasswordToken('SRN:tenant', 'test', 'test', 'test');
         $this->assertFalse($this->provider->supports($token));
     }
 
@@ -138,7 +141,8 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testAuthenticateWithLegacyTokenAuthenticationError(array $data)
     {
-        $token = new UsernamePasswordToken(
+        $token = new IdpUsernamePasswordToken(
+            'srn:tenant',
             'user',
             'password',
             AuthProviderBasicManagerBuilder::PROVIDER_KEY_IDP
@@ -161,7 +165,8 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
             'status' => 'success',
             'user' => ['user_name' => 'user'],
         ];
-        $token = new UsernamePasswordToken(
+        $token = new IdpUsernamePasswordToken(
+            'srn:tenant',
             'user',
             'password',
             AuthProviderBasicManagerBuilder::PROVIDER_KEY_IDP

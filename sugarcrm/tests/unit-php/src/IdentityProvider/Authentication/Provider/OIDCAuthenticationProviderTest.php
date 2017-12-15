@@ -84,7 +84,7 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
                 'tokenClass' => new IntrospectToken('test'),
                 ],
             'jwtToken' => [
-                'tokenClass' => new JWTBearerToken('testId'),
+                'tokenClass' => new JWTBearerToken('testId', 'srn:tenant'),
             ],
         ];
     }
@@ -219,7 +219,7 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
 
         $token = $this->getMockBuilder(JWTBearerToken::class)
                       ->enableOriginalConstructor()
-                      ->setConstructorArgs(['userId'])
+                      ->setConstructorArgs(['userId', 'srn:tenant'])
                       ->setMethods(['__toString'])
                       ->getMock();
         $token->expects($this->once())->method('__toString')->willReturn('assertion');

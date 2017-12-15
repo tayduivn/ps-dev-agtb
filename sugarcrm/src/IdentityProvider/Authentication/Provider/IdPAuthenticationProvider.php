@@ -16,6 +16,7 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\IdpUsernamePasswordToken;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
 
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
@@ -81,7 +82,7 @@ class IdPAuthenticationProvider implements AuthenticationProviderInterface
             throw new ProviderNotFoundException();
         }
         try {
-            $authData = $this->oAuthProvider->remoteIdpAuthenticate($token->getUsername(), $token->getCredentials());
+            $authData = $this->oAuthProvider->remoteIdpAuthenticate($token->getUsername(), $token->getCredentials(), $token->getTenant());
 
             if (empty($authData['status']) || $authData['status'] !== 'success' || empty($authData['user']['user_name'])) {
                 throw new AuthenticationException('IdP authentication failed');
@@ -111,6 +112,6 @@ class IdPAuthenticationProvider implements AuthenticationProviderInterface
      */
     public function supports(TokenInterface $token)
     {
-        return $token instanceof UsernamePasswordToken && $this->providerKey === $token->getProviderKey();
+        return $token instanceof IdpUsernamePasswordToken && $this->providerKey === $token->getProviderKey();
     }
 }

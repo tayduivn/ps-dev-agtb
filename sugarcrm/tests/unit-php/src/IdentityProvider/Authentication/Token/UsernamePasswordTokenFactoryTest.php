@@ -39,7 +39,7 @@ class UsernamePasswordTokenFactoryTest extends \PHPUnit_Framework_TestCase
         $this->tokenFactory = new UsernamePasswordTokenFactory(
             'username',
             'password',
-            ['passwordEncrypted' => false]
+            ['passwordEncrypted' => false, 'tenant' => 'srn:tenant']
         );
     }
 

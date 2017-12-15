@@ -27,8 +27,10 @@ class SugarOAuth2StorageOIDC extends SugarOAuth2Storage
     public function checkUserCredentials($client_id, $username, $password)
     {
         try {
-            $token = (new UsernamePasswordTokenFactory($username, $password))->createIdPAuthenticationToken();
-            $manager = $this->getAuthProviderBasicBuilder(new Config(\SugarConfig::getInstance()))
+            $config = new Config(\SugarConfig::getInstance());
+            $token = (new UsernamePasswordTokenFactory($username, $password, ['tenant' => $this->getTenant($config)]))
+                        ->createIdPAuthenticationToken();
+            $manager = $this->getAuthProviderBasicBuilder($config)
                                   ->buildAuthProviders();
             $resultToken = $manager->authenticate($token);
             if ($resultToken->isAuthenticated()) {
@@ -42,6 +44,17 @@ class SugarOAuth2StorageOIDC extends SugarOAuth2Storage
         }
 
         throw new SugarApiExceptionNeedLogin(translate('ERR_INVALID_PASSWORD', 'Users'));
+    }
+
+    /**
+     * @param Config $config
+     *
+     * @return string
+     */
+    protected function getTenant(Config $config)
+    {
+        $oidcConfig = $config->get('oidc_oauth', []);
+        return !empty($oidcConfig['tid']) ? $oidcConfig['tid'] : '';
     }
 
     /**

@@ -57,9 +57,10 @@ class SugarOAuth2StorageOIDCTest extends \PHPUnit_Framework_TestCase
 
         $this->storage = $this->getMockBuilder(\SugarOAuth2StorageOIDC::class)
                               ->disableOriginalConstructor()
-                              ->setMethods(['getAuthProviderBasicBuilder'])->getMock();
+                              ->setMethods(['getAuthProviderBasicBuilder', 'getTenant'])->getMock();
 
         $this->storage->method('getAuthProviderBasicBuilder')->willReturn($this->authProviderBasicBuilder);
+        $this->storage->method('getTenant')->willReturn('srn:tenant');
         $this->authProviderBasicBuilder->method('buildAuthProviders')->willReturn($this->authManager);
 
         $GLOBALS['log'] = $this->getMockBuilder(\LoggerManager::class)

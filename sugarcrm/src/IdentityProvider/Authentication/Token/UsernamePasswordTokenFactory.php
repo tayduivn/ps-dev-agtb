@@ -29,6 +29,11 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 class UsernamePasswordTokenFactory
 {
     /**
+     * @var string Tenant SRN
+     */
+    protected $tenant;
+
+    /**
      * @var string
      */
     protected $username;
@@ -54,6 +59,7 @@ class UsernamePasswordTokenFactory
         $this->username = $username;
         $this->password = $password;
         $this->params = $params;
+        $this->tenant = !empty($params['tenant']) ? $params['tenant'] : '';
     }
 
     /**
@@ -98,11 +104,12 @@ class UsernamePasswordTokenFactory
     /**
      * Create token for remote IdP auth.
      *
-     * @return UsernamePasswordToken
+     * @return IdpUsernamePasswordToken
      */
     public function createIdPAuthenticationToken()
     {
-        return new UsernamePasswordToken(
+        return new IdpUsernamePasswordToken(
+            $this->tenant,
             $this->username,
             $this->password,
             AuthProviderManagerBuilder::PROVIDER_KEY_IDP,

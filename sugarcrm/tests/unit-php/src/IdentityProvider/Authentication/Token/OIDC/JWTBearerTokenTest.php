@@ -54,7 +54,7 @@ class JWTBearerTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCredentials()
     {
-        $token = new JWTBearerToken('userId');
+        $token = new JWTBearerToken('userId', 'srn:tenant');
         $this->assertNull($token->getCredentials());
     }
 
@@ -63,7 +63,7 @@ class JWTBearerTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetIdentity()
     {
-        $token = new JWTBearerToken('userId');
+        $token = new JWTBearerToken('userId', 'srn:tenant');
         $this->assertEquals('userId', $token->getIdentity());
     }
 
@@ -72,22 +72,22 @@ class JWTBearerTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testToString()
     {
-        $expectedResult = 'eyJraWQiOiJLZXlJZCIsImFsZyI6IlJTMjU2In0.eyJpYXQiOjEwLCJleHAiOjMxMCwiYXVkIjoiaHR0cDpcL1wvY' .
-            'XVyLnVybCIsInN1YiI6InRlc3RVc2VyIiwiaXNzIjoiY2xpZW50In0.QUh_Wld9Jr-V8XHZOgldqsXVoUQPmW-O1T-BmVfecR8YE1H2' .
-            'l5An1je0ckYn44J6NwOfoxWCKbCjSxoYsd3InH_VilFUpHhSSdDPZYfDSv_DGDLbKkemgF88f8YXMLxJLEOcIUC_Qx24JymuUWGnv0I' .
-            'WzPYWQay-QN_E-cf0pqUy4OOaaCv4tmIuQPmhjJPQyAvBiu-G9as2JfOn1BkjG84Ivr0zrC4ly4mi56A-0K__T0fm_9fb_7IrCGC-I9' .
-            'yVoPP2uYZvmCv_HXz9HiAWXYGwyx2ftlSvzj4-ZVGvLvgbOaJ7fpkjzwLBJFGk5JL-2AhTrcf8eChEQ8C_E7LKTDKlLfjtVybsmn0S3' .
-            'skYjqUwNxbmf0szve3gmv56Sh6mgv0fnnPy2uuCEGagornBe_sPI5Nijk09YmPwinWLRu2BXkdYdfwsgL6yqIWJ-Ai3H4bX3ta-BrXt' .
-            'YWy8ayvOToAXVHSigIf_ZnxurRyIkiCdPKBXU6eQ2nuorVgL91rT-Qf-31AcWLwUHEboQI7-8TSr6XWPdYZ3Mzb8eJ9ikQXUsV037ac' .
-            'mtUkVGaaFPa1m6fyjvn6xS8cDj1J7g0UrIy0tthqdx9o8hHfH4mrZz7pikhYaiCZ6eJpwLESiKkMVIjyVsoWVr7bdN5AdwlB_NJ80P7' .
-            'fpJqiozLpVOvi76PQ';
+        $expectedResult = 'eyJraWQiOiJLZXlJZCIsImFsZyI6IlJTMjU2In0.eyJpYXQiOjEwLCJleHAiOjMxMCwiYXVkIjoiaHR0cDpcL1wvYX' .
+            'VyLnVybCIsInN1YiI6InRlc3RVc2VyIiwiaXNzIjoiY2xpZW50IiwiaWRfZXh0Ijp7InRpZCI6InNybjp0ZW5hbnQifSwiYXRfZXh0Ij' .
+            'p7InRpZCI6InNybjp0ZW5hbnQifX0.GGue32GeymAuuAZ428HjoJdTMicvCDVihiS3oc_m6dHAsJdxSuIArBYdvsYToUMSFmuS8I_raU' .
+            'WndYwcCu4xjabC0ZWsUdCObwL3Ajr3kJdPoIkdseLOhhJD8ZBq4Xo74pDGEdNAIP66IRBX27Tt4BUmEMzEYquZb9hhse4YMwmB4JH8S0' .
+            'pMhcyYuYheXE4GWW16nNRzqtNXPlYRfZERP3lGvEdRS8kA1XD7bGJ-9vpBLKGI-sj4s3rgMN2-uIzaO3X1Y26w9g_59axhng7hF5NOWf' .
+            'q7LVNAwB1X8tmQ9sFS9Up9J1ge21RafgUFgY59h_--RDxneFuBqLrLRWllN8_XyWNKGzc5v2Fr-MIlVoyKUvrlc0VFavgV_pi1TGwpAv' .
+            'gdphLfIRWcIKYJzSX7-rLsSboK5a5Lro1oYNpHB7Ba2vRJMzg6Bb-xA4KDboxuUMet5YYMdSGhkkl5uFB13HMBZyNCIFm0apTb5lltSE' .
+            'TaEV5VvxS5R4Y55d592r_Y6t35vL7q7NqHzBwF_2IVrfuBtCc4cnrdkuQv5bjYK8gtdL_Rx7cTjH9g8-Xp1IIiA_v5x8qwPLn5FGKEO0' .
+            'a00O7JlZuLg2edgELUEIoeq1Deb0ZBOQ6BWZjt9JLme4EcUKIOxcqnSIQ0Pi3O5PCaO3lJI4XDnUNZK2-MTL-h0_c';
         $user = $this->createMock(User::class);
         $sugarUser = $this->createMock(\User::class);
         $sugarUser->user_name = 'testUser';
         $user->method('getSugarUser')->willReturn($sugarUser);
 
         $token = $this->getMockBuilder(JWTBearerToken::class)
-                      ->setConstructorArgs(['userId'])
+                      ->setConstructorArgs(['userId', 'srn:tenant'])
                       ->setMethods(['getUser'])
                       ->getMock();
 

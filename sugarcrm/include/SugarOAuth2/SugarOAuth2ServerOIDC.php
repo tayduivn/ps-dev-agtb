@@ -104,10 +104,11 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
     protected function createAccessToken($client_id, $user_id, $scope = null)
     {
         try {
-            $authManager = $this->getAuthProviderBasicBuilder(new Config(\SugarConfig::getInstance()))
+            $sugarConfig = \SugarConfig::getInstance();
+            $authManager = $this->getAuthProviderBasicBuilder(new Config($sugarConfig))
                                 ->buildAuthProviders();
 
-            $jwtBearerToken = new JWTBearerToken($user_id);
+            $jwtBearerToken = new JWTBearerToken($user_id, $sugarConfig->get('oidc_oauth')['tid']);
             $accessToken = $authManager->authenticate($jwtBearerToken);
 
             $token = array(

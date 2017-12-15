@@ -80,6 +80,7 @@ class Config
         $endpointService = new EndpointService(['host' => $oidcUrl]);
 
         $oidcConfig = [
+            'tid' => !empty($config['tid']) ? $config['tid'] : '',
             'clientId' => $config['clientId'],
             'clientSecret' => $config['clientSecret'],
             'oidcUrl' => $oidcUrl,
