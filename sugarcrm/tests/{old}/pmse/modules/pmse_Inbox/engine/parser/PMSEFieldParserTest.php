@@ -1110,7 +1110,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             )
         );
 
-        $token = "{::future::Leads::email_addresses_primary::}";
+        $token = array('Leads', 'email_addresses_primary');
         $expectedToken = "rock.star@gmail.com";
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
@@ -1158,7 +1158,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             )
         );
 
-        $token = "{::future::Leads::do_not_call::}";
+        $token = array('Leads', 'do_not_call');
         $expectedToken = true;
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
@@ -1206,7 +1206,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             )
         );
 
-        $token = "{::future::Leads::do_not_call::}";
+        $token = array('Leads', 'do_not_call');
         $expectedToken = true;
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
