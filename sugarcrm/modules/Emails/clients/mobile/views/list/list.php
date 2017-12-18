@@ -23,6 +23,7 @@ $viewdefs['Emails']['mobile']['view']['list'] = array(
                     'fields' => array(
                         'email_address_id',
                         'email_address',
+                        'address_type',
                         'parent_type',
                         'parent_id',
                         'parent_name',
@@ -53,6 +54,7 @@ $viewdefs['Emails']['mobile']['view']['list'] = array(
                             'fields' => array(
                                 'email_address_id',
                                 'email_address',
+                                'address_type',
                                 'parent_type',
                                 'parent_id',
                                 'parent_name',
@@ -77,6 +79,7 @@ $viewdefs['Emails']['mobile']['view']['list'] = array(
                             'fields' => array(
                                 'email_address_id',
                                 'email_address',
+                                'address_type',
                                 'parent_type',
                                 'parent_id',
                                 'parent_name',
@@ -88,6 +91,7 @@ $viewdefs['Emails']['mobile']['view']['list'] = array(
                             'fields' => array(
                                 'email_address_id',
                                 'email_address',
+                                'address_type',
                                 'parent_type',
                                 'parent_id',
                                 'parent_name',
