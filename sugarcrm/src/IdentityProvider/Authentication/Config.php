@@ -70,12 +70,13 @@ class Config
         $siteUrl = rtrim($this->get('site_url'), '/');
         $acsUrl = sprintf('%s/index.php?module=Users&action=Authenticate', $siteUrl);
         $sloUrl = sprintf('%s/index.php?module=Users&action=Logout', $siteUrl);
-        $idpSsoUrl = $this->get('SAML_loginurl');
+        $idpSsoUrl = htmlspecialchars_decode($this->get('SAML_loginurl'), ENT_QUOTES);
+        $idpSloUrl = htmlspecialchars_decode($this->get('SAML_SLO'), ENT_QUOTES);
         return [
             'strict' => false,
             'debug' => false,
             'sp' => [
-                'entityId' => $this->get('SAML_issuer', 'php-saml') ?: 'php-saml',
+                'entityId' => htmlspecialchars_decode($this->get('SAML_issuer', 'php-saml'), ENT_QUOTES) ?: 'php-saml',
                 'assertionConsumerService' => [
                     'url' => $acsUrl,
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_POST,
@@ -91,13 +92,13 @@ class Config
             ],
 
             'idp' => [
-                'entityId' => $this->get('SAML_idp_entityId', $idpSsoUrl),
+                'entityId' => htmlspecialchars_decode($this->get('SAML_idp_entityId', $idpSsoUrl), ENT_QUOTES),
                 'singleSignOnService' => [
                     'url' => $idpSsoUrl,
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'singleLogoutService' => [
-                    'url' => $this->get('SAML_SLO'),
+                    'url' => $idpSloUrl,
                     'binding' => \OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT,
                 ],
                 'x509cert' => $this->get('SAML_X509Cert'),

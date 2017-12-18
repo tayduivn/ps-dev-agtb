@@ -211,6 +211,61 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedConfig, $config->getSAMLConfig());
     }
 
+    public function getSAMLConfigIdpStoredValuesProperlyEscapeProvider()
+    {
+        return [
+            ['https://test.local', 'https://test.local'],
+            ['https://test.local?idp1=test', 'https://test.local?idp1=test'],
+            ['https://test.local/idp=test&idp1=test', 'https://test.local/idp=test&idp1=test'],
+            ['https://test.local/idp=test&amp;idp1=test', 'https://test.local/idp=test&idp1=test'],
+        ];
+    }
+
+    /**
+     * @param string $storedValue
+     * @param string $expectedValue
+     *
+     * @covers ::getSAMLConfig
+     * @dataProvider getSAMLConfigIdpStoredValuesProperlyEscapeProvider
+     */
+    public function testGetSAMLConfigIdpStoredValuesProperlyEscape($storedValue, $expectedValue)
+    {
+        $config = $this->getMockBuilder(Config::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['get', 'getSugarCustomSAMLSettings'])
+            ->getMock();
+
+        $config->expects($this->any())->method('get')
+            ->will($this->returnValueMap(
+                [
+                    ['SAML_loginurl', null, $storedValue],
+                    ['SAML_SLO', null, $storedValue],
+                    ['SAML_issuer', 'php-saml', $storedValue],
+                    ['SAML_idp_entityId', $expectedValue, $storedValue],
+                    ['SAML', [], []],
+                ]
+            ));
+
+        $config->expects($this->any())->method('getSugarCustomSAMLSettings')->willReturn([]);
+
+        $samlConfig = $config->getSAMLConfig();
+
+        $this->assertArrayHasKey('idp', $samlConfig);
+        $this->assertArrayHasKey('singleSignOnService', $samlConfig['idp']);
+        $this->assertArrayHasKey('singleLogoutService', $samlConfig['idp']);
+        $this->assertArrayHasKey('entityId', $samlConfig['idp']);
+        $this->assertArrayHasKey('url', $samlConfig['idp']['singleSignOnService']);
+        $this->assertArrayHasKey('url', $samlConfig['idp']['singleLogoutService']);
+
+        $this->assertArrayHasKey('sp', $samlConfig);
+        $this->assertArrayHasKey('entityId', $samlConfig['sp']);
+
+        $this->assertEquals($expectedValue, $samlConfig['idp']['singleSignOnService']['url'], 'SSO url invalid');
+        $this->assertEquals($expectedValue, $samlConfig['idp']['singleLogoutService']['url'], 'SLO url invalid');
+        $this->assertEquals($expectedValue, $samlConfig['idp']['entityId'], 'IdP Entity ID invalid');
+        $this->assertEquals($expectedValue, $samlConfig['sp']['entityId'], 'SugarCRM Entity ID invalid');
+    }
+
     /**
      * @covers ::getLdapConfig
      */
