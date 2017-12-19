@@ -277,7 +277,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider->expects($this->once())
                  ->method('getAccessToken')
-                 ->with('client_credentials', ['scope' => 'offline'])
+                 ->with('client_credentials', ['scope' => 'idp.auth.password'])
                  ->willReturn($accessToken);
 
         $this->requestFactory->expects($this->once())

@@ -145,10 +145,7 @@ class GenericProvider extends BasicGenericProvider
      */
     public function remoteIdpAuthenticate($username, $password, $tenant)
     {
-        /**
-         * @todo scope need to be defined in future
-         */
-        $accessToken = $this->getAccessToken('client_credentials', ['scope' => 'offline']);
+        $accessToken = $this->getAccessToken('client_credentials', ['scope' => 'idp.auth.password']);
         $authHeaders = $this->getAuthorizationHeaders($accessToken->getToken());
         $options = [
             'headers' => [
@@ -156,7 +153,6 @@ class GenericProvider extends BasicGenericProvider
             ] + $authHeaders,
             'body' => $this->buildQueryString(['user_name' => $username, 'password' => $password, 'tid' => $tenant]),
         ];
-
 
         $request = $this->getRequestFactory()->getRequestWithOptions(
             self::METHOD_POST,
