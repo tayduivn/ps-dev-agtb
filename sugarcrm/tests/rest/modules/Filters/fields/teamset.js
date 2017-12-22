@@ -28,10 +28,12 @@ describe('Filters.Teamset', function() {
         ];
         records = yield Fixtures.create(records, {module: 'Teams'});
 
+        [this.team1, this.team2, this.team3] = records.Teams;
+
         records = [
-            {attributes: {team_name: [{id: records.Teams[0].id}], assigned_user_id: this.johnId}},
-            {attributes: {team_name: [{id: records.Teams[1].id}], assigned_user_id: this.johnId}},
-            {attributes: {team_name: [{id: records.Teams[2].id}], assigned_user_id: this.johnId}},
+            {attributes: {team_name: [{id: this.team1.id}], assigned_user_id: this.johnId}},
+            {attributes: {team_name: [{id: this.team2.id}], assigned_user_id: this.johnId}},
+            {attributes: {team_name: [{id: this.team3.id}], assigned_user_id: this.johnId}},
         ];
 
         this.records = yield Fixtures.create(records, {module: 'Accounts'});
@@ -49,7 +51,7 @@ describe('Filters.Teamset', function() {
             qs: {
                 filter: [{
                     assigned_user_id: {'$in': [this.johnId]},
-                    team_id: {'$in': [this.account1.team_name[0].id, this.account2.team_name[0].id]},
+                    team_id: {'$in': [this.team1.id, this.team2.id]},
                 }]
             },
         });
@@ -70,7 +72,7 @@ describe('Filters.Teamset', function() {
             qs: {
                 filter: [{
                     assigned_user_id: this.johnId,
-                    team_id: {'$not_in': [this.account1.team_name[0].id, this.account2.team_name[0].id]},
+                    team_id: {'$not_in': [this.team1.id, this.team2.id]},
                 }]
             },
         });
