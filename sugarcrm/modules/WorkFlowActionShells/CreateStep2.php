@@ -72,10 +72,12 @@ if(isset($_REQUEST['action_type']) && $_REQUEST['action_type']!=""){
 	$focus->action_type = $_REQUEST['action_type'];
 }
 
-$action_module = InputValidation::getService()->getValidInputRequest('action_module', 'Assert\Mvc\ModuleName');
-if (!empty($action_module)) {
-    $focus->action_module = $action_module;
+// This cannot be converted to using the IVF since this is not always a module.
+// Many times this is a link name, or relationship name
+if (isset($_REQUEST['action_module']) && $_REQUEST['action_module'] != "") {
+    $focus->action_module = $_REQUEST['action_module'];
 }
+
 if(isset($_REQUEST['rel_module']) && $_REQUEST['rel_module']!=""){
 	$focus->rel_module = $_REQUEST['rel_module'];
 }
