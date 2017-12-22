@@ -124,6 +124,8 @@
             self.model.modelView = 'list';
             if (self.view.layout) {
                 self.view.layout.trigger('editablelist:' + self.view.name + ':save', self.model, oldModelId);
+                // trigger event for QuotesLineNumHelper plugin to re-number the lines
+                self.view.layout.trigger('quotes:line_nums:reset');
             }
 
             if (model.collection._resavePositions) {
