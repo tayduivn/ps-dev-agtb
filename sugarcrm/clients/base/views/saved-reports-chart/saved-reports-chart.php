@@ -66,10 +66,17 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'saved_report_id',
+                    'name' => 'saved_report',
                     'label' => 'LBL_REPORT_SELECT',
-                    'type' => 'enum',
-                    'options' => array('' => ''),
+                    'type' => 'relate',
+                    'id_name' => 'saved_report_id',
+                    'module' => 'Reports',
+                    'rname' => 'name',
+                    'initial_filter' => 'with_charts',
+                    'initial_filter_label' => 'LBL_FILTER_WITH_CHARTS',
+                    'filter_populate' => array(
+                        'chart_type' => 'none',
+                    ),
                 ),
                 array(
                     'name' => 'auto_refresh',

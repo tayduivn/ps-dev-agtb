@@ -32,27 +32,6 @@ describe('Base.View.Saved-Reports-Chart', function() {
         view = undefined;
     });
 
-    describe('initDashlet()', function() {
-        var getAllReportsStub, getReportByIdStub;
-        beforeEach(function() {
-            getAllReportsStub = sinon.stub(view, 'getAllReportsWithCharts', function() {});
-            getReportByIdStub = sinon.stub(view, 'getSavedReportById', function() {});
-        });
-
-        afterEach(function() {
-            getAllReportsStub.restore();
-            getReportByIdStub.restore();
-        });
-
-        it('should call getAllReportsWithCharts() when in config', function() {
-            view.meta.config = true;
-            view.dashletConfig = {};
-            view.dashletConfig.dashlet_config_panels = {};
-            view.initDashlet({});
-            expect(getAllReportsStub).toHaveBeenCalled();
-        });
-    });
-
     describe('bindDataChange()', function() {
         var settingsStub;
         beforeEach(function() {

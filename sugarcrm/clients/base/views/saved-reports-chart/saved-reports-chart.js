@@ -27,7 +27,6 @@
         // check if we're on the config screen
         if (this.meta.config) {
             this.meta.panels = this.dashletConfig.dashlet_config_panels;
-            this.getAllReportsWithCharts();
         } else {
             var autoRefresh = this.settings.get('auto_refresh');
             if (autoRefresh > 0) {
@@ -71,8 +70,12 @@
     /**
      * Route to the bwc edit view of the currently selected Saved Report. If User clicks 'save' or 'cancel' or 'delete'
      * from there, return the user to the current page.
+     *
+     * @deprecated
      */
     editSavedReport: function() {
+        app.logger.warn('View.Views.Base.SavedReportsChartView#editSavedReport' +
+            'has been deprecated since 8.0.0.0 and will be removed in a future release');
         var currentTargetId = this.dashModel.get('saved_report_id'),
             params = {
                 dashletEdit: 1
@@ -151,8 +154,6 @@
                     }
                 };
                 this.getSavedReportById(reportId, options);
-                // show or hide 'Edit Selected Report' link
-                this.updateEditLink(reportId);
             }, this);
 
             this.settings.on('change:chart_type', function(model) {
@@ -164,8 +165,13 @@
 
     /**
      * Check acls to show/hide 'Edit Selected Report' link
+     *
+     * @deprecated
      */
     updateEditLink: function(reportId) {
+        app.logger.warn('View.Views.Base.SavedReportsChartView#updateEditLink' +
+            'has been deprecated since 8.0.0.0 and will be removed in a future release');
+
         var acls = this.reportAcls[reportId || this.settings.get('saved_report_id')],
             showEditLink = !acls || acls['edit'] !== 'no';
         this.$('[name="editReport"]').toggle(showEditLink);
@@ -616,8 +622,12 @@
 
     /**
      * Makes a call to filter api to get all reports with chart stored in the saved_reports table
+     *
+     * @deprecated
      */
     getAllReportsWithCharts: function() {
+        app.logger.warn('View.Views.Base.SavedReportsChartView#getAllReportsWithCharts' +
+            'has been deprecated since 8.0.0.0 and will be removed in a future release');
         var params = {
                 fields: 'id,name,module,report_type,content,chart_type,assigned_user_id',
                 order_by: 'name:asc',
@@ -636,8 +646,12 @@
      * Parses items passed back from filter api endpoint into enum options
      *
      * @param {Array} reports an array of saved reports returned from the endpoint
+     * @deprecated
      */
     parseAllSavedReports: function(reports) {
+        app.logger.warn('View.Views.Base.SavedReportsChartView#parseAllSavedReports' +
+            'has been deprecated since 8.0.0.0 and will be removed in a future release');
+
         reports = reports.records || [];
         this.reportOptions = {};
         this.reportAcls = {};
