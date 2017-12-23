@@ -277,3 +277,12 @@ span.count {
 .stage_needsanalysis {
   fill: darken(@yellow, 10%);
 }
+
+// needed so that the report chart print to image canvas is off-screen
+.sc-print {
+  visibility: hidden;
+  position: absolute !important;
+  left: -10000px;
+  width: 720px;
+  height: 480px;
+}
