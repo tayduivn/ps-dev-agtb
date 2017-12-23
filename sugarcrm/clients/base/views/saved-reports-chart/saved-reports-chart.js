@@ -198,7 +198,6 @@
                 auto_refresh:    0,
                 colorData:       'class',
                 config:          true,
-                direction:       'ltr',
                 hideEmptyGroups: true,
                 reduceXTicks:    true,
                 rotateTicks:     true,
@@ -252,7 +251,8 @@
             y_axis_label: this._getYaxisLabel(data),
             module: properties.base_module,
             allow_drillthru: properties.allow_drillthru,
-            vertical: config.orientation === 'vertical' ? true : false
+            vertical: config.orientation === 'vertical' ? true : false,
+            direction: app.lang.direction
         };
 
         settings = this.getDefaultSettings();
