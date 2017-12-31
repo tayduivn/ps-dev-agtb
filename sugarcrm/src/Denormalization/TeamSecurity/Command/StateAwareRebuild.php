@@ -54,7 +54,7 @@ final class StateAwareRebuild
      *
      * @return array
      */
-    public function __invoke()
+    public function __invoke($ignoreUpToDate = false)
     {
         if (!$this->state->isEnabled()) {
             return array(
@@ -70,7 +70,7 @@ final class StateAwareRebuild
             );
         }
 
-        if ($this->state->isUpToDate()) {
+        if (!$ignoreUpToDate && $this->state->isUpToDate()) {
             return array(
                 true,
                 'Denormalized data is up to date.',

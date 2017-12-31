@@ -58,6 +58,40 @@ class StateAwareRebuildTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($state->isRebuildRunning());
     }
 
+    /**
+     * @test
+     * @dataProvider ignoreUpToDateProvider
+     */
+    public function upToDateDataIsRebuildOnlyIfForced(
+        $ignoreUpToDate,
+        \PHPUnit_Framework_MockObject_Matcher_Invocation $matcher
+    ) {
+        $state = $this->createState(true);
+        $state->activateTable('team_sets_users_1');
+
+        $rebuild = $this->createPartialMock(stdClass::class, ['__invoke']);
+        $rebuild->expects($matcher)
+            ->method('__invoke')
+            ->with('team_sets_users_2');
+
+        $stateAwareRebuild = $this->createStateAwareRebuild($state, $rebuild);
+        $stateAwareRebuild($ignoreUpToDate);
+    }
+
+    public static function ignoreUpToDateProvider()
+    {
+        return [
+            'not-forced' => [
+                false,
+                self::never(),
+            ],
+            'forced' => [
+                true,
+                self::once(),
+            ],
+        ];
+    }
+
     private function assertRebuildNotHappened(State $state)
     {
         $rebuild = $this->createPartialMock(stdClass::class, ['__invoke']);

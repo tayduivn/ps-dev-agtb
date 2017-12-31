@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -31,7 +32,14 @@ class RebuildCommand extends Command implements InstanceModeInterface
     {
         $this
             ->setName('team-security:rebuild')
-            ->setDescription('Rebuild denormalized team security data');
+            ->setDescription('Rebuild denormalized team security data')
+            ->addOption(
+                'ignore-up-to-date',
+                null,
+                InputOption::VALUE_NONE,
+                'Run even if the data is up to date'
+            )
+        ;
     }
 
     /**
@@ -40,7 +48,8 @@ class RebuildCommand extends Command implements InstanceModeInterface
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $command = Container::getInstance()->get(StateAwareRebuild::class);
-        list($status, $message) = $command();
+        $ignoreUpToDate = $input->getOption('ignore-up-to-date');
+        list($status, $message) = $command($ignoreUpToDate);
         $output->writeln($message);
 
         return $status ? 0 : 1;
