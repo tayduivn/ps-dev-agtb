@@ -59,11 +59,11 @@ class ImporterTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDateTimeImport($content_idx, $expected_datetime, $date_format, $time_format)
     {
-        $file = $GLOBALS['sugar_config']['upload_dir'].'test.csv';
+        $file = $GLOBALS['sugar_config']['upload_dir'] . 'ImporterTest.csv';
         $ret = file_put_contents($file, self::$CsvContent[$content_idx]);
         $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.$content_idx);
 
-        $importSource = new ImportFile($file, ',', '"');
+        $importSource = new ImportFile(\UploadStream::STREAM_NAME . '://' . 'ImporterTest.csv', ',', '"');
 
         $bean = BeanFactory::newBean($this->_importModule);
 

@@ -24,7 +24,7 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->file = dirname(__FILE__) . '/Bug25736Test.csv';
+        $this->file = 'Bug25736Test.csv';
 
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -61,11 +61,11 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEmailImport($module, $nameField, $name, $csvData, $expected)
     {
-        $fileCreated = sugar_file_put_contents($this->file, $csvData);
+        $fileCreated = $this->createFile($csvData);
         $this->assertGreaterThan(0, $fileCreated, 'Failed to write to ' . $this->file);
 
         // Create the ImportFile the Importer uses from our CSV
-        $importSource = new ImportFile($this->file, ',', '"');
+        $importSource = new ImportFile($this->getUploadedFileName(), ',', '"');
 
         // Create the bean type we're importing
         $this->importObject = $bean = new $module;
@@ -160,11 +160,11 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEmailUpdate($module, $nameField, $name, $csvDataImport, $csvDataUpdate, $expected)
     {
-        $fileCreated = sugar_file_put_contents($this->file, $csvDataImport);
+        $fileCreated = $this->createFile($csvDataImport);
         $this->assertGreaterThan(0, $fileCreated, 'Failed to write to ' . $this->file);
 
         // Create the ImportFile the Importer uses from our CSV
-        $importSource = new ImportFile($this->file, ',', '"');
+        $importSource = new ImportFile($this->getUploadedFileName(), ',', '"');
 
         // Create the bean type we're importing
         $this->importObject = $bean = new $module;
@@ -191,7 +191,7 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Now update
         $_REQUEST['import_type'] = 'update';
-        $fileCreated = sugar_file_put_contents($this->file, $csvDataUpdate);
+        $fileCreated = $this->createFile($csvDataUpdate);
         $this->assertGreaterThan(0, $fileCreated, 'Failed to write to ' . $this->file);
 
         // Create the bean type we're importing
@@ -240,5 +240,28 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         return $data;
+    }
+
+    /**
+     * Returns filename converted to UploadStream
+     * @return string
+     */
+    private function getUploadedFileName()
+    {
+        return \UploadStream::STREAM_NAME . '://' . $this->file;
+    }
+
+    /**
+     * Create a test file in "upload" directory
+     *
+     * @param $data
+     * @return int
+     */
+    private function createFile($data)
+    {
+        return sugar_file_put_contents(
+            SUGAR_BASE_DIR . '/'. $GLOBALS['sugar_config']['upload_dir'] . '/' . $this->file,
+            $data
+        );
     }
 }
