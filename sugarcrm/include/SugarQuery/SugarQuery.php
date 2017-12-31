@@ -517,7 +517,13 @@ class SugarQuery
             // get the field name from the relationship instead of just assuming it's something
             $field = $this->getJoinOnField($this->join[$this->rname_link]->linkName);
             if ($field) {
-                $this->join[$this->rname_link]->on()->addRaw("${field} = '{$options['baseBeanId']}'");
+                $targetTableJoin = $this->join[$this->rname_link];
+                $relationshipTableAlias = $targetTableJoin->relationshipTableAlias;
+                $relateTableJoinKey = $this->joinTableToKey[$relationshipTableAlias];
+                $this->join[$relateTableJoinKey]->on()->equals(
+                    $relationshipTableAlias . '.' . $field,
+                    $options['baseBeanId']
+                );
             } else {
                 throw new SugarQueryException('Relationship Field Not Found');
             }

@@ -538,19 +538,6 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/INNER JOIN opportunities jt(\w+) ON /s', $sql);
     }
 
-    public function testSetJoinOn()
-    {
-        $this->markTestIncomplete('[BR-3907] Testing SQL doesn\'t work with prepared statements');
-
-        $sq = new SugarQuery();
-        $sq->select(array("id","last_name", "opportunity_role"));
-        $sq->from(BeanFactory::newBean('Contacts'));
-        $sq->setJoinOn(array('baseBeanId' => 'test_opp_id'));
-        $sql = $sq->compileSql();
-        $this->assertcontains("opportunity_id = 'test_opp_id'", $sql);
-    }
-
-
     public function testLongAlias()
     {
         $contact = BeanFactory::newBean('Contacts');
