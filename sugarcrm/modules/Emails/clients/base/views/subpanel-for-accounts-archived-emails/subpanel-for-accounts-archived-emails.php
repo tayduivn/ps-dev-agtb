@@ -23,6 +23,7 @@ $viewdefs['Emails']['base']['view']['subpanel-for-accounts-archived-emails'] = a
                     'enabled' => true,
                     'default' => true,
                     'readonly' => true,
+                    'sortable' => false,
                     'fields' => array(
                         'email_address_id',
                         'email_address',
@@ -36,6 +37,8 @@ $viewdefs['Emails']['base']['view']['subpanel-for-accounts-archived-emails'] = a
                     'enabled' => true,
                     'default' => true,
                     'link' => 'true',
+                    'readonly' => true,
+                    'width' =>  'xlarge',
                     'related_fields' => array(
                         'total_attachments',
                         'state',
@@ -46,12 +49,14 @@ $viewdefs['Emails']['base']['view']['subpanel-for-accounts-archived-emails'] = a
                     'label' => 'LBL_LIST_STATUS',
                     'enabled' => true,
                     'default' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'date_sent',
                     'label' => 'LBL_LIST_DATE_COLUMN',
                     'enabled' => true,
                     'default' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'assigned_user_name',
