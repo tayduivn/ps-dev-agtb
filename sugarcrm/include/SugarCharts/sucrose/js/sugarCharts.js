@@ -705,7 +705,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          */
         setFiscalStartDate: function(firstQuarter) {
             var sugarApp = SUGAR.App || SUGAR.app || app;
-            var fiscalYear = new Date().getFullYear();
+            var fiscalYear = firstQuarter.start_date.split('-')[0];
             var quarterNumber = firstQuarter.name.match(/.*Q(\d{1})/)[1];  // [1-4]
             var quarterDateStart = new Date(firstQuarter.start_date);      // 2017-01-01
             var hourUTCOffset = quarterDateStart.getTimezoneOffset() / 60; // 5

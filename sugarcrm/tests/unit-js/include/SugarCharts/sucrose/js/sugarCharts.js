@@ -132,15 +132,25 @@ describe('SugarCharts', function() {
         date = app.cache.get('fiscaltimeperiods');
         expect(date.annualDate).toBe('Sun, 01 Jan 2017 00:00:00 GMT');
 
-        // firstQuarter = {
-        //   'name': '2017 Q3',
-        //   'start_date': '2017-07-01',
-        //   'end_date': '2017-07-31',
-        //   'type': 'Quarter'
-        // };
-        // SUGAR.charts.setFiscalStartDate(firstQuarter);
-        // date = app.cache.get('fiscaltimeperiods');
-        // expect(date.annualDate).toBe('Sun, 01 Jul 2017 00:00:00 GMT');
+        firstQuarter = {
+            'name': '2017 Q1',
+            'start_date': '2017-07-01',
+            'end_date': '2017-09-30',
+            'type': 'Quarter'
+        };
+        SUGAR.charts.setFiscalStartDate(firstQuarter);
+        date = app.cache.get('fiscaltimeperiods');
+        expect(date.annualDate).toBe('Sat, 01 Jul 2017 00:00:00 GMT');
+
+        firstQuarter = {
+            'name': '2018 Q1',
+            'start_date': '2017-10-01',
+            'end_date': '2017-12-31',
+            'type': 'Quarter'
+        };
+        SUGAR.charts.setFiscalStartDate(firstQuarter);
+        date = app.cache.get('fiscaltimeperiods');
+        expect(date.annualDate).toBe('Sun, 01 Oct 2017 00:00:00 GMT');
     });
 
     it('should return a date string when getFiscalStartDate is called', function() {
