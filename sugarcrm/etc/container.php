@@ -27,7 +27,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsSt
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use UltraLite\Container\Container;
 
-$services = [
+return new Container([
     SugarConfig::class => function () {
         return SugarConfig::getInstance();
     },
@@ -88,14 +88,4 @@ $services = [
             $container->get(StateAwareRebuild::class)
         );
     },
-];
-
-$container = new Container();
-
-foreach ($services as $id => $factory) {
-    $container->set($id, $factory);
-}
-
-unset($services);
-
-return $container;
+]);
