@@ -29,7 +29,7 @@
   left: 0;
   margin: 0;
   padding: 0;
-  overflow-y: hidden;
+  overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -65,10 +65,18 @@
   }
 }
 
-.touch .main-pane {
-  padding-top: 60px !important;
-  top: 0;
-  overflow-x: auto;
+.touch {
+  .main-pane {
+    padding-top: 60px !important;
+    top: 0;
+    overflow-x: auto;
+  }
+
+  #content {
+    /* fixes iOS intermitent BWC portrait scroll issue */
+    position: absolute;
+    overflow-x: scroll;
+  }
 }
 
 .side.sidebar-content {

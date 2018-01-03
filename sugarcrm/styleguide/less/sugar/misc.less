@@ -261,18 +261,6 @@ hr.soften {
 
 .toggle-link .dupcheck { margin-right: 5px; }
 
-/* BWC layout and views */
-.bwc-frame {
-  height: 100%;
-  width: 100%;
-  border: 0;
-  display: block;
-}
-// firefox requirement
-.bwc.layout {
-  height: 100%;
-}
-
 #tutorial {
   position: absolute;
   left: 0;
@@ -446,12 +434,6 @@ hr.soften {
   }
 }
 
-.touch .bwc-frame {
-  display: block;
-  border: 1px solid transparent;
-  width: 100%;
-}
-
 #languageList {
   display: inline-block;
 
@@ -604,19 +586,16 @@ hr.soften {
   unicode-bidi: bidi-override;
 }
 
-/*
-  Temporary hack for BWC SC-4732:
-    - first line targets webkit on windows;
-    - second line targets firefox on windows.
-*/
-@media only screen and (-webkit-min-device-pixel-ratio: 0),
-  only screen and (-moz-os-version: windows-win8) {
-  html.touch {
-    .bwc-frame,
-    .bwc.layout {
-      overflow: hidden;
-    }
-  }
+.bwc.layout,
+.bwc-frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+#bwc-frame {
+  border-width: 0;
 }
 
 /* NEW SKIN START */
