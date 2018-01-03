@@ -208,7 +208,7 @@ class Config
             $this->ldapSettings = \Administration::getSettings('ldap');
         }
         if (isset($this->ldapSettings->settings[$key])) {
-            return trim($this->ldapSettings->settings[$key]) ?: $default;
+            return trim(htmlspecialchars_decode($this->ldapSettings->settings[$key])) ?: $default;
         }
 
         return $default;
