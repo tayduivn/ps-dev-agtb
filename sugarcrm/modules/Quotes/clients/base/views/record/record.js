@@ -24,6 +24,11 @@
     calculatedFields: [],
 
     /**
+     * registers additional editable fields from supporting quotes views
+     */
+    additionalEditableFields: [],
+
+    /**
      * Track the number of items in edit mode.
      * @type {number}
      */
@@ -47,6 +52,7 @@
             .where({calculated: true})
             .pluck('name')
             .value();
+        this.additionalEditableFields = [];
     },
 
     /**
@@ -58,10 +64,24 @@
         this.context.on('editable:handleEdit', this._handleEditShippingField, this);
 
         this.context.on('quotes:editableFields:add', function(field) {
+            this.additionalEditableFields.push(field);
             this.editableFields.push(field);
         }, this);
 
         this.context.on('quotes:item:toggle', this._handleItemToggled, this);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    setEditableFields: function() {
+        this._super('setEditableFields');
+
+        if (this.editableFields) {
+            _.each(this.additionalEditableFields, function(field) {
+                this.editableFields.push(field);
+            }, this);
+        }
     },
 
     /**

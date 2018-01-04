@@ -137,6 +137,37 @@ describe('Quotes.Base.Views.Record', function() {
 
             expect(view.editableFields[0].id).toBe('myEditableField1');
         });
+
+        it('should add a field to additionalEditableFields when the event is called', function() {
+            view.context.on.restore();
+            view.editableFields = [];
+            view.bindDataChange();
+            view.context.trigger('quotes:editableFields:add', {
+                id: 'myEditableField1'
+            });
+
+            expect(view.additionalEditableFields[0].id).toBe('myEditableField1');
+        });
+    });
+
+    describe('setEditableFields', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_super', function() {});
+        });
+
+        it('should add no additional editable fields', function() {
+            view.editableFields = [];
+            view.additionalEditableFields = [];
+            view.setEditableFields();
+            expect(view.editableFields.length).toBe(0);
+        });
+
+        it('should add additional editable fields', function() {
+            view.editableFields = [];
+            view.additionalEditableFields = [1];
+            view.setEditableFields();
+            expect(view.editableFields.length).toBe(1);
+        });
     });
 
     describe('duplicateClicked()', function() {
