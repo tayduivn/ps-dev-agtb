@@ -27,6 +27,7 @@ import * as EmailField from '../fields/email-field';
 export const FIELD_TYPES__MAP = {
     name: NameField,
     phone: TextField,
+    discount: FloatField,
     fullname: FullnameField,
     url: UrlField,
     text: TextField,

@@ -10,7 +10,6 @@
  */
 
 import BaseView from './base-view';
-import {seedbed} from '@sugarcrm/seedbed';
 
 /**
  * Represents Record view.
@@ -20,20 +19,40 @@ import {seedbed} from '@sugarcrm/seedbed';
  */
 export default class GroupRecord extends BaseView {
 
+    public id: string;
+
     constructor(options) {
         super(options);
 
+        this.id = options.id;
+        this.module = 'ProductBundles';
+
         this.selectors = this.mergeSelectors({
-            $: '.quote-data-group-header.tr-inline-edit',
+            $: this.id ? `[data-record-id="${this.id}"]` : '',
             buttons: {
                 save: '.btn.inline-save',
-                cancel: '.btn.inline-cancel'
+                cancel: '.btn.inline-cancel',
+                GroupMenu: '.btn.btn-invisible.dropdown-toggle.edit-dropdown-toggle',
+                'in-line-save': '.btn.inline-save.btn-link.btn-invisible.ellipsis_inline',
+                'in-line-cancel': '.btn.inline-cancel.btn-link.btn-invisible.ellipsis_inline'
+            },
+            menu: {
+                editGroup: '[name=edit_bundle_button]',
+                deleteGroup: '[name=delete_bundle_button]',
             }
         });
     }
 
     public async pressButton(buttonName) {
         await this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
+    }
+
+    public async openLineItemMenu() {
+        await this.driver.click(this.$('buttons.GroupMenu'));
+    }
+
+    public async clickMenuItem(itemName) {
+        await this.driver.click(this.$(`menu.${itemName}`));
     }
 
 }

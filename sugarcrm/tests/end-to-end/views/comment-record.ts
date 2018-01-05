@@ -10,7 +10,6 @@
  */
 
 import BaseView from './base-view';
-import {seedbed} from '@sugarcrm/seedbed';
 
 /**
  * Represents Record view.
@@ -20,20 +19,41 @@ import {seedbed} from '@sugarcrm/seedbed';
  */
 export default class CommentRecord extends BaseView {
 
+    public id: string;
+
     constructor(options) {
         super(options);
 
+        this.id = options.id || '';
+        this.module = 'ProductBundleNotes';
+
         this.selectors = this.mergeSelectors({
-            $: '.product-bundle-notes-row.not-sortable.tr-inline-edit',
+            $: this.id?`[record-id="${this.id}"]`:'.quote-data-group-list.product-bundle-notes-row.not-sortable.tr-inline-edit',
             buttons: {
                 save: '.btn.inline-save',
-                cancel: '.btn.inline-cancel'
+                cancel: '.btn.inline-cancel',
+                QliMenu: '.actionmenu.list.btn-group .btn.dropdown-toggle',
+                'in-line-save': '.btn.inline-save.btn-invisible.ellipsis_inline',
+                'in-line-cancel': '.btn.inline-cancel.btn-invisible.ellipsis_inline'
+            },
+            menu: {
+                editLineItem: '[name=edit_row_button]',
+                deleteLineItem: '[name=delete_row_button]',
             }
-        });
+            });
     }
 
     public async pressButton(buttonName) {
         await this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
     }
+
+    public async openLineItemMenu() {
+        await this.driver.click(this.$('buttons.QliMenu'));
+    }
+
+    public async clickMenuItem(itemName) {
+        await this.driver.click(this.$(`menu.${itemName}`));
+    }
+
 
 }

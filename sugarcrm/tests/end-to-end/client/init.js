@@ -29,6 +29,15 @@
 
     $(document).on('ajaxComplete', function(event, xhr, options) {
         console.log('ajax complete: ' + options.url);
+
+        if (options.type.toLowerCase() === 'post' &&
+            options.url.indexOf('link/product_bundles') !== -1) {
+
+            const record = xhr.responseJSON.related_record;
+
+            window.__e2e.create.push(record);
+        }
+
     });
 
     $(document).on('ajaxError', function(xhr, options, error) {

@@ -10,8 +10,6 @@
  */
 
 import BaseView from './base-view';
-import {seedbed} from '@sugarcrm/seedbed';
-import {underline} from 'chalk';
 
 /**
  * Represents Record view.
@@ -33,7 +31,14 @@ export default class QliRecord extends BaseView {
             $: `[record-id="${this.id}"]`,
             buttons: {
                 save: '.btn.inline-save',
-                cancel: '.btn.inline-cancel'
+                cancel: '.btn.inline-cancel',
+                QliMenu: '.actionmenu.list.btn-group .btn.dropdown-toggle',
+                'in-line-save': '.btn.inline-save.btn-invisible.ellipsis_inline',
+                'in-line-cancel': '.btn.inline-cancel.btn-invisible.ellipsis_inline'
+            },
+            menu: {
+                editLineItem: '[name=edit_row_button]',
+                deleteLineItem: '[name=delete_row_button]',
             }
         });
     }
@@ -42,11 +47,11 @@ export default class QliRecord extends BaseView {
         await this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
     }
 
-    public async getLineItemTotal(recordName) {
-
-        // $("div[data-original-title='{}']").closest('tr').find('td:last').find('div.currency-field').data('original-title');
-
-        await this.driver.getText();
+    public async openLineItemMenu() {
+        await this.driver.click(this.$('buttons.QliMenu'));
     }
 
+    public async clickMenuItem(itemName) {
+        await this.driver.click(this.$(`menu.${itemName}`));
+    }
 }

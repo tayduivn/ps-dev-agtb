@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import {Detail, List, Edit as RelateEdit, Preview} from './relate-field';
+import {Detail, List as RelateList, Edit as RelateEdit, Preview} from './relate-field';
 import BaseField from './text-field';
 import {seedbed} from '@sugarcrm/seedbed';
 
@@ -62,4 +62,26 @@ export class Edit extends BaseField {
 
 }
 
-export {Detail, Preview, List} from './relate-field';
+export class List extends RelateList {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'a'
+            }
+        });
+
+    }
+
+    public async click(): Promise<void> {
+        let selector = this.$('field.selector', {name: this.name});
+
+        await this.driver.scroll(selector)
+            .click(selector);
+    }
+
+}
+
+export {Detail, Preview} from './relate-field';

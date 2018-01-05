@@ -17,6 +17,9 @@ import PreviewLayout from './layouts/preview-layout';
 import {Seedbed} from '@sugarcrm/seedbed';
 import DrawerLayout from './layouts/drawer-layout';
 import QliRecord from './views/qli-record';
+import CommentRecord from './views/comment-record';
+import GroupRecord from './views/group-record';
+
 
 export default (seedbed: Seedbed) => {
 
@@ -120,13 +123,25 @@ export default (seedbed: Seedbed) => {
 
             recordInfo.recordId = item.id;
 
+            if (recordInfo.module === 'ProductBundles') {
+                seedbed.defineComponent(`${recordInfo.uid}GroupRecord`, GroupRecord, {
+                    id: item.id,
+                });
+                return;
+            }
+
+            if (recordInfo.module === 'ProductBundleNotes') {
+                seedbed.defineComponent(`${recordInfo.uid}CommentRecord`, CommentRecord, {
+                    id: item.id,
+                });
+                return;
+            }
+
             if (recordInfo.module === 'Products') {
 
                 seedbed.defineComponent(`${recordInfo.uid}QLIRecord`, QliRecord, {
                     id: item.id,
                 });
-
-                return;
             }
 
             seedbed.defineComponent(`${recordInfo.uid}Record`, RecordLayout, {
@@ -199,11 +214,17 @@ export default (seedbed: Seedbed) => {
                         module: recordInfo.module
                     });
 
-                    if (record.module === 'Products') {
-                        seedbed.defineComponent(`${recordInfo.uid}QLIRecord`, QliRecord, {
-                            id: recordInfo.id,
+                    if (recordInfo.module === 'ProductBundleNotes') {
+                        seedbed.defineComponent(`${recordInfo.uid}CommentRecord`, CommentRecord, {
+                            id: responseRecord.id,
                         });
                         return;
+                    }
+
+                    if (record.module === 'Products') {
+                        seedbed.defineComponent(`${recordInfo.uid}QLIRecord`, QliRecord, {
+                            id: recordInfo.recordId,
+                        });
                     }
 
                     seedbed.defineComponent(`${recordInfo.uid}Record`, RecordLayout, {

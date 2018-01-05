@@ -18,6 +18,7 @@ import ListView from '../views/list-view';
 import QliRecord from '../views/qli-record';
 import CommentRecord from '../views/comment-record';
 import GroupRecord from '../views/group-record';
+import QliTable from "../views/qli-table";
 
 /**
  * Select module in modules menu
@@ -189,6 +190,42 @@ When(/^I choose (createLineItem|createComment|createGroup) on QLI section on (#\
     await this.driver.waitForApp();
     await layout.QliTable.clickMenuItem(itemName);
 }, {waitForApp: true});
+
+When(/^I create new group on QLI section on (#\S+) view$/, async function (layout: RecordLayout, data: any) {
+
+    if (data.hashes.length > 1) {
+        throw new Error('One line data table entry is expected');
+    }
+
+    let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
+
+    // check for * marked column and cache the record and view if needed
+    let uidInfo = Utils.computeRecordUID(inputData);
+
+    seedbed.cucumber.scenario.recordsInfo[uidInfo.uid] = {
+        uid: uidInfo.uid,
+        originInput: JSON.parse(JSON.stringify(inputData)),
+        input: inputData,
+        module: 'ProductBundles',
+    };
+
+    await layout.QliTable.openMenu();
+    await this.driver.waitForApp();
+    await layout.QliTable.clickMenuItem('createGroup');
+
+    await this.driver.waitForApp();
+
+    await layout.QliTable.GroupRecord.setFieldsValue(inputData);
+
+}, {waitForApp: true});
+
+When(/^I choose (editLineItem|deleteLineItem|editGroup|deleteGroup) on (#[a-zA-Z](?:\w|\S)*)$/, async function (itemName, view:QliRecord) {
+
+    await view.openLineItemMenu();
+    await this.driver.waitForApp();
+    await view.clickMenuItem(itemName);
+}, {waitForApp: true});
+
 
 When(/^I click on (save|cancel) button on QLI (#\S+) record$/, async function (buttonName, record: QliRecord) {
     await record.pressButton(buttonName);
