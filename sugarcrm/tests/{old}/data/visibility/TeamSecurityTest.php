@@ -30,6 +30,11 @@ class TeamSecurityTest extends Sugar_PHPUnit_Framework_TestCase
      */
     private static $users = [];
 
+    /**
+     * @var array<string,Account>
+     */
+    private static $accounts = [];
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('app_strings');
@@ -60,9 +65,9 @@ class TeamSecurityTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @dataProvider sugarQueryProvider
+     * @dataProvider sugarQuerySelectWithRelatedFieldProvider
      */
-    public function sugarQueryWithRelatedField($useDenorm, $useWhere, $userName, array $expected)
+    public function sugarQuerySelectWithRelatedField($useDenorm, $useWhere, $userName, array $expected)
     {
         global $current_user;
 
@@ -81,28 +86,34 @@ class TeamSecurityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArraySubset($expected, $data);
     }
 
-    public function sugarQueryProvider()
+    public function sugarQuerySelectWithRelatedFieldProvider()
     {
         $expected = [
             'User #1' => [
                 [
-                    'last_name' => 'Contact #1',
-                    'account_name' => 'Account #1',
+                    'last_name' => 'Contact #T1A1',
+                    'account_name' => 'Account #T1',
                 ], [
-                    'last_name' => 'Contact #2',
-                    'account_name' => 'Account #2',
+                    'last_name' => 'Contact #T2A2',
+                    'account_name' => 'Account #T2',
+                ], [
+                    'last_name' => 'Contact #T2A3',
                 ],
             ],
             'User #2' => [
                 [
-                    'last_name' => 'Contact #2',
-                    'account_name' => 'Account #2',
+                    'last_name' => 'Contact #T2A2',
+                    'account_name' => 'Account #T2',
+                ], [
+                    'last_name' => 'Contact #T2A3',
                 ],
             ],
             'User #3' => [
                 [
-                    'last_name' => 'Contact #3',
-                    'account_name' => 'Account #3',
+                    'last_name' => 'Contact #T3A2',
+                ], [
+                    'last_name' => 'Contact #T3A3',
+                    'account_name' => 'Account #T3',
                 ],
             ],
         ];
@@ -110,6 +121,55 @@ class TeamSecurityTest extends Sugar_PHPUnit_Framework_TestCase
         foreach ($expected as $userName => $data) {
             foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere)) {
                 yield sprintf('%s, %s', $userName, $configName) => [$useDenorm, $useWhere, $userName, $data];
+            }
+        }
+    }
+
+    /**
+     * @test
+     * @dataProvider sugarQueryFilterByRelatedFieldProvider
+     * @ticket BR-5762
+     */
+    public function sugarQueryFilterByRelatedField($useDenorm, $useWhere, $userName, $accountName, array $expected)
+    {
+        global $current_user;
+
+        $current_user = self::$users[$userName];
+        $account = self::$accounts[$accountName];
+
+        self::configure($useDenorm, $useWhere);
+
+        $query = new SugarQuery();
+        $query->from(BeanFactory::newBean('Contacts'));
+        $query->select('last_name');
+        $join = $query->join('accounts', array('joinType' => 'LEFT'));
+        $query->where()
+            ->equals('created_by', self::$admin->id)
+            ->equals($join->joinName() . '.id', $account->id);
+        $query->orderBy('last_name', 'ASC');
+        $data = $query->execute();
+
+        $this->assertCount(count($expected), $data);
+        $this->assertArraySubset($expected, $data);
+    }
+
+    public function sugarQueryFilterByRelatedFieldProvider()
+    {
+        $expected = [
+            'User #1 by Account #T2' => [
+                'User #2',
+                'Account #T2',
+                [
+                    [
+                        'last_name' => 'Contact #T2A2',
+                    ],
+                ],
+            ],
+        ];
+
+        foreach ($expected as $userName => $data) {
+            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere)) {
+                yield sprintf('%s, %s', $userName, $configName) => array_merge([$useDenorm, $useWhere], $data);
             }
         }
     }
@@ -275,22 +335,31 @@ class TeamSecurityTest extends Sugar_PHPUnit_Framework_TestCase
         // User #3 belongs to Teams #1 and #2
         $team3->add_user_to_team($user3->id);
 
-        $account1 = self::createAccount('Account #1', $team1);
-        self::createContact('Contact #1', $account1, $team1);
+        $account1 = self::createAccount('Account #T1', $team1);
+        self::createContact('Contact #T1A1', $account1, $team1);
         self::createOpportunity('Opportunity #1', $account1, $user1, $team1);
 
-        $account2 = self::createAccount('Account #2', $team2);
-        self::createContact('Contact #2', $account2, $team2);
+        $account2 = self::createAccount('Account #T2', $team2);
+        self::createContact('Contact #T2A2', $account2, $team2);
         self::createOpportunity('Opportunity #2', $account2, $user2, $team2);
 
-        $account3 = self::createAccount('Account #3', $team3);
-        self::createContact('Contact #3', $account3, $team3);
+        $account3 = self::createAccount('Account #T3', $team3);
+        self::createContact('Contact #T3A3', $account3, $team3);
         self::createOpportunity('Opportunity #3', $account3, $user3, $team3);
+
+        self::createContact('Contact #T3A2', $account2, $team3);
+        self::createContact('Contact #T2A3', $account3, $team2);
 
         self::$users = [
             'User #1' => $user1,
             'User #2' => $user2,
             'User #3' => $user3,
+        ];
+
+        self::$accounts = [
+            'Account #T1' => $account1,
+            'Account #T2' => $account2,
+            'Account #T3' => $account3,
         ];
     }
 

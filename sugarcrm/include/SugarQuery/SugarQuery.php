@@ -290,7 +290,7 @@ class SugarQuery
     /**
      * Build a raw where statement
      *
-     * @param $sql
+     * @param string $sql
      *
      * @return SugarQuery_Builder_Andwhere
      */
@@ -304,7 +304,6 @@ class SugarQuery
         $this->where->add($where);
         return $this->where;
     }
-
 
     /**
      * Add an Or Where Object to this query

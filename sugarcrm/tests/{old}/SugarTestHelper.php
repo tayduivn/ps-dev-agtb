@@ -296,9 +296,13 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 
     public function runBare()
     {
-
         // Prevent the activity stream from creating messages.
         Activity::disable();
+
+        // shared bean definitions may contain properties like $disable_row_level_security
+        // set on them by previous tests which shouldn't be shared between tests
+        BeanFactory::clearCache();
+
         if (SHADOW_CHECK && empty($this->file_map)) {
             $this->file_map = static::getFiles();
         }

@@ -257,7 +257,7 @@ class NormalizedTeamSecurity extends SugarVisibility implements StrategyInterfac
 
         if ($this->useCondition()) {
             $cond = $this->getCondition($current_user_id);
-            $query->where()->addRaw($cond);
+            $query->whereRaw($cond);
         } else {
             $this->join($query, $current_user_id);
         }

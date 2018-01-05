@@ -468,15 +468,25 @@ abstract class SugarQuery_Builder_Where
     }
 
     /**
-     * @param $sql
+     * @param string $sql
      */
     public function addRaw($sql)
     {
+        global $log;
+
+        if ($this->raw !== null) {
+            $log->fatal(sprintf(
+                'The raw expression \'%s\' in SugarQuery WHERE is being overwritten with \'%s\'',
+                $this->raw,
+                $sql
+            ));
+        }
+
         $this->raw = new SugarQuery_Builder_Field_Raw($sql, $this->query);
     }
 
     /**
-     * @param $condition
+     * @param mixed $condition
      */
     public function add($condition)
     {

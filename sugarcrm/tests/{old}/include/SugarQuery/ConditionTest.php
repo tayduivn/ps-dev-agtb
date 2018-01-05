@@ -349,7 +349,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->addRaw("name = 'SugarQuery Unit Test 2'");
+        $sq->whereRaw("name = 'SugarQuery Unit Test 2'");
 
         $result = $sq->execute();
 
