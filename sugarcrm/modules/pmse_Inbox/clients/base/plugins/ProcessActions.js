@@ -69,6 +69,7 @@ var PMSE = PMSE || {};
                                                 name: 'log' + i,
                                                 label: label,
                                                 user: log.user,
+                                                showUser: log.show_user,
                                                 startDate: app.date(delegate_date).formatUser(),
                                                 picture: (log.script) ? log.image : pictureUrl,
                                                 duration: duration,
