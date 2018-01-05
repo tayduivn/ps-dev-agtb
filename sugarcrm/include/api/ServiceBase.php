@@ -186,7 +186,7 @@ abstract class ServiceBase implements LoggerAwareInterface
         }
 
         $raiseException = false;
-        $strict = (bool) SugarConfig::getInstance()->get('disable_unknown_platforms', false);
+        $strict = (bool) SugarConfig::getInstance()->get('disable_unknown_platforms', true);
 
         foreach ($violations as $violation) {
             switch ($violation->getCode()) {
