@@ -15,6 +15,3 @@ $platforms[] = 'mobile';
 $platforms[] = 'portal';
 $platforms[] = 'opi';
 $platforms[] = 'lpi';
-$platforms[] = 'integration';
-$platforms[] = 'custom_api';
-$platforms[] = 'api';
