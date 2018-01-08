@@ -2414,77 +2414,83 @@ SQL;
     /**
      * @group dbmanager
      * @group db
-     * @ticket PAT-2513
+     *
+     * @dataProvider providerTestMassageValueEmptyValue
+     *
      */
-    public function testMassageValueReturnIsZeroForFloatWhenValIsNullAndFieldIsRequired()
+    public function testMassageValueEmptyValue($fieldDef, $value, $expected)
     {
-        $fieldDef = array(
-            'name' => 'test_field',
-            'type' => 'float',
-            'required' => true,
-            'default' => '',
-        );
-
-        $return = $this->_db->massageValue('', $fieldDef);
-
-        $this->assertEquals('0', $return);
+        $return = $this->_db->massageValue($value, $fieldDef);
+        $this->assertEquals($expected, $return);
     }
 
-    /**
-     * @group dbmanager
-     * @group db
-     * @ticket PAT-2513
-     */
-    public function testMassageValueReturnIsNullForFloatWhenValIsNullAndFieldIsNotRequired()
+    public function providerTestMassageValueEmptyValue()
     {
-        $fieldDef = array(
-            'name' => 'test_field',
-            'type' => 'float',
-            'required' => false,
-            'default' => '',
+        return array(
+            array(
+                array(
+                    'name' => 'float with empty value and required is true',
+                    'type' => 'float',
+                    'required' => true,
+                ),
+                '',
+                'NULL',
+            ),
+            array(
+                array(
+                    'name' => 'float with empty value and required is true and isnull is false',
+                    'type' => 'float',
+                    'required' => true,
+                    'isnull' => false,
+                ),
+                '',
+                0,
+            ),
+            array(
+                array(
+                    'name' => 'float with empty value and required is false',
+                    'type' => 'float',
+                ),
+                '',
+                'NULL',
+            ),
+            array(
+                array(
+                    'name' => 'enum type with empty value and required is true',
+                    'type' => 'enum',
+                    'required' => true,
+                ),
+                null,
+                'NULL',
+            ),
+            array(
+                array(
+                    'name' => 'enum type with empty value and required is false',
+                    'type' => 'enum',
+                    'required' => false,
+                ),
+                null,
+                'NULL',
+            ),
+            array(
+                array(
+                    'name' => 'date type with empty value and required is true',
+                    'type' => 'date',
+                    'required' => true,
+                ),
+                '',
+                'NULL',
+            ),
+            array(
+                array(
+                    'name' => 'date type with empty value and required is false',
+                    'type' => 'date',
+                    'required' => false,
+                ),
+                '',
+                'NULL',
+            ),
         );
-
-        $return = $this->_db->massageValue('', $fieldDef);
-
-        $this->assertEquals('NULL', $return);
-    }
-
-    /**
-     * @group dbmanager
-     * @group db
-     * @ticket 61597
-     */
-    public function testMessageValueReturnIsNotEmptyStringWhenEnumFieldIsRequiredAndDefaultIsEmptyAndValIsNull()
-    {
-        $fieldDef = array(
-            'name' => 'test_field',
-            'type' => 'enum',
-            'required' => true,
-            'default' => ''
-        );
-
-        $return = $this->_db->massageValue(null, $fieldDef);
-
-        $this->assertEquals("''", $return);
-    }
-
-    /**
-     * @group dbmanager
-     * @group db
-     * @ticket 61597
-     */
-    public function testMessageValueReturnIsNullWhenEnumFieldIsNotRequiredAndDefaultIsEmptyAndValIsNull()
-    {
-        $fieldDef = array(
-            'name' => 'test_field',
-            'type' => 'enum',
-            'required' => false,
-            'default' => ''
-        );
-
-        $return = $this->_db->massageValue(null, $fieldDef);
-
-        $this->assertEquals('NULL', $return);
     }
 
     public function searchStringProvider()
@@ -3469,7 +3475,7 @@ SQL;
     public function testMassageValue()
     {
         $this->assertEquals(
-            $this->_db->massageValue(123,array('name'=>'foo','type'=>'int')),
+            $this->_db->massageValue(123, array('name' => 'foo', 'type' => 'int')),
             123
         );
         if (in_array($this->_db->dbType, array('mssql'

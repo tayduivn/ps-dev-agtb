@@ -2579,7 +2579,7 @@ abstract class DBManager
     protected function massageEmptyValue($fieldDef, $forPrepared)
     {
         // Required fields are not supposed to have NULLs in database
-        if (!empty($fieldDef['required'])) {
+        if (!$this->isNullable($fieldDef)) {
             return $this->emptyValue($this->getFieldType($fieldDef), $forPrepared);
         } else {
             return $forPrepared ? null : "NULL";
