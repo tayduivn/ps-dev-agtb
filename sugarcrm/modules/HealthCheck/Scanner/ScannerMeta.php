@@ -580,10 +580,16 @@ class HealthCheckScannerMeta
         574 => array(
             'report' => 'emailsSubpanelExistsCustomDirectory',
             'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Emails_Subpanel_Exists_Custom_Directory/',
+            //@codingStandardsIgnoreEnd
         ),
         575 => array(
             'report' => 'emailsSubpanelContactsExistsCustomDirectory',
             'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Emails_Subpanel_Contacts_Exists_Custom_Directory/',
+            //@codingStandardsIgnoreEnd
         ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
