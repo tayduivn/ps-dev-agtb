@@ -29,7 +29,7 @@ RUN chmod +x /opt/bin/install-ci-utils.sh && \
 #========================
 # Install Graphical Support and Browsers
 #========================
-ENV FIREFOX_VERSION 51.0
+ENV FIREFOX_VERSION 59.0.2
 COPY scripts/install-web-browsers.sh /opt/bin/install-web-browsers.sh
 RUN chmod +x /opt/bin/install-web-browsers.sh && \
     /opt/bin/install-web-browsers.sh
