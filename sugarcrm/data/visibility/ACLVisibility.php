@@ -87,7 +87,7 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
         $where = null;
         $this->addVisibilityWhere($where, $options);
         if (!empty($where)) {
-            $sugarQuery->where()->addRaw($where);
+            $sugarQuery->whereRaw($where);
         }
 
         return $sugarQuery;
