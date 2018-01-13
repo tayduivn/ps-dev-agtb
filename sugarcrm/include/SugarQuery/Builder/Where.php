@@ -13,7 +13,7 @@
 abstract class SugarQuery_Builder_Where
 {
     /**
-     * @var null|string
+     * @var SugarQuery_Builder_Field_Raw|null
      */
     public $raw = null;
 
@@ -477,7 +477,7 @@ abstract class SugarQuery_Builder_Where
         if ($this->raw !== null) {
             $log->fatal(sprintf(
                 'The raw expression \'%s\' in SugarQuery WHERE is being overwritten with \'%s\'',
-                $this->raw,
+                $this->raw->field,
                 $sql
             ));
         }
