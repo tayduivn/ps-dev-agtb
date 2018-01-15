@@ -68,11 +68,11 @@ class ClientTest extends TestCase
         return [
             ['5.4'],
             ['5.6'],
+            ['6.x'],
         ];
     }
     /**
      * @covers ::checkEsVersion
-     * @covers ::isEsVersion5x
      *
      * @dataProvider providerTestCheckVersion
      */
@@ -85,6 +85,10 @@ class ClientTest extends TestCase
     public function providerTestCheckVersion()
     {
         return array(
+            //6.0.x is supported
+            array('6.0.0', true),
+            array('6.0.9', true),
+            array('6.9', true),
             // version 5.4 to 5.6.x are supported
             array('5.6.0', true),
             array('5.6.9', true),
@@ -127,6 +131,64 @@ class ClientTest extends TestCase
     public function providerTestIsAvailable()
     {
         return array(
+            // ES 6.x support
+            // no force update
+            array(
+                false,
+                true,
+                '{
+                  "status" : 200,
+                  "name" : "Zom",
+                  "cluster_name" : "elasticsearch_brew",
+                  "version" : {
+                    "number" : "6.0.0",
+                    "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
+                    "build_timestamp" : "2015-04-27T09:21:06Z",
+                    "build_snapshot" : false,
+                    "lucene_version" : "4.10.4"
+                  },
+                  "tagline" : "You Know, for Search"
+                }',
+                true,
+            ),
+            // force update, all good
+            array(
+                true,
+                true,
+                '{
+                  "status" : 200,
+                  "name" : "Zom",
+                  "cluster_name" : "elasticsearch_brew",
+                  "version" : {
+                    "number" : "6.0.0",
+                    "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
+                    "build_timestamp" : "2015-04-27T09:21:06Z",
+                    "build_snapshot" : false,
+                    "lucene_version" : "4.10.4"
+                  },
+                  "tagline" : "You Know, for Search"
+                }',
+                true,
+            ),
+            // force update, new ES status is good
+            array(
+                true,
+                false,
+                '{
+                  "status" : 200,
+                  "name" : "Zom",
+                  "cluster_name" : "elasticsearch_brew",
+                  "version" : {
+                    "number" : "6.0.0",
+                    "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
+                    "build_timestamp" : "2015-04-27T09:21:06Z",
+                    "build_snapshot" : false,
+                    "lucene_version" : "4.10.4"
+                  },
+                  "tagline" : "You Know, for Search"
+                }',
+                true,
+            ),
             // ES 5.6.x support
             array(
                 false,

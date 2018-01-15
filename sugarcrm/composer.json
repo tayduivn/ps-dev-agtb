@@ -112,7 +112,7 @@
         "psr/log": "1.0.0",
         "psr/simple-cache": "^1.0",
         "ramsey/uuid": "2.9.0",
-        "ruflin/elastica" : "5.3.0",
+        "ruflin/elastica" : "6.0.1",
         "sugarcrm/identity-provider": "1.2.0",
         "symfony/cache": "v3.4.8",
         "symfony/console": "v3.4.8",

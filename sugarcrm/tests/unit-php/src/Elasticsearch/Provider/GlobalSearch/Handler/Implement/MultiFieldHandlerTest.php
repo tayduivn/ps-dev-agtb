@@ -372,6 +372,18 @@ class MultiFieldHandlerTest extends TestCase
                         'index' => false,
                         'copy_to' => array(
                             'Accounts__date_modified',
+                            'Common__date_modified',
+                        ),
+                    ),
+                    'Common__date_modified' => array(
+                        'type' => 'keyword',
+                        'index' => false,
+                        'fields' => array(
+                            'gs_datetime' => array(
+                                'type' => 'date',
+                                'format' => 'YYYY-MM-dd HH:mm:ss',
+                                'store' => false,
+                            ),
                         ),
                     ),
                 ),

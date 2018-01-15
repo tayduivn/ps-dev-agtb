@@ -11,9 +11,6 @@
  */
 
 use Elastica\Exception\ResponseException;
-use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingCollection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\ErasedFieldsHandler;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Engine\Elastic;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;

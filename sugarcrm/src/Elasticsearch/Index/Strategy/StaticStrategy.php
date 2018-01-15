@@ -59,6 +59,7 @@ class StaticStrategy extends AbstractStrategy
      */
     protected function getStaticIndex($module)
     {
-        return $this->getModuleConfig($module, 'index', self::DEFAULT_INDEX);
+        //return $this->getModuleConfig($module, 'index', self::DEFAULT_INDEX);
+        return $module;
     }
 }

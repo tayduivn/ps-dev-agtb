@@ -59,15 +59,16 @@ class Client extends BaseClient
     protected $allowedVersions = array(
         '5.4',
         '5.6',
+        '6.x',
     );
 
     /**
      * Return ES version checks ES 5.x
      * @var array
      */
-    protected static $supportedVersion5x = array(
+    protected static $supportedVersion = array(
         array('version' =>'5.4', 'operator' => '>='),
-        array('version' => '5.7', 'operator' => '<'),
+        array('version' => '7.0', 'operator' => '<'),
     );
 
     /**
@@ -229,19 +230,9 @@ class Client extends BaseClient
      */
     protected function checkEsVersion($version)
     {
-        return self::isEsVersion5x($version);
-    }
-
-    /**
-     * check if the Elasticsearch version is supported 5x
-     * @param string $version
-     * @return bool
-     */
-    public static function isEsVersion5x($version)
-    {
         $result = true;
-        // verify supported 5.x versions
-        foreach (self::$supportedVersion5x as $check) {
+        // verify supported versions
+        foreach (self::$supportedVersion as $check) {
             $result = $result && version_compare($version, $check['version'], $check['operator']);
         }
         return $result;

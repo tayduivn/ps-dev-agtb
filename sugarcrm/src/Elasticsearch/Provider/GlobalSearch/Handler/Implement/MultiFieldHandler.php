@@ -397,7 +397,7 @@ class MultiFieldHandler extends AbstractHandler implements
 
                 // Sortable fields also receive a common field to make sorting
                 // possible when querying multiple modules at once.
-                if (!empty($defs['full_text_search']['sortable'])) {
+                if ($field === 'date_modified' || !empty($defs['full_text_search']['sortable'])) {
                     $mapping->addCommonField($field, $multiField, $property);
                 }
             }
