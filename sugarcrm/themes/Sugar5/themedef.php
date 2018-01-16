@@ -15,7 +15,7 @@ $themedef = array(
     'name'  => "Classic",
     'description' => "Default theme from Sugar 5",
     'version' => array(
-        'regex_matches' => array('[6|7]\.*.*'),
+        'regex_matches' => array('[6|7|8]\.*.*'),
         ),
     'group_tabs' => true,
     );
