@@ -79,6 +79,10 @@ class ViewConfig extends SugarView
             "allow_user_email_accounts",
             (empty($sugar_config['disable_user_email_config']) ? "checked" : "")
         );
+        $this->ss->assign(
+            'new_email_addresses_opted_out',
+            empty($sugar_config['new_email_addresses_opted_out']) ? '' : 'checked'
+        );
         $this->ss->assign("notify_fromname", $focus->settings['notify_fromname']);
         $this->ss->assign("notify_allow_default_outbound_on", (!empty($focus->settings['notify_allow_default_outbound']) && $focus->settings['notify_allow_default_outbound']) ? "checked='checked'" : "");
 

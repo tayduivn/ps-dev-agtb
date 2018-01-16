@@ -499,6 +499,7 @@ function get_sugar_config_defaults()
         'sugar_min_int' => -2147483648,
         'sugar_max_int' => 2147483647,
         'max_aggregate_email_attachments_bytes' => 10000000,
+        'new_email_addresses_opted_out' => false,
     );
 
     if (empty($locale)) {

@@ -299,6 +299,7 @@ class MetaDataManager implements LoggerAwareInterface
         ),
         'preview_edit' => true,
         'max_aggregate_email_attachments_bytes' => true,
+        'new_email_addresses_opted_out' => true,
     );
 
     /**

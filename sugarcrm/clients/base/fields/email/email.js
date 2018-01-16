@@ -140,7 +140,7 @@
             emailFieldHtml = this._buildEmailFieldHtml({
                 email_address: email,
                 primary_address: currentValue && (currentValue.length === 1),
-                opt_out: false,
+                opt_out: app.config.newEmailAddressesOptedOut || false,
                 invalid_email: false
             });
 
@@ -288,7 +288,8 @@
         if (_.isUndefined(dupeAddress)) {
             existingAddresses.push({
                 email_address: email,
-                primary_address: (existingAddresses.length === 0)
+                primary_address: (existingAddresses.length === 0),
+                opt_out: app.config.newEmailAddressesOptedOut || false
             });
             this.model.set(this.name, existingAddresses);
             success = true;

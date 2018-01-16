@@ -213,10 +213,15 @@ function change_state(radiobutton) {
                      name='notify_send_from_assigning_user' value="2" tabindex='1' class="checkbox"
                      type="checkbox" {$notify_send_from_assigning_user}></td>
          <td width="20%" scope="row" valign='top'>
-             &nbsp;
+             {$MOD.LBL_EMAIL_OPT_OUT_DEFAULT}:
+             <img border="0" class="inlineHelpTip"
+                  onclick="return SUGAR.util.showHelpTips(this,'{$MOD.LBL_EMAIL_OPT_OUT_DEFAULT_TOOLTIP|escape}','','','dialogHelpPopup')"
+                  src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
          </td>
          <td width="30%" valign='top'>
-             &nbsp;
+             <input type='hidden' name='new_email_addresses_opted_out' value='0'>
+             <input name='new_email_addresses_opted_out' value="1" tabindex='1' class="checkbox"
+                    type="checkbox" {$new_email_addresses_opted_out}>
          </td>
     </tr>
 </table>

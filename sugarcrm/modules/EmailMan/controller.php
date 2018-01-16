@@ -53,6 +53,9 @@ class EmailManController extends SugarController
             }
         }
 
+        $optOutConfigName = 'new_email_addresses_opted_out';
+        $configurator->config[$optOutConfigName] = isset($_REQUEST[$optOutConfigName]) && $_REQUEST[$optOutConfigName];
+
         $focus->saveConfig();
 
         // mark user metadata changed so the user preferences get refreshed
@@ -89,5 +92,8 @@ class EmailManController extends SugarController
         ksort($sugar_config);
 
         $configurator->handleOverride();
+
+        // Refresh the cache after we've had a chance to write to config_override.php.
+        MetaDataManager::refreshSectionCache([MetaDataManager::MM_CONFIG]);
     }
 }

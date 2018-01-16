@@ -125,7 +125,7 @@ describe('Base.Email', function() {
             expect(emails[2].primary_address).toBe(false);
             expect(field.$('[data-emailproperty=primary_address]').eq(2).hasClass('active')).toBe(false);
         });
-        it("should default opt_out and invalid_email to false or undefined", function(){
+        it('should default invalid_email to false or undefined', function() {
             var emails;
 
             field.$('.newEmail')
@@ -134,10 +134,23 @@ describe('Base.Email', function() {
 
             emails = model.get('email');
             expect(emails.length).toBe(3);
-            expect(emails[2].opt_out).toBeFalsy();
             expect(emails[2].invalid_email).toBeFalsy();
-            expect(field.$('[data-emailproperty=opt_out]').eq(2).hasClass('active')).toBe(false);
             expect(field.$('[data-emailproperty=invalid_email]').eq(2).hasClass('active')).toBe(false);
+        });
+
+        using('opt_out_config', [true, false], function(config) {
+            it('should default opt_out to the value of the config', function() {
+                var emails;
+
+                app.config.newEmailAddressesOptedOut = config;
+
+                field.$('.newEmail').val('foo@test.com').trigger('change');
+
+                emails = model.get('email');
+                expect(emails.length).toBe(3);
+                expect(emails[2].opt_out).toBe(config);
+                expect(field.$('[data-emailproperty=opt_out]').eq(2).hasClass('active')).toBe(config);
+            });
         });
     });
 
