@@ -2711,6 +2711,7 @@ class Report
         $id = $this->full_bean_list['self']->table_name . '.id';
         $query = "SELECT DISTINCT $id {$this->from} WHERE {$this->where} AND {$this->focus->table_name}.deleted=0";
         $query .= " ORDER BY $id ASC";
+        $query = str_replace("\n", " ", $query);
         if ($offset > 0 || $limit > 0) {
             $result = $this->db->limitQuery($query, $offset, $limit, true, "Error executing query");
         } else {

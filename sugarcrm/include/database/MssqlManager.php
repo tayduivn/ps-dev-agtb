@@ -342,10 +342,10 @@ abstract class MssqlManager extends DBManager
                     $distinctPos = stripos($matches[2], 'distinct');
                     $fromPos = stripos($matches[2], 'from');
 
-                    if ($distinctPos && $fromPos && $fromPos < $distinctPos) { // distinct is a part of sub-query!
+                    if ($distinctPos !== false && $fromPos !== false && $fromPos < $distinctPos) { // distinct is a part of sub-query!
                         $hasDistinct = false;
                     } else {
-                        $hasDistinct = $distinctPos;
+                        $hasDistinct = ($distinctPos === 0) ? true : $distinctPos;
                     }
 
                     if ($hasDistinct) {
