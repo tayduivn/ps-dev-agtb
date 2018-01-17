@@ -109,7 +109,7 @@ class TeamSetManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTeamSetIsRemoved($contact2->team_set_id);
         $this->assertTeamSetIsRemoved($contact3->team_set_id);
-        $this->assertTeamSetIsUnique($contact4->team_set_id, 'Contacts');
+        $this->assertTeamSetIsUnique($contact4);
     }
 
     private function assignRecordToTeams(SugarBean $bean, Team $pprimaryTeam, Team ...$otherTeams)
@@ -132,11 +132,11 @@ class TeamSetManagerTest extends Sugar_PHPUnit_Framework_TestCase
         ]);
     }
 
-    private function assertTeamSetIsUnique($id, $module)
+    private function assertTeamSetIsUnique(SugarBean $bean)
     {
         $query = 'SELECT COUNT(*) FROM team_sets_modules WHERE team_set_id = ? AND module_table_name = ?';
         $conn = DBManagerFactory::getConnection();
-        $stmt = $conn->executeQuery($query, [$id, $module]);
+        $stmt = $conn->executeQuery($query, [$bean->team_set_id, $bean->table_name]);
 
         $this->assertEquals(1, $stmt->fetchColumn());
     }
