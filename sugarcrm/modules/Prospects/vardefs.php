@@ -122,6 +122,13 @@ $dictionary['Prospect'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
+        'dataprivacy' => array(
+            'name' => 'dataprivacy',
+            'type' => 'link',
+            'relationship' => 'prospects_dataprivacy',
+            'source' => 'non-db',
+            'vname' => 'LBL_DATAPRIVACY',
+        ),
         //d&b principal id, a unique id assigned to a contact by D&B API
         //this contact is used for dupe check
         'dnb_principal_id' => array (

@@ -299,6 +299,13 @@ $dictionary['Contact'] = array(
                 'account_name'
             )
         ),
+        'dataprivacy' => array(
+            'name' => 'dataprivacy',
+            'type' => 'link',
+            'relationship' => 'contacts_dataprivacy',
+            'source' => 'non-db',
+            'vname' => 'LBL_DATAPRIVACY',
+        ),
         'direct_reports' => array(
             'name' => 'direct_reports',
             'type' => 'link',

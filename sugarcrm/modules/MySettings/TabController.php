@@ -152,6 +152,12 @@ class TabController
 
     public function set_system_tabs($tabs)
     {
+        // make DataPrivacy the last item in nav bar
+        $key = array_search('DataPrivacy', $tabs);
+        if ($key !== false) {
+            unset($tabs[$key]);
+            $tabs[] = 'DataPrivacy';
+        }
         $administration = BeanFactory::newBean('Administration');
         // TODO: encode in JSON rather than base64
         $serialized = base64_encode(serialize($tabs));

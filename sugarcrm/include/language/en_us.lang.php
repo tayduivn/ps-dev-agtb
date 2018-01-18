@@ -115,6 +115,7 @@ $app_list_strings = array (
     'Dashboards' => 'Dashboards',
     'OutboundEmail' => 'Email Settings',
     'EmailParticipants' => 'Email Participants',
+    'DataPrivacy' => 'Data Privacy',
   ),
 
     'moduleIconList' =>
@@ -129,6 +130,7 @@ $app_list_strings = array (
         'Quotas' => 'Fo',
         'Tasks' => 'Ts',
         'Dashboards' => 'Ds',
+        'DataPrivacy' => 'Dp',
     ),
 
   'moduleListSingular' =>
@@ -233,6 +235,7 @@ $app_list_strings = array (
     'Categories' => 'Category',
     'OutboundEmail' => 'Email Setting',
     'EmailParticipants' => 'Email Participant',
+    'DataPrivacy' => 'Data Privacy',
   ),
 
 /*
@@ -869,7 +872,6 @@ $app_list_strings = array (
     'Product' => 'Product',
     'User' => 'User',
   ),
-
   'source_default_key' => '',
   'source_dom' =>
   array (
@@ -880,7 +882,36 @@ $app_list_strings = array (
     'InboundEmail' => 'Email',
     'Twitter' => 'Twitter'
   ),
-
+    'dataprivacy_type_default_key' => '',
+    'dataprivacy_type_dom' => array(
+        '' => '',
+        'Request for data privacy and usage policy' => 'Request for data privacy and usage policy',
+        'Receipt of consent' => 'Receipt of consent',
+        'Request to access my information' => 'Request to access my information',
+        'Request to rectify information' => 'Request to rectify information',
+        'Request to erase/forget' => 'Request to erase/forget',
+        'Request to withdraw consent' => 'Request to withdraw consent',
+        'Request to export my information' => 'Request to export my information',
+        'Request to restrict/object to processing' => 'Request to restrict/object to processing',
+        'Other Requests' => 'Other Requests',
+    ),
+    'dataprivacy_status_default_key' => 'New Request',
+    'dataprivacy_status_dom' => array(
+        'New Request' => 'New Request',
+        'In Review' => 'In Review',
+        'Closed Accepted' => 'Closed Accepted',
+        'Closed Rejected' => 'Closed Rejected',
+        'Closed Other' => 'Closed Other',
+        'Invalid' => 'Invalid',
+        'Duplicate' => 'Duplicate',
+        'Reopened' => 'Reopened',
+    ),
+    'dataprivacy_priority_default_key' => 'Low',
+    'dataprivacy_priority_dom' => array(
+        'Low' => 'Low',
+        'Medium' => 'Medium',
+        'High' => 'High',
+    ),
   'product_category_default_key' => '',
   'product_category_dom' =>
   array (
@@ -5317,6 +5348,9 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_EMAIL_PARTICIPANTS' => 'Email Participants',
     'LBL_EMAIL_PARTICIPANT' => 'Email Participant',
+
+    'LBL_DATAPRIVACY' => 'Data Privacy',
+    'LBL_DATAPRIVACY_SUBPANEL_TITLE' => 'Data Privacy',
 );
 
 $app_list_strings['activity_user_options'] = array (

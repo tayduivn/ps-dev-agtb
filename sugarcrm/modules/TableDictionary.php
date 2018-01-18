@@ -75,6 +75,9 @@ include("metadata/contracts_productsMetaData.php");
 include("metadata/projects_quotesMetaData.php");
 include("metadata/projects_revenuelineitemsMetaData.php");
 include("metadata/users_holidaysMetaData.php");
+include 'metadata/contacts_dataprivacyMetaData.php';
+include 'metadata/leads_dataprivacyMetaData.php';
+include 'metadata/prospects_dataprivacyMetaData.php';
 //BEGIN SUGARCRM flav=ent ONLY
 
 include("metadata/dataset_layoutsMetaData.php");

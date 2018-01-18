@@ -46,7 +46,7 @@ $moduleList[] = 'Cases';
 $moduleList[] = 'Project';
 $moduleList[] = 'Bugs';
 $moduleList[] = 'OutboundEmail';
-
+$moduleList[] = 'DataPrivacy';
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
 $beanList = array();
@@ -209,7 +209,7 @@ $beanList['TeamHierarchy'] = 'TeamHierarchy';
 $beanList['UpgradeHistory'] = 'UpgradeHistory';
 $beanList['OutboundEmail'] = 'OutboundEmail';
 $beanList['EmailParticipants'] = 'EmailParticipant';
-
+$beanList['DataPrivacy'] = 'DataPrivacy';
 // this list defines all of the files that contain the SugarBean class definitions from $beanList
 // to create a new module's bean class, add the file definition here
 $beanFiles = array();
@@ -372,7 +372,7 @@ $beanFiles['EmptyBean'] = 'data/EmptyBean.php';
 $beanFiles['Styleguide'] = 'modules/Styleguide/Styleguide.php';
 $beanFiles['OutboundEmail'] = 'include/OutboundEmail/OutboundEmail.php';
 $beanFiles['EmailParticipant'] = 'modules/EmailParticipants/EmailParticipant.php';
-
+$beanFiles['DataPrivacy'] = 'modules/DataPrivacy/DataPrivacy.php';
 // added these lists for security settings for tabs
 $modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'Dropdown', 'Dynamic', 'DynamicFields', 'DynamicLayout', 'EditCustomFields',
