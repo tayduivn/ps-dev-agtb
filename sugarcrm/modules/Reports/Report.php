@@ -1849,13 +1849,27 @@ class Report
             // This is field name as table.field
             $field_name = substr($field, 0, $has_space);
             $field_data = explode(".", $field_name);
-            if (!isset($field_data[1]) || !isset($this->focus->field_defs[$field_data[1]]['type'])) {
+            if (!isset($field_data[1])) {
+                return $field;
+            }
+            $field_type = null;
+            foreach ($this->full_table_list as $k => $v) {
+                if (!empty($v['params']) && !empty($v['params']['join_table_alias'])) {
+                    if ($v['params']['join_table_alias'] == $field_data[0]) {
+                        $key = $k;
+                        break;
+                    }
+                }
+            }
+
+            if (!empty($key)) {
+                $fieldName = $key . ':' . $field_data[1];
+                $field_type = DBManagerFactory::getInstance()->getFieldType($this->all_fields[$fieldName]);
+            }
+            if (empty($field_type)) {
                 // Not a field or unknown field type - don't touch it
                 return $field;
             }
-
-            $db = DBManagerFactory::getInstance();
-            $field_type = $db->getFieldType($this->focus->field_defs[$field_data[1]]);
 
             if (!in_array($field_type, array('currency','double','float','decimal','int','date','datetime'))) {
                 if ($field_type === 'bool') {
