@@ -38,6 +38,7 @@ $mod_strings = array (
   'LNK_NEW_MEETING' => 'Schedule Meeting',
   'LNK_NEW_TASK' => 'Create Task',
   'LNK_ADVANCED_REPORTING' => 'Manage Advanced Reports',
+    'LNK_REPORT_SCHEDULES' => 'Report Schedules',
   'LBL_REPORTS' => 'Reports',
   'LBL_TITLE' => 'Title',
   'LBL_UNTITLED' => 'untitled',

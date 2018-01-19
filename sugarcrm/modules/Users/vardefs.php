@@ -961,7 +961,14 @@ $dictionary['User'] = array(
             'link_type'=>'one',
             'vname'=>'LBL_FORECASTS',
         ),
-
+        'reportschedules' =>
+        array (
+            'name' => 'reportschedules',
+            'type' => 'link',
+            'relationship' => 'reportschedules_users',
+            'source'=>'non-db',
+            'vname'=>'LBL_REPORTSCHEDULES',
+        ),
     'preferred_language' =>
       array(
          'name' => 'preferred_language',

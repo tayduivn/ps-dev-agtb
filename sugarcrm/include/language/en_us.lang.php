@@ -116,6 +116,7 @@ $app_list_strings = array (
     'OutboundEmail' => 'Email Settings',
     'EmailParticipants' => 'Email Participants',
     'DataPrivacy' => 'Data Privacy',
+    'ReportSchedules' => 'Report Schedules',
   ),
 
     'moduleIconList' =>
@@ -236,6 +237,7 @@ $app_list_strings = array (
     'OutboundEmail' => 'Email Setting',
     'EmailParticipants' => 'Email Participant',
     'DataPrivacy' => 'Data Privacy',
+    'ReportSchedules' => 'Report Schedule',
   ),
 
 /*
@@ -2113,6 +2115,15 @@ $app_list_strings = array (
         'record' => 'Record',
         'records' => 'List',
         'activities' => 'Activity Stream',
+    ),
+    'reportschedule_time_interval_dom' => array(
+        '3600' => 'Hourly',
+        '21600' => 'Every 6 Hours',
+        '43200' => 'Every 12 Hours',
+        '86400' => 'Daily',
+        '604800' => 'Weekly',
+        '1209600' => 'Every 2 Weeks',
+        '2419200' => 'Every 4 Weeks',
     ),
 );
 

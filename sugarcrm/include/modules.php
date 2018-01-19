@@ -210,6 +210,8 @@ $beanList['UpgradeHistory'] = 'UpgradeHistory';
 $beanList['OutboundEmail'] = 'OutboundEmail';
 $beanList['EmailParticipants'] = 'EmailParticipant';
 $beanList['DataPrivacy'] = 'DataPrivacy';
+$beanList['ReportSchedules'] = 'ReportSchedule';
+
 // this list defines all of the files that contain the SugarBean class definitions from $beanList
 // to create a new module's bean class, add the file definition here
 $beanFiles = array();
@@ -373,6 +375,8 @@ $beanFiles['Styleguide'] = 'modules/Styleguide/Styleguide.php';
 $beanFiles['OutboundEmail'] = 'include/OutboundEmail/OutboundEmail.php';
 $beanFiles['EmailParticipant'] = 'modules/EmailParticipants/EmailParticipant.php';
 $beanFiles['DataPrivacy'] = 'modules/DataPrivacy/DataPrivacy.php';
+$beanFiles['ReportSchedule'] = 'modules/ReportSchedules/ReportSchedule.php';
+
 // added these lists for security settings for tabs
 $modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'Dropdown', 'Dynamic', 'DynamicFields', 'DynamicLayout', 'EditCustomFields',
@@ -429,6 +433,7 @@ $modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'pmse_BpmGroup',
     'pmse_BpmGroupUser',
     //END SUGARCRM flav=ent ONLY
+    'ReportSchedules',
     );
 $adminOnlyList = array(
                     //module => list of actions  (all says all actions are admin only)
@@ -481,6 +486,7 @@ $modInvisList[] = 'Studio';
 $modInvisList[] = 'Connectors';
 $modInvisList[] = 'Styleguide';
 $modInvisList[] = 'EmailParticipants';
+$modInvisList[] = 'ReportSchedules';
 
 $report_include_modules = array();
 //add prospects
@@ -595,6 +601,7 @@ $objectList['TrackerPerfs'] =  'tracker_perf';
 $objectList['TrackerQueries'] =  'tracker_queries';
 $objectList['TeamNotices'] =  'TeamNotices';
 $objectList['OutboundEmail'] =  'OutboundEmail';
+$objectList['ReportSchedules'] = 'ReportSchedule';
 
 $beanList['PdfManager']     = 'PdfManager';
 $beanFiles['PdfManager']     = 'modules/PdfManager/PdfManager.php';

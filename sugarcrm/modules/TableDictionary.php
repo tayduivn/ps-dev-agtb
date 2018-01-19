@@ -55,8 +55,8 @@ include("metadata/projects_opportunitiesMetaData.php");
 
 
 include("metadata/report_cache.php");
-include("metadata/report_schedulesMetaData.php");
 include("metadata/saved_reportsMetaData.php");
+include 'metadata/reportschedules_usersMetaData.php';
 
 include("metadata/product_bundle_noteMetaData.php");
 include("metadata/product_bundle_productMetaData.php");

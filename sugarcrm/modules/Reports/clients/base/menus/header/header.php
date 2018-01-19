@@ -34,4 +34,11 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-bar-chart-o',
     ),
     //END SUGARCRM flav=ent ONLY
+    array(
+        'route'=>'#ReportSchedules',
+        'label' =>'LNK_REPORT_SCHEDULES',
+        'acl_action'=>'list',
+        'acl_module'=>'ReportSchedules',
+        'icon' => 'fa-bars',
+    ),
 );
