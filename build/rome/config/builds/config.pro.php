@@ -164,5 +164,10 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/pmse_Emails_Templates'=>1,
 'sugarcrm/modules/pmse_Inbox'=>1,
 'sugarcrm/modules/pmse_Project'=>1,
+
+'sugarcrm/tests/unit-php/modules/pmse_Business_Rules'=>1,
+'sugarcrm/tests/unit-php/modules/pmse_Emails_Templates'=>1,
+'sugarcrm/tests/unit-php/modules/pmse_Inbox'=>1,
+'sugarcrm/tests/unit-php/modules/pmse_Project'=>1,
 );
 $build = 'pro';
