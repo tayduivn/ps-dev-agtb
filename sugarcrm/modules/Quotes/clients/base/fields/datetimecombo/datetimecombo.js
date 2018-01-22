@@ -11,10 +11,10 @@
 /**
  * @class View.Fields.Base.Quotes.DatetimecomboField
  * @alias SUGAR.App.view.fields.BaseQuotesDatetimecomboField
- * @extends View.Fields.Base.DateField
+ * @extends View.Fields.Base.DatetimecomboField
  */
 ({
-    extendsFrom: 'DateField',
+    extendsFrom: 'DatetimecomboField',
 
     /**
      * @inheritdoc
