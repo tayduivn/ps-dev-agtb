@@ -244,7 +244,7 @@ return array(
     ],
     'RT GSync' => [
         [
-            'version' => '*',
+            'version' => '3.7',
         ],
     ],
     'RT SalesMap' => [
