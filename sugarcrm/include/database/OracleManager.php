@@ -1582,41 +1582,23 @@ LEFT JOIN all_constraints c
     {
         parent::massageFieldDef($fieldDef,$tablename);
 
-        if ($fieldDef['name'] == 'id')
-            $fieldDef['required'] = 'true';
-        if ($fieldDef['dbType'] == 'decimal')
-            $fieldDef['len'] = '20,2';
-        if ($fieldDef['dbType'] == 'decimal2')
-            $fieldDef['len'] = '30,6';
-        if ($fieldDef['dbType'] == 'double')
-            $fieldDef['len'] = '30,10';
-        if ($fieldDef['dbType'] == 'float')
-            $fieldDef['len'] = '30,6';
-        if ($fieldDef['dbType'] == 'uint')
-            $fieldDef['len'] = '15';
-        if ($fieldDef['dbType'] == 'ulong')
-            $fieldDef['len'] = '38';
-        if ($fieldDef['dbType'] == 'long')
-            $fieldDef['len'] = '38';
-        if ($fieldDef['dbType'] == 'bool')
-            $fieldDef['len'] = '1';
-        if ($fieldDef['dbType'] == 'id')
-            $fieldDef['len'] = '36';
-        if ($fieldDef['dbType'] == 'currency')
-            $fieldDef['len'] = '26,6';
-        if ($fieldDef['dbType'] == 'short')
-            $fieldDef['len'] = '3';
-        if ($fieldDef['dbType'] == 'tinyint')
-            $fieldDef['len'] = '3';
-        if ($fieldDef['dbType'] == 'int')
-            $fieldDef['len'] = '3';
-        if ($fieldDef['type'] == 'int' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '';
-        if ($fieldDef['dbType'] == 'enum' && empty($fieldDef['len']))
-            $fieldDef['len'] = '255';
-        if ($fieldDef['type'] == 'varchar2' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '255';
+        if (!empty($fieldDef['len'])) {
+            return;
+        }
 
+        $columnType = $this->getColumnType($fieldDef['dbType']);
+
+        $parts = $this->getTypeParts($columnType);
+
+        if (isset($parts['len'])) {
+            $len = $parts['len'];
+
+            if (isset($parts['scale'])) {
+                $len .= ',' . $parts['scale'];
+            }
+
+            $fieldDef['len'] = $len;
+        }
     }
 
     /**

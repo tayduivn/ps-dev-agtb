@@ -23,10 +23,10 @@ class Bug59310Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function getFields() {
         return array(
-            array('mail_smtpssl'),
-            array('mail_smtpport'),
-            array('mail_smtppass'),
-            array('mail_smtpuser'),
+            array('mail_smtpssl', 0, 1),
+            array('mail_smtpport', 25, 465),
+            array('mail_smtppass', 'foo', 'bar'),
+            array('mail_smtpuser', 'Passw0rd', 'Dolphin'),
         );
     }
 
@@ -34,7 +34,7 @@ class Bug59310Test extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider getFields
      * @param string $field
      */
-    public function testFieldsEncoding($field)
+    public function testFieldsEncoding($field, $value1, $value2)
     {
         // testing insert
         $ob = new OutboundEmail();
@@ -43,13 +43,14 @@ class Bug59310Test extends Sugar_PHPUnit_Framework_TestCase
         $ob->new_with_id = true;
         $ob->name = 'Test '.$ob->id;
         $ob->user_id = '1';
-        $ob->$field = mt_rand()." test \\ 'test' ".mt_rand();
+        $ob->$field = $value1;
         $ob->save();
+
         // testing update
         $ob->new_with_id = false;
         $ob->name = 'Update '.$ob->id;
         $ob->user_id = '1';
-        $ob->$field = mt_rand()." test2 \\ 'test2' ".mt_rand();
+        $ob->$field = $value2;
         $ob->save();
     }
 }

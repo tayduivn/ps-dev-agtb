@@ -2958,7 +2958,7 @@ abstract class DBManager
             if (in_array($colBaseType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char',
                                           'clob', 'blob', 'text', 'binary', 'varbinary'))) {
           	    $colType = "$colBaseType({$fieldDef['len']})";
-            } elseif(($colBaseType == 'decimal' || $colBaseType == 'float')){
+            } elseif (($colBaseType == 'decimal' || $colBaseType == 'float' || $colBaseType == 'number')) {
                   if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))
                       if(strpos($fieldDef['len'],',') === false){
                           $colType = $colBaseType . "(".$fieldDef['len'].",".$fieldDef['precision'].")";
