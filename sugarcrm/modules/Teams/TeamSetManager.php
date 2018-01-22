@@ -455,8 +455,12 @@ SQL;
         $stmt = $conn->executeQuery($query, [$oldTeamIds], [Connection::PARAM_STR_ARRAY]);
         $data = [];
 
+        $db = DBManagerFactory::getInstance();
+
         while (($row = $stmt->fetch())) {
-            $data[$row['team_set_id']][] = $row['team_id'];
+            $data[
+                $db->fromConvert($row['team_set_id'], 'id')
+            ][] = $db->fromConvert($row['team_id'], 'id');
         }
 
         if (!count($data)) {
