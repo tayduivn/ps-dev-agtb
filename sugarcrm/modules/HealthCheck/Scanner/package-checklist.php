@@ -249,7 +249,7 @@ return array(
     ],
     'RT SalesMap' => [
         [
-            'version' => '*',
+            'version' => '4.3',
         ],
     ],
     'sf_SalesFusion' => [
