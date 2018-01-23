@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data;
 
+use LoggerManager;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 require_once 'data/Relationships/SugarRelationship.php';
@@ -24,7 +25,7 @@ class Link2Test extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $GLOBALS['log'] = $this->getMock('\LoggerManager', [], [], '', false);
+        $GLOBALS['log'] = $this->createMock(LoggerManager::class);
     }
 
     protected function tearDown()

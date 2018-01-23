@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b597f2e77817f02fb9d4072f1ab7d0ff",
+    "content-hash": "8a5945bc94b4d4c9285537371fbdc5ec",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2052,17 +2052,17 @@
         },
         {
             "name": "symfony/console",
-            "version": "v3.1.7",
+            "version": "v3.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "f086a381e4b5320b03f4996b9a7582d5c3236bb1"
+                "reference": "b684842a88bde474fe4acff05830714a17aeda4a"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-console-v3.1.7-5abb15.tar",
-                "reference": "f086a381e4b5320b03f4996b9a7582d5c3236bb1",
-                "shasum": "fa3f4ff88b64fe92e9ce4f30f8b365368633b2ba"
+                "url": "https://satis.sugardev.team/dist/symfony-console-v3.1.10-97e630.tar",
+                "reference": "b684842a88bde474fe4acff05830714a17aeda4a",
+                "shasum": "dd18c885914a303dc90919e7de4f8f119a2e6681"
             },
             "require": {
                 "php": ">=5.5.9",
@@ -2108,7 +2108,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-16T22:17:09+00:00"
+            "time": "2017-01-08T20:43:43+00:00"
         },
         {
             "name": "symfony/debug",
@@ -2391,17 +2391,17 @@
         },
         {
             "name": "symfony/framework-bundle",
-            "version": "v3.1.7",
+            "version": "v3.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/framework-bundle",
-                "reference": "df0d4f4826c1625b0bac03f085947b0b60ab026d"
+                "reference": "a60800911189b190c0b3578e0b8cb50244122abc"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-framework-bundle-v3.1.7-e17505.tar",
-                "reference": "df0d4f4826c1625b0bac03f085947b0b60ab026d",
-                "shasum": "c92092d445f4b18adfaf7c24b4ae0b7da17184e9"
+                "url": "https://satis.sugardev.team/dist/symfony-framework-bundle-v3.1.10-78522e.tar",
+                "reference": "a60800911189b190c0b3578e0b8cb50244122abc",
+                "shasum": "cc8b3a75997df04a1a0d68e2637ee514ad88954f"
             },
             "require": {
                 "doctrine/annotations": "~1.0",
@@ -2416,9 +2416,9 @@
                 "symfony/filesystem": "~2.8|~3.0",
                 "symfony/finder": "~2.8|~3.0",
                 "symfony/http-foundation": "~3.1",
-                "symfony/http-kernel": "~3.1.2|~3.2",
+                "symfony/http-kernel": "~3.1.9|^3.2.2",
                 "symfony/polyfill-mbstring": "~1.0",
-                "symfony/routing": "~3.0",
+                "symfony/routing": "~3.1.10",
                 "symfony/security-core": "~2.8|~3.0",
                 "symfony/security-csrf": "~2.8|~3.0",
                 "symfony/stopwatch": "~2.8|~3.0",
@@ -2431,12 +2431,13 @@
             },
             "require-dev": {
                 "phpdocumentor/reflection-docblock": "^3.0",
+                "sensio/framework-extra-bundle": "^3.0.2",
                 "symfony/browser-kit": "~2.8|~3.0",
                 "symfony/console": "~2.8.8|~3.0.8|~3.1.2|~3.2",
                 "symfony/css-selector": "~2.8|~3.0",
                 "symfony/dom-crawler": "~2.8|~3.0",
                 "symfony/expression-language": "~2.8|~3.0",
-                "symfony/form": "~2.8|~3.0",
+                "symfony/form": "~2.8.16|~3.1.9|^3.2.2",
                 "symfony/polyfill-intl-icu": "~1.0",
                 "symfony/process": "~2.8|~3.0",
                 "symfony/property-info": "~2.8|~3.0",
@@ -2485,7 +2486,7 @@
             ],
             "description": "Symfony FrameworkBundle",
             "homepage": "https://symfony.com",
-            "time": "2016-11-14T16:20:02+00:00"
+            "time": "2017-01-28T02:42:42+00:00"
         },
         {
             "name": "symfony/http-foundation",
@@ -2956,35 +2957,32 @@
         },
         {
             "name": "symfony/routing",
-            "version": "v3.3.6",
+            "version": "v3.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/routing",
-                "reference": "985a99cf5c693cb4f7f199ac4e53bf9c807e90f1"
+                "reference": "3b4edffb6a316988d6de096d8ce406e55282af85"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-routing-v3.3.6-178e36.tar",
-                "reference": "985a99cf5c693cb4f7f199ac4e53bf9c807e90f1",
-                "shasum": "52ed0fd3158b12eeafed645443bdba684f02de1f"
+                "url": "https://satis.sugardev.team/dist/symfony-routing-v3.1.10-bb7d18.tar",
+                "reference": "3b4edffb6a316988d6de096d8ce406e55282af85",
+                "shasum": "129b5e392a23190351e19c75107b2a9e1c3744ee"
             },
             "require": {
                 "php": ">=5.5.9"
             },
             "conflict": {
-                "symfony/config": "<2.8",
-                "symfony/dependency-injection": "<3.3",
-                "symfony/yaml": "<3.3"
+                "symfony/config": "<2.8"
             },
             "require-dev": {
                 "doctrine/annotations": "~1.0",
                 "doctrine/common": "~2.2",
                 "psr/log": "~1.0",
                 "symfony/config": "~2.8|~3.0",
-                "symfony/dependency-injection": "~3.3",
                 "symfony/expression-language": "~2.8|~3.0",
                 "symfony/http-foundation": "~2.8|~3.0",
-                "symfony/yaml": "~3.3"
+                "symfony/yaml": "~2.8|~3.0"
             },
             "suggest": {
                 "doctrine/annotations": "For using the annotation loader",
@@ -2997,7 +2995,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -3029,21 +3027,21 @@
                 "router",
                 "routing"
             ],
-            "time": "2017-07-21T17:43:13+00:00"
+            "time": "2017-01-28T00:04:57+00:00"
         },
         {
             "name": "symfony/security-core",
-            "version": "v3.1.7",
+            "version": "v3.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-core.git",
-                "reference": "ac1c5a96323f6a4f8015f67a7e3fa84ab90f5452"
+                "reference": "a524c4f13e1bfd7031f6ebb9367801960cb3a331"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-security-core-v3.1.7-e544f7.tar",
-                "reference": "ac1c5a96323f6a4f8015f67a7e3fa84ab90f5452",
-                "shasum": "2c1c7b542066a51608a82f5e39f3e419beb70d79"
+                "url": "https://satis.sugardev.team/dist/symfony-security-core-v3.1.10-5eab67.tar",
+                "reference": "a524c4f13e1bfd7031f6ebb9367801960cb3a331",
+                "shasum": "03685eccdf7b067a89b07150fb4cff6761236aad"
             },
             "require": {
                 "php": ">=5.5.9",
@@ -3094,21 +3092,21 @@
             ],
             "description": "Symfony Security Component - Core Library",
             "homepage": "https://symfony.com",
-            "time": "2016-11-16T22:17:09+00:00"
+            "time": "2017-01-23T08:24:39+00:00"
         },
         {
             "name": "symfony/security-csrf",
-            "version": "v3.1.7",
+            "version": "v3.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-csrf.git",
-                "reference": "d0c684e4a1842ae3b72debba9b5b42a9fedff8e5"
+                "reference": "c631d7d6522174b9016c3057af56eac74fe2be13"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-security-csrf-v3.1.7-853b4e.tar",
-                "reference": "d0c684e4a1842ae3b72debba9b5b42a9fedff8e5",
-                "shasum": "bbd84483ad650f629a01833f7e9b89f7d0f46eb9"
+                "url": "https://satis.sugardev.team/dist/symfony-security-csrf-v3.1.10-5cad3b.tar",
+                "reference": "c631d7d6522174b9016c3057af56eac74fe2be13",
+                "shasum": "93b6cf87c0c7c394807ecab77d190a9650f6ae98"
             },
             "require": {
                 "php": ">=5.5.9",
@@ -3151,7 +3149,7 @@
             ],
             "description": "Symfony Security Component - CSRF Library",
             "homepage": "https://symfony.com",
-            "time": "2016-07-05T11:09:33+00:00"
+            "time": "2017-01-02T20:31:54+00:00"
         },
         {
             "name": "symfony/stopwatch",
@@ -3257,17 +3255,17 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v3.1.7",
+            "version": "v3.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Translation.git",
-                "reference": "e550abfd9cc7331137957a34d978f986cbb9827a"
+                "reference": "ffd6383d570cc6e73b42874ccb3dfb12a6bd8cb9"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-translation-v3.1.7-3d5218.tar",
-                "reference": "e550abfd9cc7331137957a34d978f986cbb9827a",
-                "shasum": "febeb514123c0070b1dcb79d3dec074317fb84df"
+                "url": "https://satis.sugardev.team/dist/symfony-translation-v3.1.10-2d5a3e.tar",
+                "reference": "ffd6383d570cc6e73b42874ccb3dfb12a6bd8cb9",
+                "shasum": "84cb53d1c83254ca518679b73a732ef2b4d5b66a"
             },
             "require": {
                 "php": ">=5.5.9",
@@ -3316,7 +3314,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-18T21:15:08+00:00"
+            "time": "2017-01-21T17:01:39+00:00"
         },
         {
             "name": "symfony/twig-bridge",
@@ -3406,17 +3404,17 @@
         },
         {
             "name": "symfony/validator",
-            "version": "v3.1.7",
+            "version": "v3.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Validator.git",
-                "reference": "1aad22047ba0ca2761a9ae73a3853f6d5903f52e"
+                "reference": "2934a1ca201465930d3108e27fe6c06813266072"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-validator-v3.1.7-388b9b.tar",
-                "reference": "1aad22047ba0ca2761a9ae73a3853f6d5903f52e",
-                "shasum": "1e5c35c8e4dad0535bc978fe9a452b8a04045c80"
+                "url": "https://satis.sugardev.team/dist/symfony-validator-v3.1.10-9f035c.tar",
+                "reference": "2934a1ca201465930d3108e27fe6c06813266072",
+                "shasum": "931c32ef6f8f547e5efb2322f6b6cf514db4d0ac"
             },
             "require": {
                 "php": ">=5.5.9",
@@ -3475,7 +3473,7 @@
             ],
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-18T21:15:08+00:00"
+            "time": "2017-01-23T08:25:24+00:00"
         },
         {
             "name": "tedivm/jshrink",
@@ -4612,17 +4610,17 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.7.2",
+            "version": "5.7.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "5fb2bb41245ea003609a94272117af8cf39a2d6c"
+                "reference": "4155f0633c46e19d1cc3b8bcd93debbfcf326b06"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit-phpunit-5.7.2-b89845.tar",
-                "reference": "5fb2bb41245ea003609a94272117af8cf39a2d6c",
-                "shasum": "00750cf8490aaddb7d8de4ce570e2c7b407c3ecd"
+                "url": "https://satis.sugardev.team/dist/phpunit-phpunit-5.7.21-fd47bc.tar",
+                "reference": "4155f0633c46e19d1cc3b8bcd93debbfcf326b06",
+                "shasum": "8e1aa8220d3b900cb4b06666e211c86e6a9cd1d7"
             },
             "require": {
                 "ext-dom": "*",
@@ -4632,20 +4630,20 @@
                 "ext-xml": "*",
                 "myclabs/deep-copy": "~1.3",
                 "php": "^5.6 || ^7.0",
-                "phpspec/prophecy": "^1.3.1",
-                "phpunit/php-code-coverage": "^4.0.3",
+                "phpspec/prophecy": "^1.6.2",
+                "phpunit/php-code-coverage": "^4.0.4",
                 "phpunit/php-file-iterator": "~1.4",
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-timer": "^1.0.6",
                 "phpunit/phpunit-mock-objects": "^3.2",
-                "sebastian/comparator": "~1.2.2",
-                "sebastian/diff": "~1.2",
+                "sebastian/comparator": "^1.2.4",
+                "sebastian/diff": "^1.4.3",
                 "sebastian/environment": "^1.3.4 || ^2.0",
                 "sebastian/exporter": "~2.0",
-                "sebastian/global-state": "~1.0",
+                "sebastian/global-state": "^1.1",
                 "sebastian/object-enumerator": "~2.0",
                 "sebastian/resource-operations": "~1.0",
-                "sebastian/version": "~1.0|~2.0",
+                "sebastian/version": "~1.0.3|~2.0",
                 "symfony/yaml": "~2.1|~3.0"
             },
             "conflict": {
@@ -4701,7 +4699,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues"
             },
-            "time": "2016-12-03T08:33:00+00:00"
+            "time": "2017-06-21T08:11:54+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

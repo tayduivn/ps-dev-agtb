@@ -12,6 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\Relationships;
 
+use Link2;
+use LoggerManager;
+use One2MBeanRelationship;
+use SugarBean;
+use SugarQuery;
+
 /**
  * @coversDefaultClass One2MBeanRelationship
  */
@@ -20,7 +26,7 @@ class One2MBeanRelationshipTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $GLOBALS['log'] = $this->getMock('\LoggerManager', [], [], '', false);
+        $GLOBALS['log'] = $this->createMock(LoggerManager::class);
     }
 
     protected function tearDown()
@@ -43,11 +49,11 @@ class One2MBeanRelationshipTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadRHS($expected, $rhsId)
     {
-        $link = $this->getMock('\Link2', [], [], '', false);
+        $link = $this->createMock(Link2::class);
         $link->expects($this->any())
             ->method('getSide')
             ->willReturn('RHS');
-        $bean = $this->getMock('\SugarBean', [], [], '', false);
+        $bean = $this->createMock(SugarBean::class);
         $bean->rhs_id = $rhsId;
         $link->expects($this->any())
             ->method('getFocus')
@@ -58,7 +64,7 @@ class One2MBeanRelationshipTest extends \PHPUnit_Framework_TestCase
             'lhs_module' => 'test-lhs-module',
             'rhs_module' => 'test-rhs-module',
         ];
-        $relationship = $this->getMockBuilder('\One2MBeanRelationship')
+        $relationship = $this->getMockBuilder(One2MBeanRelationship::class)
             ->setMethods(['getLinkedDefForModuleByRelationship'])
             ->setConstructorArgs([$def])
             ->getMock();
@@ -72,7 +78,7 @@ class One2MBeanRelationshipTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadLHS()
     {
-        $link = $this->getMock('\Link2', [], [], '', false);
+        $link = $this->createMock(Link2::class);
         $link->expects($this->any())
             ->method('getSide')
             ->willReturn('LHS');
@@ -81,11 +87,11 @@ class One2MBeanRelationshipTest extends \PHPUnit_Framework_TestCase
             'lhs_module' => 'test-lhs-module',
             'rhs_module' => 'test-rhs-module',
         ];
-        $relationship = $this->getMockBuilder('\One2MBeanRelationship')
+        $relationship = $this->getMockBuilder(One2MBeanRelationship::class)
             ->setMethods(['getLinkedDefForModuleByRelationship', 'getSugarQuery'])
             ->setConstructorArgs([$def])
             ->getMock();
-        $sugarQuery = $this->getMock('\SugarQuery', [], [], '', false);
+        $sugarQuery = $this->createMock(SugarQuery::class);
         $sugarQuery->expects($this->once())
             ->method('execute')
             ->willReturn([['id' => 'id-1', 'name' => 'test name']]);
