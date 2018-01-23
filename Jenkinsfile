@@ -1,10 +1,10 @@
 podTemplate(
-    label: "mango-${env.BUILD_NUMBER}",
+    label: "mango-${env.BRANCH_NAME}-${env.BUILD_NUMBER}",
     containers: [
       containerTemplate(name: 'karma', image: 'registry.sugarcrm.net/karma/karma:latest',ttyEnabled: true, args: 'cat'),
     ]
 ) {
-    node("mango-${env.BUILD_NUMBER}") {
+    node("mango-${env.BRANCH_NAME}-${env.BUILD_NUMBER}") {
       stage('checkout') {
         checkout scm
       }
