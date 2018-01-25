@@ -101,6 +101,8 @@
      * @inheritdoc
      */
     bindDataChange: function() {
+        var userACLs = app.user.getAcls();
+
         this.model.on('change:show_line_nums', this._onShowLineNumsChanged, this);
         this.model.on('change:bundles', this._onProductBundleChange, this);
         this.context.on('quotes:group:create', this._onCreateQuoteGroup, this);
@@ -108,7 +110,17 @@
         this.context.on('quotes:selected:delete', this._onDeleteSelectedItems, this);
         this.context.on('quotes:defaultGroup:create', this._onCreateDefaultQuoteGroup, this);
         this.context.on('quotes:defaultGroup:save', this._onSaveDefaultQuoteGroup, this);
-        this.context.on('productCatalogDashlet:add', this._onProductCatalogDashletAddItem, this);
+
+        if (!(_.has(userACLs.Quotes, 'edit') ||
+                _.has(userACLs.Products, 'access') ||
+                _.has(userACLs.Products, 'edit'))) {
+            // only listen for PCDashlet if this is Quotes and user has access
+            // to both Quotes and Products
+            // need to trigger on app.controller.context because of contexts changing between
+            // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
+            // app.controller.context is the only consistent context to use
+            app.controller.context.on('productCatalogDashlet:add', this._onProductCatalogDashletAddItem, this);
+        }
 
         // check if this is create mode, in which case add an empty array to bundles
         if (this.isCreateView) {
@@ -211,7 +223,7 @@
         }
 
         // trigger event on the context to let dashlet know this is done adding the product
-        this.context.trigger('productCatalogDashlet:add:complete');
+        app.controller.context.trigger('productCatalogDashlet:add:complete');
     },
 
     /**
@@ -1542,6 +1554,9 @@
      */
     _dispose: function() {
         this.beforeRender();
+        if (app.controller && app.controller.context) {
+            app.controller.context.off('productCatalogDashlet:add', null, this);
+        }
         this._super('_dispose');
     }
 })

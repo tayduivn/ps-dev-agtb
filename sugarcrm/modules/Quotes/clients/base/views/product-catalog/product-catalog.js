@@ -99,7 +99,10 @@
     bindDataChange: function() {
         this._super('bindDataChange');
 
-        this.context.on('productCatalogDashlet:add:complete', this._onProductDashletAddComplete, this);
+        // need to trigger on app.controller.context because of contexts changing between
+        // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
+        // app.controller.context is the only consistent context to use
+        app.controller.context.on('productCatalogDashlet:add:complete', this._onProductDashletAddComplete, this);
         $(window).on('resize', _.bind(this._resizePhaserCanvas, this));
     },
 
@@ -293,7 +296,7 @@
         // use 100% for the width and 260px for the height
         this.phaser = new Phaser.Game({
             height: 260,
-            parent: 'product-catalog-canvas',
+            parent: 'product-catalog-canvas-' + this.cid,
             renderer: Phaser.CANVAS,
             transparent: true,
             width: '100'
@@ -305,8 +308,11 @@
             document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
                 'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
 
-        this.$('.product-catalog-container').off(this.wheelEventName);
-        this.$('.product-catalog-container').on(this.wheelEventName, _.bind(this._onMouseWheelChange, this));
+        this.$('.product-catalog-container-' + this.cid).off(this.wheelEventName);
+        this.$('.product-catalog-container-' + this.cid).on(
+            this.wheelEventName,
+            _.bind(this._onMouseWheelChange, this)
+        );
 
         this.phaser.events = new EventHub();
         this.phaser.events.onTreeReady.add(this.onPhaserTreeReadyHandler, this);
@@ -395,7 +401,7 @@
             preload: function() {
                 this.groups = [];
                 this.gameWorldHeight = 0;
-                this.gameWorldWidth = this.game._view.$('.product-catalog-dashlet').width();
+                this.gameWorldWidth = this.game._view.$('.product-catalog-dashlet-' + this.cid).width();
                 this.cameraY = 0;
                 this.isLoading = false;
 
@@ -503,7 +509,7 @@
             _setTreeData: function(treeData) {
                 var groupIndex = 0;
 
-                this.gameWorldWidth = this.game._view.$('.product-catalog-dashlet').width();
+                this.gameWorldWidth = this.game._view.$('.product-catalog-dashlet-' + this.cid).width();
                 this.gameWorldHeight = 15;
                 this.cameraY = 0;
                 this.game.camera.y = 0;
@@ -968,8 +974,6 @@
      * @private
      */
     _sendItemToQuote: function(data) {
-        var ctx = this.context.parent ? this.context.parent : this.context;
-
         data.position = 0;
         data._forcePosition = true;
 
@@ -982,8 +986,10 @@
         delete data.date_entered;
         delete data.date_modified;
 
-        // trigger event on context to add this product template data to the record
-        ctx.trigger('productCatalogDashlet:add', data);
+        // need to trigger on app.controller.context because of contexts changing between
+        // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
+        // app.controller.context is the only consistent context to use
+        app.controller.context.trigger('productCatalogDashlet:add', data);
     },
 
     /**
@@ -1010,7 +1016,7 @@
      */
     _onProductDashletAddComplete: function() {
         this.isFetchActive = false;
-        this.$('#product-catalog-jstree').removeClass('disabled');
+        this.$('#product-catalog-container-' + this.cid).removeClass('disabled');
     },
 
     /**
@@ -1019,10 +1025,9 @@
      * @private
      */
     _resizePhaserCanvas: function() {
-        var $el;
+        var $el = this.$('.product-catalog-container-' + this.cid);
 
-        if (this.phaser) {
-            $el = this.$('.product-catalog-container');
+        if (this.phaser && $el.length) {
             this.phaser.scale.setGameSize($el.width(), $el.height());
         }
     },
@@ -1032,10 +1037,12 @@
      */
     _dispose: function() {
         // any cleanup
-        this.$('.product-catalog-container').off(this.wheelEventName);
+        this.$('.product-catalog-container-' + this.cid).off(this.wheelEventName);
         // remove window resize event
         $(window).off('resize');
-
+        if (app.controller && app.controller.context) {
+            app.controller.context.off('productCatalogDashlet:add:complete', null, this);
+        }
         // If Phaser exists, destroy it
         if (this.phaser) {
             this.phaser.events.destroy();

@@ -19,7 +19,69 @@
         var j;
         var panel;
         var field;
+        var moduleName;
+        var addBtn = _.find(options.meta.buttons, function(btn) {
+            return btn.name === 'add_to_quote_button';
+        });
+        var removeAddBtn = false;
+        var userACLs;
+        var oppsConfig;
+        var secondaryModule;
+        var showOnModules = _.keys(addBtn.showOnModules);
+        var showOnViews;
+        var layoutName;
 
+        // check to see if there's an add button and if this module is not in the list
+        // to show the add button
+        if (addBtn) {
+            // need to use router because if we're on Home or another module and use the megamenu
+            // to create an Opp or Quote, it shows the previous module we're in, not the current.
+            moduleName = app.router.getFragment().split('/')[0];
+            layoutName = app.controller.context.get('layout');
+            showOnViews = addBtn.showOnModules[moduleName];
+
+            if (!_.contains(showOnModules, moduleName)) {
+                // if this module is not in the list of metadata 'showOnModules' array, remove it
+                removeAddBtn = true;
+            }
+
+            if (!removeAddBtn) {
+                if (!_.contains(showOnViews, layoutName)) {
+                    // if this view is not in the list of metadata 'showOnModules' views, remove it
+                    removeAddBtn = true;
+                }
+            }
+
+            if (!removeAddBtn) {
+                // we need to check other conditions to remove the add button
+                oppsConfig = app.metadata.getModule('Opportunities', 'config');
+                userACLs = app.user.getAcls();
+
+                if (moduleName === 'Opportunities') {
+                    if (oppsConfig.opps_view_by === 'RevenueLineItems') {
+                        // if Opps+RLI mode, check ACLs on RLIs not Opps
+                        secondaryModule = 'RevenueLineItems';
+                    } else {
+                        // if in Opps only mode, remove the add button
+                        removeAddBtn = true;
+                    }
+                } else if (moduleName === 'Quotes') {
+                    secondaryModule = 'Products';
+                }
+
+                if (_.has(userACLs[moduleName], 'edit') ||
+                    _.has(userACLs[secondaryModule], 'access') ||
+                    _.has(userACLs[secondaryModule], 'edit')) {
+                    // if the user doesn't have access to edit Opps or Quotes,
+                    // or user doesn't have access or edit priveleges for RLIs/QLIs, remove the add button
+                    removeAddBtn = true;
+                }
+            }
+
+            if (removeAddBtn) {
+                options.meta.buttons = _.without(options.meta.buttons, addBtn);
+            }
+        }
         options.name = 'record';
 
         for (i = 0; i < options.meta.panels.length; i++) {
@@ -50,7 +112,7 @@
      * @private
      */
     _drawerCancelClicked: function() {
-        this.context.parent.trigger('productCatalogDashlet:add:complete');
+        app.controller.context.trigger('productCatalogDashlet:add:complete');
         app.drawer.close();
     },
 
@@ -75,7 +137,10 @@
         delete data.date_entered;
         delete data.date_modified;
 
-        this.context.parent.trigger('productCatalogDashlet:add', data);
+        // need to trigger on app.controller.context because of contexts changing between
+        // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
+        // app.controller.context is the only consistent context to use
+        app.controller.context.trigger('productCatalogDashlet:add', data);
         app.drawer.close();
     }
 })

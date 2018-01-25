@@ -56,12 +56,12 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
 
     describe('bindDataChange()', function() {
         beforeEach(function() {
-            sinon.collection.stub(view.context, 'on', function() {});
+            sinon.collection.stub(app.controller.context, 'on', function() {});
             view.bindDataChange();
         });
 
         it('should set an event listener on the context for productCatalogDashlet:add:complete', function() {
-            expect(view.context.on).toHaveBeenCalledWith('productCatalogDashlet:add:complete');
+            expect(app.controller.context.on).toHaveBeenCalledWith('productCatalogDashlet:add:complete');
         });
     });
 
@@ -513,6 +513,7 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
 
     describe('_sendItemToQuote()', function() {
         var productTemplateData;
+
         beforeEach(function() {
             productTemplateData = {
                 id: 'prodTemplateId',
@@ -520,8 +521,8 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
                 date_entered: 'yesterday',
                 date_modified: 'today'
             };
+            sinon.collection.stub(app.controller.context, 'trigger', function() {});
 
-            sinon.collection.stub(view.context, 'trigger', function() {});
             view._sendItemToQuote(productTemplateData);
         });
 
@@ -558,7 +559,7 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
 
         it('should trigger context event', function() {
-            expect(view.context.trigger).toHaveBeenCalledWith('productCatalogDashlet:add');
+            expect(app.controller.context.trigger).toHaveBeenCalledWith('productCatalogDashlet:add');
         });
     });
 
@@ -581,6 +582,7 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
 
         beforeEach(function() {
             view.isFetchActive = true;
+            view.cid = 'view123';
             removeClassStub = sinon.collection.stub();
             sinon.collection.stub(view, '$', function() {
                 return {
@@ -599,8 +601,8 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
             expect(view.isFetchActive).toBeFalsy();
         });
 
-        it('should call view.$ with #product-catalog-jstree', function() {
-            expect(view.$).toHaveBeenCalledWith('#product-catalog-jstree');
+        it('should call view.$ with #product-catalog-container-view.cid', function() {
+            expect(view.$).toHaveBeenCalledWith('#product-catalog-container-' + view.cid);
         });
 
         it('should call removeClass with disabled', function() {
@@ -639,9 +641,10 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
 
         it('should call off to stop listening for the wheel event', function() {
             view.wheelEventName = 'wheel';
+            view.cid = 'view123';
             view._dispose();
 
-            expect(view.$).toHaveBeenCalledWith('.product-catalog-container');
+            expect(view.$).toHaveBeenCalledWith('.product-catalog-container-' + view.cid);
             expect(offStub).toHaveBeenCalledWith('wheel');
         });
 

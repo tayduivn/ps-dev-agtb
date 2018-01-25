@@ -82,13 +82,58 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         beforeEach(function() {
             sinon.collection.spy(layout.context, 'on');
             sinon.collection.spy(layout.model, 'on');
-            sinon.collection.stub(layout, '_onProductBundleChange', function() {});
-            sinon.collection.stub(layout, '_setCopyQuoteData', function() {});
-            sinon.collection.stub(layout, '_checkProductsQuoteLink', function() {});
+            sinon.collection.stub(layout, '_onProductBundleChange');
+            sinon.collection.stub(layout, '_setCopyQuoteData');
+            sinon.collection.stub(layout, '_checkProductsQuoteLink');
+            sinon.collection.stub(app.controller.context, 'on');
         });
 
         afterEach(function() {
             bundles = null;
+        });
+
+        describe('app.controller.context', function() {
+            it('should not set listener if user has no access to Quotes edit', function() {
+                sinon.collection.stub(app.user, 'getAcls', function() {
+                    return {
+                        Quotes: {
+                            edit: 'no'
+                        },
+                        Products: {}
+                    };
+                });
+                layout.bindDataChange();
+
+                expect(app.controller.context.on).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+            });
+
+            it('should not set listener if user has no access to Products', function() {
+                sinon.collection.stub(app.user, 'getAcls', function() {
+                    return {
+                        Quotes: {},
+                        Products: {
+                            access: 'no'
+                        }
+                    };
+                });
+                layout.bindDataChange();
+
+                expect(app.controller.context.on).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+            });
+
+            it('should not set listener if user has no access to Products edit', function() {
+                sinon.collection.stub(app.user, 'getAcls', function() {
+                    return {
+                        Quotes: {},
+                        Products: {
+                            edit: 'no'
+                        }
+                    };
+                });
+                layout.bindDataChange();
+
+                expect(app.controller.context.on).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+            });
         });
 
         describe('when setting event listeners', function() {
@@ -124,8 +169,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 expect(layout.context.on).toHaveBeenCalledWith('quotes:defaultGroup:save');
             });
 
-            it('should listen on layout.context for quotes:defaultGroup:save', function() {
-                expect(layout.context.on).toHaveBeenCalledWith('productCatalogDashlet:add');
+            it('should listen on layout.context for productCatalogDashlet:add', function() {
+                expect(app.controller.context.on).toHaveBeenCalledWith('productCatalogDashlet:add');
             });
         });
 
@@ -369,7 +414,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             };
             layout._components.push(defaultGroupMock);
             layout.defaultGroupId = defaultGroupId;
-            sinon.collection.stub(layout.context, 'trigger', function() {});
+            sinon.collection.stub(app.controller.context, 'trigger');
         });
 
         afterEach(function() {
@@ -384,10 +429,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             expect(defaultGroupTriggerStub).toHaveBeenCalledWith('quotes:group:create:qli');
         });
 
-        it('should call trigger on layout context', function() {
+        it('should call trigger on app.controller.context', function() {
             layout._onProductCatalogDashletAddItem({});
 
-            expect(layout.context.trigger).toHaveBeenCalledWith('productCatalogDashlet:add:complete');
+            expect(app.controller.context.trigger).toHaveBeenCalledWith('productCatalogDashlet:add:complete');
         });
     });
 

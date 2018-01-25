@@ -9,15 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Quotes']['base']['view']['product-catalog-dashlet'] = array(
-    'dashlets' => array(
+$viewdefs['Opportunities']['base']['layout']['create-preview'] = array(
+    'components' => array(
         array(
-            'label' => 'LBL_PRODUCT_CATALOG_DASHLET_NAME',
-            'description' => 'LBL_PRODUCT_CATALOG_DASHLET_DESC',
-            'config' => array(
+            'view' => 'product-catalog',
+            'context' => array(
                 'module' => 'Quotes',
-            ),
-            'preview' => array(
             ),
         ),
     ),

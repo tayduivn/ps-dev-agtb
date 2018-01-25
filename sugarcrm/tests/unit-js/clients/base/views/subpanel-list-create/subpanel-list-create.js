@@ -9,11 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Base.View.SubpanelListCreate', function() {
-    var app,
-        view,
-        layout,
-        parentLayout,
-        sandbox;
+    var app;
+    var view;
+    var layout;
+    var parentLayout;
+    var sandbox;
+
     beforeEach(function() {
         app = SugarTest.app;
         sandbox = sinon.sandbox.create();
@@ -36,56 +37,285 @@ describe('Base.View.SubpanelListCreate', function() {
         if (!_.isFunction(app.utils.generateUUID)) {
             app.utils.generateUUID = function() {}
         }
-        sinon.sandbox.stub(app.utils, 'generateUUID', function() {
+        sandbox.stub(app.utils, 'generateUUID', function() {
             return 'testUUID'
+        });
+        app.routing.start();
+        sandbox.stub(app.metadata, 'getModule', function() {
+            return {
+                opps_view_by: 'RevenueLineItems'
+            };
         });
 
         view = SugarTest.createView('base', null, 'subpanel-list-create', {}, context, false, layout, true);
     });
 
     afterEach(function() {
-        sinon.sandbox.restore();
+        sandbox.restore();
         view.dispose();
         view = null;
+        app.router.stop();
     });
 
     describe('initialize', function() {
-        beforeEach(function() {
-            sinon.sandbox.stub(view, '_super', function() {});
-        });
-
         it('should set the dataView on the context', function() {
-            view.initialize({});
             expect(view.context.get('dataView')).toBe('subpanel-list-create');
         });
 
         it('should set isCreateSubpanel to be true on the context', function() {
-            view.initialize({});
             expect(view.context.get('isCreateSubpanel')).toBeTruthy();
         });
     });
 
     describe('bindDataChange', function() {
+        var appCtrlCtxSpy;
+
         beforeEach(function() {
-            sinon.sandbox.spy(view, '_addBeanToList');
+            view.collection = new Backbone.Collection();
+            view.context.set('link', 'rlis345');
+            sandbox.stub(view.context.parent, 'on', $.noop);
+            sandbox.stub(view, 'resetSubpanel', $.noop);
+            appCtrlCtxSpy = sandbox.stub(app.controller.context, 'on');
         });
 
-        it('should call _addBeanToList when collection length == 0', function() {
-            view.collection = new Backbone.Collection();
-            view.bindDataChange();
-            expect(view._addBeanToList).toHaveBeenCalled();
+        afterEach(function() {
+            appCtrlCtxSpy.restore();
+            appCtrlCtxSpy = null;
+        });
+
+        describe('when Opps Config opps_view_by is Opportunities', function() {
+            it('should not set listener on app.controller.context', function() {
+                app.metadata.getModule.restore();
+                sandbox.stub(app.metadata, 'getModule', function() {
+                    return {
+                        opps_view_by: 'Opportunities'
+                    };
+                });
+                sandbox.stub(app.user, 'getAcls', function() {
+                    return {
+                        Opportunities: {},
+                        RevenueLineItems: {}
+                    };
+                });
+                view.bindDataChange();
+
+                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+            });
+        });
+
+        describe('when Opps Config opps_view_by is RevenueLineItems', function() {
+            beforeEach(function() {
+                app.metadata.getModule.restore();
+                sandbox.stub(app.metadata, 'getModule', function() {
+                    return {
+                        opps_view_by: 'RevenueLineItems'
+                    };
+                });
+            });
+
+            it('should not set listener on app.controller.context when user has no access to Opps edit', function() {
+                sandbox.stub(app.user, 'getAcls', function() {
+                    return {
+                        Opportunities: {
+                            edit: 'no'
+                        },
+                        RevenueLineItems: {}
+                    };
+                });
+                view.bindDataChange();
+
+                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+            });
+
+            it('should not set listener on app.controller.context when user has no access to RLIs', function() {
+                sandbox.stub(app.user, 'getAcls', function() {
+                    return {
+                        Opportunities: {},
+                        RevenueLineItems: {
+                            access: 'no'
+                        }
+                    };
+                });
+                view.bindDataChange();
+
+                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+            });
+
+            it('should not set listener on app.controller.context when user has no edit access to RLIs', function() {
+                sandbox.stub(app.user, 'getAcls', function() {
+                    return {
+                        Opportunities: {},
+                        RevenueLineItems: {
+                            edit: 'no'
+                        }
+                    };
+                });
+                view.bindDataChange();
+
+                expect(appCtrlCtxSpy).not.toHaveBeenCalledWith('productCatalogDashlet:add');
+            });
+        });
+
+        describe('', function() {
+            beforeEach(function() {
+                view.bindDataChange();
+            });
+
+            it('should set event listeners on subpanel:validateCollection:rlis345', function() {
+                expect(view.context.parent.on).toHaveBeenCalledWith('subpanel:validateCollection:rlis345');
+            });
+
+            it('should set event listeners on subpanel:resetCollection:rlis345', function() {
+                expect(view.context.parent.on).toHaveBeenCalledWith('subpanel:resetCollection:rlis345');
+            });
+
+            it('should call resetSubpanel', function() {
+                expect(view.resetSubpanel).toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('onAddFromProductCatalog', function() {
+        var pcData;
+
+        beforeEach(function() {
+            sandbox.stub(view, '_addBeanToList', function(p1, data) {
+                view.collection.add(data);
+            });
+            pcData = {
+                discount_price: '50.00',
+                name: 'test1'
+            };
+            app.user.set({
+                id: 'test1id',
+                name: 'test1name'
+            });
+        });
+
+        afterEach(function() {
+            pcData = null;
+        });
+
+        it('should set discount_price from data to new bean likely/best/worst case', function() {
+            view.onAddFromProductCatalog(pcData);
+
+            expect(view._addBeanToList).toHaveBeenCalledWith(true, {
+                discount_price: '50.00',
+                name: 'test1',
+                likely_case: '50.00',
+                best_case: '50.00',
+                worst_case: '50.00',
+                assigned_user_id: 'test1id',
+                assigned_user_name: 'test1name'
+            });
+        });
+
+        it('should remove an existing empty model and add the new one', function() {
+            var emptyModel = app.data.createBean('Products');
+            view.collection.reset([emptyModel]);
+            view.onAddFromProductCatalog(pcData);
+
+            expect(view.collection.length).toBe(1);
+        });
+    });
+
+    describe('resetSubpanel()', function() {
+        beforeEach(function() {
+            sandbox.stub(view.collection, 'reset');
+            sandbox.stub(view, '_addBeanToList');
+
+            view.resetSubpanel();
+        });
+
+        it('should call reset on the collection', function() {
+            expect(view.collection.reset).toHaveBeenCalled();
+        });
+
+        it('should call _addBeanToList with true', function() {
+            expect(view._addBeanToList).toHaveBeenCalledWith(true);
         });
     });
 
     describe('render', function() {
         beforeEach(function() {
-            sinon.sandbox.stub(view, '_super', function() {});
-            sinon.sandbox.stub(view, '_toggleFields', function() {});
+            sandbox.stub(view, '_super', function() {});
+            sandbox.stub(view, '_toggleFields', function() {});
         });
 
         it('should call toggleFields', function() {
             view.render();
             expect(view._toggleFields).toHaveBeenCalledWith(true);
+        });
+    });
+
+    describe('_addBeanToList', function() {
+        var existingData;
+        var pcData;
+
+        beforeEach(function() {
+            existingData = {
+                discount_price: '50.00',
+                name: 'test1',
+                likely_case: '50.00',
+                best_case: '50.00',
+                worst_case: '50.00',
+                assigned_user_id: 'test1id',
+                assigned_user_name: 'test1name'
+            };
+            pcData = {
+                discount_price: '150.00',
+                name: 'test2',
+                likely_case: '150.00',
+                best_case: '150.00',
+                worst_case: '150.00',
+                assigned_user_id: 'test2id',
+                assigned_user_name: 'test2name'
+            };
+            view.collection.reset([existingData]);
+            sandbox.stub(view, 'checkButtons', $.noop);
+        });
+
+        afterEach(function() {
+            pcData = null;
+        });
+
+        describe('when hasValidModels is false', function() {
+            it('should only call checkButtons', function() {
+                view._addBeanToList(false, undefined);
+
+                expect(view.checkButtons).toHaveBeenCalled();
+            });
+        });
+
+        describe('when hasValidModels is true', function() {
+            beforeEach(function() {
+                sandbox.stub(view, '_addCustomFieldsToBean', function(bean) {
+                    return bean;
+                });
+            });
+
+            describe('when prepopulateData is not sent', function() {
+                beforeEach(function() {
+                    view._addBeanToList(true, undefined);
+                });
+
+                it('should add the bean to the end of the collection', function() {
+                    expect(view.collection.at(0).get('name')).toBe('test1');
+                    expect(view.collection.at(1).get('id')).toBe('testUUID');
+                    expect(view.collection.at(1).get('name')).toBeUndefined();
+                });
+            });
+
+            describe('when prepopulateData is sent', function() {
+                beforeEach(function() {
+                    view._addBeanToList(true, pcData);
+                });
+
+                it('should add the bean to the beginning of the collection', function() {
+                    expect(view.collection.at(0).get('name')).toBe('test2');
+                    expect(view.collection.at(1).get('name')).toBe('test1');
+                });
+            });
         });
     });
 });

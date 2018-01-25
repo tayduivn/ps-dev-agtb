@@ -29,6 +29,16 @@ $viewdefs['ProductTemplates']['base']['view']['product-catalog-dashlet-drawer-re
             'label' => 'LBL_ADD_TO_QUOTE_BUTTON',
             'css_class' => 'btn btn-primary',
             'showOn' => 'view',
+            'showOnModules' => array(
+                'Quotes' => array(
+                    'create',
+                    'record',
+                ),
+                'Opportunities' => array(
+                    'create',
+                    'record',
+                ),
+            ),
             'events' => array(
                 'click' => 'button:add_to_quote_button:click',
             ),
