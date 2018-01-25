@@ -113,6 +113,7 @@ class LeadConvert
         }
 
         $this->performLeadActivitiesTransfer($transferActivitiesAction, $transferActivitiesModules);
+        $this->performDataPrivacyTransfer();
 
         $this->lead->status = LeadConvert::STATUS_CONVERTED;
         $this->lead->converted = 1;
@@ -128,6 +129,35 @@ class LeadConvert
         }
 
         return $this->modules;
+    }
+
+    /**
+     * Links DP records to Contact and/or other modules related to DP module.
+     * Only out-of-box DP relationships are handled.
+     */
+    public function performDataPrivacyTransfer()
+    {
+        $dprs = $this->lead->get_linked_beans('dataprivacy', 'DataPrivacy');
+        if (!empty($dprs)) {
+            foreach ($dprs as $dpr) {
+                foreach ($this->modules as $module => $bean) {
+                    if ($module !== 'Leads') {
+                        if ($bean->load_relationship('dataprivacy')) {
+                            $bean->dataprivacy->add($dpr);
+                        } elseif ($rel = $this->findRelationship($bean, $dpr)) {
+                            // custom module may have different link name
+                            if ($bean->load_relationship($rel)) {
+                                // left side rel
+                                $bean->$rel->add($dpr);
+                            } elseif ($dpr->load_relationship($rel)) {
+                                // right side rel
+                                $dpr->$rel->add($bean);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
