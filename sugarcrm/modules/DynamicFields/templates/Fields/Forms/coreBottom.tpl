@@ -44,6 +44,13 @@
 </tr>
 {/if}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_AUDIT"}:</td><td><input type="checkbox" name="audited" value="1" {if !empty($vardef.audited) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="audited" value="{$vardef.audited}">{/if}</td></tr>
+<tr>
+    <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_PII"}:</td>
+    <td>
+        <input type="checkbox" name="pii" value="1" {if !empty($vardef.pii) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="pii" value="{$vardef.pii}">{/if}
+        <img border="0" class="inlineHelpTip" alt="Information" src="themes/Sugar/images/helpInline.png" onclick="return SUGAR.util.showHelpTips(this,'{$mod_strings.LBL_POPHELP_PII}','','' );">
+    </td>
+</tr>
 
 {* //BEGIN SUGARCRM flav=int ONLY *}
 {*

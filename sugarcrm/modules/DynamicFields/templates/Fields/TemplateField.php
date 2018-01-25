@@ -42,6 +42,7 @@ class TemplateField{
 	var $audited= 0;
 	var $massupdate = 0;
 	var $importable = 'true' ;
+    public $pii = false;
 
     /**
      * "duplicate_merge" attribute is considered enabled, if not specified
@@ -103,6 +104,7 @@ class TemplateField{
         'enforced' => 'enforced',
         'dependency' => 'dependency',
         'related_fields' => 'related_fields',
+        'pii' => 'pii',
 	);
 
     /**
@@ -351,6 +353,7 @@ class TemplateField{
             'reportable' => $this->convertBooleanValue($this->reportable),
             'unified_search' => $this->convertBooleanValue($this->unified_search),
             'merge_filter' => empty($this->merge_filter) ? "disabled" : $this->merge_filter,
+            'pii' => $this->convertBooleanValue($this->pii),
         );
 
         if (isset($this->default)) {
