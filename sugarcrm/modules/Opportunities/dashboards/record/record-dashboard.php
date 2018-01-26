@@ -12,21 +12,31 @@
  */
 
 return array(
-    'metadata' =>
-    array(
-        'components' =>
-        array(
+    'name' => 'LBL_OPPORTUNITIES_RECORD_DASHBOARD',
+    'metadata' => array(
+        'components' => array(
             array(
-                'rows' =>
-                array(
+                'rows' => array(
                     //BEGIN SUGARCRM flav=ent ONLY
                     array(
                         array(
-                            'view' =>
-                            array(
-                                'type' => 'forecastdetails-record',
-                                'label' => 'LBL_DASHLET_FORECAST_NAME',
+                            'view' => array(
+                                'type' => 'product-catalog-dashlet',
+                                'label' => 'LBL_PRODUCT_CATALOG_DASHLET_NAME',
                             ),
+                            'context' => array(
+                                'module' => 'Quotes',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' =>
+                                array(
+                                    'type' => 'forecastdetails-record',
+                                    'label' => 'LBL_DASHLET_FORECAST_NAME',
+                                ),
                             'context' => array(
                                 'module' => 'Forecasts',
                             ),
@@ -37,10 +47,10 @@ return array(
                     array(
                         array(
                             'view' =>
-                            array(
-                                'type' => 'forecast-pareto',
-                                'label' => 'LBL_DASHLET_FORECASTS_CHART_NAME',
-                            ),
+                                array(
+                                    'type' => 'forecast-pareto',
+                                    'label' => 'LBL_DASHLET_FORECASTS_CHART_NAME',
+                                ),
                             'context' => array(
                                 'module' => 'Forecasts',
                             ),
@@ -78,17 +88,17 @@ return array(
                     array(
                         array(
                             'view' =>
-                            array(
-                                'type' => 'attachments',
-                                'label' => 'LBL_DASHLET_ATTACHMENTS_NAME',
-                                'limit' => '5',
-                                'auto_refresh' => '0',
-                            ),
+                                array(
+                                    'type' => 'attachments',
+                                    'label' => 'LBL_DASHLET_ATTACHMENTS_NAME',
+                                    'limit' => '5',
+                                    'auto_refresh' => '0',
+                                ),
                             'context' =>
-                            array(
-                                'module' => 'Notes',
-                                'link' => 'notes',
-                            ),
+                                array(
+                                    'module' => 'Notes',
+                                    'link' => 'notes',
+                                ),
                             'width' => 12,
                         ),
                     ),
@@ -97,6 +107,5 @@ return array(
             ),
         ),
     ),
-    'name' => 'LBL_OPPORTUNITIES_RECORD_DASHBOARD',
 );
 
