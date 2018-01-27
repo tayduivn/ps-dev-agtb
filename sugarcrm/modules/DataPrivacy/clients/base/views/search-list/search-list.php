@@ -25,7 +25,7 @@ $viewdefs['DataPrivacy']['base']['view']['search-list'] = array(
                     'name' => 'name',
                     'type' => 'name',
                     'link' => true,
-                    'label' => 'LBL_SUBJECT',
+                    'label' => 'LBL_LIST_SUBJECT',
                 ),
             ),
         ),

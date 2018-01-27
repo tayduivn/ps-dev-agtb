@@ -13,7 +13,7 @@
 $dictionary['DataPrivacy'] = array(
     'table' => 'data_privacy',
     'audited' => false,
-    'activity_enabled' => true,
+    'activity_enabled' => false,
     'unified_search' => true,
     'full_text_search' => true,
     'unified_search_default_enabled' => true,
@@ -75,10 +75,10 @@ $dictionary['DataPrivacy'] = array(
                 'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.65),
                 'comment' => 'The resolution of the request',
             ),
-        'date_resolved' =>
+        'date_closed' =>
             array(
-                'name' => 'date_resolved',
-                'vname' => 'LBL_DATE_RESOLVED',
+                'name' => 'date_closed',
+                'vname' => 'LBL_DATE_CLOSED',
                 'type' => 'date',
                 'options' => 'date_range_search_dom',
                 'enable_range_search' => true,
@@ -87,7 +87,7 @@ $dictionary['DataPrivacy'] = array(
                     'searchable' => false,
                     'sortable' => true,
                 ),
-                'comment' => 'Date resolved',
+                'comment' => 'Date closed',
             ),
         'fields_to_erase' => array(
             'name' => 'fields_to_erase',
@@ -131,5 +131,5 @@ VardefManager::createVardef('DataPrivacy', 'DataPrivacy', array('default', 'assi
 
 // boost value for full text search. copied from Case.
 $dictionary['DataPrivacy']['fields']['name']['full_text_search']['boost'] = 1.53;
-$dictionary['DataPrivacy']['fields']['DataPrivacy_number']['full_text_search']['boost'] = 1.29;
+$dictionary['DataPrivacy']['fields']['dataprivacy_number']['full_text_search']['boost'] = 1.29;
 $dictionary['DataPrivacy']['fields']['description']['full_text_search']['boost'] = 0.66;

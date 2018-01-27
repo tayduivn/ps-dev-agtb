@@ -115,7 +115,7 @@ $app_list_strings = array (
     'Dashboards' => 'Dashboards',
     'OutboundEmail' => 'Email Settings',
     'EmailParticipants' => 'Email Participants',
-    'DataPrivacy' => 'Data Privacy',
+    'DataPrivacy' => 'Data Privacy Management',
   ),
 
     'moduleIconList' =>
@@ -130,7 +130,7 @@ $app_list_strings = array (
         'Quotas' => 'Fo',
         'Tasks' => 'Ts',
         'Dashboards' => 'Ds',
-        'DataPrivacy' => 'Dp',
+        'DataPrivacy' => 'DP',
     ),
 
   'moduleListSingular' =>
@@ -235,7 +235,7 @@ $app_list_strings = array (
     'Categories' => 'Category',
     'OutboundEmail' => 'Email Setting',
     'EmailParticipants' => 'Email Participant',
-    'DataPrivacy' => 'Data Privacy',
+    'DataPrivacy' => 'Data Privacy Management',
   ),
 
 /*
@@ -5349,8 +5349,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_EMAIL_PARTICIPANTS' => 'Email Participants',
     'LBL_EMAIL_PARTICIPANT' => 'Email Participant',
 
-    'LBL_DATAPRIVACY' => 'Data Privacy',
-    'LBL_DATAPRIVACY_SUBPANEL_TITLE' => 'Data Privacy',
+    'LBL_DATAPRIVACY' => 'Data Privacy Management',
+    'LBL_DATAPRIVACY_SUBPANEL_TITLE' => 'Data Privacy Management',
     'LBL_DATAPRIVACY_VIEW_PII' => 'View PII',
 );
 

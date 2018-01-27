@@ -87,13 +87,6 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
                     'type' => 'favorite',
                     'dismiss_label' => true,
                 ),
-                array(
-                    'name' => 'follow',
-                    'label'=> 'LBL_FOLLOW',
-                    'type' => 'follow',
-                    'readonly' => true,
-                    'dismiss_label' => true,
-                ),
             ),
         ),
         array(
@@ -107,27 +100,34 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
                     'name' => 'dataprivacy_number',
                     'readonly' => true,
                 ),
-                'priority',
-                 array(
-                     'name' => 'date_due',
-                     'readonly' => false,
-                 ),
-                'type',
-                'source',
                 'status',
+                'type',
+                'priority',
+                array(
+                    'name' => 'source',
+                    'nl2br' => true,
+                ),
+                array(
+                    'name' => 'requested_by',
+                    'nl2br' => true,
+                ),
                 'assigned_user_name',
+                array(
+                    'name' => 'date_due',
+                    'readonly' => false,
+                ),
+                array(
+                    'name' => 'date_closed',
+                    'readonly' => false,
+                ),
                 array(
                     'name' => 'description',
                     'nl2br' => true,
                     'span' => 12,
                 ),
                 array(
-                    'name' => 'requested_by',
+                    'name' => 'resolution',
                     'nl2br' => true,
-                    'span' => 12,
-                ),
-                array(
-                    'name' => 'tag',
                     'span' => 12,
                 ),
             ),
@@ -140,15 +140,8 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array(
-                    'name' => 'resolution',
-                    'nl2br' => true,
-                    'span' => 12,
-                ),
-                array(
-                    'name' => 'date_resolved',
-                    'readonly' => false,
-                ),
+                'team_name',
+                'tag',
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,
@@ -168,7 +161,6 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                'team_name',
                 array(
                     'name' => 'date_modified_by',
                     'readonly' => true,
