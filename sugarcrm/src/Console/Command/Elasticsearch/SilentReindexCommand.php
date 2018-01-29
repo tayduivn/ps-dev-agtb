@@ -87,7 +87,12 @@ class SilentReindexCommand extends Command implements InstanceModeInterface
         $output->writeln("Scheduling reindex ... ");
         if ($this->scheduleIndexing($modules, $clearData)) {
             $output->writeln("Consuming queue ... please be patient");
-            $this->consumeQueue();
+            $count = 0;
+            while ($this->hasMoreRecords()) {
+                $this->consumeQueue();
+                $count++;
+                $output->writeln("Consuming queue ... finish batch #" . $count);
+            }
         }
         $output->writeln("Reindexing complete");
     }
@@ -118,5 +123,22 @@ class SilentReindexCommand extends Command implements InstanceModeInterface
     protected function consumeQueue()
     {
         $this->container->queueManager->consumeQueue();
+    }
+
+    /**
+     * Check if there are more records to consume
+     * @return boolean
+     */
+    protected function hasMoreRecords()
+    {
+        // check the count for each module
+        $queueManager = $this->container->queueManager;
+        foreach ($queueManager->getQueuedModules() as $module) {
+            if ($queueManager->getQueueCountModule($module) > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
