@@ -16,8 +16,10 @@ describe('Base.Fields.Currency', function() {
 
     var moduleName;
     var metadata;
+    var sandbox;
 
     beforeEach(function() {
+        sandbox = sinon.sandbox.create();
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
         moduleName = 'Opportunities';
@@ -83,11 +85,51 @@ describe('Base.Fields.Currency', function() {
         app.view.reset();
         Handlebars.templates = {};
         model = null;
+        sandbox.restore();
 
         moduleName = null;
         metadata = null;
 
         SugarTest.testMetadata.dispose();
+    });
+
+    describe('handleBaseRateFieldChange', function() {
+        var field;
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'edit',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            field._loadTemplate();
+
+            sinon.stub(field, '_render');
+            sinon.stub(field, '_deferModelChange');
+        });
+
+        it('should call _render', function() {
+            field.handleBaseRateFieldChange(model);
+            expect(field._render).toHaveBeenCalled();
+        });
+
+        it('should not call _deferModelChange without an actual change', function() {
+            field.handleBaseRateFieldChange(model);
+            expect(field._deferModelChange).not.toHaveBeenCalled();
+        });
+
+        it('should call _deferModelChange due to a model change', function() {
+            field.handleBaseRateFieldChange(model);
+            model.set('base_rate', .5);
+            expect(field._deferModelChange).toHaveBeenCalled();
+        });
     });
 
     describe('_lastCurrencyId', function() {
