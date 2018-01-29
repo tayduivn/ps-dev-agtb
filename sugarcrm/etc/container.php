@@ -25,6 +25,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
+use Sugarcrm\Sugarcrm\Security\Context;
 use UltraLite\Container\Container;
 
 return new Container([
@@ -36,6 +37,9 @@ return new Container([
     },
     LoggerInterface::class . '-denorm' => function () {
         return LoggerFactory::getLogger('denorm');
+    },
+    LoggerInterface::class . '-security' => function () {
+        return LoggerFactory::getLogger('security');
     },
     State::class => function (ContainerInterface $container) {
         $config = $container->get(SugarConfig::class);
@@ -86,6 +90,11 @@ return new Container([
     RebuildJob::class => function (ContainerInterface $container) {
         return new RebuildJob(
             $container->get(StateAwareRebuild::class)
+        );
+    },
+    Context::class => function (ContainerInterface $container) {
+        return new Context(
+            $container->get(LoggerInterface::class . '-security')
         );
     },
 ]);

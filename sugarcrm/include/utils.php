@@ -17,7 +17,10 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+use Psr\Log\LoggerInterface;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\Context;
 
 function make_sugar_config(&$sugar_config)
 {
@@ -3244,6 +3247,14 @@ function sugar_cleanup($exit = false)
         set_include_path($root_path . PATH_SEPARATOR . get_include_path());
     }
     chdir($root_path);
+
+    $container = Container::getInstance();
+    $context = $container->get(Context::class);
+
+    if ($context->hasActiveSubject()) {
+        $logger = $container->get(LoggerInterface::class . '-security');
+        $logger->warning('Security context has active subject during shutdown: ' . json_encode($context));
+    }
 
     global $sugar_config;
     LogicHook::initialize();

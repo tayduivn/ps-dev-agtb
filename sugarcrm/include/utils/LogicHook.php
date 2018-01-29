@@ -10,6 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\LogicHook as Subject;
+
 /**
  * Predefined logic hooks
  * after_ui_frame
@@ -262,14 +266,21 @@ class LogicHook{
             } else {
                 $this->log("debug", "Creating new instance of hook class '$hookClass' without parameters");
                 $hookObject = new $hookClass();
-                if (!is_null($this->bean)) {
-                    $callback = array($hookObject, $hookFunc);
-                    // & is here because of BR-1345 and old broken hooks
-                    // that use &$bean in args.
-                    $params = array_merge(array(&$this->bean, $event, $arguments), array_slice($hookDetails, 5));
-                    call_user_func_array($callback, $params);
-                } else {
-                    $hookObject->$hookFunc($event, $arguments);
+
+                $context = Container::getInstance()->get(Context::class);
+                $subject = new Subject($hookClass, $hookFunc);
+                $context->activateSubject($subject);
+
+                try {
+                    if (!is_null($this->bean)) {
+                        // & is here because of BR-1345 and old broken hooks that use &$bean in args
+                        $params = array_merge([&$this->bean, $event, $arguments], array_slice($hookDetails, 5));
+                        call_user_func_array([$hookObject, $hookFunc], $params);
+                    } else {
+                        $hookObject->$hookFunc($event, $arguments);
+                    }
+                } finally {
+                    $context->deactivateSubject($subject);
                 }
             }
         }

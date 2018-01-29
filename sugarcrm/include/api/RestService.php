@@ -11,6 +11,10 @@
  */
 
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\User;
+use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
 
 /** @noinspection PhpInconsistentReturnPointsInspection */
 class RestService extends ServiceBase
@@ -140,11 +144,16 @@ class RestService extends ServiceBase
             $isLoggedIn = $authenticateUser['isLoggedIn'];
             $loginException = $authenticateUser['exception'];
 
+            $context = Container::getInstance()->get(Context::class);
+            $subject = new RestApiClient();
+
             // Figure out the platform
             if ($isLoggedIn) {
                 if ( isset($_SESSION['platform']) ) {
                     $this->platform = $_SESSION['platform'];
                 }
+
+                $subject = new User($GLOBALS['current_user'], $subject);
             } else {
                 // Since we don't have a session we have to allow the user to specify their platform
                 // However, since the results from the same URL will be different with
@@ -153,6 +162,9 @@ class RestService extends ServiceBase
                     $this->platform = basename($_GET['platform']);
                 }
             }
+
+            $context->activateSubject($subject);
+            $context->setAttribute('platform', $this->platform);
 
             $this->validatePlatform($this->platform);
             $this->request->setPlatform($this->platform);
@@ -259,6 +271,11 @@ class RestService extends ServiceBase
         } catch ( Exception $e ) {
             $this->handleException($e);
         }
+
+        if (isset($context, $subject)) {
+            $context->deactivateSubject($subject);
+        }
+
         // last chance for hooks to mess with the response
         $GLOBALS['logic_hook']->call_custom_logic('', "before_respond", $this->response);
         $this->response->send();
