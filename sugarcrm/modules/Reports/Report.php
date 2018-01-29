@@ -29,7 +29,17 @@ class Report
     var $group_fields_map = array();
     var $summary_fields_map = array();
     var $full_table_list = array();
-    var $full_table_beans = array();
+
+    /**
+     * @var SugarBean[]
+     */
+    public $full_bean_list = array();
+
+    /**
+     * @var string
+     */
+    public $from;
+
     var $where;
     var $order_by;
     var $order_by_arr = array();
@@ -430,7 +440,8 @@ class Report
         if (isset($this->report_def['numerical_chart_column']) && $this->report_def['numerical_chart_column'] == 'count')
             $this->report_def['numerical_chart_column'] = 'self:count';
         // END: Dynamically convert previous versions to 5.1 version of content string.
-        // Load all the necessary beans, and populate the full_table_beans array
+
+        // Load all the necessary beans, and populate the full_bean_list array
         foreach ($this->full_table_list as $table_key => $table_data)
         {
 
@@ -689,6 +700,7 @@ class Report
 
     function clear_results()
     {
+        $this->from = null;
         $this->where = null;
         $this->order_by = null;
         $this->group_by = null;
@@ -1180,48 +1192,44 @@ class Report
         $where_clause .= ')';
     }
 
-    protected function addSecurity($query, $focus, $alias)
+    /**
+     * Applies visibility filtering defined by the bean to the data selected from the specified table
+     * when building the FROM part of the query
+     *
+     * @param SugarBean $bean
+     * @param string $from
+     * @param string $tableAlias
+     *
+     * @return string
+     */
+    private function addVisibilityFrom(SugarBean $bean, $from, $tableAlias)
     {
-        $from = ''; $where = '';
-        $fromOptions = $whereOptions = $options = $this->getVisibilityOptions();
+        $options = $this->getVisibilityOptions();
+        $options['table_alias'] = $tableAlias;
 
-        // Right now, both the FROM and WHERE filters are applied to the query in the single addSecurity() call
-        // which is made from create_from(). In the case, when the visibility produces a JOIN, it gets wrapped
-        // in a sub-query to be able to order to accomodate a potentially existing WHERE which is not being built
-        // by the repot yet.
-        // A proper solution will be to split addSecurity() into two parts and call them independenly from create_from()
-        // and create_where().
-        // It's not the best time for that, so see the logic below.
+        $bean->addVisibilityFrom($from, $options);
 
-        // if applied to the FROM, the alias should be equal to the table name because the table
-        // will be joined within a sub-query where the alias is unavailable
-        $fromOptions['table_alias'] = $focus->table_name;
+        return $from;
+    }
 
-        // if applied to the WHERE, the alias should be equal to the actual alias because the WHERE
-        // will be applied to the top-level query where the alias is effective
-        $whereOptions['table_alias'] = $alias;
+    /**
+     * Applies visibility filtering defined by the bean to the data selected from the specified table
+     * when building the WHERE part of the query
+     *
+     * @param SugarBean $bean
+     * @param string $where
+     * @param string $tableAlias
+     *
+     * @return string
+     */
+    private function addVisibilityWhere(SugarBean $bean, $where, $tableAlias)
+    {
+        $options = $this->getVisibilityOptions();
+        $options['table_alias'] = $tableAlias;
 
-        $focus->addVisibilityWhere($where, $whereOptions);
-        $focus->addVisibilityFrom($from, $fromOptions);
-        if(!empty($from) || !empty($where)) {
-            if (!empty($options['as_condition']) && strtolower(substr(ltrim($from), 0, 5)) != "inner") {
-                // check that we indeed got condition in FROM - it should not start with joins
-                if (!empty($from)) {
-                    $from = 'AND ' . ltrim($from);
-                }
-                if (!empty($where)) {
-                    $where = 'AND ' . ltrim($where);
-                }
-                $query .= "/* from $alias */ $from /* where $alias */ $where";
-            } else {
-                // if we didn't ask for condition or did not get one, get back to subquery mode
-                if(!empty($where)) {
-                    $where = "WHERE $where";
-                }
-                $query = str_replace(" {$focus->table_name} $alias ", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias ", $query);
-            }
-        }
-        return $query;
+        $bean->addVisibilityWhere($where, $options);
+
+        return $where;
     }
 
     function create_where()
@@ -1686,8 +1694,8 @@ class Report
         $this->full_table_list['self']['params']['join_table_alias'] = $this->focus->table_name;
         $this->full_table_list['self']['params']['join_table_link_alias'] = $this->focus->table_name . "_l";
 
-        $this->from = "\nFROM " . $this->focus->table_name . "\n";
-        $this->focus->addVisibilityFrom($this->from, $this->getVisibilityOptions());
+        $from = "\nFROM " . $this->focus->table_name . "\n";
+        $this->from = $this->addVisibilityFrom($this->focus, $from, $this->focus->table_name);
 
         $this->jtcount = 0;
         foreach ($this->full_table_list as $table_key => $table_def)
@@ -1745,11 +1753,16 @@ class Report
                     $params['primary_table_name'] = $this->full_table_list[$table_def['parent']]['params']['join_table_alias'];
 
                     if (isset($this->full_bean_list[$table_def['parent']]->$link_name)) {
-                        if (!$this->full_bean_list[$table_def['parent']]->$link_name->loadedSuccesfully())
+                        /** @var Link2 $link */
+                        $link = $this->full_bean_list[$table_def['parent']]->$link_name;
+
+                        if (!$link->loadedSuccesfully()) {
                             $this->handleException("Unable to load link: $link_name for bean {$table_def['parent']}");
+                        }
+
                         // Start ACL check
                         global $current_user, $mod_strings;
-                        $linkModName = $this->full_bean_list[$table_def['parent']]->$link_name->getRelatedModuleName();
+                        $linkModName = $link->getRelatedModuleName();
                         $list_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'list', $type = 'module');
                         $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view', $type = 'module');
 
@@ -1760,27 +1773,31 @@ class Report
                                 $this->handleException($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
                             }
                         }
-
-                        $this->from .= $this->addSecurity($this->full_bean_list[$table_def['parent']]->$link_name->getJoin($params),
-                            $focus, $params['join_table_alias']);
                         // End ACL check
                     }
                     else {
                         // Start ACL check
                         global $current_user, $mod_strings;
-                        $linkModName = $this->full_bean_list[$table_def['parent']]->$rel_name->getRelatedModuleName();
+
+                        /** @var Link2 $link */
+                        $link = $this->full_bean_list[$table_def['parent']]->$rel_name;
+
+                        $linkModName = $link->getRelatedModuleName();
                         $list_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'list', $type = 'module');
                         $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view', $type = 'module');
 
-                        if (!$this->full_bean_list[$table_def['parent']]->$rel_name->loadedSuccesfully()) {
+                        if (!$link->loadedSuccesfully()) {
                             $this->handleException("Unable to load link: $rel_name");
                         }
                         if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
                             $this->handleException($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
-                        $this->from .= $this->addSecurity($this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params),
-                            $focus, $params['join_table_alias']);
                         // End ACL check
                     }
+
+                    $this->from .= $link->getJoin($params);
+
+                    $this->from = $this->addVisibilityFrom($focus, $this->from, $params['join_table_alias']);
+                    $this->where = $this->addVisibilityWhere($focus, $this->where, $params['join_table_alias']);
                 }
                 else
                 {
