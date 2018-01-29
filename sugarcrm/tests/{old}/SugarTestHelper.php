@@ -316,7 +316,14 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 
         // clean up prepared statements
         $connection = DBManagerFactory::getConnection()->getWrappedConnection();
-        SugarTestReflection::setProtectedValue($connection, 'statements', array());
+
+        $ro = new ReflectionObject($connection);
+
+        if ($ro->hasProperty('statements')) {
+            $rp = $ro->getProperty('statements');
+            $rp->setAccessible(true);
+            $rp->setValue($connection, []);
+        }
 
         if (SHADOW_CHECK) {
             $oldfiles = $this->file_map;
