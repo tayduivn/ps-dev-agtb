@@ -234,10 +234,9 @@
      * initialise fields that can be used in merge.
      */
     initialize: function(options) {
-
+        this._initializeMergeFields(options.module);
         this._super('initialize', [options]);
         this._initSettings();
-        this._initializeMergeFields();
         this._initializeMergeCollection(this._prepareRecords());
 
         this.action = 'list';
@@ -323,11 +322,13 @@
      * Initialize fields for merge.
      *
      * Creates filtered set of model's fields that can be merged.
-     * @private
+     *
+     * @param {string} module Module to retrieve metadata from.
+     * @protected
      */
-    _initializeMergeFields: function() {
-        var meta = app.metadata.getView(this.module, 'record'),
-            fieldDefs = app.metadata.getModule(this.module).fields;
+    _initializeMergeFields: function(module) {
+        var meta = app.metadata.getView(module, 'record');
+        var fieldDefs = app.metadata.getModule(module).fields;
 
         this.mergeFields = _.chain(meta.panels)
             .map(function(panel) {

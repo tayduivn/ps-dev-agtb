@@ -258,4 +258,53 @@ describe('View.Views.BaseMergeDuplicatesView', function() {
             expect(result).toEqual(['test1', 'sub1Test', 'sub2Test', 'test3']);
         });
     });
+
+    describe('preview', function() {
+        var oldPreviewOpen;
+
+        beforeEach(function() {
+            oldPreviewOpen = view.isPreviewOpen;
+        });
+
+        afterEach(function() {
+            view.isPreviewOpen = oldPreviewOpen;
+        });
+
+        describe('onPreviewToggle', function() {
+            it('should set isPreviewOpen', function() {
+                sinon.collection.stub(app.logger, 'warn');
+                view.isPreviewOpen = false;
+                view.onPreviewToggle(true);
+                expect(view.isPreviewOpen).toBe(true);
+            });
+        });
+
+        describe('togglePreview', function() {
+            it('should trigger preview:close if the preview is already open', function() {
+                view.isPreviewOpen = true;
+                var triggerStub = sinon.collection.stub(app.events, 'trigger');
+                view.togglePreview();
+                expect(triggerStub).toHaveBeenCalledWith('preview:close');
+            });
+
+            it('should update the preview record if the preview is closed', function() {
+                view.isPreviewOpen = false;
+                var updatePreviewRecordStub = sinon.collection.stub(view, 'updatePreviewRecord');
+                view.togglePreview();
+                expect(updatePreviewRecordStub).toHaveBeenCalledWith(view.primaryRecord);
+            });
+        });
+    });
+
+    describe('getMergeRelatedCollection', function() {
+        var collection;
+
+        beforeEach(function() {
+            collection = view.getMergeRelatedCollection();
+        });
+
+        it('should return a Backbone collection', function() {
+            expect(collection instanceof Backbone.Collection).toBeTruthy();
+        });
+    });
 });
