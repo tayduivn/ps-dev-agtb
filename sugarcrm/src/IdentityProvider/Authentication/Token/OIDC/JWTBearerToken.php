@@ -80,8 +80,7 @@ class JWTBearerToken extends AbstractToken
             'aud' => $this->getAttribute('aud'),
             'sub' => $this->getUser()->getSugarUser()->user_name,
             'iss' => $this->getAttribute('iss'),
-            'id_ext' => ['tid' => $this->tenant],
-            'at_ext' => ['tid' => $this->tenant],
+            'login_hint' => $this->tenant,
         ];
         return JWSFactory::createJWSToCompactJSON(
             $claims,

@@ -151,7 +151,7 @@ class GenericProvider extends BasicGenericProvider
             'headers' => [
                 'content-type' => 'application/x-www-form-urlencoded',
             ] + $authHeaders,
-            'body' => $this->buildQueryString(['user_name' => $username, 'password' => $password, 'tid' => $tenant]),
+            'body' => $this->buildQueryString(['user_name' => $username, 'password' => $password, 'login_hint' => $tenant]),
         ];
 
         $request = $this->getRequestFactory()->getRequestWithOptions(

@@ -72,15 +72,15 @@ class JWTBearerTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testToString()
     {
-        $expectedResult = 'eyJraWQiOiJLZXlJZCIsImFsZyI6IlJTMjU2In0.eyJpYXQiOjEwLCJleHAiOjMxMCwiYXVkIjoiaHR0cDpcL1wvYX' .
-            'VyLnVybCIsInN1YiI6InRlc3RVc2VyIiwiaXNzIjoiY2xpZW50IiwiaWRfZXh0Ijp7InRpZCI6InNybjp0ZW5hbnQifSwiYXRfZXh0Ij' .
-            'p7InRpZCI6InNybjp0ZW5hbnQifX0.GGue32GeymAuuAZ428HjoJdTMicvCDVihiS3oc_m6dHAsJdxSuIArBYdvsYToUMSFmuS8I_raU' .
-            'WndYwcCu4xjabC0ZWsUdCObwL3Ajr3kJdPoIkdseLOhhJD8ZBq4Xo74pDGEdNAIP66IRBX27Tt4BUmEMzEYquZb9hhse4YMwmB4JH8S0' .
-            'pMhcyYuYheXE4GWW16nNRzqtNXPlYRfZERP3lGvEdRS8kA1XD7bGJ-9vpBLKGI-sj4s3rgMN2-uIzaO3X1Y26w9g_59axhng7hF5NOWf' .
-            'q7LVNAwB1X8tmQ9sFS9Up9J1ge21RafgUFgY59h_--RDxneFuBqLrLRWllN8_XyWNKGzc5v2Fr-MIlVoyKUvrlc0VFavgV_pi1TGwpAv' .
-            'gdphLfIRWcIKYJzSX7-rLsSboK5a5Lro1oYNpHB7Ba2vRJMzg6Bb-xA4KDboxuUMet5YYMdSGhkkl5uFB13HMBZyNCIFm0apTb5lltSE' .
-            'TaEV5VvxS5R4Y55d592r_Y6t35vL7q7NqHzBwF_2IVrfuBtCc4cnrdkuQv5bjYK8gtdL_Rx7cTjH9g8-Xp1IIiA_v5x8qwPLn5FGKEO0' .
-            'a00O7JlZuLg2edgELUEIoeq1Deb0ZBOQ6BWZjt9JLme4EcUKIOxcqnSIQ0Pi3O5PCaO3lJI4XDnUNZK2-MTL-h0_c';
+        $expectedResult = 'eyJraWQiOiJLZXlJZCIsImFsZyI6IlJTMjU2In0.eyJpYXQiOjEwLCJleHAiOjMxMCwiYXVkIjoiaHR0cDpcL1wvY' .
+            'XVyLnVybCIsInN1YiI6InRlc3RVc2VyIiwiaXNzIjoiY2xpZW50IiwibG9naW5faGludCI6InNybjp0ZW5hbnQifQ.Sko3jqWNYI716' .
+            'h8DhgL7N3qMTHyZiqdRT97T6xFu52Hy-bXBgKPRPz6ltascajxy39dc6pn4px6u4WkXutkcDcEGh5NWHAAPsQ-Et6axln8cDwYTBYv1' .
+            '1LmGABwAPh7xxYf7ywin3jErPXLj-kq-FwUUSCQpWUrq7CnEMiseV_lvHg_oH2b2OTDK9zSWZs_mdQDCWrZeu1-2HgDryRRIZF54g29' .
+            '-9YnmbRh59L8ZhGh1s31U78dAbqohbIT5QLhMVfFc021zC-xyVPZlE6EqHmNRLzIQmrJOwOZJ-HazWbkdiCOeXGpcpPXPVaDFwi2VH7' .
+            'O8R9aHWJiQ00xpVWDuLI5WYk7xF-0Om_02ib9-ga7cbvzb2G650hpKXW1FqcgrdUVsEgPquBDVMQZHGgKmmoBbyF9wxT3xGDCqEviH3' .
+            'tMYp0JoWhZA5JPZm4yxk0bnkj_EmPO-Vp6edHeTru4eKMqvaiCIsqBSTlPUEdk8Q66CiGlq6Idg2nxFnpnvaW2Wh8xuVacuieGeL6xJ' .
+            'Zb6ZSRDj4yUV3t-8Y1eQKjfRHFhzyPvmQyKqdTJS1-hv6cZT_B7ZIyRp4iIy3t7ZHftWuvPOAsbLXsOTPukkzBNYG2BBGYybBql9MGu' .
+            'Z5t1vmT9SV00gVrBvtygFH_31aaZEo6cbFo4UbubfntURwu23oos';
         $user = $this->createMock(User::class);
         $sugarUser = $this->createMock(\User::class);
         $sugarUser->user_name = 'testUser';
