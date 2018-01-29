@@ -140,7 +140,7 @@ class TeamSet extends SugarBean{
             //so we should create the set and associate the teams with the set and return the set id.
             if(count($team_ids) == 1) {
                 $this->new_with_id = true;
-                $this->id = $team_ids[0];
+                $this->id = $this->db->fromConvert($team_ids[0], 'id');
                 if ($this->db->getConnection()->fetchColumn(
                     "SELECT id FROM $this->table_name WHERE id = ?",
                     [$this->id]
@@ -167,7 +167,8 @@ class TeamSet extends SugarBean{
 
             return $this->id;
         }else{
-            return $row['id'];
+            $id = $this->db->fromConvert($row['id'], 'id');
+            return $id;
         }
     }
 
@@ -263,6 +264,7 @@ class TeamSet extends SugarBean{
      */
     public static function getTeamSetIdsForUser($user_id)
     {
+        global $db;
         $cacheKey = "teamSetIdByUser{$user_id}";
         $cachedResults = sugar_cache_retrieve($cacheKey);
         if($cachedResults)
@@ -273,8 +275,13 @@ class TeamSet extends SugarBean{
             AND team_memberships.user_id = ? AND team_memberships.deleted=0 group by tst.team_set_id';
         $stmt = $GLOBALS['db']->getConnection()->executeQuery($sql, [$user_id]);
         $results = $stmt->fetchAll(\PDO::FETCH_COLUMN);
-        sugar_cache_put($cacheKey, $results);
-        return $results;
+
+        $newResults = array();
+        foreach ($results as $result) {
+            $newResults[] = $db->fromConvert($result, 'id');
+        }
+        sugar_cache_put($cacheKey, $newResults);
+        return $newResults;
     }
     /**
     * Determine whether a user has access to any of the teams on a team set.
