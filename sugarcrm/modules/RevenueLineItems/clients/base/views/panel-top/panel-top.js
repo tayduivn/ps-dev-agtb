@@ -85,8 +85,17 @@
      * Open a new Drawer with the RLI Create Form
      */
     openRLICreate: function(data) {
-        var parentModel = this.context.parent.get('model');
-        var model = this.createLinkModel(parentModel, 'revenuelineitems');
+        var routerFrags = app.router.getFragment().split('/');
+        var parentModel;
+        var model;
+
+        if (routerFrags[1] === 'create') {
+            // if panel-top has been initialized on a record, but we're currently in create, ignore the event
+            return;
+        }
+
+        parentModel = this.context.parent.get('model');
+        model = this.createLinkModel(parentModel, 'revenuelineitems');
 
         data.likely_case = data.discount_price;
         data.best_case = data.discount_price;
@@ -129,7 +138,7 @@
         // if we find one and it has the loadData method, call that method to
         // force the subpanel to load the data.
         rliCtx = _.find(ctx.children, function(child) {
-            return (child.get('module') == 'RevenueLineItems');
+            return child.get('module') === 'RevenueLineItems';
         }, this);
         if (!_.isUndefined(rliCtx) && _.isFunction(rliCtx.loadData)) {
             rliCtx.loadData();

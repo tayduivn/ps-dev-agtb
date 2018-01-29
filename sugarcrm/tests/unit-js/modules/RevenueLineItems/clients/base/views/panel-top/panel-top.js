@@ -36,6 +36,8 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
         context = app.context.getContext();
         context.parent = parentContext;
 
+        app.routing.start();
+
         viewMeta = {
             panels: [{
                 fields: ['field1', 'field2']
@@ -49,6 +51,7 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
         sinon.collection.restore();
         view.dispose();
         view = null;
+        app.router.stop();
     });
 
     describe('initialize()', function() {
@@ -145,8 +148,7 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
             prodData = {
                 product_template_name: 'ptName',
                 product_template_id: 'ptId',
-                discount_price: '100',
-                product_template_name: 'ptName',
+                discount_price: '100'
             };
             linkModel = app.data.createBean('RevenueLineItems');
             sinon.collection.stub(view, 'createLinkModel', function() {
@@ -158,8 +160,6 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
                 open: $.noop
             };
             sinon.collection.stub(app.drawer, 'open', $.noop);
-
-            view.openRLICreate(prodData);
         });
 
         afterEach(function() {
@@ -169,7 +169,21 @@ describe('RevenueLineItems.Base.Views.PanelTop', function() {
         });
 
         it('should call app.drawer.open', function() {
+            sinon.collection.stub(app.router, 'getFragment', function() {
+                return 'Opportunities/record';
+            });
+            view.openRLICreate(prodData);
+
             expect(app.drawer.open).toHaveBeenCalled();
+        });
+
+        it('should not call app.drawer.open if this is create view', function() {
+            sinon.collection.stub(app.router, 'getFragment', function() {
+                return 'Opportunities/create';
+            });
+            view.openRLICreate(prodData);
+
+            expect(app.drawer.open).not.toHaveBeenCalled();
         });
     });
 
