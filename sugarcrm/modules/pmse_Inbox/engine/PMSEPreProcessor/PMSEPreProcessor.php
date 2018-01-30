@@ -456,10 +456,10 @@ class PMSEPreProcessor
         // Build a list of object ids that will work for our flows
         $objectIds = $this->buildLinkedObjectIdList($bean, $links);
 
-        $evnParamsChar = $bean->db->convert('ed.evn_params', 'text2char');
+        $evnParamsChar = $bean->db->convert('rd.evn_params', 'text2char');
         $sql = "
         SELECT
-            rd.evn_id, rd.evn_uid, rd.prj_id, rd.pro_id, ed.evn_type,
+            rd.evn_id, rd.evn_uid, rd.prj_id, rd.pro_id, rd.evn_type,
             rd.evn_marker, rd.evn_is_interrupting, rd.evn_attached_to,
             rd.evn_cancel_activity, rd.evn_activity_ref,
             rd.evn_wait_for_completion, rd.evn_error_name,
@@ -467,8 +467,8 @@ class PMSEPreProcessor
             rd.evn_escalation_code, rd.evn_condition, rd.evn_message,
             rd.evn_operation_name, rd.evn_operation_implementation,
             rd.evn_time_date, rd.evn_time_cycle, rd.evn_time_duration,
-            rd.evn_behavior, ed.evn_status, ed.evn_module,
-            ed.evn_criteria, ed.evn_params, ed.evn_script,
+            rd.evn_behavior, rd.evn_status, rd.evn_module,
+            rd.evn_criteria, rd.evn_params, rd.evn_script,
             rd.rel_process_module, rd.rel_element_relationship,
             rd.rel_element_module, rd.pro_module, rd.pro_status,
             rd.pro_locked_variables, rd.pro_terminate_variables, rd.date_entered,
@@ -478,22 +478,20 @@ class PMSEPreProcessor
         FROM
             pmse_bpm_related_dependency rd
         LEFT JOIN
-            pmse_bpm_event_definition ed ON rd.evn_id = ed.id
-        LEFT JOIN
             pmse_bpm_flow flow ON rd.rel_element_id = flow.bpmn_id AND
             (flow.cas_flow_status IS NULL OR flow.cas_flow_status='WAITING')
         WHERE
             rd.deleted = 0 AND rd.pro_status != 'INACTIVE' AND (
                 (
-                    (ed.evn_type = 'START' AND ed.evn_module = :module) OR
+                    (rd.evn_type = 'START' AND rd.evn_module = :module) OR
                     (
-                        ed.evn_type = 'GLOBAL_TERMINATE' AND
+                        rd.evn_type = 'GLOBAL_TERMINATE' AND
                         (flow.cas_flow_status IS NULL OR flow.cas_flow_status != 'WAITING') AND
                         rd.rel_element_module = :module AND
                         (flow.cas_sugar_object_id IS NULL OR flow.cas_sugar_object_id IN ($objectIds))
                     ) OR
                     (
-                        ed.evn_type = 'INTERMEDIATE' AND
+                        rd.evn_type = 'INTERMEDIATE' AND
                         rd.evn_marker = 'MESSAGE' AND
                         rd.evn_behavior = 'CATCH' AND
                         flow.cas_flow_status = 'WAITING' AND
