@@ -244,14 +244,17 @@
         var baseRateField = this.def.base_rate_field || 'base_rate';
         var prevBaseRate = model.previous(baseRateField);
         var baseRate = model.get(baseRateField);
-        if (!_.isUndefined(prevBaseRate)) { // it is undefined, of course, at first load
+        var precision;
+        var newValue;
+        var previousValue;
 
-            var precision = this.def && this.def.precision || 6;
+        if (!_.isUndefined(prevBaseRate)) { // it is undefined, of course, at first load
+            precision = this.def && this.def.precision || 6;
             // lets actually make sure this really changed before triggering the deferModelChange method.
             // that way if base_rate is a integer we can actually make sure it didn't change
             // eg: 1 to "1.000000"
-            var newValue = app.math.round(baseRate, precision, true);
-            var previousValue = app.math.round(prevBaseRate, precision, true);
+            newValue = app.math.round(baseRate, precision, true);
+            previousValue = app.math.round(prevBaseRate, precision, true);
             if (!_.isEqual(newValue, previousValue)) {
                 if (options && _.isUndefined(options.revert)) {
                     this._deferModelChange();

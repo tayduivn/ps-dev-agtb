@@ -111,8 +111,8 @@ describe('Base.Fields.Currency', function() {
             );
             field._loadTemplate();
 
-            sinon.stub(field, '_render');
-            sinon.stub(field, '_deferModelChange');
+            sandbox.stub(field, '_render');
+            sandbox.stub(field, '_deferModelChange');
         });
 
         it('should call _render', function() {
@@ -192,7 +192,7 @@ describe('Base.Fields.Currency', function() {
     });
 
     describe('setMode', function() {
-        var field, sandbox = sinon.sandbox.create();
+        var field;
         beforeEach(function() {
             field = SugarTest.createField(
                 'base',
@@ -221,7 +221,6 @@ describe('Base.Fields.Currency', function() {
 
         afterEach(function() {
             field = null;
-            sandbox.restore();
         });
 
         it('calls getCurrencyField when field.action is edit', function() {
@@ -333,8 +332,7 @@ describe('Base.Fields.Currency', function() {
 
         it('should render with currencies selector', function() {
 
-            var currencyRender,
-                sandbox = sinon.sandbox.create();
+            var currencyRender;
             var getCurrencyField = sandbox.stub(field, 'getCurrencyField', function() {
                 var currencyField = SugarTest.createField(
                     'base',
@@ -357,8 +355,6 @@ describe('Base.Fields.Currency', function() {
 
             field.render();
             expect(currencyRender).toHaveBeenCalled();
-
-            sandbox.restore();
         });
     });
 
@@ -634,8 +630,6 @@ describe('Base.Fields.Currency', function() {
         });
 
         it('should convert value to different currency', function() {
-
-            var sandbox = sinon.sandbox.create();
             model = app.data.createBean(moduleName, {
                 amount: 900.00,
                 currency_id: '12a29c87-a685-dbd1-497f-50abfe93aae6',
@@ -658,20 +652,16 @@ describe('Base.Fields.Currency', function() {
 
             field.model.set('currency_id', '-99');
             expect(convertAmount.calledOnce).toBeTruthy();
-
-            sandbox.restore();
-
         });
 
         it('should not convert when model is cleared and refreshed with new values', function() {
-            var sandbox = sinon.sandbox.create(),
-                convertAmountStub,
-                beforeAttributes = {
+            var convertAmountStub;
+            var beforeAttributes = {
                     amount: 900.00,
                     currency_id: '12a29c87-a685-dbd1-497f-50abfe93aae6',
                     base_rate: 0.9
-                },
-                afterAttributes = {
+                };
+            var afterAttributes = {
                     amount: 100.00,
                     currency_id: '-99',
                     base_rate: 1.0
@@ -692,8 +682,6 @@ describe('Base.Fields.Currency', function() {
             expect(convertAmountStub.callCount).toBe(0);
             expect(field.model.get('amount')).toBe(afterAttributes.amount);
             expect(field._lastCurrencyId).toBe(afterAttributes.currency_id);
-
-            sandbox.restore();
         });
 
         it('should be empty for null value', function() {
@@ -758,9 +746,8 @@ describe('Base.Fields.Currency', function() {
     });
 
     describe('bindDataChange', function() {
-        var sandbox, field;
+        var field;
         beforeEach(function() {
-            sandbox = sinon.sandbox.create();
             field = SugarTest.createField(
                 'base',
                 'amount',
@@ -777,7 +764,6 @@ describe('Base.Fields.Currency', function() {
             field._loadTemplate();
         });
         afterEach(function() {
-            sandbox.restore();
             field.dispose();
             field = null;
         });
