@@ -371,7 +371,7 @@
         treeState = {
             categoryColor: '#000000',
             itemColor: '#167DE5',
-            itemFont: '12px Helvetica Neue',
+            itemFont: '12px open sans',
             iconTextPadding: 5,
             iconWidth: 16,
             iconHeight: 16,
@@ -1027,7 +1027,7 @@
     _resizePhaserCanvas: function() {
         var $el = this.$('.product-catalog-container-' + this.cid);
 
-        if (this.phaser && $el.length) {
+        if (this.phaser && $el.length && this.phaser.scale) {
             this.phaser.scale.setGameSize($el.width(), $el.height());
         }
     },
