@@ -107,16 +107,20 @@ describe('Plugins.EmailParticipants', function() {
         using(
             'attributes to set',
             [
-                // No change. Has parent and email address.
+                // No change. Has parent and email address. invalid_email is not set.
                 {},
-                // Has parent but no email address.
+                // Has parent but no email address. invalid_email is not set.
                 {
                     email_address_id: '',
                     email_address: ''
                 },
-                // Has parent but no email address.
+                // Has parent but no email address. invalid_email is not set.
                 {
                     email_address_id: ''
+                },
+                // Has parent and email address. The server gave us invalid_email.
+                {
+                    invalid_email: false
                 }
             ],
             function(attrs) {
@@ -154,6 +158,10 @@ describe('Plugins.EmailParticipants', function() {
                 {
                     parent: {},
                     email_address_id: ''
+                },
+                // The server gave us invalid_email.
+                {
+                    invalid_email: true
                 }
             ],
             function(attrs) {
@@ -398,17 +406,22 @@ describe('Plugins.EmailParticipants', function() {
             expect(actual.module).toBe('EmailParticipants');
             expect(actual.get('email_address_id')).toBeUndefined();
             expect(actual.get('email_address')).toBe(term);
+            expect(actual.get('invalid_email')).toBeUndefined();
+            expect(actual.get('opt_out')).toBeUndefined();
             // The choice is seen as invalid while the request is in flight.
             expect(actual.invalid).toBe(true);
 
             // Act as if the user has selected the choice in order to see that
-            // the event is trigger.
+            // the event is triggered.
             field.model.get(field.name).add(actual);
             sandbox.spy(field.model, 'trigger');
 
             SugarTest.server.respond();
 
+            // Data is patched and the choice is now seen as valid.
             expect(actual.get('email_address_id')).toBe(address.id);
+            expect(actual.get('invalid_email')).toBe(false);
+            expect(actual.get('opt_out')).toBe(false);
             expect(actual.invalid).toBe(false);
             expect(field.model.trigger).toHaveBeenCalledOnce();
             expect(field.model.trigger.args[0][0]).toBe('change:' + field.name);
@@ -444,6 +457,8 @@ describe('Plugins.EmailParticipants', function() {
             expect(actual.module).toBe('EmailParticipants');
             expect(actual.get('email_address_id')).toBeUndefined();
             expect(actual.get('email_address')).toBe(term);
+            expect(actual.get('invalid_email')).toBeUndefined();
+            expect(actual.get('opt_out')).toBeUndefined();
             // The choice is seen as invalid while the request is in flight.
             expect(actual.invalid).toBe(true);
 
@@ -453,13 +468,16 @@ describe('Plugins.EmailParticipants', function() {
 
             SugarTest.server.respond();
 
+            // Data is patched and the choice is now seen as valid.
             expect(actual.get('email_address_id')).toBe(address.id);
+            expect(actual.get('invalid_email')).toBe(false);
+            expect(actual.get('opt_out')).toBe(false);
             expect(actual.invalid).toBe(false);
             expect(field.model.trigger).not.toHaveBeenCalled();
         });
 
-        it('should not patch the new choice when the request responds with an invalid email address', function() {
-            var term = 'test@example.com';
+        it('should be marked invalid when the request responds with an invalid email address', function() {
+            var term = 'test@.example.com';
             var address = {
                 _module: 'EmailAddresses',
                 _acl: {
@@ -486,19 +504,23 @@ describe('Plugins.EmailParticipants', function() {
             expect(actual.module).toBe('EmailParticipants');
             expect(actual.get('email_address_id')).toBeUndefined();
             expect(actual.get('email_address')).toBe(term);
+            expect(actual.get('invalid_email')).toBeUndefined();
+            expect(actual.get('opt_out')).toBeUndefined();
             // The choice is seen as invalid while the request is in flight.
             expect(actual.invalid).toBe(true);
 
             sandbox.spy(field.model, 'trigger');
             SugarTest.server.respond();
 
-            // Nothing changed.
-            expect(actual.get('email_address_id')).toBeUndefined();
+            // Data is patched but the email is still seen as invalid.
+            expect(actual.get('email_address_id')).toBe(address.id);
+            expect(actual.get('invalid_email')).toBe(true);
+            expect(actual.get('opt_out')).toBe(false);
             expect(actual.invalid).toBe(true);
             expect(field.model.trigger).not.toHaveBeenCalled();
         });
 
-        it('should not patch the new choice when the request responds with an opted out email address', function() {
+        it('should not be marked invalid when the request responds with an opted out email address', function() {
             var term = 'test@example.com';
             var address = {
                 _module: 'EmailAddresses',
@@ -526,15 +548,19 @@ describe('Plugins.EmailParticipants', function() {
             expect(actual.module).toBe('EmailParticipants');
             expect(actual.get('email_address_id')).toBeUndefined();
             expect(actual.get('email_address')).toBe(term);
+            expect(actual.get('invalid_email')).toBeUndefined();
+            expect(actual.get('opt_out')).toBeUndefined();
             // The choice is seen as invalid while the request is in flight.
             expect(actual.invalid).toBe(true);
 
             sandbox.spy(field.model, 'trigger');
             SugarTest.server.respond();
 
-            // Nothing changed.
-            expect(actual.get('email_address_id')).toBeUndefined();
-            expect(actual.invalid).toBe(true);
+            // Data is patched and the choice is now seen as valid.
+            expect(actual.get('email_address_id')).toBe(address.id);
+            expect(actual.get('invalid_email')).toBe(false);
+            expect(actual.get('opt_out')).toBe(true);
+            expect(actual.invalid).toBe(false);
             expect(field.model.trigger).not.toHaveBeenCalled();
         });
 

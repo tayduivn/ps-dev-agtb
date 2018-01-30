@@ -67,6 +67,7 @@
                 } else {
                     $el.select2('data', this.getFormattedValue());
                     this._decorateInvalidRecipients();
+                    this._decorateOptedOutRecipients();
                     this._enableDragDrop();
                 }
             }, this));
@@ -158,7 +159,8 @@
                         cid: recipient.cid,
                         name: recipient.get('parent_name') || recipient.get('email_address'),
                         email_address: recipient.get('email_address'),
-                        invalid: recipient.invalid
+                        invalid: recipient.invalid,
+                        opt_out: !!recipient.get('opt_out')
                     });
                 }, this),
 
@@ -199,6 +201,7 @@
             }
 
             this._decorateInvalidRecipients();
+            this._decorateOptedOutRecipients();
             this._enableDragDrop();
         }
     },
@@ -239,6 +242,22 @@
             var $choice = $(this).closest('.select2-search-choice');
             $choice.addClass('select2-choice-danger');
             $(this).attr('data-title', app.lang.get('ERR_INVALID_EMAIL_ADDRESS', self.module));
+        });
+    },
+
+    /**
+     * Decorate any opted out email addresses.
+     *
+     * @private
+     */
+    _decorateOptedOutRecipients: function() {
+        var self = this;
+        var $optedOutRecipients = this.$('.select2-search-choice [data-optout="true"]');
+
+        $optedOutRecipients.each(function() {
+            var $choice = $(this).closest('.select2-search-choice');
+            $choice.addClass('select2-choice-optout');
+            $(this).attr('data-title', app.lang.get('LBL_EMAIL_ADDRESS_OPTED_OUT', self.module));
         });
     },
 

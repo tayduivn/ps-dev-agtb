@@ -203,13 +203,17 @@
                      * empty.
                      * - It has an `email_address_id` and `email_address`, and
                      * `email_address` is invalid.
+                     * - The server tells us that the email address is invalid.
                      */
                     if (!hasParent && !model.get('email_address_id')) {
                         model.invalid = true;
-                    } else if (model.get('email_address_id') && model.get('email_address')) {
+                    } else if (!model.has('invalid_email') &&
+                        model.get('email_address_id') &&
+                        model.get('email_address')
+                    ) {
                         model.invalid = !app.utils.isValidEmailAddress(model.get('email_address'));
                     } else {
-                        model.invalid = false;
+                        model.invalid = !!model.get('invalid_email');
                     }
 
                     if (hasParent && app.acl.hasAccessToModel('view', parent)) {
@@ -362,13 +366,15 @@
                                     success: _.bind(function(model) {
                                         var collection = this.model.get(this.name);
 
-                                        if (!model.get('invalid_email') && !model.get('opt_out')) {
-                                            choice.set('email_address_id', model.get('id'));
-                                            this.prepareModel(choice);
+                                        choice.set({
+                                            email_address_id: model.get('id'),
+                                            invalid_email: model.get('invalid_email'),
+                                            opt_out: model.get('opt_out')
+                                        });
+                                        this.prepareModel(choice);
 
-                                            if (collection.get(choice)) {
-                                                this.model.trigger('change:' + this.name, this.model, collection);
-                                            }
+                                        if (collection.get(choice)) {
+                                            this.model.trigger('change:' + this.name, this.model, collection);
                                         }
                                     }, this)
                                 });

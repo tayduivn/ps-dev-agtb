@@ -78,6 +78,8 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                                 'parent_type',
                                 'parent_id',
                                 'parent_name',
+                                'invalid_email',
+                                'opt_out',
                             ),
                         ),
                         array(
@@ -92,6 +94,8 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                                 'parent_type',
                                 'parent_id',
                                 'parent_name',
+                                'invalid_email',
+                                'opt_out',
                             ),
                         ),
                         array(
@@ -106,6 +110,8 @@ $viewdefs['Emails']['base']['view']['compose-email'] = array(
                                 'parent_type',
                                 'parent_id',
                                 'parent_name',
+                                'invalid_email',
+                                'opt_out',
                             ),
                         ),
                     ),

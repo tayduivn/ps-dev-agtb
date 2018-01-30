@@ -41,6 +41,8 @@ $viewdefs['Emails']['mobile']['view']['edit'] = array(
                         'parent_type',
                         'parent_id',
                         'parent_name',
+                        'invalid_email',
+                        'opt_out',
                     ),
                 ),
                 array(
@@ -55,6 +57,8 @@ $viewdefs['Emails']['mobile']['view']['edit'] = array(
                         'parent_type',
                         'parent_id',
                         'parent_name',
+                        'invalid_email',
+                        'opt_out',
                     ),
                 ),
                 array(
@@ -69,6 +73,8 @@ $viewdefs['Emails']['mobile']['view']['edit'] = array(
                         'parent_type',
                         'parent_id',
                         'parent_name',
+                        'invalid_email',
+                        'opt_out',
                     ),
                 ),
                 array(
@@ -83,6 +89,8 @@ $viewdefs['Emails']['mobile']['view']['edit'] = array(
                         'parent_type',
                         'parent_id',
                         'parent_name',
+                        'invalid_email',
+                        'opt_out',
                     ),
                 ),
                 array(

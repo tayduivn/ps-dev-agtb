@@ -441,7 +441,7 @@ $mod_strings = array(
     'ERR_NO_IEID' => 'error: no ieID',
     'ERR_INVALID_RECIPIENTS' => 'There are one or more recipients with an invalid email address. ' .
         'Please correct this and try again.',
-    'ERR_INVALID_EMAIL_ADDRESS' => 'Invalid Email Address',
+    'ERR_INVALID_EMAIL_ADDRESS' => 'Invalid email address',
     'ERR_INVALID_SENDER' => "The sender's email address is invalid. Please correct this and try again.",
 
     // Mail API Messages

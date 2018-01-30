@@ -123,6 +123,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
             sandbox.stub(field, 'render');
             sandbox.spy(field, 'getFormattedValue');
             sandbox.spy(field, '_decorateInvalidRecipients');
+            sandbox.spy(field, '_decorateOptedOutRecipients');
             sandbox.spy(field, '_enableDragDrop');
             field.model.set('to_collection', to);
             field.model.trigger('sync');
@@ -130,6 +131,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
             expect(field.render).not.toHaveBeenCalled();
             expect(field.getFormattedValue).toHaveBeenCalledOnce();
             expect(field._decorateInvalidRecipients).toHaveBeenCalledOnce();
+            expect(field._decorateOptedOutRecipients).toHaveBeenCalledOnce();
             expect(field._enableDragDrop).toHaveBeenCalledOnce();
             expect(field.$(field.fieldTag).select2('data').length).toBe(to.length);
         });
@@ -324,6 +326,52 @@ describe('Emails.BaseEmailRecipientsField', function() {
         expect(field.$(invalidSelector).length).toBe(1);
         expect(field.$('.select2-choice-danger').length).toBe(1);
         expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
+    });
+
+    it('should decorate opted out recipients', function() {
+        var parentId = _.uniqueId();
+        var recipient = app.data.createBean('EmailParticipants', {
+            _link: 'to',
+            parent: {
+                _acl: {},
+                type: 'Contacts',
+                id: parentId,
+                name: 'Francis Humphrey'
+            },
+            parent_type: 'Contacts',
+            parent_id: parentId,
+            parent_name: 'Francis Humphrey',
+            email_address_id: _.uniqueId(),
+            email_address: 'foo@bar.com',
+            invalid_email: false,
+            opt_out: true
+        });
+        var optOutSelector = '.select2-search-choice [data-optout="true"]';
+
+        field = SugarTest.createField({
+            name: 'to_collection',
+            type: 'email-recipients',
+            viewName: 'edit',
+            module: model.module,
+            model: model,
+            context: context,
+            loadFromModule: true
+        });
+
+        field.model.set('to_collection', to);
+        field.model.trigger('sync');
+        expect(field.$(optOutSelector).length).toBe(0);
+
+        field.model.get('to_collection').add(recipient);
+        expect(field.$(optOutSelector).length).toBe(1);
+        expect(field.$('.select2-choice-optout').length).toBe(1);
+        expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
+
+        // Make sure it is still decorated after a full render.
+        field.render();
+        expect(field.$(optOutSelector).length).toBe(1);
+        expect(field.$('.select2-choice-optout').length).toBe(1);
+        expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
     });
 
     it('should open the address book and add the selected recipients', function() {

@@ -30,6 +30,8 @@ $viewdefs['Emails']['base']['view']['subpanel-for-opportunities-archived-emails'
                         'parent_type',
                         'parent_id',
                         'parent_name',
+                        'invalid_email',
+                        'opt_out',
                     ),
                 ),
                 array(

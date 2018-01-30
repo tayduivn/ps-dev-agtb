@@ -29,6 +29,8 @@ $viewdefs['Emails']['base']['view']['list'] = array(
                         'parent_type',
                         'parent_id',
                         'parent_name',
+                        'invalid_email',
+                        'opt_out',
                     ),
                 ),
                 array(
