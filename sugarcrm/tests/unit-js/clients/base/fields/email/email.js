@@ -279,8 +279,8 @@ describe('Base.Email', function() {
 
             field.setMode('detail');
 
-            expect(field.$('a').text()).toBe('test1@test.com');
-            expect(field.$('span').text()).toBe('test2@test.com');
+            expect(field.$('a').eq(0).text()).toBe('test1@test.com');
+            expect(field.$('a').eq(1).text()).toBe('test2@test.com');
 
             field.model.set('email', newValue);
 
@@ -299,6 +299,24 @@ describe('Base.Email', function() {
 
             expect(field.$('input').eq(0).val()).toBe('test1@test.com');
             expect(field.$('[data-emailproperty=opt_out]').eq(1).hasClass('active')).toBe(true);
+        });
+
+        using('different modes', ['detail', 'list'], function(mode) {
+            it('should have the ban icon when an opted out email address is rendered', function() {
+                var newValue = app.utils.deepCopy(mock_addr);
+                newValue[0].opt_out = true;
+                newValue[1].opt_out = false;
+
+                field.setMode(mode);
+
+                expect(field.$('a').eq(0).hasClass('opt-out')).toBe(false);
+                expect(field.$('a').eq(1).hasClass('opt-out')).toBe(true);
+
+                field.model.set('email', newValue);
+
+                expect(field.$('a').eq(0).hasClass('opt-out')).toBe(true);
+                expect(field.$('a').eq(1).hasClass('opt-out')).toBe(false);
+            });
         });
     });
 
@@ -381,7 +399,7 @@ describe('Base.Email', function() {
             expect(actual[1].hasAnchor).toBeFalsy();
         });
 
-        it("should not make an email address a link when the address is opted out", function() {
+        it('should make an email address a link when the address is opted out', function() {
             var emails = [{
                     email_address: "foo@bar.com",
                     opt_out:       true,
@@ -390,7 +408,7 @@ describe('Base.Email', function() {
                 actual;
 
             actual = field.format(emails);
-            expect(actual[0].hasAnchor).toBeFalsy();
+            expect(actual[0].hasAnchor).toBeTruthy();
         });
 
         it("should not make an email address a link when the address is invalid", function() {

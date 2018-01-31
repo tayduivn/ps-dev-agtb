@@ -467,7 +467,7 @@
             _.each(value, function(email) {
                 // On render, determine which e-mail addresses need anchor tag included
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
-                email.hasAnchor = this.def.emailLink && !email.opt_out && !email.invalid_email;
+                email.hasAnchor = this.def.emailLink && !email.invalid_email;
             }, this);
         } else if ((_.isString(value) && value !== "") || this.view.action === 'list') {
             // expected an array with a single address but got a string or an empty array
@@ -562,7 +562,8 @@
                 {
                     email: app.data.createBean('EmailAddresses', {
                         id: $link.data('email-address-id'),
-                        email_address: $link.data('email-to')
+                        email_address: $link.data('email-to'),
+                        opt_out: $link.data('email-opt-out')
                     }),
                     bean: this.emailOptions.related
                 }

@@ -708,6 +708,15 @@ describe('EmailClientLaunch Plugin', function() {
                 subject: 'Bar!!!'
             });
         });
+
+        it('should set opt_out from data attribute in email link', function() {
+            var actual;
+            var $link = $('<a href="#" data-email-to="foo@bar.com" data-email-opt-out="true">Foo!</a>');
+            var emailField = SugarTest.createField('base', 'email', 'email', 'detail');
+
+            actual = emailField._retrieveEmailOptions($link);
+            expect(actual.to[0].email.get('opt_out')).toBe(true);
+        });
     });
 
     describe('Setting email links on attach', function() {

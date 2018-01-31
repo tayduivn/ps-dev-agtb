@@ -205,6 +205,21 @@
       }
     }
 
+    &[data-type="email"] {
+      .opt-out::before {
+        content: @fa-var-ban;
+        font-family: 'FontAwesome';
+        position: absolute;
+        left: 1px;
+        top: 1px;
+      }
+
+      .opt-out {
+        position: relative;
+        padding-left: 16px;
+      }
+    }
+
     > span:not(.overflow-visible) {
       overflow-x: hidden;
       text-overflow: ellipsis;

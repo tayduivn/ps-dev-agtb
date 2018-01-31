@@ -14,17 +14,17 @@
     {{#if primary_address}}
         {{#if hasAnchor}}
             {{#if ../../../ellipsis}}
-                <div class="ellipsis_inline"{{#if ../../../dir}} dir="{{../../../../dir}}"{{/if}} rel="tooltip" title="{{email_address}}" data-placement="bottom">
+                <div class="ellipsis_inline"{{#if ../../../dir}} dir="{{../../../../dir}}"{{/if}} rel="tooltip" title="{{email_address}}{{#notEq flagLabel ''}} ({{flagLabel}}){{/notEq}}" data-placement="bottom">
             {{/if}}
-                <a href="javascript:void(0);" data-action="email" data-email-address-id="{{email_address_id}}" data-email-to="{{email_address}}" track="click:email_address">{{email_address}}</a>
+                <a href="javascript:void(0);"{{#if opt_out}} class="opt-out"{{/if}} data-action="email" data-email-address-id="{{email_address_id}}" data-email-to="{{email_address}}" data-email-opt-out="{{opt_out}}" track="click:email_address">{{email_address}}</a>
             {{#if ../../../ellipsis}}
                 </div>
             {{/if}}
         {{else}}
             {{#if invalid_email}}
-                <del rel="tooltip"{{#if ../../../../dir}} dir="{{../../../../../dir}}"{{/if}} title="{{email_address}} ({{flagLabel}})" data-placement="bottom"{{#if ../../../../ellipsis}} class="ellipsis_inline"{{/if}}>{{email_address}}</del>
+                <del rel="tooltip"{{#if ../../../../dir}} dir="{{../../../../../dir}}"{{/if}} title="{{email_address}} ({{flagLabel}})" data-placement="bottom" class="{{#if ../../../../ellipsis}}ellipsis_inline{{/if}}{{#if opt_out}} opt-out{{/if}}">{{email_address}}</del>
             {{else}}
-                <span rel="tooltip"{{#if ../../../../dir}} dir="{{../../../../../dir}}"{{/if}} title="{{email_address}}{{#notEq flagLabel ''}} ({{flagLabel}}){{/notEq}}" data-placement="bottom"{{#if ../../../../ellipsis}} class="ellipsis_inline"{{/if}}>{{email_address}}</span>
+                <span rel="tooltip"{{#if ../../../../dir}} dir="{{../../../../../dir}}"{{/if}} title="{{email_address}}{{#notEq flagLabel ''}} ({{flagLabel}}){{/notEq}}" data-placement="bottom" class="{{#if ../../../../ellipsis}}ellipsis_inline{{/if}}{{#if opt_out}} opt-out{{/if}}">{{email_address}}</span>
             {{~/if~}}
         {{/if~}}
     {{/if~}}
