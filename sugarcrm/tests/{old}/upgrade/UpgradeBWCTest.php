@@ -21,6 +21,8 @@ class UpgradeBWCTest extends UpgradeTestCase
 
     public function setUp()
     {
+        $this->markTestSkipped('This tests 6_ScanModules which is not needed any more as it tests sugar 6->7 upgrade');
+
         parent::setUp();
         SugarTestHelper::saveFile('custom/Extension/application/Ext/Include/scantest.php');
         $data = "<?php \n";
