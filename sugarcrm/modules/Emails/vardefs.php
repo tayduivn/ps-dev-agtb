@@ -418,6 +418,7 @@ $dictionary['Email'] = array(
             'options' => 'dom_email_states',
             'len' => 100,
             'required' => true,
+            'isnull' => false,
             'default' => 'Archived',
             'massupdate' => false,
             'comment' => 'An email is either a draft or archived',
