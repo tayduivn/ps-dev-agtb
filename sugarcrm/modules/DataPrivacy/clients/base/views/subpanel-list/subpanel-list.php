@@ -48,6 +48,7 @@ $viewdefs['DataPrivacy']['base']['view']['subpanel-list'] = array(
                             'enabled' => true,
                             'default' => true,
                             'name' => 'status',
+                            'readonly' => true,
                         ),
                         array(
                             'label' => 'LBL_LIST_DATE_DUE',

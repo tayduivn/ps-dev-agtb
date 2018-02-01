@@ -100,7 +100,10 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
                     'name' => 'dataprivacy_number',
                     'readonly' => true,
                 ),
-                'status',
+                array(
+                    'name' => 'status',
+                    'readonly' => true,
+                ),
                 'type',
                 'priority',
                 array(
@@ -117,8 +120,16 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
                     'readonly' => false,
                 ),
                 array(
+                    'name' => 'date_opened',
+                    'readonly' => false,
+                ),
+                array(
                     'name' => 'date_closed',
                     'readonly' => false,
+                ),
+                array(
+                    'name' => 'business_purpose',
+                    'isMultiSelect' => true,
                 ),
                 array(
                     'name' => 'description',
@@ -127,6 +138,11 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'resolution',
+                    'nl2br' => true,
+                    'span' => 12,
+                ),
+                array(
+                    'name' => 'work_log',
                     'nl2br' => true,
                     'span' => 12,
                 ),

@@ -41,6 +41,7 @@ $viewdefs['DataPrivacy']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_STATUS',
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'priority',

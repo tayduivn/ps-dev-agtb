@@ -54,12 +54,6 @@ $viewdefs['DataPrivacy']['base']['view']['recordlist'] = array(
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
             ),
-            array(
-                'type' => 'follow',
-                'name' => 'follow_button',
-                'event' => 'list:follow:fire',
-                'acl_action' => 'view',
-            ),
         ),
     ),
 );
