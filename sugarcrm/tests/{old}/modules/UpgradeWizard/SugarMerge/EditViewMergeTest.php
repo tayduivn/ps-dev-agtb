@@ -525,7 +525,7 @@ class EditViewMergeTest extends Sugar_PHPUnit_Framework_TestCase
                                     'type' => 'rowaction',
                                     'event' => 'button:audit_button:click',
                                     'name' => 'audit_button',
-                                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                                    'label' => 'LNK_VIEW_AUDIT_LOG',
                                     'acl_action' => 'view',
                                 ),
                                 array(
@@ -695,7 +695,7 @@ class EditViewMergeTest extends Sugar_PHPUnit_Framework_TestCase
                                     'type' => 'rowaction',
                                     'event' => 'button:audit_button:click',
                                     'name' => 'audit_button',
-                                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                                    'label' => 'LNK_VIEW_AUDIT_LOG',
                                     'acl_action' => 'view',
                                 ),
                                 array(

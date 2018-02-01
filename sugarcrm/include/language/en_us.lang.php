@@ -3429,6 +3429,7 @@ Sincerely, SugarCRM',
     'LNK_REMOVE' => 'remove',
     'LNK_RESUME' => 'Resume',
     'LNK_VIEW_CHANGE_LOG' => 'View Change Log',
+    'LNK_VIEW_AUDIT_LOG' => 'View Audit Log',
 
 
     'NTC_CLICK_BACK' => 'Please click the browser back button and fix the error.',
