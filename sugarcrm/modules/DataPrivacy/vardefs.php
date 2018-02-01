@@ -89,6 +89,12 @@ $dictionary['DataPrivacy'] = array(
                 ),
                 'comment' => 'Date resolved',
             ),
+        'fields_to_erase' => array(
+            'name' => 'fields_to_erase',
+            'type' => 'json',
+            'dbType' => 'text',
+            'studio' => false,
+        ),
         'leads' =>
             array (
                 'name' => 'leads',

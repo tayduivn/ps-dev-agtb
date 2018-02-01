@@ -21,6 +21,11 @@ class DataPrivacy extends Issue
     public $object_name = 'DataPrivacy';
 
     /**
+     * @var string
+     */
+    public $fields_to_erase;
+
+    /**
      * {@inheritDoc}
      * @see SugarBean::bean_implements()
      */
