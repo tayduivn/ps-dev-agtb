@@ -63,6 +63,8 @@ $dictionary['RevenueLineItem'] = array(
                 'weight' => 'weight',
                 'manufacturer_id' => 'manufacturer_id',
                 'manufacturer_name' => 'manufacturer_name',
+                'type_id' => 'type_id',
+                'type_name' => 'type_name',
             ),
         ),
         'account_id' => array(
