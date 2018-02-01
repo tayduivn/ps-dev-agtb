@@ -282,6 +282,11 @@
             onScrollWheel: new Phaser.Signal(),
 
             /**
+             * Event called outside Phaser to trigger re-drawing UI
+             */
+            onResize: new Phaser.Signal(),
+
+            /**
              * Handles disposing any Signal events and listeners
              */
             destroy: function() {
@@ -400,6 +405,7 @@
             scrollBarBkgdWidth: 15,
             scrollBarBkgdBorderColor: 0xE8E8E8,
             scrollBarBkgdFill: 0xFAFAFA,
+            scrollBarBkgdFillIE: 0xF0F0F0,
             scrollThumbHoverImg: undefined,
             scrollThumbImg: undefined,
             scrollThumbWidth: 8,
@@ -410,6 +416,7 @@
             scrollPercentHeight: 0,
             scrollThumbHoverInTween: undefined,
             scrollThumbHoverOutTween: undefined,
+            maxScrollY: undefined,
 
             /**
              * Preload is called as the TreeState initializes and lets us setup any vars we need for the state
@@ -426,6 +433,7 @@
 
                 this.game.events.onSetTreeData.add(this._setTreeData, this);
                 this.game.events.onScrollWheel.add(this._onScrollWheel, this);
+                this.game.events.onResize.add(this._onResize, this);
 
                 this.GroupEventHub = function() {
                     return {
@@ -477,6 +485,14 @@
 
                 // make sure we're not out of bounds
                 this._checkBounds(this.scrollThumbImg);
+            },
+
+            /**
+             * Handles the Phaser onResize event and updates the game world and scrollbar
+             * @private
+             */
+            _onResize: function() {
+                this._updateGameWorldSize();
             },
 
             /**
@@ -819,6 +835,11 @@
              * @private
              */
             _updateGameWorldSize: function() {
+                var $el = this.game._view.$('#product-catalog-canvas-' + this.game._view.cid);
+
+                this.dashletHeight = $el.height();
+                this.gameWorldWidth = $el.width();
+
                 this.scrollPercentHeight = this.dashletHeight / this.gameWorldHeight;
 
                 this.game.world.setBounds(0, 0, this.gameWorldWidth, this.gameWorldHeight);
@@ -830,27 +851,25 @@
                 this.drawScrollbar();
             },
 
-
             /**
              * Draws the Scrollbar line and rectangle
              */
             drawScrollbar: function() {
                 var scrollX = this.gameWorldWidth - this.scrollBarBkgdWidth;
-                var scrollY = 0;
-                var halfXOffset = this.scrollBarBkgdWidth >> 1;
-                var quarterXOffset = this.scrollBarBkgdWidth >> 2;
-
+                var xOffset = this.game.device.ie ? 0 : 4;
                 if (this.scrollBarImg) {
                     this.scrollBarImg.destroy();
                     this.scrollThumbImg.destroy();
                 }
 
-                this.scrollBarImg = this.game.add.image(scrollX - halfXOffset, scrollY, this._drawScrollBkgdBar());
+                console.log('drawing Scrollbar @ ', this.gameWorldWidth);
+
+                this.scrollBarImg = this.game.add.image(scrollX, 0, this._drawScrollBkgdBar());
                 this.scrollBarImg.fixedToCamera = true;
 
                 this.scrollThumbImg = this.game.add.image(
-                    scrollX - quarterXOffset,
-                    scrollY,
+                    scrollX + xOffset,
+                    0,
                     this._drawScrollThumb(this.scrollThumbFillColor)
                 );
 
@@ -880,6 +899,8 @@
                 this.scrollThumbImg.events.onInputOut.add(function() {
                     this.scrollThumbHoverOutTween.start();
                 }, this);
+
+                this.maxScrollY = this.dashletHeight - this.scrollThumbHeight;
             },
 
             /**
@@ -890,9 +911,11 @@
              */
             _drawScrollBkgdBar: function() {
                 var bar = this.game.make.graphics();
+                var bkgdFill = this.game.device.ie ? this.scrollBarBkgdFillIE : this.scrollBarBkgdFill;
+
                 bar.lineStyle(this.scrollBarBkgdBorderLineSize, this.scrollBarBkgdBorderColor, 1);
-                bar.beginFill(this.scrollBarBkgdFill, 1);
-                bar.drawRect(0, 0, this.scrollBarBkgdWidth, this.dashletHeight - 1);
+                bar.beginFill(bkgdFill, 1);
+                bar.drawRect(0, 0, this.scrollBarBkgdWidth, this.dashletHeight);
                 return bar.generateTexture();
             },
 
@@ -906,7 +929,13 @@
                 var thumb = this.game.make.graphics();
                 thumb.lineStyle(0);
                 thumb.beginFill(fillColor, 1);
-                thumb.drawRoundedRect(0, 0, this.scrollThumbWidth, this.scrollThumbHeight, 5);
+
+                if (this.game.device.ie) {
+                    thumb.drawRect(0, 0, this.scrollBarBkgdWidth, this.scrollThumbHeight);
+                } else {
+                    thumb.drawRoundedRect(0, 0, this.scrollThumbWidth, this.scrollThumbHeight, 5);
+                }
+
                 return thumb.generateTexture();
             },
 
@@ -921,8 +950,8 @@
                 if (image.cameraOffset.y < 0) {
                     image.cameraOffset.y = 0;
                 }
-                if (image.cameraOffset.y > this.dashletHeight - this.scrollThumbHeight - 1) {
-                    image.cameraOffset.y = this.dashletHeight - this.scrollThumbHeight - 1;
+                if (image.cameraOffset.y > this.maxScrollY) {
+                    image.cameraOffset.y = this.maxScrollY;
                 }
             },
 
@@ -1181,6 +1210,7 @@
 
         if (this.phaser && $el.length && this.phaser.scale) {
             this.phaser.scale.setGameSize($el.width(), $el.height());
+            this.phaser.events.onResize.dispatch();
         }
     },
 
