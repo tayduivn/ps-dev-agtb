@@ -386,6 +386,7 @@
             isLoading: false,
             groups: undefined,
             rootGroup: undefined,
+            dashletHeight: undefined,
             gameWorldHeight: undefined,
             gameWorldWidth: undefined,
             cameraY: undefined,
@@ -394,14 +395,32 @@
                 data: 'Show More',
                 type: 'showMore'
             },
+            scrollBarImg: undefined,
+            scrollBarBkgdBorderLineSize: 1,
+            scrollBarBkgdWidth: 15,
+            scrollBarBkgdBorderColor: 0xE8E8E8,
+            scrollBarBkgdFill: 0xFAFAFA,
+            scrollThumbHoverImg: undefined,
+            scrollThumbImg: undefined,
+            scrollThumbWidth: 8,
+            scrollThumbHeight: 16,
+            scrollThumbFillColor: 0xC1C1C1,
+            scrollThumbFillHoverColor: 0x7D7D7D,
+            previousScrollThumbY: 0,
+            scrollPercentHeight: 0,
+            scrollThumbHoverInTween: undefined,
+            scrollThumbHoverOutTween: undefined,
 
             /**
              * Preload is called as the TreeState initializes and lets us setup any vars we need for the state
              */
             preload: function() {
+                var $el = this.game._view.$('#product-catalog-canvas-' + this.game._view.cid);
+
                 this.groups = [];
                 this.gameWorldHeight = 0;
-                this.gameWorldWidth = this.game._view.$('.product-catalog-dashlet-' + this.cid).width();
+                this.gameWorldWidth = $el.width();
+                this.dashletHeight = $el.height();
                 this.cameraY = 0;
                 this.isLoading = false;
 
@@ -434,17 +453,6 @@
             },
 
             /**
-             * Update is called about 60 times a second to let us update our camera position
-             * based on any mouse scrolling a user may have done
-             */
-            update: function() {
-                if (this.cameraY !== 0) {
-                    this.game.camera.y += this.cameraY;
-                    this.cameraY = 0;
-                }
-            },
-
-            /**
              * Handles the Mouse ScrollWheel event being passed from the DOM to Phaser.
              * The yDelta value gets added to `this.cameraY` so that the next game "tick" event
              * that happens during the state's `update` function, we can move the
@@ -454,7 +462,21 @@
              * @private
              */
             _onScrollWheel: function(yDelta) {
-                this.cameraY += yDelta;
+                var percentCameraGameHeightDiff;
+                var newScrollY;
+
+                // update the camera position by the yDelta
+                this.game.camera.y += yDelta;
+
+                // update the scrollbar to reflect the new camera position
+                percentCameraGameHeightDiff  = this.game.camera.y / this.gameWorldHeight;
+                newScrollY = percentCameraGameHeightDiff * this.dashletHeight;
+
+                // update the scrollbar thumb
+                this.scrollThumbImg.cameraOffset.y = newScrollY;
+
+                // make sure we're not out of bounds
+                this._checkBounds(this.scrollThumbImg);
             },
 
             /**
@@ -508,8 +530,10 @@
              */
             _setTreeData: function(treeData) {
                 var groupIndex = 0;
+                var $el = this.game._view.$('#product-catalog-canvas-' + this.game._view.cid);
 
-                this.gameWorldWidth = this.game._view.$('.product-catalog-dashlet-' + this.cid).width();
+                this.dashletHeight = $el.height();
+                this.gameWorldWidth = $el.width();
                 this.gameWorldHeight = 15;
                 this.cameraY = 0;
                 this.game.camera.y = 0;
@@ -652,6 +676,7 @@
 
                 icon.inputEnabled = true;
                 icon.events.onInputDown.add(this._itemClicked, this);
+                icon.input.useHandCursor = true;
 
                 text = this.game.add.text(
                     this.iconStartX + this.iconWidth + this.iconTextPadding,
@@ -669,6 +694,7 @@
 
                 text.inputEnabled = true;
                 text.events.onInputDown.add(this._itemClicked, this);
+                text.input.useHandCursor = true;
 
                 group.name = group.name + '-' + itemName;
                 group._itemName = itemName;
@@ -793,9 +819,135 @@
              * @private
              */
             _updateGameWorldSize: function() {
+                this.scrollPercentHeight = this.dashletHeight / this.gameWorldHeight;
+
                 this.game.world.setBounds(0, 0, this.gameWorldWidth, this.gameWorldHeight);
                 this.game.world.resize(this.gameWorldWidth, this.gameWorldHeight);
                 this.game.camera.setBoundsToWorld();
+
+                this.scrollThumbHeight = Math.floor(this.scrollPercentHeight * this.dashletHeight);
+
+                this.drawScrollbar();
+            },
+
+
+            /**
+             * Draws the Scrollbar line and rectangle
+             */
+            drawScrollbar: function() {
+                var scrollX = this.gameWorldWidth - this.scrollBarBkgdWidth;
+                var scrollY = 0;
+                var halfXOffset = this.scrollBarBkgdWidth >> 1;
+                var quarterXOffset = this.scrollBarBkgdWidth >> 2;
+
+                if (this.scrollBarImg) {
+                    this.scrollBarImg.destroy();
+                    this.scrollThumbImg.destroy();
+                }
+
+                this.scrollBarImg = this.game.add.image(scrollX - halfXOffset, scrollY, this._drawScrollBkgdBar());
+                this.scrollBarImg.fixedToCamera = true;
+
+                this.scrollThumbImg = this.game.add.image(
+                    scrollX - quarterXOffset,
+                    scrollY,
+                    this._drawScrollThumb(this.scrollThumbFillColor)
+                );
+
+                this.scrollThumbHoverImg = this.game.add.image(
+                    0,
+                    0,
+                    this._drawScrollThumb(this.scrollThumbFillHoverColor)
+                );
+                this.scrollThumbImg.addChild(this.scrollThumbHoverImg);
+                this.scrollThumbHoverInTween = this.game.add.tween(this.scrollThumbHoverImg).to({alpha: 1}, 100);
+                this.scrollThumbHoverOutTween = this.game.add.tween(this.scrollThumbHoverImg).to({alpha: 0}, 100);
+
+                this.scrollThumbHoverImg.alpha = 0;
+
+                this.scrollThumbImg.inputEnabled = true;
+                this.scrollThumbImg.input.enableDrag();
+                // only allow the thumb vertical drag
+                this.scrollThumbImg.input.allowHorizontalDrag = false;
+                this.scrollThumbImg.events.onDragStart.add(this._checkDragThumbBounds, this);
+                this.scrollThumbImg.events.onDragUpdate.add(this._checkDragThumbBounds, this);
+                this.scrollThumbImg.events.onDragStop.add(this._checkDragThumbBounds, this);
+                this.scrollThumbImg.fixedToCamera = true;
+
+                this.scrollThumbImg.events.onInputOver.add(function() {
+                    this.scrollThumbHoverInTween.start();
+                }, this);
+                this.scrollThumbImg.events.onInputOut.add(function() {
+                    this.scrollThumbHoverOutTween.start();
+                }, this);
+            },
+
+            /**
+             * Draws the scrollbar background well
+             *
+             * @return {Phaser.Texture}
+             * @private
+             */
+            _drawScrollBkgdBar: function() {
+                var bar = this.game.make.graphics();
+                bar.lineStyle(this.scrollBarBkgdBorderLineSize, this.scrollBarBkgdBorderColor, 1);
+                bar.beginFill(this.scrollBarBkgdFill, 1);
+                bar.drawRect(0, 0, this.scrollBarBkgdWidth, this.dashletHeight - 1);
+                return bar.generateTexture();
+            },
+
+            /**
+             * Draws the actual scrollbar thumb
+             *
+             * @return {Phaser.Texture}
+             * @private
+             */
+            _drawScrollThumb: function(fillColor) {
+                var thumb = this.game.make.graphics();
+                thumb.lineStyle(0);
+                thumb.beginFill(fillColor, 1);
+                thumb.drawRoundedRect(0, 0, this.scrollThumbWidth, this.scrollThumbHeight, 5);
+                return thumb.generateTexture();
+            },
+
+            /**
+             * Checks the bounds of `sprite` to make sure the Y value
+             * is between 0 and the height of the dashlet
+             *
+             * @param {Phaser.Image} image The Phaser Image to check bounds
+             * @private
+             */
+            _checkBounds: function(image) {
+                if (image.cameraOffset.y < 0) {
+                    image.cameraOffset.y = 0;
+                }
+                if (image.cameraOffset.y > this.dashletHeight - this.scrollThumbHeight - 1) {
+                    image.cameraOffset.y = this.dashletHeight - this.scrollThumbHeight - 1;
+                }
+            },
+
+            /**
+             * Handles checking bounds of the scrollbar thumb
+             * @param image
+             * @private
+             */
+            _checkDragThumbBounds: function(image) {
+                var scrollbarDashletDiff;
+
+                this._checkBounds(image);
+
+                if (this.previousScrollThumbY !== image.cameraOffset.y) {
+                    // only update camera if scroll thumb changed Y pos
+
+                    // get the percent difference between how far down the scrollbar has moved
+                    // and the height of the dashlet
+                    scrollbarDashletDiff = image.cameraOffset.y / this.dashletHeight;
+                    // multiply that percent diff by the total game world height
+                    this.game.camera.y = scrollbarDashletDiff * this.gameWorldHeight;
+
+                    // set the previous to the current camera offset
+                    this.previousScrollThumbY = image.cameraOffset.y;
+                }
             },
 
             /**
