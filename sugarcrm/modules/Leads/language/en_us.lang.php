@@ -319,4 +319,6 @@ After confirming each required and desired module, click the Save and Convert bu
     'LBL_MKTO_LEAD_SCORE' => 'Lead Score',
 
     'LBL_FILTER_LEADS_REPORTS' => 'Leads\' reports',
+    'LBL_BUSINESS_PURPOSE' => 'Business Purpose',
+    'LBL_CONSENT_LAST_UPDATED' => 'Consent Last Updated',
 );

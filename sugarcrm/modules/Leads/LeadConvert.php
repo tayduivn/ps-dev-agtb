@@ -132,7 +132,8 @@ class LeadConvert
     }
 
     /**
-     * Links DP records to Contact and/or other modules related to DP module.
+     * Links DP records to Contact and/or other modules related to DP module
+     * and copy dp-related fields (business purpose, consent date etc) to Contact.
      * Only out-of-box DP relationships are handled.
      */
     public function performDataPrivacyTransfer()
@@ -157,6 +158,15 @@ class LeadConvert
                     }
                 }
             }
+        }
+        if (!empty($this->lead->business_puspose)) {
+            $this->contact->business_puspose = $this->lead->business_puspose;
+        }
+        if (!empty($this->lead->consent_last_updated)) {
+            $this->contact->consent_last_updated = $this->lead->consent_last_updated;
+        }
+        if (isset($this->contact->business_puspose) || isset($this->contact->consent_last_updated)) {
+            $this->contact->save();
         }
     }
 

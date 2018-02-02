@@ -199,4 +199,6 @@ To create a {{module_name}}:
 2. Click "Save" to finalize the new record and return to the previous page.',
 
     'LBL_FILTER_PROSPECTS_REPORTS' => 'Targets\' reports',
+    'LBL_BUSINESS_PURPOSE' => 'Business Purpose',
+    'LBL_CONSENT_LAST_UPDATED' => 'Consent Last Updated',
 );

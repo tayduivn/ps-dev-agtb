@@ -895,6 +895,11 @@ $app_list_strings = array (
         'Request to restrict/object to processing' => 'Request to restrict/object to processing',
         'Other Requests' => 'Other Requests',
     ),
+    'dataprivacy_business_purpose_dom' => array(
+        'Business Communications' => 'Business Communications',
+        'Marketing Communications by company' => 'Marketing Communications by company',
+        'Marketing Communications by partners' => 'Marketing Communications by partners',
+    ),
     'dataprivacy_status_default_key' => 'Open',
     'dataprivacy_status_dom' => array(
         'Open' => 'Open',
