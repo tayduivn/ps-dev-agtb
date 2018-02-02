@@ -19,6 +19,7 @@ import DrawerLayout from './layouts/drawer-layout';
 import QliRecord from './views/qli-record';
 import CommentRecord from './views/comment-record';
 import GroupRecord from './views/group-record';
+import DrawerLayoutOpp from "./layouts/drawer-layout-opp";
 
 
 export default (seedbed: Seedbed) => {
@@ -41,6 +42,8 @@ export default (seedbed: Seedbed) => {
 
 // is called after cukes init, one time
     seedbed.addAsyncHandler(seedbed.events.AFTER_INIT, () => {
+
+        seedbed.defineComponent(`OpportunityDrawer`, DrawerLayoutOpp, {module: 'Opportunities'});
 
         /*cache drawers for modules*/
         _.each(seedbed.meta.modules, (module, moduleName) => {

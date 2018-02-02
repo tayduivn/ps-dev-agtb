@@ -18,7 +18,8 @@ import ListView from '../views/list-view';
 import QliRecord from '../views/qli-record';
 import CommentRecord from '../views/comment-record';
 import GroupRecord from '../views/group-record';
-import QliTable from "../views/qli-table";
+import RliTableRecord from '../views/rli-table';
+import BaseView from '../views/base-view';
 
 /**
  * Select module in modules menu
@@ -114,6 +115,32 @@ When(/^I provide input for (#\S+) view$/,
         };
 
         await view.setFieldsValue(inputData);
+
+    }, {waitForApp: true});
+
+// The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
+When(/^I provide input for (#\S+) view for (\d+) row$/,
+    async function (view: any, index: number, data: TableDefinition): Promise<void> {
+
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+
+        let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
+
+        // check for * marked column and cache the record and view if needed
+        let uidInfo = Utils.computeRecordUID(inputData);
+
+        seedbed.cucumber.scenario.recordsInfo[uidInfo.uid] = {
+            uid: uidInfo.uid,
+            originInput: JSON.parse(JSON.stringify(inputData)),
+            input: inputData,
+            module: view.module,
+        };
+
+        let rowView = view.getRowByIndex(index);
+
+        await rowView.setFieldsValue(inputData);
 
     }, {waitForApp: true});
 
@@ -238,6 +265,15 @@ When(/^I click on (save|cancel) button on Comment (#\S+) record$/, async functio
 When(/^I click on (save|cancel) button on Group (#\S+) record$/, async function (buttonName, record: GroupRecord) {
     await record.pressButton(buttonName);
 }, {waitForApp: true});
+
+When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/, async function (buttonName, view: RliTableRecord, index)  {
+
+    let rowView = view.getRowByIndex(index);
+
+    await rowView.pressButton(buttonName);
+
+},{waitForApp: true});
+
 
 When(/^I dismiss alert$/, async function () {
     await this.driver.alertDismiss();
