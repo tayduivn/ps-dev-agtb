@@ -36,7 +36,6 @@
     initialize: function(options) {
         var plugins = [
             'ListColumnEllipsis',
-            'ListRemoveLinks',
             'Pagination',
             'MassCollection'
         ];

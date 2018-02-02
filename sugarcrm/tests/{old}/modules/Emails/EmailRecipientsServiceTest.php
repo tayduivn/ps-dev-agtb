@@ -12,6 +12,7 @@
 
 
 /**
+ * @coversDefaultClass EmailRecipientsService
  * @group functional
  * @group email
  */
@@ -140,6 +141,56 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
             $actual,
             "Should have sorted the recipients such that the recipient with the email address '{$expected}' was third."
         );
+    }
+
+    /**
+     * @covers ::find
+     */
+    public function testFind_SearchContactsForTerm_EmailAddressIsOptedIn()
+    {
+        $this->createRecipientsAcrossModules();
+
+        $emailAddress = "{$this->salt}_jiminy_crickett@gmail.com";
+        $ea = BeanFactory::newBean('EmailAddresses');
+        $ea->AddUpdateEmailAddress($emailAddress, false, false);
+
+        $term = "{$this->salt}_jiminy_";
+        $module = 'contacts';
+        $recipients = $this->emailRecipientsService->find($term, $module);
+
+        $this->assertFalse($recipients[0]['opt_out']);
+    }
+
+    /**
+     * @covers ::find
+     */
+    public function testFind_SearchContactsForTerm_EmailAddressIsOptedOut()
+    {
+        $this->createRecipientsAcrossModules();
+
+        $emailAddress = "{$this->salt}_jiminy_crickett@gmail.com";
+        $ea = BeanFactory::newBean('EmailAddresses');
+        $ea->AddUpdateEmailAddress($emailAddress, false, true);
+
+        $term = "{$this->salt}_jiminy_";
+        $module = 'contacts';
+        $recipients = $this->emailRecipientsService->find($term, $module);
+
+        $this->assertTrue($recipients[0]['opt_out']);
+    }
+
+    /**
+     * @covers ::find
+     */
+    public function testFind_SearchContactsForTerm_EmailAddressIdValueIsReturned()
+    {
+        $this->createRecipientsAcrossModules();
+
+        $term = "{$this->salt}_jiminy_";
+        $module = 'contacts';
+        $recipients = $this->emailRecipientsService->find($term, $module);
+
+        $this->assertNotEmpty($recipients[0]['email_address_id']);
     }
 
     public function testLookup_SetAllProperties_RecipientResolved()

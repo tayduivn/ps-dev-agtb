@@ -31,8 +31,9 @@
      * @param {Object} options
      */
     sync: function(method, model, options) {
-        var callbacks,
-            url;
+        var callbacks;
+        var url;
+        var success;
 
         options = options || {};
 
@@ -48,6 +49,40 @@
         // can be determined
         app.config.maxQueryResult = app.config.maxQueryResult || 20;
         options.limit = options.limit || app.config.maxQueryResult;
+
+        // Is there already a success callback?
+        if (options.success) {
+            success = options.success;
+        }
+
+        // Map the response so that the email field data is packaged as an
+        // array of objects. The email field component expects the data to be
+        // in that format.
+        options.success = function(data) {
+            if (_.isArray(data)) {
+                data = _.map(data, function(row) {
+                    return {
+                        _module: row._module,
+                        _acl: row._acl,
+                        id: row.id,
+                        name: row.name,
+                        email: [{
+                            email_address: row.email,
+                            email_address_id: row.email_address_id,
+                            opt_out: row.opt_out,
+                            // The email address must be seen as the primary
+                            // email address to be shown in a list view.
+                            primary_address: true
+                        }]
+                    };
+                });
+            }
+
+            // Call the original success callback.
+            if (success) {
+                success(data);
+            }
+        };
 
         options = app.data.parseOptionsForSync(method, model, options);
 

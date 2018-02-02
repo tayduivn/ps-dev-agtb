@@ -132,6 +132,8 @@ class EmailRecipientsService
                     "_module" => $row["module"],
                     "name"   => $name,
                     "email"  => $row["email_address"],
+                    'email_address_id' => $row['email_address_id'],
+                    'opt_out' => !!$row['opt_out'],
                 );
             }
         }

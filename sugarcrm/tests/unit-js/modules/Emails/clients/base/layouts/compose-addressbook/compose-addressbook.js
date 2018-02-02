@@ -9,16 +9,23 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Emails.Base.Layout.ComposeAddressbook', function() {
-    var app, layout;
+    var app;
+    var layout;
+    var sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
         layout = SugarTest.createLayout('base', 'Emails', 'compose-addressbook', null, null, true);
+
+        sandbox = sinon.sandbox.create();
+        SugarTest.seedFakeServer();
     });
 
     afterEach(function() {
+        sandbox.restore();
+        SugarTest.server.restore();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
@@ -26,43 +33,84 @@ describe('Emails.Base.Layout.ComposeAddressbook', function() {
         layout.dispose();
     });
 
-    describe('sync', function() {
-        var apiCallStub, parseOptionsStub;
+    describe('sync uses Mail/recipients/find', function() {
+        var data;
+        var onSuccess;
+        var options;
+        var response;
 
         beforeEach(function() {
-            apiCallStub = sinon.stub(app.api, "call");
-            parseOptionsStub = sinon.stub(app.data, 'parseOptionsForSync', function(method, model, options) {
-                return {
-                    params: {
-                        module_list: options.module_list.join(',')
-                    }
-                }
+            onSuccess = sandbox.spy();
+            data = {
+                next_offset: -1,
+                records: [{
+                    id: _.uniqueId(),
+                    _module: 'Contacts',
+                    _acl: {},
+                    name: 'Haley Rhodes',
+                    email: 'hrhodes@example.com',
+                    email_address_id: _.uniqueId(),
+                    opt_out: false
+                }]
+            };
+            response = [
+                200,
+                {'Content-Type': 'application/json'},
+                JSON.stringify(data)
+            ];
+            options = {
+                success: onSuccess
+            };
+        });
+
+        it('should map the response', function() {
+            var url = /.*\/rest\/v10\/Mail\/recipients\/find.*/;
+
+            SugarTest.server.respondWith('GET', url, response);
+
+            layout.collection.sync('read', layout.collection, options);
+            SugarTest.server.respond();
+
+            expect(onSuccess).toHaveBeenCalledOnce();
+            expect(onSuccess.getCall(0).args[0][0]).toEqual({
+                _module: 'Contacts',
+                _acl: {},
+                id: data.records[0].id,
+                name: 'Haley Rhodes',
+                email: [{
+                    email_address: 'hrhodes@example.com',
+                    email_address_id: data.records[0].email_address_id,
+                    opt_out: false,
+                    primary_address: true
+                }]
             });
         });
 
-        afterEach(function() {
-            apiCallStub.restore();
-            parseOptionsStub.restore();
+        it('should search for emails in all allowed modules when options.module_list is empty', function() {
+            var url = /.*\/rest\/v10\/Mail\/recipients\/find\?.*module_list=all.*/;
+
+            SugarTest.server.respondWith('GET', url, response);
+
+            layout.collection.sync('read', layout.collection, options);
+            SugarTest.server.respond();
+
+            // The success callback would only be called if the URL includes
+            // the correct module_list value.
+            expect(onSuccess).toHaveBeenCalledOnce();
         });
 
-        it('Should search for emails through the Mail API', function() {
-            layout.collection.sync('read', layout.collection);
-            expect(apiCallStub.calledOnce).toBe(true);
-            expect(apiCallStub.args[0][1].indexOf('Mail/recipients/find')).not.toBe(-1);
-        });
+        it('should remove all modules that are not allowed', function() {
+            var url = /.*\/rest\/v10\/Mail\/recipients\/find\?.*module_list=Accounts%2CContacts.*/;
 
-        it('Should search for emails in all allow modules when options.module_list is empty.', function() {
-            layout.collection.sync('read', layout.collection);
-            expect(apiCallStub.calledOnce).toBe(true);
-            expect(apiCallStub.args[0][1].indexOf('module_list=all')).not.toBe(-1);
-        });
+            options.module_list = ['Home','Contacts','TargetList','Calls','Accounts'];
+            SugarTest.server.respondWith('GET', url, response);
 
-        it('Should remove all modules that are not allowed.', function() {
-            layout.collection.sync('read', layout.collection, {
-                module_list: ['Home','Contacts','TargetList','Calls','Accounts']
-            });
-            expect(apiCallStub.calledOnce).toBe(true);
-            expect(apiCallStub.args[0][1].indexOf('module_list=Accounts%2CContacts')).not.toBe(-1);
+            layout.collection.sync('read', layout.collection, options);
+            SugarTest.server.respond();
+
+            // The success callback would only be called if the URL includes
+            // the correct module_list value.
+            expect(onSuccess).toHaveBeenCalledOnce();
         });
     });
 });

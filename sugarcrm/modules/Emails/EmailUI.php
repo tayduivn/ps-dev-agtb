@@ -2574,8 +2574,6 @@ eoq;
         $module,
         $person
     ) {
-        $t = '';
-
         if ($relatedIDs != '') {
             $where = "({$table}.deleted = 0 AND eabr.primary_address = 1 AND {$table}.id in ($relatedIDs))";
         } else {
@@ -2589,20 +2587,16 @@ eoq;
             $where .= " AND ({$whereAdd})";
         }
 
-        if ($beanType === 'accounts') {
-            $t = "SELECT {$table}.id, '' first_name, {$table}.name last_name, ";
-            $t .= "eabr.primary_address, ea.email_address, '{$module}' module ";
-        } else {
-            $t = "SELECT {$table}.id, {$table}.first_name, {$table}.last_name, ";
-            $t .= "eabr.primary_address, ea.email_address, '{$module}' module ";
-        }
+        $t = $beanType === 'accounts' ?
+            "SELECT {$table}.id, '' first_name, {$table}.name last_name, " :
+            "SELECT {$table}.id, {$table}.first_name, {$table}.last_name, ";
 
+        $t .= "eabr.primary_address, ea.id AS email_address_id, ea.email_address, ea.opt_out, '{$module}' module ";
         $t .= "FROM {$table} ";
         $t .= "JOIN email_addr_bean_rel eabr ON ({$table}.id = eabr.bean_id and eabr.deleted=0) ";
         $t .= "JOIN email_addresses ea ON (eabr.email_address_id = ea.id) ";
         $person->add_team_security_where_clause($t);
-        $t .= " WHERE {$where} AND ea.invalid_email = 0 AND ea.opt_out = 0";
-
+        $t .= " WHERE {$where} AND ea.invalid_email = 0";
 
         return $t;
     }
