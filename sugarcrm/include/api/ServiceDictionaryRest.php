@@ -27,7 +27,7 @@ class ServiceDictionaryRest extends ServiceDictionary
     const WEIGHT_MINVERSION = 0.02;
     const WEIGHT_MAXVERSION = 0.02;
     const WEIGHT_MINMAXVERSION_MATCH = 0.02;
-    const WEIGHT_BASE = 1000;
+    const WEIGHT_BASE = 100000;
 
     /**
      * Loads the dictionary so it can be searche
@@ -169,15 +169,20 @@ class ServiceDictionaryRest extends ServiceDictionary
     protected function getScoreWeightForVersion($route, $version)
     {
         $extraScore = 0.0;
-        if (isset($route['minVersion']) && $route['minVersion'] <= $version) {
-            $extraScore += self::WEIGHT_MINVERSION + round($route['minVersion']/self::WEIGHT_BASE, 4);
+        if (isset($route['minVersion']) && version_compare($route['minVersion'], $version, '<=')) {
+            // normalize MAJOR.MINOR version
+            $v = explode('.', $route['minVersion']);
+            $majorVer = (int) $v[0];
+            $minorVer = empty($v[1]) ? 0 : (int) $v[1];
+            $wt = round(($majorVer*100 + $minorVer)/self::WEIGHT_BASE, 5);
+            $extraScore += self::WEIGHT_MINVERSION + $wt;
         }
 
-        if (isset($route['maxVersion']) && $route['maxVersion'] >= $version) {
+        if (isset($route['maxVersion']) && version_compare($route['maxVersion'], $version, '>=')) {
             $extraScore += self::WEIGHT_MAXVERSION;
         }
 
-        if (isset($route['maxVersion']) && isset($route['maxVersion']) && $route['maxVersion'] == $version) {
+        if (isset($route['minVersion']) && isset($route['maxVersion']) && version_compare($route['maxVersion'], $version, '==')) {
             $extraScore += self::WEIGHT_MINMAXVERSION_MATCH;
         }
 

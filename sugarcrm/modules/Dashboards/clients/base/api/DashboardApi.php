@@ -22,8 +22,8 @@ class DashboardApi extends ModuleApi
         $dashboardApi = array(
             'createDashboardForModule' => array(
                 'reqType' => 'POST',
-                'minVersion' => 10,
-                'maxVersion' => 10,
+                'minVersion' => '10',
+                'maxVersion' => '10',
                 'path' => array('Dashboards', '<module>'),
                 'pathVars' => array('', 'module'),
                 'method' => 'createDashboard',
@@ -32,8 +32,8 @@ class DashboardApi extends ModuleApi
             ),
             'createDashboardForHome' => array(
                 'reqType' => 'POST',
-                'minVersion' => 10,
-                'maxVersion' => 10,
+                'minVersion' => '10',
+                'maxVersion' => '10',
                 'path' => array('Dashboards'),
                 'pathVars' => array(''),
                 'method' => 'createDashboard',

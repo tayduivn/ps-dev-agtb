@@ -40,15 +40,15 @@ class RestService extends ServiceBase
 
     /**
      * The minimum version accepted
-     * @var integer
+     * @var string
      */
-    protected $min_version = 10;
+    protected $min_version = '10';
 
     /**
      * The maximum version accepted
-     * @var integer
+     * @var string
      */
-    protected $max_version = 10;
+    protected $max_version = '10';
 
     /**
      * An array of api settings
@@ -128,10 +128,9 @@ class RestService extends ServiceBase
             $this->request_headers = $this->request->getRequestHeaders();
 
             // invalid if the request version is out of supported version range
-            if ($this->min_version > $this->getVersion()
-                || $this->max_version < $this->getVersion()) {
+            if (!$this->checkVersionSupport($this->getVersion(), $this->min_version, $this->max_version)) {
                 throw new SugarApiExceptionIncorrectVersion(
-                    "Please change your requested API version to an integer value " .
+                    "Please change your requested API version to value " .
                     "between {$this->min_version} and {$this->max_version}."
                 );
             }
@@ -266,6 +265,20 @@ class RestService extends ServiceBase
     }
 
     /**
+     * checks if version is within min,max versions
+     * @param string $version version to check
+     * @param string $minVersion
+     * @param string $maxVersion
+     *
+     * @return boolean TRUE if $minVersion <= $version <= $maxVersion
+     */
+    protected function checkVersionSupport($version, $minVersion, $maxVersion)
+    {
+        return (version_compare($minVersion, $version, '<=')
+        && version_compare($version, $maxVersion, '<='));
+    }
+
+    /**
      * to get site url string
      *
      * @return url string
@@ -308,7 +321,7 @@ class RestService extends ServiceBase
             if ($route != false) {
                 $url = $this->resourceURIBase;
                 if (isset($options['relative']) && $options['relative'] == false) {
-                    $url = $req->getResourceURIBase($this->getVersion());
+                    $url = $req->getResourceURIBase($this->getUrlVersion());
                 }
                 return $url . implode('/', $resource);
             }
@@ -319,11 +332,20 @@ class RestService extends ServiceBase
 
     /**
      * get version from RestRequest, get the request version from Request obj
-     * @return int|null
+     * @return string|null
      */
     public function getVersion()
     {
         return $this->getRequest()->getVersion();
+    }
+
+    /**
+     * get Url version from RestRequest, get the request version from Request obj
+     * @return string|null
+     */
+    public function getUrlVersion()
+    {
+        return $this->getRequest()->getUrlVersion();
     }
 
     /**
@@ -683,7 +705,7 @@ class RestService extends ServiceBase
             }
 
             // using version to get right url base
-            $apiBase .= 'v' . $this->getVersion();
+            $apiBase .= $this->getUrlVersion();
 
             // This is for our URI return value
             $siteUrl = '';

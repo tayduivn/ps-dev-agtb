@@ -29,8 +29,8 @@ class DashboardListApi extends FilterApi
         return array(
             'getDashboardsForModule' => array(
                 'reqType' => 'GET',
-                'minVersion' => 10,
-                'maxVersion' => 10,
+                'minVersion' => '10',
+                'maxVersion' => '10',
                 'path' => array('Dashboards', '<module>'),
                 'pathVars' => array('', 'module'),
                 'method' => 'getDashboards',
@@ -45,8 +45,8 @@ class DashboardListApi extends FilterApi
             ),
             'getDashboardsForHome' => array(
                 'reqType' => 'GET',
-                'minVersion' => 10,
-                'maxVersion' => 10,
+                'minVersion' => '10',
+                'maxVersion' => '10',
                 'path' => array('Dashboards'),
                 'pathVars' => array(''),
                 'method' => 'getDashboards',
@@ -60,8 +60,8 @@ class DashboardListApi extends FilterApi
             ),
             'getDashboardsForActivities' => array(
                 'reqType' => 'GET',
-                'minVersion' => 10,
-                'maxVersion' => 10,
+                'minVersion' => '10',
+                'maxVersion' => '10',
                 'path' => array('Dashboards', 'Activities'),
                 'pathVars' => array('', 'module'),
                 'method' => 'getDashboards',

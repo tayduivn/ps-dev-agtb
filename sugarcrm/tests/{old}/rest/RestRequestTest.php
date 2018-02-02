@@ -19,9 +19,10 @@ class RestRequestTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $service = array_merge(array('REQUEST_METHOD' => 'GET'), $header);
         $restRequest = new RestRequest($service, array('__sugar_url' => $req));
-        $urlVersion = SugarTestReflection::getProtectedValue($restRequest, 'urlVersion');
+        $version = $restRequest->getVersion();
+        $urlVersion = $restRequest->getUrlVersion();
         $this->assertSame($expUrlVersion, $urlVersion);
-        $this->assertSame($expVersion, $restRequest->getVersion());
+        $this->assertSame($expVersion, $version);
     }
 
     public function versionProvider()
@@ -29,22 +30,38 @@ class RestRequestTest extends Sugar_PHPUnit_Framework_TestCase
         $headerName = 'HTTP_ACCEPT';
         return array(
             // no header, only URL
-            array("v10/Accounts/by_country", array(), '10', 10),
+            array("v10/Accounts/by_country", array(), 'v10', '10'),
+            // no header, only URL with minor version
+            array("v12_1/Accounts/by_country", array(), 'v12_1', '12.1'),
             // double path
-            array("//v99/Accounts/by_country/", array(), '99', 99),
-            // only Accept header has version
+            array("//v99/Accounts/by_country/", array(), 'v99', '99'),
+            // Accept header has version
             array(
                 "/Accounts/by_country",
                 array($headerName => 'application/vnd.sugarcrm.core+xml; version=11'),
-                null,
-                11,
+                'v11',
+                '11',
+            ),
+            // Accept header has version with minor version
+            array(
+                "/Accounts/by_country",
+                array($headerName => 'application/vnd.sugarcrm.core+xml; version=11.2'),
+                'v11_2',
+                '11.2',
             ),
             // only Accept header has version, with no response type
             array(
                 "/Accounts/by_country",
                 array($headerName => 'application/vnd.sugarcrm.core; version=10'),
-                null,
-                10,
+                'v10',
+                '10',
+            ),
+            // only Accept header has MAJOR.MINOR version, with no response type
+            array(
+                "/Accounts/by_country",
+                array($headerName => 'application/vnd.sugarcrm.core; version=10.2'),
+                'v10_2',
+                '10.2',
             ),
             // Header with qualifier indicator
             array(
@@ -53,15 +70,15 @@ class RestRequestTest extends Sugar_PHPUnit_Framework_TestCase
                     'application/vnd.sugarcrm.core+xml; version=11;
                     q=0.5, application/vnd.sugarcrm.core+json; version=11',
                 ),
-                null,
-                11,
+                'v11',
+                '11',
             ),
-            // url version not 2-digit, will not be detected and header version will be used
+            // url version not with _, will not be detected and header version will be used
             array(
                 "v10.1/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core+xml; version=11'),
-                null,
-                11,
+                array($headerName => 'application/vnd.sugarcrm.core+xml; version=11.2'),
+                'v11_2',
+                '11.2',
             ),
         );
     }
@@ -81,28 +98,28 @@ class RestRequestTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $headerName = 'HTTP_ACCEPT';
         return array(
-            // both header and URL have version
+            'both header and URL have version' =>
             array(
                 "v10/Accounts/by_country",
                 array($headerName => 'application/vnd.sugarcrm.core+xml; version=11'),
             ),
-            // neither Header nor Url has versoin
+            'neither Header nor Url has versoin' =>
             array("/Accounts/by_country/", array()),
-            // not 2-digit url version
+            'not _ in url version' =>
             array("v42.3/Accounts/by_country?foo=bar", array()),
-            // not 2-digit url version
+            'not 2-digit url version' =>
             array("//v7/Accounts/by_country/", array()),
-            // 3-digit, and no URL version
+            '3-digit, and no URL version' =>
             array(
                 "/Accounts/by_country",
                 array($headerName => 'application/vnd.sugarcrm.core+xml; version=101'),
             ),
-            // header version with ".", and no URL version
+            'header version triple digit minor version, and no URL version' =>
             array(
                 "/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core+xml; version=10.1'),
+                array($headerName => 'application/vnd.sugarcrm.core+xml; version=10.123'),
             ),
-            // header version has random string, and no URL version
+            'header version has random string, and no URL version' =>
             array(
                 "/Accounts/by_country",
                 array($headerName => 'application/vnd.sugarcrm.core+xml; version=v10.1x'),
@@ -196,7 +213,7 @@ class RestRequestTest extends Sugar_PHPUnit_Framework_TestCase
             'SCRIPT_NAME' => '/sugar7/api/rest.php',
         ), array('__sugar_url' => 'v10/metadata/public'));
 
-        $this->assertEquals($GLOBALS['sugar_config']['site_url']."/rest/v10/", $r->getResourceURIBase(10));
+        $this->assertEquals($GLOBALS['sugar_config']['site_url']."/rest/v10/", $r->getResourceURIBase('v10'));
     }
 
     /**

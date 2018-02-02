@@ -40,4 +40,8 @@ class SugarTestRestServiceMock extends RestService
     {
         return 10;
     }
+    public function getUrlVersion()
+    {
+        return 'v10';
+    }
 }

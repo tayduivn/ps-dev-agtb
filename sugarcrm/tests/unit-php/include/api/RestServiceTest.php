@@ -45,15 +45,15 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
         $requestMock = $this->createPartialMock('RestRequest', array('getVersion', 'getResourceURIBase'));
         $requestMock->expects($this->any())
             ->method('getVersion')
-            ->will($this->returnValue('11'));
+            ->will($this->returnValue('11.2'));
         if ($options['relative'] == true) {
             $requestMock->expects($this->any())
                 ->method('getResourceURIBase')
-                ->will($this->returnValue('/rest/v11/'));
+                ->will($this->returnValue('/rest/v11_2/'));
         } else {
             $requestMock->expects($this->any())
                 ->method('getResourceURIBase')
-                ->will($this->returnValue(self::SITE_URL . 'rest/v11/'));
+                ->will($this->returnValue(self::SITE_URL . 'rest/v11_2/'));
         }
 
         $serviceMock = $this->getMockBuilder('RestService')
@@ -85,7 +85,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
                 array('relative' => true),
                 'a.com',
                 'b.com',
-                'rest/v11/modules/Accounts',
+                'rest/v11_2/modules/Accounts',
             ),
             // resource is array, has route
             array(
@@ -94,7 +94,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
                 array('relative' => true),
                 'a.com',
                 'b.com',
-                'rest/v11/Notes/id-123/file/filename',
+                'rest/v11_2/Notes/id-123/file/filename',
             ),
             // no route
             array(
@@ -112,7 +112,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
                 array('relative' => false),
                 'a.com',
                 'b.com',
-                self::SITE_URL . 'rest/v11/modules/Accounts',
+                self::SITE_URL . 'rest/v11_2/modules/Accounts',
             ),
             // resource is array, has route, , relative = false
             array(
@@ -121,7 +121,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
                 array('relative' => false),
                 'a.com',
                 'b.com',
-                self::SITE_URL . 'rest/v11/modules/Accounts',
+                self::SITE_URL . 'rest/v11_2/modules/Accounts',
             ),
             // resource is array, has route, relative = false
             array(
@@ -130,7 +130,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
                 array('relative' => false),
                 'a.com',
                 'b.com',
-                self::SITE_URL . 'rest/v11/Notes/id-123/file/filename',
+                self::SITE_URL . 'rest/v11_2/Notes/id-123/file/filename',
             ),
             // no route, relative is false
             array(
@@ -148,7 +148,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
                 array('relative' => false),
                 'a.com',
                 'a.com',
-                self::SITE_URL . 'rest/v11/Notes/id-123/file/filename',
+                self::SITE_URL . 'rest/v11_2/Notes/id-123/file/filename',
             ),
             // resource is array, has route, URL and SCRIPT_NAME is the same
             array(
@@ -157,7 +157,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
                 array('relative' => true),
                 'a.com',
                 'a.com',
-                'api/rest.php/v11/Notes/id-123/file/filename',
+                'api/rest.php/v11_2/Notes/id-123/file/filename',
             ),
             // no route, URL and SCRIPT_NAME
             array(
@@ -170,4 +170,69 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     *
+     * @covers ::checkVersionSupport
+     *
+     * @dataProvider providerCheckVersionSupport
+     */
+    public function testCheckVersionSupport($version, $minVersion, $maxVersion, $expected)
+    {
+        $ref  = new \ReflectionClass('RestService') ;
+        $service = $ref->newInstanceWithoutConstructor();
+
+        $result = TestReflection::callProtectedMethod($service, 'checkVersionSupport', array($version, $minVersion, $maxVersion,));
+
+        $this->assertSame($expected, $result);
+    }
+
+    public function providerCheckVersionSupport()
+    {
+        return array(
+            'version same as min and max is supported' => array(
+                '10',
+                '10',
+                '10',
+                true,
+            ),
+            'major.minor version same as max is supported' => array(
+                '12.2',
+                '10',
+                '12.2',
+                true,
+            ),
+            'major.minor version between min and max is supported' => array(
+                '13.1',
+                '13',
+                '13.3',
+                true,
+            ),
+            'version greater than min and max is not supported' => array(
+                '11',
+                '10',
+                '10',
+                false,
+            ),
+            'major.minor version less than min is not supported' => array(
+                '12.2',
+                '13',
+                '13.5',
+                false,
+            ),
+            'major.minor version greater than max is not supported' => array(
+                '12.2',
+                '10',
+                '11',
+                false,
+            ),
+            'minor version greater than max.minor version is not supported' => array(
+                '10.15',
+                '10.1',
+                '10.2',
+                false,
+            ),
+        );
+    }
 }
+

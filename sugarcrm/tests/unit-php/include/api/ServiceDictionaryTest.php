@@ -272,11 +272,14 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
     public function providerTestlookupRoute()
     {
         return array(
-            array(array('Accounts', 'config'), 10, 'foo1'), // default route
-            array(array('Accounts', 'config'), 11, 'foo3'), // exact match version and min/max Version
-            array(array('Accounts', 'config'), 12, 'foo4'), // foo4 has maxVersion specified
-            array(array('Accounts', 'config'), 13, 'foo2'), // foo2 has minVersion
-            array(array('Accounts', 'config'), 14, 'foo5'), // foo5 has higher minVersion
+            'default route' => array(array('Accounts', 'config'), '10', 'foo1'),
+            'exact match version and min/max Version' => array(array('Accounts', 'config'), '11', 'foo3'),
+            'minor version in between min/max Version' => array(array('Accounts', 'config'), '11.3', 'foo4'),
+            'foo4 has maxVersion specified' => array(array('Accounts', 'config'), '12', 'foo4'),
+            'foo2 has minVersion' => array(array('Accounts', 'config'), '13', 'foo2'),
+            'foo5 has higher minVersion' => array(array('Accounts', 'config'), '14', 'foo5'),
+            'minor version and foo5 has higher minVersion' => array(array('Accounts', 'config'), '14.4', 'foo5'),
+            'minor version and foo7 has higher minVersion' => array(array('Accounts', 'config'), '15.15', 'foo7'),
         );
     }
 
@@ -312,33 +315,47 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
             ),
             'foo2' => array(
                 'reqType' => 'GET',
-                'minVersion' => 11,
+                'minVersion' => '11',
                 'path' => array('Accounts', 'config'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'foo2',
             ),
             'foo3' => array(
                 'reqType' => 'GET',
-                'minVersion' => 11,
-                'maxVersion' => 11,
+                'minVersion' => '11',
+                'maxVersion' => '11',
                 'path' => array('Accounts', 'config'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'foo3',
             ),
             'foo4' => array(
                 'reqType' => 'GET',
-                'minVersion' => 11,
-                'maxVersion' => 12,
+                'minVersion' => '11',
+                'maxVersion' => '12',
                 'path' => array('Accounts', 'config'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'foo4',
             ),
             'foo5' => array(
                 'reqType' => 'GET',
-                'minVersion' => 14,
+                'minVersion' => '14',
                 'path' => array('Accounts', 'config'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'foo5',
+            ),
+            'foo6' => array(
+                'reqType' => 'GET',
+                'minVersion' => '15.2', // test that version 15.12 is > version 15.2
+                'path' => array('Accounts', 'config'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'foo6',
+            ),
+            'foo7' => array(
+                'reqType' => 'GET',
+                'minVersion' => '15.12',  // test that version 15.12 is > version 15.2
+                'path' => array('Accounts', 'config'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'foo7',
             ),
         );
     }
@@ -346,11 +363,13 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
     public function providerTestlookupRouteCustom()
     {
         return array(
-            array(array('Accounts', 'config'), 10, 'fooCustom1'),
-            array(array('Accounts', 'config'), 11, 'fooCustom4'),
-            array(array('Accounts', 'config'), 12, 'fooCustom4'),
-            array(array('Accounts', 'config'), 13, 'fooCustom1'),
-            array(array('Accounts', 'config'), 14, 'fooCustom5'),
+            array(array('Accounts', 'config'), '10', 'fooCustom1'),
+            array(array('Accounts', 'config'), '11', 'fooCustom4'),
+            array(array('Accounts', 'config'), '12', 'fooCustom4'),
+            array(array('Accounts', 'config'), '13', 'fooCustom1'),
+            array(array('Accounts', 'config'), '14', 'fooCustom5'),
+            array(array('Accounts', 'config'), '15.2', 'fooCustom6'),
+            array(array('Accounts', 'config'), '15.4', 'fooCustom6'),
         );
     }
 
@@ -387,33 +406,41 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
             ),
             'fooCustom2' => array(
                 'reqType' => 'GET',
-                'minVersion' => 11,
+                'minVersion' => '11',
                 'path' => array('<module>', 'config'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'fooCustom2',
             ),
             'fooCustom3' => array(
                 'reqType' => 'GET',
-                'minVersion' => 11,
-                'maxVersion' => 11,
+                'minVersion' => '11',
+                'maxVersion' => '11',
                 'path' => array('?', 'config'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'fooCustom3',
             ),
             'fooCustom4' => array(
                 'reqType' => 'GET',
-                'minVersion' => 11,
-                'maxVersion' => 12,
+                'minVersion' => '11',
+                'maxVersion' => '12',
                 'path' => array('Accounts', 'config'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'fooCustom4',
             ),
             'fooCustom5' => array(
                 'reqType' => 'GET',
-                'minVersion' => 14,
+                'minVersion' => '14',
                 'path' => array('Accounts', 'config'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'fooCustom5',
+            ),
+            'fooCustom6' => array(
+                'reqType' => 'GET',
+                'minVersion' => '15',
+                'maxVersion' => '15.4',
+                'path' => array('Accounts', 'config'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'fooCustom6',
             ),
         );
     }
@@ -431,78 +458,78 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
                     ),
                     'fooModule2' => array(
                         'reqType' => 'GET',
-                        'minVersion' => 11,
+                        'minVersion' => '11',
                         'path' => array('<module>', 'config'),
                         'pathVars' => array('module', 'record'),
                         'method' => 'fooModule2',
                     ),
                     'fooModule3' => array(
                         'reqType' => 'GET',
-                        'minVersion' => 11,
+                        'minVersion' => '11',
                         'path' => array('?', 'config'),
                         'pathVars' => array('module', 'record'),
                         'method' => 'fooModule3',
                     ),
                 ),
                 array('Accounts', 'config'),
-                11,
+                '11',
                 'fooModule1',
             ), // exact match wins even no min/max version specified
             array(
                 array(
                     'fooModule1' => array(
                         'reqType' => 'GET',
-                        'minVersion' => 11,
+                        'minVersion' => '11',
                         'path' => array('<module>', 'config'),
                         'pathVars' => array('module', 'record'),
                         'method' => 'fooModule1',
                     ),
                     'fooModule2' => array(
                         'reqType' => 'GET',
-                        'minVersion' => 12,
-                        'maxVersion' => 12,
+                        'minVersion' => '12',
+                        'maxVersion' => '12',
                         'path' => array('?', 'config'),
                         'pathVars' => array('module', 'record'),
                         'method' => 'fooModule2',
                     ),
                     'fooModule3' => array(
                         'reqType' => 'GET',
-                        'minVersion' => 12,
+                        'minVersion' => '12',
                         'path' => array('<module>', 'config'),
                         'pathVars' => array('module', 'record'),
                         'method' => 'fooModule3',
                     ),
                 ),
                 array('Accounts', 'config'),
-                12,
+                '12',
                 'fooModule3',
             ), // <module> wins over wildcard ?
             array(
                 array(
                     'fooModule1' => array(
                         'reqType' => 'GET',
-                        'minVersion' => 11,
+                        'minVersion' => '11',
                         'path' => array('<module>', 'config'),
                         'pathVars' => array('module', 'record'),
                         'method' => 'fooModule1',
                     ),
                     'fooModule2' => array(
                         'reqType' => 'GET',
-                        'minVersion' => 11,
+                        'minVersion' => '11',
                         'path' => array('?', 'config'),
                         'pathVars' => array('module', 'record'),
                         'method' => 'fooModule2',
                     ),
                     'fooModule3' => array(
                         'reqType' => 'GET',
-                        'minVersion' => 12,
+                        'minVersion' => '12',
                         'path' => array('<module>', 'config'),
                         'pathVars' => array('module', 'record'),
                         'method' => 'fooModule3',
                     ),
                 ),
                 array('Accounts', 'config'),
-                13,
+                '13',
                 'fooModule3',
             ), // highest minVersion winds
         );
@@ -554,7 +581,7 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
         $vServiceDict->dict = $vServiceDict->getRegisteredEndpoints();
 
         // test no entry
-        $route = $vServiceDict->lookupRoute(array('Accounts'), 11, 'GET', 'base');
+        $route = $vServiceDict->lookupRoute(array('Accounts'), '11', 'GET', 'base');
     }
 
     /**
@@ -576,7 +603,7 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
             array(
                 'foo' => array(
                     'reqType' => 'GET',
-                    'minVersion' => 11,
+                    'minVersion' => '11',
                     'path' => array('Accounts', 'config'),
                     'pathVars' => array('module', 'record'),
                     'method' => 'foo',
@@ -591,7 +618,7 @@ class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
         $vServiceDict->dict = $vServiceDict->getRegisteredEndpoints();
 
         // test no route exception
-        $route = $vServiceDict->lookupRoute(array('Accounts', 'config'), 10, 'GET', 'base');
+        $route = $vServiceDict->lookupRoute(array('Accounts', 'config'), '10', 'GET', 'base');
     }
 
     /**
