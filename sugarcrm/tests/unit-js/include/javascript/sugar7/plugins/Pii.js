@@ -89,6 +89,10 @@ describe('Plugins.Pii', function() {
                 view.model.fields.name.pii = true;
             }
         };
+
+        app.drawer = {
+            open: sinon.collection.stub()
+        };
     });
 
     afterEach(function() {
@@ -99,6 +103,7 @@ describe('Plugins.Pii', function() {
         }
         sinon.collection.restore();
         app.cache.cutAll();
+        delete app.drawer;
         app = null;
     });
 
@@ -137,6 +142,20 @@ describe('Plugins.Pii', function() {
             view.trigger('init');
             expect(view.meta.buttons[1].buttons.length).toEqual(5);
             expect(view.meta.buttons[1].buttons[1].name).toEqual('view_pii_button');
+        });
+
+        describe('viewPiiClicked', function() {
+            it('should open the View PII drawer', function() {
+                setModelFields(true);
+                view.trigger('init');
+                var childContext = new app.Context();
+                sinon.collection.stub(view.context, 'getChildContext').returns(childContext);
+                view.viewPiiClicked();
+                expect(app.drawer.open).toHaveBeenCalledWith({
+                    layout: 'pii',
+                    context: childContext
+                });
+            });
         });
     });
 });

@@ -53,8 +53,7 @@
                     var model = this.context.get('model') || this.model;
                     this._insertViewPiiButton(model.fields);
 
-                    // This should be uncommented in TY-2163
-                    //this.context.on('button:view_pii_button:click', this.viewPiiClicked, this);
+                    this.context.on('button:view_pii_button:click', this.viewPiiClicked, this);
                 });
             },
 
@@ -62,9 +61,17 @@
              * Handles the click event and opens the pii view in the drawer.
              */
             viewPiiClicked: function() {
+                var context = this.context.getChildContext({
+                    name: 'Pii',
+                    model: app.data.createBean('Pii')
+                });
+
+                context.set('pModule', this.module);
+                context.set('pId', this.model.id);
+
                 app.drawer.open({
                     layout: 'pii',
-                    context: this.context
+                    context: context
                 });
             },
 
