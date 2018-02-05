@@ -12,19 +12,13 @@
 
 namespace Sugarcrm\Sugarcrm\Security\Subject;
 
-use Sugarcrm\Sugarcrm\Security\Subject;
 use User as SugarUser;
 
 /**
  * A Sugar user making changes through an API client
  */
-final class User implements Subject
+final class User extends Bean
 {
-    /**
-     * @var SugarUser
-     */
-    private $user;
-
     /**
      * @var ApiClient
      */
@@ -38,7 +32,8 @@ final class User implements Subject
      */
     public function __construct(SugarUser $user, ApiClient $client)
     {
-        $this->user = $user;
+        parent::__construct($user);
+
         $this->client = $client;
     }
 
@@ -47,10 +42,10 @@ final class User implements Subject
      */
     public function jsonSerialize()
     {
-        return [
-            'type' => 'user',
-            'id' => $this->user->id,
+        return array_merge([
+            '_type' => 'user',
+        ], parent::jsonSerialize(), [
             'client' => $this->client->jsonSerialize(),
-        ];
+        ]);
     }
 }

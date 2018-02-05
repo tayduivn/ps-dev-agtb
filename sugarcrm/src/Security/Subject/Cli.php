@@ -25,7 +25,7 @@ final class Cli implements Subject
     public function jsonSerialize()
     {
         return [
-            'type' => 'cli',
+            '_type' => 'cli',
         ];
     }
 }

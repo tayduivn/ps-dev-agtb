@@ -10,22 +10,39 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Security\Subject\ApiClient;
+namespace Sugarcrm\Sugarcrm\Security\Subject;
 
-use Sugarcrm\Sugarcrm\Security\Subject\ApiClient;
+use Sugarcrm\Sugarcrm\Security\Subject;
+use SugarBean;
 
 /**
- * An REST API client used to make a change
+ * A Sugar user making changes through an API client
  */
-final class Rest implements ApiClient
+abstract class Bean implements Subject
 {
+    /**
+     * @var SugarBean
+     */
+    private $bean;
+
+    /**
+     * Constructor
+     *
+     * @param SugarBean $bean
+     */
+    public function __construct(SugarBean $bean)
+    {
+        $this->bean = $bean;
+    }
+
     /**
      * {@inheritDoc}
      */
     public function jsonSerialize()
     {
         return [
-            '_type' => 'rest-api',
+            'id' => $this->bean->id,
+            '_module' => $this->bean->module_name,
         ];
     }
 }

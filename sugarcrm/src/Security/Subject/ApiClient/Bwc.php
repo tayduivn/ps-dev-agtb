@@ -25,7 +25,7 @@ final class Bwc implements ApiClient
     public function jsonSerialize()
     {
         return [
-            'type' => 'bwc-api',
+            '_type' => 'bwc-api',
         ];
     }
 }

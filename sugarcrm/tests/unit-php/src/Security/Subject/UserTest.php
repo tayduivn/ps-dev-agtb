@@ -43,8 +43,9 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $user = new User($sugarUser, $client);
 
         $this->assertSame([
-            'type' => 'user',
+            '_type' => 'user',
             'id' => $userId,
+            '_module' => 'Users',
             'client' => [
                 'type' => 'mock-api',
             ],

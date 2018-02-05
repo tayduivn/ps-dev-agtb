@@ -29,7 +29,7 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
         $hook = new LogicHook('FixEverything', 'run');
 
         $this->assertSame([
-            'type' => 'logic-hook',
+            '_type' => 'logic-hook',
             'class' => 'FixEverything',
             'method' => 'run',
         ], $hook->jsonSerialize());

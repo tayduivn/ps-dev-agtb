@@ -28,7 +28,7 @@ class RpcTest extends \PHPUnit_Framework_TestCase
         $client = new Rpc();
 
         $this->assertSame([
-            'type' => 'rpc-api',
+            '_type' => 'rpc-api',
         ], $client->jsonSerialize());
     }
 }

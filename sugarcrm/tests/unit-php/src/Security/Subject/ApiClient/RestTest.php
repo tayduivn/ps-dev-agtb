@@ -28,7 +28,7 @@ class RestTest extends \PHPUnit_Framework_TestCase
         $client = new Rest();
 
         $this->assertSame([
-            'type' => 'rest-api',
+            '_type' => 'rest-api',
         ], $client->jsonSerialize());
     }
 }

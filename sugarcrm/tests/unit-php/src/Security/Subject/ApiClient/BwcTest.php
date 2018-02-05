@@ -28,7 +28,7 @@ class BwcTest extends \PHPUnit_Framework_TestCase
         $client = new Bwc();
 
         $this->assertSame([
-            'type' => 'bwc-api',
+            '_type' => 'bwc-api',
         ], $client->jsonSerialize());
     }
 }

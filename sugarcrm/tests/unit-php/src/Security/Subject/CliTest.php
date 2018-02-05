@@ -28,7 +28,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $client = new Cli();
 
         $this->assertSame([
-            'type' => 'cli',
+            '_type' => 'cli',
         ], $client->jsonSerialize());
     }
 }

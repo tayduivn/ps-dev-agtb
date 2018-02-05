@@ -47,7 +47,7 @@ final class LogicHook implements Subject
     public function jsonSerialize()
     {
         return [
-            'type' => 'logic-hook',
+            '_type' => 'logic-hook',
             'class' => $this->class,
             'method' => $this->method,
         ];

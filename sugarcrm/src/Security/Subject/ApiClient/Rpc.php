@@ -25,7 +25,7 @@ final class Rpc implements ApiClient
     public function jsonSerialize()
     {
         return [
-            'type' => 'rpc-api',
+            '_type' => 'rpc-api',
         ];
     }
 }
