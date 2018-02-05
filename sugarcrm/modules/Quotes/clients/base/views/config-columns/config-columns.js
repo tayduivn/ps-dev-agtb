@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.QuotesConfigColumnsView
- * @alias SUGAR.App.view.layouts.BaseQuotesConfigColumnsView
+ * @class View.Views.Base.Quotes.ConfigColumnsView
+ * @alias SUGAR.App.view.views.BaseQuotesConfigColumnsView
  * @extends View.Views.Base.ConfigPanelView
  */
 ({
