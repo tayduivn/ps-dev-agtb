@@ -501,7 +501,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'oidcUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
                     'oidcKeySetId' => 'keySetId',
-                    'tid' => 'SRN:test',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'idpServiceName' => 'idp',
                 ],
                 'siteUrl' => 'http://site.url/',
                 'expectedConfig' => [
@@ -516,7 +517,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'keySetId' => 'keySetId',
                     'http_client' => [],
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'tid' => 'SRN:test',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'idpServiceName' => 'idp',
                 ],
             ],
             'httpClientNotEmpty' => [
@@ -530,7 +532,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                         'retry_count' => 5,
                         'delay_strategy' => 'exponential',
                     ],
-                    'tid' => 'SRN:test',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                 ],
                 'siteUrl' => 'http://site.url/',
                 'expectedConfig' => [
@@ -548,7 +550,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                         'delay_strategy' => 'exponential',
                     ],
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'tid' => 'SRN:test',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'idpServiceName' => 'iam',
                 ],
             ],
         ];

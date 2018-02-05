@@ -73,25 +73,23 @@ class JWTBearerTokenTest extends \PHPUnit_Framework_TestCase
     public function testToString()
     {
         $expectedResult = 'eyJraWQiOiJLZXlJZCIsImFsZyI6IlJTMjU2In0.eyJpYXQiOjEwLCJleHAiOjMxMCwiYXVkIjoiaHR0cDpcL1wvY' .
-            'XVyLnVybCIsInN1YiI6InRlc3RVc2VyIiwiaXNzIjoiY2xpZW50IiwibG9naW5faGludCI6InNybjp0ZW5hbnQifQ.Sko3jqWNYI716' .
-            'h8DhgL7N3qMTHyZiqdRT97T6xFu52Hy-bXBgKPRPz6ltascajxy39dc6pn4px6u4WkXutkcDcEGh5NWHAAPsQ-Et6axln8cDwYTBYv1' .
-            '1LmGABwAPh7xxYf7ywin3jErPXLj-kq-FwUUSCQpWUrq7CnEMiseV_lvHg_oH2b2OTDK9zSWZs_mdQDCWrZeu1-2HgDryRRIZF54g29' .
-            '-9YnmbRh59L8ZhGh1s31U78dAbqohbIT5QLhMVfFc021zC-xyVPZlE6EqHmNRLzIQmrJOwOZJ-HazWbkdiCOeXGpcpPXPVaDFwi2VH7' .
-            'O8R9aHWJiQ00xpVWDuLI5WYk7xF-0Om_02ib9-ga7cbvzb2G650hpKXW1FqcgrdUVsEgPquBDVMQZHGgKmmoBbyF9wxT3xGDCqEviH3' .
-            'tMYp0JoWhZA5JPZm4yxk0bnkj_EmPO-Vp6edHeTru4eKMqvaiCIsqBSTlPUEdk8Q66CiGlq6Idg2nxFnpnvaW2Wh8xuVacuieGeL6xJ' .
-            'Zb6ZSRDj4yUV3t-8Y1eQKjfRHFhzyPvmQyKqdTJS1-hv6cZT_B7ZIyRp4iIy3t7ZHftWuvPOAsbLXsOTPukkzBNYG2BBGYybBql9MGu' .
-            'Z5t1vmT9SV00gVrBvtygFH_31aaZEo6cbFo4UbubfntURwu23oos';
-        $user = $this->createMock(User::class);
-        $sugarUser = $this->createMock(\User::class);
-        $sugarUser->user_name = 'testUser';
-        $user->method('getSugarUser')->willReturn($sugarUser);
+            'XVyLnVybCIsInN1YiI6InNybjpjbHVzdGVyOmlkbTpldTowMDAwMDAwMDAxOnVzZXI6c2VlZF9zYWxseV9pZCIsImlzcyI6ImNsaWVu' .
+            'dCIsImxvZ2luX2hpbnQiOiJzcm46Y2x1c3RlcjppZG06ZXU6MDAwMDAwMDAwMTp0ZW5hbnQifQ.EO1vCIN7J8MFiWVEmPTJBMKhtO_1' .
+            'EZEDDMr9nd9E7iwG3Wa2npe74CeHmsuRTdTk-8nPV8T81cJG1Wha_5UDQdKcOIjwDqONz-fEYGq27GPQoHiGJ9BETVIDvfPjTR-wIcZ' .
+            'hJhSlOmpXKfQi3IU-pnAscCGklXOQVvVA1nTMEbAdJ2fNko6dD5aaN8tVzTRGaMPCJUB0AwdoAjfnjrNPXDNZUoZ240-a78alY8M-GT' .
+            'HVhVZiVgCVSwXteTQQ_nyLTy6ZS5iyotfJDNDISi0xu3kNwmU6qtKLd91VVDJvlUXGngcy8SdYYegMkUkBmxTG4stqGPQragBVOKgC2' .
+            'yR5vzDW97iRFD9CK2vXKVTC7PyidfX8M8GYLYIcHvoOSQNGtgYzgAI69HDKfZKcZDM4eAhuzEOK_MFMkK5RaVNG-Qe2d-sDytimVYYIf' .
+            '2c-1TK5GVDmB45-gFT-kqVfkFSJ3r8aQUr6LO8v5bSK-vr-qiopv42hDtWB-hmTc91XzR9-gZcj5lJ5NOVbtT8uvO_gyxHOOb7FnHWF6' .
+            '_SJsZ9o7JWyI7g53wH-GY1vM-jM7Pcq3DWy-t7qnhGcpOEav0BM1zkY9dc3VYRMO0JHmzVn98-XlntB8pQ1CMQDi_M0xZVDTdTZGsYV5' .
+            'z9yDF5p3rZ_yA6OCC0MLp8dz3-5HQ7BfKU';
 
         $token = $this->getMockBuilder(JWTBearerToken::class)
-                      ->setConstructorArgs(['userId', 'srn:tenant'])
+                      ->setConstructorArgs(
+                          ['srn:cluster:idm:eu:0000000001:user:seed_sally_id', 'srn:cluster:idm:eu:0000000001:tenant']
+                      )
                       ->setMethods(['getUser'])
                       ->getMock();
 
-        $token->expects($this->once())->method('getUser')->willReturn($user);
         $token->setAttribute('privateKey', $this->privateKey);
         $token->setAttribute('iat', 10);
         $token->setAttribute('aud', 'http://aur.url');
@@ -99,5 +97,6 @@ class JWTBearerTokenTest extends \PHPUnit_Framework_TestCase
         $token->setAttribute('kid', 'KeyId');
 
         $this->assertEquals($expectedResult, (string)$token);
+        $this->assertEquals('srn:cluster:idm:eu:0000000001:user:seed_sally_id', $token->getIdentity());
     }
 }

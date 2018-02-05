@@ -41,6 +41,17 @@ class SugarOIDCUserProvider implements UserProviderInterface
     }
 
     /**
+     * @param string $srn
+     * @return User
+     */
+    public function loadUserBySrn($srn)
+    {
+        $user = new User(null, null);
+        $user->setSrn($srn);
+        return $user;
+    }
+
+    /**
      * Get user by field value.
      *
      * @param string $value

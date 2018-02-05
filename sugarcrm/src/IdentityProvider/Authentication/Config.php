@@ -90,6 +90,7 @@ class Config
             'urlAccessToken' => $endpointService->getOAuth2Endpoint(EndpointInterface::TOKEN_ENDPOINT),
             'urlResourceOwnerDetails' => $endpointService->getOAuth2Endpoint(EndpointInterface::INTROSPECT_ENDPOINT),
             'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
+            'idpServiceName' => !empty($config['idpServiceName']) ? $config['idpServiceName'] : 'iam',
         ];
 
         if ($oidcKeySetId) {

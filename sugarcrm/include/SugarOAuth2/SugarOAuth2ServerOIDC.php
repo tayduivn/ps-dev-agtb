@@ -15,8 +15,8 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBui
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Sugarcrm\IdentityProvider\Srn;
 
 /**
  * Sugar OAuth2.0 server that connects Sugar and OpenID Connect server (e.g. Hydra authentication).
@@ -103,12 +103,23 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
      */
     protected function createAccessToken($client_id, $user_id, $scope = null)
     {
-        try {
-            $sugarConfig = \SugarConfig::getInstance();
-            $authManager = $this->getAuthProviderBasicBuilder(new Config($sugarConfig))
-                                ->buildAuthProviders();
+        $sugarConfig = \SugarConfig::getInstance();
+        $idpConfig = new Config($sugarConfig);
+        $oidcConfig = $idpConfig->getOIDCConfig();
 
-            $jwtBearerToken = new JWTBearerToken($user_id, $sugarConfig->get('oidc_oauth')['tid']);
+        $tenantSrn = Srn\Converter::fromString($oidcConfig['tid']);
+        $srnManagerConfig = [
+            'partition' => $tenantSrn->getPartition(),
+            'region' => $tenantSrn->getRegion(),
+            'cloudServiceName' => $oidcConfig['idpServiceName'],
+        ];
+        $srnManager = new Srn\Manager($srnManagerConfig);
+        $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $user_id);
+
+        try {
+            $authManager = $this->getAuthProviderBasicBuilder($idpConfig)->buildAuthProviders();
+
+            $jwtBearerToken = new JWTBearerToken(Srn\Converter::toString($userSrn), $oidcConfig['tid']);
             $accessToken = $authManager->authenticate($jwtBearerToken);
 
             $token = array(

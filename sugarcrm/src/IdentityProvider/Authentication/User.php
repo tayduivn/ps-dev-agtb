@@ -41,6 +41,12 @@ class User extends IdmUser
     protected $sugarUser;
 
     /**
+     * User Srn in OIDC system
+     * @var string
+     */
+    protected $srn;
+
+    /**
      * setter for mango base user
      * @param \User $user
      */
@@ -185,5 +191,22 @@ class User extends IdmUser
             return $this->sugarUser->emailAddress->getPrimaryAddress($this->sugarUser);
         }
         return isset($this->sugarUser->$name) ? $this->sugarUser->$name : parent::getAttribute($name);
+    }
+
+    /**
+     * Set user Srn
+     * @param $srn
+     */
+    public function setSrn($srn)
+    {
+        $this->srn = $srn;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSrn()
+    {
+        return $this->srn;
     }
 }

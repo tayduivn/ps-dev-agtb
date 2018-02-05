@@ -94,7 +94,12 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsWithUnsupportedToken()
     {
-        $token = new IdpUsernamePasswordToken('SRN:tenant', 'test', 'test', 'test');
+        $token = new IdpUsernamePasswordToken(
+            'srn:cluster:idm:eu:0000000001:tenant',
+            'test',
+            'test',
+            'test'
+        );
         $this->assertFalse($this->provider->supports($token));
     }
 
@@ -142,7 +147,7 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     public function testAuthenticateWithLegacyTokenAuthenticationError(array $data)
     {
         $token = new IdpUsernamePasswordToken(
-            'srn:tenant',
+            'srn:cluster:idm:eu:0000000001:tenant',
             'user',
             'password',
             AuthProviderBasicManagerBuilder::PROVIDER_KEY_IDP
@@ -163,10 +168,10 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     {
         $authData = [
             'status' => 'success',
-            'user' => ['user_name' => 'user'],
+            'user' => ['sub' => 'srn:cluster:idm:eu:0000000001:user:seed_sally_id'],
         ];
         $token = new IdpUsernamePasswordToken(
-            'srn:tenant',
+            'srn:cluster:idm:eu:0000000001:tenant',
             'user',
             'password',
             AuthProviderBasicManagerBuilder::PROVIDER_KEY_IDP
@@ -178,8 +183,8 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
                             ->willReturn($authData);
 
         $this->userProvider->expects($this->once())
-                           ->method('loadUserByUsername')
-                           ->with('user')
+                           ->method('loadUserBySrn')
+                           ->with('srn:cluster:idm:eu:0000000001:user:seed_sally_id')
                            ->willReturn($this->user);
         $this->userChecker->expects($this->once())->method('checkPostAuth')->with($this->user);
 

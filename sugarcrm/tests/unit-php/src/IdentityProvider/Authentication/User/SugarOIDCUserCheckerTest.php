@@ -48,11 +48,6 @@ class SugarOIDCUserCheckerTest extends \PHPUnit_Framework_TestCase
     protected $sugarUser;
 
     /**
-     * @var string
-     */
-    protected $userName = 'testUser';
-
-    /**
      * @inheritdoc
      */
     protected function setUp()
@@ -66,45 +61,14 @@ class SugarOIDCUserCheckerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Provides data for testCheckPostAuthWithExistingUser and testCheckPostAuthWithNotExistingUser
-     * @return array
-     */
-    public function checkPostAuthWithExistingUserProvider()
-    {
-        return [
-            'localUser' => [
-                'externalAuthInfo' => [
-                    'amr' => ['PROVIDER_KEY_LOCAL'],
-                ],
-                'expectedSugarField' => 'user_name',
-            ],
-            'samlUser' => [
-                'externalAuthInfo' => [
-                    'amr' => ['PROVIDER_KEY_SAML'],
-                ],
-                'expectedSugarField' => 'email',
-            ],
-        ];
-    }
-
-    /**
-     * @param array $externalAuthInfo
-     * @param $expectedSugarField
-     *
-     * @dataProvider checkPostAuthWithExistingUserProvider
-     *
      * @covers ::checkPostAuth
      */
-    public function testCheckPostAuthWithExistingUser(array $externalAuthInfo, $expectedSugarField)
+    public function testCheckPostAuthWithExistingUser()
     {
-        $this->user->expects($this->once())
-                   ->method('getAttribute')
-                   ->with('ext')
-                   ->willReturn($externalAuthInfo);
-        $this->user->expects($this->once())->method('getUsername')->willReturn($this->userName);
+        $this->user->method('getSrn')->willReturn('srn:cluster:idm:eu:0000000001:user:seed_sally_id');
         $this->localUserProvider->expects($this->once())
                                 ->method('loadUserByField')
-                                ->with($this->userName, $expectedSugarField)
+                                ->with('seed_sally_id', 'id')
                                 ->willReturn($this->foundUser);
         $this->foundUser->expects($this->once())->method('getSugarUser')->willReturn($this->sugarUser);
         $this->user->expects($this->once())->method('setSugarUser')->with($this->sugarUser);
@@ -112,37 +76,28 @@ class SugarOIDCUserCheckerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $externalAuthInfo
-     * @param $expectedSugarField
-     *
-     * @dataProvider checkPostAuthWithExistingUserProvider
-     *
      * @covers ::checkPostAuth
      */
-    public function testCheckPostAuthWithNotExistingUser(array $externalAuthInfo, $expectedSugarField)
+    public function testCheckPostAuthWithNotExistingUser()
     {
         $expectedAttributes = [
-            'user_name' => $this->userName,
-            'last_name' => $this->userName,
-            'email' => $this->userName,
+            'last_name' => 'seed_sally_id',
             'employee_status' => User::USER_EMPLOYEE_STATUS_ACTIVE,
             'status' => User::USER_STATUS_ACTIVE,
             'is_admin' => 0,
             'external_auth_only' => 1,
             'system_generated_password' => 0,
+            'id' => 'seed_sally_id',
+            'user_name' => 'seed_sally_id',
         ];
-        $this->user->expects($this->once())
-                   ->method('getAttribute')
-                   ->with('ext')
-                   ->willReturn($externalAuthInfo);
-        $this->user->expects($this->once())->method('getUsername')->willReturn($this->userName);
+        $this->user->method('getSrn')->willReturn('srn:cluster:idm:eu:0000000001:user:seed_sally_id');
         $this->localUserProvider->expects($this->once())
                                 ->method('loadUserByField')
-                                ->with($this->userName, $expectedSugarField)
+                                ->with('seed_sally_id', 'id')
                                 ->willThrowException(new UsernameNotFoundException());
         $this->localUserProvider->expects($this->once())
                                 ->method('createUser')
-                                ->with($this->userName, $expectedAttributes)
+                                ->with('seed_sally_id', $expectedAttributes)
                                 ->willReturn($this->sugarUser);
         $this->user->expects($this->once())->method('setSugarUser')->with($this->sugarUser);
         $this->userChecker->checkPostAuth($this->user);

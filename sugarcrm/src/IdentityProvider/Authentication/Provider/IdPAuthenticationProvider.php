@@ -84,11 +84,11 @@ class IdPAuthenticationProvider implements AuthenticationProviderInterface
         try {
             $authData = $this->oAuthProvider->remoteIdpAuthenticate($token->getUsername(), $token->getCredentials(), $token->getTenant());
 
-            if (empty($authData['status']) || $authData['status'] !== 'success' || empty($authData['user']['user_name'])) {
+            if (empty($authData['status']) || $authData['status'] !== 'success' || empty($authData['user']['sub'])) {
                 throw new AuthenticationException('IdP authentication failed');
             }
 
-            $user = $this->userProvider->loadUserByUsername($authData['user']['user_name']);
+            $user = $this->userProvider->loadUserBySrn($authData['user']['sub']);
             $this->userChecker->checkPostAuth($user);
 
             $authenticatedToken = new UsernamePasswordToken(

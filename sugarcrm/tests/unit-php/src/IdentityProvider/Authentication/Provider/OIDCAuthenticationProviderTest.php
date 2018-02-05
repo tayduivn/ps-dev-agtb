@@ -166,7 +166,7 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
             'active' => true,
             'scope' => 'offline',
             'client_id' => 'testLocal',
-            'sub' => 'test@test.com',
+            'sub' => 'srn:cluster:idm:eu:0000000001:user:seed_sally_id',
             'exp' => 1507571717,
             'iat' => 1507535718,
             'aud' => 'testLocal',
@@ -181,7 +181,7 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
                             ->with('token')
                             ->willReturn($introspectResult);
         $this->userProvider->expects($this->once())
-                           ->method('loadUserByUsername')
+                           ->method('loadUserBySrn')
                            ->with($introspectResult['sub'])
                            ->willReturn($this->user);
         $this->userChecker->expects($this->once())->method('checkPostAuth')->with($this->user);
@@ -219,7 +219,9 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
 
         $token = $this->getMockBuilder(JWTBearerToken::class)
                       ->enableOriginalConstructor()
-                      ->setConstructorArgs(['userId', 'srn:tenant'])
+                      ->setConstructorArgs(
+                          ['srn:cluster:idm:eu:0000000001:user:seed_sally_id', 'srn:cluster:idm:eu:0000000001:tenant']
+                      )
                       ->setMethods(['__toString'])
                       ->getMock();
         $token->expects($this->once())->method('__toString')->willReturn('assertion');
@@ -234,7 +236,7 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->userProvider->expects($this->once())
                            ->method('loadUserByField')
-                           ->with('userId', 'id')
+                           ->with('seed_sally_id', 'id')
                            ->willReturn($this->user);
 
         $result = $this->provider->authenticate($token);

@@ -223,6 +223,17 @@ class IdMUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::setSrn
+     * @covers ::getSrn
+     */
+    public function testSrn()
+    {
+        $srn = 'srn:cluster:idm:eu:0000000001:user:seed_sally_id';
+        $this->user->setSrn($srn);
+        $this->assertEquals($srn, $this->user->getSrn());
+    }
+
+    /**
      * @inheritDoc
      */
     protected function setUp()

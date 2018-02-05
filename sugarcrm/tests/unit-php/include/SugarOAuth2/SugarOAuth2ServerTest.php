@@ -25,16 +25,28 @@ class SugarOAuth2ServerTest extends \PHPUnit_Framework_TestCase
     protected $sugarConfig;
 
     /**
+     * @var \User
+     */
+    protected $currentUser = null;
+
+    /**
      * @inheritdoc
      */
     protected function setUp()
     {
         $this->sugarConfig = \SugarConfig::getInstance();
+
+        if (!empty($GLOBALS['current_user'])) {
+            $this->currentUser = $GLOBALS['current_user'];
+        }
+
+        $GLOBALS['current_user'] = $this->createMock(\User::class);
     }
 
     protected function tearDown()
     {
         $this->sugarConfig->_cached_values = [];
+        $GLOBALS['current_user'] = $this->currentUser;
     }
     /**
      * Provides data for testGetOAuth2Server
@@ -79,6 +91,36 @@ class SugarOAuth2ServerTest extends \PHPUnit_Framework_TestCase
             $expectedStorageClass,
             TestReflection::getProtectedValue($oAuthServer, 'storage')
         );
+    }
+
+    /**
+     * @expectedException \SugarApiExceptionNotFound
+     * @covers ::getSudoToken
+     */
+    public function testGetSudoTokenStorageThrowException()
+    {
+        $storage = $this->createMock(\SugarOAuth2Storage::class);
+        $ouath2Server = new \SugarOAuth2Server($storage, []);
+        $storage->expects($this->once())
+                ->method('loadUserFromName')
+                ->with('testUser')
+                ->willThrowException(new \SugarApiExceptionNeedLogin());
+        $ouath2Server->getSudoToken('testUser', 'testClient', 'base');
+    }
+
+    /**
+     * @expectedException \SugarApiExceptionNotFound
+     * @covers ::getSudoToken
+     */
+    public function testGetSudoTokenStorageReturnNull()
+    {
+        $storage = $this->createMock(\SugarOAuth2Storage::class);
+        $ouath2Server = new \SugarOAuth2Server($storage, []);
+        $storage->expects($this->once())
+            ->method('loadUserFromName')
+            ->with('testUser')
+            ->willReturn(null);
+        $ouath2Server->getSudoToken('testUser', 'testClient', 'base');
     }
 }
 

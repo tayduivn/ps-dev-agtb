@@ -72,6 +72,8 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
     /** @var  array */
     protected $beanList;
 
+    protected $sugarConfig;
+
     /**
      * @inheritdoc
      */
@@ -115,6 +117,17 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         $this->mockedUser->id = 'testId';
         $this->mockedUser->module_name = 'Users';
         \BeanFactory::registerBean($this->mockedUser);
+
+        $this->sugarConfig = \SugarConfig::getInstance();
+        $this->sugarConfig->_cached_values['oidc_oauth'] = [
+            'clientId' => 'testLocal',
+            'clientSecret' => 'testLocalSecret',
+            'oidcUrl' => 'http://sts.sugarcrm.local',
+            'idpUrl' => 'http://sugar.dolbik.local/idm289idp/web/',
+            'oidcKeySetId' => 'KeySetName',
+            'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+            'idpServiceName' => 'idm',
+        ];
     }
 
     /**
@@ -124,6 +137,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
     {
         $GLOBALS['beanList'] = $this->beanList;
         \BeanFactory::unregisterBean($this->mockedUser);
+        $this->sugarConfig->_cached_values['oidc_oauth'] = [];
     }
 
     /**
@@ -261,7 +275,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         $this->storage->expects($this->once())
                       ->method('checkUserCredentials')
                       ->with($this->inputData['client_id'], $this->inputData['username'], $this->inputData['password'])
-                      ->willReturn(['user_id' => 'testId', 'scope' => null]);
+                      ->willReturn(['user_id' => 'seed_sally_id', 'scope' => null]);
 
         $this->oAuth2Server->expects($this->once())->method('getAuthProviderBasicBuilder')->willReturnCallback(
             function ($config) {
@@ -273,7 +287,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
                 $this->assertInstanceOf(JWTBearerToken::class, $token);
-                $this->assertEquals('testId', $token->getIdentity());
+                $this->assertEquals('srn:cluster:idm:eu:0000000001:user:seed_sally_id', $token->getIdentity());
                 throw new AuthenticationException();
             }
         );
@@ -302,7 +316,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         $this->storage->expects($this->once())
                       ->method('checkUserCredentials')
                       ->with($this->inputData['client_id'], $this->inputData['username'], $this->inputData['password'])
-                      ->willReturn(['user_id' => 'testId', 'scope' => null]);
+                      ->willReturn(['user_id' => 'seed_sally_id', 'scope' => null]);
 
         $this->storage->expects($this->once())
                      ->method('unsetRefreshToken')
@@ -321,11 +335,12 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
                 $this->assertInstanceOf(JWTBearerToken::class, $token);
-                $this->assertEquals('testId', $token->getIdentity());
+                $this->assertEquals('srn:cluster:idm:eu:0000000001:user:seed_sally_id', $token->getIdentity());
                 $token->setAttribute('token', 'resultToken');
                 $token->setAttribute('expires_in', '1');
                 $token->setAttribute('token_type', 'bearer');
                 $token->setAttribute('scope', 'offline');
+                $token->setAttribute('srn', 'srn:cluster:idm:eu:0000000001:user:seed_sally_id');
                 return $token;
             }
         );

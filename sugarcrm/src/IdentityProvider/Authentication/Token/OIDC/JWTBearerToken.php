@@ -78,7 +78,7 @@ class JWTBearerToken extends AbstractToken
             'iat' => $currentTime,
             'exp' => $currentTime + static::EXPIRE_INTERVAL,
             'aud' => $this->getAttribute('aud'),
-            'sub' => $this->getUser()->getSugarUser()->user_name,
+            'sub' => $this->getIdentity(),
             'iss' => $this->getAttribute('iss'),
             'login_hint' => $this->tenant,
         ];

@@ -96,4 +96,14 @@ class SugarOIDCUserProviderTest extends \PHPUnit_Framework_TestCase
         $this->localUserProvider->expects($this->once())->method('loadUserByField')->with('value', 'field');
         $this->userProvider->loadUserByField('value', 'field');
     }
+
+    /**
+     * @covers ::loadUserBySrn
+     */
+    public function testLoadUserBySrn()
+    {
+        $srn = 'srn:cluster:idm:eu:0000000001:user:seed_sally_id';
+        $user = $this->userProvider->loadUserBySrn($srn);
+        $this->assertEquals($srn, $user->getSrn());
+    }
 }

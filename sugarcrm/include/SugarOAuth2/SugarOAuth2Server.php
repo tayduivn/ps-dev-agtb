@@ -173,9 +173,13 @@ class SugarOAuth2Server extends OAuth2
 
         $this->setPlatform($platform);
 
-        $user = $this->storage->loadUserFromName($userName);
+        $user = null;
+        try {
+            $user = $this->storage->loadUserFromName($userName);
+        } catch (\SugarApiExceptionNeedLogin $e) {
+        }
 
-        if ( $user == null ) {
+        if ($user == null) {
             throw new SugarApiExceptionNotFound();
         }
 

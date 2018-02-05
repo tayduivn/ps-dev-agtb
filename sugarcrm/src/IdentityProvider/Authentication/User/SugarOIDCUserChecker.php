@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
+use Sugarcrm\IdentityProvider\Srn\Converter;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -60,27 +61,27 @@ class SugarOIDCUserChecker extends UserChecker
     protected function loadSugarUser(User $user)
     {
         $sugarUser = null;
-        $extraData = $user->getAttribute('ext');
-        $externalAuthInfo = isset($extraData['amr']) ? $extraData['amr'] : [];
-        $identityValue = $user->getUsername();
+        $userSrn = Converter::fromString($user->getSrn());
+        $userResource = $userSrn->getResource();
+        if (empty($userResource) || $userResource[0] != 'user' || empty($userResource[1])) {
+            throw new UsernameNotFoundException('User not found in SRN');
+        }
+
+        $identityField = 'id';
+        //@todo User name should be set from user info endpoint in future
+        $userName = $identityValue = $userResource[1];
 
         $defaultAttributes = [
             'user_name' => $identityValue,
             'last_name' => $identityValue,
-            'email' => $identityValue,
+            'id' => $identityValue,
         ];
-
-        if (in_array('PROVIDER_KEY_SAML', $externalAuthInfo)) {
-            $identityField = 'email';
-        } else {
-            $identityField = 'user_name';
-        }
 
         try {
             $sugarUser = $this->localUserProvider->loadUserByField($identityValue, $identityField)->getSugarUser();
         } catch (UsernameNotFoundException $e) {
             $userAttributes = array_merge($defaultAttributes, $this->fixedUserAttributes);
-            $sugarUser = $this->localUserProvider->createUser($identityValue, $userAttributes);
+            $sugarUser = $this->localUserProvider->createUser($userName, $userAttributes);
         }
         $user->setSugarUser($sugarUser);
     }

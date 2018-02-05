@@ -16,6 +16,7 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 
 use Sugarcrm\IdentityProvider\Hydra\EndpointInterface;
+use Sugarcrm\IdentityProvider\Srn\Converter;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
@@ -123,7 +124,7 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         $resultToken->setAttributes($result);
         $resultToken->setAttribute('platform', $token->getAttribute('platform'));
         /** @var User $user */
-        $user = $this->userProvider->loadUserByUsername($result['sub']);
+        $user = $this->userProvider->loadUserBySrn($result['sub']);
         foreach ($result as $key => $value) {
             $user->setAttribute($key, $value);
         }
@@ -142,7 +143,9 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
      */
     protected function jwtBearerGrantTypeAuth(TokenInterface $token)
     {
-        $user = $this->userProvider->loadUserByField($token->getIdentity(), 'id');
+        $userSrn = Converter::fromString($token->getIdentity());
+        $userResource = $userSrn->getResource();
+        $user = $this->userProvider->loadUserByField($userResource[1], 'id');
         $token->setUser($user);
 
         $keySetInfo = $this->oAuthProvider->getKeySet();
