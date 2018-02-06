@@ -13,7 +13,9 @@
 use Doctrine\DBAL\Connection;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\Rebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
@@ -112,6 +114,11 @@ return new Container([
         return new EventRepository(
             $container->get(Connection::class),
             $container->get(Context::class)
+        );
+    },
+    Repository::class => function (ContainerInterface $container) {
+        return new Repository(
+            $container->get(Connection::class)
         );
     },
 ]);

@@ -30,6 +30,7 @@ use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository;
 use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
 
 /**
@@ -1977,6 +1978,17 @@ class SugarBean
     private function getEventRepository()
     {
         return Container::getInstance()->get(EventRepository::class);
+    }
+
+    /**
+     * Save the erase fields to database table.
+     * @param FieldList $fields the list of fields to erase
+     *
+     */
+    private function saveErasedFields(FieldList $fields)
+    {
+        $repo = Container::getInstance()->get(Repository::class);
+        $repo->addBeanFields($this->getTableName(), $this->id, $fields);
     }
 
     private function saveData($check_notify)
