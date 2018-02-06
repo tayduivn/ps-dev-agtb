@@ -142,20 +142,20 @@ $dictionary['Lead'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_DATAPRIVACY',
         ),
-        'business_purpose' => array (
-            'name' => 'business_purpose',
-            'vname' => 'LBL_BUSINESS_PURPOSE',
+        'dp_business_purpose' => array (
+            'name' => 'dp_business_purpose',
+            'vname' => 'LBL_DATAPRIVACY_BUSINESS_PURPOSE',
             'type' => 'multienum',
             'isMultiSelect' => true,
             'audited' => true,
             'options' => 'dataprivacy_business_purpose_dom',
             'default' => '',
             'len' => 255,
-            'comment' => 'Business purpose',
+            'comment' => 'Business purposes consented for',
         ),
-        'consent_last_updated' => array(
-            'name' => 'consent_last_updated',
-            'vname' => 'LBL_CONSENT_LAST_UPDATED',
+        'dp_consent_last_updated' => array(
+            'name' => 'dp_consent_last_updated',
+            'vname' => 'LBL_DATAPRIVACY_CONSENT_LAST_UPDATED',
             'type' => 'datetime',
             'audited' => true,
             'enable_range_search' => true,

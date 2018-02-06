@@ -279,6 +279,6 @@ To create a {{module_name}}:
     'LBL_MKTO_LEAD_SCORE' => 'Lead Score',
 
     'LBL_FILTER_CONTACTS_REPORTS' => 'Contacts\' reports',
-    'LBL_BUSINESS_PURPOSE' => 'Business Purpose',
-    'LBL_CONSENT_LAST_UPDATED' => 'Consent Last Updated',
+    'LBL_DATAPRIVACY_BUSINESS_PURPOSE' => 'Business Purposes Consented for',
+    'LBL_DATAPRIVACY_CONSENT_LAST_UPDATED' => 'Consent Last Updated',
 );

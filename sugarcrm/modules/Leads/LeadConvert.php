@@ -159,13 +159,13 @@ class LeadConvert
                 }
             }
         }
-        if (!empty($this->lead->business_puspose)) {
-            $this->contact->business_puspose = $this->lead->business_puspose;
+        if (!empty($this->lead->dp_business_puspose)) {
+            $this->contact->dp_business_puspose = $this->lead->dp_business_puspose;
         }
-        if (!empty($this->lead->consent_last_updated)) {
-            $this->contact->consent_last_updated = $this->lead->consent_last_updated;
+        if (!empty($this->lead->dp_consent_last_updated)) {
+            $this->contact->dp_consent_last_updated = $this->lead->dp_consent_last_updated;
         }
-        if (isset($this->contact->business_puspose) || isset($this->contact->consent_last_updated)) {
+        if (isset($this->contact->dp_business_puspose) || isset($this->contact->dp_consent_last_updated)) {
             $this->contact->save();
         }
     }

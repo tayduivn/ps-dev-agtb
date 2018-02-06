@@ -48,8 +48,8 @@ class LeadConvertTest extends \PHPUnit_Framework_TestCase
         $lead = $this->createPartialMock('\Lead', [
             'get_linked_beans',
         ]);
-        $lead->business_purpose = 'Business Communications';
-        $lead->consent_last_updated = '2018-01-01';
+        $lead->dp_business_purpose = 'Business Communications';
+        $lead->dp_consent_last_updated = '2018-01-01';
         $lead->expects($this->once())
             ->method('get_linked_beans')
             ->will($this->returnValue(array($dpr)));
