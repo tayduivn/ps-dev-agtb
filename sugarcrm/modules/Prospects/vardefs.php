@@ -12,6 +12,7 @@
 
 $dictionary['Prospect'] = array(
     'table' => 'prospects',
+    'audited' => true,
     'unified_search' => true,
     'full_text_search' => true,
     'fields' => array(
