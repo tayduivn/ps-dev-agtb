@@ -417,6 +417,7 @@
             scrollThumbHoverInTween: undefined,
             scrollThumbHoverOutTween: undefined,
             maxScrollY: undefined,
+            scrollThumbTopBottomPadding: 3,
 
             /**
              * Preload is called as the TreeState initializes and lets us setup any vars we need for the state
@@ -849,6 +850,23 @@
                 this.scrollThumbHeight = Math.floor(this.scrollPercentHeight * this.dashletHeight);
 
                 this.drawScrollbar();
+
+                this.scrollCheckTimerEvent = this.game.time.events.repeat(500, 40, this._checkScrollbar, this);
+            },
+
+            /**
+             * TimerEvent handler to check and see if the game world width has changed since last time
+             * @private
+             */
+            _checkScrollbar: function() {
+                var $el = this.game._view.$('#product-catalog-canvas-' + this.game._view.cid);
+
+                if ($el.width() !== this.gameWorldWidth) {
+                    this.game.time.events.remove(this.scrollCheckTimerEvent);
+                    this.scrollCheckTimerEvent = null;
+
+                    this._updateGameWorldSize();
+                }
             },
 
             /**
@@ -862,14 +880,12 @@
                     this.scrollThumbImg.destroy();
                 }
 
-                console.log('drawing Scrollbar @ ', this.gameWorldWidth);
-
                 this.scrollBarImg = this.game.add.image(scrollX, 0, this._drawScrollBkgdBar());
                 this.scrollBarImg.fixedToCamera = true;
 
                 this.scrollThumbImg = this.game.add.image(
                     scrollX + xOffset,
-                    0,
+                    this.scrollThumbTopBottomPadding,
                     this._drawScrollThumb(this.scrollThumbFillColor)
                 );
 
@@ -947,11 +963,11 @@
              * @private
              */
             _checkBounds: function(image) {
-                if (image.cameraOffset.y < 0) {
-                    image.cameraOffset.y = 0;
+                if (image.cameraOffset.y < this.scrollThumbTopBottomPadding) {
+                    image.cameraOffset.y = this.scrollThumbTopBottomPadding;
                 }
-                if (image.cameraOffset.y > this.maxScrollY) {
-                    image.cameraOffset.y = this.maxScrollY;
+                if (image.cameraOffset.y > this.maxScrollY - this.scrollThumbTopBottomPadding) {
+                    image.cameraOffset.y = this.maxScrollY - this.scrollThumbTopBottomPadding;
                 }
             },
 
