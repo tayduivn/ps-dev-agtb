@@ -477,15 +477,18 @@
                 // update the camera position by the yDelta
                 this.game.camera.y += yDelta;
 
-                // update the scrollbar to reflect the new camera position
-                percentCameraGameHeightDiff  = this.game.camera.y / this.gameWorldHeight;
-                newScrollY = percentCameraGameHeightDiff * this.dashletHeight;
+                // only need to update scrollbar if it exists
+                if (this.scrollThumbImg) {
+                    // update the scrollbar to reflect the new camera position
+                    percentCameraGameHeightDiff  = this.game.camera.y / this.gameWorldHeight;
+                    newScrollY = percentCameraGameHeightDiff * this.dashletHeight;
 
-                // update the scrollbar thumb
-                this.scrollThumbImg.cameraOffset.y = newScrollY;
+                    // update the scrollbar thumb
+                    this.scrollThumbImg.cameraOffset.y = newScrollY;
 
-                // make sure we're not out of bounds
-                this._checkBounds(this.scrollThumbImg);
+                    // make sure we're not out of bounds
+                    this._checkBounds(this.scrollThumbImg);
+                }
             },
 
             /**
