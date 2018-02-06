@@ -44,6 +44,22 @@
   &.search-filter .select2-choice {
     padding-left: 6px;
   }
+
+  &.select2-choices-pills .select2-search-choice,
+  &.select2-container-multi.select2-choices-pills-close .select2-search-choice {
+    &.select2-choice-danger {
+      span::before {
+        content: '';
+      }
+
+      span::after {
+        content: "\f06a";
+        font-family: 'FontAwesome';
+        color: @white;
+        padding-left: 3px;
+      }
+    }
+  }
 }
 
 .select2-search::after {
