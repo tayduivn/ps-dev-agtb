@@ -11,17 +11,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/SugarTestDatabaseMock.php';
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
+use Sugarcrm\Sugarcrm\Security\Subject\User;
 
 class AuditTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-    protected $bean = null;
-
-    /**
-     * @var SugarTestDatabaseMock
-     */
-    public static $db;
+    private $contactBean;
+    private $user1;
+    private $user2;
 
     /**
      * Beans registered through BeanFactory
@@ -33,26 +33,38 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        $GLOBALS['current_user'] = BeanFactory::newBean('Users');
-        self::$db = SugarTestHelper::setUp('mock_db');
+        SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()
     {
-        $GLOBALS['current_user'] = null;
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
     }
 
     public function setUp()
     {
         parent::setUp();
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('moduleList');
+    }
 
-        $this->bean = BeanFactory::newBean('Leads');
-        $this->bean->name = 'Test';
-        $this->bean->id = '1';
+    private function createContactBeanWithAuditLog()
+    {
+        $this->user1 = SugarTestUserUtilities::createAnonymousUser();
+        $this->user2 = SugarTestUserUtilities::createAnonymousUser();
+        $this->contactBean = SugarTestContactUtilities::createContact(
+            null,
+            ['assigned_user_id' => $this->user1->id]
+        );
+
+        $context = Container::getInstance()->get(Context::class);
+        $subject = new User($GLOBALS['current_user'], new RestApiClient());
+        $context->activateSubject($subject);
+        $context->setAttribute('platform', 'base');
+
+        //retrieve bean otherwise change will not be detected.
+        $this->contactBean = $this->contactBean->retrieve();
+        $this->contactBean->assigned_user_id = $this->user2->id;
+        $this->contactBean->save(false);
     }
 
     private function registerBean(\SugarBean $bean)
@@ -70,93 +82,34 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    public function testGetAuditLog()
-    {
-        global $timedate;
-        $auditTable = $this->bean->get_audit_table_name();
-        $dateCreated = date('Y-m-d H:i:s');
-        self::$db->addQuerySpy(
-            'auditQuery',
-            '/' . $auditTable . '/',
-            array(
-                array(
-                    'field_name' => 'name',
-                    'date_created' => $dateCreated,
-                    'before_value_string' => 'Test',
-                    'after_value_string' => 'Awesome',
-                    'before_value_text' => '',
-                    'after_value_text' => '',
-                ),
-            )
-        );
-        $audit = BeanFactory::newBean('Audit');
-        $data = $audit->getAuditLog($this->bean);
-        $dateCreated = $timedate->fromDbType($dateCreated, "datetime");
-        $expectedDateCreated = $timedate->asIso($dateCreated);
-        $expected = array(
-                0 => array(
-                    'field_name' => 'name',
-                    'date_created' => $expectedDateCreated,
-                    'after' => 'Awesome',
-                    'before' => 'Test',
-                ),
-            );
-
-        $this->assertEquals($expected, $data, "Expected Result was incorrect");
-    }
-
     public function testGetAuditLogTranslation()
     {
-        global $timedate;
-        $auditTable = $this->bean->get_audit_table_name();
-        $dateCreated = date('Y-m-d H:i:s');
-        self::$db->addQuerySpy(
-            'auditQuery',
-            '/' . $auditTable . '/',
-            array(
-                array(
-                    'field_name' => 'assigned_user_id',
-                    'date_created' => $dateCreated,
-                    'before_value_string' => '012345678',
-                    'after_value_string' => '876543210',
-                    'before_value_text' => '',
-                    'after_value_text' => '',
-                ),
-            )
-        );
+        $this->createContactBeanWithAuditLog();
 
-        self::$db->addQuerySpy(
-            'translateQuery',
-            '/012345678/',
-            array(
-                array(
-                    'user_name' => 'Jim'
-                ),
-            )
-        );
-        self::$db->addQuerySpy(
-            'translateQuery2',
-            '/876543210/',
-            array(
-                array(
-                    'user_name' => 'Sally'
-                ),
-            )
-        );
         $audit = BeanFactory::newBean('Audit');
-        $data = $audit->getAuditLog($this->bean);
-        $dateCreated = $timedate->fromDbType($dateCreated, "datetime");
-        $expectedDateCreated = $timedate->asIso($dateCreated);
-        $expected = array(
-            0 => array(
-                'field_name' => 'assigned_user_id',
-                'date_created' => $expectedDateCreated,
-                'after' => 'Sally',
-                'before' => 'Jim',
-            ),
-        );
+        $auditLog = $audit->getAuditLog($this->contactBean);
 
-        $this->assertEquals($expected, $data, "Expected Result was incorrect");
+        $this->assertNotEmpty($auditLog, 'Audit log not created or retrieved.');
+        $this->assertEquals(
+            $this->user2->user_name,
+            $auditLog[0]['after'],
+            'Ids in audit log not translated.'
+        );
+    }
+
+    public function testFormatSourceSubject()
+    {
+        $this->createContactBeanWithAuditLog();
+
+        $audit = BeanFactory::newBean('Audit');
+        $auditLog = $audit->getAuditLog($this->contactBean);
+
+        $this->assertNotEmpty($auditLog, 'Audit log not created or retrieved.');
+        $this->assertEquals(
+            $GLOBALS['current_user']->name,
+            $auditLog[0]["source"]["subject"]["name"],
+            'Audit log source subject not formatted correctly.'
+        );
     }
 
     public function testHandleRelateField()

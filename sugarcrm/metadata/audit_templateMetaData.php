@@ -33,6 +33,7 @@ $dictionary['audit'] =
 				      array ('name' => 'pk', 'type' => 'primary', 'fields' => array('id')),
                       array ('name' => 'parent_id', 'type' => 'index', 'fields' => array('parent_id')),
                       array ('name' => 'event_id', 'type' => 'index', 'fields' => array('event_id')),
+                      array ('name' => 'pa_ev_id', 'type' => 'index', 'fields' => array('parent_id', 'event_id')),
 				)
 		)
 ?>

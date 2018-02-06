@@ -17,6 +17,9 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Subject\Formatter;
+
 require_once 'modules/Audit/field_assoc.php';
 
 class Audit extends SugarBean
@@ -114,15 +117,17 @@ class Audit extends SugarBean
 
         $auditTable = $bean->get_audit_table_name();
 
-        $query = "SELECT {$auditTable}.*, users.user_name AS created_by_username
-                FROM {$auditTable}, users
-                WHERE {$auditTable}.created_by = users.id AND {$auditTable}.parent_id = '{$bean->id}'
-                ORDER BY {$auditTable}.date_created DESC";
+        $query = "SELECT atab.*, ae.source, ae.type AS event_type, usr.user_name AS created_by_username
+                  FROM {$auditTable} as atab
+                  LEFT JOIN audit_events as ae ON (ae.id = atab.event_id)
+                  LEFT JOIN users as usr ON (usr.id = atab.created_by) 
+                  WHERE  atab.parent_id = ?
+                  ORDER BY atab.date_created DESC";
 
         $db = DBManagerFactory::getInstance();
 
-        $results = $db->query($query);
-        if (empty($results)) {
+        $stmt = $db->getConnection()->executeQuery($query, array($bean->id));
+        if (empty($stmt)) {
             return array();
         }
 
@@ -130,7 +135,7 @@ class Audit extends SugarBean
         $return = array();
 
         $aclCheckContext = array('bean' => $bean);
-        while ($row = $db->fetchByAssoc($results)) {
+        while ($row = $stmt->fetch()) {
             if (!SugarACL::checkField($bean->module_dir, $row['field_name'], 'access', $aclCheckContext)) {
                 continue;
             }
@@ -138,6 +143,8 @@ class Audit extends SugarBean
             //convert date
             $dateCreated = $timedate->fromDbType($db->fromConvert($row['date_created'], 'datetime'), "datetime");
             $row['date_created'] = $timedate->asIso($dateCreated);
+
+            $row['source'] = json_decode($row['source'], true);
 
             $viewName = array_search($row['field_name'], Team::$nameTeamsetMapping);
             if ($viewName) {
@@ -199,7 +206,7 @@ class Audit extends SugarBean
             $return[] = $row;
         }
 
-        return $return;
+        return $this->formatSourceSubject($return);
     }
 
     /**
@@ -454,5 +461,26 @@ class Audit extends SugarBean
                 }
             }
         }
+    }
+
+    private function formatSourceSubject($rows)
+    {
+        $subjects = array();
+        // gather all subjects
+        foreach ($rows as $k => $v) {
+            if (!empty($v['source']['subject'])) {
+                $subjects[$k] = $v['source']['subject'];
+            }
+        }
+
+        $formatter = Container::getInstance()->get(Formatter::class);
+        $formattedSubjects = $formatter->formatBatch($subjects);
+
+        // merge formatted subjects into rows
+        foreach ($formattedSubjects as $k => $v) {
+            $rows[$k]['source']['subject'] = $v;
+        }
+
+        return $rows;
     }
 }
