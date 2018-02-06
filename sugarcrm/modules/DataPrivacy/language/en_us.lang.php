@@ -45,4 +45,7 @@ $mod_strings = array(
     'LBL_SEARCH_AND_SELECT' => 'Search and Select Data Privacy Activities',
     'TPL_SEARCH_AND_ADD' => 'Search and Add Data Privacy Activities',
     'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the data privacy activity <a href="#{{buildRoute model=this}}">{{name}}</a>.', // use when a model is available
+    'LBL_REJECT_BUTTON_LABEL' => 'Reject',
+    'LBL_COMPLETE_BUTTON_LABEL' => 'Complete',
+    'LBL_ERASE_COMPLETE_BUTTON_LABEL' => 'Erase & Complete',
 );
