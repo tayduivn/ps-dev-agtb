@@ -267,6 +267,38 @@ describe('EmailClientLaunch Plugin', function() {
             expect(validRecipients[0].get('email_address')).toBe('abc@bar.com');
         });
 
+        using('invalid email values', [true, false, undefined, null, ''], function(value) {
+            it('should include the invalid_email attribute for an email address', function() {
+                var email = app.data.createBean('EmailAddresses', {
+                    id: _.uniqueId(),
+                    email_address: 'abc@bar.com',
+                    invalid_email: value
+                });
+                var recipients = [{
+                    email: email
+                }];
+                var validRecipients = field._retrieveValidRecipients(recipients);
+
+                expect(validRecipients[0].get('invalid_email')).toBe(value);
+            });
+        });
+
+        using('opt-out values', [true, false, undefined, null, ''], function(value) {
+            it('should include the opt_out attribute for an email address', function() {
+                var email = app.data.createBean('EmailAddresses', {
+                    id: _.uniqueId(),
+                    email_address: 'abc@bar.com',
+                    opt_out: value
+                });
+                var recipients = [{
+                    email: email
+                }];
+                var validRecipients = field._retrieveValidRecipients(recipients);
+
+                expect(validRecipients[0].get('opt_out')).toBe(value);
+            });
+        });
+
         it('should not return an email address if it does not have id', function() {
             var email = app.data.createBean('EmailAddresses', {
                 email_address: 'abc@bar.com'

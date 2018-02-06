@@ -208,7 +208,9 @@ describe('Plugins.EmailParticipants', function() {
                 _link: 'to',
                 id: _.uniqueId(),
                 email_address_id: _.uniqueId(),
-                email_address: 'rhodes@example.com'
+                email_address: 'rhodes@example.com',
+                invalid_email: false,
+                opt_out: false
             });
             var actual;
 
@@ -234,7 +236,9 @@ describe('Plugins.EmailParticipants', function() {
                 parent_id: parentId,
                 parent_name: 'Haley Rhodes',
                 email_address_id: _.uniqueId(),
-                email_address: 'hrhodes@example.com'
+                email_address: 'hrhodes@example.com',
+                invalid_email: false,
+                opt_out: false
             });
             var actual;
 
@@ -260,7 +264,9 @@ describe('Plugins.EmailParticipants', function() {
                 parent_id: parentId,
                 parent_name: 'Haley Rhodes',
                 email_address_id: _.uniqueId(),
-                email_address: 'hrhodes@example.com'
+                email_address: 'hrhodes@example.com',
+                invalid_email: false,
+                opt_out: false
             });
             var actual;
 
@@ -626,7 +632,9 @@ describe('Plugins.EmailParticipants', function() {
                 parent_id: parentId,
                 parent_name: 'Haley Rhodes',
                 email_address_id: _.uniqueId(),
-                email_address: 'hrhodes'
+                email_address: 'hrhodes',
+                invalid_email: true,
+                opt_out: false
             });
         });
 

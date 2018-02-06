@@ -57,7 +57,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 parent_id: parentId1,
                 parent_name: 'Herbert Yates',
                 email_address_id: _.uniqueId(),
-                email_address: 'hyates@example.com'
+                email_address: 'hyates@example.com',
+                invalid_email: false,
+                opt_out: false
             }),
             app.data.createBean('Contacts', {
                 _link: 'to',
@@ -72,7 +74,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 parent_id: parentId2,
                 parent_name: 'Walter Quigley',
                 email_address_id: _.uniqueId(),
-                email_address: 'wquigley@example.com'
+                email_address: 'wquigley@example.com',
+                invalid_email: false,
+                opt_out: true
             })
         ];
 
@@ -122,16 +126,16 @@ describe('Emails.BaseEmailRecipientsField', function() {
 
             sandbox.stub(field, 'render');
             sandbox.spy(field, 'getFormattedValue');
-            sandbox.spy(field, '_decorateInvalidRecipients');
             sandbox.spy(field, '_decorateOptedOutRecipients');
+            sandbox.spy(field, '_decorateInvalidRecipients');
             sandbox.spy(field, '_enableDragDrop');
             field.model.set('to_collection', to);
             field.model.trigger('sync');
 
             expect(field.render).not.toHaveBeenCalled();
             expect(field.getFormattedValue).toHaveBeenCalledOnce();
-            expect(field._decorateInvalidRecipients).toHaveBeenCalledOnce();
             expect(field._decorateOptedOutRecipients).toHaveBeenCalledOnce();
+            expect(field._decorateInvalidRecipients).toHaveBeenCalledOnce();
             expect(field._enableDragDrop).toHaveBeenCalledOnce();
             expect(field.$(field.fieldTag).select2('data').length).toBe(to.length);
         });
@@ -169,7 +173,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 parent_id: to[1].get('parent_id'),
                 parent_name: to[1].get('parent_name'),
                 email_address_id: to[1].get('email_address_id'),
-                email_address: to[1].get('email_address')
+                email_address: to[1].get('email_address'),
+                invalid_email: to[1].get('invalid_email'),
+                opt_out: to[1].get('opt_out')
             });
 
             field.$(field.fieldTag).trigger(event);
@@ -187,7 +193,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
             event.choice = app.data.createBean('EmailParticipants', {
                 _link: 'to',
                 email_address_id: to[1].get('email_address_id'),
-                email_address: to[1].get('email_address')
+                email_address: to[1].get('email_address'),
+                invalid_email: to[1].get('invalid_email'),
+                opt_out: to[1].get('opt_out')
             });
 
             field.$(field.fieldTag).trigger(event);
@@ -233,7 +241,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
                     parent_id: parentId,
                     parent_name: 'Ira Carr',
                     email_address_id: _.uniqueId(),
-                    email_address: 'icarr@example.com'
+                    email_address: 'icarr@example.com',
+                    invalid_email: false,
+                    opt_out: false
                 })
             ];
 
@@ -277,10 +287,12 @@ describe('Emails.BaseEmailRecipientsField', function() {
         expect(actual[0].invalid).toBe(false);
         expect(actual[0].get('parent_name')).toBe('Herbert Yates');
         expect(actual[0].get('email_address')).toBe('hyates@example.com');
+        expect(actual[0].get('opt_out')).toBe(false);
         expect(actual[1].locked).toBe(false);
         expect(actual[1].invalid).toBe(false);
         expect(actual[1].get('parent_name')).toBe('Walter Quigley');
         expect(actual[1].get('email_address')).toBe('wquigley@example.com');
+        expect(actual[1].get('opt_out')).toBe(true);
         expect(field.tooltip).toBe('Herbert Yates <hyates@example.com>, Walter Quigley <wquigley@example.com>');
     });
 
@@ -298,7 +310,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
             parent_id: parentId,
             parent_name: 'Francis Humphrey',
             email_address_id: _.uniqueId(),
-            email_address: 'foo'
+            email_address: 'foo',
+            invalid_email: true,
+            opt_out: false
         });
         var invalidSelector = '.select2-search-choice [data-invalid="true"]';
 
@@ -329,23 +343,6 @@ describe('Emails.BaseEmailRecipientsField', function() {
     });
 
     it('should decorate opted out recipients', function() {
-        var parentId = _.uniqueId();
-        var recipient = app.data.createBean('EmailParticipants', {
-            _link: 'to',
-            parent: {
-                _acl: {},
-                type: 'Contacts',
-                id: parentId,
-                name: 'Francis Humphrey'
-            },
-            parent_type: 'Contacts',
-            parent_id: parentId,
-            parent_name: 'Francis Humphrey',
-            email_address_id: _.uniqueId(),
-            email_address: 'foo@bar.com',
-            invalid_email: false,
-            opt_out: true
-        });
         var optOutSelector = '.select2-search-choice [data-optout="true"]';
 
         field = SugarTest.createField({
@@ -360,9 +357,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
 
         field.model.set('to_collection', to);
         field.model.trigger('sync');
-        expect(field.$(optOutSelector).length).toBe(0);
 
-        field.model.get('to_collection').add(recipient);
         expect(field.$(optOutSelector).length).toBe(1);
         expect(field.$('.select2-choice-optout').length).toBe(1);
         expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
@@ -370,6 +365,64 @@ describe('Emails.BaseEmailRecipientsField', function() {
         // Make sure it is still decorated after a full render.
         field.render();
         expect(field.$(optOutSelector).length).toBe(1);
+        expect(field.$('.select2-choice-optout').length).toBe(1);
+        expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
+    });
+
+    it('should decorate recipients that are invalid and opted out as just invalid', function() {
+        var parentId = _.uniqueId();
+        var invalid = app.data.createBean('EmailParticipants', {
+            _link: 'to',
+            parent: {
+                _acl: {},
+                type: 'Contacts',
+                id: parentId,
+                name: 'Francis Humphrey'
+            },
+            parent_type: 'Contacts',
+            parent_id: parentId,
+            parent_name: 'Francis Humphrey',
+            email_address_id: _.uniqueId(),
+            email_address: 'foo',
+            invalid_email: true,
+            opt_out: true
+        });
+        var selector = '.select2-search-choice [data-invalid="true"][data-optout="true"]';
+
+        field = SugarTest.createField({
+            name: 'to_collection',
+            type: 'email-recipients',
+            viewName: 'edit',
+            module: model.module,
+            model: model,
+            context: context,
+            loadFromModule: true
+        });
+
+        field.model.set('to_collection', to);
+        field.model.trigger('sync');
+        expect(field.$(selector).length).toBe(0);
+
+        field.model.get('to_collection').add(invalid);
+        expect(field.$(selector).length).toBe(1);
+        expect(field.$('.select2-choice-danger').length).toBe(1);
+        expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
+        // The second recipient in "to" is opted out but not invalid. That
+        // recipient will have the select2-choice-optout class and opt-out
+        // title, but the invalid recipient will not. As evidence by the count
+        // being 1 instead of 2.
+        expect(field.$('.select2-choice-optout').length).toBe(1);
+        expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
+
+        // Make sure it is still decorated after a full render.
+        field.render();
+        expect(field.$(selector).length).toBe(1);
+        expect(field.$('.select2-choice-danger').length).toBe(1);
+        expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
+        // The second recipient in "to" is opted out but not invalid. That
+        // recipient will have the select2-choice-optout class and opt-out
+        // title, but the invalid recipient will not. As evidence by the count
+        // being 1 instead of 2.
         expect(field.$('.select2-choice-optout').length).toBe(1);
         expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
     });
@@ -512,7 +565,6 @@ describe('Emails.BaseEmailRecipientsField', function() {
     });
 
     describe('dragging and dropping recipients between fields', function() {
-        var toField;
         var ccField;
         var cc;
         var dropHandler;
@@ -535,7 +587,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
                     parent_id: ccParentId,
                     parent_name: 'Tom Frank',
                     email_address_id: _.uniqueId(),
-                    email_address: 'tfrank@example.com'
+                    email_address: 'tfrank@example.com',
+                    invalid_email: false,
+                    opt_out: false
                 })
             ];
 
@@ -599,7 +653,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
                     id: to[1].get('parent_id'),
                     name: to[1].get('parent_name'),
                     type: to[1].get('parent_type')
-                }
+                },
+                invalid_email: to[1].get('invalid_email'),
+                opt_out: to[1].get('opt_out')
             }]);
             expect(json.cc.add.length).toBe(0);
             expect(json.cc.delete.length).toBe(0);
@@ -621,7 +677,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 parent_id: newParentId,
                 parent_name: 'Charles Brohm',
                 email_address_id: _.uniqueId(),
-                email_address: 'cbrohm@example.com'
+                email_address: 'cbrohm@example.com',
+                invalid_email: false,
+                opt_out: false
             });
             field.model.get('to_collection').add(newRecipient);
 
@@ -649,7 +707,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
                     id: newRecipient.get('parent_id'),
                     name: newRecipient.get('parent_name'),
                     type: newRecipient.get('parent_type')
-                }
+                },
+                invalid_email: newRecipient.get('invalid_email'),
+                opt_out: newRecipient.get('opt_out')
             }]);
             expect(json.cc.add.length).toBe(0);
             expect(json.cc.delete.length).toBe(0);

@@ -114,7 +114,9 @@ describe('Emails.RecipientsFieldsetField', function() {
                 parent_id: parentId1,
                 parent_name: 'Herbert Yates',
                 email_address_id: _.uniqueId(),
-                email_address: 'hyates@example.com'
+                email_address: 'hyates@example.com',
+                invalid_email: false,
+                opt_out: false
             }),
             app.data.createBean('EmailParticipants', {
                 _link: 'to',
@@ -129,7 +131,9 @@ describe('Emails.RecipientsFieldsetField', function() {
                 parent_id: parentId2,
                 parent_name: 'Walter Quigley',
                 email_address_id: _.uniqueId(),
-                email_address: 'wquigley@example.com'
+                email_address: 'wquigley@example.com',
+                invalid_email: false,
+                opt_out: false
             })
         ];
 
@@ -147,7 +151,9 @@ describe('Emails.RecipientsFieldsetField', function() {
                 parent_id: parentId3,
                 parent_name: 'Wyatt Archer',
                 email_address_id: _.uniqueId(),
-                email_address: 'warcher@example.com'
+                email_address: 'warcher@example.com',
+                invalid_email: false,
+                opt_out: false
             })
         ];
 
@@ -165,7 +171,9 @@ describe('Emails.RecipientsFieldsetField', function() {
                 parent_id: parentId4,
                 parent_name: 'Earl Hatcher',
                 email_address_id: _.uniqueId(),
-                email_address: 'ehatcher@example.com'
+                email_address: 'ehatcher@example.com',
+                invalid_email: false,
+                opt_out: false
             })
         ];
 

@@ -54,7 +54,9 @@ describe('Emails.BaseFromField', function() {
             parent_id: parentId,
             parent_name: 'Harry Vickers',
             email_address_id: _.uniqueId(),
-            email_address: 'hvickers@example.com'
+            email_address: 'hvickers@example.com',
+            invalid_email: false,
+            opt_out: false
         });
 
         sandbox = sinon.sandbox.create();
@@ -141,7 +143,9 @@ describe('Emails.BaseFromField', function() {
                 parent_id: parentId,
                 parent_name: 'Ira Carr',
                 email_address_id: _.uniqueId(),
-                email_address: 'icarr@example.com'
+                email_address: 'icarr@example.com',
+                invalid_email: false,
+                opt_out: false
             });
             var actual;
             var json;

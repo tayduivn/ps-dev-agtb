@@ -31,7 +31,9 @@ describe('Emails.Field.ReplyAllAction', function() {
             parent_id: parentId,
             parent_name: parentName,
             email_address_id: _.uniqueId(),
-            email_address: email
+            email_address: email,
+            invalid_email: false,
+            opt_out: false
         });
     }
 
@@ -107,7 +109,9 @@ describe('Emails.Field.ReplyAllAction', function() {
                 _link: 'to',
                 id: _.uniqueId(),
                 email_address_id: _.uniqueId(),
-                email_address: 'bhunter@example.com'
+                email_address: 'bhunter@example.com',
+                invalid_email: false,
+                opt_out: true
             })
         ]);
         model.set('cc_collection', [
@@ -149,6 +153,8 @@ describe('Emails.Field.ReplyAllAction', function() {
             expect(field.emailOptions.to.length).toBe(4);
             expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
             expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
+            expect(field.emailOptions.to[0].email.get('invalid_email')).toBe(sender.get('invalid_email'));
+            expect(field.emailOptions.to[0].email.get('opt_out')).toBe(sender.get('opt_out'));
             expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
             expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
             expect(field.emailOptions.to[0].bean.get('name')).toBe(sender.get('parent_name'));
@@ -156,6 +162,9 @@ describe('Emails.Field.ReplyAllAction', function() {
                 .toBe(model.get('to_collection').at(0).get('email_address_id'));
             expect(field.emailOptions.to[1].email.get('email_address'))
                 .toBe(model.get('to_collection').at(0).get('email_address'));
+            expect(field.emailOptions.to[1].email.get('invalid_email'))
+                .toBe(model.get('to_collection').at(0).get('invalid_email'));
+            expect(field.emailOptions.to[1].email.get('opt_out')).toBe(model.get('to_collection').at(0).get('opt_out'));
             expect(field.emailOptions.to[1].bean.module).toBe(model.get('to_collection').at(0).get('parent_type'));
             expect(field.emailOptions.to[1].bean.get('id')).toBe(model.get('to_collection').at(0).get('parent_id'));
             expect(field.emailOptions.to[1].bean.get('name')).toBe(model.get('to_collection').at(0).get('parent_name'));
@@ -163,6 +172,9 @@ describe('Emails.Field.ReplyAllAction', function() {
                 .toBe(model.get('to_collection').at(1).get('email_address_id'));
             expect(field.emailOptions.to[2].email.get('email_address'))
                 .toBe(model.get('to_collection').at(1).get('email_address'));
+            expect(field.emailOptions.to[2].email.get('invalid_email'))
+                .toBe(model.get('to_collection').at(1).get('invalid_email'));
+            expect(field.emailOptions.to[2].email.get('opt_out')).toBe(model.get('to_collection').at(1).get('opt_out'));
             expect(field.emailOptions.to[2].bean.module).toBe(model.get('to_collection').at(1).get('parent_type'));
             expect(field.emailOptions.to[2].bean.get('id')).toBe(model.get('to_collection').at(1).get('parent_id'));
             expect(field.emailOptions.to[2].bean.get('name')).toBe(model.get('to_collection').at(1).get('parent_name'));
@@ -170,12 +182,18 @@ describe('Emails.Field.ReplyAllAction', function() {
                 .toBe(model.get('to_collection').at(2).get('email_address_id'));
             expect(field.emailOptions.to[3].email.get('email_address'))
                 .toBe(model.get('to_collection').at(2).get('email_address'));
+            expect(field.emailOptions.to[3].email.get('invalid_email'))
+                .toBe(model.get('to_collection').at(2).get('invalid_email'));
+            expect(field.emailOptions.to[3].email.get('opt_out')).toBe(model.get('to_collection').at(2).get('opt_out'));
             expect(field.emailOptions.to[3].bean).toBeUndefined();
             expect(field.emailOptions.cc.length).toBe(1);
             expect(field.emailOptions.cc[0].email.get('id'))
                 .toBe(model.get('cc_collection').at(0).get('email_address_id'));
             expect(field.emailOptions.cc[0].email.get('email_address'))
                 .toBe(model.get('cc_collection').at(0).get('email_address'));
+            expect(field.emailOptions.cc[0].email.get('invalid_email'))
+                .toBe(model.get('cc_collection').at(0).get('invalid_email'));
+            expect(field.emailOptions.cc[0].email.get('opt_out')).toBe(model.get('cc_collection').at(0).get('opt_out'));
             expect(field.emailOptions.cc[0].bean.module).toBe(model.get('cc_collection').at(0).get('parent_type'));
             expect(field.emailOptions.cc[0].bean.get('id')).toBe(model.get('cc_collection').at(0).get('parent_id'));
             expect(field.emailOptions.cc[0].bean.get('name')).toBe(model.get('cc_collection').at(0).get('parent_name'));

@@ -278,7 +278,9 @@ describe('Emails.BaseEmailComposeView', function() {
                         parent_id: parentId,
                         parent_name: 'Ray Mason',
                         email_address_id: _.uniqueId(),
-                        email_address: 'rmason@example.com'
+                        email_address: 'rmason@example.com',
+                        invalid_email: false,
+                        opt_out: false
                     }));
                     model.set('name', subject);
                     model.set('description_html', html);
@@ -375,7 +377,9 @@ describe('Emails.BaseEmailComposeView', function() {
                         parent_id: parentId,
                         parent_name: 'Jason Withers',
                         email_address_id: _.uniqueId(),
-                        email_address: 'jwithers@example.com'
+                        email_address: 'jwithers@example.com',
+                        invalid_email: false,
+                        opt_out: false
                     }));
 
                     view.send();
@@ -411,7 +415,9 @@ describe('Emails.BaseEmailComposeView', function() {
                 parent_id: parentId,
                 parent_name: 'Sam Nalon',
                 email_address_id: _.uniqueId(),
-                email_address: 'snalon@example.com'
+                email_address: 'snalon@example.com',
+                invalid_email: false,
+                opt_out: false
             }));
 
             view.send();
@@ -477,7 +483,9 @@ describe('Emails.BaseEmailComposeView', function() {
                         parent_id: parentId,
                         parent_name: 'Heather Dunn',
                         email_address_id: _.uniqueId(),
-                        email_address: 'hdunn@example.com'
+                        email_address: 'hdunn@example.com',
+                        invalid_email: false,
+                        opt_out: false
                     }));
 
                     view.send();

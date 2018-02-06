@@ -31,7 +31,9 @@ describe('Emails.Field.ReplyAction', function() {
             parent_id: parentId,
             parent_name: parentName,
             email_address_id: _.uniqueId(),
-            email_address: email
+            email_address: email,
+            invalid_email: false,
+            opt_out: false
         });
     }
 
@@ -107,7 +109,9 @@ describe('Emails.Field.ReplyAction', function() {
                 _link: 'to',
                 id: _.uniqueId(),
                 email_address_id: _.uniqueId(),
-                email_address: 'bhunter@example.com'
+                email_address: 'bhunter@example.com',
+                invalid_email: false,
+                opt_out: false
             })
         ]);
         model.set('cc_collection', [
@@ -188,6 +192,8 @@ describe('Emails.Field.ReplyAction', function() {
             expect(field.emailOptions.to.length).toBe(1);
             expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
             expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
+            expect(field.emailOptions.to[0].email.get('invalid_email')).toBe(sender.get('invalid_email'));
+            expect(field.emailOptions.to[0].email.get('opt_out')).toBe(sender.get('opt_out'));
             expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
             expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
             expect(field.emailOptions.to[0].bean.get('name')).toBe(sender.get('parent_name'));

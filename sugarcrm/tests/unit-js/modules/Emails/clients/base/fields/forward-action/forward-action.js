@@ -31,7 +31,9 @@ describe('Emails.Field.ForwardAction', function() {
             parent_id: parentId,
             parent_name: parentName,
             email_address_id: _.uniqueId(),
-            email_address: email
+            email_address: email,
+            invalid_email: false,
+            opt_out: false
         });
     }
 
@@ -105,7 +107,9 @@ describe('Emails.Field.ForwardAction', function() {
                 _link: 'to',
                 id: _.uniqueId(),
                 email_address_id: _.uniqueId(),
-                email_address: 'bhunter@example.com'
+                email_address: 'bhunter@example.com',
+                invalid_email: false,
+                opt_out: false
             })
         ]);
         model.set('cc_collection', [

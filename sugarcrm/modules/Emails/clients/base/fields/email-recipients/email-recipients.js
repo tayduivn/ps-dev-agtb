@@ -66,8 +66,7 @@
                     this.render();
                 } else {
                     $el.select2('data', this.getFormattedValue());
-                    this._decorateInvalidRecipients();
-                    this._decorateOptedOutRecipients();
+                    this._decorateRecipients();
                     this._enableDragDrop();
                 }
             }, this));
@@ -200,8 +199,7 @@
                 $el.select2('disable');
             }
 
-            this._decorateInvalidRecipients();
-            this._decorateOptedOutRecipients();
+            this._decorateRecipients();
             this._enableDragDrop();
         }
     },
@@ -230,6 +228,16 @@
     },
 
     /**
+     * Decorates recipients that need it.
+     *
+     * @private
+     */
+    _decorateRecipients: function() {
+        this._decorateOptedOutRecipients();
+        this._decorateInvalidRecipients();
+    },
+
+    /**
      * Decorate any invalid recipients.
      *
      * @private
@@ -248,11 +256,16 @@
     /**
      * Decorate any opted out email addresses.
      *
+     * Email addresses that are opted out and invalid are not decorated by this
+     * method. This preserves the invalid recipient decoration, since users
+     * will need that decoration to correct their email before saving or
+     * sending.
+     *
      * @private
      */
     _decorateOptedOutRecipients: function() {
         var self = this;
-        var $optedOutRecipients = this.$('.select2-search-choice [data-optout="true"]');
+        var $optedOutRecipients = this.$('.select2-search-choice [data-optout="true"]:not([data-invalid="true"])');
 
         $optedOutRecipients.each(function() {
             var $choice = $(this).closest('.select2-search-choice');

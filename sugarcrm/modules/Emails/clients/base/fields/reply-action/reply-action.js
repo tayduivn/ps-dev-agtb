@@ -222,7 +222,9 @@
             var data = {
                 email: app.data.createBean('EmailAddresses', {
                     id: recipient.get('email_address_id'),
-                    email_address: recipient.get('email_address')
+                    email_address: recipient.get('email_address'),
+                    invalid_email: recipient.get('invalid_email'),
+                    opt_out: recipient.get('opt_out')
                 })
             };
 
@@ -236,7 +238,7 @@
                 recipient.get('parent').name
             ) {
                 // We omit type because it is actually the module name and
-                // should be treated as an attribute.
+                // should not be treated as an attribute.
                 data.bean = app.data.createBean(
                     recipient.get('parent').type,
                     _.omit(recipient.get('parent'), 'type')

@@ -146,7 +146,9 @@
                     if (!email.isNew()) {
                         validRecipient.set({
                             email_address_id: email.get('id'),
-                            email_address: email.get('email_address')
+                            email_address: email.get('email_address'),
+                            invalid_email: email.get('invalid_email'),
+                            opt_out: email.get('opt_out')
                         });
                     }
 
