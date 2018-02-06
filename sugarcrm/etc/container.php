@@ -26,6 +26,8 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\Formatter;
+use Sugarcrm\Sugarcrm\Security\Subject\Formatter\BeanFormatter;
 use UltraLite\Container\Container;
 
 return new Container([
@@ -95,6 +97,14 @@ return new Container([
     Context::class => function (ContainerInterface $container) {
         return new Context(
             $container->get(LoggerInterface::class . '-security')
+        );
+    },
+    Localization::class => function () {
+        return Localization::getObject();
+    },
+    Formatter::class => function (ContainerInterface $container) {
+        return new BeanFormatter(
+            $container->get(Localization::class)
         );
     },
 ]);
