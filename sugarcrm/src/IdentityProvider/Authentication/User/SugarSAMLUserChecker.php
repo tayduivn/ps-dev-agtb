@@ -12,11 +12,14 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
+use Etechnika\IdnaConvert\IdnaConvert;
+use Sugarcrm\IdentityProvider\Authentication\Exception\InvalidIdentifier\EmptyFieldException;
+use Sugarcrm\IdentityProvider\Authentication\Exception\InvalidIdentifier\EmptyIdentifierException;
+use Sugarcrm\IdentityProvider\Authentication\Exception\InvalidIdentifier\IdentifierInvalidFormatException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 
-use Sugarcrm\IdentityProvider\Authentication\User\SAMLUserChecker;
-
+use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
@@ -27,7 +30,7 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
  *
  * @package Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User
  */
-class SugarSAMLUserChecker extends SAMLUserChecker
+class SugarSAMLUserChecker extends UserChecker
 {
     /**
      * @var SugarLocalUserProvider
@@ -80,9 +83,11 @@ class SugarSAMLUserChecker extends SAMLUserChecker
             'email' => $nameIdentifier,
         ];
 
+        $identityField = $user->getAttribute('identityField');
+        $identityValue = $user->getAttribute('identityValue');
+        $this->validateIdentifier($identityField, $identityValue);
+
         try {
-            $identityField = $user->getAttribute('identityField');
-            $identityValue = $user->getAttribute('identityValue');
             $sugarUser = $this->localUserProvider->loadUserByField($identityValue, $identityField)->getSugarUser();
             $this->updateUserCustomFields($sugarUser, $user->getAttribute('attributes')['update']);
         } catch (UsernameNotFoundException $e) {
@@ -157,6 +162,28 @@ class SugarSAMLUserChecker extends SAMLUserChecker
             return call_user_func($settings->customCreateFunction, $userAuth, $nameId, $xpath, $settings);
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Validation Identifier
+     *
+     * @param string $field
+     * @param string $nameIdentifier
+     * @throws EmptyFieldException
+     * @throws EmptyIdentifierException
+     * @throws IdentifierInvalidFormatException
+     */
+    protected function validateIdentifier($field, $nameIdentifier)
+    {
+        if ('' == $field) {
+            throw new EmptyFieldException('Empty field name of identifier');
+        }
+        if ('' == $nameIdentifier) {
+            throw new EmptyIdentifierException('Empty identifier');
+        }
+        if ('email' == $field && !filter_var(IdnaConvert::encodeString($nameIdentifier), FILTER_VALIDATE_EMAIL)) {
+            throw new IdentifierInvalidFormatException('Invalid format of nameIdentifier email expected');
         }
     }
 }

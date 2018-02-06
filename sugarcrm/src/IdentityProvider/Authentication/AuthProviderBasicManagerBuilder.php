@@ -12,13 +12,14 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
+use Sugarcrm\IdentityProvider\Authentication\UserMapping\LDAPUserMapping;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\IdPAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarSAMLUserMapping;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarSAMLUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LocalUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LdapUserChecker;
@@ -167,6 +168,7 @@ class AuthProviderBasicManagerBuilder
             $userChecker,
             self::PROVIDER_KEY_LDAP,
             $ldap,
+            new LDAPUserMapping([]),
             $this->ldapConfig['dnString'],
             true,
             $this->ldapConfig
@@ -188,7 +190,7 @@ class AuthProviderBasicManagerBuilder
             new SugarSAMLUserProvider(),
             new SugarSAMLUserChecker(new SugarLocalUserProvider()),
             new SessionProxy(),
-            new UserMapping($this->samlConfig)
+            new SugarSAMLUserMapping($this->samlConfig)
         );
     }
 

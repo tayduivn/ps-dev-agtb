@@ -10,16 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
-
-use Sugarcrm\IdentityProvider\App\Authentication\UserMappingService;
+namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping;
 
 use OneLogin_Saml2_Response;
+use Sugarcrm\IdentityProvider\Authentication\UserMapping\SAMLUserMapping;
 
 /**
  * Class for getting proper mappings of NameID field and possible custom fields for User create/update.
  */
-class UserMapping extends UserMappingService
+class SugarSAMLUserMapping extends SAMLUserMapping
 {
     /**
      * Sugar SAML config.
@@ -41,9 +40,10 @@ class UserMapping extends UserMappingService
     }
 
     /**
-     * @inheritdoc
+     * @param OneLogin_Saml2_Response $response
+     * @return array
      */
-    public function map(OneLogin_Saml2_Response $response)
+    public function map($response)
     {
         $result = [
             'create' => [],
@@ -62,9 +62,10 @@ class UserMapping extends UserMappingService
     }
 
     /**
-     * @inheritdoc
+     * @param OneLogin_Saml2_Response $response
+     * @return array
      */
-    public function mapIdentity(OneLogin_Saml2_Response $response)
+    public function mapIdentity($response)
     {
         $fields = $this->getCustomFields('check');
 

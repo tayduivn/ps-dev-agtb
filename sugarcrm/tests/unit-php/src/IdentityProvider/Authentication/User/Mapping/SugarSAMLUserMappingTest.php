@@ -9,16 +9,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User\Mapping;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarSAMLUserMapping;
 
 use OneLogin_Saml2_Response;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping
  */
-class UserMappingTest extends \PHPUnit_Framework_TestCase
+class SugarSAMLUserMappingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OneLogin_Saml2_Response
@@ -42,7 +42,7 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
      */
     public function testMapHasCreateAndUpdateSections()
     {
-        $mapper = new UserMapping([]);
+        $mapper = new SugarSAMLUserMapping([]);
         $result = $mapper->map($this->samlResponse);
         $this->assertArrayHasKey('create', $result);
         $this->assertArrayHasKey('update', $result);
@@ -120,7 +120,7 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
      */
     public function testMap($config, $responseAttributes, $expected)
     {
-        $mapper = new UserMapping($config);
+        $mapper = new SugarSAMLUserMapping($config);
 
         $this->samlResponse->method('getAttributes')->willReturn($responseAttributes);
 
@@ -146,7 +146,7 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $mapper = $this->getMockBuilder(UserMapping::class)
+        $mapper = $this->getMockBuilder(SugarSAMLUserMapping::class)
             ->setMethods(['getDOMXPath'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -195,7 +195,7 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
      */
     public function testMapIdentitySetsField($config, $expected)
     {
-        $mapper = new UserMapping($config);
+        $mapper = new SugarSAMLUserMapping($config);
 
         $result = $mapper->mapIdentity($this->samlResponse);
         $this->assertArrayHasKey('field', $result);
@@ -266,7 +266,7 @@ class UserMappingTest extends \PHPUnit_Framework_TestCase
      */
     public function testMapIdentitySetsValue($config, $responseAttributes, $responseNameId, $expected)
     {
-        $mapper = new UserMapping($config);
+        $mapper = new SugarSAMLUserMapping($config);
 
         $this->samlResponse->method('getAttributes')->willReturn($responseAttributes);
         $this->samlResponse->method('getNameId')->willReturn($responseNameId);
