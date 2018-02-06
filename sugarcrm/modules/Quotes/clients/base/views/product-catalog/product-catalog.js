@@ -849,9 +849,16 @@
 
                 this.scrollThumbHeight = Math.floor(this.scrollPercentHeight * this.dashletHeight);
 
-                this.drawScrollbar();
+                if (this.scrollPercentHeight < 1) {
+                    // the gameWorldHeight is greater than dashletHeight so we need a scrollbar
+                    this.drawScrollbar();
 
-                this.scrollCheckTimerEvent = this.game.time.events.repeat(500, 40, this._checkScrollbar, this);
+                    this.scrollCheckTimerEvent = this.game.time.events.repeat(500, 40, this._checkScrollbar, this);
+                } else if (this.scrollBarImg) {
+                    // we no longer need a scrollbar, and this.scrollBarImg exists, so we need to remove it
+                    this.scrollBarImg.destroy();
+                    this.scrollThumbImg.destroy();
+                }
             },
 
             /**
