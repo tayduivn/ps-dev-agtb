@@ -42,7 +42,7 @@ Feature: Opportunities
       | sales_status | New   |
 
 
-  @create_opportunity @xxx
+  @create_opportunity
   Scenario: Opportunities >  Create opportunity with RLIs
     Given Accounts records exist:
       | name  |
@@ -68,7 +68,7 @@ Feature: Opportunities
       | RLI2 | 12/12/2021  | 500       | Qualification | 10       | 400         |
     # Add third RLI by clicking '+' button on the second row
     When I choose addRLI on #OpportunityDrawer.RLITable view for 2 row
-    # Provide input for the second RLI
+    # Provide input for the third RLI
     When I provide input for #OpportunityDrawer.RLITable view for 3 row
       | name | date_closed | best_case | sales_stage   | quantity | likely_case |
       | RLI3 | 12/12/2022  | 50        | Qualification | 10       | 40          |

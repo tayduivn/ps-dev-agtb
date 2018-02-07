@@ -61,10 +61,9 @@ export class List extends BaseField {
 
 }
 
-
 export class Edit extends BaseField {
 
-    private itemSelector: String;
+    protected itemSelector: String;
 
     constructor(options) {
         super(options);

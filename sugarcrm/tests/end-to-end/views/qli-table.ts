@@ -14,6 +14,8 @@ import {seedbed} from '@sugarcrm/seedbed';
 import QliRecord from './qli-record';
 import CommentRecord from './comment-record';
 import GroupRecord from './group-record';
+import {QLIHeader} from './qli-header';
+import {QLIFooter} from './qli-footer';
 
 
 /**
@@ -27,6 +29,8 @@ export default class QliTable extends BaseView {
     public QliRecord: QliRecord;
     public CommentRecord: CommentRecord;
     public GroupRecord: GroupRecord;
+    public Header: QLIHeader;
+    public Footer: QLIHeader;
 
 
     constructor(options) {
@@ -41,6 +45,9 @@ export default class QliTable extends BaseView {
                 createGroup: '[name=create_group_button]'
             }
         });
+
+        this.Header = this.createComponent<QLIHeader>(QLIHeader);
+        this.Footer = this.createComponent<QLIHeader>(QLIFooter);;
 
         this.QliRecord =  this.createComponent<QliRecord>(QliRecord);
         this.CommentRecord =  this.createComponent<CommentRecord>(CommentRecord);

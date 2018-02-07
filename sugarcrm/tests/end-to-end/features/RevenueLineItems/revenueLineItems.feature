@@ -181,7 +181,7 @@ Feature: RLI module verification
     Then I should see #Acc_1Record.RecordView view
 
   @T_24497
-  Scenario: Quotes > ENT/ULT Verify that Copy of quoted RLI record creates not-quoted copy
+  Scenario: RLI > ENT/ULT Verify that Copy of quoted RLI record creates not-quoted copy
     # Create RLI
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
@@ -245,7 +245,6 @@ Feature: RLI module verification
     Given Accounts records exist related via accounts link:
       | *name |
       | Acc_1 |
-
     Given I open about view and login
     When I choose RevenueLineItems in modules menu
     When I click Create button on #RevenueLineItemsList header

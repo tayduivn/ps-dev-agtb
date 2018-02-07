@@ -16,16 +16,16 @@ Feature: Create Opportunity from Quote
 
   @create_opportunity_from_quote @T_33332
   Scenario: Quotes > Record view > Create Opportunity from Quote
-    # Create Account
-    Given Accounts records exist:
-      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
-      | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
     # Create a quote
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
       | Quote_1 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    # Create Account
+    Given Accounts records exist related via billing_accounts link to *Quote_1:
+      | name  |
+      | Acc_1 |
     # Create a product bundle
-    Given ProductBundles records exist related via product_bundles link:
+    Given ProductBundles records exist related via product_bundles link to *Quote_1:
       | *name   |
       | Group_1 |
     # Add QLI
@@ -35,19 +35,9 @@ Feature: Create Opportunity from Quote
       | QLI_2 | 200            | 2               |
     Given I open about view and login
 
-    # Link Account to Quote
     When I choose Quotes in modules menu
     When I select *Quote_1 in #QuotesList.ListView
     Then I should see #Quote_1Record view
-    When I click Edit button on #Quote_1Record header
-    When I toggle Billing_and_Shipping panel on #Quote_1Record.RecordView view
-    When I provide input for #QuotesRecord.RecordView view
-      | billing_account_name |
-      | Acc_1                |
-    When I Confirm confirmation alert
-    When I click Save button on #Quote_1Record header
-    When I close alert
-
     # Create Opportunity from Quote
     When I open actions menu in #Quote_1Record
     When I choose CreateOpportunity from actions menu in #Quote_1Record
@@ -66,6 +56,66 @@ Feature: Create Opportunity from Quote
       | worst_case       | $295.00      |
       | opportunity_type | New Business |
 
+
+  @create_opportunity_from_quote @T_33332
+  Scenario: Quotes > Record view > Create Opportunity from Quote while quote is in different currency
+    # Create a quote
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_1 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    # Create Account
+    Given Accounts records exist related via billing_accounts link to *Quote_1:
+      | name  |
+      | Acc_1 |
+    # Create a product bundle
+    Given ProductBundles records exist related via product_bundles link to *Quote_1:
+      | *name   |
+      | Group_1 |
+    # Add QLI
+    Given Products records exist related via products link:
+      | *name | discount_price | discount_amount |
+      | QLI_1 | 100            | 1               |
+      | QLI_2 | 200            | 2               |
+    Given I open about view and login
+    # Add a new EUR currency
+    When I go to "Currencies" url
+    When I click Create button on #CurrenciesList header
+    When I provide input for #CurrenciesDrawer.RecordView view
+      | iso4217 | conversion_rate |
+      | EUR     | 0.5             |
+    When I click Save button on #CurrenciesDrawer header
+    When I close alert
+    When I choose Quotes in modules menu
+    When I select *Quote_1 in #QuotesList.ListView
+    Then I should see #Quote_1Record view
+    When I click Edit button on #Quote_1Record header
+    # Change the currency of the quote and save
+    When I toggle Quote_Settings panel on #Quote_1Record.RecordView view
+    When I provide input for #Quote_1Record.RecordView view
+      | currency_id |
+      | € (EUR)     |
+    When I click Save button on #QuotesRecord header
+    When I close alert
+    When I toggle Quote_Settings panel on #Quote_1Record.RecordView view
+    # Create Opportunity from Quote
+    When I open actions menu in #Quote_1Record
+    When I choose CreateOpportunity from actions menu in #Quote_1Record
+    # The line below is a workaround for the bug
+    When I Confirm confirmation alert
+    Then I should see #OpportunitiesRecord view
+    Then I verify fields on #OpportunitiesRecord.HeaderView
+      | fieldName | value   |
+      | name      | Quote_1 |
+    When I click show more button on #OpportunitiesRecord view
+    Then I verify fields on #OpportunitiesRecord.RecordView
+      | fieldName        | value          |
+      | date_closed      | 10/19/2018     |
+      | account_name     | Acc_1          |
+      | sales_status     | In Progress    |
+      | amount           | €147.50$295.00 |
+      | best_case        | €147.50$295.00 |
+      | worst_case       | €147.50$295.00 |
+      | opportunity_type | New Business   |
 
 
 

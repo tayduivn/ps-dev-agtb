@@ -12,6 +12,7 @@ import * as TextField from '../fields/text-field';
 import * as TextareaField from '../fields/textarea-field';
 import * as NameField from '../fields/name-field';
 import * as EnumField from '../fields/enum-field';
+import * as PricingFormula from '../fields/pricing_formula';
 import * as IntField from '../fields/int-field';
 import * as FloatField from '../fields/float-field';
 import * as DateField from '../fields/date-field';
@@ -23,6 +24,7 @@ import * as UrlField from '../fields/url-field';
 import * as FullnameField from '../fields/fullname-field';
 import * as TagField from '../fields/tag-field';
 import * as EmailField from '../fields/email-field';
+import * as DiscountSelectField from '../fields/discount-select-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -45,5 +47,9 @@ export const FIELD_TYPES__MAP = {
     currency: CurrencyField,
     email: EmailField,
     'currency-type-dropdown': EnumField,
+    'currency_id': EnumField,
+    'quote-footer-currency': CurrencyField,
+    'discount-select':DiscountSelectField,
+    'pricing-formula':PricingFormula,
 };
 
