@@ -5353,6 +5353,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_DATAPRIVACY' => 'Data Privacy Management',
     'LBL_DATAPRIVACY_SUBPANEL_TITLE' => 'Data Privacy Management',
     'LBL_DATAPRIVACY_VIEW_PII' => 'View PII',
+    'LBL_DATAPRIVACY_MARKFORERASE' => 'Mark for Erase',
 );
 
 $app_list_strings['activity_user_options'] = array (
