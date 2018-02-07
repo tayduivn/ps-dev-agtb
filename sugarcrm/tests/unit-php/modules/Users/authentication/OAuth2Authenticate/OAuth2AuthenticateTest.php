@@ -15,6 +15,11 @@ namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\OAuth2Authentic
 use SugarConfig;
 use PHPUnit_Framework_TestCase as TestCase;
 use OAuth2Authenticate;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
+use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * @coversDefaultClass \OAuth2Authenticate
@@ -27,9 +32,29 @@ class OAuth2AuthenticateTest extends TestCase
     protected $auth;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $authMock;
+
+    /**
      * @var array|mixed
      */
     protected $savedConfig = [];
+
+    /**
+     * @var AuthProviderBasicManagerBuilder | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $authProviderBasicBuilder;
+
+    /**
+     * @var AuthenticationProviderManager | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $authManager;
+
+    /**
+     * @var \User | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $sugarUser;
 
     /**
      * set up
@@ -39,7 +64,21 @@ class OAuth2AuthenticateTest extends TestCase
         $this->savedConfig['site_url'] = SugarConfig::getInstance()->get('site_url');
         $this->savedConfig['oidc_oauth'] = SugarConfig::getInstance()->get('oidc_oauth');
         SugarConfig::getInstance()->_cached_values['site_url'] = 'http://test.sugarcrm.local';
+
         $this->auth = new OAuth2Authenticate();
+        $this->authMock = $this->getMockBuilder(OAuth2Authenticate::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAuthProviderBasicBuilder', 'getTenant'])->getMock();
+
+        $this->sugarUser = $this->createMock(\User::class);
+        $this->sugarUser->id = 'userId';
+
+        $this->authProviderBasicBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
+        $this->authManager = $this->createMock(AuthenticationProviderManager::class);
+
+        $this->authMock->method('getAuthProviderBasicBuilder')->willReturn($this->authProviderBasicBuilder);
+        $this->authMock->method('getTenant')->willReturn('srn:tenant');
+        $this->authProviderBasicBuilder->method('buildAuthProviders')->willReturn($this->authManager);
     }
 
     /**
@@ -86,11 +125,63 @@ class OAuth2AuthenticateTest extends TestCase
         $this->assertFalse($this->auth->getLogoutUrl());
     }
 
+
+    /**
+     * @covers ::loginAuthenticate
+     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
+     */
+    public function testLoginAuthenticateAuthenticationException()
+    {
+        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
+            function ($token) {
+                $this->assertEquals('user', $token->getUsername());
+                $this->assertEquals('password', $token->getCredentials());
+                throw new AuthenticationException();
+            }
+        );
+        $this->authMock->loginAuthenticate('user', 'password');
+    }
+
+    /**
+     * @covers ::loginAuthenticate
+     */
+    public function testLoginAuthenticateAuthenticationError()
+    {
+        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
+            function ($token) {
+                $this->assertEquals('user', $token->getUsername());
+                $this->assertEquals('password', $token->getCredentials());
+                $token->setAuthenticated(false);
+                return $token;
+            }
+        );
+        $this->assertFalse($this->authMock->loginAuthenticate('user', 'password'));
+    }
+
     /**
      * @covers ::loginAuthenticate
      */
     public function testLoginAuthenticate()
     {
-        $this->assertFalse($this->auth->loginAuthenticate('testUser', 'testPassword'));
+        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
+            function ($token) {
+                $this->assertEquals('user', $token->getUsername());
+                $this->assertEquals('password', $token->getCredentials());
+                $user = new User();
+                $user->setSugarUser($this->sugarUser);
+                $token->setUser($user);
+
+                $resultToken = new UsernamePasswordToken(
+                    $user,
+                    $token->getCredentials(),
+                    $token->getProviderKey(),
+                    $token->getRoles()
+                );
+
+                return $resultToken;
+            }
+        );
+        $result = $this->authMock->loginAuthenticate('user', 'password');
+        $this->assertEquals(['user_id' => 'userId', 'scope' => null], $result);
     }
 }

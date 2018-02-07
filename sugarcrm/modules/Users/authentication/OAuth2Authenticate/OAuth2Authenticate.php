@@ -11,6 +11,8 @@
  */
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordTokenFactory;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 
 /**
  * Class OAuth2Authenticate
@@ -45,6 +47,39 @@ class OAuth2Authenticate extends BaseAuthenticate implements SugarAuthenticateEx
      */
     public function loginAuthenticate($username, $password, $fallback = false, $params = [])
     {
+        $config = new Config(\SugarConfig::getInstance());
+        $token = (new UsernamePasswordTokenFactory($username, $password, ['tenant' => $this->getTenant($config)]))
+            ->createIdPAuthenticationToken();
+        $manager = $this->getAuthProviderBasicBuilder($config)
+            ->buildAuthProviders();
+        $resultToken = $manager->authenticate($token);
+        if ($resultToken->isAuthenticated()) {
+            return [
+                'user_id' => $resultToken->getUser()->getSugarUser()->id,
+                'scope' => null,
+            ];
+        }
         return false;
+    }
+
+    /**
+     * @param Config $config
+     *
+     * @return string
+     */
+    protected function getTenant(Config $config)
+    {
+        $oidcConfig = $config->get('oidc_oauth', []);
+        return !empty($oidcConfig['tid']) ? $oidcConfig['tid'] : '';
+    }
+
+    /**
+     * @param Config $config
+     *
+     * @return AuthProviderBasicManagerBuilder
+     */
+    protected function getAuthProviderBasicBuilder(Config $config)
+    {
+        return new AuthProviderBasicManagerBuilder($config);
     }
 }

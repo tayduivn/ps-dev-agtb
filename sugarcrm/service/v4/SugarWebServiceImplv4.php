@@ -48,11 +48,17 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $success = false;
         $authController = AuthenticationController::getInstance();
 
-        if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN' && $authController->authController->userAuthenticateClass != "LDAPAuthenticateUser")
-        {
+        if (!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN' &&
+            $authController->authController->userAuthenticateClass != "LDAPAuthenticateUser" &&
+            !($authController->authController instanceof IdMLDAPAuthenticate) &&
+            !($authController->authController instanceof OAuth2Authenticate)) {
             $user_auth['password'] = md5($user_auth['password']);
         }
-        $isLoginSuccess = $authController->login($user_auth['user_name'], $user_auth['password'], array('passwordEncrypted' => true));
+        $isLoginSuccess = (bool) $authController->login(
+            $user_auth['user_name'],
+            $user_auth['password'],
+            ['passwordEncrypted' => true]
+        );
         $usr_id=$user->retrieve_user_id($user_auth['user_name']);
         if($usr_id)
             $user->retrieve($usr_id);

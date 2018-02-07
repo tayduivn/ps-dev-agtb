@@ -11,10 +11,8 @@
  */
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
-use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use SugarOAuth2StorageOIDC;
+use AuthenticationController;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 require_once 'include/utils.php';
@@ -26,46 +24,29 @@ require_once 'include/SugarCache/SugarCache.php';
 class SugarOAuth2StorageOIDCTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var AuthProviderBasicManagerBuilder | \PHPUnit_Framework_MockObject_MockObject
+     * @var SugarOAuth2StorageOIDC
      */
-    protected $authProviderBasicBuilder;
+    protected $storageMock;
 
     /**
-     * @var AuthenticationProviderManager | \PHPUnit_Framework_MockObject_MockObject
+     * @var AuthenticationController
      */
-    protected $authManager;
+    protected $authController;
 
-    /**
-     * @var \SugarOAuth2StorageOIDC | \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $storage;
-
-    /**
-     * @var \User | \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $sugarUser;
-
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        $this->authProviderBasicBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
-        $this->authManager = $this->createMock(AuthenticationProviderManager::class);
-        $this->sugarUser = $this->createMock(\User::class);
-        $this->sugarUser->id = 'userId';
+        $this->authController = $this->createMock(AuthenticationController::class);
 
-        $this->storage = $this->getMockBuilder(\SugarOAuth2StorageOIDC::class)
-                              ->disableOriginalConstructor()
-                              ->setMethods(['getAuthProviderBasicBuilder', 'getTenant'])->getMock();
+        $this->storageMock = $this->getMockBuilder(SugarOAuth2StorageOIDC::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAuthController'])
+            ->getMock();
 
-        $this->storage->method('getAuthProviderBasicBuilder')->willReturn($this->authProviderBasicBuilder);
-        $this->storage->method('getTenant')->willReturn('srn:tenant');
-        $this->authProviderBasicBuilder->method('buildAuthProviders')->willReturn($this->authManager);
+        $this->storageMock->method('getAuthController')->willReturn($this->authController);
 
         $GLOBALS['log'] = $this->getMockBuilder(\LoggerManager::class)
-                               ->disableOriginalConstructor()
-                               ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     protected function tearDown()
@@ -73,63 +54,67 @@ class SugarOAuth2StorageOIDCTest extends \PHPUnit_Framework_TestCase
         unset($GLOBALS['log']);
     }
 
-    /**
-     * @covers ::checkUserCredentials
-     * @expectedException \SugarApiExceptionNeedLogin
-     */
-    public function testCheckUserCredentialsAuthenticationException()
+    public function providerCheckUserCredentialsFailedLogin()
     {
-        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
-            function ($token) {
-                $this->assertEquals('user', $token->getUsername());
-                $this->assertEquals('password', $token->getCredentials());
-                throw new AuthenticationException();
-            }
-        );
-        $this->storage->checkUserCredentials('client_id', 'user', 'password');
+        return [
+            [false],
+            [[]],
+        ];
     }
 
     /**
      * @covers ::checkUserCredentials
+     *
+     * @dataProvider providerCheckUserCredentialsFailedLogin
+     * @param mixed $loginResult
+     *
      * @expectedException \SugarApiExceptionNeedLogin
      */
-    public function testCheckUserCredentialsAuthenticationError()
+    public function testCheckUserCredentialsFailedLogin($loginResult)
     {
-        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
-            function ($token) {
-                $this->assertEquals('user', $token->getUsername());
-                $this->assertEquals('password', $token->getCredentials());
-                $token->setAuthenticated(false);
-                return $token;
-            }
-        );
-        $this->storage->checkUserCredentials('client_id', 'user', 'password');
+        $this->authController->method('login')
+            ->with(
+                'user',
+                'password',
+                ['passwordEncrypted' => false, 'noRedirect' => true, 'noHooks' => true]
+            )
+            ->willReturn($loginResult);
+        $this->storageMock->checkUserCredentials('sugar', 'user', 'password');
     }
 
     /**
      * @covers ::checkUserCredentials
      */
-    public function testCheckUserCredentials()
+    public function testCheckUserCredentialsSuccessfulLogin()
     {
-        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
-            function ($token) {
-                $this->assertEquals('user', $token->getUsername());
-                $this->assertEquals('password', $token->getCredentials());
-                $user = new User();
-                $user->setSugarUser($this->sugarUser);
-                $token->setUser($user);
+        $loginResult = [
+            'user_id' => '123',
+            'scope' => null,
+        ];
+        $this->authController->method('login')
+            ->with(
+                'user',
+                'password',
+                ['passwordEncrypted' => false, 'noRedirect' => true, 'noHooks' => true]
+            )
+            ->willReturn($loginResult);
+        $this->assertEquals($loginResult, $this->storageMock->checkUserCredentials('sugar', 'user', 'password'));
+    }
 
-                $resultToken = new UsernamePasswordToken(
-                    $user,
-                    $token->getCredentials(),
-                    $token->getProviderKey(),
-                    $token->getRoles()
-                );
-
-                return $resultToken;
-            }
-        );
-        $result =$this->storage->checkUserCredentials('client_id', 'user', 'password');
-        $this->assertEquals(['user_id' => 'userId', 'scope' => null], $result);
+    /**
+     * @covers ::checkUserCredentials
+     *
+     * @expectedException \SugarApiExceptionNeedLogin
+     */
+    public function testCheckUserCredentialsLoginException()
+    {
+        $this->authController->method('login')
+            ->with(
+                'user',
+                'password',
+                ['passwordEncrypted' => false, 'noRedirect' => true, 'noHooks' => true]
+            )
+            ->willThrowException(new AuthenticationException());
+        $this->storageMock->checkUserCredentials('sugar', 'user', 'password');
     }
 }

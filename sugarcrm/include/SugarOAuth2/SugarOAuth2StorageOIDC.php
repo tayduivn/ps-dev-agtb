@@ -10,10 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordTokenFactory;
 
 /**
  * Provides legacy clients support which do not support oauth2/OIDC protocol
@@ -27,17 +24,14 @@ class SugarOAuth2StorageOIDC extends SugarOAuth2Storage
     public function checkUserCredentials($client_id, $username, $password)
     {
         try {
-            $config = new Config(\SugarConfig::getInstance());
-            $token = (new UsernamePasswordTokenFactory($username, $password, ['tenant' => $this->getTenant($config)]))
-                        ->createIdPAuthenticationToken();
-            $manager = $this->getAuthProviderBasicBuilder($config)
-                                  ->buildAuthProviders();
-            $resultToken = $manager->authenticate($token);
-            if ($resultToken->isAuthenticated()) {
-                return [
-                    'user_id' => $resultToken->getUser()->getSugarUser()->id,
-                    'scope' => null,
-                ];
+            // noHooks since we'll take care of the hooks on API level, to make it more generalized
+            $loginResult = $this->getAuthController()->login(
+                $username,
+                $password,
+                ['passwordEncrypted' => false, 'noRedirect' => true, 'noHooks' => true]
+            );
+            if ($loginResult) {
+                return $loginResult;
             }
         } catch (AuthenticationException $e) {
             throw new SugarApiExceptionNeedLogin($e->getMessage());
@@ -47,23 +41,10 @@ class SugarOAuth2StorageOIDC extends SugarOAuth2Storage
     }
 
     /**
-     * @param Config $config
-     *
-     * @return string
+     * @return AuthenticationController
      */
-    protected function getTenant(Config $config)
+    protected function getAuthController()
     {
-        $oidcConfig = $config->get('oidc_oauth', []);
-        return !empty($oidcConfig['tid']) ? $oidcConfig['tid'] : '';
-    }
-
-    /**
-     * @param Config $config
-     *
-     * @return AuthProviderBasicManagerBuilder
-     */
-    protected function getAuthProviderBasicBuilder(Config $config)
-    {
-        return new AuthProviderBasicManagerBuilder($config);
+        return AuthenticationController::getInstance();
     }
 }
