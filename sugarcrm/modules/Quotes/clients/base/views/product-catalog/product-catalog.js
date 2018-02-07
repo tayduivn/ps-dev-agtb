@@ -382,7 +382,6 @@
             iconHeight: 16,
             iconScale: 0.25,
             iconStartX: 5,
-            iconStartY: 15,
             iconYOffset: 8,
             textYOffset: 1,
             itemRowYPadding: 21,
@@ -406,6 +405,7 @@
             scrollBarBkgdBorderColor: 0xE8E8E8,
             scrollBarBkgdFill: 0xFAFAFA,
             scrollBarBkgdFillIE: 0xF0F0F0,
+            scrollBarThumbImg: undefined,
             scrollThumbHoverImg: undefined,
             scrollThumbImg: undefined,
             scrollThumbWidth: 8,
@@ -471,24 +471,30 @@
              * @private
              */
             _onScrollWheel: function(yDelta) {
-                var percentCameraGameHeightDiff;
-                var newScrollY;
-
                 // update the camera position by the yDelta
                 this.game.camera.y += yDelta;
 
                 // only need to update scrollbar if it exists
-                if (this.scrollThumbImg) {
-                    // update the scrollbar to reflect the new camera position
-                    percentCameraGameHeightDiff  = this.game.camera.y / this.gameWorldHeight;
-                    newScrollY = percentCameraGameHeightDiff * this.dashletHeight;
-
-                    // update the scrollbar thumb
-                    this.scrollThumbImg.cameraOffset.y = newScrollY;
-
-                    // make sure we're not out of bounds
-                    this._checkBounds(this.scrollThumbImg);
+                if (this.scrollBarThumbImg) {
+                    this._updateScrollThumbToCamera();
                 }
+            },
+
+            /**
+             * Re-orients the scroll thumb to the camera position in the world.
+             * This allows the camera and thumb to stay in sync after a Show More event.
+             *
+             * @private
+             */
+            _updateScrollThumbToCamera: function() {
+                var percentCameraGameHeightDiff = this.game.camera.y / this.gameWorldHeight;
+                var newScrollY = percentCameraGameHeightDiff * this.dashletHeight;
+
+                // update the scrollbar thumb
+                this.scrollBarThumbImg.cameraOffset.y = newScrollY;
+
+                // make sure we're not out of bounds
+                this._checkBounds(this.scrollBarThumbImg);
             },
 
             /**
@@ -554,7 +560,7 @@
 
                 this.dashletHeight = $el.height();
                 this.gameWorldWidth = $el.width();
-                this.gameWorldHeight = 15;
+                this.gameWorldHeight = 0;
                 this.cameraY = 0;
                 this.game.camera.y = 0;
 
@@ -857,10 +863,11 @@
                     this.drawScrollbar();
 
                     this.scrollCheckTimerEvent = this.game.time.events.repeat(500, 40, this._checkScrollbar, this);
-                } else if (this.scrollBarImg) {
+                } else if (this.scrollBarThumbImg) {
                     // we no longer need a scrollbar, and this.scrollBarImg exists, so we need to remove it
                     this.scrollBarImg.destroy();
                     this.scrollThumbImg.destroy();
+                    this.scrollBarThumbImg.destroy();
                 }
             },
 
@@ -885,48 +892,64 @@
             drawScrollbar: function() {
                 var scrollX = this.gameWorldWidth - this.scrollBarBkgdWidth;
                 var xOffset = this.game.device.ie ? 0 : 4;
+
                 if (this.scrollBarImg) {
                     this.scrollBarImg.destroy();
                     this.scrollThumbImg.destroy();
+                    this.scrollBarThumbImg.destroy();
                 }
 
+                // draw the scrollbar background image
                 this.scrollBarImg = this.game.add.image(scrollX, 0, this._drawScrollBkgdBar());
                 this.scrollBarImg.fixedToCamera = true;
 
+                // draw the parent scroll thumb container
+                this.scrollBarThumbImg = this.game.add.image(scrollX + xOffset, 0);
+
+                // draw the scroll thumb image
                 this.scrollThumbImg = this.game.add.image(
-                    scrollX + xOffset,
+                    0,
                     this.scrollThumbTopBottomPadding,
                     this._drawScrollThumb(this.scrollThumbFillColor)
                 );
 
+                // draw the scroll thumb hover image
                 this.scrollThumbHoverImg = this.game.add.image(
                     0,
-                    0,
+                    this.scrollThumbTopBottomPadding,
                     this._drawScrollThumb(this.scrollThumbFillHoverColor)
                 );
-                this.scrollThumbImg.addChild(this.scrollThumbHoverImg);
+
+                // add the scroll thumb and hover image to the main scrollbar thumb
+                this.scrollBarThumbImg.addChild(this.scrollThumbImg);
+                this.scrollBarThumbImg.addChild(this.scrollThumbHoverImg);
+
                 this.scrollThumbHoverInTween = this.game.add.tween(this.scrollThumbHoverImg).to({alpha: 1}, 100);
                 this.scrollThumbHoverOutTween = this.game.add.tween(this.scrollThumbHoverImg).to({alpha: 0}, 100);
 
                 this.scrollThumbHoverImg.alpha = 0;
 
-                this.scrollThumbImg.inputEnabled = true;
-                this.scrollThumbImg.input.enableDrag();
+                this.scrollBarThumbImg.inputEnabled = true;
+                this.scrollBarThumbImg.input.enableDrag();
                 // only allow the thumb vertical drag
-                this.scrollThumbImg.input.allowHorizontalDrag = false;
-                this.scrollThumbImg.events.onDragStart.add(this._checkDragThumbBounds, this);
-                this.scrollThumbImg.events.onDragUpdate.add(this._checkDragThumbBounds, this);
-                this.scrollThumbImg.events.onDragStop.add(this._checkDragThumbBounds, this);
-                this.scrollThumbImg.fixedToCamera = true;
+                this.scrollBarThumbImg.input.allowHorizontalDrag = false;
+                this.scrollBarThumbImg.events.onDragStart.add(this._checkDragThumbBounds, this);
+                this.scrollBarThumbImg.events.onDragUpdate.add(this._checkDragThumbBounds, this);
+                this.scrollBarThumbImg.events.onDragStop.add(this._checkDragThumbBounds, this);
+                this.scrollBarThumbImg.fixedToCamera = true;
 
-                this.scrollThumbImg.events.onInputOver.add(function() {
+                this.scrollBarThumbImg.events.onInputOver.add(function() {
                     this.scrollThumbHoverInTween.start();
                 }, this);
-                this.scrollThumbImg.events.onInputOut.add(function() {
+                this.scrollBarThumbImg.events.onInputOut.add(function() {
                     this.scrollThumbHoverOutTween.start();
                 }, this);
 
                 this.maxScrollY = this.dashletHeight - this.scrollThumbHeight;
+
+                if (this.game.camera.y !== 0) {
+                    this._updateScrollThumbToCamera();
+                }
             },
 
             /**
@@ -959,7 +982,13 @@
                 if (this.game.device.ie) {
                     thumb.drawRect(0, 0, this.scrollBarBkgdWidth, this.scrollThumbHeight);
                 } else {
-                    thumb.drawRoundedRect(0, 0, this.scrollThumbWidth, this.scrollThumbHeight, 5);
+                    thumb.drawRoundedRect(
+                        0,
+                        0,
+                        this.scrollThumbWidth,
+                        this.scrollThumbHeight - this.scrollThumbTopBottomPadding,
+                        5
+                    );
                 }
 
                 return thumb.generateTexture();
@@ -973,8 +1002,8 @@
              * @private
              */
             _checkBounds: function(image) {
-                if (image.cameraOffset.y < this.scrollThumbTopBottomPadding) {
-                    image.cameraOffset.y = this.scrollThumbTopBottomPadding;
+                if (image.cameraOffset.y < 0) {
+                    image.cameraOffset.y = 0;
                 }
                 if (image.cameraOffset.y > this.maxScrollY - this.scrollThumbTopBottomPadding) {
                     image.cameraOffset.y = this.maxScrollY - this.scrollThumbTopBottomPadding;
@@ -1066,6 +1095,9 @@
                     // shrink game world as we remove Show More later
                     this.gameWorldHeight -= this.itemRowYPadding;
 
+                    // remove the parent container for the text from its parent
+                    target.parent.parent.remove(target.parent);
+                    // remove the icon and text from the parent
                     target.parent.remove(icon);
                     target.parent.remove(target);
                     icon.destroy();
