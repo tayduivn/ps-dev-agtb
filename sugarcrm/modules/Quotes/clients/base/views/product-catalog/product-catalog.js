@@ -986,7 +986,7 @@
                         0,
                         0,
                         this.scrollThumbWidth,
-                        this.scrollThumbHeight - this.scrollThumbTopBottomPadding,
+                        this.scrollThumbHeight - this.scrollThumbTopBottomPadding - this.scrollThumbTopBottomPadding,
                         5
                     );
                 }
@@ -1005,8 +1005,8 @@
                 if (image.cameraOffset.y < 0) {
                     image.cameraOffset.y = 0;
                 }
-                if (image.cameraOffset.y > this.maxScrollY - this.scrollThumbTopBottomPadding) {
-                    image.cameraOffset.y = this.maxScrollY - this.scrollThumbTopBottomPadding;
+                if (image.cameraOffset.y > this.maxScrollY) {
+                    image.cameraOffset.y = this.maxScrollY;
                 }
             },
 
