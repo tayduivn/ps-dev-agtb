@@ -892,7 +892,7 @@ $app_list_strings = array (
         'Export Information' => 'Export Information',
         'Restrict Processing' => 'Restrict Processing',
         'Object to Processing' => 'Object to Processing',
-        'Received Consent' => 'Received Consent',
+        'Consent to Process' => 'Consent to Process',
         'Withdraw Consent' => 'Withdraw Consent',
         'Other' => 'Other',
     ),

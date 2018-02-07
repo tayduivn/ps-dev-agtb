@@ -74,12 +74,12 @@ $dictionary['DataPrivacy'] = array(
                     'Export Information' => array (),
                     'Restrict Processing' => array (),
                     'Object to Processing' => array (),
-                    'Received Consent' => array(
+                    'Consent to Process' => array(
                         'Business Communications',
                         'Marketing Communications by company',
                         'Marketing Communications by partners',
                     ),
-                    'Withdraw consent' => array(
+                    'Withdraw Consent' => array(
                         'Business Communications',
                         'Marketing Communications by company',
                         'Marketing Communications by partners',
