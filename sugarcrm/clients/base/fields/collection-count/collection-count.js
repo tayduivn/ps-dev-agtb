@@ -96,23 +96,32 @@
         // Default properties.
         options = options || {};
         var length = this.collection.length;
-        var fullyFetched = this.collection.next_offset <= 0;
+        var fullyFetched = this.collection.next_offset < 0;
+
         // Override default properties with passed-in values.
         length = !_.isUndefined(options.length) ? options.length : length;
+        if (length === 0 && this.collection.total > this.collection.getOption().limit) {
+            // Having a total greater than 0 means that the length of records shall not be 0
+            length = this.collection.getOption().limit;
+        }
         fullyFetched = !_.isUndefined(options.hasMore) ? !options.hasMore : fullyFetched;
 
-        if (!length && !this.collection.dataFetched) {
+        if (!length && !this.collection.dataFetched && !this.collection.total) {
             return this.countLabel = '';
         }
 
         var tplKey = 'TPL_LIST_HEADER_COUNT_TOTAL';
-        var context = {num: length};
+        var context = {
+            num: length,
+            total: this.countTotal
+        };
 
         if (fullyFetched) {
             tplKey = 'TPL_LIST_HEADER_COUNT';
         } else if (!_.isNull(this.collection.total)) {
             context.total = this.collection.total;
-        } else {
+            this.countTotal = context.total;
+        } else if (!this.countTotal) {
             var tooltipLabel = app.lang.get('TPL_LIST_HEADER_COUNT_TOOLTIP', this.module);
             // FIXME: When SC-3681 is ready, we will no longer have the need for
             // this link, since the total will be displayed by default.
@@ -142,11 +151,22 @@
             return;
         }
 
-        this.listenTo(this.collection, 'remove reset', function() {
+        this.listenTo(this.collection, 'reset', function() {
             if (!this.disposed) {
-                this.updateCount();
+                if (this.countTotal) {
+                    var successFn = _.bind(function(total) {
+                        if (!this.disposed) {
+                            this.countTotal = total;
+                            this.updateCount();
+                        }
+                    }, this);
+                    this.collection.fetchTotal({success: successFn});
+                } else {
+                    this.updateCount();
+                }
             }
         });
+
         this.listenTo(this.context, 'paginate', function() {
             if (!this.disposed) {
                 this.fetchCount();
