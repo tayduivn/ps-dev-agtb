@@ -41,6 +41,7 @@ $dictionary['User'] = array(
                'wireless_advanced_search' => false,
                'rollup' => false,
                ),
+            'oidc_disabled' => true,
         ) ,
         'user_hash' => array(
             'name' => 'user_hash',
@@ -59,6 +60,7 @@ $dictionary['User'] = array(
                 'formula' => false,
                 'rollup' => false,
             ),
+            'oidc_disabled' => true,
         ) ,
         'system_generated_password' => array(
             'name' => 'system_generated_password',
@@ -131,6 +133,7 @@ $dictionary['User'] = array(
             'dbType' => 'varchar',
             'type' => 'name',
             'len' => '30',
+            'oidc_disabled' => true,
         ) ,
         'last_name' => array(
             'name' => 'last_name',
@@ -140,6 +143,7 @@ $dictionary['User'] = array(
             'len' => '30',
             'importable' => 'required',
         	'required' => true,
+            'oidc_disabled' => true,
         ) ,
         'full_name' => array(
             'name' => 'full_name',
@@ -309,12 +313,14 @@ $dictionary['User'] = array(
             'vname' => 'LBL_TITLE',
             'type' => 'varchar',
             'len' => '50',
+            'oidc_disabled' => true,
         ) ,
         'department' => array(
             'name' => 'department',
             'vname' => 'LBL_DEPARTMENT',
             'type' => 'varchar',
             'len' => '50',
+            'oidc_disabled' => true,
         ) ,
         'phone_home' => array(
             'name' => 'phone_home',
@@ -336,6 +342,7 @@ $dictionary['User'] = array(
             'type' => 'phone',
 			'dbType' => 'varchar',
             'len' => '50',
+            'oidc_disabled' => true,
         ) ,
         'phone_other' => array(
             'name' => 'phone_other',
@@ -359,6 +366,7 @@ $dictionary['User'] = array(
             'options' => 'user_status_dom',
             'importable' => 'required',
             'required' => true,
+            'oidc_disabled' => true,
         ) ,
         'address_street' => array(
             'name' => 'address_street',
@@ -368,6 +376,7 @@ $dictionary['User'] = array(
             'len' => '150',
             'group' => 'address',
             'group_label' => 'LBL_ADDRESS',
+            'oidc_disabled' => true,
         ) ,
         'address_city' => array(
             'name' => 'address_city',
@@ -375,6 +384,7 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'len' => '100',
             'group' => 'address',
+            'oidc_disabled' => true,
         ) ,
         'address_state' => array(
             'name' => 'address_state',
@@ -382,6 +392,7 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'len' => '100',
             'group' => 'address',
+            'oidc_disabled' => true,
         ) ,
         'address_country' => array(
             'name' => 'address_country',
@@ -389,6 +400,7 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'len' => 100,
             'group' => 'address',
+            'oidc_disabled' => true,
         ) ,
         'address_postalcode' => array(
             'name' => 'address_postalcode',
@@ -396,6 +408,7 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'len' => '20',
             'group' => 'address',
+            'oidc_disabled' => true,
         ) ,
         // This is a fake field for the edit view
         'UserType' => array(
@@ -408,6 +421,7 @@ $dictionary['User'] = array(
             'import' => false,
             'reportable' => false,
             'studio' => array('formula' => false),
+            'oidc_disabled' => true,
         ),
         'default_team' => array(
             'name' => 'default_team',
@@ -667,6 +681,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_REPORTS_TO_ID',
             'type' => 'id',
             'required' => false,
+            'oidc_disabled' => true,
         ) ,
         'reports_to_name' => array(
             'name' => 'reports_to_name',
@@ -682,6 +697,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'duplicate_merge' => 'disabled',
             'side' => 'right',
+            'oidc_disabled' => true,
         ) ,
         'reports_to_link' => array(
             'name' => 'reports_to_link',
@@ -691,6 +707,7 @@ $dictionary['User'] = array(
             'side' => 'right',
             'source' => 'non-db',
             'vname' => 'LBL_REPORTS_TO',
+            'oidc_disabled' => true,
         ) ,
         'reportees' => array(
             'name' => 'reportees',
@@ -716,6 +733,7 @@ $dictionary['User'] = array(
             'merge_filter' => 'enabled',
             'studio' => false,
             'exportable'=>true,
+            'oidc_disabled' => true,
         ),
         'email'=> array(
             'name' => 'email',
@@ -755,6 +773,7 @@ $dictionary['User'] = array(
             'required' => true,
             'link' => 'email_addresses_primary',
             'rname' => 'email_address',
+            'oidc_disabled' => true,
         ) ,
         'email_addresses_primary' => array(
             'name' => 'email_addresses_primary',
@@ -764,6 +783,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_EMAIL_ADDRESS_PRIMARY',
             'duplicate_merge' => 'disabled',
             'required' => true,
+            'oidc_disabled' => true,
         ),
         /* Virtual email fields so they will display on the main user page */
         'email_link_type' => array(

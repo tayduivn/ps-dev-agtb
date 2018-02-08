@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 class ModuleApi extends SugarApi {
 
@@ -25,6 +26,18 @@ class ModuleApi extends SugarApi {
     protected $disabledUpdateFields = array(
         'deleted',
     );
+
+    /**
+     * is OIDC auth provider enabled?
+     * @var bool
+     */
+    protected $isOidcEnabled;
+
+    /**
+     * What modules will be filtered if oidc is enabled?
+     * @var array
+     */
+    protected $oidcModules = ['Users', 'Employees'];
 
     public function registerApiRest() {
         return array(
@@ -171,6 +184,11 @@ class ModuleApi extends SugarApi {
         $api->action = 'save';
         $this->requireArgs($args,array('module'));
 
+        // Users can be created only in cloud console for OIDC mode.
+        if (in_array($args['module'], $this->oidcModules) && $this->isOidcEnabled()) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
+
         $bean = BeanFactory::newBean($args['module']);
 
         // TODO: When the create ACL goes in to effect, add it here.
@@ -306,6 +324,11 @@ class ModuleApi extends SugarApi {
     public function deleteRecord(ServiceBase $api, array $args)
     {
         $this->requireArgs($args,array('module','record'));
+
+        // Users can be deleted only in cloud console for OIDC mode.
+        if (in_array($args['module'], $this->oidcModules) && $this->isOidcEnabled()) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
 
         $bean = $this->loadBean($api, $args, 'delete', $this->aclCheckOptions);
         $bean->mark_deleted($args['record']);
@@ -678,5 +701,17 @@ class ModuleApi extends SugarApi {
         }
 
         return $this->relateRecordApi;
+    }
+
+    /**
+     * Is OIDC enabled?
+     * @return bool
+     */
+    protected function isOidcEnabled()
+    {
+        if (!isset($this->isOidcEnabled)) {
+            $this->isOidcEnabled = (new Config(SugarConfig::getInstance()))->isOIDCEnabled();
+        }
+        return $this->isOidcEnabled;
     }
 }
