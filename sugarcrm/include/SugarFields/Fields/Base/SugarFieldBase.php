@@ -770,9 +770,22 @@ class SugarFieldBase {
             $vardef['size'] = $this->normalizeNumeric($vardef['size']);
         }
 
-        // Bug 57890 - Required values should be boolean
-        if (isset($vardef['required'])) {
-            $vardef['required'] = $this->normalizeBoolean($vardef['required']);
+        $attributeNameWithBoolValue = [
+            'audited',
+            'exportable',
+            'massupdate',
+            'pii',
+            'readonly',
+            'reportable',
+            'required',
+            'sortable',
+        ];
+
+        // normalize bool value
+        foreach ($attributeNameWithBoolValue as $attributeName) {
+            if (isset($vardef[$attributeName])) {
+                $vardef[$attributeName] = $this->normalizeBoolean($vardef[$attributeName]);
+            }
         }
 
         // Handle normalizations that need to be applied
