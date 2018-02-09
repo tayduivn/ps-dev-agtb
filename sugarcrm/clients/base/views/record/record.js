@@ -29,6 +29,7 @@
         'GridBuilder',
         'Editable',
         'Audit',
+        'Pii',
         'FindDuplicates',
         'ToggleMoreLess'
     ],

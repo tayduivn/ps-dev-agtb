@@ -3431,7 +3431,6 @@ Sincerely, SugarCRM',
     'LNK_VIEW_CHANGE_LOG' => 'View Change Log',
     'LNK_VIEW_AUDIT_LOG' => 'View Audit Log',
 
-
     'NTC_CLICK_BACK' => 'Please click the browser back button and fix the error.',
     'NTC_DATE_FORMAT' => '(yyyy-mm-dd)',
     'NTC_DATE_TIME_FORMAT' => '(yyyy-mm-dd 24:00)',
@@ -5352,8 +5351,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_DATAPRIVACY' => 'Data Privacy',
     'LBL_DATAPRIVACY_SUBPANEL_TITLE' => 'Data Privacy',
-
-    'LBL_EMAIL_ADDRESS_OPTED_OUT' => 'Opted out of email campaigns',
+    'LBL_DATAPRIVACY_VIEW_PII' => 'View PII',
 );
 
 $app_list_strings['activity_user_options'] = array (
