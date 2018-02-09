@@ -58,7 +58,7 @@ Then(/^I verify fields on (#[a-zA-Z](?:\w|\S)*)$/,
 
 Then(/^I verify fields on QLI total (header|footer) on (#[a-zA-Z](?:\w|\S)*) view$/, async function (componentName, view: RecordLayout, data: TableDefinition) {
 
-    let fildsData: any = data.hashes();
+    let fieldsData: any = data.hashes();
     let component = null;
 
     switch (componentName) {
@@ -70,7 +70,7 @@ Then(/^I verify fields on QLI total (header|footer) on (#[a-zA-Z](?:\w|\S)*) vie
             break;
     }
 
-    let errors = await component.checkFields(fildsData);
+    let errors = await component.checkFields(fieldsData);
 
     let message = '';
     _.each(errors, (item) => {

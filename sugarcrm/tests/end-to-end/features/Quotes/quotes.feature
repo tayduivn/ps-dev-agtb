@@ -789,11 +789,11 @@ Feature: Quotes module E2E testing
       | total     | $784.00 |
     # 6. Verify that numbers in QLI table footer are not updated
     Then I verify fields on QLI total footer on #Quote_3Record view
-      | fieldName | value                       |
-      | new_sub   | Discounted Subtotal $784.00 |
-      | tax       | Tax $0.00                   |
-#      | shipping  | Shipping $0.00              |
-      | total     | Grand Total $784.00         |
+      | fieldName | value   |
+      | new_sub   | $784.00 |
+      | tax       | $0.00   |
+      | shipping  | $0.00   |
+      | total     | $784.00 |
     When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
     When I click Edit button on #Quote_3Record header
     # 7. Change the currency of the quote and cancel
@@ -814,11 +814,11 @@ Feature: Quotes module E2E testing
       | total     | €392.00 |
     # 9. Verify that numbers in QLI table footer are updated
     Then I verify fields on QLI total footer on #Quote_3Record view
-      | fieldName | value                       |
-      | new_sub   | Discounted Subtotal €392.00 |
-      | tax       | Tax €0.00                   |
-      | shipping  | Shipping €0.00              |
-      | total     | Grand Total €392.00         |
+      | fieldName | value   |
+      | new_sub   | €392.00 |
+      | tax       | €0.00   |
+      | shipping  | €0.00   |
+      | total     | €392.00 |
 
 
 

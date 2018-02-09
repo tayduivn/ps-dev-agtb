@@ -92,6 +92,50 @@ export class DetailQLI extends CurrencyField {
     }
 }
 
+export class QLITableFooterShipping extends CurrencyField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: '.quote-footer-currency-value'
+            }
+        });
+
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+
+        return value.toString().trim();
+
+    }
+}
+
+export class QLITableFooterOther extends CurrencyField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: '.quote-footer-value'
+            }
+        });
+
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+
+        return value.toString().trim();
+
+    }
+}
+
 export class Detail extends CurrencyField {
 
     constructor(options) {
