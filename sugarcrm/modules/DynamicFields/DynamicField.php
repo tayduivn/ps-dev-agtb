@@ -576,7 +576,9 @@ class DynamicField {
         $fmd->massupdate = $field->massupdate;
         $fmd->importable = ( isset ( $field->importable ) ) ? $field->importable : null ;
         $fmd->duplicate_merge = $field->duplicate_merge;
-        $fmd->audited =$field->audited;
+        $fmd->pii = $field->pii;
+        // pii field is always auditable
+        $fmd->audited = isTruthy($field->audited) || isTruthy($field->pii);
         $fmd->reportable = ($field->reportable ? 1 : 0);
         if(!$is_update){
             $fmd->new_with_id=true;

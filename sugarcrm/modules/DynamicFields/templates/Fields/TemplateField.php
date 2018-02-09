@@ -349,7 +349,7 @@ class TemplateField{
             'importable' => $this->importable,
             'duplicate_merge' => $this->duplicate_merge,
             'duplicate_merge_dom_value' => $this->getDupMergeDomValue(),
-            'audited' => $this->convertBooleanValue($this->audited),
+            'audited' => $this->convertBooleanValue($this->audited) || $this->convertBooleanValue($this->pii),
             'reportable' => $this->convertBooleanValue($this->reportable),
             'unified_search' => $this->convertBooleanValue($this->unified_search),
             'merge_filter' => empty($this->merge_filter) ? "disabled" : $this->merge_filter,

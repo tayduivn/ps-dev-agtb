@@ -1614,6 +1614,19 @@ if (typeof(ModuleBuilder) == 'undefined') {
             if (rel)
                 tmpElem.rel = rel;
             headElem.appendChild(tmpElem);
+        },
+        enforceAuditPii: function() {
+            var piiCheckBox = document.getElementById("piiCheckbox");
+            var auditCheckBox = document.getElementById("auditedCheckbox");
+            if (piiCheckBox && auditCheckBox) {
+                if (piiCheckBox.checked) {
+                    auditCheckBox.checked = true;
+                    auditCheckBox.disabled = true;
+                    auditCheckBox.value = 1;
+                } else {
+                    auditCheckBox.disabled = false;
+                }
+            }
         }
 // BEGIN SUGARCRM flav=ent ONLY
         ,switchLayoutRole: function(element) {
