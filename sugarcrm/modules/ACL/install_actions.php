@@ -119,7 +119,7 @@ $role1 = BeanFactory::newBean('ACLRoles');
     $db = DBManagerFactory::getInstance();
     $result = $db->query($sql);
     $roles = array();
-    while ($row = $db->fetchByAssoc($result, true, true)) {
+    while ($row = $db->fetchByAssoc($result)) {
         $roles[$row['id']] = $row['name'];
     }
     foreach ($roles as $id => $name) {
