@@ -3213,7 +3213,7 @@ class SugarBean
         }
         $row = $results[0];
         if ($encode && $this->db->getEncode()) {
-            $row = array_map([$this->db, 'encodeHTML'], $row);
+            $row = $this->htmlEncodeRow($row);
         }
 
         //make copy of the fetched row for construction of audit record and for business logic/workflow
@@ -6303,7 +6303,7 @@ class SugarBean
         }
         $row = $results[0];
         if ($encode && $this->db->getEncode()) {
-            $row = array_map([$this->db, 'encodeHTML'], $row);
+            $row = $this->htmlEncodeRow($row);
         }
         // Removed getRowCount-if-clause earlier and insert duplicates_found here as it seems that we have found something
         // if we didn't return null in the previous clause.
@@ -8289,5 +8289,24 @@ class SugarBean
     public static function getMobileSupportingModules()
     {
         return array();
+    }
+
+    /**
+     * Encodes special HTML characters in the row fields which require encoding when presented in BWC views
+     *
+     * @param array $row
+     * @return array
+     */
+    private function htmlEncodeRow(array $row)
+    {
+        foreach ($row as $field => $value) {
+            if (isset($this->field_defs[$field]) && $this->field_defs[$field]['type'] === 'json') {
+                continue;
+            }
+
+            $row[$field] = $this->db->encodeHTML($value);
+        }
+
+        return $row;
     }
 }

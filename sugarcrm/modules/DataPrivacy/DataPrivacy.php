@@ -23,6 +23,11 @@ class DataPrivacy extends Issue
     /**
      * @var string
      */
+    public $source;
+
+    /**
+     * @var string
+     */
     public $fields_to_erase;
 
     /**

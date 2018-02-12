@@ -118,17 +118,53 @@ class AbstractMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function validFieldDataProvider()
     {
-        return array(
-            array(true, array('name' => 'uploadfile', 'source' => 'non-db', 'type' => 'file'), '', ''),
-            array(false, array('name' => 'uploadfile', 'source' => 'non-db', 'type' => 'varchar'), '', '')
-        );
+        return [
+            [
+                [
+                    'name' => 'uploadfile',
+                    'source' => 'non-db',
+                    'type' => 'file',
+                ],
+                true,
+            ],
+            [
+                [
+                    'name' => 'uploadfile',
+                    'source' => 'non-db',
+                    'type' => 'varchar',
+                ],
+                false,
+            ],
+            'name-and-type-are-enough' => [
+                [
+                    'name' => 'name',
+                    'type' => 'varchar',
+                ],
+                true,
+            ],
+            'json-is-invalid' => [
+                [
+                    'name' => 'data',
+                    'type' => 'json',
+                ],
+                false,
+            ],
+            'json-can-be-enabled' => [
+                [
+                    'name' => 'data',
+                    'type' => 'json',
+                    'studio' => true,
+                ],
+                true,
+            ],
+        ];
     }
 
     /**
      * @dataProvider validFieldDataProvider
      */
-    public function testValidField($expected, $def, $view, $client)
+    public function testValidField(array $definition, $expected)
     {
-        $this->assertEquals($expected, AbstractMetaDataParser::validField($def, $view, $client));
+        $this->assertEquals($expected, AbstractMetaDataParser::validField($definition));
     }
 }
