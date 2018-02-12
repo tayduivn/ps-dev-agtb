@@ -298,6 +298,11 @@
             }
         };
 
+        // remove the phaser console log
+        window.PhaserGlobal = {
+            hideBanner: true
+        };
+
         // use 100% for the width and 260px for the height
         this.phaser = new Phaser.Game({
             height: 260,
