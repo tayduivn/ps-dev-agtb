@@ -450,8 +450,8 @@
                     };
                 };
 
-                // use scrollbar as long as we're not using firefox or safari
-                this.useScrollbar = !(this.game.device.firefox || this.game.device.safari);
+                // use scrollbar as long as we're not using firefox or safari or ie
+                this.useScrollbar = !(this.game.device.firefox || this.game.device.safari || this.game.device.ie);
 
                 if (this.game.hasTreeData) {
                     this._setTreeData(this.game.treeData);
