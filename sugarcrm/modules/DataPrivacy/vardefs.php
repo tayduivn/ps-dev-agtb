@@ -27,11 +27,6 @@ $dictionary['DataPrivacy'] = array(
             'options' => 'dataprivacy_type_dom',
             'len'=>255,
             'unified_search' => true,
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-                'boost' => 1.25,
-            ),
             'comment' => 'The type of request',
             'sortable' => true,
             'duplicate_on_record_copy' => 'always',
@@ -47,10 +42,6 @@ $dictionary['DataPrivacy'] = array(
             'comment' => 'The status of the request',
             'sortable' => true,
             'duplicate_on_record_copy' => 'always',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
         ),
         'business_purpose' => array (
             'name' => 'business_purpose',
@@ -95,7 +86,7 @@ $dictionary['DataPrivacy'] = array(
                 'type' => 'varchar',
                 'len' => 255,
                 'required' => false,
-                'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.65),
+                'full_text_search' => array('enabled' => true, 'searchable' => true),
                 'comment' => 'The source of the request',
             ),
         'requested_by' =>
@@ -104,6 +95,10 @@ $dictionary['DataPrivacy'] = array(
                 'vname' => 'LBL_REQUESTED_BY',
                 'type' => 'varchar',
                 'len' => 255,
+                'full_text_search' => array(
+                    'enabled' => true,
+                    'searchable' => true,
+                ),
                 'comment' => 'Requested by',
             ),
         'date_opened' =>
@@ -123,19 +118,14 @@ $dictionary['DataPrivacy'] = array(
                 'type' => 'date',
                 'options' => 'date_range_search_dom',
                 'enable_range_search' => true,
-                'full_text_search' => array(
-                    'enabled' => true,
-                    'searchable' => false,
-                    'sortable' => true,
-                 ),
-                 'comment' => 'Due date',
+                'comment' => 'Due date',
              ),
         'resolution' =>
             array (
                 'name' => 'resolution',
                 'vname' => 'LBL_RESOLUTION',
                 'type' => 'text',
-                'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.65),
+                'full_text_search' => array('enabled' => true, 'searchable' => true),
                 'comment' => 'The resolution of the request',
             ),
         'date_closed' =>
@@ -145,11 +135,6 @@ $dictionary['DataPrivacy'] = array(
                 'type' => 'date',
                 'options' => 'date_range_search_dom',
                 'enable_range_search' => true,
-                'full_text_search' => array(
-                    'enabled' => true,
-                    'searchable' => false,
-                    'sortable' => true,
-                ),
                 'comment' => 'Date closed',
             ),
         'fields_to_erase' => array(
@@ -191,8 +176,3 @@ $dictionary['DataPrivacy'] = array(
 );
 
 VardefManager::createVardef('DataPrivacy', 'DataPrivacy', array('default', 'assignable', 'team_security', 'issue'));
-
-// boost value for full text search. copied from Case.
-$dictionary['DataPrivacy']['fields']['name']['full_text_search']['boost'] = 1.53;
-$dictionary['DataPrivacy']['fields']['dataprivacy_number']['full_text_search']['boost'] = 1.29;
-$dictionary['DataPrivacy']['fields']['description']['full_text_search']['boost'] = 0.66;
