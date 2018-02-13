@@ -72,7 +72,9 @@
             signature_location: 'above',
             // Focus the editor and place the cursor at the beginning of all
             // content.
-            cursor_location: 'above'
+            cursor_location: 'above',
+            // Prevent prepopulating the email with case data.
+            skip_prepopulate_with_case: true
         });
     },
 

@@ -207,6 +207,8 @@
              * assigned user.
              * @param {string} [options.assigned_user_name] The name of the
              * assigned user.
+             * @param {boolean} [options.skip_prepopulate_with_case] Prevent
+             * prepopulating case data in the email.
              */
             addEmailOptions: function(options) {
                 this.emailOptions = this.emailOptions || {};

@@ -27,6 +27,7 @@ import * as EmailField from '../fields/email-field';
 import * as DiscountSelectField from '../fields/discount-select-field';
 import * as BoolField from '../fields/bool-field';
 import * as TeamsetField from '../fields/teamset-field';
+import * as ParentField from '../fields/parent-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -55,5 +56,6 @@ export const FIELD_TYPES__MAP = {
     'discount-select':DiscountSelectField,
     'pricing-formula':PricingFormula,
     teamset: TeamsetField,
+    parent: ParentField,
 };
 

@@ -759,6 +759,30 @@ describe("Sugar7 utils", function() {
                         expect(model.get('name')).toBe('[CASE:100] My Case');
                         expect(model.get('to_collection').length).toBe(1);
                     });
+
+                    it('should not prepopulate the email with case data', function() {
+                        var model;
+                        var email = app.data.createBean('Emails');
+
+                        relatedCollection.add([
+                            app.data.createBean('Contacts', {
+                                id: _.uniqueId(),
+                                name: 'Jaime Hammonds'
+                            })
+                        ]);
+
+                        app.utils.openEmailCreateDrawer('compose-email', {
+                            related: aCase,
+                            skip_prepopulate_with_case: true
+                        });
+                        model = app.drawer.open.firstCall.args[0].context.model;
+
+                        expect(model.get('parent_type')).toBe('Cases');
+                        expect(model.get('parent_id')).toBe(aCase.get('id'));
+                        expect(model.get('parent_name')).toBe('My Case');
+                        expect(model.get('name')).toBeUndefined();
+                        expect(email.get('to_collection').add).not.toHaveBeenCalled();
+                    });
                 });
             });
         });

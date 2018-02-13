@@ -176,6 +176,10 @@ describe('Emails.Field.ForwardAction', function() {
             expect(field.emailOptions.signature_location).toBe('above');
         });
 
+        it('should not prepopulate the email with case data', function() {
+            expect(field.emailOptions.skip_prepopulate_with_case).toBe(true);
+        });
+
         using('subjects', [
             {
                 original: '',

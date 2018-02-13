@@ -93,6 +93,35 @@ Feature: Emails module verification
       | recently_created | Recently Created. | Draft  |
       | recently_viewed  | Recently Viewed.  | Draft  |
 
+  @email-cases-reply
+  Scenario: Emails > List View > Open Record View > Edit Email > Set Related To Field > Save Email > Reply to Email > Verify Email Recipient and Subject
+    Given Contacts records exist:
+      | *name     |
+      | Contact_1 |
+    Given Cases records exist related via cases link:
+      | *name  |
+      | Case_1 |
+    Given Emails records exist:
+      | *  | name | state       | description_html |
+      | R1 | Test | Archived    | <p>hello</p>     |
+    Given I open about view and login
+    When I choose Emails in modules menu
+    Then I should see *R1 in #EmailsList.ListView
+    When I select *R1 in #EmailsList.ListView
+    Then I should see #R1Record.RecordView view
+    When I click show more button on #R1Record view
+    When I open actions menu in #R1Record
+    Then I click Edit button on #R1Record header
+    When I provide input for #R1Record.RecordView view
+      | parent_name |
+      | Case,Case_1 |
+    When I click Save button on #R1Record header
+    Then I close alert
+    When I click Reply button on #R1Record header
+    Then I verify fields on #EmailsRecord.RecordView
+      | fieldName     | value    |
+      | name          | Re: Test |
+      | to_collection | ,        |
 
   @email-signatures
   Scenario Outline: Emails > Create Email Signature

@@ -34,7 +34,8 @@ export default class RecordHeaderView extends BaseView {
                 'createopportunity': 'a[name="convert_to_opportunity_button"]:not(.hide)',
                 'generatequote': 'a[name="convert_to_quote_button"]:not(.hide)',
                 'convert': 'a[name="lead_convert_button"]:not(.hide)',
-                'actions': '.actions:not([style*="display: none"]) a.btn.dropdown-toggle'
+                'actions': '.actions:not([style*="display: none"]) a.btn.dropdown-toggle',
+                'reply': 'a[name="reply_button"]:not(.hide)',
             },
 
             title: {

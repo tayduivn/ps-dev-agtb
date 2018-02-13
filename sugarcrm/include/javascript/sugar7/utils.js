@@ -145,6 +145,8 @@
          * more convenient alternative name for the attachments.
          * @param {Data.Bean} [data.related] A convenience for relating a
          * parent record to the email.
+         * @param {boolean} [data.skip_prepopulate_with_case] Prevent
+         * prepopulating case data in the email.
          * @return {Object} Any key-values pairs that could not be assigned are
          * returned so the caller can decide what to do with them.
          */
@@ -167,7 +169,10 @@
                 fieldDefs = fields[fieldName] || {};
 
                 if (fieldName === 'related') {
-                    prepopulateEmailWithCase(email, value);
+                    if (data.skip_prepopulate_with_case !== true) {
+                        prepopulateEmailWithCase(email, value);
+                    }
+
                     setParentAttributes(email, value);
                 } else if (fieldDefs.type === 'collection') {
                     if (value instanceof app.BeanCollection) {
