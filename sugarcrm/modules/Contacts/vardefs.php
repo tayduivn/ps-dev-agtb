@@ -321,6 +321,7 @@ $dictionary['Contact'] = array(
             'name' => 'dp_consent_last_updated',
             'vname' => 'LBL_DATAPRIVACY_CONSENT_LAST_UPDATED',
             'type' => 'date',
+            'display_default' => 'now',
             'audited' => true,
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
