@@ -12,10 +12,11 @@
  */
 
 
-/*
+/**
  * Tests SNIP's import email feature by calling $snip->importEmail() using dummy data. Does not test object creation.
+ *
+ * @coversDefaultClass SugarSNIP
  */
-
 class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 	private $snip;
 	private $date_time_format;
@@ -24,8 +25,13 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 	private $email_id = '';
 	private $meeting_id = '';
 
+    /**
+     * @covers ::importEmail
+     * @covers ::processEmailAttachment
+     * @covers iCalendar::parse
+     * @covers iCalendar::createSugarEvents
+     */
 	public function testNewEmailWithEvent () {
-        $this->markTestIncomplete("This test crashes when not run in isolation");
 		// import email through snip
 		$file_path = 'tests/{old}/modules/SNIP/SampleEvent.ics';
 
@@ -53,7 +59,6 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 
 		// get the meeting
 		$meeting = BeanFactory::newBean('Meetings');
-        $this->assertTrue(is_a($meeting,'SugarBean'));
 		$meeting->retrieve_by_string_fields(array('parent_id' => $e->id, 'parent_type' => $e->module_dir));
 		$this->assertTrue(isset($meeting->id) && !empty($meeting->id), 'Unable to retrieve meeting object');
 		$this->meeting_id = $meeting->id;
@@ -65,14 +70,15 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals('2002-10-28 22:00:00', $GLOBALS['db']->fromConvert($meeting->date_start, 'datetime'));
 		$this->assertEquals('2002-10-28 23:00:00', $GLOBALS['db']->fromConvert($meeting->date_end, 'datetime'));
 		$this->assertEquals('Emails', $meeting->parent_type);
+        $this->assertEquals($e->id, $meeting->parent_id);
 		$this->assertEquals($email['message']['subject'], $meeting->parent_name);
 	}
 
+    /**
+     * @covers ::importEmail
+     */
 	public function testNewEmail()
 	{
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-		global $current_user;
-
 		// import email through snip
 		$email['message']['message_id'] = '12345';
 		$email['message']['from_name'] = 'Test Emailer <temailer@sugarcrm.com>';
@@ -97,21 +103,21 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 
         // validate if everything was saved correctly
 		$this->assertEquals($email['message']['message_id'], $e->message_id);
-		$this->assertEquals($email['message']['from_name'], $e->from_addr_name);
+        $this->assertEquals('temailer@sugarcrm.com', $e->from_addr_name);
 		$this->assertEquals($email['message']['description'], $e->description);
 		$this->assertEquals($email['message']['description_html'], $e->description_html);
-		$this->assertEquals($email['message']['to_addrs'], $e->to_addrs);
-		$this->assertEquals($email['message']['cc_addrs'], $e->cc_addrs);
-		$this->assertEquals($email['message']['bcc_addrs'], $e->bcc_addrs);
+        $this->assertEquals('sugar.phone@example.name', $e->to_addrs);
+        $this->assertEquals('sugar.section.dev@example.net', $e->cc_addrs);
+        $this->assertEquals('qa.sugar@example.net', $e->bcc_addrs);
 		$this->assertEquals($email['message']['subject'], $e->name);
 		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
 	}
 
+    /**
+     * @covers ::importEmail
+     */
 	public function testDescriptionHTML()
 	{
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-		global $current_user;
-
 		// import email through snip
 		$email['message']['message_id'] = '23456';
 		$email['message']['from_name'] = 'Test Emailer <temailer@sugarcrm.com>';
@@ -137,9 +143,11 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($email['message']['description_html'], $e->description_html, "Bad html description");
 	}
 
+    /**
+     * @covers ::importEmail
+     */
 	public function testExistingEmail ()
 	{
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
 		// import email through snip
 		$email['message']['message_id'] = '2002';
 		$email['message']['from_name'] = 'Test Emailer <temailer@sugarcrm.com>';
@@ -177,16 +185,20 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 
         // everything should match the content of the first email because the second email should've been rejected
 		$this->assertEquals($email['message']['message_id'], $e->message_id);
-		$this->assertEquals($email['message']['from_name'], $e->from_addr_name);
+        $this->assertEquals('temailer@sugarcrm.com', $e->from_addr_name);
 		$this->assertEquals($email['message']['description'], $e->description);
 		$this->assertEquals($email['message']['description_html'], $e->description_html);
-		$this->assertEquals($email['message']['to_addrs'], $e->to_addrs);
-		$this->assertEquals($email['message']['cc_addrs'], $e->cc_addrs);
-		$this->assertEquals($email['message']['bcc_addrs'], $e->bcc_addrs);
+        $this->assertEquals('sales.support@example.biz', $e->to_addrs);
+        $this->assertEquals('sugar.info.the@example.info', $e->cc_addrs);
+        $this->assertEmpty($e->bcc_addrs);
 		$this->assertEquals($email['message']['subject'], $e->name);
 		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
 	}
 
+    /**
+     * @covers ::importEmail
+     * @covers ::relateRecords
+     */
 	public function testRelateCase()
 	{
 	    $case = new aCase();
