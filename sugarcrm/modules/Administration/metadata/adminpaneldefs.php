@@ -9,6 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
+
 global $current_user,$admin_group_header;
 
 //users and security.
@@ -16,7 +19,32 @@ $admin_option_defs=array();
 $admin_option_defs['Users']['user_management']= array('Users','LBL_MANAGE_USERS_TITLE','LBL_MANAGE_USERS','./index.php?module=Users&action=index');
 $admin_option_defs['Users']['roles_management']= array('Roles','LBL_MANAGE_ROLES_TITLE','LBL_MANAGE_ROLES','./index.php?module=ACLRoles&action=index');
 $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS_TITLE','LBL_MANAGE_TEAMS','./index.php?module=Teams&action=index');
-$admin_option_defs['Administration']['password_management']= array('Password','LBL_MANAGE_PASSWORD_TITLE','LBL_MANAGE_PASSWORD','./index.php?module=Administration&action=PasswordManager');
+
+$idpConfig = new Authentication\Config(\SugarConfig::getInstance());
+$oidcConfig = $idpConfig->getOIDCConfig();
+if ($idpConfig->isOIDCEnabled()) {
+    $passwordManagerUrl = $oidcConfig['cloudConsoleUrl'];
+    $passwordManagerTarget = '_blank';
+    $passwordManagerOnClick = sprintf(
+        'onclick = "app.alert.show(\'disabled-for-oidc\', {level: \'warning\', messages: \'%s\'});"',
+        $GLOBALS['app_strings']['ERR_DISABLED_FOR_OIDC']
+    );
+} else {
+    $passwordManagerUrl = './index.php?module=Administration&action=PasswordManager';
+    $passwordManagerTarget = '_self';
+    $passwordManagerOnClick = null;
+}
+
+$admin_option_defs['Administration']['password_management'] = array(
+    'Password',
+    'LBL_MANAGE_PASSWORD_TITLE',
+    'LBL_MANAGE_PASSWORD',
+    $passwordManagerUrl,
+    null,
+    $passwordManagerOnClick,
+    $passwordManagerTarget,
+);
+
 //BEGIN SUGARCRM flav=ent ONLY
 $admin_option_defs['Users']['tba_management'] = array('TbACLs', 'LBL_TBA_CONFIGURATION', 'LBL_TBA_CONFIGURATION_DESC', './index.php?module=Teams&action=tba');
 //END SUGARCRM flav=ent ONLY

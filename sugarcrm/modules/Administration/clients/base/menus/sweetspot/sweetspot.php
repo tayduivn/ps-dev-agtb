@@ -9,6 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
+
+$idpConfig = new Authentication\Config(\SugarConfig::getInstance());
+$oidcConfig = $idpConfig->getOIDCConfig();
+
 $moduleName = 'Administration';
 $adminRoute = '#bwc/index.php?module=Administration&action=';
 $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
@@ -56,6 +61,7 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'module' => $moduleName,
         'icon' => 'fa-cogs',
         'route' => $adminRoute . 'PasswordManager',
+        'oidc_link' => $idpConfig->isOIDCEnabled() ? $oidcConfig['cloudConsoleUrl'] : null,
     ),
 
     // Sugar Connect

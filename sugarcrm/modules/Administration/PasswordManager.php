@@ -12,7 +12,20 @@
 
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+$idpConfig = new Authentication\Config(\SugarConfig::getInstance());
+$oidcConfig = $idpConfig->getOIDCConfig();
+if ($idpConfig->isOIDCEnabled()) {
+    sugar_die(
+        sprintf(
+            $GLOBALS['app_strings']['ERR_DISABLED_FOR_OIDC'] . ' ' .
+            $GLOBALS['app_strings']['ERR_GOTO_CLOUD_CONSOLE'],
+            $oidcConfig['cloudConsoleUrl']
+        )
+    );
+}
 
 if(!is_admin($current_user)){
     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);

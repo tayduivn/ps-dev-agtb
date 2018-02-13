@@ -118,6 +118,11 @@
                         weight: weight,
                     };
 
+                    if (action.oidc_link && app.metadata.getConfig().oidcEnabled) {
+                        actionObj.route = action.oidc_link;
+                        actionObj.openwindow = true;
+                    }
+
                     if (action.openwindow) {
                         actionObj.openwindow = action.openwindow;
                     }

@@ -2684,6 +2684,8 @@ $app_strings = array (
     'ERR_NEED_ACTIVE_SESSION' => 'An active session is required to export content.',
     'ERR_NO_HEADER_ID' => 'This feature is unavailable in this theme.',
     'ERR_NOT_ADMIN' => "Unauthorized access to administration.",
+    'ERR_DISABLED_FOR_OIDC' => "This option is disabled in SugarCRM for IDM mode and available in Cloud Console.",
+    'ERR_GOTO_CLOUD_CONSOLE' => "Please go to the <a href=\"%s\" target=\"_blank\">Cloud Console</a>.",
     'ERR_MISSING_REQUIRED_FIELDS' => 'Missing required field:',
     'ERR_INVALID_REQUIRED_FIELDS' => 'Invalid required field:',
     'ERR_INVALID_VALUE' => 'Invalid Value:',
