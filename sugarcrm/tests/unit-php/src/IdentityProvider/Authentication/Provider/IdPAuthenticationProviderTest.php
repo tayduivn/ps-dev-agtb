@@ -17,7 +17,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\IdPAuthentication
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\IdpUsernamePasswordToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
-use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
@@ -61,7 +61,7 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->userChecker = $this->createMock(UserCheckerInterface::class);
         $this->userProvider = $this->createMock(SugarOIDCUserProvider::class);
-        $this->oAuthProvider = $this->createMock(GenericProvider::class);
+        $this->oAuthProvider = $this->createMock(IdmProvider::class);
         $this->user = new User();
         $this->provider = new IdPAuthenticationProvider(
             $this->oAuthProvider,

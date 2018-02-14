@@ -17,12 +17,11 @@ use League\OAuth2\Client\Token\AccessToken;
 
 use Sugarcrm\IdentityProvider\Hydra\EndpointInterface;
 use Sugarcrm\IdentityProvider\Srn\Converter;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
-use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
 
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -39,7 +38,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class OIDCAuthenticationProvider implements AuthenticationProviderInterface
 {
     /**
-     * @var GenericProvider
+     * @var IdmProvider
      */
     protected $oAuthProvider = null;
 

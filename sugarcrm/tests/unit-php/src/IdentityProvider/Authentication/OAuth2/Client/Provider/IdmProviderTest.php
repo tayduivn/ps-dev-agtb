@@ -10,11 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestsUnit\League\OAuth2\Client\Provider\HttpBasicAuth;
+namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\OAuth2\Client\Provider;
 
 use League\OAuth2\Client\Grant\ClientCredentials;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
-use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Psr\Http\Message\RequestInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\RequestFactory;
@@ -24,7 +24,7 @@ use GuzzleHttp\Psr7\Response;
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider
  */
-class GenericProviderTest extends \PHPUnit_Framework_TestCase
+class IdmProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RequestFactory | \PHPUnit_Framework_MockObject_MockObject
@@ -54,7 +54,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
         $this->request = $this->createMock(RequestInterface::class);
 
         $this->oidcConfig = [
-            'clientId' => 'test',
+            'clientId' => 'srn:test',
             'clientSecret' => 'testSecret',
             'redirectUri' => '',
             'urlAuthorize' => 'http://testUrlAuth',
@@ -139,7 +139,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetRequiredOptions(array $options)
     {
-        new GenericProvider($options);
+        new IdmProvider($options);
     }
 
     /**
@@ -158,7 +158,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
             ->method('prepareRequestParameters')
             ->with($this->isType('array'), $this->isType('array'))
             ->willReturn([
-                'client_id' => 'test',
+                'client_id' => 'srn:test',
                 'client_secret' => 'testSecret',
                 'redirect_uri'  => '',
                 'grant_type' => 'client_credentials',
@@ -166,7 +166,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->createMock(RequestInterface::class);
 
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
             ->setConstructorArgs([$this->oidcConfig])
             ->setMethods([
@@ -192,7 +192,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo('POST'), $this->equalTo($authUrl), $this->callback(function ($options) {
                 $this->assertArrayHasKey('headers', $options);
                 $this->assertArrayHasKey('Authorization', $options['headers']);
-                $this->assertEquals('Basic ' . base64_encode('test:testSecret'), $options['headers']['Authorization']);
+                $this->assertEquals('Basic ' . base64_encode(sprintf('%s:%s', urlencode('srn:test'), urlencode('testSecret'))), $options['headers']['Authorization']);
                 return true;
             }))
             ->willReturn($response);
@@ -216,11 +216,11 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
         $this->requestFactory->expects($this->once())
                              ->method('getRequestWithOptions')
                              ->with(
-                                 $this->equalTo(GenericProvider::METHOD_POST),
+                                 $this->equalTo(IdmProvider::METHOD_POST),
                                  $this->equalTo($authUrl),
                                  $this->callback(function ($options) {
                                      $this->assertEquals(
-                                         'Basic dGVzdDp0ZXN0U2VjcmV0',
+                                         'Basic c3JuJTNBdGVzdDp0ZXN0U2VjcmV0',
                                          $options['headers']['Authorization']
                                      );
                                      $this->assertEquals('token=token', $options['body']);
@@ -229,7 +229,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
                              )
                              ->willReturn($this->request);
 
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
             ->setConstructorArgs([$this->oidcConfig])
             ->setMethods([
@@ -263,7 +263,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
         $expectedResult = ['result' => 'success'];
         $accessToken = new AccessToken(['access_token' => 'testToken', 'expires_in' => '900']);
 
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
                          ->enableOriginalConstructor()
                          ->setConstructorArgs([$this->oidcConfig])
                          ->setMethods(
@@ -283,7 +283,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
         $this->requestFactory->expects($this->once())
                 ->method('getRequestWithOptions')
                 ->with(
-                    $this->equalTo(GenericProvider::METHOD_POST),
+                    $this->equalTo(IdmProvider::METHOD_POST),
                     $this->equalTo('http://idp.test/authenticate'),
                     $this->callback(function ($options) {
                         $this->assertEquals('Bearer testToken', $options['headers']['Authorization']);
@@ -306,7 +306,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetJwtBearerAccessToken()
     {
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
                          ->enableOriginalConstructor()
                          ->setConstructorArgs([$this->oidcConfig])
                          ->setMethods(['getAccessToken'])
@@ -341,9 +341,9 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
                 ['public'],
             ],
             'keySetId' => 'testSet',
-            'clientId' => 'test',
+            'clientId' => 'srn:test',
         ];
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
                          ->enableOriginalConstructor()
                          ->setConstructorArgs([$this->oidcConfig])
                          ->setMethods(['getAccessToken', 'getAuthenticatedRequest', 'getParsedResponse'])
@@ -359,7 +359,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
         $provider->expects($this->once())
                  ->method('getAuthenticatedRequest')
                  ->with(
-                     GenericProvider::METHOD_GET,
+                     IdmProvider::METHOD_GET,
                      'http://sts.sugarcrm.local/keys/testSet',
                      $accessToken,
                      ['scope' => 'hydra.keys.get']
@@ -397,7 +397,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testRetryDelayExponential($attempt, $delay)
     {
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
             ->disableOriginalConstructor()
             ->setMethods(['verifyGrant'])
             ->getMock();
@@ -430,7 +430,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testRetryDelayLinear($attempt, $delay)
     {
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
             ->disableOriginalConstructor()
             ->setMethods(['verifyGrant'])
             ->getMock();
@@ -490,7 +490,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDelayStrategy($config, $expectedDelay)
     {
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
             ->disableOriginalConstructor()
             ->setMethods(['verifyGrant'])
             ->getMock();
@@ -531,7 +531,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testRetryDecider($attempts, $currentAttempt, $responseCode, $continueRetry)
     {
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
             ->disableOriginalConstructor()
             ->setMethods(['verifyGrant'])
             ->getMock();
@@ -554,7 +554,7 @@ class GenericProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testProviderUsesOwnHttpClient()
     {
-        $provider = $this->getMockBuilder(GenericProvider::class)
+        $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
             ->setConstructorArgs([[
                 'clientId' => 'test',

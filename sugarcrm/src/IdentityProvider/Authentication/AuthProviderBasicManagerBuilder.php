@@ -31,7 +31,7 @@ use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider
 use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider;
 use Sugarcrm\IdentityProvider\Authentication\Provider\MixedAuthenticationProvider;
 
-use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Ldap\Adapter\ExtLdap\Adapter;
 use Symfony\Component\Ldap\Ldap;
@@ -207,7 +207,7 @@ class AuthProviderBasicManagerBuilder
         $sugarLocalUserProvider = new SugarLocalUserProvider();
 
         return new OIDCAuthenticationProvider(
-            new GenericProvider($this->oidcConfig),
+            new IdmProvider($this->oidcConfig),
             new SugarOIDCUserProvider($sugarLocalUserProvider),
             new SugarOIDCUserChecker($sugarLocalUserProvider)
         );
@@ -226,7 +226,7 @@ class AuthProviderBasicManagerBuilder
         $sugarLocalUserProvider = new SugarLocalUserProvider();
 
         return new IdPAuthenticationProvider(
-            new GenericProvider($this->oidcConfig),
+            new IdmProvider($this->oidcConfig),
             new SugarOIDCUserProvider($sugarLocalUserProvider),
             new SugarOIDCUserChecker($sugarLocalUserProvider),
             static::PROVIDER_KEY_IDP

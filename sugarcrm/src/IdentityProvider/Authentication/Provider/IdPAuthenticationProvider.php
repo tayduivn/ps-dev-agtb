@@ -17,7 +17,7 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\IdpUsernamePasswordToken;
-use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -35,7 +35,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class IdPAuthenticationProvider implements AuthenticationProviderInterface
 {
     /**
-     * @var GenericProvider
+     * @var IdmProvider
      */
     protected $oAuthProvider = null;
 

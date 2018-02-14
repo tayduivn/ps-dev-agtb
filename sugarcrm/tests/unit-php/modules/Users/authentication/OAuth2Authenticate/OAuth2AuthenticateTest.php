@@ -15,8 +15,6 @@ namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\OAuth2Authentic
 use SugarConfig;
 use PHPUnit_Framework_TestCase as TestCase;
 use OAuth2Authenticate;
-use Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider;
-use League\OAuth2\Client\Token\AccessToken;
 
 /**
  * @coversDefaultClass \OAuth2Authenticate

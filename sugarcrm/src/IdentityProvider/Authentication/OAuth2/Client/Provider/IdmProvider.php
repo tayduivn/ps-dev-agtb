@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth;
+namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider;
 
 use League\OAuth2\Client\Provider\GenericProvider as BasicGenericProvider;
 use League\OAuth2\Client\Token\AccessToken;
@@ -25,7 +25,7 @@ use Psr\Http\Message\ResponseInterface;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
-class GenericProvider extends BasicGenericProvider
+class IdmProvider extends BasicGenericProvider
 {
 
     /**
@@ -93,7 +93,7 @@ class GenericProvider extends BasicGenericProvider
      */
     protected function getHttpBasicAuthHeader()
     {
-        return 'Basic ' . base64_encode(sprintf('%s:%s', $this->clientId, $this->clientSecret));
+        return 'Basic ' . base64_encode(sprintf('%s:%s', urlencode($this->clientId), urlencode($this->clientSecret)));
     }
 
     /**
