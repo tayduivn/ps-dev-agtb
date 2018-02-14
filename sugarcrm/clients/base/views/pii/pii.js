@@ -33,7 +33,8 @@
 
     /**
      * Initialize the collection.
-     * @private
+     *
+     * @protected
      */
     _initCollection: function() {
         var PiiCollection = app.BeanCollection.extend({

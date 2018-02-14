@@ -12,6 +12,65 @@ describe('View.Views.Base.DataPrivacy.MarkForErasureView', function() {
     var view;
     var app;
     var model;
+    var parentModel;
+    var cloneModel;
+    var mockData = [
+        {
+            field_name: 'first_name',
+            value: 'Bob',
+            date_modified: '2018-01-24T12:44:58-08:00',
+            source: {
+                type: 'user',
+                module: 'Users',
+                id: '1',
+                name: 'Max Jensen',
+                first_name: 'Max',
+                last_name: 'Jensen'
+            }
+        },
+        {
+            field_name: 'last_name',
+            value: 'Belcher',
+            date_modified: '2017-01-20T12:44:58-08:00',
+            source: {
+                type: 'pmse_process',
+                module: 'pmse_Inbox',
+                id: 'pid1',
+                pmse_project_id: 'ppid1',
+                name: 'My Process',
+            }
+        },
+        {
+            field_name: 'phone_office',
+            value: '555-555-5555',
+            date_modified: '2018-01-23T02:44:58-08:00',
+            source: {
+                type: 'markto',
+            }
+        },
+        {
+            field_name: 'email',
+            value: 'foo@example.com',
+            date_modified: '2018-01-23T12:44:58-08:00',
+            source: {
+                type: 'user',
+                module: 'Users',
+                id: '1',
+                name: 'Max Jensen',
+                first_name: 'Max',
+                last_name: 'Jensen'
+            }
+        },
+        {
+            field_name: 'email',
+            value: 'bar@example.net',
+            date_modified: '2018-01-23T12:44:58-08:00',
+            source: {
+                type: 'markto'
+            }
+        }
+    ];
+    var fieldsToErase;
 
     beforeEach(function() {
         SugarTest.loadComponent('base', 'view', 'base');
@@ -58,80 +117,52 @@ describe('View.Views.Base.DataPrivacy.MarkForErasureView', function() {
             ],
         }, 'DataPrivacy');
         SugarTest.testMetadata.set();
-        app = SUGAR.App;
-        var modelForErase = app.data.createBean('Contacts');
 
+        app = SUGAR.App;
+        app.drawer = {
+            close: sinon.collection.stub()
+        };
+        app.router = {
+            reset: sinon.collection.stub()
+        };
+
+        var modelForErase = app.data.createBean('Contacts', {first_name: 'Bob', last_name: 'Wombat'});
+        modelForErase.link = {name: 'contacts'};
         modelForErase.set('id', 5);
-        var context = new app.Context({
+
+        parentModel = app.data.createBean('DataPrivacy', {name: 'DP Request', type: 'Request to Erase Information'});
+        parentModel.set('id', 10);
+
+        var parentContext = new app.Context({
+            model: parentModel
+        });
+        var context = parentContext.getChildContext({
             modelForErase: modelForErase
         });
+
         view = SugarTest.createView('base', 'DataPrivacy', 'mark-for-erasure', null, context, 'DataPrivacy');
+
+        fieldsToErase = {
+            contacts: {
+                '5': [
+                    'first_name'
+                ]
+            }
+        };
     });
 
     afterEach(function() {
         app.view.reset();
         view = null;
+        delete app.drawer;
+        delete app.router;
+        app = null;
         sinon.collection.restore();
     });
 
     describe('rendering the collection', function() {
         it('should render on collection reset', function() {
-            view.collection = app.data.createBeanCollection('MarkForErasure', [
-                {
-                    field_name: 'first_name',
-                    value: 'Bob',
-                    date_modified: '2018-01-24T12:44:58-08:00',
-                    source: {
-                        type: 'user',
-                        module: 'Users',
-                        id: '1',
-                        name: 'Max Jensen',
-                        first_name: 'Max',
-                        last_name: 'Jensen'
-                    }
-                },
-                {
-                    field_name: 'last_name',
-                    value: 'Belcher',
-                    date_modified: '2017-01-20T12:44:58-08:00',
-                    source: {
-                        type: 'pmse_process',
-                        module: 'pmse_Inbox',
-                        id: 'pid1',
-                        pmse_project_id: 'ppid1',
-                        name: 'My Process',
-                    }
-                },
-                {
-                    field_name: 'phone_office',
-                    value: '555-555-5555',
-                    date_modified: '2018-01-23T02:44:58-08:00',
-                    source: {
-                        type: 'markto',
-                    }
-                },
-                {
-                    field_name: 'email',
-                    value: 'foo@example.com',
-                    date_modified: '2018-01-23T12:44:58-08:00',
-                    source: {
-                        type: 'user',
-                        module: 'Users',
-                        id: '1',
-                        name: 'Max Jensen',
-                        first_name: 'Max',
-                        last_name: 'Jensen'
-                    }
-                },
-                {
-                    field_name: 'email',
-                    value: 'bar@example.net',
-                    date_modified: '2018-01-23T12:44:58-08:00',
-                    source: {
-                        type: 'markto'
-                    }
-                }
-            ]);
+            view.collection = app.data.createBeanCollection('MarkForErasure', mockData);
             view._renderData();
             var types = ['varchar', 'varchar', 'base', 'base', 'base'];
             _.each(view.collection.models, function(model, index) {
@@ -173,6 +204,196 @@ describe('View.Views.Base.DataPrivacy.MarkForErasureView', function() {
                 expect(defaultSuccessCallbackStub).toHaveBeenCalledWith({
                     fields: dummyFields,
                     records: dummyFields
+                });
+            });
+        });
+    });
+
+    describe('Mass Collection initialization', function() {
+        it('should initialize on collection sync', function() {
+            var triggerStub = sinon.collection.stub(view.context, 'trigger');
+            var addStub = sinon.collection.stub(view.massCollection, 'add');
+            parentModel.set('fields_to_erase', fieldsToErase);
+
+            var bean1 = app.data.createBean('MarkForErasureView', mockData[0]);
+            view.collection.add(bean1);
+            view.collection.trigger('sync');
+
+            expect(addStub).toHaveBeenCalledWith([bean1]);
+            expect(triggerStub).toHaveBeenCalledWith('markforerasure:masscollection:init');
+        });
+    });
+
+    describe('Marking for erasure', function() {
+        it('should update the fields_to_erase and then save the record', function() {
+            var bean1 = app.data.createBean('MarkForErasureView', mockData[0]);
+            var saveStub = sinon.collection.stub(view, 'saveRecord');
+            view.massCollection.reset();
+            view.massCollection.add([bean1]);
+
+            view.context.trigger('markforerasure:mark');
+
+            expect(saveStub).toHaveBeenCalledWith({
+                id: 10,
+                fields_to_erase: fieldsToErase
+            });
+        });
+    });
+
+    describe('saveRecord', function() {
+        var saveStub;
+        var attributes;
+
+        beforeEach(function() {
+            attributes = {
+                id: 10,
+                fields_to_erase: fieldsToErase
+            };
+            cloneModel = app.data.createBean('DataPrivacy', attributes);
+            sinon.collection.stub(parentModel, 'clone').returns(cloneModel);
+        });
+
+        it('should save just the fields_to_erase (and the id) and close the drawer', function() {
+            saveStub = sinon.collection.stub(cloneModel, 'save').yieldsTo('success');
+            view.saveRecord(attributes);
+            expect(saveStub.getCall(0).args[0]).toEqual(attributes);
+            expect(app.drawer.close).toHaveBeenCalled();
+        });
+
+        describe('clone sync', function() {
+            it('should trigger data:sync:start and sync just the desired attributes', function() {
+                // sync testing
+                sinon.collection.stub(app.data, 'getSyncCallbacks').returns({
+                    success: sinon.collection.stub()
+                });
+                sinon.collection.stub(app.data, 'parseOptionsForSync').returns({params: {a: 'a'}});
+
+                sinon.collection.stub(cloneModel, 'save', function() {
+                    cloneModel.sync('update', cloneModel);
+                });
+
+                var appDataTriggerStub = sinon.collection.stub(app.data, 'trigger');
+                var modelTriggerStub = sinon.collection.stub(cloneModel, 'trigger');
+                var recordsStub = sinon.collection.stub(app.api, 'records');
+
+                view.saveRecord(attributes);
+
+                expect(appDataTriggerStub).toHaveBeenCalledWith('data:sync:start');
+                expect(modelTriggerStub).toHaveBeenCalledWith('data:sync:start');
+                expect(recordsStub.getCall(0).args[2]).toEqual(attributes);
+            });
+        });
+
+        describe('error handling', function() {
+            var saveStub;
+
+            beforeEach(function() {
+                saveStub = sinon.collection.stub(cloneModel, 'save');
+            });
+
+            it('should retry the request on 412 errors', function() {
+                var error = {
+                    status: 412,
+                    request: {
+                        execute: sinon.collection.stub(),
+                        metadataRetry: false
+                    }
+                };
+                saveStub.yieldsTo('error', cloneModel, error);
+                sinon.collection.stub(app.api, 'getMetadataHash').returns('new-hash');
+
+                view.saveRecord(attributes);
+
+                app.trigger('app:sync:complete');
+                expect(error.request.execute).toHaveBeenCalledWith(null, 'new-hash');
+            });
+
+            it('should handle all other error types', function() {
+                var error = {
+                    status: 500
+                };
+                saveStub.yieldsTo('error', cloneModel, error);
+                var alertStub = sinon.collection.stub(app.alert, 'show');
+
+                view.saveRecord(attributes);
+
+                expect(alertStub).toHaveBeenCalledWith('error_while_save');
+            });
+        });
+    });
+
+    describe('Mass Collection event handling', function() {
+        var bean1;
+        var bean2;
+        var bean3;
+        var triggerStub;
+
+        beforeEach(function() {
+            view.massCollection = app.data.createBeanCollection('MarkForErasureView');
+            view.collection = app.data.createBeanCollection('MarkForErasureView');
+            bean1 = app.data.createBean('MarkForErasureView', mockData[0]);
+            bean1.set('id', 1);
+
+            bean2 = app.data.createBean('MarkForErasureView', mockData[1]);
+            bean3 = app.data.createBean('MarkForErasureView', mockData[2]);
+
+            triggerStub = sinon.collection.stub(view.massCollection, 'trigger');
+        });
+
+        afterEach(function() {
+            view.massCollection.reset();
+            view.collection.reset();
+            bean1 = null;
+        });
+
+        describe('mass_collection:add', function() {
+            it('should add the specified model(s) to the mass collection', function() {
+                var addStub = sinon.collection.stub(view.massCollection, 'add');
+                view.context.trigger('mass_collection:add', bean1);
+                expect(addStub).toHaveBeenCalledWith([bean1]);
+
+                var beans = [bean2, bean3];
+                view.context.trigger('mass_collection:add', beans);
+                expect(addStub).toHaveBeenCalledWith(beans);
+            });
+
+            it('should trigger all:checked if all the models are checked', function() {
+                view.collection.add(bean1);
+                view.context.trigger('mass_collection:add', bean1);
+                expect(triggerStub).toHaveBeenCalledWith('all:checked');
+            });
+        });
+
+        describe('mass_collection:add:all', function() {
+            it('should add all models from the collection into the mass collection', function() {
+                var resetStub = sinon.collection.stub(view.massCollection, 'reset');
+                view.context.trigger('mass_collection:add:all');
+                expect(resetStub).toHaveBeenCalledWith(view.collection.models);
+                expect(triggerStub).toHaveBeenCalledWith('all:checked');
+            });
+        });
+
+        describe('mass_collection:remove', function() {
+            it('should remove the specified model(s) from the mass collection and trigger not:all:checked', function() {
+                var removeStub = sinon.collection.stub(view.massCollection, 'remove');
+
+                view.context.trigger('mass_collection:remove', bean1);
+                expect(removeStub).toHaveBeenCalledWith([bean1]);
+                expect(triggerStub).toHaveBeenCalledWith('not:all:checked');
+
+                var beans = [bean2, bean3];
+                view.context.trigger('mass_collection:remove', beans);
+                expect(removeStub).toHaveBeenCalledWith(beans);
+                expect(triggerStub).toHaveBeenCalledWith('not:all:checked');
+            });
+        });
+
+        describe('mass_collection:remove:all and mass_collection:clear', function() {
+            using('different events', ['mass_collection:remove:all', 'mass_collection:clear'], function(event) {
+                it('should reset the mass collection and trigger not:all:checked', function() {
+                    var resetStub = sinon.collection.stub(view.massCollection, 'reset');
+                    view.context.trigger(event);
+                    expect(triggerStub).toHaveBeenCalledWith('not:all:checked');
                 });
             });
         });

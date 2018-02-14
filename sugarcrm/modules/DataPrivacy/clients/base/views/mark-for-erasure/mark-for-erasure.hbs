@@ -14,6 +14,13 @@
     <table class="table dataTable table-striped">
         <thead>
         <tr>
+            {{#each ../leftColumns}}
+                <th{{#if name}} data-fieldname="{{name}}"{{/if}}>
+                    <span>
+                        {{field ../../this template="list-header"}}
+                    </span>
+                </th>
+            {{/each}}
             {{#each fields}}
                 <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../orderBy.field name}}_{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}{{#if widthClass}} {{widthClass}}{{/if}}"
                     {{#if styles}} style="{{styles}}"{{/if}}
@@ -29,6 +36,11 @@
             {{#if ../filteredCollection.length}}
                 {{#each ../../filteredCollection}}
                     <tr name="{{module}}_{{attributes.id}}" class="single">
+                        {{#each ../../../leftColumns}}
+                            <td>
+                                {{field ../../../../this model=../this template=../../../../this.action}}
+                            </td>
+                        {{/each}}
                         {{#each fields}}
                             <td{{#if align}} class="{{align}}"{{/if}}>
                                 {{field ../../../../this model=../this template=../../../../this.action}}

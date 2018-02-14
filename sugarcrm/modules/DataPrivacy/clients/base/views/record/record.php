@@ -106,6 +106,11 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
                     'size' => 'large',
                     'dismiss_label' => true,
                     'readonly' => true,
+                    'related_fields' => array(
+                        // Need fields_to_erase for Mark for Erasure view
+                        // put in header because this is not customizable in Studio
+                        'fields_to_erase',
+                    ),
                 ),
                 'name',
                 array(

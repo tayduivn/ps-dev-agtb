@@ -29,15 +29,15 @@
     /**
      * Open a drawer to mark fields on the given model for erasure.
      *
-     * @param {Data.Bean} model Model to mark fields on.
+     * @param {Data.Bean} modelForErase Model to mark fields on.
      */
-    showMarkForEraseDrawer: function(model) {
+    showMarkForEraseDrawer: function(modelForErase) {
         var context = this.context.getChildContext({
             name: 'Pii',
-            model: app.data.createBean('Pii')
+            model: app.data.createBean('Pii'),
+            modelForErase: modelForErase,
+            fetch: false
         });
-
-        context.set('modelForErase', model);
 
         app.drawer.open({
             layout: 'mark-for-erasure',

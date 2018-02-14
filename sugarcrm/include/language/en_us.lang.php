@@ -5371,6 +5371,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_DATAPRIVACY_SOURCE' => 'Source',
     'LBL_DATAPRIVACY_CHANGE_DATE' => 'Change Date',
     'LBL_DATAPRIVACY_PII' => 'PII',
+    'LBL_DATAPRIVACY_MARK_FOR_ERASURE' => 'Mark for Erasure',
 );
 
 $app_list_strings['activity_user_options'] = array (
