@@ -12,6 +12,7 @@
  */
 
 
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use SugarTestAccountUtilities as AccountHelper;
 use SugarTestUserUtilities as UserHelper;
 
@@ -42,8 +43,27 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public static function tearDownAfterClass()
 	{
+        SugarTestContactUtilities::removeAllCreatedContacts();
 	    SugarTestHelper::tearDown();
 	}
+
+    public function testEraseAuditLog()
+    {
+        $contactBean = SugarTestContactUtilities::createContact(null, array('phone_work' => '(111) 111-1111'));
+
+        //retrieve otherwise change will not be detected.
+        $bean=$contactBean->retrieve();
+        $bean->phone_work='(999)999-9999';
+        $list=FieldList::fromArray(array('phone_work'));
+        $bean->save(false);
+
+        $bean->erase($list, false);
+
+        $audit=BeanFactory::newBean('Audit');
+        $auditLog=$audit->getAuditLog($bean);
+        $this->assertNotEmpty($auditLog, 'Audit log not created.');
+        $this->assertNull($auditLog[0]['before'], 'Audit log not erased.');
+    }
 
     public function testGetObjectName(){
         $bean = new BeanMockTestObjectName();

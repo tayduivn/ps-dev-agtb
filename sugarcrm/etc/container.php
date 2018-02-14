@@ -13,6 +13,7 @@
 use Doctrine\DBAL\Connection;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Sugarcrm\Sugarcrm\Audit\EventRepository;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\Rebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
@@ -105,6 +106,12 @@ return new Container([
     Formatter::class => function (ContainerInterface $container) {
         return new BeanFormatter(
             $container->get(Localization::class)
+        );
+    },
+    EventRepository::class => function (ContainerInterface $container) {
+        return new EventRepository(
+            $container->get(Connection::class),
+            $container->get(Context::class)
         );
     },
 ]);

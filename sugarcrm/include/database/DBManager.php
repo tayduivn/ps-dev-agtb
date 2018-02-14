@@ -13,6 +13,7 @@
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
@@ -3280,36 +3281,13 @@ abstract class DBManager
 	 * Generate query for audit table
 	 * @param SugarBean $bean SugarBean that was changed
 	 * @param array $changes List of changes, contains 'before' and 'after'
+     * @param string $event_id Audit event id
      * @return string  Audit table INSERT query
+     * @deprecated Use SugarBean::auditSQL()
      */
-	protected function auditSQL(SugarBean $bean, $changes)
+    protected function auditSQL(SugarBean $bean, $changes, $event_id)
 	{
-		global $current_user;
-		$sql = "INSERT INTO ".$bean->get_audit_table_name();
-		//get field defs for the audit table.
-		require('metadata/audit_templateMetaData.php');
-		$fieldDefs = $dictionary['audit']['fields'];
-
-		$values=array();
-		$values['id'] = $this->massageValue(create_guid(), $fieldDefs['id']);
-		$values['parent_id']= $this->massageValue($bean->id, $fieldDefs['parent_id']);
-		$values['field_name']= $this->massageValue($changes['field_name'], $fieldDefs['field_name']);
-		$values['data_type'] = $this->massageValue($changes['data_type'], $fieldDefs['data_type']);
-		if ($changes['data_type']=='text') {
-			$values['before_value_text'] = $this->massageValue($changes['before'], $fieldDefs['before_value_text']);
-			$values['after_value_text'] = $this->massageValue($changes['after'], $fieldDefs['after_value_text']);
-		} else {
-			$values['before_value_string'] = $this->massageValue($changes['before'], $fieldDefs['before_value_string']);
-			$values['after_value_string'] = $this->massageValue($changes['after'], $fieldDefs['after_value_string']);
-		}
-		$values['date_created'] = $this->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
-		if(!empty($current_user->id)) {
-		    $values['created_by'] = $this->massageValue($current_user->id, $fieldDefs['created_by']);
-		}
-
-		$sql .= "(".implode(",", array_keys($values)).") ";
-		$sql .= "VALUES(".implode(",", $values).")";
-		return $sql;
+        return $bean->auditSQL($bean, $changes, $event_id);
 	}
 
     /**
@@ -3318,24 +3296,13 @@ abstract class DBManager
      * @param SugarBean $bean Sugarbean instance that was changed
      * @param array $changes List of changes, contains 'before' and 'after'
      * @return bool query result
-     *
+     * @deprecated Use SugarBean::saveAuditRecords()
      */
-	public function save_audit_records(SugarBean $bean, $changes)
+    public function save_audit_records(SugarBean $bean, $changes)
 	{
-		return $this->query($this->auditSQL($bean, $changes));
+        return $bean->saveAuditRecords($bean, $changes, Uuid::uuid1());
 	}
 
-    /**
-     * Finds fields whose value has changed.
-     * The before and after values are stored in the bean.
-     * Uses $bean->fetched_row && $bean->fetched_rel_row to compare
-     *
-     * @param SugarBean $bean Sugarbean instance that was changed
-     * @param array|null $options Array of optional arguments
-     *                   field_filter => Array of filter names to be inspected (NULL means all fields)
-     *                   for => Who are we getting the changes for, options are audit (default) and activity
-     * @return array
-     */
     /**
      * Finds fields whose value has changed.
      * The before and after values are stored in the bean.
@@ -3496,6 +3463,7 @@ abstract class DBManager
      *
      * @param SugarBean $bean Sugarbean instance that was changed
      * @return array
+     * @deprecated Use SugarBean::getAuditDataChanges()
      */
     public function getAuditDataChanges(SugarBean $bean)
     {

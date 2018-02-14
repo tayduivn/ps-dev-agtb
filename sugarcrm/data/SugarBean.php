@@ -23,6 +23,11 @@ require_once 'include/utils.php';
 //BEGIN SUGARCRM flav=ent ONLY
 //END SUGARCRM flav=ent ONLY
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
+use Sugarcrm\Sugarcrm\Audit\EventRepository;
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\ProcessManager;
 use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
@@ -1823,15 +1828,158 @@ class SugarBean
     }
 
     /**
-    * Implements a generic insert and update logic for any SugarBean
-    * This method only works for subclasses that implement the same variable names.
-    * This method uses the presence of an id field that is not null to signify and update.
-    * The id field should not be set otherwise.
-    *
-    * @param boolean $check_notify Optional, default false, if set to true assignee of the record is notified via email.
-    * @todo Add support for field type validation and encoding of parameters.
-    */
-    function save($check_notify = false)
+     * Implements Erasure type transaction save.
+     * Erases values of fields provided then saves bean.
+     * @param FieldList $fields list of fields to be erased
+     * @param boolean $check_notify Optional, default false, if set to true assignee of the record is notified via email.
+     * @throws DBALException
+     */
+    public function erase(FieldList $fields, $check_notify)
+    {
+        // erase bean
+
+        // save bean
+        $this->saveData($check_notify);
+
+        if ($this->is_AuditEnabled()) {
+            $auditEventId = $this->getEventRepository()->registerErasure($this, $fields);
+            // erase fields from Audit log
+            $this->eraseAuditRecords($fields, $auditEventId);
+        }
+    }
+
+    /**
+     * Implements a generic insert and update logic for any SugarBean
+     * This method only works for subclasses that implement the same variable names.
+     * This method uses the presence of an id field that is not null to signify and update.
+     * The id field should not be set otherwise.
+     * Audit data is saved after logic hook "after_save" is triggerred.
+     * @param boolean $check_notify Optional, default false, if set to true assignee of the record is notified via email.
+     * @todo Add support for field type validation and encoding of parameters.
+     */
+    public function save($check_notify = false)
+    {
+        $isUpdate = $this->isUpdate();
+        $this->saveData($check_notify);
+
+        if ($isUpdate && $this->is_AuditEnabled()) {
+            $auditFields = $this->getAuditEnabledFieldDefinitions(true);
+            $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
+            if (!empty($auditDataChanges)) {
+                $auditEventId = $this->getEventRepository()->registerUpdate($this, FieldList::fromArray(array_keys($auditDataChanges)));
+                foreach ($auditDataChanges as $change) {
+                    $this->saveAuditRecords($this, $change, $auditEventId);
+                }
+            }
+        }
+
+        return $this->id;
+    }
+
+    /**
+     * Generate query for audit table
+     * @param SugarBean $bean SugarBean that was changed
+     * @param array $changes List of changes, contains 'before' and 'after'
+     * @param string $event_id Audit event id
+     * @return string  Audit table INSERT query
+     * @internal This method should be marked protected as soon as audit code is removed from DBManager.
+     */
+    public function auditSQL(SugarBean $bean, $changes, $event_id)
+    {
+        global $current_user;
+        $sql = "INSERT INTO ".$bean->get_audit_table_name();
+        //get field defs for the audit table.
+        require 'metadata/audit_templateMetaData.php';
+        $fieldDefs = $dictionary['audit']['fields'];
+
+        $values=array();
+        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
+        $values['parent_id']= $this->db->massageValue($bean->id, $fieldDefs['parent_id']);
+        $values['event_id']= $this->db->massageValue($event_id, $fieldDefs['event_id']);
+        $values['field_name']= $this->db->massageValue($changes['field_name'], $fieldDefs['field_name']);
+        $values['data_type'] = $this->db->massageValue($changes['data_type'], $fieldDefs['data_type']);
+        if ($changes['data_type']=='text') {
+            $values['before_value_text'] = $this->db->massageValue($changes['before'], $fieldDefs['before_value_text']);
+            $values['after_value_text'] = $this->db->massageValue($changes['after'], $fieldDefs['after_value_text']);
+        } else {
+            $values['before_value_string'] = $this->db->massageValue($changes['before'], $fieldDefs['before_value_string']);
+            $values['after_value_string'] = $this->db->massageValue($changes['after'], $fieldDefs['after_value_string']);
+        }
+        $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created']);
+        if (!empty($current_user->id)) {
+            $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']);
+        }
+
+        $sql .= "(".implode(",", array_keys($values)).") ";
+        $sql .= "VALUES(".implode(",", $values).")";
+        return $sql;
+    }
+
+    /**
+     * Saves changes to module's audit table
+     *
+     * @param SugarBean $bean Sugarbean instance that was changed
+     * @param array $changes List of changes, contains 'before' and 'after'
+     * @param string $event_id Audit event id
+     * @return bool query result
+     * @internal This method should be marked protected as soon as audit code is removed from DBManager.
+     *            It is marked public only for backward compatibility.
+     */
+    public function saveAuditRecords(SugarBean $bean, $changes, $event_id)
+    {
+        return $this->db->query($this->auditSQL($bean, $changes, $event_id));
+    }
+
+    /**
+     * Uses the audit enabled fields array to find fields whose value has changed.
+     * The before and after values are stored in the bean.
+     * Uses $bean->fetched_row && $bean->fetched_rel_row to compare
+     *
+     * @param SugarBean $bean Sugarbean instance that was changed
+     * @return array
+     */
+    public function getAuditDataChanges(SugarBean $bean)
+    {
+        $audit_fields = $bean->getAuditEnabledFieldDefinitions();
+        return $this->db->getDataChanges($bean, array('field_filter'=>array_keys($audit_fields)));
+    }
+
+    /**
+     * Remove audit records for given list of fields
+     *
+     * @param FieldList $fields List of fields
+     * @param string $event_id audit event id
+     * @return bool query result
+     * @throws DBALException
+     */
+    public function eraseAuditRecords(FieldList $fields, $event_id)
+    {
+        return $this->db->getConnection()->update(
+            $this->get_audit_table_name(),
+            [
+                'event_id' => $event_id,
+                'before_value_string' => null,
+                'after_value_string' => null,
+                'before_value_text' => null,
+                'after_value_text' => null,
+                'date_updated' => TimeDate::getInstance()->nowDb(),
+            ],
+            [
+                'parent_id' => $this->id,
+                'field_name' => array_values($fields->jsonSerialize()),
+            ],
+            [
+                null, null, null, null, null, null, null, Connection::PARAM_STR_ARRAY,
+            ]
+        );
+    }
+
+    private function getEventRepository()
+    {
+        return Container::getInstance()->get(EventRepository::class);
+    }
+
+    private function saveData($check_notify)
     {
         $this->in_save = true;
         // cn: SECURITY - strip XSS potential vectors
@@ -1914,16 +2062,6 @@ class SugarBean
         $this->populateFetchedEmail('bean_field');
         $this->dataChanges = $this->db->getDataChanges($this);
 
-        //construct the SQL to create the audit record if auditing is enabled.
-        $auditDataChanges=array();
-        if ($this->is_AuditEnabled()) {
-            if ($isUpdate && !isset($this->fetched_row)) {
-                $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
-            } else {
-                $auditFields = $this->getAuditEnabledFieldDefinitions(true);
-                $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
-            }
-        }
         $this->_sendNotifications($check_notify);
 
         if ($isUpdate) {
@@ -1934,14 +2072,6 @@ class SugarBean
 
             // We also need to get our autoincrement values if there are any
             $this->loadAutoIncrementValues();
-        }
-
-        if (!empty($auditDataChanges) && is_array($auditDataChanges))
-        {
-            foreach ($auditDataChanges as $change)
-            {
-                $this->db->save_audit_records($this,$change);
-            }
         }
 
         $this->updateRelatedCalcFields();

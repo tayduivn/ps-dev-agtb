@@ -15,6 +15,7 @@ include("metadata/accounts_bugsMetaData.php");
 include("metadata/accounts_casesMetaData.php");
 include("metadata/accounts_contactsMetaData.php");
 include("metadata/accounts_opportunitiesMetaData.php");
+include "metadata/audit_eventsMetaData.php";
 include("metadata/calls_contactsMetaData.php");
 include("metadata/calls_usersMetaData.php");
 include("metadata/calls_leadsMetaData.php");
@@ -122,6 +123,7 @@ include "metadata/team_sets_usersMetaData.php";
 // Locked fields
 include "metadata/locked_field_bean_relMetaData.php";
 //END SUGARCRM flav=ent ONLY
+
 
 $defs = SugarAutoLoader::loadExtension('tabledictionary');
 if($defs) {
