@@ -335,6 +335,11 @@ class Email extends SugarBean {
      */
     public $status_name;
 
+    /**
+     * @var string
+     */
+    public $state;
+
 	/**
 	 * sole constructor
 	 */
@@ -1470,10 +1475,7 @@ class Email extends SugarBean {
                 $this->team_set_id = '1';
             }
 
-            // Assign the email to the current user if it is a draft.
-            if ($this->state === static::STATE_DRAFT) {
-                $this->assigned_user_id = $GLOBALS['current_user']->id;
-            }
+            $this->updateAssignedUser();
 
             // Set date_sent.
             if ($this->state === static::STATE_DRAFT) {
@@ -1526,6 +1528,19 @@ class Email extends SugarBean {
 		}
 		$GLOBALS['log']->debug('-------------------------------> Email save() done');
 	}
+
+    /**
+     * Updates assigned user based on the email state
+     */
+    private function updateAssignedUser()
+    {
+        global $current_user;
+
+        // Assign the email to the current user if it is a draft.
+        if ($this->state === static::STATE_DRAFT) {
+            $this->assigned_user_id = $current_user->id;
+        }
+    }
 
     /**
      * Clean string from potential XSS problems.

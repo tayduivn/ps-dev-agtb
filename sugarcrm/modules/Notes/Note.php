@@ -192,23 +192,10 @@ class Note extends SugarBean
     function fill_in_additional_detail_fields()
     {
         parent::fill_in_additional_detail_fields();
-        // TODO: Seems odd we need to clear out these values so that list views
-        // don't show the previous rows value if current value is blank
-        $this->getRelatedFields(
-            'Contacts',
-            $this->contact_id,
-            array('name'=>'contact_name', 'phone_work'=>'contact_phone')
-        );
-        if (!empty($this->contact_name)) {
+
+        if (!empty($this->contact_id)) {
             $emailAddress = BeanFactory::newBean('EmailAddresses');
             $this->contact_email = $emailAddress->getPrimaryAddress(false, $this->contact_id, 'Contacts');
-        }
-
-        if (isset($this->contact_id) && $this->contact_id != '') {
-            $contact = BeanFactory::getBean('Contacts', $this->contact_id);
-            if (isset($contact->id)) {
-                $this->contact_name = $contact->full_name;
-            }
         }
     }
 

@@ -613,7 +613,7 @@ $dictionary['Quote'] = array(
         ),
         'shipping_contact_id' => array(
             'name' => 'shipping_contact_id',
-            'rname' => 'last_name',
+            'rname' => 'id',
             'id_name' => 'shipping_contact_id',
             'vname' => 'LBL_SHIPPING_CONTACT_ID',
             'type' => 'relate',
@@ -701,7 +701,7 @@ $dictionary['Quote'] = array(
         ),
         'billing_contact_id' => array(
             'name' => 'billing_contact_id',
-            'rname' => 'last_name',
+            'rname' => 'id',
             'id_name' => 'billing_contact_id',
             'vname' => 'LBL_BILLING_CONTACT_ID',
             'type' => 'relate',
@@ -873,9 +873,13 @@ $dictionary['Quote'] = array(
         ),
         'opportunity_id' => array(
             'name' => 'opportunity_id',
-            'type' => 'id',
-            'vname' => 'LBL_BILLING_ACCOUNT_NAME',
+            'type' => 'relate',
             'source' => 'non-db',
+            'rname' => 'id',
+            'id_name' => 'id',
+            'table' => 'opportunities',
+            'module' => 'Opportunities',
+            'link' => 'opportunities',
         ),
         'documents' => array(
             'name' => 'documents',

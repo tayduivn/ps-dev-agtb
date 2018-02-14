@@ -96,26 +96,6 @@ class Employee extends Person {
 		$this->fill_in_additional_detail_fields();
 	}
 
-	function fill_in_additional_detail_fields()
-	{
-		global $locale;
-		$query = "SELECT u1.first_name, u1.last_name from users u1, users u2 where u1.id = u2.reports_to_id AND u2.id = '$this->id' and u1.deleted=0";
-		$result =$this->db->query($query, true, "Error filling in additional detail fields") ;
-
-		$row = $this->db->fetchByAssoc($result);
-
-		if($row != null)
-		{
-            $this->reports_to_name = $locale->formatName($this->module_name, $row);
-		}
-		else
-		{
-			$this->reports_to_name = '';
-		}
-		parent::fill_in_additional_detail_fields();
-	}
-
-
 	/**
 	 * @return -- returns a list of all employees in the system.
 	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..

@@ -21,6 +21,51 @@
  */
 class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * Relate fields which would fail the check for producing duplicates in SugarQuery
+     */
+    private const DUPLICATE_RELATE_FIELDS = [
+        'Calls' => [
+            'contact_name',
+            'contact_id',
+        ],
+        'Contacts' => [
+            'opportunity_role_fields',
+            'c_accept_status_fields',
+            'm_accept_status_fields',
+        ],
+        'DataSets' => [
+            'child_name',
+        ],
+        'Documents' => [
+            'related_doc_name',
+            'related_doc_rev_number',
+        ],
+        'Employees' => [
+            'c_accept_status_fields',
+            'm_accept_status_fields',
+        ],
+        'Groups' => [
+            'c_accept_status_fields',
+            'm_accept_status_fields',
+        ],
+        'Leads' => [
+            'c_accept_status_fields',
+            'm_accept_status_fields',
+        ],
+        'Meetings' => [
+            'contact_name',
+            'contact_id',
+        ],
+        'Quotes' => [
+            'opportunity_name',
+        ],
+        'Users' => [
+            'c_accept_status_fields',
+            'm_accept_status_fields',
+        ],
+    ];
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanList');
@@ -399,9 +444,23 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider relateFieldProvider
      */
-    public function testRelateFieldDoesNotProduceDuplicates($module, $field)
+    public function testRelateField($module, $field)
     {
         $bean = self::getSeedBean($module);
+        $definition = $bean->getFieldDefinition($field);
+
+        $this->assertThat($definition, $this->logicalOr(
+            $this->arrayHasKey('link'),
+            $this->logicalAnd(
+                $this->arrayHasKey('module'),
+                $this->arrayHasKey('id_name')
+            )
+        ));
+
+        if (in_array($field, self::DUPLICATE_RELATE_FIELDS[$module] ?? [])) {
+            return;
+        }
+
         $query = new SugarQuery();
         $query->from($bean);
         $query->select($field);
@@ -411,66 +470,21 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function relateFieldProvider()
     {
-        $exclude = array(
-            'Calls' => array(
-                'contact_name',
-                'contact_id',
-            ),
-            'Contacts' => array(
-                'opportunity_role_fields',
-                'c_accept_status_fields',
-                'm_accept_status_fields',
-            ),
-            'Contracts' => array(
-                'parent_name',
-            ),
-            'DataSets' => array(
-                'child_name',
-            ),
-            'Documents' => array(
-                'related_doc_name',
-                'related_doc_rev_number',
-            ),
-            'Employees' => array(
-                'c_accept_status_fields',
-                'm_accept_status_fields',
-            ),
-            'Groups' => array(
-                'c_accept_status_fields',
-                'm_accept_status_fields',
-            ),
-            'Leads' => array(
-                'c_accept_status_fields',
-                'm_accept_status_fields',
-            ),
-            'Meetings' => array(
-                'contact_name',
-                'contact_id',
-            ),
-            'Quotes' => array(
-                'opportunity_name',
-            ),
-            'Users' => array(
-                'c_accept_status_fields',
-                'm_accept_status_fields',
-            ),
-        );
-
-        $data = array();
         foreach (self::getValidModules() as $module) {
             $bean = self::getSeedBean($module);
-            if ($bean && isset($bean->field_defs)) {
-                foreach ($bean->field_defs as $field => $vardef) {
-                    if (isset($vardef['type']) && $vardef['type'] == 'relate'
-                        && !(isset($exclude[$module]) && in_array($field, $exclude[$module]))
-                    ) {
-                        $data[] = array($module, $field);
-                    }
+
+            if (!isset($bean->field_defs)) {
+                continue;
+            }
+
+            foreach ($bean->field_defs as $field => $vardef) {
+                if (!isset($vardef['type']) || $vardef['type'] !== 'relate') {
+                    continue;
                 }
+
+                yield sprintf('%s.%s', $module, $field) => [$module, $field];
             }
         }
-
-        return $data;
     }
 
     protected function getMustNotOverridenFields()

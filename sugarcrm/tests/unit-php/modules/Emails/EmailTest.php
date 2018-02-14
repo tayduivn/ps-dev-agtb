@@ -12,8 +12,10 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\Emails;
 
+use Email;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \Email
@@ -201,16 +203,15 @@ class EmailTest extends \PHPUnit_Framework_TestCase
      * @dataProvider saveAndAssignToCurrentUserProvider
      * @covers ::save
      */
-    public function testSave_EmailIsAssignedToTheCurrentUser($properties)
+    public function testSave_EmailIsAssignedToTheCurrentUser(array $properties)
     {
-        $email = $this->createPartialMock('\\Email', $this->getBeanMethodsWithSideEffects());
-        $email->db = $this->mockDb;
+        $email = $this->createMock(Email::class);
 
         foreach ($properties as $key => $value) {
             $email->$key = $value;
         }
 
-        $email->save();
+        TestReflection::callProtectedMethod($email, 'updateAssignedUser');
 
         $this->assertSame($GLOBALS['current_user']->id, $email->assigned_user_id, 'assigned_user_id is incorrect');
     }
@@ -253,16 +254,15 @@ class EmailTest extends \PHPUnit_Framework_TestCase
      * @dataProvider saveAndAssignToSpecifiedUserProvider
      * @covers ::save
      */
-    public function testSave_EmailIsAssignedToTheSpecifiedUser($properties)
+    public function testSave_EmailIsAssignedToTheSpecifiedUser(array $properties)
     {
-        $email = $this->createPartialMock('\\Email', $this->getBeanMethodsWithSideEffects());
-        $email->db = $this->mockDb;
+        $email = $this->createMock(Email::class);
 
         foreach ($properties as $key => $value) {
             $email->$key = $value;
         }
 
-        $email->save();
+        TestReflection::callProtectedMethod($email, 'updateAssignedUser');
 
         $this->assertSame($properties['assigned_user_id'], $email->assigned_user_id, 'assigned_user_id is incorrect');
     }

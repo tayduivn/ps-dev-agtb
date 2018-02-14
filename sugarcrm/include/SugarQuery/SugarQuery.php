@@ -123,6 +123,13 @@ class SugarQuery
     protected $shouldSkipDeletedRecords = true;
 
     /**
+     * Whether the query should skip deleted records
+     *
+     * @var bool
+     */
+    protected $shouldFetchErasedFields = false;
+
+    /**
      * This is used in Order By statements and in general is always true
      * @var boolean
      */
@@ -254,6 +261,11 @@ class SugarQuery
         if (isset($options['add_deleted']) && !$options['add_deleted']) {
             $this->shouldSkipDeletedRecords = false;
         }
+
+        if (!empty($options['erased_fields'])) {
+            $this->shouldFetchErasedFields = true;
+        }
+
         $this->rebuildFields();
 
         return $this;
@@ -1143,5 +1155,15 @@ class SugarQuery
     public function shouldSkipDeletedRecords()
     {
         return $this->shouldSkipDeletedRecords;
+    }
+
+    /**
+     * Returns whether the query should fetch erased fields for selected records
+     *
+     * @return mixed
+     */
+    public function shouldFetchErasedFields()
+    {
+        return $this->shouldFetchErasedFields;
     }
 }

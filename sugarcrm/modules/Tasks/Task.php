@@ -87,26 +87,16 @@ class Task extends SugarBean {
 	function fill_in_additional_detail_fields()
 	{
         parent::fill_in_additional_detail_fields();
-		global $app_strings;
 
 		if (isset($this->contact_id)) {
-
 			$contact = BeanFactory::getBean('Contacts', $this->contact_id);
 
 			if($contact->id != "") {
-				$this->contact_name = $contact->full_name;
-				$this->contact_name_owner = $contact->assigned_user_id;
-				$this->contact_name_mod = 'Contacts';
-				$this->contact_phone = $contact->phone_work;
 				$this->contact_email = $contact->emailAddress->getPrimaryAddress($contact);
 			} else {
-				$this->contact_name_mod = '';
-				$this->contact_name_owner = '';
-				$this->contact_name='';
 				$this->contact_email = '';
 				$this->contact_id='';
 			}
-
 		}
 
 		$this->fill_in_additional_parent_fields();

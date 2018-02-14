@@ -1114,23 +1114,6 @@ class User extends Person {
         // jmorais@dri Bug #56269
         parent::fill_in_additional_detail_fields();
         // ~jmorais@dri
-		global $locale;
-
-        $query = 'SELECT u1.first_name, u1.last_name
-            FROM users u1, users u2
-            WHERE u1.id = u2.reports_to_id
-                AND u2.id = ?
-                AND u1.deleted = 0';
-        $stmt = $this->db->getConnection()->executeQuery($query, [$this->id]);
-        $row = $stmt->fetch();
-
-		if ($row != null) {
-            global $locale;
-            $this->reports_to_name = $locale->formatName('Users', $row);
-		} else {
-			$this->reports_to_name = '';
-		}
-
 
         // Must set team_id for team widget purposes (default_team is primary team id)
         if (empty($this->team_id))

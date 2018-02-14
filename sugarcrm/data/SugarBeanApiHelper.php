@@ -116,6 +116,10 @@ class SugarBeanApiHelper
             $data['_acl'] = $this->getBeanAcl($bean, $fieldList);
         }
 
+        if (!empty($options['args']['erased_fields'])) {
+            $data['_erased_fields'] = $bean->erased_fields ? $bean->erased_fields : [];
+        }
+
         return $data;
     }
 

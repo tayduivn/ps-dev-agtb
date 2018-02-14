@@ -131,15 +131,6 @@ $dictionary['DataSet'] = array('table' => 'data_sets'
 	    'duplicate_merge'=>'disabled',
 	    'comment' => 'Custom Queries for the data sets (Meta-data only)',
  ),
-
-'child_name' =>
-array (
-        'name' => 'child_name',
-        'vname' => 'LBL_CHILD_NAME',
-        'source'=>'non-db',
-        'type' => 'relate',
-),
-
   'name' =>
   array (
     'name' => 'name',
@@ -287,4 +278,3 @@ array (
 VardefManager::createVardef('DataSets','DataSet', array(
 'team_security',
 ));
-?>

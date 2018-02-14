@@ -160,46 +160,6 @@ $dictionary['EmailTemplate'] = array(
 			'reportable'=>false,
 			'comment' => 'Record deletion indicator'
 		),
-		'assigned_user_id' => array (
-			'name' => 'assigned_user_id',
-			'vname' => 'LBL_ASSIGNED_TO_ID',
-			'group'=>'assigned_user_name',
-            'type' => 'id',
-			'reportable'=>false,
-			'isnull' => 'false',
-			'audited'=>true,
-			'comment' => 'User ID assigned to record',
-            'duplicate_merge'=>'disabled',
-		),
-    	 'assigned_user_name' => array (
-        	 'name' => 'assigned_user_name',
-        	 'link'=>'assigned_user_link' ,
-        	 'vname' => 'LBL_ASSIGNED_TO_NAME',
-        	 'rname' => 'user_name',
-        	 'type' => 'relate',
-        	 'reportable'=>false,
-        	 'source'=>'non-db',
-        	 'table' => 'users',
-        	 'id_name' => 'assigned_user_id',
-        	 'module'=>'Users',
-        	 'duplicate_merge'=>'disabled',
-             'exportable'=> true,
-    	 ),
-		 'assigned_user_link' => array (
-    		 'name' => 'assigned_user_link',
-    		 'type' => 'link',
-    		 'relationship' => 'emailtemplates_assigned_user',
-    		 'vname' => 'LBL_ASSIGNED_TO_USER',
-    		 'link_type' => 'one',
-    		 'module'=>'Users',
-    		 'bean_name'=>'User',
-    		 'source'=>'non-db',
-    		 'duplicate_merge'=>'enabled',
-    		 'rname' => 'user_name',
-    		 'id_name' => 'assigned_user_id',
-    		 'table' => 'users',
-          ),
-
 		'base_module' => array(
 			'name' => 'base_module',
 			'vname' => 'LBL_BASE_MODULE',
@@ -314,10 +274,11 @@ $dictionary['EmailTemplate'] = array(
             'relationship_role_column_value' => 'EmailTemplates',
         ),
     ),
+    'uses' => array(
+        'assignable',
+        'team_security',
+    ),
     'acls' => array('SugarACLStatic' => true),
 );
 
-VardefManager::createVardef('EmailTemplates','EmailTemplate', array(
-
-'team_security',
-));
+VardefManager::createVardef('EmailTemplates', 'EmailTemplate', array());

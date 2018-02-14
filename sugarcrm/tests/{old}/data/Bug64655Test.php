@@ -58,15 +58,20 @@ class Bug64655Test extends Sugar_PHPUnit_Framework_TestCase
         global $current_user;
         $current_user->setPreference('default_locale_name_format', 'l, f');
 
-        $contact = SugarTestContactUtilities::createContact();
-        $contact->first_name = 'John';
-        $contact->last_name = 'Doe';
-        $contact->save();
-        $this->bean->contact_id = $contact->id;
+        $contact1 = SugarTestContactUtilities::createContact();
+        $contact1->first_name = 'John';
+        $contact1->last_name = 'Doe';
+        $contact1->save();
 
-        $this->bean->fill_in_relationship_fields();
+        $contact2 = SugarTestContactUtilities::createContact();
+        $contact2->load_relationship('reports_to_link');
+        $contact2->reports_to_link->add($contact1);
 
-        $this->assertEquals('Doe, John', $this->bean->contact_name);
+        $contact2 = BeanFactory::retrieveBean($contact2->module_name, $contact2->id, [
+            'use_cache' => false,
+        ]);
+
+        $this->assertEquals('Doe, John', $contact2->report_to_name);
     }
 
     /**

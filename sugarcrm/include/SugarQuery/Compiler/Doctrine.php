@@ -199,6 +199,15 @@ class SugarQuery_Compiler_Doctrine
 
         // SugarQuery will determine if we actually need to add the table or not.
         $query->joinCustomTable($bean, $alias);
+
+        if ($query->shouldFetchErasedFields()) {
+            $this->joinErasedFields(
+                $builder,
+                $query->getFromBean(),
+                $alias ?: $table,
+                'erased_fields'
+            );
+        }
     }
 
     /**
@@ -246,6 +255,45 @@ class SugarQuery_Compiler_Doctrine
                 $builder->join($fromAlias, $table, $alias, $condition);
                 break;
         }
+
+        if ($join->bean && $join->query->shouldFetchErasedFields()) {
+            $this->joinErasedFields(
+                $builder,
+                $join->bean,
+                $alias,
+                $join->linkName . '_erased_fields'
+            );
+        }
+    }
+
+    /**
+     * Compiles additional SELECTed fields and JOINed tables which represent erased bean fields
+     *
+     * @param QueryBuilder $builder
+     * @param SugarBean $bean
+     * @param string $tableAlias
+     * @param string $columnAlias
+     */
+    protected function joinErasedFields(QueryBuilder $builder, SugarBean $bean, $tableAlias, $columnAlias)
+    {
+        if (!$bean->hasPiiFields()) {
+            return;
+        }
+
+        $erasedAlias = $bean->db->getValidDBName($tableAlias . '_erased', true, 'alias');
+
+        $builder->leftJoin(
+            $tableAlias,
+            'erased_fields',
+            $erasedAlias,
+            sprintf(
+                '%1$s.bean_id = %2$s.id AND %1$s.table_name = ' . $builder->createPositionalParameter(
+                    $bean->getTableName()
+                ),
+                $erasedAlias,
+                $tableAlias
+            )
+        )->addSelect(sprintf('%s.data %s', $erasedAlias, $columnAlias));
     }
 
     /**

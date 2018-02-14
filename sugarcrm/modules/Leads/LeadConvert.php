@@ -118,7 +118,6 @@ class LeadConvert
         $this->lead->status = LeadConvert::STATUS_CONVERTED;
         $this->lead->converted = 1;
         $this->lead->in_workflow = true;
-        $this->lead->get_Opportunity();
         $this->lead->save();
 
         //IF beans have calculated fields, re-save now  so calculated values can be updated

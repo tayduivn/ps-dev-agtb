@@ -282,22 +282,6 @@ class Meeting extends SugarBean {
 			parent::fill_in_additional_detail_fields();
 		}
 
-		if (!empty($this->contact_id)) {
-			$query  = "SELECT first_name, last_name FROM contacts ";
-			$query .= "WHERE id='$this->contact_id' AND deleted=0";
-			$result = $this->db->limitQuery($query,0,1,true," Error filling in additional detail fields: ");
-
-			// Get the contact name.
-			$row = $this->db->fetchByAssoc($result);
-			$GLOBALS['log']->info("additional call fields $query");
-			if($row != null)
-			{
-                $this->contact_name = $locale->formatName('Contacts', $row);
-				$GLOBALS['log']->debug("Call($this->id): contact_name = $this->contact_name");
-				$GLOBALS['log']->debug("Call($this->id): contact_id = $this->contact_id");
-			}
-		}
-
 		if (!isset($this->time_hour_start)) {
 			$this->time_start_hour = intval(substr($this->time_start, 0, 2));
 		} //if-else

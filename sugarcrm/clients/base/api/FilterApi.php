@@ -225,6 +225,10 @@ class FilterApi extends SugarApi
 
         $options['action'] = $api->action;
 
+        if (!empty($args['erased_fields'])) {
+            $options['erased_fields'] = true;
+        }
+
         return $options;
     }
 
@@ -463,11 +467,17 @@ class FilterApi extends SugarApi
         if (empty($options['select'])) {
             $options['select'] = self::$mandatory_fields;
         }
+
         $queryOptions = array(
-            'add_deleted' => (!isset($options['add_deleted']) || $options['add_deleted']) ? true : false
+            'add_deleted' => !isset($options['add_deleted']) || $options['add_deleted'],
         );
+
         if ($queryOptions['add_deleted'] == false) {
             $options['select'][] = 'deleted';
+        }
+
+        if (!empty($options['erased_fields'])) {
+            $queryOptions['erased_fields'] = true;
         }
 
         $q = static::newSugarQuery(DBManagerFactory::getInstance('listviews'));

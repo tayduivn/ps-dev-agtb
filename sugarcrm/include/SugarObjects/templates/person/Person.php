@@ -28,18 +28,6 @@ class Person extends Basic
     }
 
     /**
-     * need to override to have a name field created for this class
-     *
-     * @see parent::retrieve()
-     */
-    public function retrieve($id = -1, $encode = true, $deleted = true)
-    {
-        $ret_val = parent::retrieve($id, $encode, $deleted);
-        $this->_create_proper_name_field();
-        return $ret_val;
-    }
-
-    /**
      * Populate email address fields here instead of retrieve() so that they are
      * properly available for logic hooks
      *

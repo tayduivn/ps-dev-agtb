@@ -114,17 +114,6 @@ class Campaign extends SugarBean {
         parent::mark_relationships_deleted($id);
 	}
 
-	function fill_in_additional_list_fields()
-	{
-		parent::fill_in_additional_list_fields();
-	}
-
-	function fill_in_additional_detail_fields()
-	{
-        parent::fill_in_additional_detail_fields();
-	}
-
-
 	function update_currency_id($fromid, $toid){
 	}
 

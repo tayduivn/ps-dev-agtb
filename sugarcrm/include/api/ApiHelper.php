@@ -30,7 +30,7 @@ class ApiHelper
      *                         This is used so the formatting functions can handle different
      *                         API's with varying formatting requirements.
      * @param $bean SugarBean Grab the helper module for this bean
-     * @returns SugarBeanApiHelper A API helper class for beans
+     * @return SugarBeanApiHelper API helper
      */
     public static function getHelper(ServiceBase $api, SugarBean $bean)
     {
@@ -50,8 +50,7 @@ class ApiHelper
             self::$moduleHelpers[$moduleName] = new $moduleHelperClass($api);
         }
 
-        $moduleHelperClass = self::$moduleHelpers[$moduleName];
-        return $moduleHelperClass;
+        return self::$moduleHelpers[$moduleName];
     }
 
     /**

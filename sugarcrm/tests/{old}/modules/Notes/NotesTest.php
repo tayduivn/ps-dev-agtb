@@ -41,12 +41,14 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $contact->title = 'VP Operations';
         $contact->disable_row_level_security = true;
         $contact_id = $contact->save();
-        
-        $note = new Note();
-        $note->contact_id = $contact_id;
+
+        $note = SugarTestNoteUtilities::createNote(null, array(
+            'contact_id' => $contact_id,
+        ));
+
         $note->disable_row_level_security = true;
-        $note->fill_in_additional_detail_fields();
-        
+        $note->retrieve();
+
         $this->assertContains($contact->first_name,$note->contact_name);
         $this->assertContains($contact->last_name,$note->contact_name);
         

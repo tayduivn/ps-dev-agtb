@@ -42,7 +42,6 @@ class Bug64655AliasTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, true));
 
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('custom_field', array(
@@ -57,6 +56,8 @@ class Bug64655AliasTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['dictionary']['User']['name_format_map'] = array(
             'x' => self::$fieldName . '_c',
         );
+
+        SugarTestHelper::setUp('current_user', array(true, true));
     }
 
     protected function setUp()
@@ -77,13 +78,6 @@ class Bug64655AliasTest extends Sugar_PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        SugarTestHelper::tearDown();
-
-        parent::tearDownAfterClass();
     }
 
     public function testLongRelateAlias()

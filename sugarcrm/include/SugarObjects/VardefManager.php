@@ -711,6 +711,20 @@ class VardefManager{
             $df->buildCache($module, false);
         }
 
+        if (!isset($GLOBALS['dictionary'][$object]['has_pii_fields'])
+            && !empty($GLOBALS['dictionary'][$object]['fields'])) {
+            $hasPiiFields = false;
+
+            foreach ($GLOBALS['dictionary'][$object]['fields'] as $definition) {
+                if (!empty($definition['pii'])) {
+                    $hasPiiFields = true;
+                    break;
+                }
+            }
+
+            $GLOBALS['dictionary'][$object]['has_pii_fields'] = $hasPiiFields;
+        }
+
         // if we are currently rebuilding the relationships, we don't want `updateRelCFModules` to be called
         // as it will fail when trying to look up relationships as they my have not been loaded into the
         // cache yet

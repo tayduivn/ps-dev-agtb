@@ -87,6 +87,10 @@ class BeanFactory {
                 $bean->disable_row_level_security = true;
             }
 
+            if (!empty($params['erased_fields'])) {
+                $bean->retrieve_erased_fields = true;
+            }
+
             if (!$bean->retrieve($id, $encode, $deleted)) {
                 if (empty($params['strict_retrieve'])) {
                     return $bean;

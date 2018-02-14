@@ -134,12 +134,16 @@ abstract class SugarApi {
      * @param ServiceBase $api The API class of the request
      * @param array $args The arguments array passed in from the API
      * @param $aclToCheck string What kind of ACL to verify when loading a bean. Supports: view,edit,create,import,export
-     * @param $options Options array to pass to the retrieveBean method
+     * @param $options array Options to pass to the retrieveBean method
      * @return SugarBean The loaded bean
      */
     protected function loadBean(ServiceBase $api, array $args, $aclToCheck = 'view', array $options = array())
     {
         $this->requireArgs($args, array('module','record'));
+
+        if (!empty($args['erased_fields'])) {
+            $options['erased_fields'] = true;
+        }
 
         $bean = BeanFactory::retrieveBean($args['module'],$args['record'], $options);
 

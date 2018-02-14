@@ -207,16 +207,17 @@ $dictionary['Note'] = array(
 		'module'=>'Contacts',
 		'source'=>'non-db',
 		),
-
-  'contact_phone'=>
-    array(
+    'contact_phone' => array(
         'name'=>'contact_phone',
         'vname' => 'LBL_PHONE',
-        'type'=>'phone',
-        'vname' => 'LBL_PHONE',
-        'source'=>'non-db'
+        'type' => 'relate',
+        'source'=>'non-db',
+        'link' => 'contact',
+        'module' => 'Contacts',
+        'table' => 'contacts',
+        'id_name' => 'contact_id',
+        'rname' => 'phone_work',
     ),
-
  'contact_email'=>
     array(
         'name'=>'contact_email',

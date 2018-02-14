@@ -24,8 +24,8 @@ class TestReflection
     /**
      * Call a protected method on a class
      *
-     * @param Object $classOrObject The Class we are working on
-     * @param String $method The method name to call
+     * @param string|object $classOrObject The Class we are working on
+     * @param string $method The method name to call
      * @param array $args Arguments to pass to the method
      * @return mixed What ever is returned from the called method
      */
