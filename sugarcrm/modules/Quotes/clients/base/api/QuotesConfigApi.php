@@ -24,6 +24,14 @@ class QuotesConfigApi extends ConfigModuleApi
     {
         return
             array(
+                'quotesConfigGet' => array(
+                    'reqType' => 'GET',
+                    'path' => array('Quotes', 'config'),
+                    'pathVars' => array('module', ''),
+                    'method' => 'config',
+                    'shortHelp' => 'Retrieves the config settings for a given module',
+                    'longHelp' => 'include/api/help/config_get_help.html',
+                ),
                 'quotesConfigCreate' => array(
                     'reqType' => 'POST',
                     'path' => array('Quotes', 'config'),
@@ -34,6 +42,28 @@ class QuotesConfigApi extends ConfigModuleApi
                     'longHelp' => 'modules/Quotes/clients/base/api/help/config_post_help.html',
                 ),
             );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function config(ServiceBase $api, array $args)
+    {
+        $quotesConfig = parent::config($api, $args);
+
+        $quotesConfig['dependentFields'] = $this->getDependentFields();
+        $quotesConfig['relatedFields'] = $this->getRelatedFieldsMap();
+
+        $parser = ParserFactory::getParser(
+            MB_LISTVIEW,
+            'Products',
+            null,
+            null,
+            'base'
+        );
+        $quotesConfig['productsFields'] = $parser->getAvailableFields();
+
+        return $quotesConfig;
     }
 
     /**
@@ -48,6 +78,403 @@ class QuotesConfigApi extends ConfigModuleApi
         $this->applyConfig();
                 
         return $settings;
+    }
+
+    /**
+     * Gets a list of all fields and their related and locked dependencies
+     *
+     * @return array
+     */
+    protected function getRelatedFieldsMap()
+    {
+        $fieldVardefs = array(
+            'Products' => VardefManager::getFieldDefs('Products'),
+        );
+
+        $productsFieldNames = array_keys($fieldVardefs['Products']);
+
+        return $this->getAllFieldDependencies(
+            'Products',
+            $productsFieldNames,
+            $fieldVardefs
+        );
+    }
+
+    /**
+     * Finds all dependencies on a field by field name
+     *
+     * @param string $moduleName The name of the module for the fieldDef we're parsing
+     * @param array $fieldNames The names of all the fields to loop over and parse
+     * @param array $fieldDefs The collection of all field definitions
+     * @return array The map of all field dependencies
+     */
+    protected function getAllFieldDependencies($moduleName, $fieldNames, $fieldDefs)
+    {
+        $retFields = array();
+        foreach ($fieldNames as $fieldName) {
+            $fieldDef = $fieldDefs[$moduleName][$fieldName];
+
+            if (isset($fieldDef['formula'])) {
+                // check variables links
+                $fieldsInFormula = Parser::getFieldsFromExpression($fieldDef['formula']);
+
+                if (count($fieldsInFormula)) {
+                    $matches = array_unique($fieldsInFormula);
+
+                    foreach ($matches as $lockedField) {
+                        if ($lockedField === 'products' ||
+                            $lockedField === 'product_bundles' ||
+                            $fieldName === $lockedField) {
+                            continue;
+                        }
+
+                        if (!isset($retFields[$moduleName][$fieldName])) {
+                            $retFields[$moduleName][$fieldName] = array();
+                        }
+
+                        if (!isset($retFields[$moduleName][$fieldName]['locked'])) {
+                            $retFields[$moduleName][$fieldName]['locked'] = array();
+                        }
+
+                        if (!isset($retFields[$moduleName][$fieldName]['locked'][$lockedField])) {
+                            $retFields[$moduleName][$fieldName]['locked'][$lockedField] = array(
+                                'module' => $moduleName,
+                                'field' => $fieldName,
+                                'reason' => 'formula',
+                            );
+                        }
+                    }
+                }
+            }
+
+            if (isset($fieldDef['related_fields'])) {
+                foreach ($fieldDef['related_fields'] as $relatedField) {
+                    if (!isset($retFields[$moduleName][$fieldName])) {
+                        $retFields[$moduleName][$fieldName] = array();
+                    }
+
+                    if (!isset($retFields[$moduleName][$fieldName]['related'])) {
+                        $retFields[$moduleName][$fieldName]['related'] = array();
+                    }
+
+                    if (!isset($retFields[$moduleName][$fieldName]['related'][$relatedField])) {
+                        $retFields[$moduleName][$fieldName]['related'][$relatedField] = array(
+                            'module' => $moduleName,
+                            'field' => $fieldName,
+                            'reason' => 'related_fields',
+                        );
+                    }
+                }
+            }
+        }
+
+        return $retFields;
+    }
+
+    /**
+     * Gets the field dependencies list
+     *
+     * @return array
+     */
+    protected function getDependentFields()
+    {
+        $mm = MetaDataManager::getManager();
+
+        $quotesFieldNames = array_merge(
+            $mm->getModuleViewFields('Quotes', 'record'),
+            $mm->getModuleViewFields('Quotes', 'quote-data-grand-totals-header'),
+            $mm->getModuleViewFields('Quotes', 'quote-data-grand-totals-footer')
+        );
+        $pbFieldNames = array_merge(
+            $mm->getModuleViewFields('ProductBundles', 'quote-data-group-header'),
+            $mm->getModuleViewFields('ProductBundles', 'quote-data-group-footer')
+        );
+        $productsFieldNames = $mm->getModuleViewFields('Products', 'quote-data-group-list');
+
+        $fieldVardefs = array(
+            'Quotes' => VardefManager::getFieldDefs('Quotes'),
+            'ProductBundles' => VardefManager::getFieldDefs('ProductBundles'),
+            'Products' => VardefManager::getFieldDefs('Products'),
+        );
+
+        $fieldVardefs['Products']['discount'] = array(
+            'name' => 'discount',
+            'type' => 'fieldset',
+            'css_class' => 'quote-discount-percent',
+            'label' => 'LBL_DISCOUNT_AMOUNT',
+            'fields' => array(
+                array(
+                    'name' => 'discount_amount',
+                    'label' => 'LBL_DISCOUNT_AMOUNT',
+                    'type' => 'discount',
+                    'convertToBase' => true,
+                    'showTransactionalAmount' => true,
+                ),
+                array(
+                    'type' => 'discount-select',
+                    'name' => 'discount_select',
+                    'no_default_action' => true,
+                    'buttons' => array(
+                        array(
+                            'type' => 'rowaction',
+                            'name' => 'select_discount_amount_button',
+                            'label' => 'LBL_DISCOUNT_AMOUNT',
+                            'event' => 'button:discount_select_change:click',
+                        ),
+                        array(
+                            'type' => 'rowaction',
+                            'name' => 'select_discount_percent_button',
+                            'label' => 'LBL_DISCOUNT_PERCENT',
+                            'event' => 'button:discount_select_change:click',
+                        ),
+                    ),
+                ),
+            ),
+        );
+
+        $qFields = $this->getDependenciesFromFields(
+            'Quotes',
+            $quotesFieldNames,
+            $fieldVardefs
+        );
+
+        $pbFields = $this->getDependenciesFromFields(
+            'ProductBundles',
+            $pbFieldNames,
+            $fieldVardefs
+        );
+        $pFields = $this->getDependenciesFromFields(
+            'Products',
+            $productsFieldNames,
+            $fieldVardefs
+        );
+
+        $retFields = [
+            'Quotes' => [],
+            'ProductBundles' => [],
+            'Products' => [],
+        ];
+
+        $retFields['Quotes'] = array_merge(
+            isset($qFields['Quotes']) ? $qFields['Quotes'] : [],
+            isset($pbFields['Quotes']) ? $pbFields['Quotes'] : [],
+            isset($pFields['Quotes']) ? $pFields['Quotes'] : []
+        );
+
+        $retFields['ProductBundles'] = array_merge(
+            isset($qFields['ProductBundles']) ? $qFields['ProductBundles'] : [],
+            isset($pbFields['ProductBundles']) ? $pbFields['ProductBundles'] : [],
+            isset($pFields['ProductBundles']) ? $pFields['ProductBundles'] : []
+        );
+
+        $retFields['Products'] = array_merge(
+            isset($qFields['Products']) ? $qFields['Products'] : [],
+            isset($pbFields['Products']) ? $pbFields['Products'] : [],
+            isset($pFields['Products']) ? $pFields['Products'] : []
+        );
+
+        return $retFields;
+    }
+
+    /**
+     * Gets the dependencies from a specific field and recurses any fields in it's field dependencies list
+     *
+     * @param string $moduleName The name of the module for the fieldDef we're parsing
+     * @param array $fieldNames The names of all the fields to loop over and parse
+     * @param array $fieldDefs The collection of all field definitions
+     * @param array $retFields The map of all field dependencies we're returning
+     */
+    protected function getDependenciesFromFields($moduleName, $fieldNames, $fieldDefs)
+    {
+        $retFields = array();
+        foreach ($fieldNames as $fieldName) {
+            if (isset($fieldDefs[$moduleName][$fieldName])) {
+                $fieldDef = $fieldDefs[$moduleName][$fieldName];
+
+                if (isset($fieldDef['formula'])) {
+                    $this->parseFieldFormula($moduleName, $fieldDef, $fieldDefs, $retFields);
+                }
+
+                if (isset($fieldDef['related_fields'])) {
+                    $this->parseFieldRelatedFields($moduleName, $fieldDef, $fieldDefs, $retFields);
+                }
+            }
+        }
+        return $retFields;
+    }
+
+    /**
+     * Parses a fieldDef's formula to pull out any variables or link fields
+     *
+     * @param string $moduleName The name of the module for the fieldDef we're parsing
+     * @param array $fieldDef The Field definition to parse
+     * @param array $fieldDefs The collection of all field definitions
+     * @param array $retFields The map of all field dependencies we're returning
+     */
+    protected function parseFieldFormula($moduleName, $fieldDef, $fieldDefs, &$retFields)
+    {
+        $matches = array();
+        $fieldName = $fieldDef['name'];
+
+        // check ProductBundles links
+        $expr = Parser::evaluate($fieldDef['formula'], $this);
+        $fields = Parser::getFormulaRelateFields($expr, 'product_bundles');
+
+        //$fields = Parser::getFormulaRelateFields($fieldDef['formula']);
+        if (count($fields)) {
+            foreach ($fields as $lockedField) {
+                if (!isset($retFields['ProductBundles'][$lockedField])) {
+                    $retFields['ProductBundles'][$lockedField] = array();
+                }
+
+                if (!isset($retFields['ProductBundles'][$lockedField]['locked'])) {
+                    $retFields['ProductBundles'][$lockedField]['locked'] = array();
+                }
+
+                if (!isset($retFields['ProductBundles'][$lockedField]['locked'][$fieldName])) {
+                    $retFields['ProductBundles'][$lockedField]['locked'][$fieldName] = array(
+                        'module' => $moduleName,
+                        'field' => $fieldName,
+                        'reason' => 'rollup',
+                    );
+                }
+
+                $rollupField = $fieldDefs['ProductBundles'][$lockedField];
+                if (isset($rollupField['formula'])) {
+                    $this->parseFieldFormula(
+                        'ProductBundles',
+                        $rollupField,
+                        $fieldDefs,
+                        $retFields
+                    );
+                }
+                if (isset($rollupField['related_fields'])) {
+                    $this->parseFieldRelatedFields(
+                        'ProductBundles',
+                        $rollupField,
+                        $fieldDefs,
+                        $retFields
+                    );
+                }
+            }
+        }
+
+        // check Products links
+        $expr = Parser::evaluate($fieldDef['formula'], $this);
+        $fields = Parser::getFormulaRelateFields($expr, 'products');
+
+        if (count($fields)) {
+            foreach ($fields as $lockedField) {
+                if (!isset($retFields['Products'][$lockedField])) {
+                    $retFields['Products'][$lockedField] = array();
+                }
+
+                if (!isset($retFields['Products'][$lockedField]['locked'])) {
+                    $retFields['Products'][$lockedField]['locked'] = array();
+                }
+
+                if (!isset($retFields['Products'][$lockedField]['locked'][$fieldName])) {
+                    $retFields['Products'][$lockedField]['locked'][$fieldName] = array(
+                        'module' => $moduleName,
+                        'field' => $fieldName,
+                        'reason' => 'rollup',
+                    );
+                }
+
+                $rollupField = $fieldDefs['Products'][$lockedField];
+                if (isset($rollupField['formula'])) {
+                    $this->parseFieldFormula(
+                        'Products',
+                        $rollupField,
+                        $fieldDefs,
+                        $retFields
+                    );
+                }
+                if (isset($rollupField['related_fields'])) {
+                    $this->parseFieldRelatedFields(
+                        'Products',
+                        $rollupField,
+                        $fieldDefs,
+                        $retFields
+                    );
+                }
+            }
+        }
+
+        // check variables links
+        $fieldsInFormula = Parser::getFieldsFromExpression($fieldDef['formula']);
+
+        if (count($fieldsInFormula)) {
+            $matches = array_unique($fieldsInFormula);
+
+            foreach ($matches as $lockedField) {
+                if ($lockedField === 'products' ||
+                    $lockedField === 'product_bundles' ||
+                    $fieldName === $lockedField) {
+                    continue;
+                }
+
+                if (!isset($retFields[$moduleName][$lockedField])) {
+                    $retFields[$moduleName][$lockedField] = array();
+                }
+
+                if (!isset($retFields[$moduleName][$lockedField]['locked'])) {
+                    $retFields[$moduleName][$lockedField]['locked'] = array();
+                }
+
+                if (!isset($retFields[$moduleName][$lockedField]['locked'][$fieldName])) {
+                    $retFields[$moduleName][$lockedField]['locked'][$fieldName] = array(
+                        'module' => $moduleName,
+                        'field' => $fieldName,
+                        'reason' => 'formula',
+                    );
+                }
+
+                $rollupField = $fieldDefs[$moduleName][$lockedField];
+                if (isset($rollupField['formula']) && $fieldName !== $lockedField) {
+                    $this->parseFieldFormula(
+                        $moduleName,
+                        $rollupField,
+                        $fieldDefs,
+                        $retFields
+                    );
+                }
+                if (isset($rollupField['related_fields']) && $fieldName !== $lockedField) {
+                    $this->parseFieldRelatedFields($moduleName, $rollupField, $fieldDefs, $retFields);
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets any related fields from a fieldDef
+     *
+     * @param string $moduleName The name of the module for the fieldDef we're parsing
+     * @param array $fieldDef The Field definition to parse
+     * @param array $fieldDefs The collection of all field definitions
+     * @param array $retFields The map of all field dependencies we're returning
+     */
+    protected function parseFieldRelatedFields($moduleName, $fieldDef, $fieldDefs, &$retFields)
+    {
+        $fieldName = $fieldDef['name'];
+
+        foreach ($fieldDef['related_fields'] as $relatedField) {
+            if (!isset($retFields[$moduleName][$relatedField])) {
+                $retFields[$moduleName][$relatedField] = array();
+            }
+
+            if (!isset($retFields[$moduleName][$relatedField]['related'])) {
+                $retFields[$moduleName][$relatedField]['related'] = array();
+            }
+
+            if (!isset($retFields[$moduleName][$relatedField]['related'][$fieldName])) {
+                $retFields[$moduleName][$relatedField]['related'][$fieldName] = array(
+                    'module' => $moduleName,
+                    'field' => $fieldName,
+                    'reason' => 'related_fields',
+                );
+            }
+        }
     }
 
     /**

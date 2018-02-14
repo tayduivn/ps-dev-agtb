@@ -179,12 +179,14 @@ describe('Quotes.Base.Plugins.QuotesLineNumHelper', function() {
                 expect(view._fields).toEqual([{
                     name: 'quantity',
                     label: 'LBL_QUANTITY',
+                    labelModule: 'Quotes',
                     widthClass: 'cell-xsmall',
                     css_class: 'quantity',
                     type: 'float'
                 }, {
                     name: 'product_template_name',
                     label: 'LBL_ITEM_NAME',
+                    labelModule: 'Quotes',
                     widthClass: 'cell-large',
                     type: 'quote-data-relate',
                     required: true
@@ -518,6 +520,7 @@ describe('Quotes.Base.Plugins.QuotesLineNumHelper', function() {
             expect(view._fields).toEqual([{
                 name: 'line_num',
                 label: 'LBL_LINE_NUMBER',
+                labelModule: 'Quotes',
                 widthClass: 'cell-small',
                 css_class: 'line_num tcenter',
                 type: 'int',
@@ -525,12 +528,14 @@ describe('Quotes.Base.Plugins.QuotesLineNumHelper', function() {
             }, {
                 name: 'quantity',
                 label: 'LBL_QUANTITY',
+                labelModule: 'Quotes',
                 widthClass: 'cell-xsmall',
                 css_class: 'quantity',
                 type: 'float'
             }, {
                 name: 'product_template_name',
                 label: 'LBL_ITEM_NAME',
+                labelModule: 'Quotes',
                 widthClass: 'cell-large',
                 type: 'quote-data-relate',
                 required: true

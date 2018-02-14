@@ -57,13 +57,13 @@ class ViewdefManager
     public function saveViewdef($viewdef, $module, $platform, $view)
     {
         $path = "custom/modules/{$module}/clients/{$platform}/views/{$view}/{$view}.php";
-        $fileName = "viewdefs['{$module}']['{$platform}']['view']['{$view}']";
+        $varname = "viewdefs['{$module}']['{$platform}']['view']['{$view}']";
 
         if (!file_exists($path)) {
             sugar_touch($path);
         }
 
-        write_array_to_file($fileName, $viewdef, $path);
+        write_array_to_file($varname, $viewdef, $path);
     }
 
     /**
@@ -102,20 +102,25 @@ class ViewdefManager
      * @param string $paths output from calling MetaDataFiles::getClientFiles
      * @param string $module - Quotes, Opportunities, etc
      * @param string $view - record, edit, detail, etc
-     * @param bool $loadBase - flag to load base value over custom
+     * @param bool $preferBase - flag to load base value over custom if base exists
      * @return string
      */
-    public function findModuleViewdef($paths, $module, $view, $loadBase = false)
+    public function findModuleViewdef($paths, $module, $view, $preferBase = false)
     {
         $returnPaths = null;
 
         foreach ($paths as $path) {
-            //look for the view first, and make sure we're in the right module (sometimes not)
-            if ($path['file'] == $view . '.php' && strpos($path['path'], $module) !== false) {
+            // make sure this is the view we're looking for,
+            // and we're in the right module (sometimes not),
+            // and the path is not an extension file
+            if ($path['file'] == $view . '.php' &&
+                strpos($path['path'], $module) !== false &&
+                strpos($path['path'], '.ext.') === false
+            ) {
                 $returnPaths = $path;
                 // look for the custom def first, then load the default if we can't find a custom
-                // unless loadBase is specified
-                if (strpos($path['path'], 'custom') !== false && !$loadBase) {
+                // unless $preferBase is specified
+                if (strpos($path['path'], 'custom') !== false && !$preferBase) {
                     $returnPaths = $path;
                     break;
                 }

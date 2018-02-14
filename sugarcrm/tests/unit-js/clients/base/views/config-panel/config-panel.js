@@ -9,10 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Base.View.ConfigPanel', function() {
-    var app,
-        context,
-        options,
-        view;
+    var app;
+    var context;
+    var options;
+    var view;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -47,6 +47,22 @@ describe('Base.View.ConfigPanel', function() {
         });
     });
 
+    describe('bindDataChange()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'on');
+
+            view.bindDataChange();
+        });
+
+        it('should set listener for config:panel:hide', function() {
+            expect(view.on).toHaveBeenCalledWith('config:panel:hide');
+        });
+
+        it('should set listener for config:panel:show', function() {
+            expect(view.on).toHaveBeenCalledWith('config:panel:show');
+        });
+    });
+
     describe('_render()', function() {
         beforeEach(function() {
             sinon.collection.stub(view, 'updateTitle', function() {})
@@ -62,7 +78,6 @@ describe('Base.View.ConfigPanel', function() {
             expect(view.updateTitle).toHaveBeenCalled();
         });
     });
-
 
     describe('updateTitle()', function() {
         beforeEach(function() {

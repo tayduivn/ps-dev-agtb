@@ -611,3 +611,74 @@
 .product-catalog-container {
   padding: 15px 0 0 15px;
 }
+
+.quotes-config {
+  h4 {
+    font-weight: bold;
+  }
+
+  .worksheet-columns-directions {
+    margin: 25px 0;
+  }
+
+  &.howto {
+    padding: 0;
+
+    h3 {
+      padding: 10px;
+      margin: 0;
+    }
+
+    .field-search {
+      padding: 10px;
+
+      .searchbox {
+        width: 95%;
+      }
+    }
+
+    .legend {
+      margin-top: 5px;
+      background-color: @navbarLinkBackgroundActive;
+      padding: 10px;
+
+      .legend-inputs {
+        margin: 10px 0;
+      }
+
+      .legend-help-text {
+        clear: both;
+        font-size: 10.5px;
+      }
+    }
+
+    .field-list {
+      padding: 5px;
+      display: flex;
+    }
+  }
+
+  .worksheet-columns-directions {
+    margin-top: 75px;
+  }
+
+  .flex-list-view {
+    &[class$="-actions"]:not(.scroll-width) {
+      .flex-list-view-content {
+        overflow-x: visible;
+        height: 28px;
+
+        .dataTable {
+          th:first-child,
+          td:first-child,
+          th:last-child,
+          td:last-child {
+            &:not(.alert) {
+              height: 28px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

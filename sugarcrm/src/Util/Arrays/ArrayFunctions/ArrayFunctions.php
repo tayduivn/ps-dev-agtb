@@ -111,26 +111,4 @@ class ArrayFunctions
 
         return call_user_func_array('array_merge', $args);
     }
-
-    /**
-     * Utility function to find if a nested key exists in an array
-     *
-     * @param string $path array that represents the keys (path) to look for
-     * @param array $array viewdef array
-     * @return bool
-     */
-    public static function keyExistsInPath($path, $array)
-    {
-        $found = false;
-        if (count($path) == 1) {
-            if (array_key_exists($path[0], $array)) {
-                $found = true;
-            }
-        } else {
-            if (array_key_exists($path[0], $array)) {
-                $found = self::keyExistsInPath(array_slice($path, 1), $array[$path[0]]);
-            }
-        }
-        return $found;
-    }
 }

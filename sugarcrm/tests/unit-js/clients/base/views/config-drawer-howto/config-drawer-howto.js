@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Base.View.ConfigDrawerHowto', function() {
-    var app,
-        view;
+    var app;
+    var view;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -19,19 +19,35 @@ describe('Base.View.ConfigDrawerHowto', function() {
 
     afterEach(function() {
         sinon.collection.restore();
+        view.dispose();
         view = null;
     });
 
     describe('bindDataChange()', function() {
-        var onSpy;
-
         beforeEach(function() {
-            onSpy = spyOn(view.context, 'on');
+            sinon.collection.stub(view.context, 'on');
         });
 
         it('should listen for `config:howtoData:change` event', function() {
             view.bindDataChange();
-            expect(onSpy.mostRecentCall.args[0]).toBe('config:howtoData:change');
+
+            expect(view.context.on).toHaveBeenCalledWith('config:howtoData:change');
+        });
+    });
+
+    describe('onHowtoDataChange()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'render');
+
+            view.onHowtoDataChange('test');
+        });
+
+        it('should set howtoData from passed in value', function() {
+            expect(view.howtoData).toBe('test');
+        });
+
+        it('should call render', function() {
+            expect(view.render).toHaveBeenCalled();
         });
     });
 });

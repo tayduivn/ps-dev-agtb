@@ -1,0 +1,395 @@
+{
+    "Products": {
+        "name": {
+            "locked": {
+                "product_template_name": {
+                    "module": "Products",
+                    "field": "name",
+                    "reason": "formula"
+                }
+            }
+        },
+        "subtotal": {
+            "locked": {
+                "quantity": {
+                    "module": "Products",
+                    "field": "subtotal",
+                    "reason": "formula"
+                },
+                "discount_price": {
+                    "module": "Products",
+                    "field": "subtotal",
+                    "reason": "formula"
+                }
+            },
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "subtotal",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "subtotal",
+                    "reason": "related_fields"
+                },
+                "discount_price": {
+                    "module": "Products",
+                    "field": "subtotal",
+                    "reason": "related_fields"
+                },
+                "quantity": {
+                    "module": "Products",
+                    "field": "subtotal",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "total_amount": {
+            "locked": {
+                "quantity": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "formula"
+                },
+                "discount_price": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "formula"
+                },
+                "discount_select": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "formula"
+                },
+                "discount_amount": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "formula"
+                }
+            },
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "related_fields"
+                },
+                "quantity": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "related_fields"
+                },
+                "discount_price": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "related_fields"
+                },
+                "discount_select": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "related_fields"
+                },
+                "discount_amount": {
+                    "module": "Products",
+                    "field": "total_amount",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "manufacturer_name": {
+            "related": {
+                "manufacturer_id": {
+                    "module": "Products",
+                    "field": "manufacturer_name",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "cost_price": {
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "cost_price",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "cost_price",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "discount_price": {
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "discount_price",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "discount_price",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "discount_amount": {
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "discount_amount",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "discount_amount",
+                    "reason": "related_fields"
+                },
+                "discount_select": {
+                    "module": "Products",
+                    "field": "discount_amount",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "discount_rate_percent": {
+            "locked": {
+                "discount_price": {
+                    "module": "Products",
+                    "field": "discount_rate_percent",
+                    "reason": "formula"
+                },
+                "discount_amount": {
+                    "module": "Products",
+                    "field": "discount_rate_percent",
+                    "reason": "formula"
+                }
+            }
+        },
+        "discount_amount_usdollar": {
+            "locked": {
+                "discount_amount": {
+                    "module": "Products",
+                    "field": "discount_amount_usdollar",
+                    "reason": "formula"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "discount_amount_usdollar",
+                    "reason": "formula"
+                }
+            }
+        },
+        "deal_calc": {
+            "locked": {
+                "discount_select": {
+                    "module": "Products",
+                    "field": "deal_calc",
+                    "reason": "formula"
+                },
+                "discount_price": {
+                    "module": "Products",
+                    "field": "deal_calc",
+                    "reason": "formula"
+                },
+                "quantity": {
+                    "module": "Products",
+                    "field": "deal_calc",
+                    "reason": "formula"
+                },
+                "discount_amount": {
+                    "module": "Products",
+                    "field": "deal_calc",
+                    "reason": "formula"
+                }
+            },
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "deal_calc",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "deal_calc",
+                    "reason": "related_fields"
+                },
+                "discount_price": {
+                    "module": "Products",
+                    "field": "deal_calc",
+                    "reason": "related_fields"
+                },
+                "quantity": {
+                    "module": "Products",
+                    "field": "deal_calc",
+                    "reason": "related_fields"
+                },
+                "discount_amount": {
+                    "module": "Products",
+                    "field": "deal_calc",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "deal_calc_usdollar": {
+            "locked": {
+                "deal_calc": {
+                    "module": "Products",
+                    "field": "deal_calc_usdollar",
+                    "reason": "formula"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "deal_calc_usdollar",
+                    "reason": "formula"
+                }
+            },
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "deal_calc_usdollar",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "deal_calc_usdollar",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "list_price": {
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "list_price",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "list_price",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "cost_usdollar": {
+            "locked": {
+                "cost_price": {
+                    "module": "Products",
+                    "field": "cost_usdollar",
+                    "reason": "formula"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "cost_usdollar",
+                    "reason": "formula"
+                }
+            },
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "cost_usdollar",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "cost_usdollar",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "discount_usdollar": {
+            "locked": {
+                "discount_price": {
+                    "module": "Products",
+                    "field": "discount_usdollar",
+                    "reason": "formula"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "discount_usdollar",
+                    "reason": "formula"
+                }
+            }
+        },
+        "list_usdollar": {
+            "locked": {
+                "list_price": {
+                    "module": "Products",
+                    "field": "list_usdollar",
+                    "reason": "formula"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "list_usdollar",
+                    "reason": "formula"
+                }
+            },
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "list_usdollar",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "list_usdollar",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "book_value": {
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "book_value",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "book_value",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "book_value_usdollar": {
+            "locked": {
+                "book_value": {
+                    "module": "Products",
+                    "field": "book_value_usdollar",
+                    "reason": "formula"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "book_value_usdollar",
+                    "reason": "formula"
+                }
+            },
+            "related": {
+                "currency_id": {
+                    "module": "Products",
+                    "field": "book_value_usdollar",
+                    "reason": "related_fields"
+                },
+                "base_rate": {
+                    "module": "Products",
+                    "field": "book_value_usdollar",
+                    "reason": "related_fields"
+                }
+            }
+        },
+        "date_closed_timestamp": {
+            "locked": {
+                "date_closed": {
+                    "module": "Products",
+                    "field": "date_closed_timestamp",
+                    "reason": "formula"
+                }
+            }
+        }
+    }
+}

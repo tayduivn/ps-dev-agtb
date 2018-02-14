@@ -12,6 +12,7 @@ describe('Quotes.Base.Fields.QuoteFooterInput', function() {
     var app;
     var field;
     var fieldDef;
+
     beforeEach(function() {
         app = SugarTest.app;
         fieldDef = {

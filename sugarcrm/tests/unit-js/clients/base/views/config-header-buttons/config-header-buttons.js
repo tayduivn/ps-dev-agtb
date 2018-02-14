@@ -9,9 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Base.View.ConfigHeaderButtons', function() {
-    var app,
-        view,
-        module;
+    var app;
+    var view;
+    var module;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -29,8 +29,79 @@ describe('Base.View.ConfigHeaderButtons', function() {
         app.router.stop();
     });
 
-    it('will have custom module name in moduleLangObj', function() {
-        expect(view.moduleLangObj.module).toBe('Opps');
+    describe('initialize()', function() {
+        it('will have custom module name in moduleLangObj', function() {
+            expect(view.moduleLangObj.module).toBe('Opps');
+        });
+    });
+
+    describe('saveConfig()', function() {
+        var button;
+
+        beforeEach(function() {
+            button = SugarTest.createField({
+                client: 'base',
+                name: 'save_button',
+                type: 'button',
+                viewName: 'detail',
+                fieldDef: {
+                    label: 'LBL_SAVE_BUTTON_LABEL'
+                }
+            });
+
+            sinon.collection.stub(button, 'setDisabled').withArgs(true).returns(true);
+            view.fields['save_button'] = button;
+        });
+
+        afterEach(function() {
+            button = null;
+        });
+
+        it('will disable the save button', function() {
+            sinon.collection.stub(view, '_saveConfig');
+            view.saveConfig();
+
+            expect(button.setDisabled).toHaveBeenCalledWith(true);
+        });
+
+        it('will not disable if beforeSave returns false', function() {
+            sinon.collection.stub(view, 'triggerBefore').returns(false);
+            view.saveConfig();
+
+            expect(button.setDisabled).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('_saveConfig()', function() {
+        var button;
+
+        beforeEach(function() {
+            button = SugarTest.createField({
+                client: 'base',
+                name: 'save_button',
+                type: 'button',
+                viewName: 'detail',
+                fieldDef: {
+                    label: 'LBL_SAVE_BUTTON_LABEL'
+                }
+            });
+
+            sinon.collection.stub(button, 'setDisabled').withArgs(false).returns(true);
+            view.fields['save_button'] = button;
+        });
+
+        afterEach(function() {
+            button = null;
+        });
+
+        it('on xhr error will enable the button', function() {
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
+                callbacks.error({});
+            });
+
+            view._saveConfig();
+            expect(button.setDisabled).toHaveBeenCalledWith(false);
+        });
     });
 
     describe('cancelConfig()', function() {
@@ -65,68 +136,108 @@ describe('Base.View.ConfigHeaderButtons', function() {
         });
     });
 
-    describe('saveConfig()', function() {
-        var button;
+    describe('_getSaveConfigURL()', function() {
         beforeEach(function() {
-            button = SugarTest.createField({
-                client: 'base',
-                name: 'save_button',
-                type: 'button',
-                viewName: 'detail',
-                fieldDef: {
-                    label: 'LBL_SAVE_BUTTON_LABEL'
-                }
+            sinon.collection.stub(app.api, 'buildURL', function() {
+                return view.module + '/config';
             });
-
-            sinon.collection.stub(button, 'setDisabled').withArgs(true).returns(true);
-            view.fields['save_button'] = button;
         });
 
-        afterEach(function() {
-            button = null;
-        });
-
-        it('will disable the save button', function() {
-            sinon.collection.stub(view, '_saveConfig');
-            view.saveConfig();
-            expect(button.setDisabled).toHaveBeenCalledWith(true);
-        });
-
-        it('will not disable if beforeSave returns false', function() {
-            sinon.collection.stub(view, 'triggerBefore').returns(false);
-            view.saveConfig();
-            expect(button.setDisabled).not.toHaveBeenCalled();
+        it('should return the config url', function() {
+            expect(view._getSaveConfigURL()).toBe(view.module + '/config');
         });
     });
 
-    describe('_saveConfig()', function() {
-        var button;
+    describe('_getSaveConfigAttributes()', function() {
         beforeEach(function() {
-            button = SugarTest.createField({
-                client: 'base',
-                name: 'save_button',
-                type: 'button',
-                viewName: 'detail',
-                fieldDef: {
-                    label: 'LBL_SAVE_BUTTON_LABEL'
-                }
+            view.model.set({
+                test: 'test1'
             });
+        });
 
-            sinon.collection.stub(button, 'setDisabled').withArgs(false).returns(true);
-            view.fields['save_button'] = button;
+        it('should return the attributes to be saved', function() {
+            expect(view._getSaveConfigAttributes()).toEqual({
+                test: 'test1'
+            });
+        });
+    });
+
+    describe('_beforeSaveConfig()', function() {
+        it('should return true', function() {
+            expect(view._beforeSaveConfig()).toBeTruthy();
+        });
+    });
+
+    describe('showSavedConfirmation()', function() {
+        var onStub;
+
+        beforeEach(function() {
+            onStub = sinon.collection.stub();
+            sinon.collection.stub(app.alert, 'show', function() {
+                return {
+                    getCloseSelector: function() {
+                        return {
+                            on: onStub
+                        };
+                    }
+                };
+            });
+            sinon.collection.stub(app.accessibility, 'run');
         });
 
         afterEach(function() {
-            button = null;
+            onStub = null;
         });
 
-        it('on xhr error will enable the button', function() {
-            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
-                callbacks.error({});
-            });
+        it('should get the close selector and listen for the click event', function() {
+            view.showSavedConfirmation($.noop);
 
-            view._saveConfig();
-            expect(button.setDisabled).toHaveBeenCalledWith(false);
+            expect(onStub).toHaveBeenCalledWith('click');
+        });
+
+        it('should call app.accessibility.run', function() {
+            view.showSavedConfirmation($.noop);
+
+            expect(app.accessibility.run).toHaveBeenCalled();
+        });
+    });
+
+    describe('cancelConfig()', function() {
+        beforeEach(function() {
+            app.drawer = {
+                close: $.noop,
+                count: $.noop
+            };
+            sinon.collection.stub(app.drawer, 'close');
+            sinon.collection.stub(app.router, 'navigate');
+        });
+
+        afterEach(function() {
+            delete app.drawer;
+        });
+
+        it('should call app.drawer.close if inside a drawer', function() {
+            sinon.collection.stub(app.drawer, 'count', function() {
+                return 1;
+            });
+            view.cancelConfig();
+
+            expect(app.drawer.close).toHaveBeenCalled();
+        });
+
+        it('should call app.router.navigate if not inside a drawer', function() {
+            sinon.collection.stub(app.drawer, 'count', function() {
+                return 0;
+            });
+            view.cancelConfig();
+
+            expect(app.router.navigate).toHaveBeenCalled();
+        });
+    });
+
+    describe('_beforeCancelConfig()', function() {
+        it('should return true', function() {
+            expect(view._beforeCancelConfig()).toBeTruthy();
         });
     });
 });

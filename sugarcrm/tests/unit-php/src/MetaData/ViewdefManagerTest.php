@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\MetaData\ViewdefManager;
 
 /**
- * @coversDefaultClass \ViewdefManager
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\MetaData\ViewdefManager
  */
 class ViewdefManagerTest extends TestCase
 {
@@ -51,10 +51,7 @@ class ViewdefManagerTest extends TestCase
      */
     public function testLoadViewdef($base, $module, $view, $hasCount)
     {
-        $mock = $this->getMockBuilder(ViewdefManager::class)
-            ->setMethods()
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = new ViewdefManager();
 
         $result = $mock->loadViewdef($base, $module, $view);
 
@@ -75,10 +72,7 @@ class ViewdefManagerTest extends TestCase
      */
     public function testSaveViewdef()
     {
-        $mock = $this->getMockBuilder(ViewdefManager::class)
-            ->setMethods()
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = new ViewdefManager();
 
         $viewdef = array(
             'Quotes' => array(

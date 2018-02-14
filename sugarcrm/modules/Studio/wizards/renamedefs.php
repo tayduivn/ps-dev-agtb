@@ -60,6 +60,8 @@ $renamedefs = array(
             array('name' => 'LBL_OPPORTUNITIES_DESC', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_MANAGE_OPPORTUNITIES_TITLE', 'type' => 'plural', 'source' => 'Opportunities'),
             array('name' => 'LBL_MANAGE_OPPORTUNITIES_DESC', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_MANAGE_QUOTES_TITLE', 'type' => 'plural', 'source' => 'Quotes'),
+            array('name' => 'LBL_MANAGE_QUOTES', 'type' => 'singular', 'source' => 'Quotes'),
         ),
         'Bugs' => array(
             array('name' => 'LBL_NOTES_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Notes'),

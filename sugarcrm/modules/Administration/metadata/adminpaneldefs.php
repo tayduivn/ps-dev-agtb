@@ -207,6 +207,12 @@ $admin_option_defs['Products']['shipping_providers']= array('Shippers','LBL_SHIP
 $admin_option_defs['Products']['product_types']= array('Product_Types','LBL_PRODUCT_TYPES_TITLE','LBL_PRODUCT_TYPES','javascript:parent.SUGAR.App.router.navigate("ProductTypes", {trigger: true});');
 
 $admin_option_defs['Quotes']['tax_rates']= array('TaxRates','LBL_TAXRATES_TITLE','LBL_TAXRATES','javascript:parent.SUGAR.App.router.navigate("TaxRates", {trigger: true});');
+$admin_option_defs['Quotes']['quotes_config'] = array(
+    'Quotes',
+    'LBL_MANAGE_QUOTES_TITLE',
+    'LBL_MANAGE_QUOTES',
+    'javascript:void(parent.SUGAR.App.router.navigate("Quotes/config", {trigger: true}));',
+);
 
 $admin_group_header[]= array('LBL_PRICE_LIST_TITLE','',false,$admin_option_defs, 'LBL_PRICE_LIST_DESC');
 //bug tracker.

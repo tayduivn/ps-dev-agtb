@@ -30,7 +30,7 @@
     /**
      * The currently-selected config panel
      */
-    selectedPanel: '',
+    selectedPanel: undefined,
 
     /**
      * The current HowTo data Object
@@ -49,7 +49,7 @@
     /**
      * @inheritdoc
      */
-    _render: function () {
+    _render: function() {
         this._super('_render');
 
         //This is because backbone injects a wrapper element.
@@ -58,8 +58,8 @@
 
         //apply the accordion to this layout
         this.$('.collapse').collapse({
-            toggle:false,
-            parent:'#' + this.collapseDivId
+            toggle: false,
+            parent: '#' + this.collapseDivId
         });
 
         // select the first panel in metadata
@@ -87,10 +87,30 @@
      * @param {jQuery.Event|undefined} evt
      */
     onAccordionToggleClicked: function(evt) {
-        var helpId = (evt) ? $(evt.currentTarget).data('help-id') : this.selectedPanel;
-        this._switchHowToData(helpId);
+        var panelName = (evt) ? $(evt.currentTarget).data('help-id') : this.selectedPanel;
+        var oldPanel;
+        var newPanel;
+
+        this._switchHowToData(panelName);
 
         this.context.trigger('config:howtoData:change', this.currentHowToData);
+
+        if (this.selectedPanel) {
+            oldPanel = _.find(this._components, function(component) {
+                return component.name === this.selectedPanel;
+            }, this);
+
+            if (oldPanel) {
+                oldPanel.trigger('config:panel:hide');
+            }
+        }
+
+        this.selectedPanel = panelName;
+
+        newPanel = _.find(this._components, function(component) {
+            return component.name === panelName;
+        }, this);
+        newPanel.trigger('config:panel:show');
     },
 
     /**
@@ -104,7 +124,7 @@
     /**
      * Handles switching the HowTo text and info by a specific accordion view being toggled
      *
-     * @param {String} helpId The
+     * @param {string} helpId The panel component name
      * @private
      */
     _switchHowToData: function(helpId) {
