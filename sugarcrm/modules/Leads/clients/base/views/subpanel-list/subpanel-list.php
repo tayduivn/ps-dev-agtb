@@ -99,12 +99,6 @@ $viewdefs['Leads']['base']['view']['subpanel-list'] = array(
                 'icon' => 'fa-chain-broken',
                 'label' => 'LBL_UNLINK_BUTTON',
             ),
-            array(
-                'type' => 'dataprivacyerase',
-                'icon' => 'fa-eye',
-                'name' => 'dataprivacy-erase',
-                'label' => 'LBL_DATAPRIVACY_MARKFORERASE',
-            ),
         ),
     ),
 );

@@ -16,6 +16,10 @@
 ({
     extendsFrom: 'RowactionField',
 
+    events: {
+        'click [name="dataprivacy-erase"]': 'showMarkForErasePanel'
+    },
+
     /**
      * @inheritdoc
      */
@@ -50,5 +54,16 @@
         } else {
             this.hide();
         }
+    },
+
+    /**
+     * Handle Mark for Erase click
+     */
+    showMarkForErasePanel: function() {
+        // place holder for now, we can either display the mark for erase panel here
+        // or trigger ane event and let the parent (record) handle it
+        // depending on how we are mixing in the marked for erasure data stored on the DataPrivacy model
+        console.log('Mark for Erase clicked for ' + this.model.module + ':' + this.model.id);
+        //this.context.parent.trigger('mark-erasure:click', this.model);
     }
 })
