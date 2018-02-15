@@ -1056,11 +1056,12 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         if (!in_array('getCalendarEvents', $methodsArray)) {
             $methodsArray[] = 'getCalendarEvents';
         }
-
-        $calendarEventsApiMock = $this->createPartialMock(
-            'CalendarEventsApi',
-            $methodsArray
-        );
+        $calendarEventsApiMock = $this->getMockBuilder('CalendarEventsApi')
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->disallowMockingUnknownTypes()
+            ->setMethods($methodsArray)
+            ->getMock();
 
         $calendarEventsApiMock->expects($this->any())
             ->method('getCalendarEvents')

@@ -20,6 +20,7 @@ require_once("modules/Import/Forms.php");
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 class ImportController extends SugarController
 {
@@ -28,9 +29,28 @@ class ImportController extends SugarController
      */
     protected $request;
 
+    /**
+     * @var string
+     */
+    protected $importModule;
+
+    /**
+     * @var bool
+     */
+    protected $isOidcEnabled;
+
+    /**
+     * @var array
+     */
+    protected $oidcModules;
+
     public function __construct()
     {
         $this->request = InputValidation::getService();
+
+        $idpConfig =  new Authentication\Config(\SugarConfig::getInstance());
+        $this->isOidcEnabled = $idpConfig->isOIDCEnabled();
+        $this->oidcModules = $idpConfig->getOidcDisabledModules();
     }
 
     /**
@@ -157,6 +177,9 @@ class ImportController extends SugarController
 
 	function action_Step1()
     {
+        if ($this->isDisabled()) {
+            $this->showDisabledPage();
+        }
         $fromAdminView = isset($_REQUEST['from_admin_wizard']) ? $_REQUEST['from_admin_wizard'] : FALSE;
         if( $this->importModule == 'Administration' || $fromAdminView
             || $this->bean instanceof Person
@@ -170,16 +193,25 @@ class ImportController extends SugarController
 
     function action_Step2()
     {
+        if ($this->isDisabled()) {
+            $this->showDisabledPage();
+        }
 		$this->view = 'step2';
     }
 
     function action_Confirm()
     {
+        if ($this->isDisabled()) {
+            $this->showDisabledPage();
+        }
 		$this->view = 'confirm';
     }
 
     function action_Step3()
     {
+        if ($this->isDisabled()) {
+            $this->showDisabledPage();
+        }
 		$this->view = 'step3';
     }
 
@@ -190,11 +222,17 @@ class ImportController extends SugarController
 
     function action_Step4()
     {
+        if ($this->isDisabled()) {
+            $this->showDisabledPage();
+        }
 		$this->view = 'step4';
     }
 
     function action_Last()
     {
+        if ($this->isDisabled()) {
+            $this->showDisabledPage();
+        }
 		$this->view = 'last';
     }
 
@@ -239,5 +277,26 @@ class ImportController extends SugarController
     public function action_RevokeAccess()
     {
         $this->view = 'revokeaccess';
+    }
+
+    /**
+     * is import disabled?
+     * @return bool
+     */
+    protected function isDisabled()
+    {
+        return ($this->isOidcEnabled && in_array($this->importModule, $this->oidcModules));
+    }
+
+    /**
+     * show disabled page
+     */
+    protected function showDisabledPage()
+    {
+        global $mod_strings;
+        $ss = new Sugar_Smarty();
+        $ss->assign("MOD", $mod_strings);
+        $ss->display('modules/Import/tpls/disabled.tpl');
+        sugar_cleanup(true);
     }
 }

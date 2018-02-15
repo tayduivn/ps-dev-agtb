@@ -630,4 +630,14 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedResult, $config->isOIDCEnabled());
     }
+
+    /**
+     * @covers ::getOidcDisabledModules
+     */
+    public function testGetOidcDisabledModules()
+    {
+        $sugarConfig = $this->createMock(\SugarConfig::class);
+        $config = new Config($sugarConfig);
+        $this->assertEquals(['Users', 'Employees'], $config->getOidcDisabledModules());
+    }
 }

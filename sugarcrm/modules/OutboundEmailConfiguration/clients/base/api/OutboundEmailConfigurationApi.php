@@ -25,6 +25,7 @@ class OutboundEmailConfigurationApi extends ModuleApi
      */
     public function __construct()
     {
+        parent::__construct();
         LoggerManager::getLogger()->deprecated(
             'OutboundEmailConfigurationApi and all of its endpoints have been deprecated.'
         );

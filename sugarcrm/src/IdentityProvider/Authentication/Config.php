@@ -112,6 +112,15 @@ class Config
     }
 
     /**
+     * return disabled modules in IDM mode
+     * @return array
+     */
+    public function getOidcDisabledModules()
+    {
+        return ['Users', 'Employees'];
+    }
+
+    /**
      * Get default config for php-saml library
      *
      * @return array

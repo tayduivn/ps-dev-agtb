@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+
 global $sugar_config;
 
 $moduleName = 'Users';
@@ -91,19 +94,19 @@ $viewdefs[$moduleName]['base']['menu']['header'][] =
         'acl_module' => $moduleName,
         'icon' => 'fa-arrows',
     );
-$viewdefs[$moduleName]['base']['menu']['header'][] =
-    array(
-        'route' => '#bwc/index.php?' . http_build_query(
-            array(
-                'module' => 'Import',
-                'action' => 'Step1',
-                'import_module' => $moduleName,
-                'return_module' => $moduleName,
-                'return_action' => 'index',
-            )
-        ),
+$idpConfig = new Config(\SugarConfig::getInstance());
+if (!$idpConfig->isOIDCEnabled()) {
+    $viewdefs[$moduleName]['base']['menu']['header'][] = [
+        'route' => '#bwc/index.php?' . http_build_query([
+            'module' => 'Import',
+            'action' => 'Step1',
+            'import_module' => $moduleName,
+            'return_module' => $moduleName,
+            'return_action' => 'index',
+        ]),
         'label' => 'LNK_IMPORT_USERS',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
         'icon' => 'fa-arrow-circle-o-up',
-    );
+    ];
+}

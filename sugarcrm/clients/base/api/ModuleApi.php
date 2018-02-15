@@ -37,7 +37,17 @@ class ModuleApi extends SugarApi {
      * What modules will be filtered if oidc is enabled?
      * @var array
      */
-    protected $oidcModules = ['Users', 'Employees'];
+    protected $oidcModules;
+
+    /**
+     * constructor
+     */
+    public function __construct()
+    {
+        $idpConfig =  new Config(\SugarConfig::getInstance());
+        $this->isOidcEnabled = $idpConfig->isOIDCEnabled();
+        $this->oidcModules = $idpConfig->getOidcDisabledModules();
+    }
 
     public function registerApiRest() {
         return array(
@@ -709,9 +719,6 @@ class ModuleApi extends SugarApi {
      */
     protected function isOidcEnabled()
     {
-        if (!isset($this->isOidcEnabled)) {
-            $this->isOidcEnabled = (new Config(SugarConfig::getInstance()))->isOIDCEnabled();
-        }
         return $this->isOidcEnabled;
     }
 }

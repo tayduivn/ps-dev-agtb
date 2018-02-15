@@ -21,6 +21,7 @@ class EmailAddressesApi extends ModuleApi
     {
         $this->disabledUpdateFields[] = 'email_address';
         $this->disabledUpdateFields[] = 'email_address_caps';
+        parent::__construct();
     }
 
     /**

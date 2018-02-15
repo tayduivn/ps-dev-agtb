@@ -62,6 +62,7 @@ class PMSEProjectApi extends ModuleApi
 
     public function __construct()
     {
+        parent::__construct();
         $this->projectWrapper = ProcessManager\Factory::getPMSEObject('PMSEProjectWrapper');
         $this->crmDataWrapper = ProcessManager\Factory::getPMSEObject('PMSECrmDataWrapper');
         $this->activityDefinitionWrapper = ProcessManager\Factory::getPMSEObject('PMSEActivityDefinitionWrapper');
