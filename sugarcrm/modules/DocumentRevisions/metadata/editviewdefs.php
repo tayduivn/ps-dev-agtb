@@ -34,9 +34,7 @@ $viewdefs['DocumentRevisions']['EditView'] = array(
             
             array (
                 'filename',
-            	 //BEGIN SUGARCRM flav!=com ONLY
                 'doc_type',
-            	 //END SUGARCRM flav!=com ONLY
             ),
             
             array (

@@ -39,12 +39,6 @@
 
 	{/literal}
 {foreach from=$CATEGORIES item="TYPES" key="CATEGORY_NAME"}
-
-    {* //BEGIN SUGARCRM flav=com ONLY*}
-
-	{if $APP_LIST.moduleList[$CATEGORY_NAME]!='Users'}
-	{* //END SUGARCRM flav=com ONLY*}
-
 	<TR id="ACLEditView_Access_{$CATEGORY_NAME}">
 	<td nowrap width='1%' id="ACLEditView_Access_{$CATEGORY_NAME}_category"><b>
 	{if $APP_LIST.moduleList[$CATEGORY_NAME]=='Users'}
@@ -89,13 +83,6 @@
 		{/if}
 	{/foreach}
 	</TR>
-
-	{* //BEGIN SUGARCRM flav=com ONLY*}
-
-    {/if}
-
-    {* //END SUGARCRM flav=com ONLY*}
-
 {foreachelse}
     <tr> <td colspan="2">No Actions Defined</td></tr>
 {/foreach}

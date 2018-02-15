@@ -15,9 +15,6 @@
 
 		<div class="screen">
 		
-{* //BEGIN SUGARCRM flav=com ONLY*}
-{$MY_FRAME}
-{* //END SUGARCRM flav=com ONLY*}
 {foreach  from=$ADMIN_GROUP_HEADER key=j item=val1}
    
    {if isset($GROUP_HEADER[$j][1])}

@@ -733,15 +733,6 @@ EOHTML;
         // Under the License referenced above, you are required to leave in all copyright statements in both
         // the code and end-user application.
 
-        //BEGIN SUGARCRM flav=com  && dep=os ONLY
-
-        $copyright = '&copy; 2004-2013 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br>This program is free software; you can redistribute it and/or modify it under the terms of the <br><a href="LICENSE.txt" target="_blank" class="copyRightLink"> GNU Affero General Public License version 3</a> as published by the Free Software Foundation, including the additional permission set forth in the source code header.<br>';
-
-        //END SUGARCRM flav=com  && dep=os ONLY
-
-
-
-
         //BEGIN SUGARCRM flav=pro  && dep=od && reg=zh_cn  ONLY
 
         $copyright = 'é™�ä¸­å›½åœ°åŒºä½¿ç�1ￄ1�7�1�7�1�7r> &copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> ç‰ˆæ�ƒæ‰€æœ 1�7�1�7r>';
@@ -755,21 +746,6 @@ EOHTML;
         $copyright = '&copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br>';
 
           //END SUGARCRM lic=sub ONLY
-
-        //BEGIN SUGARCRM flav=com  && dep=os ONLY
-
-
-        // The interactive user interfaces in modified source and object code
-        // versions of this program must display Appropriate Legal Notices, as
-        // required under Section 5 of the GNU General Public License version
-        // 3. In accordance with Section 7(b) of the GNU General Public License
-        // version 3, these Appropriate Legal Notices must retain the display
-        // of the "Powered by SugarCRM" logo. If the display of the logo is
-        // not reasonably feasible for technical reasons, the Appropriate
-        // Legal Notices must display the words "Powered by SugarCRM".
-        $attribLinkImg = "<img style='margin-top: 2px' border='0' width='120' height='34' src='".getJSPath('include/images/poweredby_sugarcrm_65.png')."' alt='Powered By SugarCRM'>\n";
-
-        //END SUGARCRM flav=com  && dep=os ONLY
 
           //BEGIN SUGARCRM lic=sub ONLY
         // You are required to leave in all copyright statements in both the
@@ -1453,9 +1429,6 @@ EOHTML;
         $favicon = '';
         if ( $module_favicon )
             $favicon = $themeObject->getImageURL($this->module.'_favico.png',false);
-            //BEGIN SUGARCRM flav=com ONLY
-            $favicon = $themeObject->getImageURL($this->module.'.gif',false);
-            //END SUGARCRM flav=com ONLY
         if ( !sugar_is_file($favicon) || !$module_favicon )
             $favicon = $themeObject->getImageURL('sugar_icon.ico',false);
 

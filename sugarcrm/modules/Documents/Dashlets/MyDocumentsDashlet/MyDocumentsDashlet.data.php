@@ -15,9 +15,7 @@ global $current_user;
 $dashletData['MyDocumentsDashlet']['searchFields'] = array('date_entered'    => array('default' => ''),
                                                           'document_name'    => array('default' => ''),
                                                           'category_id'      => array('default' => ''),
-														  //BEGIN SUGARCRM flav!=com ONLY
  														  'doc_type'  => array('default' => ''),
-														  //END SUGARCRM flav!=com ONLY
  														  'status_id'     => array('default' => ''),
  														  'active_date'      => array('default' => ''),
                                                           'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
@@ -50,11 +48,9 @@ $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array(
 													  'active_date' => array('width' => '8',
                                                                          'label' => 'LBL_ACTIVE_DATE',
 																		 'default' => true),
-													   //BEGIN SUGARCRM flav!=com ONLY
 													  'doc_type' => array('width' => '8',
                                                                          'label' => 'LBL_DOC_TYPE',
 																		 'default' => false), 
-													   //END SUGARCRM flav!=com ONLY
 													  'exp_date' => array('width' => '8',
                                                                          'label' => 'LBL_EXPIRATION_DATE',
 																		 'default' => false), 

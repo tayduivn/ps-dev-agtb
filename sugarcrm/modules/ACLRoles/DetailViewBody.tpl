@@ -24,13 +24,6 @@
 {/foreach}
 </TR>
 {foreach from=$CATEGORIES item="TYPES" key="CATEGORY_NAME"}
-
-	{* //BEGIN SUGARCRM flav=com ONLY*}
-
-    {if $APP_LIST.moduleList[$CATEGORY_NAME]!='Users'}
-
-    {* //END SUGARCRM flav=com ONLY*}
-
 	<TR>
 	{if $APP_LIST.moduleList[$CATEGORY_NAME]=='Users'}
 	<td nowrap width='1%' scope="row"><b>{$MOD.LBL_USER_NAME_FOR_ROLE}</b></td>
@@ -54,13 +47,6 @@
 		{/if}
 	{/foreach}
 	</TR>
-
-	{* //BEGIN SUGARCRM flav=com ONLY*}
-
-    {/if}
-
-    {* //END SUGARCRM flav=com ONLY*}
-
 {foreachelse}
 	<tr> <td colspan="2">No Actions</td></tr>
 {/foreach}

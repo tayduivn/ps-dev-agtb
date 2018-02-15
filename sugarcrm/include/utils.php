@@ -115,12 +115,7 @@ function make_sugar_config(&$sugar_config)
         'chown' => '',
         'chgrp' => '',
     ),
-    //BEGIN SUGARCRM flav=com ONLY
-    'default_theme' => empty($default_theme) ? 'Sugar5' : $default_theme,
-    //END SUGARCRM flav=com ONLY
-    //BEGIN SUGARCRM flav!=com ONLY
     'default_theme' => empty($default_theme) ? 'RacerX' : $default_theme,
-    //END SUGARCRM flav!=com ONLY
     'default_time_format' => empty($defaultTimeFormat) ? 'h:ia' : $defaultTimeFormat,
     'default_user_is_admin' => empty($default_user_is_admin) ? false : $default_user_is_admin,
     'default_user_name' => empty($default_user_name) ? '' : $default_user_name,
@@ -179,21 +174,6 @@ function make_sugar_config(&$sugar_config)
     'default_navigation_paradigm' => empty($navigation_paradigm) ? 'gm' : $navigation_paradigm,
     'default_call_status' => 'Planned',
     'js_lang_version' => 1,
-     //BEGIN SUGARCRM flav=com ONLY
-    'passwordsetting' => empty($passwordsetting) ? array (
-        'SystemGeneratedPasswordON' => '',
-        'generatepasswordtmpl' => '',
-        'lostpasswordtmpl' => '',
-        'forgotpasswordON' => true,
-        'linkexpiration' => '1',
-        'linkexpirationtime' => '30',
-        'linkexpirationtype' => '1',
-        'systexpiration' => '0',
-        'systexpirationtime' => '',
-        'systexpirationtype' => '0',
-        'systexpirationlogin' => '',
-        ) : $passwordsetting,
-        //END SUGARCRM flav=com ONLY
         'passwordsetting' => empty($passwordsetting) ? array (
         'minpwdlength' => '',
         'maxpwdlength' => '',
@@ -308,12 +288,7 @@ function get_sugar_config_defaults()
         'user' => '',
         'group' => '',
     ),
-    //BEGIN SUGARCRM flav=com ONLY
-    'default_theme' => return_session_value_or_default('site_default_theme', 'Sugar5'),
-    //END SUGARCRM flav=com ONLY
-    //BEGIN SUGARCRM flav!=com ONLY
     'default_theme' => return_session_value_or_default('site_default_theme', 'Sugar'),
-    //END SUGARCRM flav!=com ONLY
     'default_time_format' => 'h:ia',
     'default_user_is_admin' => false,
     'default_user_name' => '',
@@ -355,18 +330,10 @@ function get_sugar_config_defaults()
     'showDetailData' => true, // if true, read-only ACL fields will still appear on EditViews as non-editable
     'showThemePicker' => true,
     'slow_query_time_msec' => '100',
-//BEGIN SUGARCRM flav=com ONLY
-    'sugarbeet' => true,
-//END SUGARCRM flav=com ONLY
     'time_formats' => array (
         'H:i'=>'23:00', 'h:ia'=>'11:00pm', 'h:iA'=>'11:00PM', 'h:i a'=>'11:00 pm', 'h:i A'=>'11:00 PM',
         'H.i'=>'23.00', 'h.ia'=>'11.00pm', 'h.iA'=>'11.00PM', 'h.i a'=>'11.00 pm', 'h.i A'=>'11.00 PM' ),
-//BEGIN SUGARCRM flav=com ONLY
-    'tracker_max_display_length' => 15,
-//END SUGARCRM flav=com ONLY
-//BEGIN SUGARCRM flav!=com ONLY
     'tracker_max_display_length' => 30,
-//END SUGARCRM flav!=com ONLY
     'translation_string_prefix' =>
     return_session_value_or_default('translation_string_prefix', false),
     'upload_badext' => array (
@@ -408,21 +375,6 @@ function get_sugar_config_defaults()
       'enable_repeat' => true,
       'max_repeat_count' => 1000,
     ),
-     //BEGIN SUGARCRM flav=com ONLY
-    'passwordsetting' => empty($passwordsetting) ? array (
-        'SystemGeneratedPasswordON' => '',
-        'generatepasswordtmpl' => '',
-        'lostpasswordtmpl' => '',
-        'forgotpasswordON' => false,
-        'linkexpiration' => '1',
-        'linkexpirationtime' => '30',
-        'linkexpirationtype' => '1',
-        'systexpiration' => '0',
-        'systexpirationtime' => '',
-        'systexpirationtype' => '0',
-        'systexpirationlogin' => '',
-        ) : $passwordsetting,
-        //END SUGARCRM flav=com ONLY
     'snip_url' => 'https://ease.sugarcrm.com/',
     'passwordsetting' => array (
         'minpwdlength' => '',
@@ -4170,19 +4122,9 @@ function getTrackerSubstring($name)
 
     if (!isset($max_tracker_item_length)) {
         if (isset($sugar_config['tracker_max_display_length'])) {
-    //BEGIN SUGARCRM flav=com ONLY
-          $max_tracker_item_length = (is_int($sugar_config['tracker_max_display_length']) && $sugar_config['tracker_max_display_length'] > 0 && $sugar_config['tracker_max_display_length'] < 50) ? $sugar_config['tracker_max_display_length'] : 15;
-    //END SUGARCRM flav=com ONLY
-    //BEGIN SUGARCRM flav!=com ONLY
           $max_tracker_item_length = (is_int($sugar_config['tracker_max_display_length']) && $sugar_config['tracker_max_display_length'] > 0 && $sugar_config['tracker_max_display_length'] < 50) ? $sugar_config['tracker_max_display_length'] : 30;
-    //END SUGARCRM flav!=com ONLY
         } else {
-    //BEGIN SUGARCRM flav=com ONLY
-          $max_tracker_item_length = 15;
-    //END SUGARCRM flav=com ONLY
-    //BEGIN SUGARCRM flav!=com ONLY
           $max_tracker_item_length = 30;
-    //END SUGARCRM flav!=com ONLY
         }
     }
 

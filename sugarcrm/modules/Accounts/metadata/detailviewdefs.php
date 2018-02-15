@@ -16,9 +16,7 @@ $viewdefs['Accounts']['DetailView'] = array(
     'DUPLICATE', 
     'DELETE', 
     'FIND_DUPLICATES',
-//BEGIN SUGARCRM flav!=com ONLY
 	'CONNECTOR'
-//END SUGARCRM flav!= com ONLY
 )),
                             'maxColumns' => '2',
                             'useTabs' => true,

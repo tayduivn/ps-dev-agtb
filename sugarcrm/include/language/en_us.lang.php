@@ -6268,7 +6268,6 @@ $app_list_strings ['documentation'] = array (
     'ENT' => '02_Sugar_Enterprise',
     'CORP' => '03_Sugar_Corporate',
     'PRO' => '04_Sugar_Professional',
-    'COM' => '05_Sugar_Community_Edition'
 );
 
 $app_list_strings['forecasts_config_ranges_options_dom'] = array(

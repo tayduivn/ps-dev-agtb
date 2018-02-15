@@ -206,11 +206,6 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 				{sugar_getimage name="blank.gif"  width='40' height='1' border='0'}
 		</td>
 		{/if}
-		{* //BEGIN SUGARCRM flav=com ONLY*}
-		<td align='right'>
-			{if !$lock_homepage}<input id="add_dashlets" class="button" type="button" value="{$lblAddDashlets}" onclick="return SUGAR.mySugar.showDashletsDialog();"/>{/if}
-		</td>
-		{* //END SUGARCRM flav=com ONLY*}
 	</tr>
 	{/if}
 	<tr>

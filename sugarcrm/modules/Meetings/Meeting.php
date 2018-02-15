@@ -395,7 +395,6 @@ class Meeting extends SugarBean {
 			$this->parent_type = $app_list_strings['record_type_default_key'];
 		}
 
-		//BEGIN SUGARCRM flav!=com ONLY
         // Fill in the meeting url for external account types
         if ( !empty($this->id) && !empty($this->type) && $this->type != 'Sugar' && !empty($this->join_url) ) {
             // It's an external meeting
@@ -410,7 +409,6 @@ class Meeting extends SugarBean {
 
           $this->displayed_url = $meetingLink;
         }
-        //END SUGARCRM flav!=com ONLY
 	}
 
 	function get_list_view_data() {
@@ -462,7 +460,6 @@ class Meeting extends SugarBean {
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
         $meeting_fields['EMAIL_REMINDER_CHECKED'] = $this->email_reminder_time==-1 ? false : true;
 
-        //BEGIN SUGARCRM flav!=com ONLY
         $oneHourAgo = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time()-3600);
         if(!empty($this->host_url) && $date_db	>= $oneHourAgo) {
             if($this->assigned_user_id == $GLOBALS['current_user']->id){
@@ -480,7 +477,6 @@ class Meeting extends SugarBean {
 		if(!empty($meeting_fields['DISPLAYED_URL'])){
 			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" target="_blank">' . $join_icon . '</a>';
 		}
-		//END SUGARCRM flav!=com ONLY
 
 		return $meeting_fields;
 	}

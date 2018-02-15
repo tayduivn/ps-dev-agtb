@@ -117,7 +117,6 @@ $dictionary['User'] = array(
             'importable' => false,
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,
-        //BEGIN SUGARCRM flav!=com ONLY
         'picture' => array(
             'name' => 'picture',
             'vname' => 'LBL_PICTURE_FILE',
@@ -128,7 +127,6 @@ $dictionary['User'] = array(
             'height' => '42',
             'border' => '',
         ) ,
-        //END SUGARCRM flav!=com ONLY
         'first_name' => array(
             'name' => 'first_name',
             'vname' => 'LBL_FIRST_NAME',

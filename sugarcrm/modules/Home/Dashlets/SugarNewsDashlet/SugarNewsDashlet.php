@@ -84,9 +84,6 @@ class SugarNewsDashlet extends Dashlet {
 
     public function display($text = '')
     {
-        //BEGIN SUGARCRM flav=com ONLY
-        $sugar_edition = 'COM';
-        //END SUGARCRM flav=com ONLY
         $sugar_edition = 'PRO';
         //BEGIN SUGARCRM flav=ent ONLY
         $sugar_edition = 'ENT';

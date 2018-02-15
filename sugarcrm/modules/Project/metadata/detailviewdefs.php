@@ -90,40 +90,6 @@ $viewdefs['Project']['DetailView'] = array(
                     ),
 				),
 
-				//BEGIN SUGARCRM flav=com ONLY
-				 array( 'customCode' =>
-                        '<input title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" ' .
-                        'accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" class="button" type="submit" ' .
-                        'name="Duplicate" id="duplicate_button" value="{$APP.LBL_DUPLICATE_BUTTON_LABEL}"'.
-                        'onclick="'.
-                        '{if $IS_TEMPLATE}'.
-                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'projecttemplateseditview\'; this.form.return_id.value=\'{$id}\';'.
-                        '{else}'.
-                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'EditView\'; this.form.return_id.value=\'{$id}\';'.
-                        '{/if}"'.
-                        '"/>',
-                     //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
-                     'sugar_html' => array(
-                         'type' => 'submit',
-                         'value' => '{$APP.LBL_DUPLICATE_BUTTON_LABEL}',
-                         'htmlOptions' => array(
-                             'title' => '{$APP.LBL_DUPLICATE_BUTTON_TITLE}',
-                             'accessKey' => '{$APP.LBL_DUPLICATE_BUTTON_KEY}',
-                             'class' => 'button',
-                             'name' => 'Duplicate',
-                             'id' => 'duplicate_button',
-                             'onclick' =>
-                                 '{if $IS_TEMPLATE}'.
-                                     'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'projecttemplateseditview\'; this.form.return_id.value=\'{$id}\';'.
-                                 '{else}'.
-                                     'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'EditView\'; this.form.return_id.value=\'{$id}\';'.
-                                 '{/if}',
-                         ),
-                     ),
-                ),
-				//END SUGARCRM flav=com ONLY
-
-
 				array( 'customCode' =>
                         '{if $EDIT_RIGHTS_ONLY}<input title="{$MOD.LBL_VIEW_GANTT_TITLE}" '.
                         'class="button" type="submit" '.

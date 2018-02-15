@@ -193,7 +193,6 @@ $mod_strings = array (
     'LBL_SUGAR_SOURCECODE_DESC' => 'Sales force automation application.',
     'LBL_THIRD_PARTY_SOFTWARE_TITLE' => 'Third Party Software',
     'LBL_THIRD_PARTY_SOURCECODE' => 'Information about third party code used in this product, including related license terms, is available at',
-  'LBL_SUGAR_COMMUNITY_EDITION' => 'Sugar Community Edition',
   'LBL_SUGAR_PROFESSIONAL' => "Sugar Professional",
   'LBL_SUGAR_ENTERPRISE' => "Sugar Enterprise",
   'LBL_AND' => "and",

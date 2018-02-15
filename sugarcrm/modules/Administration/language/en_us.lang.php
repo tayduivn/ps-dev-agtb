@@ -96,7 +96,7 @@ $mod_strings = array (
     'ERR_UW_RUN_SQL'                            => "Error running sql file: ",
     'ERR_UW_UPDATE_CONFIG'                      => "Error updating config.php with new version information.",
     'ERR_UW_UPLOAD_ERROR'                       => "There was an error uploading the file, please try again!<br>\n",
-    'ERROR_FLAVOR_INCOMPATIBLE' => 'The uploaded file is not compatible with this flavor (Community Edition, Professional, or Enterprise) of Sugar: ',
+    'ERROR_FLAVOR_INCOMPATIBLE' => 'The uploaded file is not compatible with this flavor (Professional, Enterprise or Ultimate edition) of Sugar: ',
     'ERROR_LICENSE_EXPIRED'=> "Error: Your license expired ",
     'ERROR_LICENSE_EXPIRED2' => " day(s) ago.   Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen to enter your new license key.  If you do not enter a new license key within 7 days of your license key expiration, you will no longer be able to log into this application.",
     'ERROR_MANIFEST_TYPE' => 'Manifest file must specify the package type.',

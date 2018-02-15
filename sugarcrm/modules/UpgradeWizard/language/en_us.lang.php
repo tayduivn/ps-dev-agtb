@@ -55,7 +55,7 @@ $mod_strings = array(
     'ERROR_MANIFEST_TYPE'                       => 'Manifest file must specify the package type.',
     'ERROR_PACKAGE_TYPE'                        => 'Manifest file specifies an unrecognized package type: %s',
     'ERROR_VERSION_INCOMPATIBLE'                => 'The upgrade package is not compatible with this version of Sugar: %s',
-    'ERROR_FLAVOR_INCOMPATIBLE'                 => 'The uploaded file is not compatible with this flavor (Community Edition, Professional, or Enterprise) of Sugar: %s',
+    'ERROR_FLAVOR_INCOMPATIBLE'                 => 'The uploaded file is not compatible with this flavor (Professional, Enterprise or Ultimate edition) of Sugar: %s',
 
     'ERROR_UW_CONFIG_DB'                        => 'Error saving %s config var to the db (key %s, value %s).',
     'ERR_NOT_ADMIN'                             => "Unauthorized access to administration.",

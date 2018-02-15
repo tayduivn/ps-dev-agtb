@@ -54,10 +54,6 @@
 
 	<td width="20%"><slot>{$MOD.LBL_TEAM}</slot></td>
 	<td width="30%"><slot>{$TEAM_NAME}</slot></td>
-//BEGIN SUGARCRM flav=com ONLY
-	<td width="20%"><slot>&nbsp;</slot></td>
-	<td width="30%"><slot>&nbsp;</slot></td>
-//END SUGARCRM flav=com ONLY
 	</tr><tr>
 	<td width="20%"><slot>{$MOD.LBL_CAMPAIGN_START_DATE}</slot></td>
 	<td width="30%"><slot>{$START_DATE}</slot></td>

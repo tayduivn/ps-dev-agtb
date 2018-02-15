@@ -154,42 +154,6 @@ class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    //BEGIN SUGARCRM flav=com ONLY
-    function test_default_com_connectors() {
-        $this->install_connectors();
-        if(!file_exists('custom/modules/connectors/metadata/display_config.php')) {
-           $this->markTestSkipped('Mark test skipped.  Likely no permission to write to custom directory.');
-        }
-
-        $viewdefs = array();
-
-        require('modules/Accounts/metadata/detailviewdefs.php');
-        $this->assertFalse(in_array('CONNECTOR', $viewdefs['Accounts']['DetailView']['templateMeta']['form']['buttons']), "Assert that the Get Data button is not added to Accounts detailviewdefs.php file.");
-
-        $twitter_hover_link_set = false;
-
-        foreach($viewdefs['Accounts']['DetailView']['panels'] as $panels) {
-        	foreach($panels as $panel) {
-        		foreach($panel as $row=>$col) {
-        		    if(is_array($col) && $col['name'] == 'name') {
-        		       if(isset($col['displayParams']) && isset($col['displayParams']['connectors'])) {
-                       	  foreach($col['displayParams']['connectors'] as $entry)
-                       	  {
-                       	  	   if($entry == 'ext_rest_twitter') {
-                       	  	   	 $twitter_hover_link_set = true;
-                       	  	   }
-                       	  }
-        		       }
-        		    }
-        		}
-        	}
-        }
-
-        $this->assertFalse($twitter_hover_link_set, "Assert that the Twitter hover link is not set for Accounts.");
-
-    }
-    //END SUGARCRM flav=com ONLY
-
     private function install_connectors() {
     	require('modules/Connectors/InstallDefaultConnectors.php');
     }

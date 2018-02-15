@@ -72,17 +72,6 @@ if(!$hasUserPreferences){
 	}
 	else{
         // This is here to get Sugar dashlets added above the rest
-        //BEGIN SUGARCRM flav=com ONLY
-        $dashlets[create_guid()] = array('className' => 'iFrameDashlet',
-                                         'module' => 'Home',
-                                         'forceColumn' => 0,
-                                         'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],
-                                         'options' => array('titleLabel' => 'LBL_DASHLET_DISCOVER_SUGAR_PRO',
-                                                            'url' => 'http://www.sugarcrm.com/crm/product/gopro',
-                                                            'height' => 315,
-                                             ));
-
-        //END SUGARCRM flav=com ONLY
         $dashlets[create_guid()] = array('className' => 'iFrameDashlet',
                                          'module' => 'Home',
                                          'forceColumn' => 1,

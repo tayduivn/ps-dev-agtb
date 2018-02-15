@@ -92,9 +92,6 @@ class RestMetadataSugarViewsTest extends RestTestBase {
 
 
         // Make sure we get the base code when we ask for it.
-        //BEGIN SUGARCRM flav=com ONLY
-        file_put_contents('clients/base/views/address/editView.hbs', 'BASE EDITVIEW');
-        //END SUGARCRM flav=com ONLY
         $this->_clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=base');

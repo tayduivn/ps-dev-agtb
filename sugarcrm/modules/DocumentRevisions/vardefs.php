@@ -52,9 +52,6 @@ $dictionary['DocumentRevision'] = array(
             'function' => 'getDocumentsExternalApiDropDown',
             'len' => '100',
             'comment' => 'Document type (ex: Google, box.net, IBM SmartCloud)',
-            //BEGIN SUGARCRM flav=com ONLY
-            'studio' => 'false',
-            //END SUGARCRM flav=com ONLY
         ),
         'doc_url' => array(
             'name' => 'doc_url',

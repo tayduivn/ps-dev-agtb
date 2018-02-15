@@ -112,7 +112,7 @@ var $useForSubpanel = true;
         $admin = Administration::getSettings();
 
         if((isset($sugar_flavor) && $sugar_flavor != null) &&
-           ($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
+           (isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)) {
             if (empty($this->bean->id)) {
                 $license_users = $admin->settings['license_users'];
                 if ($license_users != '') {

@@ -788,11 +788,6 @@ function handleSugarConfig() {
     $sugar_config['sugar_version']                  = $setup_sugar_version;
     $sugar_config['tmp_dir']                        = $cache_dir.'xml/';
     $sugar_config['upload_dir']                 = 'upload/';
-//BEGIN SUGARCRM flav=com ONLY
-    if( isset($_SESSION['setup_site_sugarbeet_anonymous_stats']) ){
-        $sugar_config['sugarbeet']      = $_SESSION['setup_site_sugarbeet_anonymous_stats'];
-    }
-//END SUGARCRM flav=com ONLY
     $sugar_config['demoData'] = $_SESSION['demoData'];
     if( isset( $setup_site_guid ) ){
         $sugar_config['unique_key'] = $setup_site_guid;
@@ -2250,7 +2245,6 @@ function post_install_modules(){
 }
 
 function get_help_button_url(){
-    $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/05_Sugar_Community_Edition';
     //BEGIN SUGARCRM flav=corp ONLY
     $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/03_Sugar_Corporate';
     //END SUGARCRM flav=corp ONLY

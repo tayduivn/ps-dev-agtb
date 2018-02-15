@@ -817,10 +817,8 @@ $mod_strings = array(
                 'text' => 'TextArea',
                 'url' => 'URL',
                 'iframe' => 'IFrame',
-                //BEGIN SUGARCRM flav!=com ONLY
                 'image' => 'Image',
                 'encrypt'=>'Encrypt',
-                //END SUGARCRM flav!=com ONLY
                 'datetimecombo' =>'Datetime',
                 'decimal'=>'Decimal',
 ),

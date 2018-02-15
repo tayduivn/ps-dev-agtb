@@ -50,10 +50,6 @@
 	<tr>
 		<td scope="row"><slot>{$APP.LBL_TEAMS}:</slot></td>
 		<td><slot>{$TEAM}</slot></td>
-		 <!--//BEGIN SUGARCRM flav=com ONLY -->
-		<td scope="row"><slot>&nbsp;</slot></td>
-		<td><slot>&nbsp;</slot></td>
-		<!--//END SUGARCRM flav=com ONLY -->
 		<td scope="row"><slot>{$PARENT_TYPE}</slot></td>
 		<td><slot>{$PARENT_NAME}</slot></td>
 	</tr>

@@ -31,9 +31,7 @@ $viewdefs['Documents']['QuickCreate'] = array(
   array (
     
     array (
-       //BEGIN SUGARCRM flav!=com ONLY
-      'doc_type', 
-       //END SUGARCRM flav!=com ONLY           
+      'doc_type',
       'status_id',
     ),
     array (

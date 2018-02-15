@@ -263,7 +263,7 @@ Build options:
     php build.php --ver=6.1.0 --flav=ent
 
     Will only build the Enterprise version of the application.
-    —-flav=pro builds the Professional and -—flav=com will build the Community edition.
+    —-flav=pro builds the Professional edition.
 
 -—clean
     Will tell the build system to either delete files before building or not.

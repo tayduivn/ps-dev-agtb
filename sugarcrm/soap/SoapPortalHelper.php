@@ -66,12 +66,6 @@ function get_bugs_in_contacts($in, $orderBy = '')
         if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
 
-        //BEGIN SUGARCRM flav=com ONLY
-        $query = "SELECT bug_id as id from contacts_bugs where contact_id IN $in AND deleted=0";
-        if(!empty($orderBy)){
-            $query .= ' ORDER BY ' . $orderBy;
-        }
-        //END SUGARCRM flav=com ONLY
         $query = "SELECT cb.bug_id as id from contacts_bugs cb, bugs b where cb.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and cb.contact_id IN $in AND cb.deleted=0";
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
@@ -89,12 +83,6 @@ function get_bugs_in_accounts($in, $orderBy = '')
         if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
 
-        //BEGIN SUGARCRM flav=com ONLY
-        $query = "SELECT bug_id as id from accounts_bugs where account_id IN $in AND deleted=0";
-        if(!empty($orderBy)){
-            $query .= ' ORDER BY ' . $orderBy;
-        }
-        //END SUGARCRM flav=com ONLY
         $query = "SELECT ab.bug_id as id from accounts_bugs ab, bugs b where ab.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and ab.account_id IN $in AND ab.deleted=0";
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
@@ -117,12 +105,6 @@ function get_cases_in_contacts($in, $orderBy = '')
         if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
 
-        //BEGIN SUGARCRM flav=com ONLY
-        $query = "SELECT case_id as id from contacts_cases where contact_id IN $in AND deleted=0";
-        if(!empty($orderBy)){
-            $query .= ' ORDER BY ' . $orderBy;
-        }
-        //END SUGARCRM flav=com ONLY
         $query = "SELECT case_id as id from contacts_cases cc, cases c where cc.case_id = c.id AND c.deleted = 0 AND c.portal_viewable = 1 AND cc.contact_id IN $in AND cc.deleted=0";
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
@@ -142,12 +124,6 @@ function get_cases_in_accounts($in, $orderBy = '')
         //bail if the in is empty
         if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
-        //BEGIN SUGARCRM flav=com ONLY
-        $query = "SELECT id  from cases where account_id IN $in AND deleted=0";
-        if(!empty($orderBy)){
-            $query .= ' ORDER BY ' . $orderBy;
-        }
-        //END SUGARCRM flav=com ONLY
         $query = "SELECT id from cases where deleted = 0 AND portal_viewable = 1 AND account_id IN $in";
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;

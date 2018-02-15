@@ -144,7 +144,6 @@ class Employee extends Person {
 	function preprocess_fields_on_save(){
 		parent::preprocess_fields_on_save();
 
-		//BEGIN SUGARCRM flav!=com ONLY
 		$upload_file = new UploadFile("picture");
 
 		//remove file
@@ -168,7 +167,6 @@ class Employee extends Person {
 				}
 			}
 		}
-		//END SUGARCRM flav!=com ONLY
 	}
 
 

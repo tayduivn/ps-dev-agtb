@@ -83,12 +83,10 @@ array (
             ),
           ),
         ),
-        //BEGIN SUGARCRM flav!=com ONLY
         array(
         	'type',
         	'password'
         ),
-        //END SUGARCRM flav!=com ONLY
         array (
 
           array (

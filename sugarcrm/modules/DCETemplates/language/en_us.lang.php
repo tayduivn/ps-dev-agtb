@@ -47,7 +47,6 @@ $mod_strings = array (
   'LBL_UPGRADE_ACCEPTABLE_EDITION' => 'Upgrade Acceptable Edition',
   'LBL_UPGRADE_ACCEPTABLE_VERSION' => 'Upgrade Acceptable Version',
   'LBL_TYPE' => 'Type',
-  'LBL_CE' => 'CE',
   'LBL_PRO' => 'PRO',
   'LBL_HELP_ACC_VERSION'=>'ex: 5.1.0 | 5.1.5 | 5.5.0',
   'LBL_CONVERTED_STATUS' => 'Converted Status',

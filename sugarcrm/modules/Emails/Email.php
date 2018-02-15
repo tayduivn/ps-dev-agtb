@@ -1368,9 +1368,6 @@ class Email extends SugarBean {
             // Got a bean
             if (!empty($bean))
             {
-                // For CE, just get primary e-mail address
-                $emailAddress = $bean->email1;
-
                 $emailAddress = '';
                 // If has access to primary mail, use it
                 if ($bean->ACLFieldAccess('email1', 'read'))

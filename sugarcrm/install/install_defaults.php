@@ -48,12 +48,7 @@
             'setup_site_guid' => '',
             'setup_site_admin_password' => '',
             'setup_site_admin_password_retype' => '',
-            //BEGIN SUGARCRM flav=com ONLY
-            'site_default_theme' => 'Sugar5',
-            //END SUGARCRM flav=com ONLY
-            //BEGIN SUGARCRM flav!=com ONLY
             'site_default_theme' => 'RacerX',
-            //END SUGARCRM flav!=com ONLY
             'default_language' => 'en_us',
             'default_charset' => 'UTF-8',
             'default_currency_name' => 'US Dollars',

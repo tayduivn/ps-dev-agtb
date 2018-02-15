@@ -38,9 +38,6 @@ $viewdefs['ProjectTask']['DetailView'] = array(
                                                                 ),
 
 															),
-															//BEGIN SUGARCRM flav=com ONLY
-																'DUPLICATE', 'DELETE',
-															//END SUGARCRM flav=com ONLY
 														),
 										'hideAudit' => true,
 											),

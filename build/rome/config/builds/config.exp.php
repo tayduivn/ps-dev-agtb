@@ -18,7 +18,7 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$config['builds']['exp']['flav'] = array('exp', 'com');
+$config['builds']['exp']['flav'] = array('exp');
 $config['builds']['exp']['lic'] = array('sub');
 $config['builds']['exp']['dep'] = array('od');
 $config['blackList']['od_exp'] = array(

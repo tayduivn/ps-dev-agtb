@@ -98,13 +98,11 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && CAL.checkRecurr
          ),
       ),
       
-      //BEGIN SUGARCRM flav!=com ONLY
       array(
 	      'type',
 	      'password'
       ),
-      //END SUGARCRM flav!=com ONLY
-      
+
       array (
           array (
             'name' => 'date_start',

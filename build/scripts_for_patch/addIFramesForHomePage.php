@@ -37,15 +37,6 @@ function add_new_iframe_dashlets(){
 	$newDashlets = array();
 	$newIds = array();
 	require_once('cache/dashlets/dashlets.php');
-	//BEGIN SUGARCRM flav=com ONLY
-    $discoverSugarProDashlet = array('className' => 'iFrameDashlet',
-         'module' => 'iFrames',
-         'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],
-         'options' => array('title' => translate('LBL_DASHLET_DISCOVER_SUGAR_PRO','iFrames'),
-        'url' => 'http://apps.sugarcrm.com/dashlet/5.2.0/go-pro.html?lang=@@LANG@@&edition=@@EDITION@@&ver=@@VER@@',
-        'height' => 315,
-     ));
-    //END SUGARCRM flav=com ONLY
     $sugarNewsDashlet = array('className' => 'iFrameDashlet',
 					 'module' => 'iFrames',
 					 'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],
@@ -70,11 +61,6 @@ function add_new_iframe_dashlets(){
 			$originalPages = $content['pages'];
 			//Determine if the original perference has already had the two dashlets or not
 			foreach($originalDashlets as $ds){
-				//BEGIN SUGARCRM flav=com ONLY
-				if(!empty($ds['options']['title']) && $ds['options']['title'] == translate('LBL_DASHLET_DISCOVER_SUGAR_PRO','iFrames')){
-					$hasDiscoverSugarPro = true;
-				}
-				//END SUGARCRM flav=com ONLY
 				if(!empty($ds['options']['title']) && $ds['options']['title'] == translate('LBL_DASHLET_SUGAR_NEWS','iFrames')){
 					$hasSugarNews = true;
 				}
@@ -82,10 +68,6 @@ function add_new_iframe_dashlets(){
 
 			//If the user_perference has no 'Sugar News' dashlet and no 'Discover sugar Pro' dashlet, we should add them
 			if(!$hasSugarNews && !$hasDiscoverSugarPro){
-				//BEGIN SUGARCRM flav=com ONLY
-    			$discoverSugarProDashletId = create_guid();
-				$newDashlets["$discoverSugarProDashletId"]  = $discoverSugarProDashlet;
-				//END SUGARCRM flav=com ONLY
 				$sugarNewsId = create_guid();
 				$newDashlets["$sugarNewsId"]  = $sugarNewsDashlet;
 				$originalDashlets = array_merge_recursive($newDashlets, $originalDashlets );
@@ -94,18 +76,10 @@ function add_new_iframe_dashlets(){
 						case '1':
 							if(!empty($originalPages[0]['columns'][0]['dashlets'])){
 								array_unshift($originalPages[0]['columns'][0]['dashlets'] , $sugarNewsId);
-								//BEGIN SUGARCRM flav=com ONLY
-								array_unshift( $originalPages[0]['columns'][0]['dashlets'] , $discoverSugarProDashletId);
-								//END SUGARCRM flav=com ONLY
 							}
 							break;
 						case '2':
 						case '3':
-							if(!empty($originalPages[0]['columns'][0]['dashlets'])){
-								//BEGIN SUGARCRM flav=com ONLY
-								array_unshift( $originalPages[0]['columns'][0]['dashlets'] , $discoverSugarProDashletId);
-								//END SUGARCRM flav=com ONLY
-							}
 							if(!empty($originalPages[0]['columns'][1]['dashlets'])){
 								array_unshift($originalPages[0]['columns'][1]['dashlets'] , $sugarNewsId);
 							}

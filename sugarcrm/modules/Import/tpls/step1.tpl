@@ -60,13 +60,6 @@
                                     <td align="left" scope="row" colspan="3"><div class="hr">&nbsp;</div></td>
                                 </tr>
                             {/if}
-                            {* //BEGIN SUGARCRM flav=com ONLY *}
-                            <tr>
-                                <td>
-                                    <input type="hidden" name="source" value="csv" />
-                                </td>
-                            </tr>
-                            {* //END SUGARCRM flav=com ONLY *}
                             <tr id="ext_source_help">
                                 <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
                             </tr>

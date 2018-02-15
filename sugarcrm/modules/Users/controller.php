@@ -95,9 +95,6 @@ class UsersController extends SugarController
             else{
                 SugarApplication::redirect("index.php?module=Users&action=index");
             }
-            //BEGIN SUGARCRM flav=COM ONLY
-            SugarApplication::redirect("index.php?module=Users&action=index");
-            //END SUGARCRM flav=COM ONLY
         }
         else
             sugar_die("Unauthorized access to administration.");

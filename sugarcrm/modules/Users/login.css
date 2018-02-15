@@ -48,7 +48,6 @@ input[type="text"], input[type="password"], textarea {
 } 	
 
 .loginBox {
-/*//BEGIN SUGARCRM flav!=com ONLY*/
 	background-image: -moz-linear-gradient(center top, 	#fdfdfd 0%,
 	#e8e8e8 100%
 	);
@@ -64,11 +63,7 @@ input[type="text"], input[type="password"], textarea {
 	border: 1px solid #999999; 
 	background-color: #e8e8e8;
 	border-bottom: 1px solid #ccc;
-/*//END SUGARCRM flav!=com ONLY*/
-/*//BEGIN SUGARCRM flav=com ONLY*/
-	border: 1px solid #abc3d7; 
-/*//END SUGARCRM flav=com ONLY*/
-	padding: 20px;	
+	padding: 20px;
 
 }
 
@@ -99,7 +94,6 @@ input[type="text"], input[type="password"], textarea {
 	padding-top: 0px;
 }
 
-/*//BEGIN SUGARCRM flav!=com ONLY*/
 .loginBoxShadow {
 	-moz-box-shadow:0 0 10px #aaa;
 	box-shadow:0 0 10px #aaa;
@@ -111,4 +105,3 @@ input[type="text"], input[type="password"], textarea {
 .loginBoxShadow .last {
     border-bottom-color:#999999;
 }
-/*//END SUGARCRM flav!=com ONLY*/

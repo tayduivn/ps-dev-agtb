@@ -442,7 +442,6 @@ $vardefs =array(
             'audited' => true,
             'pii' => true,
 		),
-    //BEGIN SUGARCRM flav!=com ONLY
 	'picture' =>
 		array(
 			'name' => 'picture',
@@ -458,7 +457,6 @@ $vardefs =array(
             'border' => '',
             'duplicate_on_record_copy' => 'always',
 		),
-	//END SUGARCRM flav!=com ONLY
 ),
      'name_format_map' => array(
         'f' => 'first_name',

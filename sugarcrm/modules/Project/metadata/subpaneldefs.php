@@ -65,9 +65,6 @@ $layout_defs['Project'] = array(
 			'top_buttons' => array(
 
 				array('widget_class' => 'SubPanelEditProjectTasksButton', ),
-				//BEGIN SUGARCRM flav=com ONLY
-				array('widget_class' => 'SubPanelTopCreateButton', ),
-				//END SUGARCRM flav=com ONLY
 			),
 			'subpanel_name' => 'default',
 			'title_key' => 'LBL_PROJECT_TASKS_SUBPANEL_TITLE',

@@ -1046,16 +1046,9 @@ class MBModule
         foreach ( $this->config [ 'templates' ] as $temp => $val )
             $template = $temp ;
 		copy ( "themes/RacerX/images/icon_{$template}_32.png", "$icondir/icon_" . ucfirst ( $this->key_name ) . "_32.png" ) ;
-		//BEGIN SUGARCRM flav=com ONLY
-        copy ( "themes/default/images/icon_$template.gif", "$icondir/icon_" . ucfirst ( $this->key_name ) . ".gif" ) ;
-		//END SUGARCRM flav=com ONLY
         copy ( "include/SugarObjects/templates/$template/icons/$template.gif", "$icondir/" . $this->key_name . ".gif" ) ;
         if (file_exists("include/SugarObjects/templates/$template/icons/Create$template.gif"))
         	copy ( "include/SugarObjects/templates/$template/icons/Create$template.gif", "$icondir/Create" . $this->key_name . ".gif" ) ;
-		//BEGIN SUGARCRM flav=com ONLY
-        if (file_exists("include/SugarObjects/templates/$template/icons/{$template}_32.gif"))
-        	copy ( "include/SugarObjects/templates/$template/icons/{$template}_32.gif", "$icondir/icon_" . $this->key_name . "_32.gif" ) ;
-		//END SUGARCRM flav=com ONLY
         if (file_exists("include/SugarObjects/templates/$template/icons/{$template}_bar_32.png"))
         	copy ( "include/SugarObjects/templates/$template/icons/{$template}_bar_32.png", "$icondir/icon_{$this->key_name}_bar_32.png" ) ;
     }

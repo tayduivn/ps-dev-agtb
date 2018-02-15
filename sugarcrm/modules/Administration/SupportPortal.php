@@ -94,7 +94,7 @@ switch ($view) {
 			//value there as the dev_status value
 			$dev_status = getVersionStatus($GLOBALS['sugar_version']);
 			$send_version = getMajorMinorVersion($GLOBALS['sugar_version']);
-			$editionMap = array('ENT' => 'Enterprise', 'PRO' => 'Professional', 'CE' => 'Community_Edition');
+            $editionMap = array('ENT' => 'Enterprise', 'PRO' => 'Professional');
 			if(!empty($editionMap[$send_edition])){
 				$send_edition = $editionMap[$send_edition];
 			}

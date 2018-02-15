@@ -579,8 +579,7 @@ class User extends Person {
 		global $sugar_flavor;
         $admin = Administration::getSettings();
 		if((isset($sugar_flavor) && $sugar_flavor != null) &&
-			($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
-
+            (isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)) {
 	        // Begin Express License Enforcement Check
 			// this will cause the logged in admin to have the licensed user count refreshed
 				if( isset($_SESSION['license_seats_needed']))

@@ -93,7 +93,6 @@ array (
           ),
           'status',
         ),
-        //BEGIN SUGARCRM flav!=com ONLY
         array (
             'type',
            
@@ -101,17 +100,14 @@ array (
                 'name'=>'displayed_url',
             ),           
         ),
-        //END SUGARCRM flav!=com ONLY
         array (
           array (
             'name' => 'date_start',
             'label' => 'LBL_DATE_TIME',
           ),
-           //BEGIN SUGARCRM flav!=com ONLY
           array(
             'name'=>'password',
           ),
-           //END SUGARCRM flav!=com ONLY
         ),
         array (
           array (

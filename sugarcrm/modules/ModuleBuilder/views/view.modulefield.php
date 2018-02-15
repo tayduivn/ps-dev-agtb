@@ -80,10 +80,6 @@ class ViewModulefield extends SugarView
         //durng certain validation attempts.
         $allValidFieldTypes = array_merge($field_types, array('parent' => $GLOBALS['mod_strings']['parent']));
 
-		//BEGIN SUGARCRM flav=com ONLY
-		if (isset($field_types['encrypt']))
-		  unset($field_types['encrypt']);
-		//END SUGARCRM flav=com ONLY
         //bug 22264: Field name must not be an SQL keyword.
 		$field_name_exceptions = array_merge(array_keys($GLOBALS['db']->getReservedWords()),
 		  array('ID', 'ID_C', 'PARENT_NAME', 'PARENT_ID'));

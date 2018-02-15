@@ -33,13 +33,8 @@ class Bug33284_Test extends Sugar_PHPUnit_Framework_TestCase
     {
         global $sugar_config;       
         
-        //BEGIN SUGARCRM flav=com ONLY
-        $default_length = 15;
-        //END SUGARCRM flav=com ONLY
-        //BEGIN SUGARCRM flav!=com ONLY
         $default_length = 30;
-        //END SUGARCRM flav!=com ONLY    	
-    	
+
         $sugar_config['tracker_max_display_length'] = $default_length;
         
         $test_string = 'The quick brown fox jumps over lazy dogs';
@@ -53,13 +48,8 @@ class Bug33284_Test extends Sugar_PHPUnit_Framework_TestCase
     	global $sugar_config;       
         $test_string = '"Hello There How Are You? " This has quotes too';
         
-        //BEGIN SUGARCRM flav=com ONLY
-        $default_length = 15;
-        //END SUGARCRM flav=com ONLY
-        //BEGIN SUGARCRM flav!=com ONLY
         $default_length = 30;
-        //END SUGARCRM flav!=com ONLY
- 
+
         $sugar_config['tracker_max_display_length'] = $default_length;
         
         $display_string = getTrackerSubstring($test_string);  

@@ -386,12 +386,6 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         $actual   = $this->_user->getEmailClientPreference();
         $this->assertEquals($expected, $actual, "Should have returned {$expected} when the session is mobile and PRO+");
 
-        //BEGIN SUGARCRM flav=com ONLY
-        $expected = "sugar";
-        $actual   = $this->_user->getEmailClientPreference();
-        $this->assertEquals($expected, $actual, "Should have returned {$expected} when the session is mobile and CE only");
-        //END SUGARCRM flav=com ONLY
-
         $this->restoreConfig("email_default_client", $oc);
         $this->_user->setPreference("email_link_type", $op);
         $this->restoreSession("isMobile", $os);

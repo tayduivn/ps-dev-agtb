@@ -59,13 +59,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'varchar',
     'len' => '50',
     'comment' => 'Meeting password',
-    //BEGIN SUGARCRM flav=com ONLY
-    'studio' => 'false',
-    //END SUGARCRM flav=com ONLY
-	//BEGIN SUGARCRM flav!=com ONLY
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
     'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
-    //END SUGARCRM flav!=com ONLY
   ),
   'join_url' =>
   array (
@@ -94,13 +89,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'url',
     'len' => '400',
     'comment' => 'Meeting URL',
-    //BEGIN SUGARCRM flav=com ONLY
-    'studio' => 'false',
-    //END SUGARCRM flav=com ONLY
-    //BEGIN SUGARCRM flav!=com ONLY
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
     'dependency' => 'and(isAlpha($type),not(equal($type,"Sugar")))',
-    //END SUGARCRM flav!=com ONLY
   ),
   'creator' =>
   array (
@@ -220,12 +210,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
      'options' => 'eapm_list',
      'default'	=> 'Sugar',
      'massupdate' => false,
-   	 //BEGIN SUGARCRM flav=com ONLY
-   	 'studio' => 'false',
-     //END SUGARCRM flav=com ONLY
-   	 //BEGIN SUGARCRM flav!=com ONLY
    	 'studio' => array('wireless_basic_search'=>false),
-   	 //END SUGARCRM flav!=com ONLY
    ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>

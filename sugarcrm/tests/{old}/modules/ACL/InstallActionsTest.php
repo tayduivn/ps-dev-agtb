@@ -50,25 +50,6 @@ class InstallActionsTest extends Sugar_PHPUnit_Framework_TestCase
     static public function tearDownAfterClass()
     {
         return; // see above - skipped
-        //If it is the ce version, we need to restore db to ce state
-        if ($GLOBALS['sugar_flavor'] == 'CE') {
-            $query = "delete from acl_actions where acltype like 'Tracker%' and category != 'Trackers'";
-            $GLOBALS['db']->query($query);
-
-            $query = "select id from acl_roles where name = 'Tracker'";
-            $result = $GLOBALS['db']->query($query);
-            $role_id = array();
-            while ($row = $GLOBALS['db']->fetchByAssoc($result))
-                $role_id[] = $row['id'];
-
-            if (!empty($role_id)) {
-                foreach ($role_id as $id) {
-                    $GLOBALS['db']->query("delete from acl_roles_users where role_id = '$id'");
-                    $GLOBALS['db']->query("delete from acl_roles_actions where role_id = '$id'");
-                    $GLOBALS['db']->query("delete from acl_roles where id = '$id'");
-                }
-            }
-        }
     }
 
     public function testUpgradingFrom451To510()

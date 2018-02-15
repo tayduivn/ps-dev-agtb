@@ -24,12 +24,10 @@ $viewdefs['Employees']['EditView'] = array(
   'default'=>array (
 	    array (
 	      'employee_status',
-	  		//BEGIN SUGARCRM flav!=com ONLY
             array (
               'name'=>'picture',
               'label'=>'LBL_PICTURE_FILE',
             ),
-	  		//END SUGARCRM flav!=com ONLY
 	    ),
 	    array (
 	      'first_name',

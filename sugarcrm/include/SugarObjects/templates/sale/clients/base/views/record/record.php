@@ -173,9 +173,6 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
             'fields' => array(
                 $_module_name.'_type',
                 'lead_source',
-                //BEGIN SUGARCRM flav=com ONLY
-                '',
-                //END SUGARCRM flav=com ONLY
                 array(
                     'name' => 'team_name',
                     'required' => true,

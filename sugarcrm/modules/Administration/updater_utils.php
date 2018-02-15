@@ -685,9 +685,8 @@ function apiActualLoadSystemStatus()
     checkSystemLicenseStatus();
     if (!isset($_SESSION['LICENSE_EXPIRES_IN'])) {
         // BEGIN CE-OD License User Limit Enforcement
-        if (isset($sugar_flavor)
-            && ($sugar_flavor=='CE' || !empty($admin->settings['license_enforce_user_limit']))) {
-
+        if (isset($sugar_flavor) &&
+            (!empty($admin->settings['license_enforce_user_limit']))) {
             $query = "SELECT count(id) as total from users WHERE ".User::getLicensedUsersWhere();
             $result = $db->query($query, true, "Error filling in user array: ");
             $row = $db->fetchByAssoc($result);

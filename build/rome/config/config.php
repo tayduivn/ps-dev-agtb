@@ -30,7 +30,7 @@ $config['registry']['lic'] = array('sub'=>1, 'gpl'=>1);
 $config['sugarVariables'] = array('@_SUGAR_VERSION'=>'','@_SUGAR_FLAV'=>'', '@_SUGAR_BUILD_NUMBER'=>'999', '@_SUGAR_BUILD_TIME'=>date('Y-m-d g:ia') );
 $config['mergeDirs'] = array('translations'=>'sugarcrm');
 
-$config['builds']['exp']['flav'] = array('com');
+$config['builds']['exp']['flav'] = array('pro');
 $config['builds']['exp']['lic'] = array('sub'=>'sub');
 
 $config['builds']['pro']['flav'] = array('pro');
@@ -48,7 +48,7 @@ $config['builds']['ult']['lic'] = array('sub');
 $config['builds']['dev']['flav'] = array('een','ent','pro','dev','ult','corp');
 $config['builds']['dev']['lic'] = array('sub');
 
-$config['product']= array("com","dce","dev","eng","exp","pro",);
+$config['product']= array("dce","dev","eng","exp","pro",);
 $config['replace'] = array('$Id:','$Log:','$Header$', '$Id$');
 
 //Controls whether or not to include the original line numbering (i.e. commented lines appear as newlines)

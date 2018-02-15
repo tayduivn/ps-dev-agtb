@@ -274,9 +274,6 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                //BEGIN SUGARCRM flav=com ONLY
-                '',
-                //END SUGARCRM flav=com ONLY
                 'team_name',
                 array(
                     'name' => 'date_entered_by',

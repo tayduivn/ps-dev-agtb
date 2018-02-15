@@ -78,10 +78,6 @@ class RestPublicMetadataViewTemplatesTest extends RestTestBase {
         //END SUGARCRM flav=ent ONLY
 
         // Make sure we get the base code when we ask for it.
-        //BEGIN SUGARCRM flav=com ONLY
-        file_put_contents($filesToCheck['base'][0], 'BASE CODE');
-        $this->_clearMetadataCache();
-        //END SUGARCRM flav=com ONLY
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=base');
         $this->assertEquals('BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get base code when it was the direct option");
 

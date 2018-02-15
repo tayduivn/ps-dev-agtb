@@ -56,12 +56,6 @@ else {
     //BEGIN SUGARCRM flav=dev ONLY
     $login_image = '<IMG src="'.getJSPath('include/images/sugar_md_dev.png').'" alt="Sugar" width="340" height="25">';
     //END SUGARCRM flav=dev ONLY
-    //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
-    $login_image = '<IMG src="'.getJSPath('include/images/sugar_md_express.png').'" alt="Sugar" width="340" height="25" style="margin: 5px 0;">';
-    //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
-    //BEGIN SUGARCRM flav=com && lic!=sub ONLY
-    $login_image = '<IMG src="'.getJSPath('include/images/sugar_md_open.png').'" alt="Sugar" width="340" height="25" style="margin: 5px 0;">';
-    //END SUGARCRM flav=com && lic!=sub ONLY
     //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
     $login_image = '<IMG src="'.getJSPath('include/images/sugar_md_ent.png').'" alt="Sugar" width="340" height="25">';
     //END SUGARCRM flav=ent && flav!=dev ONLY
@@ -116,8 +110,7 @@ if (isset($_SESSION['LICENSE_EXPIRES_IN'])
 // BEGIN CE-OD License User Limit Enforcement
 global $sugar_flavor;
 if((isset($sugar_flavor) && $sugar_flavor != null) &&
-	($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
-
+    (isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)) {
 	global $db;
 	$result = $db->query($query, true, "Error filling in user array: ");
 	$row = $db->fetchByAssoc($result);

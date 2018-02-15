@@ -277,9 +277,6 @@ function deploy( $ZIP_FILE, $HTML_DIR, $HTML_DEST_DIR, $SHORT_VER_SUFFIX, $FULL_
 
 	// *** DEPLOYING $type on localhost
 	$trans_type = ucfirst( $type );
-	if( $trans_type == "Ce" ){
-		$trans_type = "CE";
-	}
 
 	/* The actual function from deploy.php */
 	$type = strToLower( $type );

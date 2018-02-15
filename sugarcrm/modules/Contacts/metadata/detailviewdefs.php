@@ -65,12 +65,10 @@ $viewdefs['Contacts']['DetailView'] = array(
             ),         
           ),
 
-	      //BEGIN SUGARCRM flav!=com ONLY
 	      array (
 	      	'name' => 'picture',
 	        'label' => 'LBL_PICTURE_FILE',
 	      ),
-	      //END SUGARCRM flav!=com ONLY
         ),
 
         array (

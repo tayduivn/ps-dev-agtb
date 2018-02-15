@@ -103,7 +103,6 @@
                      alt="{$mod_strings.LBL_LOGO}" />
             </div>
         </td>
-        //BEGIN SUGARCRM flav!=com ONLY
         <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
 		{if !isset($config.show_download_tab) || !empty($config.show_download_tab)}
 			{assign var='show_download_tab_checked' value='CHECKED'}
@@ -111,7 +110,6 @@
 			{assign var='show_download_tab_checked' value=''}
 		{/if}
 		<td ><input type='hidden' name='show_download_tab' value='false'><input name='show_download_tab'  type="checkbox" value='true' {$show_download_tab_checked}></td>
-        //END SUGARCRM flav!=com ONLY
     </tr>
     <tr>
         <td  scope="row" width='12%' nowrap>

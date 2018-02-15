@@ -22,13 +22,11 @@ global $sugar_config, $sugar_version, $sugar_flavor, $server_unique_key, $curren
 	$sub_menu = array();
  }
 
-//BEGIN SUGARCRM flav!=com ONLY
 if(SugarThemeRegistry::current()->name != 'Classic')
 $global_control_links['profile'] = array(
 'linkinfo' => array($app_strings['LBL_PROFILE'] => 'index.php?module=Users&action=EditView&record='.$GLOBALS['current_user']->id),
 'submenu' => ''
 );
-//END SUGARCRM flav!=com ONLY
 
 $global_control_links['employees'] = array(
 'linkinfo' => array($app_strings['LBL_EMPLOYEES']=> 'index.php?module=Employees&action=index&query=true'),

@@ -606,9 +606,9 @@ $dc->buildCache();
 //END SUGARCRM flav=int ONLY
 
 
-//BEGIN SUGARCRM flav=pro || flav=com ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/Connectors/InstallDefaultConnectors.php');
-//END SUGARCRM flav=pro || flav=com ONLY
+//END SUGARCRM flav=pro ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    INSTALL PASSWORD TEMPLATES

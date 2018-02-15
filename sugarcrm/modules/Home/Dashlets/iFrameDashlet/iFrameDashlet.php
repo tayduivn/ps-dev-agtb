@@ -29,18 +29,12 @@ class iFrameDashlet extends Dashlet {
         } else {
 	        if(empty($options['title'])) {
 	            $this->title = translate('LBL_DASHLET_TITLE', 'Home');
-//BEGIN SUGARCRM flav=com ONLY
-	            $this->title = translate('LBL_DASHLET_DISCOVER_SUGAR_PRO', 'Home');
-//END SUGARCRM flav=com ONLY
 	        } else {
 	            $this->title = $options['title'];
 	        }
         }
         if(empty($options['url'])) {
             $this->url = $this->defaultURL;
-//BEGIN SUGARCRM flav=com ONLY
-            $this->url = 'http://apps.sugarcrm.com/dashlet/go-pro.html?lang=@@LANG@@&edition=@@EDITION@@&ver=@@VER@@';
-//END SUGARCRM flav=com ONLY
         } else {
             $this->url = $options['url'];
         }
@@ -105,10 +99,6 @@ class iFrameDashlet extends Dashlet {
 
     public function display($text = '')
     {
-        //BEGIN SUGARCRM flav=com ONLY
-
-        $sugar_edition = 'COM';
-        //END SUGARCRM flav=com ONLY
         $sugar_edition = 'PRO';
         //BEGIN SUGARCRM flav=ent ONLY
         $sugar_edition = 'ENT';

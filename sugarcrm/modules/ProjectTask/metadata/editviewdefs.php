@@ -82,12 +82,7 @@ $viewdefs['ProjectTask']['EditView'] = array(
         'type' => 'readonly',
       ),
     ),
-    //BEGIN SUGARCRM flav=com ONLY
-	array (
-        'name' => 'assigned_user_name',
-	),
-	//END SUGARCRM flav=com ONLY
-	
+
     array (
     	array(
 			'name' => 'status',

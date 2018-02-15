@@ -1498,9 +1498,7 @@ class SugarBean
                         && (is_string($value_array['importable']) && $value_array['importable'] == 'false'
                             || is_bool($value_array['importable']) && $value_array['importable'] == false))
                     || (isset($value_array['type']) && $value_array['type'] == 'link')
-                    //BEGIN SUGARCRM flav!=com ONLY
                     || (isset($value_array['type']) && $value_array['type'] == 'image')
-                    //END SUGARCRM flav!=com ONLY
                     || (isset($value_array['auto_increment'])
                         && ($value_array['type'] == true || $value_array['type'] == 'true')) ) {
                     // only allow import if we force it

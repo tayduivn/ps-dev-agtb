@@ -3,7 +3,7 @@
  
  /* Please read the comments before or next to each item to understand how to fill it.
     * NOTE: Windows uses backslashed (\) for paths and linux uses forward slash (/). When enter windows paths (i.e backslashes) be sure to escape it (i.e. \\ instead of just \).
-    * Please be sure to use lowercase letters for database names, operating system and flavor names (i.e. ent, pro, ce). 
+    * Please be sure to use lowercase letters for database names, operating system and flavor names (i.e. ent, pro).
     */
  
  $silentUpgradeConfig = Array (
@@ -17,11 +17,11 @@
 						  * KEEP IN MIND ALL PATHS ARE ABSOLUTE (i.e. C:\\xampp\\htdocs\\file.zip or \var\www\files\file.zip)
 						  * Insert an array for each version you want to install/upgrade from. That array has three options:
 						  * install files => An array of arrays with first element being the zip file for installing whatever version you want to install, 
-						  *                       second element being type (i.e. ENT, PRO, CE) and third element being the database you want to deploy to (chose from mysql, mssql or oci8)
+						  *                       second element being type (i.e. ENT, PRO) and third element being the database you want to deploy to (chose from mysql, mssql or oci8)
 						  * short version => The version number of the installation WITHOUT any periods (i.e. 5.1.0RC would become 510rc or 510RC)
 						  * full version => the version number with all the punctuations (i.e. 5.1.0RC)
 						  * upgrade files =>  An array of arrays with first element being the zip file for upgrading from the installed version to whatever, 
-						  *       		 second element being type (i.e. ENT, PRO, CE), and third element being the database (mysql, mssql or oci8)
+						  *       		 second element being type (i.e. ENT, PRO), and third element being the database (mysql, mssql or oci8)
 						  *
 						  */
 						'files' => 
@@ -80,8 +80,8 @@
  						 * Each version has it's on associated array. Please fill in the host, username
  						 * and password for each array
 						 *
-						 * restrictions is an array that lists what versions cannot be run on this DB. For example Oracle can only be run on Ent so we list pro and ce
-						 * thus the script will NOT install CE and PRO versions of Sugar on Oracle.
+						 * restrictions is an array that lists what versions cannot be run on this DB. For example Oracle can only be run on Ent so we list pro
+						 * thus the script will NOT install PRO versions of Sugar on Oracle.
  						 */
  						 
  						'dbversions' => 
@@ -91,14 +91,14 @@
 										'host' => 'localhost',
 										'user' => 'root',
 										'pwd' => '',
-										'restrictions' => Array() //If blank all flavors of sugar (ent,pro,ce) will be run on this DB type. For example Oracle only runs on Ent
+                                        'restrictions' => array(), //If blank all flavors of sugar (ent,pro) will be run on this DB type. For example Oracle only runs on Ent
 									),
 								'oci8' => //Oracle
 									Array(
 										'host' => 'localoracle', //the SID in tnsnames.ora or database name in tnsname.ora (default is XE for an Oracle 10g install)
 										'user' => 'system', //system username (usually 'system')
 										'pwd' => 'idontknow', //system password
-										'restrictions' => Array('pro', 'ce')//If blank all flavors of sugar (ent,pro,ce) will be run on this DB type. For example Oracle only runs on Ent so we list pro and ce
+                                        'restrictions' => array('pro'), //If blank all flavors of sugar (ent,pro) will be run on this DB type. For example Oracle only runs on Ent so we list pro
 									),
 								 'mssql' =>
 									Array(
@@ -106,7 +106,7 @@
 										'instance' => ' ', //if empty leave a space between the quotes
 										'user' => 'root',
 										'pwd' => 'idontknow',
-										'restrictions' => Array() //If blank all flavors of sugar (ent,pro,ce) will be run on this DB type. For example Oracle only runs on Ent
+                                        'restrictions' => array(), //If blank all flavors of sugar (ent,pro) will be run on this DB type. For example Oracle only runs on Ent
 									),
 								
 							),

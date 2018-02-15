@@ -2333,11 +2333,6 @@ SQL;
      */
     public function testRecursiveQueryMultiHierarchy()
     {
-        //BEGIN SUGARCRM flav=com ONLY
-        // CE is failing on CI because of forecast_tree check
-        $this->markTestSkipped("This test needs to be modified to use a different table name because forecasts_tree breaks CE builds");
-        //END SUGARCRM flav=com ONLY
-
         if ( !$this->_db->supports('recursive_query') )
         {
             $this->markTestSkipped('DBManager does not support recursive query');

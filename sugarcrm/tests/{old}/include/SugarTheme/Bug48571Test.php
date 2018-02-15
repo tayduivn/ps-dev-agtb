@@ -67,10 +67,6 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testBuildRegistry()
     {
-        //BEGIN SUGARCRM flav=com ONLY
-        $this->markTestSkipped('Skip for community edition builds for now as this was to test a ce->pro upgrade');
-        //END SUGARCRM flav=com ONLY
-
         SugarThemeRegistry::buildRegistry();
         $themeObject = SugarThemeRegistry::current();
         $this->assertRegExp('/Racer X/i', $themeObject->__get('name'), 'Assert that buildRegistry defaults to the Sugar theme');

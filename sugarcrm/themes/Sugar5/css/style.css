@@ -2330,7 +2330,6 @@ a:link, a:visited, a:hover
 }
 
 .buttonSlide .yui-bd { 
-/*//BEGIN SUGARCRM flav!=com || flav=dev ONLY*/
 	width: 0px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -2338,7 +2337,6 @@ a:link, a:visited, a:hover
 	background-color: transparent;
 	opacity: 0;
 	filter:alpha(opacity=0);
-/*//END SUGARCRM flav!=com || flav=dev ONLY*/
 }
 
 input, select, textarea, button, .button
@@ -3575,7 +3573,6 @@ ul.tablist li a.current:link, ul.tablist li a.current:visited, ul.tablist li a.c
     background : transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar55&imageName=sugar-yui-sprites.png')  no-repeat scroll 0px -70px;
  }
  
-/* //BEGIN SUGARCRM flav!=com || flav=dev ONLY */
 #tabListContainerTable
 {
     border-bottom:2px solid #ABC3D7;
@@ -3610,7 +3607,6 @@ ul.tablist li a.current:link, ul.tablist li a.current:visited, ul.tablist li a.c
 {
     padding-left:10px;
 }
-/* //END SUGARCRM flav!=com || flav=dev ONLY */
 
 #basic_search_link
 {
