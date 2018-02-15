@@ -115,7 +115,77 @@ class ModuleApi extends SugarApi {
                 'shortHelp' => 'This method returns enum values for a specified field',
                 'longHelp' => 'include/api/help/module_enum_get_help.html',
             ),
+            'pii' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>','?', 'pii'),
+                'pathVars' => array('module','record', 'pii'),
+                'method' => 'getPiiFields',
+                'shortHelp' => 'Returns pii fields',
+                'longHelp' => 'include/api/help/module_record_pii_help.html',
+            ),
         );
+    }
+
+    /**
+     * This method returns the pii fields of a given record
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     */
+    public function getPiiFields(ServiceBase $api, array $args)
+    {
+        $this->requireArgs($args, array('module','record'));
+
+        //get the corresponding bean
+        $bean = $this->loadBean($api, $args, 'view');
+
+        //get the list of pii fields
+        $piiFields = array_keys($bean->getFieldDefinitions('pii', array(true)));
+
+        $fields = [];
+        $time = $this->getPiiTime();
+        $source = $this->getPiiSource();
+        foreach ($piiFields as $field) {
+            $item = [
+                'field_name' => $field,
+                'value' => isset($bean->$field)? $bean->$field : '',
+                'date_modified' => $time,
+                'source' => $source,
+            ];
+            $fields[] = $item;
+        }
+        return [
+            "next_offset" => -1,
+            'fields' => $fields,
+        ];
+    }
+
+    /**
+     * Get the mocked pii time
+     * @return string
+     */
+    private function getPiiTime()
+    {
+        return TimeDate::getInstance()->asIso(TimeDate::getInstance()->getNow());
+    }
+
+    /**
+     * Get the mocked source
+     * @return array
+     */
+    private function getPiiSource()
+    {
+        return [
+            'subject' => ['_type' => 'mock'],
+            'attributes' => [
+                'attr-1' => 'value-1',
+                'attr-2' => [
+                    'sub-attr-2-1' => 'sub-value-2-1',
+                    'sub-attr-2-2' => ['sub-value-2-2-1', 'sub-value-2-2-2'],
+                ],
+            ],
+        ];
     }
 
     /**
