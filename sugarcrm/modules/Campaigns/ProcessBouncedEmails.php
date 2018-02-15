@@ -83,7 +83,7 @@ function markEmailAddressInvalid($email_address)
     $rs = $sea->retrieve_by_string_fields( array('email_address_caps' => trim(strtoupper($email_address))) );
     if($rs != null)
     {
-        $sea->AddUpdateEmailAddress($email_address, 1, 0, $rs->id);
+        $sea->AddUpdateEmailAddress($email_address, 1, null, $rs->id);
     }
 }
 

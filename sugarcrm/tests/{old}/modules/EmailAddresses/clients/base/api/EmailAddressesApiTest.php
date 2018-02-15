@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $service;
+    private $configOptoutBackUp = null;
 
     public static function setUpBeforeClass()
     {
@@ -37,7 +38,18 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
+        if (is_null($this->configOptoutBackUp) && isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
+            $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
+        }
         $this->service = SugarTestRestUtilities::getRestServiceMock();
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+        if (!is_null($this->configOptoutBackUp)) {
+            $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $this->configOptoutBackUp;
+        }
     }
 
     /**
@@ -54,7 +66,7 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers createBean
+     * @covers ::createBean
      * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testCreateBean_CannotCreateWithAnInvalidEmailAddress()
@@ -68,7 +80,7 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers createBean
+     * @covers ::createBean
      */
     public function testCreateBean_CreateNewEmailAddress()
     {
@@ -95,7 +107,7 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers createBean
+     * @covers ::createBean
      */
     public function testCreateBean_ReturnExistingEmailAddressWithoutMakingChanges()
     {
@@ -115,7 +127,7 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers updateRecord
+     * @covers ::updateRecord
      */
     public function testUpdateRecord_EmailAddressDoesNotChange()
     {
@@ -133,5 +145,39 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertSame($address->email_address, $record['email_address']);
         $this->assertTrue($record['invalid_email']);
+    }
+
+    public function optoutDataProvider()
+    {
+        return array(
+            [true],
+            [false],
+        );
+    }
+
+    /**
+     * @covers ::createBean
+     * @dataProvider optoutDataProvider
+     */
+    public function testCreateBean_CreateNewEmailAddress_ConfiguredDefaultIsOptedIn(bool $optOut)
+    {
+        $this->setConfigOptout($optOut);
+        $address = 'address-' . Uuid::uuid1() . '@example.com';
+
+        $api = new EmailAddressesApi();
+        $args = array(
+            'module' => 'EmailAddresses',
+            'email_address' => $address,
+            'email_address_caps' => strtoupper($address),
+        );
+        $bean = $api->createBean($this->service, $args);
+
+        $this->assertNotEmpty($bean->id);
+        $this->assertEquals($optOut, $bean->opt_out, 'New email opt_out does not match configured default');
+    }
+
+    private function setConfigOptout(bool $optOut)
+    {
+        $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = "{$optOut}";
     }
 }

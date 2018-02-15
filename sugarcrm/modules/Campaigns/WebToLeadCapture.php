@@ -146,25 +146,20 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                 
 		        $lead->load_relationship('campaigns');
 		        $lead->campaigns->add($camplog->id);
+
+            $optOut = isset($_POST['webtolead_email_opt_out']) || isset($_POST['email_opt_out']) ? true : false;
+            if (isset($lead->email1) && !empty($lead->email1)) {
+                _setDefaultEmailProperties($lead, 'email1', $optOut);
+            }
+            if (isset($lead->email2) && !empty($lead->email2)) {
+                _setDefaultEmailProperties($lead, 'email2', $optOut);
+            }
+
                 if(!empty($GLOBALS['check_notify'])) {
                     $lead->save($GLOBALS['check_notify']);
                 }
                 else {
                     $lead->save(FALSE);
-                }
-            }
-
-            //in case there are forms out there still using email_opt_out
-            if(isset($_POST['webtolead_email_opt_out']) || isset($_POST['email_opt_out'])){
-                    
-                if(isset ($lead->email1) && !empty($lead->email1)){
-                    $sea = BeanFactory::newBean('EmailAddresses');
-                    $sea->AddUpdateEmailAddress($lead->email1,0,1);
-                }   
-                if(isset ($lead->email2) && !empty($lead->email2)){
-                    $sea = BeanFactory::newBean('EmailAddresses');
-                    $sea->AddUpdateEmailAddress($lead->email2,0,1);
-                    
                 }
             }
 
@@ -243,4 +238,56 @@ if (!empty($redirect)) {
 
 echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
 
+/**
+ * Get Email Address record from Database or return empty array if not found
+ * @param string $emailAddress
+ * @return array
+ * @throws SugarQueryException
+ */
+function _fetchEmailAddress($emailAddress = '')
+{
+    $sea = BeanFactory::newBean('EmailAddresses');
+    $q = new SugarQuery();
+    $q->select(array('*'));
+    $q->from($sea);
+    $q->where()->queryAnd()
+        ->equals('email_address_caps', strtoupper($emailAddress))
+        ->equals('deleted', 0);
+    $q->limit(1);
+    $rows = $q->execute();
+    if (is_array($rows) && count($rows) > 0) {
+        return $rows[0];
+    }
+    return array();
+}
+
+/**
+ * Set the Email properties on the supplied lead. If email address already exists, use existing Email address
+ * properties. Otherwise, set defaults with consideration given to the default opt_out configuration value.
+ * @param SugarBean $lead
+ * @param string $emailField
+ * @param bool $optOutRequested
+ */
+function _setDefaultEmailProperties($lead, $emailField, $optOutRequested = false)
+{
+    $emailOptoutDefault = !empty($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
+    $ea = _fetchEmailAddress($lead->$emailField);
+    if ($optOutRequested) {
+        $optOut = $optOutRequested;
+    } else {
+        $optOut = empty($ea) ? $emailOptoutDefault : $ea['opt_out'];
+    }
+    $invalidEmail = empty($ea) ? false : $ea['invalid_email'];
+    $primary = empty($ea) ? true : $ea['primary_address'];
+
+    if (empty($lead->email) || !is_array($lead->email)) {
+        $lead->email = array();
+    }
+    $lead->email[] = array(
+        'email_address' => $lead->$emailField,
+        'primary_address' => $primary,
+        'opt_out' => $optOut,
+        'invalid_email' => $invalidEmail,
+    );
+}
 ?>

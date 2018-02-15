@@ -76,7 +76,8 @@ class SugarFieldEmail extends SugarFieldBase
         }
         
         array_walk($params[$field], array($this, 'formatEmails'));
-        
+        $emailOptoutDefault = !empty($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
+
         $bean->emailAddress->addresses = array();
         foreach ($params[$field] as $email ) {
             if (empty($email['email_address'])) {
@@ -87,7 +88,7 @@ class SugarFieldEmail extends SugarFieldBase
             $mergeAddr = array(
                 'primary_address' => false,
                 'invalid_email' => false,
-                'opt_out' => false,
+                'opt_out' => $emailOptoutDefault,
             );
             foreach ($oldAddresses as $address) {
                 if (strtolower($address['email_address']) == strtolower($email['email_address'])) {

@@ -361,11 +361,12 @@ class Importer
                 {
                     $rowValue = $returnValue;
 
+                    $defaultOptout  = !empty($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
                     $address = array(
                         'email_address' => $rowValue,
                         'primary_address' => $field == 'email',
                         'invalid_email' => false,
-                        'opt_out' => false,
+                        'opt_out' => $defaultOptout,
                     );
 
                     // check for current opt_out and invalid email settings for this email address
