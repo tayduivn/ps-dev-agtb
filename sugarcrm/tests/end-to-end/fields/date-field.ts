@@ -42,7 +42,7 @@ export class Detail extends DateField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'div.ellipsis_inline'
             }
         });
 
@@ -56,7 +56,7 @@ export class List extends DateField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'div.ellipsis_inline'
             }
         });
 
