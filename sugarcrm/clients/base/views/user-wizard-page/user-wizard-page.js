@@ -26,6 +26,12 @@
     showPage: true,
 
     /**
+     * is Oidc enabled?
+     * @var boolean
+     */
+    isOidcEnabled: false,
+
+    /**
      * @override
      * @param options
      */
@@ -35,6 +41,7 @@
         this._super('initialize', [options]);
         this.fieldsToValidate = this._fieldsToValidate(options.meta);
         this.action = 'edit';
+        this.isOidcEnabled = App.metadata.getConfig().oidcEnabled || false;
     },
     /**
      * @override
@@ -60,6 +67,16 @@
             return this;
         }
         this._super('_render');
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _renderField: function(field, $fieldEl) {
+        this._super('_renderField', [field, $fieldEl]);
+        if (this.isOidcEnabled && field.def.oidc_disabled) {
+            field.setDisabled(true);
+        }
     },
 
     /**

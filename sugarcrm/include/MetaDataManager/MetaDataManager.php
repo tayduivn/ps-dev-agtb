@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\MetaData\RefreshQueue;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 require_once 'soap/SoapHelperFunctions.php';
 require_once 'include/SugarObjects/LanguageManager.php';
@@ -2107,6 +2108,8 @@ class MetaDataManager implements LoggerAwareInterface
         $administration = new Administration();
         $administration->retrieveSettings();
 
+        $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
+
         $properties = $this->getConfigProperties();
         $properties = $this->parseConfigProperties($sugarConfig, $properties);
         $configs = $this->handleConfigPropertiesExceptions($properties);
@@ -2163,6 +2166,9 @@ class MetaDataManager implements LoggerAwareInterface
         if (isset($sugarConfig['sugar_max_int']) && is_numeric($sugarConfig['sugar_max_int'])) {
             $configs['sugarMaxInt'] = $sugarConfig['sugar_max_int'];
         }
+
+        $configs['oidcEnabled'] = $idpConfig->isOIDCEnabled();
+
         return $configs;
     }
 

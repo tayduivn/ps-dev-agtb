@@ -23,10 +23,16 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setup('current_user', array(true, true));
         SugarTestHelper::setup('files');
 
+        $sugarConfig = \SugarConfig::getInstance();
+        $sugarConfig->_cached_values = [];
         // Backup current language settings so manipulation can be tested
         $this->configBackup['languages'] = $GLOBALS['sugar_config']['languages'];
         if (isset($GLOBALS['sugar_config']['disabled_languages'])) {
             $this->configBackup['disabled_languages'] = $GLOBALS['sugar_config']['disabled_languages'];
+        }
+
+        if (!empty($GLOBALS['sugar_config']['oidc_oauth'])) {
+            $this->configBackup['oidc_oauth'] = $GLOBALS['sugar_config']['oidc_oauth'];
         }
 
         $this->setTestLanguageSettings();
@@ -42,6 +48,10 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['languages'] = $this->configBackup['languages'];
         if (isset($this->configBackup['disabled_languages'])) {
             $GLOBALS['sugar_config']['disabled_languages'] = $this->configBackup['disabled_languages'];
+        }
+
+        if (isset($this->configBackup['oidc_oauth'])) {
+            $GLOBALS['sugar_config']['oidc_oauth'] = $this->configBackup['oidc_oauth'];
         }
 
         MetaDataFiles::clearModuleClientCache();
@@ -125,32 +135,85 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['disabled_languages'] = "whiskey,br_ikea";
     }
 
-    public function testGetConfigs()
+    /**
+     * Provides data for testGetConfigs
+     * @return array
+     */
+    public function getConfigsProvider()
     {
-        $sugarConfig = array(
-            'list_max_entries_per_page' => 1,
-            'max_record_fetch_size' => 2,
-            'mass_actions' => array(
-                'mass_update_chunk_size' => 3,
-                'not_on_white_list' => 4,
-            ),
-            'analytics' => array(
-                'enabled' => true,
-            ),
-        );
+        return [
+            'configWithOidcDisable' => [
+                'sugarConfig' => [
+                    'list_max_entries_per_page' => 1,
+                    'max_record_fetch_size' => 2,
+                    'mass_actions' => [
+                        'mass_update_chunk_size' => 3,
+                        'not_on_white_list' => 4,
+                    ],
+                    'analytics' => [
+                        'enabled' => true,
+                    ],
+                    'oidc_oauth' => [],
+                ],
+                'expectedConfig' => [
+                    'maxQueryResult' => 1,
+                    'maxRecordFetchSize' => 2,
+                    'massActions' => [
+                        'massUpdateChunkSize' => 3,
+                    ],
+                    'analytics' => [
+                        'enabled' => true,
+                    ],
+                    'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
+                    'oidcEnabled' => false,
+                ],
+            ],
+            'configWithOidcEnable' => [
+                'sugarConfig' => [
+                    'list_max_entries_per_page' => 1,
+                    'max_record_fetch_size' => 2,
+                    'mass_actions' => [
+                        'mass_update_chunk_size' => 3,
+                        'not_on_white_list' => 4,
+                    ],
+                    'analytics' => [
+                        'enabled' => true,
+                    ],
+                    'oidc_oauth' => [
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'oidcUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'oidcKeySetId' => 'KeySetName',
+                        'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                        'idpServiceName' => 'idm',
+                    ],
+                ],
+                'expectedConfig' => [
+                    'maxQueryResult' => 1,
+                    'maxRecordFetchSize' => 2,
+                    'massActions' => [
+                        'massUpdateChunkSize' => 3,
+                    ],
+                    'analytics' => [
+                        'enabled' => true,
+                    ],
+                    'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
+                    'oidcEnabled' => true,
+                ],
+            ],
+        ];
+    }
 
-        $expectedConfigs = array(
-            'maxQueryResult' => 1,
-            'maxRecordFetchSize' => 2,
-            'massActions' => array(
-                'massUpdateChunkSize' => 3,
-            ),
-            'analytics' => array(
-                'enabled' => true,
-            ),
-            'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
-        );
-
+    /**
+     * @param $sugarConfig
+     * @param $expectedConfigs
+     *
+     * @dataProvider getConfigsProvider
+     */
+    public function testGetConfigs($sugarConfig, $expectedConfigs)
+    {
+        $GLOBALS['sugar_config']['oidc_oauth'] = $sugarConfig['oidc_oauth'];
         $administration = new Administration();
         $administration->retrieveSettings();
         if (!empty($administration->settings['system_name'])) {
