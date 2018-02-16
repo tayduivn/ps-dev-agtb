@@ -16,7 +16,10 @@
         "notify-on-install" : false,
         "discard-changes" : true,
         "preferred-install" : "dist",
-        "use-include-path" : false
+        "use-include-path" : false,
+        "platform": {
+            "php": "7.1.0"
+        }
     },
     "minimum-stability": "stable",
     "autoload": {
@@ -121,7 +124,7 @@
         "psr/container": "^1.0",
         "ext-openssl": "*",
         "league/oauth2-client": "2.2.1",
-        "php": ">=5.6.0"
+        "php": "^7.1"
     },
     "require-dev": {
         "phpunit/phpunit": "5.7.21",
