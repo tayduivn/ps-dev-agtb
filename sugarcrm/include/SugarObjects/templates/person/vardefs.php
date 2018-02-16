@@ -21,6 +21,7 @@ $vardefs =array(
 			'len' => '255',
             'duplicate_on_record_copy' => 'always',
 			'comment' => 'Contact salutation (e.g., Mr, Ms)',
+            'audited' => true,
             'pii' => true,
 		),
 'first_name' =>
@@ -38,6 +39,7 @@ $vardefs =array(
             ),
 			'comment' => 'First name of the contact',
             'merge_filter' => 'selected',
+            'audited' => true,
             'pii' => true,
 
 		),
@@ -58,6 +60,7 @@ $vardefs =array(
             'merge_filter' => 'selected',
             'required'=>true,
             'importable' => 'required',
+            'audited' => true,
             'pii' => true,
 		),
 	'name' =>
@@ -94,6 +97,7 @@ $vardefs =array(
 			'len' => '100',
             'duplicate_on_record_copy' => 'always',
 			'comment' => 'The title of the contact',
+            'audited' => true,
             'pii' => true,
 		),
     'facebook' =>
@@ -104,6 +108,7 @@ $vardefs =array(
         'len' => '100',
         'duplicate_on_record_copy' => 'always',
         'comment' => 'The facebook name of the user',
+        'audited' => true,
         'pii' => true,
     ),
     'twitter' =>
@@ -114,6 +119,7 @@ $vardefs =array(
         'len' => '100',
         'duplicate_on_record_copy' => 'always',
         'comment' => 'The twitter name of the user',
+        'audited' => true,
         'pii' => true,
     ),
     'googleplus' =>
@@ -124,6 +130,7 @@ $vardefs =array(
         'len' => '100',
         'duplicate_on_record_copy' => 'always',
         'comment' => 'The google plus id of the user',
+        'audited' => true,
         'pii' => true,
     ),
 	'department' =>
@@ -158,6 +165,7 @@ $vardefs =array(
             'full_text_search' => array('enabled' => true, 'searchable' => true,  'boost' => 0.97),
 			'comment' => 'Home phone number of the contact',
             'merge_filter' => 'enabled',
+            'audited' => true,
             'pii' => true,
 		),
 	'phone_mobile' =>
@@ -172,6 +180,7 @@ $vardefs =array(
 			'comment' => 'Mobile phone number of the contact',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'phone_work' =>
@@ -200,6 +209,7 @@ $vardefs =array(
 			'comment' => 'Other phone number for the contact',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'phone_fax' =>
@@ -214,6 +224,7 @@ $vardefs =array(
 			'comment' => 'Contact fax number',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'primary_address_street' =>
@@ -233,6 +244,7 @@ $vardefs =array(
                 'searchable' => true,
                 'boost' => 0.29,
             ),
+            'audited' => true,
             'pii' => true,
 		),
 	'primary_address_street_2' =>
@@ -243,6 +255,7 @@ $vardefs =array(
 			'len' => '150',
 			'source' => 'non-db',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'primary_address_street_3' =>
@@ -253,6 +266,7 @@ $vardefs =array(
 			'len' => '150',
 			'source' => 'non-db',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'primary_address_city' =>
@@ -265,6 +279,7 @@ $vardefs =array(
 			'comment' => 'City for primary address',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'primary_address_state' =>
@@ -277,6 +292,7 @@ $vardefs =array(
 			'comment' => 'State for primary address',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'primary_address_postalcode' =>
@@ -289,6 +305,7 @@ $vardefs =array(
 			'comment' => 'Postal code for primary address',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 
 		),
@@ -301,6 +318,7 @@ $vardefs =array(
 			'comment' => 'Country for primary address',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'alt_address_street' =>
@@ -320,6 +338,7 @@ $vardefs =array(
                 'searchable' => true,
                 'boost' => 0.28,
             ),
+            'audited' => true,
             'pii' => true,
 		),
 	'alt_address_street_2' =>
@@ -330,6 +349,7 @@ $vardefs =array(
 			'len' => '150',
 			'source' => 'non-db',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'alt_address_street_3' =>
@@ -340,6 +360,7 @@ $vardefs =array(
 			'len' => '150',
 			'source' => 'non-db',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'alt_address_city' =>
@@ -352,6 +373,7 @@ $vardefs =array(
 			'comment' => 'City for alternate address',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'alt_address_state' =>
@@ -364,6 +386,7 @@ $vardefs =array(
 			'comment' => 'State for alternate address',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'alt_address_postalcode' =>
@@ -376,6 +399,7 @@ $vardefs =array(
 			'comment' => 'Postal code for alternate address',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'alt_address_country' =>
@@ -387,6 +411,7 @@ $vardefs =array(
 			'comment' => 'Country for alternate address',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 		'assistant' =>
@@ -399,6 +424,7 @@ $vardefs =array(
 			'comment' => 'Name of the assistant of the contact',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
 	'assistant_phone' =>
@@ -413,6 +439,7 @@ $vardefs =array(
 			'comment' => 'Phone number of the assistant of the contact',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
             'pii' => true,
 		),
     //BEGIN SUGARCRM flav!=com ONLY

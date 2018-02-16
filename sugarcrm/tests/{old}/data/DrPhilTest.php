@@ -209,6 +209,11 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
             }
         }
 
+        // verify pii and audited fields
+        if (isset($def['pii']) && isTruthy($def['pii'])) {
+            $this->assertTrue(isset($def['audited']) && isTruthy($def['audited']), "$table:$key contains mismatch audited and pii value.");
+        }
+
         if (isset($def['fields'])) {
             foreach ($def['fields'] as $subField) {
                 $this->assertArrayHasKey($subField, $defs, "Sub field $subField for $table/$key points to an invalid field.");
