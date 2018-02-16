@@ -119,10 +119,15 @@
                 })
             },
             _.bind(function(model) {
+                var links;
+
                 if (model) {
                     this.layout.reloadDashlet();
-                    this.context.parent.trigger('panel-top:refresh', 'emails');
-                    this.context.parent.trigger('panel-top:refresh', 'archived_emails');
+                    links = app.utils.getLinksBetweenModules(this.context.parent.get('module'), 'Emails');
+
+                    _.each(links, function(link) {
+                        this.context.parent.trigger('panel-top:refresh', link.name);
+                    }, this);
                 }
             }, this)
         );

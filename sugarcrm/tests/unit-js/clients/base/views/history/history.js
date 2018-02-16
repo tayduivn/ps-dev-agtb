@@ -68,4 +68,22 @@ describe('Base.View.History', function() {
         expect(app.utils.openEmailCreateDrawer.firstCall.args[1].to.get('parent_id')).toBe(view.model.get('id'));
         expect(app.utils.openEmailCreateDrawer.firstCall.args[1].to.get('parent_name')).toBe(view.model.get('name'));
     });
+
+    it('should trigger panel-top:refresh events on the parent context', function() {
+        var parentContext = app.context.getContext({module: 'Contacts'});
+        var model = app.data.createBean('Emails');
+
+        parentContext.prepare(true);
+        sandbox.spy(parentContext, 'trigger');
+        view.context.parent = parentContext;
+        view.layout = {
+            reloadDashlet: sandbox.stub(),
+            off: sandbox.stub()
+        };
+        sandbox.stub(app.utils, 'openEmailCreateDrawer').callsArgWith(2, model);
+
+        view.archiveEmail();
+
+        expect(view.context.parent.trigger.callCount).toBe(3);
+    });
 });
