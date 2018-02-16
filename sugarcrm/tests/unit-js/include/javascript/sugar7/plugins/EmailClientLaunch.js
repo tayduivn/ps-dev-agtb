@@ -87,39 +87,84 @@ describe('EmailClientLaunch Plugin', function() {
             expect(field._retrieveValidRecipients.callCount).toBe(3);
         });
 
-        it('should refresh app context if module is Emails', function() {
-            var drawerCloseCallback;
-            var model = app.data.createBean('Emails');
+        describe('after closing the create drawer', function() {
+            var model;
 
-            app.controller.context.set('module', 'Emails');
-            setUseSugarClient(true);
-            field.launchEmailClient({});
-            drawerCloseCallback = app.utils.openEmailCreateDrawer.lastCall.args[2];
-            drawerCloseCallback(field.context, model);
-            expect(app.controller.context.reloadData).toHaveBeenCalled();
-        });
+            beforeEach(function() {
+                model = app.data.createBean('Emails');
+                setUseSugarClient(true);
+                sandbox.spy(app.controller.context, 'trigger');
+                sandbox.spy(field, 'trigger');
+            });
 
-        it('should not refresh app context if module is not Emails', function() {
-            var drawerCloseCallback;
-            var model = app.data.createBean('Emails');
+            it('should reload the data if the module is Emails and it is a list view', function() {
+                app.controller.context.set({
+                    module: 'Emails',
+                    layout: 'records'
+                }, {silent: true});
+                app.utils.openEmailCreateDrawer.callsArgWith(2, field.context, model);
 
-            app.controller.context.set('module', 'Tasks');
-            setUseSugarClient(true);
-            field.launchEmailClient({});
-            drawerCloseCallback = app.utils.openEmailCreateDrawer.lastCall.args[2];
-            drawerCloseCallback(model);
-            expect(app.controller.context.reloadData).not.toHaveBeenCalled();
-        });
+                field.launchEmailClient({});
 
-        it('should not refresh app context if drawer is canceled - no model', function() {
-            var drawerCloseCallback;
+                expect(field.trigger).toHaveBeenCalledWith('emailclient:close');
+                expect(app.controller.context.reloadData).toHaveBeenCalledOnce();
+                expect(app.controller.context.trigger).not.toHaveBeenCalledWith('panel-top:refresh');
+            });
 
-            app.controller.context.set('module', 'Emails');
-            setUseSugarClient(true);
-            field.launchEmailClient({});
-            drawerCloseCallback = app.utils.openEmailCreateDrawer.lastCall.args[2];
-            drawerCloseCallback();
-            expect(app.controller.context.reloadData).not.toHaveBeenCalled();
+            it('should trigger panel-top:refresh events on the context if the module is not Emails', function() {
+                app.controller.context.set({
+                    module: 'Contacts',
+                    layout: 'records'
+                }, {silent: true});
+                app.utils.openEmailCreateDrawer.callsArgWith(2, field.context, model);
+
+                field.launchEmailClient({});
+
+                expect(field.trigger).toHaveBeenCalledWith('emailclient:close');
+                expect(app.controller.context.reloadData).not.toHaveBeenCalled();
+                expect(app.controller.context.trigger.callCount).toBe(3);
+                expect(app.controller.context.trigger.getCall(0).args[0]).toEqual('panel-top:refresh');
+                expect(app.controller.context.trigger.getCall(0).args[1]).toEqual('emails');
+                expect(app.controller.context.trigger.getCall(1).args[0]).toEqual('panel-top:refresh');
+                expect(app.controller.context.trigger.getCall(1).args[1]).toEqual('archived_emails');
+                expect(app.controller.context.trigger.getCall(2).args[0]).toEqual('panel-top:refresh');
+                expect(app.controller.context.trigger.getCall(2).args[1]).toEqual('contacts_activities_1_emails');
+            });
+
+            it('should trigger panel-top:refresh events on the context if it is not a list view', function() {
+                app.controller.context.set({
+                    module: 'Emails',
+                    layout: 'record'
+                }, {silent: true});
+                app.utils.openEmailCreateDrawer.callsArgWith(2, field.context, model);
+                // Pretend that Emails has a link to itself.
+                sandbox.stub(app.utils, 'getLinksBetweenModules').returns([{
+                    name: 'emails'
+                }]);
+
+                field.launchEmailClient({});
+
+                expect(field.trigger).toHaveBeenCalledWith('emailclient:close');
+                expect(app.controller.context.reloadData).not.toHaveBeenCalled();
+                expect(app.controller.context.trigger).toHaveBeenCalledOnce();
+                expect(app.controller.context.trigger.getCall(0).args[0]).toEqual('panel-top:refresh');
+                expect(app.controller.context.trigger.getCall(0).args[1]).toEqual('emails');
+            });
+
+            it('should not reload any data if the drawer is canceled', function() {
+                app.controller.context.set({
+                    module: 'Emails',
+                    layout: 'records'
+                }, {silent: true});
+                // No model is passed.
+                app.utils.openEmailCreateDrawer.callsArgWith(2, field.context);
+
+                field.launchEmailClient({});
+
+                expect(field.trigger).not.toHaveBeenCalledWith('emailclient:close');
+                expect(app.controller.context.reloadData).not.toHaveBeenCalled();
+                expect(app.controller.context.trigger).not.toHaveBeenCalledWith('panel-top:refresh');
+            });
         });
     });
 

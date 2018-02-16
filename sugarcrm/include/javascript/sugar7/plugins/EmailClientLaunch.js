@@ -98,12 +98,23 @@
                     options,
                     _.bind(function(context, model) {
                         if (model) {
+                            var controllerContext = app.controller.context;
+                            var controllerContextModule = controllerContext.get('module');
+                            var links;
+
                             this.trigger('emailclient:close');
 
-                            // Refresh the current list view if it is the
-                            // Emails list view.
-                            if (app.controller.context.get('module') === 'Emails') {
-                                app.controller.context.reloadData();
+                            if (controllerContextModule === 'Emails' && controllerContext.get('layout') === 'records') {
+                                // Refresh the current list view if it is the
+                                // Emails list view.
+                                controllerContext.reloadData();
+                            } else {
+                                // Refresh Emails subpanels if there are any.
+                                links = app.utils.getLinksBetweenModules(controllerContextModule, 'Emails');
+
+                                _.each(links, function(link) {
+                                    controllerContext.trigger('panel-top:refresh', link.name);
+                                });
                             }
                         }
                     }, this)
