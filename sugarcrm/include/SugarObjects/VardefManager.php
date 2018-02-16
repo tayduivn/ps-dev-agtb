@@ -765,7 +765,7 @@ class VardefManager{
      * @param  $object
      * @return array|bool  returns a list of all fields in the module of type 'link'.
      */
-    protected static function getLinkFieldsForModule($module, $object)
+    public static function getLinkFieldsForModule($module, $object)
     {
         global $dictionary;
         //Some modules like cases have a bean name that doesn't match the object name

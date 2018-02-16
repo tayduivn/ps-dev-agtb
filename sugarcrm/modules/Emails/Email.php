@@ -1277,28 +1277,10 @@ class Email extends SugarBean {
 			if(!empty($_REQUEST['parent_type']) && !empty($_REQUEST['parent_id']) ) {
 	                $this->parent_id = $this->db->quote($_REQUEST['parent_id']);
 	                $this->parent_type = $this->db->quote($_REQUEST['parent_type']);
-					$a = $this->db->fetchOne("SELECT count(*) c FROM emails_beans WHERE  email_id = '{$this->id}' AND bean_id = '{$this->parent_id}' AND bean_module = '{$this->parent_type}'");
-					if($a['c'] == 0) {
-					    $bean = BeanFactory::getBean($_REQUEST['parent_type'], $_REQUEST['parent_id']);
-                        if (!empty($bean)) {
-                            if (!empty($bean->field_defs['emails']['type']) && $bean->field_defs['emails']['type'] == 'link') {
-                                $email_link = "emails";
-                            } else {
-                                $email_link = $this->findEmailsLink($bean);
-                            }
-                            if ($email_link && $bean->load_relationship($email_link) ){
-                                $bean->$email_link->add($this);
-                            }
-                        }
-					} // if
-
 				} else {
                     $c = BeanFactory::newBean('Cases');
                     $ie = BeanFactory::newBean('InboundEmail');
                     if ($caseId = $ie->getCaseIdFromCaseNumber($subject, $c)) {
-                        $c->retrieve($caseId);
-                        $c->load_relationship('emails');
-                        $c->emails->add($this->id);
                         $this->parent_type = "Cases";
                         $this->parent_id = $caseId;
                     } // if
@@ -1582,42 +1564,58 @@ class Email extends SugarBean {
 
     /**
      * If the parent fields are set, then link the email to the bean on the emails_beans join table, as long as there is
-     * an link that matches the module name (or <module_name>_activities_emails for custom modules).
+     * a link that matches the module name (or <module_name>_activities_1_emails for the Activities relationship added
+     * via Studio or <module_name>_activities_emails for the Activities relationship added via Module Builder).
      *
      * @see SI Bug 22504
+     * @uses Email::findEmailsLink()
      */
     protected function linkParentBeanUsingRelationship()
     {
-        $fieldDefs = $this->field_defs;
+        if (empty($this->parent_type) || empty($this->parent_id)) {
+            return;
+        }
 
-        $getRelationshipName = function ($module) use ($fieldDefs) {
-            $module = strtolower($module);
-            $hasModuleLinkName = array_key_exists($module, $fieldDefs);
-            $name = $hasModuleLinkName ? $module : "{$module}_activities_emails"; // Custom modules relationship name.
-
-            return $name;
-        };
-
-        if (!empty($this->parent_type) && !empty($this->parent_id)) {
-            if (!empty($this->fetched_row) &&
-                !empty($this->fetched_row['parent_id']) &&
-                !empty($this->fetched_row['parent_type'])
+        // Unlink the previous parent.
+        if (!empty($this->fetched_row) &&
+            !empty($this->fetched_row['parent_id']) &&
+            !empty($this->fetched_row['parent_type'])
+        ) {
+            if ($this->fetched_row['parent_id'] != $this->parent_id ||
+                $this->fetched_row['parent_type'] != $this->parent_type
             ) {
-                if ($this->fetched_row['parent_id'] != $this->parent_id ||
-                    $this->fetched_row['parent_type'] != $this->parent_type
-                ) {
-                    $rel = $getRelationshipName($this->fetched_row['parent_type']);
+                $parent = BeanFactory::retrieveBean(
+                    $this->fetched_row['parent_type'],
+                    $this->fetched_row['parent_id'],
+                    [
+                        'disable_row_level_security' => true,
+                    ]
+                );
 
-                    if ($this->load_relationship($rel)) {
-                        $this->$rel->delete($this->id, $this->fetched_row['parent_id']);
+                if ($parent) {
+                    $linkName = $this->findEmailsLink($parent);
+
+                    if ($parent->load_relationship($linkName)) {
+                        $parent->$linkName->delete($parent->id, $this->id);
                     }
                 }
             }
+        }
 
-            $rel = $getRelationshipName($this->parent_type);
+        // Link the new parent.
+        $parent = BeanFactory::retrieveBean(
+            $this->parent_type,
+            $this->parent_id,
+            [
+                'disable_row_level_security' => true,
+            ]
+        );
 
-            if ($this->load_relationship($rel)) {
-                $this->$rel->add($this->parent_id);
+        if ($parent) {
+            $linkName = $this->findEmailsLink($parent);
+
+            if ($parent->load_relationship($linkName)) {
+                $parent->$linkName->add($this->id);
             }
         }
     }
@@ -2699,21 +2697,83 @@ class Email extends SugarBean {
 	}
 
     /**
-     * Used to find a usable Emails relationship link
+     * Used to find a usable Emails relationship link.
      *
-     * @deprecated This method is no longer used.
-     * @param SugarBean $bean
-     * @return bool|string Name of an Emails relationship link or false
+     * Emails has special relationships that should be used to link an email to another bean when the other bean is the
+     * email's parent. Typically, these relationships add the relationship to the emails_beans join table.
+     *
+     * If the related module has a link named "emails", then this link will be returned. Core modules with these special
+     * relationships to Emails have links named "emails". Examples are Accounts, Bugs, Cases, and Contacts.
+     *
+     * The <module>_activities_1_emails link is created when an admin adds the Activities relationship to a module in
+     * Studio. <module> is the lower case form of the module to which the Activities relationship was added. This
+     * activities link is another link that should be handled specially when the email's parent is a record from the
+     * module on the other side.
+     *
+     * The <module>_activities_emails link is used when the Activities relationship is created using Module Builder,
+     * before the module is deployed. Prior to 6.3, it was also possible for this activities link name to be generated
+     * by Studio. This should have been corrected during an upgrade from a version less than 6.5.7. However, in case
+     * this link name is still used, <module>_activities_emails will be returned if no match was found for the link
+     * names mentioned above.
+     *
+     * The name of the first link to Emails that is found is returned if none of the above link names were identified.
+     *
+     * @see SI Bug 22504
+     * @see SI Bug 49024
+     * @param SugarBean $bean A bean from the related module.
+     * @return bool|string Name of an Emails relationship link or false.
      */
-    protected function findEmailsLink(SugarBean $bean)
+    public function findEmailsLink(SugarBean $bean)
     {
-        LoggerManager::getLogger()->deprecated('Email::findEmailsLink() has been deprecated.');
+        $moduleName = BeanFactory::getModuleName($bean);
+        $moduleNameLower = strtolower($moduleName);
 
-        foreach($bean->field_defs as $field => $def) {
-            if (!empty($def['type']) && $def['type'] == 'link' && !empty($def['module']) && $def['module'] == 'Emails') {
-                return $field;
-            }
+        // Get the names of all links that $bean has pointing to Emails.
+        $linkFields = VardefManager::getLinkFieldsForModule($moduleName, BeanFactory::getObjectName($moduleName));
+
+        // `false` is returned for the Empty module.
+        if (!is_array($linkFields)) {
+            $linkFields = [];
         }
+
+        $linksToEmails = array_filter($linkFields, function ($def) use ($bean) {
+            if (!empty($def['module'])) {
+                return $def['module'] === 'Emails';
+            }
+
+            // The module isn't defined on the link, so use the relationship to determine if the module on the other
+            // side is Emails.
+            if ($bean->load_relationship($def['name'])) {
+                return $bean->{$def['name']}->getRelatedModuleName() === 'Emails';
+            }
+
+            return false;
+        });
+        $linksToEmails = array_keys($linksToEmails);
+
+        $studioGeneratedLinkName = "{$moduleNameLower}_activities_1_emails";
+        $moduleBuilderGeneratedLinkName = "{$moduleNameLower}_activities_emails";
+
+        // Does the bean's module have a link field named "emails"?
+        if (in_array('emails', $linksToEmails)) {
+            return 'emails';
+        }
+
+        // Does the bean's module have a link field generated by Studio for the Activities relationship?
+        if (in_array($studioGeneratedLinkName, $linksToEmails)) {
+            return $studioGeneratedLinkName;
+        }
+
+        // Does the bean's module have a link field generated by Module Builder for the Activities relationship?
+        if (in_array($moduleBuilderGeneratedLinkName, $linksToEmails)) {
+            return $moduleBuilderGeneratedLinkName;
+        }
+
+        // Use the first link that was found.
+        if (count($linksToEmails) > 0) {
+            return array_shift($linksToEmails);
+        }
+
         return false;
     }
 

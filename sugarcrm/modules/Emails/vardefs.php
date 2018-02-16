@@ -424,6 +424,7 @@ $dictionary['Email'] = array(
             'comment' => 'An email is either a draft or archived',
             'reportable' => false,
             'hideacl' => true,
+            'mandatory_fetch' => true,
         ),
         'reply_to_id' => array(
             'name' => 'reply_to_id',

@@ -58,6 +58,12 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($email['message']['description'].' '.$e->id.' '.$email['message']['message_id'].' '.$email['message']['subject'].' '.htmlentities($email['message']['from_name']), $contact->description);
 		$this->assertEquals('Email', $contact->lead_source);
 		$this->assertEquals(gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($email['message']['date_sent'])), $GLOBALS['db']->fromConvert($contact->date_entered, 'datetime'));
+
+        // The contact should have been linked to the email using the contact's emails link.
+        $emails = $contact->get_linked_beans('emails', 'Email');
+
+        $this->assertCount(1, $emails);
+        $this->assertSame($e->id, $emails[0]->id);
 	}
 
 	// create a Cases object
@@ -92,6 +98,12 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($e->id, $case->status);
 		$this->assertEquals($email['message']['description'].' '.$e->id.' '.$email['message']['message_id'].' '.$email['message']['subject'].' '.htmlentities($email['message']['from_name']), $case->description);
 		$this->assertEquals(gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($email['message']['date_sent'])), $GLOBALS['db']->fromConvert($case->date_entered, 'datetime'));
+
+        // The case should have been linked to the email using the case's emails link.
+        $emails = $case->get_linked_beans('emails', 'Email');
+
+        $this->assertCount(1, $emails);
+        $this->assertSame($e->id, $emails[0]->id);
 	}
 
 	// create an Opportunity object
@@ -126,6 +138,12 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($e->id, $opp->sales_stage);
 		$this->assertEquals($email['message']['description'].' '.$e->id.' '.$email['message']['message_id'].' '.$email['message']['subject'].' '.htmlentities($email['message']['from_name']), $opp->description);
 		$this->assertEquals(gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($email['message']['date_sent'])), $GLOBALS['db']->fromConvert($opp->date_entered, 'datetime'));
+
+        // The opportunity should have been linked to the email using the opportunity's emails link.
+        $emails = $opp->get_linked_beans('emails', 'Email');
+
+        $this->assertCount(1, $emails);
+        $this->assertSame($e->id, $emails[0]->id);
 	}
 
 	public function setUp () {

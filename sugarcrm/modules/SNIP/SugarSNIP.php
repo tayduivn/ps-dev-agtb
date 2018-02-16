@@ -678,10 +678,11 @@ class SugarSNIP
 				$obj->save();
 				// associate email to new object
 				if(empty($obj->id)) continue; // save failed
-	            $mod = strtolower($module);
-	            $rel = array_key_exists($mod, $email->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
-	            if($email->load_relationship($rel) ) {
-	            	$email->$rel->add($obj->id);
+
+                $linkName = $email->findEmailsLink($obj);
+
+                if ($obj->load_relationship($linkName)) {
+                    $obj->$linkName->add($email);
 	            }
 			}
     	}

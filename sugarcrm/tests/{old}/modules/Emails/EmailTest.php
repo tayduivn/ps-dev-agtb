@@ -35,6 +35,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
+        VardefManager::$linkFields = [];
+        VardefManager::loadVardef('Contacts', 'Contact', true);
+
         // Clean up any dangling beans that need to be resaved.
         SugarRelationship::resaveRelatedBeans(false);
 
@@ -734,6 +737,26 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::save
+     * @covers ::linkParentBeanUsingRelationship
+     * @covers ::findEmailsLink
+     */
+    public function testSave_WillLinkTheParentContact()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+        $email = SugarTestEmailUtilities::createEmail();
+
+        $email->parent_type = 'Contacts';
+        $email->parent_id = $contact->id;
+        $email->save();
+
+        $contacts = $email->get_linked_beans('contacts', 'Contact');
+
+        $this->assertCount(1, $contacts);
+        $this->assertSame($contact->id, $contacts[0]->id);
+    }
+
+    /**
      * @covers ::linkEmailToAddress
      */
     public function testLinkEmailToAddress()
@@ -1037,6 +1060,75 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         // Verify the data in the emails_email_addr_rel table once more.
         $email->retrieveEmailAddresses();
         $this->assertEmpty($email->to_addrs);
+    }
+
+    public function findEmailsLinkProvider()
+    {
+        return [
+            'module has emails link' => [
+                [
+                    'emails' => [
+                        'name' => 'emails',
+                        'type' => 'link',
+                        'relationship' => 'emails_contacts_rel',
+                        'source' => 'non-db',
+                        'vname' => 'LBL_EMAILS',
+                    ],
+                ],
+                'emails',
+            ],
+            'activities relationship added via studio' => [
+                [
+                    'contacts_activities_1_emails' => [
+                        'name' => 'contacts_activities_1_emails',
+                        'type' => 'link',
+                        'relationship' => 'contacts_activities_1_emails',
+                        'source' => 'non-db',
+                        'module' => 'Emails',
+                        'bean_name' => 'Email',
+                        'vname' => 'LBL_CONTACTS_ACTIVITIES_1_EMAILS_FROM_EMAILS_TITLE',
+                    ],
+                ],
+                'contacts_activities_1_emails',
+            ],
+            'activities relationship added via module builder' => [
+                [
+                    'contacts_activities_emails' => [
+                        'name' => 'contacts_activities_emails',
+                        'type' => 'link',
+                        'relationship' => 'contacts_activities_emails',
+                        'source' => 'non-db',
+                        'module' => 'Emails',
+                        'bean_name' => 'Email',
+                        'vname' => 'LBL_CONTACTS_ACTIVITIES_EMAILS_FROM_EMAILS_TITLE',
+                    ],
+                ],
+                'contacts_activities_emails',
+            ],
+            'no link to emails' => [
+                [],
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider findEmailsLinkProvider
+     * @covers ::findEmailsLink
+     * @param array $fieldDefs
+     * @param bool|string $expected
+     */
+    public function testFindEmailsLink(array $fieldDefs, $expected)
+    {
+        $email = BeanFactory::newBean('Emails');
+        $contact = BeanFactory::newBean('Contacts');
+
+        $GLOBALS['dictionary']['Contact']['fields'] = $fieldDefs;
+        VardefManager::$linkFields = [];
+
+        $actual = $email->findEmailsLink($contact);
+
+        $this->assertSame($expected, $actual);
     }
 
     /**
