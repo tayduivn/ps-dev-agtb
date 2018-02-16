@@ -16,19 +16,34 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 global $sugar_config;
 
 $moduleName = 'Users';
-$viewdefs[$moduleName]['base']['menu']['header'] = array(
-    array(
+$idpConfig  = new Config(\SugarConfig::getInstance());
+$isOIDCEnabled  = $idpConfig->isOIDCEnabled();
+if ($isOIDCEnabled) {
+    $newUserLink = [
+        'route' => $idpConfig->getOIDCConfig()['cloudConsoleUrl'],
+        'openwindow' => true,
+        'label' => 'LNK_NEW_USER',
+        'acl_action' => 'admin',
+        'acl_module' => $moduleName,
+        'icon' => 'fa-plus',
+    ];
+} else {
+    $newUserLink = [
         'route' => '#bwc/index.php?' . http_build_query(
-            array(
+            [
                 'module' => $moduleName,
                 'action' => 'EditView',
-            )
+            ]
         ),
         'label' => 'LNK_NEW_USER',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
         'icon' => 'fa-plus',
-    ),
+    ];
+}
+
+$viewdefs[$moduleName]['base']['menu']['header'] = array(
+    $newUserLink,
     array(
         'route' => '#bwc/index.php?' . http_build_query(
             array(
@@ -94,8 +109,8 @@ $viewdefs[$moduleName]['base']['menu']['header'][] =
         'acl_module' => $moduleName,
         'icon' => 'fa-arrows',
     );
-$idpConfig = new Config(\SugarConfig::getInstance());
-if (!$idpConfig->isOIDCEnabled()) {
+
+if (!$isOIDCEnabled) {
     $viewdefs[$moduleName]['base']['menu']['header'][] = [
         'route' => '#bwc/index.php?' . http_build_query([
             'module' => 'Import',

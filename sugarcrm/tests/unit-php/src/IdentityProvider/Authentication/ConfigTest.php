@@ -520,6 +520,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'idpUrl' => 'http://login.sugarcrm.local',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'idpServiceName' => 'idp',
+                    'cloudConsoleUrl' => '',
                 ],
             ],
             'httpClientNotEmpty' => [
@@ -534,6 +535,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                         'delay_strategy' => 'exponential',
                     ],
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                 ],
                 'siteUrl' => 'http://site.url/',
                 'expectedConfig' => [
@@ -554,6 +556,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'idpUrl' => 'http://login.sugarcrm.local',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'idpServiceName' => 'iam',
+                    'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                 ],
             ],
         ];

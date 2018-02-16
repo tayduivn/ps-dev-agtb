@@ -92,6 +92,7 @@ class Config
             'urlUserInfo' => $endpointService->getUserInfoEndpoint(),
             'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
             'idpServiceName' => !empty($config['idpServiceName']) ? $config['idpServiceName'] : 'iam',
+            'cloudConsoleUrl' => !empty($config['cloudConsoleUrl']) ? $config['cloudConsoleUrl'] : '',
         ];
 
         if ($oidcKeySetId) {

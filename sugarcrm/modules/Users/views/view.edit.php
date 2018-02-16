@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
+
 class UsersViewEdit extends ViewEdit {
 var $useForSubpanel = true;
 
@@ -43,6 +45,10 @@ var $useForSubpanel = true;
     function display() {
         global $current_user, $app_list_strings;
 
+        $idpConfig = new IdmConfig(\SugarConfig::getInstance());
+        if ($idpConfig->isOIDCEnabled() && !$this->bean->isUpdate()) {
+            $this->showRedirectToCloudConsole($idpConfig->getOIDCConfig()['cloudConsoleUrl']);
+        }
 
         //lets set the return values
         $return_module = $this->request->getValidInputRequest('return_module', 'Assert\Bean\ModuleName');
@@ -259,5 +265,18 @@ EOD
 EOHTML;
         }
         return $theTitle;
+    }
+
+    /**
+     * Show redirect to cloud console
+     * @param string $url cloud console url
+     */
+    protected function showRedirectToCloudConsole($url)
+    {
+        $ss = new Sugar_Smarty();
+        $error = string_format($GLOBALS['mod_strings']['ERR_CREATE_USER_FOR_IDM_MODE'], [$url]);
+        $ss->assign("error", $error);
+        $ss->display('modules/Users/tpls/errorMessage.tpl');
+        sugar_cleanup(true);
     }
 }
