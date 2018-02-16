@@ -45,7 +45,7 @@ $viewdefs['RevenueLineItems']['mobile']['layout']['subpanels'] = array(
             'linkable' => false,
             'unlinkable' => false,
             'context' => array(
-                'link' => 'archived_emails',
+                'link' => 'emails',
             ),
         ),
         array(
