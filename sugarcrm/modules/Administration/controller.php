@@ -461,6 +461,39 @@ class AdministrationController extends SugarController
         $this->terminate();
     }
 
+
+    /**
+     * Updates the list of configured custom api platforms.
+     */
+    public function action_saveApiPlatforms()
+    {
+        global $current_user;
+
+        if (!is_admin($current_user)) {
+            sugar_die($app_strings['ERR_NOT_ADMIN']);
+        }
+
+        $api_platforms = json_decode(
+            html_entity_decode(
+                InputValidation::getService()->getValidInputRequest('custom_api_platforms'),
+                ENT_QUOTES
+            )
+        );
+
+        $file_loc = "custom/Extension/application/Ext/Platforms/custom_api_platforms.php";
+
+        $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
+        foreach ($api_platforms as $platform) {
+            $out .= '$platforms[] = ' . var_export($platform, true) . ";\n";
+        }
+
+        mkdir_recursive(dirname($file_loc));
+        sugar_file_put_contents_atomic($file_loc, $out);
+
+        $repairAndClear = new RepairAndClear();
+        $repairAndClear->rebuildExtensions();
+    }
+
     /**
      * @return UploadedFile|null
      */
