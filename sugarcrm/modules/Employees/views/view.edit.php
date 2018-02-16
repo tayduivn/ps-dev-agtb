@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
+
 class EmployeesViewEdit extends ViewEdit {
     var $useForSubpanel = true;
 
@@ -50,6 +52,16 @@ class EmployeesViewEdit extends ViewEdit {
                 $this->ss->assign('DEPT_READONLY', $this->bean->department);
             }
         }
+
+        // Check for IDM mode.
+        $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
+        $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $idpConfig->isOIDCEnabled());
+        if ($GLOBALS['current_user']->isAdminForModule('Users') && $this->bean->id !== $GLOBALS['current_user']->id) {
+            $label = 'LBL_OIDC_NON_EDITABLE_FIELDS_FOR_ADMIN_USER';
+        } else {
+            $label = 'LBL_OIDC_NON_EDITABLE_FIELDS_FOR_REGULAR_USER';
+        }
+        $this->ss->assign('NON_EDITABLE_FIELDS_MSG', translate($label, 'Users'));
 
  		parent::display();
  	}

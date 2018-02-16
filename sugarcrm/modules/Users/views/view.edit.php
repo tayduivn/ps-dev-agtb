@@ -224,6 +224,16 @@ EOD
         if(!empty($_REQUEST['scrollToCal'])){
             $this->ss->assign('scroll_to_cal', true);
         }
+
+        // Check for IDM mode.
+        $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $idpConfig->isOIDCEnabled());
+        if ($GLOBALS['current_user']->isAdminForModule('Users') && $this->bean->id !== $GLOBALS['current_user']->id) {
+            $label = 'LBL_OIDC_NON_EDITABLE_FIELDS_FOR_ADMIN_USER';
+        } else {
+            $label = 'LBL_OIDC_NON_EDITABLE_FIELDS_FOR_REGULAR_USER';
+        }
+        $this->ss->assign('NON_EDITABLE_FIELDS_MSG', translate($label, 'Users'));
+
         $this->ev->process($processSpecial,$processFormName);
 
 		echo $this->ev->display($this->showTitle);

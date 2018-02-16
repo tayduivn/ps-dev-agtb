@@ -630,6 +630,12 @@ $mod_strings = array (
     'LBL_FILTER_USERS_REPORTS' => 'Users\' reports',
     'LBL_CONTACTS_SYNC' => 'Contacts',
     'LBL_DETAIL' => 'User Profile',
+
+    'LBL_OIDC_NON_EDITABLE_FIELDS_FOR_ADMIN_USER' =>
+        'If certain fields are not editable, please login to your Cloud Console to manage these fields',
+    'LBL_OIDC_NON_EDITABLE_FIELDS_FOR_REGULAR_USER' =>
+        'If you wish to change certain fields that are not editable, ' .
+        'please contact Administrator to notify these changes',
 ); // END STRINGS DEFS
 
 ?>
