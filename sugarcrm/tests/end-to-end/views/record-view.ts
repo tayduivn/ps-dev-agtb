@@ -63,6 +63,7 @@ export default class RecordView extends BaseView {
 
         }
 
+        await this.driver.scroll(panelSelector);
         await this.driver.click(panelSelector);
 
     }

@@ -25,7 +25,7 @@ export default class extends BaseField {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '[data-name={{name}}]',
+            $: '[field-name={{name}}]',
             field: {
                 $: '.select2-search-field',
                 input: 'input',
@@ -44,6 +44,30 @@ export default class extends BaseField {
         // TODO remove this pause once SBD-358 is fixed, and uncomment the line above.
         await this.driver.pause(4000);
         await this.driver.click(`${this.matchInput}`);
+    }
+
+}
+
+export class TagEdit extends BaseField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            $: '[field-name={{name}}]',
+            field: {
+                selector: 'span.tag-wrapper',
+            }
+        });
+
+    }
+
+    public async getText(): Promise<string> {
+
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+
+        return value.toString().trim();
+
     }
 
 }

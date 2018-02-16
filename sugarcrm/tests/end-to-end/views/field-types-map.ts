@@ -25,6 +25,8 @@ import * as FullnameField from '../fields/fullname-field';
 import * as TagField from '../fields/tag-field';
 import * as EmailField from '../fields/email-field';
 import * as DiscountSelectField from '../fields/discount-select-field';
+import * as BoolField from '../fields/bool-field';
+import * as TeamsetField from '../fields/teamset-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -43,6 +45,7 @@ export const FIELD_TYPES__MAP = {
     taxrate: RelateField,
     'quote-data-relate': QuoteDataRelateField,
     checkbox: CopyField,
+    bool:BoolField,
     copy: CopyField,
     currency: CurrencyField,
     email: EmailField,
@@ -51,5 +54,6 @@ export const FIELD_TYPES__MAP = {
     'quote-footer-currency': CurrencyField,
     'discount-select':DiscountSelectField,
     'pricing-formula':PricingFormula,
+    teamset: TeamsetField,
 };
 

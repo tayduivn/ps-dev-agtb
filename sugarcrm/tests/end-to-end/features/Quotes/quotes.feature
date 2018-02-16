@@ -43,7 +43,7 @@ Feature: Quotes module E2E testing
       | *name | discount_price | discount_amount | quantity |
       | QLI_1 | 100            | 2               | 2        |
       | QLI_2 | 200            | 2               | 3        |
-      # 2. Generate 2 tax rates
+    # 2. Generate 2 tax rates
     Given TaxRates records exist:
       | *name | list_order | status | value |
       | Tax_1 | 4          | Active | 10.00 |
