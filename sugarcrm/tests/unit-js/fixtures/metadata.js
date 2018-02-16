@@ -116,6 +116,20 @@ fixtures.metadata = {
             lhs_module:"Accounts",
             rhs_module:"Contacts"
         },
+        emails_contacts_rel: {
+            lhs_module: 'Emails',
+            lhs_table: 'emails',
+            lhs_key: 'id',
+            rhs_module: 'Contacts',
+            rhs_table: 'contacts',
+            rhs_key: 'id',
+            relationship_type: 'many-to-many',
+            relationship_role_column: 'bean_module',
+            relationship_role_column_value: 'Contacts',
+            join_table: 'emails_beans',
+            join_key_lhs: 'email_id',
+            join_key_rhs: 'bean_id'
+        },
         emails_attachments: {
             lhs_module: 'Emails',
             rhs_module: 'Notes'
@@ -135,6 +149,20 @@ fixtures.metadata = {
         emails_bcc: {
             lhs_module: 'Emails',
             rhs_module: 'EmailParticipants'
+        },
+        contacts_activities_1_emails: {
+            lhs_module: 'Contacts',
+            lhs_table: 'contacts',
+            lhs_key: 'id',
+            rhs_module: 'Emails',
+            rhs_table: 'emails',
+            relationship_role_column_value: 'Contacts',
+            rhs_key: 'id',
+            relationship_type: 'many-to-many',
+            join_table: 'emails_beans',
+            join_key_rhs: 'email_id',
+            join_key_lhs: 'bean_id',
+            relationship_role_column: 'bean_module'
         }
     },
     "currencies": {
@@ -566,8 +594,35 @@ fixtures.metadata = {
                 modified_by_name: {
                     name: "modified_by_name",
                     type: "varchar"
+                },
+                emails: {
+                    name: 'emails',
+                    type: 'link',
+                    relationship: 'emails_contacts_rel',
+                    source: 'non-db',
+                    vname: 'LBL_EMAILS'
+                },
+                archived_emails: {
+                    name: 'archived_emails',
+                    type: 'link',
+                    link_file: 'modules/Emails/ArchivedEmailsLink.php',
+                    link_class: 'ArchivedEmailsLink',
+                    source: 'non-db',
+                    vname: 'LBL_EMAILS',
+                    module: 'Emails',
+                    link_type: 'many',
+                    relationship: '',
+                    readonly: true
+                },
+                contacts_activities_1_emails: {
+                    name: 'contacts_activities_1_emails',
+                    type: 'link',
+                    relationship: 'contacts_activities_1_emails',
+                    source: 'non-db',
+                    module: 'Emails',
+                    bean_name: 'Email',
+                    vname: 'LBL_CONTACTS_ACTIVITIES_1_EMAILS_FROM_EMAILS_TITLE'
                 }
-
             },
             "views": {
                 "edit": {

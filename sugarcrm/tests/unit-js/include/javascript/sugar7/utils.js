@@ -786,4 +786,33 @@ describe("Sugar7 utils", function() {
             });
         });
     });
+
+    describe('getting the names of all links between two modules', function() {
+        beforeEach(function() {
+            var metadata = SugarTest.loadFixture('emails-metadata');
+
+            SugarTest.testMetadata.init();
+
+            _.each(metadata.modules, function(def, module) {
+                SugarTest.testMetadata.updateModuleMetadata(module, def);
+            });
+
+            SugarTest.testMetadata.set();
+
+            app.data.declareModels();
+            app.routing.start();
+        });
+
+        it('should only return links between Contacts and Emails', function() {
+            var links = app.utils.getLinksBetweenModules('Contacts', 'Emails');
+            var linkNames = _.pluck(links, 'name');
+
+            expect(links.length).toBe(3);
+            expect(linkNames).toEqual([
+                'emails',
+                'archived_emails',
+                'contacts_activities_1_emails'
+            ]);
+        });
+    });
 });

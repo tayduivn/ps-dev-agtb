@@ -77,22 +77,27 @@ describe('Emails.Fields.EmailactionPaneltop', function() {
 
             field.trigger('emailclient:close');
 
-            expect(field.context.trigger.callCount).toBe(2);
+            expect(field.context.trigger.callCount).toBe(3);
             expect(field.context.trigger.getCall(0).args[0]).toEqual('panel-top:refresh');
             expect(field.context.trigger.getCall(0).args[1]).toEqual('emails');
             expect(field.context.trigger.getCall(1).args[0]).toEqual('panel-top:refresh');
             expect(field.context.trigger.getCall(1).args[1]).toEqual('archived_emails');
+            expect(field.context.trigger.getCall(2).args[0]).toEqual('panel-top:refresh');
+            expect(field.context.trigger.getCall(2).args[1]).toEqual('contacts_activities_1_emails');
         });
 
         it('should trigger the events on the parent context', function() {
+            var parentContext = app.context.getContext({module: 'Contacts'});
+
+            parentContext.prepare(true);
+            sandbox.spy(parentContext, 'trigger');
+
             field = createField();
-            field.context.parent = {
-                trigger: sandbox.spy()
-            };
+            field.context.parent = parentContext;
 
             field.trigger('emailclient:close');
 
-            expect(field.context.parent.trigger.callCount).toBe(2);
+            expect(field.context.parent.trigger.callCount).toBe(3);
         });
     });
 

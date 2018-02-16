@@ -57,7 +57,9 @@ describe("Base.View.Massupdate", function() {
     it("should generate its fields from metadata massupdate value", function() {
         var expected = view.meta.panels[0].fields.length,
             actual = _.size(_.filter(app.metadata.getModule('Contacts').fields, function(field) {
-                return field.massupdate;
+                // Only fields with `massupdate: true` and are not read only
+                // are included in the panel's fields.
+                return field.massupdate && !field.readonly;
             }));
 
 

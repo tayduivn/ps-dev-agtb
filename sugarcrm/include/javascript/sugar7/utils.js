@@ -1021,6 +1021,25 @@
                     layout: layout,
                     context: context
                 }, onClose);
+            },
+
+            /**
+             * Get all of the links on the primary module that relate records
+             * to the related module.
+             *
+             * @param {string} primaryModule The module with the link fields.
+             * @param {string} relatedModule The module on the other side of
+             * the link fields we care about.
+             * @return {Array}
+             */
+            getLinksBetweenModules: function(primaryModule, relatedModule) {
+                var fields = app.metadata.getModule(primaryModule).fields;
+
+                return _.chain(fields).filter(function(field) {
+                    return field.type && field.type === 'link';
+                }).filter(function(link) {
+                    return app.data.getRelatedModule(primaryModule, link.name) === relatedModule;
+                }, this).value();
             }
         });
     });

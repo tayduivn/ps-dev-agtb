@@ -31,8 +31,11 @@
      */
     handleEmailClientClose: function() {
         var context = this.context.parent || this.context;
-        context.trigger('panel-top:refresh', 'emails');
-        context.trigger('panel-top:refresh', 'archived_emails');
+        var links = app.utils.getLinksBetweenModules(context.get('module'), this.module);
+
+        _.each(links, function(link) {
+            context.trigger('panel-top:refresh', link.name);
+        });
     },
 
     /**
