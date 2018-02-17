@@ -58,7 +58,7 @@
      * @protected
      */
     _getFilters: function(index) {
-        var filterStr = app.date().subtract(this.settings.get('filter'), 'days').format('YYYY-MM-DD');
+        var filterStr = app.date().subtract(this.settings.get('filter'), 'days').formatServer(true);
 
         var tab = this.tabs[index],
             filter = {},

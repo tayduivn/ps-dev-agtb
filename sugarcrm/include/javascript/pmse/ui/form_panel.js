@@ -1350,7 +1350,7 @@ FormPanelDate.prototype._getValueFromControl = function () {
 //Returns a date value in ISO format
 FormPanelDate.prototype._unformat = function (value) {
     value = App.date(value, this._dateFormat, true);
-    return value.isValid() ? value.format("YYYY-MM-DD") : null;
+    return value.isValid() ? value.formatServer(true) : null;
 };
 
 FormPanelDate.prototype.getFormattedDate = function () {
@@ -1482,7 +1482,7 @@ FormPanelDatetime.prototype._setValueToControl = function (value) {
 
 FormPanelDatetime.prototype._unformat = function (value) {
     value = App.date(value, this._dateFormat, true);
-    return value.isValid() ? value.format() : null;
+    return value.isValid() ? value.formatServer() : null;
 };
 
 FormPanelDatetime.prototype._getValueFromControl = function () {

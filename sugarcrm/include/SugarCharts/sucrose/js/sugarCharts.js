@@ -797,7 +797,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 case 'day':
                     var pattern = datePatterns[type];
                     var parsedDate = dateParser(label, pattern, userLangPref);
-                    startDate = parsedDate.format('YYYY-MM-DD'); //2017-12-31
+                    startDate = parsedDate.formatServer(true); //2017-12-31
                     endDate = 'on';
                     break;
 
@@ -805,8 +805,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     var pattern = datePatterns[type] || 'YYYY';
                     var parsedDate = dateParser(label, pattern, userLangPref);
                     var momentType = type === 'week' ? 'isoweek' : type;
-                    startDate = parsedDate.startOf(momentType).format('YYYY-MM-DD'); //2017-01-01
-                    endDate = parsedDate.endOf(momentType).format('YYYY-MM-DD'); //2017-12-31
+                    startDate = parsedDate.startOf(momentType).formatServer(true); //2017-01-01
+                    endDate = parsedDate.endOf(momentType).formatServer(true); //2017-12-31
                     break;
             }
 
