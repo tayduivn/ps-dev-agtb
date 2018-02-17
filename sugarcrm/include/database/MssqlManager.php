@@ -729,9 +729,13 @@ abstract class MssqlManager extends DBManager
             //and is not part of a function (i.e. "ISNULL(leads.last_name,'') as name"  )
             //this is especially true for unified search from home screen
 
+            // However, we want to skip the parsing when the cast function is used
+            // e.g. cast(contacts_cstm.account_type_c as varchar(8000))
+
             $alias_beg_pos = 0;
-            if(strpos($psql, " as "))
+            if (strpos($psql, " as ") && substr($col_name, 0, 4) !== "cast") {
                 $alias_beg_pos = strpos($psql, " as ");
+            }
 
             if ($alias_beg_pos > 0) {
                 $col_name = substr($psql,0, $alias_beg_pos );
