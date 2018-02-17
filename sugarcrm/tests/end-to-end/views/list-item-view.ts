@@ -37,7 +37,9 @@ export default class ListItemView extends BaseView {
                     save: '[name="inline-save"]',
                     cancel: '[name="inline-cancel"]',
                     follow: '[name="follow_button"]',
-                    delete: '[name="delete_button"]'
+                    delete: '[name="delete_button"]',
+                    checkbox: '.actions.actionmenu.list input[type=checkbox]',
+                    favorite: '.fa.fa-favorite',
                 }
             },
             buttons: {
@@ -64,6 +66,17 @@ export default class ListItemView extends BaseView {
             .execSync('scrollToSelector', [rowSelector])
             .click(selector);
     }
+
+    public async clickItem(itemName) {
+
+        let selector = this.$('listItem.buttons.'+ itemName, {id: this.id});
+        let rowSelector = this.$();
+
+        return this.driver
+            .execSync('scrollToSelector', [rowSelector])
+            .click(selector);
+    }
+
 
     public async clickPreviewButton() {
 

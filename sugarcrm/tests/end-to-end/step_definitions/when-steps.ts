@@ -20,6 +20,7 @@ import CommentRecord from '../views/comment-record';
 import GroupRecord from '../views/group-record';
 import RliTableRecord from '../views/rli-table';
 import BaseView from '../views/base-view';
+import SubpanelLayout from "../layouts/subpanel-layout";
 
 /**
  * Select module in modules menu
@@ -63,6 +64,34 @@ When(/^I select (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
         let listItem = view.getListItem({id: record.id});
         await listItem.clickListItem();
     }, {waitForApp: true});
+
+/**
+ * Select item from cached View
+ */
+When(/^I toggle (checkbox|favorite) for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
+    async function (itemName, record: {id: string}, view: ListView) {
+        let listItem = view.getListItem({id: record.id});
+        await listItem.clickItem(itemName);
+    }, {waitForApp: true});
+
+/**
+ * Select All Records in the list view
+ *
+ * @example I toggleAll records in #AccountsList.ListView
+ */
+When(/^I toggleAll records in (#\S+)$/,
+    async function (view: ListView) {
+        await view.toggleAll();
+    }, {waitForApp: true});
+
+
+//When I select GenerateQuote action in #Opp_ARecord.SubpanelsLayout.subpanels.revenuelineitems
+When(/^I select (GenerateQuote|Delete) action in (#\S+)$/,
+    async function (itemName, view: SubpanelLayout) {
+
+    await view.clickMenuItem(itemName);
+    }, {waitForApp: true});
+
 
 /**
  * Open the preview for the record

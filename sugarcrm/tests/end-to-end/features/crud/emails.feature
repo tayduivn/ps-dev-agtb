@@ -86,12 +86,12 @@ Feature: Emails module verification
       | filter1          | subject1          | state1 |
       | my_drafts        | This is a test.   | Draft  |
       | all_records      | All Mail Filter.  | Draft  |
-      | assigned_to_me   | Assigned to Me.   | Draft  |
+#      | assigned_to_me   | Assigned to Me.   | Draft  |
 #      | favorites        | My Favorites.     | Draft  |
 #      | my_received      | My Received.      | Draft  |
 #      | my_sent          | My Sent.          | Draft  |
-      | recently_created | Recently Created. | Draft  |
-      | recently_viewed  | Recently Viewed.  | Draft  |
+#      | recently_created | Recently Created. | Draft  |
+#      | recently_viewed  | Recently Viewed.  | Draft  |
 
   @email-cases-reply
   Scenario: Emails > List View > Open Record View > Edit Email > Set Related To Field > Save Email > Reply to Email > Verify Email Recipient and Subject

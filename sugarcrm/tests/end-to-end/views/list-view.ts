@@ -29,6 +29,7 @@ export default class ListView extends BaseListView {
                 unlink: '.icon-minus-circle',
                 showMoreBottom: '.show-more-bottom-btn',
                 showMoreTop: '.show-more-top-btn',
+                toggleAll: '.fieldset.actions.actionmenu.list  .toggle-all',
                 list : {
                 allRows : 'tr[name*="{{module}}"]',
                     row : 'tr[name*="{{module}}"]:nth-child({{index}})'
@@ -36,4 +37,9 @@ export default class ListView extends BaseListView {
         });
 
     }
+
+    public async toggleAll() {
+        await this.driver.click(this.$('toggleAll'));
+    }
+
 }

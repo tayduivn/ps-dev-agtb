@@ -11,6 +11,7 @@
 import HeaderView from '../views/record-header-view';
 import {BaseView, seedbed} from '@sugarcrm/seedbed';
 import RecordView from '../views/record-view';
+import SubpanelsLayout from '../layouts/subpanels-layout';
 import QliTable from '../views/qli-table';
 
 /**
@@ -23,6 +24,7 @@ export default class RecordLayout extends BaseView {
 
     public HeaderView: HeaderView;
     public QliTable: QliTable;
+    public SubpanelsLayout: SubpanelsLayout;
     protected type: string;
     public RecordView: RecordView;
     public defaultView: RecordView;
@@ -52,6 +54,9 @@ export default class RecordLayout extends BaseView {
             module: options.module,
         });
 
+        this.SubpanelsLayout = this.createComponent<SubpanelsLayout>(SubpanelsLayout, {
+                        module: options.module,
+        });
     }
 
     public async showMore() {
