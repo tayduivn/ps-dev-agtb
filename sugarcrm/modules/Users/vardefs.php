@@ -79,6 +79,7 @@ $dictionary['User'] = array(
                 'formula' => false,
                 'rollup' => false,
             ),
+            'oidc_disabled' => true,
         ) ,
 
         'pwd_last_changed' => array(
@@ -88,6 +89,7 @@ $dictionary['User'] = array(
             'required' => false,
             'massupdate' => false,
             'studio' => array('formula' => false),
+            'oidc_disabled' => true,
         ) ,
         /**
          * authenticate_id is used by authentication plugins so they may place a quick lookup key for looking up a given user after authenticating through the plugin
@@ -198,6 +200,7 @@ $dictionary['User'] = array(
             'massupdate' => false,
             'default' => '0',
             'studio' => array('listview' => false, 'searchview'=>false, 'related' => false),
+            'oidc_disabled' => true,
         ) ,
         'receive_notifications' => array(
             'name' => 'receive_notifications',
@@ -760,6 +763,7 @@ $dictionary['User'] = array(
                 'enabled' => true,
                 'searchable' => true,
             ),
+            'oidc_disabled' => true,
         ),
         'email_addresses' => array(
             'name' => 'email_addresses',
