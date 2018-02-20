@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Sugarcrm\IdentityProvider\Authentication\UserMapping\LDAPUserMapping;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\IdPAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarOidcUserMapping;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
@@ -209,7 +210,8 @@ class AuthProviderBasicManagerBuilder
         return new OIDCAuthenticationProvider(
             new IdmProvider($this->oidcConfig),
             new SugarOIDCUserProvider($sugarLocalUserProvider),
-            new SugarOIDCUserChecker($sugarLocalUserProvider)
+            new SugarOIDCUserChecker($sugarLocalUserProvider),
+            new SugarOidcUserMapping()
         );
     }
 
@@ -229,6 +231,7 @@ class AuthProviderBasicManagerBuilder
             new IdmProvider($this->oidcConfig),
             new SugarOIDCUserProvider($sugarLocalUserProvider),
             new SugarOIDCUserChecker($sugarLocalUserProvider),
+            new SugarOidcUserMapping(),
             static::PROVIDER_KEY_IDP
         );
     }

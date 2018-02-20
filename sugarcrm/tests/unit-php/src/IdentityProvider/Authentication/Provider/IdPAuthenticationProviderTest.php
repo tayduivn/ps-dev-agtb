@@ -48,10 +48,18 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     protected $userChecker = null;
 
     /**
-     * @var GenericProvider | \PHPUnit_Framework_MockObject_MockObject
+     * @var IdmProvider | \PHPUnit_Framework_MockObject_MockObject
      */
     protected $oAuthProvider = null;
 
+    /**
+     * @var User\Mapping\SugarOidcUserMapping
+     */
+    protected $userMapping;
+
+    /**
+     * @var User
+     */
     protected $user = null;
 
     /**
@@ -62,11 +70,13 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->userChecker = $this->createMock(UserCheckerInterface::class);
         $this->userProvider = $this->createMock(SugarOIDCUserProvider::class);
         $this->oAuthProvider = $this->createMock(IdmProvider::class);
+        $this->userMapping = new User\Mapping\SugarOidcUserMapping();
         $this->user = new User();
         $this->provider = new IdPAuthenticationProvider(
             $this->oAuthProvider,
             $this->userProvider,
             $this->userChecker,
+            $this->userMapping,
             AuthProviderBasicManagerBuilder::PROVIDER_KEY_IDP
         );
     }
@@ -168,7 +178,16 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     {
         $authData = [
             'status' => 'success',
-            'user' => ['sub' => 'srn:cluster:idm:eu:0000000001:user:seed_sally_id'],
+            'user' => [
+                'sub' => 'srn:cluster:idm:eu:0000000001:user:seed_sally_id',
+                'id_ext' => [
+                    'id' => 'seed_sally_id',
+                    'preferred_username' => 'test_name',
+                    'address' => [
+                        'street_address' => 'test_street',
+                    ],
+                ],
+            ],
         ];
         $token = new IdpUsernamePasswordToken(
             'srn:cluster:idm:eu:0000000001:tenant',
@@ -191,5 +210,8 @@ class IdPAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $result = $this->provider->authenticate($token);
 
         $this->assertEquals($this->user, $result->getUser());
+        $this->assertEquals('test_name', $this->user->getAttribute('oidc_data')['user_name']);
+        $this->assertEquals('test_street', $this->user->getAttribute('oidc_data')['address_street']);
+        $this->assertEquals('seed_sally_id', $this->user->getAttribute('oidc_identify')['value']);
     }
 }

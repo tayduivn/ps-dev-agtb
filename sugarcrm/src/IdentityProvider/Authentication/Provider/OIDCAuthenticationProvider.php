@@ -15,11 +15,13 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 
+use Sugarcrm\IdentityProvider\Authentication\UserMapping\MappingInterface;
 use Sugarcrm\IdentityProvider\Hydra\EndpointInterface;
 use Sugarcrm\IdentityProvider\Srn\Converter;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 
@@ -53,6 +55,11 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
     protected $userChecker;
 
     /**
+     * @var MappingInterface
+     */
+    protected $userMapping;
+
+    /**
      * List of handlers that can be used to handle tokens.
      * Actually, they correspond to steps of SAML authentication flow.
      *
@@ -68,15 +75,18 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
      * @param AbstractProvider $oAuthProvider
      * @param UserProviderInterface $userProvider
      * @param UserCheckerInterface $userChecker
+     * @param MappingInterface $userMapping
      */
     public function __construct(
         AbstractProvider $oAuthProvider,
         UserProviderInterface $userProvider,
-        UserCheckerInterface $userChecker
+        UserCheckerInterface $userChecker,
+        MappingInterface $userMapping
     ) {
         $this->oAuthProvider = $oAuthProvider;
         $this->userProvider = $userProvider;
         $this->userChecker = $userChecker;
+        $this->userMapping = $userMapping;
     }
 
     /**
@@ -124,6 +134,13 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         $resultToken->setAttribute('platform', $token->getAttribute('platform'));
         /** @var User $user */
         $user = $this->userProvider->loadUserBySrn($result['sub']);
+        $userInfo = $this->oAuthProvider->getUserInfo($accessToken);
+
+        // TODO change one attribute to separate attributes!!!
+        // TODO don't use oidc_data for update exists sugar user
+        $user->setAttribute('oidc_data', $this->userMapping->map($userInfo));
+        $user->setAttribute('oidc_identify', $this->userMapping->mapIdentity($result));
+
         foreach ($result as $key => $value) {
             $user->setAttribute($key, $value);
         }

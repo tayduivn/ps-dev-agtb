@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
-use Sugarcrm\IdentityProvider\Srn\Converter;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -60,28 +59,18 @@ class SugarOIDCUserChecker extends UserChecker
      */
     protected function loadSugarUser(User $user)
     {
-        $sugarUser = null;
-        $userSrn = Converter::fromString($user->getSrn());
-        $userResource = $userSrn->getResource();
-        if (empty($userResource) || $userResource[0] != 'user' || empty($userResource[1])) {
-            throw new UsernameNotFoundException('User not found in SRN');
-        }
-
-        $identityField = 'id';
-        //@todo User name should be set from user info endpoint in future
-        $userName = $identityValue = $userResource[1];
-
-        $defaultAttributes = [
-            'user_name' => $identityValue,
-            'last_name' => $identityValue,
-            'id' => $identityValue,
-        ];
+        $userAttributes = $user->getAttribute('oidc_data');
+        $identify = $user->getAttribute('oidc_identify');
 
         try {
-            $sugarUser = $this->localUserProvider->loadUserByField($identityValue, $identityField)->getSugarUser();
+            $sugarUser = $this->localUserProvider->loadUserByField($identify['value'], $identify['field'])->getSugarUser();
         } catch (UsernameNotFoundException $e) {
-            $userAttributes = array_merge($defaultAttributes, $this->fixedUserAttributes);
-            $sugarUser = $this->localUserProvider->createUser($userName, $userAttributes);
+            $userAttributes = array_merge(
+                [$identify['field'] => $identify['value']],
+                $this->fixedUserAttributes,
+                $userAttributes
+            );
+            $sugarUser = $this->localUserProvider->createUser($userAttributes['user_name'], $userAttributes);
         }
         $user->setSugarUser($sugarUser);
     }

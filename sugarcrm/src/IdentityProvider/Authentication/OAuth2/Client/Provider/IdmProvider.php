@@ -62,6 +62,11 @@ class IdmProvider extends BasicGenericProvider
     protected $responseErrorMessage = 'message';
 
     /**
+     * @var string
+     */
+    protected $urlUserInfo;
+
+    /**
      * Adds HttpClient with retry policy.
      *
      * @inheritdoc
@@ -101,7 +106,14 @@ class IdmProvider extends BasicGenericProvider
      */
     protected function getRequiredOptions()
     {
-        return array_merge(parent::getRequiredOptions(), ['clientId', 'clientSecret', 'urlKeys', 'keySetId', 'idpUrl']);
+        return array_merge(parent::getRequiredOptions(), [
+            'clientId',
+            'clientSecret',
+            'urlKeys',
+            'keySetId',
+            'idpUrl',
+            'urlUserInfo',
+        ]);
     }
 
     /**
@@ -132,6 +144,28 @@ class IdmProvider extends BasicGenericProvider
         ];
 
         $request = $this->getRequestFactory()->getRequestWithOptions(self::METHOD_POST, $url, $options);
+        return $this->getParsedResponse($request);
+    }
+
+    /**
+     * return user info
+     * @param AccessToken $token
+     * @return mixed
+     */
+    public function getUserInfo(AccessToken $token)
+    {
+        $authHeaders = $this->getAuthorizationHeaders($token->getToken());
+        $options = [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ] + $authHeaders,
+        ];
+        $request = $this->getRequestFactory()->getRequestWithOptions(
+            self::METHOD_POST,
+            $this->urlUserInfo,
+            $options
+        );
         return $this->getParsedResponse($request);
     }
 

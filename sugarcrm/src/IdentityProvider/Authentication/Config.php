@@ -89,6 +89,7 @@ class Config
             'urlAuthorize' => $endpointService->getOAuth2Endpoint(EndpointInterface::AUTH_ENDPOINT),
             'urlAccessToken' => $endpointService->getOAuth2Endpoint(EndpointInterface::TOKEN_ENDPOINT),
             'urlResourceOwnerDetails' => $endpointService->getOAuth2Endpoint(EndpointInterface::INTROSPECT_ENDPOINT),
+            'urlUserInfo' => $endpointService->getUserInfoEndpoint(),
             'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
             'idpServiceName' => !empty($config['idpServiceName']) ? $config['idpServiceName'] : 'iam',
         ];

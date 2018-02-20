@@ -60,6 +60,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
             'urlAuthorize' => 'http://testUrlAuth',
             'urlAccessToken' => 'http://testUrlAccessToken',
             'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+            'urlUserInfo' => 'http:://testUrlUserInfo',
             'keySetId' => 'testSet',
             'urlKeys' => 'http://sts.sugarcrm.local/keys/testSet',
             'idpUrl' => 'http://idp.test',
@@ -75,6 +76,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
                     'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'urlUserInfo' => 'http:://testUrlUserInfo',
                     'keySetId' => 'test',
                     'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
                     'idpUrl' => 'http://idp.test',
@@ -87,6 +89,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
                     'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'urlUserInfo' => 'http:://testUrlUserInfo',
                     'keySetId' => 'test',
                     'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
                     'idpUrl' => 'http://idp.test',
@@ -101,6 +104,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
                     'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
                     'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                    'urlUserInfo' => 'http:://testUrlUserInfo',
                     'idpUrl' => 'http://idp.test',
                 ],
             ],
@@ -112,6 +116,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
                     'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'urlUserInfo' => 'http:://testUrlUserInfo',
                     'keySetId' => 'test',
                     'idpUrl' => 'http://idp.test',
                 ],
@@ -124,8 +129,22 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
                     'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'urlUserInfo' => 'http:://testUrlUserInfo',
                     'keySetId' => 'test',
                     'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                ],
+            ],
+            'missingUserInfoUrl' => [
+                [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'test',
+                    'redirectUri' => '',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/.well-known/jwks.json',
+                    'keySetId' => 'test',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                    'idpUrl' => 'http://idp.test',
                 ],
             ],
         ];
@@ -563,6 +582,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                 'urlAuthorize' => '',
                 'urlAccessToken' => 'http://testUrlAccessToken',
                 'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+                'urlUserInfo' => 'http:://testUrlUserInfo',
                 'keySetId' => 'test',
                 'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
                 'idpUrl' => 'http://idp.test',
@@ -577,5 +597,44 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
         $httpClient = $provider->getHttpClient();
         $this->assertArrayHasKey('handler', $httpClient->getConfig());
         $this->assertRegexp('/retryDecider.*?Function/', (string)$httpClient->getConfig()['handler']);
+    }
+
+    /**
+     * @covers ::getUserInfo
+     */
+    public function testGetUserInfo()
+    {
+        $token = new AccessToken(['access_token' => 'token']);
+
+        /** @var IdmProvider | \PHPUnit_Framework_MockObject_MockObject $provider */
+        $provider = $this->getMockBuilder(IdmProvider::class)
+            ->setConstructorArgs([$this->oidcConfig])
+            ->setMethods(['getRequestFactory', 'getParsedResponse'])
+            ->getMock();
+
+        $provider->expects($this->once())
+            ->method('getRequestFactory')
+            ->willReturn($this->requestFactory);
+
+        $this->requestFactory->expects($this->once())
+            ->method('getRequestWithOptions')
+            ->with(
+                $this->equalTo(IdmProvider::METHOD_POST),
+                $this->equalTo('http:://testUrlUserInfo'),
+                $this->isType('array')
+            )
+            ->willReturn($this->request);
+
+        $provider->expects($this->once())
+            ->method('getParsedResponse')
+            ->with($this->request)
+            ->willReturn([
+                'preferred_username' => 'test',
+                'status' => 0,
+            ]);
+
+        $result = $provider->getUserInfo($token);
+        $this->assertEquals('test', $result['preferred_username']);
+        $this->assertEquals(0, $result['status']);
     }
 }

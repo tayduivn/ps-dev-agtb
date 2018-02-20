@@ -513,6 +513,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
                     'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'urlUserInfo' => 'http://sts.sugarcrm.local/userinfo',
                     'urlKeys' => 'http://sts.sugarcrm.local/keys/keySetId',
                     'keySetId' => 'keySetId',
                     'http_client' => [],
@@ -543,6 +544,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
                     'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'urlUserInfo' => 'http://sts.sugarcrm.local/userinfo',
                     'urlKeys' => 'http://sts.sugarcrm.local/keys/keySetId',
                     'keySetId' => 'keySetId',
                     'http_client' => [

@@ -50,9 +50,14 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     protected $userChecker = null;
 
     /**
-     * @var GenericProvider | \PHPUnit_Framework_MockObject_MockObject
+     * @var IdmProvider | \PHPUnit_Framework_MockObject_MockObject
      */
     protected $oAuthProvider = null;
+
+    /**
+     * @var User\Mapping\SugarOidcUserMapping
+     */
+    protected $userMapping;
 
     protected $user = null;
 
@@ -64,11 +69,13 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->userChecker = $this->createMock(UserCheckerInterface::class);
         $this->userProvider = $this->createMock(SugarOIDCUserProvider::class);
         $this->oAuthProvider = $this->createMock(IdmProvider::class);
+        $this->userMapping = new User\Mapping\SugarOidcUserMapping();
         $this->user = new User();
         $this->provider =new OIDCAuthenticationProvider(
             $this->oAuthProvider,
             $this->userProvider,
-            $this->userChecker
+            $this->userChecker,
+            $this->userMapping
         );
     }
 
@@ -184,12 +191,25 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
                            ->method('loadUserBySrn')
                            ->with($introspectResult['sub'])
                            ->willReturn($this->user);
+        $this->oAuthProvider->expects($this->once())
+            ->method('getUserInfo')
+            ->with('token')
+            ->willReturn([
+                'id' => 'seed_sally_id',
+                'preferred_username' => 'test_name',
+                'address' => [
+                    'street_address' => 'test_street',
+                ],
+            ]);
         $this->userChecker->expects($this->once())->method('checkPostAuth')->with($this->user);
         $resultToken = $this->provider->authenticate($token);
 
         $this->assertInstanceOf(IntrospectToken::class, $resultToken);
         $this->assertEquals('opi', $resultToken->getAttribute('platform'));
         $this->assertEquals('token', $resultToken->getCredentials());
+        $this->assertEquals('test_name', $resultToken->getUser()->getAttribute('oidc_data')['user_name']);
+        $this->assertEquals('test_street', $resultToken->getUser()->getAttribute('oidc_data')['address_street']);
+        $this->assertEquals('seed_sally_id', $resultToken->getUser()->getAttribute('oidc_identify')['value']);
         foreach ($introspectResult as $key => $expectedValue) {
             $this->assertEquals($expectedValue, $resultToken->getAttribute($key));
         }

@@ -65,7 +65,13 @@ class SugarOIDCUserCheckerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCheckPostAuthWithExistingUser()
     {
-        $this->user->method('getSrn')->willReturn('srn:cluster:idm:eu:0000000001:user:seed_sally_id');
+        $this->user->expects($this->exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([$this->equalTo('oidc_data')], [$this->equalTo('oidc_identify')])
+            ->willReturnOnConsecutiveCalls(
+                ['user_name' => 'test'],
+                ['field' => 'id', 'value' => 'seed_sally_id']
+            );
         $this->localUserProvider->expects($this->once())
                                 ->method('loadUserByField')
                                 ->with('seed_sally_id', 'id')
@@ -81,15 +87,21 @@ class SugarOIDCUserCheckerTest extends \PHPUnit_Framework_TestCase
     public function testCheckPostAuthWithNotExistingUser()
     {
         $expectedAttributes = [
-            'last_name' => 'seed_sally_id',
             'employee_status' => User::USER_EMPLOYEE_STATUS_ACTIVE,
             'status' => User::USER_STATUS_ACTIVE,
             'is_admin' => 0,
             'external_auth_only' => 1,
             'system_generated_password' => 0,
             'id' => 'seed_sally_id',
-            'user_name' => 'seed_sally_id',
+            'user_name' => 'test',
         ];
+        $this->user->expects($this->exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([$this->equalTo('oidc_data')], [$this->equalTo('oidc_identify')])
+            ->willReturnOnConsecutiveCalls(
+                ['user_name' => 'test'],
+                ['field' => 'id', 'value' => 'seed_sally_id']
+            );
         $this->user->method('getSrn')->willReturn('srn:cluster:idm:eu:0000000001:user:seed_sally_id');
         $this->localUserProvider->expects($this->once())
                                 ->method('loadUserByField')
@@ -97,7 +109,7 @@ class SugarOIDCUserCheckerTest extends \PHPUnit_Framework_TestCase
                                 ->willThrowException(new UsernameNotFoundException());
         $this->localUserProvider->expects($this->once())
                                 ->method('createUser')
-                                ->with('seed_sally_id', $expectedAttributes)
+                                ->with('test', $expectedAttributes)
                                 ->willReturn($this->sugarUser);
         $this->user->expects($this->once())->method('setSugarUser')->with($this->sugarUser);
         $this->userChecker->checkPostAuth($this->user);

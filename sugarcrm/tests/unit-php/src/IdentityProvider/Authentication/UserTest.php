@@ -34,6 +34,11 @@ class IdMUserTest extends \PHPUnit_Framework_TestCase
     protected $sugarUser = null;
 
     /**
+     * @var \EmailAddress | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $emailAddress;
+
+    /**
      * @covers ::setSugarUser
      * @covers ::getSugarUser
      */
@@ -221,18 +226,6 @@ class IdMUserTest extends \PHPUnit_Framework_TestCase
 
         $this->user->incrementLoginFailed();
     }
-
-    /**
-     * @covers ::setSrn
-     * @covers ::getSrn
-     */
-    public function testSrn()
-    {
-        $srn = 'srn:cluster:idm:eu:0000000001:user:seed_sally_id';
-        $this->user->setSrn($srn);
-        $this->assertEquals($srn, $this->user->getSrn());
-    }
-
     /**
      * @inheritDoc
      */
@@ -244,15 +237,48 @@ class IdMUserTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->emailAddress = $this->getMockBuilder(\EmailAddress::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->user = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()
             ->setMethods(['getTimeDate'])
             ->getMock();
+        $this->user->setAttribute('test_internal_attribute', 'internal_test');
 
         $this->sugarUser = $this->getMockBuilder(\User::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->sugarUser->emailAddress = $this->emailAddress;
+        $this->sugarUser->test_sugar_user_attribute = 'sugar_user_attribute';
+
         $this->user->setSugarUser($this->sugarUser);
         $this->user->method('getTimeDate')->willReturn($this->timeDate);
+    }
+
+    public function providerGetAttribute()
+    {
+        return [
+            ['email', 'test@test.test'],
+            ['test_internal_attribute', 'internal_test'],
+            ['test_sugar_user_attribute', 'sugar_user_attribute'],
+        ];
+    }
+
+    /**
+     * @covers ::getAttribute
+     * @dataProvider providerGetAttribute
+     * @param $name
+     * @param $expected
+     */
+    public function testGetAttribute($name, $expected)
+    {
+        $this->emailAddress->expects($this->any())
+            ->method('getPrimaryAddress')
+            ->with($this->sugarUser)
+            ->willReturn('test@test.test');
+
+        $this->assertEquals($expected, $this->user->getAttribute($name));
     }
 }

@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 
+use Sugarcrm\IdentityProvider\Authentication\UserMapping\MappingInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\IdpUsernamePasswordToken;
@@ -50,6 +51,11 @@ class IdPAuthenticationProvider implements AuthenticationProviderInterface
     protected $userChecker;
 
     /**
+     * @var MappingInterface
+     */
+    protected $userMapping;
+
+    /**
      * @var string
      */
     protected $providerKey;
@@ -59,17 +65,20 @@ class IdPAuthenticationProvider implements AuthenticationProviderInterface
      * @param AbstractProvider $oAuthProvider
      * @param UserProviderInterface $userProvider
      * @param UserCheckerInterface $userChecker
+     * @param MappingInterface $userMapping
      * @param string $providerKey
      */
     public function __construct(
         AbstractProvider $oAuthProvider,
         UserProviderInterface $userProvider,
         UserCheckerInterface $userChecker,
+        MappingInterface $userMapping,
         $providerKey
     ) {
         $this->oAuthProvider = $oAuthProvider;
         $this->userProvider = $userProvider;
         $this->userChecker = $userChecker;
+        $this->userMapping = $userMapping;
         $this->providerKey = $providerKey;
     }
 
@@ -89,6 +98,16 @@ class IdPAuthenticationProvider implements AuthenticationProviderInterface
             }
 
             $user = $this->userProvider->loadUserBySrn($authData['user']['sub']);
+
+            // TODO change one attribute to separate attributes!!!
+            // TODO don't use oidc_data and oidc_identify for update existed sugar user
+            $userData = [];
+            if (!empty($authData['user']['id_ext'])) {
+                $userData = $this->userMapping->map($authData['user']['id_ext']);
+            }
+            $user->setAttribute('oidc_data', $userData);
+            $user->setAttribute('oidc_identify', $this->userMapping->mapIdentity($authData['user']));
+
             $this->userChecker->checkPostAuth($user);
 
             $authenticatedToken = new UsernamePasswordToken(
