@@ -80,9 +80,6 @@ class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
         $test = $parser->isValidField('found_in_release', $fielddefs['found_in_release']);
         $this->assertFalse($test, 'found_in_release should not be a valid available field in Bugs Portal List View');
 
-        $test = $parser->isValidField('system_id', $fielddefs['system_id']);
-        $this->assertTrue($test, 'system_id should be a valid available field in Bugs Portal List View');
-
         $test = $parser->isValidField('release_link', $fielddefs['release_link']);
         $this->assertFalse($test, 'release_link should not be a valid available field in Bugs Portal List View');
     }

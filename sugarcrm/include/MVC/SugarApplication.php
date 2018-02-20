@@ -469,58 +469,16 @@ EOF;
     }
 
 	function preProcess(){
-	    $config = Administration::getSettings();
 		if(!empty($_SESSION['authenticated_user_id'])){
 			if(isset($_SESSION['hasExpiredPassword']) && $_SESSION['hasExpiredPassword'] == '1'){
 				if( $this->controller->action!= 'Save' && $this->controller->action != 'Logout') {
 	                $this->controller->module = 'Users';
 	                $this->controller->action = 'ChangePassword';
-	                $record = $GLOBALS['current_user']->id;
-	             }else{
-					$this->handleOfflineClient();
 				 }
-            } elseif ($this->controller->action != 'AdminWizard'
-                    && $this->controller->action != 'EmailUIAjax'
-                    && $this->controller->action != 'Wizard'
-                    && $this->controller->action != 'SaveAdminWizard'
-                    && $this->controller->action != 'SaveUserWizard'
-            ){
-                $this->handleOfflineClient();
             }
 		}
 		$this->handleAccessControl();
 	}
-
-    function handleOfflineClient()
-    {
-        if (isset($GLOBALS['sugar_config']['disc_client']) && $GLOBALS['sugar_config']['disc_client']) {
-            if (isset($_REQUEST['action']) && $_REQUEST['action'] != 'SaveTimezone') {
-                if (!file_exists('modules/Sync/file_config.php')) {
-                    if ($_REQUEST['action'] != 'InitialSync' && $_REQUEST['action'] != 'Logout'
-                        && ($_REQUEST['action'] != 'Popup' && $_REQUEST['module'] != 'Sync')
-                    ) {
-                        //echo $_REQUEST['action'];
-                        //die();
-                        $this->controller->module = 'Sync';
-                        $this->controller->action = 'InitialSync';
-                    }
-                } else {
-                    require_once ('modules/Sync/file_config.php');
-                    if (isset($file_sync_info['is_first_sync']) && $file_sync_info['is_first_sync']) {
-                        if ($_REQUEST['action'] != 'InitialSync' && $_REQUEST['action'] != 'Logout'
-                            && ($_REQUEST['action'] != 'Popup' && $_REQUEST['module'] != 'Sync')
-                        ) {
-                            $this->controller->module = 'Sync';
-                            $this->controller->action = 'InitialSync';
-                        }
-                    }
-                }
-            }
-            global $moduleList, $sugar_config, $sync_modules;
-            require_once('modules/Sync/SyncController.php');
-            $GLOBALS['current_user']->is_admin = '0'; //No admins for disc client
-        }
-    }
 
     /**
      * Handles everything related to authorization.
@@ -621,7 +579,7 @@ EOF;
             sugar_cache_put('checkDatabaseVersion_row_count', $row_count);
         }
 
-        if ($row_count == 0 && empty($GLOBALS['sugar_config']['disc_client'])) {
+        if ($row_count == 0) {
             if ($dieOnFailure) {
                 $replacementStrings = array(
                     0 => $GLOBALS['sugar_version'],

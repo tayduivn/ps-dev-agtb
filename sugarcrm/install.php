@@ -215,36 +215,14 @@ $workflow = array(  'welcome.php',
                     'license.php',
                     'installType.php',
 );
-                  if(isset($_SESSION['oc_install']) &&  $_SESSION['oc_install']) {
-                     $_SESSION['setup_db_type'] = 'mysql';
-                  }
+
 $workflow[] =  'systemOptions.php';
 $workflow[] = 'dbConfig_a.php';
 //$workflow[] = 'dbConfig_b.php';
 
-if (!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false) {
-    $workflow[] = 'siteConfig_a.php';
-    if (isset($_SESSION['install_type']) && !empty($_SESSION['install_type']) &&
-         $_SESSION['install_type'] == 'custom') {
-            $workflow[] = 'siteConfig_b.php';
-    }
-} else {
-    if (is_readable('config.php')) {
-        require_once ('config.php');
-        //BEGIN SUGARCRM flav=int ONLY
-        unset($sugar_config['dbconfig']);
-        unset($_SESSION['setup_db_database_name']);
-        unset($_SESSION['setup_db_host_name']);
-        unset($_SESSION['setup_db_host_instance']);
-        unset($_SESSION['setup_db_user_name']);
-        unset($_SESSION['setup_db_password']);
-        unset($_SESSION['setup_db_admin_user_name']);
-        unset($_SESSION['setup_db_admin_password']);
-        unset($_SESSION['setup_db_name']);
-        unset($_SESSION['setup_db_type']);
-        unset($_SESSION['setup_db_manager']);
-        //END SUGARCRM flav=int ONLY
-    }
+$workflow[] = 'siteConfig_a.php';
+if (isset($_SESSION['install_type']) && $_SESSION['install_type'] == 'custom') {
+    $workflow[] = 'siteConfig_b.php';
 }
 
 if(empty($sugar_config['cache_dir']) && !empty($_SESSION['cache_dir'])) {
@@ -280,22 +258,14 @@ if (!isset($_SESSION['cache_dir']) || empty($_SESSION['cache_dir'])) {
     if(file_exists('config.php')) {
         global $sugar_config;
         require_once('config.php');
-        if(isset($sugar_config['disc_client']) && $sugar_config['disc_client'] == true) {
-            $workflow[] = 'oc_install.php';
-            $_SESSION['oc_install'] = true;
-        } else {
-            $_SESSION['oc_install'] = false;
-        }
     }
   $workflow[] = 'confirmSettings.php';
   $workflow[] = 'performSetup.php';
 
-  if(!isset($_SESSION['oc_install']) ||  $_SESSION['oc_install'] == false){
     if(isset($_SESSION['install_type'])  && !empty($_SESSION['install_type'])  && $_SESSION['install_type']=='custom'){
         //$workflow[] = 'download_patches.php';
         $workflow[] = 'download_modules.php';
     }
-  }
 
     $workflow[] = 'register.php';
 
@@ -316,9 +286,6 @@ if(!empty($_REQUEST['goto'])) {
             break;
         case 'SilentInstall':
             $next_step = 9999;
-            break;
-		case 'oc_convert':
-            $next_step = 9191;
             break;
     }
 }
@@ -507,43 +474,11 @@ if($next_clicked) {
                 $next_step--;
             }
             break;
-         case 'oc_install.php':
-            	$_SESSION['oc_server_url']	= $_REQUEST['oc_server_url'];
-            	$_SESSION['oc_username']    = $_REQUEST['oc_username'];
-            	$_SESSION['oc_password']   	= $_REQUEST['oc_password'];
-				$_SESSION['is_oc_conversion'] = false;
-
-            	//do not allow demo data to be populated during an offline client installation
-            	$_SESSION['demoData'] = 'no';
-                if(empty($_SESSION['setup_license_key_users'])) {
-                    $_SESSION['setup_license_key_users'] = 1;
-                }
-                if(empty($_SESSION['setup_license_key_expire_date'])) {
-                    $_SESSION['setup_license_key_expire_date'] = '2090-12-12';
-                }
-                if(empty($_SESSION['setup_license_key'])) {
-                    $_SESSION['setup_license_key'] = 'sugar';
-                }
-                if(empty($_SESSION['setup_num_lic_oc'])) {
-                    $_SESSION['setup_num_lic_oc'] = 1;
-                }
-                $_SESSION['licenseKey_submitted']      = true;
-                $validation_errors = array();
-            	$validation_errors = validate_offlineClientConfig();
-            	if(count($validation_errors) > 0) {
-               	 $next_step--;
-            	}
-            break;
 }
     }
 
 if($next_step == 9999) {
     $the_file = 'SilentInstall';
-}else if($next_step == 9191) {
-	$_SESSION['oc_server_url']	= $_REQUEST['oc_server_url'];
-    $_SESSION['oc_username']    = $_REQUEST['oc_username'];
-    $_SESSION['oc_password']   	= $_REQUEST['oc_password'];
-    $the_file = 'oc_convert.php';
 }
 else{
         $the_file = $workflow[$next_step];
@@ -588,12 +523,6 @@ switch($the_file) {
 
 					<p>{$mod_strings['LBL_DISABLED_HELP_1']} <a href="{$mod_strings['LBL_DISABLED_HELP_LNK']}" target="_blank">{$mod_strings['LBL_DISABLED_HELP_2']}</a>.</p>
 EOQ;
-		             //if this is an offline client installation but the conversion did not succeed,
-		            //then try to convert again
-					if(isset($sugar_config['disc_client']) && $sugar_config['disc_client'] == true && isset($sugar_config['oc_converted']) && $sugar_config['oc_converted'] == false) {
-			          header('Location: index.php?entryPoint=oc_convert&first_time=true');
-						exit ();
-		            }
             }
         }
         break;
@@ -676,14 +605,7 @@ EOQ;
                 }
             }
         }
-        $offline_client_install = false;
-        if(isset($_REQUEST['oc_install']) && ($_REQUEST['oc_install'] == 'true')) {
-            $_SESSION['oc_install'] = true;
-        }
-        else
-        {
-        	$_SESSION['oc_install'] = false;
-        }
+
         break;
 	}
 }

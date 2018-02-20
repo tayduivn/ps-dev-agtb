@@ -161,7 +161,6 @@ $beanList['Expressions']  = 'Expression';
 $beanList['Contracts']  = 'Contract';
 $beanList['ContractTypes']  = 'ContractType';
 $beanList['Holidays'] = 'Holiday';
-$beanList['System'] = 'System';
 $beanList['SessionManager'] = 'SessionManager';
 
 //BEGIN SUGARCRM flav=ent ONLY
@@ -325,7 +324,6 @@ $beanFiles['WorkFlowAlert']  = 'modules/WorkFlowAlerts/WorkFlowAlert.php';
 $beanFiles['WorkFlowActionShell']  = 'modules/WorkFlowActionShells/WorkFlowActionShell.php';
 $beanFiles['WorkFlowAction']  = 'modules/WorkFlowActions/WorkFlowAction.php';
 $beanFiles['Expression']  = 'modules/Expressions/Expression.php';
-$beanFiles['System']      = 'modules/Administration/System.php';
 $beanFiles['SessionManager']      = 'modules/Administration/SessionManager.php';
 $beanFiles['ContractType']  = 'modules/ContractTypes/ContractType.php';
 $beanFiles['Holiday'] = 'modules/Holidays/Holiday.php';
@@ -383,7 +381,7 @@ $modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes',
     'Shippers', 'TaxRates', 'TeamNotices', 'Teams', 'TimePeriods', 'ForecastOpportunities', 'Quotas',
     'ContractTypes',
-    'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports', 'System',
+    'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports',
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
     ,'OptimisticLock', 'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses','EmailText',

@@ -748,11 +748,6 @@
       "group":"shipping_address",
       "len":100
    },
-   "system_id":{
-      "name":"system_id",
-      "vname":"LBL_SYSTEM_ID",
-      "type":"int"
-   },
    "shipping_account_name":{
       "name":"shipping_account_name",
       "rname":"name",

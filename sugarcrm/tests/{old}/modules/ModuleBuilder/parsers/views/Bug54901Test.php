@@ -56,7 +56,6 @@ class Bug54901Test extends Sugar_PHPUnit_Framework_TestCase {
         
         // Massage the field defs
         $list->changeFieldType('resolution', 'iframe');
-        $list->changeFieldType('system_id', 'encrypt');
         $list->changeFieldType('portal_viewable', 'relate');
         
         // Get our fields
@@ -64,7 +63,6 @@ class Bug54901Test extends Sugar_PHPUnit_Framework_TestCase {
         
         // Run the assertions
         $this->assertArrayNotHasKey('resolution', $fields, 'The resolution field was not excluded');
-        $this->assertArrayNotHasKey('system_id', $fields, 'The system_id field was not excluded');
         $this->assertArrayHasKey('portal_viewable', $fields, 'portal_viewable was excluded but a relate type should not be excluded');
         $this->assertArrayHasKey('description', $fields, 'Description is showing as not available');
     }
@@ -75,7 +73,6 @@ class Bug54901Test extends Sugar_PHPUnit_Framework_TestCase {
         
         // Massage the field defs
         $grid->changeFieldType('resolution', 'parent');
-        $grid->changeFieldType('system_id', 'encrypt');
         $grid->changeFieldType('work_log', 'relate');
         
         // Get our fields
@@ -84,9 +81,6 @@ class Bug54901Test extends Sugar_PHPUnit_Framework_TestCase {
         // Run the assertions
         $available = $grid->isAvailableFieldName('resolution', $fields);
         $this->assertFalse($available, 'The resolution field was not excluded');
-
-        $available = $grid->isAvailableFieldName('system_id', $fields);
-        $this->assertFalse($available, 'The system_id field was not excluded');
 
         $available = $grid->isAvailableFieldName('work_log', $fields);
         $this->assertFalse($available, 'Work Log was not excluded');

@@ -486,7 +486,7 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 			$category = 'license';
 			$value = 0;
 			$admin->saveSetting($category, 'users', $value);
-			$key = array('num_lic_oc','key','expire_date');
+            $key = array('key', 'expire_date');
 			$value = '';
 			foreach($key as $k){
 				$admin->saveSetting($category, $k, $value);

@@ -48,7 +48,6 @@ $mod_strings = array (
 	'LBL_STATUS'						=> 'Status:',
     'LBL_SOURCE' => 'Source:',
 	'LBL_SUBJECT'						=> 'Subject:',
-	'LBL_SYSTEM_ID'						=> 'System ID',
 	'LBL_LIST_ACCOUNT_NAME'				=> 'Account Name',
 	'LBL_LIST_ASSIGNED'					=> 'Assigned To',
 	'LBL_LIST_CLOSE'					=> 'Close',

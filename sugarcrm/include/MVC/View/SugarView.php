@@ -525,8 +525,6 @@ class SugarView
             if ( typeof(SUGAR.themes) == 'undefined' ) SUGAR.themes = {};
         </script>
 EOQ;
-        if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
-            echo getVersionedScript('modules/Sync/headersync.js');
     }
 
     /**
@@ -639,8 +637,6 @@ EOHTML;
 
 			echo $this->_getModLanguageJS();
             echo getVersionedScript('include/javascript/productTour.js');
-            if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
-                echo getVersionedScript('modules/Sync/headersync.js');
 
             if (!is_file(sugar_cached("Expressions/functions_cache.js"))) {
                 $GLOBALS['updateSilent'] = true;

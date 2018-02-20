@@ -134,9 +134,6 @@ $mod_strings = array (
 	'SYSTEM_NAME_HELP'=>'This is the name that displays in the title bar of your browser.',
     'LBL_ENABLE_HISTORY_CONTACTS_EMAILS' => 'Enable/Disable emails from related (or linked) contacts to show in Email Subpanel.',
 
-    'LBL_OC_STATUS'                     => 'Default Offline Client Status',
-    'DEFAULT_OC_STATUS'                 => 'Enable Offline Client by default',
-    'LBL_OC_STATUS_DESC' => 'Check here if you would like any user to have access to Offline Client.  Otherwise you can configure access at the user level.',
     'SESSION_TIMEOUT' => 'Portal Session Timeout',
     'LBL_SESSION_TIMEOUT_TOOLTIP' => 'The Portal Session Timeout is for legacy versions of Sugar Portal available in 6.5 and older.',
     'UPLOAD_MAXSIZE_UNITS' => 'bytes',

@@ -337,8 +337,7 @@ installLog($mod_strings['LBL_PERFORM_LICENSE_SETTINGS']);
 update_license_settings(
     $_SESSION['setup_license_key_users'],
     $_SESSION['setup_license_key_expire_date'],
-    $_SESSION['setup_license_key'],
-    $_SESSION['setup_num_lic_oc']
+    $_SESSION['setup_license_key']
 );
 echo $mod_strings['LBL_PERFORM_DONE'];
 
@@ -588,21 +587,6 @@ if ((!empty($_SESSION['fts_type']) || !empty($_SESSION['setup_fts_type'])) &&
 $endTime = microtime(true);
 $deltaTime = $endTime - $startTime;
 
-//////////////////////////////////////////
-/// PERFORM OFFLINE CLIENT INSTALL
-/////////////////////////////////////////
-if (isset($_SESSION['oc_install']) && $_SESSION['oc_install'] == true) {
-    installLog("Performing Offline Client");
-    set_time_limit(3600);
-    ini_set('default_socket_timeout', 360);
-    echo '<b>Installing Offline Client</b>';
-    require_once("include/utils/disc_client_utils.php");
-    $oc_result = convert_disc_client();
-    installLog($oc_result);
-    echo $oc_result;
-}
-
-
 ///////////////////////////////////////////////////////////////////////////
 ////    FINALIZE LANG PACK INSTALL
 if (isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::is_array_access($_SESSION['INSTALLED_LANG_PACKS'])
@@ -640,17 +624,12 @@ if (function_exists('memory_get_usage')) {
     $memoryUsed = $mod_strings['LBL_PERFORM_OUTRO_5'] . memory_get_usage() . $mod_strings['LBL_PERFORM_OUTRO_6'];
 }
 
-if (isset($_SESSION['oc_install']) && $_SESSION['oc_install'] == true) {
-    removeConfig_SIFile();
-}
-
-
 $errTcpip = '';
 $fp = @fsockopen("www.sugarcrm.com", 80, $errno, $errstr, 3);
 if (!$fp) {
     $errTcpip = "<p>{$mod_strings['ERR_PERFORM_NO_TCPIP']}</p>";
 }
-if ($fp && (!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false)) {
+if ($fp) {
     @fclose($fp);
     if ($next_step == 9999) {
         $next_step = 8;

@@ -127,14 +127,6 @@ class SugarSystemInfoTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('license_users', $this->sysInfo->getLicenseInfo());
     }
 
-    public function testGetClientInfo()
-    {
-        if(!file_exists('modules/Administration/System.php')) {
-            $this->markTaskSkipped('This test relies on System.php bean');
-        }
-        $this->assertArrayHasKey('oc_br_all', $this->sysInfo->getClientInfo());
-    }
-
     public function testGetLicensePortalInfo()
     {
         $info = $this->sysInfo->getLicensePortalInfo();

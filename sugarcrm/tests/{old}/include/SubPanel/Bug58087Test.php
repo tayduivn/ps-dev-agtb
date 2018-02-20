@@ -102,21 +102,6 @@ class Bug58087Test extends SubPanelTestBase
     }
 
     /**
-     * @group Bug58087
-     */
-    public function testEmailActionMenuItemDoesNotExistInSubpanelActionsWhenInOfflineClient() 
-    {
-        $GLOBALS['sugar_config']['disc_client'] = true;
-        $GLOBALS['sugar_config']['oc_converted'] = true;
-        
-        // Test it
-        $subpanel = new aSubPanel('activities', $this->_testDefs, $this->_testBean);
-        $buttons = $subpanel->get_buttons();
-        $test = $this->_hasEmailAction($buttons);
-        $this->assertFalse($test, "Compose Email button returned when it was supposed to be excluded");
-    }
-
-    /**
      * Helper method that scans an array and checks for the presence of a value
      * 
      * @param array $buttons

@@ -26,16 +26,13 @@ if( !isset($_SESSION['licenseKey_submitted']) || !$_SESSION['licenseKey_submitte
     $_SESSION['setup_license_key_users']        = 0;
     $_SESSION['setup_license_key_expire_date']  = "";
     $_SESSION['setup_license_key']              = "";
-    $_SESSION['setup_num_lic_oc']              = 0;
 
 } else {
 //BEGIN SUGARCRM flav=int ONLY
     $_SESSION['setup_license_key_users']        = 50;
     $_SESSION['setup_license_key_expire_date']  = "2008-01-01";
     $_SESSION['setup_license_key']              = "sugar internal user 2009-7-9";
-    $_SESSION['setup_num_lic_oc']              = 10;
 //END SUGARCRM flav=int ONLY
-
 }
 
 //php 521 suggestion

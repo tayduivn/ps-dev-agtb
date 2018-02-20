@@ -4843,10 +4843,7 @@ class SugarBean
                 empty($selectedFields[$this->table_name.'.modified_user_id'])) {
                 $ret_array['select'] .= ", $this->table_name.modified_user_id ";
             }
-            if(isset($this->field_defs['system_id']) && empty($selectedFields[$this->table_name.'.system_id']))
-            {
-                $ret_array['select'] .= ", $this->table_name.system_id ";
-            }
+
             if(isset($selectedFields[$this->table_name.'.team_id']) && isset($this->field_defs['team_set_id']) && empty($selectedFields[$this->table_name.'.team_set_id']))
             {
             $ret_array['select'] .= ", $this->table_name.team_set_id ";

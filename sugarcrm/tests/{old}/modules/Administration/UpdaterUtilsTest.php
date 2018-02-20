@@ -21,7 +21,6 @@ class UpdaterUtilsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->fakeLicense = array(
             'license_users' => 50,
-            'num_lic_oc' => 0,
             'license_num_portal_users' => 500,
             'license_validation_key' => 'abcdefgh',
             'license_vk_end_date' => gmdate('Y-m-d',gmmktime(1,2,3,4,5,gmdate('Y')+2)),

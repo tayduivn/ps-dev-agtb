@@ -568,11 +568,6 @@ $dictionary['Quote'] = array(
             'group' => 'shipping_address',
             'len' => '100',
         ),
-        'system_id' => array(
-            'name' => 'system_id',
-            'vname' => 'LBL_SYSTEM_ID',
-            'type' => 'int',
-        ),
         'shipping_account_name' => array(
             'name' => 'shipping_account_name',
             'rname' => 'name',
@@ -902,7 +897,9 @@ $dictionary['Quote'] = array(
         array(
             'name' => 'quote_num',
             'type' => 'unique',
-            'fields' => array('quote_num', 'system_id')
+            'fields' => array(
+                'quote_num',
+            ),
         ),
         array(
             'name' => 'idx_qte_name',

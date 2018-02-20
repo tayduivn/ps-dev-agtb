@@ -1859,16 +1859,6 @@ $app_list_strings = array (
         '21' => '3 Weeks',
         '31' => '1 Month',
     ),
-
-     'oc_status_dom' =>
-     array (
-     '' => '',
-     'Active' => 'Active',
-    'Inactive' => 'Inactive',
-    ),
-
-
-
     'projects_priority_options' => array (
         'high'      => 'High',
         'medium'    => 'Medium',
@@ -3456,7 +3446,6 @@ Sincerely, SugarCRM',
     'WARN_LICENSE_EXPIRED'=> "Your company's license for SugarCRM will expire soon.",
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login.",
     'WARN_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated soon.",
-    'ERROR_EXCEEDING_OC_LICENSES' =>"The number of enabled Offline Clients currently exceeds the number specified in your license.",
     'WARN_BROWSER_IE_COMPATIBILITY_MODE_WARNING' => "<b>Warning:</b> Your browser is in IE compatibility view which is not supported.",
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
@@ -3526,9 +3515,6 @@ Sincerely, SugarCRM',
     'LBL_PROCESSING_REQUEST'=>'Processing..',
     'LBL_REQUEST_PROCESSED'=>'Done',
     'LBL_AJAX_FAILURE' => 'Ajax failure',
-    'LBL_OC_STATUS' => 'Offline Client Status',
-    'LBL_OC_STATUS_TEXT' => 'Indicates whether or not the current user is able to use an Offline Client.',
-    'LBL_OC_DEFAULT_STATUS' => 'Inactive',
     'LBL_SEARCH_PARENT_RELATED_ITEM' => 'Search ...',
     'LBL_SAVED_SEARCH_SHORTCUT' => 'Saved Searches',
     'LBL_SEARCH_POPULATE_ONLY'=> 'Perform a search using the search form above',

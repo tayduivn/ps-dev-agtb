@@ -225,9 +225,6 @@ class Note extends SugarBean
             if (file_exists("upload://{$this->id}")) {
                 $note_fields['FILENAME'] = $this->filename;
                 $note_fields['FILE_URL'] = UploadFile::get_upload_url($this);
-            } elseif (!empty($sugar_config['disc_client']) && $sugar_config['disc_client']) {
-                $file_display = " (".$mod_strings['LBL_OC_FILE_NOTICE'].")";
-                $note_fields['FILENAME'] = $file_display;
             }
         }
         if (isset($this->contact_id) && $this->contact_id != '') {

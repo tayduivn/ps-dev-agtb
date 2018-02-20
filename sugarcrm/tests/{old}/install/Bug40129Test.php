@@ -54,7 +54,6 @@ public function setUp() {
 	    'setup_db_type' => 'mysql',
 	    'setup_license_key_users' => 100,
 	    'setup_license_key_expire_date' => '2010-12-25',
-	    'setup_license_key_oc_licences' => 1,
 	    'setup_license_key' => 'internal sugar user 20100224',
 	    'setup_site_url' => 'http://localhost/pineapple/build/rome/builds/ent/sugarcrm',
 	    'setup_system_name' => 'pineapple',
@@ -156,5 +155,3 @@ public function test_silent_install() {
 
 
 }
-
-?>

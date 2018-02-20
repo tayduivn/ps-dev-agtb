@@ -328,14 +328,6 @@ class MassUpdate
 
 					$this->sugarbean->retrieve($id);
 
-					////////////////////////
-					//IS USER OFFLINE CLIENT ENABLED
-					if($this->sugarbean->object_name == 'User' && isset($_POST['oc_status'])){
-						$this->sugarbean->setPreference('OfflineClientStatus',$_POST['oc_status']);
-					}
-					//
-					////////////////////////
-
 					if($this->sugarbean->ACLAccess('Save', array("massupdate" => true))) {
 						$_POST['record'] = $id;
 						$_GET['record'] = $id;
@@ -522,7 +514,6 @@ class MassUpdate
 		$lang_update = translate('LBL_UPDATE');
 		$lang_confirm= translate('NTC_DELETE_CONFIRMATION_MULTIPLE');
 		$lang_sync = translate('LBL_SYNC_CONTACT');
-		$lang_oc_status = translate('LBL_OC_STATUS');
 		$lang_unsync = translate('LBL_UNSYNC');
 		$lang_archive = translate('LBL_ARCHIVE');
 		$lang_optout_primaryemail = $app_strings['LBL_OPT_OUT_FLAG_PRIMARY'];

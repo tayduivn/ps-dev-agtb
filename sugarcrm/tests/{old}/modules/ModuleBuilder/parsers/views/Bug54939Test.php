@@ -68,22 +68,16 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
         $list = new Bug54939TestPortalListParser(MB_PORTALLISTVIEW, 'Cases', '', MB_PORTAL);
         $list->changeFieldType('resolution', 'iframe');
         // Relate SHOULD be clean on list
-        $list->changeFieldType('system_id', 'relate');
         $fields = $list->getAvailableFields();
         $this->assertArrayNotHasKey('resolution', $fields, 'The resolution field was not excluded');
-        $this->assertArrayHasKey('system_id', $fields, 'The system_id field was excluded');
         $this->assertArrayHasKey('description', $fields, 'Description is showing as not available');
 
         $grid = new Bug54939TestGridParser(MB_PORTALRECORDVIEW, 'Cases', '', MB_PORTAL);
         $grid->changeFieldType('resolution', 'parent');
-        $grid->changeFieldType('system_id', 'encrypt');
         $fields = $grid->getAvailableFields();
 
         $available = $grid->isAvailableFieldName('resolution', $fields);
         $this->assertFalse($available, 'The resolution field was not excluded');
-
-        $available = $grid->isAvailableFieldName('system_id', $fields);
-        $this->assertFalse($available, 'The system_id field was not excluded');
 
         $available = $grid->isAvailableFieldName('work_log', $fields);
         $this->assertTrue($available, 'Work Log is showing as not available');
@@ -100,13 +94,9 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
 
         $grid = new Bug54939TestGridParser(MB_WIRELESSDETAILVIEW, 'Cases', '', MB_WIRELESS);
         $grid->changeFieldType('work_log', 'parent');
-        $grid->changeFieldType('system_id', 'encrypt');
         $fields = $grid->getAvailableFields();
 
         $available = $grid->isAvailableFieldName('work_log', $fields);
         $this->assertTrue($available, 'The work_log field was excluded');
-
-        $available = $grid->isAvailableFieldName('system_id', $fields);
-        $this->assertTrue($available, 'The system_id field was excluded');
     }
 }

@@ -32,9 +32,6 @@ if (isset($_SESSION['licenseKey_submitted']) && ($_SESSION['licenseKey_submitted
         if (isset($GLOBALS['license']->settings['license_expire_date'])) {
             $_SESSION['setup_license_key_expire_date'] = $GLOBALS['license']->settings['license_expire_date'];
         }
-        if (isset($GLOBALS['license']->settings['license_num_lic_oc'])) {
-            $_SESSION['setup_num_lic_oc'] = $GLOBALS['license']->settings['license_num_lic_oc'];
-        }
     }
 }
 //BEGIN SUGARCRM lic=sub ONLY

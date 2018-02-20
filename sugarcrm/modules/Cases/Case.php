@@ -43,7 +43,6 @@ class aCase extends Basic
     var $email_id;
     var $assigned_user_name;
     var $team_name;
-    var $system_id;
 
     var $table_name = "cases";
     var $rel_account_table = "accounts_cases";
@@ -205,7 +204,7 @@ class aCase extends Basic
         $temp_array['ENCODED_NAME'] = $this->name;
         $temp_array['CASE_NUMBER'] = $this->case_number;
         $temp_array['SET_COMPLETE'] =  "<a href='index.php?return_module=Home&return_action=index&action=EditView&module=Cases&record=$this->id&status=Closed'>".SugarThemeRegistry::current()->getImage("close_inline", "title=".translate('LBL_LIST_CLOSE', 'Cases')." border='0'", null, null, '.gif', translate('LBL_LIST_CLOSE', 'Cases'))."</a>";
-        $temp_array['CASE_NUMBER'] = format_number_display($this->case_number, $this->system_id);
+        $temp_array['CASE_NUMBER'] = format_number_display($this->case_number);
         return $temp_array;
     }
 
@@ -261,19 +260,6 @@ class aCase extends Basic
                 return true;
         }
         return false;
-    }
-
-    function save($check_notify = false)
-    {
-        if (!isset($this->system_id) || empty($this->system_id)) {
-            $admin = Administration::getSettings();
-            $system_id = $admin->settings['system_system_id'];
-            if (!isset($system_id)) {
-                $system_id = 1;
-            }
-            $this->system_id = $system_id;
-        }
-        return parent::save($check_notify);
     }
 
     /**

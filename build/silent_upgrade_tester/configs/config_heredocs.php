@@ -43,7 +43,6 @@ $sugar_config_si = array (
    'setup_license_key_users'        => 100,
    'setup_license_key_expire_date'  => '2010-02-24',
    'setup_license_key'              => 'internal sugar user 20100224',
-   'setup_num_lic_oc'              => 10,
    'setup_site_sugarbeet_automatic_checks' => true,
    'setup_system_name' => '$setup_system_name',
    'dbUSRData' => 'same',

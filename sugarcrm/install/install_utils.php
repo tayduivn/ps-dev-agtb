@@ -1352,16 +1352,6 @@ function insert_default_settings(){
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'tracker_sessions', '1')");
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'tracker_queries', '1')");
 
-    //systems data
-    global $sugar_config;
-
-    $system = new System();
-    $system->system_key = $sugar_config['unique_key'];
-    $system->user_id = 1;
-    $system->last_connect_date = create_current_date_time();
-    $system_id = $system->retrieveNextKey(false, true);
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'system_id', '" . $system_id . "')" );
-
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'skypeout_on', '1')" );
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'tweettocase_on', '0' )");
 
@@ -1370,7 +1360,8 @@ function insert_default_settings(){
 
   //BEGIN SUGARCRM lic=sub ONLY
 
-function update_license_settings( $users, $expire_date, $key, $num_lic_oc ){
+function update_license_settings($users, $expire_date, $key)
+{
     global $db;
 
     $query = "DELETE FROM config WHERE category='license' AND name='users'";
@@ -1386,11 +1377,6 @@ function update_license_settings( $users, $expire_date, $key, $num_lic_oc ){
     $query = "DELETE FROM config WHERE category='license' AND name='key'";
     $db->query($query);
     $query = "INSERT INTO config (value, category, name) VALUES ('$key', 'license', 'key')";
-    $db->query($query);
-
-    $query = "DELETE FROM config WHERE category='license' AND name='num_lic_oc'";
-    $db->query($query);
-    $query = "INSERT INTO config (value, category, name) VALUES ('$num_lic_oc', 'license', 'num_lic_oc')";
     $db->query($query);
 }
 
@@ -1718,14 +1704,8 @@ function pullSilentInstallVarsIntoSession() {
     $derived = array (
         'setup_site_admin_password_retype'      => $sugar_config_si['setup_site_admin_password'],
         'setup_db_sugarsales_password_retype'   => $config_subset['setup_db_sugarsales_password'],
-        'oc_run' => 'convert',
     );
-    if(isset($sugar_config_si['oc_server_url']))
-        $derived['oc_server_url'] = $sugar_config_si['oc_server_url'];
-    if(isset($sugar_config_si['oc_username']))
-        $derived['oc_username'] = $sugar_config_si['oc_username'];
-    if(isset($sugar_config_si['oc_password']))
-        $derived['oc_password'] = $sugar_config_si['oc_password'];
+
     if(isset($sugar_config_si['install_method']))
         $derived['install_method'] = $sugar_config_si['install_method'];
     
@@ -1735,7 +1715,6 @@ function pullSilentInstallVarsIntoSession() {
         'setup_license_key_users',
         'setup_license_key_expire_date',
         'setup_license_key',
-        'setup_num_lic_oc',
         'default_currency_iso4217',
         'default_currency_name',
         'default_currency_significant_digits',
@@ -1796,22 +1775,6 @@ function copyFromArray($input_array, $needles, $output_array){
          }
     }
 }
-
-function validate_offlineClientConfig() {
-    global $mod_strings;
-    $errors = array();
-    if(empty($_SESSION['oc_server_url']) || $_SESSION['oc_server_url'] == 'http://'){
-         $errors[] = '<span class="error"> Sugar Server Url is required.</span>';
-    }
-    if(empty($_SESSION['oc_username'])){
-         $errors[] = '<span class="error"> Username of server user is required.</span>';
-    }
-    if(empty($_SESSION['oc_password'])){
-         $errors[] = '<span class="error"> Password is required.</span>';
-    }
-    return $errors;
-}
-
 
 /**
  * handles language pack uploads - code based off of upload_file->final_move()
@@ -2126,13 +2089,6 @@ function getInstallType( $type_string ){
     return( "" );
 }
 }
-
-function removeConfig_SIFile(){
-    if(file_exists('config_si.php')){
-       unlink('config_si.php');
-    }
-}
-
 
 //mysqli connector has a separate parameter for port.. We need to separate it out from the host name
 function getHostPortFromString($hostname=''){

@@ -42,7 +42,6 @@ class PMSEEngineUtils
     protected static $blacklistedFields = array(
         'ALL' => array(
             'deleted',
-            'system_id',
             'mkto_sync',
             'mkto_id',
             'mkto_lead_score',

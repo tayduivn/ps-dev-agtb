@@ -39,14 +39,6 @@ class InstallUtilsTest extends Sugar_PHPUnit_Framework_TestCase
        	$this->assertEquals('en_us,en', $lang, 'parse_accept_language did not return proper values');
 	}
 
-	public function testRemoveConfig_SIFile(){
-		if(write_array_to_file('config_si', array(), 'config_si.php')) {
-			removeConfig_SIFile();
-			$this->assertFileNotExists('config_si.php', 'removal of config_si did not succeed');
-			SugarAutoLoader::delFromMap('config_si.php');
-		}
-	}
-
     /**
      * This is a test to check the creation of the config.js file used by the sidecar framework beginning in the 6.7 release.
      * In the future this configuration may move to be contained within a database.

@@ -94,7 +94,6 @@ $config['blackList']['sales'] = array(
 'sugarcrm/modules/ReportMaker'=>1,
 'sugarcrm/modules/Reports/Dashlets/MyReportsDashlet'=>1,
 'sugarcrm/modules/Shippers'=>1,
-'sugarcrm/modules/Sync'=>1,
 
 'sugarcrm/modules/TaxRates'=>1,
 'sugarcrm/modules/TeamNotices'=>1,

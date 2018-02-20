@@ -54,23 +54,6 @@ $mod_strings = array(
 	//END SUGARCRM flav=ent ONLY
     'ERR_DB_VERSION_FAILURE'			=> 'Unable to check database version.',
 
-
-	'ERR_OC_PASSWORD'					=> 'Password is required.',
-	'ERR_OC_SERVER_URL'					=> 'Sugar Server URL is required.',
-	'ERR_OC_USERNAME'					=> 'Username of server user is required.',
-	'LBL_INSTALL_OC'					=> 'Install Offline Client',
-    'LBL_OC_ADMIN'                      => 'Please contact your Administrator in order to resolve this problem.',
-    'LBL_OC_SUCCESS'                    => 'Offline Client Installation has completed. Please click the button below in order to be taken to your installation.',
-	'LBL_OC_INSTALL_ADMIN_NAME'			=> 'Admin Username',
-	'LBL_OC_INSTAL_DIRECTIONS'			=> 'Please enter the details below in order to properly install and sync your offline client.',
-	'LBL_OC_INSTALL_SERVER_URL'			=> 'URL of Sugar Server',
-	'LBL_OC_INSTALL_PASS'				=> 'Password for server user',
-	'LBL_OC_INSTALL_TITLE'				=> 'Offline Client Installation',
-	'LBL_OC_INSTALL_USERNAME_DETAILS'	=> 'This is the username you will connect to your Sugar server with.',
-	'LBL_OC_INSTALL_USERNAME'			=> 'Username',
-	'LBL_PERFORM_OC_INSTALL'			=> 'Initializing Offline Client Installation',
-    'LBL_OC_INSTALL_DIRECTIONS'         => 'Please enter the details below in order to properly install and sync your offline client.',
-
 	'DEFAULT_CHARSET'					=> 'UTF-8',
     'ERR_ADMIN_USER_NAME_BLANK'         => 'Provide the user name for the Sugar admin user. ',
 	'ERR_ADMIN_PASS_BLANK'				=> 'Provide the password for the Sugar admin user. ',
@@ -320,9 +303,6 @@ $mod_strings = array(
 	'LBL_LICENSE_EXPIRY'				=> 'Expiration Date',
 	'LBL_LICENSE_I_ACCEPT'				=> 'I Accept',
 	'LBL_LICENSE_NUM_USERS'				=> 'Number of Users',
-	'LBL_LICENSE_OC_DIRECTIONS'			=> 'Please enter the number of purchased offline clients.',
-	'LBL_LICENSE_OC_NUM'				=> 'Number of Offline Client Licenses',
-	'LBL_LICENSE_OC'					=> 'Offline Client Licenses',
 	'LBL_LICENSE_PRINTABLE'				=> ' Printable View ',
     'LBL_PRINT_SUMM'                    => 'Print Summary',
 	'LBL_LICENSE_TITLE_2'				=> 'SugarCRM License',
@@ -621,5 +601,3 @@ $contact_user_link_guid',
         'name' => 'Forgot Password email',
         ),
 );
-
-?>

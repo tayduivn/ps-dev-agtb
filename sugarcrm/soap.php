@@ -43,7 +43,6 @@ require_once('soap/SoapDeprecated.php');
 require_once('soap/SoapStudio.php');
 //END SUGARCRM flav=int ONLY
 
-require_once('soap/SoapSync.php');
 require_once('soap/SoapUpgradeUtils.php');
 
 /* Begin the HTTP listener service and exit. */
