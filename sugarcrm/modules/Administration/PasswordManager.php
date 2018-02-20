@@ -22,7 +22,7 @@ if ($idpConfig->isOIDCEnabled()) {
         sprintf(
             $GLOBALS['app_strings']['ERR_DISABLED_FOR_OIDC'] . ' ' .
             $GLOBALS['app_strings']['ERR_GOTO_CLOUD_CONSOLE'],
-            $oidcConfig['cloudConsoleUrl']
+            $idpConfig->buildCloudConsoleUrl('passwordManagement')
         )
     );
 }

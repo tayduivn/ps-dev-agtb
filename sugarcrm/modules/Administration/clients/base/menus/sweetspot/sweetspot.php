@@ -61,7 +61,7 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'module' => $moduleName,
         'icon' => 'fa-cogs',
         'route' => $adminRoute . 'PasswordManager',
-        'oidc_link' => $idpConfig->isOIDCEnabled() ? $oidcConfig['cloudConsoleUrl'] : null,
+        'oidc_link' => $idpConfig->isOIDCEnabled() ? $idpConfig->buildCloudConsoleUrl('passwordManagement') : null,
     ),
 
     // Sugar Connect

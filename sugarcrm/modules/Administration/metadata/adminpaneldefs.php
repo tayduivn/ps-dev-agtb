@@ -23,7 +23,7 @@ $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS
 $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
 $oidcConfig = $idpConfig->getOIDCConfig();
 if ($idpConfig->isOIDCEnabled()) {
-    $passwordManagerUrl = $oidcConfig['cloudConsoleUrl'];
+    $passwordManagerUrl = $idpConfig->buildCloudConsoleUrl('passwordManagement');
     $passwordManagerTarget = '_blank';
     $passwordManagerOnClick = sprintf(
         'onclick = "app.alert.show(\'disabled-for-oidc\', {level: \'warning\', messages: \'%s\'});"',

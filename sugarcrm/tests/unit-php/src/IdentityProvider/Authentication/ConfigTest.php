@@ -521,6 +521,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'idpServiceName' => 'idp',
                     'cloudConsoleUrl' => '',
+                    'cloudConsoleRoutes' => [],
                 ],
             ],
             'httpClientNotEmpty' => [
@@ -557,6 +558,50 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'idpServiceName' => 'iam',
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local',
+                    'cloudConsoleRoutes' => [],
+                ],
+            ],
+            'cloudConsoleRoutesAreNotEmpty' => [
+                'configSugar' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'oidcKeySetId' => 'keySetId',
+                    'http_client' => [
+                        'retry_count' => 5,
+                        'delay_strategy' => 'exponential',
+                    ],
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'cloudConsoleUrl' => 'http://console.sugarcrm.local',
+                    'cloudConsoleRoutes' => [
+                        'userManagement' => 'management/users',
+                        'passwordManagement' => 'management/password',
+                    ],
+                ],
+                'siteUrl' => 'http://site.url/',
+                'expectedConfig' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'redirectUri' => 'http://site.url',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/keySetId',
+                    'keySetId' => 'keySetId',
+                    'http_client' => [
+                        'retry_count' => 5,
+                        'delay_strategy' => 'exponential',
+                    ],
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'idpServiceName' => 'iam',
+                    'cloudConsoleUrl' => 'http://console.sugarcrm.local',
+                    'cloudConsoleRoutes' => [
+                        'userManagement' => 'management/users',
+                        'passwordManagement' => 'management/password',
+                    ],
                 ],
             ],
         ];
@@ -642,5 +687,92 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $sugarConfig = $this->createMock(\SugarConfig::class);
         $config = new Config($sugarConfig);
         $this->assertEquals(['Users', 'Employees'], $config->getOidcDisabledModules());
+    }
+
+    /**
+     * Provides data for testIsOIDCEnabled
+     *
+     * @return array
+     */
+    public function buildCloudConsoleUrlProvider()
+    {
+        return [
+            'path-key-found' => [
+                'userManagement',
+                [],
+                [
+                    'cloudConsoleUrl' => 'http://console.sugarcrm.local',
+                    'cloudConsoleRoutes' => [
+                        'userManagement' => '/management/users/',
+                    ],
+                ],
+                'http://console.sugarcrm.local/management/users',
+            ],
+            'path-key-not-found' => [
+                'some-unknown-route',
+                [],
+                [
+                    'cloudConsoleUrl' => 'http://console.sugarcrm.local',
+                    'cloudConsoleRoutes' => [],
+                ],
+                'http://console.sugarcrm.local',
+            ],
+            'path-key-found-and-3-parts-exist' => [
+                'userManagement',
+                [
+                    'a',
+                    'some-id',
+                    'policies',
+                ],
+                [
+                    'cloudConsoleUrl' => 'http://foo.bar',
+                    'cloudConsoleRoutes' => [
+                        'userManagement' => 'management/users',
+                    ],
+                ],
+                'http://foo.bar/management/users/a/some-id/policies',
+            ],
+            'no-parts-url-has-slashes' => [
+                'userManagement',
+                [],
+                [
+                    'cloudConsoleUrl' => 'http://console.sugarcrm.local//',
+                    'cloudConsoleRoutes' => [],
+                ],
+                'http://console.sugarcrm.local',
+            ],
+            'parts-with-non-url-characters' => [
+                'userManagement',
+                [
+                    'user',
+                    'Имя',
+                ],
+                [
+                    'cloudConsoleUrl' => 'http://foo.bar',
+                    'cloudConsoleRoutes' => [],
+                ],
+                'http://foo.bar/user/%D0%98%D0%BC%D1%8F',
+            ],
+        ];
+    }
+
+    /**
+     * @param string $pathKey
+     * @param array|null $parts
+     * @param array $oidcConfig
+     * @param string $result
+     *
+     * @dataProvider buildCloudConsoleUrlProvider
+     * @covers ::buildCloudConsoleUrl
+     */
+    public function testBuildCloudConsoleUrl($pathKey, $parts, $oidcConfig, $result)
+    {
+        $config = $this->getMockBuilder(Config::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getOIDCConfig'])
+            ->getMock();
+        $config->method('getOIDCConfig')->willReturn($oidcConfig);
+
+        $this->assertEquals($result, $config->buildCloudConsoleUrl($pathKey, $parts));
     }
 }

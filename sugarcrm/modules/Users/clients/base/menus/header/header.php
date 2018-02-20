@@ -20,7 +20,7 @@ $idpConfig  = new Config(\SugarConfig::getInstance());
 $isOIDCEnabled  = $idpConfig->isOIDCEnabled();
 if ($isOIDCEnabled) {
     $newUserLink = [
-        'route' => $idpConfig->getOIDCConfig()['cloudConsoleUrl'],
+        'route' => $idpConfig->buildCloudConsoleUrl('userCreate'),
         'openwindow' => true,
         'label' => 'LNK_NEW_USER',
         'acl_action' => 'admin',

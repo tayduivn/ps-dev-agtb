@@ -93,6 +93,7 @@ class Config
             'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
             'idpServiceName' => !empty($config['idpServiceName']) ? $config['idpServiceName'] : 'iam',
             'cloudConsoleUrl' => !empty($config['cloudConsoleUrl']) ? $config['cloudConsoleUrl'] : '',
+            'cloudConsoleRoutes' => !empty($config['cloudConsoleRoutes']) ? $config['cloudConsoleRoutes'] : [],
         ];
 
         if ($oidcKeySetId) {
@@ -101,6 +102,33 @@ class Config
         }
 
         return $oidcConfig;
+    }
+
+    /**
+     * Builds URL for Cloud Console navigation.
+     *
+     * If you provide key of the pre-configured Cloud Console URI it takes it's value from the config.
+     *
+     * Additionally you can pass a list of params to specify concrete action and/or resource,
+     * e.g. ['users', 'user-id', 'permissions'] will give you 'users/user-id'/permissions' URI.
+     *
+     * @param string $pathKey
+     * @param array $parts
+     * @return string
+     */
+    public function buildCloudConsoleUrl($pathKey, $parts = [])
+    {
+        $config = $this->getOIDCConfig();
+        $serverUrl = rtrim($config['cloudConsoleUrl'], '/');
+        $additional = [];
+
+        if (array_key_exists($pathKey, $config['cloudConsoleRoutes'])) {
+            $additional[] = trim($config['cloudConsoleRoutes'][$pathKey], '/');
+        }
+
+        $additional = array_merge($additional, array_map('urlencode', $parts));
+
+        return join('/', array_merge([$serverUrl], $additional));
     }
 
     /**

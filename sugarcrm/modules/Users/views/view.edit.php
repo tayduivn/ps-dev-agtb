@@ -47,7 +47,7 @@ var $useForSubpanel = true;
 
         $idpConfig = new IdmConfig(\SugarConfig::getInstance());
         if ($idpConfig->isOIDCEnabled() && !$this->bean->isUpdate()) {
-            $this->showRedirectToCloudConsole($idpConfig->getOIDCConfig()['cloudConsoleUrl']);
+            $this->showRedirectToCloudConsole($idpConfig->buildCloudConsoleUrl('userCreate'));
         }
 
         //lets set the return values
