@@ -26,6 +26,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LocalUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LdapUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLdapUserProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Ldap\Ldap;
 
 use Sugarcrm\IdentityProvider\Encoder\EncoderBuilder;
 use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider;
@@ -35,7 +36,6 @@ use Sugarcrm\IdentityProvider\Authentication\Provider\MixedAuthenticationProvide
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Ldap\Adapter\ExtLdap\Adapter;
-use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
