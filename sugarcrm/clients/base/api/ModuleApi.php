@@ -10,7 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Audit\EventRepository;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\Sugarcrm\Security\Subject\Formatter;
 
 class ModuleApi extends SugarApi {
 
@@ -119,6 +122,7 @@ class ModuleApi extends SugarApi {
                 'reqType' => 'GET',
                 'path' => array('<module>','?', 'pii'),
                 'pathVars' => array('module','record', 'pii'),
+                'minVersion' => '11.1',
                 'method' => 'getPiiFields',
                 'shortHelp' => 'Returns pii fields',
                 'longHelp' => 'include/api/help/module_record_pii_help.html',
@@ -143,49 +147,61 @@ class ModuleApi extends SugarApi {
         //get the list of pii fields
         $piiFields = array_keys($bean->getFieldDefinitions('pii', array(true)));
 
+        $eventRepo = Container::getInstance()->get(EventRepository::class);
+        $events = $this->formatSourceSubject($eventRepo->getLatestBeanEvents($args['module'], $bean->id, $piiFields));
+
+        global $timedate;
+
         $fields = [];
-        $time = $this->getPiiTime();
-        $source = $this->getPiiSource();
         foreach ($piiFields as $field) {
             $item = [
                 'field_name' => $field,
-                'value' => isset($bean->$field)? $bean->$field : '',
-                'date_modified' => $time,
-                'source' => $source,
+                'value' => isset($bean->$field)? $bean->$field : null,
+                'date_modified' => null,
+                'event_type' => null,
+                'source' => null,
             ];
+
+            if (isset($events[$field])) {
+                $item = array_merge(
+                    $item,
+                    ['date_modified' => $timedate->asIso(
+                        $timedate->fromDbType($events[$field]['date_created'], 'datetime')
+                    ),
+                    'event_type' => $events[$field]['type'],
+                    'source' => $events[$field]['source'],]
+                );
+            }
             $fields[] = $item;
         }
-        return [
-            "next_offset" => -1,
-            'fields' => $fields,
-        ];
+
+        return ['fields' => $fields];
     }
 
-    /**
-     * Get the mocked pii time
-     * @return string
-     */
-    private function getPiiTime()
+    private function formatSourceSubject($rows)
     {
-        return TimeDate::getInstance()->asIso(TimeDate::getInstance()->getNow());
+        $subjects = array();
+        // gather all subjects
+        foreach ($rows as $k => $v) {
+            if (!empty($v['source']['subject'])) {
+                $subjects[$k] = $v['source']['subject'];
+            }
+        }
+
+        $formatter = $this->getFormatter();
+        $formattedSubjects = $formatter->formatBatch($subjects);
+
+        // merge formatted subjects into rows
+        foreach ($formattedSubjects as $k => $v) {
+            $rows[$k]['source']['subject'] = $v;
+        }
+
+        return $rows;
     }
 
-    /**
-     * Get the mocked source
-     * @return array
-     */
-    private function getPiiSource()
+    protected function getFormatter()
     {
-        return [
-            'subject' => ['_type' => 'mock'],
-            'attributes' => [
-                'attr-1' => 'value-1',
-                'attr-2' => [
-                    'sub-attr-2-1' => 'sub-value-2-1',
-                    'sub-attr-2-2' => ['sub-value-2-2-1', 'sub-value-2-2-2'],
-                ],
-            ],
-        ];
+        return Container::getInstance()->get(Formatter::class);
     }
 
     /**

@@ -16,11 +16,14 @@ use Doctrine\DBAL\Connection;
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
+use Sugarcrm\Sugarcrm\Security\Subject\User;
 use SugarTestContactUtilities;
 use SugarTestHelper;
 
 /**
- * @covers \Sugarcrm\Sugarcrm\Audit\EventRepository
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\EventRepository
  */
 class EventRepositoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,8 +34,20 @@ class EventRepositoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         SugarTestHelper::setUp('current_user');
+        $container = Container::getInstance();
+        $context = $container->get(Context::class);
+        $subject = new User($GLOBALS['current_user'], new RestApiClient());
+        $context->activateSubject($subject);
+        $context->setAttribute('platform', 'base');
 
-        $this->contactBean = SugarTestContactUtilities::createContact(null, array('phone_work' => '(111) 111-1111'));
+        $this->contactBean = SugarTestContactUtilities::createContact(
+            null,
+            ['phone_work' => '(111) 111-1111',
+                'first_name' => 'John',
+                'phone_fax' => '(111) 111-1111',
+                'phone_mobile' => '(111) 111-1111',
+                'phone_home' => '(111) 111-1111']
+        );
 
         $container = Container::getInstance();
         $this->eventRepo = $container->get(EventRepository::class);
@@ -49,6 +64,7 @@ class EventRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers ::registerUpdate()
      */
     public function registerUpdate()
     {
@@ -61,6 +77,7 @@ class EventRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers ::registerErasure()
      */
     public function registerErasure()
     {
@@ -82,5 +99,34 @@ class EventRepositoryTest extends \PHPUnit_Framework_TestCase
         $row = $stmt->fetch();
 
         return $row['cnt'];
+    }
+
+    /**
+     *
+     *
+     * @test
+     * @covers ::getLatestBeanEvents()
+     */
+    public function getLatestBeanEvents()
+    {
+        //retrieve bean otherwise change will not be detected.
+        $this->contactBean = $this->contactBean->retrieve();
+        $this->contactBean->phone_home = '(222) 222-2222';
+        $this->contactBean->phone_fax = '(222) 222-2222';
+        $this->contactBean->phone_mobile = '(222) 222-2222';
+        $this->contactBean->first_name = 'John 2';
+        $this->contactBean->save(false);
+
+        //generate another set of changes
+        $this->contactBean = $this->contactBean->retrieve();
+        $this->contactBean->phone_home = '(333) 333-3333';
+        $this->contactBean->phone_fax = '(333) 333-3333';
+        $this->contactBean->phone_mobile = '(333) 333-3333';
+        $this->contactBean->phone_home = '(333) 333-3333';
+        $this->contactBean->first_name = 'John 3';
+        $this->contactBean->save(false);
+
+        $actual = $this->eventRepo->getLatestBeanEvents('Contacts', $this->contactBean->id, ['phone_mobile', 'phone_fax', 'title', 'first_name']);
+        $this->assertCount(3, $actual, 'Expected number of rows not found.');
     }
 }

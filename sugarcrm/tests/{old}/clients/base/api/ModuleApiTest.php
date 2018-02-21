@@ -10,6 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
+use Sugarcrm\Sugarcrm\Security\Subject\Formatter;
+use Sugarcrm\Sugarcrm\Security\Subject\User;
+
 require_once ("tests/{old}/SugarTestRestUtilities.php");
 
 /**
@@ -64,6 +70,45 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
 
         SugarTestHelper::tearDown();
+    }
+
+    public function testGetPiiFields()
+    {
+        $container = Container::getInstance();
+        $context = $container->get(Context::class);
+        $subject = new User($GLOBALS['current_user'], new RestApiClient());
+        $context->activateSubject($subject);
+        $context->setAttribute('platform', 'base');
+        $bean = SugarTestContactUtilities::createContact(
+            null,
+            ['phone_work' => '(111) 111-1111',
+                'first_name' => 'John',
+                'phone_fax' => '(111) 111-1111',
+                'phone_mobile' => '(111) 111-1111',
+                'phone_home' => '(111) 111-1111']
+        );
+        //retrieve bean otherwise change will not be detected.
+        $contactBean = $bean->retrieve();
+        $contactBean->phone_home = '(222) 222-2222';
+        $contactBean->phone_fax = '(222) 222-2222';
+        $contactBean->phone_mobile = '(222) 222-2222';
+        $contactBean->first_name = 'John 2';
+        $contactBean->save(false);
+
+        $args['module'] = 'Contacts';
+        $args['record'] = $contactBean->id;
+
+        $moduleApi = $this->getMockBuilder(ModuleApi::class)
+            ->setMethods(['getFormatter'])
+            ->getMock();
+
+        $moduleApi->expects($this->once())
+            ->method('getFormatter')
+            ->will($this->returnValue(Container::getInstance()->get(Formatter::class)));
+
+        $result = $moduleApi->getPiiFields($this->serviceMock, $args);
+
+        $this->assertNotEmpty($result, 'Did not fetch any Pii fields.');
     }
 
     // test set favorite

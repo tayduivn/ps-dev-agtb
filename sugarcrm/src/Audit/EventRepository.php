@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Audit;
 
+use BeanFactory;
+use DBManagerFactory;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use InvalidArgumentException;
@@ -64,7 +66,7 @@ class EventRepository
      * @return string id of audit event created
      * @throws DBALException
      * @throws InvalidArgumentException
-    */
+     */
     public function registerErasure(SugarBean $bean, FieldList $fields)
     {
         if (count($fields) === 0) {
@@ -97,5 +99,50 @@ class EventRepository
         );
 
         return $id;
+    }
+
+    /**
+     * Retrieves latest audit events for given instance of bean and fields
+     *
+     * @param $module module name
+     * @param $id
+     * @param array $fields
+     * @return array[]
+     */
+    public function getLatestBeanEvents($module, $id, array $fields)
+    {
+        $bean = BeanFactory::newBean($module);
+        if (empty($fields) || empty($bean)) {
+            return array();
+        }
+
+        $auditTable = $bean->get_audit_table_name();
+
+        $sql = "SELECT  atab.field_name, atab.date_created, ae.source, ae.type
+                FROM {$auditTable} AS atab
+                LEFT JOIN {$auditTable} as atab2 ON (atab2.parent_id = atab.parent_id 
+                        AND atab2.field_name = atab.field_name
+                        AND (atab2.date_created > atab.date_created
+                        OR (atab2.date_created = atab.date_created
+                            AND atab2.id > atab.id)))
+                LEFT JOIN audit_events AS ae ON (ae.id = atab.event_id)
+                WHERE  atab.parent_id = ?
+                AND atab.field_name IN (?)
+                AND atab2.id is NULL";
+
+        $stmt = $this->conn->executeQuery($sql, [$id, $fields], [null, Connection::PARAM_STR_ARRAY]);
+
+        global $timedate;
+        $db = DBManagerFactory::getInstance();
+
+        $return = array();
+        while ($row = $stmt->fetch()) {
+            $row['source'] = json_decode($row['source'], true);
+            //convert date
+            $row['date_created'] = $db->fromConvert($row['date_created'], 'datetime');
+            $return[$row['field_name']] = $row;
+        }
+
+        return $return;
     }
 }
