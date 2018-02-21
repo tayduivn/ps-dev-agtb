@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\DBALException;
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
+
 /**
  *  Class for data privacy.
  */
@@ -29,6 +32,11 @@ class DataPrivacy extends Issue
      * @var string
      */
     public $fields_to_erase;
+
+    /**
+     * @var string
+     */
+    public $status;
 
     /**
      * {@inheritDoc}
@@ -57,6 +65,39 @@ class DataPrivacy extends Issue
             }
             $this->system_id = $system_id;
         }
+
+        //check the value defined in dataprivacy_status_dom
+        if (isset($this->fetched_row['status']) && $this->fetched_row['status'] !== 'Closed') {
+            if ($this->status === 'Closed') {
+                $this->completeErasure();
+            }
+        }
+
         return parent::save($check_notify);
+    }
+
+    /**
+     * Erase the fields for the current DPR record
+     * @throws DBALException
+     */
+    private function completeErasure()
+    {
+        $data = empty($this->fields_to_erase) ? [] : json_decode($this->fields_to_erase, true);
+
+        foreach ($data as $module => $moduleData) {
+            foreach ($moduleData as $id => $fields) {
+                if (empty($fields)) {
+                    continue;
+                }
+
+                $bean = BeanFactory::retrieveBean($module, $id);
+                if (!$bean) {
+                    continue;
+                }
+
+                $list = FieldList::fromArray($fields);
+                $bean->erase($list, false);
+            }
+        }
     }
 }

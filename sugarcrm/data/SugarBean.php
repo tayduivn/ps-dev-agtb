@@ -1811,7 +1811,7 @@ class SugarBean
      * Implements Erasure type transaction save.
      * Erases values of fields provided then saves bean.
      * @param FieldList $fields list of fields to be erased
-     * @param boolean $check_notify Optional, default false, if set to true assignee of the record is notified via email.
+     * @param boolean $check_notify if set to true, the assignee of the record is notified via email.
      * @throws DBALException
      */
     public function erase(FieldList $fields, $check_notify)
