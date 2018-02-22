@@ -139,6 +139,48 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
         });
     });
 
+    describe('_massCollectionChange()', function() {
+        var groupButtonField;
+        var massDeleteField;
+        var massCollection;
+
+        beforeEach(function() {
+            groupButtonField = {
+                setDisabled: sinon.collection.spy()
+            };
+            massDeleteField = {
+                setDisabled: sinon.collection.spy()
+            };
+            massCollection = {};
+
+            sinon.collection.stub(view, 'getField')
+                .withArgs('group_button').returns(groupButtonField)
+                .withArgs('massdelete_button').returns(massDeleteField);
+        });
+
+        afterEach(function() {
+            groupButtonField = null;
+            massDeleteField = null;
+            massCollection = null;
+        });
+
+        it('should set group and mass delete fields disabled if massCollection is empty', function() {
+            massCollection.length = 0;
+            view._massCollectionChange({}, massCollection);
+
+            expect(groupButtonField.setDisabled).toHaveBeenCalledWith(true);
+            expect(massDeleteField.setDisabled).toHaveBeenCalledWith(true);
+        });
+
+        it('should set group and mass delete fields enabled if massCollection has items', function() {
+            massCollection.length = 1;
+            view._massCollectionChange({}, massCollection);
+
+            expect(groupButtonField.setDisabled).toHaveBeenCalledWith(false);
+            expect(massDeleteField.setDisabled).toHaveBeenCalledWith(false);
+        });
+    });
+
     describe('_render()', function() {
         var massCollection;
         var quoteModel;
@@ -206,32 +248,69 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
 
     describe('_checkMassActions()', function() {
         var massActionsField;
+        var groupButtonField;
+        var massDeleteField;
+
         beforeEach(function() {
             massActionsField = {
                 setDisabled: sinon.collection.spy()
             };
+            groupButtonField = {
+                setDisabled: sinon.collection.spy()
+            };
+            massDeleteField = {
+                setDisabled: sinon.collection.spy()
+            };
+            sinon.collection.stub(view, 'getField')
+                .withArgs('quote-data-mass-actions').returns(massActionsField)
+                .withArgs('group_button').returns(groupButtonField)
+                .withArgs('massdelete_button').returns(massDeleteField);
+        });
 
-            sinon.collection.stub(view, 'getField', function() {
-                return massActionsField;
+        describe('bundles are empty', function() {
+            beforeEach(function() {
+                sinon.collection.stub(view, '_bundlesAreEmpty', function() {
+                    return true;
+                });
+            });
+
+            it('should set mass actions field disabled if bundles are empty', function() {
+                view._checkMassActions();
+
+                expect(massActionsField.setDisabled).toHaveBeenCalledWith(true);
             });
         });
 
-        it('should set mass actions field disabled if bundles are empty', function() {
-            sinon.collection.stub(view, '_bundlesAreEmpty', function() {
-                return true;
+        describe('bundles have items', function() {
+            beforeEach(function() {
+                sinon.collection.stub(view, '_bundlesAreEmpty', function() {
+                    return false;
+                });
             });
-            view._checkMassActions();
 
-            expect(massActionsField.setDisabled).toHaveBeenCalledWith(true);
-        });
+            it('should set mass actions field enabled if bundles have items', function() {
+                view._checkMassActions();
 
-        it('should not set mass actions field disabled if bundles have items', function() {
-            sinon.collection.stub(view, '_bundlesAreEmpty', function() {
-                return false;
+                expect(massActionsField.setDisabled).toHaveBeenCalledWith(false);
             });
-            view._checkMassActions();
 
-            expect(massActionsField.setDisabled).toHaveBeenCalledWith(false);
+            it('should set group and mass delete fields disabled if massCollection is empty', function() {
+                view.massCollection.models = [];
+                view._checkMassActions();
+
+                expect(groupButtonField.setDisabled).toHaveBeenCalledWith(true);
+                expect(massDeleteField.setDisabled).toHaveBeenCalledWith(true);
+            });
+
+            it('should set group and mass delete fields enabled if massCollection has items', function() {
+                view.massCollection.models = [{
+                    hey: 'buddy!'
+                }];
+                view._checkMassActions();
+
+                expect(groupButtonField.setDisabled).toHaveBeenCalledWith(false);
+                expect(massDeleteField.setDisabled).toHaveBeenCalledWith(false);
+            });
         });
     });
 

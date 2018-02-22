@@ -115,12 +115,8 @@
      */
     _massCollectionChange: function(model, massCollection) {
         var setDisabled = true;
-        var groupBtn = _.find(this.fields, function(field) {
-            return field.name === 'group_button';
-        });
-        var massDeleteBtn = _.find(this.fields, function(field) {
-            return field.name === 'massdelete_button';
-        });
+        var groupBtn = this.getField('group_button');
+        var massDeleteBtn = this.getField('massdelete_button');
 
         if (massCollection.length) {
             setDisabled = false;
@@ -176,14 +172,28 @@
      */
     _checkMassActions: function() {
         var massActionsField = this.getField('quote-data-mass-actions');
+        var groupBtn = this.getField('group_button');
+        var massDeleteBtn = this.getField('massdelete_button');
         var disableMassActions = false;
 
-        if (massActionsField) {
-            if (this._bundlesAreEmpty()) {
-                disableMassActions = true;
+        if (this._bundlesAreEmpty()) {
+            if (massActionsField) {
+                massActionsField.setDisabled(true);
+            }
+        } else {
+            // qlis exist
+            if (massActionsField) {
+                massActionsField.setDisabled(false);
             }
 
-            massActionsField.setDisabled(disableMassActions);
+            disableMassActions = this.massCollection.models.length === 0;
+
+            if (groupBtn) {
+                groupBtn.setDisabled(disableMassActions);
+            }
+            if (massDeleteBtn) {
+                massDeleteBtn.setDisabled(disableMassActions);
+            }
         }
     },
 
