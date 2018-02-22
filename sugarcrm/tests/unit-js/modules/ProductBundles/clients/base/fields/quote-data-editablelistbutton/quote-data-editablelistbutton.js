@@ -55,15 +55,48 @@ describe('ProductBundles.Base.Fields.QuoteDataEditablelistbutton', function() {
             });
         });
 
+        afterEach(function() {
+            addClassStub = null;
+            removeClassStub = null;
+        });
+
+        describe('inline-save field', function() {
+            beforeEach(function() {
+                field.name = 'inline-save';
+            });
+
+            it('should set changed = true if current model differs from synced', function() {
+                field.model.set('name', 'test1');
+                sinon.collection.stub(field.model, 'getSynced', function() {
+                    return '';
+                });
+                field._render();
+
+                expect(field.changed).toBeTruthy();
+            });
+
+            it('should not set changed if current model is same as synced', function() {
+                field.model.set('name', 'test1');
+                sinon.collection.stub(field.model, 'getSynced', function() {
+                    return 'test1';
+                });
+                field._render();
+
+                expect(field.changed).toBeUndefined();
+            });
+        });
+
         it('should add class higher if tplName is edit', function() {
             field.tplName = 'edit';
             field._render();
+
             expect(addClassStub).toHaveBeenCalled();
         });
 
         it('should remove class higher if tplName is not edit', function() {
             field.tplName = 'not-edit';
             field._render();
+
             expect(removeClassStub).toHaveBeenCalled();
         });
     });

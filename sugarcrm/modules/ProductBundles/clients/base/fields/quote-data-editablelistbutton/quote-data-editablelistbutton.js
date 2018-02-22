@@ -20,6 +20,15 @@
      * @inheritdoc
      */
     _render: function() {
+        var syncedName;
+
+        if (this.name === 'inline-save') {
+            syncedName = this.model.getSynced('name');
+            if (this.model.get('name') !== syncedName) {
+                this.changed = true;
+            }
+        }
+
         this._super('_render');
 
         if (this.tplName === 'edit') {
