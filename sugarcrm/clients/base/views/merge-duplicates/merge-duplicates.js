@@ -221,6 +221,13 @@
     generatedValues: null,
 
     /**
+     * Variable to store a copy of primary record's model for showing it
+     * on preview panel
+     * @property {Backbone.Model} previewModel Contains copy of primary record.
+     */
+    previewModel: {},
+
+    /**
      * @inheritdoc
      *
      * Initialize merge collection as collection of selected records and
@@ -796,8 +803,26 @@
      */
     updatePreviewRecord: function(model) {
         var module = model.module || model.get('module');
-        var previewCollection = app.data.createBeanCollection(module, [model]);
-        app.events.trigger('preview:render', model, previewCollection, false);
+        var previewCollection;
+
+        // FIXME PX-15: Hack-fix for re-enabling sync on preview panel launch
+        // We had to get the delta for primary record from current state until
+        // now and reapply all of them after preview is synced
+        if (_.isEmpty(this.previewModel) || this.previewModel.get('id') !== model.get('id')) {
+            this.previewModel = app.data.createBean(module, model.toJSON());
+            previewCollection = app.data.createBeanCollection(module, [this.previewModel]);
+
+            this.previewModel.setOption({
+                success: function(changedModel) {
+                    var changedAttributes = model.changedAttributes(model.getSynced());
+                    changedModel.set(_.mapObject(changedAttributes, function(value, fieldName) {
+                        return model.get(fieldName);
+                    }, this));
+                }
+            });
+        }
+
+        app.events.trigger('preview:render', this.previewModel, previewCollection, false);
         app.events.trigger('preview:open', true);
     },
 
@@ -1047,6 +1072,15 @@
         this.primaryRecord = model;
 
         this.primaryRecord.on('change', function(model) {
+            // Reapply every change on preview model
+            if (!_.isEmpty(this.previewModel)) {
+                var changedAttributes = this.primaryRecord.changedAttributes();
+
+                this.previewModel.set(_.mapObject(changedAttributes, function(value, fieldName) {
+                    return this.primaryRecord.get(fieldName);
+                }, this));
+            }
+
             this.updatePrimaryTitle(app.utils.getRecordName(this.primaryRecord));
         }, this);
 

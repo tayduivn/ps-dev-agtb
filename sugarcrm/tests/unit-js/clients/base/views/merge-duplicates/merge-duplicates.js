@@ -11,10 +11,9 @@
 describe('View.Views.BaseMergeDuplicatesView', function() {
 
     var view, layout, app;
+    var module = 'Contacts';
 
     beforeEach(function() {
-        var module = 'Contacts',
-            context = null;
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'merge-duplicates');
@@ -39,6 +38,7 @@ describe('View.Views.BaseMergeDuplicatesView', function() {
         layout.dispose();
         app.view.reset();
         SugarTest.testMetadata.dispose();
+        sinon.collection.restore();
     });
 
     using('fields on merge view', [
@@ -106,6 +106,20 @@ describe('View.Views.BaseMergeDuplicatesView', function() {
     ], function(data) {
         it('should show as editable on merge view', function() {
             expect(view.validMergeField(data.field)).toBe(data.expectedResult);
+        });
+    });
+
+    describe('updatePreviewRecord', function() {
+        it('should create the preview panel for the merge result', function() {
+            var triggerStub = sinon.collection.stub(app.events, 'trigger');
+            var bean = app.data.createBean(module);
+            var previewBean = app.data.createBean(module, bean.toJSON());
+            var previewCollection = app.data.createBeanCollection(module, [previewBean]);
+            sinon.collection.stub(app.data, 'createBean').returns(previewBean);
+            sinon.collection.stub(app.data, 'createBeanCollection').returns(previewCollection);
+            view.updatePreviewRecord(bean);
+            expect(triggerStub).toHaveBeenCalledWith('preview:render', previewBean, previewCollection, false);
+            expect(triggerStub).toHaveBeenCalledWith('preview:open', true);
         });
     });
 
