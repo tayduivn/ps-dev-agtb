@@ -37,7 +37,7 @@ function getMLARoles()
             'Cases' => array('admin' => 100, 'access' => 89),
             'KBContents' => array('admin' => 100, 'access' => 89),
         ),
-        'Data Protection Officer' => array(
+        'Data Privacy Manager' => array(
             'DataPrivacy' => array('admin' => 100, 'access' => 89),
             'Contacts' => array('admin' => 100, 'access' => 89),
             'Leads' => array('admin' => 100, 'access' => 89),

@@ -10,8 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $mod_strings = array(
-    'LBL_MODULE_NAME' => 'Data Privacy Management',
-    'LBL_MODULE_NAME_SINGULAR' => 'Data Privacy Management',
+    'LBL_MODULE_NAME' => 'Data Privacy',
+    'LBL_MODULE_NAME_SINGULAR' => 'Data Privacy',
     'LBL_NUMBER' => 'Number',
     'LBL_TYPE' => 'Type',
     'LBL_SOURCE' => 'Source',
