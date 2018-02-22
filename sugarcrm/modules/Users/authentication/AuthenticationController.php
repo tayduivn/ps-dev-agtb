@@ -127,7 +127,6 @@ class AuthenticationController implements LoggerAwareInterface
 	public function login($username, $password, $params = array())
 	{
 		//kbrill bug #13225
-		$_SESSION['loginAttempts'] = (isset($_SESSION['loginAttempts']))? $_SESSION['loginAttempts'] + 1: 1;
 		unset($GLOBALS['login_error']);
 
 		if($this->loggedIn)return $this->loginSuccess;
@@ -223,7 +222,6 @@ class AuthenticationController implements LoggerAwareInterface
 			    LogicHook::initialize();
 			    $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
 			}
-            $this->logger->fatal('FAILED LOGIN:attempts[' .$_SESSION['loginAttempts'] .'] - '. $username);
 		}
 		// if password has expired, set a session variable
 

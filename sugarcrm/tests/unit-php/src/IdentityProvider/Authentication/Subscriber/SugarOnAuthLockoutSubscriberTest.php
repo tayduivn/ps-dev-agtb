@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Subscriber;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
@@ -77,8 +78,8 @@ class SugarOnAuthLockoutSubscriberTest extends \PHPUnit_Framework_TestCase
             'lockUser' => [
                 'username' => 'userName2',
                 'method' => 'lockout',
-                'userLoginFailed' => 1,
-                'lockoutExpirationLogin' => 2,
+                'userLoginFailed' => 3,
+                'lockoutExpirationLogin' => 3,
                 'count' => $this->exactly(2),
             ],
         ];
@@ -183,8 +184,8 @@ class SugarOnAuthLockoutSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('isEnabled')
             ->willReturn(false);
 
-        $this->token->expects($this->never())->method('getUsername');
-        $this->userProvider->expects($this->never())->method('loadUserByUsername');
+        $this->token->expects($this->once())->method('getUsername')->willReturn('username');
+        $this->userProvider->expects($this->once())->method('loadUserByUsername')->willReturn(null);
         $this->lockout->expects($this->never())->method('getFailedLoginsCount');
         $this->user->expects($this->never())->method('getLoginFailed');
         $this->user->expects($this->never())->method('lockout');
@@ -290,5 +291,7 @@ class SugarOnAuthLockoutSubscriberTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->token);
 
         $this->subscriber = new SugarOnAuthLockoutSubscriber($this->lockout, $this->userProvider);
+
+        TestReflection::setProtectedValue($this->subscriber, 'logger', $this->createMock(\LoggerManager::class));
     }
 }

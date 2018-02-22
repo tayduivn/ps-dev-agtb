@@ -14,17 +14,23 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\AuthenticationEvents;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+
 /**
  * example subscriber
  */
-class SugarOnAuthLockoutSubscriber implements EventSubscriberInterface
+class SugarOnAuthLockoutSubscriber implements EventSubscriberInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var Lockout
      */
@@ -43,6 +49,7 @@ class SugarOnAuthLockoutSubscriber implements EventSubscriberInterface
     {
         $this->lockout = $lockout;
         $this->userProvider = $userProvider;
+        $this->setLogger(LoggerFactory::getLogger('authentication'));
     }
 
     /**
@@ -81,22 +88,27 @@ class SugarOnAuthLockoutSubscriber implements EventSubscriberInterface
      */
     public function onFailure(AuthenticationEvent $event)
     {
+        $username = $event->getAuthenticationToken()->getUsername();
+        /** @var User $user */
+        $user = $this->userProvider->loadUserByUsername($username);
+        if ($user) {
+            $user->incrementLoginFailed();
+            $this->logger->fatal('FAILED LOGIN:attempts[' . $user->getLoginFailed() .'] - '. $username);
+        } else {
+            $this->logger->fatal('FAILED LOGIN: ' . $username);
+        }
+
         if (!$this->lockout->isEnabled()) {
             return;
         }
 
-        /** @var User $user */
-        $user = $this->userProvider->loadUserByUsername($event->getAuthenticationToken()->getUsername());
         if (!$user) {
             return;
         }
 
-        if (($user->getLoginFailed() + 1) >= $this->lockout->getFailedLoginsCount()) {
+        if ($user->getLoginFailed() >= $this->lockout->getFailedLoginsCount()) {
             $user->lockout($this->lockout->getTimeDate()->nowDb());
-        } else {
-            $user->incrementLoginFailed();
         }
-        
         return;
     }
 }
