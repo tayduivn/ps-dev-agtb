@@ -4317,7 +4317,27 @@ Sincerely, SugarCRM',
 
     'LBL_FUTURE' => 'Future',
     'LBL_REQUIRED_FIELD' => 'Required',
-    // for nomad mobile
+
+    // For nomad mobile
+    // start of: Quotes related
+    'LBL_QLI_SINGLE_TITLE' => 'Quoted Line Item',
+    'LBL_DISCOUNT_TOTAL' => 'Discount total',
+    'LBL_TAX' => 'Tax',
+    'LBL_SHIPPING' => 'Shipping',
+    'LBL_GRAND_TOTAL' => 'Grand Total',
+    'LBL_QUOTES_POPULATE_ADDRESS' => 'Auto populate billing address from Account profile',
+    'LBL_QLI_ADD_GROUP' => 'Add a Group',
+    'LBL_QLI_COMMENT' => 'Comment',
+    'LBL_SELECT_ACTION' => 'Select Action',
+    'LBL_QLI_GROUP_NAME' => 'Group Name',
+    'LBL_GROUP_TOTAL' => 'Group Total',
+    'LBL_ITEM_NAME' => 'Line Item',
+    'LBL_QLI_DELETE' => 'Are you sure you want to delete this line item?',
+    'LBL_QLI_COMMENT_DELETE' => 'Are you sure you want to delete this line item comment?',
+    'LBL_QLI_GROUP_DELETE' => 'Do you really want to delete group {0}? All items will be moved to default group.',
+    'LBL_QLI_GROUP_EMPTY' => 'No Quoted Line Item',
+    // end of: Quotes related
+
     'LBL_OPTIONAL' => 'Optional',
     'LBL_RELATED_MODULE' => 'Related {{{this}}}',
     'LBL_RELATED_MODULE_PLURAL' => 'Related {{{this}}}',
