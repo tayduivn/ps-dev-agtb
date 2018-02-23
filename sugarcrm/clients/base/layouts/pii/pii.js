@@ -11,9 +11,11 @@
 /**
  * @class View.Layouts.Base.PiiLayout
  * @alias SUGAR.App.view.layouts.BasePiiLayout
- * @extends View.Layout
+ * @extends View.Layouts.Base.DefaultLayout
  */
 ({
+    extendsFrom: 'DefaultLayout',
+
     plugins: ['ShortcutSession'],
 
     shortcuts: ['PiiHeaderPanel:Close']

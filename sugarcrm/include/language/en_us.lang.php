@@ -3430,6 +3430,7 @@ Sincerely, SugarCRM',
     'LNK_REMOVE' => 'remove',
     'LNK_RESUME' => 'Resume',
     'LNK_VIEW_CHANGE_LOG' => 'View Audit Log',
+    'TPL_AUDIT_LOG_TITLE' => 'Audit Log for {{{name}}}',
 
     'NTC_CLICK_BACK' => 'Please click the browser back button and fix the error.',
     'NTC_DATE_FORMAT' => '(yyyy-mm-dd)',
@@ -5374,6 +5375,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_DATAPRIVACY_CHANGE_DATE' => 'Change Date',
     'LBL_DATAPRIVACY_PII' => 'PII',
     'LBL_DATAPRIVACY_MARK_FOR_ERASURE' => 'Mark for Erasure',
+    'TPL_DATAPRIVACY_PII_TITLE' => 'PII for {{{name}}}',
 );
 
 $app_list_strings['activity_user_options'] = array (
