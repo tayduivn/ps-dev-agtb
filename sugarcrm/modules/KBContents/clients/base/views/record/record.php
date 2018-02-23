@@ -95,7 +95,7 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                     'type' => 'rowaction',
                     'event' => 'button:audit_button:click',
                     'name' => 'audit_button',
-                    'label' => 'LNK_VIEW_AUDIT_LOG',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
                     'acl_action' => 'view',
                 ),
                 array(
