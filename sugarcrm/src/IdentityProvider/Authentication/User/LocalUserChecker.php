@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\ExternalAuthUserException;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -28,7 +28,7 @@ class LocalUserChecker extends SugarUserChecker
     /**
      * @inheritdoc
      *
-     * @throws InvalidUserException
+     * @throws ExternalAuthUserException
      */
     public function checkPreAuth(UserInterface $user)
     {
@@ -37,7 +37,9 @@ class LocalUserChecker extends SugarUserChecker
         // There is a checkbox in User's profile - External (LDAP, SAML) auth only.
         // If it's on, User is not allowed to use local Sugar authentication, but only an external one.
         if (!empty($user->getSugarUser()->external_auth_only)) {
-            throw new InvalidUserException('External auth only User is not allowed to login using Sugar credentials.');
+            throw new ExternalAuthUserException(
+                'External auth only user is not allowed to login using Sugar credentials.'
+            );
         }
     }
 }

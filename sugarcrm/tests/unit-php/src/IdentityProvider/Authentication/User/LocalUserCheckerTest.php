@@ -64,7 +64,7 @@ class LocalUserCheckerTest extends \PHPUnit_Framework_TestCase
      *
      * @param mixed $externalAuthOnlyValue
      *
-     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException
+     * @expectedException \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\ExternalAuthUserException
      */
     public function testCheckPreAuthOfUserWithExternalAuthOnly($externalAuthOnlyValue)
     {

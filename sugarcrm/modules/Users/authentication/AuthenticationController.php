@@ -14,6 +14,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedU
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\PermanentLockedUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InvalidUserException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\ExternalAuthUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
@@ -162,6 +163,9 @@ class AuthenticationController implements LoggerAwareInterface
             $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = $this->getMessageForProviderException($e);
         } catch (InvalidUserException $e) {
+            $this->logger->error($e->getMessage());
+            $_SESSION['login_error'] = $this->getMessageForProviderException($e);
+        } catch (ExternalAuthUserException $e) {
             $this->logger->error($e->getMessage());
             $_SESSION['login_error'] = $this->getMessageForProviderException($e);
         } catch (\Exception $e) {
@@ -339,6 +343,9 @@ class AuthenticationController implements LoggerAwareInterface
     {
         if ($exception instanceof InvalidUserException) {
             return translate('LBL_LOGIN_PORTAL_GROUP_CANT_LOGIN');
+        } elseif ($exception instanceof ExternalAuthUserException) {
+            return translate('ERR_INVALID_PASSWORD', 'Users') . ' ' .
+                translate('LBL_EXTERNAL_USER_CANT_LOGIN', 'Users');
         } elseif ($exception instanceof InactiveUserException) {
             return translate('LBL_LOGIN_INACTIVE_USER');
         } else {
