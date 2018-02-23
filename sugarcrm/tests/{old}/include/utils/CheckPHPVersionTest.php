@@ -15,19 +15,11 @@ class CheckPHPVersionTest extends Sugar_PHPUnit_Framework_TestCase
     public function providerPhpVersion()
     {
         return array(
-            array('4.2.1', -1, 'Minimum valid version check failed.'),
-            array('5.2.1', -1, 'Minimum valid version check failed.'),
-            array('5.3.0.dev', -1, 'Minimum valid version check failed.'),
-            array('5.3.0', -1, 'Minimum valid version check failed.'),
-            array('5.3.25', -1, 'Minimum valid version check failed.'),
-            array('5.4.0', -1, 'Minimum valid version check failed.'),
-            array('5.5.0', -1, 'Minimum valid version check failed.'),
-            array('5.6.0.dev', -1, 'Minimum valid version check failed.'),
-            array('5.6.0', 1, 'Supported version check Passed'),
-            array('7.0.0', 1, 'Supported version check Passed'),
-            array('7.1.0', 1, 'Supported version check Passed'),
-            array('7.2.0.dev', -1, 'Threshold Check Failed'),
+            array('5.6.0', -1, 'Minimum valid version check failed.'),
+            array('7.1.0-dev', -1, 'Minimum valid version check failed.'),
+            array('7.1.0', 1, 'Supported version check Failed'),
             array('7.2.0', -1, 'Threshold Check Failed'),
+            array('7.2.0-dev', -1, 'Threshold Check Failed'),
         );
     }
 

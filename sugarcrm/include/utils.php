@@ -1188,9 +1188,7 @@ function return_module_language($language, $module, $refresh=false)
         $message = "Variable module is not in return_module_language ";
         //If any object in the stack contains a circular reference,
         //debug_backtrace will cause a fatal recursive dependency error without DEBUG_BACKTRACE_IGNORE_ARGS
-        if (version_compare(PHP_VERSION, '5.3.6') >= 0) {
-            $message .= var_export(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), true);
-        }
+        $message .= var_export(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), true);
         $GLOBALS['log']->warn($message);
 
         return array();
@@ -3148,63 +3146,16 @@ function decodeJavascriptUTF8($str)
 function check_php_version($sys_php_version = '')
 {
     $sys_php_version = empty($sys_php_version) ? constant('PHP_VERSION') : $sys_php_version;
-    // versions below $min_considered_php_version considered invalid by default,
-    // versions equal to or above this ver will be considered depending
-    // on the rules that follow
-    $min_considered_php_version = '5.6.0';
-    //always use .unsupported to make sure that the dev/beta/rc releases are excluded as well
 
-    $version_threshold  = '7.2.unsupported';
-
-    // only the supported versions,
-    // should be mutually exclusive with $invalid_php_versions
-    $supported_php_versions = array (
-        //'5.6.0'
-    );
-
-    // invalid versions above the $min_considered_php_version,
-    // should be mutually exclusive with $supported_php_versions
-
-    // SugarCRM prohibits install on PHP 5.2.7 on all platforms
-    $invalid_php_versions = array(
-        //'5.2.7'
-    );
-
-    // default unsupported
-    $retval = 1;
-
-    // versions below $min_considered_php_version are invalid
-    if (1 == version_compare($sys_php_version, $min_considered_php_version, '<')) {
-        $retval = -1;
+    if (version_compare($sys_php_version, '7.1.0', '<')) {
+        return -1;
     }
 
-    if (1 == version_compare($sys_php_version, $version_threshold, '>')) {
-        $retval = -1;
+    if (version_compare($sys_php_version, '7.2.0-dev', '>=')) {
+        return -1;
     }
 
-    // supported version check overrides default unsupported
-    foreach ($supported_php_versions as $ver) {
-        if (1 == version_compare($sys_php_version, $ver, 'eq') || strpos($sys_php_version,$ver) !== false) {
-            $retval = 1;
-            break;
-        }
-    }
-
-    // invalid version check overrides default unsupported
-    foreach ($invalid_php_versions as $ver) {
-        if (1 == version_compare($sys_php_version, $ver, 'eq') && strpos($sys_php_version,$ver) !== false) {
-            $retval = -1;
-            break;
-        }
-    }
-
-    //allow a redhat distro to install, regardless of version.  We are assuming the redhat naming convention is followed
-    //and the php version contains 'rh' characters
-    if (strpos($sys_php_version, 'rh') !== false) {
-        $retval = 1;
-    }
-
-    return $retval;
+    return 1;
 }
 
 /**
@@ -4555,28 +4506,6 @@ function code2utf($num)
     return '';
 }
 
-function str_split_php4($string, $length = 1)
-{
-    $string_length = strlen($string);
-    $return = array();
-    $cursor = 0;
-    if ($length > $string_length) {
-        // use the string_length as the string is shorter than the length
-        $length = $string_length;
-    }
-    for ($cursor = 0; $cursor < $string_length; $cursor = $cursor + $length) {
-        $return[] = substr($string, $cursor, $length);
-    }
-
-    return $return;
-}
-
-if (version_compare(phpversion(), '5.0.0', '<')) {
-    function str_split($string, $length = 1)
-    {
-        return str_split_php4($string, $length);
-    }
-}
 
 /**
  * Chart dashlet helper function that returns the correct CSS file, dependent on the current theme.

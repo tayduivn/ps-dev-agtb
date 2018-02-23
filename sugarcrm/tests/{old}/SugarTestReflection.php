@@ -16,25 +16,7 @@
 class SugarTestReflection
 {
     protected static $supported;
-    
-    /**
-     * This verifies that the PHP we are running on is new enough for this fanciness
-     * @return bool
-     */
-    public static function isSupported()
-    {
-        if (isset(self::$supported)) {
-            return self::$supported;
-        }
-        if (version_compare(PHP_VERSION, '5.3.0') < 0) {
-            self::$supported = false;
-        } else {
-            self::$supported = true;
-        }
-        
-        return self::$supported;
-    }
-    
+
     public static function callProtectedMethod($classOrObject, $method, $args = array())
     {
         $rm = new ReflectionMethod($classOrObject, $method);

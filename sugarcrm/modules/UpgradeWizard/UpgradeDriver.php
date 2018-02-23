@@ -619,11 +619,14 @@ abstract class UpgradeDriver
 
     /**
      * Preflight check for PHP version
+     * This function is called before upgrade package is extracted.
+     * Therefore can not make use of check_php_version().
+     * Every time supported PHP version is changed, this function should be updated.
      */
     protected function preflightPHP()
     {
-        if (version_compare(PHP_VERSION, "5.3.0", '<')) {
-            return $this->error("PHP versions below 5.3.0 are not supported!", true);
+        if (version_compare(PHP_VERSION, '7.1.0', '<')) {
+            return $this->error("PHP versions below 7.1.0 are not supported!", true);
         }
         return true;
     }

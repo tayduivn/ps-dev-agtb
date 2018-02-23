@@ -96,11 +96,6 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->markTestIncomplete("SugarApi needs a user to pass along to other objects, and user is not getting passed along. Sending to FRM for fix.");
         
-        if ( !SugarTestReflection::isSupported() ) {
-            $this->markTestSkipped("Need a newer version of PHP, 5.3.2 is the minimum for this test");
-        }
-
-
         $apiMock = $this->createPartialMock('SugarApi', array('htmlDecodeReturn', 'trackAction'));
         $apiMock->expects($this->any())
                 ->method('htmlDecodeReturn');

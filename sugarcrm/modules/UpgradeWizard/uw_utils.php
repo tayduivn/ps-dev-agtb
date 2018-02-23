@@ -922,17 +922,15 @@ function checkSystemCompliance() {
 	$ret = array();
 	$ret['error_found'] = false;
 
+    require_once 'include/utils.php';
 	// PHP version
 	$php_version = constant('PHP_VERSION');
-	$check_php_version_result = check_php_version($php_version);
+    $check_php_version_result = check_php_version();
 
 	switch($check_php_version_result) {
 		case -1:
 			$ret['phpVersion'] = "<b><span class=stop>{$installer_mod_strings['ERR_CHECKSYS_PHP_INVALID_VER']} {$php_version} )</span></b>";
 			$ret['error_found'] = true;
-			break;
-		case 0:
-			$ret['phpVersion'] = "<b><span class=go>{$installer_mod_strings['ERR_CHECKSYS_PHP_UNSUPPORTED']} {$php_version} )</span></b>";
 			break;
 		case 1:
 			$ret['phpVersion'] = "<b><span class=go>{$installer_mod_strings['LBL_CHECKSYS_PHP_OK']} {$php_version} )</span></b>";
