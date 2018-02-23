@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users;
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdpConfig;
+
 /**
  * @coversDefaultClass \UsersApiHelper
  */
@@ -37,17 +39,35 @@ class UsersApiHelperTest extends \PHPUnit_Framework_TestCase
      */
     protected $primaryEmailLink;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject | IdpConfig
+     */
+    protected $IdpConfig;
+
     protected function setUp()
     {
+        $this->IdpConfig = $this->createMock(IdpConfig::class);
+        $this->IdpConfig
+            ->method('isOIDCEnabled')
+            ->willReturn(true);
+        $this->IdpConfig
+            ->method('getOidcDisabledFields')
+            ->willReturn([
+                'user_name' => [
+                    'name' => 'user_name',
+                    'oidc_disabled' => true,
+                ],
+                'first_name' => [
+                    'name' => 'first_name',
+                    'oidc_disabled' => true,
+                ],
+            ]);
+
         $this->userApiHelper = $this->getMockBuilder(\UsersApiHelper::class)
             ->disableOriginalConstructor()
-            ->setMethods(['isOidcEnabled', 'getOidcDisabledFields', 'sanitizeSubmittedData'])
+            ->setMethods(['getIdpConfig', 'sanitizeSubmittedData'])
             ->getMock();
-
-        $this->userApiHelper->expects($this->any())->method('isOidcEnabled')->willReturn(true);
-        $this->userApiHelper->expects($this->any())
-            ->method('getOidcDisabledFields')
-            ->willReturn(['user_name', 'first_name']);
+        $this->userApiHelper->method('getIdpConfig')->willReturn($this->IdpConfig);
 
         $this->user = $this->getMockBuilder(\User::class)
             ->disableOriginalConstructor()

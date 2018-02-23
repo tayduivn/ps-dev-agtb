@@ -150,6 +150,28 @@ class Config
     }
 
     /**
+     * return oidc disabled fields
+     * @return array
+     */
+    public function getOidcDisabledFields()
+    {
+        return array_filter($this->getUserVardef(), function ($def) {
+            return !empty($def['oidc_disabled']);
+        });
+    }
+
+    /**
+     *
+     * Used to retrieve the field defs for a Users module
+     *
+     * @return array
+     */
+    protected function getUserVardef()
+    {
+        return \VardefManager::getFieldDefs('Users');
+    }
+
+    /**
      * Get default config for php-saml library
      *
      * @return array

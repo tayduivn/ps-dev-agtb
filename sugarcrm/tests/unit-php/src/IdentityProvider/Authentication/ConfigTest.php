@@ -775,4 +775,42 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($result, $config->buildCloudConsoleUrl($pathKey, $parts));
     }
+
+     /**
+     * @covers ::getOidcDisabledFields
+     */
+    public function testGetOidcDisabledFields()
+    {
+        $varDefFields = [
+            'pwd_last_changed' => [
+                'name' => 'pwd_last_changed',
+            ],
+            'user_name' => [
+                'name' => 'user_name',
+                'oidc_disabled' => true,
+            ],
+            'id' => [
+                'name' => 'id',
+            ],
+            'first_name' => [
+                'name' => 'first_name',
+                'oidc_disabled' => true,
+            ],
+            'sugar_login' => [
+                'name' => 'sugar_login',
+            ],
+        ];
+        $expectedList = [
+            'user_name' => $varDefFields['user_name'],
+            'first_name' => $varDefFields['first_name'],
+        ];
+
+        $config = $this->getMockBuilder(Config::class)
+            ->setMethods(['getUserVardef'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $config->method('getUserVardef')->willReturn($varDefFields);
+
+        $this->assertEquals($expectedList, $config->getOidcDisabledFields());
+    }
 }

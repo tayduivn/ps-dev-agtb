@@ -15,10 +15,9 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 class UsersApiHelper extends SugarBeanApiHelper
 {
     /**
-     * is OIDC auth provider enabled?
-     * @var bool
+     * @var Config
      */
-    protected $isOidcEnabled;
+    protected $idpConfig = null;
 
     /**
      * Formats the bean so it is ready to be handed back to the API's client.
@@ -59,7 +58,7 @@ class UsersApiHelper extends SugarBeanApiHelper
 
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
-        if ($this->isOidcEnabled()) {
+        if ($this->getIdpConfig()->isOIDCEnabled()) {
             $submittedData = $this->filterOidcDisabledFields($bean, $submittedData);
         }
         parent::populateFromApi($bean, $submittedData, $options);
@@ -82,22 +81,11 @@ class UsersApiHelper extends SugarBeanApiHelper
      */
     protected function filterOidcDisabledFields(SugarBean $bean, array $submittedData)
     {
-        $submittedData = array_diff_key($submittedData, array_flip($this->getOidcDisabledFields()));
+        $submittedData = array_diff_key($submittedData, $this->getIdpConfig()->getOidcDisabledFields());
         if (!empty($submittedData['email'])) {
             $submittedData['email'] = $this->filterEmailField($bean, $submittedData['email']);
         }
         return $submittedData;
-    }
-
-    /**
-     * return oidc disabled fields
-     * @return array
-     */
-    protected function getOidcDisabledFields()
-    {
-        return array_keys(array_filter(VardefManager::getFieldDefs('Users'), function ($def) {
-            return !empty($def['oidc_disabled']);
-        }));
     }
 
     /**
@@ -159,14 +147,14 @@ class UsersApiHelper extends SugarBeanApiHelper
     }
 
     /**
-     * Is OIDC enabled?
-     * @return bool
+     * Return idp config
+     * @return Config
      */
-    protected function isOidcEnabled()
+    protected function getIdpConfig()
     {
-        if (!isset($this->isOidcEnabled)) {
-            $this->isOidcEnabled = (new Config(SugarConfig::getInstance()))->isOIDCEnabled();
+        if (is_null($this->idpConfig)) {
+            $this->idpConfig = new Config(\SugarConfig::getInstance());
         }
-        return $this->isOidcEnabled;
+        return $this->idpConfig;
     }
 }

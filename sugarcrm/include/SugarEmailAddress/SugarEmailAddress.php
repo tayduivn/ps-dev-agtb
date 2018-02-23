@@ -13,6 +13,8 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 use Doctrine\DBAL\Connection;
+use Sugarcrm\IdentityProvider\Srn;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
 
 class SugarEmailAddress extends SugarBean
 {
@@ -1026,6 +1028,26 @@ class SugarEmailAddress extends SugarBean
             $this->smarty = new Sugar_Smarty();
 
         global $app_strings, $dictionary, $beanList;
+
+        $idmConfig = new IdmConfig(\SugarConfig::getInstance());
+        $disabledForModule = $idmConfig->isOIDCEnabled() && in_array($module, $idmConfig->getOidcDisabledModules());
+        $cloudConsoleUrl = '';
+        if ($disabledForModule) {
+            $oidcConfig = $idmConfig->getOIDCConfig();
+            $tenantSrn = Srn\Converter::fromString($oidcConfig['tid']);
+            $srnManagerConfig = [
+                'partition' => $tenantSrn->getPartition(),
+                'region' => $tenantSrn->getRegion(),
+                'cloudServiceName' => $oidcConfig['idpServiceName'],
+            ];
+            $srnManager = new Srn\Manager($srnManagerConfig);
+            $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $id);
+            $cloudConsoleUrl = $idmConfig->buildCloudConsoleUrl('userProfile', [Srn\Converter::toString($userSrn)]);
+        }
+        $this->smarty->assign('oidc', json_encode([
+            'disabledForModule' => $disabledForModule,
+            'cloudConsoleUrl' => $cloudConsoleUrl,
+        ]));
 
         // SugarBean shouldn't rely on any request parameters, needs refactoring ...
         $request = InputValidation::getService();
