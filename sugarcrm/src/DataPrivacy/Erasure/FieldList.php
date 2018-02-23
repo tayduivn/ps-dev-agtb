@@ -147,9 +147,10 @@ class FieldList implements Field, Countable
     private static function createEmailField(array $array) : Email
     {
         if (!isset($array['id'])) {
-            throw new InvalidArgumentException(
-                'The array representation of an email field must contain the "id" element'
-            );
+            $array['id'] = '';
+//            throw new InvalidArgumentException(
+//                'The array representation of an email field must contain the "id" element'
+//            );
         }
 
         return new Email($array['id']);

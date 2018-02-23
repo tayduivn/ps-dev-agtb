@@ -61,6 +61,7 @@ class FieldListTest extends \PHPUnit_Framework_TestCase
      */
     public function createEmailFieldFailure()
     {
+        $this->markTestSkipped('Re-enabled once Audit/Erase Email Addresses is completed');
         $this->expectException(InvalidArgumentException::class);
         FieldList::fromArray([
             [
