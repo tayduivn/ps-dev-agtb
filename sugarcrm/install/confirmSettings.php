@@ -434,6 +434,5 @@ $sugar_smarty->assign('spriteSupportStatus', $spriteSupportStatus);
 $sugar_smarty->assign('suhosinStatus', $suhosinStatus);
 $sugar_smarty->assign('uploadStream', $uploadStream);
 $sugar_smarty->assign('phpIniLocation', $phpIniLocation);
-$sugar_smarty->assign('warningsLocalhost', $warningsLocalhost);
 
 $sugar_smarty->display("install/templates/confirmSettings.tpl");
