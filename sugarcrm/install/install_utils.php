@@ -906,16 +906,39 @@ function handleSidecarConfig()
 }
 
 /**
+ * Returns regular expressin patterns of the paths which should be forbidden to access form the web
+ *
+ * @return string[]
+ */
+function getForbiddenPaths()
+{
+    return [
+        '\.git',
+        '\.log$',
+        '^bin/',
+        '^cache/diagnostic/',
+        '^composer\.(json|lock)$',
+        '^cron\.php$',
+        '^custom/blowfish/',
+        '^dist/',
+        '^emailmandelivery\.php$',
+        '^files\.md5$',
+        '^src/',
+        '^upload/',
+        '^vendor/(?!ytree.*\.(css|gif|js|png)$)',
+// @codingStandardsIgnoreStart
+        '^(cache|clients|data|examples|include|jssource|log4php|metadata|ModuleInstall|modules|soap|xtemplate)/.*\.(php|tpl)$',
+// @codingStandardsIgnoreEnd
+    ];
+}
+
+/**
  * Set up proper .htaccess content
  */
 function getHtaccessData($htaccess_file)
 {
     global $sugar_config;
-    if(!empty($_SERVER['SERVER_SOFTWARE'])) {
-        $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
-    } else {
-        $ignoreCase = '';
-    }
+
     $contents = '';
 
     // Adding RewriteBase path for vhost and alias configurations
@@ -923,7 +946,6 @@ function getHtaccessData($htaccess_file)
     if(empty($basePath)) $basePath = '/';
 
     $restrict_str = <<<EOQ
-
 # BEGIN SUGARCRM RESTRICTIONS
 
 EOQ;
@@ -932,7 +954,6 @@ EOQ;
         $restrict_str .= "php_value suhosin.executor.include.whitelist upload\n";
     }
 
-    // @codingStandardsIgnoreStart
     $restrict_str .= <<<EOQ
 # Fix mimetype for logo.svg (SP-1395)
 AddType     image/svg+xml     .svg
@@ -944,19 +965,14 @@ AddType     application/javascript  .js
     RewriteEngine On
     RewriteBase {$basePath}
 
-    RewriteRule {$ignoreCase}\.git - [F]
-    RewriteRule {$ignoreCase}\.log$ - [F]
-    RewriteRule {$ignoreCase}^bin/ - [F]
-    RewriteRule {$ignoreCase}^cache/+diagnostic - [F]
-    RewriteRule {$ignoreCase}^composer\.(json|lock)$ - [F]
-    RewriteRule {$ignoreCase}^custom/+blowfish - [F]
-    RewriteRule {$ignoreCase}^dist/ - [F]
-    RewriteRule {$ignoreCase}^emailmandelivery\.php$ - [F]
-    RewriteRule {$ignoreCase}^files\.md5$ - [F]
-    RewriteRule {$ignoreCase}^src/ - [F]
-    RewriteRule {$ignoreCase}^upload/ - [F]
-    RewriteRule {$ignoreCase}^vendor/+(?!ytree.*\.(css|gif|js|png)$) - [F]
-    RewriteRule {$ignoreCase}^(cache|clients|data|examples|include|jssource|log4php|metadata|ModuleInstall|modules|soap|xtemplate)/.*\.(php|tpl)$ - [F]
+EOQ;
+
+    foreach (getForbiddenPaths() as $path) {
+        $restrict_str .= sprintf('    RewriteRule (?i)%s - [F]', $path) . PHP_EOL;
+    }
+
+// @codingStandardsIgnoreStart
+    $restrict_str .= <<<EOQ
 
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
@@ -1037,6 +1053,7 @@ function handleHtaccess()
  * (re)write the web.config file to prevent browser access to the log file
  *
  * @param bool $iisCheck If upgrade running from CLI IIS_UrlRewriteModule not set. So for CliUpgrader can skip it
+ * @link https://docs.microsoft.com/en-us/iis/extensions/url-rewrite-module/url-rewrite-module-configuration-reference
  */
 function handleWebConfig($iisCheck = true)
 {
@@ -1044,49 +1061,7 @@ function handleWebConfig($iisCheck = true)
         return;
     }
 
-    global $setup_site_log_dir;
-    global $setup_site_log_file;
-    global $sugar_config;
-
-    // Bug 36968 - Fallback to using $sugar_config values when we are not calling this from the installer
-    if (empty($setup_site_log_file)) {
-        $setup_site_log_file = $sugar_config['log_file'];
-        if ( empty($sugar_config['log_file']) ) {
-            $setup_site_log_file = 'sugarcrm.log';
-        }
-    }
-    if (empty($setup_site_log_dir)) {
-        $setup_site_log_dir = $sugar_config['log_dir'];
-        if ( empty($sugar_config['log_dir']) ) {
-            $setup_site_log_dir = '.';
-        }
-    }
-
-    $prefix = $setup_site_log_dir.empty($setup_site_log_dir)?'':'/';
-
-
     $redirect_config_array = array(
-    array('1'=> $prefix.str_replace('.','\\.',$setup_site_log_file).'\\.*' ,'2'=>'log_file_restricted.html'),
-    array('1'=> $prefix.'install\.log' ,'2'=>'log_file_restricted.html'),
-    array('1'=> $prefix.'upgradeWizard\.log' ,'2'=>'log_file_restricted.html'),
-    array('1'=> $prefix.'emailman\.log' ,'2'=>'log_file_restricted.html'),
-    array('1'=>'not_imported_.*\.txt' ,'2'=>'log_file_restricted.html'),
-    array('1'=>'vendor/XTemplate/(.*)/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'data/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'examples/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'include/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'include/(.*)/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'vendor/log4php/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'vendor/log4php/(.*)/(.*)' ,'2'=>'index.php'),
-    array('1'=>'metadata/(.*)/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'modules/(.*)/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'clients/(.*)/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'jssource/(.*)/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'ModuleInstall/(.*)/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'soap/(.*)\.php$' ,'2'=>'index.php'),
-    array('1'=>'emailmandelivery\.php' ,'2'=>'index.php'),
-    array('1'=>'cron\.php' ,'2'=>'index.php'),
-    array('1'=> $sugar_config['upload_dir'].'.*' ,'2'=>'index.php'),
     array('1' => '^portal$', '2' => 'portal/'),
     );
 
@@ -1154,6 +1129,24 @@ function handleWebConfig($iisCheck = true)
             $xmldoc->startElement('rewrite');
             echo "<p>Rebuilding rewrite element</p>\n";
                 $xmldoc->startElement('rules');
+
+    $i = 0;
+
+    foreach (getForbiddenPaths() as $path) {
+        $xmldoc->startElement('rule');
+        $xmldoc->writeAttribute('name', sprintf('forbid-%02d', ++$i));
+        $xmldoc->writeAttribute('stopProcessing', 'true');
+        $xmldoc->startElement('match');
+        $xmldoc->writeAttribute('url', $path);
+        $xmldoc->endElement();
+        $xmldoc->startElement('action');
+        $xmldoc->writeAttribute('type', 'CustomResponse');
+        $xmldoc->writeAttribute('statusCode', '403');
+        $xmldoc->writeAttribute('statusReason', 'Forbidden by SugarCRM');
+        $xmldoc->endElement();
+        $xmldoc->endElement();
+    }
+
                 for ($i = 0; $i < count($redirect_config_array); $i++) {
                     $xmldoc->startElement('rule');
                         $xmldoc->writeAttribute('name', "redirect$i");
@@ -1708,7 +1701,7 @@ function pullSilentInstallVarsIntoSession() {
 
     if(isset($sugar_config_si['install_method']))
         $derived['install_method'] = $sugar_config_si['install_method'];
-    
+
     $needles = array(
         'setup_db_create_database',
         'setup_db_create_sugarsales_user',
