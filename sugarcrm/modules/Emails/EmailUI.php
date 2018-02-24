@@ -408,7 +408,7 @@ eoq;
 		global $app_list_strings,$current_user, $app_strings, $mod_strings,$current_language,$locale;
 
 		//Link drop-downs
-		$parent_types = $app_list_strings['record_type_display_emails'];
+        $parent_types = $app_list_strings['record_type_display'];
 		$disabled_parent_types = ACLController::disabledModuleList($parent_types, false, 'list');
 
 		foreach($disabled_parent_types as $disabled_parent_type) {
@@ -1612,7 +1612,7 @@ EOQ;
 
         $smarty->assign("userId",$email->assigned_user_id);
         $smarty->assign("userName",$email->assigned_user_name);
-        $parent_types = $app_list_strings['record_type_display_emails'];
+        $parent_types = $app_list_strings['record_type_display'];
         $smarty->assign('parentOptions', get_select_options_with_id($parent_types, $email->parent_type));
 
 		$quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . json_encode($sqs_objects) . '</script>';
@@ -1657,7 +1657,7 @@ EOQ;
 		//if not empty or set to test (from test campaigns)
 		if (!empty($focus->parent_type) && $focus->parent_type !='test') {
 			$smarty->assign('PARENT_MODULE', $focus->parent_type);
-			$smarty->assign('PARENT_TYPE', $app_list_strings['record_type_display_emails'][$focus->parent_type] . ":");
+            $smarty->assign('PARENT_TYPE', $app_list_strings['record_type_display'][$focus->parent_type] . ':');
 		}
 
         global $gridline;

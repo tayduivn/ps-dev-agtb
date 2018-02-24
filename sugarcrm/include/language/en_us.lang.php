@@ -662,6 +662,7 @@ $app_list_strings = array (
 
     'Tasks' => 'Task',
       'KBContents' => 'Knowledge Base',
+      'Notes' => 'Note',
   ),
 
   'record_type_display_notes' =>
@@ -687,23 +688,6 @@ $app_list_strings = array (
     'Calls' => 'Call',
       'KBContents' => 'Knowledge Base',
   ),
-    'record_type_display_emails' => array(
-        'Accounts' => 'Account',
-        'Contacts' => 'Contact',
-        'Tasks' => 'Task',
-        'Opportunities' => 'Opportunity',
-        'Products' => 'Quoted Line Item',
-        'Quotes' => 'Quote',
-        'Bugs' => 'Bug',
-        'Cases' => 'Case',
-        'Leads' => 'Lead',
-        'Project' => 'Project',
-        'ProjectTask' => 'Project Task',
-        'Prospects' => 'Target',
-        'Notes' => 'Note',
-        'Meetings' => 'Meeting',
-        'RevenueLineItems' => 'Revenue Line Item',
-    ),
     'record_type_display_emailparticipants' => array(
         'Accounts' => 'Account',
         'Contacts' => 'Contact',
@@ -731,7 +715,7 @@ $app_list_strings = array (
 
     'Prospects' => 'Target',
       'KBContents' => 'Knowledge Base',
-
+      'Notes' => 'Note',
   ),
 
   'product_status_default_key' => 'Ship',

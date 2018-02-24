@@ -236,7 +236,7 @@ if ($focus->type=='campaign' and !empty($_REQUEST['parent_id']) and !empty($_REQ
 if (!empty($focus->parent_type) && $focus->parent_type !='test') {
 	$xtpl->assign('PARENT_MODULE', $focus->parent_type);
 	$xtpl->assign('PARENT_TYPE_UNTRANSLATE', $focus->parent_type);
-    $xtpl->assign('PARENT_TYPE', $app_list_strings['record_type_display_emails'][$focus->parent_type] . ':');
+    $xtpl->assign('PARENT_TYPE', $app_list_strings['record_type_display'][$focus->parent_type] . ':');
 }
 
 $to_addr = !empty($focus->to_addrs_names) ? htmlspecialchars($focus->to_addrs_names, ENT_COMPAT, 'UTF-8') : nl2br($focus->to_addrs);

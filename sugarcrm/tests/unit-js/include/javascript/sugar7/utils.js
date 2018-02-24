@@ -599,7 +599,7 @@ describe("Sugar7 utils", function() {
             describe('populating the related fields', function() {
                 beforeEach(function() {
                     sandbox.stub(app.lang, 'getAppListStrings')
-                        .withArgs('record_type_display_emails')
+                        .withArgs('parent_type_display')
                         .returns({
                             Accounts: 'Account',
                             Contacts: 'Contact',
@@ -613,9 +613,8 @@ describe("Sugar7 utils", function() {
                             Project: 'Project',
                             ProjectTask: 'Project Task',
                             Prospects: 'Target',
-                            Notes: 'Note',
-                            Meetings: 'Meeting',
-                            RevenueLineItems: 'Revenue Line Item'
+                            KBContents: 'Knowledge Base',
+                            Notes: 'Note'
                         });
                     sandbox.stub(app.acl, 'hasAccess').withArgs('list').returns(true);
                 });
