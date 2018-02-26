@@ -255,13 +255,6 @@ $dictionary['Bug'] = array(
     ),
     'indices' => array(
         array(
-            'name' => 'bug_number',
-            'type' => 'unique',
-            'fields' => array(
-                'bug_number',
-            ),
-        ),
-        array(
             'name' => 'idx_bug_name',
             'type' => 'index',
             'fields' => array(

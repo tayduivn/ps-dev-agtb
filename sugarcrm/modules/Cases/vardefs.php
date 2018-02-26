@@ -206,13 +206,6 @@ $dictionary['Case'] = array(
     ),
     'indices' => array(
         array(
-            'name' => 'case_number',
-            'type' => 'unique',
-            'fields' => array(
-                'case_number',
-            ),
-        ),
-        array(
             'name' => 'idx_case_name',
             'type' => 'index',
             'fields' => array(
