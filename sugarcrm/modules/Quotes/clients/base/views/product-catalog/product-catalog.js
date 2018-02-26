@@ -272,6 +272,8 @@
      * @private
      */
     _createPhaser: function() {
+        var $el;
+        var gameConfig;
         var bootState;
         var loadState;
         var treeState;
@@ -331,14 +333,17 @@
             this.phaser.destroy();
         }
 
-        // use 100% for the width and 260px for the height
-        this.phaser = new Phaser.Game({
+        $el = this.$('#product-catalog-canvas-' + this.cid);
+        gameConfig = {
             height: 260,
             parent: 'product-catalog-canvas-' + this.cid,
             renderer: Phaser.CANVAS,
             transparent: true,
-            width: '100'
-        });
+            width: $el.width()
+        };
+
+        // use 100% for the width and 260px for the height
+        this.phaser = new Phaser.Game(gameConfig);
 
         this.phaser._view = this;
 
@@ -413,6 +418,7 @@
             iconTextPadding: 5,
             iconWidth: 16,
             iconHeight: 16,
+            iconWidthHalf: this.iconWidth >> 1,
             iconScale: 0.25,
             iconStartX: 5,
             iconYOffset: 8,
@@ -451,6 +457,7 @@
             maxScrollY: undefined,
             scrollThumbTopBottomPadding: 3,
             useScrollbar: true,
+            isLangRTL: false,
 
             /**
              * Preload is called as the TreeState initializes and lets us setup any vars we need for the state
@@ -464,6 +471,7 @@
                 this.dashletHeight = $el.height();
                 this.cameraY = 0;
                 this.isLoading = false;
+                this.isLangRTL = app.lang.direction === 'rtl';
 
                 this.game.events.onSetTreeData.add(this._setTreeData, this);
                 this.game.events.onScrollWheel.add(this._onScrollWheel, this);
@@ -687,7 +695,11 @@
                     group.parentGroup._nextOffset = rowIndex;
                 }
 
-                group.x = groupIndex === 0 ? 0 : this.iconWidth + this.iconStartX;
+                if (this.isLangRTL) {
+                    group.x = 0;
+                } else {
+                    group.x = groupIndex === 0 ? 0 : this.iconWidth + this.iconStartX;
+                }
                 group.y = this.containerRowStartY + (this.itemRowYPadding * rowIndex) + groupYOffset;
             },
 
@@ -708,6 +720,8 @@
                 var itemType = node.type;
                 var itemId = node.id;
                 var itemName = node.data;
+                var startX;
+                var startY;
 
                 if (itemType === 'category') {
                     textColor = this.categoryColor;
@@ -720,10 +734,17 @@
                     iconName = 'empty';
                 }
 
+                startX = this.iconStartX + 8;
+                startY = this.iconYOffset;
+
+                if (this.isLangRTL) {
+                    startX = this.gameWorldWidth - (startX * (groupIndex + 1)) - (this.iconWidthHalf * groupIndex);
+                }
+
                 // create the icon
                 icon = this.game.add.image(
-                    this.iconStartX + 8,
-                    this.iconYOffset,
+                    startX,
+                    startY,
                     'prodCatTS',
                     iconName
                 );
@@ -741,8 +762,15 @@
                 icon.events.onInputDown.add(this._itemClicked, this);
                 icon.input.useHandCursor = true;
 
+                startY = this.textYOffset;
+                if (this.isLangRTL) {
+                    startX -= this.iconWidth - this.iconTextPadding;
+                } else {
+                    startX = this.iconStartX + this.iconWidth + this.iconTextPadding;
+                }
+
                 text = this.game.add.text(
-                    this.iconStartX + this.iconWidth + this.iconTextPadding,
+                    startX,
                     0,
                     node.data,
                     {
@@ -750,6 +778,10 @@
                         fill: textColor
                     }
                 );
+
+                if (this.isLangRTL) {
+                    text.anchor.setTo(1,0);
+                }
 
                 text._itemName = itemName;
                 text._itemId = itemId;
@@ -937,7 +969,7 @@
              * Draws the Scrollbar line and rectangle
              */
             drawScrollbar: function() {
-                var scrollX = this.gameWorldWidth - this.scrollBarBkgdWidth;
+                var scrollX = this.isLangRTL ? this.scrollBarBkgdWidth : this.gameWorldWidth - this.scrollBarBkgdWidth;
                 var xOffset = this.game.device.ie ? 0 : 4;
 
                 if (this.scrollBarImg) {
