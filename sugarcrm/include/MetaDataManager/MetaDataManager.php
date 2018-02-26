@@ -2169,6 +2169,12 @@ class MetaDataManager implements LoggerAwareInterface
         }
 
         $configs['oidcEnabled'] = $idpConfig->isOIDCEnabled();
+        if ($configs['oidcEnabled']) {
+            $configs['cloudConsoleForgotPasswordUrl'] = $idpConfig->buildCloudConsoleUrl(
+                'forgotPassword',
+                [$idpConfig->getOIDCConfig()['tid']]
+            );
+        }
 
         return $configs;
     }

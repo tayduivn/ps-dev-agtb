@@ -187,6 +187,8 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'oidcKeySetId' => 'KeySetName',
                         'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                         'idpServiceName' => 'idm',
+                        'cloudConsoleUrl' => 'http://console.sugarcrm.local',
+                        'cloudConsoleRoutes' => ['forgotPassword' => 'forgot-password'],
                     ],
                 ],
                 'expectedConfig' => [
@@ -200,6 +202,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     ],
                     'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
                     'oidcEnabled' => true,
+                    'cloudConsoleForgotPasswordUrl' => 'http://console.sugarcrm.local/forgot-password/' . urlencode('srn:cluster:sugar:eu:0000000001:tenant'),
                 ],
             ],
         ];
