@@ -4941,6 +4941,18 @@ Sincerely, SugarCRM',
     'LBL_INACTIVE_TASKS_DASHLET_USER_BUTTON_LABEL' => 'My Tasks',
     'LBL_INACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL' => 'Team Tasks',
 
+    //Audit subjects
+    'LBL_AUDIT_SUBJECT_ADVANCED_WORKFLOW' => 'Advanced Workflow',
+    'LBL_AUDIT_SUBJECT_API_BWC' => 'BWC UI',
+    'LBL_AUDIT_SUBJECT_API_REST' => 'REST API',
+    'LBL_AUDIT_SUBJECT_API_RPC' => 'SOAP or Old REST API',
+    'LBL_AUDIT_SUBJECT_CLI' => 'CLI',
+    'LBL_AUDIT_SUBJECT_CRON_JOB' => 'Cron Job',
+    'LBL_AUDIT_SUBJECT_LOGIC_HOOK' => 'Logic Hook',
+    'LBL_AUDIT_SUBJECT_MARKETO' => 'Marketo',
+    'LBL_AUDIT_SUBJECT_SUGAR_WORKFLOW' => 'Sugar Workflow',
+    'LBL_AUDIT_SUBJECT_USER' => 'User',
+
     //common chart strings
     'LBL_CHART' => 'Chart',
     'LBL_CHART_NO_DATA' => 'No data available.',
