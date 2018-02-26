@@ -416,7 +416,6 @@
             iconScale: 0.25,
             iconStartX: 5,
             iconYOffset: 8,
-            textYOffset: 1,
             itemRowYPadding: 21,
             childRowYPadding: 10,
             containerRowStartY: 0,
@@ -744,7 +743,7 @@
 
                 text = this.game.add.text(
                     this.iconStartX + this.iconWidth + this.iconTextPadding,
-                    this.textYOffset,
+                    0,
                     node.data,
                     {
                         font: this.itemFont,
