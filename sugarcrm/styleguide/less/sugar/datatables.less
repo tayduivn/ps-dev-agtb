@@ -1346,3 +1346,22 @@ FLEXLIST GENERIC */
 }
 
 /* NEW SKIN END */
+
+div.audit-email {
+  /* Firefox doesn't like this div inheriting white-space from .dataTable td > span:not(.overflow-visible) */
+  white-space: initial;
+
+  div.ellipsis_inline {
+    display: inline-block !important;
+    width: calc(~"100% - 16px");
+
+    & + a {
+      float: right;
+      margin-top: 2px;
+
+      i {
+        font-size: 14px;
+      }
+    }
+  }
+}

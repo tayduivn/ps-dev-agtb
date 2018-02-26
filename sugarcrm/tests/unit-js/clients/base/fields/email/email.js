@@ -489,6 +489,21 @@ describe('Base.Email', function() {
             expect(actual).toBe(expected);
         });
 
+        it('should return empty array when value is an empty array', function() {
+            var value = [];
+            var actual = field.format(value);
+            expect(actual.length).toBe(value.length);
+        });
+
+        it('should have email address, id and flagLabel when passed as an object', function() {
+            var value = {email_address: 'a@a.com', id: 'email_id'};
+            var actual = field.format(value);
+            var expectedAttributes = {email_address: 'a@a.com', email_address_id: 'email_id', flagLabel: ''};
+
+            expect(actual[0].email_address).toBe(expectedAttributes.email_address);
+            expect(actual[0].email_address_id).toBe(expectedAttributes.email_address_id);
+            expect(actual[0].flagLabel).toBe(expectedAttributes.flagLabel);
+        });
     });
 
     describe('when required', function() {

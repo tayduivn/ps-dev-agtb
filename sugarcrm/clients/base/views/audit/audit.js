@@ -16,7 +16,7 @@
 ({
     extendsFrom: 'FilteredListView',
 
-    fallbackFieldTemplate: 'list-header',
+    fallbackFieldTemplate: 'list',
 
     /**
      * @inheritdoc

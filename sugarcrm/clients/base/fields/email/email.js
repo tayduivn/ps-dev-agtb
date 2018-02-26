@@ -19,7 +19,8 @@
         'click  .btn-edit':        'toggleExistingAddressProperty',
         'click  .removeEmail':     'removeExistingAddress',
         'click  .addEmail':        'addNewAddress',
-        'change .newEmail':        'addNewAddress'
+        'change .newEmail': 'addNewAddress',
+        'click [data-action=audit-email-address]': 'auditEmailAddress',
     },
 
     _flag2Deco: {
@@ -458,7 +459,7 @@
 
     /**
      * To display representation
-     * @param {String|Array} value single email address or set of email addresses
+     * @param {string|Array|Object} value single email address or set of email addresses
      */
     format: function(value) {
         value = app.utils.deepCopy(value);
@@ -469,6 +470,12 @@
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
                 email.hasAnchor = this.def.emailLink && !email.invalid_email;
             }, this);
+        } else if (_.isObject(value) && !_.isEmpty(value)) {
+            // Expecting an object containing attributes for an email address
+            value = [{
+                email_address: value.email_address,
+                email_address_id: value.id,
+            }];
         } else if ((_.isString(value) && value !== "") || this.view.action === 'list') {
             // expected an array with a single address but got a string or an empty array
             value = [{
@@ -538,6 +545,17 @@
         if (this.view.action === 'filter-rows') {
             return value;
         }
+    },
+
+    /**
+     * Opens a drawer to audit the email address
+     *
+     * @param e
+     */
+    auditEmailAddress: function(e) {
+        //TODO open drawer to audit email address
+        // Will be worked on in PX-22
+        console.log('Drawer opens here to audit email address');
     },
 
     /**
