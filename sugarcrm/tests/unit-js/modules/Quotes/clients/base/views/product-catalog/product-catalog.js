@@ -14,6 +14,11 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
     var viewMeta;
     var context;
     var layout;
+    var addClassStub;
+    var removeClassStub;
+    var showStub;
+    var hideStub;
+    var offStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -23,15 +28,43 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
             config: false
         };
         layout = SugarTest.createLayout('base', 'Quotes', 'create', {});
+        sinon.collection.stub(layout, 'closestComponent', function() {
+            return {
+                on: $.noop,
+                off: $.noop
+            };
+        });
         view = SugarTest.createView('base', 'Quotes', 'product-catalog', viewMeta, context, true, layout);
+
+        removeClassStub = sinon.collection.stub();
+        addClassStub = sinon.collection.stub();
+        showStub = sinon.collection.stub();
+        hideStub = sinon.collection.stub();
+        offStub = sinon.collection.stub();
+
+        sinon.collection.stub(view, '$', function() {
+            return {
+                addClass: addClassStub,
+                removeClass: removeClassStub,
+                show: showStub,
+                hide: hideStub,
+                off: offStub
+            };
+        });
     });
 
     afterEach(function() {
-        sinon.collection.restore();
         view.dispose();
         view = null;
         layout.dispose();
         layout = null;
+
+        sinon.collection.restore();
+        addClassStub = null;
+        removeClassStub = null;
+        showStub = null;
+        hideStub = null;
+        offStub = null;
     });
 
     describe('initialize()', function() {
@@ -96,25 +129,13 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
     });
 
     describe('loadData()', function() {
-        var addClassStub;
-
         beforeEach(function() {
-            addClassStub = sinon.collection.stub();
-            sinon.collection.stub(view, '$', function() {
-                return {
-                    addClass: addClassStub
-                };
-            });
             sinon.collection.stub(app.api, 'buildURL', function(term) {
                 return term;
             });
             sinon.collection.stub(app.api, 'call', function() {});
             sinon.collection.stub(view, 'toggleLoading', function() {});
             view.isConfig = false;
-        });
-
-        afterEach(function() {
-            addClassStub = null;
         });
 
         it('should hide the product catalog no results message', function() {
@@ -159,26 +180,6 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
     });
 
     describe('toggleLoading()', function() {
-        var showStub;
-        var hideStub;
-
-        beforeEach(function() {
-            showStub = sinon.collection.stub();
-            hideStub = sinon.collection.stub();
-
-            sinon.collection.stub(view, '$', function() {
-                return {
-                    show: showStub,
-                    hide: hideStub
-                };
-            });
-        });
-
-        afterEach(function() {
-            showStub = null;
-            hideStub = null;
-        });
-
         it('should call show if startLoading is true', function() {
             view.toggleLoading(true);
 
@@ -195,8 +196,6 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
     });
 
     describe('_onCatalogFetchSuccess()', function() {
-        var addClassStub;
-        var removeClassStub;
         var responseData;
         var emptyResponseData;
         var checkBuildPhaserStub;
@@ -204,16 +203,9 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         var dispatchStub;
 
         beforeEach(function() {
-            addClassStub = sinon.collection.stub();
-            removeClassStub = sinon.collection.stub();
             checkBuildPhaserStub = sinon.collection.stub();
             dispatchStub = sinon.collection.stub();
-            sinon.collection.stub(view, '$', function() {
-                return {
-                    addClass: addClassStub,
-                    removeClass: removeClassStub
-                };
-            });
+
             view.activeFetchCt = 1;
             responseData = {
                 records: [{
@@ -238,8 +230,6 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
 
         afterEach(function() {
-            addClassStub = null;
-            removeClassStub = null;
             responseData = null;
             emptyResponseData = null;
             checkBuildPhaserStub = null;
@@ -449,25 +439,13 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
     });
 
     describe('_fetchMoreRecords()', function() {
-        var addClassStub;
-
         beforeEach(function() {
-            addClassStub = sinon.collection.stub();
-            sinon.collection.stub(view, '$', function() {
-                return {
-                    addClass: addClassStub
-                };
-            });
             sinon.collection.stub(app.api, 'buildURL', function(term) {
                 return term;
             });
             sinon.collection.stub(app.api, 'call', function() {});
             sinon.collection.stub(view, 'toggleLoading', function() {});
             view.isConfig = false;
-        });
-
-        afterEach(function() {
-            addClassStub = null;
         });
 
         it('should call toggleLoading with true, false', function() {
@@ -578,23 +556,11 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
     });
 
     describe('_onProductDashletAddComplete()', function() {
-        var removeClassStub;
-
         beforeEach(function() {
             view.isFetchActive = true;
             view.cid = 'view123';
-            removeClassStub = sinon.collection.stub();
-            sinon.collection.stub(view, '$', function() {
-                return {
-                    removeClass: removeClassStub
-                };
-            });
 
             view._onProductDashletAddComplete();
-        });
-
-        afterEach(function() {
-            removeClassStub = null;
         });
 
         it('should set isFetchActive to false', function() {
@@ -611,19 +577,13 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
     });
 
     describe('_dispose()', function() {
-        var offStub;
         var phaserDestroyStub;
         var eventsDestroyStub;
 
         beforeEach(function() {
-            offStub = sinon.collection.stub();
             phaserDestroyStub = sinon.collection.stub();
             eventsDestroyStub = sinon.collection.stub();
-            sinon.collection.stub(view, '$', function() {
-                return {
-                    off: offStub
-                };
-            });
+
             view.phaser = {
                 destroy: phaserDestroyStub,
                 events: {
@@ -634,7 +594,6 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
         });
 
         afterEach(function() {
-            offStub = null;
             phaserDestroyStub = null;
             eventsDestroyStub = null;
         });

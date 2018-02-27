@@ -97,6 +97,8 @@
      * @inheritdoc
      */
     bindDataChange: function() {
+        var sidebarLayout;
+
         this._super('bindDataChange');
 
         // need to trigger on app.controller.context because of contexts changing between
@@ -104,6 +106,20 @@
         // app.controller.context is the only consistent context to use
         app.controller.context.on('productCatalogDashlet:add:complete', this._onProductDashletAddComplete, this);
         $(window).on('resize', _.bind(this._resizePhaserCanvas, this));
+
+        sidebarLayout = this.closestComponent('sidebar');
+        sidebarLayout.on('sidebar:state:changed', this.onSidebarStateChanged, this);
+    },
+
+    /**
+     * Handles when the sidebar is toggled open or closed.
+     *
+     * @param {string} sidebarState The state of the sidebar: 'open' or 'close'
+     */
+    onSidebarStateChanged: function(sidebarState) {
+        if (sidebarState === 'open' && this.phaser) {
+            this.checkBuildPhaser();
+        }
     },
 
     /**
@@ -150,6 +166,9 @@
             context: this,
             success: this._onCatalogFetchSuccess,
             complete: _.bind(function() {
+                if (this.disposed) {
+                    return;
+                }
                 // when complete, remove the spinning refresh icon from the cog
                 // and add back the cog icon
                 this.toggleLoading(false);
@@ -183,6 +202,10 @@
     _onCatalogFetchSuccess: function(response) {
         this.jsTreeData = response;
         this.activeFetchCt--;
+
+        if (this.disposed) {
+            return;
+        }
 
         if (this.activeFetchCt === 0) {
             if (this.jsTreeData.records.length === 0) {
@@ -302,6 +325,11 @@
         window.PhaserGlobal = {
             hideBanner: true
         };
+
+        if (this.phaser) {
+            this.phaser.events.destroy();
+            this.phaser.destroy();
+        }
 
         // use 100% for the width and 260px for the height
         this.phaser = new Phaser.Game({
@@ -462,6 +490,7 @@
                     this._setTreeData(this.game.treeData);
                 }
             },
+
             /**
              * After preload is done, create runs and lets us let the Sugar.App know our tree is ready
              */
@@ -888,8 +917,15 @@
              * @private
              */
             _checkScrollbar: function() {
-                var $el = this.game._view.$('#product-catalog-canvas-' + this.game._view.cid);
+                var $el;
 
+                if (this.game._view.disposed) {
+                    this.game.time.events.remove(this.scrollCheckTimerEvent);
+                    this.scrollCheckTimerEvent = null;
+                    return;
+                }
+
+                $el = this.game._view.$('#product-catalog-canvas-' + this.game._view.cid);
                 if ($el.width() !== this.gameWorldWidth) {
                     this.game.time.events.remove(this.scrollCheckTimerEvent);
                     this.scrollCheckTimerEvent = null;
@@ -1288,17 +1324,28 @@
      * @inheritdoc
      */
     _dispose: function() {
+        var sidebarLayout = this.closestComponent('sidebar');
+        sidebarLayout.off('sidebar:state:changed', null, this);
+
+        this.context.off('phaserio:ready', null, this);
+
+        // If Phaser exists, destroy it
+        if (this.phaser) {
+            this.phaser.events.destroy();
+            // async the phaser destroy event so it
+            // has a chance to finish its update before destroy
+            _.delay(_.bind(function() {
+                this.phaser.destroy();
+            }, this), 25);
+
+        }
+
         // any cleanup
         this.$('.product-catalog-container-' + this.cid).off(this.wheelEventName);
         // remove window resize event
         $(window).off('resize');
         if (app.controller && app.controller.context) {
             app.controller.context.off('productCatalogDashlet:add:complete', null, this);
-        }
-        // If Phaser exists, destroy it
-        if (this.phaser) {
-            this.phaser.events.destroy();
-            this.phaser.destroy();
         }
 
         this._super('_dispose');

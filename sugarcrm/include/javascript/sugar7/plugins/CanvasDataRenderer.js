@@ -58,9 +58,14 @@
                     }
 
                     // otherwise get the Phaser Lib
-                    $.getScript(
-                        this._scriptPath,
-                        _.bind(function(data) {
+                    $.ajax({
+                        type: 'GET',
+                        url: this._scriptPath,
+                        dataType: 'script',
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            console.log('[CanvasDataRenderer] Error loading file: ', errorThrown);
+                        },
+                        success: _.bind(function(data) {
                             this._scriptReady = true;
                             this._scriptData = data;
                             if (this._pageReady && !this._scriptEmbedded) {
@@ -68,7 +73,7 @@
                                 this.embedScript();
                             }
                         }, this)
-                    );
+                    });
                 }, null, component);
 
                 this.on('render', function() {
@@ -86,13 +91,15 @@
             embedScript: function() {
                 this._scriptEmbedded = true;
 
-                // if Phaser has not already been added by another view using this same plugin
-                if (!window.Phaser) {
-                    this.$el.prepend('<script type="text/javascript">' + this._scriptData + '</script>');
-                }
+                if (!this.disposed) {
+                    // if Phaser has not already been added by another view using this same plugin
+                    if (!window.Phaser) {
+                        this.$el.prepend('<script type="text/javascript">' + this._scriptData + '</script>');
+                    }
 
-                // trigger back to this context that phaser is good to go
-                this.context.trigger('phaserio:ready');
+                    // trigger back to this context that phaser is good to go
+                    this.context.trigger('phaserio:ready');
+                }
             }
         });
     });

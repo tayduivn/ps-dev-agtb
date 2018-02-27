@@ -157,8 +157,11 @@
      * Checks the -/+ buttons to enable/disable
      */
     checkButtons: function() {
-        var delBtns = this.$('.deleteBtn'),
-            addBtns = this.$('.addBtn');
+        if (this.disposed) {
+            return;
+        }
+        var delBtns = this.$('.deleteBtn');
+        var addBtns = this.$('.addBtn');
         if (delBtns && delBtns.length === 1 && !delBtns.hasClass('disabled')) {
             // if we have only one button, disable it, otherwise leave them all open
             delBtns.addClass('disabled');
