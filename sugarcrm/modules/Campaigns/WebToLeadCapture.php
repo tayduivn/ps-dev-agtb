@@ -147,7 +147,17 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 		        $lead->load_relationship('campaigns');
 		        $lead->campaigns->add($camplog->id);
 
-            $optOut = isset($_POST['webtolead_email_opt_out']) || isset($_POST['email_opt_out']) ? true : false;
+            // Set the default treatment of email opt_out if no explicit actions are present in form data
+            // The presence of the email_opt_in form variable supersedes any presence of the email_opt_out or
+            // webtolead_email_opt_out form variables, which are supported primarily for legacy compatibility.
+            $optOut = !empty($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
+            if (isset($_POST['email_opt_in'])) {
+                $optIn = ($_POST['email_opt_in'] == 'on');
+                $optOut = !$optIn;
+            } elseif (isset($_POST['webtolead_email_opt_out']) || isset($_POST['email_opt_out'])) {
+                $optOut = true;
+            }
+
             if (isset($lead->email1) && !empty($lead->email1)) {
                 _setDefaultEmailProperties($lead, 'email1', $optOut);
             }
@@ -239,44 +249,13 @@ if (!empty($redirect)) {
 echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
 
 /**
- * Get Email Address record from Database or return empty array if not found
- * @param string $emailAddress
- * @return array
- * @throws SugarQueryException
- */
-function _fetchEmailAddress($emailAddress = '')
-{
-    $sea = BeanFactory::newBean('EmailAddresses');
-    $q = new SugarQuery();
-    $q->select(array('*'));
-    $q->from($sea);
-    $q->where()->queryAnd()
-        ->equals('email_address_caps', strtoupper($emailAddress))
-        ->equals('deleted', 0);
-    $q->limit(1);
-    $rows = $q->execute();
-    if (is_array($rows) && count($rows) > 0) {
-        return $rows[0];
-    }
-    return array();
-}
-
-/**
- * Set the Email properties on the supplied lead. If email address already exists, use existing Email address
- * properties. Otherwise, set defaults with consideration given to the default opt_out configuration value.
+ * Set the Email properties on the supplied lead.
  * @param SugarBean $lead
  * @param string $emailField
- * @param bool $optOutRequested
+ * @param bool $optOut
  */
-function _setDefaultEmailProperties($lead, $emailField, $optOutRequested = false)
+function _setDefaultEmailProperties(SugarBean $lead, $emailField, $optOut = false)
 {
-    $emailOptoutDefault = !empty($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
-    $ea = _fetchEmailAddress($lead->$emailField);
-    if ($optOutRequested) {
-        $optOut = $optOutRequested;
-    } else {
-        $optOut = empty($ea) ? $emailOptoutDefault : $ea['opt_out'];
-    }
     $invalidEmail = empty($ea) ? false : $ea['invalid_email'];
     $primary = empty($ea) ? true : $ea['primary_address'];
 
