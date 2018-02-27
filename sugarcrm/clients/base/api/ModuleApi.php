@@ -141,14 +141,25 @@ class ModuleApi extends SugarApi {
     {
         $this->requireArgs($args, array('module','record'));
 
-        //get the corresponding bean
         $bean = $this->loadBean($api, $args, 'view');
-
         //get the list of pii fields
         $piiFields = array_keys($bean->getFieldDefinitions('pii', array(true)));
+        $filter = $this->getFieldsFromArgs($api, $args);
+        if (count($filter) > 0) {
+            $piiFields = array_intersect($piiFields, $filter);
+        }
+        $args['fields'] = $piiFields;
+
+        $data = $this->formatBean($api, $args, $bean);
 
         $eventRepo = Container::getInstance()->get(EventRepository::class);
-        $events = $this->formatSourceSubject($eventRepo->getLatestBeanEvents($args['module'], $bean->id, $piiFields));
+        $events = $this->formatSourceSubject(
+            $eventRepo->getLatestBeanEvents(
+                $args['module'],
+                $data['id'],
+                $piiFields
+            )
+        );
 
         global $timedate;
 
@@ -156,7 +167,7 @@ class ModuleApi extends SugarApi {
         foreach ($piiFields as $field) {
             $item = [
                 'field_name' => $field,
-                'value' => isset($bean->$field)? $bean->$field : null,
+                'value' => isset($data[$field]) ? $data[$field] : null,
                 'date_modified' => null,
                 'event_type' => null,
                 'source' => null,
@@ -168,8 +179,8 @@ class ModuleApi extends SugarApi {
                     ['date_modified' => $timedate->asIso(
                         $timedate->fromDbType($events[$field]['date_created'], 'datetime')
                     ),
-                    'event_type' => $events[$field]['type'],
-                    'source' => $events[$field]['source'],]
+                        'event_type' => $events[$field]['type'],
+                        'source' => $events[$field]['source'],]
                 );
             }
             $fields[] = $item;
