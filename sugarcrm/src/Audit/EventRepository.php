@@ -119,13 +119,13 @@ class EventRepository
         $auditTable = $bean->get_audit_table_name();
 
         $sql = "SELECT  atab.field_name, atab.date_created, ae.source, ae.type
-                FROM {$auditTable} AS atab
-                LEFT JOIN {$auditTable} as atab2 ON (atab2.parent_id = atab.parent_id 
+                FROM {$auditTable} atab
+                LEFT JOIN {$auditTable} atab2 ON (atab2.parent_id = atab.parent_id 
                         AND atab2.field_name = atab.field_name
                         AND (atab2.date_created > atab.date_created
                         OR (atab2.date_created = atab.date_created
                             AND atab2.id > atab.id)))
-                LEFT JOIN audit_events AS ae ON (ae.id = atab.event_id)
+                LEFT JOIN audit_events ae ON (ae.id = atab.event_id)
                 WHERE  atab.parent_id = ?
                 AND atab.field_name IN (?)
                 AND atab2.id is NULL";

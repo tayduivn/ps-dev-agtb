@@ -118,9 +118,9 @@ class Audit extends SugarBean
         $auditTable = $bean->get_audit_table_name();
 
         $query = "SELECT atab.*, ae.source, ae.type AS event_type, usr.user_name AS created_by_username
-                  FROM {$auditTable} as atab
-                  LEFT JOIN audit_events as ae ON (ae.id = atab.event_id)
-                  LEFT JOIN users as usr ON (usr.id = atab.created_by) 
+                  FROM {$auditTable} atab
+                  LEFT JOIN audit_events ae ON (ae.id = atab.event_id)
+                  LEFT JOIN users usr ON (usr.id = atab.created_by) 
                   WHERE  atab.parent_id = ?
                   ORDER BY atab.date_created DESC";
 
