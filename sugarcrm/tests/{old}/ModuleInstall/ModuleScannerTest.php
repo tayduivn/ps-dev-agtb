@@ -110,6 +110,93 @@ EOQ;
 		$this->assertTrue(!empty($errors));
     }
 
+    /**
+     * @param $module
+     * @param $function
+     * @param $expected
+     *
+     * @dataProvider providerTestScanVArdefFile
+     */
+    public function testScanVardefFile($module, $functionDef, $expected)
+    {
+        $fileModContents = <<<EOQ
+<?php
+\$dictionary['{$module}'] = array(
+    'fields' => array(
+        'function_field' => array(
+        'name' => 'function_field',
+        {$functionDef},
+        ),
+    ),
+);
+EOQ;
+        $vardefFile = "cache/vardefs.php";
+        file_put_contents($vardefFile, $fileModContents);
+        $ms = new ModuleScanner();
+        $errors = SugarTestReflection::callProtectedMethod($ms, 'scanVardefFile', [$vardefFile]);
+        unlink($vardefFile);
+        $this->assertSame($expected, empty($errors));
+    }
+
+    public function providerTestScanVArdefFile()
+    {
+        return [
+            [
+                'testModule_custom_function_name',
+                "'function' => ['name' => 'sugarInternalFunction']",
+                true,
+            ],
+            [
+                'testModule_custom_function',
+                "'function' => 'sugarInternalFunction'",
+                true,
+            ],
+            [
+                'testModule_blacklist_function_name',
+                "'function' => ['name' => 'call_user_func_array']",
+                false,
+            ],
+            [
+                'testModule_blacklist_function',
+                "'function' => 'call_user_func_array'",
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * test isVardefFile
+     * @param $fileName
+     * @param $expected
+     *
+     * @dataProvider providerTestIsVardefFile
+     */
+    public function testIsVardefFile($fileName, $expected)
+    {
+        $vardefsInManifest = [
+            'vardefs' => [
+                [
+                    'from' => '<basepath>/SugarModules/relationships/vardefs/this_is_a_vardefs.php',
+                    'to_module' => 'Accounts',
+                ],
+            ],
+        ];
+        $ms = new ModuleScanner();
+        SugarTestReflection::setProtectedValue($ms, 'installdefs', $vardefsInManifest);
+        $result = SugarTestReflection::callProtectedMethod($ms, 'isVardefFile', [$fileName]);
+        $this->assertSame($expected, $result);
+    }
+
+    public function providerTestIsVardefFile()
+    {
+        return [
+            ['anydir/vardefs.php', true],
+            ['anydir/vardefs.ext.php', true],
+            ['anydir/Vardefs/any_file_is_vardefs.php', true],
+            ['anydir/anyfile.php', false],
+            ['/SugarModules/relationships/vardefs/this_is_a_vardefs.php', true],
+        ];
+    }
 
 	public function testCallMethodObjectOperatorFail()
     {
