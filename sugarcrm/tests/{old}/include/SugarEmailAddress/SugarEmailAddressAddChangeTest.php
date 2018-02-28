@@ -95,33 +95,44 @@ class SugarEmailAddressAddChangeTest extends Sugar_PHPUnit_Framework_TestCase
         $new_sea = $this->readSugarEmailAddress($uuid);
         $this->assertNotNull($new_sea, 'Email Address not found in DB!');
         $this->assertEquals($new_address, $new_sea->email_address, 'Email Address in DB was not updated.');
+        $this->assertEquals(strtoupper($new_address), $new_sea->email_address_caps);
     }
 
-    public function testEmailSimulatedInvalidFlagWorkflow()
+    public function testEmailAddressUpdateWithId()
     {
+        $new_address = 'T.E.S.T@sugar.example.com';
+        $uuid = $this->email->AddUpdateEmailAddress($new_address, null, null, $this->old_uuid);
 
-        $workflow_email = 'testworkflow@sugar.example.com';
-        $new_email = 'afreshnewemail@sugar.example.com';
+        $this->assertNotNull($uuid, 'Failed to enter the new email in the database!');
+        $this->assertEquals($uuid, $this->old_uuid, 'Different Email Address Bean used despite passing an ID');
 
-        // simulate a before workflow: invalid is set to true
-        $email_old_invalid = SugarTestSugarEmailAddressUtilities::createEmailAddress($workflow_email,'',array('invalid' => true));
-        $old_uuid = SugarTestSugarEmailAddressUtilities::fetchEmailIdByAddress($workflow_email);
-        $contact = SugarTestSugarEmailAddressUtilities::getContact();
+        $new_sea = $this->readSugarEmailAddress($uuid);
+        $this->assertNotNull($new_sea, 'Email Address not found in DB!');
+        $this->assertEquals($new_address, $new_sea->email_address, 'Email Address in DB was not updated.');
+        $this->assertEquals(strtoupper($new_address), $new_sea->email_address_caps);
+    }
 
-        $email_old_invalid->stash($contact->id, $contact->module_dir);
-        $email_old_invalid->AddUpdateEmailAddress($workflow_email,0); // 'workflow'
+    public function testEmailAddressUpdateInvalidOptOut()
+    {
+        //Set both to false
+        $this->email->AddUpdateEmailAddress($this->old_email, false, false);
+        $eab = $this->readSugarEmailAddress($this->old_uuid);
+        $this->assertNotNull($eab->invalid_email);
+        $this->assertEquals(0, $eab->invalid_email);
+        $this->assertNotNull($eab->opt_out);
+        $this->assertEquals(0, $eab->opt_out);
 
-        $uuid = $email_old_invalid->AddUpdateEmailAddress($new_email,1,0,$old_uuid); // workflow is processed
+        //Set One but don't touch the other
+        $this->email->AddUpdateEmailAddress($this->old_email, null, true);
+        $eab = $this->readSugarEmailAddress($this->old_uuid);
+        $this->assertNotNull($eab->invalid_email);
+        $this->assertEquals(0, $eab->invalid_email);
+        $this->assertEquals(1, $eab->opt_out);
 
-        $this->assertNotNull($old_uuid, 'where is the old email address?');
-        $this->assertNotNull($uuid, 'where is our new email address?');
-        $this->assertNotEquals($old_uuid, $uuid, 'we used the same Email Address Bean for different Email Addresses!');
-
-        // need a way to see our new work
-        $fresh_sea = $this->readSugarEmailAddress($uuid);
-
-        $this->assertNotNull($fresh_sea, 'Email Address not found in DB!');
-        $this->assertEquals($new_email, $fresh_sea->email_address, 'Email Address in DB is not the same as expected.');
-        $this->assertNotEquals(1, intval($fresh_sea->invalid_email), 'Workflow changes to Email not protected');
+        //Set the other and don't touch the first
+        $this->email->AddUpdateEmailAddress($this->old_email, true, null);
+        $eab = $this->readSugarEmailAddress($this->old_uuid);
+        $this->assertEquals(1, $eab->invalid_email);
+        $this->assertEquals(1, $eab->opt_out);
     }
 }

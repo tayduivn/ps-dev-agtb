@@ -28,10 +28,11 @@ class SugarEmailAddress extends SugarBean
     public $addresses = array(); // array of emails
     public $hasFetched = false; // Set to true when the emails have been fetched
     var $view = '';
-    private $stateBeforeWorkflow;
 
     public $email_address;
     public $dontLegacySave = false;
+    public $opt_out;
+    public $invalid_email;
 
     static $count = 0;
 
@@ -390,7 +391,6 @@ class SugarEmailAddress extends SugarBean
                 array(Connection::PARAM_STR_ARRAY)
             );
         }
-        $this->stateBeforeWorkflow = null;
         $this->hasFetched = true;
         return;
     }
@@ -821,101 +821,74 @@ class SugarEmailAddress extends SugarBean
      */
     public function AddUpdateEmailAddress($addr, $invalid = null, $opt_out = null, $id = null)
     {
-        // Trim the address
-        $addr = trim($addr);
-
         $address = self::_cleanAddress($addr);
         $addressCaps = strtoupper($address);
 
-        $conn = $this->db->getConnection();
-        // determine if we have a matching email address
-        $stmt = $conn->executeQuery(
-            sprintf('SELECT * FROM %s WHERE email_address_caps = ? and deleted = ?', $this->table_name),
-            array($addressCaps, 0)
-        );
-        $duplicate_email = $stmt->fetch();
+        $addrBean = BeanFactory::newBean('EmailAddresses');
+        $existingBean = $this->getEmailAddrBean($addrBean, $addressCaps, $id);
 
-        // check if we are changing an email address, where workflow might be in play
-        if ($id) {
-            $stmt = $conn->executeQuery(sprintf('SELECT * FROM %s WHERE id = ?', $this->table_name), array($id));
-            $current_email = $stmt->fetch();
-        }
-        else {
-            $current_email = null;
-        }
-
-        $new_invalid = null;
-        $new_opt_out = null;
-        if (!empty($current_email['id']) && isset($this->stateBeforeWorkflow[$current_email['id']])) {
-
-            // workflow could be in play
-            $before_email = $this->stateBeforeWorkflow[$current_email['id']];
-
-            if (!is_null($opt_out) &&
-                $current_email['opt_out'] != intval($opt_out) &&
-                intval($before_email['opt_out']) != intval($current_email['opt_out'])
-            ) {
-                $new_opt_out = intval($current_email['opt_out']);
+        if (!empty($address) || !empty($existingBean)) {
+            if (!empty($existingBean)) {
+                if (!$this->didEmailAddressChange($existingBean, $address, $invalid, $opt_out)) {
+                    return $existingBean->id;
+                }
+                //update the existing bean address
+                $addrBean = $existingBean;
+            }
+            $addrBean->email_address = $address;
+            $addrBean->email_address_caps = $addressCaps;
+            if (!is_null($invalid)) {
+                $addrBean->invalid_email = boolval($invalid);
+            }
+            if (!is_null($opt_out)) {
+                $addrBean->opt_out = boolval($opt_out);
             }
 
-            if (!is_null($invalid) &&
-                $current_email['invalid_email'] != intval($invalid) &&
-                intval($before_email['invalid_email']) != intval($current_email['invalid_email'])
-            ) {
-                $new_invalid = intval($current_email['invalid_email']);
-            }
+            return $addrBean->save();
         }
 
-        $now = TimeDate::getInstance()->nowDb();
-        $defaultOptout = $this->opt_out;
-        $defaultInvalid = !is_null($invalid) ? intval($invalid) : false;
+        return '';
+    }
 
-        // determine how we are going to put in this address - UPDATE or INSERT
-        if (!empty($duplicate_email['id'])) {
-            $guid =  $duplicate_email['id'];
-            if (is_null($new_invalid)) {
-                $new_invalid = !is_null($invalid) ? intval($invalid) : $duplicate_email['invalid_email'];
-            }
-            if (is_null($new_opt_out)) {
-                $new_opt_out = !is_null($opt_out) ? intval($opt_out) : $duplicate_email['opt_out'];
-            }
+    /**
+     * Given an EmailAddress bean, returns true if the address or it's properties do not match the given parameters
+     * @param SugarEmailAddress $addrBean
+     * @param string $address
+     * @param string|null $invalid
+     * @param string|null $opt_out
+     *
+     * @return bool
+     */
+    private function didEmailAddressChange(SugarEmailAddress $addrBean, string $address, $invalid, $opt_out)
+    {
+        return (!is_null($invalid) && $addrBean->invalid_email != $invalid) ||
+               (!is_null($opt_out) && $addrBean->opt_out != $opt_out) ||
+               ($addrBean->email_address != $address);
+    }
 
-            // address_caps matches - see if we're changing fields
-            if ($duplicate_email['invalid_email'] != $new_invalid ||
-                $duplicate_email['opt_out'] != $new_opt_out ||
-                (trim($duplicate_email['email_address']) != $address)) {
-                $this->db->updateParams($this->table_name, $this->field_defs, array(
-                    'email_address' => $address,
-                    'invalid_email' => $new_invalid,
-                    'opt_out' => $new_opt_out,
-                    'date_modified' => $now,
-                ), array('id' => $guid));
-            }
-        } elseif (!empty($address)) {
-            // no case-insensitive address match - it's new, or undeleted.
-            if (is_null($new_invalid)) {
-                $new_invalid = $defaultInvalid;
-            }
-            if (is_null($new_opt_out)) {
-                $new_opt_out = !is_null($opt_out) ? intval($opt_out) : $defaultOptout;
-            }
-
-            $guid = create_guid();
-            $this->db->insertParams($this->table_name, $this->field_defs, array(
-                'id' => $guid,
-                'email_address' => $address,
-                'email_address_caps' => $addressCaps,
-                'date_created' => $now,
-                'date_modified' => $now,
-                'deleted' => 0,
-                'invalid_email' => $new_invalid,
-                'opt_out' => $new_opt_out,
-            ));
+    /**
+     * Retrieve an existing EmailAddress bean by either ID or email_address_caps
+     *
+     * @param SugarEmailAddress $seed
+     * @param string $addressCaps
+     * @param string|null $id
+     *
+     * @return null|SugarEmailAddress
+     */
+    private function getEmailAddrBean(SugarEmailAddress $seed, $addressCaps, $id)
+    {
+        if (!empty($id)) {
+            return BeanFactory::retrieveBean('EmailAddresses', $id);
         } else {
-            $guid = '';
+            $q = new SugarQuery();
+            $q->from($seed)->where()->equals('email_address_caps', $addressCaps);
+            $matches = $seed->fetchFromQuery($q);
+            if (!empty($matches)) {
+                return reset($matches);
+            }
         }
 
-        return $guid;
+        return null;
     }
 
     /**
@@ -1387,25 +1360,12 @@ class SugarEmailAddress extends SugarBean
         return ($module == "Employees") ? "Users" : $module;
     }
 
-    public function stash($parentBeanId, $moduleName)
+    /**
+     * @deprecated stash was only created as a crutch for legacy workflow and is no longer required.
+     */
+    public function stash()
     {
-        $conn = $this->db->getConnection();
-        $qb = $conn->createQueryBuilder();
-        $qbSubquery = $conn->createQueryBuilder();
-        $qbSubquery->select('email_address_id')
-            ->from('email_addr_bean_rel')
-            ->where($qbSubquery->expr()->eq('bean_id', $qbSubquery->createPositionalParameter($parentBeanId)))
-            ->andWhere($qbSubquery->expr()->eq('bean_module', $qbSubquery->createPositionalParameter($moduleName)))
-            ->andWhere($qbSubquery->expr()->eq('deleted', 0));
-        $query = $qb->select('id', 'email_address', 'invalid_email', 'opt_out')
-            ->from($this->table_name)
-            ->where($qb->expr()->in('id', $qb->importSubQuery($qbSubquery)))
-            ->andWhere($qb->expr()->eq('deleted', 0));
-        $stmt = $query->execute();
-        $this->stateBeforeWorkflow = array();
-        while ($row = $stmt->fetch()) {
-            $this->stateBeforeWorkflow[$row['id']] = array_diff_key($row, array('id' => null));
-        }
+        $GLOBALS['log']->deprecated('EmailAddress::stash is deprecated !');
     }
 
     /**

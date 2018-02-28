@@ -94,6 +94,7 @@ $dictionary['email_addresses'] = array(
 
 $dictionary['EmailAddress'] = array(
     'table' => 'email_addresses',
+    'audited' => true,
     'fields' => array(
         'id' => array(
             'name' => 'id',
@@ -121,12 +122,14 @@ $dictionary['EmailAddress'] = array(
             'type' => 'bool',
             'default' => 0,
             'vname' => 'LBL_INVALID_EMAIL',
+            'audited' => true,
         ),
         'opt_out' => array(
             'name' => 'opt_out',
             'type' => 'bool',
             'default' => 0,
             'vname' => 'LBL_OPT_OUT',
+            'audited' => true,
         ),
         'date_created' => array(
             'name' => 'date_created',
