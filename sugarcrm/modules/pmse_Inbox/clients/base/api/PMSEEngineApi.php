@@ -1013,7 +1013,10 @@ class PMSEEngineApi extends SugarApi
                     // Get the assigned bean early. This allows us to check for a bean
                     // id to determine if the bean has been deleted or not. This bean
                     // will also be used later to get the assigned user of the record.
-                    $assignedBean = BeanFactory::getBean($arrayCases[$arrayId]['cas_sugar_module'], $arrayCases[$arrayId]['cas_sugar_object_id']);
+                    $params = array('erased_fields' => true);
+                    $assignedBean = BeanFactory::getBean($arrayCases[$arrayId]['cas_sugar_module'], $arrayCases[$arrayId]['cas_sugar_object_id'], $params);
+
+                    $row = PMSEEngineUtils::appendNameFields($assignedBean, $row);
 
                     $usersBean = BeanFactory::getBean('Users', $arrayCases[$arrayId]['cas_user_id']);
                     $row['cas_user_full_name'] = $usersBean->full_name;

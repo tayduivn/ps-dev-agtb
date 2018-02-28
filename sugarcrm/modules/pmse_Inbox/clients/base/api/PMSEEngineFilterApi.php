@@ -106,6 +106,31 @@ class PMSEEngineFilterApi extends FilterApi
     }
 
     /**
+     * Returns the records for the module and filter provided.
+     *
+     * @param ServiceBase $api The REST API object.
+     * @param array $args REST API arguments.
+     * @param string $acl Which type of ACL to check.
+     * @return array The REST response as a PHP array.
+     * @throws SugarApiExceptionError If retrieving a predefined filter failed.
+     * @throws SugarApiExceptionInvalidParameter If any arguments are invalid.
+     * @throws SugarApiExceptionNotAuthorized If we lack ACL access.
+     */
+    public function filterList(ServiceBase $api, array $args, $acl = 'list')
+    {
+        $result = parent::filterList($api, $args, $acl);
+        foreach ($result['records'] as $key => $value) {
+            $params = array(
+                'erased_fields' => true,
+                'use_cache' => false,           // TODO: remove this flag once the BeanFactory cache issue is fixed
+            );
+            $assignedBean = BeanFactory::getBean($value['cas_sugar_module'], $value['cas_sugar_object_id'], $params);
+            $result['records'][$key] = PMSEEngineUtils::appendNameFields($assignedBean, $value);
+        }
+        return $result;
+    }
+
+    /**
      * @param ServiceBase $api
      * @param array $args
      * @param string $acl
@@ -122,7 +147,7 @@ class PMSEEngineFilterApi extends FilterApi
         if (empty($args['filter']['visibility'])) {
             $args['filter'][] = array('visibility' => 'regular_user');
         }
-        return parent::filterList($api, $args, $acl);
+        return $this->filterList($api, $args, $acl);
     }
 
     /**

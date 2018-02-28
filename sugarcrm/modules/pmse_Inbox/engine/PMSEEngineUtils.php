@@ -191,6 +191,33 @@ class PMSEEngineUtils
     protected static $parentBeanCache = [];
 
     /**
+     * Method to append the name fields from a bean to an array
+     * @param SugarBean $bean
+     * @param array $result
+     * @return array
+     */
+    public static function appendNameFields($bean, $result)
+    {
+        if ($bean instanceof Person) {
+            $result['is_a_person'] = true;
+            $result['salutation'] = $bean->salutation;
+            $result['first_name'] = $bean->first_name;
+            $result['last_name'] = $bean->last_name;
+            $result['cas_title'] = null;
+            $result['name'] = null;
+        } else {
+            $result['is_a_person'] = false;
+            $result['salutation'] = null;
+            $result['first_name'] = null;
+            $result['last_name'] = null;
+            $result['cas_title'] = $bean->name;
+            $result['name'] = $bean->name;
+        }
+        $result['_erased_fields'] = $bean->erased_fields;
+        return $result;
+    }
+
+    /**
      * Method get key fields
      * @param type $pattern
      * @param type $array
