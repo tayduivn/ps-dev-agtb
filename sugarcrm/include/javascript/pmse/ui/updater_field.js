@@ -629,7 +629,8 @@ UpdaterField.prototype.setOperatorPanelForm = function(self, field, fieldType, c
                 };
             }
             self._datePanel.setOperators({
-                arithmetic: ['+', '-']
+                arithmetic: ['+', '-'],
+                runTime: true
             }).setConstantPanel(constantPanelCfg);
         } else {
             self._datePanel.setOperators({
@@ -733,7 +734,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 decimalSeparator: this._decimalSeparator,
                 numberGroupingSeparator: this._numberGroupingSeparator,
                 dateFormat: App.date.getUserDateFormat(),
-                timeFormat: SUGAR.App.user.getPreference("timepref"),
+                timeFormat: App.user.getPreference('timepref'),
                 currencies: project.getMetadata("currencies"),
                 onOpen: function () {
                     jQuery(that.currentField.html).addClass("opened");
@@ -1910,18 +1911,20 @@ DateUpdaterItem.prototype._setValueToControl = function (value) {
     var friendlyValue = "", i, dateFormat, timeFormat;
     value.forEach(function(value, index, arr) {
         if (value && value.expType === 'CONSTANT') {
-            if (!dateFormat) {
-                dateFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref"));
-            }
-            if (value.expSubtype === "datetime") {
-                if (!timeFormat) {
-                    timeFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("timepref"));
+            if (value.expValue != 'now') {
+                if (!dateFormat) {
+                    dateFormat = App.date.convertFormat(App.user.getPreference('datepref'));
                 }
-                aux = App.date(value.expValue);
-                value.expLabel = aux.format(dateFormat + " " + timeFormat);
-            } else if (value.expSubtype === "date") {
-                aux = App.date(value.expValue);
-                value.expLabel = aux.format(dateFormat);
+                if (value.expSubtype === 'datetime') {
+                    if (!timeFormat) {
+                        timeFormat = App.date.convertFormat(App.user.getPreference('timepref'));
+                    }
+                    aux = App.date(value.expValue);
+                    value.expLabel = aux.format(dateFormat + ' ' + timeFormat);
+                } else if (value.expSubtype === 'date') {
+                    aux = App.date(value.expValue);
+                    value.expLabel = aux.format(dateFormat);
+                }
             }
         }
         friendlyValue += " " + value.expLabel;

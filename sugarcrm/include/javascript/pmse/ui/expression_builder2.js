@@ -89,49 +89,57 @@ ExpressionControl.prototype._typeToControl = {
     "user": "friendlydropdown"
 };
 
-ExpressionControl.prototype.OPERATORS  = {
-    "arithmetic": [
-        {
-            text: "+",
-            value: "addition"
-        },
-        {
-            text: "-",
-            value: "substraction"
-        },
-        {
-            text: "x",
-            value: "multiplication"
-        },
-        {
-            text: "/",
-            value: "division"
-        }
-    ],
-    "logic": [
-        {
-            text: "AND",
-            value: "AND"
-        },
-        {
-            text: "OR",
-            value:  "OR"
-        },
-        {
-            text: "NOT",
-            value: "NOT"
-        }
-    ],
-    'group': [
-        {
-            text: '(',
-            value: '('
-        },
-        {
-            text: ')',
-            value: ')'
-        }
-    ]
+ExpressionControl.prototype.initOperators = function () {
+    ExpressionControl.prototype.OPERATORS  = {
+        'runTime': [
+            {
+                text: translate('LBL_PMSE_RUNTIME_BUTTON'),
+                value: 'Run Time'
+            }
+        ],
+        "arithmetic": [
+            {
+                text: "+",
+                value: "addition"
+            },
+            {
+                text: "-",
+                value: "substraction"
+            },
+            {
+                text: "x",
+                value: "multiplication"
+            },
+            {
+                text: "/",
+                value: "division"
+            }
+        ],
+        "logic": [
+            {
+                text: "AND",
+                value: "AND"
+            },
+            {
+                text: "OR",
+                value:  "OR"
+            },
+            {
+                text: "NOT",
+                value: "NOT"
+            }
+        ],
+        'group': [
+            {
+                text: '(',
+                value: '('
+            },
+            {
+                text: ')',
+                value: ')'
+            }
+        ]
+    };
 };
 
 ExpressionControl.prototype.initComparisonOperators = function(module) {
@@ -214,6 +222,7 @@ ExpressionControl.prototype.EXTRA_OPERATORS = {};
 
 ExpressionControl.prototype.init = function(settings) {
     var module = 'pmse_Project';
+    ExpressionControl.prototype.initOperators();
     ExpressionControl.prototype.initComparisonOperators(module);
     var defaults = {
         name: null,
@@ -1120,6 +1129,13 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                 case "button-panel-operators":
                     if (data.value == 'close') {
                         that._closeParentPanels();
+                    } else if (data.value === 'Run Time') {
+                        itemData = {
+                            expType: 'CONSTANT',
+                            expSubtype: "date",
+                            expLabel: translate('LBL_PMSE_RUNTIME_BUTTON'),
+                            expValue: 'now'
+                        };
                     } else {
                         itemData = {
                             expType: that._getOperatorType(data.value),

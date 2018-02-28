@@ -334,6 +334,8 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT' => 'is not',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE' => 'not equal to',
 
+    'LBL_PMSE_RUNTIME_BUTTON' => 'Run Time',
+
     'LBL_PMSE_FORMPANEL_SUBMIT' => 'Add',
     'LBL_PMSE_FORMPANEL_CLOSE' => 'Close',
 
