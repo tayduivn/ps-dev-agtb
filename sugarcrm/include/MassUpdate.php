@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
@@ -38,6 +39,11 @@ class MassUpdate
     protected $request;
 
     /**
+     * @var IdmConfig
+     */
+    protected $idmConfig;
+
+    /**
      * Constructor for Mass Update
      *
      * @param Request $request
@@ -48,6 +54,7 @@ class MassUpdate
         //TODO: It will be turned on when job queue, asynchronous processing, activity Stream performance has been handled after 7.0
         Activity::disable();
         $this->request = $request ?: InputValidation::getService();
+        $this->idmConfig =  new IdmConfig(\SugarConfig::getInstance());
     }
 
 	/**
@@ -540,6 +547,12 @@ class MassUpdate
 
 		//These fields should never appear on mass update form
 		static $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
+
+        if (in_array($this->sugarbean->module_name, $this->idmConfig->getOidcDisabledModules())
+            && $this->idmConfig->isOIDCEnabled()
+        ) {
+            $banned += $this->idmConfig->getOidcDisabledFields();
+        }
 
 		foreach($this->sugarbean->field_defs as $field)
 		{
