@@ -28,6 +28,16 @@
     },
 
     /**
+     * Save status.
+     *
+     * @private
+     */
+    _setStatus: function(status) {
+        this.model.set('status', status);
+        this.handleSave();
+    },
+
+    /**
      * Calculates and returns the number of fields on all related records marked for erasure.
      *
      * @return {number} The number of records marked for erasure.
@@ -50,13 +60,13 @@
      * Displays a confirmation warning for erasing all field values for the fields marked for erasure.
      */
     showConfirmEraseAlert: function() {
+        var self = this;
         var alertText = app.lang.get('LBL_WARNING_ERASE_CONFIRM', 'DataPrivacy');
         app.alert.show('confirm_complete:' + this.model.get('id'), {
             level: 'confirmation',
             messages: app.utils.formatString(alertText, [this._getNumberOfFieldsToErased()]),
             onConfirm: function() {
-                // place holder for now
-                console.log('Erase & Complete has been confirmed');
+                self._setStatus('Closed');
             }
         });
     },
@@ -65,12 +75,12 @@
      * Displays a confirmation warning for closing the request.
      */
     showConfirmCompleteAlert: function() {
+        var self = this;
         app.alert.show('confirm_erase_and_complete:' + this.model.get('id'), {
             level: 'confirmation',
             messages: app.lang.get('LBL_WARNING_COMPLETE_CONFIRM', 'DataPrivacy'),
             onConfirm: function() {
-                // place holder for now
-                console.log('Complete has been confirmed');
+                self._setStatus('Closed');
             }
         });
     },
@@ -79,6 +89,7 @@
      * Displays a confirmation warning for rejecting the erasure of field values for all fields marked for erasure.
      */
     showRejectEraseAlert: function() {
+        var self = this;
         var alertText;
         if (this.model.get('type') == 'Request to Erase Information') {
             alertText = app.utils.formatString(
@@ -92,8 +103,7 @@
             level: 'confirmation',
             messages: alertText,
             onConfirm: function() {
-                // place holder for now
-                console.log('Reject has been confirmed');
+                self._setStatus('Rejected');
             }
         });
     },

@@ -84,13 +84,20 @@ class DataPrivacy extends Issue
     {
         $data = empty($this->fields_to_erase) ? [] : json_decode($this->fields_to_erase, true);
 
-        foreach ($data as $module => $moduleData) {
+        foreach ($data as $link => $moduleData) {
+            $moduleName = null;
+            if ($this->load_relationship($link) && $this->$link) {
+                $moduleName = $this->$link->getRelatedModuleName();
+            }
+            if (empty($moduleName)) {
+                continue;
+            }
             foreach ($moduleData as $id => $fields) {
                 if (empty($fields)) {
                     continue;
                 }
 
-                $bean = BeanFactory::retrieveBean($module, $id);
+                $bean = BeanFactory::retrieveBean($moduleName, $id);
                 if (!$bean) {
                     continue;
                 }
