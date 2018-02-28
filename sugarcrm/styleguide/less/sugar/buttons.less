@@ -21,7 +21,7 @@
   /*sugar mods*/
   padding: 4px 6px;
   color: @gray;
-  font-weight: 500;
+  font-weight: 600;
 
   &.down {
     .buttonBackground(@btnBackgroundHighlight,@btnBackground);
@@ -449,6 +449,33 @@ input.required + .btn.btn-input-addon {
     box-shadow: inset 0 1px 3px @btnPrimaryHoverActiveBgGrad;
     border: solid 1px @btnPrimaryActiveBorder;
     background-color: @btnPrimaryActiveBackground;
+  }
+}
+
+.btn.btn-secondary {
+  background-color: @btnSecondaryBackground;
+  border-color: @btnSecondaryBorder;
+  color: @btnSecondaryColor;
+
+  &:hover {
+    background-color: @btnSecondaryBackgroundHover;
+    box-shadow: none;
+    background-image: none;
+  }
+
+  &:active:not(.disabled):not(.btn-invisible) {
+    background: @btnSecondaryBackgroundActive;
+    box-shadow: @btnSecondaryBoxShadowActive;
+  }
+
+  &:focus {
+    background: @btnSecondaryBackgroundFocus;
+  }
+
+  &.disabled,
+  &[disabled] {
+    background-color: @btnSecondaryBackgroundDisabled;
+    color: @btnSecondaryColorDisabled;
   }
 }
 

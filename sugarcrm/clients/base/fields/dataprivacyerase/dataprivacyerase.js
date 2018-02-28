@@ -57,13 +57,9 @@
     },
 
     /**
-     * Handle Mark for Erase click
+     * Trigger event to open the Mark for Erasure drawer.
      */
     showMarkForErasePanel: function() {
-        // place holder for now, we can either display the mark for erase panel here
-        // or trigger ane event and let the parent (record) handle it
-        // depending on how we are mixing in the marked for erasure data stored on the DataPrivacy model
-        console.log('Mark for Erase clicked for ' + this.model.module + ':' + this.model.id);
-        //this.context.parent.trigger('mark-erasure:click', this.model);
+        this.context.parent.trigger('mark-erasure:click', this.model);
     }
 })

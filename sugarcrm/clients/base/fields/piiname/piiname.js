@@ -18,16 +18,30 @@
      * @inheritdoc
      *
      * Convert the raw field type name into the label of the field
-     * of the parent model; if not available, use raw value.
+     * of the Pii module or Pii parent module; if not available,
+     * use raw value.
      */
     format: function(value) {
-        if (this.context && this.context.parent) {
-            var parentModel = this.context.parent.get('model');
-            var field = parentModel.fields[value];
-            if (field) {
-                value = app.lang.get(field.label || field.vname, parentModel.module);
-            }
+        var module;
+        var field;
+
+        if (!this.context) {
+            return value;
         }
+
+        if (this.context.has('piiModule')) {
+            module = this.context.get('piiModule');
+            field = app.metadata.getField({module: module, name: value});
+        } else if (this.context.parent) {
+            var model = this.context.parent.get('model');
+            module = model.module;
+            field = model.fields[value];
+        }
+
+        if (field) {
+            value = app.lang.get(field.label || field.vname, module);
+        }
+
         return value;
     }
 })

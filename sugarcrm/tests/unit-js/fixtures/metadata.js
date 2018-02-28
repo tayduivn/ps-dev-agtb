@@ -827,6 +827,9 @@ fixtures.metadata = {
                 }
             }
         },
+        DataPrivacy: {
+            fields: {}
+        },
         "Accounts": {
             fields: {}
         },
