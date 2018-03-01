@@ -122,7 +122,7 @@ class Audit extends SugarBean
                   LEFT JOIN audit_events ae ON (ae.id = atab.event_id)
                   LEFT JOIN users usr ON (usr.id = atab.created_by) 
                   WHERE  atab.parent_id = ?
-                  ORDER BY atab.date_created, atab.id DESC";
+                  ORDER BY atab.date_created DESC, atab.id DESC";
 
         $db = DBManagerFactory::getInstance();
 
@@ -180,8 +180,8 @@ class Audit extends SugarBean
 
     /**
      * Wrapper around static method self::getAssociatedFieldName($fieldName, $fieldValue)
-     * @param {String} $fieldName
-     * @param {String} $fieldValue
+     * @param string $fieldName
+     * @param string $fieldValue
      * @return string
      */
     protected function getNameForId($fieldName, $fieldValue)
