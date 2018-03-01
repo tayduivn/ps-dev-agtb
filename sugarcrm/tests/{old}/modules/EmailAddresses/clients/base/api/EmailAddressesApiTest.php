@@ -123,7 +123,7 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertSame($address->id, $bean->id);
         $this->assertSame($address->email_address, $bean->email_address);
-        $this->assertFalse($address->invalid_email);
+        $this->assertFalse(boolval($bean->invalid_email));
     }
 
     /**
@@ -173,7 +173,7 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = $api->createBean($this->service, $args);
 
         $this->assertNotEmpty($bean->id);
-        $this->assertEquals($optOut, $bean->opt_out, 'New email opt_out does not match configured default');
+        $this->assertEquals($optOut, boolval($bean->opt_out), 'New email opt_out does not match configured default');
     }
 
     private function setConfigOptout(bool $optOut)
