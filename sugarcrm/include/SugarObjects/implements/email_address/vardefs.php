@@ -39,6 +39,7 @@ $vardefs = array(
                 'searchable' => true,
                 'boost' => 1.50,
             ),
+            'audited' => true,
         ),
         'email1' => array(
 			'name'		=> 'email1',

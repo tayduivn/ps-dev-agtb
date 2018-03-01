@@ -17,8 +17,8 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+use Sugarcrm\Sugarcrm\Audit\Formatter as AuditFormatter;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
-use Sugarcrm\Sugarcrm\Security\Subject\Formatter;
 
 require_once 'modules/Audit/field_assoc.php';
 
@@ -122,11 +122,11 @@ class Audit extends SugarBean
                   LEFT JOIN audit_events ae ON (ae.id = atab.event_id)
                   LEFT JOIN users usr ON (usr.id = atab.created_by) 
                   WHERE  atab.parent_id = ?
-                  ORDER BY atab.date_created DESC";
+                  ORDER BY atab.date_created, atab.id DESC";
 
         $db = DBManagerFactory::getInstance();
 
-        $stmt = $db->getConnection()->executeQuery($query, array($bean->id));
+        $stmt = $db->getConnection()->executeQuery($query, [$bean->id]);
         if (empty($stmt)) {
             return array();
         }
@@ -135,6 +135,7 @@ class Audit extends SugarBean
         $return = array();
 
         $aclCheckContext = array('bean' => $bean);
+        $rows = [];
         while ($row = $stmt->fetch()) {
             if (!SugarACL::checkField($bean->module_dir, $row['field_name'], 'access', $aclCheckContext)) {
                 continue;
@@ -164,49 +165,28 @@ class Audit extends SugarBean
             ) {
                 foreach ($fieldDefs as $field) {
                     if (in_array($field['name'], array('before_value_string', 'after_value_string'))) {
-                        $row[$field['name']] =
-                            self::getAssociatedFieldName($row['field_name'], $row[$field['name']]);
+                        $row[$field['name']] = $this->getNameForId($row['field_name'], $row[$field['name']]);
                     }
                 }
             }
 
-            $row = $this->formatRowForApi($row);
-
-            $fieldName = $row['field_name'];
-            $fieldType = $db->getFieldType($bean->field_defs[$row['field_name']]);
-            switch ($fieldType) {
-                case 'date':
-                case 'time':
-                case 'datetime':
-                    $row['before'] = $this->formatDateTime($row['before'], $fieldType);
-                    $row['after'] = $this->formatDateTime($row['after'], $fieldType);
-                    break;
-                case 'enum':
-                case 'multienum':
-                    $row['before'] = explode(',',str_replace('^','', $row['before']));
-                    $row['after'] = explode(',',str_replace('^','', $row['after']));
-                    break;
-                case 'relate':
-                case 'link':
-                    // get the other side
-                    if (isset($bean->field_defs[$fieldName]['module'])) {
-                        $module = $bean->field_defs[$fieldName]['module'];
-                        $otherSideBeanBefore = BeanFactory::getBean($module, $row['before']);
-                        $otherSideBeanAfter = BeanFactory::getBean($module, $row['after']);
-                        if ($otherSideBeanBefore instanceof SugarBean) {
-                            $row['before'] = $otherSideBeanBefore->get_summary_text();
-                        }
-                        if ($otherSideBeanAfter instanceof SugarBean) {
-                            $row['after'] = $otherSideBeanAfter->get_summary_text();
-                        }
-                    }
-                    break;
-            }
-
-            $return[] = $row;
+            $rows[] = $this->formatRowForApi($row);
         }
 
-        return $this->formatSourceSubject($return);
+        Container::getInstance()->get(AuditFormatter::class)->formatRows($rows);
+
+        return $rows;
+    }
+
+    /**
+     * Wrapper around static method self::getAssociatedFieldName($fieldName, $fieldValue)
+     * @param {String} $fieldName
+     * @param {String} $fieldValue
+     * @return string
+     */
+    protected function getNameForId($fieldName, $fieldValue)
+    {
+        return self::getAssociatedFieldName($fieldName, $fieldValue);
     }
 
     /**
@@ -461,26 +441,5 @@ class Audit extends SugarBean
                 }
             }
         }
-    }
-
-    private function formatSourceSubject($rows)
-    {
-        $subjects = array();
-        // gather all subjects
-        foreach ($rows as $k => $v) {
-            if (!empty($v['source']['subject'])) {
-                $subjects[$k] = $v['source']['subject'];
-            }
-        }
-
-        $formatter = Container::getInstance()->get(Formatter::class);
-        $formattedSubjects = $formatter->formatBatch($subjects);
-
-        // merge formatted subjects into rows
-        foreach ($formattedSubjects as $k => $v) {
-            $rows[$k]['source']['subject'] = $v;
-        }
-
-        return $rows;
     }
 }

@@ -18,7 +18,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use InvalidArgumentException;
 use SugarBean;
-use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
+use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList as ErasureFieldList;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 use TimeDate;
@@ -54,7 +55,7 @@ class EventRepository
      * @return string id of audit event created
      * @throws DBALException
      */
-    public function registerUpdate(SugarBean $bean, FieldList $changedFields)
+    public function registerUpdate(SugarBean $bean, FieldChangeList $changedFields)
     {
         return $this->save($bean, 'update', $changedFields);
     }
@@ -67,7 +68,7 @@ class EventRepository
      * @throws DBALException
      * @throws InvalidArgumentException
      */
-    public function registerErasure(SugarBean $bean, FieldList $fields)
+    public function registerErasure(SugarBean $bean, ErasureFieldList $fields)
     {
         if (count($fields) === 0) {
             throw new InvalidArgumentException("Fields to be erased can not be empty.");
@@ -78,12 +79,12 @@ class EventRepository
     /**
      * Saves EventRepository
      * @param SugarBean $bean SugarBean that was changed
-     * @param $eventType Audit event type
-     * @param FieldList $fields list of fields impacted
+     * @param string $eventType Audit event type
+     * @param array|jsonSerializeable $data json serializable representation of the event data
      * @return string id of record saved
      * @throws DBALException
      */
-    private function save(SugarBean $bean, $eventType, FieldList $fields)
+    private function save(SugarBean $bean, string $eventType, $data)
     {
         $id =  Uuid::uuid1();
 
@@ -94,7 +95,7 @@ class EventRepository
             'parent_id' => $bean->id,
             'module_name' => $bean->module_name,
             'source' => json_encode($this->context),
-            'data' => json_encode($fields),
+            'data' => json_encode($data),
             'date_created' => TimeDate::getInstance()->nowDb(),]
         );
 

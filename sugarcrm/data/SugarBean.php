@@ -26,7 +26,8 @@ require_once 'include/utils.php';
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
-use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
+use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList as ErasureFieldList;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\ProcessManager;
@@ -1814,7 +1815,7 @@ class SugarBean
      * @param boolean $check_notify if set to true, the assignee of the record is notified via email.
      * @throws DBALException
      */
-    public function erase(FieldList $fields, $check_notify)
+    public function erase(ErasureFieldList $fields, $check_notify)
     {
         $fields->erase($this);
 
@@ -1851,20 +1852,17 @@ class SugarBean
             $this->getErasedFieldsRepository()->removeBeanFields(
                 $this->getTableName(),
                 $this->id,
-                FieldList::fromArray(array_keys($this->dataChanges))
+                ErasureFieldList::fromArray(array_keys($this->dataChanges))
             );
 
             if ($this->is_AuditEnabled()) {
                 $auditFields = $this->getAuditEnabledFieldDefinitions(true);
                 $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
-                if (!empty($auditDataChanges)) {
-                    $auditEventId = $this->getEventRepository()->registerUpdate(
-                        $this,
-                        FieldList::fromArray(array_keys($auditDataChanges))
-                    );
-
-                    foreach ($auditDataChanges as $change) {
-                        $this->saveAuditRecords($this, $change, $auditEventId);
+                $auditFieldList = FieldChangeList::fromChanges($auditDataChanges);
+                if (count($auditFieldList) > 0) {
+                    $auditEventId = $this->getEventRepository()->registerUpdate($this, $auditFieldList);
+                    foreach ($auditFieldList as $field) {
+                        $this->saveAuditRecords($this, $field->getChangeArray(), $auditEventId);
                     }
                 }
             }
@@ -1916,15 +1914,16 @@ class SugarBean
      * Saves changes to module's audit table
      *
      * @param SugarBean $bean Sugarbean instance that was changed
-     * @param array $changes List of changes, contains 'before' and 'after'
+     * @param array $change A single change array, contains 'before' and 'after'
      * @param string $event_id Audit event id
+     *
      * @return bool query result
      * @internal This method should be marked protected as soon as audit code is removed from DBManager.
      *            It is marked public only for backward compatibility.
      */
-    public function saveAuditRecords(SugarBean $bean, $changes, $event_id)
+    public function saveAuditRecords(SugarBean $bean, $change, $event_id)
     {
-        return $this->db->query($this->auditSQL($bean, $changes, $event_id));
+        return $this->db->query($this->auditSQL($bean, $change, $event_id));
     }
 
     /**
@@ -1949,7 +1948,7 @@ class SugarBean
      * @return bool query result
      * @throws DBALException
      */
-    public function eraseAuditRecords(FieldList $fields, $event_id)
+    public function eraseAuditRecords(ErasureFieldList $fields, $event_id)
     {
         return $this->db->getConnection()->update(
             $this->get_audit_table_name(),

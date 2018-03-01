@@ -15,6 +15,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
+use Sugarcrm\Sugarcrm\Audit\Formatter as AuditFormatter;
+use Sugarcrm\Sugarcrm\Audit\Formatter\CompositeFormatter;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\Rebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
@@ -29,7 +31,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use Sugarcrm\Sugarcrm\Security\Context;
-use Sugarcrm\Sugarcrm\Security\Subject\Formatter;
+use Sugarcrm\Sugarcrm\Security\Subject\Formatter as SubjectFormatter;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter\BeanFormatter;
 use UltraLite\Container\Container;
 
@@ -105,7 +107,7 @@ return new Container([
     Localization::class => function () {
         return Localization::getObject();
     },
-    Formatter::class => function (ContainerInterface $container) {
+    SubjectFormatter::class => function (ContainerInterface $container) {
         return new BeanFormatter(
             $container->get(Localization::class)
         );
@@ -119,6 +121,15 @@ return new Container([
     Repository::class => function (ContainerInterface $container) {
         return new Repository(
             $container->get(Connection::class)
+        );
+    },
+    AuditFormatter::class => function (ContainerInterface $container) {
+        $class = \SugarAutoLoader::customClass(CompositeFormatter::class);
+        return new $class(
+            new \Sugarcrm\Sugarcrm\Audit\Formatter\Date(),
+            new \Sugarcrm\Sugarcrm\Audit\Formatter\Enum(),
+            new \Sugarcrm\Sugarcrm\Audit\Formatter\Email(),
+            new \Sugarcrm\Sugarcrm\Audit\Formatter\Subject($container->get(SubjectFormatter::class))
         );
     },
 ]);

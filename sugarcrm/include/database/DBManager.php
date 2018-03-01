@@ -3359,34 +3359,22 @@ abstract class DBManager
 
                 //Because of bug #25078(sqlserver haven't 'date' type, trim extra "00:00:00" when insert into *_cstm table).
                 // so when we read the audit datetime field from sqlserver, we have to replace the extra "00:00:00" again.
-                if(!empty($field_type) && $field_type == 'date'){
-                    $before_value = $this->fromConvert($before_value , $field_type);
+                if (!empty($before_value) && !empty($field_type) && $field_type == 'date') {
+                    $before_value = $this->fromConvert($before_value, $field_type);
                 }
 
                 //email field contains an array so loop through and grab the addresses marked as primary for comparison
                 if (!empty($field_type) && $field_type == 'email') {
-                    if (empty($before_value)) {
-                        //further processing expects a string, so change empty array into blank string
-                        $before_value = '';
-                    } else {
-                        foreach ($before_value as $emailArr ) {
-                            if ($emailArr['primary_address']) {
-                                $before_value = $emailArr['email_address'];
-                                break;
-                            }
-                        }
+                    if ($this->didEmailAddressesChange($before_value, $after_value)) {
+                        $changed_values[$field] = array(
+                            'field_name' => $field,
+                            'data_type' => $field_type,
+                            'before' => $before_value,
+                            'after' => $after_value,
+                        );
                     }
-                    if (empty($after_value)) {
-                        //further processing expects a string, so change empty array into blank string
-                        $after_value = '';
-                    } else {
-                        foreach ($after_value as $emailArr ) {
-                            if ($emailArr['primary_address']) {
-                                $after_value = $emailArr['email_address'];
-                                break;
-                            }
-                        }
-                    }
+
+                    continue;
                 }
 
                 // if we have a type of currency, we need to convert the value into the base for the system.
@@ -3454,6 +3442,21 @@ abstract class DBManager
             }
         }
         return $changed_values;
+    }
+
+    private function didEmailAddressesChange($before_value, $after_value)
+    {
+        if (!is_array($before_value) || !(is_array($after_value))) {
+            return $before_value !== $after_value;
+        }
+
+        $before_addresses = array_column($before_value, 'id');
+        sort($before_addresses);
+        $after_addresses = array_column($after_value, 'id');
+        sort($after_addresses);
+
+
+        return ($before_addresses != $after_addresses);
     }
 
     /**
