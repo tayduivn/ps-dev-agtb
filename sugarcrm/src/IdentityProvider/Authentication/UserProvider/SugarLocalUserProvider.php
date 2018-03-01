@@ -114,6 +114,7 @@ class SugarLocalUserProvider implements UserProviderInterface
             throw new InvalidUserException('Portal or group user can not log in.');
         }
 
+        $sugarUser->emailAddress->handleLegacyRetrieve($sugarUser);
         $user = new User($nameIdentifier, $sugarUser->user_hash);
         $user->setSugarUser($sugarUser);
 

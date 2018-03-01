@@ -29,6 +29,11 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
+    protected $emailAddress;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
     protected $userProvider;
 
     /**
@@ -47,6 +52,8 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->user = $this->createMock(\User::class);
+        $this->emailAddress = $this->createMock(\EmailAddress::class);
+        $this->user->emailAddress = $this->emailAddress;
 
         $this->userProvider = $this->getMockBuilder(SugarLocalUserProvider::class)
             ->setMethods(['createUserBean', 'getSugarQuery'])
@@ -163,6 +170,8 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadUserByUsername()
     {
+        $this->emailAddress->expects($this->once())->method('handleLegacyRetrieve');
+
         $this->sugarQueryWhere->expects($this->once())
             ->method('equals')
             ->with($this->equalTo('user_name'), $this->equalTo($name = 'test'));
@@ -201,6 +210,8 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
         $field = 'last_name';
         $value = 'Johnson';
 
+        $this->emailAddress->expects($this->once())->method('handleLegacyRetrieve');
+
         $this->sugarQueryWhere->expects($this->once())
             ->method('equals')
             ->with($this->equalTo($field), $this->equalTo($value));
@@ -236,6 +247,8 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
     public function testLoadUserByFieldEmail()
     {
         $id = '123';
+
+        $this->emailAddress->expects($this->once())->method('handleLegacyRetrieve');
 
         $this->user->expects($this->once())
             ->method('retrieve_by_email_address')
@@ -281,6 +294,9 @@ class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
         $user->expects($this->once())
             ->method('getUsername')
             ->willReturn($name = 'user_name');
+
+        $user->emailAddress = $this->emailAddress;
+        $this->emailAddress->expects($this->once())->method('handleLegacyRetrieve');
 
         $this->sugarQueryWhere->expects($this->once())
             ->method('equals')

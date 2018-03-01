@@ -63,7 +63,10 @@ class SugarOIDCUserChecker extends UserChecker
         $identify = $user->getAttribute('oidc_identify');
 
         try {
-            $sugarUser = $this->localUserProvider->loadUserByField($identify['value'], $identify['field'])->getSugarUser();
+            $sugarUser = $this->localUserProvider
+                ->loadUserByField($identify['value'], $identify['field'])
+                ->getSugarUser();
+            $this->setUserData($sugarUser, $userAttributes);
         } catch (UsernameNotFoundException $e) {
             $userAttributes = array_merge(
                 [$identify['field'] => $identify['value']],
@@ -73,5 +76,37 @@ class SugarOIDCUserChecker extends UserChecker
             $sugarUser = $this->localUserProvider->createUser($userAttributes['user_name'], $userAttributes);
         }
         $user->setSugarUser($sugarUser);
+    }
+
+    /**
+     * Compare user data and set changes
+     * PopulateFromRow couldn't be used because all non-oidc fields are set to empty
+     * @param \User $sugarUser
+     * @param array $attributes
+     */
+    protected function setUserData(\User $sugarUser, array $attributes)
+    {
+        $isDataChanged = false;
+        $email = null;
+        if (isset($attributes['email'])) {
+            $primaryEmail = $sugarUser->emailAddress->getPrimaryAddress($sugarUser);
+            if (strcasecmp($primaryEmail, $attributes['email']) !== 0) {
+                $email = $attributes['email'];
+            }
+            unset($attributes['email']);
+        }
+        foreach ($attributes as $name => $value) {
+            if (isset($sugarUser->$name) && strcasecmp($sugarUser->$name, $value) !== 0) {
+                $sugarUser->$name = $value;
+                $isDataChanged = true;
+            }
+        }
+        if ($isDataChanged) {
+            $sugarUser->save();
+        }
+        if ($email) {
+            $sugarUser->emailAddress->addAddress($email, true);
+            $sugarUser->emailAddress->save($sugarUser->id, $sugarUser->module_dir);
+        }
     }
 }

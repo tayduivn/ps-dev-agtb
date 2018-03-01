@@ -18,7 +18,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/aws-aws-sdk-php-2.7.7-845e97.tar",
                 "reference": "c9dff84d401f0933d7e7d85aacbf6ce1b8fc9f0f",
-                "shasum": "1fc97d39c15c34e1f0270f81c85b0e9c4b20fb18"
+                "shasum": "43cfd68140d567d7e193ed3a0eeb2936cafcebd8"
             },
             "require": {
                 "guzzle/guzzle": "~3.7",
@@ -85,10 +85,10 @@
                 "reference": "2d555f72f3f4ff9e72a7bc17cb8a53c86737c8a0"
             },
             "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/beberlei/assert/beberlei-assert-v2.9.2-07d031.tar",
+                "type": "zip",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/2d555f72f3f4ff9e72a7bc17cb8a53c86737c8a0",
                 "reference": "2d555f72f3f4ff9e72a7bc17cb8a53c86737c8a0",
-                "shasum": "929ee97b0e9916304fa6d1bbe4ee39f5a6e49aba"
+                "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
@@ -107,25 +107,7 @@
                     "lib/Assert/functions.php"
                 ]
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Assert\\Tests\\": "tests/Assert/Tests"
-                },
-                "files": [
-                    "tests/Assert/Tests/Fixtures/functions.php"
-                ]
-            },
-            "scripts": {
-                "assert:generate-docs": [
-                    "php bin/generate_method_docs.php"
-                ],
-                "assert:cs-lint": [
-                    "php-cs-fixer fix --diff -vvv --dry-run"
-                ],
-                "assert:cs-fix": [
-                    "php-cs-fixer fix . -vvv || true"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-2-Clause"
             ],
@@ -151,30 +133,30 @@
         },
         {
             "name": "doctrine/annotations",
-            "version": "v1.4.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/annotations.git",
-                "reference": "54cacc9b81758b14e3ce750f205a393d52339e97"
+                "reference": "c7f2050c68a9ab0bdb0f98567ec08d80ea7d24d5"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-annotations-v1.4.0-879343.tar",
-                "reference": "54cacc9b81758b14e3ce750f205a393d52339e97",
-                "shasum": "1f177d5921812d38abc21f47d1bd69673ef2ab4f"
+                "url": "https://satis.sugardev.team/dist/doctrine/annotations/doctrine-annotations-v1.6.0-c854b5.tar",
+                "reference": "c7f2050c68a9ab0bdb0f98567ec08d80ea7d24d5",
+                "shasum": "2eaafbe230b6780b6f3a3efe8b3bb0613b80c7f5"
             },
             "require": {
                 "doctrine/lexer": "1.*",
-                "php": "^5.6 || ^7.0"
+                "php": "^7.1"
             },
             "require-dev": {
                 "doctrine/cache": "1.*",
-                "phpunit/phpunit": "^5.7"
+                "phpunit/phpunit": "^6.4"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-master": "1.6.x-dev"
                 }
             },
             "autoload": {
@@ -219,37 +201,41 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2017-02-24T16:22:25+00:00"
+            "time": "2017-12-06T07:11:42+00:00"
         },
         {
             "name": "doctrine/cache",
-            "version": "v1.6.2",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "fcaefc41da9c6da19578ac5b4f6d1c8c11125927"
+                "reference": "98ce1588680b7440a02ca77f8c05ef6f8d71cd0b"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-cache-v1.6.2-8f5b62.tar",
-                "reference": "fcaefc41da9c6da19578ac5b4f6d1c8c11125927",
-                "shasum": "bea2dae3e26075ceff83a8f75451b01056a7d299"
+                "url": "https://satis.sugardev.team/dist/doctrine/cache/doctrine-cache-v1.7.1-705a90.tar",
+                "reference": "98ce1588680b7440a02ca77f8c05ef6f8d71cd0b",
+                "shasum": "62740ba6a14bfea314fbd797243eca123196dec7"
             },
             "require": {
-                "php": "~5.5|~7.0"
+                "php": "~7.1"
             },
             "conflict": {
                 "doctrine/common": ">2.2,<2.4"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.8|~5.0",
-                "predis/predis": "~1.0",
-                "satooshi/php-coveralls": "~0.6"
+                "alcaeus/mongo-php-adapter": "^1.1",
+                "mongodb/mongodb": "^1.1",
+                "phpunit/phpunit": "^5.7",
+                "predis/predis": "~1.0"
+            },
+            "suggest": {
+                "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.6.x-dev"
+                    "dev-master": "1.7.x-dev"
                 }
             },
             "autoload": {
@@ -293,24 +279,24 @@
                 "cache",
                 "caching"
             ],
-            "time": "2017-07-22T12:49:21+00:00"
+            "time": "2017-08-25T07:02:50+00:00"
         },
         {
             "name": "doctrine/collections",
-            "version": "v1.4.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/collections.git",
-                "reference": "1a4fb7e902202c33cce8c55989b945612943c2ba"
+                "reference": "a53828a6d82d30451859b357ab630b0827122d84"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-collections-v1.4.0-cefe7d.tar",
-                "reference": "1a4fb7e902202c33cce8c55989b945612943c2ba",
-                "shasum": "4725f8bf1c93e3bb4c7ee97c4d92668dd9d71a19"
+                "url": "https://satis.sugardev.team/dist/doctrine/collections/doctrine-collections-v1.5.0-50e219.tar",
+                "reference": "a53828a6d82d30451859b357ab630b0827122d84",
+                "shasum": "aecb386f2358e3cec76d4b5826aa1f4e913eb281"
             },
             "require": {
-                "php": "^5.6 || ^7.0"
+                "php": "^7.1"
             },
             "require-dev": {
                 "doctrine/coding-standard": "~0.1@dev",
@@ -364,7 +350,7 @@
                 "collections",
                 "iterator"
             ],
-            "time": "2017-01-03T10:49:41+00:00"
+            "time": "2017-07-22T10:37:32+00:00"
         },
         {
             "name": "doctrine/common",
@@ -521,33 +507,38 @@
         },
         {
             "name": "doctrine/inflector",
-            "version": "v1.1.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "1a30ab845ec7f2650d3d1b136b915972ef53dc77"
+                "reference": "5527a48b7313d15261292c149e55e26eae771b0a"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-inflector-v1.1.0-6c8dd6.tar",
-                "reference": "1a30ab845ec7f2650d3d1b136b915972ef53dc77",
-                "shasum": "654919ad35875fd52655ec4563ef254b78ebbe65"
+                "url": "https://satis.sugardev.team/dist/doctrine/inflector/doctrine-inflector-v1.3.0-e56813.tar",
+                "reference": "5527a48b7313d15261292c149e55e26eae771b0a",
+                "shasum": "e61850fdd82d6c52aa8d6f4a3660dfd4c1a9f3bf"
             },
             "require": {
-                "php": ">=5.3.2"
+                "php": "^7.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*"
+                "phpunit/phpunit": "^6.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.3.x-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Doctrine\\Common\\Inflector\\": "lib/"
+                "psr-4": {
+                    "Doctrine\\Common\\Inflector\\": "lib/Doctrine/Common/Inflector"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Doctrine\\Tests\\Common\\Inflector\\": "tests/Doctrine/Tests/Common/Inflector"
                 }
             },
             "license": [
@@ -583,7 +574,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2015-11-06T14:35:42+00:00"
+            "time": "2018-01-09T20:05:19+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -597,7 +588,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/doctrine-lexer-v1.0.1-20cd74.tar",
                 "reference": "d1ec545810553c0f5ed11140a3b5afa74a141459",
-                "shasum": "d0c3ed2af18e48da306ed14181b1dd1e5d1d1036"
+                "shasum": "7eb1523b7c986ca670f590e14f3fa1a85884a955"
             },
             "require": {
                 "php": ">=5.3.2"
@@ -709,7 +700,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/etechnika-idna-convert-1.0.3-ae3a24.tar",
                 "reference": "85e488474269b19630ca4e711061e4aa61ac879a",
-                "shasum": "e69c7b5e4a970e05db1f6293d5143a2464ecdb60"
+                "shasum": "af77428108e7274c006dc0fa784f31024c49de5d"
             },
             "require": {
                 "php": ">=5.3.0"
@@ -759,10 +750,10 @@
                 "reference": "40244500384f8b96f5952076f3e05fb56a815c55"
             },
             "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/fgrosse/phpasn1/fgrosse-phpasn1-1.5.3-6ec612.tar",
+                "type": "zip",
+                "url": "https://api.github.com/repos/fgrosse/PHPASN1/zipball/40244500384f8b96f5952076f3e05fb56a815c55",
                 "reference": "40244500384f8b96f5952076f3e05fb56a815c55",
-                "shasum": "1d3cd3728ad636f915a22478528f5bc017bdda98"
+                "shasum": ""
             },
             "require": {
                 "ext-gmp": "*",
@@ -786,11 +777,7 @@
                     "FG\\": "lib/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "FG\\Test\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -809,19 +796,19 @@
             "description": "A PHP Framework that allows you to encode and decode arbitrary ASN.1 structures using the ITU-T X.690 Encoding Rules.",
             "homepage": "https://github.com/FGrosse/PHPASN1",
             "keywords": [
+                "DER",
                 "asn.1",
                 "asn1",
                 "ber",
                 "binary",
                 "decoding",
-                "der",
                 "encoding",
                 "x.509",
                 "x.690",
                 "x509",
                 "x690"
             ],
-            "time": "2017-11-22T16:10:00+00:00"
+            "time": "2017-12-17T10:18:20+00:00"
         },
         {
             "name": "google/apiclient",
@@ -835,7 +822,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/google-apiclient-1.1.4-b0e5f5.tar",
                 "reference": "2adb5ba90612858d4add0342eee6b8b9aaca398d",
-                "shasum": "092550b6121aed1795ede6c6d6e354c6cb5e38df"
+                "shasum": "564bfd05c0c142ab194a6d0ee1a1d8f8bb39e85a"
             },
             "require": {
                 "php": ">=5.2.1"
@@ -866,22 +853,22 @@
         },
         {
             "name": "guzzle/guzzle",
-            "version": "v3.8.1",
+            "version": "v3.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle3.git",
-                "reference": "4de0618a01b34aa1c8c33a3f13f396dcd3882eba"
+                "reference": "0645b70d953bc1c067bbc8d5bc53194706b628d9"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/guzzle-guzzle-v3.8.1-52886a.tar",
-                "reference": "4de0618a01b34aa1c8c33a3f13f396dcd3882eba",
-                "shasum": "c16eb4002bc27b5df1762f343b5fd0604244a676"
+                "url": "https://satis.sugardev.team/dist/guzzle-guzzle-v3.9.3-ed28d5.tar",
+                "reference": "0645b70d953bc1c067bbc8d5bc53194706b628d9",
+                "shasum": "d8855478ce5a8b3b9edda7f0857c30fe2358c0dc"
             },
             "require": {
                 "ext-curl": "*",
                 "php": ">=5.3.3",
-                "symfony/event-dispatcher": ">=2.1"
+                "symfony/event-dispatcher": "~2.1"
             },
             "replace": {
                 "guzzle/batch": "self.version",
@@ -908,18 +895,21 @@
                 "guzzle/stream": "self.version"
             },
             "require-dev": {
-                "doctrine/cache": "*",
-                "monolog/monolog": "1.*",
+                "doctrine/cache": "~1.3",
+                "monolog/monolog": "~1.0",
                 "phpunit/phpunit": "3.7.*",
-                "psr/log": "1.0.*",
-                "symfony/class-loader": "*",
-                "zendframework/zend-cache": "<2.3",
-                "zendframework/zend-log": "<2.3"
+                "psr/log": "~1.0",
+                "symfony/class-loader": "~2.1",
+                "zendframework/zend-cache": "2.*,<2.3",
+                "zendframework/zend-log": "2.*,<2.3"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "Guzzle 5 has moved to a new package name. The package you have installed, Guzzle 3, is deprecated."
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.8-dev"
+                    "dev-master": "3.9-dev"
                 }
             },
             "autoload": {
@@ -927,6 +917,11 @@
                     "Guzzle": "src/",
                     "Guzzle\\Tests": "tests/"
                 }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
             },
             "license": [
                 "MIT"
@@ -942,7 +937,7 @@
                     "homepage": "https://github.com/guzzle/guzzle/contributors"
                 }
             ],
-            "description": "Guzzle is a PHP HTTP client library and framework for building RESTful web service clients",
+            "description": "PHP HTTP client. This library is deprecated in favor of https://packagist.org/packages/guzzlehttp/guzzle",
             "homepage": "http://guzzlephp.org/",
             "keywords": [
                 "HTTP client",
@@ -953,7 +948,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2014-01-28T22:29:15+00:00"
+            "time": "2015-03-18T18:23:50+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1262,7 +1257,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/ircmaxell-password-compat-v1.0.4-2be011.tar",
                 "reference": "5c5cde8822a69545767f7c7f3058cb15ff84614c",
-                "shasum": "7a94bee2714b7443941787d128de4a5e35c3ce75"
+                "shasum": "7581bf3fdb04c8ee9b6c7c0e643c18e13e9920b0"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.*"
@@ -1368,13 +1363,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpecc/phpecc.git",
-                "reference": "fa28096ea13e8c287838a220f25e8c5f406166f9"
+                "reference": "9ed6017fbae2fd1105e0d81e703007d353b7587b"
             },
             "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/mdanter/ecc/mdanter-ecc-v0.4.5-f85c21.tar",
-                "reference": "fa28096ea13e8c287838a220f25e8c5f406166f9",
-                "shasum": "3939b081bc433233c3a828dda0eae4ccb4511274"
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpecc/phpecc/zipball/9ed6017fbae2fd1105e0d81e703007d353b7587b",
+                "reference": "9ed6017fbae2fd1105e0d81e703007d353b7587b",
+                "shasum": ""
             },
             "require": {
                 "ext-gmp": "*",
@@ -1393,11 +1388,7 @@
                     "Mdanter\\Ecc\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Mdanter\\Ecc\\Tests\\": "tests/unit"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1417,12 +1408,12 @@
             "description": "PHP Elliptic Curve Cryptography library",
             "homepage": "https://github.com/phpecc/phpecc",
             "keywords": [
-                "ECDH",
+                "Diffie",
                 "ECDSA",
+                "Hellman",
                 "curve",
-                "diffie",
+                "ecdh",
                 "elliptic",
-                "hellman",
                 "nistp192",
                 "nistp224",
                 "nistp256",
@@ -1532,7 +1523,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/moontoast-math-1.1.0-234d74.tar",
                 "reference": "df98c89b919b71180560c7f5ef266ee1504f60b9",
-                "shasum": "fd97af756a57fc3e8252378764dcc20fe28e4d40"
+                "shasum": "a1ad3d09f2165e0557b173759f9e94ede525c86c"
             },
             "require": {
                 "ext-bcmath": "*",
@@ -1629,7 +1620,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/paragonie-random_compat-v2.0.2-31ee9f.tar",
                 "reference": "088c04e2f261c33bed6ca5245491cfca69195ccf",
-                "shasum": "e7db3de779bc1bcebf5d830762282c5038a38767"
+                "shasum": "a79f0e3179bc1252ad7ce670c2e3affce97e5323"
             },
             "require": {
                 "php": ">=5.2.0"
@@ -1681,7 +1672,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/parsecsv-php-parsecsv-0.4.5-c0d74d.tar",
                 "reference": "0486a4bf3ef80dfa215f38f865ed8685fbb472c7",
-                "shasum": "13ccfa6fafe0a336c615347362680c23b2dbc9d3"
+                "shasum": "79b1cbc63a5a16b8d4ec5bd497200bc2c9ef43d5"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.1.*"
@@ -1966,7 +1957,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/psr-log-1.0.0-e71523.tar",
                 "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
-                "shasum": "93e2546e57b9c28306eb0fce599fed484143c95b"
+                "shasum": "e8fd0dc32860b445d52991f2a07999dad372ffa4"
             },
             "type": "library",
             "autoload": {
@@ -2000,10 +1991,10 @@
                 "reference": "753fa598e8f3b9966c886fe13f370baa45ef0e24"
             },
             "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/psr/simple-cache/psr-simple-cache-1.0.0-d7dc15.tar",
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/simple-cache/zipball/753fa598e8f3b9966c886fe13f370baa45ef0e24",
                 "reference": "753fa598e8f3b9966c886fe13f370baa45ef0e24",
-                "shasum": "106ab87ae1cd757dec05d63e1aec2b18577f34fa"
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
@@ -2019,6 +2010,7 @@
                     "Psr\\SimpleCache\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2036,7 +2028,7 @@
                 "psr-16",
                 "simple-cache"
             ],
-            "time": "2017-01-02T13:31:06+00:00"
+            "time": "2017-01-02T13:31:39+00:00"
         },
         {
             "name": "ramsey/uuid",
@@ -2050,7 +2042,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/ramsey-uuid-2.9.0-0b3a5a.tar",
                 "reference": "b2ef4dd9584268d73f92f752a62bc24cd534dc9a",
-                "shasum": "fb2953922511f4b53b50540ff4516b7ed6e0fa7f"
+                "shasum": "716c94413900577fc0905acfeb3b8bce161b50c8"
             },
             "require": {
                 "paragonie/random_compat": "^1.0|^2.0",
@@ -2715,9 +2707,9 @@
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/cache/symfony-cache-v3.4.4-f003ed.tar",
+                "url": "https://satis.sugardev.team/dist/symfony-cache-v3.4.4-f003ed.tar",
                 "reference": "b2a726e31870b57b201e674878e15ba1015e323d",
-                "shasum": "72be73927b82b30aecd613524f0f33b02b9b636d"
+                "shasum": "0fe264c39179a3d918c433ec02a6bb80de8062b1"
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -3076,30 +3068,27 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v3.4.4",
+            "version": "v2.8.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "3bc11a9e3fb7417fd0335e8fa010286ff4e2a12b"
+                "reference": "1d1b0ad29912ba622a2ea4e2208fdb86240b8d22"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-event-dispatcher-v3.4.4-d4d251.tar",
-                "reference": "3bc11a9e3fb7417fd0335e8fa010286ff4e2a12b",
-                "shasum": "ed4d0dba272cc8cd037f3d4b3bd921ff73bb7c20"
+                "url": "https://satis.sugardev.team/dist/symfony-event-dispatcher-v2.8.34-5b02ff.tar",
+                "reference": "1d1b0ad29912ba622a2ea4e2208fdb86240b8d22",
+                "shasum": "a043eb416faf18fa5b7c0d2b4eb62148980dad57"
             },
             "require": {
-                "php": "^5.5.9|>=7.0.8"
-            },
-            "conflict": {
-                "symfony/dependency-injection": "<3.3"
+                "php": ">=5.3.9"
             },
             "require-dev": {
                 "psr/log": "~1.0",
-                "symfony/config": "~2.8|~3.0|~4.0",
-                "symfony/dependency-injection": "~3.3|~4.0",
-                "symfony/expression-language": "~2.8|~3.0|~4.0",
-                "symfony/stopwatch": "~2.8|~3.0|~4.0"
+                "symfony/config": "^2.0.5|~3.0.0",
+                "symfony/dependency-injection": "~2.6|~3.0.0",
+                "symfony/expression-language": "~2.6|~3.0.0",
+                "symfony/stopwatch": "~2.3|~3.0.0"
             },
             "suggest": {
                 "symfony/dependency-injection": "",
@@ -3108,7 +3097,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.4-dev"
+                    "dev-master": "2.8-dev"
                 }
             },
             "autoload": {
@@ -3134,7 +3123,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2018-01-03T07:37:34+00:00"
+            "time": "2018-01-03T07:36:31+00:00"
         },
         {
             "name": "symfony/expression-language",
@@ -3142,13 +3131,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/expression-language.git",
-                "reference": "932c40078752107880e39261463ced3d549e54c0"
+                "reference": "867e4d1f5d4e52435a8ffff6b24fd6a801582241"
             },
             "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/expression-language/symfony-expression-language-v3.4.4-d9d346.tar",
-                "reference": "932c40078752107880e39261463ced3d549e54c0",
-                "shasum": "b0e39919439298e4dbeaee3e30f1f239a8876057"
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/expression-language/zipball/867e4d1f5d4e52435a8ffff6b24fd6a801582241",
+                "reference": "867e4d1f5d4e52435a8ffff6b24fd6a801582241",
+                "shasum": ""
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8",
@@ -3168,6 +3157,7 @@
                     "/Tests/"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3575,25 +3565,25 @@
         },
         {
             "name": "symfony/options-resolver",
-            "version": "v3.4.4",
+            "version": "v4.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/options-resolver",
-                "reference": "8c8b30736f5c889345a729f1f282dc207031bfd4"
+                "reference": "4404e0fbc340eb22781ec74d1f1ca2ff7f1f952f"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-options-resolver-v3.4.4-96ee27.tar",
-                "reference": "8c8b30736f5c889345a729f1f282dc207031bfd4",
-                "shasum": "4e7f0a96729a9d95ce8c68e4d9930091489716a7"
+                "url": "https://satis.sugardev.team/dist/symfony/options-resolver/symfony-options-resolver-v4.0.4-cf5b4a.tar",
+                "reference": "4404e0fbc340eb22781ec74d1f1ca2ff7f1f952f",
+                "shasum": "4fe8ed586dcc87d714d613879048a65d3110070e"
             },
             "require": {
-                "php": "^5.5.9|>=7.0.8"
+                "php": "^7.1.3"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.4-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -3624,7 +3614,7 @@
                 "configuration",
                 "options"
             ],
-            "time": "2018-01-11T07:39:01+00:00"
+            "time": "2018-01-18T22:19:33+00:00"
         },
         {
             "name": "symfony/polyfill-apcu",
@@ -3632,13 +3622,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-apcu.git",
-                "reference": "185a98de49caaa46fa9d5cf7c1090e89a07ba103"
+                "reference": "e8ae2136ddb53dea314df56fcd88e318ab936c00"
             },
             "dist": {
-                "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony/polyfill-apcu/symfony-polyfill-apcu-v1.7.0-24c826.tar",
-                "reference": "185a98de49caaa46fa9d5cf7c1090e89a07ba103",
-                "shasum": "02452b1427f43a7c5ba25b4c51f061b914b2bc90"
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-apcu/zipball/e8ae2136ddb53dea314df56fcd88e318ab936c00",
+                "reference": "e8ae2136ddb53dea314df56fcd88e318ab936c00",
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
@@ -3657,6 +3647,7 @@
                     "bootstrap.php"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4895,32 +4886,32 @@
         },
         {
             "name": "doctrine/instantiator",
-            "version": "1.0.5",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "cd55575e110c24f67c0827911c501697afb21dff"
+                "reference": "2e9017638327f5da9408e24364143246ee4abbdd"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-instantiator-1.0.5-6a4414.tar",
-                "reference": "cd55575e110c24f67c0827911c501697afb21dff",
-                "shasum": "0919ad33afd3f43ef9b1976e5820ef03b5e008c0"
+                "url": "https://satis.sugardev.team/dist/doctrine/instantiator/doctrine-instantiator-1.1.0-1eee12.tar",
+                "reference": "2e9017638327f5da9408e24364143246ee4abbdd",
+                "shasum": "b1c4378c8cd4918290ec5854033a4ba84a2ad4ee"
             },
             "require": {
-                "php": ">=5.3,<8.0-DEV"
+                "php": "^7.1"
             },
             "require-dev": {
                 "athletic/athletic": "~0.1.8",
                 "ext-pdo": "*",
                 "ext-phar": "*",
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "~2.0"
+                "phpunit/phpunit": "^6.2.3",
+                "squizlabs/php_codesniffer": "^3.0.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -4951,7 +4942,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2015-06-14T21:17:01+00:00"
+            "time": "2017-07-22T11:58:36+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -5128,29 +5119,35 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "3.3.2",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "bf329f6c1aadea3299f08ee804682b7c45b326a2"
+                "reference": "94fd0001232e47129dd3504189fa1c7225010d08"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpdocumentor-reflection-docblock-3.3.2-9dccc3.tar",
-                "reference": "bf329f6c1aadea3299f08ee804682b7c45b326a2",
-                "shasum": "dfb6637501c54967d037a7a7b37a03eac2ea1633"
+                "url": "https://satis.sugardev.team/dist/phpdocumentor/reflection-docblock/phpdocumentor-reflection-docblock-4.3.0-9283bc.tar",
+                "reference": "94fd0001232e47129dd3504189fa1c7225010d08",
+                "shasum": "39a16eb9ec0651e9b4d9c27c43be79f6ae338bae"
             },
             "require": {
-                "php": "^5.6 || ^7.0",
+                "php": "^7.0",
                 "phpdocumentor/reflection-common": "^1.0.0",
                 "phpdocumentor/type-resolver": "^0.4.0",
                 "webmozart/assert": "^1.0"
             },
             "require-dev": {
-                "mockery/mockery": "^0.9.4",
-                "phpunit/phpunit": "^4.4"
+                "doctrine/instantiator": "~1.0.5",
+                "mockery/mockery": "^1.0",
+                "phpunit/phpunit": "^6.4"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "phpDocumentor\\Reflection\\": [
@@ -5175,7 +5172,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2017-11-10T13:56:53+00:00"
+            "time": "2017-11-29T21:10:41+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -5425,7 +5422,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/phpunit-php-text-template-1.2.1-638b73.tar",
                 "reference": "75aefe65c90fa77db317125ac746ed158f136c25",
-                "shasum": "3c6b78e89ef8b9f1d46052c0015aeafae340c795"
+                "shasum": "55edf7bef5609c3b0a4e4338ac1fd33faad01ae4"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -5509,29 +5506,29 @@
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "1.4.12",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "84d0ec0d015491e158b1db1835e08d4380cd1a29"
+                "reference": "1d658be27678095dfb66323d17ff8cceef78c75f"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit-php-token-stream-1.4.12-a4761d.tar",
-                "reference": "84d0ec0d015491e158b1db1835e08d4380cd1a29",
-                "shasum": "6c22cf54d6b983c471efd4bc2014234a35a636f8"
+                "url": "https://satis.sugardev.team/dist/phpunit/php-token-stream/phpunit-php-token-stream-2.0.2-708d20.tar",
+                "reference": "1d658be27678095dfb66323d17ff8cceef78c75f",
+                "shasum": "fd6273fa60841966649f6c934cf4d4c088de0f3b"
             },
             "require": {
                 "ext-tokenizer": "*",
-                "php": ">=5.3.3"
+                "php": "^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.2"
+                "phpunit/phpunit": "^6.2.4"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
@@ -5556,7 +5553,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-token-stream/issues"
             },
-            "time": "2017-12-04T08:47:31+00:00"
+            "time": "2017-11-27T05:48:46+00:00"
         },
         {
             "name": "phpunit/phpunit",
@@ -5888,7 +5885,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/sebastian-environment-2.0.0-21ecdd.tar",
                 "reference": "ff2156b0fb569919320554c60eb4c10ec2ead647",
-                "shasum": "e45327da2e779144b75852807643c7c1dbb20000"
+                "shasum": "9c386c718142400e85c83d94d3eab047df8d1d9d"
             },
             "require": {
                 "php": "^5.6 || ^7.0"
@@ -5937,7 +5934,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/sebastian-exporter-2.0.0-c1d041.tar",
                 "reference": "abc09359053f96a7fe483bbc92f7201bbdd1f099",
-                "shasum": "6d547c95fc05b58bb45535f47fa380d077997edb"
+                "shasum": "4d5bd2d5dfb6ea16bd9a3546f1f399d74975d467"
             },
             "require": {
                 "php": ">=5.3.3",
@@ -6003,7 +6000,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/sebastian-global-state-1.1.1-e28361.tar",
                 "reference": "dd5fa6462205b9b524ac7dff681e658cbfba9fb8",
-                "shasum": "0dcaa59fa4f11f0ea7127bfdb7ea9df817e217fe"
+                "shasum": "dd6067c2c7fa59bee87a8d4c8536d75a4c3ea28c"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -6108,7 +6105,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/sebastian-recursion-context-2.0.0-a3231f.tar",
                 "reference": "938359410d5eb73a34317b422feb4662a1215da1",
-                "shasum": "097bf2bd9a7e6637c05afc978d15b5494dc2e571"
+                "shasum": "71a5bbc6be23db6e05c36d8ec058625caf9c0807"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -6160,7 +6157,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/sebastian-resource-operations-1.0.0-b5a241.tar",
                 "reference": "eb35907dc618089694b1c2aeef6966e4c897b3c7",
-                "shasum": "17d9e1f7b8a15b24be91f43e2d820739d58479eb"
+                "shasum": "8fccb0d1bc411f239dcf05c065899f6b53c70d89"
             },
             "require": {
                 "php": ">=5.6.0"
@@ -6201,7 +6198,7 @@
                 "type": "tar",
                 "url": "https://satis.sugardev.team/dist/sebastian-version-2.0.1-b999a9.tar",
                 "reference": "be8fddb7f814c4907bbbe3dcadee2473385d88d0",
-                "shasum": "d8b77f949bf6f306a20e1c98d4648bad9dd8e248"
+                "shasum": "5dc10667255ac85f6cd8e0205461b93c6d153bd6"
             },
             "require": {
                 "php": ">=5.6"
