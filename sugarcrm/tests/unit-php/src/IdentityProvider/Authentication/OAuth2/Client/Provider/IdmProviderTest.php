@@ -42,6 +42,11 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
     protected $oidcConfig;
 
     /**
+     * @var \SugarCacheAbstract
+     */
+    protected $sugarCache;
+
+    /**
      * @inheritdoc
      */
     protected function setUp()
@@ -52,6 +57,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                                      ->getMock();
 
         $this->request = $this->createMock(RequestInterface::class);
+        $this->sugarCache = $this->createMock(\SugarCacheMemory::class);
 
         $this->oidcConfig = [
             'clientId' => 'srn:test',
@@ -64,6 +70,13 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
             'keySetId' => 'testSet',
             'urlKeys' => 'http://sts.sugarcrm.local/keys/testSet',
             'idpUrl' => 'http://idp.test',
+            'caching' => [
+                'ttl' => [
+                    'userInfo' => 12,
+                    'introspectToken' => 15,
+                    'keySet' => 3600,
+                ],
+            ],
         ];
     }
     public function getRequiredOptionsProvider()
@@ -232,6 +245,8 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
 
         $token = new AccessToken(['access_token' => 'token']);
 
+        $response = ['sub' => 'max'];
+
         $this->requestFactory->expects($this->once())
                              ->method('getRequestWithOptions')
                              ->with(
@@ -255,8 +270,10 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                 'getResourceOwnerDetailsUrl',
                 'getRequestFactory',
                 'getParsedResponse',
+                'getSugarCache',
             ])
             ->getMock();
+        $provider->method('getSugarCache')->willReturn($this->sugarCache);
 
         $provider->expects($this->once())
             ->method('getResourceOwnerDetailsUrl')
@@ -269,7 +286,35 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
         $provider->expects($this->once())
             ->method('getParsedResponse')
             ->with($this->isInstanceOf(RequestInterface::class))
-            ->willReturn(['sub' => 'max']);
+            ->willReturn($response);
+
+        $this->sugarCache->expects($this->once())
+            ->method('set')
+            ->with('oidc_introspect_token_' . md5('token'), $response, 15);
+
+        $provider->introspectToken($token);
+    }
+
+    /**
+     * @covers ::introspectToken
+     */
+    public function testIntrospectTokenCanUseCacheAndNotCallRemote()
+    {
+        $token = new AccessToken(['access_token' => 'token']);
+
+        $provider = $this->getMockBuilder(IdmProvider::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([$this->oidcConfig])
+            ->setMethods(['getParsedResponse', 'getSugarCache'])
+            ->getMock();
+        $provider->method('getSugarCache')->willReturn($this->sugarCache);
+
+        $this->sugarCache->method('get')
+            ->with('oidc_introspect_token_' . md5('token'))
+            ->willReturn('some-introspect-response');
+
+        $provider->expects($this->never())->method('getParsedResponse');
+        $this->sugarCache->expects($this->never())->method('set');
 
         $provider->introspectToken($token);
     }
@@ -365,10 +410,22 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
         $provider = $this->getMockBuilder(IdmProvider::class)
                          ->enableOriginalConstructor()
                          ->setConstructorArgs([$this->oidcConfig])
-                         ->setMethods(['getAccessToken', 'getAuthenticatedRequest', 'getParsedResponse'])
+                         ->setMethods([
+                             'getAccessToken',
+                             'getAuthenticatedRequest',
+                             'getParsedResponse',
+                             'getSugarCache',
+                         ])
                          ->getMock();
 
+        $provider->method('getSugarCache')->willReturn($this->sugarCache);
+
         $accessToken = new AccessToken(['access_token' => 'testToken', 'expires_in' => '900']);
+
+        $this->sugarCache->expects($this->once())
+            ->method('get')
+            ->with('oidc_key_set')
+            ->willReturn(null);
 
         $provider->expects($this->once())
                  ->method('getAccessToken')
@@ -389,7 +446,34 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                  ->with($this->request)
                  ->willReturn($expectedKeys);
 
+        $this->sugarCache->expects($this->once())
+                         ->method('set')
+                         ->with('oidc_key_set', $expectedKeys['keys'], 3600);
+
         $this->assertEquals($expectedResult, $provider->getKeySet());
+    }
+
+    /**
+     * @covers ::getKeySet
+     */
+    public function testGetKeySetCanUseCacheAndNotCallRemote()
+    {
+        $provider = $this->getMockBuilder(IdmProvider::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([$this->oidcConfig])
+            ->setMethods(['getAccessToken', 'getParsedResponse', 'getSugarCache'])
+            ->getMock();
+        $provider->method('getSugarCache')->willReturn($this->sugarCache);
+
+        $this->sugarCache->method('get')
+            ->with('oidc_key_set')
+            ->willReturn([['private'], ['public']]);
+
+        $provider->expects($this->never())->method('getAccessToken');
+        $provider->expects($this->never())->method('getParsedResponse');
+        $this->sugarCache->expects($this->never())->method('set');
+
+        $provider->getKeySet();
     }
 
     /**
@@ -606,11 +690,17 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
     {
         $token = new AccessToken(['access_token' => 'token']);
 
+        $response = [
+            'preferred_username' => 'test',
+            'status' => 0,
+        ];
+
         /** @var IdmProvider | \PHPUnit_Framework_MockObject_MockObject $provider */
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->setConstructorArgs([$this->oidcConfig])
-            ->setMethods(['getRequestFactory', 'getParsedResponse'])
+            ->setMethods(['getRequestFactory', 'getParsedResponse', 'getSugarCache'])
             ->getMock();
+        $provider->method('getSugarCache')->willReturn($this->sugarCache);
 
         $provider->expects($this->once())
             ->method('getRequestFactory')
@@ -628,13 +718,72 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
         $provider->expects($this->once())
             ->method('getParsedResponse')
             ->with($this->request)
-            ->willReturn([
-                'preferred_username' => 'test',
-                'status' => 0,
-            ]);
+            ->willReturn($response);
+
+        $this->sugarCache->expects($this->once())
+            ->method('set')
+            ->with('oidc_user_info_' . md5('token'), $response, 12);
 
         $result = $provider->getUserInfo($token);
         $this->assertEquals('test', $result['preferred_username']);
         $this->assertEquals(0, $result['status']);
+    }
+
+    /**
+     * @covers ::getUserInfo
+     */
+    public function testGetUserInfoCanUseCacheAndNotCallRemote()
+    {
+        $token = new AccessToken(['access_token' => 'token']);
+
+        $provider = $this->getMockBuilder(IdmProvider::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([$this->oidcConfig])
+            ->setMethods(['getParsedResponse', 'getSugarCache'])
+            ->getMock();
+        $provider->method('getSugarCache')->willReturn($this->sugarCache);
+
+        $this->sugarCache->method('get')
+            ->with('oidc_user_info_' . md5('token'))
+            ->willReturn('some-user-info');
+
+        $provider->expects($this->never())->method('getParsedResponse');
+        $this->sugarCache->expects($this->never())->method('set');
+
+        $provider->getUserInfo($token);
+    }
+
+    public function setCacheDoesNotStoreDataIfTTLIsNotCorrectProvider()
+    {
+        return [
+            [0],
+            [null],
+        ];
+    }
+
+    /**
+     * @covers ::setCache
+     *
+     * @dataProvider setCacheDoesNotStoreDataIfTTLIsNotCorrectProvider
+     *
+     * @param mixed $ttl
+     */
+    public function testSetCacheDoesNotStoreDataIfTTLIsNotCorrect($ttl)
+    {
+        $token = new AccessToken(['access_token' => 'token']);
+
+        $this->oidcConfig['caching']['ttl']['userInfo'] = $ttl;
+
+        $provider = $this->getMockBuilder(IdmProvider::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([$this->oidcConfig])
+            ->setMethods(['getParsedResponse', 'getSugarCache'])
+            ->getMock();
+        $provider->method('getSugarCache')->willReturn($this->sugarCache);
+        $provider->method('getParsedResponse')->willReturn('some-data');
+
+        $this->sugarCache->expects($this->never())->method('set');
+
+        $provider->getUserInfo($token);
     }
 }

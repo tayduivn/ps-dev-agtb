@@ -520,6 +520,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
+                    'caching' => [],
                 ],
             ],
             'httpClientNotEmpty' => [
@@ -556,6 +557,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     'cloudConsoleRoutes' => [],
+                    'caching' => [],
                 ],
             ],
             'cloudConsoleRoutesAreNotEmpty' => [
@@ -598,6 +600,47 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'cloudConsoleRoutes' => [
                         'userManagement' => 'management/users',
                         'passwordManagement' => 'management/password',
+                    ],
+                    'caching' => [],
+                ],
+            ],
+            'cachingNotEmpty' => [
+                'configSugar' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'oidcKeySetId' => 'keySetId',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'caching' => [
+                        'ttl' => [
+                            'introspectToken' => 10,
+                            'userInfo' => 10,
+                        ],
+                    ],
+                ],
+                'siteUrl' => 'http://site.url/',
+                'expectedConfig' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'redirectUri' => 'http://site.url',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'urlUserInfo' => 'http://sts.sugarcrm.local/userinfo',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/keySetId',
+                    'keySetId' => 'keySetId',
+                    'http_client' => [],
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'cloudConsoleUrl' => '',
+                    'cloudConsoleRoutes' => [],
+                    'caching' => [
+                        'ttl' => [
+                            'introspectToken' => 10,
+                            'userInfo' => 10,
+                        ],
                     ],
                 ],
             ],

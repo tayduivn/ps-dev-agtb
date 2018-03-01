@@ -27,7 +27,6 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
 class IdmProvider extends BasicGenericProvider
 {
-
     /**
      * Identity provider endpoint
      * @var string
@@ -65,6 +64,11 @@ class IdmProvider extends BasicGenericProvider
      * @var string
      */
     protected $urlUserInfo;
+
+    /**
+     * @var array
+     */
+    protected $caching = [];
 
     /**
      * Adds HttpClient with retry policy.
@@ -134,6 +138,11 @@ class IdmProvider extends BasicGenericProvider
      */
     public function introspectToken(AccessToken $token)
     {
+        $cacheKey = 'oidc_introspect_token_' . md5($token->getToken());
+        $result = $this->getCache($cacheKey);
+        if (!is_null($result)) {
+            return $result;
+        }
         $url = $this->getResourceOwnerDetailsUrl($token);
         $options = [
             'headers' => [
@@ -144,7 +153,9 @@ class IdmProvider extends BasicGenericProvider
         ];
 
         $request = $this->getRequestFactory()->getRequestWithOptions(self::METHOD_POST, $url, $options);
-        return $this->getParsedResponse($request);
+        $result = $this->getParsedResponse($request);
+        $this->setCache($cacheKey, $result, 'introspectToken');
+        return $result;
     }
 
     /**
@@ -154,6 +165,11 @@ class IdmProvider extends BasicGenericProvider
      */
     public function getUserInfo(AccessToken $token)
     {
+        $cacheKey = 'oidc_user_info_' . md5($token->getToken());
+        $result = $this->getCache($cacheKey);
+        if (!is_null($result)) {
+            return $result;
+        }
         $authHeaders = $this->getAuthorizationHeaders($token->getToken());
         $options = [
             'headers' => [
@@ -166,7 +182,9 @@ class IdmProvider extends BasicGenericProvider
             $this->urlUserInfo,
             $options
         );
-        return $this->getParsedResponse($request);
+        $result = $this->getParsedResponse($request);
+        $this->setCache($cacheKey, $result, 'userInfo');
+        return $result;
     }
 
     /**
@@ -223,21 +241,27 @@ class IdmProvider extends BasicGenericProvider
      */
     public function getKeySet()
     {
-        $accessToken = $this->getAccessToken('client_credentials', ['scope' => 'hydra.keys.get']);
-        $keyRequest = $this->getAuthenticatedRequest(
-            self::METHOD_GET,
-            $this->urlKeys,
-            $accessToken,
-            ['scope' => 'hydra.keys.get']
-        );
-        $keyResponse = $this->getParsedResponse($keyRequest);
+        $cacheKey = 'oidc_key_set';
+        $keySet = $this->getCache($cacheKey);
+        if (is_null($keySet)) {
+            $accessToken = $this->getAccessToken('client_credentials', ['scope' => 'hydra.keys.get']);
+            $keyRequest = $this->getAuthenticatedRequest(
+                self::METHOD_GET,
+                $this->urlKeys,
+                $accessToken,
+                ['scope' => 'hydra.keys.get']
+            );
+            $keyResponse = $this->getParsedResponse($keyRequest);
 
-        if (!isset($keyResponse['keys'])) {
-            throw new \UnexpectedValueException('Keys not found');
+            if (!isset($keyResponse['keys'])) {
+                throw new \UnexpectedValueException('Keys not found');
+            }
+            $keySet = $keyResponse['keys'];
+            $this->setCache($cacheKey, $keySet, 'keySet');
         }
 
         return [
-            'keys' => $keyResponse['keys'],
+            'keys' => $keySet,
             'keySetId' => $this->keySetId,
             'clientId' => $this->clientId,
         ];
@@ -349,5 +373,42 @@ class IdmProvider extends BasicGenericProvider
             throw new IdentityProviderException($message, $code, $data);
         }
         return parent::checkResponse($response, $data);
+    }
+
+    /**
+     * Get SugarCache instance.
+     *
+     * @return \SugarCacheAbstract
+     */
+    protected function getSugarCache()
+    {
+        return \SugarCache::instance();
+    }
+
+    /**
+     * Set value to cache.
+     * If ttlName is not found in config or is <= 0  value won't be put to cache.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param string $ttlName Value from oidc_auth config that is responsible for specific request's cached value TTL
+     */
+    protected function setCache($key, $value, $ttlName)
+    {
+        $ttl = intval($this->caching['ttl'][$ttlName] ?? 0);
+        if ($ttl > 0) {
+            $this->getSugarCache()->set($key, $value, $ttl);
+        }
+    }
+
+    /**
+     * Get value from cache by key.
+     *
+     * @param string $key
+     * @return mixed|null
+     */
+    protected function getCache($key)
+    {
+        return $this->getSugarCache()->get($key);
     }
 }

@@ -93,6 +93,7 @@ class Config
             'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
             'cloudConsoleUrl' => !empty($config['cloudConsoleUrl']) ? $config['cloudConsoleUrl'] : '',
             'cloudConsoleRoutes' => !empty($config['cloudConsoleRoutes']) ? $config['cloudConsoleRoutes'] : [],
+            'caching' => $config['caching'] ?? [],
         ];
 
         if ($oidcKeySetId) {
