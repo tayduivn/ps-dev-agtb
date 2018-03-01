@@ -1854,16 +1854,16 @@ class SugarBean
                 $this->id,
                 ErasureFieldList::fromArray(array_keys($this->dataChanges))
             );
+        }
 
-            if ($this->is_AuditEnabled()) {
-                $auditFields = $this->getAuditEnabledFieldDefinitions(true);
-                $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
-                $auditFieldList = FieldChangeList::fromChanges($auditDataChanges);
-                if (count($auditFieldList) > 0) {
-                    $auditEventId = $this->getEventRepository()->registerUpdate($this, $auditFieldList);
-                    foreach ($auditFieldList as $field) {
-                        $this->saveAuditRecords($this, $field->getChangeArray(), $auditEventId);
-                    }
+        if ($this->is_AuditEnabled()) {
+            $auditFields = $this->getAuditEnabledFieldDefinitions(true);
+            $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
+            $auditFieldList = FieldChangeList::fromChanges($auditDataChanges);
+            if (count($auditFieldList) > 0) {
+                $auditEventId = $this->getEventRepository()->registerUpdate($this, $auditFieldList);
+                foreach ($auditFieldList as $field) {
+                    $this->saveAuditRecords($this, $field->getChangeArray(), $auditEventId);
                 }
             }
         }
@@ -2077,9 +2077,11 @@ class SugarBean
 
         $this->updateRelatedCalcFields();
 
-        // populate fetched row with newest changes in the bean
-        foreach ($this->dataChanges as $change) {
-            $this->fetched_row[$change['field_name']] = $change['after'];
+        if (!empty($this->fetched_row)) {
+            // populate fetched row with newest changes in the bean
+            foreach ($this->dataChanges as $change) {
+                $this->fetched_row[$change['field_name']] = $change['after'];
+            }
         }
 
         // the reason we need to skip this is so that any RelatedBeans that are targeted to be saved
@@ -2346,7 +2348,8 @@ class SugarBean
         //If we have a new parent record that uses this link, make sure to resave that one as well
         if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
             && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
-            && isset($this->parent_id) && $this->parent_id != $this->fetched_row['parent_id']
+            && isset($this->parent_id) && isset($this->fetched_row['parent_id'])
+            && $this->parent_id != $this->fetched_row['parent_id']
             && isset($this->parent_type) && $this->$lname->getRelatedModuleName() == $this->parent_type
         ) {
             $bean =  BeanFactory::retrieveBean($this->parent_type, $this->parent_id);

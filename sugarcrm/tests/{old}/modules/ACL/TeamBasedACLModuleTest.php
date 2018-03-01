@@ -189,9 +189,6 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->name = 'test';
         $this->bean->save();
 
-        // Make sure "fetched_row" is populated. Date modified should force the cache.
-        $this->bean->retrieve($this->bean->id);
-
         $actualAccess = $acl->checkAccess($this->module, $action, $context);
         $this->assertEquals(false, $actualAccess);
     }

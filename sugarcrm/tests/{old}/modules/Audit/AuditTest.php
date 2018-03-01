@@ -20,8 +20,7 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     private $contactBean;
-    private $user1;
-    private $user2;
+    private $origDict;
 
     /**
      * Beans registered through BeanFactory
@@ -49,22 +48,17 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
 
     private function createContactBeanWithAuditLog()
     {
-        $this->user1 = SugarTestUserUtilities::createAnonymousUser();
-        $this->user2 = SugarTestUserUtilities::createAnonymousUser();
-        $this->contactBean = SugarTestContactUtilities::createContact(
-            null,
-            ['assigned_user_id' => $this->user1->id]
-        );
-
         $context = Container::getInstance()->get(Context::class);
         $subject = new User($GLOBALS['current_user'], new RestApiClient());
         $context->activateSubject($subject);
         $context->setAttribute('platform', 'base');
 
-        //retrieve bean otherwise change will not be detected.
-        $this->contactBean = $this->contactBean->retrieve();
-        $this->contactBean->assigned_user_id = $this->user2->id;
-        $this->contactBean->save(false);
+        $this->setupAuditableContactFields(['assigned_user_id']);
+        $this->contactBean = SugarTestContactUtilities::createContact(
+            null,
+            ['assigned_user_id' => $GLOBALS['current_user']->id]
+        );
+        $this->resetContactDictionary();
     }
 
     private function registerBean(\SugarBean $bean)
@@ -82,18 +76,45 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    private function setupAuditableContactFields(array $flist)
+    {
+        if (isset($GLOBALS['dictionary']['Contact'])) {
+            $this->origDict = $GLOBALS['dictionary']['Contact'];
+        }
+        foreach ($GLOBALS['dictionary']['Contact']['fields'] as $key => $value) {
+            $GLOBALS['dictionary']['Contact']['fields'][$key]['audited'] =
+                in_array($key, $flist) ? 1 : 0;
+        }
+    }
+
+    private function resetContactDictionary()
+    {
+        $GLOBALS['dictionary']['Contact'] = $this->origDict;
+    }
+
     public function testGetAuditLogTranslation()
     {
         $this->createContactBeanWithAuditLog();
+        $audit = $this->getMockBuilder(Audit::class)
+            ->setMethods(['getNameForId'])
+            ->getMock();
 
-        $audit = BeanFactory::newBean('Audit');
+        $audit->expects($this->atLeastOnce())
+            ->method('getNameForId')
+            ->will($this->returnValue($GLOBALS['current_user']->user_name));
+
         $auditLog = $audit->getAuditLog($this->contactBean);
 
         $this->assertNotEmpty($auditLog, 'Audit log not created or retrieved.');
+    }
+
+    public function testGetAssociatedFieldName()
+    {
+        $translatedName = Audit::getAssociatedFieldName('assigned_user_id', $GLOBALS['current_user']->id);
         $this->assertEquals(
-            $this->user2->user_name,
-            $auditLog[0]['after'],
-            'Ids in audit log not translated.'
+            $GLOBALS['current_user']->user_name,
+            $translatedName,
+            'Id not translated.'
         );
     }
 

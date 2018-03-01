@@ -22,6 +22,8 @@ use SugarTestUserUtilities as UserHelper;
  */
 class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $origDict;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('current_user');
@@ -47,22 +49,47 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 	    SugarTestHelper::tearDown();
 	}
 
+    private function setupAuditableContactFields(array $flist)
+    {
+        if (isset($GLOBALS['dictionary']['Contact'])) {
+            $this->origDict = $GLOBALS['dictionary']['Contact'];
+        }
+        foreach ($GLOBALS['dictionary']['Contact']['fields'] as $key => $value) {
+            $GLOBALS['dictionary']['Contact']['fields'][$key]['audited'] =
+                in_array($key, $flist) ? 1 : 0;
+        }
+    }
+
+    private function resetContactDictionary()
+    {
+        $GLOBALS['dictionary']['Contact'] = $this->origDict;
+    }
+
+    public function testAuditLogForBeanCreate()
+    {
+        $this->setupAuditableContactFields(['phone_work']);
+        $contactBean = SugarTestContactUtilities::createContact(null, array('phone_work' => '(111) 111-1111'));
+        $this->resetContactDictionary();
+        $audit = BeanFactory::newBean('Audit');
+        $auditLog = $audit->getAuditLog($contactBean);
+        $this->assertNotEmpty($auditLog, 'Audit log not created.');
+    }
+
     public function testEraseAuditLog()
     {
+        $this->setupAuditableContactFields(['phone_work']);
         $contactBean = SugarTestContactUtilities::createContact(null, array('phone_work' => '(111) 111-1111'));
 
-        //retrieve otherwise change will not be detected.
-        $bean=$contactBean->retrieve();
-        $bean->phone_work='(999)999-9999';
-        $list=FieldList::fromArray(array('phone_work'));
-        $bean->save(false);
+        $list=FieldList::fromArray(['phone_work']);
+        $contactBean->erase($list, false);
 
-        $bean->erase($list, false);
-
+        $this->resetContactDictionary();
         $audit=BeanFactory::newBean('Audit');
-        $auditLog=$audit->getAuditLog($bean);
+        $auditLog=$audit->getAuditLog($contactBean);
+        $entries = array_combine(array_column($auditLog, 'field_name'), $auditLog);
+
         $this->assertNotEmpty($auditLog, 'Audit log not created.');
-        $this->assertNull($auditLog[0]['before'], 'Audit log not erased.');
+        $this->assertNull($entries['phone_work']['after'], 'Audit log not erased.');
     }
 
     public function testGetObjectName(){

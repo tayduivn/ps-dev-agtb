@@ -17,6 +17,7 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+use Doctrine\DBAL\Connection;
 use Sugarcrm\Sugarcrm\Audit\Formatter as AuditFormatter;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
@@ -165,7 +166,8 @@ class Audit extends SugarBean
             ) {
                 foreach ($fieldDefs as $field) {
                     if (in_array($field['name'], array('before_value_string', 'after_value_string'))) {
-                        $row[$field['name']] = $this->getNameForId($row['field_name'], $row[$field['name']]);
+                        $row[$field['name']] =
+                            $this->getNameForId($row['field_name'], $row[$field['name']]);
                     }
                 }
             }

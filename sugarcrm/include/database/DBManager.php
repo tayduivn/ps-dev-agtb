@@ -3335,27 +3335,24 @@ abstract class DBManager
         if (is_array($bean->fetched_row)) {
             $fetched_row = array_merge($bean->fetched_row, $bean->fetched_rel_row);
         }
-        if (!$fetched_row) {
-            return $changed_values;
-        }
 
         if (isset($options['field_filter']) && is_array($options['field_filter'])) {
             $fields = array_intersect_key($fields, array_flip($options['field_filter']));
         }
 
-        // remove fields which do not present in fetched row
-        $fields = array_intersect_key($fields, $fetched_row);
+        // remove fields which are not present in fetched row
+        if (!empty($fetched_row)) {
+            $fields = array_intersect_key($fields, $fetched_row);
+        }
 
         // remove fields which do not exist as bean property
         $fields = array_intersect_key($fields, (array) $bean);
 
         if (is_array($fields) and count($fields) > 0) {
             foreach ($fields as $field => $vardefs) {
-                if (array_key_exists($field, $fetched_row)) {
-                    $before_value = $fetched_row[$field];
-                    $after_value=$bean->$field;
-                    $field_type = $this->getFieldType($vardefs);
-                }
+                $before_value = array_key_exists($field, $fetched_row) ? $fetched_row[$field] : null;
+                $after_value=$bean->$field;
+                $field_type = $this->getFieldType($vardefs);
 
                 //Because of bug #25078(sqlserver haven't 'date' type, trim extra "00:00:00" when insert into *_cstm table).
                 // so when we read the audit datetime field from sqlserver, we have to replace the extra "00:00:00" again.
