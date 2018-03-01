@@ -74,8 +74,8 @@ function addWorkflowIdToActionArray(array $array)
     return $array;
 }
 
-function process_workflow_actions($focus, $action_array){
-
+function process_workflow_actions(SugarBean $focus, array $action_array)
+{
     // Ensure we have our workflow id in the action data
     $action_array = addWorkflowIdToActionArray($action_array);
 
@@ -93,7 +93,6 @@ function process_workflow_actions($focus, $action_array){
     // Activate the subject
     $context->activateSubject($subject);
 
-
 	if($action_array['action_type']=="update"){
 		process_action_update($focus, $action_array);
 	}
@@ -109,6 +108,8 @@ function process_workflow_actions($focus, $action_array){
 
     // Deactivate the subject for the current context
     $context->deactivateSubject($subject);
+
+    $focus->commitAuditedStateChanges($subject);
 //end function process_workflow_actions
 }
 

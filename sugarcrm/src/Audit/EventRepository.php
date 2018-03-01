@@ -17,10 +17,11 @@ use DBManagerFactory;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use InvalidArgumentException;
+use JsonSerializable;
 use SugarBean;
-use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList as ErasureFieldList;
 use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 use TimeDate;
 
@@ -51,19 +52,40 @@ class EventRepository
     /**
      * Registers update in EventRepository. Then saves audited fields.
      * @param SugarBean $bean
-     * @param FieldList $changedFields
+     * @param FieldChangeList $changedFields
      * @return string id of audit event created
      * @throws DBALException
      */
     public function registerUpdate(SugarBean $bean, FieldChangeList $changedFields)
     {
-        return $this->save($bean, 'update', $changedFields);
+        return $this->save($bean, 'update', $this->context, $changedFields);
+    }
+
+    /**
+     * Registers the update and attributes it to the provided subject
+     *
+     * @param SugarBean $bean The updated bean
+     * @param Subject $subject The subject to attribute the update to
+     * @param FieldChangeList $changedFields
+     *
+     * @return string id of audit event created
+     * @throws DBALException
+     */
+    public function registerUpdateAttributedToSubject(
+        SugarBean $bean,
+        Subject $subject,
+        FieldChangeList $changedFields
+    ) {
+        return $this->save($bean, 'update', [
+            'subject' => $subject,
+            'attributes' => [],
+        ], $changedFields);
     }
 
     /**
      * Registers erasure EventRepository. Then saves audited fields.
      * @param SugarBean $bean
-     * @param FieldList $fields list of fields to be erased
+     * @param ErasureFieldList $fields list of fields to be erased
      * @return string id of audit event created
      * @throws DBALException
      * @throws InvalidArgumentException
@@ -73,18 +95,20 @@ class EventRepository
         if (count($fields) === 0) {
             throw new InvalidArgumentException("Fields to be erased can not be empty.");
         }
-        return $this->save($bean, 'erasure', $fields);
+
+        return $this->save($bean, 'erasure', $this->context, $fields);
     }
 
     /**
      * Saves EventRepository
      * @param SugarBean $bean SugarBean that was changed
      * @param string $eventType Audit event type
-     * @param array|jsonSerializeable $data json serializable representation of the event data
+     * @param array|JsonSerializable $source The source of the event
+     * @param array|jsonSerializable $data Event data
      * @return string id of record saved
      * @throws DBALException
      */
-    private function save(SugarBean $bean, string $eventType, $data)
+    private function save(SugarBean $bean, string $eventType, $source, $data)
     {
         $id =  Uuid::uuid1();
 
@@ -94,7 +118,7 @@ class EventRepository
             'type' => $eventType,
             'parent_id' => $bean->id,
             'module_name' => $bean->module_name,
-            'source' => json_encode($this->context),
+            'source' => json_encode($source),
             'data' => json_encode($data),
             'date_created' => TimeDate::getInstance()->nowDb(),]
         );
@@ -133,7 +157,6 @@ class EventRepository
 
         $stmt = $this->conn->executeQuery($sql, [$id, $fields], [null, Connection::PARAM_STR_ARRAY]);
 
-        global $timedate;
         $db = DBManagerFactory::getInstance();
 
         $return = array();

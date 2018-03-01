@@ -20,8 +20,6 @@
  *******************************************************************************/
 
 require_once 'include/utils.php';
-//BEGIN SUGARCRM flav=ent ONLY
-//END SUGARCRM flav=ent ONLY
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
@@ -30,9 +28,9 @@ use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList as ErasureFieldList;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-use Sugarcrm\Sugarcrm\ProcessManager;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository;
 use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
+use Sugarcrm\Sugarcrm\Security\Subject;
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -240,7 +238,12 @@ class SugarBean
     var $additional_column_fields = array();
     var $relationship_fields = array();
     var $current_notify_user;
-    var $fetched_row=false;
+
+    /**
+     * @var array|false
+     */
+    public $fetched_row = false;
+
     var $fetched_rel_row = array();
     var $layout_def;
     var $force_load_details = false;
@@ -479,6 +482,12 @@ class SugarBean
         throw new Exception("Bean created not via createBean!");
     }
 
+    /**
+     * The state of the bean in which the last audit record was created
+     *
+     * @var array
+     */
+    private $lastAuditedState;
 
     /**
      * Constructor for the bean, it performs following tasks:
@@ -1785,11 +1794,12 @@ class SugarBean
     public function setCreateData($isUpdate, User $user = null)
     {
         global $current_user;
+        global $timedate;
 
         // Only set this if this is a create process
         if (!$isUpdate) {
             if (empty($this->date_entered)) {
-                $this->date_entered = $this->date_modified;
+                $this->date_entered = $timedate->nowDb();
             }
 
             if ($this->set_created_by == true) {
@@ -1819,7 +1829,7 @@ class SugarBean
     {
         $fields->erase($this);
 
-        $this->saveData($check_notify);
+        $this->saveData(true, $check_notify);
 
         $this->getErasedFieldsRepository()->addBeanFields(
             $this->getTableName(),
@@ -1846,26 +1856,26 @@ class SugarBean
     public function save($check_notify = false)
     {
         $isUpdate = $this->isUpdate();
-        $this->saveData($check_notify);
+
+        if ($isUpdate && is_array($this->fetched_row)) {
+            $this->lastAuditedState = array_merge($this->fetched_row, $this->fetched_rel_row);
+        } else {
+            $this->lastAuditedState = [];
+        }
+
+        $this->setCreateData($isUpdate);
+
+        $this->populateFetchedEmail('bean_field');
+        $this->commitAuditedStateChanges(null);
+        $this->saveData($isUpdate, $check_notify);
 
         if ($isUpdate) {
+            $nonEmptyFields = array_keys(array_filter($this->toArray(true)));
             $this->getErasedFieldsRepository()->removeBeanFields(
                 $this->getTableName(),
                 $this->id,
-                ErasureFieldList::fromArray(array_keys($this->dataChanges))
+                ErasureFieldList::fromArray($nonEmptyFields)
             );
-        }
-
-        if ($this->is_AuditEnabled()) {
-            $auditFields = $this->getAuditEnabledFieldDefinitions(true);
-            $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
-            $auditFieldList = FieldChangeList::fromChanges($auditDataChanges);
-            if (count($auditFieldList) > 0) {
-                $auditEventId = $this->getEventRepository()->registerUpdate($this, $auditFieldList);
-                foreach ($auditFieldList as $field) {
-                    $this->saveAuditRecords($this, $field->getChangeArray(), $auditEventId);
-                }
-            }
         }
 
         return $this->id;
@@ -1988,7 +1998,7 @@ class SugarBean
         return Container::getInstance()->get(Repository::class);
     }
 
-    private function saveData($check_notify)
+    private function saveData($isUpdate, $check_notify)
     {
         $this->in_save = true;
         // cn: SECURITY - strip XSS potential vectors
@@ -1998,7 +2008,6 @@ class SugarBean
         global $timedate;
         global $current_user, $action;
 
-        $isUpdate = $this->isUpdate();
         $prev_date_modified = isset($this->date_modified) ? $this->date_modified : null;
         $this->setModifiedDate();
         $this->_checkOptimisticLocking($action, $isUpdate);
@@ -2006,8 +2015,6 @@ class SugarBean
         if ($this->deleted != 1) {
             $this->deleted = 0;
         }
-        $this->setCreateData($isUpdate);
-
 
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
         // currently, the default_team is only enforced in the presentation layer-- this enforces it at the data layer as well
@@ -2035,14 +2042,11 @@ class SugarBean
         {
             unset($this->date_entered);
         }
-        // call the custom business logic
-        $custom_logic_arguments = array(
+
+        $this->call_custom_logic('before_save', array(
             'check_notify' => $check_notify,
             'isUpdate' => $isUpdate,
-        );
-
-        $this->call_custom_logic("before_save", $custom_logic_arguments);
-        unset($custom_logic_arguments);
+        ));
 
         if (!$this->update_date_modified) {
             $this->date_modified = $prev_date_modified;
@@ -2067,8 +2071,6 @@ class SugarBean
             }
         }
 
-        //make sure the bean has the latest changes to the email field prior to checking for changes
-        $this->populateFetchedEmail('bean_field');
         $this->dataChanges = $this->db->getDataChanges($this);
 
         $this->_sendNotifications($check_notify);
@@ -6052,18 +6054,20 @@ class SugarBean
         return $list;
     }
 
-  /**
-    * This function is used to execute the query and create an array template objects
-    * from the resulting ids from the query.
-    * It is currently used for building sub-panel arrays. It supports an additional
-    * where clause that is executed as a filter on the results
-    *
-    * @param string $query - the query that should be executed to build the list
-    * @param object $template - The object that should be used to copy the records.
-    * @deprecated Use SugarQuery instead
-    */
-  function build_related_list_where($query, $template, $where='', $in='', $order_by, $limit='', $row_offset = 0)
-  {
+    /**
+     * This function is used to execute the query and create an array template objects
+     * from the resulting ids from the query.
+     * It is currently used for building sub-panel arrays. It supports an additional
+     * where clause that is executed as a filter on the results
+     *
+     * @param string $query The query that should be executed to build the list
+     * @param SugarBean $template The object that should be used to copy the records.
+     *
+     * @return SugarBean[]
+     * @deprecated Use SugarQuery instead
+     */
+    public function build_related_list_where($query, $template, $where, $in, $order_by, $limit = '', $row_offset = 0)
+    {
     $db = DBManagerFactory::getInstance('listviews');
     // No need to do an additional query
     $GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
@@ -6087,7 +6091,6 @@ class SugarBean
     {
         $query .= " AND $where";
     }
-
 
     if(!empty($order_by))
     {
@@ -6116,7 +6119,7 @@ class SugarBean
     }
 
     return $list;
-  }
+    }
 
     /**
      * Constructs an comma separated list of ids from passed query results.
@@ -6727,33 +6730,39 @@ class SugarBean
     */
     function call_custom_logic($event, $arguments = array())
     {
-        if(!isset($this->processed) || $this->processed == false){
-            //add some logic to ensure we do not get into an infinite loop
-            if(!empty($this->logicHookDepth[$event])) {
-                if($this->logicHookDepth[$event] > $this->max_logic_depth)
-                    return;
-            }else
-                $this->logicHookDepth[$event] = 0;
+        if (!empty($this->processed)) {
+            return;
+        }
 
-            //we have to put the increment operator here
-            //otherwise we may never increase the depth for that event in the case
-            //where one event will trigger another as in the case of before_save and after_save
-            //Also keeping the depth per event allow any number of hooks to be called on the bean
-            //and we only will return if one event gets caught in a loop. We do not increment globally
-            //for each event called.
-            $this->logicHookDepth[$event]++;
+        if (!isset($this->logicHookDepth[$event])) {
+            $this->logicHookDepth[$event] = 0;
+        }
 
-            //method defined in 'include/utils/LogicHook.php'
+        //add some logic to ensure we do not get into an infinite loop
+        if ($this->logicHookDepth[$event] > $this->max_logic_depth) {
+            return;
+        }
 
-            $logicHook = new LogicHook();
-            $logicHook->setBean($this);
-            $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
-            $this->logicHookDepth[$event]--;
-            //Fire dependency manager dependencies here for some custom logic types.
-            if (in_array($event, array('after_relationship_add', 'after_relationship_delete', 'before_delete')))
-            {
-                $this->updateRelatedCalcFields(isset($arguments['link']) ? $arguments['link'] : "");
-            }
+        //we have to put the increment operator here
+        //otherwise we may never increase the depth for that event in the case
+        //where one event will trigger another as in the case of before_save and after_save
+        //Also keeping the depth per event allow any number of hooks to be called on the bean
+        //and we only will return if one event gets caught in a loop. We do not increment globally
+        //for each event called.
+        $this->logicHookDepth[$event]++;
+
+        $logicHook = new LogicHook();
+        $logicHook->setBean($this);
+        $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
+        $this->logicHookDepth[$event]--;
+
+        //Fire dependency manager dependencies here for some custom logic types.
+        switch ($event) {
+            case 'after_relationship_add':
+            case 'after_relationship_delete':
+            case 'before_delete':
+                $this->updateRelatedCalcFields($arguments['link'] ?? null);
+                break;
         }
     }
 
@@ -7270,10 +7279,7 @@ class SugarBean
     *
     * @param string $street_field
     */
-
-   function add_address_streets(
-       $street_field
-       )
+    public function add_address_streets($street_field)
     {
         $street_field_2 = $street_field.'_2';
         $street_field_3 = $street_field.'_3';
@@ -7303,21 +7309,24 @@ class SugarBean
         return self::$field_key[$this->module_key];
     }
 
-/**
- * Encrpyt and base64 encode an 'encrypt' field type in the bean using Blowfish. The default system key is stored in cache/Blowfish/{keytype}
- * @param STRING value -plain text value of the bean field.
- * @return string
- */
+    /**
+     * Encrpyt and base64 encode an 'encrypt' field type in the bean using Blowfish. The default system key is stored
+     * in cache/Blowfish/{keytype}
+     *
+     * @param STRING value -plain text value of the bean field.
+     * @return string
+     */
     function encrpyt_before_save($value)
     {
         return Blowfish::encode($this->getEncryptKey(), $value);
     }
 
-/**
- * Decode and decrypt a base 64 encoded string with field type 'encrypt' in this bean using Blowfish.
- * @param STRING value - an encrypted and base 64 encoded string.
- * @return string
- */
+    /**
+     * Decode and decrypt a base 64 encoded string with field type 'encrypt' in this bean using Blowfish.
+     *
+     * @param STRING value - an encrypted and base 64 encoded string.
+     * @return string
+     */
     public function decrypt_after_retrieve($value)
     {
         if(empty($value)) return $value; // no need to decrypt empty
@@ -8361,5 +8370,55 @@ class SugarBean
         }
 
         return $row;
+    }
+
+    /**
+     * Updates the audit log with the changes from the last audited state to the current one.
+     *
+     * @param Subject|null $overrideSubject The subject to attribute the changes to. If not provided,
+     *                                      then the one from the security context will be used.
+     * @throws DBALException
+     */
+    public function commitAuditedStateChanges(?Subject $overrideSubject) : void
+    {
+        if (!$this->is_AuditEnabled()) {
+            return;
+        }
+
+        $changes = $this->db->getStateChanges($this, $this->lastAuditedState, ['for' => 'audit']);
+
+        if (count($changes) < 1) {
+            return;
+        }
+
+        $eventRepository = $this->getEventRepository();
+        $changeList = FieldChangeList::fromChanges($changes);
+
+        if ($overrideSubject) {
+            $auditEventId = $eventRepository->registerUpdateAttributedToSubject($this, $overrideSubject, $changeList);
+        } else {
+            $auditEventId = $eventRepository->registerUpdate($this, $changeList);
+        }
+
+        foreach ($changeList->getChangesList() as $change) {
+            $this->saveAuditRecords($this, $change, $auditEventId);
+        }
+
+        $this->lastAuditedState = $this->getAuditedState();
+    }
+
+    private function getAuditedState() : array
+    {
+        $state = array();
+
+        foreach ($this->getFieldDefinitions('audited', [true]) as $name => $_) {
+            $state[$name] = $this->{$name} ?? null;
+        }
+
+        if (isset($this->emailAddress)) {
+            $state['email'] = $this->emailAddress->getAddressesForBean($this, true);
+        }
+
+        return $state;
     }
 }
