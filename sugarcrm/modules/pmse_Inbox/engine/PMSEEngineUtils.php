@@ -15,6 +15,10 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\AdvancedWorkflow;
 
 /**
  * Class contains utilities as encoder and decoders for codes url, remove bound fields,
@@ -1488,7 +1492,32 @@ class PMSEEngineUtils
                     $bean->fetched_row['assigned_user_id'] != $bean->assigned_user_id))) {
             $check_notify = true;
         }
-        return $bean->save($check_notify);
+
+        // Get the source information that is needed
+        $attrs = Registry\Registry::getInstance()->get('process_attributes');
+
+        // Get the context object to set the Subject into
+        $context = Container::getInstance()->get(Context::class);
+
+        // Create the AdvancedWorkflow subject based on its properties
+        $subject = new AdvancedWorkflow(
+            BeanFactory::getBean(
+                'pmse_Project',
+                empty($attrs['project_id']) ? null : $attrs['project_id']
+            )
+        );
+
+        // Activate the subject
+        $context->activateSubject($subject);
+
+        // Save the id since we need to return it later once subject's been deactivated
+        $id = $bean->save($check_notify);
+
+        // Deactivate the subject for the current context
+        $context->deactivateSubject($subject);
+
+        // now return the id
+        return $id;
     }
 
     /**

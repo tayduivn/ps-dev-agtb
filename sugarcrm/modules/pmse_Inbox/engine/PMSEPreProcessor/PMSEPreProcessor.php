@@ -53,6 +53,13 @@ class PMSEPreProcessor
     protected $evaluator;
 
     /**
+     * Internal cache of flowData process ids to project ids. This will be used
+     * in setting proper source subject information.
+     * @var array
+     */
+    protected $flowProjectMap = [];
+
+    /**
      * Pre Processor constructor method
      * @codeCoverageIgnore
      */
@@ -171,6 +178,60 @@ class PMSEPreProcessor
     }
 
     /**
+     * Sets subject data into the registry so that the bean save call can use it
+     * @param array $flowData
+     */
+    private function setSubjectData(array $flowData)
+    {
+        // Store prj_id, pro_id, bpmn_id and bpmn_type in the registry for later
+        // use. prj_id is only set in flowData that comes from getAllEvents, so
+        // we will more often than not need to get it from the pro_id of the flow
+        // row
+        if (isset($flowData['prj_id'])) {
+            $project = $flowData['prj_id'];
+        } else {
+            // If we've already fetched this, don't do it again
+            // pro_id should always be set
+            if (isset($this->flowProjectMap[$flowData['pro_id']])) {
+                $project = $this->flowProjectMap[$flowData['pro_id']];
+            } else {
+                $sql = "SELECT p.id
+                        FROM pmse_project p
+                        INNER JOIN pmse_bpm_process_definition d ON d.prj_id = p.id
+                        WHERE d.id = :pro_id
+                        LIMIT 1";
+
+                // Execute the query and get our results
+                $stmt = DBManagerFactory::getInstance()
+                        ->getConnection()
+                        ->executeQuery($sql, [':pro_id' => $flowData['pro_id']]);
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // Get the id from the result
+                if (isset($data[0]['id'])) {
+                    // Cache it and write it
+                    $project = $this->flowProjectMap[$flowData['pro_id']] = $data[0]['id'];
+                } else {
+                    // Just default to nothing... realistically, this should never
+                    // happen
+                    $project = '';
+                }
+            }
+        }
+
+        // What to store
+        $store = [
+            'project_id' => $project,
+            'definition_id' => $flowData['pro_id'],
+            'element_id' => $flowData['bpmn_id'],
+            'element_type' => str_replace('bpmn', '', $flowData['bpmn_type']),
+        ];
+
+        // Store it
+        Registry\Registry::getInstance()->set('process_attributes', $store, true);
+    }
+
+    /**
      * Processes a request
      * @param PMSERequest $request
      * @return boolean
@@ -192,6 +253,9 @@ class PMSEPreProcessor
 
             // Loop the flowdata list and handle the actions necessary
             foreach ($flowDataList as $flowData) {
+                // For handling Security Subject saving later on
+                $this->setSubjectData($flowData);
+
                 // Make sure we start fresh each time with validation and such
                 $request->reset();
 

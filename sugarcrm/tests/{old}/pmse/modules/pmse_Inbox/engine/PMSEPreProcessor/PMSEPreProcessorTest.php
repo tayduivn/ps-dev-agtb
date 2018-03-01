@@ -198,6 +198,9 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
                         'bpmn_type' => 'bpmEvent',
                         'bpmn_id'=>'event_0',
                         'cas_id' => 1,
+                        // Added so that subject data setter doesn't die
+                        'prj_id' => 'foo',
+                        'pro_id' => 'bar',
                     ],
                 ]));
 
@@ -266,6 +269,9 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
                         'bpmn_type' => 'bpmEvent',
                         'bpmn_id'=>'event_0',
                         'cas_id' => 1,
+                        // Added so that subject data setter doesn't die
+                        'prj_id' => 'foo',
+                        'pro_id' => 'bar',
                     ],
                 ]));
 
