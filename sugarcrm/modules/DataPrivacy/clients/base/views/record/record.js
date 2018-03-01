@@ -128,21 +128,22 @@
      */
     setButtonStates: function(state) {
         this._super('setButtonStates', [state]);
-        this.setCompleteButtons(state);
+        this.setButtons(state);
     },
 
     /**
      * @inheritdoc
      *
      *  Depending on the type index, we either show or hide
-     *  complete_button and erase_complete_button
+     *  complete_button, erase_complete_button & reject_button
      */
-    setCompleteButtons: function(state) {
+    setButtons: function(state) {
+        var open = (this.model.get('status') === 'Open');
         var erase = (this.model.get('type') === 'Request to Erase Information');
         if (state === this.STATE.VIEW && app.acl.hasAccess('admin', this.module)) {
             this.currentState = state;
             _.each(this.buttons, function(field) {
-                if (this.shouldHide(erase, field)) {
+                if (this.shouldHide(open, erase, field)) {
                     field.hide();
                 }
             }, this);
@@ -155,8 +156,15 @@
      *
      * Check whether the button should be hidden
      */
-    shouldHide: function(erase, field) {
-        if ((erase && field.name === 'complete_button') || (!erase && field.name === 'erase_complete_button')) {
+    shouldHide: function(open, erase, field) {
+        var DPActions = [
+            'complete_button',
+            'erase_complete_button',
+            'reject_button'
+        ];
+        if ((!open && DPActions.indexOf(field.name) !== -1) ||
+            (erase && field.name === 'complete_button') ||
+            (!erase && field.name === 'erase_complete_button')) {
             return true;
         }
         return false;

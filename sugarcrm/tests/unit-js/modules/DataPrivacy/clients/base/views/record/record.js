@@ -172,26 +172,45 @@ describe('DataPrivacy.Views.Record', function() {
         sandbox.restore();
     });
 
-    describe('call setCompleteButtons() with erase type', function() {
-        it('should show Erase & Complete button and hide Complete button', function() {
+    describe('call setButtons() with erase type', function() {
+        it('should show Erase & Complete and Reject button but hide Complete button', function() {
+            view.model.set('status', 'Open');
             view.model.set('type', 'Request to Erase Information');
-            view.setCompleteButtons(view.STATE.VIEW);
+            view.setButtons(view.STATE.VIEW);
 
             // erase_complete_button should be shown
             expect(view.buttons[3].show).toHaveBeenCalled();
             // complete_button should be hidden
             expect(view.buttons[2].hide).toHaveBeenCalled();
+            // reject_button should be shown
+            expect(view.buttons[4].show).toHaveBeenCalled();
         });
     });
-    describe('call setCompleteButtons() with non-erase type', function() {
-        it('should show Complete button and hide Erase & Complete button', function() {
+    describe('call setButtons() with non-erase type', function() {
+        it('should show Complete and Reject buttons but hide Erase & Complete button', function() {
+            view.model.set('status', 'Open');
             view.model.set('type', 'Request for Data Privacy Policy');
-            view.setCompleteButtons(view.STATE.VIEW);
+            view.setButtons(view.STATE.VIEW);
 
             // complete_button should be shown
             expect(view.buttons[2].show).toHaveBeenCalled();
             // erase_complete_button should be hidden
             expect(view.buttons[3].hide).toHaveBeenCalled();
+            // reject_button should be shown
+            expect(view.buttons[4].show).toHaveBeenCalled();
+        });
+    });
+    describe('call setButtons() with non-Open status', function() {
+        it('should hide Complete, Erase & Complete and reject buttons', function() {
+            view.model.set('status', 'Rejected');
+            view.setButtons(view.STATE.VIEW);
+
+            // complete_button should be hidden
+            expect(view.buttons[2].hide).toHaveBeenCalled();
+            // erase_complete_button should be hidden
+            expect(view.buttons[3].hide).toHaveBeenCalled();
+            // reject_button should be hidden
+            expect(view.buttons[4].hide).toHaveBeenCalled();
         });
     });
 });
