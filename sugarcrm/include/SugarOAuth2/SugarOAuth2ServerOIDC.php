@@ -111,7 +111,6 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
         $srnManagerConfig = [
             'partition' => $tenantSrn->getPartition(),
             'region' => $tenantSrn->getRegion(),
-            'cloudServiceName' => $oidcConfig['idpServiceName'],
         ];
         $srnManager = new Srn\Manager($srnManagerConfig);
         $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $user_id);

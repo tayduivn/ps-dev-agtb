@@ -502,7 +502,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'idpUrl' => 'http://login.sugarcrm.local',
                     'oidcKeySetId' => 'keySetId',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-                    'idpServiceName' => 'idp',
                 ],
                 'siteUrl' => 'http://site.url/',
                 'expectedConfig' => [
@@ -519,7 +518,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'http_client' => [],
                     'idpUrl' => 'http://login.sugarcrm.local',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-                    'idpServiceName' => 'idp',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
                 ],
@@ -556,7 +554,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     ],
                     'idpUrl' => 'http://login.sugarcrm.local',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-                    'idpServiceName' => 'iam',
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     'cloudConsoleRoutes' => [],
                 ],
@@ -597,7 +594,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     ],
                     'idpUrl' => 'http://login.sugarcrm.local',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-                    'idpServiceName' => 'iam',
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     'cloudConsoleRoutes' => [
                         'userManagement' => 'management/users',

@@ -91,7 +91,6 @@ class Config
             'urlResourceOwnerDetails' => $endpointService->getOAuth2Endpoint(EndpointInterface::INTROSPECT_ENDPOINT),
             'urlUserInfo' => $endpointService->getUserInfoEndpoint(),
             'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
-            'idpServiceName' => !empty($config['idpServiceName']) ? $config['idpServiceName'] : 'iam',
             'cloudConsoleUrl' => !empty($config['cloudConsoleUrl']) ? $config['cloudConsoleUrl'] : '',
             'cloudConsoleRoutes' => !empty($config['cloudConsoleRoutes']) ? $config['cloudConsoleRoutes'] : [],
         ];

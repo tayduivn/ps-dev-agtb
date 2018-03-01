@@ -1065,7 +1065,6 @@ class SugarEmailAddress extends SugarBean
             $srnManagerConfig = [
                 'partition' => $tenantSrn->getPartition(),
                 'region' => $tenantSrn->getRegion(),
-                'cloudServiceName' => $oidcConfig['idpServiceName'],
             ];
             $srnManager = new Srn\Manager($srnManagerConfig);
             $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $id);

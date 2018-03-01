@@ -287,7 +287,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
                 $this->assertInstanceOf(JWTBearerToken::class, $token);
-                $this->assertEquals('srn:cluster:idm:eu:0000000001:user:seed_sally_id', $token->getIdentity());
+                $this->assertEquals('srn:cluster:iam:eu:0000000001:user:seed_sally_id', $token->getIdentity());
                 throw new AuthenticationException();
             }
         );
@@ -335,12 +335,12 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
                 $this->assertInstanceOf(JWTBearerToken::class, $token);
-                $this->assertEquals('srn:cluster:idm:eu:0000000001:user:seed_sally_id', $token->getIdentity());
+                $this->assertEquals('srn:cluster:iam:eu:0000000001:user:seed_sally_id', $token->getIdentity());
                 $token->setAttribute('token', 'resultToken');
                 $token->setAttribute('expires_in', '1');
                 $token->setAttribute('token_type', 'bearer');
                 $token->setAttribute('scope', 'offline');
-                $token->setAttribute('srn', 'srn:cluster:idm:eu:0000000001:user:seed_sally_id');
+                $token->setAttribute('srn', 'srn:cluster:iam:eu:0000000001:user:seed_sally_id');
                 return $token;
             }
         );
