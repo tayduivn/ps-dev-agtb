@@ -46,8 +46,7 @@ FILE;
 
         $this->assertInstanceOf('CustomSugarForecasting_Individual', $klass);
 
-        SugarAutoLoader::unlink('custom/include/SugarForecasting/Individual.php');
-
+        unlink('custom/include/SugarForecasting/Individual.php');
     }
 
     /**

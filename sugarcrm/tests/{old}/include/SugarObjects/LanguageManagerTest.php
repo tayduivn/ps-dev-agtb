@@ -58,7 +58,10 @@ class LanguageManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['default_language'] = 'tlh_QON';
         $GLOBALS['current_language'] = 'en_us';
         SugarTestHelper::saveFile('include/language/tlh_QON.lang.php');
-        SugarAutoLoader::put('include/language/tlh_QON.lang.php', '<?php $app_list_strings = array ("language_pack_name" => "tlhIngan Hol");', false);
+        file_put_contents(
+            'include/language/tlh_QON.lang.php',
+            '<?php $app_list_strings = array ("language_pack_name" => "tlhIngan Hol");'
+        );
         $strings = return_app_list_strings_language('en_us');
         $this->assertArrayHasKey('account_type_dom', $strings);
         $this->assertNotEmpty($strings['account_type_dom'], 'account_type_dom is empty');

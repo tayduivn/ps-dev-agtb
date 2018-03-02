@@ -46,7 +46,6 @@ EOQ;
        fputs( $fh, $string);
        fclose( $fh );
     }
-	    SugarAutoLoader::addToMap("custom/modules/Bug44030_TestPerson/metadata/SearchFields.php", false);
 
 	    //Remove the cached unified_search_modules.php file
 	    $this->unified_search_modules_file = $GLOBALS['sugar_config']['cache_dir'] . 'modules/unified_search_modules.php';
@@ -71,7 +70,6 @@ EOQ;
 		{
 			unlink('custom/modules/Bug44030_TestPerson/metadata/SearchFields.php');
 			rmdir_recursive('custom/modules/Bug44030_TestPerson');
-			SugarAutoLoader::delFromMap('custom/modules/Bug44030_TestPerson', false);
 		}
 		unset($beanFiles['Bug44030_TestPerson']);
 		unset($beanList['Bug44030_TestPerson']);

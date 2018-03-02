@@ -231,7 +231,7 @@ class PMSEUserTask extends PMSEActivity
 
         //If a module includes custom save/editview logic in Save.php, use that instead of a direct save.
         if (isModuleBWC($beanObject->module_dir) &&
-            SugarAutoLoader::fileExists("modules/{$beanObject->module_dir}/Save.php")
+            file_exists("modules/{$beanObject->module_dir}/Save.php")
         ) {
             foreach ($fields as $key => $value) {
                 $historyData->lock(!array_key_exists($key, $beanObject->fetched_row));

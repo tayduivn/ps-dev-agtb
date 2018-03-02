@@ -40,11 +40,6 @@ class DropdownUpgradeTest extends Sugar_PHPUnit_Framework_TestCase
             // Copy our test files into place
             copy($this->_testCustFile[$type], $this->_custFile[$type]);
         }
-
-        // File map cache this bad boy
-        foreach($this->_custFile as $custFile) {
-            SugarAutoLoader::addToMap($custFile);
-        }
     }
     
     public function tearDown() {
@@ -55,9 +50,6 @@ class DropdownUpgradeTest extends Sugar_PHPUnit_Framework_TestCase
             if (file_exists($custFile . '-backup')) {
                 // Move the backup back into place. No need to mess with the file map cache
                 rename($custFile . '-backup', $custFile);
-            } else {
-                // There was no back up, so remove this from the file map cache
-                SugarAutoLoader::delFromMap($custFile);
             }
         }
     }

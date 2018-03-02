@@ -26,8 +26,7 @@ if(!empty($_SESSION['display_lotuslive_alert'])){
     displayAdminError(translate('MSG_RECONNECT_LOTUSLIVE', 'Administration'));
 }
 
-if( is_admin($current_user) && SugarAutoLoader::fileExists('include/SugarSearchEngine/SugarSearchEngineFactory.php') )
-{
+if (is_admin($current_user) && file_exists('include/SugarSearchEngine/SugarSearchEngineFactory.php')) {
     $ftsType = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
     if(!empty($ftsType) && isset($GLOBALS['sugar_config']['full_text_engine'][$ftsType]['valid']) && !$GLOBALS['sugar_config']['full_text_engine'][$ftsType]['valid'])
     {

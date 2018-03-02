@@ -36,7 +36,7 @@ class FiltersTest extends Sugar_PHPUnit_Framework_TestCase
             // Back up and remove existing files.
             SugarTestHelper::saveFile($file);
             if (file_exists($file)) {
-                SugarAutoLoader::unlink($file);
+                unlink($file);
             }
         }
     }
@@ -50,7 +50,7 @@ class FiltersTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown() {
         foreach (self::$generatedOperatorsFile as $file) {
             if (file_exists($file)) {
-                SugarAutoLoader::unlink($file);
+                unlink($file);
             }
         }
         parent::tearDown();
@@ -144,6 +144,6 @@ EOQ;
         array_pop($path); // Remove file name
         $path = implode('/', $path);
         SugarTestHelper::ensureDir($path);
-        SugarAutoLoader::put($file, $contents, false);
+        file_put_contents($file, $contents);
     }
 }

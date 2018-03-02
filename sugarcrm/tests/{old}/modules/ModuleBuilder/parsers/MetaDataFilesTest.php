@@ -31,14 +31,11 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         foreach ( $this->createdFiles as $file ) {
-            SugarAutoLoader::unlink($file);
+            unlink($file);
         }
         foreach ( $this->createdDirs as $dir ) {
             rmdir_recursive($dir);
-            SugarAutoLoader::delFromMap($dir, false);
         }
-
-        SugarAutoLoader::saveMap();
     }
 
     public $fileFullPaths = array(
@@ -158,7 +155,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
 
         $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbs';
-        SugarAutoLoader::put($this->createdFiles[0],'FO RIZZLE (base)');
+        file_put_contents($this->createdFiles[0], 'FO RIZZLE (base)');
 
         $fileList = MetaDataFiles::getClientFiles(array('base'),'field');
 
@@ -182,13 +179,13 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
         // These have to be in this order, to simulate how they return from getClientFiles
         $this->createdFiles[] = 'custom/clients/base/fields/fo/rizzle.hbs';
-        SugarAutoLoader::put($this->createdFiles[0],'FO RIZZLE (custom)');
+        file_put_contents($this->createdFiles[0], 'FO RIZZLE (custom)');
         $this->createdFiles[] = 'custom/clients/base/fields/fo/drizzle.hbs';
-        SugarAutoLoader::put($this->createdFiles[1],'FO DRIZZLE (custom)');
+        file_put_contents($this->createdFiles[1], 'FO DRIZZLE (custom)');
         $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbs';
-        SugarAutoLoader::put($this->createdFiles[2],'FO RIZZLE (base)');
+        file_put_contents($this->createdFiles[2], 'FO RIZZLE (base)');
         $this->createdFiles[] = 'clients/base/fields/fo/fizzle.hbs';
-        SugarAutoLoader::put($this->createdFiles[3],'FO FIZZLE (base)');
+        file_put_contents($this->createdFiles[3], 'FO FIZZLE (base)');
 
         $fileList = MetaDataFiles::getClientFiles(array('base'),'field');
 
@@ -220,20 +217,20 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->createdFiles[] = 'clients/base/fields/fo/fo.js';
         $controllerContentsBase = 'console.log("fo"); // (base/controller)';
-        SugarAutoLoader::put($this->createdFiles[0],$controllerContentsBase);
+        file_put_contents($this->createdFiles[0], $controllerContentsBase);
 
         $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbs';
         $templateContentsBase = 'FO RIZZLE (base/template)';
-        SugarAutoLoader::put($this->createdFiles[1],$templateContentsBase);
+        file_put_contents($this->createdFiles[1], $templateContentsBase);
 
 
         $this->createdFiles[] = 'clients/mobile/fields/fo/fo.js';
         $controllerContentsMobile = 'console.log("fo"); // (mobile/controller)';
-        SugarAutoLoader::put($this->createdFiles[2],$controllerContentsMobile);
+        file_put_contents($this->createdFiles[2], $controllerContentsMobile);
 
         $this->createdFiles[] = 'clients/mobile/fields/fo/rizzle.hbs';
         $templateContentsMobile = 'FO RIZZLE (mobile/template)';
-        SugarAutoLoader::put($this->createdFiles[3],$templateContentsMobile);
+        file_put_contents($this->createdFiles[3], $templateContentsMobile);
 
         $fileList = MetaDataFiles::getClientFiles(array('mobile','base'),'field');
 
@@ -286,31 +283,31 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->createdFiles[] = 'modules/Accounts/clients/base/views/fo/fo.js';
         $baseController = 'console.log("fo"); // (base/controller)';
-        SugarAutoLoader::put($this->createdFiles[0],$baseController);
+        file_put_contents($this->createdFiles[0], $baseController);
 
         $this->createdFiles[] = 'modules/Accounts/clients/base/views/fo/rizzle.hbs';
         $baseTemplate = 'FO RIZZLE (base)';
-        SugarAutoLoader::put($this->createdFiles[1],$baseTemplate);
+        file_put_contents($this->createdFiles[1], $baseTemplate);
 
         $this->createdFiles[] = 'modules/Accounts/clients/base/views/fo/fo.php';
         $baseMetaContents = '<?php'."\n".'$viewdefs["Accounts"]["base"]["view"]["fo"] = array("erma"=>"base");';
-        SugarAutoLoader::put($this->createdFiles[2],$baseMetaContents);
+        file_put_contents($this->createdFiles[2], $baseMetaContents);
 
         $this->createdFiles[] = 'modules/Accounts/clients/mobile/views/fo/fo.js';
         $mobileController = 'console.log("fo"); // (mobile/controller)';
-        SugarAutoLoader::put($this->createdFiles[3],$mobileController);
+        file_put_contents($this->createdFiles[3], $mobileController);
 
         $this->createdFiles[] = 'modules/Accounts/clients/mobile/views/fo/rizzle.hbs';
         $mobileTemplate = 'FO RIZZLE (mobile)';
-        SugarAutoLoader::put($this->createdFiles[4],$mobileTemplate);
+        file_put_contents($this->createdFiles[4], $mobileTemplate);
 
         $this->createdFiles[] = 'modules/Accounts/clients/mobile/views/fo/fo.php';
         $mobileMetaContents = '<?php'."\n".'$viewdefs["Accounts"]["mobile"]["view"]["fo"] = array("erma"=>"mobile");';
-        SugarAutoLoader::put($this->createdFiles[5],$mobileMetaContents);
+        file_put_contents($this->createdFiles[5], $mobileMetaContents);
 
         $this->createdFiles[] = 'modules/ActivityStream/Activity/clients/base/datas/model/model.js';
         $baseModelContents = '({})';
-        SugarAutoLoader::put($this->createdFiles[6],$baseModelContents);
+        file_put_contents($this->createdFiles[6], $baseModelContents);
 
         $fileList = MetaDataFiles::getClientFiles(array('mobile','base'),'view','Accounts');
 
@@ -375,7 +372,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::ensureDir(dirname($baseFilePath));
 
         $baseMetaContents = '<?php' . "\n" . '$viewdefs["base"]["view"]["fo"] = array("erma"=>"base");';
-        SugarAutoLoader::put($baseFilePath, $baseMetaContents);
+        file_put_contents($baseFilePath, $baseMetaContents);
 
 
         $extFilePath = 'custom/application/Ext/clients/base/views/fo/fo.ext.php';
@@ -383,7 +380,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->createdDirs[] = dirname($extFilePath);
         SugarAutoLoader::ensureDir(dirname($extFilePath));
         $baseExtMetaContents = '<?php' . "\n" . '$viewdefs["base"]["view"]["fo"]["ext"] = "baseByExt";';
-        SugarAutoLoader::put($extFilePath, $baseExtMetaContents);
+        file_put_contents($extFilePath, $baseExtMetaContents);
 
         $baseFileList = MetaDataFiles::getClientFiles(array('base'),'view');
 
@@ -407,14 +404,14 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->createdDirs[] = dirname($baseFilePath);
         SugarAutoLoader::ensureDir(dirname($baseFilePath));
         $acctMetaContents = '<?php' . "\n" . '$viewdefs["Accounts"]["base"]["view"]["fo"] = array("erma"=>"baseAcct");';
-        SugarAutoLoader::put($baseFilePath, $acctMetaContents);
+        file_put_contents($baseFilePath, $acctMetaContents);
 
         $extFilePath = 'custom/modules/Accounts/Ext/clients/base/views/fo/fo.ext.php';
         $this->createdFiles[] = $extFilePath;
         $this->createdDirs[] = dirname($extFilePath);
         SugarAutoLoader::ensureDir(dirname($extFilePath));
         $acctExtMetaContents = '<?php' . "\n" . '$viewdefs["Accounts"]["base"]["view"]["fo"]["ext"] = "baseAcctByExt";';
-        SugarAutoLoader::put($extFilePath, $acctExtMetaContents);
+        file_put_contents($extFilePath, $acctExtMetaContents);
 
         $accountFileList = MetaDataFiles::getClientFiles(array('base'),'view','Accounts');
 
@@ -442,7 +439,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->createdDirs[] = dirname($baseFilePath);
         SugarAutoLoader::ensureDir(dirname($baseFilePath));
         $baseMetaContents = '<?php'."\n".'$viewdefs["base"]["layout"]["fo"] = array("erma"=>"baseLayouts");';
-        SugarAutoLoader::put($baseFilePath, $baseMetaContents);
+        file_put_contents($baseFilePath, $baseMetaContents);
 
         //Load the extension file
         $extFilePath = 'custom/modules/Cases/Ext/clients/base/layouts/fo/fo.ext.php';
@@ -450,7 +447,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->createdDirs[] = dirname($extFilePath);
         SugarAutoLoader::ensureDir(dirname($extFilePath));
         $caseExtMetaContents = '<?php'."\n".'$viewdefs["Cases"]["base"]["layout"]["fo"]["ext"] = "baseCaseByExt";';
-        SugarAutoLoader::put($extFilePath, $caseExtMetaContents);
+        file_put_contents($extFilePath, $caseExtMetaContents);
 
         $caseFileList = MetaDataFiles::getClientFiles(array('base'), 'layout', 'Cases');
         $this->assertArrayHasKey($extFilePath, $caseFileList, "Didn't find the Cases fo extension");
@@ -480,7 +477,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::ensureDir(dirname($templateFilePath));
         $baseMetaContents = '<?php'."\n".'$module_name = "<module_name>";'."\n".
             '$viewdefs[$module_name]["base"]["view"]["fo"] = array("erma"=>"baseViews");';
-        SugarAutoLoader::put($templateFilePath, $baseMetaContents);
+        file_put_contents($templateFilePath, $baseMetaContents);
 
         //Load the extension file
         $extFilePath = 'custom/modules/Cases/Ext/clients/base/views/fo/fo.ext.php';
@@ -488,7 +485,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->createdDirs[] = dirname($extFilePath);
         SugarAutoLoader::ensureDir(dirname($extFilePath));
         $caseExtMetaContents = '<?php'."\n".'$viewdefs["Cases"]["base"]["view"]["fo"]["ext"] = "baseCaseByExt";';
-        SugarAutoLoader::put($extFilePath, $caseExtMetaContents);
+        file_put_contents($extFilePath, $caseExtMetaContents);
 
         $caseFileList = MetaDataFiles::getClientFiles(array('base'), 'view', 'Cases');
         $this->assertArrayHasKey($templateFilePath, $caseFileList, "Didn't find the template fo section.");

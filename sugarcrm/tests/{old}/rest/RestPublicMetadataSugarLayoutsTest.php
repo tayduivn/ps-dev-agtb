@@ -42,9 +42,8 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
                 SugarAutoLoader::ensureDir(dirname($file));
             }
 
-            SugarAutoLoader::put($file, $contents);
+            file_put_contents($file, $contents);
         }
-        SugarAutoLoader::saveMap();
         // Make sure we don't login before running public api tests
         $this->authToken = 'LOGGING_IN';
         $this->_clearMetadataCache();
@@ -53,13 +52,12 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
     public function tearDown()
     {
         foreach ($this->_oldFileContents as $file => $contents) {
-            SugarAutoLoader::put($file, $contents);
+            file_put_contents($file, $contents);
         }
 
         foreach ($this->_testFilesCreated as $file) {
-             SugarAutoLoader::unlink($file);
+             unlink($file);
         }
-        SugarAutoLoader::saveMap();
         parent::tearDown();
     }
     /**

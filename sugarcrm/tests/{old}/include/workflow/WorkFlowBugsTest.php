@@ -41,7 +41,6 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
              if(file_exists($test_file))
              {
            		copy($test_file, $target_file);
-                SugarAutoLoader::addToMap($target_file, false);
              }
         }
 
@@ -51,7 +50,6 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
         	copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
         }
         copy('tests/{old}/include/workflow/testfiles/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php');
-        SugarAutoLoader::addToMap('custom/modules/Accounts/logic_hooks.php', false);
         LogicHook::refreshHooks();
 
         $sql = "DELETE FROM workflow where id in ('436cfc81-1926-5ba6-cfec-4c72d7b861c4', '43406320-49b6-6503-0074-4c73532a4325')";
@@ -136,12 +134,11 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
           	   		copy($target_file . '.bak', $target_file);
           	   		unlink($target_file . '.bak');
           	   } else {
-          	       SugarAutoLoader::unlink($target_file);
+                    unlink($target_file);
           	   }
            }
         } else {
            rmdir_recursive('custom/modules/Accounts/workflow');
-           SugarAutoLoader::delFromMap('custom/modules/Accounts/workflow', false);
         }
 
         if(self::$has_logic_hooks_file)
@@ -149,9 +146,9 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
         	copy('custom/modules/Accounts/logic_hooks.php.bak', 'custom/modules/Accounts/logic_hooks.php');
         	unlink('custom/modules/Accounts/logic_hooks.php.bak');
         } else {
-            SugarAutoLoader::unlink('custom/modules/Accounts/logic_hooks.php');
+            unlink('custom/modules/Accounts/logic_hooks.php');
         }
-        SugarAutoLoader::saveMap();
+
         $sql = "DELETE FROM workflow where id in ('436cfc81-1926-5ba6-cfec-4c72d7b861c4', '43406320-49b6-6503-0074-4c73532a4325')";
         $GLOBALS['db']->query($sql);
 

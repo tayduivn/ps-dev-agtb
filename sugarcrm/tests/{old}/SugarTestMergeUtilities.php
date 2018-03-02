@@ -45,7 +45,6 @@ class SugarTestMergeUtilities
 
 				   if(file_exists("{$custom_directory}/custom/modules/{$module}/metadata/{$file}.php")) {
 				   	  copy("{$custom_directory}/custom/modules/{$module}/metadata/{$file}.php", "custom/modules/{$module}/metadata/{$file}.php");
-				   	  SugarAutoLoader::addToMap("custom/modules/{$module}/metadata/{$file}.php", false);
 				   }
 			   } //foreach
 		   } //foreach
@@ -57,21 +56,20 @@ class SugarTestMergeUtilities
 		   foreach(self::$modules as $module) {
 			   if(!self::$has_dir[$module]) {
 			   	  rmdir_recursive("custom/modules/{$module}");
-			   	  SugarAutoLoader::delFromMap("custom/modules/{$module}");
 			   }  else {
 				   foreach(self::$files as $file) {
 				      if(file_exists("custom/modules/{$module}/metadata/{$file}.php.bak")) {
 				      	 copy("custom/modules/{$module}/metadata/{$file}.php.bak", "custom/modules/{$module}/metadata/{$file}.php");
 			             unlink("custom/modules/{$module}/metadata/{$file}.php.bak");
 				      } else if(file_exists("custom/modules/{$module}/metadata/{$file}.php")) {
-				      	 SugarAutoLoader::unlink("custom/modules/{$module}/metadata/{$file}.php", true);
+                          unlink("custom/modules/{$module}/metadata/{$file}.php");
 				      }
 
 				   	  if(file_exists("custom/modules/{$module}/metadata/{$module}.php.suback.bak")) {
 				      	 copy("custom/modules/{$module}/metadata/{$file}.php.suback.bak", "custom/modules/{$module}/metadata/{$file}.php.suback.php");
 			             unlink("custom/modules/{$module}/metadata/{$file}.php.suback.bak");
 				      } else if(file_exists("custom/modules/{$module}/metadata/{$file}.php.suback.php")) {
-				      	 SugarAutoLoader::unlink("custom/modules/{$module}/metadata/{$file}.php.suback.php");
+                          unlink("custom/modules/{$module}/metadata/{$file}.php.suback.php");
 				      }
 				   }
 			   }

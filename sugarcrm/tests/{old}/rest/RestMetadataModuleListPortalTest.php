@@ -25,7 +25,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
 
         $this->unitTestFiles[] = $this->oppTestPath;
         if (!file_exists('modules/Accounts/metadata/studio.php')) {
-            SugarAutoLoader::put('modules/Accounts/metadata/studio.php', '<?php' . "\n\$time = time();", true);
+            file_put_contents('modules/Accounts/metadata/studio.php', '<?php' . "\n\$time = time();");
             $this->createdStudioFile = true;
         }
 
@@ -34,20 +34,19 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
     public function tearDown()
     {
         if ($this->createdStudioFile && file_exists('modules/Accounts/metadata/studio.php')) {
-            SugarAutoLoader::unlink('modules/Accounts/metadata/studio.php');
+            unlink('modules/Accounts/metadata/studio.php');
         }
 
         foreach($this->unitTestFiles as $unitTestFile ) {
             if ( file_exists($unitTestFile) ) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
-                SugarAutoLoader::unlink($unitTestFile);
+                unlink($unitTestFile);
             }
         }
 
         if (file_exists($this->oppTestPath)) {
-            SugarAutoLoader::unlink($this->oppTestPath);
+            unlink($this->oppTestPath);
         }
-        SugarAutoLoader::saveMap();
         // Set the tabs back to what they were
         if ( isset($this->defaultTabs[0]) ) {
             $tabs = new TabController();
@@ -125,7 +124,10 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         if (is_dir($dir = dirname($this->oppTestPath)) === false) {
             sugar_mkdir($dir, null, true);
         }
-        SugarAutoLoader::put($this->oppTestPath, "<?php\n\$viewdefs['Accounts']['portal']['view']['list'] = array('test' => 'Testing');", true);
+        file_put_contents(
+            $this->oppTestPath,
+            "<?php\n\$viewdefs['Accounts']['portal']['view']['list'] = array('test' => 'Testing');"
+        );
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('me');
 

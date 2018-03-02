@@ -148,7 +148,7 @@ FILE;
         $api = new ForecastsApi();
         $klass = SugarTestReflection::callProtectedMethod($api, 'getTimeperiodFilterClass', array(array()));
         $this->assertInstanceOf('CustomSugarForecasting_Filter_TimePeriodFilter', $klass);
-        SugarAutoLoader::unlink('custom/include/SugarForecasting/Filter/TimePeriodFilter.php');
+        unlink('custom/include/SugarForecasting/Filter/TimePeriodFilter.php');
     }
 
     /**

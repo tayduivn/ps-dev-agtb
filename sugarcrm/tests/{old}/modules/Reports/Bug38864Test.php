@@ -23,7 +23,7 @@ class Bug38864Test extends Sugar_PHPUnit_Framework_TestCase
 
         sugar_mkdir("custom/modules/Reports/metadata/",null,true);
 
-        SugarAutoLoader::put(
+        file_put_contents(
             "custom/modules/Reports/metadata/reportmodulesdefs.php",
             "<?php
 \$additionalModules[] = 'ProspectLists';
@@ -34,7 +34,7 @@ class Bug38864Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-	    SugarAutoLoader::unlink("custom/modules/Reports/metadata/reportmodulesdefs.php");
+        unlink("custom/modules/Reports/metadata/reportmodulesdefs.php");
 	    unset($GLOBALS['current_user']);
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}

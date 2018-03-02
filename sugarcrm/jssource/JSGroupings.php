@@ -80,7 +80,7 @@
                 }
             }
         }
-        $calendarJSFileName = SugarAutoLoader::fileExists('custom/include/javascript/calendar.js') ?
+        $calendarJSFileName = file_exists('custom/include/javascript/calendar.js') ?
             'custom/include/javascript/calendar.js' : 'include/javascript/calendar.js';
         $js_groupings = array(
            $sugar_grp1 = array(

@@ -16,7 +16,6 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @var array SugarAutoLoader state
      */
-    protected $fileMap;
     protected $namespaceMap;
     protected $namespaceMapPsr4;
 
@@ -28,7 +27,6 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->fileMap = SugarAutoLoader::$filemap;
         $this->namespaceMap = SugarAutoLoader::$namespaceMap;
         $this->namespaceMapPsr4 = SugarAutoLoader::$namespaceMapPsr4;
     }
@@ -39,8 +37,8 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
             @unlink($file);
         }
 
-        if (SugarAutoLoader::fileExists('custom/include/utils/class_map.php')) {
-            SugarAutoLoader::unlink('custom/include/utils/class_map.php');
+        if (file_exists('custom/include/utils/class_map.php')) {
+            unlink('custom/include/utils/class_map.php');
         }
         if (file_exists(sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE))) {
             unlink(sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE));
@@ -48,8 +46,6 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 
         SugarAutoLoader::$classMap = array();
         SugarAutoLoader::$classMapDirty = true;
-        SugarAutoLoader::$memmap = array();
-        SugarAutoLoader::$filemap = $this->fileMap;
         SugarAutoLoader::$namespaceMap = $this->namespaceMap;
         SugarAutoLoader::$namespaceMapPsr4 = $this->namespaceMapPsr4;
         parent::tearDown();
@@ -62,29 +58,9 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 
     public function testExists()
     {
-        $this->assertTrue((bool)SugarAutoLoader::fileExists('config.php'));
-        $this->assertTrue((bool)SugarAutoLoader::fileExists('custom/index.html'));
-        $this->assertFalse(SugarAutoLoader::fileExists('config.php.dontexist'));
-
-        // Tests that a file skipped for caching will read from the file system
-        $this->assertTrue(SugarAutoLoader::fileExists('cache/file_map.php'));
-    }
-
-    public function testAddMap()
-    {
-        $this->assertFalse(SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
-        SugarAutoLoader::addToMap("subdir/nosuchfile.php", false);
-        $this->assertTrue((bool)SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
-        $this->assertTrue((bool)SugarAutoLoader::fileExists('subdir'));
-    }
-
-    public function testDelMap()
-    {
-        SugarAutoLoader::addToMap("subdir/nosuchfile.php", false);
-        $this->assertTrue((bool)SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
-        SugarAutoLoader::delFromMap("subdir", false);
-        $this->assertFalse(SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
-        $this->assertFalse((bool)SugarAutoLoader::fileExists('subdir'));
+        $this->assertTrue((bool)file_exists('config.php'));
+        $this->assertTrue((bool)file_exists('custom/index.html'));
+        $this->assertFalse(file_exists('config.php.dontexist'));
     }
 
     public function testBuildClassCache()
@@ -103,7 +79,7 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 
         // Add some entries to a custom class map
         SugarAutoLoader::ensureDir('custom/include/utils');
-        SugarAutoLoader::put('custom/include/utils/class_map.php', "<?php\n\$class_map['voice_of']='a_porkchop';\n\n");
+        file_put_contents('custom/include/utils/class_map.php', "<?php\n\$class_map['voice_of']='a_porkchop';\n\n");
 
         // Make sure the build picks up the custom classes
         SugarAutoLoader::buildClassCache();
@@ -160,8 +136,8 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
         // Register namespace / directory pair
         SugarAutoLoader::addNamespace($namespace, $dir, $type);
 
-        // Fake existence of file
-        SugarAutoLoader::addToMap($fileName, false, false);
+        sugar_touch($fileName);
+        $this->cleanupFiles[] = $fileName;
 
         $this->assertSame($fileName, SugarAutoLoader::getFilenameForFQCN($className));
     }
@@ -250,8 +226,8 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
                 'psr4',
                 'Sugarcrm\\Sugarcrm\\inc',
                 'include',
-                'Sugarcrm\\Sugarcrm\\inc\\SugarLogger\\LoggerManager',
-                'include/SugarLogger/LoggerManager.php',
+                'Sugarcrm\\Sugarcrm\\inc\\SugarLogger\\FakeLoggerManager',
+                'include/SugarLogger/FakeLoggerManager.php',
             ),
             array(
                 'psr4',
@@ -431,16 +407,14 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 
         SugarAutoLoader::ensureDir('src');
 
-        SugarAutoLoader::put(
+        file_put_contents(
             'OverlapSrc.php',
-            $this->getClassPhp('Sugarcrm\\Sugarcrm', 'OverlapSrc', 'looser'),
-            false
+            $this->getClassPhp('Sugarcrm\\Sugarcrm', 'OverlapSrc', 'looser')
         );
 
-        SugarAutoLoader::put(
+        file_put_contents(
             'src/OverlapSrc.php',
-            $this->getClassPhp('Sugarcrm\\Sugarcrm', 'OverlapSrc', 'winner'),
-            false
+            $this->getClassPhp('Sugarcrm\\Sugarcrm', 'OverlapSrc', 'winner')
         );
 
         SugarAutoLoader::$classMap = array();
@@ -464,16 +438,14 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 
         SugarAutoLoader::ensureDir('custom/src');
 
-        SugarAutoLoader::put(
+        file_put_contents(
             'custom/OverlapSrc.php',
-            $this->getClassPhp('Sugarcrm\\Sugarcrm\\custom', 'OverlapSrc', 'looser_custom'),
-            false
+            $this->getClassPhp('Sugarcrm\\Sugarcrm\\custom', 'OverlapSrc', 'looser_custom')
         );
 
-        SugarAutoLoader::put(
+        file_put_contents(
             'custom/src/OverlapSrc.php',
-            $this->getClassPhp('Sugarcrm\\Sugarcrm\\custom', 'OverlapSrc', 'winner_custom'),
-            false
+            $this->getClassPhp('Sugarcrm\\Sugarcrm\\custom', 'OverlapSrc', 'winner_custom')
         );
 
         SugarAutoLoader::$classMap = array();

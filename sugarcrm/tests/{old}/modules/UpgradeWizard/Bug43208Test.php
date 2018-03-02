@@ -72,7 +72,6 @@ include('custom/Extension/application/Ext/TableDictionary/Bug43208_module.php');
 EOQ;
        fputs( $fh, $string);
        fclose( $fh );
-       SugarAutoLoader::addToMap($this->tableDictionaryExtFile2, false);
     }
 
     if( $fh = @fopen($this->corruptExtModuleFile, 'w+') )
@@ -103,7 +102,7 @@ function tearDown() {
        copy($this->tableDictionaryExtFile2 . '.backup', $this->tableDictionaryExtFile2);
        unlink($this->tableDictionaryExtFile2 . '.backup');
     } else {
-       SugarAutoLoader::unlink($this->tableDictionaryExtFile2);
+            unlink($this->tableDictionaryExtFile2);
     }
 
     if(file_exists($this->corruptExtModuleFile)) {

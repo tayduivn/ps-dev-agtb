@@ -26,10 +26,9 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
 	    foreach($this->todelete as $file) {
 	        if(is_dir($file)) {
                 rmdir_recursive($file);
-                SugarAutoLoader::delFromMap($file, false);
                 continue;
 	        }
-	        @SugarAutoLoader::unlink($file);
+            @unlink($file);
 	    }
 	    $this->todelete = array();
 	}
@@ -37,19 +36,19 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
 	protected function touch($file)
 	{
 	    $this->todelete[] = $file;
-	    SugarAutoLoader::touch($file);
+        sugar_touch($file);
 	}
 
 	protected function put($file, $data)
 	{
 		$this->todelete[] = $file;
-		SugarAutoLoader::put($file, $data);
+        file_put_contents($file, $data);
 	}
 
 	public function testFileExists()
 	{
-	    $this->assertTrue(SugarAutoLoader::fileExists("index.php"));
-	    $this->assertTrue(SugarAutoLoader::fileExists("custom///modules"));
+        $this->assertTrue(file_exists("index.php"));
+        $this->assertTrue(file_exists("custom///modules"));
 	}
 
 	public function testExisting()
@@ -60,26 +59,6 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
 	public function testNotExisting()
 	{
 		$this->assertEmpty(SugarAutoLoader::existing("nosuchfile.test1"));
-	}
-
-	public function testAdd()
-	{
-	    $this->assertEmpty(SugarAutoLoader::existing("nosuchfile.test2", "some/dir/nosuchfile.test3"));
-	    SugarAutoLoader::addToMap("nosuchfile.test2");
-	    $this->assertTrue(SugarAutoLoader::fileExists("nosuchfile.test2"));
-	    SugarAutoLoader::addToMap("some/dir/nosuchfile.test3");
-	    $this->assertTrue(SugarAutoLoader::fileExists("some/dir/nosuchfile.test3"));
-	}
-
-	public function testDel()
-	{
-	    $this->assertEmpty(SugarAutoLoader::existing("nosuchfile.test4", "some/dir/nosuchfile.test5"));
-	    SugarAutoLoader::addToMap("nosuchfile.test4");
-	    SugarAutoLoader::addToMap("some/dir/nosuchfile.test5");
-	    $this->assertTrue(SugarAutoLoader::fileExists("some/dir/nosuchfile.test5"));
-        SugarAutoLoader::delFromMap("nosuchfile.test4", false);
-        SugarAutoLoader::delFromMap("some/dir/nosuchfile.test5", false);
-        $this->assertEmpty(SugarAutoLoader::existing("nosuchfile.test4", "some/dir/nosuchfile.test5"));
 	}
 
 	// load
@@ -152,14 +131,14 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetDirFilesExt()
     {
     	$this->touch("custom/blah1.php");
-    	$this->touch("custom/blah2.txt");
+        $this->touch("custom/blah2.js");
     	$this->touch("custom/blah3.php");
     	$res = SugarAutoLoader::getDirFiles("custom", false, ".php");
     	$this->assertContains("custom/blah1.php", $res);
-    	$this->assertNotContains("custom/blah2.txt", $res);
+        $this->assertNotContains("custom/blah2.js", $res);
     	$this->assertContains("custom/blah3.php", $res);
-    	$res = SugarAutoLoader::getDirFiles("custom", false, "txt");
-    	$this->assertContains("custom/blah2.txt", $res);
+        $res = SugarAutoLoader::getDirFiles("custom", false, "js");
+        $this->assertContains("custom/blah2.js", $res);
     }
 
     // getFilesCustom
@@ -178,7 +157,6 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
         // directories
         if(!is_dir("custom/include/language")) {
             mkdir_recursive("custom/include/language");
-            SugarAutoLoader::addToMap("custom/include/language/dummy.php");
         }
     	$res = SugarAutoLoader::getFilesCustom("include", true);
     	$this->assertContains("include/utils", $res);
@@ -210,12 +188,12 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
     public function testTouchUnlink()
     {
         $this->todelete[] = "custom/testunlink.php";
-        SugarAutoLoader::touch("custom/testunlink.php");
+        sugar_touch("custom/testunlink.php");
         $this->assertTrue(file_exists("custom/testunlink.php"), "File does not exist!");
-        $this->assertTrue(SugarAutoLoader::fileExists("custom/testunlink.php"), "File does not exist in the map!");
-        SugarAutoLoader::unlink("custom/testunlink.php");
+        $this->assertTrue(file_exists("custom/testunlink.php"), "File does not exist in the map!");
+        unlink("custom/testunlink.php");
         $this->assertFalse(file_exists("custom/testunlink.php"), "File should not exist!");
-        $this->assertFalse(SugarAutoLoader::fileExists("custom/testunlink.php"), "File should not exist in the map!");
+        $this->assertFalse(file_exists("custom/testunlink.php"), "File should not exist in the map!");
         array_pop($this->todelete);
     }
 
@@ -223,13 +201,13 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
     public function testPutUnlink()
     {
         $this->todelete[] = "custom/testunlink.php";
-        SugarAutoLoader::put("custom/testunlink.php", "TESTDATA");
+        file_put_contents("custom/testunlink.php", "TESTDATA");
         $this->assertTrue(file_exists("custom/testunlink.php"), "File does not exist!");
         $this->assertEquals("TESTDATA", file_get_contents("custom/testunlink.php"));
-        $this->assertTrue(SugarAutoLoader::fileExists("custom/testunlink.php"), "File does not exist in the map!");
-        SugarAutoLoader::unlink("custom/testunlink.php");
+        $this->assertTrue(file_exists("custom/testunlink.php"), "File does not exist in the map!");
+        unlink("custom/testunlink.php");
         $this->assertFalse(file_exists("custom/testunlink.php"), "File should not exist!");
-        $this->assertFalse(SugarAutoLoader::fileExists("custom/testunlink.php"), "File should not exist in the map!");
+        $this->assertFalse(file_exists("custom/testunlink.php"), "File should not exist in the map!");
         array_pop($this->todelete);
     }
 
@@ -316,10 +294,10 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->todelete[] = "custom/testdir";
 
         $this->asserTrue(is_dir("custom/testdir/testdir2"), "test dir create failed");
-        $this->asserTrue(SugarAutoLoader::fileExists("custom/testdir/testdir2"), "test dir not in cache");
+        $this->asserTrue(file_exists("custom/testdir/testdir2"), "test dir not in cache");
 
-        SugarAutoLoader::put("custom/testdir/testdir2/testfile.php", "test");
-        $this->asserTrue(SugarAutoLoader::fileExists("custom/testdir/testdir2/testfile.php"), "test file not in cache");
+        file_put_contents("custom/testdir/testdir2/testfile.php", "test");
+        $this->asserTrue(file_exists("custom/testdir/testdir2/testfile.php"), "test file not in cache");
 
     }
 

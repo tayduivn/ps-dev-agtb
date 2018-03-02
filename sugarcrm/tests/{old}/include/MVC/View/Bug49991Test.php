@@ -34,7 +34,6 @@ public function setUp()
         $this->sourceBackup = file_get_contents('custom/modules/Connectors/tpls/source_properties.tpl');
     }
     copy('modules/Connectors/tpls/source_properties.tpl', 'custom/modules/Connectors/tpls/source_properties.tpl');
-    SugarAutoLoader::addToMap('custom/modules/Connectors/tpls/source_properties.tpl', false);
 }
 
 public function tearDown()
@@ -44,7 +43,6 @@ public function tearDown()
         file_put_contents('custom/modules/Connectors/tpls/source_properties.tpl', $this->sourceBackup);
     } else {
         unlink('custom/modules/Connectors/tpls/source_properties.tpl');
-        SugarAutoLoader::delFromMap('custom/modules/Connectors/tpls/source_properties.tpl', false);
     }
     unset($this->mock);
 }

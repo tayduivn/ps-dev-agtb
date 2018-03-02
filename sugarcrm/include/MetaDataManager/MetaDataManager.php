@@ -527,29 +527,29 @@ class MetaDataManager implements LoggerAwareInterface
         }
         $platform = (array) $platform;
 
-        // Get the platform metadata class name
-        $class = self::getManagerClassName(''); // MetaDataManager
-        $path  = 'include/MetaDataManager/';
-        $found = false;
-        foreach ($platform as $type) {
-            $mmClass = self::getManagerClassName($type);
-            $file = $path . $mmClass . '.php';
-            if (SugarAutoLoader::requireWithCustom($file)) {
-                $class = SugarAutoLoader::customClass($mmClass);
-                $found = true;
-                break;
-            }
-        }
-
-        if (!$found) {
-            SugarAutoLoader::requireWithCustom($path . $class . '.php');
-            $class = SugarAutoLoader::customClass($class);
-        }
-
         // Build a simple key
         $key = implode(':', $platform) . ':' . intval($public);
 
         if ($fresh || empty(self::$managers[$key])) {
+            // Get the platform metadata class name
+            $class = self::getManagerClassName(''); // MetaDataManager
+            $path  = 'include/MetaDataManager/';
+            $found = false;
+            foreach ($platform as $type) {
+                $mmClass = self::getManagerClassName($type);
+                $file = $path . $mmClass . '.php';
+                if (SugarAutoLoader::requireWithCustom($file)) {
+                    $class = SugarAutoLoader::customClass($mmClass);
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                SugarAutoLoader::requireWithCustom($path . $class . '.php');
+                $class = SugarAutoLoader::customClass($class);
+            }
+
             $manager = new $class($platform, $public);
 
             $manager->setLogger(LoggerFactory::getLogger('metadata'));
@@ -2495,7 +2495,7 @@ class MetaDataManager implements LoggerAwareInterface
      * @return bool true if the js-component file for this metadata call exists, false otherwise
      */
     protected function verifyJSSource($data, MetaDataContextInterface $context = null) {
-        if (!empty($data['jssource']) && !SugarAutoLoader::fileExists($data['jssource'])) {
+        if (!empty($data['jssource']) && !file_exists($data['jssource'])) {
             //The jssource file is invalid, we need to invalidate the hash as well.
             return false;
         }
@@ -2506,7 +2506,7 @@ class MetaDataManager implements LoggerAwareInterface
                 $context = $this->getDefaultContext();
             }
             $publicJsSource = $this->getPublicJsSource($context);
-            if ($data['jssource_public'] != $publicJsSource || !SugarAutoLoader::fileExists($publicJsSource)) {
+            if ($data['jssource_public'] != $publicJsSource || !file_exists($publicJsSource)) {
                 return false;
             }
         }
@@ -3245,7 +3245,7 @@ class MetaDataManager implements LoggerAwareInterface
     {
         sugar_mkdir(sugar_cached('api/metadata'), null, true);
         $filePath = $this->getLangUrl($language, $ordered);
-        if (SugarAutoLoader::fileExists($filePath)) {
+        if (file_exists($filePath)) {
             // Get the contents of the file so that we can get the hash
             $data = file_get_contents($filePath);
 
@@ -4031,7 +4031,7 @@ class MetaDataManager implements LoggerAwareInterface
     protected function getRawFilter($fieldName, $role)
     {
         $path = 'custom/application/Ext/DropdownFilters/roles/' . $role . '/dropdownfilters.ext.php';
-        if (SugarAutoLoader::fileExists($path)) {
+        if (file_exists($path)) {
             $filters = $this->readDropdownFilterFile($path);
             if (isset($filters[$fieldName])) {
                 return $filters[$fieldName];

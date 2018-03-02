@@ -32,7 +32,7 @@ class TrackersTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($this->files as $file) {
             $path =  sugar_cached("modules/Trackers/" . $file);
             if (file_exists($path)) {
-                SugarAutoLoader::unlink($path);
+                unlink($path);
             }
         }
 

@@ -59,7 +59,7 @@ class Bug46713Test extends Sugar_PHPUnit_Framework_TestCase
 
         if(!$this->hasExistingCustomSearchFields)
         {
-            SugarAutoLoader::unlink('custom/modules/Cases/metadata/SearchFields.php');
+            unlink('custom/modules/Cases/metadata/SearchFields.php');
         }
 
         if(file_exists('custom/modules/Cases/metadata/SearchFields.php.bak')) {
@@ -89,4 +89,3 @@ class Bug46713Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('cases.case_number = 0', $where_clauses[0]);
     }
 }
-?>

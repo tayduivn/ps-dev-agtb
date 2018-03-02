@@ -42,14 +42,13 @@ class ConnectorsFormatterTest extends Sugar_Connectors_TestCase
 );
 
 EOQ;
-            SugarAutoLoader::put(CONNECTOR_DISPLAY_CONFIG_FILE, $the_string, true);
+            file_put_contents(CONNECTOR_DISPLAY_CONFIG_FILE, $the_string);
         }
         parent::setUp();
 
         if (file_exists('custom/modules/Connectors/connectors/sources/ext/rest/twitter/twitter.php')) {
             copy_recursive('custom/modules/Connectors/connectors/sources/ext/rest/twitter', 'custom/modules/Connectors/backup/connectors/sources/ext/rest/twitter_backup');
             ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/twitter');
-            SugarAutoLoader::delFromMap('custom/modules/Connectors/backup/sources/ext/rest/twitter');
         }
 
            //Setup the neccessary Smarty configurations

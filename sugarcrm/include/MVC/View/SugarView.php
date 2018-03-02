@@ -825,7 +825,7 @@ EOHTML;
 
         //rrs bug: 20923 - if this image does not exist as per the license, then the proper image will be displayed regardless, so no need
         //to display an empty image here.
-        if(SugarAutoLoader::fileExists('include/images/poweredby_sugarcrm_65.png')){
+        if(file_exists('include/images/poweredby_sugarcrm_65.png')){
             $copyright .= $attribLinkImg;
         }
         // End Required Image
@@ -940,7 +940,7 @@ EOHTML;
      */
     protected function _checkModule()
     {
-        if(!empty($this->module) && !SugarAutoLoader::fileExists('modules/'.$this->module)){
+        if (!empty($this->module) && !file_exists('modules/'.$this->module)) {
             $error = str_replace("[module]", "$this->module", $GLOBALS['app_strings']['ERR_CANNOT_FIND_MODULE']);
             $GLOBALS['log']->fatal($error);
             echo $error;

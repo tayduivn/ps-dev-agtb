@@ -35,9 +35,9 @@ class SamlAuthTest extends  Sugar_PHPUnit_Framework_TestCase
     {
         global $sugar_config;
 
-        if(SugarAutoLoader::fileExists($this->customSAMLSettings)) {
+        if (file_exists($this->customSAMLSettings)) {
             // if custom file settings exists then remove it.
-            SugarAutoLoader::unlink($this->customSAMLSettings);
+            unlink($this->customSAMLSettings);
         }
 
         $sugar_config['SAML_loginurl'] = 'loginURL';
@@ -62,7 +62,7 @@ class SamlAuthTest extends  Sugar_PHPUnit_Framework_TestCase
 \$settings->name_identifier_format = "testID";
 \$settings->saml_settings['check']['user_name'] = '//root';
 EOQ;
-       SugarAutoLoader::put($this->customSAMLSettings, $contents);
+        file_put_contents($this->customSAMLSettings, $contents);
        $settings = SAMLAuthenticate::loadSettings();
        $this->assertEquals('www.sugarcrm.com', $settings->idpSingleSignOnUrl);
        $this->assertEquals('TestCert', $settings->idpPublicCertificate);
@@ -86,7 +86,7 @@ EOQ;
 \$settings->issuer = "php-saml";
 \$settings->name_identifier_format = "testID";
 EOQ;
-        SugarAutoLoader::put($this->customSAMLSettings, $contents);
+        file_put_contents($this->customSAMLSettings, $contents);
         $settings = SAMLAuthenticate::loadSettings();
         $this->assertObjectNotHasAttribute('useXML', $settings);
         $this->assertEquals('testIssuer', $settings->spIssuer);

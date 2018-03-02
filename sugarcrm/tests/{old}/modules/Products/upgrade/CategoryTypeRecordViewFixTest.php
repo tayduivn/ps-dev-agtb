@@ -24,7 +24,7 @@ class CategoryTypeRecordViewFixTest extends UpgradeTestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        if (SugarAutoLoader::fileExists($this->file)) {
+        if (file_exists($this->file)) {
             $this->fileContents = sugar_file_get_contents($this->file);
         }
 

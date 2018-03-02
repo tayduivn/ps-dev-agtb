@@ -77,7 +77,7 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
             SugarTestHelper::saveFile($file);
             foreach ($filesets as $filepath) {
                 if (file_exists($filepath)) {
-                    SugarAutoLoader::unlink($filepath, false);
+                    unlink($filepath);
                 }
 
             }

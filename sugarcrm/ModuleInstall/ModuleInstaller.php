@@ -1973,7 +1973,7 @@ class ModuleInstaller{
                     if (!is_dir($cachePath)) {
                         sugar_mkdir($cachePath, null, true);
                     }
-                    SugarAutoLoader::put("{$cachePath}/{$subLayoutFileName}.ext.php", $extension, true);
+                    file_put_contents("{$cachePath}/{$subLayoutFileName}.ext.php", $extension);
                 }
             }
         }
@@ -2041,10 +2041,10 @@ class ModuleInstaller{
             if (!file_exists($dirName)) {
                 mkdir_recursive($dirName, true);
             }
-            SugarAutoLoader::put($cacheFile, $contents, true);
+            file_put_contents($cacheFile, $contents);
         } else {
             if (file_exists($cacheFile)) {
-                SugarAutoLoader::unlink($cacheFile, true);
+                unlink($cacheFile);
             }
         }
     }
@@ -3225,10 +3225,8 @@ class ModuleInstaller{
         foreach ($copyList as $to => $from) {
             $contents = file_get_contents($from);
             SugarAutoLoader::ensureDir(dirname($to));
-            SugarAutoLoader::put($to, $contents, false);
+            file_put_contents($to, $contents);
         }
-
-        SugarAutoLoader::saveMap();
     }
 
     /**

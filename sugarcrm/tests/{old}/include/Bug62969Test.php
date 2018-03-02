@@ -26,7 +26,7 @@ class Bug62969Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
 
-        if (SugarAutoLoader::fileExists($this->customFile)) {
+        if (file_exists($this->customFile)) {
             copy($this->customFile, $this->customFile . '.bak');
         }
 
@@ -50,7 +50,7 @@ class Bug62969Test extends Sugar_PHPUnit_Framework_TestCase
 EOQ;
         $dirName = dirname($this->customFile);
         SugarAutoLoader::ensureDir($dirName);
-        SugarAutoLoader::put($this->customFile, $customLangFileContent);
+        file_put_contents($this->customFile, $customLangFileContent);
 
         // clear cache so it can be reloaded later
         $cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
@@ -59,8 +59,7 @@ EOQ;
 
     public function tearDown()
     {
-        // delete from loader map
-        SugarAutoLoader::unlink($this->customFile, true);
+        unlink($this->customFile);
 
         if (file_exists($this->customFile . '.bak')) {
             copy($this->customFile . '.bak', $this->customFile);

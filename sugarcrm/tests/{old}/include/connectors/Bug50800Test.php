@@ -27,7 +27,7 @@ class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
         if(file_exists($this->custom_path.'/connectors.php'))
         {
            $this->custom_contents = file_get_contents($this->custom_path.'/connectors.php');
-           SugarAutoLoader::unlink($this->custom_path.'/connectors.php');
+            unlink($this->custom_path.'/connectors.php');
         } else {
             mkdir_recursive($this->custom_path);
         }
@@ -37,9 +37,9 @@ class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
         //remove connector file
         if(!empty($this->custom_contents))
         {
-           SugarAutoLoader::put($this->custom_path.'/connectors.php', $this->custom_contents);
+            file_put_contents($this->custom_path.'/connectors.php', $this->custom_contents);
         } else {
-            SugarAutoLoader::unlink($this->custom_path.'/connectors.php');
+            unlink($this->custom_path.'/connectors.php');
         }
 
         SugarTestHelper::tearDown();
@@ -48,7 +48,7 @@ class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
     function testConnectorFailsStringGracefully()
     {
         //now write a connector file with a string instead of an array for the connector var
-        SugarAutoLoader::put($this->custom_path.'/connectors.php',"<?php\n \$connector = 'Connector String ';");
+        file_put_contents($this->custom_path.'/connectors.php', "<?php\n \$connector = 'Connector String ';");
 
         //create the connector and call getConnectors
         $cu = new ConnectorUtils();
@@ -58,7 +58,7 @@ class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
     function testConnectorFailsNullGracefully()
     {
         //now write a connector file with missing array info instead of an array for the connector var
-        SugarAutoLoader::put($this->custom_path.'/connectors.php',"<?php\n ");
+        file_put_contents($this->custom_path.'/connectors.php', "<?php\n ");
 
         //create the connector and call getConnectors
         $cu = new ConnectorUtils();

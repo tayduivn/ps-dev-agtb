@@ -188,13 +188,13 @@ class SidecarMetaDataFileBuilder
     public function teardownFiles() {
         foreach ($this->created as $file) {
             // Kill the file we made for testing
-            SugarAutoLoader::unlink($file);
+            unlink($file);
         }
 
         // Kill the sidecar files that were created in testing
         foreach ($this->filesToMake as $file) {
             if (file_exists($file['sidecarpath'])) {
-                SugarAutoLoader::unlink($file['sidecarpath']);
+                unlink($file['sidecarpath']);
             }
         }
     }

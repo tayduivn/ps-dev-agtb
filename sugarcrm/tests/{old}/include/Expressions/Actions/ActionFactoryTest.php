@@ -42,15 +42,14 @@ EOQ;
             SugarAutoLoader::ensureDir("custom/" . ActionFactory::$action_directory);
             $this->removeCustomDir = true;
         }
-        SugarAutoLoader::put("custom/" . ActionFactory::$action_directory . "/testCustomAction.php", $actionContent);
+        file_put_contents("custom/" . ActionFactory::$action_directory . "/testCustomAction.php", $actionContent);
     }
 
     protected function removeCustomAction()
     {
-        SugarAutoLoader::unlink("custom/" . ActionFactory::$action_directory . "/testCustomAction.php");
+        unlink("custom/" . ActionFactory::$action_directory . "/testCustomAction.php");
         if ($this->removeCustomDir) {
             rmdir("custom/" . ActionFactory::$action_directory);
-            SugarAutoLoader::delFromMap("custom/" . ActionFactory::$action_directory);
         }
     }
 

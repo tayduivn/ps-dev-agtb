@@ -21,7 +21,7 @@ class RestMetadataTest extends RestTestBase {
         foreach($this->createdFiles as $file)
         {
         	if (is_file($file)) {
-        		SugarAutoLoader::unlink($file, true);
+                unlink($file);
             }
 
             if (file_exists($file . '.testbackup')) {
@@ -82,7 +82,7 @@ class RestMetadataTest extends RestTestBase {
 
         $this->createdFiles[] = $fileLoc;
         SugarAutoLoader::ensureDir('custom/include/language');
-        SugarAutoLoader::put($fileLoc, $langContent, true);
+        file_put_contents($fileLoc, $langContent);
         sugar_cache_clear('app_strings.en_us');
         $langStrings = return_application_language('en_us');
         $this->assertEquals($langStrings['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest",'The override is not taking effect in the same instance, there is no hope for the rest of this test.');

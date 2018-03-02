@@ -105,7 +105,7 @@ class RestService extends ServiceBase
     {
         $apiSettings = array();
         require 'include/api/metadata.php';
-        if (SugarAutoLoader::fileExists('custom/include/api/metadata.php')) {
+        if (file_exists('custom/include/api/metadata.php')) {
             // Don't use requireWithCustom because we need the data out of it
             require 'custom/include/api/metadata.php';
         }

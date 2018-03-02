@@ -60,7 +60,7 @@ array (
 ?>
 EOQ;
 
-    SugarAutoLoader::put('modules/Opportunities/metadata/SearchFields.php', $searchFieldContents);
+        file_put_contents('modules/Opportunities/metadata/SearchFields.php', $searchFieldContents);
 }
 
 public function tearDow()
@@ -80,6 +80,4 @@ public function testRepairSearchFields()
     $this->assertArrayHasKey('start_range_date_modified', $searchFields['Opportunities']);
     $this->assertArrayHasKey('end_range_date_modified', $searchFields['Opportunities']);
 }
-
 }
-?>

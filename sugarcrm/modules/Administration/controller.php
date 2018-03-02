@@ -128,7 +128,7 @@ class AdministrationController extends SugarController
 
             $file = 'include/MVC/Controller/wireless_module_registry.php';
 
-            if (SugarAutoLoader::fileExists($file)) {
+            if (file_exists($file)) {
                 require $file;
             }
 

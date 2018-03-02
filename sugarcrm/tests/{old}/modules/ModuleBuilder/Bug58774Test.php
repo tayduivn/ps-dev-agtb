@@ -15,7 +15,6 @@ class Bug58774Test extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_originalRequest = array();
     protected $_originalDictionary = array();
-    protected $_fileMapFiles = array();
     protected $_backedUpFiles = array();
     protected $_tearDownFiles = array(
         'custom/modules/Calls/Ext/Vardefs/vardefs.ext.php',
@@ -35,12 +34,6 @@ class Bug58774Test extends Sugar_PHPUnit_Framework_TestCase
             if (file_exists($file)) {
                 rename($file, str_replace('.php', '-unittestbackup', $file));
                 $this->_backedUpFiles[] = $file;
-                // And if there are any of these files in the file map cache, 
-                // handle those too
-                if (SugarAutoLoader::fileExists($file)) {
-                    $this->_fileMapFiles[] = $file;
-                    SugarAutoLoader::delFromMap($file);
-                }
             }
         }
         
@@ -67,22 +60,13 @@ class Bug58774Test extends Sugar_PHPUnit_Framework_TestCase
             if (file_exists($file)) {
                 unlink($file);
             }
-            
-            if (SugarAutoLoader::fileExists($file)) {
-                SugarAutoLoader::delFromMap($file);
-            }
         }
         
         // Restore our backups
         foreach ($this->_backedUpFiles as $file) {
             rename(str_replace('.php', '-unittestbackup', $file), $file);
         }
-        
-        // Restore the file map cache
-        foreach ($this->_fileMapFiles as $file) {
-            SugarAutoLoader::addToMap($file);
-        }
-        
+
         // Reset the dictionary
         if (!empty($this->_originalDictionary)) {
             $GLOBALS['dictionary']['Call'] = $this->_originalDictionary;

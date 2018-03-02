@@ -37,10 +37,6 @@ class Bug50431Test extends Sugar_PHPUnit_Framework_TestCase
         file_put_contents($this->customMappingFile2, '<?php class ImportMapTestImportToken { } ');
         file_put_contents($this->customMappingFile3, '<?php class ImportMapOther { } ');
         file_put_contents($this->outOfBoxTestFile, '<?php class ImportMapTestImportTokenOutOfBox { } ');
-        SugarAutoLoader::addToMap($this->customMappingFile, false);
-        SugarAutoLoader::addToMap($this->customMappingFile2, false);
-        SugarAutoLoader::addToMap($this->customMappingFile3, false);
-        SugarAutoLoader::addToMap($this->outOfBoxTestFile, false);
     }
 
     public function tearDown()
@@ -48,25 +44,21 @@ class Bug50431Test extends Sugar_PHPUnit_Framework_TestCase
         if(file_exists($this->customMappingFile))
         {
             unlink($this->customMappingFile);
-            SugarAutoLoader::delFromMap($this->customMappingFile, false);
         }
 
         if(file_exists($this->customMappingFile2))
         {
             unlink($this->customMappingFile2);
-            SugarAutoLoader::delFromMap($this->customMappingFile2, false);
         }
 
         if(file_exists($this->customMappingFile3))
         {
             unlink($this->customMappingFile3);
-            SugarAutoLoader::delFromMap($this->customMappingFile3, false);
         }
 
         if(file_exists($this->outOfBoxTestFile))
         {
             unlink($this->outOfBoxTestFile);
-            SugarAutoLoader::delFromMap($this->outOfBoxTestFile, false);
         }
     }
 
@@ -74,27 +66,18 @@ class Bug50431Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $view = new Bug50431ImportViewStep3Mock();
         $result = $view->getMappingClassName($this->source);
-
         $this->assertEquals('ImportMapCustomTestImportToken', $result, 'Failed to load ' . $this->customMappingFile);
 
         unlink($this->customMappingFile);
-        SugarAutoLoader::delFromMap($this->customMappingFile, false);
         $result = $view->getMappingClassName($this->source);
-
         $this->assertEquals('ImportMapTestImportToken', $result, 'Failed to load ' . $this->customMappingFile2);
 
         unlink($this->customMappingFile2);
-        SugarAutoLoader::delFromMap($this->customMappingFile2, false);
-
         $result = $view->getMappingClassName($this->source);
-
         $this->assertEquals('ImportMapTestImportToken', $result, 'Failed to load ' . $this->outOfBoxTestFile);
 
         unlink($this->outOfBoxTestFile);
-        SugarAutoLoader::delFromMap($this->outOfBoxTestFile, false);
-
         $result = $view->getMappingClassName($this->source);
-
         $this->assertEquals('ImportMapOther', $result, 'Failed to load ' . $this->customMappingFile3);
     }
 

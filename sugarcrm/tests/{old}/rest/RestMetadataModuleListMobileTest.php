@@ -31,10 +31,9 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         foreach($this->unitTestFiles as $unitTestFile ) {
             if ( file_exists($unitTestFile) ) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
-                SugarAutoLoader::unlink($unitTestFile);
+                unlink($unitTestFile);
             }
         }
-        SugarAutoLoader::saveMap();
         parent::tearDown();
     }
     /**
@@ -67,7 +66,11 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
 
         // Create a custom set of wireless modules to test if it is loading those properly
         SugarAutoLoader::ensureDir('custom/include/MVC/Controller');
-        SugarAutoLoader::put('custom/include/MVC/Controller/wireless_module_registry.php','<'."?php\n".'$wireless_module_registry = array("Accounts"=>"Accounts","Contacts"=>"Contacts","Opportunities"=>"Opportunities");', true);
+        file_put_contents(
+            'custom/include/MVC/Controller/wireless_module_registry.php',
+            '<'."?php\n".'$wireless_module_registry = array("Accounts"=>"Accounts",'
+                .'"Contacts"=>"Contacts","Opportunities"=>"Opportunities");'
+        );
 
         $enabledMobile = array('Accounts','Contacts','Opportunities',  );
 

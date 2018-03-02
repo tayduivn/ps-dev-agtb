@@ -58,7 +58,6 @@ function write_logic_file($module_name, $contents)
 		$fp = sugar_fopen($file, 'wb');
 		fwrite($fp,$contents);
 		fclose($fp);
-		SugarAutoLoader::addToMap($file);
 //end function write_logic_file
 }
 

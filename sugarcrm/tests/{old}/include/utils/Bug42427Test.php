@@ -29,9 +29,7 @@ class Bug42427Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         unlink('include/language/fr_test.lang.php');
-        SugarAutoLoader::delFromMap('include/language/fr_test.lang.php', false);
         unlink('include/language/de_test.lang.php');
-        SugarAutoLoader::delFromMap('include/language/de_test.lang.php', false);
 
         sugar_cache_clear('app_list_strings.en_us');
         sugar_cache_clear('app_list_strings.fr_test');
@@ -45,9 +43,7 @@ class Bug42427Test extends Sugar_PHPUnit_Framework_TestCase
     public function testWillLoadEnUsStringIfDefaultLanguageIsNotEnUs()
     {
         file_put_contents('include/language/fr_test.lang.php', '<?php $app_list_strings = array(); ?>');
-        SugarAutoLoader::addToMap('include/language/fr_test.lang.php', false);
         file_put_contents('include/language/de_test.lang.php', '<?php $app_list_strings = array(); ?>');
-        SugarAutoLoader::addToMap('include/language/de_test.lang.php', false);
 
         $sugar_config['default_language'] = 'fr_test';
 

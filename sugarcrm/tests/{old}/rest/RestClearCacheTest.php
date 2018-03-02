@@ -19,7 +19,7 @@ class RestClearCacheTest extends RestTestBase {
     public function tearDown()
     {
         if (file_exists($this->_customFile)) {
-            SugarAutoLoader::unlink($this->_customFile, true);
+            unlink($this->_customFile);
         }
     }
 
@@ -57,7 +57,7 @@ class PongApi extends SugarApi {
     }
 }
 EOQ;
-        SugarAutoLoader::put($this->_customFile, $file_contents, true);
+        file_put_contents($this->_customFile, $file_contents);
         // verify ping
         // verify pong isn't there
         $replyPong = $this->_restCall('ping');
@@ -84,11 +84,10 @@ EOQ;
         // Clean up after ourselves
         if (file_exists($this->_customFile)) {
             $dirname = dirname($this->_customFile);
-            SugarAutoLoader::unlink($this->_customFile, true);
+            unlink($this->_customFile);
 
             if ($this->_customDirMade) {
                 $done = rmdir($dirname);
-                SugarAutoLoader::delFromMap($dirname, true);
             }
         }
 

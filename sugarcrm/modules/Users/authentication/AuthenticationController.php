@@ -63,11 +63,11 @@ class AuthenticationController implements LoggerAwareInterface
         }
 
         $authUserPath = sprintf('custom/modules/Users/authentication/%1$s/%1$sUser.php', $type);
-        if (!preg_match('|^custom/|', $customFile) && !SugarAutoLoader::fileExists($authUserPath)) {
+        if (!preg_match('|^custom/|', $customFile) && !file_exists($authUserPath)) {
             // if there's no customization we can safely use IdM glue
             $idmGlueClass = 'IdM' . $type;
             $idmGluePath = 'modules/Users/authentication/' . $idmGlueClass . '/' . $idmGlueClass . '.php';
-            if (SugarAutoLoader::fileExists($idmGluePath)) {
+            if (file_exists($idmGluePath)) {
                 $type = $idmGlueClass;
             }
         }

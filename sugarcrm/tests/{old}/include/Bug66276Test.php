@@ -27,15 +27,15 @@ class Bug66276Test extends Sugar_PHPUnit_Framework_TestCase
                 sugar_mkdir($testFile['dir'], 0777, true);
             }
 
-            SugarAutoLoader::put($testFile['dir'] . '/' . $testFile['name'], $testFile['content'], true);
+            file_put_contents($testFile['dir'] . '/' . $testFile['name'], $testFile['content']);
         }
     }
 
     public function tearDown()
     {
         foreach ($this->testFiles as $testFile) {
-            if (SugarAutoLoader::fileExists($testFile['dir'] . '/' . $testFile['name'])) {
-                SugarAutoLoader::unlink($testFile['dir'] . '/' . $testFile['name'], true);
+            if (file_exists($testFile['dir'] . '/' . $testFile['name'])) {
+                unlink($testFile['dir'] . '/' . $testFile['name']);
             }
         }
     }
@@ -47,7 +47,7 @@ class Bug66276Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf('QuickSearchDefaultsModule', QuickSearchDefaults::getQuickSearchDefaults(array('custom/modules/Test/QuickSearchDefaults.php'=>'QuickSearchDefaultsModule')));
         $this->assertInstanceOf('QuickSearchDefaultsCustom', QuickSearchDefaults::getQuickSearchDefaults());
-        SugarAutoLoader::unlink('custom/include/QuickSearchDefaults.php', true);
+        unlink('custom/include/QuickSearchDefaults.php');
         $this->assertInstanceOf('QuickSearchDefaults', QuickSearchDefaults::getQuickSearchDefaults());
     }
 }

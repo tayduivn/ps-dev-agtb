@@ -141,7 +141,7 @@ class ParserDropDown extends ModuleBuilderParser
     {
         $fileName = $this->getExtensionFilePath($dropdownName, $lang);
         if ($fileName) {
-            if (SugarAutoLoader::put($fileName, $contents, true)) {
+            if (file_put_contents($fileName, $contents) !== false) {
                 return true;
             }
             $GLOBALS['log']->fatal("Unable to write edited dropdown language to file: $fileName");

@@ -36,7 +36,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
 
         foreach ($this->filename_check as $filename) {
-            @SugarAutoLoader::unlink($filename);
+            @unlink($filename);
         }
         require_once('ModuleInstall/ModuleInstaller.php');
         $moduleInstaller = new ModuleInstaller();

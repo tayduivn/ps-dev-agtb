@@ -51,7 +51,7 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
     {
         // remove files from disk and autoloader map
         foreach ($this->toDelete as $file) {
-            \SugarAutoLoader::unlink($file);
+            unlink($file);
         }
 
         // restore trigger global
@@ -366,7 +366,6 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
         // since we don't set the main dir, this needs to be changed to the base sugar dir so the
         // name spaces will work
         file_put_contents(SUGAR_BASE_DIR . '/' .$file, $contents);
-        \SugarAutoLoader::addToMap($file, false);
         $this->toDelete[] = SUGAR_BASE_DIR . '/' . $file;
     }
 }

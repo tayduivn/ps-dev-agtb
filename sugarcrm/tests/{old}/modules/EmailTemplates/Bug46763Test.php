@@ -80,7 +80,7 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
             mkdir($dirName, 0777, true);
         }
 
-        SugarAutoLoader::put($this->file, implode(PHP_EOL, $data));
+        file_put_contents($this->file, implode(PHP_EOL, $data));
     }
 
     /**
@@ -94,7 +94,7 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
         if (file_exists($this->file . '.bak')) {
             rename($this->file . '.bak', $this->file);
         } else {
-            SugarAutoLoader::unlink($this->file, true);
+            unlink($this->file);
         }
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

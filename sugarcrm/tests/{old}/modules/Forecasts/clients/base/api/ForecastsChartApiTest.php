@@ -79,7 +79,7 @@ FILE;
         $api = new ForecastsChartApi();
         $klass = SugarTestReflection::callProtectedMethod($api, 'getClass', array($_file, $_klass, array()));
         $this->assertInstanceOf('Custom' . $_klass, $klass);
-        SugarAutoLoader::unlink('custom/' . $_file);
+        unlink('custom/' . $_file);
     }
 
     /**

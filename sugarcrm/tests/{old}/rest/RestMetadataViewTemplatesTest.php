@@ -70,7 +70,7 @@ class RestMetadataViewTemplatesTest extends RestTestBase
         }
 
         // Make sure we get it when we ask for mobile
-        SugarAutoLoader::put($filesToCheck['mobile'][0],'MOBILE CODE', true);
+        file_put_contents($filesToCheck['mobile'][0], 'MOBILE CODE');
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=views');
@@ -78,13 +78,13 @@ class RestMetadataViewTemplatesTest extends RestTestBase
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there
-        SugarAutoLoader::put($filesToCheck['base'][0],'BASE CODE', true);
+        file_put_contents($filesToCheck['base'][0], 'BASE CODE');
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get mobile code when base code was there.");
 
         // Make sure we get the base code when we ask for it.
-        SugarAutoLoader::put($filesToCheck['base'][0],'BASE CODE', true);
+        file_put_contents($filesToCheck['base'][0], 'BASE CODE');
         $this->_clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=views');
@@ -92,26 +92,24 @@ class RestMetadataViewTemplatesTest extends RestTestBase
 
         //BEGIN SUGARCRM flav=ent ONLY
         // Delete the mobile template and make sure it falls back to base
-        SugarAutoLoader::unlink($filesToCheck['mobile'][0], true);
+        unlink($filesToCheck['mobile'][0]);
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=views');
         $this->assertEquals('BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't fall back to base code when mobile code wasn't there.");
 
-
         // Make sure the mobile code is loaded before the non-custom base code
-        SugarAutoLoader::put($filesToCheck['mobile'][1],'CUSTOM MOBILE CODE', true);
+        file_put_contents($filesToCheck['mobile'][1], 'CUSTOM MOBILE CODE');
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views');
         $this->assertEquals('CUSTOM MOBILE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't use the custom mobile code.");
         //END SUGARCRM flav=ent ONLY
 
         // Make sure custom base code works
-        SugarAutoLoader::put($filesToCheck['base'][1],'CUSTOM BASE CODE', true);
+        file_put_contents($filesToCheck['base'][1], 'CUSTOM BASE CODE');
         $this->_clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=views');
         $this->assertEquals('CUSTOM BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't use the custom base code.");
-
     }
 }

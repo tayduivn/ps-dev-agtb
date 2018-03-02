@@ -250,7 +250,6 @@ include_once("include/workflow/custom_utils.php");
 
 		fwrite($fp, "\n?>");
 		fclose($fp);
-        SugarAutoLoader::addToMap($file);
 //end function write_triggers
 }
 

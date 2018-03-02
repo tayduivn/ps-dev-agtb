@@ -29,7 +29,6 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
         if ($this->module_name) {
             rmdir_recursive("modules/{$this->module_name}");
-            SugarAutoLoader::delFromMap("modules/{$this->module_name}", false);
         }
         SugarTestHelper::tearDown();
     }
@@ -86,7 +85,6 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
     protected function touch($filename)
     {
         sugar_touch($filename);
-        SugarAutoLoader::addToMap($filename, false);
     }
 
     protected function mkdir($filename)

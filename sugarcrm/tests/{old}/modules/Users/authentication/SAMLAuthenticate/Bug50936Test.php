@@ -49,7 +49,7 @@ $contents = <<<EOQ
     echo \$authrequest->getRedirectUrl();
 EOQ;
         SugarTestHelper::saveFile('custom/modules/Users/authentication/SAMLAuthenticate/index.php');
-        SugarAutoLoader::put('custom/modules/Users/authentication/SAMLAuthenticate/index.php', $contents);
+        file_put_contents('custom/modules/Users/authentication/SAMLAuthenticate/index.php', $contents);
 
 $contents = <<<EOQ
 <?php
@@ -73,7 +73,7 @@ $contents = <<<EOQ
         ?>
 EOQ;
         SugarTestHelper::saveFile('custom/modules/Users/authentication/SAMLAuthenticate/settings.php');
-        SugarAutoLoader::put('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', $contents, false);
+        file_put_contents('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', $contents);
 	}
 
 	public function tearDown()

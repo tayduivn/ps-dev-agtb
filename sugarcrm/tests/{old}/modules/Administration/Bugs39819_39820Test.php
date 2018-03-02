@@ -32,7 +32,7 @@ class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
     public function testLoadEnHelp()
     {
         // en_us help on a standard module.
-        SugarAutoLoader::put("modules/Accounts/language/en_us.help.DetailView.html", "<h1>ENBugs39819-39820</h1>");
+        file_put_contents("modules/Accounts/language/en_us.help.DetailView.html", "<h1>ENBugs39819-39820</h1>");
 
         $_SERVER['HTTP_HOST'] = "";
         $_SERVER['SCRIPT_NAME'] = "";
@@ -49,7 +49,7 @@ class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
         $tStr = ob_get_contents();
         ob_end_clean();
 
-        SugarAutoLoader::unlink("modules/Accounts/language/en_us.help.DetailView.html");
+        unlink("modules/Accounts/language/en_us.help.DetailView.html");
 
         // I expect to get the en_us normal help file....
         $this->assertRegExp("/.*ENBugs39819\-39820.*/", $tStr);
@@ -58,7 +58,7 @@ class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
     public function testLoadCustomItHelp()
     {
         // Custom help (NOT en_us) on a standard module.
-        SugarAutoLoader::put("custom/modules/Accounts/language/it_it.help.DetailView.html", "<h1>Bugs39819-39820</h1>");
+        file_put_contents("custom/modules/Accounts/language/it_it.help.DetailView.html", "<h1>Bugs39819-39820</h1>");
 
         // Register language and reinit InputValidation
         $GLOBALS['sugar_config']['languages']['it_it'] = 'Italian';
@@ -81,7 +81,7 @@ class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
         ob_end_clean();
 
         // Cleanups custom language
-        SugarAutoLoader::unlink("custom/modules/Accounts/language/it_it.help.DetailView.html");
+        unlink("custom/modules/Accounts/language/it_it.help.DetailView.html");
         unset($GLOBALS['sugar_config']['languages']['it_it']);
 
         // I expect to get the it_it custom help....

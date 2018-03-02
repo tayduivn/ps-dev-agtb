@@ -351,7 +351,6 @@ class Configurator {
     	$path = $this->checkTempImage($path);
     	$logo = create_custom_directory(SugarThemeRegistry::current()->getDefaultImagePath(). '/company_logo.png');
         copy($path, $logo);
-        SugarAutoLoader::addToMap($logo);
         sugar_cache_clear('company_logo_attributes');
         SugarThemeRegistry::clearAllCaches();
         SugarThemeRegistry::current()->clearImageCache('company_logo.png');

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_bean;
@@ -62,7 +61,10 @@ class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
         // write out a custom Person File
         mkdir_recursive("custom/include/SugarObjects/templates/person/");
         SugarTestHelper::saveFile("custom/include/SugarObjects/templates/person/vardefs.php");
-        SugarAutoLoader::put("custom/include/SugarObjects/templates/person/vardefs.php", file_get_contents("tests/{old}/include/SugarObjects/templates/test-vardefs/person-vardef.php"));
+        file_put_contents(
+            "custom/include/SugarObjects/templates/person/vardefs.php",
+            file_get_contents("tests/{old}/include/SugarObjects/templates/test-vardefs/person-vardef.php")
+        );
         VardefManager::addTemplate('Contacts', 'Contact', 'person', false);
         $this->assertArrayHasKey('customField', $GLOBALS['dictionary']['Contact']['fields']);
 

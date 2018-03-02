@@ -52,7 +52,6 @@ $string = <<<EOQ
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
-            SugarAutoLoader::addToMap('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php', true);
         }
 
 
@@ -78,7 +77,6 @@ EOQ;
             rmdir_recursive('custom/modules/' . $this->package . '_bak');
         } else {
             rmdir_recursive('custom/modules/' . $this->package);
-            SugarAutoLoader::delFromMap('custom/modules/' . $this->package, true);
         }
 
         unset($_SESSION['avail_modules'][$this->package]);

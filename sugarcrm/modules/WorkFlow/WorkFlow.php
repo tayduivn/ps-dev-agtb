@@ -425,7 +425,7 @@ function filter_base_modules(){
 
 		global $dictionary;
 
-		if(!SugarAutoLoader::fileExists('modules/'. $focus->module_dir . '/'.$focus->object_name.'.php')){
+        if (!file_exists('modules/'. $focus->module_dir . '/' . $focus->object_name.'.php')) {
 			return $field;
 		}
 

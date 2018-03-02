@@ -75,7 +75,6 @@ class Bug46740Test extends Sugar_PHPUnit_Framework_TestCase
 FILE;
 
         file_put_contents($this->file, $contents);
-        SugarAutoLoader::addToMap($this->file, false);
     }
 
     /**
@@ -91,7 +90,6 @@ FILE;
             rename($this->file . '.bak', $this->file);
         } else {
             unlink($this->file);
-            SugarAutoLoader::delFromMap($this->file, false);
         }
         SugarTestHelper::tearDown();
     }

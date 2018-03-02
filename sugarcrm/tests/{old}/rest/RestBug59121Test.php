@@ -31,9 +31,6 @@ class RestBug59121Test extends RestTestBase
         if (file_exists($this->_customFile)) {
             $this->_backedUp = true;
             rename($this->_customFile, $this->_customFile . '.backup');
-            
-            // Remove it from the autoloader as well
-            SugarAutoLoader::delFromMap($this->_customFile);
         }
         
         $this->_request = $_REQUEST;
@@ -46,11 +43,8 @@ class RestBug59121Test extends RestTestBase
         $_REQUEST = $this->_request;
         
         @unlink($this->_customFile);
-        SugarAutoLoader::delFromMap($this->_customFile);
-        
         if ($this->_backedUp) {
             rename($this->_customFile . '.backup', $this->_customFile);
-            SugarAutoLoader::addToMap($this->_customFile);
         }
         
         parent::tearDown();

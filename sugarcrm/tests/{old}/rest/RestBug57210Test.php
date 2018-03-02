@@ -46,7 +46,7 @@ class RestBug57210Test extends RestFileTestBase {
         foreach ($sugar_config as $key => $value) {
             $newContents .= override_value_to_string_recursive2('sugar_config', $key, $value);
         }
-        SugarAutoLoader::put($this->_config_override_name, $newContents, true);
+        file_put_contents($this->_config_override_name, $newContents);
     }
 
     public function tearDown()
@@ -59,7 +59,7 @@ class RestBug57210Test extends RestFileTestBase {
         } else {
             // If it didn't exist before, we need to remove the one we created
             if (file_exists($this->_config_override_name)) {
-                SugarAutoLoader::unlink($this->_config_override_name, true);
+                unlink($this->_config_override_name);
             }
         }
     }

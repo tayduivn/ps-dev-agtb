@@ -53,9 +53,9 @@ class Bug57454Test extends Sugar_PHPUnit_Framework_TestCase
         $sugar_config['SAML_X509Cert'] = 'TestCert';
         $sugar_config['SAML_issuer'] = 'testIssuer';
 
-        if(SugarAutoLoader::fileExists($this->customSAMLSettings)) {
+        if (file_exists($this->customSAMLSettings)) {
             // if custom file settings exists then remove it.
-            SugarAutoLoader::unlink($this->customSAMLSettings);
+            unlink($this->customSAMLSettings);
         }
 
         $auth = new SAMLAuthenticate();

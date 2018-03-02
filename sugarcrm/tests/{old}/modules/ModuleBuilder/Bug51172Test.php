@@ -50,15 +50,14 @@ class Bug51172Test extends Sugar_PHPUnit_Framework_TestCase
 
         if(file_exists($eLang))
         {
-            SugarAutoLoader::unlink($eLang, false);
+            unlink($eLang);
         }
 
         if(file_exists($uLang))
         {
-            SugarAutoLoader::unlink($uLang, false);
+            unlink($uLang);
         }
 
-        SugarAutoLoader::saveMap();
         SugarTestHelper::tearDown();
         parent::tearDown();
     }

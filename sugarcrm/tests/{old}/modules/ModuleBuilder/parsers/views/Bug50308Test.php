@@ -47,7 +47,7 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
     public function tearDown() {
 
         //remove custom file
-        SugarAutoLoader::unlink($this->customFilePath, true);
+        unlink($this->customFilePath);
         //recreate custom file using old data if it was collected
         if(!empty($this->originalPopupMeta)){
             $meta = "<?php\n \$popupMeta = array (\n";
@@ -56,7 +56,7 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
             }
             $meta .=");\n";
 
-            SugarAutoLoader::put($this->customFilePath, $meta, true);
+            file_put_contents($this->customFilePath, $meta);
         }
 
         unset($this->customFilePath);
@@ -87,7 +87,7 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
             }
             $meta .=");\n";
 
-        $writeResult = SugarAutoLoader::put($this->customFilePath, $meta);
+        $writeResult = file_put_contents($this->customFilePath, $meta) !== false;
         $this->assertGreaterThan(0,$writeResult, 'there was an error writing custom popup meta to file using this path: '.$this->customFilePath);
 
         //create new instance of popupmetadata parser

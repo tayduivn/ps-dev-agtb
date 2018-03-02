@@ -40,9 +40,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
                 SugarAutoLoader::ensureDir(dirname($file));
             }
 
-            SugarAutoLoader::put($file, $contents);
+            file_put_contents($file, $contents);
         }
-        SugarAutoLoader::saveMap();
 
         $this->_restLogin('','','mobile');
         $this->mobileAuthToken = $this->authToken;
@@ -54,13 +53,12 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
     public function tearDown()
     {
         foreach ($this->_oldFileContents as $file => $contents) {
-            SugarAutoLoader::put($file, $contents);
+            file_put_contents($file, $contents);
         }
 
         foreach ($this->_testFilesCreated as $file) {
-            SugarAutoLoader::unlink($file);
+            unlink($file);
         }
-        SugarAutoLoader::saveMap();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDown();
     }

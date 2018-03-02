@@ -141,7 +141,6 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->created_files[] = $filename;
         file_put_contents($filename, $contents);
-        SugarAutoLoader::addToMap($filename, false);
     }
 
     /**
@@ -156,7 +155,6 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
             $this->temp_files[$filename] = '';
         } else if (file_exists($filename)) {
             unlink($filename);
-            SugarAutoLoader::delFromMap($filename);
         }
     }
 

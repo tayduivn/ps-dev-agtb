@@ -32,7 +32,7 @@ class FileLocatorTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         if(!empty($this->tempfiles)) {
             foreach($this->tempfiles as $file) {
-                @SugarAutoLoader::unlink($file, false);
+                @unlink($file);
             }
         }
     }
@@ -97,14 +97,14 @@ class FileLocatorTest extends Sugar_PHPUnit_Framework_TestCase
         sugar_mkdir('custom/include/SearchForm/tpls/', 0755, true);
         sugar_mkdir('custom/modules/Accounts/tpls/SearchForm', 0755, true);
         $this->tempfiles[]= 'custom/include/SearchForm/tpls/FileLocatorTest.tpl';
-        SugarAutoLoader::put('custom/include/SearchForm/tpls/FileLocatorTest.tpl', "unittest");
+        file_put_contents('custom/include/SearchForm/tpls/FileLocatorTest.tpl', "unittest");
         $this->assertEquals("custom/include/SearchForm/tpls/FileLocatorTest.tpl",
             $this->form->locateFile('FileLocatorTest.tpl'),
             "Wrong file location"
             );
 
         $this->tempfiles[] = "custom/modules/Accounts/tpls/SearchForm/FileLocatorTest.tpl";
-        SugarAutoLoader::put('custom/modules/Accounts/tpls/SearchForm/FileLocatorTest.tpl', "unittest");
+        file_put_contents('custom/modules/Accounts/tpls/SearchForm/FileLocatorTest.tpl', "unittest");
         $this->assertEquals("custom/modules/Accounts/tpls/SearchForm/FileLocatorTest.tpl",
             $this->form->locateFile('FileLocatorTest.tpl'),
             "Wrong file location"

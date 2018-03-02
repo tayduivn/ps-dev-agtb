@@ -248,7 +248,8 @@ class QueryBuilder extends SugarBean {
 
         //Get dictionary and focus data for base bean
         $temp_focus = BeanFactory::newBean($column_module);
-        if(!SugarAutoLoader::fileExists('modules/'. $column_module . '/vardefs.php') || empty($temp_focus)){
+
+        if (!file_exists('modules/'. $column_module . '/vardefs.php') || empty($temp_focus)) {
             return;
         }
 
@@ -348,7 +349,7 @@ class QueryBuilder extends SugarBean {
 
         global $dictionary, $current_language;
 
-        if(!SugarAutoLoader::fileExists('modules/'. $focus->module_dir . '/'.$focus->object_name.'.php')){
+        if (!file_exists('modules/' . $focus->module_dir . '/' . $focus->object_name.'.php')) {
             return $field;
         }
 

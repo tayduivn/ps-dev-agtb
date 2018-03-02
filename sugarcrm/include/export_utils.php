@@ -673,8 +673,8 @@ function generateSearchWhere($module, $query)
 {
     // this function is similar to the function prepareSearchForm() in view.list.php
     $seed = BeanFactory::newBean($module);
-    if (SugarAutoLoader::fileExists('modules/' . $module . '/SearchForm.html')) {
-        if (SugarAutoLoader::fileExists('modules/' . $module . '/metadata/SearchFields.php')) {
+    if (file_exists('modules/' . $module . '/SearchForm.html')) {
+        if (file_exists('modules/' . $module . '/metadata/SearchFields.php')) {
             require_once('include/SearchForm/SearchForm.php');
             $searchForm = new SearchForm($module, $seed);
         } elseif (!empty($_SESSION['export_where'])) {

@@ -75,13 +75,15 @@ class CustomSugarChartFactory extends JsChart {
 ?>
 EOQ;
 
-    SugarAutoLoader::put('custom/include/SugarCharts/CustomSugarChartFactory/CustomSugarChartFactory.php', $the_string);
+        file_put_contents(
+            'custom/include/SugarCharts/CustomSugarChartFactory/CustomSugarChartFactory.php',
+            $the_string
+        );
 }
 
 public function tearDown()
 {
 	rmdir_recursive('custom/include/SugarCharts/CustomSugarChartFactory');
-	SugarAutoLoader::delFromMap('custom/include/SugarCharts/CustomSugarChartFactory', false);
 }
 
 

@@ -42,7 +42,7 @@ class SugarTinyMCETest extends Sugar_PHPUnit_Framework_TestCase
             rename(self::$customDefaultConfigFile, self::$customDefaultConfigFile . ".bak");
         }
 
-        SugarAutoLoader::put(
+        file_put_contents(
             self::$customConfigFile,
             "<?php
             \$buttonConfigs = array('default' => array('buttonConfig' =>'testcase',
@@ -54,7 +54,7 @@ class SugarTinyMCETest extends Sugar_PHPUnit_Framework_TestCase
             ?>"
         );
 
-        SugarAutoLoader::put(
+        file_put_contents(
             self::$customDefaultConfigFile,
             "<?php
             \$defaultConfig = array('extended_valid_elements' => 'upload[testlength|ratio|initialtest|mintestsize|threads|maxchunksize|maxchunkcount],download[testlength|initialtest|mintestsize|threads|maximagesize]',
@@ -75,13 +75,13 @@ class SugarTinyMCETest extends Sugar_PHPUnit_Framework_TestCase
             unlink(self::$customConfigFile);
             rename(self::$customConfigFile . ".bak", self::$customConfigFile);
         } else {
-            SugarAutoLoader::unlink(self::$customConfigFile);
+            unlink(self::$customConfigFile);
         }
         if (file_exists(self::$customDefaultConfigFile . ".bak")) {
             unlink(self::$customDefaultConfigFile);
             rename(self::$customDefaultConfigFile . ".bak", self::$customDefaultConfigFile);
         } else {
-            SugarAutoLoader::unlink(self::$customDefaultConfigFile);
+            unlink(self::$customDefaultConfigFile);
         }
     }
 

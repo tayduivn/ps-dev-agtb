@@ -107,7 +107,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Scenario 2
         // Add a model controller to our datas directory.
-        SugarAutoLoader::touch("modules/TestModule/clients/base/datas/model/model.js");
+        sugar_touch("modules/TestModule/clients/base/datas/model/model.js");
         $moduleMeta = $this->mm->getModuleDatas('TestModule');
 
         // We now verify if we have additional controller metadata in our return.
@@ -116,7 +116,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Clean up our test.
         MetaDataFiles::clearModuleClientCache("TestModule");
-        SugarAutoLoader::unlink("modules/TestModule/clients/base/datas/model/model.js");
+        unlink("modules/TestModule/clients/base/datas/model/model.js");
         rmdir_recursive("modules/TestModule/");
         SugarAutoLoader::buildCache();
     }
@@ -330,7 +330,6 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ->with($params['lang'], $params['ordered'])->will($this->returnValue(array()));
 
         $fileName = md5(microtime());
-        SugarAutoLoader::delFromMap($fileName, false);
 
         $manager->expects($this->exactly(3))->method('getLangUrl')
             ->with($params['lang'], $params['ordered'])->will($this->returnValue($fileName));
@@ -542,7 +541,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 <?php
 \$platforms[] = 'metadata-manager-test';
 PLATFORMS;
-        SugarAutoLoader::put('custom/clients/platforms.php', $contents);
+        file_put_contents('custom/clients/platforms.php', $contents);
 
         SugarTestHelper::saveFile('custom/application/Ext/Platforms/platforms.ext.php');
         SugarAutoLoader::ensureDir('custom/application/Ext/Platforms');
@@ -551,7 +550,7 @@ PLATFORMS;
 <?php
 \$platforms[] = 'extension-platform';
 PLATFORMS;
-        SugarAutoLoader::put('custom/application/Ext/Platforms/platforms.ext.php', $contents);
+        file_put_contents('custom/application/Ext/Platforms/platforms.ext.php', $contents);
 
         $platforms = MetaDataManager::getPlatformList();
         $this->assertContains('base', $platforms);
@@ -697,7 +696,7 @@ PLATFORMS;
         SugarTestHelper::saveFile($dir . '/' . $fileName);
 
         SugarAutoLoader::ensureDir($dir);
-        SugarAutoLoader::put($dir . '/' . $fileName, '');
+        file_put_contents($dir . '/' . $fileName, '');
 
         $platforms = SugarTestReflection::callProtectedMethod('MetaDataManager', 'getPlatformsWithCachesInFilesystem');
         $this->assertContains($platformName, $platforms);

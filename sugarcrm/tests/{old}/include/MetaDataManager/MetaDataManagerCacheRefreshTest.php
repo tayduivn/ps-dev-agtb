@@ -67,7 +67,6 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
             if (file_exists($file)) {
                 unlink($file);
                 rmdir(dirname($file));
-                SugarAutoLoader::delFromMap($file, $save);
             }
             $c++;
         }
@@ -237,8 +236,6 @@ $viewdefs[\'Cases\'][\'mobile\'][\'view\'][\'fandy\'] = array(\'test\' => \'test
 $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'test this\');';
         sugar_file_put_contents($this->casesFile, $casesFile);
         sugar_file_put_contents($this->accountsFile, $AccountsFile);
-        SugarAutoLoader::addToMap($this->casesFile, false);
-        SugarAutoLoader::addToMap($this->accountsFile); // Only save the file map cache on the second add
 
         // Refresh the modules cache
         MetaDataManager::refreshModulesCache(array('Accounts'), array('mobile'));

@@ -53,10 +53,8 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
     public function removeCustomConnectorFiles()
     {
         foreach ($this->backupFiles as $file) {
-            @SugarAutoLoader::unlink($file);
+            @unlink($file);
         }
-
-        SugarAutoLoader::saveMap();
     }
 
     public function testEnableAll()

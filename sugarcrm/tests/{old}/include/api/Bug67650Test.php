@@ -28,8 +28,8 @@ EOQ;
         if (!file_exists($this->customIncludeDir)) {
             sugar_mkdir($this->customIncludeDir, 0777, true);
         }
-          
-        SugarAutoLoader::put($this->customIncludeDir . '/' . $this->customIncludeFile, $customIncludeFileContent);
+
+        file_put_contents($this->customIncludeDir . '/' . $this->customIncludeFile, $customIncludeFileContent);
         // clean cache
         unset(ApiHelper::$moduleHelpers['Campaigns']);
     }
@@ -41,7 +41,7 @@ EOQ;
 
         // remove the custom file
         if (file_exists($this->customIncludeDir . '/' . $this->customIncludeFile)) {
-            SugarAutoLoader::unlink($this->customIncludeDir . '/' . $this->customIncludeFile);
+            unlink($this->customIncludeDir . '/' . $this->customIncludeFile);
         }
     }
 

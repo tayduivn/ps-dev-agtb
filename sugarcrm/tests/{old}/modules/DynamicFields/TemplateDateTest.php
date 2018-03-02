@@ -21,7 +21,7 @@ class TemplateDateTest extends Sugar_PHPUnit_Framework_TestCase
 		{
 		   $this->hasExistingCustomSearchFields = true;
 		   copy('custom/modules/Opportunities/metadata/SearchFields.php', 'custom/modules/Opportunities/metadata/SearchFields.php.bak');
-		   SugarAutoLoader::unlink('custom/modules/Opportunities/metadata/SearchFields.php');
+            unlink('custom/modules/Opportunities/metadata/SearchFields.php');
 		} else if(!file_exists('custom/modules/Opportunities/metadata')) {
 		   SugarAutoLoader::ensureDir('custom/modules/Opportunities/metadata');
 		}
@@ -32,13 +32,12 @@ class TemplateDateTest extends Sugar_PHPUnit_Framework_TestCase
 
     	if(!$this->hasExistingCustomSearchFields)
 		{
-		   SugarAutoLoader::unlink('custom/modules/Opportunities/metadata/SearchFields.php', true);
+            unlink('custom/modules/Opportunities/metadata/SearchFields.php');
 		}
 
 		if(file_exists('custom/modules/Opportunities/metadata/SearchFields.php.bak')) {
 		   copy('custom/modules/Opportunities/metadata/SearchFields.php.bak', 'custom/modules/Opportunities/metadata/SearchFields.php');
 		   unlink('custom/modules/Opportunities/metadata/SearchFields.php.bak');
-		   SugarAutoLoader::addToMap('custom/modules/Opportunities/metadata/SearchFields.php');
 		}
 
     }
@@ -76,6 +75,4 @@ class TemplateDateTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertTrue(isset($searchFields['Opportunities']['start_range_date_closed']['is_date_field']));
 		$this->assertTrue(isset($searchFields['Opportunities']['end_range_date_closed']['is_date_field']));
     }
-
 }
-?>

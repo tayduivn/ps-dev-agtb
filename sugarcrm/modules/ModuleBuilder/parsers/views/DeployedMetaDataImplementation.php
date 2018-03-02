@@ -369,7 +369,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
         $workingFilename = $this->getFileNameNoDefault($this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION);
 
 		if (file_exists($workingFilename)) {
-            SugarAutoLoader::unlink($workingFilename);
+            unlink($workingFilename);
         }
         $filename = $this->getFileNameNoDefault($this->_view, $this->_moduleName, MB_CUSTOMMETADATALOCATION);
 		$GLOBALS['log']->debug(get_class($this) . "->deploy(): writing to " . $filename);
@@ -544,7 +544,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
             $fileName = $this->getFileNameNoDefault($this->_view, $this->_moduleName);
             if (file_exists($fileName)) {
                 $this->saveHistory();
-                SugarAutoLoader::unlink($fileName, true);
+                unlink($fileName);
                 MetaDataFiles::clearModuleClientCache($this->_moduleName, 'view');
                 // Clear out the cache just for the platform we are on
                 $client = empty($this->client) ? 'base' : $this->client;

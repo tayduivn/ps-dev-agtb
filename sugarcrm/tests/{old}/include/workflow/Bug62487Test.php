@@ -33,19 +33,13 @@ class Bug62487Test extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-
         write_array_to_file('component_list', $component_list, $this->file);
-
-        SugarAutoLoader::addToMap($this->file, true);
-
         parent::setUp();
     }
 
     function tearDown()
     {
         rmdir_recursive(dirname($this->file));
-
-        SugarAutoLoader::delFromMap(dirname($this->file), true);
         parent::tearDown();
     }
 

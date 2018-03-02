@@ -26,16 +26,13 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
         foreach($this->testMetaDataFiles as $file ) {
             if (file_exists($file)) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
-                @SugarAutoLoader::unlink($file);
+                @unlink($file);
 
                 // Remove the stray directory since metadata manager will pick it up
                 $dirname = dirname($file);
                 rmdir($dirname);
-                SugarAutoLoader::delFromMap($dirname);
             }
         }
-        SugarAutoLoader::saveMap();
-
         parent::tearDown();
     }
 
@@ -69,8 +66,10 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
     public function testAdditionalPortalLayoutMetaData() {
         // FIXME TY-1298: investigate why this test fails
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['contacts']));
-        SugarAutoLoader::put($this->testMetaDataFiles['contacts'], "<?php\n\$viewdefs['Contacts']['portal']['layout']['banana'] = array('yummy' => 'Banana Split');", true);
-        SugarAutoLoader::saveMap();
+        file_put_contents(
+            $this->testMetaDataFiles['contacts'],
+            "<?php\n\$viewdefs['Contacts']['portal']['layout']['banana'] = array('yummy' => 'Banana Split');"
+        );
 
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts');
@@ -83,8 +82,10 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
     public function testAdditionalPortalViewMetaData() {
         // FIXME TY-1298: investigate why this test fails
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['cases']));
-        SugarAutoLoader::put($this->testMetaDataFiles['cases'], "<?php\n\$viewdefs['Cases']['portal']['view']['ghostrider'] = array('pattern' => 'Full');", true);
-        SugarAutoLoader::saveMap();
+        file_put_contents(
+            $this->testMetaDataFiles['cases'],
+            "<?php\n\$viewdefs['Cases']['portal']['view']['ghostrider'] = array('pattern' => 'Full');"
+        );
 
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases');

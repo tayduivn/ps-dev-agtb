@@ -47,7 +47,7 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->createFile($file, 'FileLoaderTestValidFilePath');
         $result = FileLoader::validateFilePath($file, $upload);
-        $this->assertSame($result, $file);
+        $this->assertSame($result, realpath($file));
     }
 
     public function providerTestValidFilePath()

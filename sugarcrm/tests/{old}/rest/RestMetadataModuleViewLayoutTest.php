@@ -56,20 +56,26 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         }
 
         // Make sure we get it when we ask for mobile
-        SugarAutoLoader::put($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['mobile']['layout']['edit'] = array('unit_test'=>'Standard Dir');\n", true);
+        file_put_contents(
+            $filesToCheck[0],
+            '<'."?php\n\$viewdefs['Cases']['mobile']['layout']['edit'] = array('unit_test'=>'Standard Dir');\n"
+        );
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the mobile layout");
 
         // Make sure we get the custom file
-        SugarAutoLoader::put($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['mobile']['layout']['edit'] = array('unit_test'=>'Custom Dir');\n", true);
+        file_put_contents(
+            $filesToCheck[1],
+            '<'."?php\n\$viewdefs['Cases']['mobile']['layout']['edit'] = array('unit_test'=>'Custom Dir');\n"
+        );
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
         $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the custom mobile layout");
 
         // Make sure it flops back to the standard file
-        SugarAutoLoader::unlink($filesToCheck[1], true);
+        unlink($filesToCheck[1]);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the mobile layout");
@@ -126,20 +132,26 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         }
 
         // Make sure we get it when we ask for mobile
-        SugarAutoLoader::put($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['mobile']['view']['edit'] = array('unit_test'=>'Standard Dir');\n", true);
+        file_put_contents(
+            $filesToCheck[0],
+            '<'."?php\n\$viewdefs['Cases']['mobile']['view']['edit'] = array('unit_test'=>'Standard Dir');\n"
+        );
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the mobile view");
 
         // Make sure we get the custom file
-        SugarAutoLoader::put($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['mobile']['view']['edit'] = array('unit_test'=>'Custom Dir');\n", true);
+        file_put_contents(
+            $filesToCheck[1],
+            '<'."?php\n\$viewdefs['Cases']['mobile']['view']['edit'] = array('unit_test'=>'Custom Dir');\n"
+        );
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
         $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the custom mobile view");
 
         // Make sure it flops back to the standard file
-        SugarAutoLoader::unlink($filesToCheck[1], true);
+        unlink($filesToCheck[1]);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the mobile view");

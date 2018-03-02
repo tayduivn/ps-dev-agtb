@@ -21,7 +21,7 @@ class Bug59546Test extends Sugar_PHPUnit_Framework_TestCase
         // Back up our current custom file and remove it if it is there
         if (file_exists($this->_testFile)) {
             copy($this->_testFile, $this->_testFile . '.backup');
-            SugarAutoLoader::unlink($this->_testFile, true);
+            unlink($this->_testFile);
         }
         
         SugarTestHelper::setUp('app_list_strings');
@@ -52,13 +52,12 @@ class Bug59546Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::tearDown();
         
-        // Remove the test file from the autoloader
-        SugarAutoLoader::unlink($this->_testFile, true);
+        // Remove the test file
+        unlink($this->_testFile);
         
         // Restore the backup if it is there
         if (file_exists($this->_testFile . '.backup')) {
             rename($this->_testFile . '.backup', $this->_testFile);
-            SugarAutoLoader::addToMap($this->_testFile);
         }
     }
 

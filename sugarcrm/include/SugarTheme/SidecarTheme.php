@@ -221,7 +221,7 @@ class SidecarTheme
         // We compile expected theme by if we found variables.php in the file system (in /custom/themes or /themes)
         $customThemeVars = $this->paths['custom'] . 'variables.php';
         $baseThemeVars = $this->paths['base'] . 'variables.php';
-        return SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars);
+        return file_exists($customThemeVars) || file_exists($baseThemeVars);
     }
 
     /**

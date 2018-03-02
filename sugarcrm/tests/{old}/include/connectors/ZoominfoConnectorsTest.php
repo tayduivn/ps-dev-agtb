@@ -33,7 +33,6 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
         if (file_exists('custom/modules/Connectors/connectors/sources/ext/rest/zoominfocompany/mapping.php')) {
             unlink('custom/modules/Connectors/connectors/sources/ext/rest/zoominfocompany/mapping.php');
         }
-        SugarAutoLoader::delFromMap('custom/modules/Connectors/connectors/sources/ext/rest/zoominfocompany/mapping.php', false);
 
         ConnectorFactory::$source_map = array();
 
@@ -65,9 +64,7 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
         parent::tearDown();
         $this->company_source->setProperties($this->company_props);
         $this->person_source->setProperties($this->person_props);
-        $this->mock = null;
-        // reload map
-        SugarAutoLoader::loadFileMap();*/
+        $this->mock = null;*/
     }
 
     public function testZoominfoCompanyFillBeans()

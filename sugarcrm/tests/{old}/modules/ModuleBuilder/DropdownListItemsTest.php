@@ -31,12 +31,11 @@ class DropdownListItemsTest extends Sugar_PHPUnit_Framework_TestCase
         );
         sugar_mkdir(dirname(self::$custFilePath), null, true);
         write_array_to_file('app_list_strings_required', $testItems, self::$custFilePath);
-        SugarAutoLoader::addToMap(self::$custFilePath);
     }
     
     public static function tearDownAfterClass()
     {
-        SugarAutoLoader::unlink(self::$custFilePath, true);
+        unlink(self::$custFilePath);
     }
     
     public function testGetRequiredDropdownListItems()

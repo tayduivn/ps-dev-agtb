@@ -29,35 +29,32 @@ function setUp() {
     file_put_contents('modules/DocumentRevisions/DetailView.php', 'test');
 }
 
+    protected function tearDown()
+    {
+        SugarTestMergeUtilities::teardownFiles();
 
-function tearDown() {
-   SugarTestMergeUtilities::teardownFiles();
+        if (file_exists('custom/backup/modules/DocumentRevisions')) {
+            rmdir_recursive('custom/backup/modules/DocumentRevisions');
+        }
 
-   if(file_exists('custom/backup/modules/DocumentRevisions'))
-   {
-  	   rmdir_recursive('custom/backup/modules/DocumentRevisions');
-   }
+        if (file_exists('modules/DocumentRevisions/EditView.html')) {
+            unlink('modules/DocumentRevisions/EditView.html');
+        }
 
-   if(file_exists('modules/DocumentRevisions/EditView.html'))
-   {
-       SugarAutoLoader::unlink('modules/DocumentRevisions/EditView.html');
-   }
+        if (file_exists('modules/DocumentRevisions/DetailView.html')) {
+            unlink('modules/DocumentRevisions/DetailView.html');
+        }
 
-   if(file_exists('modules/DocumentRevisions/DetailView.html'))
-   {
-       SugarAutoLoader::unlink('modules/DocumentRevisions/DetailView.html');
-   }
+        if (file_exists('modules/DocumentRevisions/EditView.php')) {
+            unlink('modules/DocumentRevisions/EditView.php');
+        }
 
-   if(file_exists('modules/DocumentRevisions/EditView.php'))
-   {
-       SugarAutoLoader::unlink('modules/DocumentRevisions/EditView.php');
-   }
+        if (file_exists('modules/DocumentRevisions/DetailView.php')) {
+            unlink('modules/DocumentRevisions/DetailView.php');
+        }
 
-   if(file_exists('modules/DocumentRevisions/DetailView.php'))
-   {
-       SugarAutoLoader::unlink('modules/DocumentRevisions/DetailView.php');
-   }
-}
+        parent::tearDown();
+    }
 
 function test_filename_convert_merge() {
    $this->merge = new EditViewMerge();
@@ -106,16 +103,13 @@ function test_filename_convert_merge() {
 
 class UpgradeRemoval49955Mock extends UpgradeRemoval
 {
-
-public function getFilesToRemove($version)
-{
-	$files = array();
-	$files[] = 'modules/DocumentRevisions/EditView.html';
-    $files[] = 'modules/DocumentRevisions/DetailView.html';
-    $files[] = 'modules/DocumentRevisions/EditView.php';
-    $files[] = 'modules/DocumentRevisions/DetailView.php';
-	return $files;
-}
-
-
+    public function getFilesToRemove($version)
+    {
+        return array(
+            'modules/DocumentRevisions/EditView.html',
+            'modules/DocumentRevisions/DetailView.html',
+            'modules/DocumentRevisions/EditView.php',
+            'modules/DocumentRevisions/DetailView.php',
+        );
+    }
 }

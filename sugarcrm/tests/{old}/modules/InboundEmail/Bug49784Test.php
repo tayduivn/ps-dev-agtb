@@ -44,7 +44,6 @@ class Bug49784Test extends Sugar_PHPUnit_Framework_TestCase
         $pi = pathinfo($this->casesHookFile);
         SugarAutoLoader::ensureDir($pi['dirname']);
         write_array_to_file("hook_array", $hook_array, $this->casesHookFile);
-        SugarAutoLoader::addToMap($this->casesHookFile, false);
         LogicHook::refreshHooks();
 
         //now  write out the script that the logichook executes.  This will keep track of times called
@@ -57,8 +56,6 @@ class Bug49784Test extends Sugar_PHPUnit_Framework_TestCase
                     $hookRunCount++;
                 }}?>';
         file_put_contents($this->casesCountFile, $fileCont);
-        SugarAutoLoader::addToMap($this->casesCountFile, false);
-
 
     	//setup test account for case
 		$this->account = new Account();
@@ -96,9 +93,9 @@ class Bug49784Test extends Sugar_PHPUnit_Framework_TestCase
             copy($this->casesHookFile.'.bak', $this->casesHookFile);
             unlink($this->casesHookFile.'.bak');
         } else if(file_exists($this->casesHookFile)) {
-            SugarAutoLoader::unlink($this->casesHookFile);
+            unlink($this->casesHookFile);
         }
-        SugarAutoLoader::unlink($this->casesCountFile);
+        unlink($this->casesCountFile);
         $GLOBALS['db']->query("delete from emails where id='{$this->email->id}'");
         $GLOBALS['db']->query("delete from accounts where id='{$this->account->id}'");
         $GLOBALS['db']->query("delete from cases where id='{$this->case->id}'");

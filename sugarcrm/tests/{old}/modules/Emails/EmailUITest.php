@@ -139,7 +139,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         sugar_mkdir("custom/modules/Emails/metadata/",null,true);
-        SugarAutoLoader::put(
+        file_put_contents(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
             '<?php $QCModules[] = "Users"; ?>'
             );
@@ -151,7 +151,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         else {
-            SugarAutoLoader::unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
+            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
 
         $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities','Leads', 'Tasks', 'Users'), $qArray);
@@ -166,7 +166,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         sugar_mkdir("custom/modules/Emails/metadata/",null,true);
-        SugarAutoLoader::put(
+        file_put_contents(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
             '<?php $QCModules[] = "EmailUIUnitTest"; ?>'
             );
@@ -178,7 +178,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         else {
-            SugarAutoLoader::unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
+            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
 
         $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities', 'Leads', 'Tasks'), $qArray);
@@ -193,7 +193,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         sugar_mkdir("custom/modules/Emails/metadata/",null,true);
-        SugarAutoLoader::put(
+        file_put_contents(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
             '<?php $QCModules = array("Users"); ?>'
             );
@@ -205,7 +205,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         else {
-            SugarAutoLoader::unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
+            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
 
         $this->assertEquals(array("Users"), $qArray);

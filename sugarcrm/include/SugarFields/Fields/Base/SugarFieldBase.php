@@ -16,6 +16,7 @@
  * including DetailView, ListView, EditView. It also provides Search Inputs and database queries
  * to handle searching
  *
+ * @property Sugar_Smarty $ss
  */
 class SugarFieldBase {
     /**
@@ -26,7 +27,6 @@ class SugarFieldBase {
      * @var string
      */
     public $error;
-    var $ss; // Sugar Smarty Object
     var $hasButton = false;
     protected static $base = array();
 
@@ -49,7 +49,16 @@ class SugarFieldBase {
     public function __construct($type)
     {
     	$this->type = $type;
-        $this->ss = new Sugar_Smarty();
+    }
+
+    public function __get($name)
+    {
+        if ($name == 'ss') {
+            $this->ss = new Sugar_Smarty();
+            return $this->ss;
+        }
+
+        return null;
     }
 
     /**

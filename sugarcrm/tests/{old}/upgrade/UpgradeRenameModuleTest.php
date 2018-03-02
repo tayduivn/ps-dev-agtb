@@ -45,8 +45,6 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
 
     public function tearDown() {
         parent::tearDown();
-        SugarAutoLoader::delFromMap($this->globalFilename);
-        SugarAutoLoader::delFromMap($this->moduleFilename);
         if (file_exists($this->globalFilename . '.bak')) {
             copy($this->globalFilename . '.bak', $this->globalFilename);
         }
@@ -58,12 +56,10 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         {
             if (file_exists('custom/modules/' . $row . '/Ext/Language/' . $GLOBALS['current_language'] . '.lang.ext.php')) {
                 unlink('custom/modules/' . $row . '/Ext/Language/' . $GLOBALS['current_language'] . '.lang.ext.php');
-                SugarAutoLoader::delFromMap('custom/modules/' . $row . '/Ext/Language/' . $GLOBALS['current_language'] . '.lang.ext.php');
             }
 
             if (file_exists('custom/Extension/modules/' . $row . '/Ext/Language/' . $GLOBALS['current_language'] . '.lang.php')) {
                 unlink('custom/Extension/modules/' . $row . '/Ext/Language/' . $GLOBALS['current_language'] . '.lang.php');
-                SugarAutoLoader::delFromMap('custom/Extension/modules/' . $row . '/Ext/Language/' . $GLOBALS['current_language'] . '.lang.php');
             }
         }
 

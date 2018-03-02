@@ -25,7 +25,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		{
 		   $this->hasExistingCustomSearchFields = true;
 		   copy('custom/modules/Opportunities/metadata/SearchFields.php', 'custom/modules/Opportunities/metadata/SearchFields.php.bak');
-		   SugarAutoLoader::unlink('custom/modules/Opportunities/metadata/SearchFields.php');
+            unlink('custom/modules/Opportunities/metadata/SearchFields.php');
 		} else if(!file_exists('custom/modules/Opportunities/metadata')) {
 		   SugarAutoLoader::ensureDir('custom/modules/Opportunities/metadata');
 		}
@@ -88,7 +88,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 
     	if(!$this->hasExistingCustomSearchFields)
 		{
-		   SugarAutoLoader::unlink('custom/modules/Opportunities/metadata/SearchFields.php');
+            unlink('custom/modules/Opportunities/metadata/SearchFields.php');
 		}
 
 		if(file_exists('custom/modules/Opportunities/metadata/SearchFields.php.bak')) {
@@ -98,9 +98,8 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 
 		if(file_exists($this->smartyTestFile))
 		{
-			SugarAutoLoader::unlink($this->smartyTestFile);
+            unlink($this->smartyTestFile);
 		}
-
     }
 
     public function testRangeNumberSearches()
@@ -250,4 +249,3 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-?>

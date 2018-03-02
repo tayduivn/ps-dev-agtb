@@ -47,7 +47,6 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_TestCase
         	$this->_hasUnifiedSearchModulesDisplay = true;
         	copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
         	unlink('custom/modules/unified_search_modules_display.php');
-        	SugarAutoLoader::delFromMap('custom/modules/unified_search_modules_display.php', false);
         }
         */
 
@@ -72,7 +71,7 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_TestCase
         	copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
         	unlink('custom/modules/unified_search_modules_display.php.bak');
         } else {
-        	SugarAutoLoader::unlink('custom/modules/unified_search_modules_display.php');
+        	unlink('custom/modules/unified_search_modules_display.php');
         }
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

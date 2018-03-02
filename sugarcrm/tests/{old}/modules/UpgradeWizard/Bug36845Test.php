@@ -82,7 +82,6 @@ EOQ;
         $fp = sugar_fopen($this->module_dir . '/metadata/SearchFields.php', "w");
         fwrite( $fp, $the_string );
         fclose( $fp );
-        SugarAutoLoader::addToMap($this->module_dir . '/metadata/SearchFields.php', false);
         $table_name = strtolower($this->module);
         $the_string = <<<EOQ
 <?php
@@ -104,7 +103,6 @@ EOQ;
         $fp = sugar_fopen($this->module_dir . '/vardefs.php', "w");
         fwrite( $fp, $the_string );
         fclose( $fp );
-        SugarAutoLoader::addToMap($this->module_dir . '/vardefs.php', false);
 
         $the_string = <<<EOQ
 <?php
@@ -116,7 +114,6 @@ EOQ;
         $fp = sugar_fopen($this->module_dir . '/clabc_Bug36845Test.php', "w");
         fwrite( $fp, $the_string );
         fclose( $fp );
-        SugarAutoLoader::addToMap($this->module_dir . '/clabc_Bug36845Test.php', false);
         require('include/modules.php');
         global $beanFiles, $beanList;
 
@@ -147,19 +144,17 @@ EOQ;
             copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
             unlink('custom/modules/unified_search_modules_display.php.bak');
         } else {
-            SugarAutoLoader::unlink('custom/modules/unified_search_modules_display.php');
+            unlink('custom/modules/unified_search_modules_display.php');
         }
 
         if(file_exists("custom/{$this->module_dir}/metadata"))
         {
             rmdir_recursive("custom/{$this->module_dir}/metadata");
-            SugarAutoLoader::delFromMap("custom/{$this->module_dir}");
         }
 
         if(file_exists($this->module_dir))
         {
            rmdir_recursive($this->module_dir);
-           SugarAutoLoader::delFromMap($this->module_dir);
         }
     }
 
@@ -181,7 +176,6 @@ EOQ;
     public function test_update_custom_vardefs_without_searchfields()
     {
     	unlink("{$this->module_dir}/metadata/SearchFields.php");
-    	SugarAutoLoader::delFromMap("{$this->module_dir}/metadata/SearchFields.php", false);
         $this->assertTrue(!file_exists("{$this->module_dir}/metadata/SearchFields.php"), 'Assert that we have a SearchFields.php file');
         $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
         require_once('modules/UpgradeWizard/uw_utils.php');
@@ -201,7 +195,6 @@ EOQ;
         if(file_exists('custom/modules/unified_search_modules_display.php'))
         {
             unlink('custom/modules/unified_search_modules_display.php');
-            SugarAutoLoader::delFromMap('custom/modules/unified_search_modules_display.php', false);
         }
 
         require_once('modules/UpgradeWizard/uw_utils.php');

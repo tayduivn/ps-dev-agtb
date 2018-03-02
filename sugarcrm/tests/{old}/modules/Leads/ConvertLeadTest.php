@@ -23,8 +23,13 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        SugarTestHelper::saveFile('custom/modules/Leads/metadata/editviewdefs.php');
-        @SugarAutoLoader::unlink('custom/modules/Leads/metadata/editviewdefs.php');
+        $file = 'custom/modules/Leads/metadata/editviewdefs.php';
+        SugarTestHelper::saveFile($file);
+
+        if (file_exists($file)) {
+            unlink($file);
+        }
+
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');

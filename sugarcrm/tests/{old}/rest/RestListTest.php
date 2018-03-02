@@ -32,7 +32,7 @@ class RestListTest extends RestTestBase {
         else
             $this->config_file_override= '<?php' . "\r\n";
         $new_line= '$sugar_config[\'full_text_engine\'] = true;';
-        SugarAutoLoader::put('config_override.php', $this->config_file_override . "\r\n" . $new_line, true);
+        file_put_contents('config_override.php', $this->config_file_override . "\r\n" . $new_line);
     }
 
     public function tearDown()
@@ -40,7 +40,7 @@ class RestListTest extends RestTestBase {
         // restore FTS and config override
         SugarSearchEngineAbstractBase::markSearchEngineStatus(false);
 
-        SugarAutoLoader::put('config_override.php', $this->config_file_override);
+        file_put_contents('config_override.php', $this->config_file_override);
 
         // Cleaning up after ourselves, but only if there is cleanup to do
         // Accounts clean up
@@ -127,9 +127,8 @@ class RestListTest extends RestTestBase {
 
         parent::tearDown();
         foreach($this->files AS $file) {
-            SugarAutoLoader::unlink($file);
+            unlink($file);
         }
-        SugarAutoLoader::saveMap();
         $GLOBALS['db']->commit();
     }
 
@@ -320,7 +319,7 @@ class RestListTest extends RestTestBase {
             mkdir("{$metadata_dir}", 0777, true);
         }
 
-        SugarAutoLoader::put( $metadata_dir . '/' . $metadata_file, $metadata, true );
+        file_put_contents($metadata_dir . '/' . $metadata_file, $metadata);
         $user = new User();
 
         // save old user

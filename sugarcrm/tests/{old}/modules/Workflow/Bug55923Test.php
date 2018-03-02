@@ -44,8 +44,6 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        $this->hasWorkflowFile = SugarAutoLoader::fileExists('custom/modules/Meetings/workflow/workflow.php');
-
         $wf = new WorkFlow();
         $wf->name = 'WF1';
         $wf->base_module = 'Meetings';
@@ -107,10 +105,6 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
 
         $_REQUEST = array();
         SugarTestHelper::tearDown();
-
-        if(!$this->hasWorkflowFile) {
-            SugarAutoLoader::delFromMap('custom/modules/Meetings/workflow/workflow.php');
-        }
     }
 
     /**

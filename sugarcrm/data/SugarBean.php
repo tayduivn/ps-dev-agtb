@@ -1223,8 +1223,7 @@ class SugarBean
         if ((!isset($dictionary) or empty($dictionary)) && !empty($module_dir))
         {
             $filename='modules/'. $module_dir . '/vardefs.php';
-            if(SugarAutoLoader::fileExists($filename))
-            {
+            if (file_exists($filename)) {
                 include($filename);
             }
         }
@@ -7426,8 +7425,7 @@ class SugarBean
             return $result;
         }
 
-        if(SugarAutoLoader::fileExists('modules/'.$module_dir.'/'.$fileName))
-        {
+        if (file_exists('modules/'.$module_dir.'/'.$fileName)) {
             // If the data was not loaded, try loading again....
             if(!isset($moduleDefs[$module]))
             {

@@ -361,8 +361,6 @@ EOF;
 
         // Create the custom file
         file_put_contents(self::$customMobileMetaFile, $testFileContents);
-        SugarAutoLoader::addToMap(self::$customMobileMetaFile);
-
     }
 
     static protected function tearDownMobile()
@@ -377,7 +375,6 @@ EOF;
             } else {
                 rmdir_recursive(self::$mobileCreatedPath);
             }
-            SugarAutoLoader::delFromMap(self::$customMobileMetaFile);
         }
     }
 }

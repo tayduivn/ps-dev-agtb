@@ -28,12 +28,11 @@ class ViewClassicTest extends Sugar_PHPUnit_Framework_TestCase
 	    $view->action = 'testaction'.mt_rand();
 
 	    sugar_mkdir("modules/{$view->module}",null,true);
-	    SugarAutoLoader::touch("modules/{$view->module}/{$view->action}.php", false);
+        sugar_touch("modules/{$view->module}/{$view->action}.php");
 
 	    $return = $view->display();
 
 	    rmdir_recursive("modules/{$view->module}");
-	    SugarAutoLoader::delFromMap("modules/{$view->module}");
 
 	    $this->assertTrue($return);
 	}
@@ -46,12 +45,11 @@ class ViewClassicTest extends Sugar_PHPUnit_Framework_TestCase
 	    $view->action = 'testaction'.mt_rand();
 
 	    sugar_mkdir("custom/modules/{$view->module}",null,true);
-	    SugarAutoLoader::touch("custom/modules/{$view->module}/{$view->action}.php", false);
+        sugar_touch("custom/modules/{$view->module}/{$view->action}.php");
 
 	    $return = $view->display();
 
 	    rmdir_recursive("custom/modules/{$view->module}");
-	    SugarAutoLoader::delFromMap("custom/modules/{$view->module}");
 
 	    $this->assertTrue($return);
 	}

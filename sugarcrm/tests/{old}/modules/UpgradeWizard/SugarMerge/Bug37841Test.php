@@ -36,35 +36,40 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
        $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
     }
 
+    protected function tearDown()
+    {
+        $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
 
-    function tearDown() {
-       $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
-       foreach($this->modules as $module) {
-    	   if(!$this->has_dir[$module]) {
-    	   	  rmdir_recursive("custom/modules/{$module}");
-    	   	  SugarAutoLoader::delFromMap("custom/modules/{$module}");
-    	   }  else {
-    	   	   $files = array('editviewdefs','detailviewdefs');
-    		   foreach($files as $file) {
-    		      if(file_exists("custom/modules/{$module}/metadata/{$file}.php.bak")) {
-    		      	 copy("custom/modules/{$module}/metadata/{$file}.php.bak", "custom/modules/{$module}/metadata/{$file}.php");
-    	             unlink("custom/modules/{$module}/metadata/{$file}.php.bak");
-    		      } else if(file_exists("custom/modules/{$module}/metadata/{$file}.php")) {
-    		      	 SugarAutoLoader::unlink("custom/modules/{$module}/metadata/{$file}.php", true);
-    		      }
+        foreach ($this->modules as $module) {
+            if (!$this->has_dir[$module]) {
+                rmdir_recursive("custom/modules/{$module}");
+            } else {
+                $files = array('editviewdefs', 'detailviewdefs');
 
-    		   	  if(file_exists("custom/modules/{$module}/metadata/{$module}.php.suback.bak")) {
-    		      	 copy("custom/modules/{$module}/metadata/{$file}.php.suback.bak", "custom/modules/{$module}/metadata/{$file}.php.suback.php");
-    	             unlink("custom/modules/{$module}/metadata/{$file}.php.suback.bak");
-    		      } else if(file_exists("custom/modules/{$module}/metadata/{$file}.php.suback.php")) {
-    		      	 SugarAutoLoader::unlink("custom/modules/{$module}/metadata/{$file}.php.suback.php", true);
-    		      }
-    		   }
-    	   }
-       } //foreach
+                foreach ($files as $file) {
+                    if (file_exists("custom/modules/{$module}/metadata/{$file}.php.bak")) {
+                        copy(
+                            "custom/modules/{$module}/metadata/{$file}.php.bak",
+                            "custom/modules/{$module}/metadata/{$file}.php"
+                        );
+                        unlink("custom/modules/{$module}/metadata/{$file}.php.bak");
+                    } elseif (file_exists("custom/modules/{$module}/metadata/{$file}.php")) {
+                        unlink("custom/modules/{$module}/metadata/{$file}.php");
+                    }
+
+                    if (file_exists("custom/modules/{$module}/metadata/{$module}.php.suback.bak")) {
+                        copy(
+                            "custom/modules/{$module}/metadata/{$file}.php.suback.bak",
+                            "custom/modules/{$module}/metadata/{$file}.php.suback.php"
+                        );
+                        unlink("custom/modules/{$module}/metadata/{$file}.php.suback.bak");
+                    } elseif (file_exists("custom/modules/{$module}/metadata/{$file}.php.suback.php")) {
+                        unlink("custom/modules/{$module}/metadata/{$file}.php.suback.php");
+                    }
+                }
+            }
+        }
     }
-
-
 
     /**
      * Ensure that no custom metadata is created and no history item created.
@@ -118,7 +123,7 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
             {
                 continue;
             }
-            SugarAutoLoader::unlink("{$path}/{$filename}");
+            unlink("{$path}/{$filename}");
         }
     }
 
@@ -160,4 +165,3 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
         return $found;
     }
 }
-?>

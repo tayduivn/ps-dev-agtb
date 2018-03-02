@@ -29,7 +29,6 @@ class Bug45573Test extends Sugar_PHPUnit_Framework_TestCase
 			$this->hasCustomSearchFields = true;
             copy('custom/modules/Cases/metadata/SearchFields.php', 'custom/modules/Cases/metadata/SearchFields.php.bak');
             unlink('custom/modules/Cases/metadata/SearchFields.php');
-            SugarAutoLoader::delFromMap('custom/modules/Cases/metadata/SearchFields.php', false);
 		}
 	}
 
@@ -42,7 +41,7 @@ class Bug45573Test extends Sugar_PHPUnit_Framework_TestCase
 		   copy('custom/modules/Cases/metadata/SearchFields.php.bak', 'custom/modules/Cases/metadata/SearchFields.php');
 		   unlink('custom/modules/Cases/metadata/SearchFields.php.bak');
 		} else if(!$this->hasCustomSearchFields && file_exists('custom/modules/Cases/metadata/SearchFields.php')) {
-		   SugarAutoLoader::unlink('custom/modules/Cases/metadata/SearchFields.php', true);
+            unlink('custom/modules/Cases/metadata/SearchFields.php');
 		}
 
 		//Refresh vardefs for Cases to reset
@@ -118,7 +117,4 @@ class Bug45573Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertTrue(isset($searchFields['Cases']['range_date_modified']));
 		$this->assertTrue(isset($searchFields['Cases']['range_date_modified']['enable_range_search']));
 	}
-
 }
-
-?>

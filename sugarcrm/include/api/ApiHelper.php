@@ -40,7 +40,7 @@ class ApiHelper
         if (!isset(self::$moduleHelpers[$moduleName])) {
             if (SugarAutoLoader::requireWithCustom('modules/' . $modulePath . '/' . $moduleName . 'ApiHelper.php')) {
                 $moduleHelperClass = SugarAutoLoader::customClass($moduleName . 'ApiHelper');
-            } elseif (SugarAutoLoader::fileExists('custom/data/SugarBeanApiHelper.php')) {
+            } elseif (file_exists('custom/data/SugarBeanApiHelper.php')) {
                 require_once('custom/data/SugarBeanApiHelper.php');
                 $moduleHelperClass = 'CustomSugarBeanApiHelper';
             } else {

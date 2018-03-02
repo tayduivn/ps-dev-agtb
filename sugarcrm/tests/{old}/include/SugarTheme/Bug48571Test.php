@@ -34,7 +34,7 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
         if(file_exists('custom/themes/default/themedef.php'))
         {
             $this->customThemeDef = file_get_contents('custom/themes/default/themedef.php');
-            SugarAutoLoader::unlink('custom/themes/default/themedef.php');
+            unlink('custom/themes/default/themedef.php');
         }
 
         //Blowout all existing cache/themes that may not have been cleaned up
@@ -61,7 +61,7 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
 
         if(!empty($this->customThemeDef))
         {
-            SugarAutoLoader::put('custom/themes/default/themedef.php', $this->customThemeDef);
+            file_put_contents('custom/themes/default/themedef.php', $this->customThemeDef);
         }
     }
 

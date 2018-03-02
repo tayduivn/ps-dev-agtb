@@ -147,7 +147,6 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 
 	    // copy our test data file
 	    copy ('tests/{old}/modules/SNIP/createdefs.php', 'custom/modules/SNIP/createdefs.php');
-        SugarAutoLoader::addToMap('custom/modules/SNIP/createdefs.php', false);
 	    // initiate snip
 		$this->snip = SugarSNIP::getInstance();
 	}
@@ -174,7 +173,7 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 		    unlink('custom/modules/SNIP/createdefs.php');
 		    rename($this->orig_file, 'custom/modules/SNIP/createdefs.php');
 		} else {
-		    SugarAutoLoader::unlink('custom/modules/SNIP/createdefs.php');
+            unlink('custom/modules/SNIP/createdefs.php');
 		}
 
 		unset($this->snip);

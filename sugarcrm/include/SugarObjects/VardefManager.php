@@ -553,7 +553,7 @@ class VardefManager{
             $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
             $cache->set(static::getCacheKey($module, $object), $GLOBALS['dictionary'][$object]);
         } else {
-            $file = self::getCacheFileName($module, $object);
+            $file = create_cache_directory(self::getCacheFileName($module, $object));
 
             $out="<?php \n \$GLOBALS[\"dictionary\"][\"". $object . "\"]=" . var_export($GLOBALS['dictionary'][$object], true) .";";
             sugar_file_put_contents_atomic($file, $out);
@@ -624,7 +624,7 @@ class VardefManager{
                 $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
                 $cache->set(static::getCacheKey($module_dir, $object_name), null);
             } else {
-                $file = self::getCacheFileName($module_dir, $object_name);
+                $file = sugar_cached(self::getCacheFileName($module_dir, $object_name));
                 if (file_exists($file)) {
                     unlink($file);
                 }
@@ -1108,11 +1108,9 @@ class VardefManager{
             $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
             $GLOBALS['dictionary'][$object] = $cache->get(static::getCacheKey($module, $object));
         } else {
-            $cachedfile = self::getCacheFileName($module, $object);
-            if(file_exists($cachedfile)){
-                if(file_exists($cachedfile)) {
-                    @include($cachedfile);
-                }
+            $cachedfile = sugar_cached(self::getCacheFileName($module, $object));
+            if (file_exists($cachedfile)) {
+                include $cachedfile;
             }
         }
     }
@@ -1149,10 +1147,10 @@ class VardefManager{
     static function getCacheFileName($module, $object){
         global $beanList, $beanFiles;
         if (isset($beanList[$module]) && isset($beanFiles[$beanList[$module]])) {
-            $pi = pathinfo($beanFiles[$beanList[$module]]);
-            return create_cache_directory($pi['dirname'] . "/" . $object . 'vardefs.php');
+            $dirname = dirname($beanFiles[$beanList[$module]]);
+            return $dirname . "/" . $object . 'vardefs.php';
         } else {
-            return create_cache_directory('modules/' . $module . '/' . $object . 'vardefs.php');
+            return 'modules/' . $module . '/' . $object . 'vardefs.php';
         }
     }
 

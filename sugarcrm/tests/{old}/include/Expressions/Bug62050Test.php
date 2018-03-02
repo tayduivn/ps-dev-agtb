@@ -32,7 +32,6 @@ class Bug62050Test extends Sugar_PHPUnit_Framework_TestCase
         foreach ($this->files as $file)
         {
             unlink($file);
-            SugarAutoLoader::delFromMap($file);
         }
     }
 

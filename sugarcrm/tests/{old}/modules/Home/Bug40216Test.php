@@ -30,13 +30,11 @@ class Bug40216Test extends Sugar_PHPUnit_Framework_TestCase
     {
         rmdir_recursive("modules/{$this->moduleName}");
         rmdir_recursive("custom/modules/{$this->moduleName}");
-        SugarAutoLoader::delFromMap("modules/{$this->moduleName}", false);
-        SugarAutoLoader::delFromMap("custom/modules/{$this->moduleName}", false);
     }
 
     public function testAdditionalDetailsMetadataFileIsFound()
     {
-    	   SugarAutoLoader::touch("modules/{$this->moduleName}/metadata/additionalDetails.php");
+        sugar_touch("modules/{$this->moduleName}/metadata/additionalDetails.php");
 
     	   $viewObject = new Bug40216Mock;
 
@@ -48,7 +46,7 @@ class Bug40216Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCustomAdditionalDetailsMetadataFileIsFound()
     {
-    	   SugarAutoLoader::touch("custom/modules/{$this->moduleName}/metadata/additionalDetails.php");
+        sugar_touch("custom/modules/{$this->moduleName}/metadata/additionalDetails.php");
 
     	   $viewObject = new Bug40216Mock;
 
@@ -60,8 +58,8 @@ class Bug40216Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCustomAdditionalDetailsMetadataFileIsUsedBeforeNonCustomOne()
     {
-    	   SugarAutoLoader::touch("modules/{$this->moduleName}/metadata/additionalDetails.php");
-    	   SugarAutoLoader::touch("custom/modules/{$this->moduleName}/metadata/additionalDetails.php");
+        sugar_touch("modules/{$this->moduleName}/metadata/additionalDetails.php");
+        sugar_touch("custom/modules/{$this->moduleName}/metadata/additionalDetails.php");
 
     	   $viewObject = new Bug40216Mock;
 

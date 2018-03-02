@@ -11,6 +11,8 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\ProductTemplates\clients\base\api;
 
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+
 /**
  * @coversDefaultClass \ProductTemplateTreeApi
  */
@@ -20,7 +22,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
     {
         \SugarAutoLoader::load('../../modules/ProductTemplates/clients/base/api/ProductTemplateApi.php');
         \SugarAutoLoader::load('../../include/SugarObjects/SugarConfig.php');
-        \SugarAutoLoader::load('../{old}/SugarTestReflection.php');
+
         parent::setup();
     }
 
@@ -86,7 +88,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $leaf = \SugarTestReflection::callProtectedMethod($mock, 'generateNewLeaf', [$node, $index]);
+        $leaf = TestReflection::callProtectedMethod($mock, 'generateNewLeaf', [$node, $index]);
 
         $this->assertEquals($returnObj, $leaf);
     }
@@ -118,7 +120,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
             ->method('getTreeData')
             ->with($unionFilter, $unionFilter, $filter, $filter);
 
-        \SugarTestReflection::callProtectedMethod($mock, 'getFilteredTreeData', ['foo']);
+        TestReflection::callProtectedMethod($mock, 'getFilteredTreeData', ['foo']);
     }
 
     /**
@@ -147,7 +149,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
             ->method('getTreeData')
             ->with($union1Root, $union2Root, $root, $root);
 
-        \SugarTestReflection::callProtectedMethod($mock, 'getRootedTreeData', [$root]);
+        TestReflection::callProtectedMethod($mock, 'getRootedTreeData', [$root]);
     }
 
     public function getRootedTreeDataProvider()
@@ -196,7 +198,7 @@ class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
             ->method('getDBConnection')
             ->will($this->returnValue($dbConnectionMock));
 
-        \SugarTestReflection::callProtectedMethod(
+        TestReflection::callProtectedMethod(
             $mock,
             'getTreeData',
             [$union1Filter, $union2Filter, $filter1, $filter2]

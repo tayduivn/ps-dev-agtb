@@ -20,8 +20,9 @@ class RestBug54947Test extends RestTestBase {
         // Cleanup
         foreach($this->createdFiles as $file)
         {
-        	if (is_file($file))
-        		SugarAutoLoader::unlink($file, true);
+            if (is_file($file)) {
+                unlink($file);
+            }
         }
 
         parent::tearDown();

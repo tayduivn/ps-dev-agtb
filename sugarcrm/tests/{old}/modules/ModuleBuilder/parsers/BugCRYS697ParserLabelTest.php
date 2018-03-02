@@ -20,8 +20,8 @@ class BugCRYS697ParserLabelTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('files');
         SugarTestHelper::saveFile($this->getFileName());
-        if (SugarAutoLoader::fileExists($this->getFileName())) {
-            SugarAutoLoader::unlink($this->getFileName());
+        if (file_exists($this->getFileName())) {
+            unlink($this->getFileName());
         }
         parent::setUp();
     }
@@ -41,7 +41,7 @@ class BugCRYS697ParserLabelTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSavingEmptyLabels()
     {
         ParserLabel::addLabels($this->lang, array(), $this->testModule);
-        $this->assertFalse(SugarAutoLoader::fileExists($this->getFileName()));
+        $this->assertFalse(file_exists($this->getFileName()));
     }
 
 } 

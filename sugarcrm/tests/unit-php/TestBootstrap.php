@@ -19,6 +19,7 @@ if (basename(getcwd()) === 'tests/unit-php' || !is_file('include/entryPoint.php'
 }
 
 define('SUGAR_BASE_DIR', $path);
+chdir(SUGAR_BASE_DIR);
 
 set_include_path(
     dirname(__FILE__) . PATH_SEPARATOR .

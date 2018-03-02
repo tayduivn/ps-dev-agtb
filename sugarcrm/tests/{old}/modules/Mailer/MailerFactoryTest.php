@@ -78,7 +78,7 @@ class {$expected} extends BaseMailer
 }
 
 PHP;
-        SugarAutoLoader::put($file, $customMailer, true);
+        file_put_contents($file, $customMailer);
 
         $actual = MailerFactoryTest_MockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
         self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");

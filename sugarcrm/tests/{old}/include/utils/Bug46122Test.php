@@ -48,7 +48,7 @@ class Bug46122Test extends Sugar_PHPUnit_Framework_TestCase
             copy($this->modulesHookFile.'.bak', $this->modulesHookFile);
             unlink($this->modulesHookFile.'.bak');
         } else if(file_exists($this->modulesHookFile)) {
-            SugarAutoLoader::unlink($this->modulesHookFile);
+            unlink($this->modulesHookFile);
         }
 
         if($this->hasCustomContactLogicHookFile && file_exists($this->contactsHookFile.'.bak'))
@@ -56,7 +56,7 @@ class Bug46122Test extends Sugar_PHPUnit_Framework_TestCase
             copy($this->contactsHookFile.'.bak', $this->contactsHookFile);
             unlink($this->contactsHookFile.'.bak');
         } else if(file_exists($this->contactsHookFile)) {
-            SugarAutoLoader::unlink($this->contactsHookFile);
+            unlink($this->contactsHookFile);
         }
         unset($GLOBALS['logic_hook']);
     }

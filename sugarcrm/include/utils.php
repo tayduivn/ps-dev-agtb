@@ -4818,7 +4818,7 @@ function encodeMultienumValue($arr)
  */
 function create_export_query_relate_link_patch($module, $searchFields, $where)
 {
-    if (SugarAutoLoader::fileExists('modules/'.$module.'/SearchForm.html')) {
+    if (file_exists('modules/'.$module.'/SearchForm.html')) {
         $ret_array['where'] = $where;
 
         return $ret_array;

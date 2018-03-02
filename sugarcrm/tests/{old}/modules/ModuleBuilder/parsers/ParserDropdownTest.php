@@ -32,7 +32,7 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
         $this->customModList = 'custom/Extension/application/Ext/Language/' . $GLOBALS['current_language'] . '.sugar_moduleList.php';
         if (file_exists($this->customModList)) {
             $this->modListBackup = file_get_contents($this->customModList);
-            SugarAutoLoader::unlink($this->customModList, true);
+            unlink($this->customModList);
         }
 
         SugarTestHelper::setUp('app_list_strings');
@@ -44,7 +44,7 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
         if (isset($this->fileBackup)) {
             file_put_contents($this->customFile, $this->fileBackup);
         } elseif (file_exists($this->customFile)) {
-            SugarAutoLoader::unlink($this->customFile, true);
+            unlink($this->customFile);
         }
 
         if (isset($this->modListBackup)) {
@@ -102,7 +102,7 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
 
         $dirName = dirname($this->customFile);
         SugarAutoLoader::ensureDir($dirName);
-        SugarAutoLoader::put($this->customFile, $customFileContents);
+        file_put_contents($this->customFile, $customFileContents);
 
         $parser = new ParserDropDown();
         $output = $parser->saveExemptDropdowns(

@@ -26,8 +26,6 @@ class DashletLoadLanguageTest extends Sugar_PHPUnit_Framework_TestCase
             rmdir_recursive("modules/{$this->_moduleName}");
         if ( is_dir("custom/modules/{$this->_moduleName}") )
             rmdir_recursive("custom/modules/{$this->_moduleName}");
-        SugarAutoLoader::delFromMap("modules/{$this->_moduleName}", false);
-        SugarAutoLoader::delFromMap("custom/modules/{$this->_moduleName}", false);
         unset($GLOBALS['dashletStrings']);
         $GLOBALS['current_language'] = $GLOBALS['sugar_config']['default_language'];
     }
@@ -38,7 +36,6 @@ class DashletLoadLanguageTest extends Sugar_PHPUnit_Framework_TestCase
         sugar_mkdir("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/",null,true);
         sugar_file_put_contents("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php",
             '<?php $dashletStrings["TestModuleDashlet"]["foo"] = "bar"; ?>');
-        SugarAutoLoader::addToMap("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php", false);
 
         $dashlet = new Dashlet(0);
         $dashlet->loadLanguage('TestModuleDashlet',"modules/{$this->_moduleName}/Dashlets/");
@@ -55,7 +52,6 @@ class DashletLoadLanguageTest extends Sugar_PHPUnit_Framework_TestCase
         create_custom_directory("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/");
         sugar_file_put_contents("custom/modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php",
             '<?php $dashletStrings["TestModuleDashlet"]["foo"] = "barbar"; ?>');
-        SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php", false);
 
         $dashlet = new Dashlet(0);
         $dashlet->loadLanguage('TestModuleDashlet',"modules/{$this->_moduleName}/Dashlets/");
@@ -69,7 +65,6 @@ class DashletLoadLanguageTest extends Sugar_PHPUnit_Framework_TestCase
         create_custom_directory("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/");
         sugar_file_put_contents("custom/modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php",
             '<?php $dashletStrings["TestModuleDashlet"]["foo"] = "barbar"; ?>');
-        SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php", false);
         $dashlet = new Dashlet(0);
         $dashlet->loadLanguage('TestModuleDashlet',"modules/{$this->_moduleName}/Dashlets/");
 
@@ -85,7 +80,6 @@ class DashletLoadLanguageTest extends Sugar_PHPUnit_Framework_TestCase
         sugar_mkdir("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/",null,true);
         sugar_file_put_contents("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.FR_fr.lang.php",
             '<?php $dashletStrings["TestModuleDashlet"]["foo"] = "barrie"; ?>');
-        SugarAutoLoader::addToMap("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.FR_fr.lang.php", false);
 
         $dashlet = new Dashlet(0);
         $dashlet->loadLanguage('TestModuleDashlet',"modules/{$this->_moduleName}/Dashlets/");
@@ -99,7 +93,6 @@ class DashletLoadLanguageTest extends Sugar_PHPUnit_Framework_TestCase
         sugar_mkdir("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/",null,true);
         sugar_file_put_contents("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php",
             '<?php $dashletStrings["TestModuleDashlet"]["foo"] = "bar"; ?>');
-        SugarAutoLoader::addToMap("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php", false);
         $dashlet = new Dashlet(0);
         $dashlet->loadLanguage('TestModuleDashlet',"modules/{$this->_moduleName}/Dashlets/");
 
@@ -115,7 +108,6 @@ class DashletLoadLanguageTest extends Sugar_PHPUnit_Framework_TestCase
         create_custom_directory("modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/");
         sugar_file_put_contents("custom/modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php",
             '<?php $dashletStrings["TestModuleDashlet"]["foo"] = "barbarbar"; ?>');
-        SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/Dashlets/TestModuleDashlet/TestModuleDashlet.en_us.lang.php", false);
         $dashlet = new Dashlet(0);
         $dashlet->loadLanguage('TestModuleDashlet',"modules/{$this->_moduleName}/Dashlets/");
 

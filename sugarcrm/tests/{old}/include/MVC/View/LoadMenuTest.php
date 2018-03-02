@@ -43,8 +43,6 @@ class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
     		    rmdir_recursive("modules/{$this->_moduleName}");
     		if ( is_dir("custom/modules/{$this->_moduleName}") )
     		    rmdir_recursive("custom/modules/{$this->_moduleName}");
-    		SugarAutoLoader::delFromMap("modules/{$this->_moduleName}");
-    		SugarAutoLoader::delFromMap("custom/modules/{$this->_moduleName}");
         }
 		unset($GLOBALS['current_user']);
 	}
@@ -70,7 +68,6 @@ class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
-            SugarAutoLoader::addToMap("modules/{$this->_moduleName}/Menu.php", false);
         }
 
         $view = new SugarView;
@@ -108,7 +105,6 @@ EOQ;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
-            SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", false);
         }
 
         $view = new SugarView;
@@ -146,7 +142,6 @@ global \$module_menu;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
-            SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", false);
         }
 
         $view = new SugarView;
@@ -190,7 +185,6 @@ EOQ;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
-            SugarAutoLoader::addToMap("custom/application/Ext/Menus/menu.ext.php", false);
         }
 
         $view = new SugarView;
@@ -217,7 +211,6 @@ EOQ;
         }
         else {
             unlink('custom/application/Ext/Menus/menu.ext.php');
-            SugarAutoLoader::delFromMap('custom/application/Ext/Menus/menu.ext.php', false);
         }
 	}
 
@@ -235,7 +228,6 @@ EOQ;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
-            SugarAutoLoader::addToMap("modules/{$this->_moduleName}/Menu.php", false);
         }
 
         // Create module ext menu
@@ -248,7 +240,6 @@ EOQ;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
-            SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", false);
         }
 
         $view = new SugarView;

@@ -72,6 +72,8 @@ class SugarOAuth2StorageOIDCTest extends \PHPUnit_Framework_TestCase
      */
     public function testCheckUserCredentialsFailedLogin($loginResult)
     {
+        $this->markTestSkipped('checkUserCredentials() -> translate() requires installed instance');
+
         $this->authController->method('login')
             ->with(
                 'user',

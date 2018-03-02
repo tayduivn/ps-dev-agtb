@@ -47,34 +47,40 @@ function setUp() {
    } //foreach
 }
 
+    protected function tearDown()
+    {
+        foreach ($this->modules as $module) {
+            if (!$this->has_dir[$module]) {
+                rmdir_recursive("custom/modules/{$module}");
+            } else {
+                $files = array('editviewdefs', 'detailviewdefs');
 
-function tearDown() {
+                foreach ($files as $file) {
+                    if (file_exists("custom/modules/{$module}/metadata/{$file}.php.bak")) {
+                        copy(
+                            "custom/modules/{$module}/metadata/{$file}.php.bak",
+                            "custom/modules/{$module}/metadata/{$file}.php"
+                        );
+                        unlink("custom/modules/{$module}/metadata/{$file}.php.bak");
+                    } elseif (file_exists("custom/modules/{$module}/metadata/{$file}.php")) {
+                        unlink("custom/modules/{$module}/metadata/{$file}.php");
+                    }
 
-   foreach($this->modules as $module) {
-	   if(!$this->has_dir[$module]) {
-	   	  rmdir_recursive("custom/modules/{$module}");
-	   	  SugarAutoLoader::delFromMap("custom/modules/{$module}");
-	   }  else {
-	   	   $files = array('editviewdefs','detailviewdefs');
-		   foreach($files as $file) {
-		      if(file_exists("custom/modules/{$module}/metadata/{$file}.php.bak")) {
-		      	 copy("custom/modules/{$module}/metadata/{$file}.php.bak", "custom/modules/{$module}/metadata/{$file}.php");
-	             unlink("custom/modules/{$module}/metadata/{$file}.php.bak");
-		      } else if(file_exists("custom/modules/{$module}/metadata/{$file}.php")) {
-		      	 SugarAutoLoader::unlink("custom/modules/{$module}/metadata/{$file}.php");
-		      }
+                    if (file_exists("custom/modules/{$module}/metadata/{$module}.php.suback.bak")) {
+                        copy(
+                            "custom/modules/{$module}/metadata/{$file}.php.suback.bak",
+                            "custom/modules/{$module}/metadata/{$file}.php.suback.php"
+                        );
+                        unlink("custom/modules/{$module}/metadata/{$file}.php.suback.bak");
+                    } elseif (file_exists("custom/modules/{$module}/metadata/{$file}.php.suback.php")) {
+                        unlink("custom/modules/{$module}/metadata/{$file}.php.suback.php");
+                    }
+                }
+            }
+        }
 
-		   	  if(file_exists("custom/modules/{$module}/metadata/{$module}.php.suback.bak")) {
-		      	 copy("custom/modules/{$module}/metadata/{$file}.php.suback.bak", "custom/modules/{$module}/metadata/{$file}.php.suback.php");
-	             unlink("custom/modules/{$module}/metadata/{$file}.php.suback.bak");
-		      } else if(file_exists("custom/modules/{$module}/metadata/{$file}.php.suback.php")) {
-		      	 unlink("custom/modules/{$module}/metadata/{$file}.php.suback.php");
-		      }
-		   }
-	   }
-   } //foreach
-}
-
+        parent::tearDown();
+    }
 
 function test_project_merge() {
    $sugar_merge = new SugarMerge('tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/custom');
@@ -89,4 +95,3 @@ function test_project_merge() {
 
 
 }
-?>

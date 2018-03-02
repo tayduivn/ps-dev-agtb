@@ -20,8 +20,6 @@ class S_527_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestM
     {
         if (parent::init()) {
             $this->tearDown();
-            SugarAutoLoader::addToMap('modules/FakeAccounts/vardefs.php');
-            SugarAutoLoader::addToMap('modules/FakeAccounts/FakeAccount.php');
             require_once 'modules/FakeAccounts/FakeAccount.php';
             return true;
         }
@@ -38,8 +36,6 @@ class S_527_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestM
 
     public function tearDown()
     {
-        SugarAutoLoader::delFromMap('modules/FakeAccounts/vardefs.php');
-        SugarAutoLoader::delFromMap('modules/FakeAccounts/FakeAccount.php');
         unset($GLOBALS['dictionary']['FakeAccount']);
         unset($GLOBALS['beanList']['FakeAccounts']);
     }

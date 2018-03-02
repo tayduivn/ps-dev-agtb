@@ -45,7 +45,7 @@ class UpgradeFixCustomMultienumFieldsTest extends UpgradeTestCase
 \$dictionary['Accounts']['fields']['test_multienum_field']['dependency'] = '';
 EOQ;
         mkdir_recursive($this->metaFolder);
-        SugarAutoLoader::put($this->metaFolder . $this->metaFileName, $customMultienumMeta, true);
+        file_put_contents($this->metaFolder . $this->metaFileName, $customMultienumMeta);
 
         $this->upgrader->setVersions(6.7, 'ent', 7.5, 'ent');
 

@@ -50,7 +50,7 @@ class RestBug57887Test extends RestTestBase
 
         // Backup existing files if needed
         SugarTestHelper::saveFile($this->_metadataFile);
-        @SugarAutoLoader::unlink($this->_metadataFile);
+        @unlink($this->_metadataFile);
 
         $dir = $this->getMetadataCacheDir();
         $tempdir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . '/';
@@ -102,7 +102,7 @@ class RestBug57887Test extends RestTestBase
         $this->assertNotEmpty($dateModified);
 
         // Confirm custom file does not exist in the file map cache
-        $exists = SugarAutoLoader::fileExists($this->_metadataFile);
+        $exists = file_exists($this->_metadataFile);
         $this->assertFalse($exists, "The custom file was found in the file map cache");
 
         // Make a change to the layouts using the parsers
@@ -111,7 +111,7 @@ class RestBug57887Test extends RestTestBase
         $parser->handleSave(false);
 
         // Confirm custom file is in the file map cache
-        $exists = (bool) SugarAutoLoader::fileExists($this->_metadataFile);
+        $exists = (bool) file_exists($this->_metadataFile);
         $this->assertTrue($exists, "The custom file was not found in the file map cache");
 
         // Confirm metadata cache is now updated and that the change was picked 

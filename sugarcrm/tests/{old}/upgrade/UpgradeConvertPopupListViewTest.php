@@ -57,10 +57,10 @@ class UpgradeConvertPopupListViewTest extends UpgradeTestCase
     public function tearDown()
     {
         if (is_file($this->popupListPath)) {
-            SugarAutoLoader::unlink($this->popupListPath);
+            unlink($this->popupListPath);
         }
         if (is_file($this->selectionListPath)) {
-            SugarAutoLoader::unlink($this->selectionListPath);
+            unlink($this->selectionListPath);
         }
         SugarTestHelper::tearDown();
         parent::tearDown();

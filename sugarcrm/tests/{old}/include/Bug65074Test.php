@@ -53,14 +53,14 @@ EOQ;
             sugar_mkdir($this->customIncludeDir, 0777, true);
         }
 
-        SugarAutoLoader::put($this->customIncludeDir . '/' . $this->customIncludeFile, $customIncludeFileContent, true);
+        file_put_contents($this->customIncludeDir . '/' . $this->customIncludeFile, $customIncludeFileContent);
     }
 
     public function tearDown()
     {
         // remove the custom include file
         if (file_exists($this->customIncludeDir . '/' . $this->customIncludeFile)) {
-            SugarAutoLoader::unlink($this->customIncludeDir . '/' . $this->customIncludeFile, true);
+            unlink($this->customIncludeDir . '/' . $this->customIncludeFile);
         }
 
         SugarTestHelper::tearDown();

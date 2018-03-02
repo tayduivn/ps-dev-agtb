@@ -46,7 +46,6 @@ class RestBug58174Test extends RestTestBase
          );";
 
         file_put_contents($this->_testLangFile, $content);
-        SugarAutoLoader::addToMap($this->_testLangFile);
 
         LanguageManager::refreshLanguage('Notes', 'en_us');
 
@@ -60,8 +59,6 @@ class RestBug58174Test extends RestTestBase
         unlink($this->_testLangFile);
         if (!empty($this->_customContents)) {
             file_put_contents($this->_testLangFile, $this->_customContents);
-        } else {
-            SugarAutoLoader::delFromMap($this->_testLangFile);
         }
         
         parent::tearDown();

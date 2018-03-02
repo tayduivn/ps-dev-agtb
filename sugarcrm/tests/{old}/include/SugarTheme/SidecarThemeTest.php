@@ -48,12 +48,6 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $themePaths = $theme->getPaths();
         $defaultPaths = $defaultTheme->getPaths();
 
-        // Make sure variables.php doesn't exist in the file map.
-        SugarAutoLoader::delFromMap($themePaths['custom'] . 'variables.php');
-        SugarAutoLoader::delFromMap($themePaths['base'] . 'variables.php');
-        SugarAutoLoader::delFromMap($defaultPaths['custom'] . 'variables.php');
-        SugarAutoLoader::delFromMap($defaultPaths['base'] . 'variables.php');
-
         // Make sure our environment is clean. The FileNotExists assertion works
         // on directories as well.
         $this->assertFileNotExists($themePaths['cache']);

@@ -1025,31 +1025,24 @@ class SugarTestHelper
             if (SHADOW_ENABLED) {
                 if (substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && $filename != 'config_override.php' && file_exists($filename)) {
                     // Delete shadow files always
-                    @SugarAutoLoader::unlink($filename, false);
-                    if(file_exists($filename)) {
-                        // still have it in map if it exists in template
-                        SugarAutoLoader::addToMap($filename, false);
-                    }
+                    @unlink($filename);
                     continue;
                 }
             }
             if ($filecontents == self::NOFILE_DATA) {
                 if ( file_exists($filename) ) {
-                    SugarAutoLoader::unlink($filename, false);
+                    unlink($filename);
                 }
             } else {
                 file_put_contents($filename,$filecontents);
-                SugarAutoLoader::addToMap($filename, false);
             }
         }
         rsort(self::$oldDirs);
         foreach (self::$oldDirs as $dirname) {
             if (file_exists($dirname)) {
                 rmdir($dirname);
-                SugarAutoLoader::delFromMap($dirname, false);
             }
         }
-        SugarAutoLoader::saveMap();
     }
 
     /**

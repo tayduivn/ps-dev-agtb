@@ -27,8 +27,6 @@ class Bug58463Test extends Sugar_PHPUnit_Framework_TestCase
         // Back up the current file if there is one
         if (file_exists($this->_testCustomFile)) {
             rename($this->_testCustomFile, $this->_testCustomFile . '.testbackup');
-        } else {
-            SugarAutoLoader::addToMap($this->_testCustomFile);
         }
 
         // Create an empty test custom file
@@ -48,8 +46,6 @@ class Bug58463Test extends Sugar_PHPUnit_Framework_TestCase
 
         if (file_exists($this->_testCustomFile . '.testbackup')) {
             rename($this->_testCustomFile . '.testbackup', $this->_testCustomFile);
-        } else {
-            SugarAutoLoader::delFromMap($this->_testCustomFile);
         }
 
         // Reset the request

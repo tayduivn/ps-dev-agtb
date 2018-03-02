@@ -29,7 +29,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
             if(file_exists("custom/modules/{$mod}/language/en_us.lang.php"))
             {
                 $this->language_contents[$mod] = file_get_contents("custom/modules/{$mod}/language/en_us.lang.php");
-                SugarAutoLoader::unlink("custom/modules/{$mod}/language/en_us.lang.php", true);
+                unlink("custom/modules/{$mod}/language/en_us.lang.php");
             }
         }
 
@@ -51,12 +51,15 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         {
             foreach($this->language_contents as $key=>$contents)
             {
-                SugarAutoLoader::put("custom/modules/{$key}/language/en_us.lang.php", $contents, true);
+                file_put_contents("custom/modules/{$key}/language/en_us.lang.php", $contents);
             }
         }
 
         if(!empty($this->global_language_contents)) {
-            SugarAutoLoader::put("custom/include/language/" . $this->language . ".lang.php", $this->global_language_contents, true);
+            file_put_contents(
+                "custom/include/language/" . $this->language . ".lang.php",
+                $this->global_language_contents
+            );
         }
         SugarTestHelper::tearDown();
     }
@@ -177,9 +180,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $fileName = 'custom/include/language/' . $this->language . '.lang.php';
         if( file_exists($fileName) )
         {
-            @SugarAutoLoader::unlink($fileName, true);
-        } else {
-                SugarAutoLoader::delFromMap($fileName, true);
+            @unlink($fileName);
         }
     }
 
@@ -190,11 +191,8 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
             $fileName = 'custom/modules/' . $module . '/language/' . $this->language . '.lang.php';
             if( file_exists($fileName) )
             {
-                @SugarAutoLoader::unlink($fileName, true);
-            } else {
-                SugarAutoLoader::delFromMap($fileName, true);
+                @unlink($fileName);
             }
-
         }
 
     }

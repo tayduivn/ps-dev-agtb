@@ -52,7 +52,7 @@ class UpgradeQuickCreateTest extends UpgradeTestCase
     public function tearDown()
     {
         if (is_file($this->quickCreateFile)) {
-            SugarAutoLoader::unlink($this->quickCreateFile);
+            unlink($this->quickCreateFile);
         }
         SugarTestHelper::tearDown();
         parent::tearDown();
