@@ -21,3 +21,4 @@
     {/literal}
     {/if}
 </script>
+{{include file='include/EditView/header.tpl'}}
