@@ -11,11 +11,15 @@
  */
 
 
-use Sugarcrm\Sugarcrm\Session\SessionStorage;
-use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
+use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Bwc;
+use Sugarcrm\Sugarcrm\Security\Subject\User;
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
+use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
 /**
  * SugarCRM application
@@ -173,6 +177,11 @@ class SugarApplication
             if (empty($_REQUEST['SAMLResponse'])) {
                 $this->ACLFilter();
             }
+
+            $context = Container::getInstance()->get(Context::class);
+            $subject = new User($GLOBALS['current_user'], new Bwc());
+            $context->activateSubject($subject);
+
             $this->preProcess();
             $this->controller->preProcess();
             $this->checkHTTPReferer();
@@ -200,6 +209,11 @@ class SugarApplication
                 $this->ACLFilter();
             }
         }
+
+        if (isset($context, $subject)) {
+            $context->deactivateSubject($subject);
+        }
+
         sugar_cleanup();
     }
 
