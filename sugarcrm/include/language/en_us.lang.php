@@ -5368,6 +5368,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_DATAPRIVACY_FIELDNAME' => 'Field',
     'LBL_DATAPRIVACY_VALUE' => 'Value',
     'LBL_DATAPRIVACY_CHANGED_BY' => 'Changed By',
+    'LBL_DATAPRIVACY_SOURCE' => 'Source',
     'LBL_DATAPRIVACY_CHANGE_DATE' => 'Change Date',
     'LBL_DATAPRIVACY_PII' => 'PII',
 );

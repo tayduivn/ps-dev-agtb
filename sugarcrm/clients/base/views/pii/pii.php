@@ -29,9 +29,9 @@ $viewdefs['base']['view']['pii'] = array(
                     'filter' => 'contains',
                 ),
                 array(
-                    'type' => 'base',
-                    'name' => 'created_by_username',
-                    'label' => 'LBL_DATAPRIVACY_CHANGED_BY',
+                    'type' => 'source',
+                    'name' => 'source',
+                    'label' => 'LBL_DATAPRIVACY_SOURCE',
                     'sortable' => false,
                 ),
                 array(
