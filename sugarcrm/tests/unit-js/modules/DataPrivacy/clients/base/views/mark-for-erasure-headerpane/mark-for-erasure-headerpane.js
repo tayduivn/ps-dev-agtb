@@ -26,7 +26,8 @@ describe('View.Views.Base.DataPrivacy.MarkForErasureHeaderpaneView', function() 
         beans = [app.data.createBean('MarkForErasureView', {id: '5'})];
         var context = new app.Context({
             model: model,
-            mass_collection: app.data.createBeanCollection('MarkForErasureView', beans)
+            mass_collection: app.data.createBeanCollection('MarkForErasureView', beans),
+            modelForErase: app.data.createBean('Contacts')
         });
         var layout = SugarTest.createLayout('base', null, 'base');
         view = SugarTest.createView(
@@ -79,6 +80,52 @@ describe('View.Views.Base.DataPrivacy.MarkForErasureHeaderpaneView', function() 
 
             massCollection.add(beans[0]);
             expect(toggleClass).toHaveBeenCalledWith('disabled', true);
+        });
+    });
+
+    describe('_formatTitle', function() {
+        it('should return EMPTY string when neither record name nor default value is available', function() {
+            title = view._formatTitle();
+            expect(title).toEqual('');
+        });
+
+        it('should return title with full name if it exists on model', function() {
+            var model = view.context.get('modelForErase');
+            model.fields = {name: {type: 'fullname'}};
+            var fullName = 'Mr. Dummy_Name';
+            var formattedTitle = 'PII for ' + fullName;
+            sinon.collection.stub(app.utils, 'formatNameModel')
+                .withArgs(model.module, model.attributes)
+                .returns(fullName);
+            sinon.collection.stub(app.lang, 'get')
+                .withArgs('TPL_DATAPRIVACY_PII_TITLE', model.module, {name: fullName})
+                .returns(formattedTitle);
+            title = view._formatTitle();
+            expect(title).toEqual(formattedTitle);
+        });
+
+        it('should return title with record name if it is available', function() {
+            var model = view.context.get('modelForErase');
+            var recordName = 'Dummy_Name';
+            var formattedTitle = 'PII for ' + recordName;
+            sinon.collection.stub(app.utils, 'getRecordName').withArgs(model).returns(recordName);
+            sinon.collection.stub(app.lang, 'get')
+                .withArgs('TPL_DATAPRIVACY_PII_TITLE', model.module, {name: recordName})
+                .returns(formattedTitle);
+            title = view._formatTitle();
+            expect(title).toEqual(formattedTitle);
+        });
+
+        it('should return default title if default value exists but record name is empty', function() {
+            var model = view.context.get('modelForErase');
+            var defaultTitle = 'PII';
+            var defaultValue = 'LBL_DATAPRIVACY_PII';
+            sinon.collection.stub(app.utils, 'getRecordName')
+                .withArgs(model).returns('');
+            sinon.collection.stub(app.lang, 'get')
+                .withArgs(defaultValue, 'DataPrivacy').returns(defaultTitle);
+            title = view._formatTitle(defaultValue);
+            expect(title).toEqual(defaultTitle);
         });
     });
 });

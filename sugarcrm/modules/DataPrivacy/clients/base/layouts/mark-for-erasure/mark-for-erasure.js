@@ -11,9 +11,11 @@
  /**
  * @class View.Layouts.Base.MarkForErasureLayout
  * @alias SUGAR.App.view.layouts.MarkForErasureLayout
- * @extends View.Layout
+ * @extends View.Layouts.Base.DefaultLayout
  */
 ({
+    extendsFrom: 'DefaultLayout',
+
     plugins: ['ShortcutSession'],
 
     shortcuts: ['MarkForErasureHeaderPanel:Close']

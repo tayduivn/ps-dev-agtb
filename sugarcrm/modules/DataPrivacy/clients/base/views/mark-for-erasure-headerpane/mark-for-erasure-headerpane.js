@@ -110,4 +110,30 @@
     _toggleMarkForErasureButton: function() {
         this.$('[name="mark_for_erasure_button"]').toggleClass('disabled', this._shouldDisable());
     },
+
+    /*
+     * @override
+     *
+     * Overriding to show record name on title header if it is available;
+     * if not, use the standard title.
+     */
+    _formatTitle: function(title) {
+        var recordName;
+        var model = this.context.get('modelForErase');
+
+        // Special case for `Person` type modules
+        if (model.fields && model.fields.name && model.fields.name.type == 'fullname') {
+            recordName = app.utils.formatNameModel(model.module, model.attributes);
+        } else {
+            recordName = app.utils.getRecordName(model);
+        }
+
+        if (recordName) {
+            return app.lang.get('TPL_DATAPRIVACY_PII_TITLE', model.module, {name: recordName});
+        } else if (title) {
+            return app.lang.get(title, this.module);
+        } else {
+            return '';
+        }
+    },
 })
