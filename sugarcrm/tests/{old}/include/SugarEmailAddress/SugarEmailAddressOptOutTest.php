@@ -51,7 +51,7 @@ class SugarEmailAddressOptOutTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateContactWithNewEmailAddress_ConfigureOptoutDefault_OptoutPropertySet(bool $defaultOptout)
     {
-        $this->setConfigOptout($defaultOptout);
+        $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $defaultOptout;
         $contact = SugarTestContactUtilities::createContact();
         $contact->emailAddress->save($contact->id, $contact->module_dir);
 
@@ -62,10 +62,5 @@ class SugarEmailAddressOptOutTest extends Sugar_PHPUnit_Framework_TestCase
             $actualOptout,
             'Expected New Contact Email to Match Configured Optout Default: ' . intval($defaultOptout)
         );
-    }
-
-    private function setConfigOptout(bool $optOut)
-    {
-        $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = "{$optOut}";
     }
 }

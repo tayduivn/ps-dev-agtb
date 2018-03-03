@@ -161,7 +161,7 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateBean_CreateNewEmailAddress_ConfiguredDefaultIsOptedIn(bool $optOut)
     {
-        $this->setConfigOptout($optOut);
+        $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $optOut;
         $address = 'address-' . Uuid::uuid1() . '@example.com';
 
         $api = new EmailAddressesApi();
@@ -174,10 +174,5 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotEmpty($bean->id);
         $this->assertEquals($optOut, boolval($bean->opt_out), 'New email opt_out does not match configured default');
-    }
-
-    private function setConfigOptout(bool $optOut)
-    {
-        $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = "{$optOut}";
     }
 }

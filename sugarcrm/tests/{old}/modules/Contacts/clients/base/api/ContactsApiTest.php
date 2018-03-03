@@ -166,7 +166,7 @@ class ContactsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateContactWithEmail_OptoutPropertyShouldDefaultToOptedIn(bool $defaultOptout)
     {
-        $this->setConfigOptout($defaultOptout);
+        $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $defaultOptout;
 
         $email =  'email_' . Uuid::uuid1() . '@bar.biz';
         $args = array(
@@ -186,13 +186,5 @@ class ContactsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertSame($email, $result['email'][0]['email_address'], 'email_address should match');
         $this->assertSame($defaultOptout, $result['email'][0]['opt_out'], 'Email opt_out value does not match config');
-    }
-
-    /**
-     * Set Email Optout Default Configuration
-     */
-    private function setConfigOptout(bool $optOut)
-    {
-        $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = "{$optOut}";
     }
 }

@@ -100,7 +100,7 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testImportEmailAddress_OptoutNotMapped_DefaultsToConfigValue(bool $defaultOptout)
     {
-        $this->setConfigOptout($defaultOptout);
+        $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $defaultOptout;
 
         $contactId = $this->importData['id'];
 
@@ -151,10 +151,5 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '" . $contactId . "'");
         }
         return $contact;
-    }
-
-    private function setConfigOptout(bool $optOut)
-    {
-        $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = "{$optOut}";
     }
 }
