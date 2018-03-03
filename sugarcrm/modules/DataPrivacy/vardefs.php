@@ -12,7 +12,7 @@
 
 $dictionary['DataPrivacy'] = array(
     'table' => 'data_privacy',
-    'audited' => false,
+    'audited' => true,
     'activity_enabled' => false,
     'unified_search' => true,
     'full_text_search' => true,
@@ -31,6 +31,7 @@ $dictionary['DataPrivacy'] = array(
             'sortable' => true,
             'duplicate_on_record_copy' => 'always',
             'required' => true,
+            'audited' => true,
         ),
         'status' => array (
             'name' => 'status',
@@ -42,6 +43,7 @@ $dictionary['DataPrivacy'] = array(
             'comment' => 'The status of the request',
             'sortable' => true,
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
         ),
         'business_purpose' => array (
             'name' => 'business_purpose',
@@ -78,6 +80,7 @@ $dictionary['DataPrivacy'] = array(
                     'Other' => array (),
                 ),
             ),
+            'audited' => true,
         ),
         'source' =>
             array (
@@ -88,6 +91,7 @@ $dictionary['DataPrivacy'] = array(
                 'required' => false,
                 'full_text_search' => array('enabled' => true, 'searchable' => true),
                 'comment' => 'The source of the request',
+                'audited' => true,
             ),
         'requested_by' =>
             array(
@@ -100,6 +104,7 @@ $dictionary['DataPrivacy'] = array(
                     'searchable' => true,
                 ),
                 'comment' => 'Requested by',
+                'audited' => true,
             ),
         'date_opened' =>
             array(
@@ -119,6 +124,7 @@ $dictionary['DataPrivacy'] = array(
                 'options' => 'date_range_search_dom',
                 'enable_range_search' => true,
                 'comment' => 'Due date',
+                'audited' => true,
              ),
         'resolution' =>
             array (
@@ -127,6 +133,7 @@ $dictionary['DataPrivacy'] = array(
                 'type' => 'text',
                 'full_text_search' => array('enabled' => true, 'searchable' => true),
                 'comment' => 'The resolution of the request',
+                'audited' => true,
             ),
         'date_closed' =>
             array(
@@ -136,6 +143,7 @@ $dictionary['DataPrivacy'] = array(
                 'options' => 'date_range_search_dom',
                 'enable_range_search' => true,
                 'comment' => 'Date closed',
+                'audited' => true,
             ),
         'fields_to_erase' => array(
             'name' => 'fields_to_erase',
