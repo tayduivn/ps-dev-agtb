@@ -20,15 +20,23 @@ require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $importData = array();
-    private $configOptoutBackUp = null;
+    private $configOptoutBackUp;
     private $fileName = 'upload://import_email_properties.csv';
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        SugarTestHelper::setUp('current_user');
+    }
 
     protected function setUp()
     {
-        if (is_null($this->configOptoutBackUp) && isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
+        parent::setUp();
+
+        if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
         }
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+
         unlink($this->fileName);
 
         $id = Uuid::uuid1();
@@ -38,18 +46,22 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
             'last_name' => 'ContactLastName',
             'email' => "Contact_{$id}@test.net",
         );
+        SugarTestContactUtilities::setCreatedContact([$id]);
     }
 
     protected function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
-        unset($GLOBALS['current_user']);
+        SugarTestContactUtilities::removeAllCreatedContacts();
         $this->importData = array();
         unlink($this->fileName);
-        if (!is_null($this->configOptoutBackUp)) {
+
+        if (isset($this->configOptoutBackUp)) {
             $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $this->configOptoutBackUp;
+        } else {
+            unset($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
         }
+
+        parent::tearDown();
     }
 
     public function optoutDataProvider()
@@ -66,8 +78,6 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testImportEmailAddress_OptoutSupplied_ImportsCorrectly(bool $optOut)
     {
-        $contactId = $this->importData['id'];
-
         $importValue = intval($optOut);
         $this->importData['email_opt_out'] = "{$importValue}";
         $this->createImportFile($this->importData);
@@ -76,11 +86,11 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
         $importer = new Importer($importSource, $bean);
         $importer->import();
 
-        $contact = $this->retrieveAndDeleteImportedContact($contactId);
+        $contact = BeanFactory::retrieveBean('Contacts', $this->importData['id']);
         $this->assertNotEmpty($contact, 'Contact record was not created on Import');
 
-        $this->assertEquals($contact->first_name, $this->importData['first_name'], 'Contact first_name not imported');
-        $this->assertEquals($contact->last_name, $this->importData['last_name'], 'Contact last_name not imported');
+        $this->assertSame($contact->first_name, $this->importData['first_name'], 'Contact first_name not imported');
+        $this->assertSame($contact->last_name, $this->importData['last_name'], 'Contact last_name not imported');
         $this->assertEquals(
             $this->importData['email'],
             $contact->email[0]['email_address'],
@@ -102,19 +112,17 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $defaultOptout;
 
-        $contactId = $this->importData['id'];
-
         $this->createImportFile($this->importData);
         $bean = BeanFactory::newBean('Contacts');
         $importSource = new ImportFile($this->fileName, ',', '"');
         $importer = new Importer($importSource, $bean);
         $importer->import();
 
-        $contact = $this->retrieveAndDeleteImportedContact($contactId);
+        $contact = BeanFactory::retrieveBean('Contacts', $this->importData['id']);
         $this->assertNotEmpty($contact, 'Contact record was not created on Import');
 
-        $this->assertEquals($contact->first_name, $this->importData['first_name'], 'Contact first_name not imported');
-        $this->assertEquals($contact->last_name, $this->importData['last_name'], 'Contact last_name not imported');
+        $this->assertSame($contact->first_name, $this->importData['first_name'], 'Contact first_name not imported');
+        $this->assertSame($contact->last_name, $this->importData['last_name'], 'Contact last_name not imported');
         $this->assertEquals(
             $this->importData['email'],
             $contact->email[0]['email_address'],
@@ -142,14 +150,5 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
         $values = array_values($importData);
         $data = "\"" . implode('","', $values) . "\"\n";
         file_put_contents($this->fileName, $data);
-    }
-
-    private function retrieveAndDeleteImportedContact($contactId)
-    {
-        $contact = BeanFactory::retrieveBean('Contacts', $contactId);
-        if (!empty($contact)) {
-            $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '" . $contactId . "'");
-        }
-        return $contact;
     }
 }

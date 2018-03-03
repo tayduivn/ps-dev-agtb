@@ -21,93 +21,88 @@ class ContactsApiTest extends Sugar_PHPUnit_Framework_TestCase
     private $contactsApi;
     private $configOptoutBackUp;
 
-    private $contactIds = array();
-    private $emailAddressIds = array();
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        SugarTestHelper::setUp('current_user');
+    }
 
     protected function setUp()
     {
-        SugarTestHelper::setUp('current_user');
         parent::setUp();
-        if (is_null($this->configOptoutBackUp) && isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
+
+        if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
         }
-        $this->contactIds = array();
 
         $this->api = SugarTestRestUtilities::getRestServiceMock();
         $this->api->user = $GLOBALS['current_user'];
-        $GLOBALS['current_user'] = $this->api->user;
         $this->contactsApi = new ContactsApi();
     }
 
     protected function tearDown()
     {
-        BeanFactory::setBeanClass('Contacts');
         SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestHelper::tearDown();
-        if (!empty($this->contactIds)) {
-            $ids = implode("','", $this->contactIds);
-            $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN ('" . $ids . "')");
-            $this->contactIds = array();
-        }
-        if (!empty($this->emailAddressIds)) {
-            $ids = implode("','", $this->emailAddressIds);
-            $GLOBALS['db']->query("DELETE FROM email_addresses WHERE id IN ('" . $ids . "')");
-            $this->emailAddressIds = array();
-        }
-        parent::tearDown();
-        if (!is_null($this->configOptoutBackUp)) {
+
+        if (isset($this->configOptoutBackUp)) {
             $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $this->configOptoutBackUp;
+        } else {
+            unset($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
         }
+
+        parent::tearDown();
     }
 
     public function contactDataProvider()
     {
         $uuid = Uuid::uuid1();
+        $email = "foo_{$uuid}@bar.biz";
+
         return array(
             array(
-                "foo_{$uuid}@bar.biz",
+                $email,
                 true,
                 false,
                 false,
             ),
             array(
-                "foo_{$uuid}@bar.biz",
+                $email,
                 true,
                 true,
                 false,
             ),
             array(
-                "foo_{$uuid}@bar.biz",
+                $email,
                 true,
                 false,
                 true,
             ),
             array(
-                "foo_{$uuid}@bar.biz",
+                $email,
                 true,
                 true,
                 true,
             ),
             array(
-                "foo_{$uuid}@bar.biz",
+                $email,
                 false,
                 false,
                 false,
             ),
             array(
-                "foo_{$uuid}@bar.biz",
+                $email,
                 false,
                 true,
                 false,
             ),
             array(
-                "foo_{$uuid}@bar.biz",
+                $email,
                 false,
                 false,
                 true,
             ),
             array(
-                "foo_{$uuid}@bar.biz",
+                $email,
                 false,
                 true,
                 true,
@@ -141,9 +136,9 @@ class ContactsApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $result = $this->contactsApi->createRecord($this->api, $args);
-        $this->assertNotEmpty($result['email'][0]['email_address_id'], 'Email Address Id should not be empty');
-        $this->emailAddressIds[] = $result['email'][0]['email_address_id'];
+        SugarTestContactUtilities::setCreatedContact([$result['id']]);
 
+        $this->assertNotEmpty($result['email'][0]['email_address_id'], 'Email Address Id should not be empty');
         $this->assertSame($email, $result['email'][0]['email_address'], 'email_address should match');
         $this->assertSame($primary, $result['email'][0]['primary_address'], 'primary property should match');
         $this->assertSame($optOut, $result['email'][0]['opt_out'], 'opt_out property should match');
@@ -180,10 +175,9 @@ class ContactsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
         $result = $this->contactsApi->createRecord($this->api, $args);
+        SugarTestContactUtilities::setCreatedContact([$result['id']]);
 
         $this->assertNotEmpty($result['email'][0]['email_address_id'], 'Email Address Id should not be empty');
-        $this->emailAddressIds[] = $result['email'][0]['email_address_id'];
-
         $this->assertSame($email, $result['email'][0]['email_address'], 'email_address should match');
         $this->assertSame($defaultOptout, $result['email'][0]['opt_out'], 'Email opt_out value does not match config');
     }

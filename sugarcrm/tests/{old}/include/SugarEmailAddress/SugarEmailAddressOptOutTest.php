@@ -17,24 +17,34 @@ require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
  */
 class SugarEmailAddressOptOutTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $configOptoutBackUp = null;
+    private $configOptoutBackUp;
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        SugarTestHelper::setUp('current_user');
+    }
 
     protected function setup()
     {
-        if (is_null($this->configOptoutBackUp) && isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
+        parent::setUp();
+
+        if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
         }
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
     protected function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
-        if (!is_null($this->configOptoutBackUp)) {
+
+        if (isset($this->configOptoutBackUp)) {
             $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $this->configOptoutBackUp;
+        } else {
+            unset($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
         }
+
+        parent::tearDown();
     }
 
     public function optoutDataProvider()
@@ -53,11 +63,10 @@ class SugarEmailAddressOptOutTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $defaultOptout;
         $contact = SugarTestContactUtilities::createContact();
-        $contact->emailAddress->save($contact->id, $contact->module_dir);
 
-        $contact = BeanFactory::getBean("Contacts", $contact->id);
+        $contact = BeanFactory::retrieveBean('Contacts', $contact->id);
         $actualOptout = (bool)$contact->emailAddress->addresses[0]['opt_out'];
-        $this->assertEquals(
+        $this->assertSame(
             $defaultOptout,
             $actualOptout,
             'Expected New Contact Email to Match Configured Optout Default: ' . intval($defaultOptout)

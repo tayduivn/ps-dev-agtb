@@ -18,7 +18,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $service;
-    private $configOptoutBackUp = null;
+    private $configOptoutBackUp;
 
     public static function setUpBeforeClass()
     {
@@ -31,25 +31,29 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDownAfterClass();
     }
 
     protected function setUp()
     {
         parent::setUp();
-        if (is_null($this->configOptoutBackUp) && isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
+
+        if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
         }
+
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
     protected function tearDown()
     {
-        parent::tearDown();
-        if (!is_null($this->configOptoutBackUp)) {
+        if (isset($this->configOptoutBackUp)) {
             $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $this->configOptoutBackUp;
+        } else {
+            unset($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
         }
+
+        parent::tearDown();
     }
 
     /**
@@ -102,6 +106,8 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = $api->createBean($this->service, $args);
 
         $this->assertNotEmpty($bean->id);
+        SugarTestEmailAddressUtilities::setCreatedEmailAddress($bean->id);
+
         $this->assertSame($address, $bean->email_address);
         $this->assertSame(strtoupper($address), $bean->email_address_caps);
     }
@@ -159,7 +165,7 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::createBean
      * @dataProvider optoutDataProvider
      */
-    public function testCreateBean_CreateNewEmailAddress_ConfiguredDefaultIsOptedIn(bool $optOut)
+    public function testCreateBean_CreateNewEmailAddress_OptOutValueComesFromConfiguredDefault(bool $optOut)
     {
         $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $optOut;
         $address = 'address-' . Uuid::uuid1() . '@example.com';
@@ -173,6 +179,8 @@ class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = $api->createBean($this->service, $args);
 
         $this->assertNotEmpty($bean->id);
+        SugarTestEmailAddressUtilities::setCreatedEmailAddress($bean->id);
+
         $this->assertEquals($optOut, boolval($bean->opt_out), 'New email opt_out does not match configured default');
     }
 }

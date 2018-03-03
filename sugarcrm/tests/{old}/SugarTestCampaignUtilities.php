@@ -40,8 +40,11 @@ class SugarTestCampaignUtilities
 
     public static function removeAllCreatedCampaigns() 
     {
-        $campaign_ids = self::getCreatedCampaignIds();
-        $GLOBALS['db']->query('DELETE FROM campaigns WHERE id IN (\'' . implode("', '", $campaign_ids) . '\')');
+        $campaignIds = static::getCreatedCampaignIds();
+        $campaignIds = implode("', '", $campaignIds);
+        $GLOBALS['db']->query("DELETE FROM campaigns WHERE id IN ('{$campaignIds}')");
+        $GLOBALS['db']->query("DELETE FROM campaign_log WHERE campaign_id IN ('{$campaignIds}')");
+        $GLOBALS['db']->query("DELETE FROM campaign_trkrs WHERE campaign_id IN ('{$campaignIds}')");
     }
     
     public static function getCreatedCampaignIds() 

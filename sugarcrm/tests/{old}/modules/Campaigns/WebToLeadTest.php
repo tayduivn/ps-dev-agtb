@@ -14,37 +14,48 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 
 class WebToLeadTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $campaign_id;
+    private $campaignId;
     private $configOptoutBackUp;
+    private $configFileOverride;
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        SugarTestHelper::setUp('current_user');
+    }
 
     protected function setUp()
     {
-        if (is_null($this->configOptoutBackUp) && isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
+        parent::setUp();
+
+        if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
         }
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $campaign = SugarTestCampaignUtilities::createCampaign();
-        $this->campaign_id = $campaign->id;
 
-        $this->config_file_override = '';
+        $campaign = SugarTestCampaignUtilities::createCampaign();
+        $this->campaignId = $campaign->id;
+
         if (file_exists('config_override.php')) {
-            $this->config_file_override = file_get_contents('config_override.php');
+            $this->configFileOverride = file_get_contents('config_override.php');
         } else {
-            $this->config_file_override = '<?php' . "\r\n";
+            $this->configFileOverride = "<?php\r\n";
         }
     }
 
     protected function tearDown()
     {
-        SugarAutoLoader::put('config_override.php', $this->config_file_override);
+        SugarAutoLoader::put('config_override.php', $this->configFileOverride);
 
-        SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        if (!is_null($this->configOptoutBackUp)) {
+
+        if (isset($this->configOptoutBackUp)) {
             $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $this->configOptoutBackUp;
+        } else {
+            unset($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
         }
+
+        parent::tearDown();
     }
 
     public function optoutDataProvider()
@@ -140,11 +151,10 @@ class WebToLeadTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $requestId = Uuid::uuid1();
-        $_POST = array
-        (
+        $_POST = array(
             'first_name' => 'TestFirstName',
             'last_name' => 'TestLastName',
-            'campaign_id' => $this->campaign_id,
+            'campaign_id' => $this->campaignId,
             'redirect_url' => 'http://www.sugarcrm.com/index.php',
             'assigned_user_id' => '1',
             'team_id' => '1',
@@ -173,17 +183,24 @@ class WebToLeadTest extends Sugar_PHPUnit_Framework_TestCase
         curl_exec($ch);
         $output = ob_get_clean();
 
-        // First, save ids of created emails so they can be deleted at tearDown.
+        // First, save ids of created leads so they can be deleted at tearDown.
+        $ea = BeanFactory::newBean('EmailAddresses');
+
         foreach ($emails as $email) {
-            SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress($email);
+            // Each email address is associated with a Leads record.
+            $beans = $ea->getBeansByEmailAddress($email);
+            $leadIds = array_map(function ($bean) {
+                return $bean->id;
+            }, $beans);
+            SugarTestLeadUtilities::setCreatedLead($leadIds);
         }
 
         // Lastly, verify email addresses were successfully created with the expected address properties.
         for ($i = 0; $i < count($emails); $i++) {
             $ea = $this->fetchEmailAddress($emails[$i]);
             $this->assertNotEmpty($ea, 'Expected Email Address was not found: ' . $emails[$i]);
-            $this->assertEquals(0, $ea['invalid_email'], 'Expected Email Address to be Valid');
-            $this->assertEquals(
+            $this->assertSame(0, $ea['invalid_email'], 'Expected Email Address to be Valid');
+            $this->assertSame(
                 $expectedResult,
                 $ea['opt_out'],
                 'Email Address [' . $i . '] opt_out value incorrect'
@@ -210,12 +227,7 @@ class WebToLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
     private function setConfigOptout(bool $optOut)
     {
-        if ($optOut) {
-            $new_line = '$sugar_config[\'new_email_addresses_opted_out\'] = true;';
-        } else {
-            $new_line = '$sugar_config[\'new_email_addresses_opted_out\'] = false;';
-        }
-
-        SugarAutoLoader::put('config_override.php', $this->config_file_override . "\r\n" . $new_line, true);
+        $config = '$sugar_config[\'new_email_addresses_opted_out\'] = ' . ($optOut ? 'true' : 'false') . ';';
+        SugarAutoLoader::put('config_override.php', $this->configFileOverride . "\r\n" . $config, true);
     }
 }
