@@ -972,6 +972,67 @@
             },
 
             /**
+             * Returns the set of fields on a model that are components of the name field.
+             * @param {app.data.Bean} model
+             * @param {string} (optional) format "s f l t" style name format string.
+             * @return Array names of fields that make up the user formated name for this model.
+             */
+            getFullnameFieldComponents: function(model, format) {
+                var components = [];
+                var nameDef = model.fields.name;
+
+                if (!nameDef) {
+                    return components;
+                }
+
+                if (nameDef.type === 'fullname') {
+                    format = format || app.user.getPreference('default_locale_name_format');
+                    var metadata = app.metadata.getModule(model.module) || {fields: {}};
+                    var formatMap = metadata.nameFormat || {};
+
+                    if (_.isEmpty(formatMap)) {
+                        return ['name'];
+                    }
+                    _.each(format.split(''), function(letter) {
+                        if (formatMap[letter]) {
+                            components.push(formatMap[letter]);
+                        }
+                    });
+
+                    return components;
+                } else if (nameDef.fields) {
+                    return nameDef.fields;
+                }
+
+                return ['name'];
+            },
+
+            /**
+             * Returns true if the name or fields that make up the name have been erased
+             * and all name components are empty
+             * @param model
+             * @return {boolean}
+             */
+            isNameErased: function(model) {
+                var erasedFields = model.get('_erased_fields');
+
+                if (_.isEmpty(erasedFields)) {
+                    return false;
+                }
+
+                //Otherwise check for the name/fullname components
+                var nameComponents = this.getFullnameFieldComponents(model);
+                var anyNameFieldErased =  _.some(nameComponents, function(field) {
+                    return _.contains(erasedFields, field);
+                });
+
+                //Ensure that the name is empty before marking it erased
+                return anyNameFieldErased && _.every(nameComponents.concat('name'), function(field) {
+                    return !model.get(field);
+                });
+            },
+
+            /**
              * Populates the data on the email and then opens the specified
              * Emails layout in a drawer.
              *

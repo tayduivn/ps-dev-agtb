@@ -45,4 +45,23 @@
         }, this);
         _oldMetadataSet.apply(this, arguments);
     };
+
+    // Similar to the way alerts overrides the context to attach request args to
+    // the request, in order to collect erased_fields, we need to intercept the
+    // request process and add the erased_fields request argument.
+    var _contextProto = _.clone(app.Context.prototype);
+
+    /**
+     * Overrides the loadData method to forcefully append the erased_fields
+     * request argument. This could probably be done better, and more specifically,
+     * for GET/READ requests only since that is really the only request type that
+     * needs this argument. For now this will do.
+     * @param {Object} options
+     */
+    app.Context.prototype.loadData = function(options) {
+        options = options || {};
+        options.params = options.params || {};
+        options.params.erased_fields = true;
+        _contextProto.loadData.call(this, options);
+    };
 })(SUGAR.App);

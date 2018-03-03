@@ -247,7 +247,11 @@
                 var viewName;
 
                 if (_.isUndefined(isEdit)) {
-                    viewName = (field.tplName === this.action) ? 'edit' : this.action;
+                    if (field.tplName === this.action || field.tplName === 'erased') {
+                        viewName = 'edit';
+                    } else {
+                        viewName = this.action;
+                    }
                 } else {
                     viewName = !!isEdit ? 'edit' : this.action;
                 }

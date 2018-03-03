@@ -126,9 +126,24 @@ describe('Base.Field.Fullname', function() {
         });
 
         it('should render with different templates', function() {
+            var nameParts = {
+                first_name: 'firstName',
+                last_name: 'lastName',
+                salutation: 'Mr.'
+            };
+            var fullName = nameParts.salutation + ' ' + nameParts.first_name + ' ' + nameParts.last_name;
+            var model = new app.data.createBean('Contacts', {
+                id: 'test-contact',
+                full_name: fullName,
+                first_name: nameParts.first_name,
+                last_name: nameParts.last_name,
+                salutation: nameParts.salutation
+            });
+            model.fields = {name: {fields: ['last_name', 'first_name', 'salutation']}};
+
             //record view detail
-            var field = SugarTest.createField('base', 'full_name', 'fullname', 'detail', fieldDef, 'Contacts'),
-                template = app.template.getField('fullname', 'detail', 'Contacts');
+            var field = SugarTest.createField('base', 'full_name', 'fullname', 'detail', fieldDef, 'Contacts', model);
+            var template = app.template.getField('fullname', 'detail', 'Contacts');
             field.render();
             expect(field.template(field)).toEqual(template(field));
 
@@ -139,7 +154,7 @@ describe('Base.Field.Fullname', function() {
             field.dispose();
 
             //list view detail
-            field = SugarTest.createField('base', 'full_name', 'fullname', 'list', fieldDef, 'Contacts');
+            field = SugarTest.createField('base', 'full_name', 'fullname', 'list', fieldDef, 'Contacts', model);
             template = app.template.getField('fullname', 'list', 'Contacts');
             field.render();
             expect(field.template(field)).toEqual(template(field));
@@ -157,19 +172,19 @@ describe('Base.Field.Fullname', function() {
     describe('bindDataChange', function() {
         it('should update the Full Name when First Name or Last Name changes', function() {
             var nameParts = {
-                    first_name: 'firstName',
-                    last_name: 'lastName',
-                    salutation: 'Mr.'
-                },
-                fullName = nameParts.salutation + ' ' + nameParts.first_name + ' ' + nameParts.last_name,
-                model = new app.data.createBean('Contacts',
-                    {
-                        id: 'test-contact',
-                        full_name: fullName,
-                        first_name: nameParts.first_name,
-                        last_name: nameParts.last_name,
-                        salutation: nameParts.salutation
-                    });
+                first_name: 'firstName',
+                last_name: 'lastName',
+                salutation: 'Mr.'
+            };
+            var fullName = nameParts.salutation + ' ' + nameParts.first_name + ' ' + nameParts.last_name;
+            var model = new app.data.createBean('Contacts', {
+                id: 'test-contact',
+                full_name: fullName,
+                first_name: nameParts.first_name,
+                last_name: nameParts.last_name,
+                salutation: nameParts.salutation
+            });
+            model.fields = {name: {fields: ['last_name', 'first_name', 'salutation']}};
 
             var field = SugarTest.createField('base', 'full_name', 'fullname', 'edit', fieldDef, 'Contacts', model);
             field.model.module = 'Contacts';

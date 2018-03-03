@@ -39,6 +39,15 @@ describe('Sugar7 field extensions', function () {
             expect(field.action).toBe('detail');
         });
 
+        it('should fallback to the noaccess if detail acl is failed and action is erased', function() {
+            field = SugarTest.createField('base', 'account_name', 'text', 'erased');
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function(action) {
+                return !_.contains(['edit', 'detail', 'list', 'admin'], action);
+            });
+            field._loadTemplate();
+            expect(field.action).toBe('noaccess');
+        });
+
         it('should fallback to the noaccess if all acl is failed', function() {
             field = SugarTest.createField('base', 'name', 'base', 'edit');
             sinon.collection.stub(app.acl, 'hasAccessToModel', function(action) {
@@ -234,6 +243,24 @@ describe('Sugar7 field extensions', function () {
         it('should return noaccess as name if viewName is noaccess', function() {
             field = SugarTest.createField('base', 'text', 'base', 'list', {});
             expect(field._getFallbackTemplate('noaccess')).toEqual('noaccess');
+        });
+    });
+
+    describe('Erased field', function() {
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'phone_work', 'base', 'detail');
+        });
+
+        it('should change the field action to erased', function() {
+            field.model.set('_erased_fields', ['phone_work']);
+            field._setErasedFieldAction();
+            expect(field.action).toEqual('erased');
+        });
+
+        it('should keep the field action unchanged', function() {
+            field.model.set('_erased_fields', ['phone_home']);
+            field.render();
+            expect(field.action).toEqual('detail');
         });
     });
 });

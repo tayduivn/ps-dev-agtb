@@ -149,6 +149,155 @@ describe("Sugar7 utils", function() {
         });
     });
 
+    describe('marking a record name as erased', function() {
+        using('name format model combinations ', [
+                //Normal case
+                {
+                    userFormat: 's f l',
+                    formatMap: {
+                        s: 'salutation',
+                        f: 'first_name',
+                        l: 'last_name',
+                        t: 'title'
+                    },
+                    erased_fields: ['first_name', 'last_name', 'salutation'],
+                    attributes: {},
+                    expected: true
+                },
+                //Not all fields erased, but model is empty
+                {
+                    userFormat: 's f l',
+                    formatMap: {
+                        s: 'salutation',
+                        f: 'first_name',
+                        l: 'last_name',
+                        t: 'title'
+                    },
+                    erased_fields: ['last_name', 'salutation'],
+                    attributes: {},
+                    expected: true
+                },
+                //All fields marked erased, but not empty
+                {
+                    userFormat: 's f l',
+                    formatMap: {
+                        s: 'salutation',
+                        f: 'first_name',
+                        l: 'last_name',
+                        t: 'title'
+                    },
+                    erased_fields: ['first_name', 'last_name', 'salutation', 'title'],
+                    attributes: {'last_name': 'foo'},
+                    expected: false
+                },
+                //All fields empty, but none erased (title excluded via userFormat)
+                {
+                    userFormat: 's f l',
+                    formatMap: {
+                        s: 'salutation',
+                        f: 'first_name',
+                        l: 'last_name',
+                        t: 'title'
+                    },
+                    erased_fields: ['title'],
+                    attributes: {},
+                    expected: false
+                },
+                //remapped field
+                {
+                    userFormat: 's f l',
+                    formatMap: {
+                        s: 'other_field',
+                        f: 'first_name',
+                        l: 'last_name',
+                        t: 'title'
+                    },
+                    erased_fields: ['first_name', 'last_name', 'salutation'],
+                    attributes: {other_field: 'something'},
+                    expected: false
+                },
+                //all fields in shorter nameFormat erased
+                {
+                    userFormat: 'l',
+                    formatMap: {
+                        s: 'other_field',
+                        f: 'first_name',
+                        l: 'last_name',
+                        t: 'title'
+                    },
+                    erased_fields: ['last_name'],
+                    expected: true
+                },
+                //components are empty, but the name itself is populated (somehow)
+                {
+                    userFormat: 'l',
+                    formatMap: {
+                        s: 'other_field',
+                        f: 'first_name',
+                        l: 'last_name',
+                        t: 'title'
+                    },
+                    erased_fields: ['last_name'],
+                    attributes: {name: 'something'},
+                    expected: false
+                },
+                //Document type record
+                {
+                    userFormat: 's f l',
+                    erased_fields: ['document_name'],
+                    fields: {name: {fields: ['document_name']}},
+                    expected: true
+                },
+                //Document with name but not document name erased
+                {
+                    userFormat: 's f l',
+                    erased_fields: ['name'],
+                    fields: {name: {fields: ['document_name']}},
+                    expected: false
+                },
+                //Non-person type record
+                {
+                    userFormat: 's f l',
+                    erased_fields: ['name'],
+                    fields: {name: {type: 'varchar'}},
+                    expected: true
+                },
+                {
+                    userFormat: 's f l',
+                    erased_fields: ['not_name'],
+                    fields: {name: {type: 'varchar'}},
+                    expected: false
+                }
+            ],
+            function(args) {
+                it('should leverage the name format to determine what parts have been erased', function() {
+                    var model = app.data.createBean('Contacts', args.attributes || {});
+                    model.fields = args.fields || {
+                        module: 'Contacts',
+                        name: {
+                            'type': 'fullname'
+                        }
+                    };
+                    if (args.erased_fields) {
+                        model.set({_erased_fields: args.erased_fields});
+                    }
+                    var userMock = sinon.stub(app.user, 'getPreference', function() {
+                        return args.userFormat;
+                    });
+                    var metamock = sinon.stub(app.metadata, 'getModule', function() {
+                        return {nameFormat: args.formatMap};
+                    });
+
+                    var result = app.utils.isNameErased(model);
+                    expect(result).toEqual(args.expected);
+
+                    metamock.restore();
+                    userMock.restore();
+                });
+            }
+        );
+    });
+
     describe('email addresses', function() {
         var combos,
             model;
