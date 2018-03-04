@@ -11,29 +11,31 @@
  */
 
 /**
- * @deprecated Use SugarCacheApcu instead
+ * APCu cache backend
  */
-class SugarCacheAPC extends SugarCacheAbstract
+class SugarCacheApcu extends SugarCacheAbstract
 {
     /**
-     * @see SugarCacheAbstract::$_priority
+     * {@inheritDoc}
      */
-    protected $_priority = 940;
+    protected $_priority = 935;
 
     /**
-     * @see SugarCacheAbstract::useBackend()
+     * {@inheritDoc}
      */
     public function useBackend()
     {
+        global $sugar_config;
+
         if (!parent::useBackend()) {
             return false;
         }
 
-        if (!empty($GLOBALS['sugar_config']['external_cache_disabled_apc'])) {
+        if (!empty($sugar_config['external_cache_disabled_apcu'])) {
             return false;
         }
 
-        if (!extension_loaded('apc')) {
+        if (!extension_loaded('apcu')) {
             return false;
         }
 
@@ -49,39 +51,40 @@ class SugarCacheAPC extends SugarCacheAbstract
     }
 
     /**
-     * @see SugarCacheAbstract::_setExternal()
+     * {@inheritDoc}
      */
-    protected function _setExternal($key,$value)
+    protected function _setExternal($key, $value)
     {
-        apc_store($key,$value,$this->_expireTimeout);
+        apcu_store($key, $value, $this->_expireTimeout);
     }
 
     /**
-     * @see SugarCacheAbstract::_getExternal()
+     * {@inheritDoc}
      */
     protected function _getExternal($key)
     {
-        $res = apc_fetch($key);
-        if($res === false) {
+        $value = apcu_fetch($key, $success);
+
+        if (!$success) {
             return null;
         }
 
-        return $res;
+        return $value;
     }
 
     /**
-     * @see SugarCacheAbstract::_clearExternal()
+     * {@inheritDoc}
      */
     protected function _clearExternal($key)
     {
-        apc_delete($key);
+        apcu_delete($key);
     }
 
     /**
-     * @see SugarCacheAbstract::_resetExternal()
+     * {@inheritDoc}
      */
     protected function _resetExternal()
     {
-        apc_clear_cache('user');
+        apcu_clear_cache();
     }
 }

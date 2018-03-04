@@ -78,12 +78,16 @@
         ]
     },
     "autoload-dev": {
+        "classmap": [
+            "tests/{old}"
+        ],
+        "exclude-from-classmap": [
+            "tests/{old}/src"
+        ],
         "psr-4": {
             "Sugarcrm\\SugarcrmTests\\": [
-                "tests/{old}/src/",
-                "tests/{old}"
+                "tests/{old}/src/"
             ],
-            "Sugarcrm\\SugarcrmTests\\inc\\": "tests/{old}/include/",
             "Sugarcrm\\SugarcrmTestsUnit\\": [
                 "tests/unit-php/src/",
                 "tests/unit-php/"
