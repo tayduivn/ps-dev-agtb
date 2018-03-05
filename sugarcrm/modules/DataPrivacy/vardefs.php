@@ -56,6 +56,7 @@ $dictionary['DataPrivacy'] = array(
             'sortable' => true,
             'duplicate_on_record_copy' => 'always',
             'required' => false,
+            'isMultiSelect' => true,
             'visibility_grid' => array(
                 'trigger' => 'type',
                 'values' => array(
