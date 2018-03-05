@@ -2185,7 +2185,16 @@ sugarListView.prototype.send_form = function(select, currentModule, action, no_r
 
 	sugarListView.get_checks();
 	// create new form to post (can't access action property of MassUpdate form due to action input)
-	var newForm = document.createElement('form');
+    var exportFrame = document.getElementById('export_frame');
+    if (!exportFrame) {
+        exportFrame = document.createElement('iframe');
+        exportFrame.style.display = 'none';
+        exportFrame.id = 'export_frame';
+        exportFrame.name = 'export_frame';
+        document.MassUpdate.parentNode.appendChild(exportFrame);
+    }
+
+    var newForm = document.createElement('form');
 	newForm.method = 'post';
 	newForm.action = action;
 	newForm.name = 'newForm';
@@ -2241,6 +2250,7 @@ sugarListView.prototype.send_form = function(select, currentModule, action, no_r
 	}
 
 	document.MassUpdate.parentNode.appendChild(newForm);
+    newForm.target = 'export_frame';
 
 	newForm.submit();
 	// awu Bug 18624: Fixing issue where a canceled Export and unselect of row will persist the uid field, clear the field
