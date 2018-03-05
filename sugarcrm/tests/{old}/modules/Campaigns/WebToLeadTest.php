@@ -199,8 +199,8 @@ class WebToLeadTest extends Sugar_PHPUnit_Framework_TestCase
         for ($i = 0; $i < count($emails); $i++) {
             $ea = $this->fetchEmailAddress($emails[$i]);
             $this->assertNotEmpty($ea, 'Expected Email Address was not found: ' . $emails[$i]);
-            $this->assertSame(0, $ea['invalid_email'], 'Expected Email Address to be Valid');
-            $this->assertSame(
+            $this->assertEquals(0, $ea['invalid_email'], 'Expected Email Address to be Valid');
+            $this->assertEquals(
                 $expectedResult,
                 $ea['opt_out'],
                 'Email Address [' . $i . '] opt_out value incorrect'
