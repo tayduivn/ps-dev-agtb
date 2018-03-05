@@ -42,6 +42,10 @@ $mod_strings = array(
     'LBL_ASSIGNED_TO_ME' => 'My Data Privacy Activities',
     'LBL_SEARCH_AND_SELECT' => 'Search and Select Data Privacy Activities',
     'TPL_SEARCH_AND_ADD' => 'Search and Add Data Privacy Activities',
+    'LBL_WARNING_ERASE_CONFIRM' => 'You are about to permanently erase {0} field(s). There is no option to recover this data after erasure is complete. Are you sure you want to proceed?',
+    'LBL_WARNING_REJECT_ERASURE_CONFIRM' => 'You have {0} field(s) marked for erasure. Confirming will abort the erasure, preserve all data, and mark this request as rejected. Are you sure you want to proceed?',
+    'LBL_WARNING_COMPLETE_CONFIRM' => 'You are about to mark this request as completed. This will permanently set the status to Closed and cannot be reopened. Are you sure you want to proceed?',
+    'LBL_WARNING_REJECT_REQUEST_CONFIRM' => 'You are about to mark this request as rejected. This will permanently set the status to Rejected and cannot be reopened. Are you sure you want to proceed?',
     'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the data privacy activity <a href="#{{buildRoute model=this}}">{{name}}</a>.', // use when a model is available
     'LBL_REJECT_BUTTON_LABEL' => 'Reject',
     'LBL_COMPLETE_BUTTON_LABEL' => 'Complete',

@@ -20,6 +20,88 @@
      * @inheritdoc
      *
      */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.context.on('button:erase_complete_button:click', this.showConfirmEraseAlert, this);
+        this.context.on('button:reject_button:click', this.showRejectEraseAlert, this);
+        this.context.on('button:complete_button:click', this.showConfirmCompleteAlert, this);
+    },
+
+    /**
+     * Calculates and returns the number of fields on all related records marked for erasure.
+     *
+     * @return {number} The number of records marked for erasure.
+     * @private
+     */
+    _getNumberOfFieldsToErased: function() {
+        var fieldsNumber = 0;
+        var fieldsToErase = this.model.get('fields_to_erase');
+
+        _.each(fieldsToErase, function(module) {
+            fieldsNumber += _.reduce(module, function(memo, fields) {
+                return memo + fields.length;
+            }, 0);
+        });
+
+        return fieldsNumber;
+    },
+
+    /**
+     * Displays a confirmation warning for erasing all field values for the fields marked for erasure.
+     */
+    showConfirmEraseAlert: function() {
+        var alertText = app.lang.get('LBL_WARNING_ERASE_CONFIRM', 'DataPrivacy');
+        app.alert.show('confirm_complete:' + this.model.get('id'), {
+            level: 'confirmation',
+            messages: app.utils.formatString(alertText, [this._getNumberOfFieldsToErased()]),
+            onConfirm: function() {
+                // place holder for now
+                console.log('Erase & Complete has been confirmed');
+            }
+        });
+    },
+
+    /**
+     * Displays a confirmation warning for closing the request.
+     */
+    showConfirmCompleteAlert: function() {
+        app.alert.show('confirm_erase_and_complete:' + this.model.get('id'), {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_WARNING_COMPLETE_CONFIRM', 'DataPrivacy'),
+            onConfirm: function() {
+                // place holder for now
+                console.log('Complete has been confirmed');
+            }
+        });
+    },
+
+    /**
+     * Displays a confirmation warning for rejecting the erasure of field values for all fields marked for erasure.
+     */
+    showRejectEraseAlert: function() {
+        var alertText;
+        if (this.model.get('type') == 'Request to Erase Information') {
+            alertText = app.utils.formatString(
+                app.lang.get('LBL_WARNING_REJECT_ERASURE_CONFIRM', 'DataPrivacy'),
+                [this._getNumberOfFieldsToErased()]
+            );
+        } else {
+            alertText = app.lang.get('LBL_WARNING_REJECT_REQUEST_CONFIRM', 'DataPrivacy');
+        }
+        app.alert.show('confirm_reject_erase:' + this.model.get('id'), {
+            level: 'confirmation',
+            messages: alertText,
+            onConfirm: function() {
+                // place holder for now
+                console.log('Reject has been confirmed');
+            }
+        });
+    },
+
+    /**
+     * @inheritdoc
+     *
+     */
     bindDataChange: function() {
         this._super('bindDataChange');
         this.model.on('change', function() {
