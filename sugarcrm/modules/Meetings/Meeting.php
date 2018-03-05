@@ -348,7 +348,7 @@ class Meeting extends SugarBean {
 		}
         if(!empty($this->date_start))
         {
-            $td = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start);
+            $td = $timedate->fromDb($this->date_start);
             if (!empty($td))
             {
     	        if (!empty($this->duration_hours) && $this->duration_hours != '')
@@ -359,7 +359,7 @@ class Meeting extends SugarBean {
                 {
                     $td = $td->modify("+{$this->duration_minutes} mins");
                 }
-                $this->date_end = $td->format($GLOBALS['timedate']->get_date_time_format());
+                $this->date_end = $timedate->asDb($td);
             }
             else
             {

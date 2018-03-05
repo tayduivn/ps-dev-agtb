@@ -10,101 +10,67 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
-
 class TemplateDateTimeTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        global $timedate;
+        parent::setUpBeforeClass();
+
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        //Set the now on timedate correctly for consistent testing
-        $now = $timedate->getNow(true)->setDate(2012,10,8)->setTime(16, 10);
-        $timedate->setNow($now);
-
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         global $timedate;
         $timedate->setNow(new SugarDateTime());
-        SugarTestHelper::tearDown();
+
+        parent::tearDown();
     }
 
-    public function testDefaultValues()
+    /**
+     * @dataProvider valueProvider
+     */
+    public function testDefaultValues($value, $expextedYear, $expextedMonth, $expextedDay)
     {
         global $timedate;
-        $tdt = new TemplateDatetimecombo();
 
-        $fakeBean = new TemplateDateTimeMockBean();
         //Verify that each of the default values for TemplateDateTime modify the date correctly
+        //Set the now on timedate correctly for consistent testing
+        $now = $timedate->getNow(true)->setDate(2012, 10, 8)->setTime(16, 10);
+        $timedate->setNow($now);
+
         $expected = clone $timedate->getNow();
+        $expected->setDate($expextedYear, $expextedMonth, $expextedDay);
+
         //We have to make sure to run through parseDateDefault and set a time as on some versions of php,
         //setting the day will reset the time to midnight.
         //ex. in php 5.3.2 'next monday' will not change the time. In php 5.3.6 it will set the time to midnight
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['today'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
+        $tdt = new TemplateDatetimecombo();
+        $result = $this->parseDateDefault(new SugarBean(), $tdt->dateStrings[$value] . '&04:10pm');
+        $this->assertEquals($timedate->asDb($expected), $result);
+    }
 
-        $expected->setDate(2012,10,7);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['yesterday'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
+    private function parseDateDefault(SugarBean $bean, $value)
+    {
+        return SugarTestReflection::callProtectedMethod($bean, __FUNCTION__, [$value, true]);
+    }
 
-        $expected->setDate(2012,10,9);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['tomorrow'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
-
-
-        $expected->setDate(2012,10,15);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['next week'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
-
-
-        $expected->setDate(2012,10,15);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['next monday'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
-
-        $expected->setDate(2012,10,12);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['next friday'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
-
-        $expected->setDate(2012,10,22);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['two weeks'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
-
-        $expected->setDate(2012,11,8);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['next month'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
-
-
-        $expected->setDate(2012,11,01);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['first day of next month'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
-
-        $expected->setDate(2013,01,8);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['three months'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
-
-        $expected->setDate(2013,04,8);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['six months'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
-
-        $expected->setDate(2013,10,8);
-        $result = $fakeBean->parseDateDefault($tdt->dateStrings['next year'] . "&04:10pm", true);
-        $this->assertEquals($timedate->asUser($expected), $result);
+    public static function valueProvider()
+    {
+        return [
+            ['today', 2012, 10, 8],
+            ['yesterday', 2012, 10, 7],
+            ['tomorrow', 2012, 10, 9],
+            ['next week', 2012, 10, 15],
+            ['next friday', 2012, 10, 12],
+            ['two weeks', 2012, 10, 22],
+            ['next month', 2012, 11, 8],
+            ['first day of next month', 2012, 11, 01],
+            ['three months', 2013, 01, 8],
+            ['six months', 2013, 04, 8],
+            ['next year', 2013, 10, 8],
+        ];
     }
 }
-
-class TemplateDateTimeMockBean extends SugarBean {
-
-
-    public function parseDateDefault($value, $time = false) {
-        return parent::parseDateDefault($value, $time);
-    }
-}
-
-
-?>

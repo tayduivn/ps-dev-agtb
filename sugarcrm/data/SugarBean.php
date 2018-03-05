@@ -1166,9 +1166,9 @@ class SugarBean
                 $timeValue = $timedate->fromString($dtAry[1]);
                 $dateValue->setTime($timeValue->hour, $timeValue->min, $timeValue->sec);
             }
-            return $timedate->asUser($dateValue);
+            return $timedate->asDb($dateValue);
         } else {
-            return $timedate->asUserDate($timedate->getNow(true)->modify($value));
+            return $timedate->asDbDate($timedate->getNow(true)->modify($value));
         }
     }
 
@@ -2998,9 +2998,6 @@ class SugarBean
 				if($field == 'date_modified' || $field == 'date_entered')
 				{
 					$this->$field = $this->db->fromConvert($this->$field, 'datetime');
-					if(empty($disable_date_format)) {
-						$this->$field = $timedate->to_display_date_time($this->$field);
-					}
                 } elseif (isset($this->field_defs[$field]['type'])) {
                     $type = $this->field_defs[$field]['type'];
 
@@ -3013,24 +3010,10 @@ class SugarBean
 						if($this->$field == '0000-00-00')
 						{
 							$this->$field = '';
-                        } elseif (!empty($this->field_defs[$field]['rel_field'])) {
-                            $rel_field = $this->field_defs[$field]['rel_field'];
-
-							if(!empty($this->$rel_field))
-							{
-								if(empty($disable_date_format)) {
-									$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
-									$this->$field = $timedate->to_display_date($mergetime);
-									$this->$rel_field = $timedate->to_display_time($mergetime);
-								}
-							}
 						}
 						else
 						{
                             $this->$field = $this->db->fromConvert($this->$field, 'date');
-							if (empty($disable_date_format)) {
-								$this->$field = $timedate->to_display_date($this->$field, false);
-							}
 						}
 					} elseif($type == 'datetime' || $type == 'datetimecombo')
 					{
@@ -3043,20 +3026,12 @@ class SugarBean
                             //Converting from db fields is needed
                             //Example: from "2015-01-08 22:32:00.000000" (retrieved from DB2) to "2015-01-08 22:32:00"
                             $this->$field = $this->db->fromConvert($this->$field, 'datetime');
-							if(empty($disable_date_format)) {
-								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
-							}
 						}
 					} elseif($type == 'time')
 					{
 						if($this->$field == '00:00:00')
 						{
 							$this->$field = '';
-						} else
-						{
-							if (empty($this->field_defs[$field]['rel_field']) && empty($disable_date_format)) {
-								$this->$field = $timedate->to_display_time($this->$field,true, false);
-							}
 						}
 					} elseif($type == 'encrypt' && empty($disable_date_format)){
                         $this->preprocess_encrypt_before_get($field);

@@ -344,6 +344,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             $aItem->updateDependentField();
         }
         $fields = $aItem->get_list_view_data();
+        $fields = $this->formatRowDates($aItem, $fields);
 
         $aItem->ACLFilterFieldList($fields);
         if(isset($processed_ids[$aItem->id])) {
@@ -2039,4 +2040,18 @@ function getUserVariable($localVarName, $varName) {
     $this->_additionalDetails = $value;
  }
 
+    private function formatRowDates(SugarBean $bean, array $row) : array
+    {
+        foreach ($bean->field_defs as $name => $field_def) {
+            $nameUpper = strtoupper($name);
+
+            if (!isset($row[$nameUpper])) {
+                continue;
+            }
+
+            $row[$nameUpper] = ViewDateFormatter::format($field_def['type'], $row[$nameUpper]);
+        }
+
+        return $row;
+    }
 }

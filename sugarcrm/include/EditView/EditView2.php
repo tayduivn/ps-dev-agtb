@@ -512,7 +512,8 @@ class EditView
 	       	 	}
 
 	       	 	if(!$valueFormatted) {
-                   $value = isset($this->focus->$name) ? $this->focus->$name : '';
+                    $value = isset($this->focus->$name) ? $this->focus->$name : '';
+                    $value = ViewDateFormatter::format($this->fieldDefs[$name]['type'], $value);
                 }
 
                 if (empty($this->fieldDefs[$name]['value']))

@@ -442,6 +442,8 @@ class ListViewData {
 				}
 				$temp->updateDependentFieldForListView('', $filter_fields);
 				$data[$dataIndex] = $temp->get_list_view_data($filter_fields);
+                $data[$dataIndex] = $this->formatRowDates($temp, $data[$dataIndex]);
+
                 if($temp->isFavoritesEnabled()){
 					$data[$dataIndex]['star'] = SugarFavorites::generateStar(!empty($row['my_favorite']), $temp->module_dir, $temp->id);
 				}
@@ -686,4 +688,18 @@ class ListViewData {
         return array('fieldToAddTo' => $results['fieldToAddTo'], 'string' => $extra);
     }
 
+    private function formatRowDates(SugarBean $bean, array $row) : array
+    {
+        foreach ($bean->field_defs as $name => $field_def) {
+            $nameUpper = strtoupper($name);
+
+            if (!isset($row[$nameUpper])) {
+                continue;
+            }
+
+            $row[$nameUpper] = ViewDateFormatter::format($field_def['type'], $row[$nameUpper]);
+        }
+
+        return $row;
+    }
 }
