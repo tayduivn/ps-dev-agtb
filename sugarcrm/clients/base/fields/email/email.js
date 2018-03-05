@@ -459,7 +459,7 @@
 
     /**
      * To display representation
-     * @param {string|Array|Object} value single email address or set of email addresses
+     * @param {string|Array|Object} value single email address or set of email addresses.
      */
     format: function(value) {
         value = app.utils.deepCopy(value);
@@ -548,14 +548,30 @@
     },
 
     /**
-     * Opens a drawer to audit the email address
-     *
-     * @param e
+     * Opens a drawer to audit the email address.
      */
-    auditEmailAddress: function(e) {
-        //TODO open drawer to audit email address
-        // Will be worked on in PX-22
-        console.log('Drawer opens here to audit email address');
+    auditEmailAddress: function() {
+        var email = _.first(this.value);
+        var emailModel = app.data.createBean('EmailAddresses', {
+            name: email.email_address,
+            id: email.email_address_id
+        });
+
+        var parentContext = this.context.getChildContext({
+            forceNew: true,
+            model: emailModel,
+            module: 'EmailAddresses',
+            modelId: email.email_address_id
+        });
+
+        app.drawer.open({
+            layout: 'audit',
+            context: {
+                module: 'Audit',
+                model: emailModel,
+                parent: parentContext,
+            }
+        });
     },
 
     /**
