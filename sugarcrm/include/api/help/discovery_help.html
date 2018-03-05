@@ -15,6 +15,11 @@
     Returns authentication configuration
 </span>
 
+<h2>Version Requirements</h2>
+<span class="restversion">
+    Minimum REST API Version required - 11.1
+</span>
+
 <h2>Request Arguments</h2>
 <span class="lead">
     This endpoint does not accept any request arguments.
@@ -24,16 +29,16 @@
 
 <h3>Standalone instance</h3>
 <pre class="pre-scrollable">
-[
+{
    "idmMode": false
-]
+}
 </pre>
 
 <h3>IDM instance</h3>
 <pre class="pre-scrollable">
-[
+{
    "idmMode": true,
    "stsUrl": "Url to Secure Token Service",
    "tenant": "Tenant id for this instance"
-]
+}
 </pre>

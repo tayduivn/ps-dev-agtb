@@ -14,7 +14,7 @@ const {Agent, Fixtures} = require('@sugarcrm/thorn');
 
 describe('Discovery', function() {
     before(function*() {
-        this.url = `${process.env.THORN_SERVER_URL}/rest/v11`;
+        this.url = `${process.env.THORN_SERVER_URL}/rest/v11_1`;
     });
 
     it('should get discovery info', function*() {
