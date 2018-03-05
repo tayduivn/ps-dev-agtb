@@ -11,6 +11,8 @@
  */
 
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\CronJob;
 
 /**
  * Job queue job
@@ -489,6 +491,23 @@ class SchedulersJob extends Basic
         }
     }
 
+    private function run(callable $func, array $params)
+    {
+        $bean = BeanFactory::newBean('Schedulers');
+        $bean->id = $this->scheduler_id;
+
+        // Create the Cronjob subject and activate it
+        $subject = new CronJob($bean);
+        $context = Container::getInstance()->get(Context::class);
+        $context->activateSubject($subject);
+
+        try {
+            return call_user_func_array($func, $params);
+        } finally {
+            $context->deactivateSubject($subject);
+        }
+    }
+
     /**
      * Run this job
      * @return bool Was the job successful?
@@ -509,12 +528,13 @@ class SchedulersJob extends Basic
             set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
 			if (!is_callable($func)) {
 			    $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_CALL', 'SchedulersJobs'), $func));
+                return false;
 			}
 			$data = array($this);
 			if (!empty($this->data)) {
 			    $data[] = $this->data;
 			}
-            $res = call_user_func_array($func, $data);
+            $res = $this->run($func, $data);
             restore_error_handler();
             $this->restoreJobUser();
 			if ($this->status == self::JOB_STATUS_RUNNING) {
@@ -562,7 +582,7 @@ class SchedulersJob extends Basic
                     return false;
                 }
                 $tmpJob->setJob($this);
-                $res = $tmpJob->run($this->data);
+                $res = $this->run([$tmpJob, 'run'], [$this->data]);
                 $this->restoreJobUser();
                 if ($this->status == self::JOB_STATUS_RUNNING) {
                     // nobody updated the status yet - job class could do that
