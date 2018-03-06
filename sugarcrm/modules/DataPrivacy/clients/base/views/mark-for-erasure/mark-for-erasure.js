@@ -200,7 +200,7 @@
         // FIXME: this will have to be modified to handle Emails
         if (this.collection && this.collection.models) {
             return _.filter(this.collection.models, function(model) {
-                return fieldNames.includes(model.get('field_name'));
+                return fieldNames.indexOf(model.get('field_name')) !== -1;
             });
         }
         return [];
