@@ -91,16 +91,17 @@ class KBFilterQuery implements QueryInterface
 
     /**
      * Create the filter.
-     * @param bool $addLangFilter a flag indicate if a lang filter is needed
-     * @param bool $addIdFilter a flag indicate if a id filter is needed
+     * @param array $params term fields
      * @return \Elastica\Query\BoolQuery
      */
-    public function createFilter()
+    public function createFilter($params)
     {
         $mainFilter = new \Elastica\Query\BoolQuery();
 
         $activeRevFilter = new \Elastica\Query\Term();
-        $activeRevFilter->setTerm('active_rev', 1);
+        foreach ($params as $field => $value) {
+            $activeRevFilter->setTerm($field, $value);
+        }
         $mainFilter->addMust($activeRevFilter);
 
         return $mainFilter;
