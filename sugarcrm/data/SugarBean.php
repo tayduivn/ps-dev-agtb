@@ -1794,12 +1794,11 @@ class SugarBean
     public function setCreateData($isUpdate, User $user = null)
     {
         global $current_user;
-        global $timedate;
 
         // Only set this if this is a create process
         if (!$isUpdate) {
             if (empty($this->date_entered)) {
-                $this->date_entered = $timedate->nowDb();
+                $this->date_entered = $this->date_modified;
             }
 
             if ($this->set_created_by == true) {
@@ -1812,10 +1811,20 @@ class SugarBean
                 }
             }
 
-            if ($this->new_with_id == false) {
-                $this->id = create_guid();
-            }
+            $this->ensureHasId();
         }
+    }
+
+    /**
+     * Makes sure the newly created bean has the ID
+     */
+    private function ensureHasId()
+    {
+        if ($this->new_with_id || $this->id) {
+            return;
+        }
+
+        $this->id = create_guid();
     }
 
     /**
@@ -1863,7 +1872,9 @@ class SugarBean
             $this->lastAuditedState = [];
         }
 
-        $this->setCreateData($isUpdate);
+        if (!$isUpdate) {
+            $this->ensureHasId();
+        }
 
         $this->populateFetchedEmail('bean_field');
         $this->commitAuditedStateChanges(null);
@@ -2015,6 +2026,7 @@ class SugarBean
         if ($this->deleted != 1) {
             $this->deleted = 0;
         }
+        $this->setCreateData($isUpdate);
 
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
         // currently, the default_team is only enforced in the presentation layer-- this enforces it at the data layer as well
