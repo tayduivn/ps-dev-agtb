@@ -2050,10 +2050,6 @@ class SugarBean
             static::leaveOperation('updating_relationships');
         }
         $this->updateCalculatedFields();
-        if($isUpdate && !$this->update_date_entered)
-        {
-            unset($this->date_entered);
-        }
 
         $this->call_custom_logic('before_save', array(
             'check_notify' => $check_notify,

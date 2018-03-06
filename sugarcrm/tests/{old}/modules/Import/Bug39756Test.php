@@ -13,6 +13,9 @@
 
 class Bug39756Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Account
+     */
     var $_account = null;
 
     public function setUp() 

@@ -889,12 +889,13 @@ abstract class DBManager
                 continue;
             }
 
-            if (!isset($bean->$field)) {
-                continue;
-            }
-
-            $dataValues[$field] = $bean->$field;
+            $dataValues[$field] = $bean->$field ?? null;
             $dataFields[$field] = $fieldDef;
+        }
+
+        // prevent updates from overwriting `date_entered` unless it's allowed
+        if (!$bean->update_date_entered) {
+            unset($dataFields['date_entered']);
         }
 
         // build where clause
