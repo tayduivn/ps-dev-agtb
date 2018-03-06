@@ -11,6 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\WebToLead;
 
 require_once('include/formbase.php');
 
@@ -53,6 +56,10 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	    //adding the client ip address
 	    $_POST['client_id_address'] = query_client_ip();
 		$campaign_id=$_POST['campaign_id'];
+        // create and activate subject for audit
+        $subject = new WebToLead($campaign_id);
+        $context = Container::getInstance()->get(Context::class);
+        $context->activateSubject($subject);
 		$campaign = BeanFactory::newBean('Campaigns');
         $camp_query  = 'SELECT name, id FROM campaigns WHERE id = ' . $campaign->db->quoted($campaign_id);
 		$camp_query .= " and deleted=0";
@@ -216,7 +223,8 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                         $delimiter = strpos($redirect_url, '?') === false ? '?' : '&';
                         $redirect_url .= $delimiter . $query_string;
                     }
-
+                    // deactivate the subject for audit
+                    $context->deactivateSubject($subject);
     				header("Location: {$redirect_url}");
     				die();
 			    }
@@ -224,6 +232,8 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 			else{
 				echo $mod_strings['LBL_THANKS_FOR_SUBMITTING_LEAD'];
 			}
+            // deactivate the subject for audit
+            $context->deactivateSubject($subject);
 			sugar_cleanup();
 			// die to keep code from running into redirect case below
 			die();
@@ -231,6 +241,8 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	   else{
 	  	  echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
 	  }
+    // deactivate the subject for audit
+    $context->deactivateSubject($subject);
 }
 
 if (!empty($redirect)) {
