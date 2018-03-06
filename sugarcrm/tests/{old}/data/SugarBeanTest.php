@@ -77,10 +77,13 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testEraseAuditLog()
     {
-        $this->setupAuditableContactFields(['phone_work']);
-        $contactBean = SugarTestContactUtilities::createContact(null, array('phone_work' => '(111) 111-1111'));
+        $this->setupAuditableContactFields(['phone_work', 'phone_home']);
+        $contactBean = SugarTestContactUtilities::createContact(
+            null,
+            ['phone_work' => '(111) 111-1111', 'phone_home' => '(222) 222-2222']
+        );
 
-        $list=FieldList::fromArray(['phone_work']);
+        $list=FieldList::fromArray(['phone_work', 'phone_home', ['field_name' => 'email', 'id' => 'email id xxx']]);
         $contactBean->erase($list, false);
 
         $this->resetContactDictionary();

@@ -1950,19 +1950,27 @@ class SugarBean
      */
     public function eraseAuditRecords(ErasureFieldList $fields, $event_id)
     {
-        return $this->db->getConnection()->update(
-            $this->get_audit_table_name(),
+        $tableName = $this->get_audit_table_name();
+        $sql = "UPDATE {$tableName} 
+                SET event_id = ?, 
+                before_value_string = ?, 
+                after_value_string = ?, 
+                before_value_text = ?, 
+                after_value_text = ?, 
+                date_updated = ? 
+                WHERE parent_id = ? 
+                AND field_name IN (?)";
+        return $this->db->getConnection()->executeUpdate(
+            $sql,
             [
-                'event_id' => $event_id,
-                'before_value_string' => null,
-                'after_value_string' => null,
-                'before_value_text' => null,
-                'after_value_text' => null,
-                'date_updated' => TimeDate::getInstance()->nowDb(),
-            ],
-            [
-                'parent_id' => $this->id,
-                'field_name' => array_values($fields->jsonSerialize()),
+                $event_id,
+                null,
+                null,
+                null,
+                null,
+                TimeDate::getInstance()->nowDb(),
+                $this->id,
+                array_filter(array_values($fields->jsonSerialize()), 'is_string'),
             ],
             [
                 null, null, null, null, null, null, null, Connection::PARAM_STR_ARRAY,
