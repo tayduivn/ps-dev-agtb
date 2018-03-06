@@ -49,7 +49,6 @@ class OutboundEmailConfigurationApi extends ModuleApi
                 "method"    => "listConfigurations",
                 "shortHelp" => "A list of outbound email configurations",
                 'longHelp'  => 'modules/OutboundEmailConfiguration/clients/base/api/help/outbound_email_configuration_list_get_help.html',
-                'maxVersion' => '11',
             ),
         );
 

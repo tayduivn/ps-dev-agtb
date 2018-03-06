@@ -76,7 +76,6 @@ class MailApi extends ModuleApi
                 'method' => 'createMail',
                 'shortHelp' => 'Create Mail Item',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_post_help.html',
-                'maxVersion' => '11',
             ),
             'archiveMail' => array(
                 'reqType' => 'POST',
@@ -85,7 +84,6 @@ class MailApi extends ModuleApi
                 'method' => 'archiveMail',
                 'shortHelp' => 'Archive Mail Item',
                 'longHelp'  => 'modules/Emails/clients/base/api/help/mail_archive_help.html',
-                'maxVersion' => '11',
             ),
             'recipientLookup' => array(
                 'reqType' => 'POST',
@@ -94,7 +92,6 @@ class MailApi extends ModuleApi
                 'method' => 'recipientLookup',
                 'shortHelp' => 'Lookup Email Recipient Info',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_recipients_lookup_post_help.html',
-                'maxVersion' => '11',
             ),
             'listRecipients' => array(
                 'reqType' => 'GET',
@@ -111,7 +108,6 @@ class MailApi extends ModuleApi
                 'method' => 'validateEmailAddresses',
                 'shortHelp' => 'Validate One Or More Email Address',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_address_validate_post_help.html',
-                'maxVersion' => '11',
             ),
             'saveAttachment' => array(
                 'reqType' => 'POST',
@@ -121,7 +117,6 @@ class MailApi extends ModuleApi
                 'rawPostContents' => true,
                 'shortHelp' => 'Saves a mail attachment.',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_attachment_post_help.html',
-                'maxVersion' => '11',
             ),
             'removeAttachment' => array(
                 'reqType' => 'DELETE',
@@ -131,7 +126,6 @@ class MailApi extends ModuleApi
                 'rawPostContents' => true,
                 'shortHelp' => 'Removes a mail attachment',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_attachment_record_delete_help.html',
-                'maxVersion' => '11',
             ),
             'clearUserCache' => array(
                 'reqType' => 'DELETE',
@@ -141,7 +135,6 @@ class MailApi extends ModuleApi
                 'rawPostContents' => true,
                 'shortHelp' => 'Clears the user\'s attachment cache directory',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_attachment_cache_delete_help.html',
-                'maxVersion' => '11',
             ),
         );
 
