@@ -1826,11 +1826,9 @@ class SugarBean
      */
     private function ensureHasId()
     {
-        if ($this->new_with_id || $this->id) {
-            return;
+        if (!$this->id) {
+            $this->id = create_guid();
         }
-
-        $this->id = create_guid();
     }
 
     /**
