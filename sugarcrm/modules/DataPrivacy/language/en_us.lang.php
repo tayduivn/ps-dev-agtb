@@ -50,4 +50,11 @@ $mod_strings = array(
     'LBL_REJECT_BUTTON_LABEL' => 'Reject',
     'LBL_COMPLETE_BUTTON_LABEL' => 'Complete',
     'LBL_ERASE_COMPLETE_BUTTON_LABEL' => 'Erase & Complete',
+
+    // list view
+    'LBL_HELP_RECORDS' => 'The Data Privacy module tracks privacy activities, including consent and subject requests, to support your organization\'s privacy procedures. Create data privacy records related to an individual\'s record (e.g. a contact) to track consent or take action on a privacy request.',
+    // record view
+    'LBL_HELP_RECORD' => 'The Data Privacy module tracks privacy activities, including consent and subject requests, to support your organization\'s privacy procedures. Create data privacy records related to an individual\'s record (e.g. a contact) to track consent or take action on a privacy request. Once the needed action is completed, users in the Data Privacy Manager role can click "Complete" or "Reject" to update the status.
+
+For erasure requests, select "Mark to Erase" for each of the individual\'s records listed in the subpanels below. Once all desired fields are selected, clicking "Erase and Complete" will permanently remove the fields\' values and mark the data privacy record as completed.',
 );
