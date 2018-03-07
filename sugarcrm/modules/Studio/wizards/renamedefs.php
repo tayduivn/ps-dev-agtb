@@ -752,6 +752,10 @@ $renamedefs = array(
             array('name' => 'LBL_PRODUCT_CATALOG_DASHLET_NAME', 'type' => 'singular', 'source' => 'ProductTemplates'),
             array('name' => 'LBL_PRODUCT_CATALOG_DESC', 'type' => 'singular', 'source' => 'ProductTemplates'),
             array('name' => 'LBL_PRODUCT_CATALOG_DASHLET_DESC', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_QUOTE_COPY_ALERT_MESSAGE', 'type' => 'plural', 'source' => 'Products'),
+            array('name' => 'LBL_QUOTE_COPY_ALERT_MESSAGE', 'type' => 'singular', 'source' => 'Quote'),
+            array('name' => 'LBL_QUOTE_COPY_ALERT_MESSAGE_LONG_TIME', 'type' => 'plural', 'source' => 'Products'),
+            array('name' => 'LBL_QUOTE_COPY_ALERT_MESSAGE_LONG_TIME', 'type' => 'singular', 'source' => 'Quote'),
         ),
         'Quotas' => array(
             array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),

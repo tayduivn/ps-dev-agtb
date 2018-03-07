@@ -121,12 +121,6 @@ describe('Quotes.Base.Views.Record', function() {
             expect(view.context.on).toHaveBeenCalledWith('quotes:item:toggle');
         });
 
-        it('should set listener on context for quotes:item:toggle:reset', function() {
-            view.bindDataChange();
-
-            expect(view.context.on).toHaveBeenCalledWith('quotes:item:toggle:reset');
-        });
-
         it('should set listener on context for quotes:editableFields:add', function() {
             view.bindDataChange();
 
@@ -151,6 +145,7 @@ describe('Quotes.Base.Views.Record', function() {
         var pbItem1;
         var pbItem2;
         var contextCollection;
+        var removeClassStub;
 
         beforeEach(function() {
             pbItem1 = app.data.createBean('Products', {
@@ -188,6 +183,15 @@ describe('Quotes.Base.Views.Record', function() {
                 navigate: function() {}
             };
             sinon.collection.stub(app.router, 'navigate', function() {});
+
+            removeClassStub = sinon.collection.stub();
+            sinon.collection.stub(view, 'getField', function() {
+                return {
+                    $el: {
+                        removeClass: removeClassStub
+                    }
+                };
+            });
         });
 
         afterEach(function() {
@@ -248,6 +252,10 @@ describe('Quotes.Base.Views.Record', function() {
 
             it('should call app.controller.loadView with correct module', function() {
                 expect(callArgs.module).toBe('Quotes');
+            });
+
+            it('should close the main dropdown when copy is clicked', function() {
+                expect(removeClassStub).toHaveBeenCalledWith('open');
             });
 
             describe('when copying bundle', function() {

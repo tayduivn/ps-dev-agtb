@@ -259,6 +259,45 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
     });
 
+    describe('toggleCopyAlert()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(app.alert, 'show', function() {});
+            sinon.collection.stub(app.alert, 'dismiss', function() {});
+        });
+
+        it('should call alert.show when called with showAlert = true', function() {
+            layout.toggleCopyAlert(true);
+
+            expect(app.alert.show).toHaveBeenCalled();
+        });
+
+        it('should call alert.dismiss when called with showAlert = false', function() {
+            layout.toggleCopyAlert(false);
+
+            expect(app.alert.dismiss).toHaveBeenCalled();
+        });
+    });
+
+    describe('completedCopyItem()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(layout, 'toggleCopyAlert', function() {});
+        });
+
+        it('should decrement copyItemCount', function() {
+            layout.copyItemCount = 2;
+            layout.completedCopyItem();
+
+            expect(layout.copyItemCount).toBe(1);
+        });
+
+        it('should call toggleCopyAlert if copyItemCount is 0', function() {
+            layout.copyItemCount = 1;
+            layout.completedCopyItem();
+
+            expect(layout.toggleCopyAlert).toHaveBeenCalledWith(false);
+        });
+    });
+
     describe('_setCopyQuoteData()', function() {
         var relatedRecords;
         var defaultGroup;
@@ -270,6 +309,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             sinon.collection.stub(layout, '_updateDefaultGroupWithNewData', function() {});
             sinon.collection.stub(layout.context, 'once', function() {});
             sinon.collection.stub(layout, '_onCreateQuoteGroup', function() {});
+            sinon.collection.stub(layout, 'completedCopyItem', function() {});
         });
 
         afterEach(function() {
@@ -319,6 +359,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             it('should call trigger on the default group with quotes:line_nums:reset', function() {
                 expect(triggerStub).toHaveBeenCalledWith('quotes:line_nums:reset');
             });
+
+            it('should call completedCopyItem for the bundle item', function() {
+                expect(layout.completedCopyItem).toHaveBeenCalled();
+            });
         });
 
         describe('when relatedRecords is not the default group', function() {
@@ -352,6 +396,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         beforeEach(function() {
             addRowModelStub = sinon.collection.stub();
             triggerStub = sinon.collection.stub();
+            sinon.collection.stub(layout, 'completedCopyItem', function() {});
+
             pbItem1 = {
                 modelView: 'test'
             };
@@ -395,6 +441,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         it('should call trigger on the default group with quotes:line_nums:reset', function() {
             expect(triggerStub).toHaveBeenCalledWith('quotes:line_nums:reset');
+        });
+
+        it('should call completedCopyItem for the bundle item', function() {
+            expect(layout.completedCopyItem).toHaveBeenCalled();
         });
     });
 

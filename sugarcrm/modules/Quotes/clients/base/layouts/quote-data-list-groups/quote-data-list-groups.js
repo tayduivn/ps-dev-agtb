@@ -75,6 +75,11 @@
     isCopy: undefined,
 
     /**
+     * Keeps track of the number of items to be copied during a Quote's "Copy" functionality
+     */
+    copyItemCount: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -87,6 +92,7 @@
         this.bundlesBeingSavedCt = 0;
         this.isCreateView = this.context.get('create') || false;
         this.isCopy = this.context.get('copy') || false;
+        this.copyItemCount = 0;
 
         //Setup the neccesary child context before data is populated so that child views/layouts are correctly linked
         var pbContext = this.context.getChildContext({link: 'product_bundles'});
@@ -127,7 +133,13 @@
             this._onProductBundleChange(this.model.get('bundles'));
 
             if (this.isCopy) {
-                this._setCopyQuoteData();
+                this.copyItemCount = this.context.get('copyItemCount');
+                this.toggleCopyAlert(true);
+
+                // set this function to happen async after the alert has been displayed
+                _.delay(_.bind(function() {
+                    this._setCopyQuoteData();
+                }, this), 250);
             }
         } else {
             this.model.once('sync', function(model) {
@@ -138,6 +150,42 @@
                     this._onProductBundleChange(bundles);
                 }
             }, this);
+        }
+    },
+
+    /**
+     * Toggles showing and hiding the "Copying QLI" alert when using the Copy functionality
+     *
+     * @param {boolean} showAlert True if we need to show alert, false if we need to dismiss it
+     */
+    toggleCopyAlert: function(showAlert) {
+        var alertId = 'quotes_copy_alert';
+        var titleLabel;
+
+        if (showAlert) {
+            titleLabel = this.copyItemCount > 8 ?
+                'LBL_QUOTE_COPY_ALERT_MESSAGE_LONG_TIME' :
+                'LBL_QUOTE_COPY_ALERT_MESSAGE';
+
+            app.alert.show(alertId, {
+                level: 'process',
+                closeable: false,
+                autoClose: false,
+                title: app.lang.get(titleLabel, 'Quotes')
+            });
+        } else {
+            app.alert.dismiss(alertId);
+        }
+    },
+
+    /**
+     * Handles decrementing the total copy item count and
+     * checks if we need to dismiss the copy alert
+     */
+    completedCopyItem: function() {
+        this.copyItemCount--;
+        if (this.copyItemCount === 0) {
+            this.toggleCopyAlert(false);
         }
     },
 
@@ -160,9 +208,12 @@
                     pbItem.modelView = 'edit';
                     // add the item as a row model starting in edit mode
                     defaultGroup.addRowModel(pbItem, true);
-                    // update the group line number counts
-                    defaultGroup.trigger('quotes:line_nums:reset');
+
+                    this.completedCopyItem();
                 }, this);
+
+                // update the group line number counts
+                defaultGroup.trigger('quotes:line_nums:reset');
 
                 // update the existing default group
                 this._updateDefaultGroupWithNewData(defaultGroup, record);
@@ -202,6 +253,8 @@
             pbItem.modelView = 'edit';
             // add the item as a row model starting in edit mode
             group.addRowModel(pbItem, true);
+
+            this.completedCopyItem();
         }, this);
 
         // update the group line number counts

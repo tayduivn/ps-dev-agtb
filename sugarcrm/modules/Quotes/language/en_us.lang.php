@@ -258,4 +258,6 @@ $mod_strings = array (
     'LBL_QUOTE_CONFIG_SUMMATION_TITLE' => 'Summation Bar',
     'LBL_QUOTE_CONFIG_COLUMNS_TITLE' => 'Worksheet Columns',
     'LBL_QUOTE_CONFIG_TOTAL_TITLE' => 'Grand Total',
+    'LBL_QUOTE_COPY_ALERT_MESSAGE' => 'Copying Quoted Line Items to new Quote.',
+    'LBL_QUOTE_COPY_ALERT_MESSAGE_LONG_TIME' => 'Copying Quoted Line Items to new Quote. This process may take some time.',
 );

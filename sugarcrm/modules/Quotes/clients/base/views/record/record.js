@@ -62,7 +62,6 @@
         }, this);
 
         this.context.on('quotes:item:toggle', this._handleItemToggled, this);
-        this.context.on('quotes:item:toggle:reset', this._handleToggleReset, this);
     },
 
     /**
@@ -78,6 +77,8 @@
         // create an empty Quote Bean
         var quoteModelCopy;
         var quoteContextCollection;
+        var mainDropdownBtn;
+        var copyItemCount = 0;
 
         if (this.editCount) {
             app.alert.show('quotes_qli_editmode', {
@@ -88,6 +89,11 @@
 
             return;
         }
+
+        // get the Edit dropdown button
+        mainDropdownBtn = this.getField('main_dropdown');
+        // close the dropdown menu
+        mainDropdownBtn.$el.removeClass('open');
 
         bundles = this.model.get('bundles');
         quoteModelCopy = app.data.createBean(this.model.module);
@@ -125,6 +131,8 @@
                 // set isCopied on the bean for currency fields to be set properly
                 newBean.isCopied = true;
 
+                copyItemCount++;
+
                 // creates a Bean and pushes the individual Products|ProductBundleNotes to the array
                 items.push(newBean);
             }, this);
@@ -153,7 +161,8 @@
             layout: 'create',
             model: quoteModelCopy,
             module: 'Quotes',
-            relatedRecords: bundleModels
+            relatedRecords: bundleModels,
+            copyItemCount: copyItemCount
         };
 
         // lead the Quotes create layout
