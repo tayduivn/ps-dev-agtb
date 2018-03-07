@@ -110,33 +110,90 @@ class ChartDisplay
 
             $sugarChart->setData($this->chartRows);
             global $do_thousands;
-            $sugarChart->setProperties($this->chartTitle, '', $this->chartType, 'on', 'value', 'on', $do_thousands, $this->reporter->module, $this->reporter->name);
+
+            $sugarChart->setProperties(
+                $this->chartTitle, // title
+                '', // subtitle
+                $this->chartType, // type
+                'on', // legend
+                'value', // labels
+                'on', // print
+                $do_thousands, // thousands
+                $this->reporter->module,
+                $this->reporter->name
+            );
+
+            $reportDef = $this->reporter->report_def;
+
+            // set the measure data type
+            //TODO: this fails for some RLI/QLI charts
+            if (isset($reportDef['numerical_chart_column_type'])) {
+                $yDataType = $reportDef['numerical_chart_column_type'];
+            } else {
+                $yDataType = 'numeric';
+            }
+            $xDataType = 'numeric';
 
             // no drillthru for bwc modules
-            $sugarChart->chart_properties['allow_drillthru'] = !isModuleBWC($this->reporter->module);
-            if (isset($this->reporter->report_def['group_defs'])) {
+            $allowDrillthru = !isModuleBWC($this->reporter->module);
+
+            if (isset($reportDef['group_defs'])) {
                 $groupByNames = array();
-                foreach ($this->reporter->report_def['group_defs'] as $group_def) {
+                $groupByLabels = array();
+                $groupByTypes = array();
+
+                foreach ($reportDef['group_defs'] as $group_def) {
                     $groupByNames[] = $group_def['name'];
+
+                    $bean = $this->reporter->full_bean_list[$group_def['table_key']];
+                    if (!empty($bean)) {
+                        $fieldDef = $bean->getFieldDefinition($group_def['name']);
+                        $moduleName = $reportDef['full_table_list'][$group_def['table_key']]['module'];
+                        $groupByLabel = translate($fieldDef['vname'], $moduleName);
+                    } else {
+                        $groupByLabel = $group_def['label'];
+                    }
+                    $groupByLabels[] = rtrim($groupByLabel, ':');
+
+                    if (!empty($group_def['type'])) {
+                        $groupByType = $group_def['type'];
+                    } elseif (isset($fieldDef) && !empty($fieldDef['type'])) {
+                        $groupByType = $fieldDef['type'];
+                    }
+
+                    if ($groupByType === 'int' || $groupByType === 'decimal') {
+                        $groupByTypes[] = 'numeric';
+                    } elseif ($groupByType === 'datetime' || $groupByType === 'currency') {
+                        $groupByTypes[] = $groupByType;
+                    } else {
+                        $groupByTypes[] = 'string';
+                    }
+
                     // check for any unsupported drillthru fields for sidecar modules
-                    if ($sugarChart->chart_properties['allow_drillthru']) {
-                        $groupByType = !empty($group_def['type']) ? $group_def['type'] : '';
-                        if (empty($groupByType) && !empty($this->reporter->full_bean_list[$group_def['table_key']])) {
-                            $bean = $this->reporter->full_bean_list[$group_def['table_key']];
-                            $fieldDef = $bean->getFieldDefinition($group_def['name']);
-                            if (!empty($fieldDef['type'])) {
-                                $groupByType = $fieldDef['type'];
-                            }
-                        }
+                    if ($allowDrillthru) {
                         // no drillthru on fields: 'datetime' (no column function), 'multienum'
                         if ($groupByType === 'multienum'
                             || ($groupByType === 'datetime' && empty($group_def['column_function']))) {
-                            $sugarChart->chart_properties['allow_drillthru'] = false;
+                            $allowDrillthru = false;
                         }
                     }
                 }
+
+                $sugarChart->setDisplayProperty('groupName', $groupByLabels[0]);
+                $sugarChart->setDisplayProperty('groupType', $groupByTypes[0]);
+                $xDataType = $groupByTypes[0] === 'string' ? 'ordinal' : $groupByTypes[0];
+
+                if (isset($groupByLabels[1])) {
+                    $sugarChart->setDisplayProperty('seriesName', $groupByLabels[1]);
+                    $sugarChart->setDisplayProperty('seriesType', $groupByTypes[1]);
+                }
+
                 $sugarChart->group_by = $groupByNames;
             }
+
+            $sugarChart->setDisplayProperty('xDataType', $xDataType);
+            $sugarChart->setDisplayProperty('yDataType', $yDataType);
+            $sugarChart->setDisplayProperty('allow_drillthru', $allowDrillthru);
 
             return $sugarChart;
         } else {
@@ -373,11 +430,6 @@ class ChartDisplay
             $val = unformat_number($val, true);
         }
         $row_remap['numerical_value'] = $val;
-        global $do_thousands;
-        if ($do_thousands) {
-            // MRF - Bug # 13501, 47148 - added floor() below:
-            $row_remap['numerical_value'] = round( floor($row_remap['numerical_value']) / 1000 );
-        }
         // format to user prefs
         $row_remap['formatted_value'] = $this->print_currency_symbol(true) . format_number($row_remap['numerical_value']);
 

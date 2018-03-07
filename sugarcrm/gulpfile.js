@@ -610,6 +610,7 @@ gulp.task('copy-sucrose', function() {
     gulp.src([
             'node_modules/@sugarcrm/sucrose-sugar/src/less/**/*',
             '!node_modules/@sugarcrm/sucrose-sugar/src/less/**/sucrose*.less',
+            '!node_modules/@sugarcrm/sucrose-sugar/src/less/**/tooltip.less',
             '!node_modules/@sugarcrm/sucrose-sugar/src/less/**/variables.less',
         ])
         .pipe(gulp.dest('styleguide/less/lib/sucrose/'));

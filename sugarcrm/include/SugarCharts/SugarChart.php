@@ -111,8 +111,17 @@ class SugarChart
         $this->data_set = $dataSet;
     }
 
-    function setProperties($title, $subtitle, $type, $legend = 'on', $labels = 'value', $print = 'on', $thousands = false, $base_module = '', $name = '')
-    {
+    public function setProperties(
+        $title,
+        $subtitle,
+        $type,
+        $legend = 'on',
+        $labels = 'value',
+        $print = 'on',
+        $thousands = false,
+        $base_module = '',
+        $name = ''
+    ) {
         $this->chart_properties['title'] = $title;
         $this->chart_properties['subtitle'] = $subtitle;
         $this->chart_properties['type'] = $type;
@@ -122,6 +131,8 @@ class SugarChart
         $this->chart_properties['thousands'] = $thousands;
         $this->chart_properties['base_module'] = $base_module;
         $this->chart_properties['label'] = $name;
+        // no drillthru for bwc modules
+        $this->chart_properties['allow_drillthru'] = !isModuleBWC($base_module);
     }
 
     function setDisplayProperty($property, $value)

@@ -16,32 +16,16 @@
 ({
     plugins: ['Dashlet', 'Chart'],
 
-    tooltiptemplate: null,
-    params: null,
-
-    /**
-     * Track if current user is manager.
-     */
-    isManager: false,
-
-    /**
-     * What module are we forecasting by
-     */
-    forecastBy: null,
-
-    /**
-     * Which field holds the likely case value
-     */
-    likelyField: null,
-
     /**
      * @inheritdoc
      */
     initialize: function(options) {
+        // Track if current user is manager
         this.isManager = app.user.get('is_manager');
         this._initPlugins();
 
         var config = app.metadata.getModule('Forecasts', 'config');
+        // What module are we forecasting by?
         this.forecastBy = config && config.forecast_by || 'Opportunities';
 
         // set the title label in meta the same way the dashlet title is set on render
@@ -64,6 +48,7 @@
         ];
 
         var orderBy = '';
+        // Which field holds the likely case value?
         if (this.forecastBy === 'Opportunities') {
             fields.push('amount');
             orderBy = 'amount:desc';
@@ -80,7 +65,14 @@
             'order_by': orderBy
         };
 
-        this.tooltiptemplate = app.template.getView(this.name + '.tooltiptemplate');
+        // get the locale settings for the active user
+        // this.locale is stored by reference in the chart model
+        this.locale = SUGAR.charts.getUserLocale();
+        // create deep copy for tooltip temp use, etc.
+        // it will be set to chart.locality() after instantiation
+        this.locality = {};
+
+        this.tooltipTemplate = app.template.getView(this.name + '.tooltiptemplate');
     },
 
     /**
@@ -90,7 +82,7 @@
         var self = this;
 
         if (this.settings.get('filter_duration') == 0) {
-            this.settings.set({'filter_duration':'current'}, {'silent':true});
+            this.settings.set({'filter_duration': 'current'}, {'silent': true});
         }
 
         this.setDateRange();
@@ -112,12 +104,13 @@
                 return d.y;
             })
             .margin({top: 0})
-            .tooltipContent(function(eo, properties) {
+            .tooltipContent(_.bind(function(eo, properties) {
                 var point = eo.point;
-                point.close_date = d3sugar.timeFormat('%x')(d3sugar.timeParse('%Y-%m-%d')(point.x));
-                point.amount = app.currency.formatAmountLocale(point.base_amount, point.currency_id);
-                return self.tooltiptemplate(point).replace(/(\r\n|\n|\r)/gm, '');
-            })
+                var value = this.chart.x()(point);
+                point.close_date = sucrose.utility.dateFormat(value, this.locality.date, this.locality);
+                point.likely = app.currency.formatAmountLocale(point.base_amount, point.currency_id);
+                return self.tooltipTemplate(point).replace(/(\r\n|\n|\r)/gm, '');
+            }, this))
             .showTitle(false)
             .tooltips(true)
             .showLegend(true)
@@ -140,8 +133,13 @@
                     close: app.lang.get('LBL_CHART_LEGEND_CLOSE'),
                     open: app.lang.get('LBL_CHART_LEGEND_OPEN')
                 },
-                noData: app.lang.get('LBL_CHART_NO_DATA')
-            });
+                noData: app.lang.get('LBL_CHART_NO_DATA'),
+                noLabel: app.lang.get('LBL_CHART_NO_LABEL')
+            })
+            .locality(this.locale);
+
+        // create deep copy for tooltip temp use
+        this.locality = sucrose.utility.buildLocality(this.chart.locality(), true);
 
         this.on('data-changed', function() {
             this.renderChart();

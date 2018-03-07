@@ -21,6 +21,13 @@ describe('SugarCharts', function() {
             function(d) {
                 eval(d);
             });
+        SugarTest.loadFile(
+            '../include/javascript/sucrose',
+            'sucrose.min',
+            'js',
+            function(d) {
+                eval(d);
+            });
         sandbox = sinon.sandbox.create();
     });
 
@@ -321,7 +328,17 @@ describe('SugarCharts', function() {
         langGetStub.restore();
     });
 
-    it('should return a chart data json object when translateDataToD3 is called', function() {
+    it('should return an array of translated strings when translateListStrings is called', function() {
+        var strings;
+        var appListStub = sandbox.stub(app.lang, 'getAppListStrings', function(appList) {
+            return 'Bar';
+        });
+        strings = SUGAR.charts.translateListStrings('dom_switch_bool');
+        expect(strings).toBe('Bar');
+        appListStub.restore();
+    });
+
+    it('should return a chart data json object when transformDataToD3 is called', function() {
         var json = {
             'properties': [{
                 'title': 'Total is 20'
@@ -347,11 +364,11 @@ describe('SugarCharts', function() {
         var params = {barType: 'grouped', module: 'Mock'};
         var config = {chartType: 'barChart', barType: 'stacked', ReportModule: true};
 
-        var chartData = SUGAR.charts.translateDataToD3(json, params, config);
-
         var expected = {
             'properties': {
                 'title': 'Total is 20',
+                'xDataType': 'ordinal',
+                'yDataType': 'numeric',
                 'groups': [
                     {'group': 1, 'label': 'Apples'},
                     {'group': 2, 'label': 'Oranges'}
@@ -359,7 +376,11 @@ describe('SugarCharts', function() {
                 'values': [
                     {'group': 1, 'total': 12},
                     {'group': 2, 'total': 8}
-                ]
+                ],
+                'groupName': 'LBL_CHART_GROUP',
+                'groupType': 'string',
+                'seriesName': 'LBL_CHART_KEY',
+                'seriesType': 'string'
             },
             'data': [
                 {
@@ -388,12 +409,19 @@ describe('SugarCharts', function() {
                 }
             ]
         };
+        var chartData;
 
+        //Deprecated: use transformDataToD3() instead
+        chartData = SUGAR.charts.translateDataToD3(json, params, config);
+        expect(chartData).toEqual(expected);
+
+        chartData = SUGAR.charts.transformDataToD3(json, params, config);
         expect(chartData).toEqual(expected);
     });
 
     it('should return boolean when isDataEmpty is called', function() {
         var empty;
+        //Deprecated: use dataIsEmpty() instead
         empty = SUGAR.charts.isDataEmpty();
         expect(empty).toBe(false);
         empty = SUGAR.charts.isDataEmpty('No Data');
@@ -404,11 +432,551 @@ describe('SugarCharts', function() {
         expect(empty).toBe(true);
     });
 
+    it('should return boolean when dataIsEmpty is called', function() {
+        var empty;
+        empty = SUGAR.charts.dataIsEmpty();
+        expect(empty).toBe(true);
+        empty = SUGAR.charts.dataIsEmpty('No Data');
+        expect(empty).toBe(true);
+        empty = SUGAR.charts.dataIsEmpty('');
+        expect(empty).toBe(true);
+        empty = SUGAR.charts.dataIsEmpty(['Foo']);
+        expect(empty).toBe(true);
+        empty = SUGAR.charts.dataIsEmpty({values: 'Foo'});
+        expect(empty).toBe(true);
+        empty = SUGAR.charts.dataIsEmpty({values: []});
+        expect(empty).toBe(true);
+        empty = SUGAR.charts.dataIsEmpty({values: [{x: 1, y: 7}]});
+        expect(empty).toBe(false);
+    });
+
+    it('should return an object with translated chart strings when getChartStrings is called', function() {
+        var strings;
+        var expected;
+        var translateStub = sandbox.stub(SUGAR.charts, 'translateString', function(appString, module) {
+            return appString + (module || '');
+        });
+
+        // test default user prefs just like getLocale
+        strings = SUGAR.charts.getChartStrings();
+        expected = {
+            legend: {
+                close: 'LBL_CHART_LEGEND_CLOSE',
+                open: 'LBL_CHART_LEGEND_OPEN',
+                noLabel: 'LBL_CHART_UNDEFINED'
+            },
+            tooltip: {
+                amount: 'LBL_CHART_AMOUNT',
+                count: 'LBL_CHART_COUNT',
+                date: 'LBL_CHART_DATE',
+                group: 'LBL_CHART_GROUP',
+                key: 'LBL_CHART_KEY',
+                percent: 'LBL_CHART_PERCENT'
+            },
+            noData: 'LBL_CHART_NO_DATA',
+            noLabel: 'LBL_CHART_UNDEFINED',
+            noDrillthru: 'LBL_CHART_NO_DRILLTHRUReports'
+        };
+        expect(strings).toEqual(expected);
+
+        translateStub.restore();
+    });
+
+    it('should return an object with locale format preference when getLocale is called', function() {
+        var strings;
+        var expected;
+        var userPrefStub = sandbox.stub(SUGAR.charts, 'getUserPreferences', function() {
+            return {
+                'decimal_separator': '.',
+                'number_grouping_separator': ',',
+                'currency_symbol': '$',
+                'currency_id': -99,
+                'datepref': 'm/d/Y',
+                'timepref': 'h:ia',
+                'decimal_precision': 2
+            };
+        });
+        var dateArrayStub = sandbox.stub(SUGAR.charts, '_dateStringArray', function(listLabel) {
+            return [listLabel];
+        });
+        var userMock = {
+            'decimal_separator': '*',
+            'number_grouping_separator': '^',
+            'currency_symbol': '#',
+            'currency_id': 123,
+            'datepref': 'Y.M.D',
+            'timepref': 'H:m A',
+            'decimal_precision': 3
+        };
+
+        // first test default user prefs
+        prefs = SUGAR.charts.getLocale();
+        expected = {
+            'decimal': '.',
+            'thousands': ',',
+            'grouping': [3],
+            'currency': ['$', ''],
+            'currency_id': -99,
+            'dateTime': '%a %b %e %X %Y',
+            'date': '%m/%d/%Y',
+            'time': '%I:%M',
+            'periods': ['am', 'pm'],
+            'days': ['dom_cal_day_long'],
+            'shortDays': ['dom_cal_day_short'],
+            'months': ['dom_cal_month_long'],
+            'shortMonths': ['dom_cal_month_short'],
+            'precision': 2
+        };
+        expect(prefs).toEqual(expected);
+
+        // now test passing user overrides
+        prefs = SUGAR.charts.getLocale(userMock);
+        expected = {
+            'decimal': '*',
+            'thousands': '^',
+            'grouping': [3],
+            'currency': ['#', ''],
+            'currency_id': 123,
+            'dateTime': '%a %b %e %X %Y',
+            'date': '%Y.%M.%D',
+            'time': '%H:%m',
+            'periods': [' AM', ' PM'],
+            'days': ['dom_cal_day_long'],
+            'shortDays': ['dom_cal_day_short'],
+            'months': ['dom_cal_month_long'],
+            'shortMonths': ['dom_cal_month_short'],
+            'precision': 3
+        };
+        expect(prefs).toEqual(expected);
+
+        userPrefStub.restore();
+        dateArrayStub.restore();
+    });
+
+    it('should return an object with locale format preference when getUserLocale is called', function() {
+        var strings;
+        var expected;
+        var userPrefStub = sandbox.stub(SUGAR.charts, 'getUserPreferences', function() {
+            return {
+                'decimal_separator': '*',
+                'number_grouping_separator': '^',
+                'currency_symbol': '#',
+                'currency_id': 123,
+                'datepref': 'Y.M.D',
+                'timepref': 'H:m A',
+                'decimal_precision': 3
+            };
+        });
+        var dateArrayStub = sandbox.stub(SUGAR.charts, '_dateStringArray', function(listLabel) {
+            return [listLabel];
+        });
+
+        // test default user prefs just like getLocale
+        prefs = SUGAR.charts.getUserLocale();
+        expected = {
+            'decimal': '*',
+            'thousands': '^',
+            'grouping': [3],
+            'currency': ['#', ''],
+            'currency_id': 123,
+            'dateTime': '%a %b %e %X %Y',
+            'date': '%Y.%M.%D',
+            'time': '%H:%m',
+            'periods': [' AM', ' PM'],
+            'days': ['dom_cal_day_long'],
+            'shortDays': ['dom_cal_day_short'],
+            'months': ['dom_cal_month_long'],
+            'shortMonths': ['dom_cal_month_short'],
+            'precision': 3
+        };
+        expect(prefs).toEqual(expected);
+
+        userPrefStub.restore();
+        dateArrayStub.restore();
+    });
+
+    it('should return a user preference when userPreference is called', function() {
+        var strings;
+        var expected;
+        var appUserPref = sandbox.stub(app.user, 'getPreference', function(pref) {
+            return pref === 'Foo' ? 'Bar' : 'Baz';
+        });
+        pref = SUGAR.charts.userPreference('Foo');
+        expect(pref).toBe('Bar');
+        pref = SUGAR.charts.userPreference('Foop');
+        expect(pref).toBe('Baz');
+        appUserPref.restore();
+    });
+
+    it('should return an object with locale format preference when getSystemLocale is called', function() {
+        var strings;
+        var expected;
+        var sysPrefStub = sandbox.stub(SUGAR.charts, '_getSystemPreferences', function() {
+            return {
+                'decimal_separator': '*',
+                'number_grouping_separator': '^',
+                'currency_symbol': '#',
+                'currency_id': 123,
+                'datepref': 'Y.M.D',
+                'timepref': 'H:m A',
+                'decimal_precision': 3
+            };
+        });
+        var dateArrayStub = sandbox.stub(SUGAR.charts, '_dateStringArray', function(listLabel) {
+            return [listLabel];
+        });
+
+        // test default user prefs just like getLocale
+        prefs = SUGAR.charts.getSystemLocale();
+        expected = {
+            'decimal': '*',
+            'thousands': '^',
+            'grouping': [3],
+            'currency': ['#', ''],
+            'currency_id': 123,
+            'dateTime': '%a %b %e %X %Y',
+            'date': '%Y.%M.%D',
+            'time': '%H:%m',
+            'periods': [' AM', ' PM'],
+            'days': ['dom_cal_day_long'],
+            'shortDays': ['dom_cal_day_short'],
+            'months': ['dom_cal_month_long'],
+            'shortMonths': ['dom_cal_month_short'],
+            'precision': 3
+        };
+        expect(prefs).toEqual(expected);
+
+        sysPrefStub.restore();
+        dateArrayStub.restore();
+    });
+
+    // Pseudo private methods
+    it('should return a date format string when _dateFormat is called', function() {
+        var formatter;
+        formatter = SUGAR.charts._dateFormat();
+        expect(formatter).toBe('%b %-d, %Y');
+        formatter = SUGAR.charts._dateFormat('M/D/Y');
+        expect(formatter).toBe('%M/%D/%Y');
+        formatter = SUGAR.charts._dateFormat('y.m.d');
+        expect(formatter).toBe('%y.%m.%d');
+    });
+
+    it('should return a time format string when _timeFormat is called', function() {
+        var formatter;
+        formatter = SUGAR.charts._timeFormat();
+        expect(formatter).toBe('%-I:%M:%S');
+        formatter = SUGAR.charts._timeFormat('H:m A');
+        expect(formatter).toBe('%H:%m');
+        formatter = SUGAR.charts._timeFormat('h:i');
+        expect(formatter).toBe('%I:%M');
+    });
+
+    it('should return a time format string when _timePeriods is called', function() {
+        var periods;
+        periods = SUGAR.charts._timePeriods();
+        expect(periods).toEqual(['AM', 'PM']);
+        periods = SUGAR.charts._timePeriods('H:m A');
+        expect(periods).toEqual([' AM', ' PM']);
+        periods = SUGAR.charts._timePeriods('H:mA');
+        expect(periods).toEqual(['AM', 'PM']);
+        periods = SUGAR.charts._timePeriods('H:m a');
+        expect(periods).toEqual([' am', ' pm']);
+        periods = SUGAR.charts._timePeriods('H:ma');
+        expect(periods).toEqual(['am', 'pm']);
+        periods = SUGAR.charts._timePeriods('H:m');
+        expect(periods).toEqual(['', '']);
+    });
+
+    it('should return an array of date strings when _dateStringArray is called', function() {
+        var dateStrings;
+        var dateArrayStub = sandbox.stub(SUGAR.charts, 'translateListStrings', function(listLabel) {
+            return listLabel === 'noempty' ? {foo: 'Foo', bar: 'Bar'} : {baz: '', foo: 'Foo', bar: 'Bar'};
+        });
+        dateStrings = SUGAR.charts._dateStringArray('noempty');
+        expect(dateStrings).toEqual(['Foo', 'Bar']);
+        dateStrings = SUGAR.charts._dateStringArray('withempty');
+        expect(dateStrings).toEqual(['Foo', 'Bar']);
+        dateArrayStub.restore();
+    });
+
+    it('should return a tooltip template when _getTooltipTemplate is called', function() {
+        var strings;
+        var expected;
+        var appTemplate = sandbox.stub(app.template, 'getField', function(field, templateName, module) {
+            return templateName === 'multipletooltiptemplate' ?
+                'Foo' :
+                'Bar';
+        });
+        template = SUGAR.charts._getTooltipTemplate('barChart');
+        expect(template).toBe('Foo');
+        template = SUGAR.charts._getTooltipTemplate('lineChart');
+        expect(template).toBe('Foo');
+        template = SUGAR.charts._getTooltipTemplate('pieChart');
+        expect(template).toBe('Bar');
+        appTemplate.restore();
+    });
+
+    describe('when button objects are use for the confirmation buttons', function() {
+        var tooltipTemplate;
+        var appCurrency;
+        var numberFormat;
+        var percentFormat;
+        var isNumeric;
+        var chart;
+
+        beforeEach(function() {
+            tooltipTemplate = sandbox.stub(SUGAR.charts, '_getTooltipTemplate', function(point) {
+                return JSON.stringify(point);
+            });
+            appCurrency = sandbox.stub(app.currency, 'formatAmountLocale', function(value, currencyId) {
+                return '#' + value;
+            });
+            numberFormat = sandbox.stub(sucrose.utility, 'numberFormat', function(value, precision, currency, locale) {
+                return value;
+            });
+            percentFormat = sandbox.stub(sucrose.utility, 'numberFormatPercent', function(value, total, locale) {
+                return (value * 100 / total) + '%';
+            });
+            isNumeric = sandbox.stub(sucrose.utility, 'isNumeric', function(value) {
+                var v = parseFloat(value);
+                return !isNaN(v) && typeof v === 'number' && isFinite(v);
+            });
+            chart = {
+                strings: function() {
+                    return {
+                        noDrillthru: 'Drill through not supported.',
+                        tooltip: {
+                            amount: 'Amount',
+                            count: 'Count'
+                        }
+                    };
+                },
+                locality: function() {
+                    return {
+                        'decimal': '*',
+                        'thousands': '^',
+                        'grouping': [3],
+                        'currency': ['#', ''],
+                        'currency_id': 123,
+                        'precision': 3
+                    };
+                },
+                getKey: function() {
+                    return function(d) { return d.key; };
+                },
+                getValue: function() {
+                    return function(d) { return d.y; };
+                },
+                xValueFormat: function() {
+                    return function(d, i, label, isDateTime, formatter) {
+                        return label ? label : isDateTime ? '12/31/2017' : d;
+                    };
+                }
+            };
+        });
+
+        afterEach(function() {
+            tooltipTemplate.restore();
+            appCurrency.restore();
+            numberFormat.restore();
+            percentFormat.restore();
+            isNumeric.restore();
+            chart = null;
+            properties = null;
+        });
+
+        it('should render a tooltip with single data field template', function() {
+            var tooltip;
+            var expected;
+            var properties = {
+                yDataType: 'numeric',
+                total: 100
+            };
+            var eo = {
+                key: 'My Key',
+                y: 50
+            };
+            var params = {
+                allow_drillthru: true
+            };
+
+            // Test numeric tooltip
+            tooltip = SUGAR.charts.formatTooltipSingle(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                key: 'My Key',
+                label: 'Count',
+                value: 50,
+                percent: '50%'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+
+            // Test currency tooltip
+            properties.yDataType = 'currency';
+            tooltip = SUGAR.charts.formatTooltipSingle(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                key: 'My Key',
+                label: 'Amount',
+                value: '#50',
+                percent: '50%'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+
+            // Verify percent formatting is called
+            properties.total = 200;
+            tooltip = SUGAR.charts.formatTooltipSingle(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                key: 'My Key',
+                label: 'Amount',
+                value: '#50',
+                percent: '25%'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+
+            // Verify drill through message is displayed
+            params.allow_drillthru = false;
+            tooltip = SUGAR.charts.formatTooltipSingle(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                key: 'My Key',
+                label: 'Amount',
+                value: '#50',
+                percent: '25%',
+                msg: 'Drill through not supported.'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+        });
+
+        it('should render a tooltip with multiple data fields template', function() {
+            var tooltip;
+            var expected;
+            var properties = {
+                yDataType: 'numeric',
+                xDataType: 'ordinal',
+                seriesType: 'string',
+                seriesName: 'Series',
+                groupName: 'Group'
+            };
+            var eo = {
+                point: {
+                    x: 1,
+                    y: 50
+                },
+                pointIndex: 0,
+                group: {
+                    label: 'My group',
+                    _height: 100
+                },
+                series: {
+                    key: 'My series'
+                }
+            };
+            var params = {
+                allow_drillthru: true
+            };
+
+            // Test numeric tooltip
+            tooltip = SUGAR.charts.formatTooltipMultiple(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                valueName: 'Count',
+                valueLabel: 50,
+                groupName: 'Group',
+                groupLabel: 'My group',
+                seriesName: 'Series',
+                seriesLabel: 'My series',
+                percent: '50%'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+
+            // Test currency tooltip
+            properties.yDataType = 'currency';
+            tooltip = SUGAR.charts.formatTooltipMultiple(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                valueName: 'Amount',
+                valueLabel: '#50',
+                groupName: 'Group',
+                groupLabel: 'My group',
+                seriesName: 'Series',
+                seriesLabel: 'My series',
+                percent: '50%'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+
+            // Verify percent formatting is called
+            eo.group._height = 200;
+            tooltip = SUGAR.charts.formatTooltipMultiple(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                valueName: 'Amount',
+                valueLabel: '#50',
+                groupName: 'Group',
+                groupLabel: 'My group',
+                seriesName: 'Series',
+                seriesLabel: 'My series',
+                percent: '25%'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+
+            // Verify drill through message is displayed
+            params.allow_drillthru = false;
+            tooltip = SUGAR.charts.formatTooltipMultiple(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                valueName: 'Amount',
+                valueLabel: '#50',
+                groupName: 'Group',
+                groupLabel: 'My group',
+                seriesName: 'Series',
+                seriesLabel: 'My series',
+                percent: '25%',
+                msg: 'Drill through not supported.'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+            params.allow_drillthru = true;
+
+            // Verify percent not displayed if 100%
+            eo.group._height = 50;
+            tooltip = SUGAR.charts.formatTooltipMultiple(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                valueName: 'Amount',
+                valueLabel: '#50',
+                groupName: 'Group',
+                groupLabel: 'My group',
+                seriesName: 'Series',
+                seriesLabel: 'My series'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+
+            // Verify series label is displayed as numeric
+            eo.series.key = 50;
+            properties.seriesType = 'numeric';
+            tooltip = SUGAR.charts.formatTooltipMultiple(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                valueName: 'Amount',
+                valueLabel: '#50',
+                groupName: 'Group',
+                groupLabel: 'My group',
+                seriesName: 'Series',
+                seriesLabel: 50
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+
+            // Verify series label is displayed as currency
+            properties.seriesType = 'currency';
+            tooltip = SUGAR.charts.formatTooltipMultiple(eo, properties, chart, tooltipTemplate, params);
+            expected = {
+                valueName: 'Amount',
+                valueLabel: '#50',
+                groupName: 'Group',
+                groupLabel: 'My group',
+                seriesName: 'Series',
+                seriesLabel: '#50'
+            };
+            expect(tooltip).toEqual(JSON.stringify(expected));
+        });
+    });
+
     // Not suitable for unit tests. See integration tests.
     // callback
     // openDrawer
     // renderChart
-    // renderError'
+    // renderError
     // get
     // trackWindowResize
     // saveImageFile

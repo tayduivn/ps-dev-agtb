@@ -4934,6 +4934,13 @@ Sincerely, SugarCRM',
     'LBL_CHART_CONTROLS_CLOSE' => 'Hide controls',
     'LBL_CHART_CONTROLS_OPEN' => 'Show controls',
     'LBL_CHART_UNDEFINED' => 'Undefined',
+    'LBL_CHART_NO_LABEL' => 'Undefined',
+    'LBL_CHART_AMOUNT' => 'Amount',
+    'LBL_CHART_COUNT' => 'Count',
+    'LBL_CHART_PERCENT' => 'Percent',
+    'LBL_CHART_GROUP' => 'Group',
+    'LBL_CHART_DATE' => 'Date',
+    'LBL_CHART_KEY' => 'Key',
 
     //common chart config field labels
     'LBL_CHART_CONFIG_CHART_TYPE' => 'Chart type',

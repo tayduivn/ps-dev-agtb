@@ -30,6 +30,9 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        this.tooltipTemplate = app.template.getField('chart', 'singletooltiptemplate', this.module);
+        this.locale = SUGAR.charts.getSystemLocale();
+
         this.chart = sucrose.charts.pieChart()
                 .margin({top: 0, right: 0, bottom: 0, left: 0})
                 .donut(true)
@@ -45,16 +48,20 @@
                 .direction(app.lang.direction)
                 .colorData('data')
                 .tooltipContent(_.bind(function(eo, properties) {
-                    var key = this.chart.getKey()(eo);
-                    var y = this.chart.getValue()(eo);
-                    var percent = properties.total ? (y * 100 / properties.total).toFixed(1) : 100;
-                    return '<h3>' + key + '</h3>' +
-                           '<p>' + y + ' - ' + percent + '%</p>';
+                    var point = {};
+                    point.key = this.chart.getKey()(eo);
+                    point.label = app.lang.get('LBL_CHART_COUNT');
+                    point.value = this.chart.getValue()(eo);
+                    point.percent = sucrose.utility.numberFormatPercent(point.value, properties.total, this.locality);
+                    return this.tooltipTemplate(point).replace(/(\r\n|\n|\r)/gm, '');
                 }, this))
                 .strings({
-                    noData: app.lang.get('LBL_CHART_NO_DATA')
-                });
+                    noData: app.lang.get('LBL_CHART_NO_DATA'),
+                    noLabel: app.lang.get('LBL_CHART_NO_LABEL')
+                })
+                .locality(this.locale);
 
+        this.locality = this.chart.locality();
     },
 
     /**

@@ -23,6 +23,7 @@
         this.chart = null;
         this.chart_loaded = false;
         this.chartType = '';
+        this.locale = SUGAR.charts.getSystemLocale();
     },
 
     /**
@@ -50,7 +51,7 @@
             return $(this).css('overflow-y') === 'auto' || $(this).css('overflow-y') === 'scroll';
         }).first();
 
-        b.scrollTop(b.scrollTop() + distance);
+        b.scrollTop(b.scrollTop() - distance);
     },
 
     /**
@@ -258,6 +259,7 @@
      * Checks to see if the chart is available and is displayed before resizing
      */
     resize: function() {
+        // If (this.chart_loaded && !this.sidebar_closed && !this.preview_open && !this.dashlet_collapsed) {
         if (!this.chart_loaded) {
             return;
         }

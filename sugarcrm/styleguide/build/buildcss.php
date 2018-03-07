@@ -23,26 +23,11 @@ try {
     $variablesLess = file_get_contents($root . 'variables.less');
     $variables = getCustomThemeVars($variablesLess);
     $variables['baseUrl'] = '".."';
-    $split_css = (isset($_GET["split_css"]) && $_GET["split_css"]=="true");
     $files = array();
-
-    if ($split_css) {
-        // Build bootstrap.css and sugar.css.
-        $files[] = array(
-            'in' => '../less/clients/' . $client . '/bootstrap.less',
-            'out' => '../assets/css/bootstrap.css',
-        );
-        $files[] = array(
-            'in' => '../less/clients/' . $client . '/sugar.less',
-            'out' => '../assets/css/sugar.css',
-        );
-    } else {
-        // Build bootstrap.css.
-        $files[] = array(
-            'in' => '../less/clients/' . $client . '/config.less',
-            'out' => '../assets/css/bootstrap.css',
-        );
-    }
+    $files[] = array(
+        'in' => '../less/clients/' . $client . '/sugar.less',
+        'out' => '../assets/css/sugar.css',
+    );
 
     // Build utility CSS files.
     $modulesRoot = '../less/modules';
@@ -72,7 +57,7 @@ try {
     // echo '<h2>bootstrap.css successfully generated.</h2>';
     // echo '<p><a href="./../styleguide/">Go to the styleguide</a></p>';
     // echo '<p><a href="./index.php">Back</a></p>';
-    echo 'bootstrap.css successfully generated.';
+    echo 'CSS files successfully generated.';
 
 } catch (Exception $ex) {
     exit('lessc fatal error:'.$ex->getMessage());

@@ -51,16 +51,15 @@ foreach ($themesClientsDir as $platform) {
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link data-linkcss="bootstrap" href="../assets/css/bootstrap.css" rel="stylesheet">
-    <link data-linkcss="bootstrap" href="../assets/css/sugar.css" rel="stylesheet">
-    <link data-linkcss="bootstrap" href="../assets/css/styleguide.css" rel="stylesheet">
+    <link data-linkcss="sugar" href="../assets/css/sugar.css" rel="stylesheet">
+    <link data-linkcss="sugar" href="../assets/css/styleguide.css" rel="stylesheet">
 </head>
 <body>
 <div id="header">
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
-            <div class="nav">
-                <a class="brand" href="#" style="margin-left:0">bootstrap.css builder</a>
+            <div class="nav" style="padding: 0 20px">
+                <h1>CSS Builder</h1>
             </div>
         </div>
     </div>
@@ -70,23 +69,13 @@ foreach ($themesClientsDir as $platform) {
         <div class="subnav row-fluid">
             <div class="btn-toolbar pull-left">
                 <div>
-                    <label for="min-false">
-                        <input id="min-false" type="radio" name="min" value="false" checked>
-                        Uncompressed
-                    </label>
                     <label for="min-true">
-                        <input id="min-true" type="radio" name="min" value="true">
+                        <input id="min-true" type="radio" name="min" value="true" checked>
                         Compressed
                     </label>
-                </div>
-                <div>
-                    <label for="split_css-true">
-                        <input id="split_css-true" type="radio" name="split_css" value="true" checked>
-                        Split
-                    </label>
-                    <label for="split_css-false">
-                        <input id="split_css-false" type="radio" name="split_css" value="false">
-                        Combined
+                    <label for="min-false">
+                        <input id="min-false" type="radio" name="min" value="false">
+                        Uncompressed
                     </label>
                 </div>
                 <div>
@@ -104,7 +93,7 @@ foreach ($themesClientsDir as $platform) {
                 ?>
                 </div>
             </div>
-            <div class="btn-toolbar pull-right">
+            <div class="btn-toolbar pull-right" style="padding: 0 20px">
                 <div class="btn-group">
                     <a class="btn btn-primary btn-submit" href="javascript:void(0)">Compile!</a>
                 </div>
@@ -156,7 +145,6 @@ foreach ($themesClientsDir as $platform) {
         </div>
     </div>
     <div class="modal-footer">
-        <a target="_blank" href="../styleguide" class="btn">Open styleguide</a>
         <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
     </div>
 </div>
@@ -169,31 +157,23 @@ foreach ($themesClientsDir as $platform) {
         $.get('buildcss.php?' + attrs, function(data){
             $("#build-result .modal-body h4").text(data);
             $("#build-result").modal('show');
-            $('link[data-linkcss=bootstrap]').remove();
+            $('link[data-linkcss=sugar]').remove();
             $("head").append("<link>");
-                var css = $("head").children(":last");
-                css.attr({
-                  'data-linkcss': 'bootstrap',
-                  rel:  "stylesheet",
-                  type: "text/css",
-                  href: '../assets/css/bootstrap.css?t=' + new Date().getTime()
-                });
+            var css = $("head").children(":last");
+            css.attr({
+              'data-linkcss': 'sugar',
+              rel:  "stylesheet",
+              type: "text/css",
+              href: '../assets/css/sugar.css?t=' + new Date().getTime()
+            });
             $("head").append("<link>");
-                var css = $("head").children(":last");
-                css.attr({
-                  'data-linkcss': 'sugar',
-                  rel:  "stylesheet",
-                  type: "text/css",
-                  href: '../assets/css/sugar.css?t=' + new Date().getTime()
-                });
-            $("head").append("<link>");
-                var css = $("head").children(":last");
-                css.attr({
-                  'data-linkcss': 'sugar',
-                  rel:  "stylesheet",
-                  type: "text/css",
-                  href: '../assets/css/styleguide.css?t=' + new Date().getTime()
-                });
+            var css = $("head").children(":last");
+            css.attr({
+              'data-linkcss': 'sugar',
+              rel:  "stylesheet",
+              type: "text/css",
+              href: '../assets/css/styleguide.css?t=' + new Date().getTime()
+            });
         });
     });
     $('tr').hover().css('cursor', 'pointer').click(function() {

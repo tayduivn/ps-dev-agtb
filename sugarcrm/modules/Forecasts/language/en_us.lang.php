@@ -189,6 +189,10 @@ $mod_strings = array (
     'LBL_PRODUCT_ID' => 'Product ID',
     'LBL_QUOTA_ID' => 'Quota ID',
     'LBL_VERSION' => 'Version',
+    'LBL_CHART_BAR_LEGEND_CLOSE' => 'Hide bar legend',
+    'LBL_CHART_BAR_LEGEND_OPEN' => 'Show bar legend',
+    'LBL_CHART_LINE_LEGEND_CLOSE' => 'Hide line legend',
+    'LBL_CHART_LINE_LEGEND_OPEN' => 'Show line legend',
 
     //Labels for forecasting history log and endpoint
     'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request Forecasts for {1}',

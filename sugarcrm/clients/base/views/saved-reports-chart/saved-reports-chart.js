@@ -157,6 +157,19 @@
             }, this);
 
             this.settings.on('change:chart_type', function(model) {
+                // reset settings xAxisLabel because of line chart
+                var reportData = this.reportData.get('rawReportData');
+                var chartData = this.reportData.get('rawChartData');
+                var axisLabel;
+                // report might no be loaded yet
+                if (reportData && chartData) {
+                    axisLabel = this._getXaxisLabel(
+                        reportData.group_defs,
+                        chartData.properties[0],
+                        model.get('chart_type')
+                    );
+                    model.set('x_axis_label', axisLabel);
+                }
                 // toggle display of chart display option controls based on chart type
                 this._toggleChartFields();
             }, this);
@@ -233,6 +246,7 @@
         var config;
         var params;
         var settings;
+        var chartType;
 
         // only called by bindDataChange when the report id is changed in config panel
         if (!serverData.reportData || !serverData.chartData) {
@@ -245,23 +259,27 @@
         data = serverData.reportData;
         properties = serverData.chartData.properties[0];
 
-        config = this.getChartConfig(properties.type);
+        config = this.getChartConfig(properties.type); // this is chart type in Report
+
+        // default settings is current settings with defaults
+        settings = this.getDefaultSettings();
+
+        // this does what extend/defaults does but we need it for x_axis_label before
+        chartType = updated ? config.chartType : settings.chart_type || config.chartType;
 
         params = {
             label: data.label,
-            chart_type: config.chartType,
+            chart_type: chartType, // this is renamed chart type from Report
             report_title: properties.title,
             show_legend: properties.legend === 'on' ? true : false,
             stacked: config.barType === 'stacked' || config.barType === 'basic' ? true : false,
-            x_axis_label: this._getXaxisLabel(data),
+            x_axis_label: this._getXaxisLabel(data.group_defs, properties, chartType),
             y_axis_label: this._getYaxisLabel(data),
             module: properties.base_module,
             allow_drillthru: properties.allow_drillthru,
             vertical: config.orientation === 'vertical' ? true : false,
             direction: app.lang.direction
         };
-
-        settings = this.getDefaultSettings();
 
         // override settings when new report is selected
         if (updated) {
@@ -596,12 +614,10 @@
      * Returns the x-axis label based on report data
      * @return {String}
      */
-    _getXaxisLabel: function(data) {
-        var label = '';
-        if (data && data.group_defs) {
-            label = _.first(data.group_defs).label;
-        }
-        return label;
+    _getXaxisLabel: function(groups, properties, chartType) {
+        return chartType === 'line chart' ?
+            properties.seriesName || _.last([].concat(groups)).label :
+            properties.groupName || _.first([].concat(groups)).label;
     },
 
     /**
@@ -702,7 +718,8 @@
         app.api.call('read', url, null, {
             success: _.bind(function(serverData) {
                 if (options && options.success) {
-                    // usually setChartParams()
+                    // options.success is usually setChartParams()
+                    // defines this.reportData 'rawChartParams';
                     options.success.apply(this, arguments);
                 }
 
@@ -793,7 +810,7 @@
                         yOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_XAXIS_LABEL');
                         break;
                     case 'line chart':
-                        showTickOptions = false;
+                        showTickOptions = true;
                         break;
                     default:
                         showTickOptions = true;

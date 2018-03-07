@@ -10,7 +10,6 @@
  */
 ({
     plugins: ['Dashlet', 'Chart'],
-    //className: 'process-status-chart',
     processCollection: null,
     currentValue: 'all',
     chartCollection: null,
@@ -23,18 +22,38 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        this.locale = SUGAR.charts.getUserLocale();
+        this.tooltipTemplate = app.template.getField('chart', 'multipletooltiptemplate', 'Reports');
+
         this.chart = sucrose.charts.multibarChart()
             .showTitle(false)
             .showControls(true)
             .showValues(false)
             .stacked(true)
             .tooltipContent(_.bind(function(eo, properties) {
-                var point = eo.point;
-                var series = eo.series;
-                return '<h3>' + series.key + '</h3>' +
-                       '<p>' + parseInt(point.y, 10) + '</p>';
+                var point = {};
+                var precision = this.locality.precision;
+                point.groupName = app.lang.get('LBL_PMSE_LABEL_PROCESS', this.module);
+                point.groupLabel = eo.group.label;
+                point.seriesName = app.lang.get('LBL_PMSE_LABEL_STATUS', this.module);
+                point.seriesLabel = eo.series.key;
+                point.valueName = app.lang.get('LBL_CHART_COUNT');
+                point.valueLabel = sucrose.utility.numberFormat(eo.point.y, precision, false, this.locality);
+                return this.tooltipTemplate(point).replace(/(\r\n|\n|\r)/gm, '');
             }, this))
-            .tooltips(true);
+            .tooltips(true)
+            .strings({
+                legend: {
+                    close: app.lang.get('LBL_CHART_LEGEND_CLOSE'),
+                    open: app.lang.get('LBL_CHART_LEGEND_OPEN'),
+                    noLabel: app.lang.get('LBL_CHART_UNDEFINED')
+                },
+                noData: app.lang.get('LBL_CHART_NO_DATA'),
+                noLabel: app.lang.get('LBL_CHART_UNDEFINED')
+            })
+            .locality(this.locale);
+
+        this.locality = this.chart.locality();
     },
 
     hasChartData: function () {

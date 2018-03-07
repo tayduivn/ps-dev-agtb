@@ -498,8 +498,7 @@ class PMSECasesListApi extends FilterApi
             $processes[$index]['total'] += $row['total'];
         }
 
-        $labels = array();
-        $values = array();
+        $groups = array();
         $in_progress = array();
         $completed = array();
         $cancelled = array();
@@ -507,50 +506,41 @@ class PMSECasesListApi extends FilterApi
         $error = array();
 
         for ($i = 0; $i < sizeof($processes); $i++) {
-            $labels[] = array(
+            $groups[] = array(
                 "group" => ($i + 1),
-                "l" => $processes[$i]['name'],
-            );
-            $values[] = array(
-                "group" => ($i + 1),
-                "t" => $processes[$i]['total'],
+                "label" => $processes[$i]['name'],
+                "total" => $processes[$i]['total'],
             );
             $in_progress[] = array(
                 "series" => 0,
                 "x" => ($i + 1),
                 "y" => $processes[$i]['status']['IN PROGRESS'],
-                //"y0" => $processes[$i]['status']['IN PROGRESS'],
             );
             $completed[] = array(
                 "series" => 1,
                 "x" => ($i + 1),
                 "y" => $processes[$i]['status']['COMPLETED'],
-                //"y0" => $processes[$i]['status']['COMPLETED'],
             );
             $cancelled[] = array(
                 "series" => 2,
                 "x" => ($i + 1),
                 "y" => $processes[$i]['status']['CANCELLED'],
-                //"y0" => $processes[$i]['status']['CANCELLED'],
             );
             $terminated[] = array(
                 "series" => 3,
                 "x" => ($i + 1),
                 "y" => $processes[$i]['status']['TERMINATED'],
-                //"y0" => $processes[$i]['status']['TERMINATED'],
             );
             $error[] = array(
                 "series" => 4,
                 "x" => ($i + 1),
                 "y" => $processes[$i]['status']['ERROR'],
-                //"y0" => $processes[$i]['status']['ERROR'],
             );
         }
 
         return array(
             "properties" => array(
-                "labels" => $labels,
-                "values" => $values,
+                "groups" => $groups,
             ),
             "data" => array(
                 array(
