@@ -490,6 +490,36 @@ class SugarEmailAddress extends SugarBean
     }
 
     /**
+     * returns a collection of beans matching the $this id
+     * @param string $emailId
+     * @return array
+     */
+    public function getRelatedBeansById($emailId)
+    {
+        $ret = [];
+
+        if (empty($emailId)) {
+            return $ret;
+        }
+
+        $query = "SELECT * FROM email_addr_bean_rel WHERE email_address_id = ? AND deleted = 0";
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($query, [$emailId]);
+
+        while ($row = $stmt->fetch()) {
+            if (empty($row['bean_module'])) {
+                continue;
+            }
+            $bean = BeanFactory::retrieveBean($row['bean_module'], $row['bean_id']);
+            if (!empty($bean)) {
+                $ret[] = $bean;
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
      * Saves email addresses for a parent bean
      * @param string $id Parent bean ID
      * @param string $module Parent bean's module

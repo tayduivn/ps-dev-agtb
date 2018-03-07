@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\DataPrivacy\Erasure\Field;
+namespace Sugarcrm\SugarcrmTestsUnit\DataPrivacy\Erasure\Field;
 
 use SugarBean;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Scalar as Field;

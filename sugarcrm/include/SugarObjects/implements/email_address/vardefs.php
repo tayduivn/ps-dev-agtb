@@ -40,6 +40,7 @@ $vardefs = array(
                 'boost' => 1.50,
             ),
             'audited' => true,
+            'pii' => true,
         ),
         'email1' => array(
 			'name'		=> 'email1',

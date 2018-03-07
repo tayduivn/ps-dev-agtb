@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\DataPrivacy\Erasure\Field;
+namespace Sugarcrm\SugarcrmTestsUnit\DataPrivacy\Erasure\Field;
 
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Email as Field;
 

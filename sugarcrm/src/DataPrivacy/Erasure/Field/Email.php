@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field;
 
 use SugarBean;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field;
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 
 /**
  * Represents an email field
@@ -51,6 +52,31 @@ final class Email implements Field
      */
     public function erase(SugarBean $bean) : void
     {
-        // TODO: implement this
+        $emailBean = \BeanFactory::getBean('EmailAddresses', $this->id);
+
+        // handle all related beans contains this email
+        $relatedBeans = $this->getAllRelatedBeans($emailBean);
+
+        if (!empty($relatedBeans)) {
+            foreach ($relatedBeans as $relBean) {
+                if (!empty($relBean->emailAddress)) {
+                    $relBean->removeEmailById($this->id);
+                    $relBean->save();
+                }
+            }
+        }
+
+        // erase this email
+        $emailBean->erase(FieldList::fromArray(['email_address', 'email_address_caps']), false);
+    }
+
+    /**
+     * to get all related beans to this email id
+     * @param SugarBean $emailBean
+     * @return array
+     */
+    protected function getAllRelatedBeans($emailBean)
+    {
+        return $emailBean->getRelatedBeansById($emailBean->id);
     }
 }
