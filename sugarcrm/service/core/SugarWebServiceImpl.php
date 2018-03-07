@@ -437,7 +437,7 @@ function set_entry($session,$module_name, $name_value_list){
 
             if (self::$helperObject->isIDMMode()
                 && self::$helperObject->isIDMModeModule($module_name)
-                && self::$helperObject->isIDMModeField($name)) {
+                && self::$helperObject->isIDMModeField(is_array($value) ? $value['name'] : $name)) {
                     continue;
             }
 
