@@ -72,16 +72,16 @@ class JWTBearerTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testToString()
     {
-        $expectedResult = 'eyJraWQiOiJLZXlJZCIsImFsZyI6IlJTMjU2In0.eyJpYXQiOjEwLCJleHAiOjMxMCwiYXVkIjoiaHR0cDpcL1wvY' .
-            'XVyLnVybCIsInN1YiI6InNybjpjbHVzdGVyOmlkbTpldTowMDAwMDAwMDAxOnVzZXI6c2VlZF9zYWxseV9pZCIsImlzcyI6ImNsaWVu' .
-            'dCIsImxvZ2luX2hpbnQiOiJzcm46Y2x1c3RlcjppZG06ZXU6MDAwMDAwMDAwMTp0ZW5hbnQifQ.EO1vCIN7J8MFiWVEmPTJBMKhtO_1' .
-            'EZEDDMr9nd9E7iwG3Wa2npe74CeHmsuRTdTk-8nPV8T81cJG1Wha_5UDQdKcOIjwDqONz-fEYGq27GPQoHiGJ9BETVIDvfPjTR-wIcZ' .
-            'hJhSlOmpXKfQi3IU-pnAscCGklXOQVvVA1nTMEbAdJ2fNko6dD5aaN8tVzTRGaMPCJUB0AwdoAjfnjrNPXDNZUoZ240-a78alY8M-GT' .
-            'HVhVZiVgCVSwXteTQQ_nyLTy6ZS5iyotfJDNDISi0xu3kNwmU6qtKLd91VVDJvlUXGngcy8SdYYegMkUkBmxTG4stqGPQragBVOKgC2' .
-            'yR5vzDW97iRFD9CK2vXKVTC7PyidfX8M8GYLYIcHvoOSQNGtgYzgAI69HDKfZKcZDM4eAhuzEOK_MFMkK5RaVNG-Qe2d-sDytimVYYIf' .
-            '2c-1TK5GVDmB45-gFT-kqVfkFSJ3r8aQUr6LO8v5bSK-vr-qiopv42hDtWB-hmTc91XzR9-gZcj5lJ5NOVbtT8uvO_gyxHOOb7FnHWF6' .
-            '_SJsZ9o7JWyI7g53wH-GY1vM-jM7Pcq3DWy-t7qnhGcpOEav0BM1zkY9dc3VYRMO0JHmzVn98-XlntB8pQ1CMQDi_M0xZVDTdTZGsYV5' .
-            'z9yDF5p3rZ_yA6OCC0MLp8dz3-5HQ7BfKU';
+        $expectedResult = 'eyJraWQiOiJLZXlJZCIsImFsZyI6IlJTMjU2In0.eyJpYXQiOjEwLCJleHAiOjMxMCwiYXVkIjoiaHR0' .
+            'cDpcL1wvYXVyLnVybCIsInN1YiI6InNybjpjbHVzdGVyOmlkbTpldTowMDAwMDAwMDAxOnVzZXI6c2VlZF9zYWxseV9pZCIsIm' .
+            'lzcyI6ImNsaWVudCIsInRpZCI6InNybjpjbHVzdGVyOmlkbTpldTowMDAwMDAwMDAxOnRlbmFudCJ9.UwxUf0cplkrEHGqJyTe' .
+            'ZE9d5jiaCwU5CpP0hUDqlhruL_zKrA54tIGAdi4UbkhUuFHKFA8TWJN_ZyU1LPD9A6T5sGYTYA4aaQy8fIysvcnh75aO4pTAuv' .
+            '4VXEBmLcPsMvr-Fm524m8K_qXZXPuguZqYAmmazf6MXb0wKS4URtpzAhUYLN0C4U1KR0dYT6PW6X0ryuoq3g072-vvBIAU2y2L1' .
+            'Nv_j11jqLgIF31Yjn2Ns7UyQJmrs_OpZ_ZzEoWJ70dcQBwqMQZqYMqzBeZxSy573eDQrxA9Tqq0bCq3OCOPnM2qNeFljA8Cg4D3' .
+            'isFJHW3oNR3V8HDO_2JmWevJ13eYzafjxByxZnN69s7D4g-3ykB8pPTZ_WWwpeNtQR1LBwPE1Tx-TYocl3YnG22SCWcDradO0ei' .
+            'Dg7nt8z9SRqWE4bVV3nPntKD1b2CXBxeSIcyjnWPh9SShtOAeplTiFcTkDSRutw2KvDkPABEqgER7phwivv0gwdiOCHNCBKQNZt' .
+            'FVRIQt8HJ95-aPLWgeb6FFKZl8412y6GJtAW-r6LbNAX14TeGgeNCcFIcT7XWUAlbx0pE3SJVDBpw1Bmq7509NU4pYPzJQ6bVFP' .
+            'Pqptj7I12ePJxDTADsMTBGKTDqxKhjqJwCVkPTVQBqNjRKn0I07PtMMQbx3qrtaRizjzLKo';
 
         $token = $this->getMockBuilder(JWTBearerToken::class)
                       ->setConstructorArgs(

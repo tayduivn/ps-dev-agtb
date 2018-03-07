@@ -351,7 +351,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                     $this->equalTo('http://idp.test/authenticate'),
                     $this->callback(function ($options) {
                         $this->assertEquals('Bearer testToken', $options['headers']['Authorization']);
-                        $this->assertEquals('user_name=test&password=test1&login_hint=srn%3Atenant', $options['body']);
+                        $this->assertEquals('user_name=test&password=test1&tid=srn%3Atenant', $options['body']);
                         return true;
                     })
                 )
