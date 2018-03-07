@@ -194,7 +194,16 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             }else if($name === 'id' ){
 
                 $seed->retrieve($value);
+                break;
             }
+        }
+
+        if (self::$helperObject->isIDMMode()
+                && self::$helperObject->isIDMModeModule($module_name)
+                && !$seed->isUpdate()) {
+            $error->set_error('idm_mode_cannot_create_user');
+            self::$helperObject->setFaultObject($error);
+            return;
         }
 
         $return_fields = array();
@@ -209,6 +218,12 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             if (is_array($value)) {
                 $name = $value['name'];
                 $value = $value['value'];
+            }
+
+            if (self::$helperObject->isIDMMode()
+                    && self::$helperObject->isIDMModeModule($module_name)
+                    && self::$helperObject->isIDMModeField($name)) {
+                continue;
             }
 
             if (!self::$helperObject->checkFieldValue($seed, $name, $value)) {

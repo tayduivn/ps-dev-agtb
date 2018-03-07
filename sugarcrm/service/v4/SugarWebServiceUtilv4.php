@@ -384,8 +384,13 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                 }
                 else if($name === 'id' ){
                     $seed->retrieve($value);
+                    break;
                 }
 			}
+
+            if ($this->isIDMMode() && $this->isIDMModeModule($module_name) && !$seed->isUpdate()) {
+                continue;
+            }
 
 			foreach($name_value_list as $name => $value) {
 			    //Normalize the input
@@ -412,6 +417,11 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                 if (!empty($seed->field_defs[$field_name]['sensitive'])) {
 					continue;
 				}
+
+                if ($this->isIDMMode() && $this->isIDMModeModule($module_name) && $this->isIDMModeField($field_name)) {
+                    continue;
+                }
+
 				$seed->$field_name = $val;
 			}
 
