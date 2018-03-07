@@ -417,15 +417,15 @@ function set_entry($session,$module_name, $name_value_list){
 		}else if($name === 'id' ){
 
 			$seed->retrieve($value);
-            break;
+                break;
 		}
 	}
 
-    if (self::$helperObject->isIDMMode() && self::$helperObject->isIDMModeModule($module_name) && !$seed->isUpdate()) {
-        $error->set_error('idm_mode_cannot_create_user');
-        self::$helperObject->setFaultObject($error);
-        return;
-    }
+        if (self::$helperObject->isIDMMode() && self::$helperObject->isIDMModeModule($module_name) && !$seed->isUpdate()) {
+            $error->set_error('idm_mode_cannot_create_user');
+            self::$helperObject->setFaultObject($error);
+            return;
+        }
 
 	foreach($name_value_list as $name=>$value){
 		if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $name == 'user_hash'){
@@ -435,11 +435,11 @@ function set_entry($session,$module_name, $name_value_list){
 			continue;
 		}
 
-        if (self::$helperObject->isIDMMode()
+            if (self::$helperObject->isIDMMode()
                 && self::$helperObject->isIDMModeModule($module_name)
                 && self::$helperObject->isIDMModeField($name)) {
-            continue;
-        }
+                    continue;
+            }
 
 		if(!is_array($value)){
 			$seed->$name = $value;
