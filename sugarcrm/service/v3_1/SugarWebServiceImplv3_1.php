@@ -294,11 +294,17 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         $success = false;
         $authController = AuthenticationController::getInstance();
 
-        if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN' && $authController->authController->userAuthenticateClass != "LDAPAuthenticateUser")
-        {
+        if (!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN' &&
+            $authController->authController->userAuthenticateClass != "LDAPAuthenticateUser" &&
+            !($authController->authController instanceof IdMLDAPAuthenticate) &&
+            !($authController->authController instanceof OAuth2Authenticate)) {
             $user_auth['password'] = md5($user_auth['password']);
         }
-        $isLoginSuccess = $authController->login($user_auth['user_name'], $user_auth['password'], array('passwordEncrypted' => true));
+        $isLoginSuccess = (bool) $authController->login(
+            $user_auth['user_name'],
+            $user_auth['password'],
+            ['passwordEncrypted' => true]
+        );
         $usr_id=$user->retrieve_user_id($user_auth['user_name']);
         if($usr_id)
             $user->retrieve($usr_id);
@@ -329,10 +335,9 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
             self::$helperObject->setFaultObject($error);
             return;
-        }
-        else if( $authController->authController->userAuthenticateClass == "LDAPAuthenticateUser"
-                 && (empty($user_auth['encryption']) || $user_auth['encryption'] !== 'PLAIN' ) )
-        {
+        } elseif (($authController->authController->userAuthenticateClass == "LDAPAuthenticateUser" ||
+            $authController->authController instanceof IdMLDAPAuthenticate)
+                 && (empty($user_auth['encryption']) || $user_auth['encryption'] !== 'PLAIN' )) {
             $error->set_error('ldap_error');
             LogicHook::initialize();
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');

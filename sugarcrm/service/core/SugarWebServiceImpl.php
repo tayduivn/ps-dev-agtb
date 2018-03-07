@@ -507,11 +507,16 @@ public function login($user_auth, $application, $name_value_list){
 	$error = new SoapError();
 	$user = BeanFactory::newBean('Users');
 	$success = false;
-	if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN'){
+        $authController = AuthenticationController::getInstance();
+        if (!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN' &&
+            !($authController->authController instanceof OAuth2Authenticate)) {
 		$user_auth['password'] = md5($user_auth['password']);
 	}
-    $authController = AuthenticationController::getInstance();
-	$isLoginSuccess = $authController->login($user_auth['user_name'], $user_auth['password'], array('passwordEncrypted' => true));
+        $isLoginSuccess = (bool) $authController->login(
+            $user_auth['user_name'],
+            $user_auth['password'],
+            ['passwordEncrypted' => true]
+        );
 	$usr_id=$user->retrieve_user_id($user_auth['user_name']);
 	if($usr_id) {
 		$user->retrieve($usr_id);
