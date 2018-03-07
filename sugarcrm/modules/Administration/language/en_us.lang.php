@@ -615,6 +615,7 @@ $mod_strings = array (
     'LBL_REBUILD_AUDIT_SEARCH' => 'Searching for new audit enabled modules',
     'LBL_REBUILD_AUDIT_CREATING' => 'creating table %1$s for %2$s .<BR>',
     'LBL_REBUILD_AUDIT_SKIP' => 'Audit table for %1$s already exists. skipping...<BR>',
+    'LBL_REBUILD_AUDIT_REPAIR' => 'Audit table for %1$s was repaired.<BR>',
     'LBL_REBUILD_CONFIG_DESC' =>'Rebuilds config.php by updating version and adding defaults when not explicitly declared',
     'LBL_REBUILD_CONFIG' =>'Rebuild Config File',
     'LBL_REBUILD_DASHLETS_DESC_SHORT' => 'Rebuilds the Sugar Dashlets cache file',
@@ -1165,6 +1166,13 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
 
     'LBL_MI_IN_ACTIONVIEWMAP' => 'Installing Action View Map',
     'LBL_MI_UN_ACTIONVIEWMAP' => 'Unninstalling Action View Map',
+
+    'LBL_API_PLATFORMS' => 'Api Platforms',
+    'LBL_CONFIGURE_CUSTOM_API_PLATFORMS' => 'Configure API Platforms',
+    'LBL_CUSTOM_API_PLATFORMS_DESC' => 'Configure enabled custom API platform names',
+    'LBL_CUSTOM_API_PLATFORMS_HELP' => 'Standard platforms cannot be modified. Platforms loaded via a module loadable '
+        . 'package must be removed by uninstalling the appropriate package.',
+
 	// OAuth
     'LBL_OAUTH_TITLE' => "OAuth Keys",
     'LBL_OAUTH' => "OAuth key management",

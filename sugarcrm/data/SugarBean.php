@@ -929,36 +929,42 @@ class SugarBean
      *
      * Internal function, do not override.
      */
-    function create_audit_table()
+    public function create_audit_table()
     {
-        global $dictionary;
-        $table_name=$this->get_audit_table_name();
+        $defs = $this->get_audit_table_defs();
 
-        require('metadata/audit_templateMetaData.php');
+        $this->db->createTableParams($defs['table'], $defs['fields'], $defs['indices'], $defs['engine'] ?? null);
+    }
 
+    /**
+     * Returns the dictionary entry of the audit table for this Bean.
+     *
+     * @return array
+     */
+    public function get_audit_table_defs()
+    {
+        $dictionary = [];
+        $globalDict = $GLOBALS['dictionary'];
+
+        require 'metadata/audit_templateMetaData.php';
         // Bug: 52583 Need ability to customize template for audit tables
         $custom = 'custom/metadata/audit_templateMetaData_' . $this->getTableName() . '.php';
-        if (file_exists($custom))
-        {
+        if (file_exists($custom)) {
             require($custom);
         }
 
-        $fieldDefs = $dictionary['audit']['fields'];
-        $indices = $dictionary['audit']['indices'];
-
+        $table_name = $this->get_audit_table_name();
+        $dictionary['audit']['table'] = $table_name;
         // Renaming template indexes to fit the particular audit table (removed the brittle hard coding)
-        foreach($indices as $nr => $properties){
-            $indices[$nr]['name'] = 'idx_' . strtolower($table_name) . '_' . $properties['name'];
+        foreach ($dictionary['audit']['indices'] as $nr => $properties) {
+            $dictionary['audit']['indices'][$nr]['name'] = 'idx_' . strtolower($table_name) . '_' . $properties['name'];
         }
 
-        $engine = null;
-        if(isset($dictionary['audit']['engine'])) {
-            $engine = $dictionary['audit']['engine'];
-        } else if(isset($dictionary[$this->getObjectName()]['engine'])) {
-            $engine = $dictionary[$this->getObjectName()]['engine'];
+        if (!isset($dictionary['audit']['engine']) && isset($globalDict[$this->getObjectName()]['engine'])) {
+            $dictionary['audit']['engine'] = $globalDict[$this->getObjectName()]['engine'];
         }
 
-        $this->db->createTableParams($table_name, $fieldDefs, $indices, $engine);
+        return $dictionary['audit'];
     }
 
     /**
