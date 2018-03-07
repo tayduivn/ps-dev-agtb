@@ -21,19 +21,28 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
     protected $object;
 
     /**
+     * @var \SugarConfig
+     */
+    protected $sugarConfig = null;
+
+    /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp()
     {
         $this->object = ProcessManager\Factory::getPMSEObject('PMSEEngineUtils');
+        \SugarTestReflection::setProtectedValue($this->object, 'idmConfig', null);
         $GLOBALS['timedate'] = '';
         $_REQUEST['leads_email_widget_id'] = 2;
         $_REQUEST['leads0emailAddress0'] = 'test1@test.com';
         $_REQUEST['leads0emailAddress1'] = 'test2@test.com'; 
         $_REQUEST['leads0emailAddress2'] = 'test3@test.com';   
         $_REQUEST['leads0emailAddress3'] = '';   
-        $_REQUEST['leads0emailAddress4'] = '';         
+        $_REQUEST['leads0emailAddress4'] = '';
+
+        $this->sugarConfig = \SugarConfig::getInstance();
+        $this->sugarConfig->clearCache();
     }
 
     /**
@@ -45,6 +54,8 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
         unset($_REQUEST);
         SugarTestCaseUtilities::removeAllCreatedCases();
         SugarTestTaskUtilities::removeAllCreatedTasks();
+        $this->sugarConfig->clearCache();
+        \SugarTestReflection::setProtectedValue($this->object, 'idmConfig', null);
     }
 
     /**
@@ -440,6 +451,89 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($result_test9);
         $result_test10 = $this->object->isValidStudioField($array_test10);
         $this->assertFalse($result_test10);
+    }
+
+    /**
+     * Provides data for testIsValidStudioFieldInOidcMode
+     * @return array
+     */
+    public function isValidStudioFieldInOidcModeProvider()
+    {
+        return [
+            'oidcDisabledInSugarAndFieldIsOidc' => [
+                'oidcConfig' => [],
+                'fieldDef' => [
+                    'name' => 'user_name',
+                    'vname' => 'LBL_USER_NAME',
+                    'type' => 'username',
+                    'dbType' => 'varchar',
+                    'len' => '60',
+                    'importable' => 'required',
+                    'required' => true,
+                    'oidc_disabled' => true,
+                ],
+                'expectedResult' => true,
+            ],
+            'oidcEnabledInSugarAndFieldIsNotOidc' => [
+                'oidcConfig' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'oidcKeySetId' => 'KeySetName',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'idpServiceName' => 'idm',
+                    'cloudConsoleUrl' => 'http://sts.staging.arch.sugarcrm.io/',
+                ],
+                'fieldDef' => [
+                    'name' => 'user_name',
+                    'vname' => 'LBL_USER_NAME',
+                    'type' => 'username',
+                    'dbType' => 'varchar',
+                    'len' => '60',
+                    'importable' => 'required',
+                    'required' => true,
+                ],
+                'expectedResult' => true,
+            ],
+            'oidcEnabledInSugarAndFieldIsOidc' => [
+                'oidcConfig' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'oidcKeySetId' => 'KeySetName',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'idpServiceName' => 'idm',
+                    'cloudConsoleUrl' => 'http://sts.staging.arch.sugarcrm.io/',
+                ],
+                'fieldDef' => [
+                    'name' => 'user_name',
+                    'vname' => 'LBL_USER_NAME',
+                    'type' => 'username',
+                    'dbType' => 'varchar',
+                    'len' => '60',
+                    'importable' => 'required',
+                    'required' => true,
+                    'oidc_disabled' => true,
+                ],
+                'expectedResult' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @param $oidcConfig
+     * @param $defs
+     * @param $expectedResult
+     *
+     * @dataProvider isValidStudioFieldInOidcModeProvider
+     * @covers PMSEEngineUtils::isValidStudioField
+     */
+    public function testIsValidStudioFieldInOidcMode($oidcConfig, $defs, $expectedResult)
+    {
+        $this->sugarConfig->_cached_values['oidc_oauth'] = $oidcConfig;
+        $this->assertEquals($expectedResult, $this->object->isValidStudioField($defs));
     }
 
     /**

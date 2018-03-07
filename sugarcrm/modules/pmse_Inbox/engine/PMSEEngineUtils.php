@@ -17,6 +17,7 @@
 use Sugarcrm\Sugarcrm\ProcessManager;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\AdvancedWorkflow;
 
@@ -38,6 +39,11 @@ class PMSEEngineUtils
     protected static $supportedModules = array();
 
     public static $uploadObject;
+
+    /**
+     * @var Authentication\Config
+     */
+    protected static $idmConfig;
 
     /**
      * List of fields across all modules that should always be blacklisted
@@ -1328,6 +1334,15 @@ class PMSEEngineUtils
      */
     public static function isValidStudioField($def)
     {
+
+        if (is_null(static::$idmConfig)) {
+            static::$idmConfig = new Authentication\Config(\SugarConfig::getInstance());
+        }
+
+        if (static::$idmConfig->isOIDCEnabled() && !empty($def['oidc_disabled'])) {
+            return false;
+        }
+
         if (isset($def['studio'])) {
             if (is_array($def ['studio'])) {
                 if (isset($def['studio']['editField']) && $def['studio']['editField'] == true) {
