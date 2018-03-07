@@ -2573,7 +2573,7 @@
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "56ac75c9d02298e6f8d8c93ea4bfdff886eb1a32",
+                "reference": "359940f28ef18d56ae43455a996bf0a1550739f0",
                 "shasum": null
             },
             "require": {
@@ -2583,7 +2583,7 @@
                 "monolog/monolog": "^1.21",
                 "onelogin/php-saml": "2.11.0",
                 "paragonie/random_compat": "^2.0",
-                "php": ">=5.6.0",
+                "php": "^7.1",
                 "silex/silex": "~2.0",
                 "spomky-labs/jose": "6.1.4",
                 "symfony/asset": "~2.8|^3.0",
