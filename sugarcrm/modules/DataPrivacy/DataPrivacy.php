@@ -68,7 +68,7 @@ class DataPrivacy extends Issue
 
         //check the value defined in dataprivacy_status_dom
         if (isset($this->fetched_row['status']) && $this->fetched_row['status'] !== 'Closed') {
-            if ($this->status === 'Closed') {
+            if ($this->status === 'Closed' && $this->type === 'Request to Erase Information') {
                 $this->completeErasure();
             }
         }
