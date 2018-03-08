@@ -109,8 +109,10 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEquals('sugar.phone@example.name', $e->to_addrs);
         $this->assertEquals('sugar.section.dev@example.net', $e->cc_addrs);
         $this->assertEquals('qa.sugar@example.net', $e->bcc_addrs);
-		$this->assertEquals($email['message']['subject'], $e->name);
-		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
+        $this->assertEquals($email['message']['subject'], $e->name);
+        $this->assertEquals(TimeDate::getInstance()->asDb(new SugarDateTime($email['message']['date_sent'])),
+            $e->date_sent
+        );
 	}
 
     /**
@@ -191,8 +193,10 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEquals('sales.support@example.biz', $e->to_addrs);
         $this->assertEquals('sugar.info.the@example.info', $e->cc_addrs);
         $this->assertEmpty($e->bcc_addrs);
-		$this->assertEquals($email['message']['subject'], $e->name);
-		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
+        $this->assertEquals($email['message']['subject'], $e->name);
+        $this->assertEquals(TimeDate::getInstance()->asDb(new SugarDateTime($email['message']['date_sent'])),
+            $e->date_sent
+        );
 	}
 
     /**
