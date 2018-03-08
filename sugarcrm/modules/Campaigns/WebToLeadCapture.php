@@ -57,9 +57,10 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	    $_POST['client_id_address'] = query_client_ip();
 		$campaign_id=$_POST['campaign_id'];
         // create and activate subject for audit
-        $subject = new WebToLead($campaign_id);
+        $subject = new WebToLead();
         $context = Container::getInstance()->get(Context::class);
         $context->activateSubject($subject);
+        $context->setAttribute('campaign_id', $campaign_id);
 		$campaign = BeanFactory::newBean('Campaigns');
         $camp_query  = 'SELECT name, id FROM campaigns WHERE id = ' . $campaign->db->quoted($campaign_id);
 		$camp_query .= " and deleted=0";

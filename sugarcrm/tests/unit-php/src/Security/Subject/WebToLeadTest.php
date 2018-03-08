@@ -25,11 +25,10 @@ class WebToLeadTest extends \PHPUnit_Framework_TestCase
      */
     public function jsonSerialize()
     {
-        $client = new WebToLead('my campaign id');
+        $client = new WebToLead();
 
         $this->assertSame([
             '_type' => 'web-to-lead',
-            'campaign_id' => 'my campaign id',
         ], $client->jsonSerialize());
     }
 }

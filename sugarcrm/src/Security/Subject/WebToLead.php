@@ -19,29 +19,12 @@ use Sugarcrm\Sugarcrm\Security\Subject;
 final class WebToLead implements Subject
 {
     /**
-     * The campaign id that is attributed with any changes by this
-     * subject
-     * @var string
-     */
-    private $campaign_id;
-
-    /**
-     * Object constructor
-     * @param string $campaign_id The campaign id
-     */
-    public function __construct($campaign_id)
-    {
-        $this->campaign_id = $campaign_id;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function jsonSerialize()
     {
         return [
             '_type' => 'web-to-lead',
-            'campaign_id' => $this->campaign_id,
         ];
     }
 }
