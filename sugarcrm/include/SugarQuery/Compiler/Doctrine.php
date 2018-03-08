@@ -191,6 +191,7 @@ class SugarQuery_Compiler_Doctrine
 
         $alias = $query->getFromAlias();
         $table = $bean->getTableName();
+
         if ($alias == $table) {
             $alias = null;
         }
@@ -201,12 +202,7 @@ class SugarQuery_Compiler_Doctrine
         $query->joinCustomTable($bean, $alias);
 
         if ($query->shouldFetchErasedFields()) {
-            $this->joinErasedFields(
-                $builder,
-                $query->getFromBean(),
-                $alias ?: $table,
-                'erased_fields'
-            );
+            $this->joinErasedFields($builder, $query, $bean, $alias ?: $table, 'erased_fields');
         }
     }
 
@@ -247,6 +243,7 @@ class SugarQuery_Compiler_Doctrine
 
         $fromAlias = $join->query->getFromAlias();
         $alias = $join->joinName();
+
         switch (strtolower($join->options['joinType'])) {
             case 'left':
                 $builder->leftJoin($fromAlias, $table, $alias, $condition);
@@ -257,12 +254,7 @@ class SugarQuery_Compiler_Doctrine
         }
 
         if ($join->bean && $join->query->shouldFetchErasedFields()) {
-            $this->joinErasedFields(
-                $builder,
-                $join->bean,
-                $alias,
-                $join->linkName . '_erased_fields'
-            );
+            $this->joinErasedFields($builder, $join->query, $join->bean, $alias, $join->linkName . '_erased_fields');
         }
     }
 
@@ -270,12 +262,18 @@ class SugarQuery_Compiler_Doctrine
      * Compiles additional SELECTed fields and JOINed tables which represent erased bean fields
      *
      * @param QueryBuilder $builder
-     * @param SugarBean $bean
-     * @param string $tableAlias
-     * @param string $columnAlias
+     * @param SugarQuery $query
+     * @param SugarBean $bean The bean whose erased fields need to be retrieved
+     * @param string $tableAlias The alias of the table which the erased fields need to be joined to
+     * @param string $columnAlias The alias for the column containing the erased fields data
      */
-    protected function joinErasedFields(QueryBuilder $builder, SugarBean $bean, $tableAlias, $columnAlias)
-    {
+    protected function joinErasedFields(
+        QueryBuilder $builder,
+        SugarQuery $query,
+        SugarBean $bean,
+        string $tableAlias,
+        string $columnAlias
+    ) {
         if (!$bean->hasPiiFields()) {
             return;
         }
@@ -283,7 +281,7 @@ class SugarQuery_Compiler_Doctrine
         $erasedAlias = $bean->db->getValidDBName($tableAlias . '_erased', true, 'alias');
 
         $builder->leftJoin(
-            $tableAlias,
+            $query->getFromAlias(),
             'erased_fields',
             $erasedAlias,
             sprintf(

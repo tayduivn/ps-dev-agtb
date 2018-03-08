@@ -46,7 +46,9 @@ class ErasedFieldsApiTest extends \PHPUnit_Framework_TestCase
         self::$contact1 = SugarTestContactUtilities::createContact();
         self::$contact1->erase(FieldList::fromArray(['first_name']), false);
 
-        self::$contact2 = SugarTestContactUtilities::createContact();
+        self::$contact2 = SugarTestContactUtilities::createContact(null, [
+            'reports_to_id' => self::$contact1->id,
+        ]);
         self::$contact2->erase(FieldList::fromArray(['last_name']), false);
 
         self::$note = SugarTestNoteUtilities::createNote(null, [
@@ -116,6 +118,35 @@ class ErasedFieldsApiTest extends \PHPUnit_Framework_TestCase
             'parent' => [
                 '_erased_fields' => [
                     'last_name',
+                ],
+            ],
+        ], $data);
+    }
+
+    /**
+     * @test
+     */
+    public function ownAndRelateFields()
+    {
+        $query = new SugarQuery();
+        $query->from(self::$contact2, [
+            'erased_fields' => true,
+        ]);
+        $query->select('report_to_name');
+        $query->where()->equals('id', self::$contact2->id);
+
+        $contacts = self::$contact2->fetchFromQuery($query);
+        $this->assertCount(1, $contacts);
+
+        $data = $this->format(array_shift($contacts));
+
+        $this->assertArraySubset([
+            '_erased_fields' => [
+                'last_name',
+            ],
+            'reports_to_link' => [
+                '_erased_fields' => [
+                    'first_name',
                 ],
             ],
         ], $data);
