@@ -71,8 +71,13 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
     {
         $userToken = null;
         try {
-            $authManager = $this->getAuthProviderBuilder(new Config(\SugarConfig::getInstance()))->buildAuthProviders();
-            $introspectToken = new IntrospectToken($token);
+            $config = new Config(\SugarConfig::getInstance());
+            $authManager = $this->getAuthProviderBuilder($config)->buildAuthProviders();
+            $introspectToken = new IntrospectToken(
+                $token,
+                $config->getOIDCConfig()['tid'],
+                $config->getOIDCConfig()['crmOAuthScope']
+            );
             $introspectToken->setAttribute('platform', $this->platform);
             /** @var IntrospectToken $userToken */
             $userToken = $authManager->authenticate($introspectToken);

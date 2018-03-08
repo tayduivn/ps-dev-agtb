@@ -69,6 +69,7 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->userChecker = $this->createMock(UserCheckerInterface::class);
         $this->userProvider = $this->createMock(SugarOIDCUserProvider::class);
         $this->oAuthProvider = $this->createMock(IdmProvider::class);
+        $this->oAuthProvider->method('getScopeSeparator')->willReturn(' ');
         $this->userMapping = new User\Mapping\SugarOidcUserMapping();
         $this->user = new User();
         $this->provider =new OIDCAuthenticationProvider(
@@ -88,8 +89,12 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'introspectToken' => [
-                'tokenClass' => new IntrospectToken('test'),
-                ],
+                'tokenClass' => new IntrospectToken(
+                    'test',
+                    'srn:cloud:idp:eu:0000000001:tenant',
+                    'https://apis.sugarcrm.com/auth/crm'
+                ),
+            ],
             'jwtToken' => [
                 'tokenClass' => new JWTBearerToken('testId', 'srn:tenant'),
             ],
@@ -156,7 +161,11 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testAuthenticateWithInvalidToken($tokenResult)
     {
-        $token = new IntrospectToken('token');
+        $token = new IntrospectToken(
+            'token',
+            'srn:cloud:idp:eu:0000000001:tenant',
+            'https://apis.sugarcrm.com/auth/crm'
+        );
         $this->oAuthProvider->expects($this->once())
                             ->method('introspectToken')
                             ->with('token')
@@ -171,17 +180,24 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     {
         $introspectResult = [
             'active' => true,
-            'scope' => 'offline',
+            'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
             'client_id' => 'testLocal',
             'sub' => 'srn:cluster:idm:eu:0000000001:user:seed_sally_id',
             'exp' => 1507571717,
             'iat' => 1507535718,
             'aud' => 'testLocal',
             'iss' => 'http://sts.sugarcrm.local',
-            'ext' => ['amr' => ['PROVIDER_KEY_SAML']],
+            'ext' => [
+                'amr' => ['PROVIDER_KEY_SAML'],
+                'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+            ],
         ];
 
-        $token = new IntrospectToken('token');
+        $token = new IntrospectToken(
+            'token',
+            'srn:cloud:idp:eu:0000000001:tenant',
+            'https://apis.sugarcrm.com/auth/crm'
+        );
         $token->setAttribute('platform', 'opi');
         $this->oAuthProvider->expects($this->once())
                             ->method('introspectToken')
@@ -264,5 +280,144 @@ class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('accessToken', $result->getAttribute('token'));
         $this->assertNotEmpty($result->getAttribute('expires_in'));
         $this->assertNotEmpty($result->getAttribute('exp'));
+    }
+
+    public function introspectTokenThrowsProvider()
+    {
+        $scopeExceptionMessage = 'Access token should contain https://apis.sugarcrm.com/auth/crm scope';
+        $tidExceptionMessage = 'Access token does not belong to tenant srn:cloud:idp:eu:0000000001:tenant';
+        $subExceptionMessage = 'Access token claims should belong to tenant srn:cloud:idp:eu:0000000001:tenant';
+        $subSRNExceptionMessage = 'Invalid number of components in SRN';
+        return [
+            'noScope' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => 'srn:cluster:iam:eu:0000000001:user:seed_max_id',
+                    'ext'=> [
+                        'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+                    ],
+                ],
+                'exceptionMessage' => $scopeExceptionMessage,
+            ],
+            'scopeIsEmpty' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => 'srn:cluster:iam:eu:0000000001:user:seed_max_id',
+                    'ext'=> [
+                        'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+                    ],
+                    'scope' => '',
+                ],
+                'exceptionMessage' => $scopeExceptionMessage,
+            ],
+            'scopeHasNoCrmScope' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => 'srn:cluster:iam:eu:0000000001:user:seed_max_id',
+                    'ext'=> [
+                        'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+                    ],
+                    'scope' => 'offline',
+                ],
+                'exceptionMessage' => $scopeExceptionMessage,
+            ],
+            'scopeHasNoCrmScopeButHasTwoOther' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => 'srn:cluster:iam:eu:0000000001:user:seed_max_id',
+                    'ext'=> [
+                        'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+                    ],
+                    'scope' => 'offline foo.bar',
+                ],
+                'exceptionMessage' => $scopeExceptionMessage,
+            ],
+            'scopesDelimitedIncorrectly' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => 'srn:cluster:iam:eu:0000000001:user:seed_max_id',
+                    'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+                    'scope' => 'offline,https://apis.sugarcrm.com/auth/crm',
+                ],
+                'exceptionMessage' => $scopeExceptionMessage,
+            ],
+            'tidIsEmpty' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => 'srn:cluster:iam:eu:0000000001:user:seed_max_id',
+                    'tid' => '',
+                    'ext'=> [
+                        'tid' => '',
+                    ],
+                    'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
+                ],
+                'exceptionMessage' => $tidExceptionMessage,
+            ],
+            'tidHasOtherTid' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => 'srn:cluster:iam:eu:0000000001:user:seed_max_id',
+                    'ext'=> [
+                        'tid' => 'srn:cloud:idp:eu:0000000000:tenant',
+                    ],
+                    'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
+                ],
+                'exceptionMessage' => $tidExceptionMessage,
+            ],
+            'noSub' => [
+                'response' => [
+                    'active' => true,
+                    'ext'=> [
+                        'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+                    ],
+                    'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
+                ],
+                'exceptionMessage' => $subSRNExceptionMessage,
+            ],
+            'subIsEmpty' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => '',
+                    'ext'=> [
+                        'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+                    ],
+                    'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
+                ],
+                'exceptionMessage' => $subSRNExceptionMessage,
+
+            ],
+            'subBelongsOtherTid' => [
+                'response' => [
+                    'active' => true,
+                    'sub' => 'srn:cloud:idp:eu:0000000000:user:seed_max_id',
+                    'ext'=> [
+                        'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
+                    ],
+                    'scope' => 'offline https://apis.sugarcrm.com/auth/crm',
+                ],
+                'exceptionMessage' => $subExceptionMessage,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::authenticate
+     * @dataProvider introspectTokenThrowsProvider
+     */
+    public function testIntrospectTokenThrows($response, $exceptionMessage)
+    {
+        $token = new IntrospectToken(
+            'token',
+            'srn:cloud:idp:eu:0000000001:tenant',
+            'https://apis.sugarcrm.com/auth/crm'
+        );
+
+        $this->expectExceptionMessage($exceptionMessage);
+        $this->oAuthProvider->expects($this->once())
+            ->method('introspectToken')
+            ->with('token')
+            ->willReturn($response);
+
+        $this->provider->authenticate($token);
     }
 }

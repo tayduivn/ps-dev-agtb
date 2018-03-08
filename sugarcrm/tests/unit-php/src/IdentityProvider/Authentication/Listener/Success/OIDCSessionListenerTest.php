@@ -83,9 +83,15 @@ class OIDCSessionListenerTest extends \PHPUnit_Framework_TestCase
         $this->user->method('getSugarUser')->willReturn($this->sugarUser);
 
         $this->token = $this->getMockBuilder(IntrospectToken::class)
-                            ->setConstructorArgs([$this->accessToken])
-                            ->setMethods(['getUser', 'getAttribute'])
-                            ->getMock();
+            ->setConstructorArgs(
+                [
+                    $this->accessToken,
+                    'srn:cloud:idp:eu:0000000001:tenant',
+                    'https://apis.sugarcrm.com/auth/crm',
+                ]
+            )
+            ->setMethods(['getUser', 'getAttribute'])
+            ->getMock();
         $this->token->method('getUser')->willReturn($this->user);
 
         $this->sugarConfig = $this->createMock(\SugarConfig::class);

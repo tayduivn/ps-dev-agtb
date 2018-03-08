@@ -129,7 +129,28 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
             throw new AuthenticationException('OIDC Token is not valid');
         }
 
-        $resultToken = new IntrospectToken($token->getCredentials());
+        $resultScopes = explode($this->oAuthProvider->getScopeSeparator(), $result['scope'] ?? '');
+        if (!in_array($token->getCrmOAuthScope(), $resultScopes)) {
+            throw new AuthenticationException(
+                sprintf('Access token should contain %s scope', $token->getCrmOAuthScope())
+            );
+        }
+
+        if (isset($result['ext']['tid']) && $token->getTenant() != $result['ext']['tid']) {
+            throw new AuthenticationException(
+                sprintf('Access token does not belong to tenant %s', $token->getTenant())
+            );
+        }
+
+        $userSRN = Converter::fromString($result['sub'] ?? '');
+        $tenantSRN = Converter::fromString($token->getTenant());
+        if ($userSRN->getTenantId() != $tenantSRN->getTenantId()) {
+            throw new AuthenticationException(
+                sprintf('Access token claims should belong to tenant %s', $token->getTenant())
+            );
+        }
+
+        $resultToken = new IntrospectToken($token->getCredentials(), $token->getTenant(), $token->getCrmOAuthScope());
         $resultToken->setAttributes($result);
         $resultToken->setAttribute('platform', $token->getAttribute('platform'));
         /** @var User $user */

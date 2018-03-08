@@ -23,7 +23,13 @@ class IntrospectTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCredentials()
     {
-        $token = new IntrospectToken('test');
+        $token = new IntrospectToken(
+            'test',
+            'srn:cloud:idp:eu:0000000001:tenant',
+            'https://apis.sugarcrm.com/auth/crm'
+        );
         $this->assertEquals('test', $token->getCredentials());
+        $this->assertEquals('srn:cloud:idp:eu:0000000001:tenant', $token->getTenant());
+        $this->assertEquals('https://apis.sugarcrm.com/auth/crm', $token->getCrmOAuthScope());
     }
 }

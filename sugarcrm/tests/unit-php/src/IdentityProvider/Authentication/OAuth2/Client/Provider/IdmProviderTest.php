@@ -77,6 +77,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
                     'keySet' => 3600,
                 ],
             ],
+            'crmOAuthScope' => 'https://apis.sugarcrm.com/auth/crm',
         ];
     }
     public function getRequiredOptionsProvider()
@@ -380,7 +381,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
             function ($token, $options) {
                 $this->assertInstanceOf(JwtBearer::class, $token);
                 $this->assertEquals(
-                    ['scope' => 'offline', 'assertion' => 'assertion'],
+                    ['scope' => 'offline https://apis.sugarcrm.com/auth/crm', 'assertion' => 'assertion'],
                     $options
                 );
             }

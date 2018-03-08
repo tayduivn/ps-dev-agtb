@@ -71,6 +71,16 @@ class IdmProvider extends BasicGenericProvider
     protected $caching = [];
 
     /**
+     * @var string
+     */
+    protected $scopeSeparator = ' ';
+
+    /**
+     * @var string
+     */
+    protected $crmOAuthScope;
+
+    /**
      * Adds HttpClient with retry policy.
      *
      * @inheritdoc
@@ -223,12 +233,16 @@ class IdmProvider extends BasicGenericProvider
      */
     public function getJwtBearerAccessToken($assertion)
     {
+        $scopes = [
+            'offline',
+            $this->crmOAuthScope,
+        ];
         /**
          * @todo scope need to be defined in future
          */
         return $this->getAccessToken(
             new JwtBearer(),
-            ['scope' => 'offline', 'assertion' => $assertion]
+            ['scope' => implode($this->getScopeSeparator(), array_filter($scopes)), 'assertion' => $assertion]
         );
     }
 
@@ -410,5 +424,13 @@ class IdmProvider extends BasicGenericProvider
     protected function getCache($key)
     {
         return $this->getSugarCache()->get($key);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getScopeSeparator()
+    {
+        return $this->scopeSeparator ?? parent::getScopeSeparator();
     }
 }
