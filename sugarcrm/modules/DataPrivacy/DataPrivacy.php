@@ -64,15 +64,6 @@ class DataPrivacy extends Issue
      */
     public function save($check_notify = false)
     {
-        if (!isset($this->system_id) || empty($this->system_id)) {
-            $admin = Administration::getSettings();
-            $system_id = $admin->settings['system_system_id'];
-            if (!isset($system_id)) {
-                $system_id = 1;
-            }
-            $this->system_id = $system_id;
-        }
-
         //check the value defined in dataprivacy_status_dom
         if ($this->type === 'Request to Erase Information'
             && isset($this->fetched_row['status'])
