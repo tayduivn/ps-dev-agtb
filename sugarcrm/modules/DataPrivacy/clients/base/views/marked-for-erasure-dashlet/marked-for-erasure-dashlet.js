@@ -125,7 +125,7 @@
          * @param {string} link
          * @return {Context}
          */
-        listenToRelatedContext(link) {
+        listenToRelatedContext: function(link) {
             var context = this.context.parent || this.context;
             if (!this.relContexts[link] && context.get('module') == 'DataPrivacy') {
                 this.relContexts[link] = context.getChildContext({link: link});
