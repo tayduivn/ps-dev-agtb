@@ -254,7 +254,13 @@ class SugarQuery_Compiler_Doctrine
         }
 
         if ($join->bean && $join->query->shouldFetchErasedFields()) {
-            $this->joinErasedFields($builder, $join->query, $join->bean, $alias, $join->linkName . '_erased_fields');
+            $this->joinErasedFields(
+                $builder,
+                $join->query,
+                $join->bean,
+                $alias,
+                $join->bean->db->getValidDBName($join->linkName . '_erased_fields')
+            );
         }
     }
 
