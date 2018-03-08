@@ -12,6 +12,8 @@
 
 use Doctrine\DBAL\DBALException;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
 
 /**
  *  Class for data privacy.
@@ -22,6 +24,11 @@ class DataPrivacy extends Issue
     public $module_name = 'DataPrivacy';
     public $module_dir = 'DataPrivacy';
     public $object_name = 'DataPrivacy';
+
+    /**
+     * @var string
+     */
+    public $type;
 
     /**
      * @var string
@@ -67,9 +74,18 @@ class DataPrivacy extends Issue
         }
 
         //check the value defined in dataprivacy_status_dom
-        if (isset($this->fetched_row['status']) && $this->fetched_row['status'] !== 'Closed') {
-            if ($this->status === 'Closed' && $this->type === 'Request to Erase Information') {
+        if ($this->type === 'Request to Erase Information'
+            && isset($this->fetched_row['status'])
+            && $this->fetched_row['status'] !== 'Closed'
+            && $this->status === 'Closed'
+        ) {
+            $context = Container::getInstance()->get(Context::class);
+            $context->setAttribute('dp_request_id', $this->id);
+
+            try {
                 $this->completeErasure();
+            } finally {
+                $context->unsetAttribute('dp_request_id');
             }
         }
 
