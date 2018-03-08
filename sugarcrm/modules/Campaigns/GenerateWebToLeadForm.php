@@ -492,11 +492,9 @@ for($i= 0; $i<$columns;$i++){
 }
 
 if ($emailFieldPresent) {
-    $defaultOptout = !empty($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
-    $optinChecked = $defaultOptout ? '' : 'checked';
     $Web_To_Lead_Form_html .= "<tr><td colspan=4 style='font-size: 12px; font-weight: normal;' width='100%'>";
     $Web_To_Lead_Form_html .= $webFormEmailOptinText;
-    $Web_To_Lead_Form_html .= "<span sugar='slot'>:&nbsp;&nbsp;<input id='email_opt_in' name='email_opt_in' type='checkbox' {$optinChecked}></span sugar='slot'>";
+    $Web_To_Lead_Form_html .= "<span sugar='slot'>:&nbsp;&nbsp;<input id='email_opt_in' name='email_opt_in' type='checkbox'></span sugar='slot'>";
     $Web_To_Lead_Form_html .= "</td></tr>";
 }
 
