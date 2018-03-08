@@ -61,7 +61,7 @@ class CountConditionalRelatedExpression extends NumericExpression
         if (App === undefined) {
             return SUGAR.expressions.Expression.FALSE;
         }
-
+        
         var params = this.params,
             view = this.context.view,
             target = this.context.target,
@@ -81,19 +81,21 @@ class CountConditionalRelatedExpression extends NumericExpression
         // is the condition field valid?
         var conditionValid = _.contains(condition_values, model.get(condition_field));
 
-        var models = this.context.collection.models;
-        _.each(models, function(model) {
-            var conditionValid = _.contains(condition_values, model.get(condition_field));
-            this.context.updateRelatedCollectionValues(
-                    this.context.model,
-                    relationship,
-                    'countConditional',
-                    target,
-                    model,
-                    (!conditionValid ? 'remove' : 'add')
-            );
-        });
-        
+        if (!this.context.view.createMode) {
+            var models = this.context.collection.models;
+            _.each(models, _.bind(function(model) {
+                var conditionValid = _.contains(condition_values, model.get(condition_field));
+                this.context.updateRelatedCollectionValues(
+                        this.context.model,
+                        relationship,
+                        'countConditional',
+                        target,
+                        model,
+                        (!conditionValid ? 'remove' : 'add')
+                );
+            }, this));
+        }
+    
         if (!_.isUndefined(this.context.relatedModel) && hasModelBeenRemoved) {
             this.context.updateRelatedCollectionValues(
                 this.context.model,
