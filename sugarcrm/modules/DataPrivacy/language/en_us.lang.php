@@ -50,6 +50,9 @@ $mod_strings = array(
     'LBL_REJECT_BUTTON_LABEL' => 'Reject',
     'LBL_COMPLETE_BUTTON_LABEL' => 'Complete',
     'LBL_ERASE_COMPLETE_BUTTON_LABEL' => 'Erase & Complete',
+    'LBL_COUNT_FIELDS_MARKED' => 'Fields Marked To Erase',
+    'LBL_NO_RECORDS_MARKED' => 'No Fields or Records have been marked to erase.',
+    'LBL_DATA_PRIVACY_RECORD_DASHBOARD' => 'Data Privacy Record Dashboard',
 
     // list view
     'LBL_HELP_RECORDS' => 'The Data Privacy module tracks privacy activities, including consent and subject requests, to support your organization\'s privacy procedures. Create data privacy records related to an individual\'s record (e.g. a contact) to track consent or take action on a privacy request.',

@@ -2198,6 +2198,7 @@ $app_strings = array (
     'LBL_EMAIL_SMTP_SSL_OR_TLS'         => 'Enable SMTP over SSL or TLS?',
     'LBL_NO_ACTION'                         => 'There is no action by that name.',
     'LBL_NO_DATA'                           => 'No data',
+    'LBL_NOT_APPLICABLE'                    => 'Not Applicable',
     'LBL_ROUTING_ADD_RULE'                  => 'Add Rule',
     'LBL_ROUTING_ALL'                       => 'At Least',
     'LBL_ROUTING_ANY'                       => 'Any',
@@ -4889,6 +4890,11 @@ Sincerely, SugarCRM',
     'LBL_MESSAGE_BOX_TITLE' => 'Alert',
     'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
     'LBL_RESTORE' => 'Reset to Original',
+
+    //Data Privacy Erasure Dashlet
+    'LBL_MARKED_FOR_ERASURE_TITLE' => 'Records Marked For Erasure',
+    'LBL_MARKED_FOR_ERASURE_DASHLET_DESCRIPTION' => 'Displays records related to a Data Privacy Request to '
+        . 'Erase Information.',
 
     // RSS Feed dashlet
     'LBL_RSS_FEED_DASHLET' => 'RSS Feed',

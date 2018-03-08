@@ -93,6 +93,23 @@ class DataPrivacy extends Issue
     }
 
     /**
+     * Should be called only by the after_relationship_delete logic hook when a related record is removed
+     * @param string $link
+     * @param string $id
+     */
+    public function relatedRecordRemoved(string $link, string $id)
+    {
+        if (!empty($this->fields_to_erase)) {
+            $data = json_decode($this->fields_to_erase, true);
+            if (isset($data[$link][$id])) {
+                unset($data[$link][$id]);
+                $this->fields_to_erase = json_encode($data);
+                $this->save();
+            }
+        }
+    }
+
+    /**
      * Erase the fields for the current DPR record
      * @throws DBALException
      */

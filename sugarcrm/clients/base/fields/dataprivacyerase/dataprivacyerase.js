@@ -56,6 +56,12 @@
         }
     },
 
+    bindDataChange: function() {
+        this._super('bindDataChange', arguments);
+        //When the parent record resaves, check if we need to show/hide
+        this.listenTo(this.context.parent.get('model'), 'sync', this.render);
+    },
+
     /**
      * Trigger event to open the Mark for Erasure drawer.
      */
