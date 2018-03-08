@@ -12,8 +12,10 @@
 
 namespace Sugarcrm\SugarcrmTests\EventRepositoryTest;
 
+use Contact;
 use Doctrine\DBAL\Connection;
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
+use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
@@ -27,8 +29,19 @@ use SugarTestHelper;
  */
 class EventRepositoryTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Contact
+     */
     private $contactBean;
+
+    /**
+     * @var EventRepository
+     */
     private $eventRepo;
+
+    /**
+     * @var Connection
+     */
     private $conn;
 
     protected function setUp()
@@ -68,11 +81,18 @@ class EventRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function registerUpdate()
     {
-        $list = FieldList::fromArray(array('phone_work'));
+        $list = FieldChangeList::fromChanges([
+            [
+                'field_name' => 'phone_work',
+                'data_type' => 'varchar',
+                'before' => '(111) 111 1111',
+                'after' => '(222) 222 2222',
+            ],
+        ]);
+
         $auditEventId = $this->eventRepo->registerUpdate($this->contactBean, $list);
 
-        $count = $this->getAuditEvent($auditEventId);
-        $this->assertEquals(1, $count, 'Audit event not created.');
+        $this->assertTrue($this->eventExists($auditEventId), 'Audit event not created.');
     }
 
     /**
@@ -84,26 +104,17 @@ class EventRepositoryTest extends \PHPUnit_Framework_TestCase
         $list = FieldList::fromArray(array('phone_work'));
         $auditEventId = $this->eventRepo->registerErasure($this->contactBean, $list);
 
-        $count = $this->getAuditEvent($auditEventId);
-        $this->assertEquals(1, $count, 'Audit event not created.');
+        $this->assertTrue($this->eventExists($auditEventId), 'Audit event not created.');
     }
 
-    private function getAuditEvent($auditEventId)
+    private function eventExists(string $id) : bool
     {
-        $query = 'SELECT EXISTS (SELECT id
-                FROM audit_events
-                WHERE id = ?) AS cnt';
-
-        $stmt = $this->conn->executeQuery($query, array($auditEventId));
-
-        $row = $stmt->fetch();
-
-        return $row['cnt'];
+        return $this->conn
+            ->executeQuery('SELECT id FROM audit_events WHERE id = ?', [$id])
+            ->fetchColumn() === $id;
     }
 
     /**
-     *
-     *
      * @test
      * @covers ::getLatestBeanEvents()
      */
