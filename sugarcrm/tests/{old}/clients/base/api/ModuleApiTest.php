@@ -13,8 +13,8 @@
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
-use Sugarcrm\Sugarcrm\Security\Subject\Formatter;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 require_once ("tests/{old}/SugarTestRestUtilities.php");
 
@@ -79,36 +79,54 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $subject = new User($GLOBALS['current_user'], new RestApiClient());
         $context->activateSubject($subject);
         $context->setAttribute('platform', 'base');
-        $bean = SugarTestContactUtilities::createContact(
-            null,
-            ['phone_work' => '(111) 111-1111',
-                'first_name' => 'John',
-                'phone_fax' => '(111) 111-1111',
-                'phone_mobile' => '(111) 111-1111',
-                'phone_home' => '(111) 111-1111']
+        $contact = BeanFactory::newBean('Contacts');
+        $contact->id = Uuid::uuid1();
+        $contact->new_with_id = true;
+        $contact->last_name = 'Last-' . $contact->id;
+        $contact->phone_mobile = '(111) 111-1111';
+
+        $emailAddr1 = $contact->last_name . '-1'. '@example.com';
+        $email1 = SugarTestEmailAddressUtilities::createEmailAddress($emailAddr1);
+        SugarTestEmailAddressUtilities::addAddressToPerson(
+            $contact,
+            $email1
         );
-        //retrieve bean otherwise change will not be detected.
-        $contactBean = $bean->retrieve();
-        $contactBean->phone_home = '(222) 222-2222';
-        $contactBean->phone_fax = '(222) 222-2222';
-        $contactBean->phone_mobile = '(222) 222-2222';
-        $contactBean->first_name = 'John 2';
-        $contactBean->save(false);
+
+        $contact->emailAddress->addAddress($emailAddr1, true, false, false, false, $email1->id);
+        $contact->emailAddress->dontLegacySave = true;
+        $contact->save();
 
         $args['module'] = 'Contacts';
-        $args['record'] = $contactBean->id;
+        $args['record'] = $contact->id;
 
-        $moduleApi = $this->getMockBuilder(ModuleApi::class)
-            ->setMethods(['getFormatter'])
-            ->getMock();
-
-        $moduleApi->expects($this->once())
-            ->method('getFormatter')
-            ->will($this->returnValue(Container::getInstance()->get(Formatter::class)));
+        $moduleApi = new ModuleApi();
 
         $result = $moduleApi->getPiiFields($this->serviceMock, $args);
-
         $this->assertNotEmpty($result, 'Did not fetch any Pii fields.');
+
+        $fieldsByName = array_combine(array_column($result['fields'], 'field_name'), $result['fields']);
+        $this->assertArrayHasKey('phone_mobile', $fieldsByName, 'phone_mobile field not returned.');
+        $this->assertEquals(
+            $GLOBALS['current_user']->last_name,
+            $fieldsByName['phone_mobile']['source']['subject']['last_name'],
+            'Expected formatted subject not returned for phone_mobile.'
+        );
+        $this->assertEquals(
+            $contact->phone_mobile,
+            $fieldsByName['phone_mobile']['value'],
+            'Expected phone_mobile value not returned.'
+        );
+        $this->assertArrayHasKey('email', $fieldsByName, 'email field not returned.');
+        $this->assertEquals(
+            $GLOBALS['current_user']->last_name,
+            $fieldsByName['email']['source']['subject']['last_name'],
+            'Expected formatted subject not returned for email.'
+        );
+        $this->assertEquals(
+            $emailAddr1,
+            $fieldsByName['email']['value']['email_address'],
+            'Expected email address not returned.'
+        );
     }
 
     // test set favorite

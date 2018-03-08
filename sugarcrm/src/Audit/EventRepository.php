@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Audit;
 
-use BeanFactory;
 use DBManagerFactory;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
@@ -129,42 +128,71 @@ class EventRepository
     /**
      * Retrieves latest audit events for given instance of bean and fields
      *
-     * @param $module module name
-     * @param $id
+     * @param SugarBean $bean
      * @param array $fields
      * @return array[]
      */
-    public function getLatestBeanEvents($module, $id, array $fields)
+    public function getLatestBeanEvents(SugarBean $bean, array $fields)
     {
-        $bean = BeanFactory::newBean($module);
-        if (empty($fields) || empty($bean)) {
-            return array();
+        if (empty($fields)) {
+            return [];
         }
 
         $auditTable = $bean->get_audit_table_name();
 
-        $sql = "SELECT  atab.field_name, atab.date_created, ae.source, ae.type
-                FROM {$auditTable} atab
-                LEFT JOIN {$auditTable} atab2 ON (atab2.parent_id = atab.parent_id 
-                        AND atab2.field_name = atab.field_name
-                        AND (atab2.date_created > atab.date_created
-                        OR (atab2.date_created = atab.date_created
-                            AND atab2.id > atab.id)))
-                LEFT JOIN audit_events ae ON (ae.id = atab.event_id)
-                WHERE  atab.parent_id = ?
-                AND atab.field_name IN (?)
-                AND atab2.id is NULL";
+        $selectWithLJoin = "SELECT  atab.field_name, atab.date_created, atab.after_value_string, ae.source, ae.type
+                            FROM {$auditTable} atab
+                            LEFT JOIN audit_events ae ON (ae.id = atab.event_id) 
+                            LEFT JOIN {$auditTable} atab2 ON";
 
-        $stmt = $this->conn->executeQuery($sql, [$id, $fields], [null, Connection::PARAM_STR_ARRAY]);
+        $leftJoinCond = [];
+        $leftJoinCond[] = 'atab2.parent_id = atab.parent_id AND atab2.field_name = atab.field_name
+                           AND (atab2.date_created > atab.date_created
+                                    OR (atab2.date_created = atab.date_created AND atab2.id > atab.id))';
+
+        $where = [];
+        $where[] = 'atab2.id is NULL AND atab.parent_id = ?';
+
+        $addLJoinCond = [];
+        $addWhere = [];
+        $params = [$bean->id];
+        $paramTypes = [null];
+        $nonEmailFields = array_diff($fields, ['email']);
+        if ($nonEmailFields) {
+            $addLJoinCond[] = "(atab.field_name != 'email')";
+            $addWhere[] = 'atab.field_name IN (?)';
+            $params[] = $nonEmailFields;
+            $paramTypes[] = Connection::PARAM_STR_ARRAY;
+        }
+
+        if (in_array('email', $fields) && $bean->emailAddress->addresses) {
+            $addLJoinCond[] = "(atab.field_name = 'email' AND atab2.after_value_string = atab.after_value_string)";
+            $addWhere[] = "(atab.field_name = 'email' AND atab.after_value_string IN (?))";
+            $emailIds = array_column($bean->emailAddress->addresses, 'email_address_id');
+            $params[] = $emailIds;
+            $paramTypes[] = Connection::PARAM_STR_ARRAY;
+        }
+
+        $leftJoinCond[] = implode(' OR ', $addLJoinCond);
+        $where[] = implode(' OR ', $addWhere);
+
+        $sql = sprintf(
+            '%s %s WHERE %s',
+            $selectWithLJoin,
+            implode(' AND ', $leftJoinCond),
+            implode(' AND ', $where)
+        );
+
+        $stmt = $this->conn->executeQuery($sql, $params, $paramTypes);
 
         $db = DBManagerFactory::getInstance();
 
-        $return = array();
+        $return = [];
         while ($row = $stmt->fetch()) {
             $row['source'] = json_decode($row['source'], true);
             //convert date
             $row['date_created'] = $db->fromConvert($row['date_created'], 'datetime');
-            $return[$row['field_name']] = $row;
+            $return[] = $row;
         }
 
         return $return;
