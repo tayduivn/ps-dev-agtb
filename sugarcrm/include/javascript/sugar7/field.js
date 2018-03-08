@@ -145,13 +145,15 @@
              * @return {boolean} true if the record has the field marked as erased; false otherwise.
              */
             _isErasedField: function() {
+                if (!this.model) {
+                    return false;
+                }
+
                 if (this.type === 'fullname') {
                     return app.utils.isNameErased(this.model);
                 } else {
                     return !this.model.get(this.name) && _.contains(this.model.get('_erased_fields'), this.name);
                 }
-
-                return false;
             },
 
             /**
