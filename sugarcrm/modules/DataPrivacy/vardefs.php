@@ -178,7 +178,7 @@ $dictionary['DataPrivacy'] = array(
             ),
     ),
     'indices' => array(
-        array('name' =>'dataprivacy_number' , 'type'=>'unique' , 'fields'=>array('dataprivacy_number', 'system_id')),
+        array('name' =>'dataprivacy_number' , 'type'=>'unique' , 'fields'=>array('dataprivacy_number')),
         array('name' =>'idx_dataprivacy_name', 'type' =>'index', 'fields'=>array('name')),
     ),
     'acls' => array('SugarACLStatic' => true),
