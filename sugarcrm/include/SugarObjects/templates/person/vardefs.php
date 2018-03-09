@@ -196,6 +196,8 @@ $vardefs =array(
 			'comment' => 'Work phone number of the contact',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'audited' => true,
+            'pii' => true,
 		),
 	'phone_other' =>
 		array (

@@ -32,6 +32,8 @@ $dictionary['Prospect'] = array(
             'vname' => 'LBL_BIRTHDATE',
             'massupdate' => false,
             'type' => 'date',
+            'audited' => true,
+            'pii' => true,
         ),
         'do_not_call' => array(
             'name' => 'do_not_call',

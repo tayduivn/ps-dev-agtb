@@ -162,7 +162,9 @@ $dictionary['Contact'] = array(
             'vname' => 'LBL_BIRTHDATE',
             'massupdate' => false,
             'type' => 'date',
-            'comment' => 'The birthdate of the contact'
+            'comment' => 'The birthdate of the contact',
+            'audited' => true,
+            'pii' => true,
         ),
         //BEGIN SUGARCRM flav=ent ONLY
         'portal_name' => array(
