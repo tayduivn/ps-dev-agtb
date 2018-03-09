@@ -44,7 +44,7 @@
 </tr>
 {/if}
 
-{if $auditable}
+{if $auditable && !in_array($vardef.type, array('bool', 'html', 'relate', 'image'))}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_AUDIT"}:</td><td><input id="auditedCheckbox" type="checkbox" name="audited" value="1" {if !empty($vardef.audited) || !empty($vardef.pii) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="audited" value="{$vardef.audited}">{/if}</td></tr>
 <tr>
     <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_PII"}:</td>
