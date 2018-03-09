@@ -44,6 +44,7 @@ $dictionary['DataPrivacy'] = array(
             'sortable' => true,
             'duplicate_on_record_copy' => 'always',
             'audited' => true,
+            'massupdate' => false,
         ),
         'business_purpose' => array (
             'name' => 'business_purpose',
