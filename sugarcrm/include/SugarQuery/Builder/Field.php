@@ -38,10 +38,6 @@ class SugarQuery_Builder_Field
     public $alias = false;
 
     /**
-     * @var bool|string field alias when returning data as an array (abstracting away database alias length)
-     */
-    public $original_alias = false;
-    /**
      * @var string the fields bean table
      */
     public $bean_table;
@@ -83,9 +79,6 @@ class SugarQuery_Builder_Field
         if (is_array($field)) {
             $this->field = $field[0];
             $this->alias = $field[1];
-            if (!empty($field[2])) {
-                $this->original_alias = $field[2];
-            }
         } else {
             $this->field = $field;
         }

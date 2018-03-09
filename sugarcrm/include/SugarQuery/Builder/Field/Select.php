@@ -42,11 +42,7 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         }
 
         if (!empty($this->alias)) {
-            $dbAlias = DBManagerFactory::getInstance()->getValidDBName($this->alias, false, 'alias');
-            if (strtolower($this->alias) != $dbAlias) {
-                $this->original_alias = $this->alias;
-                $this->alias = $dbAlias;
-            }
+            $this->alias = $this->query->getValidColumnAlias($this->alias);
         }
 
         if ($this->field == '*') {

@@ -130,6 +130,13 @@ class SugarQuery
     protected $shouldFetchErasedFields = false;
 
     /**
+     * Mapping of original column aliases to their compact versions
+     *
+     * @var array
+     */
+    private $columnAliasMap = [];
+
+    /**
      * This is used in Order By statements and in general is always true
      * @var boolean
      */
@@ -688,14 +695,13 @@ class SugarQuery
     protected function formatRow(array $row)
     {
         //remap long aliases to thier correct output key
-        if (!empty($this->select)) {
-            foreach ($this->select->select as $field) {
-                if (!empty($field->original_alias) && isset($row[$field->alias])) {
-                    $row[$field->original_alias] = $row[$field->alias];
-                    unset($row[$field->alias]);
-                }
+        foreach ($this->columnAliasMap as $orignalAlias => $compactAlias) {
+            if (array_key_exists($compactAlias, $row)) {
+                $row[$orignalAlias] = $row[$compactAlias];
+                unset($row[$compactAlias]);
             }
         }
+
         return $row;
     }
 
@@ -1165,5 +1171,24 @@ class SugarQuery
     public function shouldFetchErasedFields()
     {
         return $this->shouldFetchErasedFields;
+    }
+
+    /**
+     * Returns a SQL-valid version of a given column alias and registers a mapping between the two
+     *
+     * @param string $alias Original column alias
+     * @return string
+     */
+    public function getValidColumnAlias(string $alias) : string
+    {
+        $validAlias = $this->db->getValidDBName($alias, true);
+
+        if (strcasecmp($alias, $validAlias) == 0) {
+            return $alias;
+        }
+
+        $this->columnAliasMap[$alias] = $validAlias;
+
+        return $validAlias;
     }
 }
