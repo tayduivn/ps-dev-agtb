@@ -3543,6 +3543,9 @@ class ModuleInstaller{
      */
     public function setup_elastic_mapping()
     {
+        if (!isset($this->installdefs['beans'])) {
+            return;
+        }
         foreach ($this->installdefs['beans'] as $beanDefs) {
             $modules[] = $beanDefs['module'];
         }
