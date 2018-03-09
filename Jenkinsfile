@@ -18,5 +18,12 @@ podTemplate(
           }
         }
       }
+      
+      // keep the master branch, everything else, delete it
+      if(env.BRANCH_NAME != "master") {
+        stage('cleanup') {
+          cleanWs()   
+        }
+      }
     }
 }
