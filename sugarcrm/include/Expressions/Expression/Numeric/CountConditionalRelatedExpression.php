@@ -75,11 +75,8 @@ class CountConditionalRelatedExpression extends NumericExpression
         }
 
         var model = this.context.relatedModel || App.data.createRelatedBean(this.context.model, null, relationship);
-        var model_id = model.id || model.cid;
         // has the model been removed from it's collection
         var hasModelBeenRemoved = this.context.isRemoveEvent || false;
-        // is the condition field valid?
-        var conditionValid = _.contains(condition_values, model.get(condition_field));
 
         if (!this.context.view.createMode) {
             var models = this.context.collection.models;
