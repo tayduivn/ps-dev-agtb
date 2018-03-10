@@ -80,6 +80,7 @@ include("metadata/users_holidaysMetaData.php");
 include 'metadata/contacts_dataprivacyMetaData.php';
 include 'metadata/leads_dataprivacyMetaData.php';
 include 'metadata/prospects_dataprivacyMetaData.php';
+include 'metadata/accounts_dataprivacyMetaData.php';
 //BEGIN SUGARCRM flav=ent ONLY
 
 include("metadata/dataset_layoutsMetaData.php");

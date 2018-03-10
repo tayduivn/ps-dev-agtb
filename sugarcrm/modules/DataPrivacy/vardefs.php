@@ -162,6 +162,14 @@ $dictionary['DataPrivacy'] = array(
                 'source'=>'non-db',
                 'vname'=>'LBL_LEADS',
             ),
+        'accounts' =>
+            array (
+                'name' => 'accounts',
+                'type' => 'link',
+                'relationship' => 'accounts_dataprivacy',
+                'source'=>'non-db',
+                'vname'=>'LBL_ACCOUNTS',
+            ),
         'contacts' =>
             array (
                 'name' => 'contacts',

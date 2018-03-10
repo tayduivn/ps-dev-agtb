@@ -158,5 +158,12 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
                 'link' => 'project',
             ),
         ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_DATAPRIVACY_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'dataprivacy',
+            ),
+        ),
     ),
 );

@@ -32,5 +32,12 @@ $viewdefs['DataPrivacy']['base']['layout']['subpanels'] = array(
                 'link' => 'prospects',
             ),
         ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'accounts',
+            ),
+        ),
     ),
 );

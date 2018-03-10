@@ -38,6 +38,7 @@ $mod_strings = array(
     'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
     'LBL_PROSPECTS_SUBPANEL_TITLE' => 'Targets',
+    'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Accounts',
     'LBL_LISTVIEW_FILTER_ALL' => 'All Data Privacy Activities',
     'LBL_ASSIGNED_TO_ME' => 'My Data Privacy Activities',
     'LBL_SEARCH_AND_SELECT' => 'Search and Select Data Privacy Activities',
