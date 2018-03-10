@@ -5371,6 +5371,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_EMAIL_PARTICIPANTS' => 'Email Participants',
     'LBL_EMAIL_PARTICIPANT' => 'Email Participant',
 
+    'LBL_EMAIL_ADDRESS_OPTED_OUT' => 'Opted out of email campaigns',
+
     'LBL_DATAPRIVACY' => 'Data Privacy',
     'LBL_DATAPRIVACY_SUBPANEL_TITLE' => 'Data Privacy',
     'LBL_DATAPRIVACY_VIEW_PII' => 'View Personal Info',
