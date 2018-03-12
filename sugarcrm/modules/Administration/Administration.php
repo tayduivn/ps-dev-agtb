@@ -135,6 +135,7 @@ class Administration extends SugarBean {
     function saveConfig() {
         // outbound email settings
         $oe = new OutboundEmail();
+        $oe = $oe->getSystemMailerSettings();
 
         foreach($_POST as $key => $val) {
             $prefix = $this->get_config_prefix($key);

@@ -32,6 +32,7 @@ class EmailManController extends SugarController
         // save Outbound settings  #Bug 20033 Ensure data for Outbound email exists before trying to update the system mailer.
         if(isset($_REQUEST['mail_sendtype']) && empty($_REQUEST['campaignConfig'])) {
             $oe = new OutboundEmail();
+            $oe = $oe->getSystemMailerSettings();
             $oe->populateFromPost();
             $oe->saveSystem();
         }
