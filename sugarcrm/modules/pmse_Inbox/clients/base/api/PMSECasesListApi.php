@@ -183,7 +183,6 @@ class PMSECasesListApi extends FilterApi
             $qLike = $q->getDBManager()->quoted('%' . $args['q'] . '%');
             $q->where()->queryAnd()
                 ->addRaw("
-                    a.cas_title LIKE $qLike OR
                     a.pro_title LIKE $qLike OR
                     a.cas_status LIKE $qLike OR
                     prj.assigned_user_id LIKE $qLike OR

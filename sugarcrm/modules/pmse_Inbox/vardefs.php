@@ -105,7 +105,7 @@ $dictionary['pmse_Inbox'] = array(
             'size' => '20',
         ),
         'cas_title' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'cas_title',
             'vname' => 'LBL_CAS_TITLE',
             'type' => 'varchar',
@@ -297,7 +297,7 @@ $dictionary['pmse_Inbox'] = array(
             'dbType' => 'varchar',
             'len' => 255,
             'unified_search' => false,
-            'required' => true,
+            'required' => false,
             'importable' => 'required',
             'duplicate_merge' => 'enabled',
             'merge_filter' => 'selected',

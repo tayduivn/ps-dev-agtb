@@ -968,7 +968,7 @@ class PMSEEngineApi extends SugarApi
         $q->select($fields);
         if ($args['module_list'] == 'all' && !empty($args['q'])) {
             $q->where()->queryAnd()
-                ->addRaw("pmse_inbox.cas_title LIKE '%" . $args['q'] . "%' OR pmse_inbox.pro_title LIKE '%" . $args['q'] . "%' ");
+                ->addRaw("pmse_inbox.pro_title LIKE '%" . $args['q'] . "%' ");
         } else if (!empty($args['q'])){
             switch($args['module_list']){
                 case translate('LBL_CAS_ID', 'pmse_Inbox'):
@@ -978,10 +978,6 @@ class PMSEEngineApi extends SugarApi
                 case translate('LBL_PROCESS_DEFINITION_NAME', 'pmse_Inbox'):
                 $q->where()->queryAnd()
                     ->addRaw("pmse_inbox.pro_title LIKE '%" . $args['q'] . "%'");
-                    break;
-                case translate('LBL_RECORD_NAME', 'pmse_Inbox'):
-                    $q->where()->queryAnd()
-                        ->addRaw("pmse_inbox.cas_title LIKE '%" . $args['q'] . "%'");
                     break;
                 case translate('LBL_OWNER', 'pmse_Inbox'):
                     $q->where()->queryAnd()
@@ -1158,8 +1154,6 @@ class PMSEEngineApi extends SugarApi
         $returnArray['case']['title']['time'] = $this->caseWrapper->processDueDateTime($returnArray['case']['flow']['cas_due_date']);
         $bpmnProcess = BeanFactory::retrieveBean('pmse_BpmnProcess', $bpmFlow->pro_id);
         $returnArray['case']['title']['process'] = $bpmnProcess->name;
-        $bpmInbox = BeanFactory::retrieveBean('pmse_Inbox', $args['id']);
-        $returnArray['case']['title']['rec_name'] = $bpmInbox->name;
         $bpmnActivity = BeanFactory::retrieveBean('pmse_BpmnActivity', $bpmFlow->bpmn_id);
         $returnArray['case']['title']['activity'] = $bpmnActivity->name;
         $returnArray['case']['inboxId'] = $bpmnActivity->name;
