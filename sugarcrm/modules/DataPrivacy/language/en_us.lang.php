@@ -50,6 +50,7 @@ $mod_strings = array(
     'LBL_REJECT_BUTTON_LABEL' => 'Reject',
     'LBL_COMPLETE_BUTTON_LABEL' => 'Complete',
     'LBL_ERASE_COMPLETE_BUTTON_LABEL' => 'Erase & Complete',
+    'LBL_ERASE_SUBPANEL_FIELDS_LABEL' => 'Erase fields selected via subpanels',
     'LBL_COUNT_FIELDS_MARKED' => 'Fields Marked To Erase',
     'LBL_NO_RECORDS_MARKED' => 'No Fields or Records have been marked to erase.',
     'LBL_DATA_PRIVACY_RECORD_DASHBOARD' => 'Data Privacy Record Dashboard',

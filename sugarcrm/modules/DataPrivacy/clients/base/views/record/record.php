@@ -47,6 +47,7 @@ $viewdefs['DataPrivacy']['base']['view']['record'] = array(
             'css_class' => 'btn btn-success',
             'showOn' => 'view',
             'acl_action' => 'admin',
+            'tooltip' => 'LBL_ERASE_SUBPANEL_FIELDS_LABEL',
         ),
         array(
             'type' => 'rowaction',
