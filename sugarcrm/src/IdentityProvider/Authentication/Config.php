@@ -12,8 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
-use Sugarcrm\IdentityProvider\Hydra\EndpointInterface;
-use Sugarcrm\IdentityProvider\Hydra\EndpointService;
+use Sugarcrm\IdentityProvider\STS\EndpointInterface;
+use Sugarcrm\IdentityProvider\STS\EndpointService;
 
 /**
  * Configuration glue for IdM

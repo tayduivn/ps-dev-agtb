@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Sugarcrm\IdentityProvider\Srn;
 
 /**
- * Sugar OAuth2.0 server that connects Sugar and OpenID Connect server (e.g. Hydra authentication).
+ * Sugar OAuth2.0 server that connects Sugar and OpenID Connect server (e.g. STS authentication).
  * @api
  */
 class SugarOAuth2ServerOIDC extends SugarOAuth2Server
