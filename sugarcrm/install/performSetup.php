@@ -14,8 +14,9 @@ use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+//BEGIN SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-
+//END SUGARCRM flav=ent ONLY
 // $Id: performSetup.php 55505 2010-03-22 15:20:57Z clee $
 // This file will load the configuration settings from session data,
 // write to the config file, and execute any necessary database steps.
@@ -193,10 +194,10 @@ $nonStandardModules = array(//'Tracker',
 // TODO: Remove the following. (See MAR-1314)
 // Disable the activity stream from creating messages while installing.
 Activity::disable();
-
+//BEGIN SUGARCRM flav=ent ONLY
 // Disable processes for the time being
 Registry\Registry::getInstance()->set('setup:disable_processes', true);
-
+//END SUGARCRM flav=ent ONLY
 //If this is MIcrosoft install and FTS is enabled, then fire index wake up method to prime the indexing service.
 if ($db->supports('fulltext') && $db->full_text_indexing_installed()) {
     installLog("Enabling fulltext indexing");
@@ -711,10 +712,10 @@ MetaDataManager::setupMetadata(array('base'), array('en_us'));
 // TODO: Remove the following. (See MAR-1314)
 // Restore the activity stream behaviour.
 Activity::enable();
-
+//BEGIN SUGARCRM flav=ent ONLY
 // Allow processes to resume at this point
 Registry\Registry::getInstance()->drop('setup:disable_processes');
-
+//END SUGARCRM flav=ent ONLY
 installerHook('post_performSetup');
 $out = <<<EOQ
 <br><p><b>{$mod_strings['LBL_PERFORM_OUTRO_1']} {$setup_sugar_version} {$mod_strings['LBL_PERFORM_OUTRO_2']}</b></p>

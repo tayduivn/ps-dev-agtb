@@ -160,6 +160,12 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/Connectors/connectors/sources/ext/rest/insideview'=>1,
 'sugarcrm/modules/Connectors/connectors/sources/ext/eapm/facebook'=>1,
 
+// Locked fields implementation for ENT and above
+'sugarcrm/include/SugarObjects/implements/lockable_fields' => 1,
+'sugarcrm/metadata/locked_field_bean_relMetaData.php' => 1,
+'sugarcrm/modules/pmse_Project/pmse_BpmProcessDefinition/LockedFieldsRelatedModulesUtilities.php' => 1,
+'sugarcrm/include/SugarFields/Fields/Locked_fields/SugarFieldLocked_fields.php' => 1,
+
 'sugarcrm/modules/pmse_Business_Rules'=>1,
 'sugarcrm/modules/pmse_Emails_Templates'=>1,
 'sugarcrm/modules/pmse_Inbox'=>1,
@@ -169,5 +175,8 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/unit-php/modules/pmse_Emails_Templates'=>1,
 'sugarcrm/tests/unit-php/modules/pmse_Inbox'=>1,
 'sugarcrm/tests/unit-php/modules/pmse_Project'=>1,
+
+'sugarcrm/src/ProcessManager' => 1,
+'sugarcrm/tests/{old}/src/ProcessManager' => 1,
 );
 $build = 'pro';

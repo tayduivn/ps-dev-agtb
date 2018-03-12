@@ -146,6 +146,7 @@ $config['blackList']['corp'] = array(
 'sugarcrm/include/SugarObjects/implements/lockable_fields' => 1,
 'sugarcrm/metadata/locked_field_bean_relMetaData.php' => 1,
 'sugarcrm/modules/pmse_Project/pmse_BpmProcessDefinition/LockedFieldsRelatedModulesUtilities.php' => 1,
+'sugarcrm/include/SugarFields/Fields/Locked_fields/SugarFieldLocked_fields.php' => 1,
 
 'sugarcrm/clients/portal'=>1,
 'sugarcrm/portal2' =>1,
@@ -166,5 +167,13 @@ $config['blackList']['corp'] = array(
 'sugarcrm/modules/pmse_Emails_Templates'=>1,
 'sugarcrm/modules/pmse_Inbox'=>1,
 'sugarcrm/modules/pmse_Project'=>1,
+
+'sugarcrm/tests/unit-php/modules/pmse_Business_Rules'=>1,
+'sugarcrm/tests/unit-php/modules/pmse_Emails_Templates'=>1,
+'sugarcrm/tests/unit-php/modules/pmse_Inbox'=>1,
+'sugarcrm/tests/unit-php/modules/pmse_Project'=>1,
+
+'sugarcrm/src/ProcessManager' => 1,
+'sugarcrm/tests/{old}/src/ProcessManager' => 1,
 );
 $build = 'corp';

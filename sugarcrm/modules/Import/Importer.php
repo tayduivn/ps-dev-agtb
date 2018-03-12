@@ -13,8 +13,9 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+//BEGIN SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-
+//END SUGARCRM flav=ent ONLY
 class Importer
 {
     /**
@@ -839,11 +840,11 @@ class Importer
 
         if ( $focus->object_name == "Contact" && isset($list_of_users) )
             $focus->process_sync_to_outlook($list_of_users);
-
+        //BEGIN SUGARCRM flav=ent ONLY
         // Before calling save, we need to clear out any existing registered AWF
         // triggered start events so they can continue to trigger.
         Registry\Registry::getInstance()->drop('triggered_starts');
-
+        //END SUGARCRM flav=ent ONLY
         $focus->save(false);
 
         //now that save is done, let's make sure that parent and related id's were saved as relationships

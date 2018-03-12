@@ -9,9 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+//BEGIN SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-
+//END SUGARCRM flav=ent ONLY
 
 /**
  * @api
@@ -276,10 +276,11 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
             try {
                 $errors = $helper->populateFromApi($bean, $data, array('massUpdate'=>true));
                 $check_notify = $helper->checkNotify($bean);
-
+                //BEGIN SUGARCRM flav=ent ONLY
                 // Before calling save, we need to clear out any existing AWF
                 // triggered start events so they can continue to trigger.
                 Registry\Registry::getInstance()->drop('triggered_starts');
+                //END SUGARCRM flav=ent ONLY
                 $bean->save($check_notify);
             } catch (SugarApiException $e) {
                 // ACL's might not let them modify this bean, but we should still do the rest

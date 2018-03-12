@@ -9,9 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+//BEGIN SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-
+//END SUGARCRM flav=ent ONLY
 class CalendarUtils
 {
 	/**
@@ -344,11 +344,11 @@ class CalendarUtils
 
             // make sure any store relationship info is not saved
             $clone->rel_fields_before_value = array();
-
+            //BEGIN SUGARCRM flav=ent ONLY
             // Before calling save, we need to clear out any existing registered AWF
             // triggered start events so they can continue to trigger.
             Registry\Registry::getInstance()->drop('triggered_starts');
-
+            //END SUGARCRM flav=ent ONLY
             $clone->save(false);
 
             if ($clone->id) {

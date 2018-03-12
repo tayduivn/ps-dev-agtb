@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\ProcessManager;
-
-
 /**
  * This class is here to provide functions to easily call in to the individual module api helpers
  */

@@ -9,9 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+//BEGIN SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-
+//END SUGARCRM flav=ent ONLY
 /**
  * Bulk API calls
  *
@@ -61,9 +61,10 @@ class BulkApi extends SugarApi
             $rest = new BulkRestService($api);
             $rest->setRequest($restReq);
             $rest->setResponse($restResp);
-
+            //BEGIN SUGARCRM flav=ent ONLY
             // Because we want to trigger processes for each save
             Registry\Registry::getInstance()->drop('triggered_starts');
+            //END SUGARCRM flav=ent ONLY
             $rest->execute();
 
         }

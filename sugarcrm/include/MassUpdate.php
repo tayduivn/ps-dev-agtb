@@ -13,8 +13,9 @@
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+//BEGIN SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-
+//END SUGARCRM flav=ent ONLY
 require_once 'include/EditView/EditView2.php';
 
 /**
@@ -348,10 +349,10 @@ class MassUpdate
                                 continue;
                             }
                             if (isset($_POST['UserType'])) {
-                                if ($_POST['UserType'] == "Administrator") { 
+                                if ($_POST['UserType'] == "Administrator") {
                                     $newbean->is_admin = 1;
                                 }
-                                else if ($_POST['UserType'] == "RegularUser") { 
+                                elseif ($_POST['UserType'] == "RegularUser") {
                                     $newbean->is_admin = 0;
                                 }
                             }
@@ -399,11 +400,11 @@ class MassUpdate
 
 							} // if
 	                    } // if
-
+                        //BEGIN SUGARCRM flav=ent ONLY
                         // Before calling save, we need to clear out any existing registered AWF
                         // triggered start events so they can continue to trigger.
                         Registry\Registry::getInstance()->drop('triggered_starts');
-
+                        //END SUGARCRM flav=ent ONLY
 						$newbean->save($check_notify);
 						if (!empty($email_address_id)) {
 	    					$query = "UPDATE email_addresses SET opt_out = {$optout_flag_value} where id = '{$emailAddressRow['email_address_id']}'";
@@ -440,7 +441,7 @@ class MassUpdate
                 // Then massupdate has to be false
                 $def['massupdate'] = false;
             } elseif (isset($def['massupdate'])) {
-                // The massupdate value has to be boolean so the client can properly 
+                // The massupdate value has to be boolean so the client can properly
                 // handle it. A "0" false renders as a true to the client.
                 if (self::isTrue($def['massupdate'])) {
                     $def['massupdate'] = true;
@@ -1524,7 +1525,7 @@ EOQ;
                 }
             }
         }
-        
+
         if ( $relationship == '' ) {
             return false;
         }
@@ -1534,7 +1535,7 @@ EOQ;
             $focus->load_relationship($relationship);
             $focus->$relationship->delete($id, $prospect_list_id);
         }
-        
+
         return true;
     }
 
@@ -1566,15 +1567,15 @@ EOQ;
         }
         return new $searchFormClass($bean, $module);
     }
-    
+
     /**
      * Boolean converter that returns whether the value is boolean true. This is
      * static because it is consumed from internal static methods.
-     * 
+     *
      * @param mixed $val Value to check boolean on
-     * @return boolean 
+     * @return boolean
      */
-    protected static function isTrue($val) 
+    protected static function isTrue($val)
     {
         return $val === true || $val === 1 || $val === "true" || $val === "1";
     }
@@ -1582,11 +1583,11 @@ EOQ;
     /**
      * Boolean converter that returns whether the value is boolean false. This is
      * static because it is consumed from internal static methods.
-     * 
+     *
      * @param mixed $val Value to check boolean on
-     * @return boolean 
+     * @return boolean
      */
-    protected static function isFalse($val) 
+    protected static function isFalse($val)
     {
         return $val === false || $val === 0 || $val === "false" || $val === "0";
     }

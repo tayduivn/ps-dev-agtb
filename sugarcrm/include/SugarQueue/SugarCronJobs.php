@@ -9,9 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+//BEGIN SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
-
+//END SUGARCRM flav=ent ONLY
 /**
  * CRON driver for job queue
  * @api
@@ -187,10 +187,11 @@ class SugarCronJobs
      */
     public function executeJob($job)
     {
+        //BEGIN SUGARCRM flav=ent ONLY
         // Before calling save, we need to clear out any existing registered AWF
         // triggered start events so they can continue to trigger.
         Registry\Registry::getInstance()->drop('triggered_starts');
-
+        //END SUGARCRM flav=ent ONLY
         $this->setTimeLimit($this->max_runtime);
         $res = $this->job->runJob();
         $this->clearTimeLimit();
