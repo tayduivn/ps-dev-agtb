@@ -243,6 +243,7 @@ class SugarQuery_Builder_Field
                         'bean' => $farBean,
                         'alias' => $jta,
                     ))
+                        ->addLinkName($this->def['id_name'])
                         ->on()->equalsField("{$idField->table}.{$this->def['id_name']}", "{$jta}.id")
                         ->equals("{$jta}.deleted", 0);
                 }

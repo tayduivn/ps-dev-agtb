@@ -14,12 +14,14 @@ namespace Sugarcrm\SugarcrmTests\DataPrivacy\Erasure;
 
 use ApiHelper;
 use Contact;
+use Lead;
 use Note;
 use SugarBean;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use SugarQuery;
 use SugarTestContactUtilities;
 use SugarTestHelper;
+use SugarTestLeadUtilities;
 use SugarTestNoteUtilities;
 use SugarTestRestUtilities;
 
@@ -30,7 +32,13 @@ class ErasedFieldsApiTest extends \PHPUnit_Framework_TestCase
      */
     private static $contact1;
     private static $contact2;
+    private static $contact3;
     /**#@-*/
+
+    /**
+     * @var Lead
+     */
+    private static $lead;
 
     /**
      * @var Note
@@ -51,10 +59,17 @@ class ErasedFieldsApiTest extends \PHPUnit_Framework_TestCase
         ]);
         self::$contact2->erase(FieldList::fromArray(['last_name']), false);
 
+        self::$contact3 = SugarTestContactUtilities::createContact();
+        self::$contact3->erase(FieldList::fromArray(['first_name', 'last_name']), false);
+
         self::$note = SugarTestNoteUtilities::createNote(null, [
             'contact_id' => self::$contact1->id,
             'parent_type' => self::$contact2->module_name,
             'parent_id' => self::$contact2->id,
+        ]);
+
+        self::$lead = SugarTestLeadUtilities::createLead(null, [
+            'reports_to_id' => self::$contact3->id,
         ]);
     }
 
@@ -148,6 +163,30 @@ class ErasedFieldsApiTest extends \PHPUnit_Framework_TestCase
                 '_erased_fields' => [
                     'first_name',
                 ],
+            ],
+        ], $data);
+    }
+
+    /**
+     * @test
+     */
+    public function relateFieldWithoutLink()
+    {
+        $query = new SugarQuery();
+        $query->from(self::$lead, [
+            'erased_fields' => true,
+        ]);
+        $query->select('report_to_name');
+        $query->where()->equals('id', self::$lead->id);
+
+        $leads = self::$lead->fetchFromQuery($query);
+        $this->assertCount(1, $leads);
+
+        $data = $this->format(array_shift($leads));
+
+        $this->assertArraySubset([
+            '_erased_fields' => [
+                'report_to_name',
             ],
         ], $data);
     }

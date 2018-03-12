@@ -3751,6 +3751,11 @@ class SugarBean
     public function populateFromRow(array $row, $convert = false)
     {
         global $locale;
+
+        if (array_key_exists('erased_fields', $row)) {
+            $this->erased_fields = json_decode($row['erased_fields'], true) ?: [];
+        }
+
         foreach($this->field_defs as $field=>$field_value)
         {
             if(isset($row[$field]))
@@ -3779,6 +3784,7 @@ class SugarBean
                 $rel_mod_defs = VardefManager::getFieldDefs($field_value['module']);
                 if ($rel_mod_defs) {
                     $rname = isset($field_value['rname']) ? $field_value['rname'] : 'name';
+                    $source_fields = [$rname];
                     if (isset($rel_mod_defs[$rname])) {
                         $rname_field_def = $rel_mod_defs[$rname];
                         if (isset($rname_field_def['type']) && $rname_field_def['type'] == 'fullname') {
@@ -3788,6 +3794,7 @@ class SugarBean
                             // to contain elements like rel_{this_field_name}_{name_format_field}
                             // where {name_format_field} are names returned by Localization::getNameFormatFields()
                             $name_format_fields = $locale->getNameFormatFields($field_value['module']);
+                            $source_fields = $name_format_fields;
 
                             foreach ($name_format_fields as $name_field) {
                                 $alias = $this->getRelateAlias($field, $name_field);
@@ -3798,6 +3805,10 @@ class SugarBean
 
                             $this->$field = $locale->formatName($field_value['module'], $data);
                         }
+                    }
+
+                    if ($this->shouldRelateFieldBeMarkedErased($field, $field_value, $row, $source_fields)) {
+                        $this->erased_fields[] = $field;
                     }
                 }
             }
@@ -3817,14 +3828,46 @@ class SugarBean
             $this->my_favorite = true;
         }
 
-        if (array_key_exists('erased_fields', $row)) {
-            $this->erased_fields = json_decode($row['erased_fields'], true) ?: [];
-        }
-
         return $row;
     }
 
+    /**
+     * Checks if a relate field without a link should be added to the list of erased fields on the primary record
+     *
+     * @param string $name Relate field name
+     * @param array $definition Field definition
+     * @param array $row The data fetched from the DB for the primary record
+     * @param array $sourceFields The fields from which the relate field's value has been built
+     * @return bool
+     */
+    private function shouldRelateFieldBeMarkedErased(
+        string $name,
+        array $definition,
+        array $row,
+        array $sourceFields
+    ) : bool {
+        // the related record's fields will be marked erased explicitly
+        if (isset($definition['link'])) {
+            return false;
+        }
 
+        if (strcmp($this->$name, '') != 0) {
+            return false;
+        }
+
+        /** @see SugarQuery_Builder_Field::getJoin() */
+        $key = $definition['id_name'] . '_erased_fields';
+
+        if (!isset($row[$key])) {
+            return false;
+        }
+
+        $erased_fields = json_decode($row[$key], true);
+
+        return count(
+            array_intersect($erased_fields, $sourceFields)
+        ) > 0;
+    }
 
     /**
     * Add any required joins to the list count query.  The joins are required if there
