@@ -108,7 +108,9 @@
         $(window).on('resize', _.bind(this._resizePhaserCanvas, this));
 
         sidebarLayout = this.closestComponent('sidebar');
-        sidebarLayout.on('sidebar:state:changed', this.onSidebarStateChanged, this);
+        if (sidebarLayout) {
+            sidebarLayout.on('sidebar:state:changed', this.onSidebarStateChanged, this);
+        }
     },
 
     /**
@@ -1356,8 +1358,9 @@
      */
     _dispose: function() {
         var sidebarLayout = this.closestComponent('sidebar');
-        sidebarLayout.off('sidebar:state:changed', null, this);
-
+        if (sidebarLayout) {
+            sidebarLayout.off('sidebar:state:changed', null, this);
+        }
         this.context.off('phaserio:ready', null, this);
 
         // If Phaser exists, destroy it
