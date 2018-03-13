@@ -19,6 +19,10 @@ require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
  */
 class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    const PRIMARY_EMAIL = 'primary@foo.bar';
+    const NON_PRIMARY_EMAIL_OPTED_IN = 'non_primary_opted_in@foo.bar';
+    const NON_PRIMARY_EMAIL_OPTED_OUT = 'non_primary_opted_out@foo.bar';
+
     private $importData = array();
     private $configOptoutBackUp;
     private $fileName = 'upload://import_email_properties.csv';
@@ -44,7 +48,9 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
             'id' => $id,
             'first_name' => 'ContactFirstName',
             'last_name' => 'ContactLastName',
-            'email' => "Contact_{$id}@test.net",
+            'email' => static::PRIMARY_EMAIL,
+            'email_addresses_non_primary' => static::NON_PRIMARY_EMAIL_OPTED_IN . ',0,0;' .
+                static::NON_PRIMARY_EMAIL_OPTED_OUT . ',0,1',
         );
         SugarTestContactUtilities::setCreatedContact([$id]);
     }
@@ -76,7 +82,7 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::import
      * @dataProvider optoutDataProvider
      */
-    public function testImportEmailAddress_OptoutSupplied_ImportsCorrectly(bool $optOut)
+    public function testImportEmailAddress_OptoutMapped_ImportsCSVFileValuesCorrectly(bool $optOut)
     {
         $importValue = intval($optOut);
         $this->importData['email_opt_out'] = "{$importValue}";
@@ -91,16 +97,30 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertSame($contact->first_name, $this->importData['first_name'], 'Contact first_name not imported');
         $this->assertSame($contact->last_name, $this->importData['last_name'], 'Contact last_name not imported');
-        $this->assertEquals(
-            $this->importData['email'],
-            $contact->email[0]['email_address'],
-            'Contact email address not created on import'
+        $emailProperties = $this->getEmailProperties($contact);
+
+        $this->assertSame(
+            3,
+            count($emailProperties),
+            'Expected 3 Emails To Be Created'
         );
 
-        $this->assertEquals(
-            $this->importData['email_opt_out'],
-            $contact->email[0]['opt_out'],
+        $this->assertSame(
+            boolval($this->importData['email_opt_out']),
+            boolval($emailProperties[static::PRIMARY_EMAIL]['opt_out']),
             'Opt_out value on created Email Address Value does not match Opt-Out Value Supplied in Import Record'
+        );
+
+        $this->assertSame(
+            false,
+            boolval($emailProperties[static::NON_PRIMARY_EMAIL_OPTED_IN]['opt_out']),
+            'Opt_out value on created Non-Primary Email Address Value should be 0 (Opted-In)'
+        );
+
+        $this->assertSame(
+            true,
+            boolval($emailProperties[static::NON_PRIMARY_EMAIL_OPTED_OUT]['opt_out']),
+            'Opt_out value on created Non-Primary Email Address Value should be 1 (Opted-Out)'
         );
     }
 
@@ -123,16 +143,41 @@ class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertSame($contact->first_name, $this->importData['first_name'], 'Contact first_name not imported');
         $this->assertSame($contact->last_name, $this->importData['last_name'], 'Contact last_name not imported');
-        $this->assertEquals(
-            $this->importData['email'],
-            $contact->email[0]['email_address'],
-            'Contact email address not created on import'
+        $emailProperties = $this->getEmailProperties($contact);
+
+        $this->assertSame(
+            3,
+            count($emailProperties),
+            'Expected 3 Emails To Be Created'
         );
-        $this->assertEquals(
+
+        $this->assertSame(
             $defaultOptout,
-            ($contact->email[0]['opt_out'] == '1'),
-            'Opt_out value on created Email Address Value does not match the system-configured default opt-out value'
+            boolval($emailProperties[static::PRIMARY_EMAIL]['opt_out']),
+            'Opt_out value on created Email Address Value does not match Opt-Out Value Supplied in Import Record'
         );
+
+        $this->assertSame(
+            $defaultOptout,
+            boolval($emailProperties[static::NON_PRIMARY_EMAIL_OPTED_IN]['opt_out']),
+            'Opt_out value on created Non-Primary Email Address Value should be 0 (Opted-In)'
+        );
+
+        $this->assertSame(
+            $defaultOptout,
+            boolval($emailProperties[static::NON_PRIMARY_EMAIL_OPTED_OUT]['opt_out']),
+            'Opt_out value on created Non-Primary Email Address Value should be 1 (Opted-Out)'
+        );
+    }
+
+    private function getEmailProperties($contact)
+    {
+        $emailProperties = array();
+        foreach ($contact->email as $emailData) {
+            $emailAddress = $emailData['email_address'];
+            $emailProperties[$emailAddress] = $emailData;
+        }
+        return $emailProperties;
     }
 
     private function createImportFile($importData)

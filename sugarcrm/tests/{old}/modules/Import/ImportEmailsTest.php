@@ -71,9 +71,11 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->importObject = $bean = new $module;
 
         // Setup needed $_REQUEST data
-        $_REQUEST['columncount'] = 2;
+        $_REQUEST['columncount'] = 4;
         $_REQUEST['colnum_0'] = $nameField;
         $_REQUEST['colnum_1'] = 'email_addresses_non_primary';
+        $_REQUEST['colnum_2'] = 'email_opt_out';  //must be a 'mapped field' for csv file values to be used
+        $_REQUEST['colnum_3'] = 'invalid_email';  //must be a 'mapped field' for csv file values to be used
         $_REQUEST['import_module'] = $bean->module_dir;
 
         // Create the Importer and try importing
