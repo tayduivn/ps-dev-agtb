@@ -43,7 +43,7 @@
                         {{/each}}
                         {{#each fields}}
                             <td{{#if align}} class="{{align}}"{{/if}}>
-                                {{field ../../../../this model=../this template=../../../../this.action}}
+                                {{field ../../../../this model=../this template="pii"}}
                             </td>
                         {{/each}}
                     </tr>

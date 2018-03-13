@@ -475,6 +475,7 @@
             value = [{
                 email_address: value.email_address,
                 email_address_id: value.id,
+                primary_address: value.primary_address,
             }];
         } else if ((_.isString(value) && value !== "") || this.view.action === 'list') {
             // expected an array with a single address but got a string or an empty array

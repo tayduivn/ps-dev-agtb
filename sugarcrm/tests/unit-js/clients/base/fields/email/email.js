@@ -495,14 +495,20 @@ describe('Base.Email', function() {
             expect(actual.length).toBe(value.length);
         });
 
-        it('should have email address, id and flagLabel when passed as an object', function() {
-            var value = {email_address: 'a@a.com', id: 'email_id'};
+        it('should have email address, id, primary_address and flagLabel when passed as an object', function() {
+            var value = {email_address: 'a@a.com', id: 'email_id', primary_address: false};
             var actual = field.format(value);
-            var expectedAttributes = {email_address: 'a@a.com', email_address_id: 'email_id', flagLabel: ''};
+            var expectedAttributes = {
+                email_address: 'a@a.com',
+                email_address_id: 'email_id',
+                flagLabel: '',
+                primary_address: false,
+            };
 
             expect(actual[0].email_address).toBe(expectedAttributes.email_address);
             expect(actual[0].email_address_id).toBe(expectedAttributes.email_address_id);
             expect(actual[0].flagLabel).toBe(expectedAttributes.flagLabel);
+            expect(actual[0].primary_address).toBe(expectedAttributes.primary_address);
         });
     });
 

@@ -31,7 +31,7 @@
                 <tr name="{{module}}_{{attributes.id}}" data-fieldname="{{attributes.field_name}}" class="single">
                     {{#each fields}}
                         <td{{#if align}} class="{{align}}"{{/if}}>
-                            {{field ../../../../this model=../this template=../../../../this.action}}
+                            {{field ../../../../this model=../this template="pii"}}
                         </td>
                     {{/each}}
                 </tr>

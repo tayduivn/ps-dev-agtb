@@ -47,8 +47,6 @@
 ({
     extendsFrom: 'PiiView',
 
-    fallbackFieldTemplate: 'list-header',
-
     className: 'flex-list-view left-actions',
 
     /**
@@ -197,11 +195,17 @@
      * @private
      */
     _getModelsByName: function(fieldNames) {
-        // FIXME: this will have to be modified to handle Emails
         if (this.collection && this.collection.models) {
-            return _.filter(this.collection.models, function(model) {
-                return fieldNames.indexOf(model.get('field_name')) !== -1;
-            });
+            var models = [];
+            _.each(fieldNames, function(field) {
+                _.each(this.collection.models, function(model) {
+                    var fieldName = model.get('field_name');
+                    if (field === fieldName || (!_.isUndefined(field.id) && field.id === model.get('value').id)) {
+                        models.push(model);
+                    }
+                });
+            }, this);
+            return models;
         }
         return [];
     },
@@ -254,8 +258,31 @@
      */
     _markForErasure: function() {
         var selectedModels = this.massCollection.models;
-        // FIXME: this will need to be modified to handle emails
-        var selectedFields = _.map(selectedModels, function(model) { return model.get('field_name'); });
+        var selectedFields;
+        try {
+            selectedFields = _.map(selectedModels, function(model) {
+                var fieldName = model.get('field_name');
+                // Email addresses and other related fields will have an object containing
+                // the name and id of the record
+                var value = model.get('value');
+                if (_.isObject(value)) {
+                    if (!fieldName || !value.id) {
+                        throw new Error('Unable to mark field ' + fieldName + ' to erase.');
+                    }
+                    return {
+                        field_name: fieldName,
+                        id: value.id
+                    };
+                }
+                return fieldName;
+            });
+        } catch (e) {
+            app.alert.show('invalid_pii_field', {
+                level: 'error',
+                messages: [e.message],
+            });
+            return;
+        }
 
         var modelForErase = this.context.get('modelForErase');
         var link = modelForErase.link;

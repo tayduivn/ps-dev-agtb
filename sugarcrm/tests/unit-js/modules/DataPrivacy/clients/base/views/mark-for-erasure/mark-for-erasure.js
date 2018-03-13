@@ -50,7 +50,7 @@ describe('View.Views.Base.DataPrivacy.MarkForErasureView', function() {
         },
         {
             field_name: 'email',
-            value: 'foo@example.com',
+            value: {id: 'emailId1', email_address: 'foo@example.com'},
             date_modified: '2018-01-23T12:44:58-08:00',
             source: {
                 type: 'user',
@@ -63,7 +63,7 @@ describe('View.Views.Base.DataPrivacy.MarkForErasureView', function() {
         },
         {
             field_name: 'email',
-            value: 'bar@example.net',
+            value: {id: 'emailId2', email_address: 'bar@example.net'},
             date_modified: '2018-01-23T12:44:58-08:00',
             source: {
                 type: 'markto'
