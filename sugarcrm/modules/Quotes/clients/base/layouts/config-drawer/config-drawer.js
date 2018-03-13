@@ -10,14 +10,14 @@
  */
 /**
  * @class View.Layouts.Base.QuotesConfigDrawerLayout
- * @alias SUGAR.App.view.layouts.Base.QuotesConfigDrawerLayout
+ * @alias SUGAR.App.view.layouts.BaseQuotesConfigDrawerLayout
  * @extends View.Layouts.Base.ConfigDrawerLayout
  */
 ({
     extendsFrom: 'ConfigDrawerLayout',
 
     /**
-     * Checks Quotes ACLs to see if the User is a system admin, admin,
+     * Checks Quotes ACLs to see if the User is a system admin
      * or if the user has a developer role for the Quotes module
      *
      * @inheritdoc
@@ -25,10 +25,9 @@
     _checkModuleAccess: function() {
         var acls = app.user.getAcls().Quotes;
         var isSysAdmin = (app.user.get('type') == 'admin');
-        var isAdmin = !_.has(acls, 'admin');
         var isDev = (!_.has(acls, 'developer'));
 
-        return (isSysAdmin || isAdmin || isDev);
+        return (isSysAdmin || isDev);
     },
 
     /**

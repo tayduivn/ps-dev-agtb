@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+//FILE SUGARCRM flav=ent ONLY
 describe('Quotes.Layout.ConfigDrawer', function() {
     var app;
     var layout;
