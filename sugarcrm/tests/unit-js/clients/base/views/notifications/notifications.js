@@ -139,6 +139,46 @@ describe('Notifications', function() {
         });
     });
 
+    describe('Initialization with metadata overridden bad delay values', function() {
+        var customOptions;
+
+        afterEach(function() {
+            sinon.collection.restore();
+            SugarTest.testMetadata.dispose();
+            SugarTest.app.view.reset();
+            view.dispose();
+            view = null;
+        });
+
+        it('should initialize delay to delayMax when metadata overridden values are too big', function() {
+            customOptions = {
+                delay: 40000
+            };
+            SugarTest.testMetadata.init();
+            SugarTest.testMetadata.addViewDefinition(viewName, customOptions, moduleName);
+            SugarTest.testMetadata.set();
+
+            view = SugarTest.createView('base', moduleName, viewName);
+            view._initOptions();
+
+            expect(view.delay / 60 / 1000).toBe(view.delayMax);
+        });
+
+        it('should initialize delay to delayMin when metadata overridden values are too low', function() {
+            customOptions = {
+                delay: 0
+            };
+            SugarTest.testMetadata.init();
+            SugarTest.testMetadata.addViewDefinition(viewName, customOptions, moduleName);
+            SugarTest.testMetadata.set();
+
+            view = SugarTest.createView('base', moduleName, viewName);
+            view._initOptions();
+
+            expect(view.delay / 60 / 1000).toBe(view.delayMin);
+        });
+    });
+
     describe('Pulling mechanism', function() {
         beforeEach(function() {
             view = SugarTest.createView('base', moduleName, viewName);
