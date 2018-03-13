@@ -18,6 +18,11 @@ $disable_date_format = true;
 
 class SoapHelperWebServices {
 
+    /**
+     * @var IdmConfig
+     */
+    protected $idmConfig = null;
+
 	function get_field_list($value, $fields, $translate=true)
 	{
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_field_list('.print_r($value, true).', '.print_r($fields, true).", $translate");

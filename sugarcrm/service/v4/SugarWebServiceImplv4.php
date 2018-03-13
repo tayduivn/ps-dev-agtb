@@ -90,7 +90,8 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             self::$helperObject->setFaultObject($error);
             return;
         } elseif (extension_loaded('mcrypt')
-            && ($authController->authController->userAuthenticateClass == "LDAPAuthenticateUser" ||
+            && (!empty($authController->authController->userAuthenticateClass)
+                && $authController->authController->userAuthenticateClass == "LDAPAuthenticateUser" ||
                 $authController->authController instanceof IdMLDAPAuthenticate ||
                 $authController->authController instanceof OAuth2Authenticate)
             && (empty($user_auth['encryption']) || $user_auth['encryption'] !== 'PLAIN')) {
@@ -98,7 +99,8 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             $authController->loggedIn = false; // reset login attempt to try again with decrypted password
             if($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id']))
                 $success = true;
-        } elseif (($authController->authController->userAuthenticateClass == "LDAPAuthenticateUser" ||
+        } elseif ((!empty($authController->authController->userAuthenticateClass)
+                && $authController->authController->userAuthenticateClass == "LDAPAuthenticateUser" ||
                 $authController->authController instanceof IdMLDAPAuthenticate ||
                 $authController->authController instanceof OAuth2Authenticate)
                  && (empty($user_auth['encryption']) || $user_auth['encryption'] == 'PLAIN' )) {

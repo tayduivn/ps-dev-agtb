@@ -350,7 +350,8 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
             self::$helperObject->setFaultObject($error);
             return;
-        } elseif (($authController->authController->userAuthenticateClass == "LDAPAuthenticateUser" ||
+        } elseif ((!empty($authController->authController->userAuthenticateClass)
+            && $authController->authController->userAuthenticateClass == "LDAPAuthenticateUser" ||
             $authController->authController instanceof IdMLDAPAuthenticate)
                  && (empty($user_auth['encryption']) || $user_auth['encryption'] !== 'PLAIN' )) {
             $error->set_error('ldap_error');
