@@ -59,7 +59,7 @@ describe('Quotes.Layout.ConfigDrawer', function() {
             expect(layout._checkModuleAccess()).toBeTruthy();
         });
 
-        it('should allow access when user is Quotes Admin', function() {
+        it('should not allow access when user is Quotes Admin', function() {
             sinon.collection.stub(app.user, 'getAcls', function() {
                 return {
                     Quotes: {
@@ -68,7 +68,7 @@ describe('Quotes.Layout.ConfigDrawer', function() {
                 };
             });
 
-            expect(layout._checkModuleAccess()).toBeTruthy();
+            expect(layout._checkModuleAccess()).toBeFalsy();
         });
 
         it('should not allow access when user is not a System Admin nor Developer', function() {
