@@ -190,7 +190,7 @@ $dictionary['DataPrivacy'] = array(
     'indices' => array(
         array('name' =>'idx_dataprivacy_name', 'type' =>'index', 'fields'=>array('name')),
     ),
-    'acls' => array('SugarACLStatic' => true),
+    'acls' => array('SugarACLDataPrivacy' => true, 'SugarACLStatic' => true),
 );
 
 VardefManager::createVardef('DataPrivacy', 'DataPrivacy', array('default', 'assignable', 'team_security', 'issue'));

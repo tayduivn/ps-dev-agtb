@@ -13,10 +13,10 @@
 /**
  * This class is used to enforce ACLs on modules that are restricted to DPO (Data Privacy Officer) only.
  */
-class SugarACLDpoErasure extends SugarACLStrategy
+class SugarACLDataPrivacy extends SugarACLStrategy
 {
     /**
-     * Only allow access to the erasure action for DPR module.
+     * don't allow change field 'fields_to_erase' for non-admin of 'DataPrivacy'
      * @param string $module
      * @param string $view
      * @param array $context
@@ -29,13 +29,16 @@ class SugarACLDpoErasure extends SugarACLStrategy
             return false;
         }
 
-
-        if (!empty($context['action']) && $context['action'] == 'erase') {
-            if ($module != 'DataPrivacy' || !$user->isAdminForModule($module)) {
-                    return false;
+        if (!empty($context['action'])
+            && $context['action'] === 'save'
+            && $module === 'DataPrivacy'
+            && !$user->isAdminForModule($module)
+        ){
+            $lockedFields = ['fields_to_erase'];
+            if (isset($context['field']) && in_array($context['field'], $lockedFields)) {
+                return false;
             }
         }
-
         return true;
     }
 }

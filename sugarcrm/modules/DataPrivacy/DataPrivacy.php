@@ -64,6 +64,13 @@ class DataPrivacy extends Issue
      */
     public function save($check_notify = false)
     {
+        $isAdmin = $GLOBALS['current_user']->isAdminForModule($this->module_name);
+        $oldStatus = $this->fetched_row['status'] ?? null;
+
+        if (!$this->isStatusChangeAllowed($isAdmin, $oldStatus, $this->status)) {
+            throw new SugarApiExceptionNotAuthorized("changing 'status' is not allowed in " . $this->module_name);
+        }
+
         //check the value defined in dataprivacy_status_dom
         if ($this->type === 'Request to Erase Information'
             && isset($this->fetched_row['status'])
@@ -130,5 +137,30 @@ class DataPrivacy extends Issue
                 $bean->erase($list, false);
             }
         }
+    }
+
+    /**
+     * check if status change is allowed
+     * @param bool $isAdmin
+     * @param null|string $oldStatus
+     * @param string $newStatus
+     * @return bool
+     */
+    protected function isStatusChangeAllowed(bool $isAdmin, ?string $oldStatus, string $newStatus) : bool
+    {
+        if ($isAdmin) {
+            if ((!empty($oldStatus) && $oldStatus !== 'Open' && $oldStatus != $newStatus)
+                || (empty($oldStatus) && $newStatus != 'Open')) {
+                return false;
+            }
+            return true;
+        }
+
+        if ((!empty($oldStatus) && $oldStatus != $newStatus)
+            || (empty($oldStatus) && $newStatus !== 'Open')) {
+            return false;
+        }
+
+        return true;
     }
 }
