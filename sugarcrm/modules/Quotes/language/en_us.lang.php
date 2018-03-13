@@ -255,9 +255,6 @@ $mod_strings = array (
     'LBL_COPY_LINE_ITEMS' => 'Please save any active line items by clicking the blue check mark next to each one before copying this Quote.',
     'LBL_SEARCH_CATALOG_PLACEHOLDER' => 'Search the Product Catalog',
     'LBL_NO_PRODUCT_CATALOG_RESULTS' => 'No data available',
-    'LBL_QUOTE_CONFIG_SUMMATION_TITLE' => 'Summation Bar',
-    'LBL_QUOTE_CONFIG_COLUMNS_TITLE' => 'Worksheet Columns',
-    'LBL_QUOTE_CONFIG_TOTAL_TITLE' => 'Grand Total',
     'LBL_QUOTE_COPY_ALERT_MESSAGE' => 'Copying Quoted Line Items to new Quote.',
     'LBL_QUOTE_COPY_ALERT_MESSAGE_LONG_TIME' => 'Copying Quoted Line Items to new Quote. This process may take some time.',
 );
