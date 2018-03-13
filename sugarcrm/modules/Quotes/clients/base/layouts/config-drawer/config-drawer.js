@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Layouts.Base.Quotes.ConfigDrawerLayout
- * @alias SUGAR.App.view.layouts.BaseQuotesConfigDrawerLayout
+ * @class View.Layouts.Base.QuotesConfigDrawerLayout
+ * @alias SUGAR.App.view.layouts.Base.QuotesConfigDrawerLayout
  * @extends View.Layouts.Base.ConfigDrawerLayout
  */
 ({
@@ -24,9 +24,9 @@
      */
     _checkModuleAccess: function() {
         var acls = app.user.getAcls().Quotes;
-        var isSysAdmin = (app.user.get('type') === 'admin');
+        var isSysAdmin = (app.user.get('type') == 'admin');
         var isAdmin = !_.has(acls, 'admin');
-        var isDev = !_.has(acls, 'developer');
+        var isDev = (!_.has(acls, 'developer'));
 
         return (isSysAdmin || isAdmin || isDev);
     },
