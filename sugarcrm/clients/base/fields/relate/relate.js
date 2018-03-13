@@ -611,6 +611,14 @@
             this.formattedRname = value;
             this.formattedIds = idList;
         }
+
+        // Show a custom placeholder if the field's content has been erased
+        if (this._isErasedField()) {
+            this.hasErasedPlaceholder = true;
+        } else {
+            this.hasErasedPlaceholder = false;
+        }
+
         return value;
     },
 
@@ -744,6 +752,33 @@
                 self.model.set(newData);
             }
         });
+    },
+
+    /**
+     * @override
+     */
+    _isErasedField: function() {
+        if (!this.model) {
+            return false;
+        }
+
+        var def = this.fieldDefs;
+        var link = this.model.get(def.link);
+
+        if (link) {
+            var recordField = app.metadata.getField({
+                module: def.module,
+                name: def.rname
+            });
+
+            if (recordField && recordField.type === 'fullname') {
+                return app.utils.isNameErased(app.data.createBean(def.module, link));
+            } else {
+                return _.contains(link._erased_fields, def.rname);
+            }
+        } else {
+            return this._super('_isErasedField');
+        }
     },
 
     /**

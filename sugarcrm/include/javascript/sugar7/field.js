@@ -149,11 +149,7 @@
                     return false;
                 }
 
-                if (this.type === 'fullname') {
-                    return app.utils.isNameErased(this.model);
-                } else {
-                    return !this.model.get(this.name) && _.contains(this.model.get('_erased_fields'), this.name);
-                }
+                return !this.model.get(this.name) && _.contains(this.model.get('_erased_fields'), this.name);
             },
 
             /**

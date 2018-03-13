@@ -247,20 +247,37 @@ describe('Sugar7 field extensions', function () {
     });
 
     describe('Erased field', function() {
-        beforeEach(function() {
-            field = SugarTest.createField('base', 'phone_work', 'base', 'detail');
+        describe('by default', function() {
+            beforeEach(function() {
+                field = SugarTest.createField('base', 'phone_work', 'base', 'detail');
+            });
+
+            it('should change the field action to erased', function() {
+                field.model.set('_erased_fields', ['phone_work']);
+                field._setErasedFieldAction();
+                expect(field.action).toEqual('erased');
+            });
+
+            it('should keep the field action unchanged', function() {
+                field.model.set('_erased_fields', ['phone_home']);
+                field.render();
+                expect(field.action).toEqual('detail');
+            });
         });
 
-        it('should change the field action to erased', function() {
-            field.model.set('_erased_fields', ['phone_work']);
+        it('should show related field as erased', function() {
+            var fieldDef = {
+                rname: 'name',
+                link: 'accounts',
+                module: 'Accounts'
+            };
+
+            var model = app.data.createBean('Contacts');
+            model.set('accounts', {'_erased_fields': ['name']});
+            field = SugarTest.createField('base', 'account_name', 'relate', 'list', fieldDef, 'Contacts', model);
+
             field._setErasedFieldAction();
             expect(field.action).toEqual('erased');
-        });
-
-        it('should keep the field action unchanged', function() {
-            field.model.set('_erased_fields', ['phone_home']);
-            field.render();
-            expect(field.action).toEqual('detail');
         });
     });
 });

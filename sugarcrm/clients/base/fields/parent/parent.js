@@ -48,6 +48,21 @@
         this._filterModuleList(this._modules);
     },
 
+    _isErasedField: function() {
+        if (this.model && this.model.has('parent')) {
+            var link = this.model.get('parent');
+            if (_.isEmpty(link._erased_fields)) {
+                return false;
+            }
+            var parentType = link.parent_type || this.model.get('parent_type');
+            if (parentType) {
+                return app.utils.isNameErased(app.data.createBean(parentType, link));
+            }
+        }
+
+        return false;
+    },
+
     /**
      * Calls {@link View.Fields.Base.RelateField#_render} and renders the select2
      * module dropdown.

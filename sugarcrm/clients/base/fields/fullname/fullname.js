@@ -97,6 +97,17 @@
 
     /**
      * @override
+     */
+    _isErasedField: function() {
+        if (!this.model) {
+            return false;
+        }
+
+        return app.utils.isNameErased(this.model);
+    },
+
+    /**
+     * @override
      * Note that the parent bindDataChange (from FieldsetField) is an empty function
      */
     bindDataChange: function() {
