@@ -180,7 +180,7 @@ $admin_option_defs['Administration']['sugarportal']= array('SugarPortal','LBL_SU
 //$admin_option_defs['migrate_custom_fields']= array('MigrateFields','LBL_EXTERNAL_DEV_TITLE','LBL_EXTERNAL_DEV_DESC','./index.php?module=Administration&action=Development');
 
 $admin_option_defs['any']['workflow_management']= array('WorkFlow','LBL_MANAGE_WORKFLOW','LBL_WORKFLOW_DESC','./index.php?module=WorkFlow&action=ListView');
-$admin_option_defs['any']['api_platforms'] = [
+$admin_option_defs['Administration']['api_platforms'] = [
     'Administration',
     'LBL_CONFIGURE_CUSTOM_API_PLATFORMS',
     'LBL_CUSTOM_API_PLATFORMS_DESC',
