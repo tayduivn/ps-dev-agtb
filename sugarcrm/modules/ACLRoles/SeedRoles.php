@@ -38,10 +38,11 @@ function getMLARoles()
             'KBContents' => array('admin' => 100, 'access' => 89),
         ),
         'Data Privacy Manager' => array(
-            'DataPrivacy' => array('admin' => 100, 'access' => 89),
-            'Contacts' => array('admin' => 100, 'access' => 89),
-            'Leads' => array('admin' => 100, 'access' => 89),
-            'Prospects' => array('admin' => 100, 'access' => 89),
+            'DataPrivacy' => array('admin' => 99, 'access' => 89),
+            'Accounts' => array('admin' => 99, 'access' => 89),
+            'Contacts' => array('admin' => 99, 'access' => 89),
+            'Leads' => array('admin' => 99, 'access' => 89),
+            'Prospects' => array('admin' => 99, 'access' => 89),
         ),
     );
 }
