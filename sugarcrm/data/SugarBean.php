@@ -1870,10 +1870,12 @@ class SugarBean
     {
         $isUpdate = $this->isUpdate();
 
-        if ($isUpdate && is_array($this->fetched_row)) {
-            $this->lastAuditedState = array_merge($this->fetched_row, $this->fetched_rel_row);
-        } else {
-            $this->lastAuditedState = [];
+        if ($this->lastAuditedState === null) {
+            if (is_array($this->fetched_row)) {
+                $this->lastAuditedState = array_merge($this->fetched_row, $this->fetched_rel_row);
+            } else {
+                $this->lastAuditedState = [];
+            }
         }
 
         if (!$isUpdate) {

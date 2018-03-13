@@ -1058,6 +1058,36 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         return $db;
     }
+
+    /**
+     * @test
+     */
+    public function auditChangesAreNotDuplicatedAfterResave()
+    {
+        $contact = SugarTestContactUtilities::createContact(null, [
+            'first_name' => null,
+            'last_name' => 'Doe',
+        ]);
+
+        $this->assertCount(0, $this->getFieldAuditRecords($contact, 'first_name'));
+        $this->assertCount(1, $this->getFieldAuditRecords($contact, 'last_name'));
+
+        $contact->first_name = 'John';
+        $contact->save();
+
+        $this->assertCount(1, $this->getFieldAuditRecords($contact, 'first_name'));
+        $this->assertCount(1, $this->getFieldAuditRecords($contact, 'last_name'));
+    }
+
+    private function getFieldAuditRecords(SugarBean $bean, $field)
+    {
+        /** @var Audit $audit */
+        $audit = BeanFactory::newBean('Audit');
+
+        return array_filter($audit->getAuditLog($bean), function (array $row) use ($field) {
+            return $row['field_name'] === $field;
+        });
+    }
 }
 
 class BeanMockTestObjectName extends SugarBean
