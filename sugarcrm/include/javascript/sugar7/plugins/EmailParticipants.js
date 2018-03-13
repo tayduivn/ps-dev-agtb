@@ -179,11 +179,14 @@
                     var hasParent;
                     var parentName;
 
+                    model.isNameErased = false;
+
                     if (model.get('parent') && model.get('parent').type && model.get('parent').id) {
                         // We omit type because it is actually the module name
                         // and should not be treated as an attribute.
                         parent = app.data.createBean(model.get('parent').type, _.omit(model.get('parent'), 'type'));
                         parentName = app.utils.getRecordName(parent);
+                        model.isNameErased = app.utils.isNameErased(parent);
                     }
 
                     // The type and id fields are not unset after a parent
@@ -191,7 +194,7 @@
                     // parent record is truly only there if type and id are
                     // non-empty and the parent record can be resolved and has
                     // not been deleted.
-                    hasParent = !!(parent && parentName);
+                    hasParent = !!(parent && (parentName || model.isNameErased));
 
                     // Select2 needs the locked property directly on the object.
                     model.locked = !!this.def.readonly;
@@ -238,11 +241,20 @@
                  * @example
                  * // Surround name with quotes.
                  * "Will Westin" <will@example.com>
+                 * @example
+                 * // Name has been erased via a data privacy request.
+                 * Value erased <will@example.com>
                  * @param {Data.Bean} model
                  * @param {boolean} [surroundNameWithQuotes=false]
+                 * @return {string}
                  */
                 this.formatForHeader = function(model, surroundNameWithQuotes) {
                     var name = model.get('parent_name') || '';
+
+                    // The name was erased, so let's use the label.
+                    if (_.isEmpty(name) && model.isNameErased) {
+                        name = app.lang.get('LBL_VALUE_ERASED', this.module);
+                    }
 
                     if (_.isEmpty(name)) {
                         return model.get('email_address') || '';

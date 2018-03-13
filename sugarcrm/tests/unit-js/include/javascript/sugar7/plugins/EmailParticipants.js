@@ -89,6 +89,8 @@ describe('Plugins.EmailParticipants', function() {
             // The model is modified, but it is returned so that `prepareModel`
             // can be used as the map callback.
             expect(result).toBe(bean);
+            expect(result.isNameErased).toBe(false);
+            expect(bean.isNameErased).toBe(false);
             expect(result.locked).toBe(false);
             expect(bean.locked).toBe(false);
             // Derived from `app.utils.isValidEmailAddress`.
@@ -200,86 +202,54 @@ describe('Plugins.EmailParticipants', function() {
 
             expect(bean.href).toBeUndefined();
         });
+
+        it('should indicate that the name has been erased', function() {
+            // Erase the name.
+            bean.set('parent_name', '');
+            sandbox.stub(app.utils, 'isNameErased').returns(true);
+
+            field.prepareModel(bean);
+
+            expect(bean.isNameErased).toBe(true);
+            // None of the other properties are affected.
+            expect(bean.locked).toBe(false);
+            expect(bean.invalid).toBe(false);
+            expect(bean.href).toBe('#Contacts/' + bean.get('parent_id'));
+        });
     });
 
     describe('formatting a model for email headers', function() {
-        it('should return just an email address', function() {
-            var bean = app.data.createBean('EmailParticipants', {
-                _link: 'to',
-                id: _.uniqueId(),
-                email_address_id: _.uniqueId(),
-                email_address: 'rhodes@example.com',
-                invalid_email: false,
-                opt_out: false
+        describe('participant only has an email address', function() {
+            var bean;
+
+            beforeEach(function() {
+                bean = app.data.createBean('EmailParticipants', {
+                    _link: 'to',
+                    id: _.uniqueId(),
+                    email_address_id: _.uniqueId(),
+                    email_address: 'rhodes@example.com',
+                    invalid_email: false,
+                    opt_out: false
+                });
             });
-            var actual;
 
-            field.prepareModel(bean);
-            actual = field.formatForHeader(bean);
+            it('should return just an email address', function() {
+                var actual;
 
-            expect(actual).toBe('rhodes@example.com');
+                field.prepareModel(bean);
+                actual = field.formatForHeader(bean);
+
+                expect(actual).toBe('rhodes@example.com');
+            });
         });
 
-        it('should return a name and email address', function() {
-            var parentId = _.uniqueId();
+        describe('participant has a name and email address', function() {
+            var bean;
 
-            var bean = app.data.createBean('EmailParticipants', {
-                _link: 'to',
-                id: _.uniqueId(),
-                parent: {
-                    _acl: {},
-                    type: 'Contacts',
-                    id: parentId,
-                    name: 'Haley Rhodes'
-                },
-                parent_type: 'Contacts',
-                parent_id: parentId,
-                parent_name: 'Haley Rhodes',
-                email_address_id: _.uniqueId(),
-                email_address: 'hrhodes@example.com',
-                invalid_email: false,
-                opt_out: false
-            });
-            var actual;
-
-            field.prepareModel(bean);
-            actual = field.formatForHeader(bean);
-
-            expect(actual).toBe('Haley Rhodes <hrhodes@example.com>');
-        });
-
-        it('should surround the name with quotes', function() {
-            var parentId = _.uniqueId();
-
-            var bean = app.data.createBean('EmailParticipants', {
-                _link: 'to',
-                id: _.uniqueId(),
-                parent: {
-                    _acl: {},
-                    type: 'Contacts',
-                    id: parentId,
-                    name: 'Haley Rhodes'
-                },
-                parent_type: 'Contacts',
-                parent_id: parentId,
-                parent_name: 'Haley Rhodes',
-                email_address_id: _.uniqueId(),
-                email_address: 'hrhodes@example.com',
-                invalid_email: false,
-                opt_out: false
-            });
-            var actual;
-
-            field.prepareModel(bean);
-            actual = field.formatForHeader(bean, true);
-
-            expect(actual).toBe('"Haley Rhodes" <hrhodes@example.com>');
-        });
-
-        using('quotes', [true, false], function(surroundNameWithQuotes) {
-            it('should return just a name', function() {
+            beforeEach(function() {
                 var parentId = _.uniqueId();
-                var bean = app.data.createBean('EmailParticipants', {
+
+                bean = app.data.createBean('EmailParticipants', {
                     _link: 'to',
                     id: _.uniqueId(),
                     parent: {
@@ -290,14 +260,70 @@ describe('Plugins.EmailParticipants', function() {
                     },
                     parent_type: 'Contacts',
                     parent_id: parentId,
-                    parent_name: 'Haley Rhodes'
+                    parent_name: 'Haley Rhodes',
+                    email_address_id: _.uniqueId(),
+                    email_address: 'hrhodes@example.com',
+                    invalid_email: false,
+                    opt_out: false
                 });
+            });
+
+            it('should return a name and email address', function() {
                 var actual;
 
                 field.prepareModel(bean);
-                actual = field.formatForHeader(bean, surroundNameWithQuotes);
+                actual = field.formatForHeader(bean);
 
-                expect(actual).toBe('Haley Rhodes');
+                expect(actual).toBe('Haley Rhodes <hrhodes@example.com>');
+            });
+
+            it('should surround the name with quotes', function() {
+                var actual;
+
+                field.prepareModel(bean);
+                actual = field.formatForHeader(bean, true);
+
+                expect(actual).toBe('"Haley Rhodes" <hrhodes@example.com>');
+            });
+
+            it('should use "Value erased" for the name', function() {
+                var actual;
+
+                // Erase the name.
+                bean.set('parent_name', '');
+                sandbox.stub(app.utils, 'isNameErased').returns(true);
+
+                field.prepareModel(bean);
+                actual = field.formatForHeader(bean);
+
+                expect(actual).toBe('Value erased <hrhodes@example.com>');
+            });
+        });
+
+        describe('participant only has a name', function() {
+            using('quotes', [true, false], function(surroundNameWithQuotes) {
+                it('should return just a name', function() {
+                    var parentId = _.uniqueId();
+                    var bean = app.data.createBean('EmailParticipants', {
+                        _link: 'to',
+                        id: _.uniqueId(),
+                        parent: {
+                            _acl: {},
+                            type: 'Contacts',
+                            id: parentId,
+                            name: 'Haley Rhodes'
+                        },
+                        parent_type: 'Contacts',
+                        parent_id: parentId,
+                        parent_name: 'Haley Rhodes'
+                    });
+                    var actual;
+
+                    field.prepareModel(bean);
+                    actual = field.formatForHeader(bean, surroundNameWithQuotes);
+
+                    expect(actual).toBe('Haley Rhodes');
+                });
             });
         });
     });

@@ -177,6 +177,7 @@
         "LBL_CREATE": "Create {{name}}",
         "LBL_HELP_RECORD_TITLE": "Default Help Record Title",
         "LBL_HELP_RECORD": "Default Help Record Body",
-        "LBL_CREATE_CATEGORY": "Create a <div class='btn-link' data-action='create-new'>category</div>"
+        "LBL_CREATE_CATEGORY": "Create a <div class='btn-link' data-action='create-new'>category</div>",
+        "LBL_VALUE_ERASED": "Value erased"
     }
 }
