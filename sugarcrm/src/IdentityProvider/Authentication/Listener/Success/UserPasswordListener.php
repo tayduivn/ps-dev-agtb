@@ -89,7 +89,7 @@ class UserPasswordListener
         $userPasswordType = $user->getPasswordType();
         $lastChangeDate = $user->getPasswordLastChangeDate();
         if ($lastChangeDate) {
-            $lastChangeDate = $this->getTimeDate()->fromUser($lastChangeDate, $user->getSugarUser());
+            $lastChangeDate = $this->getTimeDate()->fromDb($lastChangeDate);
         } else {
             $lastChangeDate = $this->getTimeDate()->nowDb();
             $user->setPasswordLastChangeDate($lastChangeDate);

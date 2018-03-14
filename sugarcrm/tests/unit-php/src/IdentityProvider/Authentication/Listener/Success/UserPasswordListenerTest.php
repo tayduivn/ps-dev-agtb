@@ -137,8 +137,8 @@ class UserPasswordListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn('2017-11-20 00:00:00 /*user password change date*/');
 
         $this->timeDate->expects($this->once())
-            ->method('fromUser')
-            ->with($this->equalTo('2017-11-20 00:00:00 /*user password change date*/'), $this->isInstanceOf(\User::class))
+            ->method('fromDb')
+            ->with($this->equalTo('2017-11-20 00:00:00 /*user password change date*/'))
             ->willReturn($lastChange);
 
         $this->listener->execute($this->event);
