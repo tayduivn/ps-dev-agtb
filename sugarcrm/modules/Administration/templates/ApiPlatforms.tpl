@@ -73,6 +73,12 @@
         var lbl_api_platforms = '{sugar_translate label="LBL_API_PLATFORMS"}';
         var deleteImage = '{$deleteImage}';
         {literal}
+        deleteRow = function(el) {
+            if(confirm(SUGAR.language.get('Administration', 'LBL_REMOVE_PLATFORM'))) {
+                SUGAR.apiPlatformsTable.deleteRow(el);
+            }
+        };
+
         $('head').append(
             "<style type='text/css'>" +
                 ".yui-dt > div { margin-right: -15px; }" +
@@ -88,11 +94,10 @@
             [
                 {key: "name", label: lbl_api_platforms, width: 200, sortable: false, formatter: function (cell, rec, col, data) {
                     if (rec.getData('custom')) {
-                        cell.innerHTML = data + "<a style='float: right;' href='javascript:void(0)' "
-                            + "onclick='console.log(this);SUGAR.apiPlatformsTable.deleteRow(this);'>"
-                            + deleteImage + "</a>";
+                        cell.innerHTML = data + '<a style="float: right;" href="javascript:void()" ' +
+                            'onclick="deleteRow(this);">' + deleteImage + '</a>';
                     } else {
-                        cell.innerHTML = "<i>" + data + "</i>";
+                        cell.innerHTML = '<i>' + data + '</i>';
                     }
                 }}
             ],

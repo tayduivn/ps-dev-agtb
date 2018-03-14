@@ -1165,11 +1165,13 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     'LBL_MI_IN_ACTIONVIEWMAP' => 'Installing Action View Map',
     'LBL_MI_UN_ACTIONVIEWMAP' => 'Unninstalling Action View Map',
 
-    'LBL_API_PLATFORMS' => 'Api Platforms',
+    'LBL_API_PLATFORMS' => 'API Platforms',
     'LBL_CONFIGURE_CUSTOM_API_PLATFORMS' => 'Configure API Platforms',
     'LBL_CUSTOM_API_PLATFORMS_DESC' => 'Configure enabled custom API platform names',
     'LBL_CUSTOM_API_PLATFORMS_HELP' => 'Standard platforms cannot be modified. Platforms loaded via a module loadable '
-        . 'package must be removed by uninstalling the appropriate package.',
+    . 'package must be removed by uninstalling the appropriate package.',
+    'LBL_REMOVE_PLATFORM' => 'Are you sure you wish to remove this API platform?
+Any integrations that rely on this platform will stop working.',
 
 	// OAuth
     'LBL_OAUTH_TITLE' => "OAuth Keys",
