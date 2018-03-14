@@ -63,6 +63,7 @@ describe('Plugins.EmailParticipants', function() {
 
         beforeEach(function() {
             var parentId = _.uniqueId();
+            var emailAddressId = _.uniqueId();
 
             bean = app.data.createBean('EmailParticipants', {
                 _link: 'to',
@@ -76,8 +77,13 @@ describe('Plugins.EmailParticipants', function() {
                 parent_type: 'Contacts',
                 parent_id: parentId,
                 parent_name: 'Haley Rhodes',
-                email_address_id: _.uniqueId(),
-                email_address: 'hrhodes@example.com'
+                email_address_id: emailAddressId,
+                email_address: 'hrhodes@example.com',
+                email_addresses: {
+                    email_address: 'hrhodes@example.com',
+                    id: emailAddressId,
+                    _erased_fields: []
+                }
             });
         });
 
@@ -91,6 +97,8 @@ describe('Plugins.EmailParticipants', function() {
             expect(result).toBe(bean);
             expect(result.isNameErased).toBe(false);
             expect(bean.isNameErased).toBe(false);
+            expect(result.isEmailErased).toBe(false);
+            expect(bean.isEmailErased).toBe(false);
             expect(result.locked).toBe(false);
             expect(bean.locked).toBe(false);
             // Derived from `app.utils.isValidEmailAddress`.
@@ -212,6 +220,28 @@ describe('Plugins.EmailParticipants', function() {
 
             expect(bean.isNameErased).toBe(true);
             // None of the other properties are affected.
+            expect(bean.isEmailErased).toBe(false);
+            expect(bean.locked).toBe(false);
+            expect(bean.invalid).toBe(false);
+            expect(bean.href).toBe('#Contacts/' + bean.get('parent_id'));
+        });
+
+        it('should indicate that the email address has been erased', function() {
+            var link = bean.get('email_addresses');
+
+            // Erase the email address.
+            bean.set('email_address', '');
+            link.email_address = '';
+            link._erased_fields = [
+                'email_address',
+                'email_address_caps'
+            ];
+
+            field.prepareModel(bean);
+
+            expect(bean.isEmailErased).toBe(true);
+            // None of the other properties are affected.
+            expect(bean.isNameErased).toBe(false);
             expect(bean.locked).toBe(false);
             expect(bean.invalid).toBe(false);
             expect(bean.href).toBe('#Contacts/' + bean.get('parent_id'));
@@ -223,13 +253,23 @@ describe('Plugins.EmailParticipants', function() {
             var bean;
 
             beforeEach(function() {
+                var emailAddressId = _.uniqueId();
+
                 bean = app.data.createBean('EmailParticipants', {
                     _link: 'to',
                     id: _.uniqueId(),
-                    email_address_id: _.uniqueId(),
+                    email_address_id: emailAddressId,
                     email_address: 'rhodes@example.com',
                     invalid_email: false,
-                    opt_out: false
+                    opt_out: false,
+                    email_addresses: {
+                        email_address: 'rhodes@example.com',
+                        id: emailAddressId,
+                        _erased_fields: [
+                            'email_address',
+                            'email_address_caps'
+                        ]
+                    }
                 });
             });
 
@@ -241,6 +281,24 @@ describe('Plugins.EmailParticipants', function() {
 
                 expect(actual).toBe('rhodes@example.com');
             });
+
+            it('should return "Value erased"', function() {
+                var actual;
+                var link = bean.get('email_addresses');
+
+                // Erase the email address.
+                bean.set('email_address', '');
+                link.email_address = '';
+                link._erased_fields = [
+                    'email_address',
+                    'email_address_caps'
+                ];
+
+                field.prepareModel(bean);
+                actual = field.formatForHeader(bean);
+
+                expect(actual).toBe('Value erased');
+            });
         });
 
         describe('participant has a name and email address', function() {
@@ -248,6 +306,7 @@ describe('Plugins.EmailParticipants', function() {
 
             beforeEach(function() {
                 var parentId = _.uniqueId();
+                var emailAddressId = _.uniqueId();
 
                 bean = app.data.createBean('EmailParticipants', {
                     _link: 'to',
@@ -261,10 +320,18 @@ describe('Plugins.EmailParticipants', function() {
                     parent_type: 'Contacts',
                     parent_id: parentId,
                     parent_name: 'Haley Rhodes',
-                    email_address_id: _.uniqueId(),
+                    email_address_id: emailAddressId,
                     email_address: 'hrhodes@example.com',
                     invalid_email: false,
-                    opt_out: false
+                    opt_out: false,
+                    email_addresses: {
+                        email_address: 'hrhodes@example.com',
+                        id: emailAddressId,
+                        _erased_fields: [
+                            'email_address',
+                            'email_address_caps'
+                        ]
+                    }
                 });
             });
 
@@ -297,6 +364,24 @@ describe('Plugins.EmailParticipants', function() {
                 actual = field.formatForHeader(bean);
 
                 expect(actual).toBe('Value erased <hrhodes@example.com>');
+            });
+
+            it('should use "Value erased" for the email address', function() {
+                var actual;
+                var link = bean.get('email_addresses');
+
+                // Erase the email address.
+                bean.set('email_address', '');
+                link.email_address = '';
+                link._erased_fields = [
+                    'email_address',
+                    'email_address_caps'
+                ];
+
+                field.prepareModel(bean);
+                actual = field.formatForHeader(bean);
+
+                expect(actual).toBe('Haley Rhodes <Value erased>');
             });
         });
 

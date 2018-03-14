@@ -22,6 +22,19 @@
             return 'email_participants_validator_' + component.cid;
         }
 
+        /**
+         * Returns true if the email address has been erased.
+         *
+         * @param {Data.Bean} model
+         * @return {boolean}
+         */
+        function isEmailAddressErased(model) {
+            var link = model.get('email_addresses');
+            var erasedFields = link && link._erased_fields ? link._erased_fields : [];
+
+            return _.isEmpty(erasedFields) ? false : _.contains(erasedFields, 'email_address');
+        }
+
         app.plugins.register('EmailParticipants', ['field'], {
             /**
              * @inheritdoc
@@ -180,6 +193,7 @@
                     var parentName;
 
                     model.isNameErased = false;
+                    model.isEmailErased = isEmailAddressErased(model);
 
                     if (model.get('parent') && model.get('parent').type && model.get('parent').id) {
                         // We omit type because it is actually the module name
@@ -212,7 +226,8 @@
                         model.invalid = true;
                     } else if (!model.has('invalid_email') &&
                         model.get('email_address_id') &&
-                        model.get('email_address')
+                        model.get('email_address') &&
+                        !model.isEmailErased
                     ) {
                         model.invalid = !app.utils.isValidEmailAddress(model.get('email_address'));
                     } else {
@@ -244,23 +259,32 @@
                  * @example
                  * // Name has been erased via a data privacy request.
                  * Value erased <will@example.com>
+                 * @example
+                 * // Email address has been erased via a data privacy request.
+                 * Will Westin <Value erased>
                  * @param {Data.Bean} model
                  * @param {boolean} [surroundNameWithQuotes=false]
                  * @return {string}
                  */
                 this.formatForHeader = function(model, surroundNameWithQuotes) {
                     var name = model.get('parent_name') || '';
+                    var email = model.get('email_address') || '';
 
                     // The name was erased, so let's use the label.
                     if (_.isEmpty(name) && model.isNameErased) {
                         name = app.lang.get('LBL_VALUE_ERASED', this.module);
                     }
 
-                    if (_.isEmpty(name)) {
-                        return model.get('email_address') || '';
+                    // The email was erased, so let's use the label.
+                    if (_.isEmpty(email) && model.isEmailErased) {
+                        email = app.lang.get('LBL_VALUE_ERASED', this.module);
                     }
 
-                    if (_.isEmpty(model.get('email_address'))) {
+                    if (_.isEmpty(name)) {
+                        return email;
+                    }
+
+                    if (_.isEmpty(email)) {
                         return name;
                     }
 
@@ -268,7 +292,7 @@
                         name = '"' + name + '"';
                     }
 
-                    return name + ' <' + model.get('email_address') + '>';
+                    return name + ' <' + email + '>';
                 };
 
                 /**
