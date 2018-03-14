@@ -51,7 +51,7 @@
 
                     // This is the endpoint URL we want to consume
                     var resourcePath = 'pmse_Inbox/caseRecord/' + casModule + '/' + casModuleId;
-                    var url = app.api.buildURL(resourcePath, null, null, {view: 'record'});
+                    var url = app.api.buildURL(resourcePath, null, null, {view: 'record', erased_fields: true});
                     // For some reason, options contains a method property that
                     // is causing the subsequent success call to be a READ HTTP
                     // Request Type. So delete the method property of options to
