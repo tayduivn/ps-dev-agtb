@@ -18,20 +18,25 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        parent::setUpBeforeClass();
+
+        SugarTestHelper::setUp('current_user');
     }
 
     public function tearDown()
     {
-        foreach($this->createdBeans as $bean)
-        {
-            $bean->retrieve($bean->id);
-            $bean->mark_deleted($bean->id);
-        }
-
         BeanFactory::unsetBeanClass();
+
+        parent::tearDown();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+
+        parent::tearDownAfterClass();
     }
 
     /**
@@ -40,36 +45,24 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetBean()
     {
-        $module = "Accounts";
-        global $beanList, $beanFiles;
-        require('include/modules.php');
+        $account = SugarTestAccountUtilities::createAccount();
 
-        $account = BeanFactory::newBean($module);
-        $account->name = "Unit Test";
-        $account->save();
-        $this->createdBeans[] = $account;
-
-        $validBean = BeanFactory::retrieveBean($module, $account->id);
+        $validBean = BeanFactory::retrieveBean($account->module_name, $account->id);
 
         $this->assertEquals($account->id, $validBean->id);
 
         //Ensure we get a false if we try to load a bad bean.
         $uniqueID = uniqid();
-        $invalidBean = BeanFactory::retrieveBean($module, $uniqueID);
+        $invalidBean = BeanFactory::retrieveBean($account->module_name, $uniqueID);
         $this->assertFalse(isset($invalidBean->id));
     }
 
     public function testRegisterBean()
     {
-        // Create a new record
-        $module = 'Accounts';
-        $account = BeanFactory::newBean($module);
-        $account->name = 'BeanFactoryTest';
-        $account->save();
-        $this->createdBeans[] = $account;
+        $account = SugarTestAccountUtilities::createAccount();
 
         // Test that it is registered
-        $registered = BeanFactoryTestMock::isRegistered($account);
+        $registered = $this->isBeanRegistered($account);
         $this->assertTrue($registered, "Newly created Account bean is not registered");
 
         // Change the record and get it again
@@ -77,48 +70,38 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $account->save();
 
         // Test that the changes took
-        $new = BeanFactory::getBean($module, $account->id);
+        $new = BeanFactory::getBean($account->module_name, $account->id);
         $this->assertEquals($account->name, $new->name);
     }
-    
+
     public function testRegisterBeanLegacyStyle()
     {
-        // Create a new record
-        $module = 'Accounts';
-        $account = BeanFactory::newBean($module);
-        $account->name = 'BeanFactoryTest';
-        $account->save();
-        $this->createdBeans[] = $account;
+        $account = SugarTestAccountUtilities::createAccount();
 
         // Unregister it so we can test registration
         BeanFactory::unregisterBean($account);
-        $unregistered = BeanFactoryTestMock::isRegistered($account);
+        $unregistered = $this->isBeanRegistered($account);
         $this->assertFalse($unregistered, "New bean is still registered in the factory");
         
         // Test registration old style way
-        $registered = BeanFactory::registerBean($module, $account, $account->id);
+        $registered = BeanFactory::registerBean($account->module_name, $account, $account->id);
         $this->assertTrue($registered, "Legacy style registration of the bean failed");
         
         // Double ensure it worked
-        $registered = BeanFactoryTestMock::isRegistered($account);
+        $registered = $this->isBeanRegistered($account);
         $this->assertTrue($registered, "Legacy style registration did not actually register the bean");
     }
 
     public function testUnregisterBean()
     {
-        // Create the bean and save to register
-        $module = 'Accounts';
-        $account = BeanFactory::newBean($module);
-        $account->name = 'BeanFactoryTest';
-        $account->save();
-        $this->createdBeans[] = $account;
+        $account = SugarTestAccountUtilities::createAccount();
 
         // Test that unregister is true for a bean
         $unregistered = BeanFactory::unregisterBean($account);
         $this->assertTrue($unregistered, "Unregister with a bean failed");
 
         // Test that the bean is no longer in the registry
-        $unregistered = BeanFactoryTestMock::isRegistered($account);
+        $unregistered = $this->isBeanRegistered($account);
         $this->assertFalse($unregistered, "New bean is still registered in the factory");
     }
 
@@ -222,16 +205,66 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Contact', BeanFactory::getObjectName('Contacts'));
         $this->assertEquals('Contact', BeanFactory::getBeanClass('Contacts'));
     }
-}
 
-class BeanFactoryTestMock extends BeanFactory
-{
-    public static function isRegistered($bean)
+    /**
+     * @test
+     */
+    public function cacheRespectsDeleted()
     {
-        if (!empty($bean->module_name) && !empty($bean->id)) {
-            return isset(self::$loadedBeans[$bean->module_name][$bean->id]);
-        }
+        $account = SugarTestAccountUtilities::createAccount();
+        BeanFactory::deleteBean($account->module_name, $account->id);
+        BeanFactory::clearCache();
 
-        return false;
+        $retrievedAccount1 = $this->retrieveBean($account, [
+            'disable_row_level_security' => true,
+            'deleted' => false,
+        ]);
+        $this->assertEquals(1, $retrievedAccount1->deleted);
+
+        $retrievedAccount2 = $this->retrieveBean($account, [
+            'disable_row_level_security' => true,
+        ]);
+        $this->assertNull($retrievedAccount2);
+    }
+
+    /**
+     * @test
+     */
+    public function cacheRespectsVisibility()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        BeanFactory::clearCache();
+
+        $retrievedAccount1 = $this->retrieveBean($account, ['disable_row_level_security' => true]);
+        $retrievedAccount2 = $this->retrieveBean($account);
+
+        $this->assertNotSame($retrievedAccount1, $retrievedAccount2);
+    }
+
+    /**
+     * @test
+     */
+    public function cacheRespectsErasedFields()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        BeanFactory::clearCache();
+
+        $retrievedAccount1 = $this->retrieveBean($account);
+        $this->assertNull($retrievedAccount1->erased_fields);
+
+        $retrievedAccount2 = $this->retrieveBean($account, ['erased_fields' => true]);
+        $this->assertNotNull($retrievedAccount2->erased_fields);
+    }
+
+    private function retrieveBean(SugarBean $bean, array $params = []) : ?SugarBean
+    {
+        return BeanFactory::retrieveBean($bean->module_name, $bean->id, $params);
+    }
+
+    private function isBeanRegistered(SugarBean $bean)
+    {
+        $loadedBeans = SugarTestReflection::getProtectedValue(BeanFactory::class, 'loadedBeans');
+
+        return isset($loadedBeans[$bean->module_name][$bean->id]);
     }
 }
