@@ -80,6 +80,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
     // chart display strings
     var chartStrings = SUGAR.charts.getChartStrings(chartConfig.chartType);
     var displayErrorMsg = SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports');
+    var noDataAvailable = SUGAR.charts.translateString('LBL_NO_DATA_AVAILABLE');
 
     // get and save the fiscal start date
     SUGAR.charts.defineFiscalYearStart();
@@ -95,6 +96,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 var locality = {};
 
                 if (SUGAR.charts.dataIsEmpty(data)) {
+                    SUGAR.charts.renderError(chartId, noDataAvailable);
                     return;
                 }
 
@@ -199,6 +201,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 var tickFormat = function(d) { return d; };
 
                 if (SUGAR.charts.dataIsEmpty(data)) {
+                    SUGAR.charts.renderError(chartId, noDataAvailable);
                     return;
                 }
 
@@ -279,6 +282,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 var pieChart;
 
                 if (SUGAR.charts.dataIsEmpty(data)) {
+                    SUGAR.charts.renderError(chartId, noDataAvailable);
                     return;
                 }
 
@@ -353,6 +357,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 var funnelChart;
 
                 if (SUGAR.charts.dataIsEmpty(data)) {
+                    SUGAR.charts.renderError(chartId, noDataAvailable);
                     return;
                 }
 
@@ -415,6 +420,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 var gaugeChart;
 
                 if (SUGAR.charts.dataIsEmpty(data)) {
+                    SUGAR.charts.renderError(chartId, noDataAvailable);
                     return;
                 }
 

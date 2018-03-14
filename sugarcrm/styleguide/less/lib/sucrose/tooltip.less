@@ -36,13 +36,21 @@
 
     span {
       display: table-cell;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: pre-line;
+      word-wrap: normal;
     }
 
     span:first-child {
       color: darken(@grayLighter, 10%);
       padding-right: 6px;
-      white-space: nowrap;
+      box-sizing: border-box;
       text-align: right;
+      max-width: 90px;
+    }
+    span:last-child {
+      max-width: 130px;
     }
   }
 
