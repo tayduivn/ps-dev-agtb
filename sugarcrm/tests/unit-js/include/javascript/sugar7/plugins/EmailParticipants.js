@@ -383,6 +383,28 @@ describe('Plugins.EmailParticipants', function() {
 
                 expect(actual).toBe('Haley Rhodes <Value erased>');
             });
+
+            it('should use "Value erased" for the name and email address', function() {
+                var actual;
+                var link = bean.get('email_addresses');
+
+                // Erase the name.
+                bean.set('parent_name', '');
+                sandbox.stub(app.utils, 'isNameErased').returns(true);
+
+                // Erase the email address.
+                bean.set('email_address', '');
+                link.email_address = '';
+                link._erased_fields = [
+                    'email_address',
+                    'email_address_caps'
+                ];
+
+                field.prepareModel(bean);
+                actual = field.formatForHeader(bean);
+
+                expect(actual).toBe('Value erased <Value erased>');
+            });
         });
 
         describe('participant only has a name', function() {
