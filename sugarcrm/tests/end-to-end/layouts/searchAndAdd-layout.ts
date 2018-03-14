@@ -8,55 +8,37 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import HeaderView from '../views/record-header-view';
+
 import {BaseView, seedbed} from '@sugarcrm/seedbed';
-import RecordView from '../views/record-view';
-import SubpanelsLayout from '../layouts/subpanels-layout';
-import QliTable from '../views/qli-table';
+import HeaderView from '../views/record-header-view';
+import ListLayout from "./list-layout";
+
 
 /**
- * Represents a Detail/Record page layout.
+ * Represents searchAndAdd layout.
  *
- * @class RecordLayout
+ * @class SearchAndAddLayout
  * @extends BaseView
  */
-export default class RecordLayout extends BaseView {
+export default class SearchAndAddLayout extends ListLayout {
 
     public HeaderView: HeaderView;
-    public QliTable: QliTable;
-    public SubpanelsLayout: SubpanelsLayout;
-    protected type: string;
-    public RecordView: RecordView;
-    public defaultView: RecordView;
 
     constructor(options) {
-
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.main-pane',
+            $: '.drawer.active',
             showMoreBtn: '.show-hide-toggle .btn.more',
             showLessBtn: '.show-hide-toggle .btn.less',
         });
 
-        this.type = 'record';
-
-        this.defaultView = this.RecordView = this.createComponent<RecordView>(RecordView, {
-            module: options.module,
-            default: true
-        });
+        this.type = 'drawer';
 
         this.HeaderView = this.createComponent<HeaderView>(HeaderView, {
             module: options.module,
         });
 
-        this.QliTable = this.createComponent<QliTable>(QliTable, {
-            module: options.module,
-        });
-
-        this.SubpanelsLayout = this.createComponent<SubpanelsLayout>(SubpanelsLayout, {
-            module: options.module,
-        });
     }
 
     public async showMore() {
@@ -69,4 +51,5 @@ export default class RecordLayout extends BaseView {
             await this.driver.click(this.$('showLessBtn'));
         }
     }
+
 }

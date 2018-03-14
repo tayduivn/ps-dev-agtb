@@ -21,6 +21,7 @@ import GroupRecord from '../views/group-record';
 import RliTableRecord from '../views/rli-table';
 import BaseView from '../views/base-view';
 import SubpanelLayout from "../layouts/subpanel-layout";
+import PersonalInfoDrawerLayout from "../layouts/personal-info-drawer-layout";
 
 /**
  * Select module in modules menu
@@ -307,3 +308,17 @@ When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/
 When(/^I dismiss alert$/, async function () {
     await this.driver.alertDismiss();
 }, {waitForApp: true});
+
+When(/^I select fields in (#\S+) view$/,
+    async function (layout:PersonalInfoDrawerLayout , data: TableDefinition): Promise<void> {
+
+        if (data.hashes.length > 1) {
+            throw new Error('One line data table entry is expected');
+        }
+
+        for(let i=0; i<data.rows().length; i++ ) {
+            await layout.clickRowByFiledName(data.rows()[i]);
+        }
+
+
+    }, {waitForApp: true});

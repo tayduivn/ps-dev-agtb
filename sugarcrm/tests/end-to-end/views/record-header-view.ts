@@ -28,6 +28,8 @@ export default class RecordHeaderView extends BaseView {
                 'create': 'a[name="create_button"]:not(.hide)',
                 'copy': 'a[name="duplicate_button"]:not(.hide)',
                 'cancel': 'a[name="cancel_button"]:not(.hide)',
+                'close': 'a[name="close"]:not(.hide)',
+                'add': 'a[name="link_button"]:not(.hide)',
                 'save': 'a[name="save_button"]:not(.hide)',
                 'edit': 'a[name="edit_button"]:not(.hide)',
                 'delete': 'a[name="delete_button"]:not(.hide)',
@@ -36,6 +38,9 @@ export default class RecordHeaderView extends BaseView {
                 'convert': 'a[name="lead_convert_button"]:not(.hide)',
                 'actions': '.actions:not([style*="display: none"]) a.btn.dropdown-toggle',
                 'reply': 'a[name="reply_button"]:not(.hide)',
+                'eraseandcomplete': 'a[name="erase_complete_button"]:not(.hide)',
+                'markforerasure': 'a[name="mark_for_erasure_button"]:not(.hide)',
+                'reject': 'a[name="reject_button"]:not(.hide)',
             },
 
             title: {

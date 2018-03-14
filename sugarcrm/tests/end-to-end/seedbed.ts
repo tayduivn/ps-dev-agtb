@@ -20,6 +20,8 @@ import QliRecord from './views/qli-record';
 import CommentRecord from './views/comment-record';
 import GroupRecord from './views/group-record';
 import DrawerLayoutOpp from "./layouts/drawer-layout-opp";
+import SearchAndAddLayout from "./layouts/searchAndAdd-layout";
+import PersonalInfoDrawerLayout from "./layouts/personal-info-drawer-layout";
 
 
 export default (seedbed: Seedbed) => {
@@ -54,6 +56,8 @@ export default (seedbed: Seedbed) => {
             if (module.views && module.views.record) {
                 seedbed.defineComponent(`${moduleName}Record`, RecordLayout, {module: moduleName});
                 seedbed.defineComponent(`${moduleName}Drawer`, DrawerLayout, {module: moduleName});
+                seedbed.defineComponent(`${moduleName}SearchAndAdd`, SearchAndAddLayout, {module: moduleName});
+                seedbed.defineComponent(`PersonalInfoDrawer`, PersonalInfoDrawerLayout, {module: moduleName});
             }
         });
 

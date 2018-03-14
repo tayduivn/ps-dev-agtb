@@ -66,6 +66,29 @@ export class Detail extends TextareaField {
 
     }
 }
+
+export class DetailAddress extends TextareaField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'span'
+            }
+        });
+
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await this.driver.getText(selector);
+
+        return value.toString().trim();
+
+    }
+}
+
 export class List extends TextareaField {
 
     constructor(options) {

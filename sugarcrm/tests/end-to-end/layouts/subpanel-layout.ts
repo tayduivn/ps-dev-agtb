@@ -65,7 +65,7 @@ export default class SubpanelLayout extends ListView {
     }
 
     /**
-     * Click sub-panel Plus Butoon.
+     * Click sub-panel Plus button.
      */
     public async createRecord(): Promise<any> {
         let selector = this.$('header.buttons.plusButton');
@@ -76,14 +76,16 @@ export default class SubpanelLayout extends ListView {
 
     public async openActionsMenu(): Promise<any> {
         let selector = this.$('header.buttons.toggleMenuButton');
-        await this.driver
-            .execSync('scrollToSelector', [selector])
-            .click(selector);
+
+        await this.driver.scroll(selector);
+
+        await this.driver.click(selector);
     }
 
     public async selectMenuItem(): Promise<any> {
         let selector = this.$('header.linkRecordMenuItem');
         await this.driver
+            .scroll(selector)
             .click(selector);
     }
 

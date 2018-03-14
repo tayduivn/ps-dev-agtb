@@ -38,6 +38,7 @@ export default class ListItemView extends BaseView {
                     cancel: '[name="inline-cancel"]',
                     follow: '[name="follow_button"]',
                     delete: '[name="delete_button"]',
+                    marktoerase: '[name="dataprivacy-erase"]',
                     checkbox: '.actions.actionmenu.list input[type=checkbox]',
                     favorite: '.fa.fa-favorite',
                 }
