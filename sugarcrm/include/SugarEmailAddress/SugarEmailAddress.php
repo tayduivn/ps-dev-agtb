@@ -802,7 +802,7 @@ class SugarEmailAddress extends SugarBean
                 $guid = create_guid();
                 $now = TimeDate::getInstance()->nowDb();
 
-                $fieldDefs = $GLOBALS['dictionary'][$this->table_name]['fields'];
+                $fieldDefs = $this->getFieldDefinitions();
                 $this->db->insertParams($this->table_name, $fieldDefs, array(
                     'id' => $guid,
                     'email_address' => $address,
