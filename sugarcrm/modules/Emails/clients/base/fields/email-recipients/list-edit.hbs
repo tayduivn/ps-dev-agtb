@@ -13,14 +13,24 @@
 {{#if ellipsis}}
     <div class="ellipsis_inline" data-placement="bottom"{{#if dir}} dir="{{dir}}"{{/if}} title="{{tooltip}}">
 {{/if}}
-{{#each value~}}
-    {{~#if attributes.parent_name~}}
-        {{~#if href}}<a href="{{href}}">{{/if}}{{~attributes.parent_name~}}{{#if href}}</a>{{/if~}}
-    {{~else~}}
-        {{~attributes.email_address~}}
-    {{~/if~}}
-    {{~#unless @last}}, {{/unless~}}
-{{~/each}}
+{{#each value}}
+    {{#if isNameErased}}
+            <span class="label">
+            {{#if href}}<a href="{{href}}">{{/if}}{{str 'LBL_VALUE_ERASED' ../module}}{{#if href}}</a>{{/if}}
+        </span>
+    {{else}}
+        {{#if attributes.parent_name}}
+            {{#if href}}<a href="{{href}}">{{/if}}{{attributes.parent_name}}{{#if href}}</a>{{/if}}
+        {{else}}
+            {{#if isEmailErased}}
+                    <span class="label">{{str 'LBL_VALUE_ERASED' ../module}}</span>
+            {{else}}
+                {{attributes.email_address}}
+            {{/if}}
+        {{/if}}
+    {{/if}}
+    {{#unless @last}}, {{/unless}}
+{{/each}}
 {{#if ellipsis}}
     </div>
 {{/if}}
