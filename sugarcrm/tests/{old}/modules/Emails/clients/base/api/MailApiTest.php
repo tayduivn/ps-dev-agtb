@@ -11,6 +11,10 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\User;
+use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
 
 /**
  * @coversDefaultClass MailApi
@@ -22,7 +26,8 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
     private $api,
         $mailApi,
         $emailUI,
-        $userCacheDir;
+        $userCacheDir,
+        $dp;
 
     public function setUp()
     {
@@ -36,16 +41,24 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->emailUI = new EmailUI();
         $this->emailUI->preflightUserCache();
         $this->userCacheDir = $this->emailUI->userCacheDir;
+        $this->dp = array();
     }
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
         parent::tearDown();
         if (file_exists($this->userCacheDir)) {
             rmdir_recursive($this->userCacheDir);
         }
+
+        if (!empty($this->dp)) {
+            $GLOBALS['db']->query('DELETE FROM data_privacy WHERE id IN (\'' . implode("', '", $this->dp) . '\')');
+        }
+
+        $this->dp = array();
     }
 
     public function testArchiveMail_StatusIsArchive_CallsMailRecordArchive()
@@ -347,6 +360,49 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($record['_acl'], '_acl should be populated on the record');
 
         BeanFactory::unregisterBean($mockContact);
+    }
+
+    /**
+     * @covers ::findRecipients
+     */
+    public function testFindRecipients_DataPrivacyErasedValuesReturned()
+    {
+        $contactValues = array(
+            '_module' => 'Contacts',
+            'first_name' => 'Foo',
+            'last_name' => 'Bar',
+        );
+        $contact = SugarTestContactUtilities::createContact('', $contactValues);
+
+        $recipients = array(
+            array(
+                'id' => $contact->id,
+                '_module' => 'Contacts',
+                'name' => '',
+                'email' => 'foo@bar.com',
+            ),
+        );
+
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array('findCount', 'find'));
+        $emailRecipientsServiceMock->expects($this->once())
+            ->method('find')
+            ->will($this->returnValue($recipients));
+
+        $this->mailApi->expects($this->any())
+            ->method('getEmailRecipientsService')
+            ->will($this->returnValue($emailRecipientsServiceMock));
+
+        $this->createDpErasureRecord($contact, ['first_name', 'last_name']);
+        $response = $this->mailApi->findRecipients($this->api, ['erased_fields' => true]);
+
+        $record = array_shift($response['records']);
+        $this->assertArrayHasKey('_erased_fields', $record, 'Erased Fields expected, not returned');
+        $this->assertCount(2, $record['_erased_fields'], 'Expected 2 erased fields');
+        $this->assertSame(
+            ['first_name', 'last_name'],
+            $record['_erased_fields'],
+            'Unexpected Erased Fields were returned'
+        );
     }
 
     /**
@@ -789,5 +845,42 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $files = findAllFiles($this->userCacheDir, array());
         $this->assertEquals(0, count($files), "Cache directory should be empty");
+    }
+
+    /**
+     * Create DataPrivacy Record, Link to Contact, and Re-Save to Complete the Erasure and set up the Erase record.
+     */
+    private function createDpErasureRecord($contact, $fields)
+    {
+        $dp = BeanFactory::newBean('DataPrivacy');
+        $dp->name = 'Data Privacy Test';
+        $dp->type = 'Request to Erase Information';
+        $dp->status = 'Open';
+        $dp->priority = 'Low';
+        $dp->assigned_user_id = $GLOBALS['current_user']->id;
+        $dp->date_opened = $GLOBALS['timedate']->getDatePart($GLOBALS['timedate']->nowDb());
+        $dp->date_due = $GLOBALS['timedate']->getDatePart($GLOBALS['timedate']->nowDb());
+        $dp->save();
+
+        $module = 'Contacts';
+        $linkName = strtolower($module);
+        $dp->load_relationship($linkName);
+        $dp->$linkName->add(array($contact));
+
+        $options = ['use_cache' => false, 'encode' => false];
+        $dp = BeanFactory::retrieveBean('DataPrivacy', $dp->id, $options);
+        $dp->status = 'Closed';
+
+        $fieldInfo = implode('","', $fields);
+        $dp->fields_to_erase = '{"' . strtolower($module) . '":{"' . $contact->id . '":["' . $fieldInfo . '"]}}';
+
+        $context = Container::getInstance()->get(Context::class);
+        $subject = new User($GLOBALS['current_user'], new RestApiClient());
+        $context->activateSubject($subject);
+        $context->setAttribute('platform', 'base');
+
+        $dp->save();
+        $this->dp[] = $dp->id;
+        return $dp;
     }
 }

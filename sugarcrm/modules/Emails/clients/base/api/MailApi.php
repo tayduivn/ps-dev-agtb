@@ -370,10 +370,17 @@ class MailApi extends ModuleApi
             }
 
             $apiHelpers = array();
+            $retrieveOptions = array();
+            if (!empty($args['erased_fields'])) {
+                $retrieveOptions = ['erased_fields' => true, 'encode' => false, 'use_cache' => false];
+            }
             foreach ($records as $idx => $record) {
-                $bean = BeanFactory::retrieveBean($record['_module'], $record['id']);
+                $bean = BeanFactory::retrieveBean($record['_module'], $record['id'], $retrieveOptions);
                 if (!isset($apiHelpers[$record['_module']])) {
                     $apiHelpers[$record['_module']] = ApiHelper::getHelper($api, $bean);
+                }
+                if (isset($bean->erased_fields)) {
+                    $records[$idx]['_erased_fields'] = $bean->erased_fields;
                 }
                 $records[$idx]['_acl'] = $apiHelpers[$record['_module']]->getBeanAcl($bean, array_keys($record));
             }
