@@ -19,7 +19,11 @@
         {{#if value.attributes.parent_name}}
             {{#if value.href}}<a href="{{value.href}}">{{/if}}{{value.attributes.parent_name}}{{#if value.href}}</a>{{/if}}
         {{else}}
-            {{value.attributes.email_address}}
+            {{#if value.isEmailErased}}
+                <span class="label">{{str 'LBL_VALUE_ERASED' module}}</span>
+            {{else}}
+                {{value.attributes.email_address}}
+            {{/if}}
         {{/if}}
     {{/if}}
 </div>

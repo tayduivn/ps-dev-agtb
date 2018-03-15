@@ -17,7 +17,11 @@
         {{#if value.attributes.parent_name}}
             {{value.attributes.parent_name}}
         {{else}}
-            {{value.attributes.email_address}}
+            {{#if value.isEmailErased}}
+                <span class="label">{{str 'LBL_VALUE_ERASED' module}}</span>
+            {{else}}
+                {{value.attributes.email_address}}
+            {{/if}}
         {{/if}}
     {{/if}}
 </div>
