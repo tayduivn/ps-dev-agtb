@@ -95,6 +95,7 @@ class Config
             'cloudConsoleRoutes' => !empty($config['cloudConsoleRoutes']) ? $config['cloudConsoleRoutes'] : [],
             'caching' => $config['caching'] ?? [],
             'crmOAuthScope' => $config['crmOAuthScope'] ?? '',
+            'requestedOAuthScopes' => $config['requestedOAuthScopes'] ?? [],
         ];
 
         if ($oidcKeySetId) {

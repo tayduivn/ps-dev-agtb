@@ -76,9 +76,9 @@ class IdmProvider extends BasicGenericProvider
     protected $scopeSeparator = ' ';
 
     /**
-     * @var string
+     * @var array
      */
-    protected $crmOAuthScope;
+    protected $requestedOAuthScopes = [];
 
     /**
      * Adds HttpClient with retry policy.
@@ -233,16 +233,9 @@ class IdmProvider extends BasicGenericProvider
      */
     public function getJwtBearerAccessToken($assertion)
     {
-        $scopes = [
-            'offline',
-            $this->crmOAuthScope,
-        ];
-        /**
-         * @todo scope need to be defined in future
-         */
         return $this->getAccessToken(
             new JwtBearer(),
-            ['scope' => implode($this->getScopeSeparator(), array_filter($scopes)), 'assertion' => $assertion]
+            ['scope' => implode($this->getScopeSeparator(), $this->requestedOAuthScopes), 'assertion' => $assertion]
         );
     }
 
