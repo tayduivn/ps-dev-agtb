@@ -274,7 +274,7 @@
     _loadTemplate: function() {
         this._super('_loadTemplate');
 
-        if (this.view.name === 'preview') {
+        if (this.view.name === 'preview' && this.action !== 'erased') {
             this.template = app.template.getField('parent', 'detail', this.model.module);
         }
     }

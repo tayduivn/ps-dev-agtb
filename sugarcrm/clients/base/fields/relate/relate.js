@@ -611,14 +611,12 @@
             this.formattedRname = value;
             this.formattedIds = idList;
         }
-
         // Show a custom placeholder if the field's content has been erased
         if (this._isErasedField()) {
             this.hasErasedPlaceholder = true;
         } else {
             this.hasErasedPlaceholder = false;
         }
-
         return value;
     },
 

@@ -540,7 +540,7 @@ describe('Base.View.Create', function() {
             expect(getCustomSaveOptionsStub.calledOnce).toBeTruthy();
             getCustomSaveOptionsStub.restore();
 
-            expect(ajaxSpy.getCall(0).args[0].url).toContain('?param1=true&param2=false&viewed=1');
+            expect(ajaxSpy.getCall(0).args[0].url).toContain('?param1=true&param2=false&erased_fields=true&viewed=1');
             ajaxSpy.restore();
         });
 
@@ -570,7 +570,7 @@ describe('Base.View.Create', function() {
             expect(getCustomSaveOptionsStub.calledOnce).toBeTruthy();
             getCustomSaveOptionsStub.restore();
 
-            expect(ajaxSpy.getCall(0).args[0].url).toContain('?viewed=1');
+            expect(ajaxSpy.getCall(0).args[0].url).toContain('?erased_fields=true&viewed=1');
         });
 
         it("Should append after_create url parameters if the model is copied and and the copied model ID is set", function() {

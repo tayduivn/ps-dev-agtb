@@ -5833,8 +5833,6 @@ class SugarBean
     */
     function fill_in_additional_parent_fields()
     {
-        global $locale;
-
         // Added empty parent name check because beans with parent_name in vardef
         // were being nullified on retrieve AFTER save but were not passing the
         // parent_id/last_parent_id conditional, so the bean was losing parent_name
@@ -5847,28 +5845,20 @@ class SugarBean
         if(!empty($this->parent_type)) {
             $this->last_parent_id = $this->parent_id;
 
-            $fields = array(
-                'name'          => 'parent_name',
-                'document_name' => 'parent_document_name',
-            );
+            $parent_data = $this->retrieve_parent_fields([
+                $this->parent_type => [
+                    [
+                        'child_id' => $this->id,
+                        'parent_id' => $this->parent_id,
+                    ],
+                ],
+            ]);
 
-            $name_format_fields = $locale->getNameFormatFields($this->parent_type);
-            foreach ($name_format_fields as $field) {
-                $fields[$field] = 'parent_' . $field;
-            }
-
-            $this->getRelatedFields($this->parent_type, $this->parent_id, $fields);
-
-            $data = array();
-            foreach ($name_format_fields as $field) {
-                $data[$field] = $this->{'parent_' . $field};
-            }
-
-            $formatted_parent_name = $locale->formatName($this->parent_type, $data);
-            if ($formatted_parent_name != '') {
-                $this->parent_name = $formatted_parent_name;
-            } elseif ($this->parent_document_name != '') {
-                $this->parent_name = $this->parent_document_name;
+            if (isset($parent_data[$this->id])) {
+                unset($parent_data[$this->id]['id']);
+                foreach ($parent_data[$this->id] as $field => $value) {
+                    $this->$field = $value;
+                }
             }
         }
     }

@@ -164,6 +164,32 @@ class ErasedFieldsApiTest extends TestCase
     /**
      * @test
      */
+    public function retrieveWithParentErasedFields()
+    {
+        $note = \BeanFactory::retrieveBean('Notes', self::$note->id, [
+            'erased_fields' => true,
+            'encode' => false,
+            'use_cache' => false,
+        ]);
+        $data = $this->format($note);
+
+        $this->assertArraySubset([
+            'contact' => [
+                '_erased_fields' => [
+                    'first_name',
+                ],
+            ],
+            'parent' => [
+                '_erased_fields' => [
+                    'last_name',
+                ],
+            ],
+        ], $data);
+    }
+
+    /**
+     * @test
+     */
     public function ownAndRelateFields()
     {
         $query = new SugarQuery();
