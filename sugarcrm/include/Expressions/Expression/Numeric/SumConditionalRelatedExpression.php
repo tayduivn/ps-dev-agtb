@@ -112,30 +112,15 @@ class SumConditionalRelatedExpression extends NumericExpression
         var related_collection = this.context.model.getRelatedCollection(relationship);
         var rollup_value = '0';
         
-        if (!this.context.view.createMode) {
-            var models = this.context.collection.models;
-            _.each(models, _.bind(function(model) {
-                var conditionValid = _.contains(condition_values, model.get(condition_field));
-                this.context.updateRelatedCollectionValues(
-                        this.context.model,
-                        relationship,
-                        'rollupConditionalSum',
-                        rel_field,
-                        model,
-                        (!conditionValid ? 'remove' : 'add')
-                );
-            }, this));
-        } else {
-            if (!_.isUndefined(this.context.relatedModel)) {
-                this.context.updateRelatedCollectionValues(
-                    this.context.model,
-                    relationship,
-                    'rollupConditionalSum',
-                    rel_field,
-                    model,
-                    (hasModelBeenRemoved)? 'remove' : 'add'
-                );
-            }
+        if (!_.isUndefined(this.context.relatedModel)) {
+            this.context.updateRelatedCollectionValues(
+                this.context.model,
+                relationship,
+                'rollupConditionalSum',
+                rel_field,
+                model,
+                (hasModelBeenRemoved)? 'remove' : 'add'
+            );
         }
 
         var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'rollupConditionalSum', rel_field) || {};
