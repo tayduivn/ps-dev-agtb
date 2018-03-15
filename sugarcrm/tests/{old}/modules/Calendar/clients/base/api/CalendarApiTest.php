@@ -10,6 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\User;
+use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
 
 /**
  * @group api
@@ -18,8 +22,9 @@
 class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $api, $calendarApi;
+    private $dp;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         $this->api = SugarTestRestUtilities::getRestServiceMock();
@@ -27,6 +32,64 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = $this->api->user;
 
         $this->calendarApi = new CalendarApi();
+        $this->dp = array();
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+
+        if (!empty($this->dp)) {
+            $GLOBALS['db']->query('DELETE FROM data_privacy WHERE id IN (\'' . implode("', '", $this->dp) . '\')');
+        }
+
+        $this->dp = array();
+    }
+
+    public function testTransformInvitee_DPEnabled_NameIsErased()
+    {
+        $args = array(
+            'q' => 'bar',
+            'fields' => 'first_name,last_name',
+            'search_fields' => 'first_name,last_name',
+            'erased_fields' => true,
+        );
+
+        $contactValues = array(
+            '_module' => 'Contacts',
+            'first_name' => 'Foo',
+            'last_name' => 'Bar',
+        );
+        $contact = SugarTestContactUtilities::createContact('', $contactValues);
+
+        $searchResults = array(
+            'result' => array(
+                'list' => array(
+                    array('bean' => $contact),
+                ),
+            ),
+        );
+
+        $this->createDpErasureRecord($contact, ['first_name', 'last_name']);
+        $calendarApi = new \CalendarApi();
+
+        $result = SugarTestReflection::callProtectedMethod(
+            $calendarApi,
+            'transformInvitees',
+            array($this->api, $args, $searchResults)
+        );
+
+        $this->assertNotEmpty(1, $result['records'], 'Api Result Contains No Records');
+        $records = $result['records'];
+        $this->assertCount(1, $records, 'Expecting 1 Contact Record to be returned as Invitee');
+        $this->assertNotEmpty($records[0]['_erased_fields'], 'Erased Fields expected, not returned');
+        $this->assertCount(2, $records[0]['_erased_fields'], 'Expected 2 erased fields');
+        $this->assertSame(
+            ['first_name', 'last_name'],
+            $records[0]['_erased_fields'],
+            'Unexpected Erased Fields were returned'
+        );
     }
 
     public function testBuildSearchParams_ConvertsRestArgsToLegacyParams()
@@ -212,5 +275,39 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             'Should match search query to field containing search text'
         );
+    }
+
+    private function createDpErasureRecord($contact, $fields)
+    {
+        $dp = BeanFactory::newBean('DataPrivacy');
+        $dp->name = 'Data Privacy Test';
+        $dp->type = 'Request to Erase Information';
+        $dp->status = 'Open';
+        $dp->priority = 'Low';
+        $dp->assigned_user_id = $GLOBALS['current_user']->id;
+        $dp->date_opened = $GLOBALS['timedate']->getDatePart($GLOBALS['timedate']->nowDb());
+        $dp->date_due = $GLOBALS['timedate']->getDatePart($GLOBALS['timedate']->nowDb());
+        $dp->save();
+
+        $module = 'Contacts';
+        $linkName = strtolower($module);
+        $dp->load_relationship($linkName);
+        $dp->$linkName->add(array($contact));
+
+        $options = ['use_cache' => false, 'encode' => false];
+        $dp = BeanFactory::retrieveBean('DataPrivacy', $dp->id, $options);
+        $dp->status = 'Closed';
+
+        $fieldInfo = implode('","', $fields);
+        $dp->fields_to_erase = '{"' . strtolower($module) . '":{"' . $contact->id . '":["' . $fieldInfo . '"]}}';
+
+        $context = Container::getInstance()->get(Context::class);
+        $subject = new User($GLOBALS['current_user'], new RestApiClient());
+        $context->activateSubject($subject);
+        $context->setAttribute('platform', 'base');
+
+        $dp->save();
+        $this->dp[] = $dp->id;
+        return $dp;
     }
 }
