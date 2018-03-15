@@ -1231,4 +1231,35 @@ describe("Record View", function () {
             expect(app.user.lastState.get(view.SHOW_MORE_KEY)).not.toEqual(view.$('.more[data-moreless]'));
         });
     });
+
+    describe('saveClicked', function() {
+        var doValidateStub;
+
+        beforeEach(function() {
+            doValidateStub = sinon.collection.stub(view.model, 'doValidate');
+            sinon.collection.stub(app.acl, 'hasAccessToModel')
+                .withArgs('edit', view.model, 'last_name').returns(true);
+            sinon.collection.stub(view, 'getFields')
+                .withArgs('Cases', view.model).returns({last_name: {}});
+        });
+
+        it('should validate all fields if none of them were erased', function() {
+            view.model.set('_erased_fields', []);
+            view.saveClicked();
+            expect(doValidateStub).toHaveBeenCalledWith({last_name: {}}, jasmine.any(Function));
+        });
+
+        it('should validate Non-Empty erased fields', function() {
+            view.model.set('_erased_fields', ['last_name']);
+            view.model.set('last_name', 'dummy_last_name');
+            view.saveClicked();
+            expect(doValidateStub).toHaveBeenCalledWith({last_name: {}}, jasmine.any(Function));
+        });
+
+        it('should not validate Empty erased fields', function() {
+            view.model.set('_erased_fields', ['last_name']);
+            view.saveClicked();
+            expect(doValidateStub).toHaveBeenCalledWith({}, jasmine.any(Function));
+        });
+    });
 });

@@ -895,8 +895,10 @@
         this.toggleButtons(false);
         var allFields = this.getFields(this.module, this.model);
         var fieldsToValidate = {};
+        var erasedFields = this.model.get('_erased_fields');
         for (var fieldKey in allFields) {
-            if (app.acl.hasAccessToModel('edit', this.model, fieldKey)) {
+            if (app.acl.hasAccessToModel('edit', this.model, fieldKey) &&
+                (!_.contains(erasedFields, fieldKey) || this.model.get(fieldKey))) {
                 _.extend(fieldsToValidate, _.pick(allFields, fieldKey));
             }
         }

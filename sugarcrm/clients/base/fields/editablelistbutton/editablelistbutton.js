@@ -120,10 +120,11 @@
         this.setDisabled(true);
 
         var fieldsToValidate = this.view.getFields(this.module, this.model);
+        var erasedFields = this.model.get('_erased_fields');
         fieldsToValidate = _.pick(fieldsToValidate, function(vardef, fieldName) {
-            return app.acl.hasAccessToModel('edit', this.model, fieldName);
+            return app.acl.hasAccessToModel('edit', this.model, fieldName) &&
+                (!_.contains(erasedFields, fieldName) || this.model.get(fieldName));
         }, this);
-
         this.model.doValidate(fieldsToValidate, _.bind(this._validationComplete, this));
     },
 
