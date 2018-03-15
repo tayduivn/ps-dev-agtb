@@ -486,6 +486,10 @@
             }];
         }
 
+        if (value && value.length === 1) {
+            value[0].soleEmail = true;
+        }
+
         value = this.addFlagLabels(value);
         return value;
     },

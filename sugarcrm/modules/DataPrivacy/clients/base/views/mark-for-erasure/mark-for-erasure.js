@@ -136,10 +136,12 @@
      */
     _initCollection: function() {
         // FIXME TY-2169: move this code into the PII view and stop overriding here.
+        var self = this;
         var PiiCollection = app.BeanCollection.extend({
             baseModule: this.baseModule,
             baseRecordId: this.baseRecord,
             sync: function(method, model, options) {
+                options.params = _.extend(options.params || {}, {erased_fields: true});
                 var url = app.api.buildURL(this.baseModule, 'pii', {id: this.baseRecordId}, options.params);
                 var callbacks = app.data.getSyncCallbacks(method, model, options);
                 var defaultSuccessCallback = app.data.getSyncSuccessCallback(method, model, options);
@@ -149,6 +151,8 @@
                         field.id = _.uniqueId();
                         return field;
                     });
+                    data.records = self.mergePiiFields(data.records);
+                    self.applyDataToRecords(data);
                     return defaultSuccessCallback(data, request);
                 };
                 app.api.call(method, url, options.attributes, callbacks);

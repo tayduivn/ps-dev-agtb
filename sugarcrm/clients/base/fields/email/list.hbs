@@ -13,5 +13,9 @@
 {{#each value}}
     {{#if primary_address}}
         {{partial 'email' ../../this ../this dir=../../dir ellipsis=../../ellipsis}}
+    {{else}}
+        {{#if soleEmail}}
+            {{partial 'email' ../../../this ../../this dir=../../../dir ellipsis=../../../ellipsis}}
+        {{/if~}}
     {{/if~}}
 {{/each~}}

@@ -187,6 +187,7 @@ describe('View.Views.Base.PiiView', function() {
                 var callStub = sinon.collection.stub(app.api, 'call');
                 var dummyFields = [{dummy: 'field'}];
                 callStub.yieldsTo('success', {fields: dummyFields});
+                sinon.collection.stub(view, 'mergePiiFields').returns(dummyFields);
                 view.collection.sync('read', app.data.createBean(), {attributes: attributes, params: {}});
                 expect(callStub).toHaveBeenCalledWith(
                     'read',
@@ -199,6 +200,88 @@ describe('View.Views.Base.PiiView', function() {
                     records: dummyFields
                 });
             });
+        });
+    });
+
+    describe('mergePiiFields', function() {
+        var records;
+        var getModuleStub;
+
+        beforeEach(function() {
+            records = [
+                {
+                    field_name: 'field1',
+                    value: 'value1'
+                },
+                {
+                    field_name: 'email',
+                    value: {id: 'emailId1', email_address: 'a@a.com'}
+                },
+                {
+                    field_name: 'email',
+                    value: {id: 'emailId2', email_address: 'b@b.com'}
+                },
+            ];
+
+            getModuleStub = sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    field1: {name: 'field1', pii: true},
+                    field2: {name: 'field2', pii: true},
+                    email: {name: 'email', pii: true},
+                };
+            });
+        });
+
+        it('should combine module PII fields with response fields', function() {
+            var actual = view.mergePiiFields(records);
+            expect(actual[0].field_name).toEqual('field1');
+            expect(actual[1].field_name).toEqual('field2');
+            expect(actual[2].field_name).toEqual('email');
+            expect(actual[2].value.id).toEqual('emailId1');
+            expect(actual[3].field_name).toEqual('email');
+            expect(actual[3].value.id).toEqual('emailId2');
+        });
+    });
+
+    describe('applyDataToRecords', function() {
+        var records;
+
+        beforeEach(function() {
+            records = [
+                {
+                    field_name: 'field1',
+                    value: 'value1'
+                },
+                {
+                    field_name: 'field2',
+                    value: 'value2'
+
+                }
+            ];
+        });
+
+        it('should apply ACLs to records', function() {
+            var data = {
+                records: records,
+                _acl: {
+                    fields: {
+                        field1: {read: 'no', write: 'no', create: 'no'}
+                    }
+                }
+            };
+            view.applyDataToRecords(data);
+            expect(data.records[0]._acl).toEqual({fields: {value: {read: 'no', write: 'no', create: 'no'}}});
+            expect(data.records[1]._acl).toBeUndefined();
+        });
+
+        it('should apply the erased field list to records', function() {
+            var data = {
+                records: records,
+                _erased_fields: ['field2']
+            };
+            view.applyDataToRecords(data);
+            expect(data.records[0]._erasedFields).toBeUndefined();
+            expect(data.records[1]._erased_fields).toEqual(['value']);
         });
     });
 });

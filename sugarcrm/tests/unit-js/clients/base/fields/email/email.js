@@ -437,14 +437,14 @@ describe('Base.Email', function() {
 
         it("should convert a string representing an email address into an array containing one object", function() {
             var expected = {
-                    email_address:   "foo@bar.com",
-                    primary_address: true,
-                    hasAnchor:       true,
-                    flagLabel: "LBL_EMAIL_PRIMARY"
-                },
-                actual;
+                email_address: 'foo@bar.com',
+                primary_address: true,
+                hasAnchor: true,
+                soleEmail: true,
+                flagLabel: 'LBL_EMAIL_PRIMARY'
+            };
 
-            actual = field.format(expected.email_address);
+            var actual = field.format(expected.email_address);
             expect(actual.length).toBe(1);
             expect(actual[0]).toEqual(expected);
         });
@@ -503,12 +503,14 @@ describe('Base.Email', function() {
                 email_address_id: 'email_id',
                 flagLabel: '',
                 primary_address: false,
+                soleEmail: true,
             };
 
             expect(actual[0].email_address).toBe(expectedAttributes.email_address);
             expect(actual[0].email_address_id).toBe(expectedAttributes.email_address_id);
             expect(actual[0].flagLabel).toBe(expectedAttributes.flagLabel);
             expect(actual[0].primary_address).toBe(expectedAttributes.primary_address);
+            expect(actual[0].soleEmail).toBe(expectedAttributes.soleEmail);
         });
     });
 

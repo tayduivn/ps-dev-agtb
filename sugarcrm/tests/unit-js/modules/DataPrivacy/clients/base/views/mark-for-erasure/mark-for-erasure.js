@@ -194,6 +194,7 @@ describe('View.Views.Base.DataPrivacy.MarkForErasureView', function() {
                 var callStub = sinon.collection.stub(app.api, 'call');
                 var dummyFields = [{dummy: 'field'}];
                 callStub.yieldsTo('success', {fields: dummyFields});
+                sinon.collection.stub(view, 'mergePiiFields').returns(dummyFields);
                 view.collection.sync('read', model, {attributes: attributes, params: {}});
                 expect(callStub).toHaveBeenCalledWith(
                     'read',
