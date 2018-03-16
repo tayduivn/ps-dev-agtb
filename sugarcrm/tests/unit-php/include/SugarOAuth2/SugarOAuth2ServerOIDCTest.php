@@ -75,6 +75,16 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
     protected $sugarConfig;
 
     /**
+     * @var string
+     */
+    protected $stsAccessToken = '4swYymAtLvC9-pGAo3YKJYkLa-7UWFN-jfp5jxP4GfE.wS2Lih_FhXsbyaeZLgpM_1pOIvhCxr-ZgEQXWcKtNko';
+
+    /**
+     * @var string
+     */
+    protected $sugarAccessToken = '956fc0c6-eb25-491c-aa19-411bde06e238';
+
+    /**
      * @inheritdoc
      */
     public function setUp()
@@ -386,7 +396,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->oAuth2Server->setPlatform('testPlatform');
-        $this->oAuth2Server->verifyAccessToken('test');
+        $this->oAuth2Server->verifyAccessToken($this->stsAccessToken);
     }
 
     /**
@@ -411,7 +421,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->oAuth2Server->setPlatform('testPlatform');
-        $result = $this->oAuth2Server->verifyAccessToken('test');
+        $result = $this->oAuth2Server->verifyAccessToken($this->stsAccessToken);
         $this->assertEquals([], $result);
     }
 
@@ -441,7 +451,26 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->oAuth2Server->setPlatform('testPlatform');
-        $result = $this->oAuth2Server->verifyAccessToken('test');
+        $result = $this->oAuth2Server->verifyAccessToken($this->stsAccessToken);
         $this->assertEquals(['client_id' => 'testClient', 'user_id' => 'testUserId', 'expires' => '123'], $result);
+    }
+
+    /**
+     * @covers ::verifyAccessToken
+     */
+    public function testVerifyAccessTokenFromPortal()
+    {
+        $tokenData = [
+            'client_id' => 'sugar',
+            'user_id' => 'user_id',
+            'expires' => (time() + 7200),
+        ];
+
+        $this->oAuth2Server->expects($this->never())->method('getAuthProviderBuilder');
+        $this->storage->expects($this->once())
+            ->method('getAccessToken')
+            ->with($this->sugarAccessToken)
+            ->willReturn($tokenData);
+        $this->assertEquals($tokenData, $this->oAuth2Server->verifyAccessToken($this->sugarAccessToken));
     }
 }

@@ -55,4 +55,34 @@ class UuidTest extends \PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * Provides data for testIsValid
+     * @return array
+     */
+    public function isValidDataProvider()
+    {
+        return [
+            'validUUid' => [
+                'uuid' => '956fc0c6-eb25-491c-aa19-411bde06e238',
+                'expectedResult' => true,
+            ],
+            'invalidUUid' => [
+                'uuid' => md5('test'),
+                'expectedResult' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @param string $uuid
+     * @param bool $expectedResult
+     *
+     * @covers ::isValid
+     * @dataProvider isValidDataProvider
+     */
+    public function testIsValid(string $uuid, bool $expectedResult)
+    {
+        $this->assertEquals($expectedResult, Uuid::isValid($uuid));
+    }
 }

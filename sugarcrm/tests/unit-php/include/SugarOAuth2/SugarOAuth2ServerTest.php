@@ -57,6 +57,7 @@ class SugarOAuth2ServerTest extends \PHPUnit_Framework_TestCase
         return [
             'oldOAuthServer' => [
                 'oidcOauth' => [],
+                'platform' => 'base',
                 'expectedServerClass' => \SugarOAuth2Server::class,
                 'expectedStorageClass' => \SugarOAuth2Storage::class,
             ],
@@ -68,24 +69,38 @@ class SugarOAuth2ServerTest extends \PHPUnit_Framework_TestCase
                     'idpUrl' => 'http://sugar.dolbik.dev/idm205idp/web/',
                     'oidcKeySetId' => 'testkey2',
                 ],
+                'platform' => 'base',
                 'expectedServerClass' => \SugarOAuth2ServerOIDC::class,
                 'expectedStorageClass' => \SugarOAuth2StorageOIDC::class,
+            ],
+            'portalPlatform' => [
+                'oidcOauth' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'oidcUrl' => 'http://localhost:4444',
+                    'idpUrl' => 'http://sugar.dolbik.dev/idm205idp/web/',
+                    'oidcKeySetId' => 'testkey2',
+                ],
+                'platform' => 'portal',
+                'expectedServerClass' => \SugarOAuth2Server::class,
+                'expectedStorageClass' => \SugarOAuth2Storage::class,
             ],
         ];
     }
 
     /**
      * @param array $oidcOauth
+     * @param string $platform
      * @param $expectedServerClass
      * @param $expectedStorageClass
      *
      * @dataProvider getOAuth2ServerProvider
      * @covers ::getOAuth2Server
      */
-    public function testGetOAuth2Server(array $oidcOauth, $expectedServerClass, $expectedStorageClass)
+    public function testGetOAuth2Server(array $oidcOauth, string $platform, $expectedServerClass, $expectedStorageClass)
     {
         $this->sugarConfig->_cached_values['oidc_oauth'] = $oidcOauth;
-        $oAuthServer = SugarOAuth2ServerMock::getOAuth2Server();
+        $oAuthServer = SugarOAuth2ServerMock::getOAuth2Server($platform);
         $this->assertInstanceOf($expectedServerClass, $oAuthServer);
         $this->assertInstanceOf(
             $expectedStorageClass,
@@ -136,6 +151,6 @@ class SugarOAuth2ServerMock extends \SugarOAuth2Server
     public static function getOAuth2Server($platform = null)
     {
         parent::$currentOAuth2Server = null;
-        return parent::getOAuth2Server();
+        return parent::getOAuth2Server($platform);
     }
 }

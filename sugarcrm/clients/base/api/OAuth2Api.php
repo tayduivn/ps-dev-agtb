@@ -66,7 +66,7 @@ class OAuth2Api extends SugarApi
     protected function getOAuth2Server(array $args)
     {
         $platform = empty($args['platform']) ? 'base' : $args['platform'];
-        $oauth2Server = SugarOAuth2Server::getOAuth2Server();
+        $oauth2Server = SugarOAuth2Server::getOAuth2Server($platform);
         $oauth2Server->setPlatform($platform);
 
         return $oauth2Server;

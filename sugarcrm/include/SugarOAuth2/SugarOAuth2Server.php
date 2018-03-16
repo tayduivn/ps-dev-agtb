@@ -41,7 +41,7 @@ class SugarOAuth2Server extends OAuth2
     {
         if (!isset(static::$currentOAuth2Server)) {
             $idpConfig = new Config(\SugarConfig::getInstance());
-            $isOidcEnabled = $idpConfig->isOIDCEnabled();
+            $isOidcEnabled = $idpConfig->isOIDCEnabled() && $platform != SugarOAuth2ServerOIDC::PORTAL_PLATFORM;
             $oidcPostfix = $isOidcEnabled ? 'OIDC' : '';
             SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage'.$oidcPostfix.'.php');
             $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2Storage'.$oidcPostfix);
