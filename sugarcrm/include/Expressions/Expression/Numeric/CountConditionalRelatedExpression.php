@@ -78,32 +78,17 @@ class CountConditionalRelatedExpression extends NumericExpression
         // has the model been removed from it's collection
         var hasModelBeenRemoved = this.context.isRemoveEvent || false;
 
-        if (!this.context.view.createMode) {
-            var models = this.context.collection.models;
-            _.each(models, _.bind(function(model) {
-                var conditionValid = _.contains(condition_values, model.get(condition_field));
-                this.context.updateRelatedCollectionValues(
-                        this.context.model,
-                        relationship,
-                        'countConditional',
-                        target,
-                        model,
-                        (!conditionValid ? 'remove' : 'add')
-                );
-            }, this));
-        }
-    
-        if (!_.isUndefined(this.context.relatedModel) && hasModelBeenRemoved) {
+        if (!_.isUndefined(this.context.relatedModel)) {
             this.context.updateRelatedCollectionValues(
                 this.context.model,
                 relationship,
                 'countConditional',
                 target,
                 model,
-                'remove'
+                (hasModelBeenRemoved) ? 'remove' : 'add'
             );
         }
-        
+
         // get the updated values array/object and get the size of it, which will be the correct count
         var rollup_value = _.size(this.context.getRelatedCollectionValues(this.context.model, relationship, 'countConditional', target));
 
