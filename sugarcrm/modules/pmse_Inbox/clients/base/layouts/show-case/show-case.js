@@ -164,6 +164,21 @@
         // Override functions on the record view
         _.extend(this.recordComponent, this.caseViewOverrides());
 
+        // Swap out the event handler so we can override the error message.
+        this.recordComponent.model.off('error:validation');
+        var showInvalidModel = function() {
+                var name = 'invalid-data';
+                this._viewAlerts.push(name);
+                var msg = this.formAction == 'approve' ?
+                    'ERR_AWF_APPROVE_VALIDATION_ERROR' :
+                    'ERR_AWF_REJECT_VALIDATION_ERROR';
+                app.alert.show(name, {
+                    level: 'error',
+                    messages: msg
+                });
+            };
+        this.recordComponent.model.on('error:validation', showInvalidModel, this.recordComponent);
+
         this._super('loadData', loadDataParams);
         this._render();
         this._delegateEvents();
@@ -305,10 +320,26 @@
      * Validate the model when trying to approve/reject/route the case
      */
     caseAction: function (action) {
-        this.recordModel.doValidate(
-            this.recordComponent.getFields(this.recordModule, this.recordModel),
-            _.bind(this.validationComplete, this, action)
-        );
+        var allFields = this.recordComponent.getFields(this.recordModule, this.recordModel);
+        var fieldsToValidate = {};
+        if (action == 'Reject' || action == 'Route') {
+            this.recordComponent.formAction = 'reject';
+            var erasedFields = this.recordModel.get('_erased_fields');
+            for (var fieldKey in allFields) {
+                if (app.acl.hasAccessToModel('edit', this.recordModel, fieldKey) &&
+                    (!_.contains(erasedFields, fieldKey) || this.recordModel.get(fieldKey))) {
+                    _.extend(fieldsToValidate, _.pick(allFields, fieldKey));
+                }
+            }
+        } else {
+            this.recordComponent.formAction = 'approve';
+            for (var fieldKey in allFields) {
+                if (app.acl.hasAccessToModel('edit', this.recordModel, fieldKey)) {
+                    _.extend(fieldsToValidate, _.pick(allFields, fieldKey));
+                }
+            }
+        }
+        this.recordModel.doValidate(fieldsToValidate, _.bind(this.validationComplete, this, action));
     },
 
     /**
@@ -425,9 +456,6 @@
                 }, this),
                 onCancel: $.noop
             });
-        } else {
-            // If not valid then switch to Edit Mode
-            this.recordComponent.editClicked();
         }
     },
 

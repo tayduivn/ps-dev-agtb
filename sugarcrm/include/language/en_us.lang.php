@@ -5073,6 +5073,10 @@ Sincerely, SugarCRM',
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
     'ERR_RESOLVE_ERRORS' => 'Please resolve any errors before proceeding.',
 
+    // AWF activity error message
+    'ERR_AWF_APPROVE_VALIDATION_ERROR' => 'In order to Approve, all required fields must be filled in; however, you may still Reject or Route this record.',
+    'ERR_AWF_REJECT_VALIDATION_ERROR' => 'In order to Reject/Route all required fields must be filled in.',
+
     // Refresh button on list views
     'LBL_LIST_REFRESH' => 'Refresh list',
 
