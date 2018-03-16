@@ -10,9 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 
 class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var RelateRecordApi
+     */
+    private $api;
+
     protected $createdBeans = array();
 
     public function setUp()
@@ -20,6 +26,8 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
+
+        $this->api = new RelateRecordApi();
     }
 
     public function tearDown()
@@ -34,6 +42,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestProspectListsUtilities::removeAllCreatedProspectLists();
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestHelper::tearDown();
     }
 
@@ -515,6 +524,35 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $api = new RelateRecordApi();
         return SugarTestReflection::callProtectedMethod($api, 'normalizeLinkIds', array($ids));
+    }
+
+    /**
+     * @test
+     */
+    public function erasedFields()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+        $contact->erase(FieldList::fromArray(['first_name']), false);
+
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        $opportunity->load_relationship('contacts');
+        $opportunity->contacts->add($contact);
+
+        // this shouldn't be needed after BR-5932 is resolved
+        BeanFactory::clearCache();
+
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $response = $this->api->getRelatedRecord($service, [
+            'module' => $opportunity->module_name,
+            'record' => $opportunity->id,
+            'link_name' => 'contacts',
+            'remote_id' => $contact->id,
+            'erased_fields' => true,
+        ]);
+
+        $this->assertArraySubset([
+            '_erased_fields' => ['first_name'],
+        ], $response);
     }
 }
 

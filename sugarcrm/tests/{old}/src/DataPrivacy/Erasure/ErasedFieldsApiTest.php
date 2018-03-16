@@ -24,6 +24,7 @@ use SugarTestHelper;
 use SugarTestLeadUtilities;
 use SugarTestNoteUtilities;
 use SugarTestRestUtilities;
+use BeanFactory;
 
 class ErasedFieldsApiTest extends \PHPUnit_Framework_TestCase
 {
@@ -165,6 +166,29 @@ class ErasedFieldsApiTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
         ], $data);
+    }
+
+    /**
+     * @test
+     */
+    public function ownAndRelateFieldsViaRetrieve()
+    {
+        BeanFactory::clearCache();
+
+        $contact = BeanFactory::retrieveBean(self::$contact2->module_name, self::$contact2->id, [
+            'erased_fields' => true,
+        ]);
+
+        $this->assertArraySubset([
+            '_erased_fields' => [
+                'last_name',
+            ],
+            'reports_to_link' => [
+                '_erased_fields' => [
+                    'first_name',
+                ],
+            ],
+        ], $this->format($contact));
     }
 
     /**

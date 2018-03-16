@@ -8412,7 +8412,15 @@ class SugarBean
      */
     private function htmlEncodeRow(array $row)
     {
+        $link_erased_fields = array_fill_keys(array_map(function (array $definition) {
+            return sprintf('%s_erased_fields', $definition['name']);
+        }, $this->getFieldDefinitions('type', ['link'])), true);
+
         foreach ($row as $field => $value) {
+            if ($field === 'erased_fields' || isset($link_erased_fields[$field])) {
+                continue;
+            }
+
             if (isset($this->field_defs[$field]) && $this->field_defs[$field]['type'] === 'json') {
                 continue;
             }
