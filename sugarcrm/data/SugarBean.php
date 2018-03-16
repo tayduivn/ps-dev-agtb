@@ -1829,6 +1829,17 @@ class SugarBean
         }
     }
 
+    private function saveLastAuditedState()
+    {
+        if ($this->lastAuditedState === null) {
+            if (is_array($this->fetched_row)) {
+                $this->lastAuditedState = array_merge($this->fetched_row, $this->fetched_rel_row);
+            } else {
+                $this->lastAuditedState = [];
+            }
+        }
+    }
+
     /**
      * Implements Erasure type transaction save.
      * Erases values of fields provided then saves bean.
@@ -1838,7 +1849,12 @@ class SugarBean
      */
     public function erase(ErasureFieldList $fields, $check_notify)
     {
+        $this->saveLastAuditedState();
+
         $fields->erase($this);
+
+        $this->populateFetchedEmail('bean_field');
+        $this->commitAuditedStateChanges(null);
 
         $this->saveData(true, $check_notify);
 
@@ -1868,13 +1884,7 @@ class SugarBean
     {
         $isUpdate = $this->isUpdate();
 
-        if ($this->lastAuditedState === null) {
-            if (is_array($this->fetched_row)) {
-                $this->lastAuditedState = array_merge($this->fetched_row, $this->fetched_rel_row);
-            } else {
-                $this->lastAuditedState = [];
-            }
-        }
+        $this->saveLastAuditedState();
 
         if (!$isUpdate) {
             $this->ensureHasId();

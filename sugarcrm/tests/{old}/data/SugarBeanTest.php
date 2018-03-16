@@ -22,14 +22,13 @@ use SugarTestUserUtilities as UserHelper;
  */
 class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $origDict;
 
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-	}
+    }
 
     public function setUp()
     {
@@ -43,65 +42,41 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
-	public static function tearDownAfterClass()
-	{
+    public static function tearDownAfterClass()
+    {
         SugarTestContactUtilities::removeAllCreatedContacts();
-	    SugarTestHelper::tearDown();
-	}
-
-    private function setupAuditableContactFields(array $flist)
-    {
-        if (isset($GLOBALS['dictionary']['Contact'])) {
-            $this->origDict = $GLOBALS['dictionary']['Contact'];
-        }
-        foreach ($GLOBALS['dictionary']['Contact']['fields'] as $key => $value) {
-            $GLOBALS['dictionary']['Contact']['fields'][$key]['audited'] =
-                in_array($key, $flist) ? 1 : 0;
-        }
-    }
-
-    private function resetContactDictionary()
-    {
-        $GLOBALS['dictionary']['Contact'] = $this->origDict;
+        SugarTestHelper::tearDown();
     }
 
     public function testAuditLogForBeanCreate()
     {
-        $this->setupAuditableContactFields(['phone_work']);
-        $contactBean = SugarTestContactUtilities::createContact(null, array('phone_work' => '(111) 111-1111'));
-        $this->resetContactDictionary();
-        $audit = BeanFactory::newBean('Audit');
-        $auditLog = $audit->getAuditLog($contactBean);
-        $this->assertNotEmpty($auditLog, 'Audit log not created.');
+        $contact = SugarTestContactUtilities::createContact(null, array('phone_mobile' => '(111) 111-1111'));
+        $auditLog = $this->getFieldAuditRecords($contact, 'phone_mobile');
+        $this->assertCount(1, $auditLog, 'Audit log not created for create action.');
     }
 
     public function testErasure()
     {
-        $this->setupAuditableContactFields(['phone_work']);
         $contact = SugarTestContactUtilities::createContact(null, [
-            'phone_work' => '(111) 111-1111',
+            'phone_mobile' => '(111) 111-1111',
             'phone_home' => '(222) 222-2222',
         ]);
-        $this->assertEquals('(111) 111-1111', $contact->phone_work);
+        $this->assertEquals('(111) 111-1111', $contact->phone_mobile);
         $this->assertEquals('(222) 222-2222', $contact->phone_home);
 
-        $list = FieldList::fromArray(['phone_work', 'phone_home', ['field_name' => 'email', 'id' => 'email id xxx']]);
+        $list = FieldList::fromArray(['phone_mobile', 'phone_home', ['field_name' => 'email', 'id' => 'email id xxx']]);
         $contact->erase($list, false);
 
         $retrievedContact = BeanFactory::retrieveBean($contact->module_name, $contact->id, [
             'use_cache' => false,
             'disable_row_level_security' => true,
         ]);
-        $this->assertEmpty($retrievedContact->phone_work);
+        $this->assertEmpty($retrievedContact->phone_mobile);
         $this->assertEmpty($retrievedContact->phone_home);
 
-        $this->resetContactDictionary();
-        $audit = BeanFactory::newBean('Audit');
-        $auditLog = $audit->getAuditLog($contact);
-        $entries = array_combine(array_column($auditLog, 'field_name'), $auditLog);
-
-        $this->assertNotEmpty($auditLog, 'Audit log not created.');
-        $this->assertNull($entries['phone_work']['after'], 'Audit log not erased.');
+        $auditLog = $this->getFieldAuditRecords($contact, 'phone_mobile');
+        // there should be two entries for phone_mobile. One for create and second one for erasure
+        $this->assertCount(2, $auditLog, 'Audit log not created for create or erasure.');
     }
 
     public function testGetObjectName(){
