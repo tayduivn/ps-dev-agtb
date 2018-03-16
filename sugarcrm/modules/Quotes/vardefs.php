@@ -122,7 +122,7 @@ $dictionary['Quote'] = array(
         'quote_type' => array(
             'name' => 'quote_type',
             'vname' => 'LBL_QUOTE_TYPE',
-            'type' => 'radioenum',
+            'type' => 'enum',
             'dbtype' => 'varchar',
             'options' => 'quote_type_dom',
         ),
