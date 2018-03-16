@@ -11,7 +11,18 @@
  */
 
 
-abstract class SugarApi {
+abstract class SugarApi
+{
+    /**
+     * @var ServiceBase
+     */
+    public $api;
+
+    /**
+     * @var string
+     */
+    public $action;
+
     /**
      * Handles validation of required arguments for a request
      *

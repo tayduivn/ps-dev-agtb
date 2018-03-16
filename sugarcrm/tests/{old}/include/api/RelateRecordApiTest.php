@@ -538,9 +538,6 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->load_relationship('contacts');
         $opportunity->contacts->add($contact);
 
-        // this shouldn't be needed after BR-5932 is resolved
-        BeanFactory::clearCache();
-
         $service = SugarTestRestUtilities::getRestServiceMock();
         $response = $this->api->getRelatedRecord($service, [
             'module' => $opportunity->module_name,

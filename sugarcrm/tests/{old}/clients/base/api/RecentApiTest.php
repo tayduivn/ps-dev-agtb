@@ -10,17 +10,25 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 
 /**
  * @group ApiTests
  */
 class RecentApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var RecentApi
+     */
+    private $api;
+
     protected function setUp()
     {
         parent::setUp();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('timedate');
+
+        $this->api = new RecentApi();
     }
 
     protected function tearDown()
@@ -54,13 +62,12 @@ class RecentApiTest extends Sugar_PHPUnit_Framework_TestCase
         $account = SugarTestAccountUtilities::createAccount();
 
         $service = SugarTestRestUtilities::getRestServiceMock();
-        $api = new RecentApi();
-        $api->api = $service;
+        $this->api->api = $service;
 
         $date = '2014-01-01 00:00:00';
 
-        $this->trackAction($api, $account, $date);
-        $response = $api->getRecentlyViewed($service, array(
+        $this->trackAction($account, $date);
+        $response = $this->api->getRecentlyViewed($service, array(
             'module_list' => $account->module_name,
         ));
 
@@ -75,15 +82,40 @@ class RecentApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($date, $lastViewed);
     }
 
-    private function trackAction(RecentApi $api, SugarBean $bean, $date)
+    /**
+     * @test
+     */
+    public function erasedFields()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+        $contact->erase(FieldList::fromArray(['field_list']), false);
+
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $this->api->api = $service;
+
+        $this->trackAction($contact, '2014-01-01 00:00:00');
+
+        $response = $this->api->getRecentlyViewed($service, array(
+            'module_list' => $contact->module_name,
+            'erased_fields' => true,
+        ));
+
+        $this->assertArraySubset([
+            'records' => [
+                [
+                    '_erased_fields' => ['field_list'],
+                ],
+            ],
+        ], $response);
+    }
+
+    private function trackAction(SugarBean $bean, $date)
     {
         global $timedate;
-
-        $api->action = null;
 
         $dateTime = $timedate->fromDb($date);
         $timedate->setNow($dateTime);
 
-        $api->trackAction($bean);
+        $this->api->trackAction($bean);
     }
 }
