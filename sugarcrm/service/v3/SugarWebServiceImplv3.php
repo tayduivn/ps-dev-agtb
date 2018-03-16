@@ -48,7 +48,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
         $authController = AuthenticationController::getInstance();
 
         if (!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN' &&
-            !($authController->authController instanceof OAuth2Authenticate)) {
+            !$authController->authController instanceof OAuth2Authenticate) {
             $user_auth['password'] = md5($user_auth['password']);
         }
 
@@ -87,7 +87,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
             self::$helperObject->setFaultObject($error);
             return;
-        } elseif (extension_loaded('mcrypt')) {
+        } elseif (extension_loaded('mcrypt') && !$authController->authController instanceof OAuth2Authenticate) {
             $password = self::$helperObject->decrypt_string($user_auth['password']);
             $authController->loggedIn = false; // reset login attempt to try again with decrypted password
             if($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id']))
