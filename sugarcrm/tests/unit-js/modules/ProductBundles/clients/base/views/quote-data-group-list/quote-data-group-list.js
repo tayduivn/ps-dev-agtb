@@ -1023,37 +1023,34 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
     });
 
+    describe('render()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'toggleEmptyRow');
+            sinon.collection.stub(view, '_super');
+        });
+
+        it('should call toggleEmptyRow with true when isEmptyGroup = true', function() {
+            view.isEmptyGroup = false;
+            view.collection.reset();
+            view.render();
+
+            expect(view.toggleEmptyRow).toHaveBeenCalledWith(true);
+        });
+
+        it('should call toggleEmptyRow with false when isEmptyGroup = false', function() {
+            view.isEmptyGroup = true;
+            view.collection.add(new Backbone.Model({
+                id: 'test1'
+            }));
+            view.render();
+
+            expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
+        });
+    });
+
     describe('_renderHtml', function() {
         var $el;
         var $trs;
-
-        beforeEach(function() {
-            sinon.collection.stub(view, 'toggleEmptyRow');
-        });
-
-        describe('calling toggleEmptyRow', function() {
-            beforeEach(function() {
-                sinon.collection.stub(view, '$', function() {
-                    return {
-                        length: 0
-                    };
-                });
-            });
-
-            it('should call toggleEmptyRow with true when isEmptyGroup = true', function() {
-                view.isEmptyGroup = true;
-                view._renderHtml();
-
-                expect(view.toggleEmptyRow).toHaveBeenCalledWith(true);
-            });
-
-            it('should call toggleEmptyRow with false when isEmptyGroup = false', function() {
-                view.isEmptyGroup = false;
-                view._renderHtml();
-
-                expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
-            });
-        });
 
         describe('with group header', function() {
             var afterStub;

@@ -140,6 +140,8 @@
             // remove any id or sugarlogic entries from the bundle data
             delete bundleData.id;
             delete bundleData['_products-rel_exp_values'];
+            // remove any leftover create/delete arrays
+            delete bundleData.products;
 
             // set items array onto the bundleData
             bundleData.product_bundle_items = items;

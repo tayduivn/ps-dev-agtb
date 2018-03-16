@@ -167,14 +167,11 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
     describe('addRowModel()', function() {
         var rowModel;
         var rowModel2;
-        var listComponent;
         beforeEach(function() {
-            listComponent = {
+            layout.quoteDataGroupList = {
                 toggledModels: {}
             };
-            sinon.collection.stub(layout, 'getGroupListComponent', function() {
-                return listComponent;
-            });
+
             rowModel = new Backbone.Model({
                 id: 'rowModelId1',
                 position: 0
@@ -185,12 +182,12 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
                 position: 0
             });
             rowModel2.cid = 'rowModelId2';
+            sinon.collection.spy(layout.collection, 'add');
 
             layout.collection.reset();
         });
 
         afterEach(function() {
-            listComponent = null;
             rowModel = null;
         });
 
@@ -203,13 +200,13 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         it('should add model to list component toggledModels if in edit', function() {
             layout.addRowModel(rowModel, true);
 
-            expect(listComponent.toggledModels.rowModelId1).toEqual(rowModel);
+            expect(layout.quoteDataGroupList.toggledModels.rowModelId1).toEqual(rowModel);
         });
 
         it('should not add model to list component toggledModels if not in edit', function() {
             layout.addRowModel(rowModel, false);
 
-            expect(listComponent.toggledModels.rowModelId1).toBeUndefined();
+            expect(layout.quoteDataGroupList.toggledModels.rowModelId1).toBeUndefined();
         });
 
         it('should add row model at the position value on the model', function() {
@@ -224,24 +221,20 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
 
     describe('removeRowModel()', function() {
         var rowModel;
-        var listComponent;
+
         beforeEach(function() {
             rowModel = new Backbone.Model({
                 id: 'rowModelId1'
             });
-            listComponent = {
+            layout.quoteDataGroupList = {
                 toggledModels: {
                     rowModelId1: rowModel
                 }
             };
-            sinon.collection.stub(layout, 'getGroupListComponent', function() {
-                return listComponent;
-            });
             layout.collection.reset(rowModel);
         });
 
         afterEach(function() {
-            listComponent = null;
             rowModel = null;
         });
 
@@ -254,36 +247,76 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         it('should remove model from list toggledModels if in edit', function() {
             layout.removeRowModel(rowModel, true);
 
-            expect(listComponent.toggledModels.rowModelId1).toBeUndefined();
+            expect(layout.quoteDataGroupList.toggledModels.rowModelId1).toBeUndefined();
         });
     });
 
-    describe('getGroupListComponent()', function() {
-        var comp;
-        var result;
+    describe('addComponent()', function() {
+        var components;
+
         beforeEach(function() {
-            comp = {
-                name: 'quote-data-group-list',
-                id: 'groupListId1'
-            };
-            layout._components = [comp];
+            components = [{
+                name: 'quote-data-group-list'
+            }, {
+                name: 'other-component'
+            }];
         });
 
         afterEach(function() {
-            comp = null;
-            result = null;
-            layout._components = [];
+            components = null;
         });
 
-        it('should return the list component', function() {
-            result = layout.getGroupListComponent();
-            expect(result).toBe(comp);
+        it('should set quoteDataGroupList during addComponent', function() {
+            _.each(components, function(comp) {
+                layout.addComponent(comp, {});
+            }, this);
+
+            expect(layout.quoteDataGroupList).toEqual(components[0]);
+        });
+    });
+
+    describe('removeComponent()', function() {
+        var components;
+
+        beforeEach(function() {
+            components = [{
+                name: 'quote-data-group-list'
+            }, {
+                name: 'other-component'
+            }];
         });
 
-        it('should return undefined if list component is not found', function() {
-            layout._components = [];
-            result = layout.getGroupListComponent();
-            expect(result).toBe(undefined);
+        afterEach(function() {
+            components = null;
+        });
+
+        it('should set quoteDataGroupList during addComponent', function() {
+            _.each(components, function(comp) {
+                layout.removeComponent(comp, {});
+            }, this);
+
+            expect(layout.quoteDataGroupList).toBeNull();
+        });
+    });
+
+    describe('_dispose()', function() {
+        var quoteDataGroupList;
+
+        beforeEach(function() {
+            quoteDataGroupList = {
+                name: 'quote-data-group-list'
+            };
+            layout.quoteDataGroupList = quoteDataGroupList;
+        });
+
+        afterEach(function() {
+            quoteDataGroupList = null;
+        });
+
+        it('should set quoteDataGroupList during addComponent', function() {
+            layout._dispose();
+
+            expect(layout.quoteDataGroupList).toBeNull();
         });
     });
 });

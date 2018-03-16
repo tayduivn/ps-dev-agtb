@@ -623,6 +623,17 @@
     },
 
     /**
+     * @inheritdoc
+     */
+    render: function() {
+        this._super('render');
+
+        // update isEmptyGroup after render and make sure we toggle the row properly
+        this.isEmptyGroup = this.collection.length === 0;
+        this.toggleEmptyRow(this.isEmptyGroup);
+    },
+
+    /**
      * Overriding _renderHtml to specifically place this template after the
      * quote data group header
      *
@@ -641,8 +652,6 @@
         } else {
             this.$el.html(this.template(this));
         }
-
-        this.toggleEmptyRow(this.isEmptyGroup);
     },
 
     /**

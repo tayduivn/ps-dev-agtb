@@ -36,6 +36,12 @@
     groupId: undefined,
 
     /**
+     * The Quote Data Group List view added to this layout
+     * @type View.Views.Base.ProductBundles.QuoteDataGroupListView
+     */
+    quoteDataGroupList: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -102,14 +108,13 @@
      * @param {boolean} isRowInEdit Is the row currently in edit mode?
      */
     addRowModel: function(model, isRowInEdit) {
-        var listComp;
-
         if (isRowInEdit) {
-            listComp = this.getGroupListComponent();
-            listComp.toggledModels[model.cid] = model;
+            this.quoteDataGroupList.toggledModels[model.cid] = model;
         }
 
-        this.collection.add(model, {at: model.get('position')});
+        this.collection.add(model, {
+            at: model.get('position')
+        });
     },
 
     /**
@@ -120,17 +125,15 @@
      * @param {boolean} isRowInEdit Is the row currently in edit mode?
      */
     removeRowModel: function(model, isRowInEdit) {
-        var listComp;
         var modelId;
 
         if (isRowInEdit) {
             modelId = model.get('id');
-            listComp = this.getGroupListComponent();
-            if (listComp.toggledModels[modelId]) {
-                delete listComp.toggledModels[modelId];
+            if (this.quoteDataGroupList.toggledModels[modelId]) {
+                delete this.quoteDataGroupList.toggledModels[modelId];
             }
-            if (listComp.toggledModels[model.cid]) {
-                delete listComp.toggledModels[model.cid];
+            if (this.quoteDataGroupList.toggledModels[model.cid]) {
+                delete this.quoteDataGroupList.toggledModels[model.cid];
             }
         }
 
@@ -138,11 +141,37 @@
     },
 
     /**
-     * Returns the QuoteDataGroupListView in this layout
+     * Gets a reference to the QuoteDataGroupList being added to the layout
+     *
+     * @inheritdoc
      */
-    getGroupListComponent: function() {
-        return _.find(this._components, function(comp) {
-            return comp.name === 'quote-data-group-list';
-        });
+    addComponent: function(component, def) {
+        this._super('addComponent', [component, def]);
+
+        if (component.name === 'quote-data-group-list') {
+            this.quoteDataGroupList = component;
+        }
+    },
+
+    /**
+     * Unsets a reference to the QuoteDataGroupList being removed from the layout
+     *
+     * @inheritdoc
+     */
+    removeComponent: function(component) {
+        this._super('removeComponent', [component]);
+
+        if (component.name === 'quote-data-group-list') {
+            this.quoteDataGroupList = null;
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.quoteDataGroupList = null;
+
+        this._super('_dispose');
     }
 })

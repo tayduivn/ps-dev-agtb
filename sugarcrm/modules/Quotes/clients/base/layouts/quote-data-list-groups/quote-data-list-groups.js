@@ -80,6 +80,11 @@
     copyItemCount: undefined,
 
     /**
+     * Keeps track of the number of bundles to be copied during a Quote's "Copy" functionality
+     */
+    copyBundleCount: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -93,6 +98,7 @@
         this.isCreateView = this.context.get('create') || false;
         this.isCopy = this.context.get('copy') || false;
         this.copyItemCount = 0;
+        this.copyBundleCount = 0;
 
         //Setup the neccesary child context before data is populated so that child views/layouts are correctly linked
         var pbContext = this.context.getChildContext({link: 'product_bundles'});
@@ -183,12 +189,22 @@
 
     /**
      * Handles decrementing the total copy item count and
-     * checks if we need to dismiss the copy alert
+     * checks if we need to dismiss the copy alert, or
+     * decrements the copy bundle count and checks if we need to render
+     *
+     * @param {boolean} bundleComplete True if we're completing a bundle
      */
-    completedCopyItem: function() {
+    completedCopyItem: function(bundleComplete) {
         this.copyItemCount--;
         if (this.copyItemCount === 0) {
             this.toggleCopyAlert(false);
+        }
+
+        if (bundleComplete) {
+            this.copyBundleCount--;
+            if (this.copyBundleCount === 0) {
+                this.render();
+            }
         }
     },
 
@@ -202,6 +218,8 @@
         var relatedRecords = this.context.get('relatedRecords');
         var defaultGroup = this._getComponentByGroupId(this.defaultGroupId);
 
+        this.copyBundleCount = relatedRecords.length;
+
         // loop over the bundles
         _.each(relatedRecords, function(record) {
             // check if this record is the "default group"
@@ -209,17 +227,22 @@
                 _.each(record.product_bundle_items, function(pbItem) {
                     // set the item to use the edit template for quote-data-editablelistbutton
                     pbItem.modelView = 'edit';
-                    // add the item as a row model starting in edit mode
-                    defaultGroup.addRowModel(pbItem, true);
 
+                    // add this model to the toggledModels for edit view
+                    defaultGroup.quoteDataGroupList.toggledModels[pbItem.cid] = pbItem;
+
+                    // update the copy item number
                     this.completedCopyItem();
                 }, this);
 
-                // update the group line number counts
-                defaultGroup.trigger('quotes:line_nums:reset');
+                // add the whole collection of PBItems to the list collection at once
+                defaultGroup.quoteDataGroupList.collection.add(record.product_bundle_items);
 
                 // update the existing default group
                 this._updateDefaultGroupWithNewData(defaultGroup, record);
+
+                // update the copy bundle number
+                this.completedCopyItem(true);
             } else {
                 // listen for a new group being created during the _onCreateQuoteGroup function
                 this.context.once(
@@ -254,11 +277,19 @@
         _.each(record.product_bundle_items, function(pbItem) {
             // set the item to use the edit template for quote-data-editablelistbutton
             pbItem.modelView = 'edit';
-            // add the item as a row model starting in edit mode
-            group.addRowModel(pbItem, true);
 
+            // add this model to the toggledModels for edit view
+            group.quoteDataGroupList.toggledModels[pbItem.cid] = pbItem;
+
+            // update the copy item number
             this.completedCopyItem();
         }, this);
+
+        // add the whole collection of PBItems to the list collection at once
+        group.quoteDataGroupList.collection.add(record.product_bundle_items);
+
+        // update the copy bundle number
+        this.completedCopyItem(true);
 
         // update the group line number counts
         group.trigger('quotes:line_nums:reset');
@@ -1257,7 +1288,9 @@
             }
         }, this);
 
-        this.render();
+        if (!this.isCopy) {
+            this.render();
+        }
     },
 
     /**
@@ -1380,7 +1413,6 @@
         var groupsToUpdate = [];
         var rowId;
         var groupId;
-        var groupList;
         var groupLayout;
         var url;
 
@@ -1395,11 +1427,8 @@
                 // get the QuoteDataGroupLayout component
                 groupLayout = this._getComponentByGroupId(groupId);
 
-                // get the QuoteDataGroupListView component
-                groupList = groupLayout.getGroupListComponent();
-
                 // remove this row from the list's toggledModels if it exists
-                delete groupList.toggledModels[rowId];
+                delete groupLayout.quoteDataGroupList.toggledModels[rowId];
 
                 url = app.api.buildURL(model.module + '/' + rowId);
                 bulkRequests.push({
@@ -1536,8 +1565,7 @@
                 // an array with the last model
                 model = model || list[0];
                 if (model.isNew()) {
-                    var groupList = groupToDelete.getGroupListComponent();
-                    delete groupList.toggledModels[model.cid];
+                    delete groupToDelete.quoteDataGroupList.toggledModels[model.cid];
                     bundleItems.remove(model);
                 }
             }, this, bundleItems, groupToDelete), this);
