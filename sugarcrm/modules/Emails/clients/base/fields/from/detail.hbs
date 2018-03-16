@@ -11,7 +11,7 @@
  */
 --}}
 <div class="ellipsis_inline" rel="tooltip" data-placement="bottom" title="{{tooltip}}">
-    {{#if value.isNameErased}}
+    {{#if value.nameIsErased}}
         <span class="label">
             {{#if value.href}}<a href="{{value.href}}">{{/if}}{{str 'LBL_VALUE_ERASED' module}}{{#if value.href}}</a>{{/if}}
         </span>
@@ -19,7 +19,7 @@
         {{#if value.attributes.parent_name}}
             {{#if value.href}}<a href="{{value.href}}">{{/if}}{{value.attributes.parent_name}}{{#if value.href}}</a>{{/if}}
         {{else}}
-            {{#if value.isEmailErased}}
+            {{#if value.emailIsErased}}
                 <span class="label">{{str 'LBL_VALUE_ERASED' module}}</span>
             {{else}}
                 {{value.attributes.email_address}}

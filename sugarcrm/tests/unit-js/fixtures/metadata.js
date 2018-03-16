@@ -537,6 +537,11 @@ fixtures.metadata = {
                     "type": "enum",
                     "options": "salutations_dom"
                 },
+                "name": {
+                    "name": "name",
+                    "type": "varchar",
+                    "fields": ["first_name", "last_name"]
+                },
                 "full_name": {
                     "name": "full_name",
                     "type": "varchar",

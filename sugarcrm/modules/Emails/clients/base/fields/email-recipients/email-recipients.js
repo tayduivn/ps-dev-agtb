@@ -176,7 +176,7 @@
                     var template = app.template.getField(this.type, 'select2-result', this.module);
 
                     return template({
-                        value: this.formatForHeader(recipient, true),
+                        value: recipient.toHeaderString({quote_name: true}),
                         module: recipient.get('parent_type')
                     });
                 }, this),
@@ -220,7 +220,7 @@
             // EmailParticipantsPlugin#formatForHeader to unintentionally
             // receive a value.
             this.tooltip = _.map(value, function(model) {
-                return this.formatForHeader(model);
+                return model.toHeaderString();
             }, this).join(', ');
         }
 

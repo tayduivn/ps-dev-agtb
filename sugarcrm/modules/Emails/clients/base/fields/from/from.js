@@ -133,7 +133,7 @@
                 formatSelection: _.bind(function(sender) {
                     var template = app.template.getField(this.type, 'select2-selection', this.module);
 
-                    return sender ? template({value: this.formatForHeader(sender, true)}) : '';
+                    return sender ? template({value: sender.toHeaderString({quote_name: true})}) : '';
                 }, this),
 
                 /**
@@ -149,7 +149,7 @@
                     var template = app.template.getField(this.type, 'select2-result', this.module);
 
                     return template({
-                        value: this.formatForHeader(sender, true),
+                        value: sender.toHeaderString({quote_name: true}),
                         module: sender.get('parent_type')
                     });
                 }, this),
@@ -190,7 +190,7 @@
             }
 
             if (value) {
-                this.tooltip = this.formatForHeader(value);
+                this.tooltip = value.toHeaderString();
             }
         }
 

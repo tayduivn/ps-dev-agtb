@@ -279,17 +279,7 @@
      */
     _formatEmailList: function(collection) {
         return collection.map(function(model) {
-            var name = model.get('parent_name') || '';
-
-            if (_.isEmpty(name)) {
-                return model.get('email_address') || '';
-            }
-
-            if (_.isEmpty(model.get('email_address'))) {
-                return name;
-            }
-
-            return name + ' <' + model.get('email_address') + '>';
+            return model.toHeaderString();
         }).join(', ');
     }
 })

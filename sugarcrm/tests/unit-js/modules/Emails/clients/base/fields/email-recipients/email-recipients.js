@@ -36,6 +36,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
         SugarTest.testMetadata.set();
 
         app = SugarTest.app;
+        SugarTest.declareData('base', 'EmailParticipants', true, false);
         app.data.declareModels();
         app.routing.start();
 
@@ -61,7 +62,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 invalid_email: false,
                 opt_out: false
             }),
-            app.data.createBean('Contacts', {
+            app.data.createBean('EmailParticipants', {
                 _link: 'to',
                 id: _.uniqueId(),
                 parent: {

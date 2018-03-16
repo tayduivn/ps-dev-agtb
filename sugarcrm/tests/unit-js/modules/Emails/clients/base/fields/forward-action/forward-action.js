@@ -17,6 +17,7 @@ describe('Emails.Field.ForwardAction', function() {
 
     function createParticipant(link, email, parentType, parentName) {
         var parentId = _.uniqueId();
+        var emailAddressId = _.uniqueId();
 
         return app.data.createBean('EmailParticipants', {
             _link: link,
@@ -30,15 +31,43 @@ describe('Emails.Field.ForwardAction', function() {
             parent_type: parentType,
             parent_id: parentId,
             parent_name: parentName,
-            email_address_id: _.uniqueId(),
+            email_addresses: {
+                email_address: email,
+                id: emailAddressId,
+                _erased_fields: []
+            },
+            email_address_id: emailAddressId,
             email_address: email,
             invalid_email: false,
             opt_out: false
         });
     }
 
+    function eraseName(participant) {
+        var parent = participant.get('parent');
+
+        participant.set('parent_name', '');
+        parent.name = '';
+        parent._erased_fields = [
+            'first_name',
+            'last_name'
+        ];
+    }
+
+    function eraseEmailAddress(participant) {
+        var link = participant.get('email_addresses');
+
+        participant.set('email_address', '');
+        link.email_address = '';
+        link._erased_fields = [
+            'email_address',
+            'email_address_caps'
+        ];
+    }
+
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
+        var bhunterEmailAddressId = _.uniqueId();
         var parent;
 
         SugarTest.testMetadata.init();
@@ -54,6 +83,7 @@ describe('Emails.Field.ForwardAction', function() {
         SugarTest.testMetadata.set();
 
         app = SugarTest.app;
+        SugarTest.declareData('base', 'EmailParticipants', true, false);
         app.data.declareModels();
         app.routing.start();
 
@@ -106,7 +136,12 @@ describe('Emails.Field.ForwardAction', function() {
             app.data.createBean('EmailParticipants', {
                 _link: 'to',
                 id: _.uniqueId(),
-                email_address_id: _.uniqueId(),
+                email_addresses: {
+                    email_address: 'bhunter@example.com',
+                    id: bhunterEmailAddressId,
+                    _erased_fields: []
+                },
+                email_address_id: bhunterEmailAddressId,
                 email_address: 'bhunter@example.com',
                 invalid_email: false,
                 opt_out: false
@@ -345,6 +380,49 @@ describe('Emails.Field.ForwardAction', function() {
                 model.get('cc_collection').reset([]);
 
                 expect(field.emailOptions.description_html).toBe(expected);
+            });
+
+            it('should use "Value erased" for erased names and email addresses', function() {
+                var from = model.get('from_collection');
+                var to = model.get('to_collection');
+                var cc = model.get('cc_collection');
+                var bcc = model.get('bcc_collection');
+                var expected = '\n-----\n' +
+                    'From: Value erased <Value erased>\n' +
+                    'Date: 03/27/2012 01:48\n' +
+                    'To: Value erased <Value erased>, Value erased <Value erased>, Value erased\n' +
+                    'Cc: Value erased <Value erased>\n' +
+                    'Subject: My Subject\n\n' +
+                    'Here is my plain-text content.';
+
+                // The sender has an email address and name.
+                eraseName(from.at(0));
+                eraseEmailAddress(from.at(0));
+
+                // The recipient has an email address and name.
+                eraseName(to.at(0));
+                eraseEmailAddress(to.at(0));
+
+                // The recipient has an email address and name.
+                eraseName(to.at(1));
+                eraseEmailAddress(to.at(1));
+
+                // The recipient has only an email address.
+                eraseEmailAddress(to.at(2));
+
+                // The recipient has an email address and name.
+                eraseName(cc.at(0));
+                eraseEmailAddress(cc.at(0));
+
+                // The recipient has an email address and name.
+                eraseName(bcc.at(0));
+                eraseEmailAddress(bcc.at(0));
+
+                sandbox.stub(field, 'useSugarEmailClient').returns(false);
+
+                model.set('description', 'Here is my plain-text content.');
+
+                expect(field.emailOptions.description).toBe(expected);
             });
         });
 

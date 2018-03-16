@@ -22,19 +22,6 @@
             return 'email_participants_validator_' + component.cid;
         }
 
-        /**
-         * Returns true if the email address has been erased.
-         *
-         * @param {Data.Bean} model
-         * @return {boolean}
-         */
-        function isEmailAddressErased(model) {
-            var link = model.get('email_addresses');
-            var erasedFields = link && link._erased_fields ? link._erased_fields : [];
-
-            return _.isEmpty(erasedFields) ? false : _.contains(erasedFields, 'email_address');
-        }
-
         app.plugins.register('EmailParticipants', ['field'], {
             /**
              * @inheritdoc
@@ -188,19 +175,15 @@
                  * models.
                  */
                 this.prepareModel = function(model) {
-                    var parent;
+                    var parent = model.getParent();
                     var hasParent;
                     var parentName;
 
-                    model.isNameErased = false;
-                    model.isEmailErased = isEmailAddressErased(model);
+                    model.nameIsErased = model.isNameErased();
+                    model.emailIsErased = model.isEmailErased();
 
-                    if (model.get('parent') && model.get('parent').type && model.get('parent').id) {
-                        // We omit type because it is actually the module name
-                        // and should not be treated as an attribute.
-                        parent = app.data.createBean(model.get('parent').type, _.omit(model.get('parent'), 'type'));
+                    if (parent) {
                         parentName = app.utils.getRecordName(parent);
-                        model.isNameErased = app.utils.isNameErased(parent);
                     }
 
                     // The type and id fields are not unset after a parent
@@ -208,7 +191,7 @@
                     // parent record is truly only there if type and id are
                     // non-empty and the parent record can be resolved and has
                     // not been deleted.
-                    hasParent = !!(parent && (parentName || model.isNameErased));
+                    hasParent = !!(parent && (parentName || model.nameIsErased));
 
                     // Select2 needs the locked property directly on the object.
                     model.locked = !!this.def.readonly;
@@ -227,7 +210,7 @@
                     } else if (!model.has('invalid_email') &&
                         model.get('email_address_id') &&
                         model.get('email_address') &&
-                        !model.isEmailErased
+                        !model.emailIsErased
                     ) {
                         model.invalid = !app.utils.isValidEmailAddress(model.get('email_address'));
                     } else {
@@ -262,37 +245,18 @@
                  * @example
                  * // Email address has been erased via a data privacy request.
                  * Will Westin <Value erased>
+                 * @deprecated Use
+                 * {@link Model.Datas.Base.EmailParticipantsModel#toHeaderString}
+                 * instead.
                  * @param {Data.Bean} model
                  * @param {boolean} [surroundNameWithQuotes=false]
                  * @return {string}
                  */
                 this.formatForHeader = function(model, surroundNameWithQuotes) {
-                    var name = model.get('parent_name') || '';
-                    var email = model.get('email_address') || '';
+                    app.logger.warn('Plugins.EmailParticipants#formatForHeader is deprecated. Use ' +
+                        'Model.Datas.Base.EmailParticipantsModel#toHeaderString instead.');
 
-                    // The name was erased, so let's use the label.
-                    if (_.isEmpty(name) && model.isNameErased) {
-                        name = app.lang.get('LBL_VALUE_ERASED', this.module);
-                    }
-
-                    // The email was erased, so let's use the label.
-                    if (_.isEmpty(email) && model.isEmailErased) {
-                        email = app.lang.get('LBL_VALUE_ERASED', this.module);
-                    }
-
-                    if (_.isEmpty(name)) {
-                        return email;
-                    }
-
-                    if (_.isEmpty(email)) {
-                        return name;
-                    }
-
-                    if (surroundNameWithQuotes) {
-                        name = '"' + name + '"';
-                    }
-
-                    return name + ' <' + email + '>';
+                    return model.toHeaderString({quote_name: surroundNameWithQuotes});
                 };
 
                 /**

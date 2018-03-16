@@ -46,6 +46,7 @@ describe('Emails.RecipientsFieldsetField', function() {
         SugarTest.testMetadata.set();
 
         app = SugarTest.app;
+        SugarTest.declareData('base', 'EmailParticipants', true, false);
         app.data.declareModels();
         app.routing.start();
 

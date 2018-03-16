@@ -14,7 +14,7 @@
     <div class="ellipsis_inline" data-placement="bottom"{{#if dir}} dir="{{dir}}"{{/if}} title="{{tooltip}}">
 {{/if}}
 {{#each value}}
-    {{#if isNameErased}}
+    {{#if nameIsErased}}
             <span class="label">
             {{#if href}}<a href="{{href}}">{{/if}}{{str 'LBL_VALUE_ERASED' ../module}}{{#if href}}</a>{{/if}}
         </span>
@@ -22,7 +22,7 @@
         {{#if attributes.parent_name}}
             {{#if href}}<a href="{{href}}">{{/if}}{{attributes.parent_name}}{{#if href}}</a>{{/if}}
         {{else}}
-            {{#if isEmailErased}}
+            {{#if emailIsErased}}
                     <span class="label">{{str 'LBL_VALUE_ERASED' ../module}}</span>
             {{else}}
                 {{attributes.email_address}}
