@@ -8224,25 +8224,6 @@ class SugarBean
     }
 
     /**
-     * remove email
-     * @param string $id email Id
-     */
-    public function removeEmailById($id)
-    {
-        if (empty($id)) {
-            return;
-        }
-
-        if (!empty($this->email) && is_array($this->email)) {
-            foreach ($this->email as $idx => $address) {
-                if (isset($address['email_address_id']) && $address['email_address_id'] === $id) {
-                    unset($this->email[$idx]);
-                }
-            }
-        }
-    }
-
-    /**
      * Clears the status recursive resave
      */
     public static function clearRecursiveResave()

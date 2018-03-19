@@ -60,8 +60,8 @@ final class Email implements Field
         if (!empty($relatedBeans)) {
             foreach ($relatedBeans as $relBean) {
                 if (!empty($relBean->emailAddress)) {
-                    $relBean->removeEmailById($this->id);
-                    $relBean->save();
+                    $relBean->emailAddress->removeAddressById($this->id);
+                    $relBean->emailAddress->save($relBean->id, $relBean->module_dir);
                 }
             }
         }

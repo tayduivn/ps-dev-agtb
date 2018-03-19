@@ -9,37 +9,34 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 namespace Sugarcrm\SugarcrmTests\DataPrivacy\Erasure\Field;
-
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Email;
 use SugarTestContactUtilities;
 use SugarTestEmailAddressUtilities;
 use SugarTestLeadUtilities;
 use SugarTestHelper;
-
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Email
  */
 class EmailTest extends \Sugar_PHPUnit_Framework_TestCase
 {
-    private static $emailAddress;
+    private static $emailAddress = [];
     private static $contact;
     private static $lead;
-
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user', [true, true]);
-
-        self::$emailAddress = SugarTestEmailAddressUtilities::createEmailAddress();
         self::$contact = SugarTestContactUtilities::createContact();
-        SugarTestEmailAddressUtilities::addAddressToPerson(self::$contact, self::$emailAddress);
         self::$lead = SugarTestLeadUtilities::createLead();
-        SugarTestEmailAddressUtilities::addAddressToPerson(self::$lead, self::$emailAddress);
+        // create 3 emails
+        for ($i = 0; $i < 3; $i++) {
+            $emailAddress = SugarTestEmailAddressUtilities::createEmailAddress();
+            SugarTestEmailAddressUtilities::addAddressToPerson(self::$contact, $emailAddress);
+            SugarTestEmailAddressUtilities::addAddressToPerson(self::$lead, $emailAddress);
+            self::$emailAddress[] = $emailAddress;
+        }
     }
-
     public static function tearDownAfterClass()
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
@@ -47,7 +44,6 @@ class EmailTest extends \Sugar_PHPUnit_Framework_TestCase
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         parent::tearDownAfterClass();
     }
-
     /**
      * @test
      * @covers ::__construct()
@@ -56,14 +52,20 @@ class EmailTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function erase()
     {
-        $email = new Email(self::$emailAddress->id);
-
-        $count = count(\SugarTestReflection::callProtectedMethod($email, 'getAllRelatedBeans', [self::$emailAddress]));
-        $this->assertEquals(2, $count);
-
-        $email->erase(\BeanFactory::newBean('Contacts'));
-
-        $count = count(\SugarTestReflection::callProtectedMethod($email, 'getAllRelatedBeans', [self::$emailAddress]));
-        $this->assertEquals(0, $count);
+        $contactBean = \BeanFactory::retrieveBean('Contacts', self::$contact->id, ['use_cache' => false]);
+        // email count
+        $this->assertEquals(4, count($contactBean->email));
+        foreach (self::$emailAddress as $emailAddress) {
+            $email = new Email($emailAddress->id);
+            $email->erase($contactBean);
+        }
+        $contactBean = \BeanFactory::retrieveBean('Contacts', self::$contact->id, ['use_cache' => false]);
+        // check email count
+        $this->assertEquals(1, count($contactBean->email));
+        // make sure all linked emails have been erased
+        foreach (self::$emailAddress as $emailAddress) {
+            $beansHaveThisEmail = $emailAddress->getBeansByEmailAddress($emailAddress->email_address);
+            $this->assertEmpty($beansHaveThisEmail);
+        }
     }
 }

@@ -128,8 +128,10 @@ class SugarEmailAddress extends SugarBean
                     foreach ($bean->email as $emailAddr) {
                         $address = $emailAddr['email_address'];
                         $optO = $this->getEmailAddressOptoutValue($emailAddr);
-                        $invalidE = (isset($emailAddr['invalid_email']) && $emailAddr['invalid_email'] == "1") ? true : false;
-                        $primaryE = (isset($emailAddr['primary_address']) && $emailAddr['primary_address'] == "1") ? true : false;
+                        $invalidE = (isset($emailAddr['invalid_email'])) ?
+                            $this->boolVal($emailAddr['invalid_email']) : false;
+                        $primaryE = (isset($emailAddr['primary_address'])) ?
+                            $this->boolVal($emailAddr['primary_address']) : false;
                         $this->addAddress($address, $primaryE, false, $invalidE, $optO);
                     }
                 }
@@ -161,7 +163,8 @@ class SugarEmailAddress extends SugarBean
                             $emailAddr = $bean->email[$i-1];
                         }
                         $optOut = $this->getEmailAddressOptoutValue($emailAddr);
-                        $invalid = isset($bean->email[$i-1]['invalid_email']) && $bean->email[$i-1]['invalid_email'] == "1";
+                        $invalid = isset($bean->email[$i-1]['invalid_email'])
+                            && $this->boolVal($bean->email[$i-1]['invalid_email']);
                         $opt_out_field = $email . '_opt_out';
                         $invalid_field = $email . '_invalid';
                         $field_optOut = (isset($bean->$opt_out_field)) ? $bean->$opt_out_field : $optOut;
@@ -706,10 +709,10 @@ class SugarEmailAddress extends SugarBean
 
         $new_address = array(
             'email_address' => $addr,
-            'primary_address' => ($primary) ? '1' : '0',
-            'reply_to_address' => ($replyTo) ? '1' : '0',
-            'invalid_email' => ($invalid) ? '1' : '0',
-            'opt_out' => ($optOut) ? '1' : '0',
+            'primary_address' => $this->boolVal($primary),
+            'reply_to_address' => $this->boolVal($replyTo),
+            'invalid_email' => $this->boolVal($invalid),
+            'opt_out' => $this->boolVal($optOut),
             'email_address_id' => $email_id,
         );
 
@@ -719,7 +722,7 @@ class SugarEmailAddress extends SugarBean
                 $key = $k;
 
                 $diffCount = array_diff_assoc($new_address, $address);
-                if ($address['primary_address'] === '1' && !empty($diffCount)) {
+                if ($this->boolVal($address['primary_address']) && !empty($diffCount)) {
                     $GLOBALS['log']->fatal("SUGAREMAILADDRESS: Existing primary address could not be overriden [ {$addr} ]");
                     return false;
                 }
@@ -731,6 +734,80 @@ class SugarEmailAddress extends SugarBean
         } else {
             $this->addresses[$key] = $new_address;
         }
+    }
+
+    /**
+     * Removes a given email address from this set of addresses.
+     * @param string $addr
+     *
+     * @return bool false if the given address was not found
+     */
+    public function removeAddress(string $addr)
+    {
+        $address = $this->getAddressEntry($addr);
+        if (!empty($address['email_address_id'])) {
+            return $this->removeAddressById($address['email_address_id']);
+        }
+
+        return false;
+    }
+
+    /**
+     * Removes a given email address by id from this set of addresses.
+     * @param string $id
+     *
+     * @return bool false if the given address was not found
+     */
+    public function removeAddressById(string $id)
+    {
+        foreach ($this->addresses as $k => $address) {
+            if ($address['email_address_id'] === $id) {
+                $wasPrimary = $address['primary_address'];
+                array_splice($this->addresses, $k, 1);
+                //If the removed address was primary, need to mark another email primary
+                if ($wasPrimary) {
+                    $this->findAndMarkNewPrimaryEmail();
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function findAndMarkNewPrimaryEmail()
+    {
+        if (empty($this->addresses)) {
+            return;
+        }
+        //First find a valid email address
+        foreach ($this->addresses as $i => $address) {
+            if (!$address['invalid_email']) {
+                $this->addresses[$i]['primary_address'] = true;
+
+                return;
+            }
+        }
+        //Otherwise just mark the first one.
+        $this->addresses[0]['primary_address'] = true;
+    }
+
+    /**
+     * Given an email address, returns the matching entry from the addresses array.
+     * @param string $addr
+     *
+     * @return mixed|null
+     */
+    private function getAddressEntry(string $addr)
+    {
+        foreach ($this->addresses as $address) {
+            if ($address['email_address'] === $addr) {
+                return $address;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -1406,12 +1483,32 @@ class SugarEmailAddress extends SugarBean
      */
     protected function getEmailAddressOptoutValue($emailAddr = array())
     {
-        if (!empty($emailAddr) && isset($emailAddr['opt_out'])) {
-            $optOut = ($emailAddr['opt_out'] == '1');
+        if (isset($emailAddr['opt_out'])) {
+            $optOut = $this->boolVal($emailAddr['opt_out']);
         } else {
             $optOut = $this->opt_out;
         }
         return $optOut;
+    }
+
+    /**
+     * Returns the boolean representation of possible sugar email address DB values.
+     * Should either be a string, integer or boolean.
+     * @param $val value to convert to a boolean
+     *
+     * @return bool
+     */
+    private function boolVal($val)
+    {
+        if (is_string($val)) {
+            return $val === '1';
+        }
+
+        if (is_numeric($val)) {
+            return $val === 1;
+        }
+
+        return boolval($val);
     }
 } // end class def
 
