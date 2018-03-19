@@ -153,6 +153,7 @@ $dictionary['DataPrivacy'] = array(
             'dbType' => 'text',
             'studio' => false,
             'hideacl' => true,
+            'reportable' => false,
         ),
         'leads' =>
             array (
