@@ -224,6 +224,9 @@ Feature: RLI module verification
     When I choose RevenueLineItems in modules menu
     When I select *RLI_1 in #RevenueLineItemsList.ListView
     Then I should see #RLI_1Record view
+    Then I verify fields on #RLI_1Record.HeaderView
+      | fieldName | value  |
+      | quote_id  | Quoted |
     When I open actions menu in #RLI_1Record
     When I choose Copy from actions menu in #RLI_1Record
     When I provide input for #RevenueLineItemsDrawer.HeaderView view
@@ -231,6 +234,9 @@ Feature: RLI module verification
       | RecordID1 | RLI_2 |
     When I click Save button on #RevenueLineItemsRecord header
     When I close alert
+    Then I verify fields on #RevenueLineItemsRecord.HeaderView
+      | fieldName | value      |
+      | quote_id  | Not Quoted |
     Then I verify fields on #RevenueLineItemsRecord.RecordView
       | fieldName  | value |
       | quote_name |       |

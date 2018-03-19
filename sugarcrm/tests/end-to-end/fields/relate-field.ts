@@ -45,7 +45,7 @@ export class List extends BaseField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'a.ellipsis_inline'
+                selector: '.ellipsis_inline a'
             }
         });
 

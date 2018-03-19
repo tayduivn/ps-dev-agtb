@@ -28,6 +28,7 @@ import * as DiscountSelectField from '../fields/discount-select-field';
 import * as BoolField from '../fields/bool-field';
 import * as TeamsetField from '../fields/teamset-field';
 import * as ParentField from '../fields/parent-field';
+import * as BadgeField from '../fields/badge-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -57,5 +58,6 @@ export const FIELD_TYPES__MAP = {
     'pricing-formula':PricingFormula,
     teamset: TeamsetField,
     parent: ParentField,
+    badge: BadgeField
 };
 
