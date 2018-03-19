@@ -31,12 +31,13 @@ gulp karma --browsers Chrome
 ## Command line options
 Option | Description
  ------|------------
--d --dev | Set Karma options for debugging
+-d --dev --debug | Set Karma options for debugging
 --coverage | Enable code coverage
 --ci | Enable CI specific options
 --path <path> | Set base output path
 --manual | Start Karma and wait for browser to connect (manual tests)
 --team <name> | Filter by specified team
+--file <path> | Filter by file path or glob expression. Multiple paths can be provided comma separated.
 --browsers <list> | Comma-separated list of browsers to run tests with
 
 ## Other Examples:

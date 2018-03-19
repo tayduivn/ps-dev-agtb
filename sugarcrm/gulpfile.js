@@ -56,13 +56,14 @@ gulp.task('karma', function(done) {
 
     // get command-line arguments for karma tests
     commander
-        .option('-d, --dev', 'Set Karma options for debugging')
+        .option('-d, --dev, --debug', 'Set Karma options for debugging')
         .option('--coverage', 'Enable code coverage')
         .option('--ci', 'Enable CI specific options')
         .option('--verbose', 'Show the running tests specifications')
         .option('--path <path>', 'Set base output path')
         .option('--manual', 'Start Karma and wait for browser to connect (manual tests)')
         .option('--team <name>', 'Filter by specified team', splitByCommas)
+        .option('--file <path>', 'File or list of files to execute', splitByCommas)
         .option('--browsers <list>',
             'Comma-separated list of browsers to run tests with',
             splitByCommas
@@ -108,6 +109,8 @@ gulp.task('karma', function(done) {
         tests = _.filter(tests, function(pattern) {
             return !_.isEmpty(glob.sync(pattern));
         });
+    } else if (commander.file) {
+        tests = commander.file;
     } else {
         tests = readJSONFile('gulp/assets/default-tests.json');
     }
