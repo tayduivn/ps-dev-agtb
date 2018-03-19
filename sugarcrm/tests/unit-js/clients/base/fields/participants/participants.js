@@ -859,7 +859,8 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 module: 'Baz',
                 name: 'Foo Bar',
                 // Always passed, but not displayed.
-                email: 'foo@bar.com'
+                email: 'foo@bar.com',
+                name_is_erased: false
             }]);
         });
 
@@ -890,6 +891,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 name: 'Foo Bar',
                 // Always passed, but not displayed.
                 email: 'foo@bar.com',
+                name_is_erased: false,
                 field_name: 'LBL_ACCOUNT_NAME',
                 field_value: 'Bar Enterprises Inc.'
             }]);

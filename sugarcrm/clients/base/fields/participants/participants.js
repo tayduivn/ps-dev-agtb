@@ -981,10 +981,12 @@
      * @return {string}
      */
     formatSearchResult: function(bean) {
+        var nameIsErased = app.utils.isNameErased(bean);
         var result = {
             module: bean.module,
-            name: app.utils.getRecordName(bean),
-            email: app.utils.getPrimaryEmailAddress(bean)
+            name: nameIsErased ? app.lang.get('LBL_VALUE_ERASED', bean.module) : app.utils.getRecordName(bean),
+            email: app.utils.getPrimaryEmailAddress(bean),
+            name_is_erased: nameIsErased
         };
 
         _.each(bean.searchInfo.highlighted, function(field) {

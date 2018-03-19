@@ -839,6 +839,7 @@
                 params.max_num = options.limit;
                 params.search_fields = options.search_fields? options.search_fields.join(',') : 'name';
                 params.fields = options.fields ? options.fields.join(',') : 'name';
+                params.erased_fields = true;
 
                 if (this.links) {
                     params.module_list = _.map(this.links, function(link) {
