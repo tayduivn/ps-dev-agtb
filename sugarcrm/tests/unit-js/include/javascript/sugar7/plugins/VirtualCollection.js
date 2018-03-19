@@ -501,7 +501,7 @@ describe('Plugins.VirtualCollection', function() {
             it('should default to `name` for the fields', function() {
                 collection.fetch();
 
-                expect(app.api.call.lastCall.args[1]).toMatch(/.*\?fields=name&.*/);
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*fields=name&.*/);
             });
 
             it('should use the specified fields', function() {
@@ -515,7 +515,7 @@ describe('Plugins.VirtualCollection', function() {
                 };
                 collection.fetch(options);
 
-                expect(app.api.call.lastCall.args[1]).toMatch(/.*\?fields=foo%2Cbar&.*/);
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*fields=foo%2Cbar&.*/);
             });
 
             it('should default to the order_by from the field definition', function() {
@@ -546,7 +546,7 @@ describe('Plugins.VirtualCollection', function() {
                 };
                 collection.fetch(options);
 
-                expect(app.api.call.lastCall.args[1]).toMatch(/.*\?fields=foo%2Cbar%2Cname%2Cbiz&.*/);
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*&fields=foo%2Cbar%2Cname%2Cbiz&.*/);
             });
 
             it('should include the offset for the links', function() {

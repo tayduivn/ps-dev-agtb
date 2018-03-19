@@ -14,10 +14,10 @@ describe('View.Fields.Base.ParticipantsField', function() {
     module = 'Meetings';
 
     participants = [
-        {_module: 'Users', id: '1', name: 'Jim Brennan', accept_status_meetings: 'accept'},
-        {_module: 'Users', id: '2', name: 'Will Weston', accept_status_meetings: 'decline'},
-        {_module: 'Contacts', id: '3', name: 'Jim Gallardo', accept_status_meetings: 'tentative'},
-        {_module: 'Leads', id: '4', name: 'Sallie Talmadge', accept_status_meetings: 'none'}
+        {_module: 'Users', id: '1', name: 'Jim Brennan', accept_status_meetings: 'accept', _erased_fields: []},
+        {_module: 'Users', id: '2', name: 'Will Weston', accept_status_meetings: 'decline', _erased_fields: []},
+        {_module: 'Contacts', id: '3', name: 'Jim Gallardo', accept_status_meetings: 'tentative', _erased_fields: []},
+        {_module: 'Leads', id: '4', name: 'Sallie Talmadge', accept_status_meetings: 'none', _erased_fields: []}
     ];
 
     fieldDef = {
@@ -414,6 +414,27 @@ describe('View.Fields.Base.ParticipantsField', function() {
             ]);
             collection.remove(['2', '4']);
             expect(field.format(field.model.get(field.name)).length).toBe(4);
+        });
+
+        it('should verify that participant name is not erased', function() {
+            var collection;
+            var value;
+            field.model.set(field.name, participants);
+            collection = field.getFieldValue();
+            value = field.format(collection);
+            expect(value[2].isNameErased).toBe(false);
+        });
+
+        it('should verify that one participant has an erased name', function() {
+            var collection;
+            var value;
+            participants[2]._erased_fields = ['first_name', 'last_name'];
+            participants[2].name = '';
+            field.model.set(field.name, participants);
+            collection = field.getFieldValue();
+            value = field.format(collection);
+            expect(value[2].isNameErased).toBe(true);
+            expect(value[2].name).toBe('Value erased');
         });
 
         it('should set the last property to true for only the final participant', function() {

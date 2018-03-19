@@ -752,14 +752,17 @@
             rows = value.length;
             value = value.map(function(participant) {
                 var attributes;
+                var isNameErased = app.utils.isNameErased(participant);
 
                 attributes = {
                     accept_status: acceptStatus(participant),
                     deletable: deletable(participant),
                     email: app.utils.getPrimaryEmailAddress(participant),
                     last: (rows === i++),
-                    name: app.utils.getRecordName(participant),
                     preview: preview(participant),
+                    isNameErased: isNameErased,
+                    name: isNameErased ? app.lang.get('LBL_VALUE_ERASED', participant.module) :
+                        app.utils.getRecordName(participant),
                     module: participant.module
                 };
 
@@ -851,7 +854,10 @@
             model = app.data.createBean(data.module, {id: data.id});
             model.fetch({
                 showAlerts: true,
-                success: success
+                success: success,
+                params: {
+                    erased_fields: true
+                }
             });
         }
     },

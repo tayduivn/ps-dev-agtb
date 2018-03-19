@@ -639,6 +639,7 @@
                 options || (options = {});
 
                 params = {};
+                params.erased_fields = true;
                 params.fields = options.fields ? options.fields : ['name'];
                 params.order_by = options.order_by || this.parent.fields[this.fieldName].order_by;
 
