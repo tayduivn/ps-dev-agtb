@@ -82,6 +82,7 @@ describe('Emails.Routes', function() {
             sandbox.stub(app.data, 'createBean');
             app.data.createBean.returns(model);
             sandbox.stub(model, 'fetch', function(options) {
+                expect(options.params.erased_fields).toBe(true);
                 options.success(model);
             });
         });

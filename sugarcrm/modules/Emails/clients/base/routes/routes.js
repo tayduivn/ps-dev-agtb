@@ -60,6 +60,9 @@
                     model.set('id', id);
                     model.fetch({
                         view: 'compose-email',
+                        params: {
+                            erased_fields: true
+                        },
                         success: function(model) {
                             var route;
 
