@@ -19,12 +19,38 @@ describe('Emails.RecipientsFieldsetField', function() {
     var cc;
     var bcc;
 
+    function eraseName(participant) {
+        var parent = participant.get('parent');
+
+        participant.set('parent_name', '');
+        parent.name = '';
+        parent._erased_fields = [
+            'first_name',
+            'last_name'
+        ];
+    }
+
+    function eraseEmailAddress(participant) {
+        var link = participant.get('email_addresses');
+
+        participant.set('email_address', '');
+        link.email_address = '';
+        link._erased_fields = [
+            'email_address',
+            'email_address_caps'
+        ];
+    }
+
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
         var parentId1 = _.uniqueId();
+        var emailAddressId1 = _.uniqueId();
         var parentId2 = _.uniqueId();
+        var emailAddressId2 = _.uniqueId();
         var parentId3 = _.uniqueId();
+        var emailAddressId3 = _.uniqueId();
         var parentId4 = _.uniqueId();
+        var emailAddressId4 = _.uniqueId();
 
         SugarTest.testMetadata.init();
 
@@ -114,7 +140,11 @@ describe('Emails.RecipientsFieldsetField', function() {
                 parent_type: 'Contacts',
                 parent_id: parentId1,
                 parent_name: 'Herbert Yates',
-                email_address_id: _.uniqueId(),
+                email_addresses: {
+                    id: emailAddressId1,
+                    email_address: 'hyates@example.com'
+                },
+                email_address_id: emailAddressId1,
                 email_address: 'hyates@example.com',
                 invalid_email: false,
                 opt_out: false
@@ -131,7 +161,11 @@ describe('Emails.RecipientsFieldsetField', function() {
                 parent_type: 'Contacts',
                 parent_id: parentId2,
                 parent_name: 'Walter Quigley',
-                email_address_id: _.uniqueId(),
+                email_addresses: {
+                    id: emailAddressId2,
+                    email_address: 'wquigley@example.com'
+                },
+                email_address_id: emailAddressId2,
                 email_address: 'wquigley@example.com',
                 invalid_email: false,
                 opt_out: false
@@ -151,7 +185,11 @@ describe('Emails.RecipientsFieldsetField', function() {
                 parent_type: 'Contacts',
                 parent_id: parentId3,
                 parent_name: 'Wyatt Archer',
-                email_address_id: _.uniqueId(),
+                email_addresses: {
+                    id: emailAddressId3,
+                    email_address: 'warcher@example.com'
+                },
+                email_address_id: emailAddressId3,
                 email_address: 'warcher@example.com',
                 invalid_email: false,
                 opt_out: false
@@ -171,7 +209,11 @@ describe('Emails.RecipientsFieldsetField', function() {
                 parent_type: 'Contacts',
                 parent_id: parentId4,
                 parent_name: 'Earl Hatcher',
-                email_address_id: _.uniqueId(),
+                email_addresses: {
+                    id: emailAddressId4,
+                    email_address: 'ehatcher@example.com'
+                },
+                email_address_id: emailAddressId4,
                 email_address: 'ehatcher@example.com',
                 invalid_email: false,
                 opt_out: false
@@ -244,6 +286,29 @@ describe('Emails.RecipientsFieldsetField', function() {
             var expected = 'Bcc: Earl Hatcher';
             var actual;
 
+            field.model.set('bcc_collection', bcc);
+            field.render();
+
+            actual = field.getFormattedValue();
+            expect(actual).toBe(expected);
+        });
+
+        it('should use "Value erased" for erased names and email addresses', function() {
+            var expected = 'Value erased, Walter Quigley; Cc: Value erased; Bcc: Earl Hatcher';
+            var actual;
+
+            // Erase this recipient's name.
+            eraseName(to[0]);
+
+            // Erase this recipient's name and email address.
+            eraseName(cc[0]);
+            eraseEmailAddress(cc[0]);
+
+            // Erase this recipient's email address.
+            eraseEmailAddress(bcc[0]);
+
+            field.model.set('to_collection', to);
+            field.model.set('cc_collection', cc);
             field.model.set('bcc_collection', bcc);
             field.render();
 

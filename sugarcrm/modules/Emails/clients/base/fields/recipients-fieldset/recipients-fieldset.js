@@ -78,7 +78,24 @@
             .reduce(function(fields, field) {
                 var models = field.getFormattedValue();
                 var str = _.map(models, function(model) {
-                    return model.get('parent_name') || model.get('email_address');
+                    var name = model.get('parent_name') || '';
+                    var email = model.get('email_address') || '';
+
+                    // The name was erased, so let's use the label.
+                    if (_.isEmpty(name) && model.isNameErased()) {
+                        name = app.lang.get('LBL_VALUE_ERASED', model.module);
+                    }
+
+                    if (!_.isEmpty(name)) {
+                        return name;
+                    }
+
+                    // The email was erased, so let's use the label.
+                    if (_.isEmpty(email) && model.isEmailErased()) {
+                        email = app.lang.get('LBL_VALUE_ERASED', model.module);
+                    }
+
+                    return email;
                 }).join(', ');
 
                 if (!_.isEmpty(str)) {
