@@ -32,7 +32,7 @@ class OIDCSessionListener
 
         $sugarUser = $user->getSugarUser();
         $sugarConfig = $this->getSugarConfig();
-        $sessionId = md5($token->getCredentials());
+        $sessionId = hash('sha256', $token->getCredentials());
 
         if (session_id() != $sessionId) {
             if (session_id()) {

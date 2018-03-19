@@ -139,7 +139,7 @@ class OIDCSessionListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->execute($this->event);
 
-        $this->assertEquals(md5($this->accessToken), session_id());
+        $this->assertEquals(hash('sha256', $this->accessToken), session_id());
         $this->assertTrue($_SESSION['externalLogin']);
         $this->assertTrue($_SESSION['is_valid_session']);
         $this->assertEquals(1, $_SESSION['user_id']);
@@ -160,7 +160,7 @@ class OIDCSessionListenerTest extends \PHPUnit_Framework_TestCase
         $this->token->expects($this->never())->method('getAttribute');
 
         ini_set("session.use_cookies", false);
-        session_id(md5($this->accessToken));
+        session_id(hash('sha256', $this->accessToken));
         session_start();
 
         $_SESSION['externalLogin'] = true;
@@ -174,7 +174,7 @@ class OIDCSessionListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->execute($this->event);
 
-        $this->assertEquals(md5($this->accessToken), session_id());
+        $this->assertEquals(hash('sha256', $this->accessToken), session_id());
         $this->assertTrue($_SESSION['externalLogin']);
         $this->assertTrue($_SESSION['is_valid_session']);
         $this->assertEquals(2, $_SESSION['user_id']);

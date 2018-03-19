@@ -298,7 +298,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->sugarCache->expects($this->once())
             ->method('set')
-            ->with('oidc_introspect_token_' . md5('token'), $response, 15);
+            ->with('oidc_introspect_token_' . hash('sha256', 'token'), $response, 15);
 
         $provider->introspectToken($token);
     }
@@ -318,7 +318,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
         $provider->method('getSugarCache')->willReturn($this->sugarCache);
 
         $this->sugarCache->method('get')
-            ->with('oidc_introspect_token_' . md5('token'))
+            ->with('oidc_introspect_token_' . hash('sha256', 'token'))
             ->willReturn('some-introspect-response');
 
         $provider->expects($this->never())->method('getParsedResponse');
@@ -733,7 +733,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->sugarCache->expects($this->once())
             ->method('set')
-            ->with('oidc_user_info_' . md5('token'), $response, 12);
+            ->with('oidc_user_info_' . hash('sha256', 'token'), $response, 12);
 
         $result = $provider->getUserInfo($token);
         $this->assertEquals('test', $result['preferred_username']);
@@ -755,7 +755,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
         $provider->method('getSugarCache')->willReturn($this->sugarCache);
 
         $this->sugarCache->method('get')
-            ->with('oidc_user_info_' . md5('token'))
+            ->with('oidc_user_info_' . hash('sha256', 'token'))
             ->willReturn('some-user-info');
 
         $provider->expects($this->never())->method('getParsedResponse');

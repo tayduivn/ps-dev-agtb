@@ -148,7 +148,7 @@ class IdmProvider extends BasicGenericProvider
      */
     public function introspectToken(AccessToken $token)
     {
-        $cacheKey = 'oidc_introspect_token_' . md5($token->getToken());
+        $cacheKey = 'oidc_introspect_token_' . hash('sha256', $token->getToken());
         $result = $this->getCache($cacheKey);
         if (!is_null($result)) {
             return $result;
@@ -175,7 +175,7 @@ class IdmProvider extends BasicGenericProvider
      */
     public function getUserInfo(AccessToken $token)
     {
-        $cacheKey = 'oidc_user_info_' . md5($token->getToken());
+        $cacheKey = 'oidc_user_info_' . hash('sha256', $token->getToken());
         $result = $this->getCache($cacheKey);
         if (!is_null($result)) {
             return $result;
