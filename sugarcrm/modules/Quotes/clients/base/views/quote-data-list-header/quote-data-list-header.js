@@ -107,27 +107,34 @@
     },
 
     /**
-     * Called when items are added or removed from the massCollection
+     * Called when items are added or removed from the massCollection. Handles checking or
+     * unchecking the CheckAll checkbox as well as calls _checkMassActions to set button states
      *
      * @param {Data.Bean} model The model that was added or removed
      * @param {Data.MixedBeanCollection} massCollection The mass collection on the context
      * @private
      */
     _massCollectionChange: function(model, massCollection) {
-        var setDisabled = true;
-        var groupBtn = this.getField('group_button');
-        var massDeleteBtn = this.getField('massdelete_button');
+        var $checkAllField = this.$('[data-check=all]');
+        var quoteModel;
 
-        if (massCollection.length) {
-            setDisabled = false;
+        if (massCollection && massCollection.models) {
+            quoteModel = _.find(massCollection.models, function(model) {
+                return model.get('_module') === 'Quotes';
+            });
+            if (quoteModel) {
+                // get rid of any Quotes models from the mass collection
+                massCollection.remove(quoteModel, {silent: true});
+            }
         }
 
-        if (groupBtn) {
-            groupBtn.setDisabled(setDisabled);
+        if (massCollection.length === 0 && $checkAllField.length) {
+            // uncheck the check-all box if there are no more items
+            $checkAllField.prop('checked', false);
         }
-        if (massDeleteBtn) {
-            massDeleteBtn.setDisabled(setDisabled);
-        }
+
+        // check to see if we need mass actions available as well
+        _.delay(_.bind(this._checkMassActions, this), 25);
     },
 
     /**
@@ -171,10 +178,19 @@
      * @private
      */
     _checkMassActions: function() {
-        var massActionsField = this.getField('quote-data-mass-actions');
-        var groupBtn = this.getField('group_button');
-        var massDeleteBtn = this.getField('massdelete_button');
-        var disableMassActions = false;
+        var massActionsField;
+        var groupBtn;
+        var massDeleteBtn;
+        var disableMassActions;
+
+        if (this.disposed) {
+            return;
+        }
+
+        massActionsField = this.getField('quote-data-mass-actions');
+        groupBtn = this.getField('group_button');
+        massDeleteBtn = this.getField('massdelete_button');
+        disableMassActions = false;
 
         if (this._bundlesAreEmpty()) {
             if (massActionsField) {

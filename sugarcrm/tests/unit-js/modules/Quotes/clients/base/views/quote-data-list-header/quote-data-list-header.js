@@ -140,44 +140,43 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
     });
 
     describe('_massCollectionChange()', function() {
-        var groupButtonField;
-        var massDeleteField;
         var massCollection;
+        var quoteModel;
+        var propStub;
 
         beforeEach(function() {
-            groupButtonField = {
-                setDisabled: sinon.collection.spy()
-            };
-            massDeleteField = {
-                setDisabled: sinon.collection.spy()
-            };
-            massCollection = {};
-
-            sinon.collection.stub(view, 'getField')
-                .withArgs('group_button').returns(groupButtonField)
-                .withArgs('massdelete_button').returns(massDeleteField);
+            quoteModel = app.data.createBean('Quotes', {
+                id: 'testId',
+                _module: 'Quotes'
+            });
+            quoteModel.id = 'testId';
+            massCollection = new Backbone.Collection(quoteModel);
+            sinon.collection.spy(massCollection, 'remove');
+            propStub = sinon.collection.stub();
+            sinon.collection.stub(view, '$', function() {
+                return {
+                    length: 1,
+                    prop: propStub
+                };
+            });
         });
 
         afterEach(function() {
-            groupButtonField = null;
-            massDeleteField = null;
             massCollection = null;
+            quoteModel = null;
+            propStub = null;
         });
 
-        it('should set group and mass delete fields disabled if massCollection is empty', function() {
-            massCollection.length = 0;
+        it('should remove any Quote models from massCollection', function() {
             view._massCollectionChange({}, massCollection);
 
-            expect(groupButtonField.setDisabled).toHaveBeenCalledWith(true);
-            expect(massDeleteField.setDisabled).toHaveBeenCalledWith(true);
+            expect(massCollection.remove).toHaveBeenCalledWith(quoteModel, {silent: true});
         });
 
         it('should set group and mass delete fields enabled if massCollection has items', function() {
-            massCollection.length = 1;
             view._massCollectionChange({}, massCollection);
 
-            expect(groupButtonField.setDisabled).toHaveBeenCalledWith(false);
-            expect(massDeleteField.setDisabled).toHaveBeenCalledWith(false);
+            expect(propStub).toHaveBeenCalledWith('checked', false);
         });
     });
 
