@@ -150,7 +150,7 @@ class ModuleApi extends SugarApi {
         }
         $args['fields'] = $piiFields;
 
-        $data = $this->formatBean($api, $args, $bean);
+        $data = $this->formatBean($api, $args, $bean, ['display_acl']);
 
         $eventRepo = Container::getInstance()->get(EventRepository::class);
         $events = $this->formatSourceSubject(
@@ -191,7 +191,12 @@ class ModuleApi extends SugarApi {
             }
         }
 
-        return ['fields' => $fields];
+        $return = ['fields' => $fields, '_acl' => $data['_acl'],];
+        if (isset($data['_erased_fields'])) {
+            $return['_erased_fields'] = $data['_erased_fields'];
+        }
+
+        return $return;
     }
 
     private function mergeFieldWithEvent($field, $value, $event)
@@ -261,7 +266,7 @@ class ModuleApi extends SugarApi {
         $bean = BeanFactory::newBean($args['module']);
 
         if(!isset($bean->field_defs[$args['field']])) {
-           throw new SugarApiExceptionNotFound('field not found');
+            throw new SugarApiExceptionNotFound('field not found');
         }
 
         $vardef = $bean->field_defs[$args['field']];
@@ -448,7 +453,7 @@ class ModuleApi extends SugarApi {
         $this->requireArgs($args,array('module','record'));
 
         $bean = $this->loadBean($api, $args, 'view');
-        
+
         // formatBean is soft on view so that creates without view access will still work
         if (!$bean->ACLAccess('view', $this->aclCheckOptions)) {
             throw new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED',array('view'));
@@ -495,7 +500,7 @@ class ModuleApi extends SugarApi {
         }
 
         $this->toggleFavorites($bean, true);
-        $bean = BeanFactory::getBean($bean->module_dir, $bean->id, array('use_cache' => false));        
+        $bean = BeanFactory::getBean($bean->module_dir, $bean->id, array('use_cache' => false));
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
         return $data;
@@ -521,7 +526,7 @@ class ModuleApi extends SugarApi {
         }
 
         $this->toggleFavorites($bean, false);
-        $bean = BeanFactory::getBean($bean->module_dir, $bean->id, array('use_cache' => false));        
+        $bean = BeanFactory::getBean($bean->module_dir, $bean->id, array('use_cache' => false));
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
         return $data;

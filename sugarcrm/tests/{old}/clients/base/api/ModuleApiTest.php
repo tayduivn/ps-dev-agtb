@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
@@ -102,7 +103,8 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $moduleApi = new ModuleApi();
 
         $result = $moduleApi->getPiiFields($this->serviceMock, $args);
-        $this->assertNotEmpty($result, 'Did not fetch any Pii fields.');
+        $this->assertArrayHasKey('fields', $result, 'Does not have expected key - fields.');
+        $this->assertArrayHasKey('_acl', $result, 'Does not have expected key -  _acl.');
 
         $fieldsByName = array_combine(array_column($result['fields'], 'field_name'), $result['fields']);
         $this->assertArrayHasKey('phone_mobile', $fieldsByName, 'phone_mobile field not returned.');
@@ -127,6 +129,26 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
             $fieldsByName['email']['value']['email_address'],
             'Expected email address not returned.'
         );
+    }
+
+    public function testGetPiiFieldsErasedFields()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+
+        $list = FieldList::fromArray(array('phone_mobile'));
+
+        $contact->erase($list, false);
+
+        // this shouldn't be needed after BR-5932 is resolved
+        BeanFactory::clearCache();
+        $args['module'] = 'Contacts';
+        $args['record'] = $contact->id;
+        $args['erased_fields'] = true;
+
+        $moduleApi = new ModuleApi();
+        $result = $moduleApi->getPiiFields($this->serviceMock, $args);
+        $this->assertArrayHasKey('_erased_fields', $result, 'Does not have expected key -  _erased_fields.');
+        $this->assertContains('phone_mobile', $result['_erased_fields'], 'Expected erased field not returned');
     }
 
     // test set favorite
