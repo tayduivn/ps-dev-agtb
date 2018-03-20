@@ -19,7 +19,9 @@ describe('Emails.BaseEmailRecipientsField', function() {
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
         var parentId1 = _.uniqueId();
+        var emailAddressId1 = _.uniqueId();
         var parentId2 = _.uniqueId();
+        var emailAddressId2 = _.uniqueId();
 
         SugarTest.testMetadata.init();
 
@@ -50,6 +52,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
+                    _erased_fields: [],
                     type: 'Contacts',
                     id: parentId1,
                     name: 'Herbert Yates'
@@ -57,7 +60,15 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 parent_type: 'Contacts',
                 parent_id: parentId1,
                 parent_name: 'Herbert Yates',
-                email_address_id: _.uniqueId(),
+                email_addresses: {
+                    _acl: {},
+                    _erased_fields: [],
+                    id: emailAddressId1,
+                    email_address: 'hyates@example.com',
+                    invalid_email: false,
+                    opt_out: false
+                },
+                email_address_id: emailAddressId1,
                 email_address: 'hyates@example.com',
                 invalid_email: false,
                 opt_out: false
@@ -67,6 +78,7 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 id: _.uniqueId(),
                 parent: {
                     _acl: {},
+                    _erased_fields: [],
                     type: 'Contacts',
                     id: parentId2,
                     name: 'Walter Quigley'
@@ -74,7 +86,15 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 parent_type: 'Contacts',
                 parent_id: parentId2,
                 parent_name: 'Walter Quigley',
-                email_address_id: _.uniqueId(),
+                email_addresses: {
+                    _acl: {},
+                    _erased_fields: [],
+                    id: emailAddressId2,
+                    email_address: 'wquigley@example.com',
+                    invalid_email: false,
+                    opt_out: true
+                },
+                email_address_id: emailAddressId2,
                 email_address: 'wquigley@example.com',
                 invalid_email: false,
                 opt_out: true
@@ -297,135 +317,178 @@ describe('Emails.BaseEmailRecipientsField', function() {
         expect(field.tooltip).toBe('Herbert Yates <hyates@example.com>, Walter Quigley <wquigley@example.com>');
     });
 
-    it('should decorate invalid recipients', function() {
-        var parentId = _.uniqueId();
-        var invalid = app.data.createBean('EmailParticipants', {
-            _link: 'to',
-            parent: {
+    describe('decorating pills', function() {
+        it('should decorate invalid recipients', function() {
+            var parentId = _.uniqueId();
+            var invalid = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId,
+                    name: 'Francis Humphrey'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: 'Francis Humphrey',
+                email_address_id: _.uniqueId(),
+                email_address: 'foo',
+                invalid_email: true,
+                opt_out: false
+            });
+            var invalidSelector = '.select2-search-choice [data-invalid="true"]';
+
+            field = SugarTest.createField({
+                name: 'to_collection',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+
+            field.model.set('to_collection', to);
+            field.model.trigger('sync');
+            expect(field.$(invalidSelector).length).toBe(0);
+
+            field.model.get('to_collection').add(invalid);
+            expect(field.$(invalidSelector).length).toBe(1);
+            expect(field.$('.select2-choice-danger').length).toBe(1);
+            expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
+
+            // Make sure it is still decorated after a full render.
+            field.render();
+            expect(field.$(invalidSelector).length).toBe(1);
+            expect(field.$('.select2-choice-danger').length).toBe(1);
+            expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
+        });
+
+        it('should use the "Value erased" tooltip when the email address is erased', function() {
+            var invalidSelector = '.select2-search-choice [data-invalid="true"]';
+
+            field = SugarTest.createField({
+                name: 'to_collection',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+
+            // Erase the recipient's email address.
+            to[0].set('email_address', '');
+            to[0].set('email_addresses', {
                 _acl: {},
-                type: 'Contacts',
-                id: parentId,
-                name: 'Francis Humphrey'
-            },
-            parent_type: 'Contacts',
-            parent_id: parentId,
-            parent_name: 'Francis Humphrey',
-            email_address_id: _.uniqueId(),
-            email_address: 'foo',
-            invalid_email: true,
-            opt_out: false
-        });
-        var invalidSelector = '.select2-search-choice [data-invalid="true"]';
+                _erased_fields: [
+                    'email_address',
+                    'email_address_caps'
+                ],
+                id: to[0].get('email_address_id'),
+                email_address: '',
+                invalid_email: false,
+                opt_out: true
+            });
 
-        field = SugarTest.createField({
-            name: 'to_collection',
-            type: 'email-recipients',
-            viewName: 'edit',
-            module: model.module,
-            model: model,
-            context: context,
-            loadFromModule: true
-        });
+            field.model.set('to_collection', to);
+            field.model.trigger('sync');
 
-        field.model.set('to_collection', to);
-        field.model.trigger('sync');
-        expect(field.$(invalidSelector).length).toBe(0);
+            expect(field.$(invalidSelector).length).toBe(1);
+            expect(field.$('.select2-choice-optout').length).toBe(1);
+            expect(field.$('[data-title="Value erased"]').length).toBe(1);
 
-        field.model.get('to_collection').add(invalid);
-        expect(field.$(invalidSelector).length).toBe(1);
-        expect(field.$('.select2-choice-danger').length).toBe(1);
-        expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
-
-        // Make sure it is still decorated after a full render.
-        field.render();
-        expect(field.$(invalidSelector).length).toBe(1);
-        expect(field.$('.select2-choice-danger').length).toBe(1);
-        expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
-    });
-
-    it('should decorate opted out recipients', function() {
-        var optOutSelector = '.select2-search-choice [data-optout="true"]';
-
-        field = SugarTest.createField({
-            name: 'to_collection',
-            type: 'email-recipients',
-            viewName: 'edit',
-            module: model.module,
-            model: model,
-            context: context,
-            loadFromModule: true
+            // Make sure it is still decorated after a full render.
+            field.render();
+            expect(field.$(invalidSelector).length).toBe(1);
+            expect(field.$('.select2-choice-optout').length).toBe(1);
+            expect(field.$('[data-title="Value erased"]').length).toBe(1);
         });
 
-        field.model.set('to_collection', to);
-        field.model.trigger('sync');
+        it('should decorate opted out recipients', function() {
+            var optOutSelector = '.select2-search-choice [data-optout="true"]';
 
-        expect(field.$(optOutSelector).length).toBe(1);
-        expect(field.$('.select2-choice-optout').length).toBe(1);
-        expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
+            field = SugarTest.createField({
+                name: 'to_collection',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
 
-        // Make sure it is still decorated after a full render.
-        field.render();
-        expect(field.$(optOutSelector).length).toBe(1);
-        expect(field.$('.select2-choice-optout').length).toBe(1);
-        expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
-    });
+            field.model.set('to_collection', to);
+            field.model.trigger('sync');
 
-    it('should decorate recipients that are invalid and opted out as just invalid', function() {
-        var parentId = _.uniqueId();
-        var invalid = app.data.createBean('EmailParticipants', {
-            _link: 'to',
-            parent: {
-                _acl: {},
-                type: 'Contacts',
-                id: parentId,
-                name: 'Francis Humphrey'
-            },
-            parent_type: 'Contacts',
-            parent_id: parentId,
-            parent_name: 'Francis Humphrey',
-            email_address_id: _.uniqueId(),
-            email_address: 'foo',
-            invalid_email: true,
-            opt_out: true
-        });
-        var selector = '.select2-search-choice [data-invalid="true"][data-optout="true"]';
+            expect(field.$(optOutSelector).length).toBe(1);
+            expect(field.$('.select2-choice-optout').length).toBe(1);
+            expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
 
-        field = SugarTest.createField({
-            name: 'to_collection',
-            type: 'email-recipients',
-            viewName: 'edit',
-            module: model.module,
-            model: model,
-            context: context,
-            loadFromModule: true
+            // Make sure it is still decorated after a full render.
+            field.render();
+            expect(field.$(optOutSelector).length).toBe(1);
+            expect(field.$('.select2-choice-optout').length).toBe(1);
+            expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
         });
 
-        field.model.set('to_collection', to);
-        field.model.trigger('sync');
-        expect(field.$(selector).length).toBe(0);
+        it('should decorate recipients that are invalid and opted out as just invalid', function() {
+            var parentId = _.uniqueId();
+            var invalid = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                parent: {
+                    _acl: {},
+                    type: 'Contacts',
+                    id: parentId,
+                    name: 'Francis Humphrey'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: 'Francis Humphrey',
+                email_address_id: _.uniqueId(),
+                email_address: 'foo',
+                invalid_email: true,
+                opt_out: true
+            });
+            var selector = '.select2-search-choice [data-invalid="true"][data-optout="true"]';
 
-        field.model.get('to_collection').add(invalid);
-        expect(field.$(selector).length).toBe(1);
-        expect(field.$('.select2-choice-danger').length).toBe(1);
-        expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
-        // The second recipient in "to" is opted out but not invalid. That
-        // recipient will have the select2-choice-optout class and opt-out
-        // title, but the invalid recipient will not. As evidence by the count
-        // being 1 instead of 2.
-        expect(field.$('.select2-choice-optout').length).toBe(1);
-        expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
+            field = SugarTest.createField({
+                name: 'to_collection',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
 
-        // Make sure it is still decorated after a full render.
-        field.render();
-        expect(field.$(selector).length).toBe(1);
-        expect(field.$('.select2-choice-danger').length).toBe(1);
-        expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
-        // The second recipient in "to" is opted out but not invalid. That
-        // recipient will have the select2-choice-optout class and opt-out
-        // title, but the invalid recipient will not. As evidence by the count
-        // being 1 instead of 2.
-        expect(field.$('.select2-choice-optout').length).toBe(1);
-        expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
+            field.model.set('to_collection', to);
+            field.model.trigger('sync');
+            expect(field.$(selector).length).toBe(0);
+
+            field.model.get('to_collection').add(invalid);
+            expect(field.$(selector).length).toBe(1);
+            expect(field.$('.select2-choice-danger').length).toBe(1);
+            expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
+            // The second recipient in "to" is opted out but not invalid. That
+            // recipient will have the select2-choice-optout class and opt-out
+            // title, but the invalid recipient will not. As evidence by the count
+            // being 1 instead of 2.
+            expect(field.$('.select2-choice-optout').length).toBe(1);
+            expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
+
+            // Make sure it is still decorated after a full render.
+            field.render();
+            expect(field.$(selector).length).toBe(1);
+            expect(field.$('.select2-choice-danger').length).toBe(1);
+            expect(field.$('[data-title=ERR_INVALID_EMAIL_ADDRESS]').length).toBe(1);
+            // The second recipient in "to" is opted out but not invalid. That
+            // recipient will have the select2-choice-optout class and opt-out
+            // title, but the invalid recipient will not. As evidence by the count
+            // being 1 instead of 2.
+            expect(field.$('.select2-choice-optout').length).toBe(1);
+            expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
+        });
     });
 
     it('should open the address book and add the selected recipients', function() {
@@ -646,11 +709,20 @@ describe('Emails.BaseEmailRecipientsField', function() {
                 _link: 'cc',
                 email_address_id: to[1].get('email_address_id'),
                 email_address: to[1].get('email_address'),
+                email_addresses: {
+                    _acl: {},
+                    _erased_fields: [],
+                    id: to[1].get('email_address_id'),
+                    email_address: to[1].get('email_address'),
+                    invalid_email: to[1].get('invalid_email'),
+                    opt_out: to[1].get('opt_out')
+                },
                 parent_type: to[1].get('parent_type'),
                 parent_id: to[1].get('parent_id'),
                 parent_name: to[1].get('parent_name'),
                 parent: {
                     _acl: {},
+                    _erased_fields: [],
                     id: to[1].get('parent_id'),
                     name: to[1].get('parent_name'),
                     type: to[1].get('parent_type')

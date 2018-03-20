@@ -173,6 +173,18 @@ describe('Plugins.EmailParticipants', function() {
                 // The server gave us invalid_email.
                 {
                     invalid_email: true
+                },
+                // The email address was erased.
+                {
+                    email_address: '',
+                    email_addresses: {
+                        email_address: '',
+                        id: _.uniqueId(),
+                        _erased_fields: [
+                            'email_address',
+                            'email_address_caps'
+                        ]
+                    }
                 }
             ],
             function(attrs) {
@@ -241,10 +253,11 @@ describe('Plugins.EmailParticipants', function() {
             field.prepareModel(bean);
 
             expect(bean.emailIsErased).toBe(true);
+            // An erased email address is invalid.
+            expect(bean.invalid).toBe(true);
             // None of the other properties are affected.
             expect(bean.nameIsErased).toBe(false);
             expect(bean.locked).toBe(false);
-            expect(bean.invalid).toBe(false);
             expect(bean.href).toBe('#Contacts/' + bean.get('parent_id'));
         });
     });

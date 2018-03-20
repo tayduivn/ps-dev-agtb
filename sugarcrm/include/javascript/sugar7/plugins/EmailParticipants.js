@@ -203,6 +203,7 @@
                      * empty.
                      * - It has an `email_address_id` and `email_address`, and
                      * `email_address` is invalid.
+                     * - The email address has been erased.
                      * - The server tells us that the email address is invalid.
                      */
                     if (!hasParent && !model.get('email_address_id')) {
@@ -214,7 +215,7 @@
                     ) {
                         model.invalid = !app.utils.isValidEmailAddress(model.get('email_address'));
                     } else {
-                        model.invalid = !!model.get('invalid_email');
+                        model.invalid = model.emailIsErased || !!model.get('invalid_email');
                     }
 
                     if (hasParent && app.acl.hasAccessToModel('view', parent)) {

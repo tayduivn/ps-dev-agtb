@@ -153,13 +153,27 @@
                  */
                 formatSelection: _.bind(function(recipient) {
                     var template = app.template.getField(this.type, 'select2-selection', this.module);
+                    var name = recipient.get('parent_name') || '';
+                    var email = recipient.get('email_address') || '';
+
+                    // The name was erased, so let's use the label.
+                    if (_.isEmpty(name) && recipient.nameIsErased) {
+                        name = app.lang.get('LBL_VALUE_ERASED', recipient.module);
+                    }
+
+                    // The email was erased, so let's use the label.
+                    if (_.isEmpty(email) && recipient.emailIsErased) {
+                        email = app.lang.get('LBL_VALUE_ERASED', recipient.module);
+                    }
 
                     return template({
                         cid: recipient.cid,
-                        name: recipient.get('parent_name') || recipient.get('email_address'),
-                        email_address: recipient.get('email_address'),
+                        name: name || email,
+                        email_address: email,
                         invalid: recipient.invalid,
-                        opt_out: !!recipient.get('opt_out')
+                        opt_out: !!recipient.get('opt_out'),
+                        name_is_erased: recipient.nameIsErased,
+                        email_is_erased: recipient.emailIsErased
                     });
                 }, this),
 
@@ -249,7 +263,11 @@
         $invalidRecipients.each(function() {
             var $choice = $(this).closest('.select2-search-choice');
             $choice.addClass('select2-choice-danger');
-            $(this).attr('data-title', app.lang.get('ERR_INVALID_EMAIL_ADDRESS', self.module));
+
+            // Don't change the tooltip if the email address has been erased.
+            if (!$(this).data('email-is-erased')) {
+                $(this).attr('data-title', app.lang.get('ERR_INVALID_EMAIL_ADDRESS', self.module));
+            }
         });
     },
 
