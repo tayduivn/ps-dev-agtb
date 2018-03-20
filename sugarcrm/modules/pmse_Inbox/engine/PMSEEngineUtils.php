@@ -122,13 +122,16 @@ class PMSEEngineUtils
     public static $targetBlacklistedModules = array(
         'Users',
         'Employees',
+        'DataPrivacy',
     );
 
     /**
      * PA related blacklisted modules
      * @var array
      */
-    public static $relatedBlacklistedModules = array();
+    public static $relatedBlacklistedModules = array(
+        'DataPrivacy',
+    );
 
     /**
      * PA related blacklisted links
