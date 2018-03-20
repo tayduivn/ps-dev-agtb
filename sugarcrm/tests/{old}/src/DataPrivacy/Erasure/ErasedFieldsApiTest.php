@@ -112,6 +112,27 @@ class ErasedFieldsApiTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function erasedFieldsAreOnlyDisplayedWnehPiiIsSelected()
+    {
+        $query = new SugarQuery();
+        $query->from(self::$contact1, [
+            'erased_fields' => true,
+        ]);
+        $query->select('id');
+        $query->where()->equals('id', self::$contact1->id);
+
+        $data = $query->execute();
+        $this->assertCount(1, $data);
+
+        $row = array_shift($data);
+        $this->assertEquals(self::$contact1->id, $row['id']);
+
+        $this->assertArrayNotHasKey('erased_fields', $row);
+    }
+
+    /**
+     * @test
+     */
     public function relateAndParentFields()
     {
         $query = new SugarQuery();

@@ -199,9 +199,7 @@ class SugarQuery
         if (!is_array($fields)) {
             $fields = func_get_args();
         }
-        if (!is_object($this->select)) {
-            $this->select = new SugarQuery_Builder_Select($this, array());
-        }
+
         $this->select->field($fields);
         return $this->select;
     }

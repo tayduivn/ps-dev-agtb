@@ -528,7 +528,6 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCloseThreadByThreadIndex()
     {
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
-            ->disableOriginalConstructor()
             ->setMethods(array('from', 'where', 'equals', 'execute'))
             ->getMock();
 
@@ -571,7 +570,6 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCloseThreadByThreadIndexInexistent()
     {
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
-            ->disableOriginalConstructor()
             ->setMethods(array('from', 'where', 'equals', 'execute'))
             ->getMock();
 

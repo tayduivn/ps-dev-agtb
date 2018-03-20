@@ -37,7 +37,9 @@ class SugarQuery_Compiler_Doctrine
      * Build out the Query in SQL
      *
      * @param SugarQuery $query The query being compiled
+     *
      * @return QueryBuilder
+     * @throws SugarQueryException
      */
     public function compile(SugarQuery $query)
     {
@@ -211,6 +213,8 @@ class SugarQuery_Compiler_Doctrine
      *
      * @param QueryBuilder $builder Query builder
      * @param SugarQuery $query The query being compiled
+     *
+     * @throws SugarQueryException
      */
     protected function compileJoins(QueryBuilder $builder, SugarQuery $query)
     {
@@ -224,6 +228,8 @@ class SugarQuery_Compiler_Doctrine
      *
      * @param QueryBuilder $builder Query builder
      * @param SugarQuery_Builder_Join $join Join specification
+     *
+     * @throws SugarQueryException
      */
     protected function compileJoin(QueryBuilder $builder, SugarQuery_Builder_Join $join)
     {
@@ -279,6 +285,18 @@ class SugarQuery_Compiler_Doctrine
             return;
         }
 
+        $selectedFields = $query->select->getSelectedFieldsByTable($tableAlias);
+
+        if (!count($selectedFields)) {
+            return;
+        }
+
+        $piiFields = $bean->getFieldDefinitions('pii', [true]);
+
+        if (!array_intersect($selectedFields, array_keys($piiFields))) {
+            return;
+        }
+
         $erasedAlias = $bean->db->getValidDBName($tableAlias . '_erased', true, 'alias');
 
         $builder->leftJoin(
@@ -300,6 +318,8 @@ class SugarQuery_Compiler_Doctrine
      *
      * @param QueryBuilder $builder Query builder
      * @param SugarQuery $query The query being compiled
+     *
+     * @throws SugarQueryException
      */
     protected function compileWhere(QueryBuilder $builder, SugarQuery $query)
     {
@@ -498,6 +518,8 @@ class SugarQuery_Compiler_Doctrine
      * @param QueryBuilder $builder Query builder
      * @param SugarQuery_Builder_Condition $condition Condition
      * @return string|null
+     *
+     * @throws SugarQueryException
      */
     protected function compileCondition(QueryBuilder $builder, SugarQuery_Builder_Condition $condition)
     {
@@ -582,6 +604,8 @@ class SugarQuery_Compiler_Doctrine
      * @param SugarQuery|QueryBuilder|array|string $set
      * @param array $fieldDef Field definition
      * @return string
+     *
+     * @throws SugarQueryException
      */
     protected function compileIn(QueryBuilder $builder, $field, $operator, $set, array $fieldDef)
     {
@@ -602,6 +626,8 @@ class SugarQuery_Compiler_Doctrine
      * @param SugarQuery|QueryBuilder|array|string $set
      * @param array $fieldDef Field definition
      * @return string
+     *
+     * @throws SugarQueryException
      */
     protected function compileSet(QueryBuilder $builder, $set, array $fieldDef)
     {

@@ -57,7 +57,9 @@ class SugarFieldEmailSecondaryQueryTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $queryMock = $this->createPartialMock('SugarQuery', array('execute'));
+        $queryMock = $this->getMockBuilder('SugarQuery')
+            ->setMethods(array('execute'))
+            ->getMock();
         $queryMock->expects($this->once())
                   ->method('execute')
                   ->will($this->returnValue($emailsArray));
