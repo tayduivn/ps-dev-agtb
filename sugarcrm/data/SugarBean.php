@@ -1851,12 +1851,13 @@ class SugarBean
     {
         $this->saveLastAuditedState();
 
+        $isUpdate = true;
         $fields->erase($this);
 
         $this->populateFetchedEmail('bean_field');
         $this->commitAuditedStateChanges(null);
 
-        $this->saveData(true, $check_notify);
+        $this->saveData($isUpdate, $check_notify);
 
         $this->getErasedFieldsRepository()->addBeanFields(
             $this->getTableName(),
@@ -1869,6 +1870,11 @@ class SugarBean
             // erase fields from Audit log
             $this->eraseAuditRecords($fields, $auditEventId);
         }
+
+        $this->call_custom_logic('after_save', array(
+            'isUpdate' => $isUpdate,
+            'dataChanges' => $this->dataChanges,
+        ));
     }
 
     /**
@@ -1902,6 +1908,11 @@ class SugarBean
                 ErasureFieldList::fromArray($nonEmptyFields)
             );
         }
+
+        $this->call_custom_logic('after_save', array(
+            'isUpdate' => $isUpdate,
+            'dataChanges' => $this->dataChanges,
+        ));
 
         return $this->id;
     }
@@ -2131,11 +2142,6 @@ class SugarBean
         {
             $this->track_view($current_user->id, $this->module_dir, 'save');
         }
-
-        $this->call_custom_logic('after_save', array(
-            'isUpdate' => $isUpdate,
-            'dataChanges' => $this->dataChanges,
-        ));
 
         $this->in_save = false;
         return $this->id;
@@ -3761,7 +3767,11 @@ class SugarBean
         global $locale;
 
         if (array_key_exists('erased_fields', $row)) {
-            $this->erased_fields = json_decode($row['erased_fields'], true) ?: [];
+            if (is_array($row['erased_fields'])) {
+                $this->erased_fields = $row['erased_fields'];
+            } else {
+                $this->erased_fields = json_decode($row['erased_fields'], true) ?: [];
+            }
         }
 
         foreach($this->field_defs as $field=>$field_value)

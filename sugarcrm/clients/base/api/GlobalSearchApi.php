@@ -178,7 +178,7 @@ class GlobalSearchApi extends SugarApi
             'next_offset' => $this->getNextOffset($resultSet->getTotalHits(), $this->limit, $this->offset),
             'total' => $resultSet->getTotalHits(),
             'query_time' => $resultSet->getQueryTime(),
-            'records' => $this->formatResults($api, $resultSet),
+            'records' => $this->formatResults($api, $args, $resultSet),
         );
 
         // cross module aggregation results
@@ -405,10 +405,11 @@ class GlobalSearchApi extends SugarApi
      * Format result set
      *
      * @param ServiceBase $api
+     * @param array $args
      * @param ResultSetInterface $results
      * @return array
      */
-    protected function formatResults(ServiceBase $api, ResultSetInterface $results)
+    protected function formatResults(ServiceBase $api, array $args, ResultSetInterface $results)
     {
         $formatted = array();
 
@@ -416,7 +417,7 @@ class GlobalSearchApi extends SugarApi
         foreach ($results as $result) {
 
             // get bean data based on available fields in the result
-            $data = $this->formatBeanFromResult($api, $result);
+            $data = $this->formatBeanFromResult($api, $args, $result);
 
             // set score
             if ($score = $result->getScore()) {
@@ -469,13 +470,17 @@ class GlobalSearchApi extends SugarApi
     /**
      * Wrapper around formatBean based on Result
      * @param ServiceBase $api
+     * @param array $args
      * @param Result $result
      * @return array
      */
-    protected function formatBeanFromResult(ServiceBase $api, Result $result)
+    protected function formatBeanFromResult(ServiceBase $api, array $args, Result $result)
     {
         // pass in field list from available data fields on result
-        $args = array('fields' => $result->getDataFields());
+        $args = array(
+            'fields' => $result->getDataFields(),
+            'erased_fields' => $args['erased_fields']?? null,
+        );
         $bean = $result->getBean();
 
         // Load email information directly from search backend if available

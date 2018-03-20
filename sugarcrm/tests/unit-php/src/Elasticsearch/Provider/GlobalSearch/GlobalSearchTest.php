@@ -31,7 +31,7 @@ class GlobalSearchTest extends TestCase
     {
         $sut = new GlobalSearch();
         $this->assertInstanceOf('Iterator', $sut->getHandlers());
-        $this->assertCount(7, $sut->getHandlers());
+        $this->assertCount(8, $sut->getHandlers());
     }
 
     /**

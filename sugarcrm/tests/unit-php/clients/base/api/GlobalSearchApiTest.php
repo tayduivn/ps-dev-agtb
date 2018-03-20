@@ -122,7 +122,7 @@ class GlobalSearchApiTest extends TestCase
             ->method('formatBeanFromResult')
             ->will($this->returnCallback(array($this, 'formatBeanFromResult')));
 
-        $actual = TestReflection::callProtectedMethod($sut, 'formatResults', array($api, $resultSet));
+        $actual = TestReflection::callProtectedMethod($sut, 'formatResults', array($api, [], $resultSet));
         $this->assertEquals($expected, $actual);
     }
 
@@ -256,7 +256,7 @@ class GlobalSearchApiTest extends TestCase
     public function formatBeanFromResult()
     {
         $args = func_get_args();
-        $result = $args[1];
+        $result = $args[2];
         $beanData = $result->getData();
         $beanData['_module'] = $result->getType();
         return $beanData;

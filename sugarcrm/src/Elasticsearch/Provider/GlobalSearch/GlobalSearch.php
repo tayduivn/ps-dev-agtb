@@ -31,6 +31,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\Cros
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\TagsHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\FavoritesHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\HtmlHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\ErasedFieldsHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatchQuery;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\MatchAllQuery;
 
@@ -141,6 +142,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->addHandler(new TagsHandler());
         $this->addHandler(new FavoritesHandler());
         $this->addHandler(new HtmlHandler());
+        $this->addHandler(new ErasedFieldsHandler());
     }
 
     /**
