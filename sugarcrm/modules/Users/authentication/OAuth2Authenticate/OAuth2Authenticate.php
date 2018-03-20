@@ -31,7 +31,7 @@ class OAuth2Authenticate extends BaseAuthenticate implements SugarAuthenticateEx
             return $idmModeConfig['stsUrl'];
         }
 
-        throw new \RuntimeException('OIDC config and URL were not found.');
+        throw new \RuntimeException('IDM-mode config and URL were not found.');
     }
 
     /**

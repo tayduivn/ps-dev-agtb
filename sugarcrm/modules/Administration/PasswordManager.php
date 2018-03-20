@@ -19,7 +19,7 @@ $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
 if ($idpConfig->isIDMModeEnabled()) {
     sugar_die(
         sprintf(
-            $GLOBALS['app_strings']['ERR_DISABLED_FOR_OIDC'] . ' ' .
+            $GLOBALS['app_strings']['ERR_DISABLED_FOR_IDM_MODE'] . ' ' .
             $GLOBALS['app_strings']['ERR_GOTO_CLOUD_CONSOLE'],
             $idpConfig->buildCloudConsoleUrl('passwordManagement')
         )

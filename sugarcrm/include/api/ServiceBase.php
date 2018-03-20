@@ -156,7 +156,7 @@ abstract class ServiceBase implements LoggerAwareInterface
        }
         $isIDMModeEnabled = (new Config(\SugarConfig::getInstance()))->isIDMModeEnabled();
         if ($isIDMModeEnabled && !extension_loaded('gmp')) {
-            throw new SugarApiExceptionError('ERR_FOR_OIDC_GMP_REQUIRED', null, 'Users');
+            throw new SugarApiExceptionError('ERR_FOR_IDM_MODE_GMP_REQUIRED', null, 'Users');
         }
         $loginExc = new SugarApiExceptionNeedLogin($message);
         $auth = AuthenticationController::getInstance();
