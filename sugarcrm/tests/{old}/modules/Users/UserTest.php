@@ -473,6 +473,17 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     */
+    public function hashesAreUnique()
+    {
+        $user1 = SugarTestUserUtilities::createAnonymousUser();
+        $user2 = SugarTestUserUtilities::createAnonymousUser();
+
+        $this->assertNotEquals($user1->getUserMDHash(), $user2->getUserMDHash());
+    }
+
+    /**
      * @param string $testMethod Method to be tested
      * @param string $getModules Method that returns module list
      * @param boolean $isWorkFlowModule The return value of User::isWorkFlowModule
