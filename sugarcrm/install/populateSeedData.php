@@ -678,6 +678,7 @@ for($i=0; $i<$number_leads; $i++)
 	$lead->primary_address_postalcode = mt_rand(10000,99999);
 	$lead->primary_address_country = $sugar_demodata['primary_address_country'];
 	$lead->save();
+    $leads[] = $lead->id;
 
     if ($i % 10 === 0) {
         echo '.';
@@ -970,6 +971,63 @@ $GLOBALS['mod_strings']  = $installerStrings;
     installLog("DemoData: Done Forecasts");
 
     echo '.';
+
+installLog("DemoData: Data Privacy");
+
+$userSally = BeanFactory::getBean('Users', 'seed_sally_id');
+
+foreach ($sugar_demodata['dataprivacy_seed_data'] as $i => $seedDp) {
+    $dp = BeanFactory::newBean('DataPrivacy');
+    $status = 'Open';
+    foreach ($seedDp as $field => $value) {
+        if ($field == 'status') {
+            $status = $value;
+            $dp->status = 'Open'; // can not create a non Open record
+            continue;
+        }
+        $dp->$field = $value;
+    }
+    $randomUser = $i % count($sugar_demodata['users']);
+    $randomUser = $sugar_demodata['users'][$randomUser]['id'];
+    $dp->assigned_user_id = $randomUser;
+    $dp->set_created_by = false;
+    $dp->created_by = $randomUser;
+    $dp->update_modified_by = false;
+    $dp->modified_user_id = 'seed_sally_id'; // always sally
+    $dp->date_opened = $timedate->nowDbDate();
+    if ($dp->status && ($dp->status == 'Closed' || $dp->status == 'Rejected')) {
+        $dp->date_closed = $timedate->nowDbDate();
+    }
+    $dp->save();
+    if ($status != 'Open') {
+        $dp->retrieve();
+        $dp->status = $status; // real status we want
+        $dp->save();
+    }
+
+    // relate to either contact or lead
+    switch ($i % 2) {
+        case 0:
+            $dp->set_relationship(
+                'contacts_dataprivacy',
+                array('dataprivacy_id' => $dp->id, 'contact_id' => $contacts[$i]),
+                false
+            );
+            break;
+        case 1:
+            $dp->set_relationship(
+                'leads_dataprivacy',
+                array('dataprivacy_id' => $dp->id, 'lead_id' => $leads[$i]),
+                false
+            );
+            break;
+    }
+
+    if ($i % 10 === 0) {
+        echo '.';
+    }
+}
+installLog("DemoData: Done Data Privacy");
 
     //BEGIN SUGARCRM flav=ent ONLY
     installLog("DemoData: Ent Reports");

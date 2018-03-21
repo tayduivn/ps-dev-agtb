@@ -14,6 +14,8 @@ use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\Installer;
 //BEGIN SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 //END SUGARCRM flav=ent ONLY
@@ -47,6 +49,11 @@ ob_implicit_flush();
 while (@ob_end_flush());
 
 require_once('install/install_utils.php');
+
+// set installer subject
+$context = Container::getInstance()->get(Context::class);
+$subject = new Installer();
+$context->activateSubject($subject);
 
 // since we need to make sure we have even the custom tabledictionary items in there
 $mi = new ModuleInstaller();
@@ -746,4 +753,8 @@ $out = <<<EOQ
 EOQ;
 
 echo $out;
+
+if (isset($context, $subject)) {
+    $context->deactivateSubject($subject);
+}
 installLog("Installation has completed *********");
