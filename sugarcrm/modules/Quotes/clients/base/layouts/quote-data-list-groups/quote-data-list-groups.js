@@ -134,7 +134,10 @@
 
             if (this.isCopy) {
                 this.copyItemCount = this.context.get('copyItemCount');
-                this.toggleCopyAlert(true);
+
+                if (this.copyItemCount) {
+                    this.toggleCopyAlert(true);
+                }
 
                 // set this function to happen async after the alert has been displayed
                 _.delay(_.bind(function() {

@@ -202,6 +202,21 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 }, {
                     silent: true
                 });
+                sinon.collection.stub(layout, 'toggleCopyAlert', function() {});
+            });
+
+            it('should not call toggleCopyAlert if there are no items to copy', function() {
+                layout.context.set('copyItemCount', 0);
+                layout.bindDataChange();
+
+                expect(layout.toggleCopyAlert).not.toHaveBeenCalled();
+            });
+
+            it('should call toggleCopyAlert if there are items to copy', function() {
+                layout.context.set('copyItemCount', 1);
+                layout.bindDataChange();
+
+                expect(layout.toggleCopyAlert).toHaveBeenCalledWith(true);
             });
 
             it('should call _onProductBundleChange with bundles', function() {
