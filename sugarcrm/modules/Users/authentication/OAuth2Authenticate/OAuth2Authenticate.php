@@ -26,9 +26,9 @@ class OAuth2Authenticate extends BaseAuthenticate implements SugarAuthenticateEx
     public function getLoginUrl($returnQueryVars = [])
     {
         $config = new Config(\SugarConfig::getInstance());
-        $oidcConfig = $config->getOIDCConfig();
-        if (isset($oidcConfig['oidcUrl'])) {
-            return $oidcConfig['oidcUrl'];
+        $idmModeConfig = $config->getIDMModeConfig();
+        if (isset($idmModeConfig['stsUrl'])) {
+            return $idmModeConfig['stsUrl'];
         }
 
         throw new \RuntimeException('OIDC config and URL were not found.');
@@ -69,8 +69,8 @@ class OAuth2Authenticate extends BaseAuthenticate implements SugarAuthenticateEx
      */
     protected function getTenant(Config $config)
     {
-        $oidcConfig = $config->get('oidc_oauth', []);
-        return !empty($oidcConfig['tid']) ? $oidcConfig['tid'] : '';
+        $idmModeConfig = $config->get('idm_mode', []);
+        return !empty($idmModeConfig['tid']) ? $idmModeConfig['tid'] : '';
     }
 
     /**

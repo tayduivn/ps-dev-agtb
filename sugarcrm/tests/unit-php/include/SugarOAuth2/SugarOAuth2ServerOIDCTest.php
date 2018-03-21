@@ -129,12 +129,12 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
         \BeanFactory::registerBean($this->mockedUser);
 
         $this->sugarConfig = \SugarConfig::getInstance();
-        $this->sugarConfig->_cached_values['oidc_oauth'] = [
+        $this->sugarConfig->_cached_values['idm_mode'] = [
             'clientId' => 'testLocal',
             'clientSecret' => 'testLocalSecret',
-            'oidcUrl' => 'http://sts.sugarcrm.local',
+            'stsUrl' => 'http://sts.sugarcrm.local',
             'idpUrl' => 'http://sugar.dolbik.local/idm289idp/web/',
-            'oidcKeySetId' => 'KeySetName',
+            'stsKeySetId' => 'KeySetName',
             'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
             'idpServiceName' => 'idm',
         ];
@@ -147,7 +147,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
     {
         $GLOBALS['beanList'] = $this->beanList;
         \BeanFactory::unregisterBean($this->mockedUser);
-        $this->sugarConfig->_cached_values['oidc_oauth'] = [];
+        $this->sugarConfig->_cached_values['idm_mode'] = [];
     }
 
     /**

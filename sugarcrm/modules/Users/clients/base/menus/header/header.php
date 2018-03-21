@@ -17,8 +17,8 @@ global $sugar_config;
 
 $moduleName = 'Users';
 $idpConfig  = new Config(\SugarConfig::getInstance());
-$isOIDCEnabled  = $idpConfig->isOIDCEnabled();
-if ($isOIDCEnabled) {
+$isIDMModeEnabled  = $idpConfig->isIDMModeEnabled();
+if ($isIDMModeEnabled) {
     $newUserLink = [
         'route' => $idpConfig->buildCloudConsoleUrl('userCreate'),
         'openwindow' => true,
@@ -110,7 +110,7 @@ $viewdefs[$moduleName]['base']['menu']['header'][] =
         'icon' => 'fa-arrows',
     );
 
-if (!$isOIDCEnabled) {
+if (!$isIDMModeEnabled) {
     $viewdefs[$moduleName]['base']['menu']['header'][] = [
         'route' => '#bwc/index.php?' . http_build_query([
             'module' => 'Import',

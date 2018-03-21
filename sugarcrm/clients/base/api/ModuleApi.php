@@ -31,16 +31,16 @@ class ModuleApi extends SugarApi {
     );
 
     /**
-     * is OIDC auth provider enabled?
+     * is IDM mode auth provider enabled?
      * @var bool
      */
-    protected $isOidcEnabled;
+    protected $isIDMModeEnabled;
 
     /**
-     * What modules will be filtered if oidc is enabled?
+     * What modules will be filtered if IDM mode is enabled?
      * @var array
      */
-    protected $oidcModules;
+    protected $idmModeDisabledModules;
 
     /**
      * constructor
@@ -48,8 +48,8 @@ class ModuleApi extends SugarApi {
     public function __construct()
     {
         $idpConfig =  new Config(\SugarConfig::getInstance());
-        $this->isOidcEnabled = $idpConfig->isOIDCEnabled();
-        $this->oidcModules = $idpConfig->getOidcDisabledModules();
+        $this->isIDMModeEnabled = $idpConfig->isIDMModeEnabled();
+        $this->idmModeDisabledModules = $idpConfig->getIDMModeDisabledModules();
     }
 
     public function registerApiRest() {
@@ -323,8 +323,8 @@ class ModuleApi extends SugarApi {
         $api->action = 'save';
         $this->requireArgs($args,array('module'));
 
-        // Users can be created only in cloud console for OIDC mode.
-        if (in_array($args['module'], $this->oidcModules) && $this->isOidcEnabled()) {
+        // Users can be created only in cloud console for IDM mode mode.
+        if (in_array($args['module'], $this->idmModeDisabledModules) && $this->isIDMModeEnabled()) {
             throw new SugarApiExceptionNotAuthorized();
         }
 
@@ -464,8 +464,8 @@ class ModuleApi extends SugarApi {
     {
         $this->requireArgs($args,array('module','record'));
 
-        // Users can be deleted only in cloud console for OIDC mode.
-        if (in_array($args['module'], $this->oidcModules) && $this->isOidcEnabled()) {
+        // Users can be deleted only in cloud console for IDM mode mode.
+        if (in_array($args['module'], $this->idmModeDisabledModules) && $this->isIDMModeEnabled()) {
             throw new SugarApiExceptionNotAuthorized();
         }
 
@@ -843,11 +843,11 @@ class ModuleApi extends SugarApi {
     }
 
     /**
-     * Is OIDC enabled?
+     * Is IDM mode enabled?
      * @return bool
      */
-    protected function isOidcEnabled()
+    protected function isIDMModeEnabled()
     {
-        return $this->isOidcEnabled;
+        return $this->isIDMModeEnabled;
     }
 }

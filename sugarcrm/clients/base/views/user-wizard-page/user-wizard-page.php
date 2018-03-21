@@ -37,7 +37,7 @@ $viewdefs['base']['view']['user-wizard-page'] = array(
                     'required' => true,
                     // disable this field only for user wizard view
                     // because email field is complex and has personal save/update server behavior
-                    'oidc_disabled' => true,
+                    'idm_mode_disabled' => true,
                 ),
                 array(
                     'name' => 'phone_work',

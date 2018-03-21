@@ -58,8 +58,8 @@ class UsersApiHelper extends SugarBeanApiHelper
 
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
-        if ($this->getIdpConfig()->isOIDCEnabled()) {
-            $submittedData = $this->filterOidcDisabledFields($bean, $submittedData);
+        if ($this->getIdpConfig()->isIDMModeEnabled()) {
+            $submittedData = $this->filterIDMModeDisabledFields($bean, $submittedData);
         }
         parent::populateFromApi($bean, $submittedData, $options);
         if (!$bean->new_with_id && !empty($bean->id)) {
@@ -79,9 +79,9 @@ class UsersApiHelper extends SugarBeanApiHelper
      * @param array $submittedData
      * @return array
      */
-    protected function filterOidcDisabledFields(SugarBean $bean, array $submittedData)
+    protected function filterIDMModeDisabledFields(SugarBean $bean, array $submittedData)
     {
-        $submittedData = array_diff_key($submittedData, $this->getIdpConfig()->getOidcDisabledFields());
+        $submittedData = array_diff_key($submittedData, $this->getIdpConfig()->getIDMModeDisabledFields());
         if (!empty($submittedData['email'])) {
             $submittedData['email'] = $this->filterEmailField($bean, $submittedData['email']);
         }

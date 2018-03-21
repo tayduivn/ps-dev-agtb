@@ -36,9 +36,9 @@ class ModuleApiTest extends \PHPUnit_Framework_TestCase
     {
         $this->api = $this->createMock(\ServiceBase::class);
         $this->moduleApi = $this->getMockBuilder(\ModuleApi::class)
-            ->setMethods(['isOidcEnabled'])
+            ->setMethods(['isIDMModeEnabled'])
             ->getMock();
-        $this->moduleApi->expects($this->any())->method('isOidcEnabled')->willReturn(true);
+        $this->moduleApi->expects($this->any())->method('isIDMModeEnabled')->willReturn(true);
     }
 
     /**

@@ -47,11 +47,11 @@ class DiscoveryApi extends SugarApi
      */
     public function discovery(ServiceBase $api, array $args)
     {
-        $config = $this->getOIDCConfig();
+        $config = $this->getIDMModeConfig();
         if (!empty($config)) {
             $data = [
                 'idmMode' => true,
-                'stsUrl' => $config['oidcUrl'],
+                'stsUrl' => $config['stsUrl'],
                 'tenant' => $config['tid'],
             ];
         } else {
@@ -65,8 +65,8 @@ class DiscoveryApi extends SugarApi
     /**
      * @return array
      */
-    protected function getOIDCConfig()
+    protected function getIDMModeConfig()
     {
-        return (new Config(SugarConfig::getInstance()))->getOIDCConfig();
+        return (new Config(SugarConfig::getInstance()))->getIDMModeConfig();
     }
 }

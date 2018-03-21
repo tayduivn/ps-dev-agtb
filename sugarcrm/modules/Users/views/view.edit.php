@@ -46,7 +46,7 @@ var $useForSubpanel = true;
         global $current_user, $app_list_strings;
 
         $idpConfig = new IdmConfig(\SugarConfig::getInstance());
-        if ($idpConfig->isOIDCEnabled() && !$this->bean->isUpdate()) {
+        if ($idpConfig->isIDMModeEnabled() && !$this->bean->isUpdate()) {
             $this->showRedirectToCloudConsole($idpConfig->buildCloudConsoleUrl('userCreate'));
         }
 
@@ -226,7 +226,7 @@ EOD
         }
 
         // Check for IDM mode.
-        $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $idpConfig->isOIDCEnabled());
+        $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $idpConfig->isIDMModeEnabled());
         if ($GLOBALS['current_user']->isAdminForModule('Users') && $this->bean->id !== $GLOBALS['current_user']->id) {
             $label = 'LBL_OIDC_NON_EDITABLE_FIELDS_FOR_ADMIN_USER';
         } else {

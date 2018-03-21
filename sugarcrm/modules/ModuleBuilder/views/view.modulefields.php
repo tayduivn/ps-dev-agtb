@@ -243,7 +243,7 @@ class ViewModulefields extends SugarView
         $def
         )
 	{
-        if ($this->idpConfig->isOIDCEnabled() && !empty($def['oidc_disabled'])) {
+        if ($this->idpConfig->isIDMModeEnabled() && !empty($def['idm_mode_disabled'])) {
             return false;
         }
 

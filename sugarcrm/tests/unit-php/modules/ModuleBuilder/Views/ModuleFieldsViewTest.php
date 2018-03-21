@@ -54,8 +54,8 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
     public function isValidStudioFieldProvider()
     {
         return [
-            'oidcDisabledInSugarAndFieldIsOidc' => [
-                'oidcConfig' => [],
+            'idmModeDisabledInSugarAndFieldIsIdmMode' => [
+                'idmModeConfig' => [],
                 'fieldDef' => [
                     'name' => 'user_name',
                     'vname' => 'LBL_USER_NAME',
@@ -78,12 +78,12 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
                         'wireless_advanced_search' => false,
                         'rollup' => false,
                     ],
-                    'oidc_disabled' => true,
+                    'idm_mode_disabled' => true,
                 ],
                 'expectedResult' => true,
             ],
-            'oidcDisabledInSugarAndStudioFalse' => [
-                'oidcConfig' => [],
+            'idmModeDisabledInSugarAndStudioFalse' => [
+                'idmModeConfig' => [],
                 'fieldDef' => [
                     'name' => 'user_name',
                     'vname' => 'LBL_USER_NAME',
@@ -96,8 +96,8 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => false,
             ],
-            'oidcDisabledInSugarAndTypeId' => [
-                'oidcConfig' => [],
+            'idmModeDisabledInSugarAndTypeId' => [
+                'idmModeConfig' => [],
                 'fieldDef' => [
                     'name' => 'user_name',
                     'vname' => 'LBL_USER_NAME',
@@ -109,8 +109,8 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => false,
             ],
-            'oidcDisabledInSugarAndNoStudioDef' => [
-                'oidcConfig' => [],
+            'idmModeDisabledInSugarAndNoStudioDef' => [
+                'idmModeConfig' => [],
                 'fieldDef' => [
                     'name' => 'user_name',
                     'vname' => 'LBL_USER_NAME',
@@ -122,8 +122,8 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => true,
             ],
-            'oidcDisabledInSugarAndStudioHidden' => [
-                'oidcConfig' => [],
+            'idmModeDisabledInSugarAndStudioHidden' => [
+                'idmModeConfig' => [],
                 'fieldDef' => [
                     'name' => 'user_name',
                     'vname' => 'LBL_USER_NAME',
@@ -136,8 +136,8 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => false,
             ],
-            'oidcDisabledInSugarAndStudioVisible' => [
-                'oidcConfig' => [],
+            'idmModeDisabledInSugarAndStudioVisible' => [
+                'idmModeConfig' => [],
                 'fieldDef' => [
                     'name' => 'user_name',
                     'vname' => 'LBL_USER_NAME',
@@ -150,13 +150,13 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => true,
             ],
-            'oidcEnabledInSugarAndFieldIsOidc' => [
-                'oidcConfig' => [
+            'idmModeEnabledInSugarAndFieldIsIdmModeDisabled' => [
+                'idmModeConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'KeySetName',
+                    'stsKeySetId' => 'KeySetName',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'idpServiceName' => 'idm',
                     'cloudConsoleUrl' => 'http://sts.staging.arch.sugarcrm.io/',
@@ -183,17 +183,17 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
                         'wireless_advanced_search' => false,
                         'rollup' => false,
                     ],
-                    'oidc_disabled' => true,
+                    'idm_mode_disabled' => true,
                 ],
                 'expectedResult' => false,
             ],
-            'oidcEnabledInSugarAndFieldIsOidcAndStudioTrue' => [
-                'oidcConfig' => [
+            'idmModeEnabledInSugarAndFieldIsIdmModeAndStudioTrue' => [
+                'idmModeConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'KeySetName',
+                    'stsKeySetId' => 'KeySetName',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'idpServiceName' => 'idm',
                     'cloudConsoleUrl' => 'http://sts.staging.arch.sugarcrm.io/',
@@ -207,7 +207,7 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
                     'importable' => 'required',
                     'required' => true,
                     'studio' => true,
-                    'oidc_disabled' => true,
+                    'idm_mode_disabled' => true,
                 ],
                 'expectedResult' => false,
             ],
@@ -215,16 +215,16 @@ class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $oidcConfig
+     * @param $idmModeConfig
      * @param $fieldDef
      * @param $expectedResult
      *
      * @dataProvider isValidStudioFieldProvider
      * @covers ::isValidStudioField
      */
-    public function testIsValidStudioField($oidcConfig, $fieldDef, $expectedResult)
+    public function testIsValidStudioField($idmModeConfig, $fieldDef, $expectedResult)
     {
-        $this->sugarConfig->_cached_values['oidc_oauth'] = $oidcConfig;
+        $this->sugarConfig->_cached_values['idm_mode'] = $idmModeConfig;
         $this->assertEquals($expectedResult, $this->view->isValidStudioField($fieldDef));
     }
 }

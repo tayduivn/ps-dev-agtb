@@ -41,8 +41,8 @@ class SugarOAuth2Server extends OAuth2
     {
         if (!isset(static::$currentOAuth2Server)) {
             $idpConfig = new Config(\SugarConfig::getInstance());
-            $isOidcEnabled = $idpConfig->isOIDCEnabled() && $platform != SugarOAuth2ServerOIDC::PORTAL_PLATFORM;
-            $oidcPostfix = $isOidcEnabled ? 'OIDC' : '';
+            $isIDMModeEnabled = $idpConfig->isIDMModeEnabled() && $platform != SugarOAuth2ServerOIDC::PORTAL_PLATFORM;
+            $oidcPostfix = $isIDMModeEnabled ? 'OIDC' : '';
             SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage'.$oidcPostfix.'.php');
             $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2Storage'.$oidcPostfix);
             $oauthStorage = new $oauthStorageName();
@@ -51,7 +51,7 @@ class SugarOAuth2Server extends OAuth2
             $oauthServerName = SugarAutoLoader::customClass('SugarOAuth2Server'.$oidcPostfix);
             $config = $idpConfig->get('oauth2', []);
             static::$currentOAuth2Server = new $oauthServerName($oauthStorage, $config);
-            if ($isOidcEnabled) {
+            if ($isIDMModeEnabled) {
                 static::$currentOAuth2Server->setPlatform($platform);
             }
         }

@@ -79,8 +79,8 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
             $authManager = $this->getAuthProviderBuilder($config)->buildAuthProviders();
             $introspectToken = new IntrospectToken(
                 $token,
-                $config->getOIDCConfig()['tid'],
-                $config->getOIDCConfig()['crmOAuthScope']
+                $config->getIDMModeConfig()['tid'],
+                $config->getIDMModeConfig()['crmOAuthScope']
             );
             $introspectToken->setAttribute('platform', $this->platform);
             /** @var IntrospectToken $userToken */
@@ -114,9 +114,9 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
     {
         $sugarConfig = \SugarConfig::getInstance();
         $idpConfig = new Config($sugarConfig);
-        $oidcConfig = $idpConfig->getOIDCConfig();
+        $idmModeConfig = $idpConfig->getIDMModeConfig();
 
-        $tenantSrn = Srn\Converter::fromString($oidcConfig['tid']);
+        $tenantSrn = Srn\Converter::fromString($idmModeConfig['tid']);
         $srnManagerConfig = [
             'partition' => $tenantSrn->getPartition(),
             'region' => $tenantSrn->getRegion(),
@@ -127,7 +127,7 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
         try {
             $authManager = $this->getAuthProviderBasicBuilder($idpConfig)->buildAuthProviders();
 
-            $jwtBearerToken = new JWTBearerToken(Srn\Converter::toString($userSrn), $oidcConfig['tid']);
+            $jwtBearerToken = new JWTBearerToken(Srn\Converter::toString($userSrn), $idmModeConfig['tid']);
             $accessToken = $authManager->authenticate($jwtBearerToken);
 
             $token = array(

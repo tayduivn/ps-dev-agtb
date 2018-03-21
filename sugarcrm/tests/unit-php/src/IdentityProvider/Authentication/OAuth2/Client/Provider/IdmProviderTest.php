@@ -39,7 +39,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array
      */
-    protected $oidcConfig;
+    protected $idmModeConfig;
 
     /**
      * @var \SugarCacheAbstract
@@ -59,7 +59,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
         $this->request = $this->createMock(RequestInterface::class);
         $this->sugarCache = $this->createMock(\SugarCacheMemory::class);
 
-        $this->oidcConfig = [
+        $this->idmModeConfig = [
             'clientId' => 'srn:test',
             'clientSecret' => 'testSecret',
             'redirectUri' => '',
@@ -208,7 +208,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([$this->oidcConfig])
+            ->setConstructorArgs([$this->idmModeConfig])
             ->setMethods([
                 'verifyGrant',
                 'getAccessTokenUrl',
@@ -273,7 +273,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([$this->oidcConfig])
+            ->setConstructorArgs([$this->idmModeConfig])
             ->setMethods([
                 'getResourceOwnerDetailsUrl',
                 'getRequestFactory',
@@ -312,7 +312,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([$this->oidcConfig])
+            ->setConstructorArgs([$this->idmModeConfig])
             ->setMethods(['getParsedResponse', 'getSugarCache'])
             ->getMock();
         $provider->method('getSugarCache')->willReturn($this->sugarCache);
@@ -337,7 +337,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider = $this->getMockBuilder(IdmProvider::class)
                          ->enableOriginalConstructor()
-                         ->setConstructorArgs([$this->oidcConfig])
+                         ->setConstructorArgs([$this->idmModeConfig])
                          ->setMethods(
                              ['getRequestWithOptions', 'getRequestFactory', 'getParsedResponse', 'getAccessToken']
                          )
@@ -380,7 +380,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
     {
         $provider = $this->getMockBuilder(IdmProvider::class)
                          ->enableOriginalConstructor()
-                         ->setConstructorArgs([$this->oidcConfig])
+                         ->setConstructorArgs([$this->idmModeConfig])
                          ->setMethods(['getAccessToken'])
                          ->getMock();
 
@@ -420,7 +420,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
         ];
         $provider = $this->getMockBuilder(IdmProvider::class)
                          ->enableOriginalConstructor()
-                         ->setConstructorArgs([$this->oidcConfig])
+                         ->setConstructorArgs([$this->idmModeConfig])
                          ->setMethods([
                              'getAccessToken',
                              'getAuthenticatedRequest',
@@ -471,7 +471,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
     {
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([$this->oidcConfig])
+            ->setConstructorArgs([$this->idmModeConfig])
             ->setMethods(['getAccessToken', 'getParsedResponse', 'getSugarCache'])
             ->getMock();
         $provider->method('getSugarCache')->willReturn($this->sugarCache);
@@ -708,7 +708,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
 
         /** @var IdmProvider | \PHPUnit_Framework_MockObject_MockObject $provider */
         $provider = $this->getMockBuilder(IdmProvider::class)
-            ->setConstructorArgs([$this->oidcConfig])
+            ->setConstructorArgs([$this->idmModeConfig])
             ->setMethods(['getRequestFactory', 'getParsedResponse', 'getSugarCache'])
             ->getMock();
         $provider->method('getSugarCache')->willReturn($this->sugarCache);
@@ -749,7 +749,7 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([$this->oidcConfig])
+            ->setConstructorArgs([$this->idmModeConfig])
             ->setMethods(['getParsedResponse', 'getSugarCache'])
             ->getMock();
         $provider->method('getSugarCache')->willReturn($this->sugarCache);
@@ -783,11 +783,11 @@ class IdmProviderTest extends \PHPUnit_Framework_TestCase
     {
         $token = new AccessToken(['access_token' => 'token']);
 
-        $this->oidcConfig['caching']['ttl']['userInfo'] = $ttl;
+        $this->idmModeConfig['caching']['ttl']['userInfo'] = $ttl;
 
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([$this->oidcConfig])
+            ->setConstructorArgs([$this->idmModeConfig])
             ->setMethods(['getParsedResponse', 'getSugarCache'])
             ->getMock();
         $provider->method('getSugarCache')->willReturn($this->sugarCache);

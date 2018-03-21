@@ -1342,7 +1342,7 @@ class PMSEEngineUtils
             static::$idmConfig = new Authentication\Config(\SugarConfig::getInstance());
         }
 
-        if (static::$idmConfig->isOIDCEnabled() && !empty($def['oidc_disabled'])) {
+        if (static::$idmConfig->isIDMModeEnabled() && !empty($def['idm_mode_disabled'])) {
             return false;
         }
 

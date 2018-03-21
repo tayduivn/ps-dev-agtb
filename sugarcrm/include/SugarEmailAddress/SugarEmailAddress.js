@@ -15,7 +15,7 @@
 	var Dom = YAHOO.util.Dom;
 	
 	SUGAR.EmailAddressWidget = function(module) {
-        this.oidc = {
+        this.idmMode = {
             disabledForModule: false,
             cloudConsoleUrl: ''
         };
@@ -235,7 +235,7 @@
 		    newContent.setAttribute("tabindex", tabIndexCount);
 		    newContent.setAttribute("size", "30");
             newContent.setAttribute("title", SUGAR.language.get('app_strings', 'LBL_EMAIL_TITLE'));
-            if (this.oidc.disabledForModule && primaryFlag == 1) {
+            if (this.idmMode.disabledForModule && primaryFlag == 1) {
                 newContent.setAttribute('readonly', 'readonly');
                 newContent.onclick = this.showErrDismissUpdatePrimaryEmail.bind(this);
             }
@@ -366,7 +366,7 @@
 		    if (this.numberEmailAddresses != 0 || typeof (this.emailIsRequired) == "undefined" || !this.emailIsRequired)
 		       td2.appendChild(removeButton);
 
-            if (this.oidc.disabledForModule) {
+            if (this.idmMode.disabledForModule) {
                 newContentPrimaryFlag.setAttribute('disabled', 'disabled');
                 if (primaryFlag == 1) {
                     var primaryRadioHidden = document.createElement('input');
@@ -461,7 +461,7 @@
         },
 
 		removeEmailAddress : function(index) {
-            if (this.oidc.disabledForModule && Dom.get(this.id + 'emailAddressPrimaryFlag' + index)) {
+            if (this.idmMode.disabledForModule && Dom.get(this.id + 'emailAddressPrimaryFlag' + index)) {
                 return this.showErrDismissUpdatePrimaryEmail();
             }
 			removeFromValidate(this.emailView, this.id + 'emailAddress' + index);
@@ -530,7 +530,7 @@
                 level: 'error',
                 messages: SUGAR.language
                     .get('Users', 'ERR_UPDATE_PRIMARY_EMAIL_FOR_IDM_MODE')
-                    .replace('{0}', this.oidc.cloudConsoleUrl)
+                    .replace('{0}', this.idmMode.cloudConsoleUrl)
             });
         },
 		

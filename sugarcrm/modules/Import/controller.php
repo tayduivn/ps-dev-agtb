@@ -37,20 +37,20 @@ class ImportController extends SugarController
     /**
      * @var bool
      */
-    protected $isOidcEnabled;
+    protected $isIDMModeEnabled;
 
     /**
      * @var array
      */
-    protected $oidcModules;
+    protected $idmModeDisabledModules;
 
     public function __construct()
     {
         $this->request = InputValidation::getService();
 
         $idpConfig =  new Authentication\Config(\SugarConfig::getInstance());
-        $this->isOidcEnabled = $idpConfig->isOIDCEnabled();
-        $this->oidcModules = $idpConfig->getOidcDisabledModules();
+        $this->isIDMModeEnabled = $idpConfig->isIDMModeEnabled();
+        $this->idmModeDisabledModules = $idpConfig->getIDMModeDisabledModules();
     }
 
     /**
@@ -285,7 +285,7 @@ class ImportController extends SugarController
      */
     protected function isDisabled()
     {
-        return ($this->isOidcEnabled && in_array($this->importModule, $this->oidcModules));
+        return ($this->isIDMModeEnabled && in_array($this->importModule, $this->idmModeDisabledModules));
     }
 
     /**

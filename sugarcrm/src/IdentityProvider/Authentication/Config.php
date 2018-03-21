@@ -62,28 +62,28 @@ class Config
     }
 
     /**
-     * Gets OIDC configuration
+     * Gets IDM mode configuration
      * @return array
      */
-    public function getOIDCConfig()
+    public function getIDMModeConfig()
     {
-        $config = $this->get('oidc_oauth');
+        $config = $this->get('idm_mode');
         if (empty($config)) {
             return [];
         }
 
-        $oidcUrl = rtrim($config['oidcUrl'], '/ ');
+        $stsUrl = rtrim($config['stsUrl'], '/ ');
         $ipdUrl = rtrim($config['idpUrl'], '/ ');
-        $oidcKeySetId = isset($config['oidcKeySetId']) ? $config['oidcKeySetId'] : null;
-        $urlKeys = $oidcKeySetId ? $oidcUrl . '/keys/' . $oidcKeySetId : null;
+        $stsKeySetId = isset($config['stsKeySetId']) ? $config['stsKeySetId'] : null;
+        $urlKeys = $stsKeySetId ? $stsUrl . '/keys/' . $stsKeySetId : null;
 
-        $endpointService = new EndpointService(['host' => $oidcUrl]);
+        $endpointService = new EndpointService(['host' => $stsUrl]);
 
-        $oidcConfig = [
+        $idmModeConfig = [
             'tid' => !empty($config['tid']) ? $config['tid'] : '',
             'clientId' => $config['clientId'],
             'clientSecret' => $config['clientSecret'],
-            'oidcUrl' => $oidcUrl,
+            'stsUrl' => $stsUrl,
             'idpUrl' => $ipdUrl,
             'redirectUri' => rtrim($this->get('site_url'), '/'),
             'urlAuthorize' => $endpointService->getOAuth2Endpoint(EndpointInterface::AUTH_ENDPOINT),
@@ -98,12 +98,12 @@ class Config
             'requestedOAuthScopes' => $config['requestedOAuthScopes'] ?? [],
         ];
 
-        if ($oidcKeySetId) {
-            $oidcConfig['keySetId'] = $oidcKeySetId;
-            $oidcConfig['urlKeys'] = $urlKeys;
+        if ($stsKeySetId) {
+            $idmModeConfig['keySetId'] = $stsKeySetId;
+            $idmModeConfig['urlKeys'] = $urlKeys;
         }
 
-        return $oidcConfig;
+        return $idmModeConfig;
     }
 
     /**
@@ -120,7 +120,7 @@ class Config
      */
     public function buildCloudConsoleUrl($pathKey, $parts = [])
     {
-        $config = $this->getOIDCConfig();
+        $config = $this->getIDMModeConfig();
         $serverUrl = rtrim($config['cloudConsoleUrl'], '/');
         $additional = [];
 
@@ -134,31 +134,31 @@ class Config
     }
 
     /**
-     * Checks OIDC config is present
+     * Checks IDM mode config is present
      * @return bool
      */
-    public function isOIDCEnabled()
+    public function isIDMModeEnabled()
     {
-        return !empty($this->getOIDCConfig());
+        return !empty($this->getIDMModeConfig());
     }
 
     /**
      * return disabled modules in IDM mode
      * @return array
      */
-    public function getOidcDisabledModules()
+    public function getIDMModeDisabledModules()
     {
         return ['Users', 'Employees'];
     }
 
     /**
-     * return oidc disabled fields
+     * return IDM mode disabled fields
      * @return array
      */
-    public function getOidcDisabledFields()
+    public function getIDMModeDisabledFields()
     {
         return array_filter($this->getUserVardef(), function ($def) {
-            return !empty($def['oidc_disabled']);
+            return !empty($def['idm_mode_disabled']);
         });
     }
 

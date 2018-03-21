@@ -482,11 +482,11 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Provides data for testGetOidcConfig
+     * Provides data for testGetIDMModeConfig
      *
      * @return array
      */
-    public function getOidcConfigProvider()
+    public function getIDMModeConfigProvider()
     {
         return [
             'sugarConfigEmpty' => [
@@ -498,16 +498,16 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'configSugar' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'keySetId',
+                    'stsKeySetId' => 'keySetId',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                 ],
                 'siteUrl' => 'http://site.url/',
                 'expectedConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'redirectUri' => 'http://site.url',
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
@@ -529,9 +529,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'configSugar' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'keySetId',
+                    'stsKeySetId' => 'keySetId',
                     'http_client' => [
                         'retry_count' => 5,
                         'delay_strategy' => 'exponential',
@@ -543,7 +543,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'expectedConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'redirectUri' => 'http://site.url',
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
@@ -568,9 +568,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'configSugar' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'keySetId',
+                    'stsKeySetId' => 'keySetId',
                     'http_client' => [
                         'retry_count' => 5,
                         'delay_strategy' => 'exponential',
@@ -586,7 +586,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'expectedConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'redirectUri' => 'http://site.url',
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
@@ -614,9 +614,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'configSugar' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'keySetId',
+                    'stsKeySetId' => 'keySetId',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'caching' => [
                         'ttl' => [
@@ -629,7 +629,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'expectedConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'redirectUri' => 'http://site.url',
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
@@ -656,9 +656,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'configSugar' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'keySetId',
+                    'stsKeySetId' => 'keySetId',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'crmOAuthScope' => 'https://apis.sugarcrm.com/auth/crm',
                 ],
@@ -666,7 +666,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'expectedConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'redirectUri' => 'http://site.url',
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
@@ -688,9 +688,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'configSugar' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'keySetId',
+                    'stsKeySetId' => 'keySetId',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'crmOAuthScope' => '',
                     'requestedOAuthScopes' => [
@@ -706,7 +706,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'expectedConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'redirectUri' => 'http://site.url',
                     'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
                     'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
@@ -739,30 +739,30 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      * @param $siteUrl
      * @param $expectedConfig
      *
-     * @dataProvider getOidcConfigProvider
+     * @dataProvider getIDMModeConfigProvider
      *
-     * @covers ::getOIDCConfig
+     * @covers ::getIDMModeConfig
      */
-    public function testGetOidcConfig($configSugar, $siteUrl, $expectedConfig)
+    public function testGetIDMModeConfig($configSugar, $siteUrl, $expectedConfig)
     {
         $sugarConfig = $this->createMock(\SugarConfig::class);
         $config = new Config($sugarConfig);
         $sugarConfig->method('get')->willReturnMap(
             [
-                ['oidc_oauth', null, $configSugar],
+                ['idm_mode', null, $configSugar],
                 ['site_url', null, $siteUrl],
             ]
         );
 
-        $this->assertEquals($expectedConfig, $config->getOIDCConfig());
+        $this->assertEquals($expectedConfig, $config->getIDMModeConfig());
     }
 
     /**
-     * Provides data for testIsOIDCEnabled
+     * Provides data for testIsIDMModeEnabled
      *
      * @return array
      */
-    public function isOIDCEnabledProvider()
+    public function isIDMModeEnabledProvider()
     {
         return [
             'sugarConfigEmpty' => [
@@ -774,9 +774,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 'configSugar' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'keySetId',
+                    'stsKeySetId' => 'keySetId',
                 ],
                 'siteUrl' => 'http://site.url/',
                 'expectedResult' => true,
@@ -789,35 +789,35 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      * @param $siteUrl
      * @param $expectedResult
      *
-     * @dataProvider isOIDCEnabledProvider
-     * @covers ::isOIDCEnabled
+     * @dataProvider isIDMModeEnabledProvider
+     * @covers ::isIDMModeEnabled
      */
-    public function testIsOIDCEnabled($configSugar, $siteUrl, $expectedResult)
+    public function testIsIDMModeEnabled($configSugar, $siteUrl, $expectedResult)
     {
         $sugarConfig = $this->createMock(\SugarConfig::class);
         $config = new Config($sugarConfig);
         $sugarConfig->method('get')->willReturnMap(
             [
-                ['oidc_oauth', null, $configSugar],
+                ['idm_mode', null, $configSugar],
                 ['site_url', null, $siteUrl],
             ]
         );
 
-        $this->assertEquals($expectedResult, $config->isOIDCEnabled());
+        $this->assertEquals($expectedResult, $config->isIDMModeEnabled());
     }
 
     /**
-     * @covers ::getOidcDisabledModules
+     * @covers ::getIDMModeDisabledModules
      */
-    public function testGetOidcDisabledModules()
+    public function testGetIDMModeDisabledModules()
     {
         $sugarConfig = $this->createMock(\SugarConfig::class);
         $config = new Config($sugarConfig);
-        $this->assertEquals(['Users', 'Employees'], $config->getOidcDisabledModules());
+        $this->assertEquals(['Users', 'Employees'], $config->getIDMModeDisabledModules());
     }
 
     /**
-     * Provides data for testIsOIDCEnabled
+     * Provides data for testBuildCloudConsoleUrl
      *
      * @return array
      */
@@ -886,27 +886,27 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $pathKey
      * @param array|null $parts
-     * @param array $oidcConfig
+     * @param array $idmModeConfig
      * @param string $result
      *
      * @dataProvider buildCloudConsoleUrlProvider
      * @covers ::buildCloudConsoleUrl
      */
-    public function testBuildCloudConsoleUrl($pathKey, $parts, $oidcConfig, $result)
+    public function testBuildCloudConsoleUrl($pathKey, $parts, $idmModeConfig, $result)
     {
         $config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOIDCConfig'])
+            ->setMethods(['getIDMModeConfig'])
             ->getMock();
-        $config->method('getOIDCConfig')->willReturn($oidcConfig);
+        $config->method('getIDMModeConfig')->willReturn($idmModeConfig);
 
         $this->assertEquals($result, $config->buildCloudConsoleUrl($pathKey, $parts));
     }
 
      /**
-     * @covers ::getOidcDisabledFields
+     * @covers ::getIDMModeDisabledFields
      */
-    public function testGetOidcDisabledFields()
+    public function testIDMModeDisabledFields()
     {
         $varDefFields = [
             'pwd_last_changed' => [
@@ -914,14 +914,14 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             ],
             'user_name' => [
                 'name' => 'user_name',
-                'oidc_disabled' => true,
+                'idm_mode_disabled' => true,
             ],
             'id' => [
                 'name' => 'id',
             ],
             'first_name' => [
                 'name' => 'first_name',
-                'oidc_disabled' => true,
+                'idm_mode_disabled' => true,
             ],
             'sugar_login' => [
                 'name' => 'sugar_login',
@@ -938,6 +938,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $config->method('getUserVardef')->willReturn($varDefFields);
 
-        $this->assertEquals($expectedList, $config->getOidcDisabledFields());
+        $this->assertEquals($expectedList, $config->getIDMModeDisabledFields());
     }
 }

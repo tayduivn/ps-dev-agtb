@@ -303,7 +303,7 @@ class IdmProvider extends BasicGenericProvider
     /**
      * Get retry delay strategy based on config value.
      *
-     * @param array $config OIDC http_client config.
+     * @param array $config IDM-mode http_client config.
      * @return \Closure
      */
     public function getDelayStrategy($config)
@@ -398,7 +398,7 @@ class IdmProvider extends BasicGenericProvider
      *
      * @param string $key
      * @param mixed $value
-     * @param string $ttlName Value from oidc_auth config that is responsible for specific request's cached value TTL
+     * @param string $ttlName Value from idm_mode config that is responsible for specific request's cached value TTL
      */
     protected function setCache($key, $value, $ttlName)
     {

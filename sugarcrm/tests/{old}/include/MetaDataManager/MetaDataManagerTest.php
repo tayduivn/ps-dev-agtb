@@ -31,8 +31,8 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->configBackup['disabled_languages'] = $GLOBALS['sugar_config']['disabled_languages'];
         }
 
-        if (!empty($GLOBALS['sugar_config']['oidc_oauth'])) {
-            $this->configBackup['oidc_oauth'] = $GLOBALS['sugar_config']['oidc_oauth'];
+        if (!empty($GLOBALS['sugar_config']['idm_mode'])) {
+            $this->configBackup['idm_mode'] = $GLOBALS['sugar_config']['idm_mode'];
         }
 
         $this->setTestLanguageSettings();
@@ -50,8 +50,8 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['sugar_config']['disabled_languages'] = $this->configBackup['disabled_languages'];
         }
 
-        if (isset($this->configBackup['oidc_oauth'])) {
-            $GLOBALS['sugar_config']['oidc_oauth'] = $this->configBackup['oidc_oauth'];
+        if (isset($this->configBackup['idm_mode'])) {
+            $GLOBALS['sugar_config']['idm_mode'] = $this->configBackup['idm_mode'];
         }
 
         MetaDataFiles::clearModuleClientCache();
@@ -142,7 +142,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function getConfigsProvider()
     {
         return [
-            'configWithOidcDisable' => [
+            'configWithIDMModeDisabled' => [
                 'sugarConfig' => [
                     'list_max_entries_per_page' => 1,
                     'max_record_fetch_size' => 2,
@@ -153,7 +153,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'analytics' => [
                         'enabled' => true,
                     ],
-                    'oidc_oauth' => [],
+                    'idm_mode' => [],
                 ],
                 'expectedConfig' => [
                     'maxQueryResult' => 1,
@@ -165,10 +165,10 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'enabled' => true,
                     ],
                     'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
-                    'oidcEnabled' => false,
+                    'idmModeEnabled' => false,
                 ],
             ],
-            'configWithOidcEnable' => [
+            'configWithIDMModeEnable' => [
                 'sugarConfig' => [
                     'list_max_entries_per_page' => 1,
                     'max_record_fetch_size' => 2,
@@ -179,12 +179,12 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'analytics' => [
                         'enabled' => true,
                     ],
-                    'oidc_oauth' => [
+                    'idm_mode' => [
                         'clientId' => 'testLocal',
                         'clientSecret' => 'testLocalSecret',
-                        'oidcUrl' => 'http://sts.sugarcrm.local',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
                         'idpUrl' => 'http://login.sugarcrm.local',
-                        'oidcKeySetId' => 'KeySetName',
+                        'stsKeySetId' => 'KeySetName',
                         'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                         'idpServiceName' => 'idm',
                         'cloudConsoleUrl' => 'http://console.sugarcrm.local',
@@ -201,7 +201,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'enabled' => true,
                     ],
                     'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
-                    'oidcEnabled' => true,
+                    'idmModeEnabled' => true,
                     'cloudConsoleForgotPasswordUrl' => 'http://console.sugarcrm.local/forgot-password/' . urlencode('srn:cluster:sugar:eu:0000000001:tenant'),
                 ],
             ],
@@ -216,7 +216,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetConfigs($sugarConfig, $expectedConfigs)
     {
-        $GLOBALS['sugar_config']['oidc_oauth'] = $sugarConfig['oidc_oauth'];
+        $GLOBALS['sugar_config']['idm_mode'] = $sugarConfig['idm_mode'];
         $administration = new Administration();
         $administration->retrieveSettings();
         if (!empty($administration->settings['system_name'])) {

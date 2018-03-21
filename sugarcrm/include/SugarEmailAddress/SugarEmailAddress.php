@@ -1134,11 +1134,12 @@ class SugarEmailAddress extends SugarBean
         global $app_strings, $dictionary, $beanList;
 
         $idmConfig = new IdmConfig(\SugarConfig::getInstance());
-        $disabledForModule = $idmConfig->isOIDCEnabled() && in_array($module, $idmConfig->getOidcDisabledModules());
+        $disabledForModule = $idmConfig->isIDMModeEnabled()
+            && in_array($module, $idmConfig->getIDMModeDisabledModules());
         $cloudConsoleUrl = '';
         if ($disabledForModule) {
-            $oidcConfig = $idmConfig->getOIDCConfig();
-            $tenantSrn = Srn\Converter::fromString($oidcConfig['tid']);
+            $idmModeConfig = $idmConfig->getIDMModeConfig();
+            $tenantSrn = Srn\Converter::fromString($idmModeConfig['tid']);
             $srnManagerConfig = [
                 'partition' => $tenantSrn->getPartition(),
                 'region' => $tenantSrn->getRegion(),
@@ -1147,7 +1148,7 @@ class SugarEmailAddress extends SugarBean
             $userSrn = $srnManager->createUserSrn($tenantSrn->getTenantId(), $id);
             $cloudConsoleUrl = $idmConfig->buildCloudConsoleUrl('userProfile', [Srn\Converter::toString($userSrn)]);
         }
-        $this->smarty->assign('oidc', json_encode([
+        $this->smarty->assign('idmMode', json_encode([
             'disabledForModule' => $disabledForModule,
             'cloudConsoleUrl' => $cloudConsoleUrl,
         ]));

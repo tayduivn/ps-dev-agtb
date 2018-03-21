@@ -571,7 +571,7 @@ class RestService extends ServiceBase
     {
         $token = false;
         $platform = !empty($_REQUEST['platform']) ? $_REQUEST['platform'] : 'base';
-        $config = SugarConfig::getInstance()->get('oidc_oauth', false);
+        $config = SugarConfig::getInstance()->get('idm_mode', false);
         $preCheck = is_array($config) && $platform == 'opi' && $header == 'Authorization';
 
         if ($preCheck && preg_match('~^Bearer (.*)$~i', $value, $matches)) {

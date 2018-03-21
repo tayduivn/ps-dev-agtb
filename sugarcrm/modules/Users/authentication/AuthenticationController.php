@@ -88,7 +88,7 @@ class AuthenticationController implements LoggerAwareInterface
     {
         if (empty($type)) {
             $idpConfig = new Config(\SugarConfig::getInstance());
-            if ($idpConfig->isOIDCEnabled()) {
+            if ($idpConfig->isIDMModeEnabled()) {
                 $type = 'OAuth2Authenticate';
             } else {
                 $type = $idpConfig->get('authenticationClass', 'SugarAuthenticate');

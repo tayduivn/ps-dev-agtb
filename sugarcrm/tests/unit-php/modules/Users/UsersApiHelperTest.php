@@ -48,18 +48,18 @@ class UsersApiHelperTest extends \PHPUnit_Framework_TestCase
     {
         $this->IdpConfig = $this->createMock(IdpConfig::class);
         $this->IdpConfig
-            ->method('isOIDCEnabled')
+            ->method('isIDMModeEnabled')
             ->willReturn(true);
         $this->IdpConfig
-            ->method('getOidcDisabledFields')
+            ->method('getIDMModeDisabledFields')
             ->willReturn([
                 'user_name' => [
                     'name' => 'user_name',
-                    'oidc_disabled' => true,
+                    'idm_mode_disabled' => true,
                 ],
                 'first_name' => [
                     'name' => 'first_name',
-                    'oidc_disabled' => true,
+                    'idm_mode_disabled' => true,
                 ],
             ]);
 

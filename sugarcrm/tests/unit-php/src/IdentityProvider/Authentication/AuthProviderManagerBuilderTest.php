@@ -39,8 +39,8 @@ class AuthProviderManagerBuilderTest extends \PHPUnit_Framework_TestCase
             ->method('getLdapConfig')
             ->willReturn($data['auth']['ldap']);
         $config->expects($this->once())
-               ->method('getOIDCConfig')
-               ->willReturn($data['auth']['oidc_oauth']);
+               ->method('getIDMModeConfig')
+               ->willReturn($data['auth']['idm_mode']);
         $manager = (new AuthProviderManagerBuilder($config))->buildAuthProviders();
         $this->assertInstanceOf(AuthenticationProviderManager::class, $manager);
     }
@@ -66,17 +66,17 @@ class AuthProviderManagerBuilderTest extends \PHPUnit_Framework_TestCase
             'filter' => '({uid_key}={username})',
         ];
 
-        $oidcUrl = 'http://oidc.url';
-        $sugar_config['auth']['oidc_oauth'] = [
+        $stsUrl = 'http://sts.url';
+        $sugar_config['auth']['idm_mode'] = [
             'clientId' => 'clientId',
             'clientSecret' => 'clientSecret',
-            'oidcUrl' => $oidcUrl,
+            'stsUrl' => $stsUrl,
             'redirectUri' => 'http://sugar.url',
-            'urlAuthorize' => $oidcUrl . '/oauth2/auth',
-            'urlAccessToken' => $oidcUrl . '/oauth2/token',
-            'urlResourceOwnerDetails' => $oidcUrl . '/oauth2/introspect',
-            'urlUserInfo' => $oidcUrl . '/userinfo',
-            'urlKeys' => $oidcUrl . '/keys/setId',
+            'urlAuthorize' => $stsUrl . '/oauth2/auth',
+            'urlAccessToken' => $stsUrl . '/oauth2/token',
+            'urlResourceOwnerDetails' => $stsUrl . '/oauth2/introspect',
+            'urlUserInfo' => $stsUrl . '/userinfo',
+            'urlKeys' => $stsUrl . '/keys/setId',
             'keySetId' => 'setId',
             'idpUrl' => 'http://idp.url',
             'http_client' => [

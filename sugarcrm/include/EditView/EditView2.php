@@ -561,10 +561,10 @@ class EditView
                 }
             }
             $this->focus->ACLFilterFieldList($this->fieldDefs, array(), array("add_acl" => true));
-            if (in_array($this->focus->module_name, $this->idpConfig->getOidcDisabledModules())
-                && $this->idpConfig->isOIDCEnabled()
+            if (in_array($this->focus->module_name, $this->idpConfig->getIDMModeDisabledModules())
+                && $this->idpConfig->isIDMModeEnabled()
             ) {
-                $this->disableOidcFields();
+                $this->disableIDMModeFields();
             }
         }
 
@@ -980,13 +980,13 @@ class EditView
     }
 
     /**
-     * Mark disabled oidc fields
+     * Mark disabled IDM mode fields
      */
-    protected function disableOidcFields()
+    protected function disableIDMModeFields()
     {
-        $oidcDisabledFields = $this->idpConfig->getOidcDisabledFields();
-        $this->fieldDefs = array_map(function ($field) use ($oidcDisabledFields) {
-            $field['disabled'] = isset($field['name']) && array_key_exists($field['name'], $oidcDisabledFields);
+        $idmModeDisabledFields = $this->idpConfig->getIDMModeDisabledFields();
+        $this->fieldDefs = array_map(function ($field) use ($idmModeDisabledFields) {
+            $field['disabled'] = isset($field['name']) && array_key_exists($field['name'], $idmModeDisabledFields);
             return $field;
         }, $this->fieldDefs);
     }

@@ -16,8 +16,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
-$oidcConfig = $idpConfig->getOIDCConfig();
-if ($idpConfig->isOIDCEnabled()) {
+if ($idpConfig->isIDMModeEnabled()) {
     sugar_die(
         sprintf(
             $GLOBALS['app_strings']['ERR_DISABLED_FOR_OIDC'] . ' ' .

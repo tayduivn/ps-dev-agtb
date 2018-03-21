@@ -26,10 +26,10 @@
     showPage: true,
 
     /**
-     * is Oidc enabled?
+     * is IDM mode enabled?
      * @var boolean
      */
-    isOidcEnabled: false,
+    isIDMModeEnabled: false,
 
     /**
      * @override
@@ -41,7 +41,7 @@
         this._super('initialize', [options]);
         this.fieldsToValidate = this._fieldsToValidate(options.meta);
         this.action = 'edit';
-        this.isOidcEnabled = App.metadata.getConfig().oidcEnabled || false;
+        this.isIDMModeEnabled = App.metadata.getConfig().idmModeEnabled || false;
     },
     /**
      * @override
@@ -74,7 +74,7 @@
      */
     _renderField: function(field, $fieldEl) {
         this._super('_renderField', [field, $fieldEl]);
-        if (this.isOidcEnabled && field.def.oidc_disabled) {
+        if (this.isIDMModeEnabled && field.def.idm_mode_disabled) {
             field.setDisabled(true);
         }
     },

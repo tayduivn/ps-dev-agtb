@@ -44,7 +44,7 @@ if($GLOBALS['current_user']->isAdminForModule('Users')
 	$module_menu[] = Array("index.php?module=Users&action=ListView&return_module=Users&return_action=DetailView", $mod_strings['LNK_USER_LIST'],"Users");
 
 	$module_menu[] = Array("index.php?module=Users&action=reassignUserRecords", $mod_strings['LNK_REASSIGN_RECORDS'],"ReassignRecords");
-    if (!$idpConfig->isOIDCEnabled()) {
+    if (!$idpConfig->isIDMModeEnabled()) {
         $module_menu[] = [
             "index.php?module=Import&action=Step1&import_module=Users&return_module=Users&return_action=index",
             $mod_strings['LNK_IMPORT_USERS'],

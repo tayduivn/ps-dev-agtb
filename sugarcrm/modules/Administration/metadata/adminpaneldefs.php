@@ -21,8 +21,8 @@ $admin_option_defs['Users']['roles_management']= array('Roles','LBL_MANAGE_ROLES
 $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS_TITLE','LBL_MANAGE_TEAMS','./index.php?module=Teams&action=index');
 
 $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
-$oidcConfig = $idpConfig->getOIDCConfig();
-if ($idpConfig->isOIDCEnabled()) {
+$idmModeConfig = $idpConfig->getIDMModeConfig();
+if ($idpConfig->isIDMModeEnabled()) {
     $passwordManagerUrl = $idpConfig->buildCloudConsoleUrl('passwordManagement');
     $passwordManagerTarget = '_blank';
     $passwordManagerOnClick = sprintf(

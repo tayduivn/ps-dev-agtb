@@ -1245,7 +1245,7 @@ function validate_user($user_name, $password){
      */
     public function isIDMMode()
     {
-        return $this->getIDMConfig()->isOIDCEnabled();
+        return $this->getIDMConfig()->isIDMModeEnabled();
     }
 
     /**
@@ -1256,7 +1256,7 @@ function validate_user($user_name, $password){
      */
     public function isIDMModeModule($module)
     {
-        return in_array($module, $this->getIDMConfig()->getOidcDisabledModules());
+        return in_array($module, $this->getIDMConfig()->getIDMModeDisabledModules());
     }
 
     /**
@@ -1267,7 +1267,7 @@ function validate_user($user_name, $password){
      */
     public function isIDMModeField($name)
     {
-        return array_key_exists($name, $this->getIDMConfig()->getOidcDisabledFields());
+        return array_key_exists($name, $this->getIDMConfig()->getIDMModeDisabledFields());
     }
 
     /**

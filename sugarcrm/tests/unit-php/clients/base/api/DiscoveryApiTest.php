@@ -24,9 +24,9 @@ class DiscoveryApiTest extends \PHPUnit_Framework_TestCase
     public function testDiscovery($expected, $config)
     {
         $api = $this->getMockBuilder(\DiscoveryApi::class)
-            ->setMethods(['getOIDCConfig'])
+            ->setMethods(['getIDMModeConfig'])
             ->getMock();
-        $api->method('getOIDCConfig')
+        $api->method('getIDMModeConfig')
             ->willReturn($config);
 
         $this->assertEquals($expected, $api->discovery($this->createMock(\ServiceBase::class), []));
@@ -47,7 +47,7 @@ class DiscoveryApiTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                 ],
             ],
         ];

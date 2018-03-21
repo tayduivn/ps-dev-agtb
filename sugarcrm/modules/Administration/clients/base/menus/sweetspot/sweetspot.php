@@ -12,7 +12,6 @@
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 
 $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
-$oidcConfig = $idpConfig->getOIDCConfig();
 
 $moduleName = 'Administration';
 $adminRoute = '#bwc/index.php?module=Administration&action=';
@@ -61,7 +60,8 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'module' => $moduleName,
         'icon' => 'fa-cogs',
         'route' => $adminRoute . 'PasswordManager',
-        'oidc_link' => $idpConfig->isOIDCEnabled() ? $idpConfig->buildCloudConsoleUrl('passwordManagement') : null,
+        'idm_mode_link' =>
+            $idpConfig->isIDMModeEnabled() ? $idpConfig->buildCloudConsoleUrl('passwordManagement') : null,
     ),
 
     // Sugar Connect

@@ -55,7 +55,7 @@ class EmployeesViewEdit extends ViewEdit {
 
         // Check for IDM mode.
         $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
-        $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $idpConfig->isOIDCEnabled());
+        $this->ss->assign('SHOW_NON_EDITABLE_FIELDS_ALERT', $idpConfig->isIDMModeEnabled());
         if ($GLOBALS['current_user']->isAdminForModule('Users') && $this->bean->id !== $GLOBALS['current_user']->id) {
             $label = 'LBL_OIDC_NON_EDITABLE_FIELDS_FOR_ADMIN_USER';
         } else {

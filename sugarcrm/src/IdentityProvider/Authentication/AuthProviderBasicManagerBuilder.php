@@ -67,7 +67,7 @@ class AuthProviderBasicManagerBuilder
     /**
      * @var array
      */
-    protected $oidcConfig;
+    protected $idmModeConfig;
 
     /**
      * __construct
@@ -81,7 +81,7 @@ class AuthProviderBasicManagerBuilder
         }
         $this->ldapConfig = $config->getLdapConfig();
         $this->samlConfig = $config->getSAMLConfig();
-        $this->oidcConfig = $config->getOIDCConfig();
+        $this->idmModeConfig = $config->getIDMModeConfig();
     }
 
     /**
@@ -201,14 +201,14 @@ class AuthProviderBasicManagerBuilder
      */
     protected function getOidcAuthProvider()
     {
-        if (empty($this->oidcConfig)) {
+        if (empty($this->idmModeConfig)) {
             return null;
         }
 
         $sugarLocalUserProvider = new SugarLocalUserProvider();
 
         return new OIDCAuthenticationProvider(
-            new IdmProvider($this->oidcConfig),
+            new IdmProvider($this->idmModeConfig),
             new SugarOIDCUserProvider($sugarLocalUserProvider),
             new SugarOIDCUserChecker($sugarLocalUserProvider),
             new SugarOidcUserMapping()
@@ -221,14 +221,14 @@ class AuthProviderBasicManagerBuilder
      */
     protected function getIdpAuthProvider()
     {
-        if (empty($this->oidcConfig)) {
+        if (empty($this->idmModeConfig)) {
             return null;
         }
 
         $sugarLocalUserProvider = new SugarLocalUserProvider();
 
         return new IdPAuthenticationProvider(
-            new IdmProvider($this->oidcConfig),
+            new IdmProvider($this->idmModeConfig),
             new SugarOIDCUserProvider($sugarLocalUserProvider),
             new SugarOIDCUserChecker($sugarLocalUserProvider),
             new SugarOidcUserMapping(),

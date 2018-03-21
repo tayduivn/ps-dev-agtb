@@ -549,10 +549,10 @@ class MassUpdate
 		//These fields should never appear on mass update form
 		static $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
 
-        if (in_array($this->sugarbean->module_name, $this->idmConfig->getOidcDisabledModules())
-            && $this->idmConfig->isOIDCEnabled()
+        if (in_array($this->sugarbean->module_name, $this->idmConfig->getIDMModeDisabledModules())
+            && $this->idmConfig->isIDMModeEnabled()
         ) {
-            $banned += $this->idmConfig->getOidcDisabledFields();
+            $banned += $this->idmConfig->getIDMModeDisabledFields();
         }
 
 		foreach($this->sugarbean->field_defs as $field)

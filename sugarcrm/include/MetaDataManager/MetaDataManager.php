@@ -2168,11 +2168,11 @@ class MetaDataManager implements LoggerAwareInterface
             $configs['sugarMaxInt'] = $sugarConfig['sugar_max_int'];
         }
 
-        $configs['oidcEnabled'] = $idpConfig->isOIDCEnabled();
-        if ($configs['oidcEnabled']) {
+        $configs['idmModeEnabled'] = $idpConfig->isIDMModeEnabled();
+        if ($configs['idmModeEnabled']) {
             $configs['cloudConsoleForgotPasswordUrl'] = $idpConfig->buildCloudConsoleUrl(
                 'forgotPassword',
-                [$idpConfig->getOIDCConfig()['tid']]
+                [$idpConfig->getIDMModeConfig()['tid']]
             );
         }
 

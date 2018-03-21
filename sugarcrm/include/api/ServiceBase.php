@@ -154,8 +154,8 @@ abstract class ServiceBase implements LoggerAwareInterface
            // @TODO Localize exception strings
            $message = "No valid authentication for user.";
        }
-        $isOidcEnabled = (new Config(\SugarConfig::getInstance()))->isOIDCEnabled();
-        if ($isOidcEnabled && !extension_loaded('gmp')) {
+        $isIDMModeEnabled = (new Config(\SugarConfig::getInstance()))->isIDMModeEnabled();
+        if ($isIDMModeEnabled && !extension_loaded('gmp')) {
             throw new SugarApiExceptionError('ERR_FOR_OIDC_GMP_REQUIRED', null, 'Users');
         }
         $loginExc = new SugarApiExceptionNeedLogin($message);

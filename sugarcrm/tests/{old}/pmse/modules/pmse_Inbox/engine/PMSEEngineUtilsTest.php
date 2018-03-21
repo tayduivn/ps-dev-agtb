@@ -454,14 +454,14 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Provides data for testIsValidStudioFieldInOidcMode
+     * Provides data for testIsValidStudioFieldInIDMMode
      * @return array
      */
-    public function isValidStudioFieldInOidcModeProvider()
+    public function isValidStudioFieldInIDMModeProvider()
     {
         return [
-            'oidcDisabledInSugarAndFieldIsOidc' => [
-                'oidcConfig' => [],
+            'idmModeDisabledInSugarAndFieldIsIdmMode' => [
+                'idmModeConfig' => [],
                 'fieldDef' => [
                     'name' => 'user_name',
                     'vname' => 'LBL_USER_NAME',
@@ -470,17 +470,17 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
                     'len' => '60',
                     'importable' => 'required',
                     'required' => true,
-                    'oidc_disabled' => true,
+                    'idm_mode_disabled' => true,
                 ],
                 'expectedResult' => true,
             ],
-            'oidcEnabledInSugarAndFieldIsNotOidc' => [
-                'oidcConfig' => [
+            'idmModeEnabledInSugarAndFieldIsNotIdmMode' => [
+                'idmModeConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'KeySetName',
+                    'stsKeySetId' => 'KeySetName',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'idpServiceName' => 'idm',
                     'cloudConsoleUrl' => 'http://sts.staging.arch.sugarcrm.io/',
@@ -496,13 +496,13 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => true,
             ],
-            'oidcEnabledInSugarAndFieldIsOidc' => [
-                'oidcConfig' => [
+            'idmModeEnabledInSugarAndFieldIsIdmMode' => [
+                'idmModeConfig' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
-                    'oidcUrl' => 'http://sts.sugarcrm.local',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
                     'idpUrl' => 'http://login.sugarcrm.local',
-                    'oidcKeySetId' => 'KeySetName',
+                    'stsKeySetId' => 'KeySetName',
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'idpServiceName' => 'idm',
                     'cloudConsoleUrl' => 'http://sts.staging.arch.sugarcrm.io/',
@@ -515,7 +515,7 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
                     'len' => '60',
                     'importable' => 'required',
                     'required' => true,
-                    'oidc_disabled' => true,
+                    'idm_mode_disabled' => true,
                 ],
                 'expectedResult' => false,
             ],
@@ -523,16 +523,16 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $oidcConfig
+     * @param $idmModeConfig
      * @param $defs
      * @param $expectedResult
      *
-     * @dataProvider isValidStudioFieldInOidcModeProvider
+     * @dataProvider isValidStudioFieldInIDMModeProvider
      * @covers PMSEEngineUtils::isValidStudioField
      */
-    public function testIsValidStudioFieldInOidcMode($oidcConfig, $defs, $expectedResult)
+    public function testIsValidStudioFieldInIDMMode($idmModeConfig, $defs, $expectedResult)
     {
-        $this->sugarConfig->_cached_values['oidc_oauth'] = $oidcConfig;
+        $this->sugarConfig->_cached_values['idm_mode'] = $idmModeConfig;
         $this->assertEquals($expectedResult, $this->object->isValidStudioField($defs));
     }
 

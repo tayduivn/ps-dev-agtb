@@ -36,11 +36,11 @@ class SoapHelperWebServicesTest extends \PHPUnit_Framework_TestCase
      * @dataProvider isIDMModeDataProvider
      * @covers ::isIDMMode()
      */
-    public function testIsIDMMode($oidcEnabled, $expected)
+    public function testIsIDMMode($idmModeEnabled, $expected)
     {
         $this->idmConfig->expects($this->once())
-            ->method('isOIDCEnabled')
-            ->willReturn($oidcEnabled);
+            ->method('isIDMModeEnabled')
+            ->willReturn($idmModeEnabled);
         $this->assertEquals($expected, $this->helper->isIDMMode());
     }
 
@@ -59,7 +59,7 @@ class SoapHelperWebServicesTest extends \PHPUnit_Framework_TestCase
     public function testIsIDMModeModule($module, $expected)
     {
         $this->idmConfig->expects($this->once())
-            ->method('getOidcDisabledModules')
+            ->method('getIDMModeDisabledModules')
             ->willReturn(['Users', 'Employees']);
         $this->assertEquals($expected, $this->helper->isIDMModeModule($module));
     }
@@ -80,7 +80,7 @@ class SoapHelperWebServicesTest extends \PHPUnit_Framework_TestCase
     public function testIsIDMModeField($field, $expected)
     {
         $this->idmConfig->expects($this->once())
-            ->method('getOidcDisabledFields')
+            ->method('getIDMModeDisabledFields')
             ->willReturn([
                 'first_name' => ['firstnamevardefs'],
                 'last_name' => ['lastnamevardefs'],

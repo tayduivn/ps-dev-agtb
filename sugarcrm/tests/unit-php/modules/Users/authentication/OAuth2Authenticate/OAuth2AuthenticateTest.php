@@ -62,7 +62,7 @@ class OAuth2AuthenticateTest extends TestCase
     protected function setUp()
     {
         $this->savedConfig['site_url'] = SugarConfig::getInstance()->get('site_url');
-        $this->savedConfig['oidc_oauth'] = SugarConfig::getInstance()->get('oidc_oauth');
+        $this->savedConfig['idm_mode'] = SugarConfig::getInstance()->get('idm_mode');
         SugarConfig::getInstance()->_cached_values['site_url'] = 'http://test.sugarcrm.local';
 
         $this->auth = new OAuth2Authenticate();
@@ -87,7 +87,7 @@ class OAuth2AuthenticateTest extends TestCase
     protected function tearDown()
     {
         SugarConfig::getInstance()->_cached_values['site_url'] = $this->savedConfig['site_url'];
-        SugarConfig::getInstance()->_cached_values['oidc_oauth'] = $this->savedConfig['oidc_oauth'];
+        SugarConfig::getInstance()->_cached_values['idm_mode'] = $this->savedConfig['idm_mode'];
     }
 
     /**
@@ -95,13 +95,13 @@ class OAuth2AuthenticateTest extends TestCase
      */
     public function testGetLoginUrlWithValidConfig()
     {
-        SugarConfig::getInstance()->_cached_values['oidc_oauth'] = [
+        SugarConfig::getInstance()->_cached_values['idm_mode'] = [
             'clientId' => 'testLocal',
             'clientSecret' => 'testLocalSecret',
             'redirectUri' => '',
-            'oidcUrl' => 'http://sts.sugarcrm.local',
+            'stsUrl' => 'http://sts.sugarcrm.local',
             'idpUrl' => 'http://idp.url',
-            'oidcKeySetId' => 'keySetId',
+            'stsKeySetId' => 'keySetId',
         ];
         $this->assertEquals('http://sts.sugarcrm.local', $this->auth->getLoginUrl());
     }
@@ -113,7 +113,7 @@ class OAuth2AuthenticateTest extends TestCase
      */
     public function testGetLoginUrlWithEmptyConfig()
     {
-        SugarConfig::getInstance()->_cached_values['oidc_oauth'] = null;
+        SugarConfig::getInstance()->_cached_values['idm_mode'] = null;
         $this->auth->getLoginUrl();
     }
 
