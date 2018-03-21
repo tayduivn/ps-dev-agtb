@@ -281,10 +281,12 @@ describe('Plugins.EmailParticipants', function() {
                     id: _.uniqueId(),
                     _module: 'Contacts',
                     name: 'Haley Rhodes',
-                    email: 'hrhodes@example.com'
+                    email: 'hrhodes@example.com',
+                    _acl: {},
+                    _erased_fields: []
                 }]
             };
-            var url = /.*\/rest\/v10\/Mail\/recipients\/find\?q=haley&max_num=10/;
+            var url = /.*\/rest\/v10\/Mail\/recipients\/find\?q=haley&max_num=10&erased_fields=true/;
             var query = {
                 term: 'haley',
                 callback: function(response) {
@@ -296,6 +298,11 @@ describe('Plugins.EmailParticipants', function() {
                     expect(response.results[0].get('parent_name')).toBe(data.records[0].name);
                     expect(response.results[0].get('email_address_id')).toBeUndefined();
                     expect(response.results[0].get('email_address')).toBeUndefined();
+                    expect(response.results[0].get('parent').type).toBe('Contacts');
+                    expect(response.results[0].get('parent').id).toBe(data.records[0].id);
+                    expect(response.results[0].get('parent').name).toBe(data.records[0].name);
+                    expect(response.results[0].get('parent')._acl).toEqual({});
+                    expect(response.results[0].get('parent')._erased_fields).toEqual([]);
                 }
             };
             var response = [
@@ -310,7 +317,7 @@ describe('Plugins.EmailParticipants', function() {
         });
 
         it('should return no results on error', function() {
-            var url = /.*\/rest\/v10\/Mail\/recipients\/find\?q=haley&max_num=10/;
+            var url = /.*\/rest\/v10\/Mail\/recipients\/find\?q=haley&max_num=10&erased_fields=true/;
             var query = {
                 term: 'haley',
                 callback: function(data) {

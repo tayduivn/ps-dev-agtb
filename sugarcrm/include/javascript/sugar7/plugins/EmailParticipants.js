@@ -43,7 +43,9 @@
                         // Add the search term to the URL params.
                         q: query.term,
                         // The first 10 results should be enough.
-                        max_num: 10
+                        max_num: 10,
+                        // Ask for erased fields.
+                        erased_fields: true
                     };
                     var callbacks = {};
                     var url = app.api.buildURL('Mail', 'recipients/find', null, options);
@@ -71,6 +73,7 @@
                                     _link: linkName,
                                     parent: {
                                         _acl: record.get('_acl') || {},
+                                        _erased_fields: record.get('_erased_fields') || [],
                                         type: record.module,
                                         id: record.get('id'),
                                         name: parentName
