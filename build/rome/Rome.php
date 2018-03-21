@@ -23,7 +23,7 @@ class Rome
     protected $onlyBuild = array();
 
     protected $symlinks = array();
-    
+
     /**
      * The Regex that is used for matching build tags.
      *
@@ -355,7 +355,7 @@ class Rome
         try {
             eval('$r =' . $eval . ';');
         } catch (Exception $e) {
-            $this->throwExption("Check Comment Syntax: $eval", true);
+            $this->throwException("Check Comment Syntax: $eval", true);
             die();
         }
 
