@@ -71,7 +71,6 @@
             "/modules/*/SubPanelViewTeams.php",
             "/modules/*/views/view.index.php",
             "/modules/HealthCheck/**",
-            "/vendor/nusoap/class.*.php",
             "/upgrade/scripts/**",
             "**/upgrade/scripts/**",
             "**/test/**",
