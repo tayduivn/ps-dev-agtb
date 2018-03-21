@@ -140,18 +140,9 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
     });
 
     describe('_massCollectionChange()', function() {
-        var massCollection;
-        var quoteModel;
         var propStub;
 
         beforeEach(function() {
-            quoteModel = app.data.createBean('Quotes', {
-                id: 'testId',
-                _module: 'Quotes'
-            });
-            quoteModel.id = 'testId';
-            massCollection = new Backbone.Collection(quoteModel);
-            sinon.collection.spy(massCollection, 'remove');
             propStub = sinon.collection.stub();
             sinon.collection.stub(view, '$', function() {
                 return {
@@ -162,19 +153,13 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
         });
 
         afterEach(function() {
-            massCollection = null;
-            quoteModel = null;
             propStub = null;
         });
 
-        it('should remove any Quote models from massCollection', function() {
-            view._massCollectionChange({}, massCollection);
-
-            expect(massCollection.remove).toHaveBeenCalledWith(quoteModel, {silent: true});
-        });
-
         it('should set group and mass delete fields enabled if massCollection has items', function() {
-            view._massCollectionChange({}, massCollection);
+            view._massCollectionChange({}, {
+                length: 0
+            });
 
             expect(propStub).toHaveBeenCalledWith('checked', false);
         });
@@ -249,8 +234,19 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
         var massActionsField;
         var groupButtonField;
         var massDeleteField;
+        var quoteModel;
+        var massCollection;
 
         beforeEach(function() {
+            quoteModel = app.data.createBean('Quotes', {
+                id: 'testId',
+                _module: 'Quotes'
+            });
+            quoteModel.id = 'testId';
+            massCollection = new Backbone.Collection(quoteModel);
+            sinon.collection.spy(massCollection, 'remove');
+            view.massCollection = massCollection;
+
             massActionsField = {
                 setDisabled: sinon.collection.spy()
             };
@@ -264,6 +260,17 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
                 .withArgs('quote-data-mass-actions').returns(massActionsField)
                 .withArgs('group_button').returns(groupButtonField)
                 .withArgs('massdelete_button').returns(massDeleteField);
+        });
+
+        afterEach(function() {
+            massCollection = null;
+            quoteModel = null;
+        });
+
+        it('should remove any Quote models from massCollection', function() {
+            view._checkMassActions();
+
+            expect(massCollection.remove).toHaveBeenCalledWith(quoteModel, {silent: true});
         });
 
         describe('bundles are empty', function() {
@@ -302,9 +309,10 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
             });
 
             it('should set group and mass delete fields enabled if massCollection has items', function() {
-                view.massCollection.models = [{
-                    hey: 'buddy!'
-                }];
+                view.massCollection.add(app.data.createBean('Products', {
+                    id: 'testProductId',
+                    _module: 'Products'
+                }));
                 view._checkMassActions();
 
                 expect(groupButtonField.setDisabled).toHaveBeenCalledWith(false);
@@ -320,6 +328,7 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
         var pbItems;
         var pbItem;
         var result;
+
         it('should return true if all bundles are empty', function() {
             bundles = new Backbone.Collection();
             pbItems = new Backbone.Collection();

@@ -116,17 +116,6 @@
      */
     _massCollectionChange: function(model, massCollection) {
         var $checkAllField = this.$('[data-check=all]');
-        var quoteModel;
-
-        if (massCollection && massCollection.models) {
-            quoteModel = _.find(massCollection.models, function(model) {
-                return model.get('_module') === 'Quotes';
-            });
-            if (quoteModel) {
-                // get rid of any Quotes models from the mass collection
-                massCollection.remove(quoteModel, {silent: true});
-            }
-        }
 
         if (massCollection.length === 0 && $checkAllField.length) {
             // uncheck the check-all box if there are no more items
@@ -182,6 +171,7 @@
         var groupBtn;
         var massDeleteBtn;
         var disableMassActions;
+        var quoteModel;
 
         if (this.disposed) {
             return;
@@ -191,6 +181,15 @@
         groupBtn = this.getField('group_button');
         massDeleteBtn = this.getField('massdelete_button');
         disableMassActions = false;
+
+        quoteModel = _.find(this.massCollection.models, function(model) {
+            return model.get('_module') === 'Quotes';
+        });
+
+        if (quoteModel) {
+            // get rid of any Quotes models from the mass collection
+            this.massCollection.remove(quoteModel, {silent: true});
+        }
 
         if (this._bundlesAreEmpty()) {
             if (massActionsField) {
