@@ -147,7 +147,10 @@
         var scrollOffset = $fieldSet.offset().left;
         var scrollWidth = $tableCell.width();
 
-        flexView.trigger('list:scrollLock', state);
+        // on record view flexView doesn't exist
+        if (flexView) {
+            flexView.trigger('list:scrollLock', state);
+        }
         $fieldSet.css('left', state ? scrollOffset : 'auto');
         $fieldSet.css('width', state ? scrollWidth : '100%');
 
