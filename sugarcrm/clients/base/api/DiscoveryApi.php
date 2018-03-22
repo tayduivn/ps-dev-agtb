@@ -25,11 +25,10 @@ class DiscoveryApi extends SugarApi
         return array(
             'discovery' => array(
                 'reqType' => 'GET',
-                'minVersion' => '11.1',
                 'path' => array('discovery'),
                 'pathVars' => array(''),
                 'method' => 'discovery',
-                'shortHelp' => 'Returns publicly available configuration for authentication',
+                'shortHelp' => 'Returns publicly availble configuration for authentication',
                 'longHelp' => 'include/api/help/discovery_help.html',
                 'noLoginRequired' => true,
                 'ignoreMetaHash' => true,
