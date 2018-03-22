@@ -10,46 +10,20 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSELoggerTest extends PHPUnit_Framework_TestCase 
-{
-    /**
-     * Sets up the test data, for example, 
-     *     opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        
-    }
 
-    /**
-     * Removes the initial test configurations for each test, for example:
-     *     close a network connection. 
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
-    
-    /**
-     * 
-     * 
-     */
+class PMSELoggerTest extends PHPUnit_Framework_TestCase
+{
     public function testGetInstance()
     {
         $instance = PMSELogger::getInstance();
         $this->assertInstanceOf('PMSELogger', $instance);
     }
-    
-    /**
-     * 
-     * @expectedException PHPUnit_Framework_Error
-     */
+
     public function testClone()
     {
+        $this->expectException(PHPUnit_Framework_Error::class);
         $instance = PMSELogger::getInstance();
-        $clone = clone($instance);
+        clone($instance);
     }
     
     public function testLog()
@@ -58,8 +32,6 @@ class PMSELoggerTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('formatMessage', 'write'))
                 ->getMock();
-        
-           
         $loggerMock->expects($this->once())
                 ->method('write');
         $loggerMock->setLogLevel(LogLevel::ALERT);
@@ -107,10 +79,4 @@ class PMSELoggerTest extends PHPUnit_Framework_TestCase
         
         $loggerMock->write(LogLevel::EMERGENCY, 'Some Message');
     }        
-    
-    public function testActivity()
-    {
-        
-    }
-    //put your tests code here
 }

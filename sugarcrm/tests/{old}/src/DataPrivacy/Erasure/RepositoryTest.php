@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository
  */
-class RepositoryTest extends \PHPUnit_Framework_TestCase
+class RepositoryTest extends \Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var Repository

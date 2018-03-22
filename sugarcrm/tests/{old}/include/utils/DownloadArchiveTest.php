@@ -169,7 +169,7 @@ class DownloadArchiveTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetArchiveEmptyBeanList()
     {
         $downloadMock = $this->createPartialMock('DownloadFile', array('outputFile'));
-        $this->setExpectedException('Exception', 'Files could not be retrieved for this record');
+        $this->expectExceptionMessage('Files could not be retrieved for this record');
         $downloadMock->getArchive(array(), 'filename');
     }
 }

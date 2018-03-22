@@ -10,7 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSETerminateEventTest extends PHPUnit_Framework_TestCase {
+
+class PMSETerminateEventTest extends PHPUnit_Framework_TestCase
+{
     /**
      * @var PMSEElement
      */
@@ -75,4 +77,3 @@ class PMSETerminateEventTest extends PHPUnit_Framework_TestCase {
         $this->endEvent->run($flowData, $bean, '');
     }
 }
- 

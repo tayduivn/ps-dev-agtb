@@ -39,7 +39,7 @@ class SugarUpgradeUpdateTBAConfigTest extends UpgradeTestCase
     {
         parent::setUp();
         SugarTestHelper::setUp('current_user', [true, true]);
-        $this->tbaConfig = $this->getMock(
+        $this->tbaConfig = $this->createPartialMock(
             'TeamBasedACLConfigurator',
             ['applyTBA', 'restoreTBA', 'fallbackTBA', 'applyFallback', 'getListOfPublicTBAModules']
         );
@@ -98,7 +98,7 @@ class SugarUpgradeUpdateTBAConfigTest extends UpgradeTestCase
             ->method('getListOfPublicTBAModules')
             ->will($this->returnValue($availableModules));
 
-        $scriptMock = $this->getMock(
+        $scriptMock = $this->createPartialMock(
             'SugarUpgradeUpdateTBAConfig',
             ['getTBAConfigurator'],
             [$this->getMockForAbstractClass('UpgradeDriver')]

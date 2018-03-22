@@ -176,7 +176,7 @@ class DownloadArchiveApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetArchiveFieldNotSpecified()
     {
         $api = new FileApi();
-        $this->setExpectedException('SugarApiExceptionMissingParameter');
+        $this->expectException(SugarApiExceptionMissingParameter::class);
 
         $api->getArchive($this->service, array(
             'module' => 'Accounts',
@@ -191,7 +191,7 @@ class DownloadArchiveApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetArchiveInvalidLinkName()
     {
         $api = new FileApi();
-        $this->setExpectedException('SugarApiExceptionNotFound');
+        $this->expectException(SugarApiExceptionNotFound::class);
 
         $api->getArchive($this->service, array(
             'module' => 'Accounts',

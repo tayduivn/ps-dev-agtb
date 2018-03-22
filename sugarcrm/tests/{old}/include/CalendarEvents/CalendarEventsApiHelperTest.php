@@ -239,7 +239,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains($leadsId1, $invitees);
 
         $invitees = $helper->getInvitees($meeting, 'users', $submittedData);
-        $this->assertEmpty(0, $invitees, 'Should include both the assigned user and current user');
+        $this->assertCount(0, $invitees, 'Should include both the assigned user and current user');
 
         BeanFactory::unregisterBean($meeting);
         BeanFactory::setBeanClass('Meetings');

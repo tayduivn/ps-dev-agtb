@@ -50,5 +50,3 @@ class SugarWidgetFieldDateTime49008Mock extends SugarWidgetFieldDateTime
          return parent::expandDate($date, $end);
      }
 }
-
-?>

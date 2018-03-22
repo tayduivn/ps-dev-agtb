@@ -30,14 +30,12 @@ class EqualExpressionTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProviderTestEqual
      *
-     * @param $status
+     * @param $expr
      * @param $expected
-     * @throws PHPUnit_Framework_Exception
      * @throws Exception
      */
     public function testIsForecastClosedEvaluate($expr, $expected)
     {
-
         $context = $this->getMockBuilder('SugarBean')->getMock();
 
         $result = Parser::evaluate($expr, $context)->evaluate();

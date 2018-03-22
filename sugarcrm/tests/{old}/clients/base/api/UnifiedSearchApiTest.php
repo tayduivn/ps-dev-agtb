@@ -94,9 +94,11 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase
         $list = $this->unifiedSearchApi->globalSearch($this->serviceMock, $args);
         $this->assertNotEmpty($list['records'], "Should have some accounts: " . print_r($list, true));
         // test I can't create
-        $this->setExpectedException(
-          'SugarApiExceptionNotAuthorized', 'You are not authorized to create Accounts. Contact your administrator if you need access.'
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
+        $this->expectExceptionMessage(
+            'You are not authorized to create Accounts. Contact your administrator if you need access.'
         );
-        $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'UnifiedSearchApi Create Denied - ' . create_guid()));
+
+        $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'UnifiedSearchApi Create Denied - ' . create_guid()));
     }
 }

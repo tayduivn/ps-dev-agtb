@@ -225,7 +225,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRequiredArgsPresent_MissingArgument_ExceptionThrown($apiMethod, $args)
     {
-        $this->setExpectedException('SugarApiExceptionMissingParameter');
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->calendarEventsApi->$apiMethod($this->api, $args);
     }
 

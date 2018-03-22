@@ -267,7 +267,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
         list($lead) = $this->setUpArchivedEmails($owner);
 
-        $this->setExpectedException($exception);
+        $this->expectException($exception);
         $this->getRelatedEmails($lead, $acl);
     }
 
@@ -319,7 +319,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
                 array(
                     'view' => array('aclaccess' => ACL_ALLOW_OWNER),
                 ),
-                'SugarApiExceptionNotFound',
+                SugarApiExceptionNotFound::class,
             ),
         );
     }

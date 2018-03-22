@@ -79,11 +79,11 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testSetSubject_ThroughSetHeader_PassInInteger_MailerExceptionIsThrown() {
-        self::setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
         $invalidSubject = 1;
         $headers        = new EmailHeaders();
         $headers->setHeader(EmailHeaders::Subject, $invalidSubject);
-        $actual = $headers->getSubject(); // hopefully nothing is actually returned
+        $headers->getSubject(); // hopefully nothing is actually returned
     }
 
     /**
@@ -124,7 +124,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testAddCustomHeader_ThroughSetHeader_PassInValidKeyAndInvalidValue_MailerExceptionIsThrown() {
-        self::setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
         $headers      = new EmailHeaders();
         $key          = "X-CUSTOM-HEADER";
         $invalidValue = 1;
@@ -195,7 +195,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     public function testPackageHeaders_NoFromHeaderCausesAMailerExceptionToBeThrown() {
         $headers = new EmailHeaders();
 
-        self::setExpectedException("MailerException");
-        $actual = $headers->packageHeaders(); // hopefully nothing is actually returned
+        $this->expectException(MailerException::class);
+        $headers->packageHeaders(); // hopefully nothing is actually returned
     }
 }

@@ -53,7 +53,7 @@ class UpdateFullNameOnListViewForPersonClassesTest extends UpgradeTestCase
     {
         $mock = $this->getMockBuilder($this->testClassName)
             ->setConstructorArgs(array($this->upgrader))
-            ->setMethods(array('getCustomViewDefs', 'fixNameField'))
+            ->setMethods(array('getCustomViewDefs', 'fixNameField', 'fixFullNameField'))
             ->getMock();
 
         $mock->from_version = '7.7';

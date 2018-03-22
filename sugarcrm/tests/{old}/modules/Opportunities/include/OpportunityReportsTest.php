@@ -139,7 +139,7 @@ class OpportunityReportsTest extends Sugar_PHPUnit_Framework_TestCase
         $id = create_guid();
 
         /** @var OpportunityReports|PHPUnit_Framework_MockObject_MockObject $converter */
-        $converter = $this->getMock('OpportunityReports', array('getReports', 'saveReport'));
+        $converter = $this->createPartialMock(OpportunityReports::class, array('getReports', 'saveReport'));
         $converter->expects($this->once())
             ->method('getReports')
             ->willReturn(array(

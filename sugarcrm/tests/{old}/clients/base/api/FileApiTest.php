@@ -59,9 +59,7 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveFilePost()
     {
         $this->denyDocumentView();
-        $this->setExpectedException(
-          'SugarApiExceptionNotAuthorized'
-        );
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->fileApi->saveFilePost(SugarTestRestUtilities::getRestServiceMock(), array(
             'module' => 'Documents',
             'record' => $this->documents[0]->id,
@@ -72,9 +70,7 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetFileList()
     {
         $this->denyDocumentView();
-        $this->setExpectedException(
-          'SugarApiExceptionNotAuthorized'
-        );
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->fileApi->getFileList(SugarTestRestUtilities::getRestServiceMock(), array(
             'module' => 'Documents',
             'record' => $this->documents[0]->id,

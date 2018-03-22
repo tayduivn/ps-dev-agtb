@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\Error\Warning;
 
 abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -316,7 +317,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
     {
         // Set this to capture our own errors, which is needed in case of non-200
         // response codes from the file_get_contents call
-        PHPUnit_Framework_Error_Warning::$enabled = FALSE;
+        Warning::$enabled = false;
 
         // Auth check early to prevent work when not needed
         if ( empty($this->authToken) ) {
@@ -388,7 +389,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         }
 
         // Set back the error handler setting
-        PHPUnit_Framework_Error_Warning::$enabled = TRUE;
+        Warning::$enabled = true;
 
         return array('info' => array(), 'reply' => $reply, 'replyRaw' => $response, 'error' => null);
     }

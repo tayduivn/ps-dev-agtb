@@ -121,10 +121,6 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $ret, $message);
     }
 
-    /**
-     * @expectedException PHPUnit_Framework_Error
-     * (Shut up about headers)
-     */
     public function testLogoutApi()
     {
         $serviceBase = SugarTestRestUtilities::getRestServiceMock();
@@ -139,6 +135,9 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api->expects($this->once())
             ->method('getOAuth2Server')
             ->will($this->returnValue($oauth2));
+
+        // ignore the warning triggered by setcookie()
+        $this->iniSet('error_reporting', error_reporting() & ~E_WARNING);
 
         $api->logout($serviceBase, array("token" => "test_token", "refresh_token" => "test_refresh"));
     }

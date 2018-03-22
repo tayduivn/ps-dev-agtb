@@ -13,7 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\ProcessManager;
 
 use Sugarcrm\Sugarcrm\ProcessManager;
-use Sugarcrm\Sugarcrm\ProcessManager\Exception as PME;
+use Sugarcrm\Sugarcrm\ProcessManager\Exception\RuntimeException;
 
 class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,6 @@ class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetFieldEvaluator($def, $instances)
     {
-        // ProcessManager\Field\Evaluator\EvaluatorInterface
         $obj = ProcessManager\Factory::getFieldEvaluator($def);
         foreach ($instances as $instance) {
             $this->assertInstanceOf($instance, $obj);
@@ -77,11 +76,8 @@ class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetPMSEObjectThrowsException($name)
     {
-        // the ::class syntax below is new in php 5.5 and will fail 5.4 lint check
-        // for now we have to hard code the class name until we drop 5.4 support
-        // $this->setExpectedException(PME\RuntimeException::class);
-        $this->setExpectedException('Sugarcrm\Sugarcrm\ProcessManager\Exception\RuntimeException');
-        $obj = ProcessManager\Factory::getPMSEObject($name);
+        $this->expectException(RuntimeException::class);
+        ProcessManager\Factory::getPMSEObject($name);
     }
 
     public function getFieldEvaluatorProvider()

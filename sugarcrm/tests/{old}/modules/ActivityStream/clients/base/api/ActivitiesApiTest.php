@@ -44,7 +44,7 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
             'ActivitiesApi',
             'getQueryObject',
             array(
-                $this->getMock('SugarBean'),
+                $this->createMock(SugarBean::class),
                 array('offset' => 0, 'limit' => 5),
                 $this->api,
                 true,

@@ -10,9 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 class PMSEReceiveMessageEventTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * @var PMSEElement
      */

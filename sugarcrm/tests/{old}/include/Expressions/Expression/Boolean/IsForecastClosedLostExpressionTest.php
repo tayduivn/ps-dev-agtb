@@ -40,7 +40,6 @@ class IsForecastClosedLostExpressionTest extends Sugar_PHPUnit_Framework_TestCas
      *
      * @param $status
      * @param $expected
-     * @throws PHPUnit_Framework_Exception
      * @throws Exception
      */
     public function testIsForecastClosedLostEvaluate($status, $expected)

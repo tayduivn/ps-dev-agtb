@@ -53,10 +53,15 @@ class Bug63015Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCreateWithExistingId()
     {
-        $id = $this->accountIds[0];
-        // try to create a record with an existing id. this should throw an exception
-        $this->setExpectedException('SugarApiExceptionInvalidParameter');
-        $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts','name' => 'Test Account1', 'assigned_user_id' => $GLOBALS['current_user']->id, 'id' => $id));
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
+
+        // try to create a record with an existing id
+        $this->moduleApi->createRecord($this->serviceMock, [
+            'module' => 'Accounts',
+            'name' => 'Test Account1',
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+            'id' => $this->accountIds[0],
+        ]);
     }
 
     public function testCreateWithNewId() 

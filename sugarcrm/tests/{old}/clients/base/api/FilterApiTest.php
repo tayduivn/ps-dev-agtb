@@ -199,7 +199,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testBadLinkName()
     {
-        $this->setExpectedException('SugarApiExceptionInvalidParameter');
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->filterApi->filterList(
             $this->serviceMock,
             array(
@@ -226,7 +226,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFilterNotFound()
     {
         $filterId = 'iDefinitelyDoNotExist';
-        $this->setExpectedException('SugarApiExceptionNotFound');
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->filterApi->filterList(
             $this->serviceMock,
             array(
@@ -238,7 +238,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testFilterIdQMutuallyExclusive()
     {
-        $this->setExpectedException('SugarApiExceptionInvalidParameter');
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->filterApi->filterList(
             $this->serviceMock,
             array(

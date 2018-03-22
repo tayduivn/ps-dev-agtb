@@ -330,22 +330,6 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('handleException');
         $controller->execute();
     }
-
-    public function testExecuteNoException()
-    {
-        $controller = $this->getMockBuilder('SugarController')
-            ->setMethods(array('execute'))
-            ->getMock();
-        $controller->expects($this->never())
-            ->method('handleException');
-        $controller->execute();
-        // this is just to suppress output... remove when this is a proper test
-        $this->expectOutputRegex('/.*/');
-        while(ob_get_level() > 1) {
-            ob_end_flush();
-        }
-    }
-
 }
 
 class SugarControllerMock extends SugarController

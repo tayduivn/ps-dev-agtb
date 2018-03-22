@@ -81,4 +81,3 @@ class PMSEEndSendMessageEventTest extends PHPUnit_Framework_TestCase
         $this->endSendMessageEvent->run($flowData, $bean, '');
     }
 }
- 

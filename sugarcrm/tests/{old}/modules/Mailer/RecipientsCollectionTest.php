@@ -57,7 +57,7 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
         $recipients          = array(); // the recipients don't matter for this test case
         $function            = "asdf";  // some asinine value that wouldn't actually be used
 
-        self::setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
         $recipientCollection->addRecipients($recipients, $function);
     }
 

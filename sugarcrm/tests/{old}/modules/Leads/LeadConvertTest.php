@@ -124,7 +124,7 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('getVarDefs')
             ->will($this->returnValue($this->modulesDef));
 
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
 
         $leadConvert->initialize('abcd');
     }

@@ -10,6 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 class PMSEProcessObserverTest extends PHPUnit_Framework_TestCase
 {
     /**

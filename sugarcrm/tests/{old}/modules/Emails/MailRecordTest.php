@@ -390,7 +390,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_Email2SendThrowsAnException_ReturnsArrayWithErrorData()
     {
-        self::setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
 
         $this->mockEmail->expects($this->once())
             ->method("email2Send")
@@ -414,7 +414,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_Email2SendReturnsTrueAndOutputWasCaptured_ExceptionIsThrown_ReturnsArrayWithErrorData()
     {
-        self::setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
 
         $this->mockEmail->expects($this->once())
             ->method("email2Send")

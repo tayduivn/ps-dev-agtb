@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 /**
  * @covers RelateCollectionDefinition
  */
@@ -45,7 +44,7 @@ class RelateCollectionDefinitionTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadDefinitionFailure($fieldDef)
     {
-        $this->setExpectedException('SugarApiExceptionNotFound');
+        $this->expectException(SugarApiExceptionNotFound::class);
         $this->loadDefinition('test', $fieldDef);
     }
 

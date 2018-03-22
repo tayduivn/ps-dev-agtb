@@ -69,17 +69,17 @@ class SugarBeanApiHelperNoAccessTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testNoEmail1FieldAccessSave()
     {
-        $this->setExpectedException(
-          'SugarApiExceptionNotAuthorized', 'Not allowed to edit field email in module: Test'
-        );
         $this->bean->field_defs['email'] = array('type' => 'email');
         $this->bean->field_defs['email1'] = array('type' => 'varchar');
         $this->bean->emailAddress = array();
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Test']['fields']['email1'] = SugarACL::ACL_NO_ACCESS;
         $data['email'] = 'test@test.com';
         $data['module'] = 'Test';
-        $this->beanApiHelper->populateFromApi($this->bean, $data);
 
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
+        $this->expectExceptionMessage('Not allowed to edit field email in module: Test');
+
+        $this->beanApiHelper->populateFromApi($this->bean, $data);
     }
 
 }

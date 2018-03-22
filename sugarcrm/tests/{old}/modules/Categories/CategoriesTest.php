@@ -170,7 +170,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $subnode = new CategoryMock();
         $subnode->id = create_guid();
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         self::$root->addNodeMock($subnode, 2, 1);
     }
 
@@ -181,7 +181,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $subnode = new CategoryMock();
         $subnode->deleted = 1;
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         self::$root->addNodeMock($subnode, 2, 1);
     }
 
@@ -194,7 +194,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
         $subnode = new CategoryMock();
         $subnode->name = 'SugarCategory' . mt_rand();
 
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
         self::$root->addNodeMock($subnode, 2, 1);
     }
 

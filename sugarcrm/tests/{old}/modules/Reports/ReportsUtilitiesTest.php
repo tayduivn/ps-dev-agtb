@@ -32,7 +32,7 @@ class ReportsUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $recipient->email1 = null;
         $recipient->email2 = null;
 
-        self::setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
         $reportsUtilities = new ReportsUtilities();
         $reportsUtilities->sendNotificationOfInvalidReport($recipient, "asdf");
     }

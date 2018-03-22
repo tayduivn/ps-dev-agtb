@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 /**
  * @coversDefaultClass OutboundSmtpEmailConfiguration
  * @group email
@@ -45,7 +44,7 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
         $configuration    = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $securityProtocol = "asdf"; // some asinine value that wouldn't actually be used
 
-        self::setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
         $configuration->setSecurityProtocol($securityProtocol);
     }
 

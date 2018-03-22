@@ -207,9 +207,9 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testInsertBeforeRoot()
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
 
-        $result = $this->treeApi->insertBefore($this->serviceMock, array(
+        $this->treeApi->insertBefore($this->serviceMock, array(
             'module' => self::$root->module_dir,
             'target' => self::$root->id,
             'name' => 'SugarCategory' . mt_rand(),
@@ -250,9 +250,9 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testInsertAfterRoot()
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(Exception::class);
 
-        $result = $this->treeApi->insertAfter($this->serviceMock, array(
+        $this->treeApi->insertAfter($this->serviceMock, array(
             'module' => self::$root->module_dir,
             'target' => self::$root->id,
             'name' => 'SugarCategory' . mt_rand(),

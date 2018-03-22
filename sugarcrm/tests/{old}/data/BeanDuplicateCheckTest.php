@@ -16,7 +16,7 @@ class BeanDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testConstructor_MetadataCountIsZero_TheStrategyRemainsFalse() {
-        $bean               = self::getMock("Lead");
+        $bean               = $this->createMock(Lead::class);
         $metadata           = array();
         $beanDuplicateCheck = new BeanDuplicateCheck($bean, $metadata);
 
@@ -28,7 +28,7 @@ class BeanDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testConstructor_MetadataCountIsTwo_TheStrategyRemainsFalse() {
-        $bean               = self::getMock("Lead");
+        $bean               = $this->createMock(Lead::class);
         $metadata           = array(
             'FilterDuplicateCheck' => array(
                 'filter_template' => array(
@@ -71,7 +71,7 @@ class BeanDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testConstructor_TheStrategyDefinedInTheMetadataIsInvalid_TheStrategyRemainsFalse() {
-        $bean               = self::getMock("Lead");
+        $bean               = $this->createMock(Lead::class);
         $metadata           = array(
             'Foobar' => array(
                 'filter_template' => array(
@@ -99,7 +99,7 @@ class BeanDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testConstructor_MetadataCountIsOne_TheStrategyIsInitializedToTheStrategyDefinedInTheMetadata() {
-        $bean               = self::getMock("Lead");
+        $bean               = $this->createMock(Lead::class);
         $metadata           = array(
             'FilterDuplicateCheck' => array(
                 'filter_template' => array(
@@ -130,7 +130,7 @@ class BeanDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testFindDuplicates_TheStrategyIsFalse_ReturnsNull() {
-        $bean               = self::getMock("Lead");
+        $bean               = $this->createMock(Lead::class);
         $metadata           = array(); // invalid metadata forces the strategy to remain false
         $beanDuplicateCheck = new BeanDuplicateCheck($bean, $metadata);
 
@@ -142,7 +142,7 @@ class BeanDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testFindDuplicates_TheStrategyIsValid_TheFindDuplicatesMethodOnTheStrategyIsCalled() {
-        $bean               = self::getMock("Lead");
+        $bean               = $this->createMock(Lead::class);
         $metadata           = array(
             'DuplicateCheckMock' => array(
                 'filter_template' => array(

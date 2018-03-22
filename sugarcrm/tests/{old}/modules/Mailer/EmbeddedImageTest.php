@@ -24,8 +24,8 @@ class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("Note")
             ->will(self::returnValue(true));
 
-        self::setExpectedException("MailerException");
-        $actual = AttachmentPeer::embeddedImageFromSugarBean($mockNote, '1234567890');
+        $this->expectException(MailerException::class);
+        AttachmentPeer::embeddedImageFromSugarBean($mockNote, '1234567890');
     }
 
     /**

@@ -257,6 +257,4 @@ class PMSEEventDefinitionWrapperTest extends PHPUnit_Framework_TestCase
         $mockEventDefinitionWrapper->detach($observerMock);
         $mockEventDefinitionWrapper->notify();
     }
-    
-    
-} 
+}

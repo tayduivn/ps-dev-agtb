@@ -15,7 +15,6 @@ use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
 {
-
     protected $loggerMock;
 
     /**

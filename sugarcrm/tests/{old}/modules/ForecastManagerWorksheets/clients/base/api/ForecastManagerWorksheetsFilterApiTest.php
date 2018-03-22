@@ -120,7 +120,6 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
             ));
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('data', $actual);
-        $this->assertNotEmpty('data', $actual);
         $this->assertArrayHasKey('quota', $actual);
     }
 

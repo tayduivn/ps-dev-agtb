@@ -53,7 +53,7 @@ EOQ;
      */
     public function testCustomSugarWidgetFilesLoaded()
     {
-        $layoutManager = $this->getMock('LayoutManager');
+        $layoutManager = $this->createMock(LayoutManager::class);
         $customWidget = new SugarWidgetFieldCustomName($layoutManager);
         $this->assertEquals('Bug48369Test', $customWidget->queryFilterIs(array()));
     }

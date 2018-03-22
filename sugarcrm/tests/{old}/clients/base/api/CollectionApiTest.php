@@ -309,7 +309,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
+        /** @var CollectionApi|MockObject $api */
         $api = $this->getMockBuilder('CollectionApi')
             ->disableOriginalConstructor()
             ->setMethods(array('getSourceArguments', 'getSourceData'))

@@ -76,7 +76,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $api = new SugarApiTestServiceMock();
-        $this->setExpectedException('SugarApiExceptionNotFound');
+        $this->expectException(SugarApiExceptionNotFound::class);
         $bean=$this->mock->callLoadBean($api, $args);
     }
 
@@ -88,7 +88,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $api = new SugarApiTestServiceMock();
-        $this->setExpectedException('SugarApiExceptionMissingParameter');
+        $this->expectException(SugarApiExceptionMissingParameter::class);
         $bean=$this->mock->callLoadBean($api, $args);
     }
 
@@ -238,15 +238,15 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $_FILES = array();
         $_SERVER['CONTENT_LENGTH'] = $contentLength;
-        $this->setExpectedException($expectedException);
+        $this->expectException($expectedException);
         SugarTestReflection::callProtectedMethod($api, 'checkPostRequestBody');
     }
 
     public static function checkPostRequestBodyProvider()
     {
         return array(
-            array(null, null, 'SugarApiExceptionMissingParameter'),
-            array(1024, 1023, 'SugarApiExceptionRequestTooLarge'),
+            array(null, null, SugarApiExceptionMissingParameter::class),
+            array(1024, 1023, SugarApiExceptionRequestTooLarge::class),
         );
     }
 
@@ -258,15 +258,15 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api = $this->getMockForAbstractClass('SugarApi');
 
         $_SERVER['CONTENT_LENGTH'] = $contentLength;
-        $this->setExpectedException($expectedException);
+        $this->expectException($expectedException);
         SugarTestReflection::callProtectedMethod($api, 'checkPutRequestBody', array($length));
     }
 
     public static function checkPutRequestBodyProvider()
     {
         return array(
-            array(0, null, 'SugarApiExceptionMissingParameter'),
-            array(1023, 1024, 'SugarApiExceptionRequestTooLarge'),
+            array(0, null, SugarApiExceptionMissingParameter::class),
+            array(1023, 1024, SugarApiExceptionRequestTooLarge::class),
         );
     }
 
@@ -517,7 +517,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue(false));
         $bean->field_defs = array('name' => array());
 
-        $this->setExpectedException($expectedException);
+        $this->expectException($expectedException);
         $this->getOrderByFromArgs($args, $bean);
     }
 
@@ -528,13 +528,13 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'order_by' => 'not-existing-field',
                 ),
-                'SugarApiExceptionInvalidParameter',
+                SugarApiExceptionInvalidParameter::class,
             ),
             'field-no-access' => array(
                 array(
                     'order_by' => 'name',
                 ),
-                'SugarApiExceptionNotAuthorized',
+                SugarApiExceptionNotAuthorized::class,
             ),
         );
     }

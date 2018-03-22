@@ -509,7 +509,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ->method("invalidParameter")
                 ->with($exceptionExpected, $exceptionArgs)
                 ->will($this->throwException(new SugarApiExceptionInvalidParameter($exceptionExpected)));
-            $this->setExpectedException("SugarApiExceptionInvalidParameter");
+            $this->expectException(SugarApiExceptionInvalidParameter::class);
         } else {
             $mailApiMock->expects($this->never())
                 ->method("invalidParameter");

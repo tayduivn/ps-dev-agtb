@@ -40,7 +40,6 @@ class IsForecastClosedWonExpressionTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @param $status
      * @param $expected
-     * @throws PHPUnit_Framework_Exception
      * @throws Exception
      */
     public function testIsForecastClosedWonEvaluate($status, $expected)

@@ -103,7 +103,7 @@ class ReportsDashletsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $mockApiClass =  $this->createPartialMock('ReportsDashletsApi', array("getSavedReportById"));
         $mockApiClass->method("getSavedReportById")->will($this->returnValue($mockSavedReport));
 
-        $this->setExpectedException("SugarApiExceptionNotAuthorized");
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $mockApiClass->getSavedReportChartById($this->service, array('reportId'=>'1234-4567-8888-9999'));
     }
 }

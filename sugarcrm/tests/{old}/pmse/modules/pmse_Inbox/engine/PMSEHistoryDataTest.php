@@ -15,7 +15,6 @@ use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEHistoryDataTest extends PHPUnit_Framework_TestCase
 {
-
     private $module= 'Leads';
 
     protected function setUp() {
@@ -51,4 +50,3 @@ class PMSEHistoryDataTest extends PHPUnit_Framework_TestCase
         $this->object->lock($value);
     }
 }
- 

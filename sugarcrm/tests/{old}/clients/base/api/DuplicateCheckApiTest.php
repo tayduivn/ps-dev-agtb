@@ -222,7 +222,7 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
             "module" => "FooModule"
         );
 
-        $this->setExpectedException('SugarApiExceptionInvalidParameter');
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
     }
 
@@ -237,7 +237,7 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
         // reset cached ACLs
         SugarACL::$acls = array();
 
-        $this->setExpectedException('SugarApiExceptionNotAuthorized');
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
     }
 
@@ -247,7 +247,7 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
             "module" => "Leads"
         );
 
-        $this->setExpectedException('SugarApiExceptionInvalidParameter');
+        $this->expectException(SugarApiExceptionInvalidParameter::class);
         $duplicateCheckApi = $this->createPartialMock('DuplicateCheckApi', array('populateFromApi'));
         $duplicateCheckApi->expects($this->any())
                           ->method('populateFromApi')

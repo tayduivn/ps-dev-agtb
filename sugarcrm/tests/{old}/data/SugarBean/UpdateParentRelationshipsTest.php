@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 class UpdateParentRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**#@+

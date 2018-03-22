@@ -10,9 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
 {
-
     protected $projectWrapper;
     protected $mockProject;
     protected $mockProcess;

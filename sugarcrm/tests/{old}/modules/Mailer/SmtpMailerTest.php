@@ -147,7 +147,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->expects($this->never())
             ->method('transferAttachments');
 
-        $this->setExpectedException('MailerException');
+        $this->expectException(MailerException::class);
         $mockMailer->send();
     }
 
@@ -283,7 +283,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->expects($this->never())
             ->method('transferAttachments');
 
-        $this->setExpectedException('MailerException');
+        $this->expectException(MailerException::class);
         $mockMailer->send();
     }
 
@@ -344,7 +344,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->expects($this->never())
             ->method('transferAttachments');
 
-        $this->setExpectedException('MailerException');
+        $this->expectException(MailerException::class);
         $mockMailer->send();
     }
 
@@ -401,7 +401,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
         // transferAttachments should fail after transferBody and before PHPMailer's Send is called
 
-        $this->setExpectedException('MailerException');
+        $this->expectException(MailerException::class);
         $mockMailer->send();
     }
 
@@ -458,7 +458,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
         // transferAttachments should fail after transferBody and before PHPMailer's Send is called
 
-        $this->setExpectedException('MailerException');
+        $this->expectException(MailerException::class);
         $mockMailer->send();
     }
 
@@ -511,7 +511,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('transferAttachments')
             ->will($this->returnValue(true));
 
-        $this->setExpectedException('MailerException');
+        $this->expectException(MailerException::class);
         $mockMailer->send();
     }
 

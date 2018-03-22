@@ -73,7 +73,7 @@ class UsersApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $user->new_with_id = true;
         $user->id = '';
 
-        $this->setExpectedException('SugarApiExceptionMissingParameter');
+        $this->expectException(SugarApiExceptionMissingParameter::class);
 
         $this->helper->populateFromApi($user, array(), array());
     }

@@ -10,12 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/tests/PHPUnit_Framework_SugarBeanRelated_TestCase.php';
-
 /**
  * Test class for SugarACL.
  */
-class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
+class SugarACLTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $bean;
 
@@ -25,11 +23,9 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
     public function aclProvider()
     {
-        $this->createMock('SugarACLDCE');
         return array(
             array(1, array('SugarACLStatic'), array('SugarACLStatic' => true)), //ACL
             array(0, array(), array('SugarACLStatic' => false)),
-            array(1, array('SugarACLDCE'), array('SugarACLDCE' => true)),
             array(0, array(), array()), //nothing
         );
     }

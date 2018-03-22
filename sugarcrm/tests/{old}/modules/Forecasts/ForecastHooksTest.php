@@ -24,7 +24,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
         /* @var $hook ForecastHooks */
         $hook->setCommitStageIfEmpty($bean, 'before_save');
 
-        $this->assertEmpty($bean->commit_stage, $bean->commit_stage);
+        $this->assertEmpty($bean->commit_stage);
     }
 
     public function testSetCommitStageToInclude()

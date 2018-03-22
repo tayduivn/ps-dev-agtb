@@ -198,8 +198,8 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSetFavoriteDeleted()
     {
         $this->accounts[0]->mark_deleted($this->accounts[0]->id);
-        $this->setExpectedException('SugarApiExceptionNotFound',
-            "Could not find record: {$this->accounts[0]->id} in module: Accounts");
+        $this->expectException(SugarApiExceptionNotFound::class);
+        $this->expectExceptionMessage("Could not find record: {$this->accounts[0]->id} in module: Accounts");
         $result = $this->moduleApi->setFavorite($this->serviceMock,
             array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
     }
@@ -212,8 +212,8 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->accounts[0]->deleted = 1;
         $this->accounts[0]->save();
-        $this->setExpectedException('SugarApiExceptionNotFound',
-            "Could not find record: {$this->accounts[0]->id} in module: Accounts");
+        $this->expectException(SugarApiExceptionNotFound::class);
+        $this->expectExceptionMessage("Could not find record: {$this->accounts[0]->id} in module: Accounts");
 
         $result = $this->moduleApi->setFavorite($this->serviceMock,
             array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
@@ -790,7 +790,7 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCreateRelatedRecords()
     {
-        /** @var PHPUnit_Framework_MockObject_MockObject $relateRecordApi */
+        /** @var MockObject $relateRecordApi */
         $api = $this->getApiWithMockedRelateRecordApi('createRelatedRecord', $relateRecordApi);
         $bean = $this->getPrimaryBean('primary-module', 'primary-id');
 

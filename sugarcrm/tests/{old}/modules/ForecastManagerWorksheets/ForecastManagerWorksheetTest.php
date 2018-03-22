@@ -307,10 +307,8 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertNotEmpty($quota->amount);
-        $this->assertEquals('1400.00', $quota->amount, null, 2);
+        $this->assertEquals('1400.00', $quota->amount);
     }
-
 
     /**
      * @depends testCommitManagerHasCommittedUserRow

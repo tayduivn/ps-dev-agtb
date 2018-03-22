@@ -76,24 +76,21 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testFindDuplicates_NoBeanId_AddFilterForEditsIsNotCalled() {
-        $bean = self::getMock("Lead");
+        $bean = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
             ->will(self::returnValue(true));
 
-        $filterDuplicateCheckMock = self::getMock(
-            "FilterDuplicateCheck",
-            array(
-                 "buildDupeCheckFilter",
-                 "addFilterForEdits",
-                 "callFilterApi",
-                 "rankAndSortDuplicates",
-            ),
-            array(
-                 $bean,
-                 $this->metadata,
-            )
-        );
+        $filterDuplicateCheckMock = $this->getMockBuilder(FilterDuplicateCheck::class)
+            ->setMethods([
+                'buildDupeCheckFilter',
+                'addFilterForEdits',
+                'callFilterApi',
+                'rankAndSortDuplicates',
+            ])->setConstructorArgs([
+                $bean,
+                $this->metadata,
+            ])->getMock();
 
         $filterDuplicateCheckMock->expects(self::once())
             ->method("buildDupeCheckFilter")
@@ -111,32 +108,29 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("rankAndSortDuplicates")
             ->will(self::returnValue(true));
 
-        $duplicates = $filterDuplicateCheckMock->findDuplicates();
+        $filterDuplicateCheckMock->findDuplicates();
     }
 
     /**
      * @group duplicatecheck
      */
     public function testFindDuplicates_HasBeanId_AddFilterForEditsIsCalled() {
-        $bean     = self::getMock("Lead");
+        $bean = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
             ->will(self::returnValue(true));
         $bean->id = 1;
 
-        $filterDuplicateCheckMock = self::getMock(
-            "FilterDuplicateCheck",
-            array(
-                 "buildDupeCheckFilter",
-                 "addFilterForEdits",
-                 "callFilterApi",
-                 "rankAndSortDuplicates",
-            ),
-            array(
-                 $bean,
-                 $this->metadata,
-            )
-        );
+        $filterDuplicateCheckMock = $this->getMockBuilder(FilterDuplicateCheck::class)
+            ->setMethods([
+                'buildDupeCheckFilter',
+                'addFilterForEdits',
+                'callFilterApi',
+                'rankAndSortDuplicates',
+            ])->setConstructorArgs([
+                $bean,
+                $this->metadata,
+            ])->getMock();
 
         $filterDuplicateCheckMock->expects(self::once())
             ->method("buildDupeCheckFilter")
@@ -154,14 +148,14 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("rankAndSortDuplicates")
             ->will(self::returnValue(true));
 
-        $duplicates = $filterDuplicateCheckMock->findDuplicates();
+        $filterDuplicateCheckMock->findDuplicates();
     }
 
     /**
      * @group duplicatecheck
      */
     public function testFindDuplicates_RankAndSortDuplicatesReordersTheResults() {
-        $bean               = self::getMock("Lead");
+        $bean = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
             ->will(self::returnValue(true));
@@ -169,16 +163,13 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->first_name   = "Pete";
         $bean->account_name = "Petoria";
 
-        $filterDuplicateCheckMock = self::getMock(
-            "FilterDuplicateCheck",
-            array(
-                 "callFilterApi",
-            ),
-            array(
-                 $bean,
-                 $this->metadata,
-            )
-        );
+        $filterDuplicateCheckMock = $this->getMockBuilder(FilterDuplicateCheck::class)
+            ->setMethods([
+                'callFilterApi',
+            ])->setConstructorArgs([
+                $bean,
+                $this->metadata,
+            ])->getMock();
 
         $duplicate1 = array(
             "id"           => "1",
@@ -223,7 +214,7 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testBuildDupeCheckFilter_ReplacesFirstName_ReplacesLastName_RemovesAccountName() {
-        $bean             = self::getMock("Lead");
+        $bean             = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
             ->will(self::returnValue(true));
@@ -281,7 +272,7 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testBuildDupeCheckFilter_NoDataForAllFieldsInSection_RemovesWholeSection() {
-        $bean             = self::getMock("Lead");
+        $bean             = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
             ->will(self::returnValue(true));
@@ -319,7 +310,7 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      * @group duplicatecheck
      */
     public function testAddFilterForEdits_AddsANotEqualsFilterToTheFilterArrayToPreventMatchesOnTheSpecifiedId() {
-        $bean                       = self::getMock("Lead");
+        $bean                       = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
             ->will(self::returnValue(true));
@@ -354,7 +345,7 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testBuildDupeCheckFilterCallerRemovesFieldsUserDoesntHaveAccessTo()
     {
-        $bean                       = self::getMock("Lead", array('ACLFieldAccess'));
+        $bean = $this->createMock(Lead::class, array('ACLFieldAccess'));
         $bean->expects($this->exactly(2))
             ->method('ACLFieldAccess')
             ->will(

@@ -89,7 +89,7 @@ PHP;
      */
     public function testGetMailerForUser_UserHasNoMailConfigurations_ThrowsMailerException()
     {
-        $this->setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
         MockMailerFactoryThrowsException::getMailerForUser($GLOBALS["current_user"]);
     }
 
@@ -105,7 +105,7 @@ PHP;
 
         $mockOutboundEmailConfiguration->setFrom("foo@bar.com");
 
-        self::setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
         MailerFactory::getMailer($mockOutboundEmailConfiguration); // hopefully nothing is actually returned
     }
 
@@ -128,7 +128,7 @@ PHP;
 
         $mockOutboundEmailConfiguration->setFrom("foo@bar.com");
 
-        self::setExpectedException("MailerException");
+        $this->expectException(MailerException::class);
         MailerFactory::getMailer($mockOutboundEmailConfiguration); // hopefully nothing is actually returned
     }
 }

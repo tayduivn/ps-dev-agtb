@@ -10,8 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSERoundRobinTest extends PHPUnit_Framework_TestCase {
 
+class PMSERoundRobinTest extends PHPUnit_Framework_TestCase
+{
     /**
      * @var PMSEElement
      */

@@ -427,7 +427,6 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
         $bean = $this->getMockBuilder('Note')->setMethods(array('deleteAttachment'))->getMock();
         $bean->id = $this->note->id;
         $bean->filename = '';
-        $bean->expects($this->never())->method('ACLAccess');
 
         $api = $this->createPartialMock('FileApi', array('loadBean', 'getFileList'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));

@@ -67,7 +67,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
             'module' => 'Contacts',
         );
 
-        $this->setExpectedException('SugarApiExceptionMissingParameter');
+        $this->expectException(SugarApiExceptionMissingParameter::class);
 
         $apiClassMock = $this->createPartialMock('vCardApi', array('isUploadedFile'));
 
@@ -149,7 +149,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
             'module' => 'Contacts',
         );
 
-        $this->setExpectedException('SugarApiExceptionNotAuthorized');
+        $this->expectException(SugarApiExceptionNotAuthorized::class);
 
         $apiClassMock = $this->createPartialMock('vCardApi', array('isUploadedFile'));
         $apiClassMock->vCardImport($api, $args);
@@ -166,7 +166,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
             'module' => 'Contacts',
         );
 
-        $this->setExpectedException('SugarApiExceptionMissingParameter');
+        $this->expectException(SugarApiExceptionMissingParameter::class);
 
         $apiClassMock = $this->createPartialMock('vCardApi', array('isUploadedFile'));
         $apiClassMock->vCardImport($api, $args);
