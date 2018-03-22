@@ -45,7 +45,21 @@
         this._super('bindDataChange');
 
         this.context.on('button:discount_select_change:click', this.onDiscountChanged, this);
+        this.context.on('record:cancel:clicked', this.onRecordCancel, this);
+
         this.model.on('change:currency_id', this.updateCurrencyStrings, this);
+    },
+
+    /**
+     * Handles setting the field back to synced values when the record is canceled
+     */
+    onRecordCancel: function() {
+        var changedAttributes = this.model.changedAttributes(this.model.getSynced());
+        this.model.set(changedAttributes, {
+            revert: true
+        });
+
+        this.updateDropdownSymbol();
     },
 
     /**
@@ -76,6 +90,8 @@
                 isPercent = true;
             }
             this.model.set(this.name, isPercent);
+
+            this.view.context.trigger('editable:record:toggleEdit');
 
             this.updateDropdownSymbol();
         }

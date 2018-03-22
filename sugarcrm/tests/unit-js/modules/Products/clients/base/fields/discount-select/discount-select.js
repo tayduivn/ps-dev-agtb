@@ -78,8 +78,36 @@ describe('Products.Base.Field.DiscountSelect', function() {
             expect(field.context.on).toHaveBeenCalledWith('button:discount_select_change:click');
         });
 
+        it('should call field.context on record:cancel:clicked', function() {
+            expect(field.context.on).toHaveBeenCalledWith('record:cancel:clicked');
+        });
+
         it('should call field.model on change:currency_id', function() {
             expect(field.model.on).toHaveBeenCalledWith('change:currency_id');
+        });
+    });
+
+    describe('onRecordCancel()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(field, 'updateDropdownSymbol');
+        });
+
+        it('should revert model to synced state', function() {
+            field.model.setSyncedAttributes({
+                discount_select: false
+            });
+            field.model.set({
+                discount_select: true
+            });
+            field.onRecordCancel();
+
+            expect(field.model.get('discount_select')).toBeFalsy();
+        });
+
+        it('should call updateDropdownSymbol', function() {
+            field.onRecordCancel();
+
+            expect(field.updateDropdownSymbol).toHaveBeenCalled();
         });
     });
 
@@ -130,6 +158,7 @@ describe('Products.Base.Field.DiscountSelect', function() {
             field.name = 'discount_select';
 
             sinon.collection.stub(field, 'updateDropdownSymbol', function() {});
+            sinon.collection.stub(field.view.context, 'trigger', function() {});
         });
 
         afterEach(function() {
@@ -140,6 +169,7 @@ describe('Products.Base.Field.DiscountSelect', function() {
 
         it('should do nothing if the model param is not the field model', function() {
             field.onDiscountChanged(modelParam, fieldParam, evtParam);
+
             expect(field.updateDropdownSymbol).not.toHaveBeenCalled();
         });
 
@@ -147,6 +177,7 @@ describe('Products.Base.Field.DiscountSelect', function() {
             modelParam = field.model;
             fieldParam.name = 'select_discount_percent_button';
             field.onDiscountChanged(modelParam, fieldParam, evtParam);
+
             expect(field.model.get('discount_select')).toBeTruthy();
         });
 
@@ -154,13 +185,23 @@ describe('Products.Base.Field.DiscountSelect', function() {
             modelParam = field.model;
             fieldParam.name = 'select_discount_amount_button';
             field.onDiscountChanged(modelParam, fieldParam, evtParam);
+
             expect(field.model.get('discount_select')).toBeFalsy();
+        });
+
+        it('should call editable:record:toggleEdit on the view context', function() {
+            modelParam = field.model;
+            fieldParam.name = 'select_discount_amount_button';
+            field.onDiscountChanged(modelParam, fieldParam, evtParam);
+
+            expect(field.view.context.trigger).toHaveBeenCalledWith('editable:record:toggleEdit');
         });
 
         it('should call updateDropdownSymbol', function() {
             modelParam = field.model;
             fieldParam.name = 'select_discount_amount_button';
             field.onDiscountChanged(modelParam, fieldParam, evtParam);
+
             expect(field.updateDropdownSymbol).toHaveBeenCalled();
         });
     });
