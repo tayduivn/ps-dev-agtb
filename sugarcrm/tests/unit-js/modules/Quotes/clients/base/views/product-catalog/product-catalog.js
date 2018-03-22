@@ -497,7 +497,8 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
                 id: 'prodTemplateId',
                 name: 'prodTemplateName',
                 date_entered: 'yesterday',
-                date_modified: 'today'
+                date_modified: 'today',
+                pricing_formula: 'ProfitMargin'
             };
             sinon.collection.stub(app.controller.context, 'trigger', function() {});
 
@@ -534,6 +535,10 @@ describe('Quotes.Base.Views.ProductCatalog', function() {
 
         it('should remove date_modified', function() {
             expect(productTemplateData.date_modified).toBeUndefined();
+        });
+
+        it('should remove pricing_formula', function() {
+            expect(productTemplateData.pricing_formula).toBeUndefined();
         });
 
         it('should trigger context event', function() {

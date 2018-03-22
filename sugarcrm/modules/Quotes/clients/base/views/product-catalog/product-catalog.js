@@ -1305,6 +1305,7 @@
         delete data.id;
         delete data.date_entered;
         delete data.date_modified;
+        delete data.pricing_formula;
 
         // need to trigger on app.controller.context because of contexts changing between
         // the PCDashlet, and Opps create being in a Drawer, or as its own standalone page
