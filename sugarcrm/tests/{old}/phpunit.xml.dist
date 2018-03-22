@@ -11,23 +11,16 @@
  */
 -->
 
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="../../vendor/phpunit/phpunit/phpunit.xsd"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
          beStrictAboutOutputDuringTests="true"
-         beStrictAboutTestsThatDoNotTestAnything="true"
-         beStrictAboutTestSize="true"
+         enforceTimeLimit="true"
          timeoutForSmallTests="100"
          timeoutForMediumTests="145"
          timeoutForLargeTests="165"
-         syntaxCheck="false"
          bootstrap="SugarTestHelper.php"
-        >
+>
     <php>
         <ini name="intl.default_locale" value="en"/>
         <ini name="intl.error_level" value="0"/>
@@ -230,26 +223,6 @@
         </testsuite>
     </testsuites>
     <filter>
-        <blacklist>
-            <file>./../../config.php</file>
-            <file>./../../modules/*/vardefs.php</file>
-            <directory>./cache</directory>
-            <directory>../../cache</directory>
-            <directory>../../clients/*/</directory>
-            <directory>../../custom/</directory>
-            <directory>../../include/language/</directory>
-            <directory>../../metadata/</directory>
-            <directory>../../modules/*/clients/*/</directory>
-            <directory>../../modules/*/language/</directory>
-            <directory>../../modules/*/metadata/</directory>
-            <directory>../../soap</directory>
-            <directory>../../tests</directory>
-            <directory>../../vendor</directory>
-            <exclude>
-                <directory>./../../clients/*/api/</directory>
-                <directory>./../../modules/*/clients/*/api/</directory>
-            </exclude>
-        </blacklist>
         <whitelist>
             <exclude>
                 <directory>./soap/</directory>
