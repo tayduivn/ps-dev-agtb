@@ -32,7 +32,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        SugarTestHelper::setUp("current_user");
+        SugarTestHelper::setUp("current_user", [true, 1]);
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('dictionary');
         $this->api     = SugarTestRestUtilities::getRestServiceMock();
