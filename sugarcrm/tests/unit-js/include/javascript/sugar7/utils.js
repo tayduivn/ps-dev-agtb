@@ -15,6 +15,9 @@ describe("Sugar7 utils", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.seedMetadata(true);
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
         SugarTest.loadFile("../include/javascript/sugar7", "utils", "js", function(d) { eval(d) });
 
         sandbox = sinon.sandbox.create();
@@ -127,7 +130,7 @@ describe("Sugar7 utils", function() {
             expect(app.utils.getRecordName(model)).toEqual('Awesome Name');
         });
         it('build full name based on first name and last name', function() {
-            model.module = 'Users';
+            model.module = 'Contacts';
             model.set({
                 first_name: 'Awesome',
                 last_name: 'Name'
@@ -747,24 +750,6 @@ describe("Sugar7 utils", function() {
 
             describe('populating the related fields', function() {
                 beforeEach(function() {
-                    sandbox.stub(app.lang, 'getAppListStrings')
-                        .withArgs('parent_type_display')
-                        .returns({
-                            Accounts: 'Account',
-                            Contacts: 'Contact',
-                            Tasks: 'Task',
-                            Opportunities: 'Opportunity',
-                            Products: 'Quoted Line Item',
-                            Quotes: 'Quote',
-                            Bugs: 'Bug',
-                            Cases: 'Case',
-                            Leads: 'Lead',
-                            Project: 'Project',
-                            ProjectTask: 'Project Task',
-                            Prospects: 'Target',
-                            KBContents: 'Knowledge Base',
-                            Notes: 'Note'
-                        });
                     sandbox.stub(app.acl, 'hasAccess').withArgs('list').returns(true);
                 });
 

@@ -66,7 +66,7 @@
             "Leads": "Leads",
             "Accounts": "Accounts"
         },
-        "salutations_dom":{
+        "salutation_dom":{
             "DR.": "Dr.",
             "MR.": "Mr."
         },
@@ -150,6 +150,22 @@
         },
         "moduleIconList": {
             "Accounts": "Ac"
+        },
+        "parent_type_display": {
+            "Accounts": "Account",
+            "Contacts": "Contact",
+            "Tasks": "Task",
+            "Opportunities": "Opportunity",
+            "Products": "Quoted Line Item",
+            "Quotes": "Quote",
+            "Bugs": "Bugs",
+            "Cases": "Case",
+            "Leads": "Lead",
+            "Project": "Project",
+            "ProjectTask": "Project Task",
+            "Prospects": "Target",
+            "KBContents": "Knowledge Base",
+            "Notes": "Note"
         }
     },
     "app_strings": {

@@ -110,6 +110,7 @@ describe('Emails.Views.ComposeAddressbookList', function() {
         expect(collection.at(0).get('_link')).toBe('to');
         expect(collection.at(0).get('parent')).toEqual({
             _acl: {},
+            _erased_fields: [],
             type: recipient.module,
             id: recipient.get('id'),
             name: recipient.get('name')
@@ -117,6 +118,44 @@ describe('Emails.Views.ComposeAddressbookList', function() {
         expect(collection.at(0).get('parent_type')).toBe(recipient.module);
         expect(collection.at(0).get('parent_id')).toBe(recipient.get('id'));
         expect(collection.at(0).get('parent_name')).toBe(recipient.get('name'));
+        expect(collection.at(0).get('email_address_id')).toBeUndefined();
+        expect(collection.at(0).get('email_address')).toBeUndefined();
+    });
+
+    it('should add the selected recipient with an erased name', function() {
+        var collection;
+        var recipient = app.data.createBean('Contacts', {
+            id: _.uniqueId(),
+            name: '',
+            first_name: '',
+            last_name: '',
+            email: 'afitz@example.com',
+            _erased_fields: [
+                'first_name',
+                'last_name'
+            ]
+        });
+
+        view.collection.add(recipient);
+        view.render();
+        view.context.trigger('mass_collection:add', [recipient]);
+        collection = view.model.get('to_collection');
+
+        expect(collection.length).toBe(1);
+        expect(collection.at(0).get('_link')).toBe('to');
+        expect(collection.at(0).get('parent')).toEqual({
+            _acl: {},
+            _erased_fields: [
+                'first_name',
+                'last_name'
+            ],
+            type: recipient.module,
+            id: recipient.get('id'),
+            name: ''
+        });
+        expect(collection.at(0).get('parent_type')).toBe(recipient.module);
+        expect(collection.at(0).get('parent_id')).toBe(recipient.get('id'));
+        expect(collection.at(0).get('parent_name')).toBe('');
         expect(collection.at(0).get('email_address_id')).toBeUndefined();
         expect(collection.at(0).get('email_address')).toBeUndefined();
     });
@@ -166,6 +205,7 @@ describe('Emails.Views.ComposeAddressbookList', function() {
         expect(collection.at(0).get('_link')).toBe('to');
         expect(collection.at(0).get('parent')).toEqual({
             _acl: {},
+            _erased_fields: [],
             type: recipients[0].module,
             id: recipients[0].get('id'),
             name: recipients[0].get('name')
@@ -178,6 +218,7 @@ describe('Emails.Views.ComposeAddressbookList', function() {
         expect(collection.at(1).get('_link')).toBe('to');
         expect(collection.at(1).get('parent')).toEqual({
             _acl: {},
+            _erased_fields: [],
             type: recipients[1].module,
             id: recipients[1].get('id'),
             name: recipients[1].get('name')
@@ -190,6 +231,7 @@ describe('Emails.Views.ComposeAddressbookList', function() {
         expect(collection.at(2).get('_link')).toBe('to');
         expect(collection.at(2).get('parent')).toEqual({
             _acl: {},
+            _erased_fields: [],
             type: recipients[2].module,
             id: recipients[2].get('id'),
             name: recipients[2].get('name')
@@ -243,6 +285,7 @@ describe('Emails.Views.ComposeAddressbookList', function() {
         expect(collection.at(0).get('_link')).toBe('to');
         expect(collection.at(0).get('parent')).toEqual({
             _acl: {},
+            _erased_fields: [],
             type: recipient.module,
             id: recipient.get('id'),
             name: recipient.get('name')
@@ -296,6 +339,7 @@ describe('Emails.Views.ComposeAddressbookList', function() {
         expect(collection.at(0).get('_link')).toBe('to');
         expect(collection.at(0).get('parent')).toEqual({
             _acl: {},
+            _erased_fields: [],
             type: recipient.module,
             id: recipient.get('id'),
             name: recipient.get('name')

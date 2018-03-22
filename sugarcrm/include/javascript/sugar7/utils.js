@@ -813,26 +813,20 @@
              * @return {string} The record name.
              */
             getRecordName: function(model) {
-                // Special case for `Documents`
-                if (model.module === 'Documents' && model.has('document_name')) {
-                    return model.get('document_name');
+                var metadata = app.metadata.getModule(model.module) || {};
+                var format;
+                var name;
 
-                // Special case for `Person` type modules
-                } else if (model.has('full_name')) {
-                    return model.get('full_name');
-
-                // Special case for `Person` type modules
-                } else if (model.has('first_name') && model.has('last_name')) {
-                    return model.get('first_name') + ' ' + model.get('last_name');
-
-                // Special case for `Person` type modules
-                } else if (model.has('last_name')) {
-                    return model.get('last_name');
-
-                // Default behavior
-                } else {
-                    return model.get('name') || '';
+                if (!_.isEmpty(metadata.nameFormat)) {
+                    // Defaulting the format avoids having to fix numerous
+                    // tests because the preference isn't set.
+                    format = app.user.getPreference('default_locale_name_format') || 's f l';
+                    name = app.utils.formatNameModel(model.module, model.attributes, format);
+                } else if (model.module === 'Documents' && model.has('document_name')) {
+                    name = model.get('document_name');
                 }
+
+                return name || model.get('full_name') || model.get('name') || '';
             },
 
             /**

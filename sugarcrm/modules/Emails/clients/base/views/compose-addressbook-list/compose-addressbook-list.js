@@ -88,6 +88,7 @@
                 _link: 'to',
                 parent: {
                     _acl: model.get('_acl') || {},
+                    _erased_fields: model.get('_erased_fields') || [],
                     type: model.module,
                     id: model.get('id'),
                     name: model.get('name')

@@ -535,7 +535,7 @@ fixtures.metadata = {
                 "salutation":{
                     "name": "salutation",
                     "type": "enum",
-                    "options": "salutations_dom"
+                    "options": "salutation_dom"
                 },
                 "name": {
                     "name": "name",

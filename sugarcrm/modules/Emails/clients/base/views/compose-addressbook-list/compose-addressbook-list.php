@@ -21,6 +21,7 @@ $viewdefs['Emails']['base']['view']['compose-addressbook-list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
+                    'type' => 'fullname',
                     'label' => 'LBL_LIST_NAME',
                     'enabled' => true,
                     'default' => true,

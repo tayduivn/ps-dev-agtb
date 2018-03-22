@@ -47,6 +47,7 @@ describe('Emails.Base.Layout.ComposeAddressbook', function() {
                     id: _.uniqueId(),
                     _module: 'Contacts',
                     _acl: {},
+                    _erased_fields: [],
                     name: 'Haley Rhodes',
                     email: 'hrhodes@example.com',
                     email_address_id: _.uniqueId(),
@@ -75,6 +76,7 @@ describe('Emails.Base.Layout.ComposeAddressbook', function() {
             expect(onSuccess.getCall(0).args[0][0]).toEqual({
                 _module: 'Contacts',
                 _acl: {},
+                _erased_fields: [],
                 id: data.records[0].id,
                 name: 'Haley Rhodes',
                 email: [{
@@ -110,6 +112,19 @@ describe('Emails.Base.Layout.ComposeAddressbook', function() {
 
             // The success callback would only be called if the URL includes
             // the correct module_list value.
+            expect(onSuccess).toHaveBeenCalledOnce();
+        });
+
+        it('should add the erased_fields parameter', function() {
+            var url = /.*\/rest\/v10\/Mail\/recipients\/find\?.*erased_fields=true.*/;
+
+            SugarTest.server.respondWith('GET', url, response);
+
+            layout.collection.sync('read', layout.collection, options);
+            SugarTest.server.respond();
+
+            // The success callback would only be called if the URL includes
+            // the erased_fields parameter.
             expect(onSuccess).toHaveBeenCalledOnce();
         });
     });

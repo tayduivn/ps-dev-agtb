@@ -61,20 +61,21 @@
         options.success = function(data) {
             if (_.isArray(data)) {
                 data = _.map(data, function(row) {
-                    return {
-                        _module: row._module,
-                        _acl: row._acl,
-                        id: row.id,
-                        name: row.name,
-                        email: [{
-                            email_address: row.email,
-                            email_address_id: row.email_address_id,
-                            opt_out: row.opt_out,
-                            // The email address must be seen as the primary
-                            // email address to be shown in a list view.
-                            primary_address: true
-                        }]
-                    };
+                    row.email = [{
+                        email_address: row.email,
+                        email_address_id: row.email_address_id,
+                        opt_out: row.opt_out,
+                        // The email address must be seen as the primary email
+                        // address to be shown in a list view.
+                        primary_address: true
+                    }];
+
+                    // Remove the properties that are now stored in the nested
+                    // email array.
+                    delete row.opt_out;
+                    delete row.email_address_id;
+
+                    return row;
                 });
             }
 
@@ -85,6 +86,7 @@
         };
 
         options = app.data.parseOptionsForSync(method, model, options);
+        options.params.erased_fields = true;
 
         callbacks = app.data.getSyncCallbacks(method, model, options);
         this.trigger('data:sync:start', method, model, options);

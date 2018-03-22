@@ -96,6 +96,9 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $recipients = $this->emailRecipientsService->find($term, $module);
         $actual = $recipients[0]["name"];
         $this->assertEquals($expected, $actual, "Should have returned name of '{$expected}' instead of '{$actual}'.");
+
+        $this->assertSame('John', $recipients[0]['first_name'], 'first_name should be John');
+        $this->assertSame('Doe', $recipients[0]['last_name'], 'last_name should be Doe');
     }
 
     public function testFind_SearchAccountsForTerm_ReturnsNameCorrectly()
@@ -107,6 +110,9 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $recipients = $this->emailRecipientsService->find($term, $module);
         $actual = $recipients[0]["name"];
         $this->assertEquals($expected, $actual, "Should have returned name of '{$expected}' instead of '{$actual}'.");
+
+        $this->assertEmpty($recipients[0]['first_name'], 'first_name should be empty');
+        $this->assertSame('This Account', $recipients[0]['last_name'], 'last_name should be This Account');
     }
 
     public function testFind_SearchAccountsForTermAndOrderByEmailAsc_ReturnsSortedMatchingAccounts()

@@ -92,7 +92,7 @@
      * Format name parts to current user locale.
      */
     format: function() {
-        return app.utils.formatNameModel(this.model.module, this.model.attributes);
+        return app.utils.getRecordName(this.model);
     },
 
     /**
