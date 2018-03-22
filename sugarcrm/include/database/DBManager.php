@@ -3367,6 +3367,9 @@ abstract class DBManager
 
                 //email field contains an array so loop through and grab the addresses marked as primary for comparison
                 if (!empty($field_type) && $field_type == 'email') {
+                    if (!empty($bean->emailAddress) && !empty($bean->emailAddress->hasFetched)) {
+                        $after_value = $bean->emailAddress->addresses;
+                    }
                     if ($this->didEmailAddressesChange($before_value, $after_value)) {
                         $changed_values[$field] = array(
                             'field_name' => $field,
@@ -3452,11 +3455,10 @@ abstract class DBManager
             return $before_value !== $after_value;
         }
 
-        $before_addresses = array_column($before_value, 'id');
+        $before_addresses = array_column($before_value, 'email_address_id');
         sort($before_addresses);
-        $after_addresses = array_column($after_value, 'id');
+        $after_addresses = array_column($after_value, 'email_address_id');
         sort($after_addresses);
-
 
         return ($before_addresses != $after_addresses);
     }

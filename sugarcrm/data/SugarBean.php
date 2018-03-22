@@ -8464,7 +8464,11 @@ class SugarBean
         }
 
         if (isset($this->emailAddress)) {
-            $state['email'] = $this->emailAddress->getAddressesForBean($this, true);
+            if (!empty($this->emailAddress->hasFetched)) {
+                $state['email'] = $this->emailAddress->addresses;
+            } else {
+                $state['email'] = $this->emailAddress->getAddressesForBean($this, true);
+            }
         }
 
         return $state;

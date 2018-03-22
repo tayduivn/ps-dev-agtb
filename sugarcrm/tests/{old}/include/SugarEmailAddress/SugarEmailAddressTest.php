@@ -220,7 +220,6 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
                 'reply_to_address' => false,
                 'invalid_email' => false,
                 'opt_out' => false,
-                'email_address_id' => null,
             ),
         );
 
@@ -233,7 +232,9 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
         $this->ea->handleLegacySave($bean);
 
         // Expectation is that email1 will win
-        $this->assertEquals($expect, $this->ea->addresses);
+        foreach ($expect[0] as $key => $value) {
+            $this->assertEquals($value, $this->ea->addresses[0][$key]);
+        }
     }
 
     /**

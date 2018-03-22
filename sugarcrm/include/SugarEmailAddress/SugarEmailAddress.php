@@ -713,7 +713,7 @@ class SugarEmailAddress extends SugarBean
             'reply_to_address' => $this->boolVal($replyTo),
             'invalid_email' => $this->boolVal($invalid),
             'opt_out' => $this->boolVal($optOut),
-            'email_address_id' => $email_id,
+            'email_address_id' => $email_id?? $this->getEmailGUID($addr),
         );
 
         $key = false;
