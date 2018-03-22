@@ -169,26 +169,8 @@ class ModuleApi extends SugarApi {
             }
         }
 
-        if (in_array('email', $piiFields) && !empty($bean->email)) {
-            $emails = array_combine(array_column($bean->email, 'email_address_id'), $bean->email);
-            $emailEvents = array_filter($events, function ($v) {
-                return $v['field_name'] === 'email';
-            });
-            $emailEventsById = array_combine(array_column($emailEvents, 'after_value_string'), $emailEvents);
-            foreach ($emails as $email) {
-                $value = [
-                    'id' => $email['email_address_id'],
-                    'email_address' => $email['email_address'],
-                    'opt_out' => (bool) $email['opt_out'],
-                    'invalid_email' => (bool) $email['invalid_email'],
-                    'primary_address' => (bool) $email['primary_address'],
-                ];
-                $fields[] = $this->mergeFieldWithEvent(
-                    'email',
-                    $value,
-                    $emailEventsById[$email['email_address_id']] ?? null
-                );
-            }
+        if (in_array('email', $piiFields)) {
+            $fields = array_merge($fields, $this->mergeEmailFieldsWithEvents($bean, $events));
         }
 
         $return = ['fields' => $fields, '_acl' => $data['_acl'],];
@@ -224,6 +206,42 @@ class ModuleApi extends SugarApi {
             );
         }
         return $item;
+    }
+
+    private function mergeEmailFieldsWithEvents($bean, $events)
+    {
+        if (empty($bean->email)) {
+            return [[
+                'field_name' => 'email',
+                'value' => null,
+                'date_modified' => null,
+                'event_type' => null,
+                'source' => null,
+            ]];
+        }
+
+        $emails = array_combine(array_column($bean->email, 'email_address_id'), $bean->email);
+        $emailEvents = array_filter($events, function ($v) {
+            return $v['field_name'] === 'email';
+        });
+        $emailEventsById = array_combine(array_column($emailEvents, 'after_value_string'), $emailEvents);
+        $fields = [];
+        foreach ($emails as $email) {
+            $value = [
+                'id' => $email['email_address_id'],
+                'email_address' => $email['email_address'],
+                'opt_out' => (bool) $email['opt_out'],
+                'invalid_email' => (bool) $email['invalid_email'],
+                'primary_address' => (bool) $email['primary_address'],
+            ];
+            $fields[] = $this->mergeFieldWithEvent(
+                'email',
+                $value,
+                $emailEventsById[$email['email_address_id']] ?? null
+            );
+        }
+
+        return $fields;
     }
 
     private function formatSourceSubject($rows)

@@ -151,6 +151,21 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('phone_mobile', $result['_erased_fields'], 'Expected erased field not returned');
     }
 
+    public function testGetPiiFieldsEmailWithNoValue()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $args['module'] = 'Accounts';
+        $args['record'] = $account->id;
+
+        $moduleApi = new ModuleApi();
+        $result = $moduleApi->getPiiFields($this->serviceMock, $args);
+
+        $this->assertNotEmpty($result, 'Did not fetch any Pii fields.');
+        $fieldsByName = array_combine(array_column($result['fields'], 'field_name'), $result['fields']);
+        $this->assertArrayHasKey('email', $fieldsByName, 'Expected email entry not returned.');
+        $this->assertNull($fieldsByName['email']['value'], 'Expected email entry with null value.');
+    }
+
     // test set favorite
     public function testSetFavorite()
     {

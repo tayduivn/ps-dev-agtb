@@ -172,6 +172,21 @@ class EventRepositoryTest extends \PHPUnit_Framework_TestCase
      * @test
      * @covers ::getLatestBeanEvents()
      *
+     */
+    public function getLatestBeanEventsOnlyEmailFieldButNoEmailValue()
+    {
+        $contactData = [];
+        $contact = $this->createContact($contactData);
+
+        $actual = $this->eventRepo->getLatestBeanEvents($contact, ['email']);
+
+        $this->assertEmpty($actual, 'Expected empty results.');
+    }
+
+    /**
+     * @test
+     * @covers ::getLatestBeanEvents()
+     *
      * @dataProvider providerGetLatestBeanEvents
      */
     public function getLatestBeanEventsOneContactTwoFields($fields)

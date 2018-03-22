@@ -138,6 +138,18 @@ class EventRepository
             return [];
         }
 
+        if (in_array('email', $fields)) {
+            if (empty($bean->emailAddress->hasFetched)) {
+                $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
+            } else {
+                $emailsRaw = $bean->emailAddress->addresses;
+            }
+
+            if (count($fields) == 1 && $fields[0] === 'email' && empty($emailsRaw)) {
+                return [];
+            }
+        }
+
         $auditTable = $bean->get_audit_table_name();
 
         $selectWithLJoin = "SELECT  atab.field_name, atab.date_created, atab.after_value_string, ae.source, ae.type
@@ -165,16 +177,16 @@ class EventRepository
             $paramTypes[] = Connection::PARAM_STR_ARRAY;
         }
 
-        if (in_array('email', $fields) && $bean->emailAddress->addresses) {
+        if (in_array('email', $fields) && !empty($emailsRaw)) {
             $addLJoinCond[] = "(atab.field_name = 'email' AND atab2.after_value_string = atab.after_value_string)";
             $addWhere[] = "(atab.field_name = 'email' AND atab.after_value_string IN (?))";
-            $emailIds = array_column($bean->emailAddress->addresses, 'email_address_id');
+            $emailIds = array_column($emailsRaw, 'email_address_id');
             $params[] = $emailIds;
             $paramTypes[] = Connection::PARAM_STR_ARRAY;
         }
 
-        $leftJoinCond[] = implode(' OR ', $addLJoinCond);
-        $where[] = implode(' OR ', $addWhere);
+        $leftJoinCond[] = sprintf('(%s)', implode(' OR ', $addLJoinCond));
+        $where[] = sprintf('(%s)', implode(' OR ', $addWhere));
 
         $sql = sprintf(
             '%s %s WHERE %s',

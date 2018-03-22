@@ -219,6 +219,7 @@ class SugarEmailAddress extends SugarBean
     function handleLegacyRetrieve(&$bean)
     {
         $this->addresses = $this->getAddressesForBean($bean, true);
+        $this->hasFetched = true;
         $this->populateLegacyFields($bean);
         if (isset($bean->email1) && !isset($bean->fetched_row['email1'])) {
             $bean->fetched_row['email1'] = $bean->email1;
