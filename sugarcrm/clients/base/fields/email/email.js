@@ -604,5 +604,20 @@
                 }
             ]
         };
+    },
+
+    /**
+     * @override
+     *
+     * Check if the value is a string representing the UUID.
+     */
+    _isErasedField: function() {
+        if (!this.model) {
+            return false;
+        }
+
+        var value = this.model.get(this.name);
+        var erasedFields = this.model.get('_erased_fields');
+        return _.isString(value) && _.contains(erasedFields, this.name);
     }
 })
