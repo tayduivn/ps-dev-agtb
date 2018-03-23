@@ -11,12 +11,19 @@
  */
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
 
 class EmployeesViewEdit extends ViewEdit {
     var $useForSubpanel = true;
 
  	function display() {
        	if(is_admin($GLOBALS['current_user'])) {
+
+            $idpConfig = new IdmConfig(\SugarConfig::getInstance());
+            if ($idpConfig->isIDMModeEnabled() && !$this->bean->isUpdate()) {
+                $this->showRedirectToCloudConsole($idpConfig->buildCloudConsoleUrl('userCreate'));
+            }
+
             $json = getJSONobj();
             $qsd = QuickSearchDefaults::getQuickSearchDefaults();
             $sqs_objects = array('EditView_reports_to_name' => $qsd->getQSUser());
@@ -65,4 +72,17 @@ class EmployeesViewEdit extends ViewEdit {
 
  		parent::display();
  	}
+
+    /**
+     * Show redirect to cloud console
+     * @param string $url cloud console url
+     */
+    protected function showRedirectToCloudConsole($url)
+    {
+        $ss = new Sugar_Smarty();
+        $error = string_format($GLOBALS['mod_strings']['ERR_CREATE_EMPLOYEE_FOR_IDM_MODE'], [$url]);
+        $ss->assign("error", $error);
+        $ss->display('modules/Users/tpls/errorMessage.tpl');
+        sugar_cleanup(true);
+    }
 }
