@@ -258,4 +258,7 @@
             </exclude>
         </whitelist>
     </filter>
+    <listeners>
+        <listener class="IntegrationListener"/>
+    </listeners>
 </phpunit>

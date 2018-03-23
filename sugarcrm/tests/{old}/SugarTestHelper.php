@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\BaseTestListener;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 if(!defined('sugarEntry')) define('sugarEntry', true);
@@ -175,126 +177,23 @@ if (function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false
 // Disables sending email.
 define('DISABLE_EMAIL_SEND', true);
 
-class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
+class IntegrationListener extends BaseTestListener
 {
-    protected $backupGlobals = false;
+    /**
+     * @var int
+     */
+    private $maxExecutionTime;
 
-    protected $useOutputBuffering = true;
-
-    protected $file_map;
-
-    public static function getFiles()
+    public function startTestSuite(PHPUnit_Framework_TestSuite $suite)
     {
-        $dir = realpath(dirname(__FILE__)."/../..");
-        $files = `find $dir -name cache -prune -o -name custom -prune -o -name upload -prune -o -name tests -prune -o -name sugarcrm\\*.log -prune -o -type f -print | sort`;
-        $flist = explode("\n", $files);
-        sort($flist);
-
-        return join("\n", $flist);
-    }
-
-    protected function assertPreConditions()
-    {
-        $GLOBALS['runningTest'] = $this->getName(false);
-        $GLOBALS['runningTestClass'] = get_class($this);
-        if (isset($GLOBALS['log'])) {
-            $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
-        }
-    }
-
-    protected function assertPostConditions()
-    {
-        SugarRelationship::resaveRelatedBeans();
-
-        if (!empty($_REQUEST)) {
-            foreach (array_keys($_REQUEST) as $k) {
-                unset($_REQUEST[$k]);
-            }
+        if ($suite instanceof PHPUnit_Framework_TestSuite_DataProvider) {
+            return;
         }
 
-        if (!empty($_POST)) {
-            foreach (array_keys($_POST) as $k) {
-                unset($_POST[$k]);
-            }
-        }
-
-        if (!empty($_GET)) {
-            foreach (array_keys($_GET) as $k) {
-                unset($_GET[$k]);
-            }
-        }
-        if (isset($GLOBALS['log'])) {
-            $GLOBALS['log']->info("DONE TEST: {$this->getName(false)}");
-        }
-        // reset error handler in case somebody set it
-        restore_error_handler();
-    }
-
-    public static function setUpBeforeClass()
-   {
         SugarTestHelper::init();
-   }
-
-    public static function tearDownAfterClass()
-    {
-        unset($GLOBALS['disable_date_format']);
-        SugarBean::resetOperations();
-        $GLOBALS['timedate']->clearCache();
-        if (constant('CHECK_FILE_MAPS')) {
-            if (!self::compareArray(SugarAutoLoader::scanDir(""), SugarAutoLoader::$filemap)) {
-                SugarAutoLoader::buildCache();
-            }
-        }
-        SugarTestHelper::tearDown();
     }
 
-    public static function compareArray($arr1, $arr2, $path = "")
-    {
-        if (!is_array($arr2)) {
-            echo ("\nERROR[{$GLOBALS['runningTestClass']}:{$GLOBALS['runningTest']}]: Difference in ./{$path} - is file in map but should be directory!\n");
-        }
-        foreach ($arr2 as $key => $value) {
-            $keypath = "{$path}$key/";
-            if (in_array($keypath, SugarAutoLoader::$exclude)) {
-                unset($arr1[$key]);
-                continue;
-            }
-            if (!isset($arr1[$key])) {
-                echo ("\nERROR[{$GLOBALS['runningTestClass']}:{$GLOBALS['runningTest']}]: Difference in {$path}$key - in map but not on disk\n");
-
-                return false;
-            }
-            if (is_array($arr1[$key])) {
-                if (!self::compareArray($arr1[$key], $arr2[$key], $keypath)) {
-                    return false;
-                }
-            }
-            unset($arr1[$key]);
-        }
-        foreach ($arr1 as $key => $value) {
-            echo ("\nERROR[{$GLOBALS['runningTestClass']}:{$GLOBALS['runningTest']}]: Difference in {$path}$key - on disk but not in map!\n");
-
-            return false;
-        }
-
-        return true;
-    }
-
-    protected function notRegexCallback($output)
-    {
-        $this->assertNotRegExp($this->_notRegex, $output);
-    }
-
-    public function expectOutputNotRegex($expectedRegex)
-    {
-        if (is_string($expectedRegex) || is_null($expectedRegex)) {
-            $this->_notRegex = $expectedRegex;
-        }
-
-        $this->setOutputCallback(array($this, "notRegexCallback"));
-    }
-
-    public function runBare()
+    public function startTest(PHPUnit_Framework_Test $test)
     {
         // Prevent the activity stream from creating messages.
         Activity::disable();
@@ -303,16 +202,20 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         // set on them by previous tests which shouldn't be shared between tests
         BeanFactory::clearCache();
 
-        if (SHADOW_CHECK && empty($this->file_map)) {
-            $this->file_map = static::getFiles();
-        }
         //track the original max execution time limit
-        $originalMaxTime = ini_get('max_execution_time');
+        $this->maxExecutionTime = ini_get('max_execution_time');
+    }
 
-        parent::runBare();
+    public function endTest(PHPUnit_Framework_Test $test, $time)
+    {
+        $_GET = $_POST = $_REQUEST = [];
 
         //sometimes individual tests change the max time execution limit, reset back to original
-        set_time_limit($originalMaxTime);
+        set_time_limit($this->maxExecutionTime);
+
+        restore_error_handler();
+
+        SugarRelationship::resaveRelatedBeans();
 
         // clean up prepared statements
         $connection = DBManagerFactory::getConnection()->getWrappedConnection();
@@ -324,21 +227,33 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
             $rp->setAccessible(true);
             $rp->setValue($connection, []);
         }
+    }
 
-        if (SHADOW_CHECK) {
-            $oldfiles = $this->file_map;
-            $this->file_map = static::getFiles();
-            $this->assertEquals($oldfiles, $this->file_map);
+    public function endTestSuite(PHPUnit_Framework_TestSuite $suite)
+    {
+        if ($suite instanceof PHPUnit_Framework_TestSuite_DataProvider) {
+            return;
         }
+
+        unset($GLOBALS['disable_date_format']);
+        SugarBean::resetOperations();
+        $GLOBALS['timedate']->clearCache();
+
+        SugarTestHelper::tearDown();
     }
 }
 
 /**
- * @deprecated Do not use this class, it will be removed soon
- * Use Sugar_PHPUnit_Framework_TestCase instead
+ * @deprecated
  */
-class Sugar_PHPUnit_Framework_OutputTestCase extends Sugar_PHPUnit_Framework_TestCase
+class Sugar_PHPUnit_Framework_TestCase extends TestCase
 {
+    public function expectOutputNotRegex($expectedRegex)
+    {
+        $this->setOutputCallback(function ($output) use ($expectedRegex) {
+            $this->assertNotRegExp($expectedRegex, $output);
+        });
+    }
 }
 
 // define a mock logger interface; used for capturing logging messages emited
@@ -371,13 +286,10 @@ class SugarMockLogger
 require_once 'ModuleInstall/ModuleInstaller.php';
 
 /**
- * Own exception for SugarTestHelper class
- *
- * @author mgusev@sugarcrm.com
+ * @deprecated
  */
 class SugarTestHelperException extends PHPUnit_Framework_Exception
 {
-
 }
 
 /**
@@ -519,13 +431,12 @@ class SugarTestHelper
      *
      * @static
      * @param  string                   $varName name of global variable of SugarCRM
-     * @return bool                     is there helper for a variable or not
      * @throws SugarTestHelperException fired when there is no implementation of helper for a variable
      */
     protected static function checkHelper($varName)
     {
         if (method_exists(__CLASS__, 'setUp_' . $varName) == false) {
-            throw new SugarTestHelperException('setUp for $' . $varName . ' is not implemented. ' . __CLASS__ . '::setUp_' . $varName);
+            throw new PHPUnit_Framework_Exception('setUp for $' . $varName . ' is not implemented. ' . __CLASS__ . '::setUp_' . $varName);
         }
     }
 
@@ -873,14 +784,14 @@ class SugarTestHelper
      * @param array $params Array containing module name and field vardefs
      *
      * @return TemplateField
-     * @throws SugarTestHelperException
+     * @throws PHPUnit_Framework_Exception
      */
     protected static function setUp_custom_field(array $params)
     {
         self::$registeredVars['custom_field'] = true;
 
         if (count($params) < 2) {
-            throw new SugarTestHelperException(sprintf(
+            throw new PHPUnit_Framework_Exception(sprintf(
                 '%s requires 2 parameters, %d given',
                 __METHOD__,
                 count($params)
@@ -889,7 +800,7 @@ class SugarTestHelper
 
         list($module, $vardefs) = $params;
         if (!isset($vardefs['type'])) {
-            throw new SugarTestHelperException('Field type is not specified');
+            throw new PHPUnit_Framework_Exception('Field type is not specified');
         }
 
         $field = get_widget($vardefs['type']);
@@ -899,7 +810,7 @@ class SugarTestHelper
 
         $bean = BeanFactory::newBean($module);
         if (!$bean) {
-            throw new SugarTestHelperException(sprintf(
+            throw new PHPUnit_Framework_Exception(sprintf(
                 '%s is not a valid module name',
                 $module
             ));
