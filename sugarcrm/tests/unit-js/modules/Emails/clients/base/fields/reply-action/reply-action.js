@@ -17,6 +17,7 @@ describe('Emails.Field.ReplyAction', function() {
 
     function createParticipant(link, email, parentType, parentName) {
         var parentId = _.uniqueId();
+        var emailAddressId = _.uniqueId();
 
         return app.data.createBean('EmailParticipants', {
             _link: link,
@@ -30,15 +31,32 @@ describe('Emails.Field.ReplyAction', function() {
             parent_type: parentType,
             parent_id: parentId,
             parent_name: parentName,
-            email_address_id: _.uniqueId(),
+            email_addresses: {
+                email_address: email,
+                id: emailAddressId,
+                _erased_fields: []
+            },
+            email_address_id: emailAddressId,
             email_address: email,
             invalid_email: false,
             opt_out: false
         });
     }
 
+    function eraseName(participant) {
+        var parent = participant.get('parent');
+
+        participant.set('parent_name', '');
+        parent.name = '';
+        parent._erased_fields = [
+            'first_name',
+            'last_name'
+        ];
+    }
+
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
+        var bhunterEmailAddressId = _.uniqueId();
         var parent;
 
         SugarTest.testMetadata.init();
@@ -109,7 +127,12 @@ describe('Emails.Field.ReplyAction', function() {
             app.data.createBean('EmailParticipants', {
                 _link: 'to',
                 id: _.uniqueId(),
-                email_address_id: _.uniqueId(),
+                email_addresses: {
+                    email_address: 'bhunter@example.com',
+                    id: bhunterEmailAddressId,
+                    _erased_fields: []
+                },
+                email_address_id: bhunterEmailAddressId,
                 email_address: 'bhunter@example.com',
                 invalid_email: false,
                 opt_out: false
@@ -187,18 +210,43 @@ describe('Emails.Field.ReplyAction', function() {
             expect(field.emailOptions.reply_to_id).toBe(model.get('id'));
         });
 
-        it('should add the sender to the To field', function() {
-            var sender = model.get('from_collection').first();
+        describe('adding the sender as a recipient', function() {
+            var sender;
 
-            expect(field.emailOptions.to.length).toBe(1);
-            expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
-            expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
-            expect(field.emailOptions.to[0].email.get('invalid_email')).toBe(sender.get('invalid_email'));
-            expect(field.emailOptions.to[0].email.get('opt_out')).toBe(sender.get('opt_out'));
-            expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
-            expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
-            expect(field.emailOptions.to[0].bean.get('name')).toBe(sender.get('parent_name'));
-            expect(field.emailOptions.cc).toBeUndefined();
+            beforeEach(function() {
+                sender = model.get('from_collection').first();
+            });
+
+            it('should add the sender to the To field', function() {
+                expect(field.emailOptions.to.length).toBe(1);
+                expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
+                expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
+                expect(field.emailOptions.to[0].email.get('invalid_email')).toBe(sender.get('invalid_email'));
+                expect(field.emailOptions.to[0].email.get('opt_out')).toBe(sender.get('opt_out'));
+                expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
+                expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
+                expect(field.emailOptions.to[0].bean.get('name')).toBe(sender.get('parent_name'));
+                expect(field.emailOptions.cc).toBeUndefined();
+            });
+
+            it('should add the sender with an erased name to the To field', function() {
+                eraseName(sender);
+                field.model.trigger('change', field.model);
+
+                expect(field.emailOptions.to.length).toBe(1);
+                expect(field.emailOptions.to[0].email.get('id')).toBe(sender.get('email_address_id'));
+                expect(field.emailOptions.to[0].email.get('email_address')).toBe(sender.get('email_address'));
+                expect(field.emailOptions.to[0].email.get('invalid_email')).toBe(sender.get('invalid_email'));
+                expect(field.emailOptions.to[0].email.get('opt_out')).toBe(sender.get('opt_out'));
+                expect(field.emailOptions.to[0].bean.module).toBe(sender.get('parent_type'));
+                expect(field.emailOptions.to[0].bean.get('id')).toBe(sender.get('parent_id'));
+                expect(field.emailOptions.to[0].bean.get('name')).toBe('');
+                expect(field.emailOptions.to[0].bean.get('_acl')).toEqual({});
+                expect(field.emailOptions.to[0].bean.get('_erased_fields')).toEqual([
+                    'first_name',
+                    'last_name'
+                ]);
+            });
         });
 
         using('subjects', [

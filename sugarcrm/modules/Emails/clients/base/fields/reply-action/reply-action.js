@@ -227,22 +227,10 @@
                     opt_out: recipient.get('opt_out')
                 })
             };
+            var parent = recipient.getParent();
 
-            // The type and id fields are not unset after a parent record
-            // is deleted. So we test for name because the parent record is
-            // truly only there if type and id are non-empty and the parent
-            // record can be resolved and has not been deleted.
-            if (recipient.get('parent') &&
-                recipient.get('parent').type &&
-                recipient.get('parent').id &&
-                recipient.get('parent').name
-            ) {
-                // We omit type because it is actually the module name and
-                // should not be treated as an attribute.
-                data.bean = app.data.createBean(
-                    recipient.get('parent').type,
-                    _.omit(recipient.get('parent'), 'type')
-                );
+            if (parent) {
+                data.bean = parent;
             }
 
             return data;

@@ -82,6 +82,14 @@
             // We omit type because it is actually the module name and should
             // not be treated as an attribute.
             parent = app.data.createBean(this.get('parent').type, _.omit(this.get('parent'), 'type'));
+
+            // The type and id fields are not unset after a parent record is
+            // deleted. So we test for name because the parent record is truly
+            // only there if type and id are non-empty and the parent record
+            // can be resolved and has not been deleted.
+            if (!parent.get('name') && !app.utils.isNameErased(parent)) {
+                parent = undefined;
+            }
         }
 
         return parent;
