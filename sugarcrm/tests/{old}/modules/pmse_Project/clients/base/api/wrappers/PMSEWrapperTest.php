@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 
 class PMSEWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 {
