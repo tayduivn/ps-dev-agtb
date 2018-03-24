@@ -35,6 +35,7 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestContactUtilities::removeAllCreatedContacts();
 
         parent::tearDownAfterClass();
     }
@@ -82,11 +83,11 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::unregisterBean($account);
         $unregistered = $this->isBeanRegistered($account);
         $this->assertFalse($unregistered, "New bean is still registered in the factory");
-        
+
         // Test registration old style way
         $registered = BeanFactory::registerBean($account->module_name, $account, $account->id);
         $this->assertTrue($registered, "Legacy style registration of the bean failed");
-        
+
         // Double ensure it worked
         $registered = $this->isBeanRegistered($account);
         $this->assertTrue($registered, "Legacy style registration did not actually register the bean");
@@ -246,14 +247,14 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function cacheRespectsErasedFields()
     {
-        $account = SugarTestAccountUtilities::createAccount();
+        $contact = SugarTestContactUtilities::createContact();
         BeanFactory::clearCache();
 
-        $retrievedAccount1 = $this->retrieveBean($account);
-        $this->assertNull($retrievedAccount1->erased_fields);
+        $retrievedContact1 = $this->retrieveBean($contact);
+        $this->assertNull($retrievedContact1->erased_fields);
 
-        $retrievedAccount2 = $this->retrieveBean($account, ['erased_fields' => true]);
-        $this->assertNotNull($retrievedAccount2->erased_fields);
+        $retrievedContact2 = $this->retrieveBean($contact, ['erased_fields' => true]);
+        $this->assertNotNull($retrievedContact2->erased_fields);
     }
 
     private function retrieveBean(SugarBean $bean, array $params = []) : ?SugarBean
