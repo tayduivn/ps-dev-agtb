@@ -141,10 +141,14 @@
                     var validRecipient = app.data.createBean('EmailParticipants');
                     var email = getEmailAddress(recipient);
                     var primary;
+                    var isNameErased = false;
+                    var isEmailErased = false;
 
                     // We can only use the email address if it has an `id`.
                     if (!email.isNew()) {
+                        isEmailErased = _.contains(email.get('_erased_fields') || [], 'email_address');
                         validRecipient.set({
+                            email_addresses: app.utils.deepCopy(email),
                             email_address_id: email.get('id'),
                             email_address: email.get('email_address'),
                             invalid_email: email.get('invalid_email'),
@@ -154,6 +158,7 @@
 
                     if (recipient.bean) {
                         primary = app.utils.getPrimaryEmailAddress(recipient.bean);
+                        isNameErased = app.utils.isNameErased(recipient.bean);
 
                         // Set the parent data if the email address is already
                         // defined. Otherwise, only set the parent data if the
@@ -169,9 +174,19 @@
                         }
                     }
 
-                    // We can only use the recipient if there is an email
-                    // address to send to or a bean whose primary email address
-                    // we can identify and send to at send-time.
+                    // Remove the email address if it has been erased, but only
+                    // if there is a person that the email can be sent to. If
+                    // there isn't a person, then we want the email address to
+                    // be seen as invalid when composing the email.
+                    if (validRecipient.get('parent') && !isNameErased && isEmailErased) {
+                        validRecipient.unset('email_addresses');
+                        validRecipient.unset('email_address_id');
+                        validRecipient.unset('email_address');
+                        validRecipient.unset('invalid_email');
+                        validRecipient.unset('opt_out');
+                    }
+
+                    // We must have a person or an email address to send to.
                     if (validRecipient.get('email_address_id') || validRecipient.get('parent')) {
                         validRecipients.push(validRecipient);
                     }

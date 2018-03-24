@@ -220,12 +220,7 @@
     _createRecipients: function(collection) {
         return collection.map(function(recipient) {
             var data = {
-                email: app.data.createBean('EmailAddresses', {
-                    id: recipient.get('email_address_id'),
-                    email_address: recipient.get('email_address'),
-                    invalid_email: recipient.get('invalid_email'),
-                    opt_out: recipient.get('opt_out')
-                })
+                email: app.data.createBean('EmailAddresses', recipient.get('email_addresses'))
             };
             var parent = recipient.getParent();
 

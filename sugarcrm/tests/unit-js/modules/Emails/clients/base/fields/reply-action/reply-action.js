@@ -24,6 +24,7 @@ describe('Emails.Field.ReplyAction', function() {
             id: _.uniqueId(),
             parent: {
                 _acl: {},
+                _erased_fields: [],
                 type: parentType,
                 id: parentId,
                 name: parentName
@@ -34,6 +35,8 @@ describe('Emails.Field.ReplyAction', function() {
             email_addresses: {
                 email_address: email,
                 id: emailAddressId,
+                invalid_email: false,
+                opt_out: false,
                 _erased_fields: []
             },
             email_address_id: emailAddressId,
@@ -130,6 +133,8 @@ describe('Emails.Field.ReplyAction', function() {
                 email_addresses: {
                     email_address: 'bhunter@example.com',
                     id: bhunterEmailAddressId,
+                    invalid_email: false,
+                    opt_out: false,
                     _erased_fields: []
                 },
                 email_address_id: bhunterEmailAddressId,

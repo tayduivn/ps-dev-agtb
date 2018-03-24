@@ -17,12 +17,14 @@ describe('Emails.Field.ReplyAllAction', function() {
 
     function createParticipant(link, email, parentType, parentName) {
         var parentId = _.uniqueId();
+        var emailAddressId = _.uniqueId();
 
         return app.data.createBean('EmailParticipants', {
             _link: link,
             id: _.uniqueId(),
             parent: {
                 _acl: {},
+                _erased_fields: [],
                 type: parentType,
                 id: parentId,
                 name: parentName
@@ -30,7 +32,14 @@ describe('Emails.Field.ReplyAllAction', function() {
             parent_type: parentType,
             parent_id: parentId,
             parent_name: parentName,
-            email_address_id: _.uniqueId(),
+            email_addresses: {
+                email_address: email,
+                id: emailAddressId,
+                invalid_email: false,
+                opt_out: false,
+                _erased_fields: []
+            },
+            email_address_id: emailAddressId,
             email_address: email,
             invalid_email: false,
             opt_out: false
@@ -39,6 +48,7 @@ describe('Emails.Field.ReplyAllAction', function() {
 
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
+        var bhunterEmailAddressId = _.uniqueId();
         var parent;
 
         SugarTest.testMetadata.init();
@@ -109,7 +119,14 @@ describe('Emails.Field.ReplyAllAction', function() {
             app.data.createBean('EmailParticipants', {
                 _link: 'to',
                 id: _.uniqueId(),
-                email_address_id: _.uniqueId(),
+                email_addresses: {
+                    email_address: 'bhunter@example.com',
+                    id: bhunterEmailAddressId,
+                    invalid_email: false,
+                    opt_out: true,
+                    _erased_fields: []
+                },
+                email_address_id: bhunterEmailAddressId,
                 email_address: 'bhunter@example.com',
                 invalid_email: false,
                 opt_out: true

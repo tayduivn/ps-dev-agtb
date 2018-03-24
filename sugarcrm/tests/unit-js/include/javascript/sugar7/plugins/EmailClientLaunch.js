@@ -362,6 +362,209 @@ describe('EmailClientLaunch Plugin', function() {
             expect(validRecipients[0].get('email_address_id')).toBe(email.get('id'));
             expect(validRecipients[0].get('email_address')).toBe('abc@bar.com');
         });
+
+        it('should have an empty parent name when the name is erased', function() {
+            var email = app.data.createBean('EmailAddresses', {
+                _acl: {},
+                _erased_fields: [],
+                id: _.uniqueId(),
+                email_address: 'test@example.com',
+                invalid_email: false,
+                opt_out: false
+            });
+            var bean = app.data.createBean('Contacts', {
+                _acl: {},
+                _erased_fields: [
+                    'first_name',
+                    'last_name'
+                ],
+                id: _.uniqueId(),
+                name: '',
+                first_name: '',
+                last_name: ''
+            });
+            var recipients = [{
+                email: email,
+                bean: bean
+            }];
+            var validRecipients = field._retrieveValidRecipients(recipients);
+
+            expect(validRecipients.length).toBe(1);
+            expect(validRecipients[0].get('parent')).toEqual({
+                _acl: {},
+                _erased_fields: [
+                    'first_name',
+                    'last_name'
+                ],
+                type: 'Contacts',
+                id: bean.get('id'),
+                name: '',
+                first_name: '',
+                last_name: ''
+            });
+            expect(validRecipients[0].get('parent_type')).toBe('Contacts');
+            expect(validRecipients[0].get('parent_id')).toBe(bean.get('id'));
+            expect(validRecipients[0].get('parent_name')).toBe('');
+            expect(validRecipients[0].get('email_addresses')).toEqual({
+                _acl: {},
+                _erased_fields: [],
+                id: email.get('id'),
+                email_address: 'test@example.com',
+                invalid_email: false,
+                opt_out: false
+            });
+            expect(validRecipients[0].get('email_address_id')).toBe(email.get('id'));
+            expect(validRecipients[0].get('email_address')).toBe('test@example.com');
+            expect(validRecipients[0].get('invalid_email')).toBe(false);
+            expect(validRecipients[0].get('opt_out')).toBe(false);
+        });
+
+        it('should have an empty email address when the email address is erased', function() {
+            var email = app.data.createBean('EmailAddresses', {
+                _acl: {},
+                _erased_fields: [
+                    'email_address',
+                    'email_address_caps'
+                ],
+                id: _.uniqueId(),
+                email_address: '',
+                invalid_email: false,
+                opt_out: false
+            });
+            var recipients = [{
+                email: email
+            }];
+            var validRecipients = field._retrieveValidRecipients(recipients);
+
+            expect(validRecipients.length).toBe(1);
+            expect(validRecipients[0].get('parent')).toBeUndefined();
+            expect(validRecipients[0].get('parent_type')).toBeUndefined();
+            expect(validRecipients[0].get('parent_id')).toBeUndefined();
+            expect(validRecipients[0].get('parent_name')).toBeUndefined();
+            expect(validRecipients[0].get('email_addresses')).toEqual({
+                _acl: {},
+                _erased_fields: [
+                    'email_address',
+                    'email_address_caps'
+                ],
+                id: email.get('id'),
+                email_address: '',
+                invalid_email: false,
+                opt_out: false
+            });
+            expect(validRecipients[0].get('email_address_id')).toBe(email.get('id'));
+            expect(validRecipients[0].get('email_address')).toBe('');
+            expect(validRecipients[0].get('invalid_email')).toBe(false);
+            expect(validRecipients[0].get('opt_out')).toBe(false);
+        });
+
+        it('should not have an email address when the email address is erased', function() {
+            var email = app.data.createBean('EmailAddresses', {
+                _acl: {},
+                _erased_fields: [
+                    'email_address',
+                    'email_address_caps'
+                ],
+                id: _.uniqueId(),
+                email_address: '',
+                invalid_email: false,
+                opt_out: false
+            });
+            var bean = app.data.createBean('Contacts', {
+                _acl: {},
+                _erased_fields: [],
+                id: _.uniqueId(),
+                name: 'Phil Thomas',
+                first_name: 'Phil',
+                last_name: 'Thomas'
+            });
+            var recipients = [{
+                email: email,
+                bean: bean
+            }];
+            var validRecipients = field._retrieveValidRecipients(recipients);
+
+            expect(validRecipients.length).toBe(1);
+            expect(validRecipients[0].get('parent')).toEqual({
+                _acl: {},
+                _erased_fields: [],
+                type: 'Contacts',
+                id: bean.get('id'),
+                name: 'Phil Thomas',
+                first_name: 'Phil',
+                last_name: 'Thomas'
+            });
+            expect(validRecipients[0].get('parent_type')).toBe('Contacts');
+            expect(validRecipients[0].get('parent_id')).toBe(bean.get('id'));
+            expect(validRecipients[0].get('parent_name')).toBe('Phil Thomas');
+            expect(validRecipients[0].get('email_addresses')).toBeUndefined();
+            expect(validRecipients[0].get('email_address_id')).toBeUndefined();
+            expect(validRecipients[0].get('email_address')).toBeUndefined();
+            expect(validRecipients[0].get('invalid_email')).toBeUndefined();
+            expect(validRecipients[0].get('opt_out')).toBeUndefined();
+        });
+
+        it('should have an empty parent name and email address when the name an email address are erased', function() {
+            var email = app.data.createBean('EmailAddresses', {
+                _acl: {},
+                _erased_fields: [
+                    'email_address',
+                    'email_address_caps'
+                ],
+                id: _.uniqueId(),
+                email_address: '',
+                invalid_email: false,
+                opt_out: false
+            });
+            var bean = app.data.createBean('Contacts', {
+                _acl: {},
+                _erased_fields: [
+                    'first_name',
+                    'last_name'
+                ],
+                id: _.uniqueId(),
+                name: '',
+                first_name: '',
+                last_name: ''
+            });
+            var recipients = [{
+                email: email,
+                bean: bean
+            }];
+            var validRecipients = field._retrieveValidRecipients(recipients);
+
+            expect(validRecipients.length).toBe(1);
+            expect(validRecipients[0].get('parent')).toEqual({
+                _acl: {},
+                _erased_fields: [
+                    'first_name',
+                    'last_name'
+                ],
+                type: 'Contacts',
+                id: bean.get('id'),
+                name: '',
+                first_name: '',
+                last_name: ''
+            });
+            expect(validRecipients[0].get('parent_type')).toBe('Contacts');
+            expect(validRecipients[0].get('parent_id')).toBe(bean.get('id'));
+            expect(validRecipients[0].get('parent_name')).toBe('');
+            expect(validRecipients[0].get('email_addresses')).toEqual({
+                _acl: {},
+                _erased_fields: [
+                    'email_address',
+                    'email_address_caps'
+                ],
+                id: email.get('id'),
+                email_address: '',
+                invalid_email: false,
+                opt_out: false
+            });
+            expect(validRecipients[0].get('email_address_id')).toBe(email.get('id'));
+            expect(validRecipients[0].get('email_address')).toBe('');
+            expect(validRecipients[0].get('invalid_email')).toBe(false);
+            expect(validRecipients[0].get('opt_out')).toBe(false);
+        });
     });
 
     describe('Should Add Email Options', function() {
