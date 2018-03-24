@@ -649,6 +649,91 @@ describe('EmailClientLaunch Plugin', function() {
             expect(url).toEqual('mailto:foo1@bar.com,foo2@bar.com');
         });
 
+        it('should return a mailto without any email addresses if they are empty', function() {
+            var options = {
+                to: [{
+                    email: app.data.createBean('EmailAddresses', {
+                        _acl: {},
+                        _erased_fields: [],
+                        id: _.uniqueId(),
+                        email_address: '',
+                        invalid_email: false,
+                        opt_out: false
+                    })
+                }],
+                cc: [{
+                    email: app.data.createBean('EmailAddresses', {
+                        _acl: {},
+                        _erased_fields: [],
+                        id: _.uniqueId(),
+                        email_address: '',
+                        invalid_email: false,
+                        opt_out: false
+                    })
+                }],
+                bcc: [{
+                    email: app.data.createBean('EmailAddresses', {
+                        _acl: {},
+                        _erased_fields: [],
+                        id: _.uniqueId(),
+                        email_address: '',
+                        invalid_email: false,
+                        opt_out: false
+                    })
+                }]
+            };
+            var url = field._buildMailToURL(options);
+
+            expect(url).toEqual('mailto:');
+        });
+
+        it('should return a mailto without any email addresses if they have been erased', function() {
+            var options = {
+                to: [{
+                    email: app.data.createBean('EmailAddresses', {
+                        _acl: {},
+                        _erased_fields: [
+                            'email_address',
+                            'email_address_caps'
+                        ],
+                        id: _.uniqueId(),
+                        email_address: '',
+                        invalid_email: false,
+                        opt_out: false
+                    })
+                }],
+                cc: [{
+                    email: app.data.createBean('EmailAddresses', {
+                        _acl: {},
+                        _erased_fields: [
+                            'email_address',
+                            'email_address_caps'
+                        ],
+                        id: _.uniqueId(),
+                        email_address: '',
+                        invalid_email: false,
+                        opt_out: false
+                    })
+                }],
+                bcc: [{
+                    email: app.data.createBean('EmailAddresses', {
+                        _acl: {},
+                        _erased_fields: [
+                            'email_address',
+                            'email_address_caps'
+                        ],
+                        id: _.uniqueId(),
+                        email_address: '',
+                        invalid_email: false,
+                        opt_out: false
+                    })
+                }]
+            };
+            var url = field._buildMailToURL(options);
+
+            expect(url).toEqual('mailto:');
+        });
+
         it('should return mailto with cc and bcc addresses in querystring', function() {
             var url = field._buildMailToURL({
                 cc: [{
