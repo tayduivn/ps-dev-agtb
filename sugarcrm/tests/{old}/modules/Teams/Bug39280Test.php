@@ -10,8 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class Bug39280Test extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class Bug39280Test extends TestCase
 {
     public function testListViewName2Display() {
     	require_once('modules/Teams/metadata/listviewdefs.php');

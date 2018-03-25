@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #56425
@@ -19,7 +20,7 @@
  * @ticked 56425
  * @ticket 42169
  */
-class Bug56425Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56425Test extends TestCase
 {
     /**
      * Test asserts genereated labels for activities

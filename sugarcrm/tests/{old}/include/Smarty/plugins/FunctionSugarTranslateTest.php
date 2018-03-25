@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SugarSmarty/plugins/function.sugar_translate.php';
 
-class FunctionSugarTranslateTest extends Sugar_PHPUnit_Framework_TestCase
+class FunctionSugarTranslateTest extends TestCase
 {
     public function providerJsEscapedSting()
     {

@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ViewClassicTest extends Sugar_PHPUnit_Framework_TestCase
+class ViewClassicTest extends TestCase
 {
     public function testConstructor()
 	{

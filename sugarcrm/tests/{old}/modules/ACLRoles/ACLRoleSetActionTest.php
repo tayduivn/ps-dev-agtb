@@ -9,12 +9,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 use PHPUnit_Framework_MockObject_Matcher_Invocation as Matcher;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers ACLRole::setAction
  */
-class ACLRoleSetActionTest extends Sugar_PHPUnit_Framework_TestCase
+class ACLRoleSetActionTest extends TestCase
 {
     public static function tearDownAfterClass()
     {

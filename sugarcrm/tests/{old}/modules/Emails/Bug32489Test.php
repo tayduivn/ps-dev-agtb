@@ -9,12 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 32489
  */
-class Bug32489Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug32489Test extends TestCase
 {
 	var $em1 = null;
     var $note1 = null;
@@ -116,4 +117,3 @@ class Bug32489Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals(1, count($results['out']), "Could not perform a simple search for imported emails with multiple attachment" );
     }
 }
-?>

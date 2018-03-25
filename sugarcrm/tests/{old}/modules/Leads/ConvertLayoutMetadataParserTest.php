@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group leadconvert
  * @group Studio
  */
-class ConvertLayoutMetadataParserTest extends Sugar_PHPUnit_Framework_TestCase
+class ConvertLayoutMetadataParserTest extends TestCase
 {
     protected $parser;
     protected $contactDef = array(

@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Reports/templates/templates_list_view.php';
 
 /**
  * @ticket 53357
  */
-class Bug53357Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug53357Test extends TestCase
 {
     protected $opportunity_id;
     protected $amount = 123456;

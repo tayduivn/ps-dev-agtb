@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class ViewAjaxTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ViewAjaxTest extends TestCase
 {   
     public function testConstructor() 
 	{

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * ExtAPIGoToMeetingTest.php
  *
@@ -24,7 +26,7 @@
 /**
  * Class ExtAPIGoToMeetingTest
  */
-class ExtAPIGoToMeetingTest extends Sugar_PHPUnit_Framework_TestCase
+class ExtAPIGoToMeetingTest extends TestCase
 {
     private $eapm;
 

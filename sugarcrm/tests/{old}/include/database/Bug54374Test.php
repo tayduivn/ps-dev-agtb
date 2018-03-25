@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug54374Test.php
  * This is a test for the massageValue function.  There was a problem with the IBMDB2Manager implementation in that some
@@ -18,7 +20,7 @@
  *
  */
 
-class Bug54374Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug54374Test extends TestCase
 {
     private $_db;
 

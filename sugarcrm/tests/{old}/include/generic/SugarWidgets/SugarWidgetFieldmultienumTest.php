@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test for SugarWidgetReportFieldmultienum.
  *
  * Class SugarWidgetReportFieldmultienumTest
  */
-class SugarWidgetReportFieldmultienumTest extends PHPUnit_Framework_TestCase
+class SugarWidgetReportFieldmultienumTest extends TestCase
 {
     /**
      * {@inheritDoc}

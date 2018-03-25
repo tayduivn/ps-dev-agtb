@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once('modules/ACLFields/actiondefs.php');
 
@@ -18,7 +19,7 @@ require_once('modules/ACLFields/actiondefs.php');
  *
  * @ticked 62906
  */
-class Bug62906Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug62906Test extends TestCase
 {
     protected $lead = null;
     protected $task = null;

@@ -10,12 +10,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestRestUtilities.php';
 
 /**
  * @group ApiTests
  */
-class PAT189Test extends Sugar_PHPUnit_Framework_TestCase
+class PAT189Test extends TestCase
 {
     /** @var AccountsRelateApi */
     private $api;

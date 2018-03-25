@@ -9,16 +9,20 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTests\DataPrivacy\Erasure\Field;
+
+namespace Sugarcrm\SugacrmTests\DataPrivacy\Erasure\Field;
+
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Email;
 use SugarTestContactUtilities;
 use SugarTestEmailAddressUtilities;
 use SugarTestLeadUtilities;
 use SugarTestHelper;
+
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Email
  */
-class EmailTest extends \Sugar_PHPUnit_Framework_TestCase
+class EmailTest extends TestCase
 {
     private static $emailAddress = [];
     private static $contact;

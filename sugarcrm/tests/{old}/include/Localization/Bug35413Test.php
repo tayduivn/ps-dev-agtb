@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #35413
@@ -18,7 +19,7 @@
  * Bug #45059
  * Non UTF-8 Emails sent without Character Encoding are not translated properly
  */
-class Bug35413Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug35413Test extends TestCase
 {
     private $_localization = null;
 

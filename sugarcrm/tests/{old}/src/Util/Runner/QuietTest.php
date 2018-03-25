@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Util\Runner;
 
 use Sugarcrm\Sugarcrm\Util\Runner\Quiet as RunnerQuiet;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
@@ -20,7 +21,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
  *
  * @covers \Sugarcrm\Sugarcrm\Util\Runner\Quiet
  */
-class QuietTest extends \Sugar_PHPUnit_Framework_TestCase
+class QuietTest extends TestCase
 {
     /** @var \SugarBean[] */
     protected $listOfBeans = array();

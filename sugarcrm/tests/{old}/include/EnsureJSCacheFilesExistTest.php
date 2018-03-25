@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once("include/utils.php");
 
-class EnsureJSCacheFilesExistTest extends Sugar_PHPUnit_Framework_TestCase
+class EnsureJSCacheFilesExistTest extends TestCase
 {
     protected $testFile = "cache/include/javascript/sugar_sidecar.min.js";
     protected $testFiles = array(

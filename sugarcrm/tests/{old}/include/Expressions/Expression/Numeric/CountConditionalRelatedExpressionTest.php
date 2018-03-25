@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class CountConditionalRelatedExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class CountConditionalRelatedExpressionTest extends TestCase
 {
     public function testCountConditionalRelated()
     {

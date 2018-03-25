@@ -10,8 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug51980Test extends Sugar_PHPUnit_Framework_TestCase {
-// class Bug51980Test extends  Sugar_PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+
+class Bug51980Test extends TestCase
+{
     private $user;
     private $opp;
 

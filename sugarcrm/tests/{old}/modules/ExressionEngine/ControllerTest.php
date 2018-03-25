@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers ExpressionEngineController
  */
-class ExpressionEngine_ControllerTest extends Sugar_PHPUnit_Framework_TestCase
+class ExpressionEngine_ControllerTest extends TestCase
 {
     protected function tearDown()
     {

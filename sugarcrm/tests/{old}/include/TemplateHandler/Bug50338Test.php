@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- 
-class Bug50338Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug50338Test extends TestCase
 {
     private $TemplateHandler;
     private $fieldDefs;

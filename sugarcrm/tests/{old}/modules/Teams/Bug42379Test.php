@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /***
  * Test cases for Bug 42379
  */
-class Bug42379Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug42379Test extends TestCase
 {
 	private $teamSets;
 	private $teamIds = array();
@@ -146,4 +147,3 @@ class TeamSetBug42379Test extends TeamSet
 
 
 }
-?>

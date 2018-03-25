@@ -9,14 +9,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class Bug41845Test extends Sugar_PHPUnit_Framework_TestCase {
-      
+
+use PHPUnit\Framework\TestCase;
+
+class Bug41845Test extends TestCase
+{
     public function testEnableDecimalFieldForRangeSearch()
     {
     	$decimal = new TemplateDecimal();
     	$this->assertTrue(isset($decimal->vardef_map['enable_range_search']), 'Assert that enable_range_search is in the vardef_map Array'); 	
     } 
-   
 }
-?>

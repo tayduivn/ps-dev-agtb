@@ -9,10 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
+use PHPUnit\Framework\TestCase;
 
-class Bug46276Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46276Test extends TestCase
 {
 	var $opportunities;
 

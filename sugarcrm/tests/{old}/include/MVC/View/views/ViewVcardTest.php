@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class ViewVcardTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ViewVcardTest extends TestCase
 {   
     public function setUp()
     {

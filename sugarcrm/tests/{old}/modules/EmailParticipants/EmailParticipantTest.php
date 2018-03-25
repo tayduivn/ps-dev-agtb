@@ -11,11 +11,12 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass EmailParticipant
  */
-class EmailParticipantTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailParticipantTest extends TestCase
 {
     protected function setUp()
     {

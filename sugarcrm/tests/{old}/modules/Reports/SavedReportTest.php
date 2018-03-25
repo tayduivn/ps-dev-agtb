@@ -9,7 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class SavedReportTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class SavedReportTest extends TestCase
 {
     protected $dbMock = null;
 
@@ -157,4 +160,3 @@ class SavedReportTest extends Sugar_PHPUnit_Framework_TestCase
         return $def;
     }
 }
-

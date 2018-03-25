@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 require_once 'upgrade/scripts/pre/RemoveInlineHTMLSpacing.php';
 
 /**
  * Test asserts correct removal of inline html in php files under custom directory
  */
-class RemoveInlineHTMLSpacingTest extends Sugar_PHPUnit_Framework_TestCase
+class RemoveInlineHTMLSpacingTest extends TestCase
 {
     /** @var UpgradeDriver */
     protected $upgradeDriver = null;

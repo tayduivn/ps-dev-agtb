@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/workflow/action_utils.php');
 
-class Pat756Test extends Sugar_PHPUnit_Framework_TestCase
+class Pat756Test extends TestCase
 {
     private $task;
 

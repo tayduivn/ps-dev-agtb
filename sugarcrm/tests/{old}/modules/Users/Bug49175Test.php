@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #49175
  * When user is admin doesn't display on user detailview
  * @ticket 49175
  */
-class Bug49175Test extends  Sugar_PHPUnit_Framework_TestCase
+class Bug49175Test extends TestCase
 {
     private $user;
 
@@ -61,5 +62,3 @@ class MockUserViewHelper extends UserViewHelper {
 
     }
 }
-
-?>

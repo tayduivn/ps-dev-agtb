@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @itr 27836
  */
-class ITR27836Test extends Sugar_PHPUnit_Framework_TestCase
+class ITR27836Test extends TestCase
 {   	
     protected $bean;
 

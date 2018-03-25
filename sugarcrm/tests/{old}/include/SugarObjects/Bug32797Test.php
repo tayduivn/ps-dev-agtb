@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group bug32797
  */
-class Bug32797Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug32797Test extends TestCase
 {
     private $_old_sugar_config = null;
 

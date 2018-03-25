@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for SugarACL getUserActions
  */
-class CallBug57478Test extends Sugar_PHPUnit_Framework_TestCase
+class CallBug57478Test extends TestCase
 {
     protected $bean;
 

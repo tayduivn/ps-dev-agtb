@@ -9,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * @group ActivityStream
  */
-class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
+class SubscriptionsTest extends TestCase
 {
     private $user;
     private $record;

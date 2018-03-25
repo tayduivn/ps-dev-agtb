@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #46411
  * Importing Calls will not populate Leads or Contacts Subpanel
@@ -17,7 +19,7 @@
  * @author adetskin@sugarcrm.com
  * @ticket 46411
  */
-class Bug46411Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46411Test extends TestCase
 {
     /**
      * Importing Calls will not populate Leads or Contacts Subpanel
@@ -123,5 +125,3 @@ class bug46411_Importer_mock extends Importer
     }
 
 }
-
-

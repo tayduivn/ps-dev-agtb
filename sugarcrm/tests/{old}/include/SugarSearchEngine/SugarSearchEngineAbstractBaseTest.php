@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SugarSearchEngineAbstractBaseTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarSearchEngineAbstractBaseTest extends TestCase
 {
     public function testSearchEngineDown()
     {

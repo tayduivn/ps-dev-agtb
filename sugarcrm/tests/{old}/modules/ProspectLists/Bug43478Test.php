@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once "include/export_utils.php";
 
-class Bug43478Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43478Test extends TestCase
 {
     /**
      * Contains created prospect lists' ids
@@ -130,4 +132,3 @@ class Bug43478Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query('DELETE FROM prospect_lists WHERE id IN (\'' . $ids . '\')');
     }
 }
-?>

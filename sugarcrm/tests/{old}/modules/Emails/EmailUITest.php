@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
+class EmailUITest extends TestCase
 {
     private $_folders = null;
 

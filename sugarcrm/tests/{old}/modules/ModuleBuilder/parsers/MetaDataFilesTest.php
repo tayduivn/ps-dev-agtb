@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * MetaDataFilesTest
  *
@@ -19,7 +21,7 @@
  */
 
 
-class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
+class MetaDataFilesTest extends TestCase
 {
     public function setUp()
     {

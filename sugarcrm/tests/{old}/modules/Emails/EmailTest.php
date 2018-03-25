@@ -11,13 +11,14 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test cases for Bug 30591
  *
  * @coversDefaultClass Email
  */
-class EmailTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailTest extends TestCase
 {
 	private $email;
 

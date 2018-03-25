@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class M2MRelationshipHooksTriggerTest
  *
  * @covers M2MRelationship
  */
-class M2MRelationshipHooksTriggerTest extends Sugar_PHPUnit_Framework_TestCase
+class M2MRelationshipHooksTriggerTest extends TestCase
 {
     /** @var Call */
     protected $call;

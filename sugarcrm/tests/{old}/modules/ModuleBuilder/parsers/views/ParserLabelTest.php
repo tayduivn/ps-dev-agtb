@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers ParserLabel
  */
-class ParserLabelTest extends PHPUnit_Framework_TestCase
+class ParserLabelTest extends TestCase
 {
     protected function setUp()
     {

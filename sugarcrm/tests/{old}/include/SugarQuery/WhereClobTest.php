@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarQuery_WhereClobTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarQuery_WhereClobTest extends TestCase
 {
     /** @var Account */
     private $account;

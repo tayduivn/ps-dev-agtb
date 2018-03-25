@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestDatabaseMock.php';
 
-class ProductsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
+class ProductsCurrencyRateUpdateTest extends TestCase
 {
     /**
      * @var SugarTestDatabaseMock

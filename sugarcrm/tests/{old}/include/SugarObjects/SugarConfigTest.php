@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class SugarConfigTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarConfigTest extends TestCase
 {
     private $_old_sugar_config = null;
 
@@ -220,4 +221,3 @@ class SugarConfigTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($config->get('foobar.foo.1.first'), 'uno');
     }
 }
-

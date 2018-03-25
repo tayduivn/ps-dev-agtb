@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug49873Test.php
  * This test is to check the removal of the Contracts relationships in a Document instance.  We test the mark_deleted call
@@ -19,7 +21,7 @@
  *
  * @author Collin Lee
  */
-class Bug49873Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49873Test extends TestCase
 {
 	var $doc = null;
     var $contract = null;

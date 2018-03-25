@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class PMSELoggerTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PMSELoggerTest extends TestCase
 {
     public function testGetInstance()
     {

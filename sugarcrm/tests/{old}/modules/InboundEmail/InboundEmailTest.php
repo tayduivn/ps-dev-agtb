@@ -9,12 +9,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * This class is meant to test everything for InboundEmail
  *
  */
-class InboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
+class InboundEmailTest extends TestCase
 {
 	var $_user = null;
     /**
@@ -167,4 +169,3 @@ class InboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
 }
-?>

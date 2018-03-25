@@ -12,8 +12,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarJobCreateNextTimePeriodTest extends TestCase
 {
     private $preTestIds = array();
 

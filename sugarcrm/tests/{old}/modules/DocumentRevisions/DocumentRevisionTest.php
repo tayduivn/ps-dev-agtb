@@ -11,8 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
-class DocumentRevisionTest extends Sugar_PHPUnit_Framework_TestCase
+class DocumentRevisionTest extends TestCase
 {
     private static $docs = array();
     private static $files = array();

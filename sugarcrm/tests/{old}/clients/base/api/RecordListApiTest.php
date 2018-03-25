@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RecordList Api Test
  */
-class RecordListApiTest extends Sugar_PHPUnit_Framework_TestCase
+class RecordListApiTest extends TestCase
 {
     /**
      * @var RecordListApi

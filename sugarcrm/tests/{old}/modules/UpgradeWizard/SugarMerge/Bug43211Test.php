@@ -9,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/dir_inc.php';
 
-class Bug43211Test extends Sugar_PHPUnit_Framework_TestCase  {
-	
+class Bug43211Test extends TestCase
+{
 var $merge;
 
 function setUp() {
@@ -75,6 +78,4 @@ function test_accounts_searchdefs_merge() {
    
    $this->assertEquals($searchdefs['Accounts']['templateMeta']['maxColumnsBasic'], $searchdefs['Accounts']['templateMeta']['maxColumns'], 'Assert that maxColumnsBasic is set to value of maxColumns');
 }
-
 }
-?>

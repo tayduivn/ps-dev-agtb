@@ -10,12 +10,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * This class is meant to test everything for InboundEmail
  *
  */
-class GroupFoldersTest extends Sugar_PHPUnit_Framework_TestCase
+class GroupFoldersTest extends TestCase
 {
 	protected $_user = null;
 	

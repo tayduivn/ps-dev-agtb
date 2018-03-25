@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once 'include/SearchForm/SearchForm2.php';
 
@@ -17,8 +18,8 @@ require_once 'include/SearchForm/SearchForm2.php';
  * @group Bug45966
  * @coversDefaultClass SearchForm
  */
-class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug45966 extends TestCase
+{
     var $module = 'Notes';
     var $action = 'index';
     var $seed;

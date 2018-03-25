@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/workflow/action_utils.php');
 
-class Bug47403Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47403Test extends TestCase
 {
 
     protected $_focus;
@@ -62,5 +64,3 @@ class Bug47403Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotSame('', $this->_focus->user_name);
     }
 }
-
-?>

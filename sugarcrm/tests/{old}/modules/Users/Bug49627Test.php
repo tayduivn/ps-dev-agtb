@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug49627Test.php
@@ -18,7 +19,7 @@
  * This unit test tests the user type dropdown items created from the UserViewHelper class.
  * It runs tests against the normal user, portal and group user types.
  */
-class Bug49627Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49627Test extends TestCase
 {
 
 var $normalUser;

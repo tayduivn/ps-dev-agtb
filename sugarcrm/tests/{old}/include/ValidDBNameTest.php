@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once("include/utils.php");
 
-class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
+class ValidDBNameTest extends TestCase
 {
     public function testShortNameUneffected()
     {
@@ -114,5 +116,3 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals(getValidDBName($name_1), getValidDBName($name_2));
     }
 }
-
-?>

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * UpgradeDriverTest
  *
@@ -19,7 +21,7 @@
 
 require_once('modules/UpgradeWizard/CliUpgrader.php');
 
-class UpgradeDriverTest extends Sugar_PHPUnit_Framework_TestCase
+class UpgradeDriverTest extends TestCase
 {
     protected $driver;
 
@@ -232,4 +234,3 @@ class UpgradeDriverTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-

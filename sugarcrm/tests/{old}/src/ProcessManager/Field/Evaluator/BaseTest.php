@@ -13,8 +13,9 @@
 namespace Sugarcrm\SugarcrmTests\ProcessManager\Field\Evaluator;
 
 use Sugarcrm\Sugarcrm\ProcessManager\Field\Evaluator;
+use PHPUnit\Framework\TestCase;
 
-class BaseTest extends \Sugar_PHPUnit_Framework_TestCase
+class BaseTest extends TestCase
 {
     /**
      * EvaluatorInterface object

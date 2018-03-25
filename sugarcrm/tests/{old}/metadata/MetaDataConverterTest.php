@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class MetaDataConverterTest extends TestCase
 {
     protected $defs = array(
         'detail' => array(

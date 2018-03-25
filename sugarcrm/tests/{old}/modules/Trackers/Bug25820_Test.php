@@ -11,10 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('tests/{old}/modules/Trackers/TrackerTestUtility.php');
 require_once('tests/{old}/SugarTestLangPackCreator.php');
 
-class Bug25820_Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug25820_Test extends TestCase
 {
     private $_trackerReporter;
 
@@ -67,4 +69,3 @@ class TrackerReporterBug25820Mock extends TrackerReporter
         return $this->_getTranslatedModuleName($moduleName);
     }
 }
-?>

@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestACLUtilities.php';
 /**
  * Bug 56391 - ACL's used in the MetadataManager were the static ones.  Have switched to use the SugarACL methods
  */
-class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56391Test extends TestCase
 {
     public function setUp()
     {

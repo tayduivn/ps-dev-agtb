@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug50342Test.php
  * This test helps simulate the calls made to the get_entry_list method of SoapSugarUsers.php.  For the searching
@@ -28,7 +30,7 @@
 
 require_once('tests/{old}/SugarTestProspectUtilities.php');
 
-class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50342Test extends TestCase
 {
     var $prospect;
 
@@ -139,4 +141,3 @@ class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-

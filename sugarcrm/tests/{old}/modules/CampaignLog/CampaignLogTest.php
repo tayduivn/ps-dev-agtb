@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
-class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
+class CampaignLogTest extends TestCase
 {
 	var $campaign_id = 'campaignforcamplogunittest';
 	var $prospect_list_id = 'prospectlistforcamplogunittest';

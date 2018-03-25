@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group leadconvert
  */
-class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
+class LeadConvertTest extends TestCase
 {
     private $lead;
     private $leadId;

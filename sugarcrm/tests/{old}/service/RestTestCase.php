@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 //Uses the latest version of SugarWebServiceUtil implementation
 
 /**
@@ -19,7 +21,7 @@
  * @author Collin Lee
  * 
  */
-abstract class RestTestCase extends Sugar_PHPUnit_Framework_TestCase
+abstract class RestTestCase extends TestCase
 {
 
 	protected $_soapClient = null;

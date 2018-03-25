@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('include/download_file.php');
 
-class RestResponseTest extends Sugar_PHPUnit_Framework_TestCase
+class RestResponseTest extends TestCase
 {
     /**
      * Find specific header in an array
@@ -252,5 +255,4 @@ class MockRestResponse extends RestResponse
     {
         return $this->headers_sent;
     }
-
 }

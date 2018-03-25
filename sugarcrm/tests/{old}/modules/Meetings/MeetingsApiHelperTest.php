@@ -11,9 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class MeetingsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class MeetingsApiHelperTest extends TestCase
 {
 
     protected $bean =null;

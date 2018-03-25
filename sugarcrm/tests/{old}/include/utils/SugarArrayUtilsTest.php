@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/array_utils.php';
 
-class SugarArrayUtilsTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarArrayUtilsTest extends TestCase
 {
 	
 	public function test_array_merge_values()

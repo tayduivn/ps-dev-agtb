@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug41114Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug41114Test extends TestCase
 {
     private $user;
     

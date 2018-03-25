@@ -11,9 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug50000Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug50000Test extends TestCase
+{
     var $reporter;
 
     public function setUp() {
@@ -63,5 +64,3 @@ class Bug50000MockReporter {
     var $report_def;
     var $group_defs_Info;
 }
-
-?>

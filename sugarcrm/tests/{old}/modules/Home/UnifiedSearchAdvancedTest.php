@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/layout_utils.php';
 
 /**
  * @ticket 34125
  */
-class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_TestCase
+class UnifiedSearchAdvancedTest extends TestCase
 {
     protected $_contact = null;
     private $_hasUnifiedSearchModulesConfig = false;
@@ -146,4 +148,3 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_TestCase
         $this->expectOutputRegex('//');
     }
 }
-

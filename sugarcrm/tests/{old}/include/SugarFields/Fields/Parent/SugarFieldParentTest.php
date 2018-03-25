@@ -9,12 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class SugarFieldParentTest
  *
  * Test cases for SugarFieldParent class
  */
-class SugarFieldParentTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarFieldParentTest extends TestCase
 {
     public function sugarFieldParentDataProvider()
     {

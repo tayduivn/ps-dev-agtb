@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
+class SaveRelationshipChangesTest extends TestCase
 {
     public function setRelationshipInfoDataProvider()
     {

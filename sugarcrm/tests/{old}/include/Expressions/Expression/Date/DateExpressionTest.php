@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DateExpressionTest extends TestCase
 {
     static $createdBeans = array();
 

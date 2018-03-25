@@ -10,8 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class SugarFieldTeamsetTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class SugarFieldTeamsetTest extends TestCase
 {
 	var $_user = null;    
 	var $_contact = null;
@@ -121,5 +123,3 @@ class SugarFieldTeamsetTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($row['total'], 2, "Assert that the West team was added to the team sets for the contact"); //West, user's private team and global team       	
     }
 }
-
-?>

@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/Sugarpdf/sugarpdf_config.php');
 require_once('vendor/tcpdf/tcpdf.php');
 require_once('vendor/Zend/Http/Response.php');
 require_once('vendor/Zend/Http/Response/Stream.php');
 
-class SerializeEvilTest extends Sugar_PHPUnit_Framework_TestCase
+class SerializeEvilTest extends TestCase
 {
 
     public function testSugarCacheFile()

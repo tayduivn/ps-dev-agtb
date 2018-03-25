@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEConvergingParallelGatewayTest extends PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class PMSEConvergingParallelGatewayTest extends TestCase
 {
 
     /**

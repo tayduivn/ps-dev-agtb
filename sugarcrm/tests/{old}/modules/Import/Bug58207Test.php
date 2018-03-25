@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test checks Import when not using UTF-8 encoding
@@ -18,7 +19,7 @@
  * @author avucinic
  *
  */
-class Bug58207Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug58207Test extends TestCase
 {
 
     private $_file;
@@ -61,5 +62,4 @@ class Bug58207Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('年間売上', $row[20]);
         $this->assertEquals('チームID', $row[30]);
     }
-
 }

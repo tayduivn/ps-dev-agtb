@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #65044
@@ -19,7 +19,7 @@
  * @author bsitnikovski@sugarcrm.com
  * @ticket 65044
 */
-class Bug65044Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug65044Test extends TestCase
 {
 
     private $ie;

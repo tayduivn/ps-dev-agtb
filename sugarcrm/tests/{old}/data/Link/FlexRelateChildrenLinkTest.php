@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers FlexRelateChildrenLink
  */
-class FlexRelateChildrenLinkTest extends Sugar_PHPUnit_Framework_TestCase
+class FlexRelateChildrenLinkTest extends TestCase
 {
     /**
      * @var Contact

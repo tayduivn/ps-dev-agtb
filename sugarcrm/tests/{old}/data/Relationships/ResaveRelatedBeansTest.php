@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Make sure that the resave pulls all beans from cache again
  * so it's not stuck with an old version of a bean overwriting changes
  */
-class ResaveRelatedBeansTest extends Sugar_PHPUnit_Framework_TestCase
+class ResaveRelatedBeansTest extends TestCase
 {
     private $id;
 

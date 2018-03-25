@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RecordListFactory Test
  */
-class RecordListFactoryTest extends Sugar_PHPUnit_Framework_TestCase
+class RecordListFactoryTest extends TestCase
 {
     public function setUp()
     {

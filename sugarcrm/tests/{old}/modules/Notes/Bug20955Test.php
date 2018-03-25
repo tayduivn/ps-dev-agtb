@@ -11,12 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once "modules/Bugs/Bug.php";
 
 /**
  * @ticket 20955
  */
-class Bug20955Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug20955Test extends TestCase
 {
 	public $_user = null;
 	public $_team = null;
@@ -77,4 +79,3 @@ class Bug20955Test extends Sugar_PHPUnit_Framework_TestCase
 		return $this->assertEquals($temp_campaign->team_id,$current_user->default_team, "The campaign default team is not the current user's default team! ");
 	}
 }
-

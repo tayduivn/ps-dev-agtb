@@ -11,9 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use PHPUnit\Framework\TestCase;
 
-
-class Bug46923Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46923Test extends TestCase
 {
     public function setUp()
     {

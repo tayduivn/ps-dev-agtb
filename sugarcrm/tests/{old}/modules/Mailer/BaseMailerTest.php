@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group email
  * @group mailer
  */
-class BaseMailerTest extends Sugar_PHPUnit_Framework_TestCase
+class BaseMailerTest extends TestCase
 {
     public function setUp()
     {

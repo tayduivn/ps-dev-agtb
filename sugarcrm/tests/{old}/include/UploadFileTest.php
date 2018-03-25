@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/upload_file.php';
 
 /**
  * @coversDefaultClass UploadFile
  */
-class UploadFileTest extends Sugar_PHPUnit_Framework_TestCase
+class UploadFileTest extends TestCase
 {
     private $db;
 

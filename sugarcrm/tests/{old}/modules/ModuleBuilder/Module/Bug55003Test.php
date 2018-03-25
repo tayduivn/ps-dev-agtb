@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 55003
@@ -19,7 +19,7 @@
  * Notes showing up in portal browser and portal layout editor when Notes is not
  * a portal module
  */
-class Bug55003Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug55003Test extends TestCase
 {
     /**
      * SugarPortalBrowser object

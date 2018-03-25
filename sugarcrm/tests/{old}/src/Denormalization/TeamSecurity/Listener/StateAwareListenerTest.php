@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\TestCase;
 use SplSubject;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder;
@@ -22,7 +23,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 /**
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener
  */
-class StateAwareListenerTest extends \PHPUnit_Framework_TestCase
+class StateAwareListenerTest extends TestCase
 {
     /**
      * @test

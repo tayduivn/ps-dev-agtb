@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SugarSmarty/plugins/function.sugar_button.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_menu.php';
 
-class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
+class FunctionSugarButtonTest extends TestCase
 {
     public function setUp()
     {

@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/include/database/TestBean.php';
 
-class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
+class SimpleQueryTest extends TestCase
 {
     /**
      * @var DBManager

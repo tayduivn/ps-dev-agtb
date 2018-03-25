@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarBeanApiHelper_FormatRelateTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarBeanApiHelper_FormatRelateTest extends TestCase
 {
     /** @var Account */
     private static $account;

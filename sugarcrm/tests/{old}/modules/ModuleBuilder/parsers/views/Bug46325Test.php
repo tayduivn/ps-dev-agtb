@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class Bug46325Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46325Test extends TestCase
 {
     public $parser;
     public $fields;

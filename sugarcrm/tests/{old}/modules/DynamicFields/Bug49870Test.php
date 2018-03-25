@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/DynamicFields/FieldCases.php');
+use PHPUnit\Framework\TestCase;
 
-class Bug49870Test extends Sugar_PHPUnit_Framework_TestCase {
+require_once 'modules/DynamicFields/FieldCases.php';
 
-    private $_modulename = 'Accounts';
+class Bug49870Test extends TestCase
+{
     var $field;
 
     public function setUp() {

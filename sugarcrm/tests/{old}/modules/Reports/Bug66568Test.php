@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Reports/templates/templates_reports.php');
 
 /**
@@ -18,7 +20,7 @@ require_once('modules/Reports/templates/templates_reports.php');
  *
  * @see hasExportAccess()
  */
-class Bug66568Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug66568Test extends TestCase
 {
     private $args;
     private $reportDef = array(

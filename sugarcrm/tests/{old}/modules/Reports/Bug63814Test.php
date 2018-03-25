@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Quarter filters for report date/time fields
  *
  * @author avucinic@sugarcrm.com
  */
-class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug63814Test extends TestCase
 {
     public function setUp()
     {

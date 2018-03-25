@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48571Test extends TestCase
 {
     var $globalDefaultTheme;
     var $unavailableThemes;
@@ -74,5 +75,3 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-
-?>

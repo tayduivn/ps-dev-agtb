@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
 require_once 'upgrade/scripts/post/7_RepairImportMaps.php';
 
-class RepairImportMapsTest extends Sugar_PHPUnit_Framework_TestCase
+class RepairImportMapsTest extends TestCase
 {
     public function setUp()
     {

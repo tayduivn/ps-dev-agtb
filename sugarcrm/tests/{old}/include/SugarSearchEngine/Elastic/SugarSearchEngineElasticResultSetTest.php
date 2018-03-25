@@ -12,12 +12,13 @@
  */
 
 use Elastica\Query;
+use PHPUnit\Framework\TestCase;
 use Elastica\Response;
 use Elastica\ResultSet;
 use Elastica\Result;
 
 
-class SugarSearchEngineElasticResultSetTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarSearchEngineElasticResultSetTest extends TestCase
 {
 
     private $responseString = '{"took":8,"timed_out":false,"_shards":{"total":1,"successful":1,"failed":0},"hits":{"total":2,"max_score":1.0,"hits":[{"_index":"c5368b06edf5dabf62a27e146d35ab3f","_type":"Accounts","_id":"20575d83-63aa-2c15-a4e3-4f3ab8344249","_score":1.0, "_source" : {"name":"test account","module":"Accounts","team_set_id":"1"}},{"_index":"c5368b06edf5dabf62a27e146d35ab3f","_type":"Accounts","_id":"e7abbd8c-1daa-80cc-bdce-4f3ab8cf1cca","_score":1.0, "_source" : {"name":"test2 account","module":"Accounts","team_set_id":"1"}}]},"aggregations":{"_type":{"_type":"terms","missing":0,"total":2,"other":0,"terms":[{"term":"Accounts","count":2}]}}}';

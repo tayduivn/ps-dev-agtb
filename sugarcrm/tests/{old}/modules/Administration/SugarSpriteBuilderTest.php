@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * SugarSpriteBuilderTest
  *
  * This test simply checks that we can run the rebuildSprite function which in turn runs SugarSpriteBuilder
  *
  */
-class SugarSpriteBuilderTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarSpriteBuilderTest extends TestCase
 {
 
 var $useSprites;

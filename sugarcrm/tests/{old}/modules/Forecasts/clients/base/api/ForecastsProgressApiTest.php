@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ForecastsProgressApiTest
  *
  * @coversDefaultClass ForecastsProgressApi
  */
-class ForecastsProgressApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastsProgressApiTest extends TestCase
 {
     /**
      * @var TimePeriod

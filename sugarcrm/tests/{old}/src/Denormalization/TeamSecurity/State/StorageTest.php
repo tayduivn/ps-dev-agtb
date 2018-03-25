@@ -13,8 +13,9 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\State;
 
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage;
+use PHPUnit\Framework\TestCase;
 
-abstract class StorageTest extends \PHPUnit_Framework_TestCase
+abstract class StorageTest extends TestCase
 {
     /**
      * @var Storage

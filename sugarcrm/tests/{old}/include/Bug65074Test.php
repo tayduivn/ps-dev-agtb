@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/utils.php');
 
 function testFuncString()
@@ -33,7 +35,7 @@ class testBeanParam
 /**
  * @ticket 65074
  */
-class Bug65074Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug65074Test extends TestCase
 {
     protected $customIncludeDir = 'custom/include';
     protected $customIncludeFile = 'bug65074_include.php';

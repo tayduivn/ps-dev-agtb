@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #56746 - Dependent Field that uses a Checkbox does not display on module
@@ -20,7 +21,7 @@
  * @ticket 54042
  * @ticket 56746
  */
-class Bug56746Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56746Test extends TestCase
 {
     /**
      * @var Account

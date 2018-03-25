@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers SugarCacheAbstract
  */
-abstract class SugarCacheAbstractTest extends Sugar_PHPUnit_Framework_TestCase
+abstract class SugarCacheAbstractTest extends TestCase
 {
     /**
      * @var SugarCacheAbstract

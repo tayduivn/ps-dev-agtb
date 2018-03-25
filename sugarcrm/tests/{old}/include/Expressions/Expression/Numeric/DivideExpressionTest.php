@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class DivideExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DivideExpressionTest extends TestCase
 {
     /**
      * @dataProvider dataProviderTestEvaluate
@@ -29,4 +31,3 @@ class DivideExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 }
-

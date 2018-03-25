@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 33948
  */
-class DashletAutoRefreshTest extends Sugar_PHPUnit_Framework_TestCase
+class DashletAutoRefreshTest extends TestCase
 {
     public function setup()
     {

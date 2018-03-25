@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug28321Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug28321Test extends TestCase
 {
 	public function testCustomCodeRenderField()
 	{

@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class FieldTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class FieldTest extends TestCase
 {
     protected function tearDown()
     {

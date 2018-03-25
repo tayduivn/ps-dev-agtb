@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass User
  */
-class UserTest extends Sugar_PHPUnit_Framework_TestCase
+class UserTest extends TestCase
 {
     /**
      * @var User
@@ -589,4 +591,3 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 }
-

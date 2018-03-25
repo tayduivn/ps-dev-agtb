@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class QuotaTest extends TestCase
 {
     public function setUp()
     {
@@ -123,4 +125,3 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::setBeanClass('TimePeriods');
     }
 }
-

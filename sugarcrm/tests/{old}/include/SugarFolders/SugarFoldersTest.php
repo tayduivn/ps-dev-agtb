@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarFoldersTest extends TestCase
 {
 	var $folder = null;
 	var $additionalFolders = null;
@@ -351,4 +351,3 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$folder_id}'");
     }
 }
-?>

@@ -9,12 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 33404
  */
-class AutoCreateImportFolderTest extends Sugar_PHPUnit_Framework_TestCase
+class AutoCreateImportFolderTest extends TestCase
 {
 	var $folder_id = null;
 	var $folder_obj = null;
@@ -59,7 +60,5 @@ class AutoCreateImportFolderTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->assertEquals(0, $this->folder_obj->has_child, "Could not create folder for Inbound Email auto folder creation" );
         $this->assertEquals(1, $this->folder_obj->is_group, "Could not create folder for Inbound Email auto folder creation" );
         $this->assertEquals($this->_user->id, $this->folder_obj->assign_to_id, "Could not create folder for Inbound Email auto folder creation" );
-        
-	}
+    }
 }
-?>

@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once('modules/Campaigns/utils.php');
 
@@ -21,7 +22,7 @@ require_once('modules/Campaigns/utils.php');
  * @ticket 54098
  */
 
-class Bug54098Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug54098Test extends TestCase
 {
     private $_aProspectlists_Prospects;
     private $_aProspectlists_Campaigns;

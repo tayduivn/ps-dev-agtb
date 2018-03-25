@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEAssignUserTest extends PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class PMSEAssignUserTest extends TestCase
 {
 
     /**

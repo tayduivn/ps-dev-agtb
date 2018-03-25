@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarSpotTest extends TestCase
 {
     public function setUp()
     {

@@ -11,13 +11,14 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 require_once 'modules/Emails/EmailSenderRelationship.php';
 
 /**
  * @coversDefaultClass EmailSenderRelationship
  */
-class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailSenderRelationshipTest extends TestCase
 {
     private $relationship;
 

@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
-class CheckPlatformTest extends Sugar_PHPUnit_Framework_TestCase
+class CheckPlatformTest extends TestCase
 {
     public function setUp()
     {
@@ -24,4 +26,3 @@ class CheckPlatformTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(is_windows(), $this->_isOnWindows);
     }
 }
-

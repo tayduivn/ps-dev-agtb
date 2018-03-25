@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SugarSystemInfoTest
  * @group BR-1722
  */
-class SugarSystemInfoTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarSystemInfoTest extends TestCase
 {
 
     /**

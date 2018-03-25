@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSEBusinessRuleParserTest extends PHPUnit_Framework_TestCase
+class PMSEBusinessRuleParserTest extends TestCase
 {
     protected $dataParser;
 

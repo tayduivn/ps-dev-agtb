@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group ApiTests
  */
-class HistoryApiTest extends Sugar_PHPUnit_Framework_TestCase
+class HistoryApiTest extends TestCase
 {
     /** @var HistoryApi */
     protected $filterApi = null;

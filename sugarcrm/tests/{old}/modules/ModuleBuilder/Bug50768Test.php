@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #50768
@@ -19,7 +20,7 @@
  * @ticket 50768
  */
 
-class Bug50768Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50768Test extends TestCase
 {
     protected $targetModule = "Accounts";
     protected $currencyFieldDef1 = array(

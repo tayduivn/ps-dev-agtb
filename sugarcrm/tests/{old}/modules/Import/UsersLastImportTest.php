@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class UsersLastImportTest extends TestCase
 {
     private $_importModule = 'Notes';
     private $_importObject = 'Note';

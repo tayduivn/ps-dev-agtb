@@ -13,13 +13,14 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Logger;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Logger
  */
-class LoggerTest extends \PHPUnit_Framework_TestCase
+class LoggerTest extends TestCase
 {
     /**
      * @test

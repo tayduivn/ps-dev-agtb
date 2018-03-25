@@ -10,9 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class CreateDefaultTeamsTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class CreateDefaultTeamsTest extends TestCase
 {
     private $_user = null;
     private $_contact = null;

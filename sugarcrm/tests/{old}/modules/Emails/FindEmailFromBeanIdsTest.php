@@ -9,12 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test cases for Bug 9755
  */
-class FindEmailFromBeanIdsTest extends Sugar_PHPUnit_Framework_TestCase
+class FindEmailFromBeanIdsTest extends TestCase
 {
 	private $emailUI;
 	private $beanIds, $beanType, $whereArr;

@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-81
  * Prepare Meetings Api
  * Test asserts only success of result, not result data.
  */
-class RS81Test extends Sugar_PHPUnit_Framework_TestCase
+class RS81Test extends TestCase
 {
     /** @var RestService */
     protected $service = null;

@@ -9,12 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 32487
  */
-class Bug32487Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug32487Test extends TestCase
 {
 	var $ib = null;
 	var $outbound_id = null;
@@ -66,4 +67,3 @@ class Bug32487Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->assertEquals(0, count($empty_results), "Outbound email account returned for unspecified/empty inbound mail account.");
     }
 }
-?>

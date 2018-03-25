@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /*
  * Tests vCard Rest api.
  */
-class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
+class vCardApiTest extends TestCase
 {
     public function setUp(){
         SugarTestHelper::setUp('current_user');

@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #61818
@@ -19,7 +19,7 @@
  *
  * @ticket 61818
  */
-class HTMLPurifier_ArrayTest extends Sugar_PHPUnit_Framework_TestCase
+class HTMLPurifier_ArrayTest extends TestCase
 {
     /**
      * Data provider for the rest of tests

@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class One2MBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class One2MBeanRelationshipTest extends TestCase
 {
     protected function tearDown()
     {

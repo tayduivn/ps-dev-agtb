@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
-class SortExtensionFilesTest extends Sugar_PHPUnit_Framework_TestCase
+class SortExtensionFilesTest extends TestCase
 {
     public static $test_directory = 'custom/sort_extension_files_test/';
 

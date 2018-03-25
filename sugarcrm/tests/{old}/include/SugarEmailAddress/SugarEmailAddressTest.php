@@ -11,13 +11,14 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 /**
  * @coversDefaultClass SugarEmailAddress
  */
-class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarEmailAddressTest extends TestCase
 {
     /** @var SugarEmailAddress */
     private $ea;

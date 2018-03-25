@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestReflection.php';
 
-class BulkApiTest extends Sugar_PHPUnit_Framework_TestCase
+class BulkApiTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

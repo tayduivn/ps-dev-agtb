@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug36989Test extends TestCase
 {
      private $module = "Contacts";
      private $searchFieldsBackup;

@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class BeanExtendTest extends Sugar_PHPUnit_Framework_TestCase
+class BeanExtendTest extends TestCase
 {
 
     public static function setUpBeforeClass()
@@ -132,6 +133,3 @@ class TestBean10 extends TestBean9
         $this->ok = true;
     }
 }
-
-
-

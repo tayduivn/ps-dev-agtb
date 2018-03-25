@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class KBContentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase 
+class KBContentsApiHelperTest extends TestCase
 {
     /**
      * @var KBContents

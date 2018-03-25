@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug45525 extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug45525 extends TestCase
 {
    
     /**
@@ -78,4 +80,3 @@ class Bug45525 extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-

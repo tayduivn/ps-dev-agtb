@@ -11,12 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SugarQuery/Compiler/Doctrine.php';
 
 /**
  * @coversDefaultClass SugarQuery_Compiler_Doctrine
  */
-class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarQuery_Compiler_DoctrineTest extends TestCase
 {
     /**
      * @var Account

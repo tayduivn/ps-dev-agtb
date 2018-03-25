@@ -9,11 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class Bug36978Test extends Sugar_PHPUnit_Framework_TestCase {
 
-var $rel_guid;	
-var $has_custom_table_dictionary;	
-var $moduleList;
+use PHPUnit\Framework\TestCase;
+
+class Bug36978Test extends TestCase
+{
+    private $rel_guid;
+    private $moduleList;
 
 function setUp() 
 {
@@ -280,7 +282,4 @@ function test_upgrade_custom_relationships() {
 	include('custom/Extension/modules/abc_Test/Ext/Vardefs/test.php');
 	*/
 }
-
-
 }
-?>

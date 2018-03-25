@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/ProjectTask/ProjectTask.php';
 
 /**
  *  RS195: Prepare ProjectTask Module.
  */
-class RS195Test extends Sugar_PHPUnit_Framework_TestCase
+class RS195Test extends TestCase
 {
     public static function setUpBeforeClass()
     {

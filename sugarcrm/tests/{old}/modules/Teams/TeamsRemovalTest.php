@@ -10,11 +10,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test cases for the Team object
  */
-class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
+class TeamsRemovalTest extends TestCase
 {
 
 	var $_user = null;    
@@ -134,5 +136,3 @@ class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->assertTrue($this->_contact->team_set_id == $row['team_set_id']);
     }
 }
-
-?>

@@ -10,13 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
  */
-class ForecastWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastWorksheetsFilterApiTest extends TestCase
 {
     /** @var array
      */

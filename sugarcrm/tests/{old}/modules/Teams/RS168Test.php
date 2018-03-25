@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS168: Prepare Teams Module.
  */
-class RS168Test extends Sugar_PHPUnit_Framework_TestCase
+class RS168Test extends TestCase
 {
     public static function setUpBeforeClass()
     {

@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug36845Test extends TestCase
 {
     var $has_custom_unified_search_modules_display = false;
     var $has_custom_unified_search_modules = false;

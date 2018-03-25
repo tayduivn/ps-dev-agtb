@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class One2OneRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class One2OneRelationshipTest extends TestCase
 {
     /**
      * @covers One2OneRelationship::getType

@@ -13,8 +13,9 @@
 namespace Sugarcrm\SugarcrmTests\ProcessManager\Field\Evaluator;
 
 use Sugarcrm\Sugarcrm\ProcessManager\Field\Evaluator;
+use PHPUnit\Framework\TestCase;
 
-class MultienumTest extends \Sugar_PHPUnit_Framework_TestCase
+class MultienumTest extends TestCase
 {
     /**
      * EvaluatorInterface object

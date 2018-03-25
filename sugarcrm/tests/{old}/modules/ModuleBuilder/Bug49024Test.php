@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 49024
@@ -17,7 +18,7 @@
  * 
  * @ticket 49024
  */
-class Bug49024Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49024Test extends TestCase
 {
     private $objOneToOneRelationship;
 

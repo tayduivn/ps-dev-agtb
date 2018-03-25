@@ -10,14 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class TimestampExpressionTest
  *
  * @coversDefaultClass TimestampExpression
  */
-class TimestampExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+class TimestampExpressionTest extends TestCase
 {
     /**
      * @var User

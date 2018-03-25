@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug59196Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug59196Test extends TestCase
 {
     protected $_request;
     protected $_customFile = 'custom/include/MVC/Controller/wireless_module_registry.php';

@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 // need to make sure SugarApi is included when extending DuplicateCheckStrategy to avoid a fatal error
 require_once("tests/{old}/SugarTestRestUtilities.php");
 /**
  * @group api
  * @group duplicatecheck
  */
-class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
+class DuplicateCheckApiTest extends TestCase
 {
     private $copyOfLeadsDuplicateCheckVarDef,
             $mockLeadsDuplicateCheckVarDef = array(

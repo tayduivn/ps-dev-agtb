@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test building a one to many relationship
  *
  * @ticket 59889
  */
-class CustomOneToManyTest extends Sugar_PHPUnit_Framework_TestCase
+class CustomOneToManyTest extends TestCase
 {
     public function setUp()
     {

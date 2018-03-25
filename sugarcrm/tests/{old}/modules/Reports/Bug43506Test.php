@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
 
 /**
@@ -19,7 +21,7 @@ require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
  *
  * @ticket 43506
  */
-class Bug43506Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43506Test extends TestCase
 {
     public function setUp()
     {

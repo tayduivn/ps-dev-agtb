@@ -11,10 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass BeanFactory
  */
-class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
+class BeanFactoryTest extends TestCase
 {
     protected $createdBeans = array();
 

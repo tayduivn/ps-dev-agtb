@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+use PHPUnit\Framework\TestCase;
 
-class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
+class PMSEUserTaskTest extends TestCase
 {
 
     /**

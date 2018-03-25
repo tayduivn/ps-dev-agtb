@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug58282Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug58282Test extends TestCase
 {
     /** @var Account */
     private $account;

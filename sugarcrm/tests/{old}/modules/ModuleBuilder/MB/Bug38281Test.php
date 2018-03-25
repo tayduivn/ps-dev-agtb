@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/ModuleBuilder/MB/MBModule.php';
 
-class Bug38281Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug38281Test extends TestCase
 {
     private $tmp_dir;
     private $tmp_file;

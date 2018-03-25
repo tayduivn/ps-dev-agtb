@@ -11,13 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #40003
  * Teams revert to self when Previewing a report
  * @ticket 40003
  */
-class Bug40003Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug40003Test extends TestCase
 {
     public function provider()
     {
@@ -64,4 +65,3 @@ class Bug40003Test extends Sugar_PHPUnit_Framework_TestCase
                             $this->sft->view->bean->team_set_id_values['primary']['id']);
     }
 }
-?>

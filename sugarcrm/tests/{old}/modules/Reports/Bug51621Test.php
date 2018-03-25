@@ -11,10 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @group Bug51621
  */
-class Bug51621Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51621Test extends TestCase
 {
 
     public function setUp()
@@ -52,4 +54,3 @@ class Bug51621Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-

@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once('include/modules.php');
 
@@ -22,7 +23,7 @@ require_once('include/modules.php');
  * @author mgusev
  *
  */
-class Bug46805Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46805Test extends TestCase
 {
     /**
      * Test emulate mssql connection and tries to assert number of left and right brackets from generated query.

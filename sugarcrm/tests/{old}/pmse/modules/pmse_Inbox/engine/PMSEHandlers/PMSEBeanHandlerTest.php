@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEBeanHandlerTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class PMSEBeanHandlerTest extends TestCase
 {
     /**
      *

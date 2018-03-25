@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 
 use DBManagerFactory;
+use PHPUnit\Framework\TestCase;
 use Doctrine\DBAL\Connection;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -23,7 +24,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 /**
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Recorder
  */
-class RecorderTest extends \PHPUnit_Framework_TestCase
+class RecorderTest extends TestCase
 {
     /**
      * @var Connection

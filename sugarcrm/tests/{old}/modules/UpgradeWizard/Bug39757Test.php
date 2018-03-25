@@ -9,14 +9,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/UpgradeWizard/uw_utils.php');
 require_once('modules/Meetings/Meeting.php');
 
 /**
  * @ticket 39757
  */
-class Bug39757Test extends Sugar_PHPUnit_Framework_TestCase 
+class Bug39757Test extends TestCase
 {
 	private $_meetingId;
 	

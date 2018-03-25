@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 59273 - Field name in viewdefs has different char case as in vardefs
  */
-class Bug59273Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug59273Test extends TestCase
 {
     protected $_viewFile = 'custom/modulebuilder/packages/test/modules/test/clients/mobile/views/list/list.php';
     protected $_request = array();

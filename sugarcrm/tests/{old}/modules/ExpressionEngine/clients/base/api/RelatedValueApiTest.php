@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests RelatedValueApi.
  */
-class RelatedValueApiTest extends Sugar_PHPUnit_Framework_TestCase
+class RelatedValueApiTest extends TestCase
 {
     /**
      * @var SugarApi

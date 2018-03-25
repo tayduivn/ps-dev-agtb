@@ -10,9 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug42085Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug42085Test extends TestCase
 {
 	var $meeting;
 	//var $listLayoutMetaDataParser;
@@ -51,5 +52,3 @@ class Bug42085Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelessdetailview'));
     }       
 }
-
-?>

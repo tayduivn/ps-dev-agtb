@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Time triggered workflow isn't working when condition checks a calculated field.
  */
-class Bug52584Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug52584Test extends TestCase
 {
     private $shell_object;
     private $focus;

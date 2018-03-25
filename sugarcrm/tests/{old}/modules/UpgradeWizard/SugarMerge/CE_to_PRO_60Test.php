@@ -10,10 +10,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/dir_inc.php';
 
-class CE_to_PRO_60Test extends Sugar_PHPUnit_Framework_TestCase  {
-
+class CE_to_PRO_60Test extends TestCase
+{
 var $merge;
 var $has_dir;
 var $modules;
@@ -220,4 +223,3 @@ function test_contacts_listview_merge() {
 
 
 }
-?>

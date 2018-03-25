@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Export as iso-8859-1 and reimport breaks special characters
@@ -18,7 +18,7 @@
  * @author bsitnikovski@sugarcrm.com
  * @ticket PAT-544
  */
-class BugPAT544Test extends Sugar_PHPUnit_Framework_TestCase
+class BugPAT544Test extends TestCase
 {
 
     private $account1;

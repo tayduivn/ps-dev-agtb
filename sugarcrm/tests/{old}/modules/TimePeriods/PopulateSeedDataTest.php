@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class PopulateTimePeriodsSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
+class PopulateTimePeriodsSeedDataTest extends TestCase
 {
 
 private $createdTimePeriods;

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 10329
  *
@@ -21,7 +23,7 @@
  *		Desired behavior: alphabetized fields.  
  *
  */
-class Bug10329Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug10329Test extends TestCase
 {
 	private $_parser;
 	 

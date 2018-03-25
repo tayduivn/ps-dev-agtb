@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 44009
  */
-class Bug44009Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44009Test extends TestCase
 {
 
 	protected $ie = null;

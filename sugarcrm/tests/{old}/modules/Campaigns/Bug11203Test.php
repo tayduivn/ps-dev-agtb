@@ -11,12 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * This test simulates a failure in creating an inbound email from the campaigns 'Email Setup' wizard
  * @ticket 11203
  */
-class Bug11203Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug11203Test extends TestCase
 {
     public $_user = null;
 
@@ -91,4 +92,3 @@ class Bug11203Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-?>

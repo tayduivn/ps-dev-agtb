@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /*
  * Tests mass update Rest api.
  */
-class RestAddToProspectListTest extends Sugar_PHPUnit_Framework_TestCase
+class RestAddToProspectListTest extends TestCase
 {
     public function setUp(){
         SugarTestHelper::setUp('current_user');

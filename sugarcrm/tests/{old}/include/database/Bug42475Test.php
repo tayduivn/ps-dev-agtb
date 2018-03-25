@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 42475
  */
-class Bug42475Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug42475Test extends TestCase
 {
     public function testAuditingCurrency() {
         // getDataChanges

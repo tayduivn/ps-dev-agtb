@@ -11,12 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /***
  * Used to test Forecast Module endpoints
  * @covers ForecastsApi
  */
-class ForecastsRestApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastsRestApiTest extends TestCase
 {
     private static $currentUser;
     private static $employee1;

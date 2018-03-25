@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/dir_inc.php');
 
-class Bug46027Test extends Sugar_PHPUnit_Framework_TestCase 
+class Bug46027Test extends TestCase
 {
-
 	public function setUp()
 	{		
 		if(file_exists('custom/backup/include/utils/external_cache'))
@@ -71,7 +72,6 @@ class Bug46027Test extends Sugar_PHPUnit_Framework_TestCase
 
 class UpgradeRemoval62xMock extends UpgradeRemoval
 {
-	
 public function getFilesToRemove($version)
 {
 	$files = array();
@@ -79,6 +79,4 @@ public function getFilesToRemove($version)
 	$files[] = 'include/JSON.js';
 	return $files;
 }
-
 }
-?>

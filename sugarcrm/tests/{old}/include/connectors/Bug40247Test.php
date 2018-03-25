@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class Bug40247Test extends TestCase
 {
     var $has_custom_connectors_file;
     var $has_custom_display_config_file;
@@ -157,6 +160,4 @@ class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
     private function install_connectors() {
     	require('modules/Connectors/InstallDefaultConnectors.php');
     }
-
 }
-?>

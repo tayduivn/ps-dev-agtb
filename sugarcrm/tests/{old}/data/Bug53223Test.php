@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #53223
@@ -18,7 +18,7 @@
  *
  * @ticket 53223
  */
-class Bug53223Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug53223Test extends TestCase
 {
     /**
      * @var DeployedRelationships

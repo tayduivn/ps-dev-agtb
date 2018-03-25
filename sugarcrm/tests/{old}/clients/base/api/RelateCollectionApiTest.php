@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 include_once 'clients/base/api/CollectionApi/CollectionDefinition/CollectionDefinitionInterface.php';
 
-class RelateCollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
+class RelateCollectionApiTest extends TestCase
 {
     /**
      * @var string

@@ -12,9 +12,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/ACLActions/actiondefs.php';
 
-class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
+class TeamBasedACLConfiguratorTest extends TestCase
 {
     /**
      * @var TeamBasedACLConfigurator

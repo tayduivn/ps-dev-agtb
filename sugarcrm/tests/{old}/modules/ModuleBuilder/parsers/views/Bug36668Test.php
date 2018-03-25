@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #36668
@@ -40,7 +41,7 @@ class LinkFieldTest extends SubpanelMetaDataParser
     }
 }
 
-class Bug36668Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug36668Test extends TestCase
 {
     function fieldDefProvider()
     {

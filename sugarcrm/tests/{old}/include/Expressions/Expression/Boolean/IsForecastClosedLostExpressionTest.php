@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class IsForecastClosedLostExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class IsForecastClosedLostExpressionTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

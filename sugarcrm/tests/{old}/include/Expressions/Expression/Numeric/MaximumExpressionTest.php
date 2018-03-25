@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class MaximumExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class MaximumExpressionTest extends TestCase
 {
     /**
      * @dataProvider dataProviderTestEvaluate

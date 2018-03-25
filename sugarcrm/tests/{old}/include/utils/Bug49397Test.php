@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * This tests checks to see that the get_user_array function correctly returns results
  * @author Collin Lee
- * 
  */
-class Bug49397Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug49397Test extends TestCase
+{
     var $user;
     var $user2;
 

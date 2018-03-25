@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 // FILE SUGARCRM flav=ent ONLY
 
-class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarQueryPortalVisibilityTest extends TestCase
 {
     public $bean = null;
     public $vis = null;

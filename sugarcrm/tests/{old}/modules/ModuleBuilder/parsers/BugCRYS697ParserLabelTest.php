@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class BugCRYS697ParserLabelTest extends Sugar_PHPUnit_Framework_TestCase
+class BugCRYS697ParserLabelTest extends TestCase
 {
     private $lang = 'en_us';
     private $testModule = 'Accounts';
@@ -37,11 +38,9 @@ class BugCRYS697ParserLabelTest extends Sugar_PHPUnit_Framework_TestCase
         return "custom/modules/{$this->testModule}/Ext/Language/{$this->lang}.lang.ext.php";
     }
 
-
     public function testSavingEmptyLabels()
     {
         ParserLabel::addLabels($this->lang, array(), $this->testModule);
         $this->assertFalse(file_exists($this->getFileName()));
     }
-
-} 
+}

@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/file_utils.php';
 
-class FileUtilsTests extends Sugar_PHPUnit_Framework_TestCase
+class FileUtilsTests extends TestCase
 {
     protected $_testFileWithExt   = 'upload/sugartestfile.txt';
     protected $_testFileNoExt     = 'upload/noextfile';

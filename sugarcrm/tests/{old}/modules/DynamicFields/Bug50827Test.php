@@ -10,8 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class Bug50827Test extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class Bug50827Test extends TestCase
 {
     private $_smarty;
 

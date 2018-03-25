@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
-class XssTest extends Sugar_PHPUnit_Framework_TestCase
+class XssTest extends TestCase
 {
     var $email_xss;
 

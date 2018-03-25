@@ -11,12 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 include_once 'modules/Categories/Category.php';
 
 /**
  * Test for Categories module
  */
-class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
+class CategoriesTest extends TestCase
 {
 
     /**

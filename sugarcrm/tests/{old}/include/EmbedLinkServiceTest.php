@@ -9,7 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class EmbedLinkServiceTest extends TestCase
 {
     protected $embedSrc = '<embed src=www.foo.com>';
     

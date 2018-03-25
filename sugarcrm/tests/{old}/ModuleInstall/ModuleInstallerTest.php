@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class ModuleInstallerTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ModuleInstallerTest extends TestCase
 {
     /**
      * @covers ModuleInstaller::merge_files

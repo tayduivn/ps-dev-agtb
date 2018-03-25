@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug39598Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug39598Test extends TestCase
 {
     private $relationshipFileDir;
     private $relationshipFilePath;

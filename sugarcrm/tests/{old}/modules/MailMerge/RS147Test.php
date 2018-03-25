@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/MailMerge/merge_query.php';
 
 
 /**
  * RS-147: Prepare MailMerge Module.
  */
-class RS147Test extends Sugar_PHPUnit_Framework_TestCase
+class RS147Test extends TestCase
 {
     /**
      * @var array Beans created in tests.

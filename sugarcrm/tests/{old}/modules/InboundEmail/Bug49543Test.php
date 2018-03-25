@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #49543
  * Email cache reset issue causing email deletion slowness
  * @ticket 49543
  */
-class Bug49543Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49543Test extends TestCase
 {
     private function createMail($subj, $from, $to, $imap_uid, $date, $uid)
     {

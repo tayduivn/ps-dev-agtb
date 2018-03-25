@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastsDefaultsTest extends TestCase
 {
     // holds any current config already set up in the DB for forecasts
     private static $currentConfig;

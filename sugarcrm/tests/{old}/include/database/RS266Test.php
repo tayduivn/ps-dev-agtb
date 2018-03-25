@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test RS266Test
  *
  * This is test for test change column (add,drop,alter) function in MSSQL manager(s) family.
  */
-class RS266Test extends Sugar_PHPUnit_Framework_TestCase
+class RS266Test extends TestCase
 {
     /**
      * @var MssqlManager

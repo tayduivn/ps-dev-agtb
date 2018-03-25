@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use PHPUnit\Framework\TestCase;
 
 require_once 'modules/DynamicFields/templates/Fields/TemplateField.php';
 
@@ -23,8 +24,8 @@ require_once 'modules/DynamicFields/templates/Fields/TemplateField.php';
  *
  */
 
-class Bug49939Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug49939Test extends TestCase
+{
 /**
  * xssFields
  * This is the provider function for testPopulateFromPostWithXSSHelpField

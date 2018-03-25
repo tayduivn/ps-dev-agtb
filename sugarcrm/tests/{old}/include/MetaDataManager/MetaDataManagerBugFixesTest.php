@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class MetaDataManagerBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
+class MetaDataManagerBugFixesTest extends TestCase
 {
     public function setUp()
     {

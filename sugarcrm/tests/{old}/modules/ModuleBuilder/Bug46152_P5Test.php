@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once ('modules/DynamicFields/FieldCases.php');
 
-class Bug46152_P5Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46152_P5Test extends TestCase
 {
 
     static private $moduleBuilder;

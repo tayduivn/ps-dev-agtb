@@ -10,11 +10,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test cases for the Team object
  */
-class TeamMembershipTest extends Sugar_PHPUnit_Framework_TestCase
+class TeamMembershipTest extends TestCase
 {
     var $_users = array();
     var $_original_path = null;
@@ -239,4 +241,3 @@ class TeamMembershipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-?>

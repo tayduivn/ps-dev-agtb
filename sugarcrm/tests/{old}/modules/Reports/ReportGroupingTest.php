@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers Report
  */
-class ReportGroupingTest extends Sugar_PHPUnit_Framework_TestCase
+class ReportGroupingTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

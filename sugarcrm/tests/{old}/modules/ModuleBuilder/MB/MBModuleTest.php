@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/ModuleBuilder/MB/MBModule.php';
 
-class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
+class MBModuleTest extends TestCase
 {
     protected $moduleName = 'superAwesomeModule';
     protected $packageKey = 'sap';

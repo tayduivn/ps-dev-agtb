@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /***
  * Test cases for Bug 44113
  */
-class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44113Test extends TestCase
 {
     private $cfg; // configurator
     private $emailMan;

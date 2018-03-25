@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class OwnerOrAdminVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
+class OwnerOrAdminVisibilityTest extends TestCase
 {   
     public function setUp() 
     {

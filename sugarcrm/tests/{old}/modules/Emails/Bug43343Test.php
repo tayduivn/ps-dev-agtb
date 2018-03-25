@@ -9,11 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 43343
  */
-class Bug43343Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43343Test extends TestCase
 {
     private $email;
     

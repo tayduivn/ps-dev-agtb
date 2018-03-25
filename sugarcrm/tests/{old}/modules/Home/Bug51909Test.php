@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once("include/utils.php");
 
 /**
@@ -19,8 +21,8 @@ require_once("include/utils.php");
  * If test fails, update data provider with new language strings 
  *
  */
-class Bug51909Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug51909Test extends TestCase
+{
 	var $oldLanguage;
 	
     public function setUp() {
@@ -60,6 +62,3 @@ class Bug51909Test extends Sugar_PHPUnit_Framework_TestCase {
         );
     }
 }
-
-
-?>

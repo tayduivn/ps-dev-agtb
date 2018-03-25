@@ -11,13 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class Bug66230Test
  *
  * Test that nothing breaks time elapsed workflows with only one trigger
  *
  */
-class Bug66230Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug66230Test extends TestCase
 {
     protected $workFlowId;
     protected $workFlowTriggerShellId;

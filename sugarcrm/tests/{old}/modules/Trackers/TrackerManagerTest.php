@@ -10,9 +10,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class TrackerManagerTest extends Sugar_PHPUnit_Framework_TestCase {
 
+use PHPUnit\Framework\TestCase;
+
+class TrackerManagerTest extends TestCase
+{
 	function setUp() {
 		$user = new User();
 		$user->retrieve('1');
@@ -97,6 +99,4 @@ class TrackerManagerTest extends Sugar_PHPUnit_Framework_TestCase {
 		$GLOBALS['sugar_config']['dump_slow_queries'] = $dumpSlowQuery;
     	$GLOBALS['sugar_config']['slow_query_time_msec'] = $slowQueryTime;
     }
-
-}  
-?>
+}

@@ -9,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/dir_inc.php';
 
-class Bug44472Test extends Sugar_PHPUnit_Framework_TestCase  {
-
+class Bug44472Test extends TestCase
+{
 function setUp() {
    SugarTestMergeUtilities::setupFiles(array('Cases'), array('editviewdefs'), 'tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610');
 }
@@ -92,5 +95,3 @@ class EditViewMergeMock extends EditViewMerge
     	$this->mergeTemplateMeta();
     }
 }
-
-?>

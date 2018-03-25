@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 require_once 'upgrade/scripts/post/9_CheckOutput.php';
 
 /**
  * Test asserts correct replacing of print_r and var_dump functions in php files under custom directory
  */
-class CheckOutputTest extends Sugar_PHPUnit_Framework_TestCase
+class CheckOutputTest extends TestCase
 {
     /** @var UpgradeDriver */
     protected $upgradeDriver = null;

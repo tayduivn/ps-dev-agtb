@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/DynamicFields/FieldCases.php';
 
 /**
@@ -19,7 +21,7 @@ require_once 'modules/DynamicFields/FieldCases.php';
  * @ticket 52173
  */
 
-class Bug52173Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug52173Test extends TestCase
 {
     /** @var Account */
     protected $account = null;

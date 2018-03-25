@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug35014Test extends TestCase
 {
 	private $campaign_id;
 
@@ -176,4 +178,3 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(count($matches) > 0, "Output Should have a form since we have a long get string");
     }
 }
-?>

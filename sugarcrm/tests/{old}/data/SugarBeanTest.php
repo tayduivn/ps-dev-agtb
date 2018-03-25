@@ -12,6 +12,7 @@
  */
 
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use SugarTestAccountUtilities as AccountHelper;
 use SugarTestUserUtilities as UserHelper;
@@ -20,7 +21,7 @@ use SugarTestUserUtilities as UserHelper;
  * Class SugarBeanTest
  * @coversDefaultClass SugarBean
  */
-class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarBeanTest extends TestCase
 {
 
     public static function setUpBeforeClass()

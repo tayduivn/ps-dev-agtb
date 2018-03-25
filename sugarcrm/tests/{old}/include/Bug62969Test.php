@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once 'include/utils.php';
 
 /**
  * @ticket 62969
  */
-class Bug62969Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug62969Test extends TestCase
 {
     protected $customFile = 'custom/application/Ext/Language/en_us.lang.ext.php';
 

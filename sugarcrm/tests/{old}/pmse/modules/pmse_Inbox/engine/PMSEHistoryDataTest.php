@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSEHistoryDataTest extends PHPUnit_Framework_TestCase
+class PMSEHistoryDataTest extends TestCase
 {
     private $module= 'Leads';
 

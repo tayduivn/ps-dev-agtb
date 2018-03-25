@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class HistoryTest extends PHPUnit_Framework_TestCase
+class HistoryTest extends TestCase
 {
 
     /**

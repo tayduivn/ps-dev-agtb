@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-144
  * Prepare ForecastManagerWorksheetsFilter Api
  * @coversDefaultClass ForecastManagerWorksheetsFilterApi
  */
-class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastManagerWorksheetsFilterApiTest extends TestCase
 {
     /** @var RestService */
     protected $service = null;

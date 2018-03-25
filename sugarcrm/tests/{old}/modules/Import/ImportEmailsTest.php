@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test if non-primary emails are being imported properly from a CSV file
  * on Accounts module, or modules based on Person
  */
-class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
+class ImportEmailsTest extends TestCase
 {
     private $importObject;
     private $file;

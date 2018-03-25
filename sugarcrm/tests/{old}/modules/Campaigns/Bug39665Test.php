@@ -10,12 +10,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Campaigns/utils.php');
 require_once('SugarTestContactUtilities.php');
 require_once('SugarTestLeadUtilities.php');
 
-class Bug39665Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug39665Test extends TestCase
 {
 	var $campaign = null;
 	var $prospectlist = null;
@@ -235,4 +237,3 @@ class Bug39665Test extends Sugar_PHPUnit_Framework_TestCase
     }
     
 }
-?>

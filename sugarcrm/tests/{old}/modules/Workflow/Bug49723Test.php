@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Removal of primary trigger should condition
  * removal of all triggers, and the related schedules
@@ -18,7 +20,7 @@
  * @author avucinic
  * @ticket 49723
  */
-class Bug49723Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49723Test extends TestCase
 {
     protected $workFlowId;
     protected $workFlowTriggerShellId;

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #39635
  * max length error for Forcasting fields
@@ -18,7 +20,7 @@
  * @author mgusev@sugarcrm.com
  * @ticket 39635
  */
-class Bug39635Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug39635Test extends TestCase
 {
 
     /**

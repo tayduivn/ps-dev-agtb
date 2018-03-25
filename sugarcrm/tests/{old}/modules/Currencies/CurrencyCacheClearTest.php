@@ -9,7 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class CurrencyCacheClearTest extends TestCase
 {
     protected $testCacheFile;
 

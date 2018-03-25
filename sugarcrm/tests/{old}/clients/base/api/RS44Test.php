@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  *  RS-44: Prepare RegisterLead Api.
  */
-class RS44Test extends Sugar_PHPUnit_Framework_TestCase
+class RS44Test extends TestCase
 {
     public static function setUpBeforeClass()
     {

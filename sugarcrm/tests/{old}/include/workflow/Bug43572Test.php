@@ -10,9 +10,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('include/workflow/workflow_utils.php');
 
-class Bug43572Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43572Test extends TestCase
 {
     function testGlueDate()
     {

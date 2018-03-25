@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once "modules/ProductTemplates/Formulas.php";
 
-class Bug44515Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44515Test extends TestCase
 {
     var $customDir = "custom/modules/ProductTemplates/formulas";
 
@@ -61,4 +63,3 @@ class Bug44515Test extends Sugar_PHPUnit_Framework_TestCase
       $this->assertEquals($_customFormula1FileName, $GLOBALS['price_formulas']['Customformula1']);
     }
 }
-

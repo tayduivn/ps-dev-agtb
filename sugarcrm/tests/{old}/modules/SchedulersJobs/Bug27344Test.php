@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug27344Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug27344Test extends TestCase
 {
 	private $_url;
     private $_initial_server_port;

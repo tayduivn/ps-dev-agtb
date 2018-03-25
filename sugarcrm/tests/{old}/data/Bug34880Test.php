@@ -10,13 +10,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #34880 : Non-reportable fields unavailable to workflow
  *
  * @author myarotsky@sugarcrm.com
  * @ticket 34880
  */
-class Bug34880Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug34880Test extends TestCase
 {
     public static function provider()
     {

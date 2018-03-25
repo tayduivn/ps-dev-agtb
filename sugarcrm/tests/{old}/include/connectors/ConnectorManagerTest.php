@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * ConnectorsManagerTest
  *
@@ -98,7 +100,7 @@ class ConnectorManagerTest extends ConnectorManager
     }
 }
 
-class ConnectorsValidTest extends Sugar_PHPUnit_Framework_TestCase
+class ConnectorsValidTest extends TestCase
 {
 
     public function tearDown()

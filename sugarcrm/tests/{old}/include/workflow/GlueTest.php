@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class GlueTest extends Sugar_PHPUnit_Framework_TestCase
+class GlueTest extends TestCase
 {
     private $toClean = array();
 

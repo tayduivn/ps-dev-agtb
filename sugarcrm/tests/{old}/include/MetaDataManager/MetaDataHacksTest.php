@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class MetaDataHacksTest extends Sugar_PHPUnit_Framework_TestCase
+class MetaDataHacksTest extends TestCase
 {
     /**
      * The metadata hacks class
@@ -60,4 +61,3 @@ class MetaDataHacksTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-

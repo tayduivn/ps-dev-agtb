@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /*
  * This tests whether a relationship with parent bean is saved during import.  We simulate a call being imported with
@@ -18,7 +19,7 @@
  */
 
 
-class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50438Test extends TestCase
 {
     var $contact;
     var $fileArr;

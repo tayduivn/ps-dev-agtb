@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -12,13 +11,13 @@
  */
 
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
 
-class AuditTest extends Sugar_PHPUnit_Framework_TestCase
+class AuditTest extends TestCase
 {
-
     private $contactBean;
     private $origDict;
 

@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/export_utils.php');
 
 /**
  * Test if non-primary emails are being exported properly to a CSV file
  * from Accounts module, or modules based on Person
  */
-class Bug25736ExportTest extends Sugar_PHPUnit_Framework_TestCase
+class Bug25736ExportTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

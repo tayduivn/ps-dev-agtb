@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #56692
  *
@@ -17,7 +19,7 @@
  * @ticket 56692
  */
 
-class Bug56692Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56692Test extends TestCase
 {
     /**
      * Test that field with type 'link' has source 'non-db', but not 'custom_fields'
@@ -33,4 +35,3 @@ class Bug56692Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('non-db', $vardefs['source']) ;
     }
 }
-?>

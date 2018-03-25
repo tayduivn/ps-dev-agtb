@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-abstract class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+abstract class MssqlManagerTest extends TestCase
 {
     /**
      * @var MssqlManager

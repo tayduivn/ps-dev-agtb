@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SystemQuickListFTSClearTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SystemQuickListFTSClearTest extends TestCase
 {
     public function setup()
     {

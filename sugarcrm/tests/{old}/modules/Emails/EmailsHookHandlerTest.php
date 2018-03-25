@@ -11,13 +11,14 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 require_once 'modules/Emails/EmailsHookHandler.php';
 
 /**
  * @coversDefaultClass EmailsHookHandler
  */
-class EmailsHookHandlerTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailsHookHandlerTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

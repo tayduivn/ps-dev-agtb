@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class RelationshipRoleTest extends TestCase
 {
     protected $createdBeans = array();
     protected $createdFiles = array();

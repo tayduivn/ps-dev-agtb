@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug36460Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug36460Test extends TestCase
 {
     public $glueClass;
     
@@ -30,4 +32,3 @@ class Bug36460Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('!=', $this->glueClass->translateOperator('Is not empty'));
     }
 }
-?>

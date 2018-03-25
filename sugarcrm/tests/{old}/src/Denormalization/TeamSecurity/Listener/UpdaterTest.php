@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 
 use BeanFactory;
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
@@ -28,7 +29,7 @@ use User;
 /**
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Updater
  */
-class UpdaterTest extends \PHPUnit_Framework_TestCase
+class UpdaterTest extends TestCase
 {
     /**
      * @var Connection

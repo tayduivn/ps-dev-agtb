@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug38424CurrencyTest extends Sugar_PHPUnit_Framework_TestCase
+class Bug38424CurrencyTest extends TestCase
 {
     private $_fieldOutput;
 

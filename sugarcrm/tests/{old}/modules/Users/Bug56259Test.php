@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 56259
  * @ticket PAT-580
  */
-class Bug56259Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56259Test extends TestCase
 {
 
     public function setUp()

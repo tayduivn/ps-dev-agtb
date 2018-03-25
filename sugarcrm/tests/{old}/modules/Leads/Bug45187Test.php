@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug45187Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45187Test extends TestCase
 {
     public function setUp()
     {

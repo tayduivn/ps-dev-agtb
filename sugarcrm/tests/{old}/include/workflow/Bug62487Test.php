@@ -10,9 +10,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('include/workflow/plugin_utils.php');
 
-class Bug62487Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug62487Test extends TestCase
 {
 
     var $file = "workflow/plugins/Bug62487Test/component_list.php";

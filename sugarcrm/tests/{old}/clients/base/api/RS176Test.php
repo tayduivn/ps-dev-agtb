@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-176: Prepare List Api
  */
-class RS176Test extends Sugar_PHPUnit_Framework_TestCase
+class RS176Test extends TestCase
 {
     /**
      * @var ListApi

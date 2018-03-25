@@ -9,14 +9,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('vendor/nusoap//nusoap.php');
 
 
 /**
  * @group bug39234
  */
-class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug39234Test extends TestCase
 {
 	public $_user = null;
 	public $_soapClient = null;
@@ -138,9 +140,8 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
 		return $result;
     }
     
- /**
+    /**
      * Create a test user
-     *
      */
 	public function _setupTestUser() {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -149,7 +150,7 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_user->save();
         $GLOBALS['current_user'] = $this->_user;
     }
-        
+
     /**
      * Remove user created for test
      *
@@ -158,6 +159,4 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
        unset($GLOBALS['current_user']);
     }
-	
 }
-?>

@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class MeetingBug57478Test extends Sugar_PHPUnit_Framework_TestCase
+class MeetingBug57478Test extends TestCase
 {
     protected $bean;
 

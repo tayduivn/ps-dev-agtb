@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarFieldDateTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarFieldDateTest extends TestCase
 {
 
     public static function setUpBeforeClass()
@@ -50,5 +52,4 @@ class SugarFieldDateTest extends Sugar_PHPUnit_Framework_TestCase
         $value = $field->exportSanitize($obj->date_closed, $vardef, $obj);
         $this->assertEquals($expectedTime, $value);
     }
-
 }

@@ -9,12 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 33404
  */
-class Bug33906Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug33906Test extends TestCase
 {
     protected $folder = null;
     protected $_user = null;

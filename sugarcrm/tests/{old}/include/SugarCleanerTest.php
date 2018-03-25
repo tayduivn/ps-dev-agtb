@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers SugarCleaner
  */
-class SugarCleanerTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarCleanerTest extends TestCase
 {
 
     /**

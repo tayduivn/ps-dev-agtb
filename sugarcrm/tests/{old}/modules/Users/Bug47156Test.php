@@ -11,12 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #47156
  * Reassigning Users With Instance That Has Numeric Ids
  * @ticket 47156
  */
-class Bug47156Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47156Test extends TestCase
 {
     protected function tearDown()
     {

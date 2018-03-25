@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug43942Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug43942Test extends TestCase
 {
 	public function test_phone_without_formatting()
 	{
@@ -39,7 +40,4 @@ class Bug43942Test extends Sugar_PHPUnit_Framework_TestCase
 	    $sugarField->save($bean, $params, $field, $properties);
 	    $this->assertEquals($bean->phone_work, '', "Assert that saving empty value works as expected");
 	}	
-	
 }
-
-?>

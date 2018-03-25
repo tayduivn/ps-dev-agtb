@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestReflection.php';
 
-class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
+class SidecarThemeTest extends TestCase
 {
     private $platformTest = 'platform_TEST_123456789E_1234';
     private $themeTest = 'theme_TEST_123456789E_1234';

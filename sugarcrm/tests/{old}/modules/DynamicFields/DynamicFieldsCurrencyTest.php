@@ -9,14 +9,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/DynamicFields/FieldCases.php');
 
 /**
  * @group DynamicFieldsCurrencyTests
  */
 
-class DynamicFieldsCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
+class DynamicFieldsCurrencyTest extends TestCase
 {
     private $_modulename = 'Accounts';
     private $_originaldbType = '';

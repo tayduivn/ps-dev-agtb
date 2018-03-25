@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass EmailTemplate
  */
-class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailTemplateTest extends TestCase
 {
     protected function setUp()
     {

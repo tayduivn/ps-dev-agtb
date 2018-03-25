@@ -9,6 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug49219Test.php
  * @author Collin Lee
@@ -21,8 +24,8 @@
  */
 require_once 'include/dir_inc.php';
 
-class Bug49219Test extends Sugar_PHPUnit_Framework_TestCase  {
-
+class Bug49219Test extends TestCase
+{
 var $merge;
 
 function setUp() {
@@ -75,7 +78,5 @@ function testSubpanelQuickCreate()
     $quickCreate = new SubpanelQuickCreate('Meetings', 'QuickCreate', true);
     $this->assertEquals('include/EditView/header.tpl', $quickCreate->ev->defs['templateMeta']['form']['headerTpl'], 'SubpanelQuickCreate fails to pick up default headerTpl attribute');
     $this->assertEquals('include/EditView/footer.tpl', $quickCreate->ev->defs['templateMeta']['form']['footerTpl'], 'SubpanelQuickCreate fails to pick up default footerTpl attribute');
-
 }
-
 }

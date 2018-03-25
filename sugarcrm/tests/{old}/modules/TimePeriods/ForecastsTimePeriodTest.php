@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/TimePeriods/TimePeriod.php');
 
-class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastsTimePeriodTest extends TestCase
 {
     private $preTestIds = array();
     private static $configDateFormat;

@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestRestUtilities.php';
 
 /**
  * @group ApiTests
  */
-class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
+class PasswordApiTest extends TestCase
 {
     public $accounts;
     public $roles;

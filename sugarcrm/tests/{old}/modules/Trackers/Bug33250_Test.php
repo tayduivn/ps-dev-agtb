@@ -9,7 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug33250_Test.php
  * 
@@ -18,10 +20,8 @@
  * 
  */
 
-
-class Bug33250_Test extends Sugar_PHPUnit_Framework_TestCase 
+class Bug33250_Test extends TestCase
 {
-    
     public function test_generic_sql_with_matched_quotes() 
     {
         $sql = 'SELECT id FROM contacts WHERE first_name = \'Collin\' and last_name = \'Lee\'';
@@ -53,5 +53,3 @@ class Bug33250_Test extends Sugar_PHPUnit_Framework_TestCase
     }    
 
 }
-
-?>

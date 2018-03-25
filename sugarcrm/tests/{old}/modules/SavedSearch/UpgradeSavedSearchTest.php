@@ -10,8 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class UpgradeSavedSearchTest extends Sugar_PHPUnit_Framework_TestCase 
+
+use PHPUnit\Framework\TestCase;
+
+class UpgradeSavedSearchTest extends TestCase
 {
     public function setUp() 
     {

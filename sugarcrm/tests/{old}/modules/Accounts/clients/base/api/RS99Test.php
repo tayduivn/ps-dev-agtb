@@ -9,12 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 //FILE SUGARCRM flav=ent ONLY
 
 /**
  * RS-99 Prepare Accounts Api
  */
-class RS99Test extends Sugar_PHPUnit_Framework_TestCase
+class RS99Test extends TestCase
 {
     /**
      * @var Account

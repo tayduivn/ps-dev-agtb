@@ -10,8 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
+use PHPUnit\Framework\TestCase;
 
 /*
  * This simulates the processing of an inbound email that is to be linked to a case.
@@ -19,7 +18,7 @@
  * Logic is borrowed heavily from Bug46122Test.php
  * @ticket 49784
  */
-class Bug49784Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49784Test extends TestCase
 {
     var $hasCustomCasesLogicHookFile = false;
     var $casesHookFile = 'custom/modules/Cases/logic_hooks.php';
@@ -123,5 +122,3 @@ class Bug49784Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-
-?>

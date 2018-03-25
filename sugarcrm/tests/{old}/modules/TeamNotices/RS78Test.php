@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-78 Prepare TeamNotices Module.
  */
-class RS78Test extends Sugar_PHPUnit_Framework_TestCase
+class RS78Test extends TestCase
 {
     /**
      * @var TeamNotice

@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
-class Bug41003Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug41003Test extends TestCase
 {
     public function providerVerifyStrippingOfBrInBr2nlFunction()
     {
@@ -34,4 +36,3 @@ class Bug41003Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, br2nl($testString));
     }
 }
-

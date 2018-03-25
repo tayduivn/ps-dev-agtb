@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #56537 : Schedule Jobs don't work with classes
  *
  * @ticket 56537
  */
-class Bug56573Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56573Test extends TestCase
 {
     /**
      * @var string job id

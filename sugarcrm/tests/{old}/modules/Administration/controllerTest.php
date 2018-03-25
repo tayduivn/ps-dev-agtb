@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class AdministrationControllerTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class AdministrationControllerTest extends TestCase
 {
     protected $savedTabs;
     protected $tabs;

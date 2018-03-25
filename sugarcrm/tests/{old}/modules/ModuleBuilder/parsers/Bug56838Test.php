@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug55154Test.php
  *
@@ -20,7 +22,8 @@
  * time as opposed to loading all required files per fixture.
  */
 
-class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
+class Bug56838Test extends TestCase
+{
     protected static $testModule = 'Cases';
 
     public static function setUpBeforeClass()

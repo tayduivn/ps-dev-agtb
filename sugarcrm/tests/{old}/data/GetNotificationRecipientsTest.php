@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test if we respect user preference for email notifications
  */
-class GetNotificationRecipientsTest extends Sugar_PHPUnit_Framework_TestCase
+class GetNotificationRecipientsTest extends TestCase
 {
     public function setUp()
     {

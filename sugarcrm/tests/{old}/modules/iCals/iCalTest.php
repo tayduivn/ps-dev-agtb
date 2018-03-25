@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class iCalTest extends Sugar_PHPUnit_Framework_TestCase
+class iCalTest extends TestCase
 {
     var $timedate;
     var $project;

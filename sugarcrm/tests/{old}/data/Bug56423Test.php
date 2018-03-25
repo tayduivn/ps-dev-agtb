@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once 'modules/DynamicFields/FieldCases.php';
 
@@ -17,7 +18,7 @@ require_once 'modules/DynamicFields/FieldCases.php';
  * Bug #56423
  * @ticket 56423
  */
-class Bug56423Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56423Test extends TestCase
 {
     /**
      * @var TemplateRelatedTextField

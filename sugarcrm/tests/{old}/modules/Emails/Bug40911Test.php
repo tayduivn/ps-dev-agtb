@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug40911 extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug40911 extends TestCase
 {
     public function setUp()
     {
@@ -57,5 +58,3 @@ class Bug40911 extends Sugar_PHPUnit_Framework_TestCase
     }
     
 }
-
-

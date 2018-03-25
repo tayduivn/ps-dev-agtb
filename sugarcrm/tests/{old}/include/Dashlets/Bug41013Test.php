@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 41013
  */
-class Bug41013Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug41013Test extends TestCase
 {
     protected $_moduleName;
 

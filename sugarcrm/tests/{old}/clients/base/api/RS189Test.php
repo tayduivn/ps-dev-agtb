@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  *  Prepare MassUpdate Api.
  */
-class RS189Test extends Sugar_PHPUnit_Framework_TestCase
+class RS189Test extends TestCase
 {
     /**
      * @var SugarApi

@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-108
  * Prepare FileTemp Api
  * @requires extension gd
  */
-class RS108Test extends Sugar_PHPUnit_Framework_TestCase
+class RS108Test extends TestCase
 {
     /** @var RestService */
     protected $service = null;

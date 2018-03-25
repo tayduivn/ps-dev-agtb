@@ -11,10 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SearchForm/SearchForm2.php';
 
-class Bug47537Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug47537Test extends TestCase
+{
     var $module = 'Quotes';
     var $action = 'index';
     var $seed;
@@ -99,4 +101,3 @@ class Bug47537Test extends Sugar_PHPUnit_Framework_TestCase {
     }
 
 }
-

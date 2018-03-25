@@ -11,12 +11,13 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass OutboundEmailVisibility
  * @group email
  */
-class OutboundEmailVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
+class OutboundEmailVisibilityTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

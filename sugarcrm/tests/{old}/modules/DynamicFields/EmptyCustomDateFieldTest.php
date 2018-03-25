@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * This is testing a bug where a custom date field whos value was not set would cause a bad SQL query to prevent the other custom fields from saving correctly.
  */
-class EmptyCustomDateFieldTest extends Sugar_PHPUnit_Framework_TestCase
+class EmptyCustomDateFieldTest extends TestCase
 {
     protected $targetModule = "Opportunities";
     protected $secondCustomFieldName = "test_custom_c";
@@ -165,7 +166,4 @@ class EmptyCustomDateFieldTest extends Sugar_PHPUnit_Framework_TestCase
         $this->testOpp->retrieve($this->testOpp->id);
         $this->assertEquals("This should save", $this->testOpp->test_custom_c);
     }
-
 }
-
-?>

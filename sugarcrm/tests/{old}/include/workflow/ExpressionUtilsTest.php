@@ -10,14 +10,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/workflow/expression_utils.php';
 
 /*
  * @group ExpressionUtilsTest
  */
 
-class ExpressionUtilsTest extends Sugar_PHPUnit_Framework_TestCase
+class ExpressionUtilsTest extends TestCase
 {
 
 	public function testGetExpression()

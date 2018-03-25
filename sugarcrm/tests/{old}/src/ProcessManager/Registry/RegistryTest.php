@@ -13,8 +13,9 @@
 namespace Sugarcrm\SugarcrmTests\ProcessManager\Registry;
 
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+use PHPUnit\Framework\TestCase;
 
-class RegistryTest extends \Sugar_PHPUnit_Framework_TestCase
+class RegistryTest extends TestCase
 {
     public function testSetAndGet()
     {

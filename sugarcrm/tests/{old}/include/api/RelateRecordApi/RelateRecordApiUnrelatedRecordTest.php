@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers RelateRecordApi
  */
-class RelateRecordApiUnrelatedRecordTest extends Sugar_PHPUnit_Framework_TestCase
+class RelateRecordApiUnrelatedRecordTest extends TestCase
 {
     /**#@+
      * @var Account

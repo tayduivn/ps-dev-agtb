@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS41: Prepare Help Api.
  */
-class RS41Test extends Sugar_PHPUnit_Framework_TestCase
+class RS41Test extends TestCase
 {
     public static function setUpBeforeClass()
     {

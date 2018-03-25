@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ActivitiesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class ActivitiesApiHelperTest extends TestCase
 {
     public function setUp()
     {
@@ -77,4 +78,3 @@ class ActivitiesServiceMockup extends ServiceBase
 
     }
 }
-

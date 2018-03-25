@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'ModuleInstall/ModuleInstaller.php';
 
-class Bug57647Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57647Test extends TestCase
 {
     protected static $_testUpdateDir;
     protected static $_testInstallPath = 'custom/modulebuilder/packages/bilbo/modules/bango/metadata/';

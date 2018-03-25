@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #PAT-543
@@ -18,7 +19,7 @@
  * @author bsitnikovski@sugarcrm.com
  * @ticket PAT-543
  */
-class BugPAT543Test extends Sugar_PHPUnit_Framework_TestCase
+class BugPAT543Test extends TestCase
 {
     public function setUp()
     {

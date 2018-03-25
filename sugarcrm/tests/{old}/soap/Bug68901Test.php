@@ -10,8 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('soap/SoapRelationshipHelper.php');
-class Bug68901Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug68901Test extends TestCase
 {
     protected static $call, $call2, $contact, $contact2, $meeting, $meeting2;
 

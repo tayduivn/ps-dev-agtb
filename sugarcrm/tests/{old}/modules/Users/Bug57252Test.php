@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug57252Test.php
@@ -19,7 +20,7 @@
  * preferences when a user does not have an existing date/time format preference.
  *
  */
-class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57252Test extends TestCase
 {
 
     public $testUser;

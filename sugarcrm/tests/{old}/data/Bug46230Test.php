@@ -11,12 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #46230
  * Dependent Field values are not refreshed in subpanels & listviews
  * @ticket 49878
  */
-class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46230Test extends TestCase
 {
     private $account;
     private $stored_service_object;

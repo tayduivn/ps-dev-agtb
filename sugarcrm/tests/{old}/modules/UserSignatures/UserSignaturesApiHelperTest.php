@@ -11,8 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
-class UserSignaturesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class UserSignaturesApiHelperTest extends TestCase
 {
     protected $bean;
 

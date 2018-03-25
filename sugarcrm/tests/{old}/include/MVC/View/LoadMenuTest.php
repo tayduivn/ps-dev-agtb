@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
+class LoadMenuTest extends TestCase
 {
     protected $_moduleName;
 

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /*
  * What is the DrPhilTest?
  * It's a test that runs through the metadata of the system and
@@ -19,7 +21,7 @@
  *
  * If this test fails you are on the honor system to view this image: http://i.imgur.com/fMpZ4Rb.jpg
  */
-class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
+class DrPhilTest extends TestCase
 {
     /**
      * Relate fields which would fail the check for producing duplicates in SugarQuery

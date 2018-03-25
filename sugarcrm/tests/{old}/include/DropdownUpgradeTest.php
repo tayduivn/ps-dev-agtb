@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class DropdownUpgradeTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DropdownUpgradeTest extends TestCase
 {
     protected $_language = 'en_us'; // Test against English
     protected $_testCustFile = array('include' => 'tests/{old}/include/DropdownUpgradeTestCustFile.php', 'ext' => 'tests/{old}/include/Bug60008-60607TestCustomFile.php');

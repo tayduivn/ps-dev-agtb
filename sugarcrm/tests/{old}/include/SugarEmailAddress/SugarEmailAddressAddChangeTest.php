@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
-class SugarEmailAddressAddChangeTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarEmailAddressAddChangeTest extends TestCase
 {
 
     protected $email;

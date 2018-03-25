@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug 57636
  *
@@ -18,7 +20,8 @@
  * should not be on any layout. 
  */
 
-class Bug57636Test extends Sugar_PHPUnit_Framework_TestCase {
+class Bug57636Test extends TestCase
+{
     protected $testModule = 'Meetings';
     protected $testFields  = array('duration_hours', 'duration_minutes');
     

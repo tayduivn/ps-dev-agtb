@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 // FILE SUGARCRM flav=ent ONLY
 
 require_once 'data/visibility/SupportPortalVisibility.php';
@@ -17,7 +19,7 @@ require_once 'data/visibility/SupportPortalVisibility.php';
 /**
  * @coversDefaultClass \SupportPortalVisibility
  */
-class SupportPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
+class SupportPortalVisibilityTest extends TestCase
 {
     private static $accounts = array();
 

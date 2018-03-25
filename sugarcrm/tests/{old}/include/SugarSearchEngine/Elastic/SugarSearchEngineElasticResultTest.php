@@ -12,11 +12,12 @@
  */
 
 use Elastica\Response;
+use PHPUnit\Framework\TestCase;
 use Elastica\ResultSet;
 use Elastica\Query;
 
 
-class SugarSearchEngineElasticResultTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarSearchEngineElasticResultTest extends TestCase
 {
 
     private $_responseString = '{"took":4,"timed_out":false,"_shards":{"total":1,"successful":1,"failed":0},"hits":{"total":1,"max_score":1.0,"hits":[{"_index":"c5368b06edf5dabf62a27e146d35ab3f","_type":"Accounts","_id":"e7abbd8c-1daa-80cc-bdce-4f3ab8cf1cca","_score":1.0, "_source":{"module":"Accounts","name":"test account"}, "highlight" : {"name":["<span class=\"highlight\">test</span>2 account"]}}]},"facets":{"_type":{"_type":"terms","missing":0,"total":1,"other":0,"terms":[{"term":"Accounts","count":1}]}}}';

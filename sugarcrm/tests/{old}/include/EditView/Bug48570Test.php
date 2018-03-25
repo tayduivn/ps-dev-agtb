@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/EditView/EditView2.php';
 
 /**
@@ -19,7 +21,7 @@ require_once 'include/EditView/EditView2.php';
  * @author mgusev@sugarcrm.com
  * @ticket 48570
  */
-class Bug48570Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48570Test extends TestCase
 {
     public function setUp()
     {

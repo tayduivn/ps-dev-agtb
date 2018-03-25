@@ -9,12 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'data/Relationships/One2MBeanRelationship.php';
 
 /**
  * @coversDefaultClass One2MBeanRelationship
  */
-class One2MBeanRelationshipLoadTest extends Sugar_PHPUnit_Framework_TestCase
+class One2MBeanRelationshipLoadTest extends TestCase
 {
     private static $account;
     private static $opportunity;

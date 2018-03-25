@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ReportsToHierarchyTest extends Sugar_PHPUnit_Framework_TestCase
+class ReportsToHierarchyTest extends TestCase
 {
     private $employee1;
     private $employee2;

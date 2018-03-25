@@ -9,13 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 32487
  */
-class ComposePackageTest extends Sugar_PHPUnit_Framework_TestCase
+class ComposePackageTest extends TestCase
 {
 	var $c = null;
 	var $a = null;

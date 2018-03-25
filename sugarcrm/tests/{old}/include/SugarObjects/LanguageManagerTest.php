@@ -10,8 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SugarObjects/LanguageManager.php';
-class LanguageManagerTest extends Sugar_PHPUnit_Framework_TestCase
+class LanguageManagerTest extends TestCase
 {
     protected $testModule = 'do_not_change';
     protected $testLanguage = 'ever';

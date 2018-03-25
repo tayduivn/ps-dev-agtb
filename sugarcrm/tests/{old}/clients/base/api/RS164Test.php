@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  *  RS164: Prepare Theme Api.
  */
-class RS164Test extends Sugar_PHPUnit_Framework_TestCase
+class RS164Test extends TestCase
 {
     /**
      * @var ThemeApi

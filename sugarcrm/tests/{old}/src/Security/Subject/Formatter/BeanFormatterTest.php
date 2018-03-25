@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Security\Subject\Formatter;
 
 use Localization;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter\BeanFormatter;
 use SugarTestAccountUtilities;
 use SugarTestHelper;
@@ -21,7 +22,7 @@ use SugarTestUserUtilities;
 /**
  * @covers \Sugarcrm\Sugarcrm\Security\Subject\Formatter\BeanFormatter
  */
-class BeanFormatterTest extends \PHPUnit_Framework_TestCase
+class BeanFormatterTest extends TestCase
 {
     /**
      * @var BeanFormatter

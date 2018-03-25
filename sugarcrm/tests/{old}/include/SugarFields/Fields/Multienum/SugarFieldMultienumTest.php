@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarFieldMultienumTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarFieldMultienumTest extends TestCase
 {
 
     public static function setUpBeforeClass()
@@ -49,5 +51,4 @@ class SugarFieldMultienumTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('A', $value);
 
     }
-
 }

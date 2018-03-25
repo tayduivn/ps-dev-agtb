@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug58774Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug58774Test extends TestCase
 {
     protected $_originalRequest = array();
     protected $_originalDictionary = array();

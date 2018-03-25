@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
+class SidecarSubpanelUpgraderTest extends TestCase
 {
     protected $oldDefsDefault;
     protected $oldDefsAccountDefault;

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Reports/SavedReport.php');
 
 /**
@@ -20,7 +22,7 @@ require_once('modules/Reports/SavedReport.php');
  * @group 46898
  * @author mgusev@sugarcrm.com
  */
-class Bug46898Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46898Test extends TestCase
 {
     public function testGetReportsToEmail()
     {

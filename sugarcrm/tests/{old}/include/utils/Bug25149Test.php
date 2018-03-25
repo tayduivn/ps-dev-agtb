@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group 25149
  */
-class Bug25149Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug25149Test extends TestCase
 {
     /**
      * @inheritdoc

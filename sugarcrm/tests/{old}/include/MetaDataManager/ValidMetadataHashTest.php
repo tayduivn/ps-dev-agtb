@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestACLUtilities.php';
 
 /**
  * Testing valid caches to prevent error 412 loops.
  */
-class ValidMetadataHashTest extends Sugar_PHPUnit_Framework_TestCase
+class ValidMetadataHashTest extends TestCase
 {
 
     protected $baseHash = "1234asdf";

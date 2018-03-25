@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #51172
@@ -19,7 +20,7 @@
  * @ticket 51172
  */
 
-class Bug51172Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51172Test extends TestCase
 {
     /**
      *  @var string name custom fields

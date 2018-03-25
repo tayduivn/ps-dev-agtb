@@ -10,13 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group Bug49691
  */
-class Bug49691aTest extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug49691aTest extends TestCase
+{
     var $bean;
     var $sugarField;
 

@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Days Before date filter
  */
-class Bug60372Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug60372Test extends TestCase
 {
     public function setUp()
     {

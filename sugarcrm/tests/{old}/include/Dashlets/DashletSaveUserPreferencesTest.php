@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class DashletSaveUserPreferencesTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DashletSaveUserPreferencesTest extends TestCase
 {
     public function setup()
     {

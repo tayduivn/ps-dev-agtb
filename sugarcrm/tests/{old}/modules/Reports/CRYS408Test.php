@@ -11,14 +11,14 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * CRYS-408:
  * The Account name is used in the empty amount field in the report.
  * It also covers SFA-2990. Since the bug itself was fixed by it.
  */
-class CRYS408Test extends Sugar_PHPUnit_Framework_TestCase
+class CRYS408Test extends TestCase
 {
     private $report;
     private $user;

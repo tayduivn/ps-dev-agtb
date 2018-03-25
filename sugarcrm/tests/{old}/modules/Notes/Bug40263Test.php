@@ -9,12 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group bug40263
  */
-class Bug40263Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug40263Test extends TestCase
 {
 	var $user;
 	var $note;
@@ -63,4 +64,3 @@ class Bug40263Test extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 }
-

@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/workflow/action_utils.php');
 
-class WorkFlowProcessActionsTest extends Sugar_PHPUnit_Framework_TestCase
+class WorkFlowProcessActionsTest extends TestCase
 {
     private $quote;
     private $_wf_array;
@@ -110,4 +112,3 @@ class WorkFlowProcessActionsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(count(array_diff($quote_teams, $task_teams)), 0, 'Team sets are different');
     }
 }
-?>

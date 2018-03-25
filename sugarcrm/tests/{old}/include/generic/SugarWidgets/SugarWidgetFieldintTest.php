@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SugarWidgetFieldintTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarWidgetFieldintTest extends TestCase
 {
     /**
      * @var SugarWidgetFieldint

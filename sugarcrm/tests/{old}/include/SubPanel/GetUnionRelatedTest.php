@@ -9,12 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * test get_union_related_list() with subpanels, functions, distinct clause
  */
-class GetUnionRelatedTest extends Sugar_PHPUnit_Framework_TestCase
+class GetUnionRelatedTest extends TestCase
 {
     /**
      * Bean to use for tests

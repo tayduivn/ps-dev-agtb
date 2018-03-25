@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class PMSEWrapperTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PMSEWrapperTest extends TestCase
 {
     /**
      * Tests building the condition for a delete query

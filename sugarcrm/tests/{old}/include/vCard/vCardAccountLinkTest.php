@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class vCardAccountLinkTest extends Sugar_PHPUnit_Framework_TestCase
+class vCardAccountLinkTest extends TestCase
 {
     private $contactId;
     private $leadId;

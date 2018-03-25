@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SugarHeartbeatClientTest
  *
  * @group BR-1722
  */
-class SugarHeartbeatClientTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarHeartbeatClientTest extends TestCase
 {
     /**
      * @covers SugarHeartbeatClient::sugarHome

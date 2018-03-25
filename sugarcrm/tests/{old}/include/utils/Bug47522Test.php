@@ -10,7 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
 /*
@@ -18,7 +19,7 @@ require_once 'include/utils.php';
  When you turn on  mbstring.encoding_translation in php.ini, it's supposed to translate the characters in the POST array during an http request.
  It's not supposed to touch the key names though.  This test is for the code that cleans those key names
   */
-class Bug47522Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47522Test extends TestCase
 {
 
     var $orig_ini_encoding_val;
@@ -69,4 +70,3 @@ class Bug47522Test extends Sugar_PHPUnit_Framework_TestCase
 
     }
 }
-

@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class AbsoluteValueExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class AbsoluteValueExpressionTest extends TestCase
 {
     /**
      * @dataProvider dataProviderTestEvaluate

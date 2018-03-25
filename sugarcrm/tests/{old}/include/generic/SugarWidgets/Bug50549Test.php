@@ -11,10 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class Bug50549Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug50549Test extends TestCase
+{
     var $field;
 
     public function setUp() {
@@ -196,6 +196,3 @@ class Bug50549MockReporter extends Report {
         return $this;
     }
 }
-
-
-?>

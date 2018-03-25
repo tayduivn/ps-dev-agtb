@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once "modules/ProductTemplates/Formulas.php";
 
-class Bug44515WithoutCustomTest extends Sugar_PHPUnit_Framework_TestCase
+class Bug44515WithoutCustomTest extends TestCase
 {
     public function setUp()
     {
@@ -36,4 +38,3 @@ class Bug44515WithoutCustomTest extends Sugar_PHPUnit_Framework_TestCase
       $this->assertEquals($expectedIndexes, count($GLOBALS['price_formulas']));
     }
 }
-

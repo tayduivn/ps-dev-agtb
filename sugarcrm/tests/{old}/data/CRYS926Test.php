@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class CRYS926
  */
-class CRYS926 extends Sugar_PHPUnit_Framework_TestCase
+class CRYS926 extends TestCase
 {
     /**
      * @var Account

@@ -12,8 +12,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
+class CurrencyRateSchedulerJobTest extends TestCase
 {
     private $currency;
     private $opportunity;

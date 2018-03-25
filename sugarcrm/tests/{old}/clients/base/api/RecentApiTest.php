@@ -11,11 +11,12 @@
  */
 
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group ApiTests
  */
-class RecentApiTest extends Sugar_PHPUnit_Framework_TestCase
+class RecentApiTest extends TestCase
 {
     /**
      * @var RecentApi

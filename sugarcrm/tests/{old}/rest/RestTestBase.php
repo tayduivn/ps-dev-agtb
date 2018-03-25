@@ -11,8 +11,9 @@
  */
 
 use PHPUnit\Framework\Error\Warning;
+use PHPUnit\Framework\TestCase;
 
-abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
+abstract class RestTestBase extends TestCase
 {
     protected $authToken;
     protected $refreshToken;

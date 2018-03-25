@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ViewEditTest extends Sugar_PHPUnit_Framework_TestCase
+class ViewEditTest extends TestCase
 {
     public function testConstructor()
     {

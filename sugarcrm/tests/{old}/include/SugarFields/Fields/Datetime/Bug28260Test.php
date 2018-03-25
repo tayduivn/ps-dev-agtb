@@ -9,11 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 $timedate = TimeDate::getInstance();
 
-class Bug28260Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug28260Test extends TestCase
 {
     private $user;
     

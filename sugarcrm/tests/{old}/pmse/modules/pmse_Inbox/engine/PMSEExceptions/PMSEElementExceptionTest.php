@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class PMSEElementExceptionTest extends PHPUnit_Framework_TestCase 
+class PMSEElementExceptionTest extends TestCase
 {
     /**
      * Sets up the test data, for example, 

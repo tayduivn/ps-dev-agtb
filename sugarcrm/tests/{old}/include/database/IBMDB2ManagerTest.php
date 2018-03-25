@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
+class IBMDB2ManagerTest extends TestCase
 {
     /** @var IBMDB2Manager */
     protected $_db = null;

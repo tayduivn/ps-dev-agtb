@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
+class PMSEExpressionValidatorTest extends TestCase
 {
 
     /**

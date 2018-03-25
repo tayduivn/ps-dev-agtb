@@ -9,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 59193
  */
-class Bug59193Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug59193Test extends TestCase
 {
 	var $disableCountQuery;
 
@@ -54,5 +57,4 @@ END;
 	      $res = $GLOBALS['db']->limitQuery($q, 0, 100);
 	      $this->assertNotEmpty($res);
 	}
-
 }

@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
+class OpportunityHooksTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

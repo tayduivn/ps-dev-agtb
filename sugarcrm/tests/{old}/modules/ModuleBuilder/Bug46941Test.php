@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @group Bug46941
  */
-class Bug46941Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug46941Test extends TestCase
+{
     /** @var ModuleBuilderController */
     var $mbController;
     var $mbPackage;

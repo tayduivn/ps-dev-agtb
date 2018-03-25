@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug57571Test extends Sugar_PHPUnit_Framework_TestCase 
+class Bug57571Test extends TestCase
 {
     protected $_module = 'Quotes';
     protected $_backedUpDefs = false;

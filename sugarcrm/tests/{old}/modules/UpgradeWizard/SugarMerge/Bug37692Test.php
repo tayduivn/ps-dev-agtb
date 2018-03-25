@@ -9,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/dir_inc.php';
 
-class Bug37692Test extends Sugar_PHPUnit_Framework_TestCase  {
-
+class Bug37692Test extends TestCase
+{
 var $merge;
 var $has_dir;
 var $modules;

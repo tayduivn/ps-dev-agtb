@@ -11,13 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug 42744:
  *  if team 1 is deleted=1 then upgrade from 5.2.0k > 5.5.1 fails
  * @ticket 42744
  * @author arymarchik@sugarcrm.com
  */
-class Bug42744Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug42744Test extends TestCase
 {
     public function setUp()
     {

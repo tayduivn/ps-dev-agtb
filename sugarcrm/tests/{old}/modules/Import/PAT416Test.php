@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #PAT-416
@@ -18,7 +19,7 @@
  * @author bsitnikovski@sugarcrm.com
  * @ticket PAT-416
  */
-class BugPAT416Test extends Sugar_PHPUnit_Framework_TestCase
+class BugPAT416Test extends TestCase
 {
 
     private $dummy_defs;

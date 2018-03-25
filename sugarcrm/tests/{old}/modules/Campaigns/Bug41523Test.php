@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #41523
@@ -17,7 +18,7 @@
  *
  * @ticket 41523
  */
-class Bug41523Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug41523Test extends TestCase
 {
     private $campaign;
 

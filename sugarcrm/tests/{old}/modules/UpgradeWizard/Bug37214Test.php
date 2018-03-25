@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('install/install_utils.php');
 require_once('modules/UpgradeWizard/uw_utils.php');
 
-class Bug37214Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug37214Test extends TestCase
+{
 var $original_argv;
 var $has_original_config_si_file;
 var $current_working_dir;
@@ -168,5 +170,3 @@ public function test_silent_upgrade_parameters2() {
 
 
 }
-
-?>

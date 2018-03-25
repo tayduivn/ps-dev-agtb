@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-abstract class UpgradeTestCase extends Sugar_PHPUnit_Framework_TestCase
+abstract class UpgradeTestCase extends TestCase
 {
     /**
      * @var TestUpgrader

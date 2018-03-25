@@ -13,12 +13,13 @@
 namespace Sugarcrm\SugarcrmTests\Security\Teams;
 
 use BeanFactory;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Teams\TeamSet;
 
 /**
  * @covers \Sugarcrm\Sugarcrm\Security\Teams\TeamSet
  */
-class TeamSetTest extends \Sugar_PHPUnit_Framework_TestCase
+class TeamSetTest extends TestCase
 {
     /**
      * @test

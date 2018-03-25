@@ -10,7 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('vendor/nusoap//nusoap.php');
 require_once('SugarTestUserUtilities.php');
 require_once('tests/{old}/SugarTestContactUtilities.php');
@@ -18,7 +20,7 @@ require_once('tests/{old}/SugarTestContactUtilities.php');
 /**
  * Test cases for the Team object
  */
-class TeamsRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
+class TeamsRelationshipsTest extends TestCase
 {
 	public $_user = null;    
 	public $_contact = null;
@@ -136,5 +138,3 @@ class TeamsRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
     
    
 }
-
-?>

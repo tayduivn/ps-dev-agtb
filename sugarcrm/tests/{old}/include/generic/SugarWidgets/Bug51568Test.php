@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #51568
  *  Currency symbol didn't export to the CVS or pdf file in report module
@@ -17,7 +19,7 @@
  * @author aryamrchik@sugarcrm.com
  * @ticket 51568
  */
-class Bug51568Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51568Test extends TestCase
 {
     /**
      * @var LayoutManager

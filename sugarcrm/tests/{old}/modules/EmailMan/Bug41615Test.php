@@ -10,9 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug41615Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug41615Test extends TestCase
 {
 	public function testCreateNewListQuery()
 	{
@@ -33,5 +34,3 @@ class Bug41615Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertContains('ORDER BY emailman.date_entered', $query, 'Assert that the ORDER BY clause includes the table name'); 
     }
 }
-
-?>

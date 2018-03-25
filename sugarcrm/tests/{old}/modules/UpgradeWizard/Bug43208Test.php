@@ -9,6 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug43208Test
  *
@@ -18,7 +21,7 @@
  * repairTableDictionaryExtFile function to scan the contents of tabledictionary.ext.php and then remove entries
  * where the file does not exist.
  */
-class Bug43208Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43208Test extends TestCase
 {
 
 var $tableDictionaryExtFile1 = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';
@@ -266,5 +269,3 @@ function repairTableDictionaryExtFile()
 		} //if
 	}
 }
-
-?>

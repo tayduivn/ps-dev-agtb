@@ -10,12 +10,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /***
  * Test cases for Bug 23871
  */
-class AddTeamsTest extends Sugar_PHPUnit_Framework_TestCase
+class AddTeamsTest extends TestCase
 {
 	private $teamSets, $anotherTeamSets;
 	private $teamIds = array();
@@ -53,4 +54,3 @@ class AddTeamsTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($this->teamSetsIdSecondOne,$this->teamSetsId);
 	}
 }
-?>

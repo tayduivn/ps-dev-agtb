@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class CronRemoteTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
@@ -134,4 +136,3 @@ class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('This is not the server you are looking for', $job->message, "Wrong message");
     }
 }
-

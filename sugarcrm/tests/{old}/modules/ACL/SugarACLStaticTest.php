@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'SugarTestACLUtilities.php';
 
 /**
@@ -17,7 +19,7 @@ require_once 'SugarTestACLUtilities.php';
  * Unit test for SugarACLStatic
  *
  */
-class SugarACLStaticTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarACLStaticTest extends TestCase
 {
 
     public $testUser;

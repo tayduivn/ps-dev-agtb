@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/UpgradeWizard/uw_utils.php');
 
 /**
@@ -19,7 +21,7 @@ require_once('modules/UpgradeWizard/uw_utils.php');
  * we want to ensure that upgrade_connectors will delete the custom connectors.php file.
  *
  */
-class Bug50720Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50720Test extends TestCase
 {
     var $customConnectors;
     var $file = 'custom/modules/Connectors/metadata/connectors.php';

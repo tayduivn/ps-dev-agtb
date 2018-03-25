@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
 /**
  * utils.php language tests
  */
-class UtilsLanguageTest extends Sugar_PHPUnit_Framework_TestCase
+class UtilsLanguageTest extends TestCase
 {
     private $backup = array(
         'default_language',

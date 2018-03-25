@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\StrategyCollection;
+use PHPUnit\Framework\TestCase;
 
-class StrategyCollectionTest extends Sugar_PHPUnit_Framework_TestCase
+class StrategyCollectionTest extends TestCase
 {
     /**
      * @expectedException \InvalidArgumentException

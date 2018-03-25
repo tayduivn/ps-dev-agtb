@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
+class WorkFlowBugsTest extends TestCase
 {
     private static $has_workflow_directory;
     private static $has_logic_hooks_file;

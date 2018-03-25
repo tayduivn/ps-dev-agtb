@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class PipelineChartApiTest extends Sugar_PHPUnit_Framework_TestCase
+class PipelineChartApiTest extends TestCase
 {
     /**
      * @var array

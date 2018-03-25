@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug23934Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug23934Test extends TestCase
 {
     private $_reportId = "ad832c9b-59be-bf94-9b8d-4cdab4d3f1e8";
     public function setUp()

@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class ForecastWorksheetOldTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ForecastWorksheetOldTest extends TestCase
 {
 
     protected static $settings = array();

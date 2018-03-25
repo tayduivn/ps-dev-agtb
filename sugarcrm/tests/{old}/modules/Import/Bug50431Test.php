@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug50431Test.php
@@ -18,7 +18,7 @@
  * This file tests the getMappingClassName function in modules/Import/views/view.step3.php
  *
  */
-class Bug50431Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50431Test extends TestCase
 {
     private $customMappingFile = 'custom/modules/Import/maps/ImportMapCustomTestImportToken.php';
     private $customMappingFile2 = 'custom/modules/Import/maps/ImportMapTestImportToken.php';

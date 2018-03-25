@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/dir_inc.php';
 
-class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarThemeRegistryTest extends TestCase
 {
     private $_themeName;
     private $_oldDefaultTheme;

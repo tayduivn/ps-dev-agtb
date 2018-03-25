@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /*
  * This tests for precision formatting from the sugarfieldcurrency object.  Prior to bug 55733, the value would get picked up from
  * the vardefs['precision'] value, instead of the currency settings.
  */
 
-class Bug55733CurrencyTest extends Sugar_PHPUnit_Framework_TestCase
+class Bug55733CurrencyTest extends TestCase
 {
 
     private $value1 = '20000.0000';

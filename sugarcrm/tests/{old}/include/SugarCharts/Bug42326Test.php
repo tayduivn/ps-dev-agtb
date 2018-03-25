@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug42326Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug42326Test extends TestCase
 {
     private $sugarChart;
 
@@ -44,4 +45,3 @@ class Bug42326Test extends Sugar_PHPUnit_Framework_TestCase
         return $dataset;
     }
 }
-

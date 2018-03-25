@@ -10,9 +10,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('install/install_utils.php');
 
-class ForecastTreeSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastTreeSeedDataTest extends TestCase
 {
 	public static function setUpBeforeClass()
 	{

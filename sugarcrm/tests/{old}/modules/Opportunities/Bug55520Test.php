@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/export_utils.php';
 
 /**
@@ -19,7 +21,7 @@ require_once 'include/export_utils.php';
  * @author vromanenko@sugarcrm.com
  * @ticked 55520
  */
-class Bug55520Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug55520Test extends TestCase
 {
     const BOM = "\xEF\xBB\xBF";
     const DEFAULT_EXPORT_CHARSET_PREF_NAME = 'default_export_charset';
@@ -82,5 +84,4 @@ class Bug55520Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
     }
-
 }

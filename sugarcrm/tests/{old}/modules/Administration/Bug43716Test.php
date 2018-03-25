@@ -10,13 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * @brief Try to compare dates in different formats
  * @ticket 43716
  */
-class Bug43716Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43716Test extends TestCase
 {
     private $backup = array();
     private $user = null;

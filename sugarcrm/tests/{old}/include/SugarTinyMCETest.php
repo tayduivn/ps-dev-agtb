@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Original Bug: 27655
@@ -18,7 +19,7 @@
  * This test was expanded to hit both major paths in this file.
  *
  */
-class SugarTinyMCETest extends Sugar_PHPUnit_Framework_TestCase
+class SugarTinyMCETest extends TestCase
 {
 
     static $customDir = 'custom/include';

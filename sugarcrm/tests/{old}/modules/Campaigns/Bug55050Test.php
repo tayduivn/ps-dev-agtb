@@ -10,13 +10,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #55050
  * Campaign Viewed Messages bug with Adding to Target List
  *
  * @ticket 55050
  */
-class Bug55050Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug55050Test extends TestCase
 {
     private $campaign;
     private $emailmarketing;

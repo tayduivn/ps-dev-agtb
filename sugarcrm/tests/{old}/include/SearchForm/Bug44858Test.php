@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once "include/SearchForm/SearchForm2.php";
 
-class Bug44858Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44858Test extends TestCase
 {
     public function setUp()
 	{

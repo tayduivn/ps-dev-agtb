@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass EmailRecipientsService
  * @group functional
  * @group email
  */
-class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailRecipientsServiceTest extends TestCase
 {
     private $emailRecipientsService,
             $salt;

@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug52901Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug52901Test extends TestCase
 {
     public function setUp()
     {
@@ -233,5 +234,4 @@ class Bug52901Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedSubgroupNodesTitles, $actualSubgroupNodesTitlesArray);
     }
-
 }

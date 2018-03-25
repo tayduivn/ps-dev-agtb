@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('include/SugarCache/SugarCache.php');
 
-class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
+class ExternalCacheAPITest extends TestCase
 {
     public function setUp() 
     {

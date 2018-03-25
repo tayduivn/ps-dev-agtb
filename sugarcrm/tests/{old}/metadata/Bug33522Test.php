@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 33522
  */
-class Bug33522Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug33522Test extends TestCase
 {
     public function testCheckMetadataRelationshipNames()
     {

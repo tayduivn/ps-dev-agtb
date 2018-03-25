@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ServiceDictionaryRestTest extends Sugar_PHPUnit_Framework_TestCase
+class ServiceDictionaryRestTest extends TestCase
 {
     public function testRegisterEndpoints() {
         $sd = new ServiceDictionaryRestMainMock();

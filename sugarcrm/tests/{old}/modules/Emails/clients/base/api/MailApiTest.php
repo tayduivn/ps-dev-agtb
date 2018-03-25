@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
@@ -21,7 +22,7 @@ use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
  * @group api
  * @group email
  */
-class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
+class MailApiTest extends TestCase
 {
     private $api,
         $mailApi,

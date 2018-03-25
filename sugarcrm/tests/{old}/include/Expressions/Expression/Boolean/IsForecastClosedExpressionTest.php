@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class IsForecastClosedExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class IsForecastClosedExpressionTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

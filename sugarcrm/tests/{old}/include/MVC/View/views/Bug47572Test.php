@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group bug47572
  */
-class Bug47572Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47572Test extends TestCase
 {
     public function setUp() {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();

@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 56505 - Incorrect format for property "default" in multiselect field's vardef
  */
-class Bug56505Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56505Test extends TestCase
 {
     public function setUp()
     {

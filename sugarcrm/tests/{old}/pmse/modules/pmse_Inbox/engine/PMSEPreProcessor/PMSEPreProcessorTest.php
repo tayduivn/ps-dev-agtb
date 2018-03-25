@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
+class PMSEPreProcessorTest extends TestCase
 {
     protected $loggerMock;
 

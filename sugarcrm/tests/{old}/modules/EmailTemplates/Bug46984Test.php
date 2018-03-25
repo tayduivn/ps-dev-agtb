@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug 46984:
  *  EmailTemplate.parse_tracker_urls
  * @ticket 46984
  * @author arymarchik@sugarcrm.com
  */
-class Bug46984Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46984Test extends TestCase
 {
     private $_user;
 

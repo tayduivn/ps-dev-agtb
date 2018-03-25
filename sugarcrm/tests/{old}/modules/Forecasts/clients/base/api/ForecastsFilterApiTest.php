@@ -11,12 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
  */
-class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastsCommittedApiTest extends TestCase
 {
     /**
      * @var User

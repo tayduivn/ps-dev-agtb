@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class BR1176Test extends Sugar_PHPUnit_Framework_TestCase
+class BR1176Test extends TestCase
 {
     public function testModules() 
     {

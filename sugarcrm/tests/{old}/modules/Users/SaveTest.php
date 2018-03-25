@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * User profile Save tests
  *
  * @author mmarum
  */
-class SaveTest extends Sugar_PHPUnit_Framework_TestCase
+class SaveTest extends TestCase
 {
     protected $current_user;
     protected $tabs;

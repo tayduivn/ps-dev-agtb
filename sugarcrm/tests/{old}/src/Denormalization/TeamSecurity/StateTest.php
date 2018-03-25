@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity;
 
 use DomainException;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use SplObserver;
 use SugarConfig;
@@ -23,7 +24,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\InMemoryStorage
 /**
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State
  */
-class StateTest extends \PHPUnit_Framework_TestCase
+class StateTest extends TestCase
 {
     /**
      * @test

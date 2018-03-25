@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
@@ -23,7 +24,7 @@ require_once ("tests/{old}/SugarTestRestUtilities.php");
  * @coversDefaultClass ModuleApi
  * @group ApiTests
  */
-class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ModuleApiTest extends TestCase
 {
     public $accounts, $account_ids;
     public $roles;

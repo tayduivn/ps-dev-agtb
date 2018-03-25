@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/db_utils.php';
 
 /**
  * @issue 50809
  */
-class Bug50809Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50809Test extends TestCase
 {
     public function testFromHtml()
     {
@@ -23,4 +25,3 @@ class Bug50809Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('FRIEND"S', from_html('FRIEND&QUOT;S'));
     }
 }
-

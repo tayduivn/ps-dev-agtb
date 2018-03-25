@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SamlAuthTest extends  Sugar_PHPUnit_Framework_TestCase
+class SamlAuthTest extends TestCase
 {
     /**
      * Custom file with settings for SAMLAuthenticate

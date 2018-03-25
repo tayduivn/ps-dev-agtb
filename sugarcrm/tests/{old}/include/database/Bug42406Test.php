@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #42406
  * Bad Repair SQL Formed If Extended Vardef References a Field That Doesn't Exist
@@ -17,7 +19,7 @@
  * @author mgusev@sugarcrm.com
  * @ticket 42406
  */
-class Bug42406 extends Sugar_PHPUnit_Framework_TestCase
+class Bug42406 extends TestCase
 {
 
     public function getBrokenField()

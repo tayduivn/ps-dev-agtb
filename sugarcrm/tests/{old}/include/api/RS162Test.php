@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  *  RS-162: Prepare SugarList Api.
  */
-class RS162Test extends Sugar_PHPUnit_Framework_TestCase
+class RS162Test extends TestCase
 {
     public static function setUpBeforeClass()
     {

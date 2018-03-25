@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  *  RS174: Prepare Project Module.
  */
-class RS174Test extends Sugar_PHPUnit_Framework_TestCase
+class RS174Test extends TestCase
 {
     public static function setUpBeforeClass()
     {

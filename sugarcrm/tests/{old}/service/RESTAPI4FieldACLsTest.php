@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('tests/{old}/service/APIv3Helper.php');
 
-class RESTAPI4FieldACLsTest extends Sugar_PHPUnit_Framework_TestCase
+class RESTAPI4FieldACLsTest extends TestCase
 {
     protected $v4;
     

@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class M2MRelationshipTestDuplicateRows extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class M2MRelationshipTestDuplicateRows extends TestCase
 {
     protected $def;
     protected $origDB;

@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug47723Test.php
@@ -20,7 +21,7 @@
  * @author dlind
  *
  */
-class Bug47723Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47723Test extends TestCase
 {
     private $reportInstance;
 

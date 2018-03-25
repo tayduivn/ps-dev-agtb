@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarFieldCurrencyTest extends TestCase
 {
     static $currency, $currency2, $currency3;
 

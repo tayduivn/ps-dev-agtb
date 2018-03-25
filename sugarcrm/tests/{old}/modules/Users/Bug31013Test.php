@@ -11,10 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 31013
  */
-class Bug31013Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug31013Test extends TestCase
 {
 	public $_user = null;
 
@@ -38,4 +40,3 @@ class Bug31013Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-

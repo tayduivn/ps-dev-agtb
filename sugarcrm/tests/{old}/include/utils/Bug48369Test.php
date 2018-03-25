@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug48369Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48369Test extends TestCase
 {
     var $backupContents;
 

@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class StrToLowerExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+class StrToLowerExpressionTest extends TestCase
 {
     public function testGetParamCount()
     {

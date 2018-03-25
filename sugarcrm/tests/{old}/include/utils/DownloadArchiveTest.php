@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/download_file.php';
 require_once 'include/utils/file_utils.php';
 
 /**
  * Test DownloadFile:getArchive()
  */
-class DownloadArchiveTest extends Sugar_PHPUnit_Framework_TestCase
+class DownloadArchiveTest extends TestCase
 {
     /**
      * Notes.

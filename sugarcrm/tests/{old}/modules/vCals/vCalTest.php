@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for vCal
  */
-class vCalTest extends Sugar_PHPUnit_Framework_TestCase
+class vCalTest extends TestCase
 {
     /** @var vCal */
     protected $bean = null;

@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'SugarTestACLUtilities.php';
 
 /**
  * @covers ACLField
  */
-class ACLFieldTest extends Sugar_PHPUnit_Framework_TestCase
+class ACLFieldTest extends TestCase
 {
     public function setUp()
     {

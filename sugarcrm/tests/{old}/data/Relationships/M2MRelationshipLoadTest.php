@@ -9,12 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'data/Relationships/M2MRelationship.php';
 
 /**
  * @coversDefaultClass M2MRelationship
  */
-class M2MRelationshipLoadTest extends Sugar_PHPUnit_Framework_TestCase
+class M2MRelationshipLoadTest extends TestCase
 {
     private static $opportunity;
     private static $opportunity2;

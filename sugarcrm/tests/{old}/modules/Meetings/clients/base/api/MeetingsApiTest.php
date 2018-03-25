@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group api
  * @group meetings
  */
-class MeetingsApiTest extends Sugar_PHPUnit_Framework_TestCase
+class MeetingsApiTest extends TestCase
 {
     private $api,
         $meetingsApi;

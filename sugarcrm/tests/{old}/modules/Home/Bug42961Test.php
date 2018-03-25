@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @brief Try to find force_unifedsearch fields
  * @ticket 42961
  */
-class Bug42961Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug42961Test extends TestCase
 {
 
     /**

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'vendor/nusoap//nusoap.php';
 require_once 'modules/DynamicFields/FieldCases.php';
 
@@ -20,7 +22,7 @@ require_once 'modules/DynamicFields/FieldCases.php';
  * @author mgusev@sugarcrm.com
  * @ticked 58138
  */
-class Bug58138Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug58138Test extends TestCase
 {
     /**
      * @var nusoapclient

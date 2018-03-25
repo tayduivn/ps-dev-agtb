@@ -9,9 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class Bug42862Test extends Sugar_PHPUnit_Framework_TestCase  {
 
+use PHPUnit\Framework\TestCase;
+
+class Bug42862Test extends TestCase
+{
 public function testDefaultPublishDate()
 {
 	global $timedate;
@@ -20,7 +22,4 @@ public function testDefaultPublishDate()
 	$docPublishDate = $timedate->to_db_date($doc->active_date, true);
 	$this->assertEquals($nowDate, $docPublishDate, "Assert that active_date field in new Document defaults to current date");
 }
-
 }
-
-?>

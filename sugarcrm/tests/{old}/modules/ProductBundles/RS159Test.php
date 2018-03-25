@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * RS-159: Prepare ProductBundles Module
  */
-class RS159Test extends Sugar_PHPUnit_Framework_TestCase
+class RS159Test extends TestCase
 {
     /** @var ProductBundle */
     protected $productBundle = null;

@@ -9,11 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/DynamicFields/FieldCases.php';
 require_once 'service/v4/SugarWebServiceImplv4.php';
 
-class Bug41985Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug41985Test extends TestCase
 {
     protected $_contact;
     protected $_account;

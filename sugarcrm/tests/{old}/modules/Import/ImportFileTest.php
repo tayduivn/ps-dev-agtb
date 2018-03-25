@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
+class ImportFileTest extends TestCase
 {
     protected $unlink = array();
 

@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug42915Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug42915Test extends TestCase
 {
     public $previousCurrentUser;
     public $saved_search_id;

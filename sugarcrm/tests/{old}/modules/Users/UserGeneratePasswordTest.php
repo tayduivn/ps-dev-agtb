@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * UserGeneratePasswordTest
@@ -18,7 +19,7 @@
  * This class runs a series of tests against the generatePassword static function in the Users class.
  * @author Collin Lee
  */
-class UserGeneratePasswordTest extends Sugar_PHPUnit_Framework_TestCase
+class UserGeneratePasswordTest extends TestCase
 {
     var $_passwordSetting;
 

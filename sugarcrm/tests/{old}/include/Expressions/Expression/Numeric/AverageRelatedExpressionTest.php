@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class AverageRelatedExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class AverageRelatedExpressionTest extends TestCase
 {
     public function testAverageRelated()
     {

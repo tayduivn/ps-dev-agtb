@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests MostActiveUsers dashlet api.
  */
-class MostActiveUsersApiTest extends Sugar_PHPUnit_Framework_TestCase
+class MostActiveUsersApiTest extends TestCase
 {
     /**
      * @var Meeting

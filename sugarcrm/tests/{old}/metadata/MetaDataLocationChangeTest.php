@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-        
-class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class MetaDataLocationChangeTest extends TestCase
 {
     //BEGIN SUGARCRM flav=ent ONLY
     protected $_expectedPortalModules = array(

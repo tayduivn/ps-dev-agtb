@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass OutboundSmtpEmailConfiguration
  * @group email
  * @group outboundemailconfiguration
  */
-class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
+class OutboundSmtpEmailConfigurationTest extends TestCase
 {
     public function setUp()
     {

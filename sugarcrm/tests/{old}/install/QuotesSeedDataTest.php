@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class QuotesSeedDataTest extends TestCase
 {
 	protected $quote_name;
 	
@@ -116,4 +119,3 @@ class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($quote_created);
 	}
 }
-?>

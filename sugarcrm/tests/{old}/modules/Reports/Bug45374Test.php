@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #45374
@@ -20,7 +21,7 @@
  *
  */
 
-class Bug45374Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45374Test extends TestCase
 {
     protected $default_team_name;
     protected $team_set;

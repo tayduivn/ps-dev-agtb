@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-77: Prepare Subscriptions Api
  */
-class RS77Test extends Sugar_PHPUnit_Framework_TestCase
+class RS77Test extends TestCase
 {
     /**
      * @var SubscriptionsApi

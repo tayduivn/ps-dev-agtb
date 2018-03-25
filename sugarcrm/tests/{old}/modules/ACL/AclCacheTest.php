@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class AclCacheTest extends PHPUnit_Framework_TestCase
+class AclCacheTest extends TestCase
 {
     /** @var AclCache */
     private $cache;

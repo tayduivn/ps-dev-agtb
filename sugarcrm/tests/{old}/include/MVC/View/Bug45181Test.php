@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/*
+use PHPUnit\Framework\TestCase;
+
+/**
  * Bug 45181: Please remove "Log Memory Usage" if useless
  * @ticket 45181
  */
-
-class Bug45181 extends Sugar_PHPUnit_Framework_TestCase {
+class Bug45181 extends TestCase
+{
     private $sugar_config;
     private $sugarView;
 

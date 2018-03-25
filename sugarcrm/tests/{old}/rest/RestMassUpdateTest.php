@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /*
  * Tests mass update Rest api.
  */
-class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
+class RestMassUpdateTest extends TestCase
 {
     public function setUp(){
         SugarTestHelper::setUp('current_user');

@@ -9,8 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class Bug33284_Test extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class Bug33284_Test extends TestCase
 {
     var $max_display_set = false;
     var $max_display_length;
@@ -61,5 +63,3 @@ class Bug33284_Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(mb_strlen(from_html($display_string), 'UTF-8'), $default_length, 'Assert that the string length is equal to ' . $default_length . ' characters (default)');    
     }  
 }
-
-?>

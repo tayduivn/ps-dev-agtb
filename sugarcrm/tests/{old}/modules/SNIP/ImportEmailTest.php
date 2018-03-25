@@ -11,13 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests SNIP's import email feature by calling $snip->importEmail() using dummy data. Does not test object creation.
  *
  * @coversDefaultClass SugarSNIP
  */
-class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
+class ImportEmailTest extends TestCase
+{
 	private $snip;
 	private $date_time_format;
 
@@ -275,4 +277,3 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		unset($this->meeting_id);
 	}
 }
-?>

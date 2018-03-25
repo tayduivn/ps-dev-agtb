@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test class for SugarACLStrategy.
  */
-class SugarACLStrategyTest extends PHPUnit_Framework_TestCase
+class SugarACLStrategyTest extends TestCase
 {
     /**
      * @var SugarACLStrategy
@@ -74,4 +76,3 @@ class SugarACLStrategyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($user1->id, $this->object->getUserID(array('user_id' => 333, 'user' => $user1)));
     }
 }
-?>

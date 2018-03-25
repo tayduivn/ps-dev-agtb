@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarForecasting_Progress_ManagerTest extends TestCase
 {
 
     /**

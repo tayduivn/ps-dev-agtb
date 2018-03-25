@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class RoundExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class RoundExpressionTest extends TestCase
 {
     /**
      * @dataProvider dataProviderTestEvaluate
@@ -34,4 +36,3 @@ class RoundExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 }
-

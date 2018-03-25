@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class SubPanelTestBase extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SubPanelTestBase extends TestCase
 {
     protected $_tabController;
     protected $_currentTabs;

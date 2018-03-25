@@ -10,8 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class Bug37168Test extends Sugar_PHPUnit_Framework_TestCase 
+
+use PHPUnit\Framework\TestCase;
+
+class Bug37168Test extends TestCase
 {
     protected $has_disable_count_query_enabled;	
     protected $previous_current_user;	

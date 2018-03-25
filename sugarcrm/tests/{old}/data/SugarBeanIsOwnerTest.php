@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SugarBeanIsOwner extends Sugar_PHPUnit_Framework_TestCase
+class SugarBeanIsOwner extends TestCase
 {
     public static function setUpBeforeClass()
     {

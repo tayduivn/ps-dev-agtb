@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/utils/zip_utils.php');
 /**
  * @ticket 40957
  */
-class ZipTest extends Sugar_PHPUnit_Framework_TestCase
+class ZipTest extends TestCase
 {
     public function setUp()
     {

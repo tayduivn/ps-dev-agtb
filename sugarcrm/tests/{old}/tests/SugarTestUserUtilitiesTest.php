@@ -9,13 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'SugarTestUserUtilities.php';
 
 /**
  * @group utilities
  */
-class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarTestUserUtilitiesTest extends TestCase
 {
     private $_before_snapshot = array();
     

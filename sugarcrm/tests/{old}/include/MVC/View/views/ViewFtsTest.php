@@ -11,9 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class ViewFtsTest extends Sugar_PHPUnit_Framework_TestCase
+class ViewFtsTest extends TestCase
 {
 
     public function testTranslateModulesList()

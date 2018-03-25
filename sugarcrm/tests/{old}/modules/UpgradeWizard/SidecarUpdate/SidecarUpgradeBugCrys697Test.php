@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SidecarMetaDataUpgraderBugCrys697Test extends Sugar_PHPUnit_Framework_TestCase
+class SidecarMetaDataUpgraderBugCrys697Test extends TestCase
 {
 
     public function getStates()

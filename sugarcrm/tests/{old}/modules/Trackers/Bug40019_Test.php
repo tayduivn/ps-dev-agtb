@@ -9,6 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug40019_Test.php
  * This test verifies the fixes to properly store the items in the BreadCrumbStack class
@@ -19,7 +22,7 @@ require_once 'SugarTestUserUtilities.php';
 require_once 'SugarTestAccountUtilities.php';
 require_once 'SugarTestContactUtilities.php';
 
-class Bug40019_Test extends Sugar_PHPUnit_Framework_TestCase 
+class Bug40019_Test extends TestCase
 {
     private $anonymous_user;
     private $saved_current_user;
@@ -123,5 +126,3 @@ class Bug40019_Test extends Sugar_PHPUnit_Framework_TestCase
     }
     
 }
-
-?>

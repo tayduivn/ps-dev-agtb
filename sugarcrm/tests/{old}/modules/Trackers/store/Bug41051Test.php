@@ -10,9 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug41051Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug41051Test extends TestCase
+{
     private $revert = array();
 
     public function setup()

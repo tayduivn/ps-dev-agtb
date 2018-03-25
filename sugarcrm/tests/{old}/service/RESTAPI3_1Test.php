@@ -10,11 +10,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('tests/{old}/service/APIv3Helper.php');
 
 
-class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
+class RESTAPI3_1Test extends TestCase
 {
     protected $_user;
 

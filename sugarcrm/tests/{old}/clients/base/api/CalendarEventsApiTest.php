@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group api
  * @group calendarevents
  * @coversDefaultClass CalendarEventsApi
  */
-class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
+class CalendarEventsApiTest extends TestCase
 {
     private $api,
         $calendarEventsApi;

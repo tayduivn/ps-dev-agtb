@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'SugarTestForecastUtilities.php';
 
 /**
  * Tests RevenueLineItemsGlobeChartApiTest.
  */
-class RevenueLineItemsGlobeChartApiTest extends Sugar_PHPUnit_Framework_TestCase
+class RevenueLineItemsGlobeChartApiTest extends TestCase
 {
     /**
      * @var SugarApi

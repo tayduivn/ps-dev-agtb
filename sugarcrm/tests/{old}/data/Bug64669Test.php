@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/export_utils.php');
 
 
@@ -17,7 +19,7 @@ require_once('include/export_utils.php');
  * Bug #64669
  * @ticket 64669
  */
-class Bug64669Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug64669Test extends TestCase
 {
 
     private $createdBeans;

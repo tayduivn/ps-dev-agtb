@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 require_once 'upgrade/scripts/post/4_ClearSubpanels.php';
 
 /**
  * Test for clearing bad defs from supbanels definitions..
  */
-class ClearSubpanelsTest extends Sugar_PHPUnit_Framework_TestCase
+class ClearSubpanelsTest extends TestCase
 {
     /**
      * @var string

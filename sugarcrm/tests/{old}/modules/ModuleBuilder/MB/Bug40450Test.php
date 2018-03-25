@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug 40450 - Extra 'Name' field in a File type module in module builder
  */
 require_once 'modules/ModuleBuilder/MB/MBModule.php';
 
-class Bug40450Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug40450Test extends TestCase
 {
     var $MBModule;
     

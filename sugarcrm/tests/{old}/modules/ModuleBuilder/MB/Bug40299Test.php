@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 40299 - Editing Stock Fields Causes SQL Errors After Custom Module Is Deployed
  */
 require_once 'modules/ModuleBuilder/MB/MBModule.php';
 
-class Bug40299Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug40299Test extends TestCase
 {
     var $MBModule;
     

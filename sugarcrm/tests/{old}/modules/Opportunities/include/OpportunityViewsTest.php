@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 //FILE SUGARCRM flav=ent ONLY
 /**
  * @coversDefaultClass \OpportunityViews
  */
-class OpportunityViewsTest extends Sugar_PHPUnit_Framework_TestCase
+class OpportunityViewsTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

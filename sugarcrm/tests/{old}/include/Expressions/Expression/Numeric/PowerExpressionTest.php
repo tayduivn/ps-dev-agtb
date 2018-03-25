@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class PowerExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PowerExpressionTest extends TestCase
 {
     /**
      * @dataProvider dataProviderTestEvaluate
@@ -30,4 +32,3 @@ class PowerExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 }
-

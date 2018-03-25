@@ -10,14 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/**
- * ContactFormBaseTest.php
- *
- */
+use PHPUnit\Framework\TestCase;
 
-
-class ContactFormBaseTest extends Sugar_PHPUnit_Framework_TestCase {
-
+class ContactFormBaseTest extends TestCase
+{
 var $form;
 var $contact1;
 

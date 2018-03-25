@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\EventRepositoryTest;
 
 use BeanFactory;
+use PHPUnit\Framework\TestCase;
 use Doctrine\DBAL\Connection;
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
 use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
@@ -29,7 +30,7 @@ use SugarTestUserUtilities;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\EventRepository
  */
-class EventRepositoryTest extends \PHPUnit_Framework_TestCase
+class EventRepositoryTest extends TestCase
 {
     /**
      * @var EventRepository

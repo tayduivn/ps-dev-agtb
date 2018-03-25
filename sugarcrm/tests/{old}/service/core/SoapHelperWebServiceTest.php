@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * SoapHelperWebServiceTest.php
  *
@@ -20,8 +22,8 @@
 
 require_once('service/core/SoapHelperWebService.php');
 
-class SoapHelperWebServiceTest extends Sugar_PHPUnit_Framework_TestCase {
-
+class SoapHelperWebServiceTest extends TestCase
+{
 static $original_service_object;
 
 public static function setUpBeforeClass()

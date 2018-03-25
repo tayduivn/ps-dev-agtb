@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarFieldDatetimecomboTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarFieldDatetimecomboTest extends TestCase
 {
 
     public static function setUpBeforeClass()
@@ -51,5 +53,4 @@ class SugarFieldDatetimecomboTest extends Sugar_PHPUnit_Framework_TestCase
         $value = $field->exportSanitize($obj->date_modified, $vardef, $obj);
         $this->assertEquals($expectedTime, $value);
     }
-
 }

@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
-class SugarArrayMergeTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarArrayMergeTest extends TestCase
 {
     /**
      * @ticket 17142

@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once __DIR__ . '/../../../../modules/HealthCheck/pack.php';
 
-class PackTest extends PHPUnit_Framework_TestCase
+class PackTest extends TestCase
 {
 
     public function healthCheckPackProvider()

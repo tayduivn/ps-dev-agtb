@@ -9,8 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class SugarTestThemeUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class SugarTestThemeUtilitiesTest extends TestCase
 {
     private $_before_snapshot = array();
     
@@ -81,4 +83,3 @@ class SugarTestThemeUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertFalse(is_dir("themes/$themename"));
     }
 }
-

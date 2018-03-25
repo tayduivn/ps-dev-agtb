@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass Administration
  */
-class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
+class AdministrationTest extends TestCase
 {
     protected $configs = array(
         array('name' => 'AdministrationTest', 'value' => 'Base', 'platform' => 'base', 'category' => 'Forecasts'),

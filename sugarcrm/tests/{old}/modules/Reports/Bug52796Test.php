@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug52796Test.php
@@ -21,7 +22,7 @@
  * @author avucinic
  *
  */
-class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug52796Test extends TestCase
 {
 	private $reportInstance;
 	private $saved = array();

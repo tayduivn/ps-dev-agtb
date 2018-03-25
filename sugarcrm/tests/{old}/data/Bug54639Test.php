@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 47731
  * @ticket 54639
  */
-class Bug54639Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug54639Test extends TestCase
 {
     private $contact = null;
 

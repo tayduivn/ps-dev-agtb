@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * PAT-1334
  * Email field missing in Accounts for listview search
  */
-class PAT1334Test extends Sugar_PHPUnit_Framework_TestCase
+class PAT1334Test extends TestCase
 {
     public function setUp()
     {        

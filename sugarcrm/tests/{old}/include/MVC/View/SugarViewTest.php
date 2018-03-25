@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarViewTest extends TestCase
 {
     private $_backup = array();
 

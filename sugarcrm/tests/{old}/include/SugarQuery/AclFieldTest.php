@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarQueryAclFieldTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarQueryAclFieldTest extends TestCase
 {
     /** @var User */
     private static $otherUser;

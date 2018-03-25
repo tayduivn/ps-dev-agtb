@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class DBManager_WriteClobTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DBManager_WriteClobTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

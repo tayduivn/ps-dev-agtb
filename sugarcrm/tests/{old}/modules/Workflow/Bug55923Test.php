@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #55923
  * Workflow doesn't trigger when date_field changes
@@ -18,7 +20,7 @@
  * @author vromanenko@sugarcrm.com
  * @ticket 55923
  */
-class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug55923Test extends TestCase
 {
     protected $workFlowId;
     protected $workFlowTriggerShellId;

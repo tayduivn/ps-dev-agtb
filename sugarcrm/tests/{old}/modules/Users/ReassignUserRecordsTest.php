@@ -11,8 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class ReassignUserRecordsTest extends Sugar_PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
 
+class ReassignUserRecordsTest extends TestCase
+{
     private $user1;
     private $user2;
     private $bean;

@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class GetLinkedBeansTest extends TestCase
 {
     protected $createdBeans = array();
 
@@ -79,6 +81,4 @@ class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
         $contacts = $account->get_linked_beans('contacts', 'Contact', array(), 0, -1, 0, $where);
         $this->assertEquals(1, count($contacts), 'Assert that we have found the test contact linked to the test account');
     }
-
 }
-?>

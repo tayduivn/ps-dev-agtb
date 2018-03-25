@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
-class DropdownListItemsTest extends Sugar_PHPUnit_Framework_TestCase
+class DropdownListItemsTest extends TestCase
 {
     protected static $custFilePath = 'custom/include/required_list_items.php';
 

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * 
  * Test is used for testing returnOrderBy() through limitQuery() because returnOrderBy() is private
@@ -19,7 +21,7 @@
  * @author avucinic@sugarcrm.com
  *
  */
-class Bug52783Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug52783Test extends TestCase
 {
 	private $_db;
 

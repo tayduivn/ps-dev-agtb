@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #66022x
 */
-class Bug66022Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug66022Test extends TestCase
 {
     public static function dataProvider_processHTMLForWindowsMSOutlook()
     {

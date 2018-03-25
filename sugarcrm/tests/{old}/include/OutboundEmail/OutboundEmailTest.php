@@ -11,11 +11,12 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass OutboundEmail
  */
-class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
+class OutboundEmailTest extends TestCase
 {
     protected function setUp()
     {

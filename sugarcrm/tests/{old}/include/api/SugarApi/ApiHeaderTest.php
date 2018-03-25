@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ApiHeaderTest extends Sugar_PHPUnit_Framework_TestCase
+class ApiHeaderTest extends TestCase
 {
     public function setUp()
     {

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @see Team
  */
@@ -26,7 +28,7 @@
 /**
  * @ticket 44928
  */
-class Bug44928Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44928Test extends TestCase
 {
     /**
      * Temporarily created team record

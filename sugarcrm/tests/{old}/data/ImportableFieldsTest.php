@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ImportableFieldsTest extends Sugar_PHPUnit_Framework_TestCase
+class ImportableFieldsTest extends TestCase
 {
     protected $myBean;
 

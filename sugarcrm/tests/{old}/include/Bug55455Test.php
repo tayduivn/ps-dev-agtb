@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/download_file.php';
 require_once 'include/utils/file_utils.php';
 
-class Bug55455Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug55455Test extends TestCase
 {
     protected $_actualFile = 'upload/sugartestfile.txt';
     protected $_mockFile   = 'thisfilenamedoesnotexist.doc';

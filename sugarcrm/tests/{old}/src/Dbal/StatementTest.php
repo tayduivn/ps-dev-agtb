@@ -13,12 +13,13 @@
 namespace Sugarcrm\SugarcrmTests\Dbal;
 
 use Doctrine\DBAL\Schema\Table;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * Covers our modifications to the DBAL connection class hierarchy
  */
-class StatementTest extends \Sugar_PHPUnit_Framework_TestCase
+class StatementTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

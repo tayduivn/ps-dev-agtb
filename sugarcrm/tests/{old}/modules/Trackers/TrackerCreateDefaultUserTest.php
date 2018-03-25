@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('tests/{old}/modules/Trackers/TrackerTestUtility.php');
 
-class TrackerCreateDefaultUserTest extends Sugar_PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
 
+require_once 'tests/{old}/modules/Trackers/TrackerTestUtility.php';
+
+class TrackerCreateDefaultUserTest extends TestCase
+{
 	var $skipTest = true;
 	var $nonAdminUser;
 	var $nonAdminUserId;
@@ -105,5 +107,3 @@ class TrackerCreateDefaultUserTest extends Sugar_PHPUnit_Framework_TestCase {
     }
     
 }
-	
-?>

@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class PMSESendMessageEventTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PMSESendMessageEventTest extends TestCase
 {
 
     /**

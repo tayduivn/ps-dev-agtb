@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/utils.php');
 
 
 /**
  * @ticket 33806
  */
-class Bug33806Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug33806Test extends TestCase
 {
 
     function _moduleNameProvider()

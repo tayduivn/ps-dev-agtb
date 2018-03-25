@@ -11,9 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class ReportsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class ReportsApiHelperTest extends TestCase
 {
 
     protected $bean =null;

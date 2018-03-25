@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers RelateCollectionDefinition
  */
-class RelateCollectionDefinitionTest extends Sugar_PHPUnit_Framework_TestCase
+class RelateCollectionDefinitionTest extends TestCase
 {
     /**
      * @var RelateCollectionDefinition

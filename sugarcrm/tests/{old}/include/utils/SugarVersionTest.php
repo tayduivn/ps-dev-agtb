@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
-class SugarVersionTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarVersionTest extends TestCase
 {
 	/**
      * @dataProvider providerVersionStatus

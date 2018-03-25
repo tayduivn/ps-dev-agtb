@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 59069
  */
-class Bug59069Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug59069Test extends TestCase
 {
     /**
      * @param string $type

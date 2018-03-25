@@ -11,8 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
+class DependencyManagerTest extends TestCase
+{
     var $removeCustomDir = false;
     var $cf_test_field = array(
         'name' => 'cf_field',

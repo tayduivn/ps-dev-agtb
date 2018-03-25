@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-/*
+/**
  * This test checks to see if custom elements can be defined in a popupdef and be handled by PopupMetaDataParser.php
  * @ticket 50308
  */
-class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug50308Test extends TestCase
+{
     var $customFilePath = 'custom/modules/Users/metadata/popupdefs.php';
     var $customFileDir = 'custom/modules/Users/metadata';
     var $originalPopupMeta = array();

@@ -11,8 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use PHPUnit\Framework\TestCase;
 
-class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarControllerTest extends TestCase
 {
     protected $module_name;
 

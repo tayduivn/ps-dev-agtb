@@ -11,12 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/generic/SugarWidgets/SugarWidgetReportField.php';
 
 /**
  * @ticket 54193
  */
-class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug54193Test extends TestCase
 {
     /** @var Currency */
     protected static $currency;

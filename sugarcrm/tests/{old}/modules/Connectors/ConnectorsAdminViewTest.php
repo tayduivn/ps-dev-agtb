@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * ConnectorsAdminViewTest
  *
  * @author Collin Lee
  */
-class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_TestCase
+class ConnectorsAdminViewTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

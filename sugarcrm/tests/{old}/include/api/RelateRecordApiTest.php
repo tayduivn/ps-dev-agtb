@@ -11,8 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
+use PHPUnit\Framework\TestCase;
 
-class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
+class RelateRecordApiTest extends TestCase
 {
     /**
      * @var RelateRecordApi

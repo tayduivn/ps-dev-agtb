@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once "include/SearchForm/SearchForm2.php";
 
 /**
@@ -20,7 +22,7 @@ require_once "include/SearchForm/SearchForm2.php";
  * @author snigam@sugarcrm.com, avucinic@sugarcrm.com
  *
  */
-class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45709_53785_Test extends TestCase
 {
 	var $task = null;
 	var $contact = null;

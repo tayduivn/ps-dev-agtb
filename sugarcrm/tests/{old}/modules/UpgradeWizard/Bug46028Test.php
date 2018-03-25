@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug46098Test
  *
@@ -20,7 +22,7 @@
 
 require_once('modules/UpgradeWizard/uw_utils.php');
 
-class Bug46028Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46028Test extends TestCase
 {
 
 var $customOpportunitiesSearchFields;

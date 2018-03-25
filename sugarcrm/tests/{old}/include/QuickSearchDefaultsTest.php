@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class QuickSearchDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
+class QuickSearchDefaultsTest extends TestCase
 {
     public function testGetQuickSearchDefaults()
     {

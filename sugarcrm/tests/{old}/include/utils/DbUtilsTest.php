@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/db_utils.php';
 
-class DbUtilsTest extends Sugar_PHPUnit_Framework_TestCase
+class DbUtilsTest extends TestCase
 {
 
     public function testReturnsSameValueOnNoneStrings()
@@ -27,4 +29,3 @@ class DbUtilsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('bar<foo', from_html('bar&lt;foo', true));
     }
 }
-

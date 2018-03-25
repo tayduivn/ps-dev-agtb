@@ -11,12 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class QuoteConvertApiTest
  * @coversDefaultClass QuoteConvertApi
  */
-class QuoteConvertApiTest extends Sugar_PHPUnit_Framework_TestCase
+class QuoteConvertApiTest extends TestCase
 {
     /**
      * @var Opportunity

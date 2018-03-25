@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug51721Test.php
  *
  */
 require_once('modules/UpgradeWizard/uw_utils.php');
 
-class Bug51721Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51721Test extends TestCase
 {
 
 private $new_upgrade;
@@ -63,5 +65,4 @@ public function testRepairUpgradeHistoryTable()
     $file = $GLOBALS['db']->getOne("SELECT filename FROM upgrade_history WHERE id = '{$this->new_upgrade2->id}'");
     $this->assertEquals('upload/upgrade/temp/Bug51721Test.zip', $file);
 }
-
 }

@@ -11,13 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug 21934:
  *  Report filters are applying time offsets to date fields
  * @ticket 21934
  * @author arymarchik@sugarcrm.com
  **/
-class Bug21934Test extends PHPUnit_Framework_TestCase
+class Bug21934Test extends TestCase
 {
     public function setUp()
     {

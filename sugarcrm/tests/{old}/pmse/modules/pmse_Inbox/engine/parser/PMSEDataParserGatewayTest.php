@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSEDataParserGatewayTest extends PHPUnit_Framework_TestCase
+class PMSEDataParserGatewayTest extends TestCase
 {
     private $parserGateway;
 

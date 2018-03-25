@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class DashletGenericChartTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DashletGenericChartTest extends TestCase
 {
     public function testLazyLoadSmartyObject() 
     {

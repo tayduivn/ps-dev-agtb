@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class FetchByQueryCallsProcessRecordTest extends Sugar_PHPUnit_Framework_TestCase
+class FetchByQueryCallsProcessRecordTest extends TestCase
 {
     var $hasCustomAccountLogicHookFile = false;
     var $accountsHookFile = 'custom/modules/Accounts/logic_hooks.php';
@@ -86,5 +87,4 @@ class FetchByQueryCallsProcessRecordTest extends Sugar_PHPUnit_Framework_TestCas
         $bean->fetchFromQuery($sugarQuery);
         $this->assertGreaterThan(0, $accountHookRunCount, 'logic hook did not update run count');
     }
-
-}?>
+}

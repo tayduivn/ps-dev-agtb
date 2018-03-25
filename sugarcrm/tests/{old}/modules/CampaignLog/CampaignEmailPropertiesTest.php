@@ -11,13 +11,14 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 require_once 'modules/Campaigns/ProcessBouncedEmails.php';
 
 /**
  * @coversDefaultClass SugarEmailAddress
  */
-class CampaignEmailPropertiesTest extends Sugar_PHPUnit_Framework_TestCase
+class CampaignEmailPropertiesTest extends TestCase
 {
     private $contact;
     private $emailAddress;

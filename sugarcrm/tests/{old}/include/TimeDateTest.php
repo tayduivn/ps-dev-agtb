@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
+class TimeDateTest extends TestCase
 {
 	/**
 	 * @var TimeDate

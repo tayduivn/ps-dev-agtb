@@ -11,11 +11,12 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use PHPUnit\Framework\TestCase;
 
 require_once('modules/DynamicFields/FieldCases.php');
 
 
-class Bug39766Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug39766Test extends TestCase
 {
     /**
      * @group bug35265

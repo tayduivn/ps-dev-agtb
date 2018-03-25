@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * SugarCurrencyTest
  *
@@ -17,7 +19,7 @@
  *
  * @author Monte Ohrt <mohrt@sugarcrm.com>
  */
-class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarCurrencyTest extends TestCase
 {
 
     /**

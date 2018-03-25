@@ -13,13 +13,14 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Invalidator;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Invalidator
  */
-class InvalidatorTest extends \PHPUnit_Framework_TestCase
+class InvalidatorTest extends TestCase
 {
     /**
      * @test

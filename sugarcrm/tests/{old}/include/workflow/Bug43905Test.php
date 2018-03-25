@@ -11,13 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #43905
  * Encrypted Value Is Displayed In Received Email Templates for Encrypt Fields
  * @ticket 43905
  */
-class Bug43905Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43905Test extends TestCase
 {
     /**
      * @group 43905

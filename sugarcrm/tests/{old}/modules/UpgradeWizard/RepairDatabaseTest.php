@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class RepairDatabaseTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class RepairDatabaseTest extends TestCase
 {
 
 var $db;	
@@ -100,5 +101,4 @@ private function getRepairTableParamsResult($bean)
 	    $result = $this->db->repairTableParams($bean->table_name, $fielddefs, $new_indices, false, $engine);
 	    return $result;	
 }
-	
 }

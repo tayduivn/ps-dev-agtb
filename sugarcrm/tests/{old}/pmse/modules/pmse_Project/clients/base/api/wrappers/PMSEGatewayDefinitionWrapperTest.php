@@ -10,7 +10,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEGatewayDefinitionWrapperTest extends PHPUnit_Framework_TestCase {
+
+use PHPUnit\Framework\TestCase;
+
+class PMSEGatewayDefinitionWrapperTest extends TestCase
+{
     protected $gatDefWrapper;
     protected $fixtureArray;
     protected $arguments;

@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once __DIR__ . '/../../../../modules/UpgradeWizard/pack_cli.php';
 
-class PackCliTest extends PHPUnit_Framework_TestCase
+class PackCliTest extends TestCase
 {
 
     public function setUp()

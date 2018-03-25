@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
 
-class Bug44896Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44896Test extends TestCase
 {
 
     public function setUp()

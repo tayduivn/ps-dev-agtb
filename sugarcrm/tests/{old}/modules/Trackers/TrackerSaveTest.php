@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,9 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class TrackerSaveTest extends Sugar_PHPUnit_Framework_TestCase {
-   
+
+use PHPUnit\Framework\TestCase;
+
+class TrackerSaveTest extends TestCase
+{
     function testSaveObject() {
         $trackerManager = TrackerManager::getInstance();
 	    $monitor = $trackerManager->getMonitor('tracker');
@@ -22,6 +23,4 @@ class TrackerSaveTest extends Sugar_PHPUnit_Framework_TestCase {
 		$monitor->setValue('module_name', $user);
 		$this->assertTrue($monitor->module_name == "User");
     }
-    
-}  
-?>
+}

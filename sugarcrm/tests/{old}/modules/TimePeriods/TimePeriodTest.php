@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/TimePeriods/TimePeriod.php');
 
-class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
+class TimePeriodTest extends TestCase
 {
     private $preTestIds = array();
 

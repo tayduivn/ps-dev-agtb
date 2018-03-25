@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Check that actions are filtered depending on view given
@@ -17,7 +18,7 @@
  * @ticket 62050
  * @author avucinic@sugarcrm.com
  */
-class Bug62050Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug62050Test extends TestCase
 {
 
     private $files = array();

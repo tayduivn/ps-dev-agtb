@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'soap/SoapPortalHelper.php';
 
-class SoapPortalHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class SoapPortalHelperTest extends TestCase
 {
 
     /**

@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS192: Prepare Export Api.
  */
-class RS192Test extends Sugar_PHPUnit_Framework_TestCase
+class RS192Test extends TestCase
 {
     /**
      * @var SugarApi

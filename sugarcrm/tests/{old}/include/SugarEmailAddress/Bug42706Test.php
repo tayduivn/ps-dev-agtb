@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 42706
  */
-class Bug42706Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug42706Test extends TestCase
 {
     public function providerGetPrimaryAddress()
     {

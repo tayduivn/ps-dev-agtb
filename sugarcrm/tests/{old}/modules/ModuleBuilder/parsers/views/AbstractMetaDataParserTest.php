@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class AbstractMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class AbstractMetaDataParserTest extends TestCase
 {
     /**
      * Test the the isTrue function works correctly for boolean and non-boolean values

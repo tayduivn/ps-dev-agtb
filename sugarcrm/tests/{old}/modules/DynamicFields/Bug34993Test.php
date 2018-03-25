@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug34993Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug34993Test extends TestCase
 {
     private $_tablename;
     private $_old_installing;

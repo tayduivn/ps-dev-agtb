@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/ProductTemplates/TreeData.php';
 
 /**
@@ -18,7 +20,7 @@ require_once 'modules/ProductTemplates/TreeData.php';
  *
  * @ticket 51792
  */
-class Bug51792Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51792Test extends TestCase
 {
     private $_category1;
     private $_category2;

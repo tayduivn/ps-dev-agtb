@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class CustomQueryTest extends Sugar_PHPUnit_Framework_TestCase
+class CustomQueryTest extends TestCase
 {
     static public function setUpBeforeClass()
     {

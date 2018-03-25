@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 //This test is based off of Bug45709Text.php
 require_once "include/SearchForm/SearchForm2.php";
 
-class Bug47735Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47735Test extends TestCase
 {
 	var $user = null;
 	var $requestArray = null;

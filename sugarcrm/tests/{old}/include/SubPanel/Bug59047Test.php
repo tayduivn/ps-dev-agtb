@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Dependent Fields do not display in the Subpanel of a Related Module unless the Field(s) they Depend on are also in
@@ -18,7 +19,7 @@
  *
  * @ticket 59047
  */
-class Bug59047Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug59047Test extends TestCase
 {
     public function testDependentFieldsAreExpanded()
     {

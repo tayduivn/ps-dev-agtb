@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'HealthCheckScanner.php';
 
-class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
+class HealthCheckCasesTest extends TestCase
 {
     protected $currentDirectory = '';
     protected $currentPath = '';

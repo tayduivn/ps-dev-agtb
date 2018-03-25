@@ -9,12 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Users/authentication/SAMLAuthenticate/saml.php');
 
 /**
  * @ticket 57454
 */
-class Bug57454Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57454Test extends TestCase
 {
     /**
      * Custom file with settings for SAMLAuthenticate

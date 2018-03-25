@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
   * Class KBUsefulnessRelationshipTest
  */
-class KBUsefulnessRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
+class KBUsefulnessRelationshipTest extends TestCase
 {
     /**
      * Definition for relationship.

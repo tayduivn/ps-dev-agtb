@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarTestImportUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarTestImportUtilitiesTest extends TestCase
 {
     public function tearDown()
     {
@@ -88,4 +90,3 @@ class SugarTestImportUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertFalse(is_file($filename));
     }
 }
-

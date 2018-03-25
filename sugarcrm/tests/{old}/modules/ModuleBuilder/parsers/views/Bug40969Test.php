@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Check ListLayoutMetaDataParser fills listviewdefs correctly for flex relate custom field to be displayed
@@ -20,7 +21,7 @@
  * 'id'                 - for entity id in link
  * 'dynamic_module'     - for entity module in link
  */
-class Bug40969Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug40969Test extends TestCase
 {
     /**
      * @var array

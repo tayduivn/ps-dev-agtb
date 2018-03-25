@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/export_utils.php';
 
 /**
  * Test export_utils.php
  */
-class ExportUtilsTest extends Sugar_PHPUnit_Framework_TestCase
+class ExportUtilsTest extends TestCase
 {
     /**
      * Ensure that get_field_order_mapping returns an array with lowercase keys

@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug46850Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46850Test extends TestCase
 {
     protected $renames = array();
     protected $deletes = array();

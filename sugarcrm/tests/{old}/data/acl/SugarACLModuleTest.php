@@ -10,9 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /* This unit test class covers the ACLs added for extra modules, this does not cover the Users/Employees modules, those are more intense. */
-class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarACLModuleTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

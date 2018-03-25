@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug56652Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56652Test extends TestCase
 {
     /** @var Contact */
     protected $contact;

@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  *  Tests PingApi.
  */
-class PingApiTest extends Sugar_PHPUnit_Framework_TestCase
+class PingApiTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

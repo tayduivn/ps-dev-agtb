@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class Bug46473Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46473Test extends TestCase
 {
     public function setUp()
     {
@@ -59,5 +59,3 @@ class Bug46473Test extends Sugar_PHPUnit_Framework_TestCase
         $this->expectOutputRegex('/.*'.$last_name.'.*/');
     }
 }
-
-?>

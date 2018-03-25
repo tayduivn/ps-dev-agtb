@@ -10,8 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class SugarTestTeamUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class SugarTestTeamUtilitiesTest extends TestCase
 {
     private $_before_snapshot = array();
     
@@ -67,4 +69,3 @@ class SugarTestTeamUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
             "removeAllCreatedAnonymousTeams() should have removed the team it added");
     }
 }
-

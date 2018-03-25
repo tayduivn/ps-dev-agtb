@@ -11,7 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SOAPEvilTest extends Sugar_PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class SOAPEvilTest extends TestCase
+{
     public $_user = null;
     public $_sc = null;
     public $_adminTeamId = null;

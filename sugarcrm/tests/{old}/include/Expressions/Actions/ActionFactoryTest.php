@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ActionFactoryTest extends Sugar_PHPUnit_Framework_TestCase
+class ActionFactoryTest extends TestCase
 {
     var $removeCustomDir = false;
 

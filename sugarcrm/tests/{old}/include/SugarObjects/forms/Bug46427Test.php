@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #46427
@@ -18,7 +19,7 @@
  *
  * @ticket 46427
  */
-class Bug46427Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46427Test extends TestCase
 {
     public function setUp()
     {

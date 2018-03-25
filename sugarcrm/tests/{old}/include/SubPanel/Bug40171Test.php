@@ -10,13 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 41853
  * @ticket 40171
  */
-class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug40171Test extends TestCase
 {
     protected $bean;
 

@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test if buisness logic works correct for determination whether notifications should be sent or not
  */
-class isEmailNotificationNeededTest extends Sugar_PHPUnit_Framework_TestCase
+class isEmailNotificationNeededTest extends TestCase
 {
     public function setUp()
     {

@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SugarSmarty/plugins/function.sugar_link.php';
 
-class FunctionSugarLinkTest extends Sugar_PHPUnit_Framework_TestCase
+class FunctionSugarLinkTest extends TestCase
 {
     public function setUp()
     {

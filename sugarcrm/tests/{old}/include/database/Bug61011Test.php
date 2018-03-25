@@ -11,10 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 61011
  */
-class Bug61011Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug61011Test extends TestCase
 {
     protected $has_disable_count_query_enabled;
 

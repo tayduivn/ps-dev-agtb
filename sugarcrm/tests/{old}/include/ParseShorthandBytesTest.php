@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers ::parseShorthandBytes
  */
-class ParseShorthandBytesTest extends Sugar_PHPUnit_Framework_TestCase
+class ParseShorthandBytesTest extends TestCase
 {
     /**
      * @dataProvider shorthandBytesProvider

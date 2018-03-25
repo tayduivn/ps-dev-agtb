@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Reports/templates/templates_list_view.php');
 
 /**
  * Summary With Details Report tests
  */
-class SummaryWithDetailsReportTest extends Sugar_PHPUnit_Framework_TestCase
+class SummaryWithDetailsReportTest extends TestCase
 {
     private $rowsAndColumnsData;
     private $report;

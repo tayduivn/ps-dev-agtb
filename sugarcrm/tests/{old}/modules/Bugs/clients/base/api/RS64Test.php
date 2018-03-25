@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-64: Prepare Bugs Api
  */
-class RS64Test extends Sugar_PHPUnit_Framework_TestCase
+class RS64Test extends TestCase
 {
     /** @var Contact */
     protected $account = null;

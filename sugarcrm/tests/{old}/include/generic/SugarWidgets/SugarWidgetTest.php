@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SugarWidgetTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarWidgetTest extends TestCase
 {
 
     public static function setUpBeforeClass()
@@ -41,5 +42,4 @@ class SugarWidgetTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedCount, $falseCount, "Failed asserting that modules in \$modules_exempt_from_availability_check return false");
     }
-
 }

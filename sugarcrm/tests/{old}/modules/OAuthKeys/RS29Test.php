@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-29: Prepare OAuthKeys Module
  * Test covers that methods of module don't through any error
  */
-class RS29Test extends Sugar_PHPUnit_Framework_TestCase
+class RS29Test extends TestCase
 {
     public function setUp()
     {

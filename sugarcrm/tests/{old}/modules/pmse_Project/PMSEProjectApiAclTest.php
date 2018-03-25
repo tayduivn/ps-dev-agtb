@@ -13,11 +13,12 @@
 require_once 'tests/{old}/SugarTestACLUtilities.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test class to cover ACL testing for Advanced Workflow Apis
  */
-class PMSEProjectApiAclTest extends Sugar_PHPUnit_Framework_TestCase
+class PMSEProjectApiAclTest extends TestCase
 {
     public function setUp()
     {

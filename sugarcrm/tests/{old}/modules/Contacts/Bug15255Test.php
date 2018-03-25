@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug15255Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug15255Test extends TestCase
 {
 	var $c = null;
 	var $a = null;
@@ -71,4 +73,3 @@ class Bug15255Test extends Sugar_PHPUnit_Framework_TestCase
     	//$this->assertEquals($this->c->name, 'testfirst testlast');
     }
 }
-?>

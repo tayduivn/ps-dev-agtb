@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('include/connectors/utils/ConnectorUtils.php');
 
 /*
@@ -17,7 +20,7 @@ require_once('include/connectors/utils/ConnectorUtils.php');
  * missing the connectors array or the array has been defined as a string
  * @ticket 50800
  */
-class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50800Test extends TestCase
 {
     var $custom_path = 'custom/modules/Connectors/metadata';
     var $custom_contents;

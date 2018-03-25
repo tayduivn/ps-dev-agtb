@@ -12,6 +12,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
@@ -20,7 +21,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
  * because we can't create bean without module's code or get any information about it.
  * The point of the fix - is to walk thew all tables and remove tBA flags.
  * */
-class RS1661Test extends Sugar_PHPUnit_Framework_TestCase
+class RS1661Test extends TestCase
 {
     /**
      * @var TeamBasedACLConfigurator|PHPUnit_Framework_MockObject_MockObject

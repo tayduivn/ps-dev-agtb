@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Currencies/Currency.php');
 
-class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase
+class CurrencyTest extends TestCase
 {
     /** @var Currency */
     private static $currency;
@@ -228,5 +231,4 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $formattedValue = format_number($testValue);
         $this->assertEquals("100.000,50", $formattedValue, "Assert that 100000.50 becomes 100.000,50. Formatted value is: ".$formattedValue);
     }    
-    
-} 
+}

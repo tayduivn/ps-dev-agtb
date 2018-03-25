@@ -11,12 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SugarJobHeartbeatTest
  * @group BR-1722
  */
-class SugarJobHeartbeatTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarJobHeartbeatTest extends TestCase
 {
     /**
      * @var SugarJobHeartbeat

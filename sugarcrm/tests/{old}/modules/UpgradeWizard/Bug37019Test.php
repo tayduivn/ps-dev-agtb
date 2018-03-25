@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,8 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class Bug37019Test extends Sugar_PHPUnit_Framework_TestCase 
+
+use PHPUnit\Framework\TestCase;
+
+class Bug37019Test extends TestCase
 {
 	var $report_id;
 	
@@ -56,4 +57,3 @@ class Bug37019Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(preg_match('/\{\"name\":\"team_memberships\",\"relationship_name\":\"team_memberships\"/', $new_content), 1, 'Assert that teams relationship_name has been renamed to team_memberships'); 
     }
 }
-?>

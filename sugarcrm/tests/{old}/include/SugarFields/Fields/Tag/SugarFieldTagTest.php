@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test SugarFieldTag class
  */
-class SugarFieldTagTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarFieldTagTest extends TestCase
 {
     /**
      * Fixtures

@@ -9,10 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/**
- * Created: Aug 22, 2011
- */
-class SugarFieldRadioenumTest extends Sugar_PHPUnit_Framework_TestCase {
+
+use PHPUnit\Framework\TestCase;
+
+class SugarFieldRadioenumTest extends TestCase
+{
 	protected $_testingArray = array (
 		"key" => "value"
 	);

@@ -11,11 +11,12 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass EmailsApiHelper
  */
-class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailsApiHelperTest extends TestCase
 {
     private $helper;
 

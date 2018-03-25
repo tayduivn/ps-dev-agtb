@@ -10,9 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class CustomSugarChartFactoryTest extends Sugar_PHPUnit_Framework_TestCase {
-
+class CustomSugarChartFactoryTest extends TestCase
+{
 public static function setUpBeforeClass()
 {
     $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();

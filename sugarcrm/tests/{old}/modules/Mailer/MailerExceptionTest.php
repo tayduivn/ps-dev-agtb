@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group email
  * @group mailer
  * @group mailerexceptiontest
  */
-class MailerExceptionTest extends Sugar_PHPUnit_Framework_TestCase
+class MailerExceptionTest extends TestCase
 {
     public function setUp(){
         global $current_language;

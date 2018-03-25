@@ -13,9 +13,10 @@
 namespace Sugarcrm\SugarcrmTests\ProcessManager;
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\ProcessManager\Exception\RuntimeException;
 
-class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
+class FactoryTest extends TestCase
 {
     /**
      * Tests getting a proper field evaluator object

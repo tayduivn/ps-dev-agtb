@@ -12,16 +12,16 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 57260 - Panel label of mobile layout in module builder is wrong
  */
-class Bug57260Test extends Sugar_PHPUnit_Framework_TestCase {
+class Bug57260Test extends TestCase
+{
     public $mbController;
     public $mbPackage;
     public $mbModule;
-    
 
     public function setUp() {
         SugarTestHelper::setUp('current_user');

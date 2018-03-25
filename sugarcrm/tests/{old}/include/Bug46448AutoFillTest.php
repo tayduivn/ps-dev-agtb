@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug46448AutoFillTest extends Sugar_PHPUnit_Framework_TestCase
+class Bug46448AutoFillTest extends TestCase
 {
 
     private $user;
@@ -129,5 +130,3 @@ class Bug46448AutoFillTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-
-?>

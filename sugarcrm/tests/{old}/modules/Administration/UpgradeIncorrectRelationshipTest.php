@@ -9,9 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Administration/upgrade_custom_relationships.php');
 
-class UpgradeIncorrectRelationshipTest extends Sugar_PHPUnit_Framework_TestCase {
+class UpgradeIncorrectRelationshipTest extends TestCase
+{
     public function setUp()
     {
         mkdir_recursive('custom/metadata');

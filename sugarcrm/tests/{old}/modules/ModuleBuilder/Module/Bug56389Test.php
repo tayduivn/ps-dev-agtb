@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Make a test StudioModule class so as not to destroy ALL of the metadata. This
@@ -45,7 +46,7 @@ class Bug56389SugarModule extends StudioModule
 /**
  * Bug 56389 - Deleted module fields do not cascade to portal view defs
  */
-class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56389Test extends TestCase
 {
     protected $moduleToTest = 'Cases';
     protected $filesBackedUp = array();

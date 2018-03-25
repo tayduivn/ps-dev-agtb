@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #53963
  * Primary keys/indexes missing for *_audit tables (DB2 only)
@@ -18,7 +20,7 @@
  * @author fsteegmans@sugarcrm.com
  * @ticked 53963
  */
-class Bug53963Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug53963Test extends TestCase
 {
     private $db;
     private $bean;

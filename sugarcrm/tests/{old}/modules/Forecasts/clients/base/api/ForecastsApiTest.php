@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class ForecastsApiTest
  *
  * @coversDefaultClass ForecastsApi
  */
-class ForecastsApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastsApiTest extends TestCase
 {
     protected $api;
 

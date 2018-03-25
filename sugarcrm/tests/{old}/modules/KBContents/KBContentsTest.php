@@ -11,9 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
-
-class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
+class KBContentsTest extends TestCase
 {
     /**
      * @var KBContentMock

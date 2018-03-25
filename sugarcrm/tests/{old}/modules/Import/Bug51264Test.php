@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #51264
@@ -17,7 +18,7 @@
  *
  * @ticket 51264
  */
-class Bug51264Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51264Test extends TestCase
 {
     private $contact;
 

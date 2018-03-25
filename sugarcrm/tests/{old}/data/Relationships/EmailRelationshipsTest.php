@@ -10,9 +10,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class EmailRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
-{
 
+use PHPUnit\Framework\TestCase;
+
+class EmailRelationshipsTest extends TestCase
+{
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -200,7 +202,5 @@ class EmailRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey($email1->id, $beans, "Email 1 missing");
         $this->assertArrayNotHasKey($email2->id, $beans, "Email 2 should not be there");
         $this->assertArrayNotHasKey($email3->id, $beans, "Email 3 should not be there");
-
     }
-
 }

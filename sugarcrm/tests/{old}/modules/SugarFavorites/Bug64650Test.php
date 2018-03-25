@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 64650
  */
-class Bug64650Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug64650Test extends TestCase
 {
     /** @var Account */
     private $account;

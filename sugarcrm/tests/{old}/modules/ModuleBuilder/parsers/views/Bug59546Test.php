@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug59546Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug59546Test extends TestCase
 {
     protected $_testFile = 'custom/modules/Opportunities/metadata/dashletviewdefs.php';
     protected $_customDefs = array();

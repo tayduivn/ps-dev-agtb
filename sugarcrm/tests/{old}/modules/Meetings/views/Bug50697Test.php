@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug50697Test.php
@@ -17,7 +18,7 @@
  * UTC_TIMESTAMP function that was used which appears to be MYSQL specific.  Changed to use timedate code instead
  *
  */
-class Bug50697Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50697Test extends TestCase
 {
 
 public function setUp()
@@ -50,6 +51,4 @@ public function testProcessSearchForm()
     $this->assertRegExp('/meetings\.date_start.*?\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}/', $mlv->where, 'Failed to create datetime query for meetings.date_start');
     $this->assertRegExp('/meetings\.name LIKE \'Bug50697Test%\'/', $mlv->where, 'Failed to generate meetings.name search parameter');
 }
-
-
 }

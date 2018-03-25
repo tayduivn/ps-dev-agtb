@@ -11,10 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @outputBuffering enabled
  */
-class validDateTest extends Sugar_PHPUnit_Framework_TestCase
+class validDateTest extends TestCase
 {
 
 	public static function setUpBeforeClass()

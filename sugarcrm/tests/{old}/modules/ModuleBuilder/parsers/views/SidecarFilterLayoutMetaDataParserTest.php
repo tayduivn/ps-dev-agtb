@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers SidecarFilterLayoutMetaDataParser
  */
-class SidecarFilterLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
+class SidecarFilterLayoutMetaDataParserTest extends TestCase
 {
     public function testRemoveExistingField()
     {

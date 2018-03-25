@@ -9,9 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class StoreQueryTest extends Sugar_PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+
+class StoreQueryTest extends TestCase
+{
 	public function setUp(){
         global $current_user;
 		$current_user = SugarTestUserUtilities::createAnonymousUser();
@@ -39,9 +41,8 @@ class StoreQueryTest extends Sugar_PHPUnit_Framework_TestCase{
         $sq->query['foo'] = 'overridden';
 
         $sq->populateRequest();
-        
+
         $this->assertEquals($_REQUEST['lvso'], 'desc');
         $this->assertEquals($_REQUEST['foo'], 'overridden');
     }
 }
-?>

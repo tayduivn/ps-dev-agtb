@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers DropdownMerger
  */
-class DropdownMergerTest extends Sugar_PHPUnit_Framework_TestCase
+class DropdownMergerTest extends TestCase
 {
     /**
      * @var DropdownMerger

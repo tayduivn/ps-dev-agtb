@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Reports/templates/templates_list_view.php');
 
 /**
@@ -19,7 +21,7 @@ require_once('modules/Reports/templates/templates_list_view.php');
  * @author bsitnikovski@sugarcrm.com
  * @ticket 53360
  */
-class Bug53360Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug53360Test extends TestCase
 {
 
     private $rowsAndColumnsData, $report;

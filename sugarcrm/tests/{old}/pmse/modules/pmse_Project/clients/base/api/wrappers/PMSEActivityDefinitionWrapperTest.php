@@ -12,12 +12,13 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers PMSEActivityDefinitionWrapper
  */
 $beanList = array('Leads'=>'Notes');
-class PMSEActivityDefinitionWrapperTest extends PHPUnit_Framework_TestCase
+class PMSEActivityDefinitionWrapperTest extends TestCase
 {
     protected $actDefWrapper;
     protected $fixtureArray;

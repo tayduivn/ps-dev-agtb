@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- 
+use PHPUnit\Framework\TestCase;
 
-class ImporterTest extends Sugar_PHPUnit_Framework_TestCase
+class ImporterTest extends TestCase
 {
     private $_importModule;
     private $_importObject;

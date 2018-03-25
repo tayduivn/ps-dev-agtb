@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug54507Test.php
  *
@@ -18,8 +20,8 @@
  * duplicate labels are not included for the Bugs module.
  */
 
-
-class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
+class Bug54507Test extends TestCase
+{
     protected $editModule = 'Bugs';
 
     public static function setUpBeforeClass()

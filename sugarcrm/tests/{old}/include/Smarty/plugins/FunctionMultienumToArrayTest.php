@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/SugarSmarty/plugins/function.multienum_to_array.php');
 
-class FunctionMultienumToArrayTest extends Sugar_PHPUnit_Framework_TestCase
+class FunctionMultienumToArrayTest extends TestCase
 {
     public function setUp()
     {

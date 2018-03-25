@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers SugarFieldFullname
  */
-class SugarFieldFullnameTest extends PHPUnit_Framework_TestCase
+class SugarFieldFullnameTest extends TestCase
 {
     /**
      * @var SugarFieldFullname

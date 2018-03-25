@@ -11,8 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
-class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
+class EmailsApiIntegrationTestCase extends TestCase
 {
     protected $service;
 

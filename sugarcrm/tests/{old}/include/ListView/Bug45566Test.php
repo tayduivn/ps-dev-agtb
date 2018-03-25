@@ -9,7 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug45566Test
@@ -18,7 +19,7 @@
  * Other verifications will be needed, but this was a critical variable that was missing
  *
  */
-class Bug45566Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45566Test extends TestCase
 {
     public function setUp()
     {
@@ -46,7 +47,4 @@ class Bug45566Test extends Sugar_PHPUnit_Framework_TestCase
         $lv->process('include/ListView/ListViewGeneric.tpl', $mockData, $account->module_dir);
         $this->assertEquals('<textarea style="display: none" name="uid"></textarea>', $lv->ss->_tpl_vars['multiSelectData'], 'Assert that multiSelectData Smarty variable was still assigned');
     }
-
 }
-
-?>

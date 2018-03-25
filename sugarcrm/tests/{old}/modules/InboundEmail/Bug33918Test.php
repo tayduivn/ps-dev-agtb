@@ -10,13 +10,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Campaigns/ProcessBouncedEmails.php');
 
 /**
  * @ticket 33918 
  */
-class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug33918Test extends TestCase
 {
 	public $folder = null;
     public $_user = null;
@@ -453,4 +455,3 @@ CIA;
         );
     }
 }
-?>

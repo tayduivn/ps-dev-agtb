@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /*
 * This test will confirm that JSGroupings are concatenated using the Extensions Framework
 *
@@ -18,7 +20,7 @@
 
 
 
-class Bug54472Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug54472Test extends TestCase
 {
 
     private $beforeArray;

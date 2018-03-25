@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 56904
  */
-class Bug56904Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug56904Test extends TestCase
 {
     /**
      * Ensures that relationships for all related beans are removed and return

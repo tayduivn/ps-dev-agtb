@@ -11,9 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class Bug49719Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49719Test extends TestCase
 {
     private $quote;
     private $contact1;

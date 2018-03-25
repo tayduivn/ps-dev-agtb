@@ -10,9 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug44908Test extends Sugar_PHPUnit_Framework_TestCase 
+use PHPUnit\Framework\TestCase;
+
+class Bug44908Test extends TestCase
 {
-	
     public function testAdvancedSearchWithCommaSeparatedBugNumbers()
     {
     	$_REQUEST = array();

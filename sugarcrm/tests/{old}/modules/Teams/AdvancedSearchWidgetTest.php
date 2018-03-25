@@ -10,10 +10,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('vendor/nusoap//nusoap.php');
 
-class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_TestCase
+class AdvancedSearchWidgetTest extends TestCase
 {
     private $_sugarField;
     private $_smarty;

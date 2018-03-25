@@ -10,9 +10,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Reports/config.php');
 
-class Bug38864Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug38864Test extends TestCase
 {
 	protected $modListHeader = null;
 

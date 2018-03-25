@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group ApiTests
  */
-class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
+class FilterApiTest extends TestCase
 {
     public static $notes;
     public static $opps;

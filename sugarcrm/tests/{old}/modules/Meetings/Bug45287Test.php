@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Meetings/Meeting.php';
 require_once 'include/SearchForm/SearchForm2.php';
 
 
-class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45287Test extends TestCase
 {
     var $meetingsArr;
     var $searchDefs;

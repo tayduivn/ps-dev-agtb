@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass InboundEmail
  */
-class InboundEmailPasswordTest extends Sugar_PHPUnit_Framework_TestCase
+class InboundEmailPasswordTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

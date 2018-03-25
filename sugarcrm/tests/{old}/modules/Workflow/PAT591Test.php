@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 include_once('include/workflow/alert_utils.php');
 
 /**
@@ -19,7 +21,7 @@ include_once('include/workflow/alert_utils.php');
  * @author bsitnikovski@sugarcrm.com
  * @ticket PAT-591
  */
-class BugPAT591Test extends Sugar_PHPUnit_Framework_TestCase
+class BugPAT591Test extends TestCase
 {
 
     public $opportunity;

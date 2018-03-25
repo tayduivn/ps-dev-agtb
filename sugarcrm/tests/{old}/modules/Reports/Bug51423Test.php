@@ -12,7 +12,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 51423:
@@ -20,7 +20,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
  * @ticket 51423
  * @author arymarchik@sugarcrm.com
  */
-class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51423Test extends TestCase
 {
     /**
      * @var array Request for creating/deleting related field for Accounts module

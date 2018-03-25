@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/connectors/utils/ConnectorUtils.php';
 
-class Bug33861Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug33861Test extends TestCase
 {
     public $has_custom_connectors_file;
     public $has_custom_display_config_file;

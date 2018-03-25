@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
 * Bug #46246
 * Relation to the document didn't created when workflow action is a document creating.
@@ -19,7 +21,7 @@
 
 require_once('include/workflow/action_utils.php');
 
-class Bug46246Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46246Test extends TestCase
 {
     private $accepted_flav='PRO';
     private $case_id='52c1cd24-22e8-adb6-ac88-4f5471d6019';

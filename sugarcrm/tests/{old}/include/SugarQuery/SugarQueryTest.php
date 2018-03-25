@@ -11,10 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * SugarQuery Test Cases
  */
-class SugarQueryTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarQueryTest extends TestCase
 {
     /**
      * Test subpanel joins

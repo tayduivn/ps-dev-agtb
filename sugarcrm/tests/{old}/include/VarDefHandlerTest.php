@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * VarDefHandler.php language tests
  */
-class VarDefHandlerTest extends Sugar_PHPUnit_Framework_TestCase
+class VarDefHandlerTest extends TestCase
 {
 
     /**

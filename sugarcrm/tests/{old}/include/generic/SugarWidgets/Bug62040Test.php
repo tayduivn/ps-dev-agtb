@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #62040
@@ -18,7 +19,7 @@
  * @author bsitnikovski@sugarcrm.com
  * @ticket 62040
  */
-class Bug62040Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug62040Test extends TestCase
 {
     private $contact;
 

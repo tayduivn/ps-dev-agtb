@@ -11,12 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket BR-1345
  * Test byref logic hooks
  *
  */
-class LogicHookRefTest extends Sugar_PHPUnit_Framework_TestCase
+class LogicHookRefTest extends TestCase
 {
     protected $bean;
     protected $hook;

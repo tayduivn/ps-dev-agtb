@@ -12,9 +12,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
+class PortalConfigParserTest extends TestCase
 {
     private $requestVars = array(
         'appName' => 'testApp',

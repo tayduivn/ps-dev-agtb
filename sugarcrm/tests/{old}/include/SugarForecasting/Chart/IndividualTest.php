@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class SugarForecasting_Chart_IndividualTest extends TestCase
 {
     /**
      * @var SugarForecasting_Chart_Individual

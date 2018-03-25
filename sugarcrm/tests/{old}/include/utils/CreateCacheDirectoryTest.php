@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/file_utils.php';
 
-class CreateCacheDirectoryTest extends Sugar_PHPUnit_Framework_TestCase
+class CreateCacheDirectoryTest extends TestCase
 {
     private $_original_cwd = '';
 
@@ -76,4 +78,3 @@ class CreateCacheDirectoryTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 }
-

@@ -11,13 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  *  Bug #48901
  *      Quotas Continue to Display for Deleted Users
  * @ticket 48901
  * @author arymarchik@sugarcrm.com
  */
-class Bug48901Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48901Test extends TestCase
 {
 
     private $_timeperiod;

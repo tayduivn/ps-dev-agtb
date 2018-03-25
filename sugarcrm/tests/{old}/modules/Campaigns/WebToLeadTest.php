@@ -11,8 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
-class WebToLeadTest extends Sugar_PHPUnit_Framework_TestCase
+class WebToLeadTest extends TestCase
 {
     private $campaignId;
     private $configOptoutBackUp;

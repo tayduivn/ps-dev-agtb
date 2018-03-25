@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/include/database/TestBean.php';
 
-class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
+class ConditionTest extends TestCase
 {
     protected static $products = array();
     protected static $prodIds = array();

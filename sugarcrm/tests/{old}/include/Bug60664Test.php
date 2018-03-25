@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Tests that translations happen properly and does not modify global mod_strings
  */
-class Bug60664Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug60664Test extends TestCase
 {
     /**
      * Holder for the current mod_strings if there are any

@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEEventDefinitionWrapperTest extends PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class PMSEEventDefinitionWrapperTest extends TestCase
 {
     protected $fixtureArray;
     protected $arguments;

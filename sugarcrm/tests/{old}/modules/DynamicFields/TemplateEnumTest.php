@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/DynamicFields/FieldCases.php');
 
-class TemplateEnumTest extends Sugar_PHPUnit_Framework_TestCase
+class TemplateEnumTest extends TestCase
 {
     private $_modulename = 'Accounts';
     private $_originaldbType = '';

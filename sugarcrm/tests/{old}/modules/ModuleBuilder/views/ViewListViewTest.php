@@ -11,9 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
- 
+use PHPUnit\Framework\TestCase;
 
-class ViewListViewTest extends Sugar_PHPUnit_Framework_TestCase
+class ViewListViewTest extends TestCase
 {
 	
 	public function setUp() 

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * ExtAPILotusLiveTest.php
  *
@@ -22,7 +24,7 @@
 
 require_once('tests/{old}/include/externalAPI/LotusLive/ExtAPILotusLiveMock.php');
 
-class ExtAPILotusLiveTest extends Sugar_PHPUnit_Framework_TestCase
+class ExtAPILotusLiveTest extends TestCase
 {
 
     public function setUp()
@@ -127,4 +129,3 @@ class ExtAPILotusLiveTest extends Sugar_PHPUnit_Framework_TestCase
         rmdir($testDir);
     }
 }
-

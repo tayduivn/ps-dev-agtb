@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 require_once 'upgrade/scripts/post/9_ClearHooks.php';
 
 /**
  * Test for clearing logic hooks.
  */
-class ClearHooksTest extends Sugar_PHPUnit_Framework_TestCase
+class ClearHooksTest extends TestCase
 {
     /**
      * {@inheritdoc}

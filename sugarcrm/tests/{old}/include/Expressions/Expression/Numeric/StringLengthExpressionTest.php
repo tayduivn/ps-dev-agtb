@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class StringLengthExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class StringLengthExpressionTest extends TestCase
 {
     /**
      * @dataProvider dataProviderTestEvaluate
@@ -28,4 +30,3 @@ class StringLengthExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 }
-

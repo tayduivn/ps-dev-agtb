@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #44930
  * Issue with the opportunity subpanel in Accounts
@@ -18,7 +20,7 @@
  * @author mgusev@sugarcrm.com
  * @ticked 44930
  */
-class Bug44930Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44930Test extends TestCase
 {
 
     /**

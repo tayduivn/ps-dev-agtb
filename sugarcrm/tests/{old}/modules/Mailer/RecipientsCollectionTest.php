@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
+class RecipientsCollectionTest extends TestCase
 {
     /**
      * This test essentially tests clearAll, clearTo, clearCc and clearBcc.

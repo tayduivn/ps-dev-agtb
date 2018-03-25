@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class MinimumExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class MinimumExpressionTest extends TestCase
 {
     /**
      * @dataProvider dataProviderTestEvaluate

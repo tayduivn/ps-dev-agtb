@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug49896Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug49896Test extends TestCase
 {
     var $_passwordSetting;
     var $_currentUser;
@@ -89,4 +91,3 @@ class Bug49896Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(true, $result, 'Assert that all rules are checked and passed');
     }    
 }
-?>

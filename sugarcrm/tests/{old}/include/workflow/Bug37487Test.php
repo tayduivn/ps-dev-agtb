@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/workflow/workflow_utils.php');
 
-class Bug37487Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug37487Test extends TestCase
 {
     function testDropDownFromFunction()
     {

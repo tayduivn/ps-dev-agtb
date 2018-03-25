@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug51185Test.php
@@ -20,7 +21,7 @@
  * time value.
  *
  */
-class Bug51185Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51185Test extends TestCase
 {
 
     public static function setUpBeforeClass()

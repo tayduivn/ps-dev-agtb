@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug39756Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug39756Test extends TestCase
 {
     /**
      * @var Account

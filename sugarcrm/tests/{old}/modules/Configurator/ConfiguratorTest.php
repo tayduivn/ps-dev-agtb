@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class ConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ConfiguratorTest extends TestCase
 {
     public function testPopulateFromPostConvertsBoolValuesFromStrings()
     {

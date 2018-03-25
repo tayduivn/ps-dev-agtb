@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestACLUtilities.php';
 /**
  * ACL's
  */
-class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
+class GetAclForModuleTest extends TestCase
 {
     public $roles = array();
     public function setUp()

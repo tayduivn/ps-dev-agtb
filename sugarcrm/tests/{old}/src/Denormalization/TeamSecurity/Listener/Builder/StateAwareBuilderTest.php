@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener\Builder;
 
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateAwareBuilder;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 
@@ -26,7 +27,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\UserOnly::__toString
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Updater::__toString
  */
-class StateAwareBuilderTest extends \PHPUnit_Framework_TestCase
+class StateAwareBuilderTest extends TestCase
 {
     /**
      * @test

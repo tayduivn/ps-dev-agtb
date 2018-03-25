@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * UpgradeAccessTest.php
  *
  * This file tests the code run when UpgradeAccess.php is invoked.
  */
 
-class UpgradeAccessTest extends Sugar_PHPUnit_Framework_TestCase
+class UpgradeAccessTest extends TestCase
 {
 
     public function setUp()

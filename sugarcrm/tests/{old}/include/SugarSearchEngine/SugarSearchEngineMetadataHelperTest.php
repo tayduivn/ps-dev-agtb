@@ -11,10 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-
-class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarSearchEngineMetadataHelperTest extends TestCase
 {
 
     private $_cacheRenamed;

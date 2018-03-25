@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #49964
  *
@@ -18,7 +20,7 @@
  * @ticket 49964
  * @author arymarchik@sugarcrm.com
  */
-class Bug49964Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49964Test extends TestCase
 {
     private $_metadata = array(
         'set_complete' => array(

@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 66276
  */
-class Bug66276Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug66276Test extends TestCase
 {
     protected $testFiles = array(
         array('dir' => 'custom/include', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsCustom {}'),

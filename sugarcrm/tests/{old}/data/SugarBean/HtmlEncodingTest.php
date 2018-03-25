@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers SugarBean::htmlEncodeRow()
  */
-class HtmlEncodingTest extends Sugar_PHPUnit_Framework_TestCase
+class HtmlEncodingTest extends TestCase
 {
     /**
      * @var DataPrivacy

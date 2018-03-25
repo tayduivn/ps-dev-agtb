@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * SoapRelationshipHelperTest.php
  * This test may be used to write tests against the SoapRelationshipHelper.php file and the utility functions found there.
@@ -17,7 +19,7 @@
  * @author Collin Lee
  */
 require_once('soap/SoapRelationshipHelper.php');
-class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class SoapRelationshipHelperTest extends TestCase
 {
 
     var $noSoapErrorArray = array('number'=>0, 'name'=>'No Error', 'description'=>'No Error');

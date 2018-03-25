@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug44018Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug44018Test extends TestCase
 {
 	public function testGetSearchInput()
 	{
@@ -29,7 +30,4 @@ class Bug44018Test extends Sugar_PHPUnit_Framework_TestCase
 	    $result = $sugarField->getSearchInput('parent_type', $args);
 	    $this->assertEquals($result, 'Contacts', 'Assert that search for parent_type workds');		    
 	}
-	
 }
-
-?>

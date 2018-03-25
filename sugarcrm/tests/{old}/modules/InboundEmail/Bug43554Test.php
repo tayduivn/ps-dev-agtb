@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 43554
  */
-class Bug43554Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43554Test extends TestCase
 {
 
 	static $ie = null;

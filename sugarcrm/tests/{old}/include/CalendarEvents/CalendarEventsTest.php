@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass CalendarEvents
  */
-class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
+class CalendarEventsTest extends TestCase
 {
     protected $calendarEventsService;
     protected $meetingIds = array();
@@ -862,4 +864,3 @@ class CalendarEventsTest_CalendarEvents extends CalendarEvents
         $this->eventsCreated = parent::saveRecurring($parentBean, $repeatDateTimeArray);
     }
 }
-

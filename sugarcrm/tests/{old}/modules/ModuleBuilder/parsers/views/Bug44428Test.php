@@ -11,13 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #44428
  * Studio | Tab Order causes layout errors
  * @ticket 44428
  */
-class Bug44428Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44428Test extends TestCase
 {
     public function setUp()
     {

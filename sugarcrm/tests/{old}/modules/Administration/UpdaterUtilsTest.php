@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Administration/updater_utils.php';
 
-class UpdaterUtilsTest extends Sugar_PHPUnit_Framework_TestCase
+class UpdaterUtilsTest extends TestCase
 {
     public function setUp()
     {

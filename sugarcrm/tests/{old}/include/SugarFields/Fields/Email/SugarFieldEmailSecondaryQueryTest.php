@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class SugarFieldEmailSecondaryQueryTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarFieldEmailSecondaryQueryTest extends TestCase
 {
     /**
      * @ticket BR-1307

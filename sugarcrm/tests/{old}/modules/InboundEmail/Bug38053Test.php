@@ -10,13 +10,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Campaigns/ProcessBouncedEmails.php');
 
 /**
  * @ticket 38053 
  */
-class Bug38053Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug38053Test extends TestCase
 {
 	public $folder = null;
     public $_user = null;
@@ -50,4 +52,3 @@ class Bug38053Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($GLOBALS['current_user']->team_set_id, $attach->team_set_id, "Checking that the attachment team_set_id is equal to the user's default.");
     }
 }
-?>

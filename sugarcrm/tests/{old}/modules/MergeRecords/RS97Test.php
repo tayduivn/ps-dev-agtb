@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  *  RS97: Prepare MergeRecord.
  */
-class RS97Test extends Sugar_PHPUnit_Framework_TestCase
+class RS97Test extends TestCase
 {
     public static function setUpBeforeClass()
     {

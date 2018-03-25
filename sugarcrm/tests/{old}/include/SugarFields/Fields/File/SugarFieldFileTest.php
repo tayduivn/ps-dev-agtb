@@ -11,8 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
-class SugarFieldFileTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarFieldFileTest extends TestCase
 {
     protected $origNote;
     protected $newNote;

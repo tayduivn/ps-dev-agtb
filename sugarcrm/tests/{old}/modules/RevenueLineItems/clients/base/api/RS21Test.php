@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests RevenueLineItemsApiTest.
  */
-class RS21Test extends Sugar_PHPUnit_Framework_TestCase
+class RS21Test extends TestCase
 {
 	/**
      * @var SugarApi

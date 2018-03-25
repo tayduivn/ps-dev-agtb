@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class OpportunityReportsTest extends Sugar_PHPUnit_Framework_TestCase
+class OpportunityReportsTest extends TestCase
 {
     /**
      * @var SugarTestDatabaseMock

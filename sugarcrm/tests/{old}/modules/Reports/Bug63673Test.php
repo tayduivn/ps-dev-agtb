@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test aggregate functions if NULL fields are present
  *
  * @author avucinci@sugarcrm.com
  */
-class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug63673Test extends TestCase
 {
     public function setUp()
     {

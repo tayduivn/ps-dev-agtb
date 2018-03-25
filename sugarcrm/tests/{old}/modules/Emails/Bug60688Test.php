@@ -11,13 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #60688
  * Role that sets email to owner read/owner write still allows non-admin user to email the contact or see email address.
  *
  * @ticket 60688
  */
-class Bug60688Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug60688Test extends TestCase
 {
     /**
      * @var ACLRoles

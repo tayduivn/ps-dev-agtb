@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class SugarRegistryTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarRegistryTest extends TestCase
 {
     public function testGetInstanceReturnsAnInstanceOfSugarRegistry()
     {
@@ -81,4 +82,3 @@ class SugarRegistryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(isset($GLOBALS['foo']));
     }
 }
-

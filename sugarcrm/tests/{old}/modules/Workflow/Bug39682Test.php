@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 include_once('include/workflow/alert_utils.php');
 
 /**
@@ -17,7 +19,7 @@ include_once('include/workflow/alert_utils.php');
  * Email sent through a workflow: a customised multiselect field sends ^^ characters
  * @ticket 39682
  */
-class Bug39682Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug39682Test extends TestCase
 {
     /**
      * Test tries to get string from multiselect values and asserts that string doesn't contains ^

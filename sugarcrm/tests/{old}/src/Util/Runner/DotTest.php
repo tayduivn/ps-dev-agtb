@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Util\Runner;
 
 use Sugarcrm\Sugarcrm\Util\Runner\Dot as RunnerDot;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
@@ -20,7 +21,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
  *
  * @covers \Sugarcrm\Sugarcrm\Util\Runner\Dot
  */
-class DotTest extends \Sugar_PHPUnit_Framework_TestCase
+class DotTest extends TestCase
 {
     /** @var \SugarBean[] */
     protected $listOfBeans = array();

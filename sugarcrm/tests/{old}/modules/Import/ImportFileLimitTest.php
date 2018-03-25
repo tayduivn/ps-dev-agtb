@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class ImportFileLimitTest extends Sugar_PHPUnit_Framework_TestCase
+class ImportFileLimitTest extends TestCase
 {
     protected $_fileSample1;
     protected $_fileSample2;
@@ -52,4 +53,3 @@ class ImportFileLimitTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->_fileLineCount4, $if4->getNumberOfLinesInfile() );
     }
 }
-

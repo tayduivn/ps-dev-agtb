@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug44324Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug44324Test extends TestCase
 {
 	var $contact;
 
@@ -58,5 +60,3 @@ class Bug44324Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-
-?>

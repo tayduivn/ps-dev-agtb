@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 require_once 'upgrade/scripts/post/7_6xToSidecar.php';
 
-class Update6xToSidecarTest extends Sugar_PHPUnit_Framework_TestCase
+class Update6xToSidecarTest extends TestCase
 {
     /**
      * Testing setUpgradeMBFiles method call with state['MBModules'] data

@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 require_once 'upgrade/scripts/post/4_MigrateDashableLists.php';
 
-class UpgradeMigrateDashableLists extends Sugar_PHPUnit_Framework_TestCase
+class UpgradeMigrateDashableLists extends TestCase
 {
     /**
      * @dataProvider providerTestVersionAvailability

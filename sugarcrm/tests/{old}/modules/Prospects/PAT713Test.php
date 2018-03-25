@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * One to Many relationship created between Targets module
@@ -17,7 +18,7 @@
  * @ticket PAT-713
  * @author bsitnikovski@sugarcrm.com
  */
-class BugPAT713Test extends Sugar_PHPUnit_Framework_TestCase
+class BugPAT713Test extends TestCase
 {
     public function setUp()
     {

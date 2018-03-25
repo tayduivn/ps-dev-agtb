@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once("modules/DynamicFields/FieldCases.php");
 
@@ -21,7 +22,7 @@ require_once("modules/DynamicFields/FieldCases.php");
  *  option. `unified_search` was always `false` for non-custom fields.
  */
 
-class Bug51427Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51427Test extends TestCase
 {
     private $old_dictionary;
     private $old_bean_list;

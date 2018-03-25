@@ -10,12 +10,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 //FILE SUGARCRM lic=sub ONLY
 
 /**
  * @ticket 47152
  */
-class Bug47152Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47152Test extends TestCase
 {
 	public $_user = null;
 
@@ -151,4 +154,3 @@ class Bug47152Test extends Sugar_PHPUnit_Framework_TestCase
         $this->checkWarnings(false);
     }
 }
-

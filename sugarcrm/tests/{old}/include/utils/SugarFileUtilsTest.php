@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/file_utils.php';
 
-class SugarFileUtilsTest extends Sugar_PHPUnit_Framework_TestCase 
+class SugarFileUtilsTest extends TestCase
 {
     private $_filename;
     private $_old_default_permissions;

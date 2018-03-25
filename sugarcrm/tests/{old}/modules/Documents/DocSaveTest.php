@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class DocSaveTest extends Sugar_PHPUnit_Framework_TestCase
+class DocSaveTest extends TestCase
 {
     /**
      * Document instance to run tests with.

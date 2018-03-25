@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
+class RenameModulesTest extends TestCase
 {
     private $language = 'en_us';
     private $language_contents;

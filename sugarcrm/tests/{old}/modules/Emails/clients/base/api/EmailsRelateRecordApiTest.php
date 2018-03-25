@@ -11,13 +11,14 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass EmailsRelateRecordApi
  * @group api
  * @group email
  */
-class EmailsRelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailsRelateRecordApiTest extends TestCase
 {
     protected $service;
 

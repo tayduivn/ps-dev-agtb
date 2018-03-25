@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug41738Test extends Sugar_PHPUnit_Framework_TestCase 
+use PHPUnit\Framework\TestCase;
+
+class Bug41738Test extends TestCase
 {   	
     protected $bean;
 
@@ -109,5 +110,3 @@ function subpanelCollectionWithSpecificQueryTasks($params)
 
 		return $query ;
 }
-
-

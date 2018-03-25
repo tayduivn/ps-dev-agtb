@@ -9,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('ModuleInstall/ModuleInstaller.php');
 
-class Bug41829Test extends Sugar_PHPUnit_Framework_TestCase 
-{   	
+class Bug41829Test extends TestCase
+{
     protected $module_installer;
     protected $log;
 

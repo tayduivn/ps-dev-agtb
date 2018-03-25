@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once("include/utils.php");
 
-class UtilsStringFormatTest extends Sugar_PHPUnit_Framework_TestCase
+class UtilsStringFormatTest extends TestCase
 {
     public function testArrayStringFormat() {
         $output = string_format("I am {0} feet tall, my name is {1} and I like {2}",

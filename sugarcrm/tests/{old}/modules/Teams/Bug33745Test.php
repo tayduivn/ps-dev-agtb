@@ -10,9 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug33745 extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug33745 extends TestCase
 {
     var $set_silent_upgrade = false;
     var $created_anonymous_user = false;

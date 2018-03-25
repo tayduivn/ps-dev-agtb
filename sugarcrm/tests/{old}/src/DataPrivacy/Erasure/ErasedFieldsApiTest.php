@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\DataPrivacy\Erasure;
 
 use ApiHelper;
+use PHPUnit\Framework\TestCase;
 use Contact;
 use Lead;
 use Note;
@@ -26,7 +27,7 @@ use SugarTestNoteUtilities;
 use SugarTestRestUtilities;
 use BeanFactory;
 
-class ErasedFieldsApiTest extends \PHPUnit_Framework_TestCase
+class ErasedFieldsApiTest extends TestCase
 {
     /**#@+
      * @var Contact

@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass SugarQuery_Builder_Field_Select
  */
-class SugarQuery_Builder_Field_SelectTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarQuery_Builder_Field_SelectTest extends TestCase
 {
     public function expandFieldRelateOwnerDataProvider()
     {

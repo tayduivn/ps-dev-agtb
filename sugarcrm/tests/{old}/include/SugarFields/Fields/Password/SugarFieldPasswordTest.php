@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SugarFieldPasswordTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarFieldPasswordTest extends TestCase
 {
     /** @var SugarFieldPassword */
     protected $fieldObj;

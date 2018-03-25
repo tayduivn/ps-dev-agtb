@@ -9,10 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug50171Test extends Sugar_PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
 
+class Bug50171Test extends TestCase
+{
 public function testGetJSMock() {
     global $mod_strings;
     $mod_strings = return_module_language($GLOBALS['current_language'], 'Import');
@@ -30,5 +31,4 @@ class Bug50171ImportViewStep3Mock extends ImportViewStep3 {
 public function _getJSMock($required) {
     return $this->_getJS($required);
 }
-
 }

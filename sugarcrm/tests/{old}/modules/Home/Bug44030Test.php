@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug44030Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug44030Test extends TestCase
 {
 	var $unified_search_modules_file;
 
@@ -90,5 +92,3 @@ EOQ;
 	}
 
 }
-
-?>

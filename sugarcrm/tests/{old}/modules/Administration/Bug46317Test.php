@@ -9,6 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Administration/updater_utils.php';
 
 /**
@@ -16,7 +19,7 @@ require_once 'modules/Administration/updater_utils.php';
  * Automatically Check For Updates issue
  * @ticket 46317
  */
-class Bug46317Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46317Test extends TestCase
 {
 
     function versionProvider()
@@ -50,4 +53,3 @@ class Bug46317Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, compareVersions($last_version, $current_version), "Current version: $current_version, last available version: $last_version");
     }
 }
-?>

@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Meetings/Meeting.php';
 
-class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
+class MeetingTest extends TestCase
 {
     public $meeting = null;
     public $contact = null;

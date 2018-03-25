@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class TimePeriodsCurrentApiTest extends Sugar_PHPUnit_Framework_TestCase
+class TimePeriodsCurrentApiTest extends TestCase
 {
     /**
      * @var TimePeriodsCurrentApi

@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group leadconvert
  */
-class SidecarLeadConvertUpgraderTest extends PHPUnit_Framework_TestCase
+class SidecarLeadConvertUpgraderTest extends TestCase
 {
     protected $upgrader;
     protected $convertUpgrader;

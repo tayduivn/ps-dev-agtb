@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #57888
@@ -18,7 +19,7 @@
  *
  * @ticket 57888
  */
-class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
+class RelateRecordQuoteApiTest extends TestCase
 {
     private $_api;
     private $_contact;

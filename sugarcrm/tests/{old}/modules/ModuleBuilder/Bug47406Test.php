@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 if (file_exists("custom/include/SugarSmarty/plugins/function.sugar_currency_format.php"))
 {
@@ -20,7 +21,7 @@ else
 	require_once("include/SugarSmarty/plugins/function.sugar_currency_format.php");
 }
 
-class Bug47406Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47406Test extends TestCase
 {
     private $mbvardef;
     private $smarty;
@@ -95,4 +96,3 @@ class Bug47406Test extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 }
-?>

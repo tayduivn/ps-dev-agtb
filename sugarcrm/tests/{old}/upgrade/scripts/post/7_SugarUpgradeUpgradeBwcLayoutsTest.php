@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 require_once 'upgrade/scripts/post/7_UpgradeBwcLayouts.php';
 
@@ -17,7 +19,7 @@ require_once 'upgrade/scripts/post/7_UpgradeBwcLayouts.php';
 /**
  * Test for upgrade BWC layouts
  */
-class SugarUpgradeUpgradeBwcLayoutsTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarUpgradeUpgradeBwcLayoutsTest extends TestCase
 {
 
     private $upgradeDriver;

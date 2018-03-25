@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSEEvalCriteriaTest extends PHPUnit_Framework_TestCase
+class PMSEEvalCriteriaTest extends TestCase
 {
 
     /**

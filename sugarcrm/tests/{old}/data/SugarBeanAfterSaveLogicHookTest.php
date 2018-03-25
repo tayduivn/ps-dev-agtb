@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarBeanAfterSaveLogicHookTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarBeanAfterSaveLogicHookTest extends TestCase
 {
     protected $hook;
 

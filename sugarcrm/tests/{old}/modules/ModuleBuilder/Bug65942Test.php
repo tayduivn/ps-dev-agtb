@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class Bug65942Test
@@ -19,7 +20,7 @@
  *
  * @author avucinic@sugarcrm.com
  */
-class Bug65942Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug65942Test extends TestCase
 {
     private $path = 'custom/Extension/modules/relationships';
     private $files = array();

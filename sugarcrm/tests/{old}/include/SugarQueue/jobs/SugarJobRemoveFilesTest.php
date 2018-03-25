@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers SugarJobRemoveFiles
  */
-class SugarJobRemoveFilesTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarJobRemoveFilesTest extends TestCase
 {
     public function testRemoveFiles()
     {

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #57409
  * It takes 1.4 min to load Contact record edit view
@@ -17,7 +19,7 @@
  * @author mgusev@sugarcrm.com
  * @ticked 57409
  */
-class Bug57409Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57409Test extends TestCase
 {
     /**
      * @var Contact

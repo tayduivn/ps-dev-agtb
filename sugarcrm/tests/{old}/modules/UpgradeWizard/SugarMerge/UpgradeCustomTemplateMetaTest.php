@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/dir_inc.php';
 
-class UpgradeCustomTemplateMetaTest extends Sugar_PHPUnit_Framework_TestCase
+class UpgradeCustomTemplateMetaTest extends TestCase
 {
 
     var $merge;
@@ -75,7 +78,5 @@ class UpgradeCustomTemplateMetaTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('useTabs', $viewdefs['Notes']['EditView']['templateMeta']);
         $this->assertArrayHasKey('tabDefs', $viewdefs['Notes']['EditView']['templateMeta']);
         $this->assertArrayHasKey('syncDetailEditViews', $viewdefs['Notes']['EditView']['templateMeta']);
-
     }
-
 }

@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ForecastsConfigApiTest
  * @coversDefaultClass \ForecastsConfigApi
  */
-class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastsConfigApiTest extends TestCase
 {
     protected $createdBeans = array();
 

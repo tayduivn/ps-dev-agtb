@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /*
 * This test check if prosect adds correctly to prospects_list
@@ -17,7 +18,7 @@
 */
 
 
-class Bug53288Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug53288Test extends TestCase
 {
     protected $_oProspectList;
     protected $_oProspect;

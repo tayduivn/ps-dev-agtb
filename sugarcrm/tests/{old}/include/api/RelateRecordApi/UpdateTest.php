@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass RelateRecordApi
  */
-class RelateRecordApiUpdateTest extends Sugar_PHPUnit_Framework_TestCase
+class RelateRecordApiUpdateTest extends TestCase
 {
     private $user1;
     private $user2;

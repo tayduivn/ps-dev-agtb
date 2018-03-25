@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug49698Test.php
  * This class tests to ensure that label changes made on the Rename Modules link from the Admin section
@@ -20,7 +22,7 @@
  */
 
 
-class Bug49698Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49698Test extends TestCase
 {
 
 public function testModuleRenameForReportsTree()

@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug46122Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46122Test extends TestCase
 {
     var $hasCustomModulesLogicHookFile = false;
     var $hasCustomContactLogicHookFile = false;
@@ -108,4 +109,3 @@ class LogicHookMock extends LogicHook
         }
     }
 }
-

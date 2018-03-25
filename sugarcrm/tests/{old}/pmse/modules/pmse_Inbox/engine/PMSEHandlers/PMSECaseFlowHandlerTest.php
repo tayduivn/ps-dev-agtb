@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class PMSECaseFlowHandlerTest extends TestCase
 {
 
     protected $originals = array();

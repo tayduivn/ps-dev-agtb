@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('include/utils.php');
 /**
  * Bug47277Test.php
  * This test founds out, if function string_format returns '', and not empty space, which causes an error, e.g. IN ()
  */
-class Bug47277Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47277Test extends TestCase
 {
     public function testStringFormatDontReturnsEmptyValue() 
     {

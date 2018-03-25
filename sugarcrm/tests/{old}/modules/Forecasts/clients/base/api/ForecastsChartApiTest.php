@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
@@ -19,7 +20,7 @@
  * @group forecasts
  * @covers ForecastsChartApi
  */
-class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastsChartApiTest extends TestCase
 {
 
     protected static $users = [

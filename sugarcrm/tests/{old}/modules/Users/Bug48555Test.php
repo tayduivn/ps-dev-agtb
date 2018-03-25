@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class Bug48555Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug48555Test extends TestCase
 {
 	protected $_user = null;
 
@@ -87,4 +89,3 @@ class Bug48555Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp($pattern,$test);
     }
 }
-

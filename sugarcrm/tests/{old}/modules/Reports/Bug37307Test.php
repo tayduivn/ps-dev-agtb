@@ -10,9 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class Bug37307Test extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Bug37307Test extends TestCase
 {
     public function testRelationshipWithApostropheInLabelOutputsCorrectly()
 	{

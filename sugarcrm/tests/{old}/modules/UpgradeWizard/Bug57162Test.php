@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/UpgradeWizard/uw_utils.php');
 
 /**
@@ -19,7 +21,7 @@ require_once('modules/UpgradeWizard/uw_utils.php');
  * @author mgusev@sugarcrm.com
  * @ticked 57162
  */
-class Bug57162Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57162Test extends TestCase
 {
     public function dataProvider()
     {

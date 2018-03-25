@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 67014
  */
-class Bug67014Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug67014Test extends TestCase
 {
     protected function tearDown()
     {

@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('tests/{old}/SugarTestViewConvertLeadUtilities.php');
 require_once 'tests/{old}/SugarTestViewConvertLeadUtilities.php';
 
 
-class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
+class ConvertLeadTest extends TestCase
 {
     /**
      * @var mixed

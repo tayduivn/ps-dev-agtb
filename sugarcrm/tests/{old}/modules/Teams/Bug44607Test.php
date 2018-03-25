@@ -10,7 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug44607Test
  * 
@@ -21,7 +23,7 @@
  * team_membership entries are created for a user that does not exist.
  *
  */
-class Bug44607Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44607Test extends TestCase
 {
 	var $testUser;
 	var $testUser2;

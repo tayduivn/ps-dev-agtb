@@ -10,10 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
 
-class Bug46152_P1Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46152_P1Test extends TestCase
 {
 
     public function getModuleAliasesData()

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug49991Test.php
  * @author Collin Lee
@@ -19,7 +21,7 @@
  * views to take advantage of not having to repeatedly check the custom directory for the presence of a file.
  */
 
-class Bug49991Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49991Test extends TestCase
 {
 
 var $mock;

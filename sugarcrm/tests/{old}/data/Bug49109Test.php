@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #49109
  * Cannot select Users in View Relationships in Email modules.
@@ -18,7 +20,7 @@
  * @author mgusev@sugarcrm.com
  * @ticket 49109
  */
-class Bug49109Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49109Test extends TestCase
 {
     public function setUp()
     {

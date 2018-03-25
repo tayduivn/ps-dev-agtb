@@ -9,12 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 23140
  */
-class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug36329Test extends TestCase
 {
 	var $save_query;
 	var $current_language;

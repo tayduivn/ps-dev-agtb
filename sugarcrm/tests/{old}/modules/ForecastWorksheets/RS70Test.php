@@ -9,11 +9,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 //FILE SUGARCRM flav=ent ONLY
 /**
  * RS-70: Prepare ForecastWorksheets Module
  */
-class RS70Test extends Sugar_PHPUnit_Framework_TestCase
+class RS70Test extends TestCase
 {
     public static function setUpBeforeClass()
     {

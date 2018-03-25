@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Make sure that list data is properly sorted by relate full name field
  */
-class SortByRelateFullNameTest extends Sugar_PHPUnit_Framework_TestCase
+class SortByRelateFullNameTest extends TestCase
 {
     public function testSortByRelateFullName()
     {

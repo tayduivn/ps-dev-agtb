@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 //require_once('modules/Forecasts/WorksheetSeedData.php');
 
@@ -20,7 +21,7 @@
  *
  * @ticket sfa-219
  */
-class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
+class ForecastUserReassignmentTest extends TestCase
 {
     private $_users;
     private $_users_ids;

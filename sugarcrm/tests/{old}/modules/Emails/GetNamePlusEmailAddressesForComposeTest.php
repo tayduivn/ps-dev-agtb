@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 32487
  */
-class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_TestCase
+class GetNamePlusEmailAddressesForComposeTest extends TestCase
 {
 	public function setUp()
     {

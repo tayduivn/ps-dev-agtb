@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/modules/UpgradeWizard/SidecarMetaDataFileBuilder.php';
 
-class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
+class SidecarMetaDataUpgraderTest extends TestCase
 {
     /**
      * Flag to let us know if there is a current upgrade wizard log that is

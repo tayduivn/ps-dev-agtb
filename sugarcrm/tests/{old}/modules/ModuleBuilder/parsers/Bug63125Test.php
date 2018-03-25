@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @group 63125
  */
-class Bug63125Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug63125Test extends TestCase
 {
     /**
      * @dataProvider provider

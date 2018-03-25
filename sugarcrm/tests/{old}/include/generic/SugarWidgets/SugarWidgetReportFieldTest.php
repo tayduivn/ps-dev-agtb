@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test for SugarWidgetReportField.
  */
-class SugarWidgetReportFieldTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarWidgetReportFieldTest extends TestCase
 {
     /**
      * Bean to work with.

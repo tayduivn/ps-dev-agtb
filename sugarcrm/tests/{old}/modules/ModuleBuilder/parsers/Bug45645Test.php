@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug45645Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45645Test extends TestCase
 {
     protected $custLangFile;
     protected $lang = 'en_us';
@@ -48,6 +49,3 @@ class Bug45645Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->newLabel, $mod_strings[$this->testLabel], 'Label not changed.');
     }
 }
-
-
-?>

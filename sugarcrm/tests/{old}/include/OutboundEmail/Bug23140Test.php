@@ -11,11 +11,12 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 23140
  */
-class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug23140Test extends TestCase
 {
 	var $outbound_id = null;
 	var $_user = null;
@@ -223,4 +224,3 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-?>

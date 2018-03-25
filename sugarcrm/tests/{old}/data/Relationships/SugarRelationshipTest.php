@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'data/Relationships/SugarRelationship.php';
 
-class SugarRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarRelationshipTest extends TestCase
 {
     protected $hooks;
 

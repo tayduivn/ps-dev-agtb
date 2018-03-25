@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-173: Prepare DashboardList Api
  */
-class RS173Test extends Sugar_PHPUnit_Framework_TestCase
+class RS173Test extends TestCase
 {
     /**
      * @var DashboardListApi

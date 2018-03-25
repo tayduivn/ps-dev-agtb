@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarApplicationTest extends TestCase
 {
     private $_app;
     // Run in isolation so that it doesn't mess up other tests

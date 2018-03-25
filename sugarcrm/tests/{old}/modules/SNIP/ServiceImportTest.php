@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('tests/{old}/service/APIv3Helper.php');
 
-class ServiceImportTest extends Sugar_PHPUnit_Framework_TestCase
+class ServiceImportTest extends TestCase
 {
 	private $email_id = '';
 

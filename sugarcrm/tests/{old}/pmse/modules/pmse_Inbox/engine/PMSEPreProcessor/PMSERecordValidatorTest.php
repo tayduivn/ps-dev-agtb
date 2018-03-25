@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSERecordValidatorTest extends PHPUnit_Framework_TestCase
+class PMSERecordValidatorTest extends TestCase
 {
     public function testValidateRequest()
     {

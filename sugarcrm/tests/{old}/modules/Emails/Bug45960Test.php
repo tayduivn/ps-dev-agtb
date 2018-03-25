@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- 
+use PHPUnit\Framework\TestCase;
 
-class Bug45960 extends Sugar_PHPUnit_Framework_TestCase
+class Bug45960 extends TestCase
 {
     protected $email_id = null;
 
@@ -62,5 +62,3 @@ class Bug45960 extends Sugar_PHPUnit_Framework_TestCase
     }
     
 }
-
-

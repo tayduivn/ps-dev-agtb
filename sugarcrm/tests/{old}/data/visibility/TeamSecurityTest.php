@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 /**
@@ -18,7 +19,7 @@ use Sugarcrm\Sugarcrm\DependencyInjection\Container;
  * @covers NormalizedTeamSecurity
  * @covers TeamSecurity
  */
-class TeamSecurityTest extends Sugar_PHPUnit_Framework_TestCase
+class TeamSecurityTest extends TestCase
 {
     /**
      * @var User

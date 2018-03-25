@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Command;
 
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
@@ -22,7 +23,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\InMemoryStorage
 /**
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild
  */
-class StateAwareRebuildTest extends \PHPUnit_Framework_TestCase
+class StateAwareRebuildTest extends TestCase
 {
     /**
      * @test

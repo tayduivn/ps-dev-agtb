@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests SNIP's iCal Parser
  */
-class iCalParserTest extends Sugar_PHPUnit_Framework_TestCase
+class iCalParserTest extends TestCase
 {
     static protected $e;
 

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 require_once 'SugarTestContactUtilities.php';
 
@@ -20,7 +22,7 @@ require_once 'SugarTestContactUtilities.php';
  *
  */
 
-class Bug42279Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug42279Test extends TestCase
 {
     private $contact;	
 

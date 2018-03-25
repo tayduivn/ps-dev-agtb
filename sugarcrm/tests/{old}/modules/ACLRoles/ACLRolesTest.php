@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestACLUtilities.php';
 
 /**
@@ -18,7 +20,7 @@ require_once 'tests/{old}/SugarTestACLUtilities.php';
  *
  * Class containing tests for ACLRole bean.
  */
-class ACLRolesTest extends Sugar_PHPUnit_Framework_TestCase
+class ACLRolesTest extends TestCase
 {
     /**
      * @var User

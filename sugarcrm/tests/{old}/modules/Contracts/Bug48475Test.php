@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/Contracts/Contract.php');
 
-class Bug48475Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48475Test extends TestCase
 {
     var $contractType;
     var $contract;
@@ -41,5 +43,3 @@ class Bug48475Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-
-?>

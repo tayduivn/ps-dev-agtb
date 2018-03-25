@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Meetings/Meeting.php');
+use PHPUnit\Framework\TestCase;
 
-class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
+require_once 'modules/Meetings/Meeting.php';
 
+class CalendarUtilsTest extends TestCase
+{
    	/**
 	 * @var TimeDate
 	 */

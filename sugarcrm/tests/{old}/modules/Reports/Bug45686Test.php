@@ -11,11 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Reports/SavedReport.php';
 /**
  * @group Bug45686
  */
-class Bug45686Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45686Test extends TestCase
 {
 
     public function setUp()

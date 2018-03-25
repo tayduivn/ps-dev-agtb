@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for Bug 61885
  */
-class Bug61885 extends Sugar_PHPUnit_Framework_TestCase
+class Bug61885 extends TestCase
 {
     private $db;
     private $created;

@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ParserDropdownTest extends TestCase
 {
     // Custom include/language file path
     private $customFile;

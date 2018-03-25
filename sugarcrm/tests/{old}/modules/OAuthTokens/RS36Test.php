@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * RS-36: Prepare OAuthTokens Module
  */
-class RS36Test extends Sugar_PHPUnit_Framework_TestCase
+class RS36Test extends TestCase
 {
     /** @var Contact */
     protected $contact = null;

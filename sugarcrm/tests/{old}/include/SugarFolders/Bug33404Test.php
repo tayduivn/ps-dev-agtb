@@ -9,12 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 33404
  */
-class Bug33404Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug33404Test extends TestCase
 {
 	var $folder = null;
     var $_user = null;
@@ -80,4 +81,3 @@ class Bug33404Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals(0, $rs['cnt'], "Could not clear folder subscriptions");
     }
 }
-?>

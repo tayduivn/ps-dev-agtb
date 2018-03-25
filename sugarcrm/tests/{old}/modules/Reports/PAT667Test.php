@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Filtering Report on Multiselect field with "Is One Of" returns "false positives"
  * @ticket PAT-667
  * @author bsitnikovski@sugarcrm.com
  */
-class BugPAT667Test extends Sugar_PHPUnit_Framework_TestCase
+class BugPAT667Test extends TestCase
 {
     /**
      * @var Report

@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSEImporterTest extends PHPUnit_Framework_TestCase
+class PMSEImporterTest extends TestCase
 {
     /**
      * @var PMSEImporter

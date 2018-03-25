@@ -9,16 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/**
- * @group ActivityStream
- */
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group activities
  * @group ActivityStream
  * @group activities_queue
  */
-class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
+class ActivityQueueManagerTest extends TestCase
 {
     const BOGUS_USER  = '0';
     const USER_ONE    = '1';

@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug57208Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57208Test extends TestCase
 {
     protected $_testModule = 'Bug57208Test';
     

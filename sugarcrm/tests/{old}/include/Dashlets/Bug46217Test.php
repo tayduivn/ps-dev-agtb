@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Created: Sep 12, 2011
  */
 include_once('include/Dashlets/DashletRssFeedTitle.php');
 
-class Bug46217Test extends Sugar_PHPUnit_Framework_TestCase {
-
+class Bug46217Test extends TestCase
+{
 	public $rssFeedClass;
 	
 	public function setUp() {

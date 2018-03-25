@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 56100 - Undefined property: SubpanelMetaDataParser
  */
-class Bug56100Test extends Sugar_PHPUnit_Framework_TestCase {
+class Bug56100Test extends TestCase
+{
     public function setUp() {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');

@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/OAuthTokens/OAuthToken.php';
 
-class OAuthTokenTest extends Sugar_PHPUnit_Framework_TestCase
+class OAuthTokenTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

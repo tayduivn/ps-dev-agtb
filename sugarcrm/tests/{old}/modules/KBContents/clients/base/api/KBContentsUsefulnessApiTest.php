@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for KBContentsUsefulnessApi
  */
-class KBContentsUsefulnessApiTest extends Sugar_PHPUnit_Framework_TestCase
+class KBContentsUsefulnessApiTest extends TestCase
 {
     /**
      * @var RestService

@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-278: Fix Dashboards regression caused by RussianStandard PR #17355
  * Because of rename `view` field to `view_name` test checks that `view` argument has the same behavior as `view_name`
  */
-class RS278Test extends Sugar_PHPUnit_Framework_TestCase
+class RS278Test extends TestCase
 {
     /** @var RestService */
     protected static $service = null;

@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class AddExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class AddExpressionTest extends TestCase
 {
     /**
      * @dataProvider dataProviderTestEvaluate
@@ -41,4 +43,3 @@ class AddExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, $result);
     }
 }
-

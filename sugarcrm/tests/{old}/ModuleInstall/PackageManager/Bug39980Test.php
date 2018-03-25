@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
-class Bug39980Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug39980Test extends TestCase
 {
 	
     public function tearDown()

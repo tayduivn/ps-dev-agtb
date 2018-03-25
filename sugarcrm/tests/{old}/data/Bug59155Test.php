@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once 'modules/DynamicFields/FieldCases.php';
@@ -18,7 +19,7 @@ require_once 'modules/DynamicFields/FieldCases.php';
 /**
  * @ticket 59155
  */
-class Bug59155Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug59155Test extends TestCase
 {
     private static $custom_field_def = array(
         'formula'     => 'related($accounts,"name")',

@@ -9,7 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * 
  * Check if getTrackerSubstring() utils function returns a html decoded value
@@ -19,7 +21,7 @@
  * @author avucinic@sugarcrm.com
  *
  */
-class Bug55650Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug55650Test extends TestCase
 {
 	
     /**
@@ -50,7 +52,4 @@ class Bug55650Test extends Sugar_PHPUnit_Framework_TestCase
         	2 => array("A lot of quotes &amp;", "A lot of quotes &"),
         );
     }
-    
 }
-
-?>

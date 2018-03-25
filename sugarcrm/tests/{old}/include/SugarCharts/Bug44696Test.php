@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 44696 - Wrong shortcut to the opportunities module from the dashlet
@@ -18,7 +19,7 @@
  * @ticket 44696
  * @ticket 53845
  */
-class Bug44696Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44696Test extends TestCase
 {
     /**
      * @var SugarChart

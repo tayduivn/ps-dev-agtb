@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class PMSECrmDataWrapperTest extends TestCase
 {
     /**
      * @var PMSECrmDataWrapper

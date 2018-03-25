@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once('modules/Currencies/Currency.php');
 
@@ -20,7 +21,7 @@ require_once('modules/Currencies/Currency.php');
  * @author mgusev@sugarcrm.com
  * @ticket 48690
  */
-class Bug48690Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48690Test extends TestCase
 {
 
     /**

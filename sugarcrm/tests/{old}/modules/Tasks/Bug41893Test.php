@@ -11,9 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class Bug41893Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug41893Test extends TestCase
 {
     private $created_anonymous_user = false;
 

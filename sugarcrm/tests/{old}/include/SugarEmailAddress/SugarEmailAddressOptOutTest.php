@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 /**
  * @coversDefaultClass SugarEmailAddress
  */
-class SugarEmailAddressOptOutTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarEmailAddressOptOutTest extends TestCase
 {
     private $configOptoutBackUp;
 

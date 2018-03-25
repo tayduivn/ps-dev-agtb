@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Administration/updater_utils.php';
 
-class Bug38912 extends Sugar_PHPUnit_Framework_TestCase
+class Bug38912 extends TestCase
 {
 	/**
 	 * Test whitelist of modules and actions 

@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
+class PMSEElementValidatorTest extends TestCase
 {
     public function eventValidatorTypeProvider()
     {

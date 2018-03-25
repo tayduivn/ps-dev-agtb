@@ -11,12 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-/*
+/**
  * Tests SNIP's object creation feature by setting up a createdefs.php file and importing emails.
  */
-
-class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
+class CreateObjectTest extends TestCase
+{
 	private $snip;
 	private $orig_file = '';
 
@@ -201,4 +202,3 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 		unset($this->opportunity_id);
 	}
 }
-?>

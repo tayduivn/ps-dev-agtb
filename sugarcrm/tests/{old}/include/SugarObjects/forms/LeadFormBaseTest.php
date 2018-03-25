@@ -10,14 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/**
- * LeadFormBaseTest.php
- *
- */
+use PHPUnit\Framework\TestCase;
 
-
-class LeadFormBaseTest extends Sugar_PHPUnit_Framework_TestCase {
-
+class LeadFormBaseTest extends TestCase
+{
 var $form;
 var $lead1;
 
@@ -86,5 +82,4 @@ public function testCreatingDuplicateLead($first_name, $last_name, $hasDuplicate
         $this->assertTrue(empty($rows), 'Assert that checkForDuplicates returned no matches');
     }
 }
-
 }

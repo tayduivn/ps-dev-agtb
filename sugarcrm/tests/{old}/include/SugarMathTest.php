@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * SugarMathTest
  *
  * unit tests for math library
  *
  */
-class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarMathTest extends TestCase
 {
 
     /**

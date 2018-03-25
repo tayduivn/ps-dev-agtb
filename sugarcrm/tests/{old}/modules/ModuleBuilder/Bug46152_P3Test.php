@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class Bug46152_P3Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46152_P3Test extends TestCase
 {
 
     private $dynamicField;

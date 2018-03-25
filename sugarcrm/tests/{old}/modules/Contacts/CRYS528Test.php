@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class CRYS528Test extends Sugar_PHPUnit_Framework_TestCase
+class CRYS528Test extends TestCase
 {
     public function setUp()
     {

@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ForecastManagerWorksheetTest
  * @coversDefaultClass ForecastManagerWorksheet
  */
-class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastManagerWorksheetTest extends TestCase
 {
 
     /**

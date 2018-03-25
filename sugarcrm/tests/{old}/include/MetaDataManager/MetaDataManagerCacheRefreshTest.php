@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests metadata manager caching and refreshing. This will be a somewhat slow
  * test as there will be significant file I/O due to nuking and rewriting cache
  * files.
  */
-class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
+class MetaDataManagerCacheRefreshTest extends TestCase
 {
     /**
      * The build number from sugar_config. Saved here for use in testing as it 

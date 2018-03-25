@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SubPanelTilesBase extends Sugar_PHPUnit_Framework_TestCase
+class SubPanelTilesBase extends TestCase
 {
     public function setUp()
     {

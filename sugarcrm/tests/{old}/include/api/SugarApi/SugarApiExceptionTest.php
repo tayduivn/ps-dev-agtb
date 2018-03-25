@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SugarApiExceptionTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarApiExceptionTest extends TestCase
 {
 
     public function setUp(){

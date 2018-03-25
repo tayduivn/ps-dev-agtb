@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class DocApiUploadTest extends Sugar_PHPUnit_Framework_TestCase
+class DocApiUploadTest extends TestCase
 {
     public $documents;
 

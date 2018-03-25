@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,13 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/UpgradeWizard/uw_utils.php');
+use PHPUnit\Framework\TestCase;
 
-class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
+require_once 'modules/UpgradeWizard/uw_utils.php';
 
+class UWUtilsTest extends TestCase
+{
     private $job;
-    private static $isSetup;
-    private static $forecastRanges;
 
     public static function setUpBeforeClass()
     {

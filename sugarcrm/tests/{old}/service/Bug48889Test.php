@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'service/v4/SugarWebServiceImplv4.php';
 
-class Bug48889Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48889Test extends TestCase
 {
 
     public function setUp()
@@ -40,4 +42,3 @@ class Bug48889Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('list', $result, 'Assert that we have a list of results and that the get_data_list query on Employees does not cause an error');
     }
 }
-

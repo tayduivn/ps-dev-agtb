@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 //FILE SUGARCRM flav=ent ONLY
 
-class Bug57563Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57563Test extends TestCase
 {
     private $_db;
 

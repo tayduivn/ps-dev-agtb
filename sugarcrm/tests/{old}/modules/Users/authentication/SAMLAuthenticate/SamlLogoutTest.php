@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @issue BR-1756
  * Can not test logout() rest API properly due to cookies/sessions handling there
  */
-class SamlLogoutTest extends Sugar_PHPUnit_Framework_TestCase
+class SamlLogoutTest extends TestCase
 {
 
     public function testLogoutURL()

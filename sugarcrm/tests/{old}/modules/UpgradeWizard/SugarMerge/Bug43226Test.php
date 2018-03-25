@@ -9,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/dir_inc.php';
 
-class Bug43226Test extends Sugar_PHPUnit_Framework_TestCase  {
-	
+class Bug43226Test extends TestCase
+{
 var $merge;
 
 function setUp() {
@@ -95,5 +98,4 @@ function test_uploadfile_convert_merge_610() {
        unlink('custom/modules/Documents/metadata/editviewdefs-testback.php');
    }
 }
-
 }

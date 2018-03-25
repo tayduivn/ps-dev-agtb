@@ -11,13 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ForecastWorksheetsApiTest
  *
  * @covers ForecastWorksheetsApi
  */
-class ForecastWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastWorksheetsApiTest extends TestCase
 {
     /**
      * @covers ForecastWorksheetsApi::getClass

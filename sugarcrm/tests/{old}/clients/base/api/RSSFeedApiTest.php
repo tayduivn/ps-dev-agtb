@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class RSSFeedApiTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class RSSFeedApiTest extends TestCase
 {
     protected static $rssFeedMaxEntries = null;
 

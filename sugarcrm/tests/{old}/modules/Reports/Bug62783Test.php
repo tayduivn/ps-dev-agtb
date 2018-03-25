@@ -11,13 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Fiscal Filters and Fiscal Group By for report date/time fields
  *
  * @author avucinic@sugarcrm.com
  */
-class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug62783Test extends TestCase
 {
 
     private static $reportDef = array(

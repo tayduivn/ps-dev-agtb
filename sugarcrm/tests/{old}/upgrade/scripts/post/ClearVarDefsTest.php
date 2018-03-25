@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'upgrade/scripts/post/1_ClearVarDefs.php';
 require_once 'SugarTestReflection.php';
 
 /**
  * Test asserts correct removal of wrong field definitions from a bean.
  */
-class ClearVarDefsTest extends Sugar_PHPUnit_Framework_TestCase
+class ClearVarDefsTest extends TestCase
 {
     const MODULE = 'PreScript';
 

@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers ForecastWorksheet
  */
 
 require_once 'tests/{old}/SugarTestDatabaseMock.php';
 
-class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastWorksheetTest extends TestCase
 {
 
     /**

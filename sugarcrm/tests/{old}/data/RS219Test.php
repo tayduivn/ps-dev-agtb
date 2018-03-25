@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #RS-219
  * @description Fixes Oracle error ORA-00918 while creating new list query.
  *
  * @ticket RS219
  */
-class RS219Test extends Sugar_PHPUnit_Framework_TestCase
+class RS219Test extends TestCase
 {
     protected function setUp()
     {
@@ -92,4 +94,3 @@ class RS219Test extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 }
-

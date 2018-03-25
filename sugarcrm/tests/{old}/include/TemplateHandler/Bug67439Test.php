@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class Bug67439Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug67439Test extends TestCase
 {
     protected static $oldObjectList;
 

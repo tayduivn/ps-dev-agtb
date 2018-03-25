@@ -12,9 +12,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/ACLFields/actiondefs.php';
 
-class TeamBasedACLFieldTest extends Sugar_PHPUnit_Framework_TestCase
+class TeamBasedACLFieldTest extends TestCase
 {
     /**
      * @var string

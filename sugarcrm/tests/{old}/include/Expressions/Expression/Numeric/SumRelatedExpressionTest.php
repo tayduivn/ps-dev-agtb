@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @outputBuffering enabled
  */
 
-class SumRelatedExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+class SumRelatedExpressionTest extends TestCase
 {
     public function testRelatedSum()
     {

@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test class for SugarACL.
  */
-class SugarACLTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarACLTest extends TestCase
 {
     protected $bean;
 

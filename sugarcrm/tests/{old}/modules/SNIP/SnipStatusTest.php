@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /*
  * Tests the getStatus() function of SugarSNIP to ensure that the return value is correct for various server responses.
  */
-class SnipStatusTest extends Sugar_PHPUnit_Framework_TestCase
+class SnipStatusTest extends TestCase
 {
     private $snip;
 

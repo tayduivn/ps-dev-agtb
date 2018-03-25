@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * RS-49
  * Prepare File Api
  */
-class RS49Test extends Sugar_PHPUnit_Framework_TestCase
+class RS49Test extends TestCase
 {
     /** @var RestService */
     protected $service = null;

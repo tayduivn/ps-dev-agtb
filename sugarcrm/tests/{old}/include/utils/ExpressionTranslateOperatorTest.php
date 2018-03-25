@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/expression_utils.php';
 
 /**
  * Class ExpressionTranslateOperatorTest
  * Check if translate_operator works properly and covers all operators
  */
-class ExpressionTranslateOperatorTest extends Sugar_PHPUnit_Framework_TestCase
+class ExpressionTranslateOperatorTest extends TestCase
 {
     /**
      * @dataProvider operatorDataset

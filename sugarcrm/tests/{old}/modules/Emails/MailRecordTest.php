@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @group email
  */
-class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
+class MailRecordTest extends TestCase
 {
     private $mailRecord,
             $mockEmail;

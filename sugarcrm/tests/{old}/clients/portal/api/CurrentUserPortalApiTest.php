@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group ApiTests
  */
-class CurrentUserPortalApiTest extends Sugar_PHPUnit_Framework_TestCase
+class CurrentUserPortalApiTest extends TestCase
 {
     /**
      * @var CurrentUserPortalApi

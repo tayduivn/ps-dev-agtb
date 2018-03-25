@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use PHPUnit\Framework\TestCase;
 
 class ChartDisplayMock47148 extends ChartDisplay
 {
@@ -34,7 +34,7 @@ class ChartDisplayMock47148 extends ChartDisplay
  * Reporter has a big problem with big numbers
  * @ticket 47148
  */
-class Bug47148Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47148Test extends TestCase
 {
     private $_backup = array();
 

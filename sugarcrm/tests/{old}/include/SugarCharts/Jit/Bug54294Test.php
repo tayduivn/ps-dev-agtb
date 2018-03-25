@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #54294
@@ -19,7 +20,7 @@
  * @author mgusev@sugarcrm.com
  * @ticked 54294
  */
-class Bug54294Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug54294Test extends TestCase
 {
     /**
      * @var Currency

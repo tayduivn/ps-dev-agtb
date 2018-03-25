@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 class Bug45716Helper {
     public $all_fields = array (
@@ -832,7 +833,7 @@ class Bug45716Helper {
     }
 }
 
-class Bug45716Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45716Test extends TestCase
 {
     public function setUp() {
         parent::setUp();

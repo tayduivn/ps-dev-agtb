@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  *  RS175: Prepare PreviouslyUsedFilters Api.
  */
-class RS175Test extends Sugar_PHPUnit_Framework_TestCase
+class RS175Test extends TestCase
 {
     /**
      * @var PreviouslyUsedFiltersApi

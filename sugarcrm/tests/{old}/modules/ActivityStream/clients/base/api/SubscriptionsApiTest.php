@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group api
  * @group subscriptions
  */
-class SubscriptionsApiTest extends Sugar_PHPUnit_Framework_TestCase
+class SubscriptionsApiTest extends TestCase
 {
     private $api;
     private $subscriptionApi;

@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestRestUtilities.php';
 require_once 'tests/{old}/SugarTestACLUtilities.php';
 /**
  * @group ApiTests
  */
-class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase
+class UnifiedSearchApiTest extends TestCase
 {
     public $accounts;
     public $roles;

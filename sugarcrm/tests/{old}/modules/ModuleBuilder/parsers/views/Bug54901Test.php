@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Accessor class, in the event the parsers public properties go protected, which
@@ -38,7 +39,8 @@ class Bug54901TestGridParser extends SidecarGridLayoutMetaDataParser {
     }
 }
 
-class Bug54901Test extends Sugar_PHPUnit_Framework_TestCase {
+class Bug54901Test extends TestCase
+{
     public function setUp() {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();

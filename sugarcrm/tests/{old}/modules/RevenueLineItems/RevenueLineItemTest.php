@@ -11,11 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class RevenueLineItemTest
  * @coversDefaultClass RevenueLineItem
  */
-class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
+class RevenueLineItemTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

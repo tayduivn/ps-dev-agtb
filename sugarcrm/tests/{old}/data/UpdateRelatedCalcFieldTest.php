@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class UpdateRelatedCalcFieldTest extends Sugar_PHPUnit_Framework_TestCase
+class UpdateRelatedCalcFieldTest extends TestCase
 {
     protected $testAccount;
     protected $createdBeans = array();

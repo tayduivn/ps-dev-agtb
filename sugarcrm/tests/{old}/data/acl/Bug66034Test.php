@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 66034
  */
-class Bug66034Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug66034Test extends TestCase
 {
     protected $aclAction;
 

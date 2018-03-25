@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+use PHPUnit\Framework\TestCase;
 
-class PMSEConcurrencyValidatorTest extends PHPUnit_Framework_TestCase
+class PMSEConcurrencyValidatorTest extends TestCase
 {
     private $validator;
 

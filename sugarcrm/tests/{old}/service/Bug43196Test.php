@@ -9,13 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('vendor/nusoap//nusoap.php');
 
 /**
  * @group bug43196
  */
-class Bug43196Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43196Test extends TestCase
 {
 	public $_soapClient = null;
 	

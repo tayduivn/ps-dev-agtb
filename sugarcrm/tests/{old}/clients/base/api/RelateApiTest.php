@@ -10,15 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group ApiTests
  */
-class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
-
+class RelateApiTest extends TestCase
+{
     public $accounts = array();
     public $contacts = array();
     public $roles = array();

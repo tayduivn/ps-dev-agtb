@@ -11,8 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
+class WorkFlowTest extends TestCase
 {
 	protected $testWFName = "WFUnitTest";
 	protected $testValue = "Workflow triggred!";
@@ -152,4 +153,3 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
     }
     */
 }
-

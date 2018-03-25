@@ -12,9 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
- 
+use PHPUnit\Framework\TestCase;
 
-class SugarFieldEncryptTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarFieldEncryptTest extends TestCase
 {
     public function setUp()
     {
@@ -44,5 +44,3 @@ class SugarFieldEncryptTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedValue, $formattedValue);    	
     }
 }
-
-?>

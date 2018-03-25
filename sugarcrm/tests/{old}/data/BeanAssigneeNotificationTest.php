@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class BeanAssigneeNotificationTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class BeanAssigneeNotificationTest extends TestCase
 {
 
     private $siteUrl;

@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * See Bug22882Test.php for other tests on app_list_strings_language
  */
-class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
+class AppListStringsTest extends TestCase
 {
     private $temp_files = array();
 

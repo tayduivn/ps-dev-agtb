@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'ModuleInstall/ModuleScanner.php';
 
-class ModuleScannerTest extends Sugar_PHPUnit_Framework_TestCase
+class ModuleScannerTest extends TestCase
 {
     public $fileLoc = "cache/moduleScannerTemp.php";
 
@@ -450,4 +453,3 @@ class MockModuleScanner extends  ModuleScanner
         return parent::isPHPFile($contents);
     }
 }
-

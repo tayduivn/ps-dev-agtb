@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- 
+use PHPUnit\Framework\TestCase;
 
-class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
+class CsvAutoDetectTest extends TestCase
 {
     private static $CsvContent = array (
         0 => "\"date_entered\",\"description\"\n\"3/26/2011 10:02am\",\"test description\"",

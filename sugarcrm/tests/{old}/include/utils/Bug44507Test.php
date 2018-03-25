@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug44507Test
@@ -18,7 +19,7 @@
  * in include/utils.php.  Bug 44507 is due to the problem
  *
  */
-class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44507Test extends TestCase
 {
 	var $disableCountQuery;
 	var $skipped = false;

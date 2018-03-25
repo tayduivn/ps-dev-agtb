@@ -10,8 +10,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class UpgradeWizardAddTeamSetIdTest extends Sugar_PHPUnit_Framework_TestCase  {
 
+use PHPUnit\Framework\TestCase;
+
+class UpgradeWizardAddTeamSetIdTest extends TestCase
+{
 var $skipTest = true;
 var $module = 'Contacts'; //Just do this for Contacts module for now
 var $team_set_ids = array();
@@ -79,5 +82,3 @@ function test_add_teamsetid() {
 
 
 }
-
-?>

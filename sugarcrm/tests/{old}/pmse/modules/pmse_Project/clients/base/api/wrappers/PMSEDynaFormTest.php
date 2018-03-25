@@ -12,8 +12,9 @@
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use PHPUnit\Framework\TestCase;
 
-class PMSEDynaFormTest extends Sugar_PHPUnit_Framework_TestCase
+class PMSEDynaFormTest extends TestCase
 {
 
     protected $adamDynaform;

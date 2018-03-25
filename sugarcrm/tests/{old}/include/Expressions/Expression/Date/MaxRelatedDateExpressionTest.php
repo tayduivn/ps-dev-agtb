@@ -10,9 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-
-class MaxRelatedDateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+class MaxRelatedDateExpressionTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

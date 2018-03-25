@@ -13,13 +13,14 @@
 namespace Sugarcrm\SugarcrmTests\Denormalization\TeamSecurity\Listener;
 
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\UserOnly;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @covers \Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\UserOnly
  */
-class UserOnlyTest extends \PHPUnit_Framework_TestCase
+class UserOnlyTest extends TestCase
 {
     /**
      * @test

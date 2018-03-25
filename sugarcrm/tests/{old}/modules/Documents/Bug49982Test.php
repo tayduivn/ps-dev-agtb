@@ -11,13 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug49982Test.php
  * This test tests that the error message is returned after an upload that exceeds post_max_size
  *
  * @ticket 49982
  */
-class Bug49982Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49982Test extends TestCase
 {
 
 	var $doc = null;

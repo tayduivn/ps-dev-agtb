@@ -9,8 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 //FILE SUGARCRM flav=ent ONLY
-class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46486Test extends TestCase
 {
 
     private $sm;
@@ -119,5 +122,4 @@ class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedResult, $this->sm->canAddSession(), "Unable to add new session for portal users.License count: $systemPortalUsers, Active Sessions: $activeSessions");
     }
-
 }

@@ -11,10 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 46763
  */
-class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46763Test extends TestCase
 {
     /**
      * Language used to perform the test

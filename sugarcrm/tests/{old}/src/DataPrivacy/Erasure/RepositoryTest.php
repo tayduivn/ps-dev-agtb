@@ -13,13 +13,14 @@
 namespace Sugarcrm\SugarcrmTests\DataPrivacy\Erasure;
 
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository
  */
-class RepositoryTest extends \Sugar_PHPUnit_Framework_TestCase
+class RepositoryTest extends TestCase
 {
     /**
      * @var Repository

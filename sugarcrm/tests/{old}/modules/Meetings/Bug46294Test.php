@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Meetings/Meeting.php';
 
-class Bug46294Test extends Sugar_PHPUnit_Framework_TestCase 
+class Bug46294Test extends TestCase
 {
     var $dictionaryOptionsNotSet = array('Meeting' => array(
                                     'fields' => array(

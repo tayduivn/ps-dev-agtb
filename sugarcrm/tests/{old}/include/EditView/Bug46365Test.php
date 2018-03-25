@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/EditView/EditView2.php';
 
-class Bug46365Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46365Test extends TestCase
 {
     protected $_o = null;
 
@@ -92,7 +95,4 @@ class Bug46365Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return (boolean) count(intval($defs['panels']['panel1'][0]) - intval((int) $this->_o->defs['panels']['panel1'][0]));
     }
-
 }
-
-?>

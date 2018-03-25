@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug 58463 - Drop Down Lists do not show in studio after save
  */
-class Bug58463Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug58463Test extends TestCase
 {
     protected $_testCustomFile = 'custom/application/Ext/Language/en_us.lang.ext.php';
     protected $_currentRequest;

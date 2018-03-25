@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once "include/generic/SugarWidgets/SugarWidgetReportField.php";
 
-class Bug36246Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug36246Test extends TestCase
 {
     public function testIfWidgetFieldUrlReturnsALink()
 	{

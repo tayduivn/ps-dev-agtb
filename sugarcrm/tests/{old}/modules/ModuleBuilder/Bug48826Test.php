@@ -12,6 +12,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #48826
@@ -24,7 +25,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once ('modules/DynamicFields/FieldCases.php') ;
 
-class Bug48826Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48826Test extends TestCase
 {
     public function provider()
     {

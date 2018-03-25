@@ -9,13 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/DynamicFields/FieldCases.php');
 
 /**
  * Test cases for URL Field
  */
-class RepairCustomFieldsTest extends Sugar_PHPUnit_Framework_TestCase
+class RepairCustomFieldsTest extends TestCase
 {
     protected $modulename = 'Accounts';
     protected $objectname = 'Account';

@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/array_utils.php';
 
-class SugarArrayTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarArrayTest extends TestCase
 {
     public function testCanFindValueUsingDotNotation() 
     {
@@ -80,4 +82,3 @@ class SugarArrayTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->assertEquals($result2, $expectedArray2);
     }
 }
-

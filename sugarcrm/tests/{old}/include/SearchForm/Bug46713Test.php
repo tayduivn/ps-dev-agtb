@@ -10,10 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once 'include/SearchForm/SearchForm2.php';
 
-class Bug46713Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46713Test extends TestCase
 {
     private $hasExistingCustomSearchFields = false;
     var $searchForm;

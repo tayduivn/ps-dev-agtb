@@ -10,8 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\BaseTestListener;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 if(!defined('sugarEntry')) define('sugarEntry', true);

@@ -9,9 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once('tests/{old}/modules/Users/AuthenticateTest.php');
 
-class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
+class Bug49069Test extends TestCase
 {
 
 	public function setUp()
@@ -89,4 +92,3 @@ class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $_REQUEST['user_password']);
     }
 }
-?>

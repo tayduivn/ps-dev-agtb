@@ -11,11 +11,12 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass EmailAddressesApi
  */
-class EmailAddressesApiTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailAddressesApiTest extends TestCase
 {
     protected $service;
     private $configOptoutBackUp;

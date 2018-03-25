@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
+class SidecarListLayoutMetaDataParserTest extends TestCase
 {
     /**
      * @var SidecarListLayoutMetaDataParser

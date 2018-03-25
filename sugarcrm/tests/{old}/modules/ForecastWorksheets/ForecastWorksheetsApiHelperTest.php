@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'tests/{old}/SugarTestDatabaseMock.php';
 
-class ForecastWorksheetsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastWorksheetsApiHelperTest extends TestCase
 {
     /**
      * @var SugarTestDatabaseMock

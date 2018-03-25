@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use PHPUnit\Framework\TestCase;
 
-class Bug61736Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug61736Test extends TestCase
 {
     /**
      * Holds the vardef after first require so we don't have to keep including the

@@ -10,15 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group ApiTests
  */
-class PersonFilterApiTest extends Sugar_PHPUnit_Framework_TestCase {
-
+class PersonFilterApiTest extends TestCase
+{
     public $personUnifiedSearchApi;
 
     public function setUp() {

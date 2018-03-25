@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('tests/{old}/SugarTestLangPackCreator.php');
 
-class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
+class ImportFieldSanitizeTest extends TestCase
 {
     protected function setUp()
     {

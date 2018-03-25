@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 //FILE SUGARCRM flav=ent ONLY
 
 require_once 'modules/UpgradeWizard/uw_utils.php';
@@ -22,7 +24,7 @@ require_once 'modules/UpgradeWizard/uw_utils.php';
  * @author mgusev@sugarcrm.com
  * @ticked 52396
  */
-class Bug52396Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug52396Test extends TestCase
 {
 
     /**

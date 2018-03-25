@@ -11,13 +11,14 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 /**
  * @coversDefaultClass Importer
  */
-class SugarEmailAddressImportTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarEmailAddressImportTest extends TestCase
 {
     const PRIMARY_EMAIL = 'primary@foo.bar';
     const NON_PRIMARY_EMAIL_OPTED_IN = 'non_primary_opted_in@foo.bar';

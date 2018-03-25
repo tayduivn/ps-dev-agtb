@@ -9,8 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class SilentUpgradeSessionVarsTest extends Sugar_PHPUnit_Framework_TestCase 
+
+use PHPUnit\Framework\TestCase;
+
+class SilentUpgradeSessionVarsTest extends TestCase
 {
     private $varsCacheFileName;
     

@@ -11,13 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #48135
  * Testing that reassigning EAPM modules from one user to another will produce working query
  * @ticket 48135
  */
-class Bug48135Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48135Test extends TestCase
 {
     public $user1;
     public $user2;

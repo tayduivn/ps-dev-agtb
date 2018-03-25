@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug49008Test extends PHPUnit_Framework_TestCase
+class Bug49008Test extends TestCase
 {
     var $sugarWidgetField;
 

@@ -11,9 +11,10 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
-class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
+class ListViewDisplayTest extends TestCase
 {
     private $save_query;
 

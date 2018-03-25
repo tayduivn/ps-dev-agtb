@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
 
@@ -20,7 +21,7 @@ require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
  * @author mgusev@sugarcrm.com
  * @ticked 57902
  */
-class Bug57902Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57902Test extends TestCase
 {
 
     public static function dataProvider()

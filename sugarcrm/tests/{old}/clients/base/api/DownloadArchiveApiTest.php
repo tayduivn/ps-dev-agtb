@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/download_file.php';
 
 /**
@@ -17,7 +19,7 @@ require_once 'include/download_file.php';
  *
  * @group ApiTests
  */
-class DownloadArchiveApiTest extends Sugar_PHPUnit_Framework_TestCase
+class DownloadArchiveApiTest extends TestCase
 {
     /**
      * @var ServiceBase

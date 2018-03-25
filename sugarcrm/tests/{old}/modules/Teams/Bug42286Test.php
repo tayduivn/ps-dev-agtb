@@ -10,8 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-class Bug42286Test extends Sugar_PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+class Bug42286Test extends TestCase
 {
 	var $testUser;
 	
@@ -49,5 +51,3 @@ class Bug42286Test extends Sugar_PHPUnit_Framework_TestCase
 	   $this->assertFalse($exceptionThrown, 'Assert that an exception was not thrown for attempting to remove user off team');
     }  
 }
-
-?>

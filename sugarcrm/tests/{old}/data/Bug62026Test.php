@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/DynamicFields/FieldCases.php';
 require_once 'data/Relationships/SugarRelationship.php';
 
@@ -18,7 +20,7 @@ require_once 'data/Relationships/SugarRelationship.php';
  * @ticket 62026
  * @author avucinic
  */
-class Bug62026Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug62026Test extends TestCase
 {
     private static $custom_field_def = array(
         'calculated'  => 'true',

@@ -10,7 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEEventObserverTest extends PHPUnit_Framework_TestCase 
+
+use PHPUnit\Framework\TestCase;
+
+class PMSEEventObserverTest extends TestCase
 {
     /**
      * Sets up the test data, for example, 

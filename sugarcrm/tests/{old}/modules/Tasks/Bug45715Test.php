@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug45715Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45715Test extends TestCase
 {
 
     public function testFieldsVisibilityToStudioListView()

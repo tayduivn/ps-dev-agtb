@@ -9,9 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
-class SugarFieldEnumTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SugarFieldEnumTest extends TestCase
 {
 	public function setUp()
     {
@@ -83,20 +84,21 @@ class SugarFieldEnumTest extends Sugar_PHPUnit_Framework_TestCase
 }
 
 
-    /**
-     * function that gets called when enum field is being evaluated from testGetEmailTemplateValue() above
-     */
-    function getEnumTestDDVals($numb)
-    {
+/**
+ * function that gets called when enum field is being evaluated from testGetEmailTemplateValue() above
+ */
+function getEnumTestDDVals($numb)
+{
+    $numbArray = array(
+        '' => '',
+        '1' => 'one',
+        '2' => 'two',
+        '3' => 'three',
+    );
 
-       $numbArray = array(
-                '' => '',
-                '1' => 'one',
-                '2' => 'two',
-                '3' => 'three',
-        );
-                if($numb){
-                    return $numbArray[$numb];
-                }
-        return $numbArray;
+    if ($numb) {
+        return $numbArray[$numb];
     }
+
+    return $numbArray;
+}

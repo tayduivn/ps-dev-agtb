@@ -11,13 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug58685Test.php
  * This test tests that the error message is returned after an upload that isn't a true upload but just an empty post
  *
  * @ticket 58685
  */
-class Bug58685Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug58685Test extends TestCase
 {
 	public function setUp()
     {

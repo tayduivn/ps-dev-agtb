@@ -10,13 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 require_once('modules/UpgradeWizard/uw_utils.php');
 
 /**
  * @ticket 40793
  */
-class Bug40793Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug40793Test extends TestCase
 {
 
     const WEBALIZER_DIR_NAME = 'bug40793';

@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @group ApiTests
  */
-class LocaleApiTest extends Sugar_PHPUnit_Framework_TestCase
+class LocaleApiTest extends TestCase
 {
     /**
      * @var LocaleApi

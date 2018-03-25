@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class ProductTest
  * @coversDefaultClass Product
  */
-class ProductTest extends Sugar_PHPUnit_Framework_TestCase
+class ProductTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

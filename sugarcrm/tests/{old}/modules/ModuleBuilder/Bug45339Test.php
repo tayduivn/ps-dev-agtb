@@ -11,13 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #45339
  * Export Customizations Does Not Cleanly Handle Relationships.
  *
  * @ticket 45339
  */
-class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45339Test extends TestCase
 {
 
     private $relationAccountContact = null;

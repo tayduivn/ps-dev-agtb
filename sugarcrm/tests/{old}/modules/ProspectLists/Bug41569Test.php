@@ -11,9 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once "include/export_utils.php";
 
-class Bug41569Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug41569Test extends TestCase
 {
     /**
      * Contains created prospect lists' ids

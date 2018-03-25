@@ -11,8 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
-class RemoveMeTest extends Sugar_PHPUnit_Framework_TestCase
+class RemoveMeTest extends TestCase
 {
     /** @var Campaign */
     private $campaign;

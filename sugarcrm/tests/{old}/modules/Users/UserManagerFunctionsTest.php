@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class UserManagerFunctionsTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class UserManagerFunctionsTest extends TestCase
 {
     private $employee1;
     private $employee2;

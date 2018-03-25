@@ -9,10 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
-class CleanStringTest extends Sugar_PHPUnit_Framework_TestCase
+class CleanStringTest extends TestCase
 {
     public function providerCleanString()
     {
@@ -42,4 +44,3 @@ class CleanStringTest extends Sugar_PHPUnit_Framework_TestCase
 	    }
 	}
 }
-

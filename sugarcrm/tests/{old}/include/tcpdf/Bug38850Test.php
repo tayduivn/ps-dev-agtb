@@ -10,14 +10,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use PHPUnit\Framework\TestCase;
+
 require_once("include/Sugarpdf/sugarpdf_config.php");
 require_once('vendor/tcpdf/config/lang/eng.php');
 require_once('vendor/tcpdf/tcpdf.php');
 /**
  * @ticket 38850
  */
-class Bug38850Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug38850Test extends TestCase
 {
     public function testCanInterjectCodeInTcpdfTag()
     {

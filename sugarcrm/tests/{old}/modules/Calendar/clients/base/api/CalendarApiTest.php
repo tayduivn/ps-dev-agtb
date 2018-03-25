@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
  * @group api
  * @group calendar
  */
-class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
+class CalendarApiTest extends TestCase
 {
     private $api, $calendarApi;
     private $dp;

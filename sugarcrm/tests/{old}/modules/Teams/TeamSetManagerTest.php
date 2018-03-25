@@ -11,12 +11,13 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Teams\TeamSet;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers TeamSetManager
  * @uses \Sugarcrm\Sugarcrm\Security\Teams\TeamSet
  */
-class TeamSetManagerTest extends Sugar_PHPUnit_Framework_TestCase
+class TeamSetManagerTest extends TestCase
 {
     public static function setUpBeforeClass()
     {

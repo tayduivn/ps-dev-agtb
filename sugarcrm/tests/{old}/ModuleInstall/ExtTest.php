@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('ModuleInstall/ModuleInstaller.php');
 
-class ExtTest extends Sugar_PHPUnit_Framework_TestCase
+class ExtTest extends TestCase
 {
     protected $module_installer;
 

@@ -10,11 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers SidecarSubpanelLayoutMetaDataParser
  */
-class SidecarSubpanelLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
+class SidecarSubpanelLayoutMetaDataParserTest extends TestCase
 {
     /**
      * @dataProvider relationshipFieldsProvider

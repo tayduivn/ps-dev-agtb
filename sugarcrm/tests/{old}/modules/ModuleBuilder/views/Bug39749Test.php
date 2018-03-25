@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #39749
@@ -19,7 +20,7 @@
  * TODO: Make this test go away when all modules are out of BWC
  * This test only applies to modules in BWC
  */
-class Bug39749Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug39749Test extends TestCase
 {
 
     public function editModules()

@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/workflow/field_utils.php';
 
 /**
@@ -17,7 +19,7 @@ require_once 'include/workflow/field_utils.php';
  *
  * Test field_utils.php functions
  */
-class FieldUtilsTest extends Sugar_PHPUnit_Framework_TestCase
+class FieldUtilsTest extends TestCase
 {
     /**
      * Test value_calc advanced workflow action

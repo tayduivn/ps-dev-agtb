@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 45335
  */
-class Bug45335Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45335Test extends TestCase
 {
     /**
      * Sets up the fixture, for example, open a network connection.

@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PMSERelatedDependencyWrapperTest extends TestCase
 {    
     protected $loggerMock;
 

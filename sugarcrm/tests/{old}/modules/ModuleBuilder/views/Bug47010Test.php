@@ -10,8 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
-class Bug47010Test extends Sugar_PHPUnit_Framework_TestCase {
+class Bug47010Test extends TestCase
+{
 
     public function setUp() {
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));

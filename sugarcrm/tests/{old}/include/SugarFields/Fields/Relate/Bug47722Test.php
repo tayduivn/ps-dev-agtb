@@ -11,12 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bug #47722
  * 	Imports to Custom Relate Fields Do Not Work
  * @ticket 47722
  */
-class Bug47722Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47722Test extends TestCase
 {
     public $contact;
     

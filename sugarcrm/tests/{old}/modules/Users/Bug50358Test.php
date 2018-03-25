@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Created by JetBrains PhpStorm.
  * User: idymovsky
@@ -19,7 +21,7 @@
  */
 
 
-class Bug50358Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50358Test extends TestCase
 {
     public $view;
     public function setUp()

@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 //BEGIN SUGARCRM flav=ent ONLY
 //END SUGARCRM flav=ent ONLY
 
-class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
+class MetaDataManagerModulesInfoTest extends TestCase
 {
     /**
      * @var TabController Instance of TabController
@@ -378,4 +380,3 @@ EOF;
         }
     }
 }
-

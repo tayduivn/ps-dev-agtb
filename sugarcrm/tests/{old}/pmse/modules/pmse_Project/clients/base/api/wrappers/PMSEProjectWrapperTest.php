@@ -11,7 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PMSEProjectWrapperTest extends TestCase
 {
     protected $projectWrapper;
     protected $mockProject;
@@ -1966,5 +1968,3 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
         $this->projectWrapper->notify();
     }
 }
-
-

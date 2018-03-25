@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @ticket 23816
  *
@@ -20,7 +22,7 @@
  *		3) Save an edit - which will return you back to the detailview
  *
  */
-class Bug23816Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug23816Test extends TestCase
 {
     public function testVcrAfterSave()
     {

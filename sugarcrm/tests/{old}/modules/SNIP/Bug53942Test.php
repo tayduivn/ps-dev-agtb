@@ -11,11 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * @ticket 53942
  */
-class Bug53942Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug53942Test extends TestCase
 {
 	public function testImportTZWithQuotes()
 	{

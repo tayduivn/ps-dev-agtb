@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class StandardDeviationExpressionTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class StandardDeviationExpressionTest extends TestCase
 {
     /**
      * @dataProvider dataProviderTestEvaluate
@@ -29,4 +31,3 @@ class StandardDeviationExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 }
-

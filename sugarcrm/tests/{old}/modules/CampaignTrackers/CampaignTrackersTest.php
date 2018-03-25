@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class CampaignTrackersTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class CampaignTrackersTest extends TestCase
 {
 	var $campaign = 'campaignforcamplogunittest';
 	var $campaign_tracker;

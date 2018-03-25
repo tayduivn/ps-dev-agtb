@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-abstract class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+abstract class MysqlManagerTest extends TestCase
 {
     /**
      * @var MysqlManager

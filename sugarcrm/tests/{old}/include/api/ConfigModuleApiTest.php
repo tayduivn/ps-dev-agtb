@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ConfigModuleApiTest
  * @coversDefaultClass \ConfigModuleApi
  */
-class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ConfigModuleApiTest extends TestCase
 {
     protected $createdBeans = array();
 

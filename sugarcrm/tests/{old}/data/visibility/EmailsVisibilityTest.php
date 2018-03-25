@@ -11,11 +11,12 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass EmailsVisibility
  */
-class EmailsVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
+class EmailsVisibilityTest extends TestCase
 {
     protected static $subject;
 

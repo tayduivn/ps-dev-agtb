@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once('modules/ACLFields/actiondefs.php');
 
 /**
@@ -18,7 +20,7 @@ require_once('modules/ACLFields/actiondefs.php');
  *
  * @ticket 61373
  */
-class Bug61373Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug61373Test extends TestCase
 {
     /**
      * @var ACLRoles

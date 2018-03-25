@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #52757
@@ -19,7 +20,7 @@
  * @author mgusev@sugarcrm.com
  * @ticked 52757
  */
-class Bug52757Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug52757Test extends TestCase
 {
     /**
      * @var Report

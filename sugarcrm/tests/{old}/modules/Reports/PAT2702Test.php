@@ -9,6 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/generic/LayoutManager.php';
 require_once 'modules/Reports/Report.php';
 /**
@@ -17,7 +20,7 @@ require_once 'modules/Reports/Report.php';
  * @author bsitnikovski@sugarcrm.com
  * @ticket PAT-2702
  */
-class PAT2702Test extends Sugar_PHPUnit_Framework_TestCase
+class PAT2702Test extends TestCase
 {
     /**
      * Test if quarter fiscal query filters for DateTime type fields are working properly

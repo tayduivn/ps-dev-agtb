@@ -10,13 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils/file_utils.php';
 
 /**
  * Can't use 'covers' on functions.
  * covers isValidCopyPath
  */
-class IsValidCopyPathTest extends Sugar_PHPUnit_Framework_TestCase
+class IsValidCopyPathTest extends TestCase
 {
     /**
      * @dataProvider isValidCopyPathSuccessProvider
