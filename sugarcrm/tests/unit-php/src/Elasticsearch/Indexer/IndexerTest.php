@@ -12,14 +12,15 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Indexer;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer
  */
-class IndexerTest extends \PHPUnit_Framework_TestCase
+class IndexerTest extends TestCase
 {
     /**
      * @covers ::decodeBeanField

@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\inc\database;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class OracleManagerTest
  *
  * @coversDefaultClass \OracleManager
  */
-class OracleManagerTest extends \PHPUnit_Framework_TestCase
+class OracleManagerTest extends TestCase
 {
     /**
      * @covers ::massageIndexDefs

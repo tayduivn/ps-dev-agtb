@@ -15,24 +15,23 @@ namespace Sugarcrm\SugarcrmTestsUnit\data\Relationships;
 use Link2;
 use LoggerManager;
 use One2MBeanRelationship;
+use PHPUnit\Framework\TestCase;
 use SugarBean;
 use SugarQuery;
 
 /**
  * @coversDefaultClass One2MBeanRelationship
  */
-class One2MBeanRelationshipTest extends \PHPUnit_Framework_TestCase
+class One2MBeanRelationshipTest extends TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
         $GLOBALS['log'] = $this->createMock(LoggerManager::class);
     }
 
     protected function tearDown()
     {
         unset($GLOBALS['log']);
-        parent::tearDown();
     }
 
     public function loadRHSDataProvider()

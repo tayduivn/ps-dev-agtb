@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\Visibility\Filter;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter\EmailsStateFilter;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter\EmailsStateFilter
  */
-class EmailsStateFilterTest extends \PHPUnit_Framework_TestCase
+class EmailsStateFilterTest extends TestCase
 {
     public function buildFilterProvider()
     {

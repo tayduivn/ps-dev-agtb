@@ -12,18 +12,19 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Implement;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\EmailAddressHandler
  *
  */
-class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
+class EmailAddressHandlerTest extends TestCase
 {
     /**
      * @coversNothing

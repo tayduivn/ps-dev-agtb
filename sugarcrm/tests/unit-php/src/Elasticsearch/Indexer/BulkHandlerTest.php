@@ -12,14 +12,15 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Indexer;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Indexer\BulkHandler;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Indexer\BulkHandler;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Indexer\BulkHandler
  */
-class BulkHandlerTest extends \PHPUnit_Framework_TestCase
+class BulkHandlerTest extends TestCase
 {
     /**
      * Trace log messages

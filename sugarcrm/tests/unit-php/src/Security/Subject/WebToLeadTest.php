@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Subject;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Subject\WebToLead;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Subject\WebToLead
  */
-class WebToLeadTest extends \PHPUnit_Framework_TestCase
+class WebToLeadTest extends TestCase
 {
     /**
      * @test

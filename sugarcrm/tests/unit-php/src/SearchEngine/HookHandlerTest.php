@@ -12,16 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine;
 
-use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
-use Sugarcrm\Sugarcrm\SearchEngine\HookHandler;
-
+use PHPUnit\Framework\TestCase;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\HookHandler
  *
  */
-class HookHandlerTest extends \PHPUnit_Framework_TestCase
+class HookHandlerTest extends TestCase
 {
     /**
      * @covers ::indexBean

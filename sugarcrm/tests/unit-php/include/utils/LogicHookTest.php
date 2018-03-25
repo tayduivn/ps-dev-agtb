@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\inc\utils;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -20,7 +21,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  * @coversDefaultClass \LogicHook
  *
  */
-class LogicHookTest extends \PHPUnit_Framework_TestCase
+class LogicHookTest extends TestCase
 {
     /**
      * @var array List of files/directories to cleanup

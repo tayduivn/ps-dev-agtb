@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
@@ -19,7 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Container
  */
-class ContainerTest extends \PHPUnit_Framework_TestCase
+class ContainerTest extends TestCase
 {
     /**
      * @covers ::__get

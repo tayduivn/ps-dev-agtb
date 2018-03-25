@@ -11,16 +11,16 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Success;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\LoadUserOnSessionListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
-
-use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\LoadUserOnSessionListener
  */
-class LoadUserOnSessionListenerTest extends \PHPUnit_Framework_TestCase
+class LoadUserOnSessionListenerTest extends TestCase
 {
     /**
      * @covers ::execute

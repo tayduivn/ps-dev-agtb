@@ -12,16 +12,17 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Query;
 
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatchQuery
  *
  */
-class MultiMatchQueryTest extends \PHPUnit_Framework_TestCase
+class MultiMatchQueryTest extends TestCase
 {
     /**
      * @covers ::setOperator

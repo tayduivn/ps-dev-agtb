@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\visibility;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @coversDefaultClass \EmailsVisibility
  */
-class EmailsVisibilityTest extends \PHPUnit_Framework_TestCase
+class EmailsVisibilityTest extends TestCase
 {
     public function doesNotAugmentTheQueryForAdminsProvider()
     {

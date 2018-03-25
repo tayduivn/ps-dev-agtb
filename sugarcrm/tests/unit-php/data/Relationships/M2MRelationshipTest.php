@@ -12,10 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\Relationships;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass M2MRelationship
  */
-class M2MRelationshipTest extends \PHPUnit_Framework_TestCase
+class M2MRelationshipTest extends TestCase
 {
 
     /**
@@ -25,7 +27,6 @@ class M2MRelationshipTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         $GLOBALS['log'] = $this->getMockBuilder('LoggerManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -43,7 +44,6 @@ class M2MRelationshipTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($GLOBALS['log']);
-        parent::tearDown();
     }
 
     public function loadDataProvider()

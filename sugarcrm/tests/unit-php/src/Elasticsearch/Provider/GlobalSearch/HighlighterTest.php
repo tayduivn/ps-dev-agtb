@@ -11,13 +11,14 @@
  */
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter
  */
-class HighlighterTest extends \PHPUnit_Framework_TestCase
+class HighlighterTest extends TestCase
 {
     /**
      * @covers ::__construct

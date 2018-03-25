@@ -12,15 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Password\Backend;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Password\Backend\Native;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Backend\Native
  *
  */
-class NativeTest extends \PHPUnit_Framework_TestCase
+class NativeTest extends TestCase
 {
     /**
      * Check that default is properly set and ensure that the defaults uses

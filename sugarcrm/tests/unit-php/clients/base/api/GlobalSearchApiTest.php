@@ -12,14 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\clients\base\api;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \GlobalSearchApi
  */
-class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
+class GlobalSearchApiTest extends TestCase
 {
     /**
      * @covers ::parseArguments

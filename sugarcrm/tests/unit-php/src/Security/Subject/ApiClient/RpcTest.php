@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Subject\ApiClient;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rpc;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rpc
  */
-class RpcTest extends \PHPUnit_Framework_TestCase
+class RpcTest extends TestCase
 {
     /**
      * @test

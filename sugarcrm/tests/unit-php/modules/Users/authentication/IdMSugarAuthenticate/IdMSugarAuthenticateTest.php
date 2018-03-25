@@ -12,8 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSugarAuthenticate;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
-
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
@@ -22,7 +22,7 @@ require_once 'include/utils.php';
 /**
  * @coversDefaultClass \IdMSugarAuthenticate
  */
-class IdMSugarAuthenticateTest extends \PHPUnit_Framework_TestCase
+class IdMSugarAuthenticateTest extends TestCase
 {
 
     /**

@@ -12,15 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker
  */
-class SugarOIDCUserCheckerTest extends \PHPUnit_Framework_TestCase
+class SugarOIDCUserCheckerTest extends TestCase
 {
     /**
      * @var SugarLocalUserProvider | \PHPUnit_Framework_MockObject_MockObject

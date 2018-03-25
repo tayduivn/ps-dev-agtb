@@ -12,10 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \TimeDate
  */
-class TimeDateTest extends \PHPUnit_Framework_TestCase
+class TimeDateTest extends TestCase
 {
     public function getRegularExpressionProvider()
     {

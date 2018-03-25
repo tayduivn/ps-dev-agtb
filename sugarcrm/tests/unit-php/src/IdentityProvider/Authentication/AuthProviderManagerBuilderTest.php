@@ -11,15 +11,15 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
-
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder
  */
-class AuthProviderManagerBuilderTest extends \PHPUnit_Framework_TestCase
+class AuthProviderManagerBuilderTest extends TestCase
 {
     /**
      * @covers ::buildAuthProviders

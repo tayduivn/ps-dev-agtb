@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints as AssertBasic;
@@ -21,7 +22,7 @@ use Symfony\Component\Validator\Constraints as AssertBasic;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder
  *
  */
-class ConstraintBuilderTest extends \PHPUnit_Framework_TestCase
+class ConstraintBuilderTest extends TestCase
 {
     /**
      * @var ConstraintBuilder

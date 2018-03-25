@@ -12,10 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\acl;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \SugarACLEmails
  */
-class SugarACLEmailsTest extends \PHPUnit_Framework_TestCase
+class SugarACLEmailsTest extends TestCase
 {
     public function checkAccessNoTestProvider()
     {

@@ -13,12 +13,13 @@
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Provider;
 
 use League\OAuth2\Client\Token\AccessToken;
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
@@ -26,7 +27,7 @@ use Symfony\Component\Security\Core\User\UserCheckerInterface;
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider
  */
-class OIDCAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
+class OIDCAuthenticationProviderTest extends TestCase
 {
 
     /**

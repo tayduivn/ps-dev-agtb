@@ -11,14 +11,14 @@
  */
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User\Mapping;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarSAMLUserMapping;
-
 use OneLogin_Saml2_Response;
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarSAMLUserMapping;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping
  */
-class SugarSAMLUserMappingTest extends \PHPUnit_Framework_TestCase
+class SugarSAMLUserMappingTest extends TestCase
 {
     /**
      * @var OneLogin_Saml2_Response
@@ -30,8 +30,6 @@ class SugarSAMLUserMappingTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->samlResponse = $this->getMockBuilder(OneLogin_Saml2_Response::class)
             ->disableOriginalConstructor()
             ->getMock();

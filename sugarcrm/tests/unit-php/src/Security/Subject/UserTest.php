@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Subject;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
 use Sugarcrm\Sugarcrm\Util\Uuid;
@@ -20,7 +21,7 @@ use User as SugarUser;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Subject\User
  */
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends TestCase
 {
     /**
      * @test

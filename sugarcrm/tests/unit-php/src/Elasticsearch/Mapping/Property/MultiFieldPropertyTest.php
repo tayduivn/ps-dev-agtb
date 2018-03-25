@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Mapping\Property;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
  * @coversDefaultClass Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty
  *
  */
-class MultiFieldPropertyTest extends \PHPUnit_Framework_TestCase
+class MultiFieldPropertyTest extends TestCase
 {
     /**
      * @covers ::setType

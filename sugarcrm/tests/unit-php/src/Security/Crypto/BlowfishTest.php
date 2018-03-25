@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Crypto;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Crypto\Blowfish
  */
-class BlowfishTest extends \PHPUnit_Framework_TestCase
+class BlowfishTest extends TestCase
 {
     public function encodeDataProvider()
     {

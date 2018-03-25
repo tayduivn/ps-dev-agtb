@@ -11,20 +11,20 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\Currencies\Ext\LogicHooks;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \CurrencyHooks
  */
-class CurrencyHooksTest extends \PHPUnit_Framework_TestCase
+class CurrencyHooksTest extends TestCase
 {
-    public function setup()
+    protected function setUp()
     {
         \SugarAutoLoader::load('../../modules/Currencies/Ext/LogicHooks/CurrencyHooks.php');
         \SugarAutoLoader::load('../../modules/Currencies/Currency.php');
         \SugarAutoLoader::load('../../include/SugarQueue/SugarJobQueue.php');
         \SugarAutoLoader::load('../../modules/SchedulersJob/SchedulersJob.php');
-        parent::setup();
     }
-
 
     /**
      * @dataProvider updateCurrencyConversionProvider

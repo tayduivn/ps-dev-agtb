@@ -12,13 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass SugarBean
  */
-class SugarBeanTest extends \PHPUnit_Framework_TestCase
+class SugarBeanTest extends TestCase
 {
     /**
      * @covers ::loadAutoIncrementValues()

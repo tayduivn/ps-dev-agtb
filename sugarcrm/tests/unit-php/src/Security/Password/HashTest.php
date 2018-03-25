@@ -12,15 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Password;
 
-use Sugarcrm\Sugarcrm\Security\Password\Hash;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Password\Backend\Native;
+use Sugarcrm\Sugarcrm\Security\Password\Hash;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Hash
  *
  */
-class HashTest extends \PHPUnit_Framework_TestCase
+class HashTest extends TestCase
 {
     /**
      * @covers ::verify

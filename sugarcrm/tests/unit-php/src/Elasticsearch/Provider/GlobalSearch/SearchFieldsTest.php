@@ -12,16 +12,17 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchField;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields
  *
  */
-class SearchFieldsTest extends \PHPUnit_Framework_TestCase
+class SearchFieldsTest extends TestCase
 {
     /**
      * @covers ::__construct

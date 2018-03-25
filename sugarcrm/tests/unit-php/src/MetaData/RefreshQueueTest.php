@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\MetaData;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\MetaData\RefreshQueue;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\MetaData\RefreshQueue
  */
-class RefreshQueueTest extends \PHPUnit_Framework_TestCase
+class RefreshQueueTest extends TestCase
 {
     /**
      * @var RefreshQueue

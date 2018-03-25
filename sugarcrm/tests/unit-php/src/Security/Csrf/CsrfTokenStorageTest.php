@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Csrf;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenStorage;
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
 
@@ -20,7 +21,7 @@ use Sugarcrm\Sugarcrm\Session\SessionStorage;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenStorage
  *
  */
-class CsrfTokenStorageTest extends \PHPUnit_Framework_TestCase
+class CsrfTokenStorageTest extends TestCase
 {
     protected function setUp()
     {

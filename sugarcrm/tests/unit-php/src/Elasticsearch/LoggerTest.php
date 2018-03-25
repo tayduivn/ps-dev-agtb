@@ -12,15 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Logger;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Logger
  *
  */
-class LoggerTest extends \PHPUnit_Framework_TestCase
+class LoggerTest extends TestCase
 {
 
     /**

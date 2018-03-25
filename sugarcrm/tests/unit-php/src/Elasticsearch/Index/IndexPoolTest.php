@@ -12,15 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Index;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexPool;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexPool
  *
  */
-class IndexPoolTest extends \PHPUnit_Framework_TestCase
+class IndexPoolTest extends TestCase
 {
     /**
      * @covers ::registerStrategies

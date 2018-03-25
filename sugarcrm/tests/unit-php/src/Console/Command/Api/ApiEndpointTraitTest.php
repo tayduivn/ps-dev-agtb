@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Console\Command\Api;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Command\Api\ApiEndpointTrait
  *
  */
-class ApiEndpointTraitTest extends \PHPUnit_Framework_TestCase
+class ApiEndpointTraitTest extends TestCase
 {
     /**
      * @covers ::initApi

@@ -12,20 +12,19 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\OutboundEmail;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \OutboundEmail
  */
-class OutboundEmailTest extends \PHPUnit_Framework_TestCase
+class OutboundEmailTest extends TestCase
 {
     private $bean;
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->bean = $this->createPartialMock('\\OutboundEmail', []);
         $this->bean->field_defs = [
             'id' => [
@@ -185,7 +184,6 @@ class OutboundEmailTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($GLOBALS['current_user']);
-        parent::tearDown();
     }
 
     /**

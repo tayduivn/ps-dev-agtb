@@ -12,12 +12,13 @@
  */
 
 // This is needed because the class we are testing has a protected field.
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \PMSEBusinessRuleConversor
  */
-class PMSEBusinessRuleConversorTest extends \PHPUnit_Framework_TestCase
+class PMSEBusinessRuleConversorTest extends TestCase
 {
 
     /**

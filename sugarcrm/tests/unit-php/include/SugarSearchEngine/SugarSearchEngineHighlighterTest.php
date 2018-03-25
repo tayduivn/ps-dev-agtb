@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarSearchEngine;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  *
  * @coversDefaultClass \SugarSearchEngineHighlighter
  *
  */
-class SugarSearchEngineHighlighterTest extends \PHPUnit_Framework_TestCase
+class SugarSearchEngineHighlighterTest extends TestCase
 {
     /**
      * @covers ::processHighlightText

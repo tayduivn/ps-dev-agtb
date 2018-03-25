@@ -12,14 +12,15 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User\Mapping;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarOidcUserMapping;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\IdentityProvider\Authentication\User as IdmUser;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarOidcUserMapping;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarOidcUserMapping
  */
-class SugarOidcUserMappingTest extends \PHPUnit_Framework_TestCase
+class SugarOidcUserMappingTest extends TestCase
 {
     /**
      * @var SugarOidcUserMapping

@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdpConfig;
 
 /**
  * @coversDefaultClass \UsersApiHelper
  */
-class UsersApiHelperTest extends \PHPUnit_Framework_TestCase
+class UsersApiHelperTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject | \UsersApiHelper

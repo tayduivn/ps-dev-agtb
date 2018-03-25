@@ -12,14 +12,15 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine;
 
-use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
  */
-class SearchEngineTest extends \PHPUnit_Framework_TestCase
+class SearchEngineTest extends TestCase
 {
     /**
      * @covers ::hasCapability

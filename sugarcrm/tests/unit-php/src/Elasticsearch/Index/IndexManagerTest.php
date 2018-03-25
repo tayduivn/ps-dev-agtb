@@ -12,17 +12,17 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Index;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexManager;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
+use Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexManager;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexManager
  *
  */
-class IndexManagerTest extends \PHPUnit_Framework_TestCase
+class IndexManagerTest extends TestCase
 {
     /**
      * @covers ::getIndexSettingsFromConfig

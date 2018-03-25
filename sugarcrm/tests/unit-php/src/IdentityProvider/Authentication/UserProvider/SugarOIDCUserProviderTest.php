@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\UserProvider;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUser
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider
  */
-class SugarOIDCUserProviderTest extends \PHPUnit_Framework_TestCase
+class SugarOIDCUserProviderTest extends TestCase
 {
     /**
      * @var SugarOIDCUserProvider

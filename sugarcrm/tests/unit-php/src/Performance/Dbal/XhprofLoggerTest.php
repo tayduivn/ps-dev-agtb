@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Performance\Dbal;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger
  */
-class DbalXhprofLoggerTest extends \PHPUnit_Framework_TestCase
+class DbalXhprofLoggerTest extends TestCase
 {
     /**
      * @see testStartQuery

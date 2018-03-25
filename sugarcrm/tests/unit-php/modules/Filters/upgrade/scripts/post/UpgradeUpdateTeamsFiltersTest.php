@@ -11,12 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Filters/upgrade/scripts/post/7_UpdateTeamsFilters.php';
 
 /**
  * @coversDefaultClass \SugarUpgradeUpdateTeamsFilters
  */
-class UpgradeUpdateTeamsFiltersTest extends \PHPUnit_Framework_TestCase
+class UpgradeUpdateTeamsFiltersTest extends TestCase
 {
     /**
      * @dataProvider providerTestConvertTeamsFilterValue

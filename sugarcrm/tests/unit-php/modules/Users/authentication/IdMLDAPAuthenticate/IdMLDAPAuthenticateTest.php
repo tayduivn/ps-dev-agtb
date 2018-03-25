@@ -11,18 +11,17 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMLDAPAuthenticate;
 
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
-
-use Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
-
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * @coversDefaultClass \IdMLDAPAuthenticate
  */
-class IdMLDAPAuthenticateTest extends \PHPUnit_Framework_TestCase
+class IdMLDAPAuthenticateTest extends TestCase
 {
     /**
      * @covers ::loginAuthenticate

@@ -11,12 +11,13 @@
  */
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\acl;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @coversDefaultClass \SugarACLDraftEmails
  */
-class SugarACLDraftEmailsTest extends \PHPUnit_Framework_TestCase
+class SugarACLDraftEmailsTest extends TestCase
 {
     public function checkViewAccessProvider()
     {

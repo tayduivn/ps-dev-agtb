@@ -11,12 +11,13 @@
  */
 namespace Sugarcrm\SugarcrmTestsUnit\modules\Reports\clients\base\api;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \ReportsApi
  */
-class ReportsApiTest extends \PHPUnit_Framework_TestCase
+class ReportsApiTest extends TestCase
 {
     /**
      * @covers ::getGroupFilterFieldDef

@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Adapter;
 
 use Elastica\Response;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Logger;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
@@ -23,7 +24,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client
  *
  */
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
     protected $config = array('host' => 'localhost', 'port' => '9200');
     protected $logger;

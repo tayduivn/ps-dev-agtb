@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Password;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Password\Salt;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Security\Password\Salt;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Salt
  *
  */
-class SaltTest extends \PHPUnit_Framework_TestCase
+class SaltTest extends TestCase
 {
     /**
      * @covers ::generate

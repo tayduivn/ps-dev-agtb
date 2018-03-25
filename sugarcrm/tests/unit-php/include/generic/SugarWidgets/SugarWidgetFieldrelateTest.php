@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\inc\generic\SugarWidgets;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class SugarWidgetFieldrelateTest
  *
  * @coversDefaultClass \SugarWidgetFieldRelate
  */
-class SugarWidgetFieldrelateTest extends \PHPUnit_Framework_TestCase
+class SugarWidgetFieldrelateTest extends TestCase
 {
     /**
      * @covers ::queryFilterEquals

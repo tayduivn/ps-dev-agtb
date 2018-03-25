@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Security;
 
 use DomainException;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject;
@@ -21,7 +22,7 @@ use Sugarcrm\Sugarcrm\Security\Subject;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Context
  * @covers \Sugarcrm\Sugarcrm\Security\Context\SubjectAttributes
  */
-class ContextTest extends \PHPUnit_Framework_TestCase
+class ContextTest extends TestCase
 {
     /**
      * @var Context

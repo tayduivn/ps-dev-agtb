@@ -12,17 +12,17 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Mailer;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \SMTPProxy
  */
-class SMTPProxyTest extends \PHPUnit_Framework_TestCase
+class SMTPProxyTest extends TestCase
 {
     protected function tearDown()
     {
         unset($GLOBALS['log']);
-        parent::tearDown();
     }
 
     public function noErrorProvider()

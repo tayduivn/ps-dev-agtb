@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\Files;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 /**
@@ -20,7 +21,7 @@ use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Files\FileLoader
  *
  */
-class FileLoaderTest extends \PHPUnit_Framework_TestCase
+class FileLoaderTest extends TestCase
 {
     /**
      * List of test files created

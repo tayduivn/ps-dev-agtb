@@ -11,16 +11,16 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Success;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UpdateUserLastLoginListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
-
-use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UpdateUserLastLoginListener
  */
-class UpdateUserLastLoginListenerTest extends \PHPUnit_Framework_TestCase
+class UpdateUserLastLoginListenerTest extends TestCase
 {
     /**
      * @var UpdateUserLastLoginListener
@@ -50,10 +50,8 @@ class UpdateUserLastLoginListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @inheritdoc
      */
-    public function setUp()
+    protected function setUp()
     {
-        parent::setUp();
-
         $this->sugarUser = $this->createMock(\User::class);
 
         $this->user = new User('test', 'test', []);

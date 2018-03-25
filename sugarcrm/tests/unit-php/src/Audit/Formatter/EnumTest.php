@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Audit\Formatter;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Formatter\Enum;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Audit\Formatter\Enum;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\Formatter\Email
  *
  */
-class EnumTest extends \PHPUnit_Framework_TestCase
+class EnumTest extends TestCase
 {
     /**
      * @covers ::formatRows

@@ -12,10 +12,11 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Console\CommandRegistry;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Console\CommandRegistry\CommandRegistry;
 use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\InstanceCommandA;
-use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\StandaloneCommandA;
 use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\InstanceStandaloneCommandA;
+use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\StandaloneCommandA;
 use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\SymfonyCommandA;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
@@ -24,7 +25,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\CommandRegistry\CommandRegistry
  *
  */
-class CommandRegistryTest extends \PHPUnit_Framework_TestCase
+class CommandRegistryTest extends TestCase
 {
     /**
      * @var CommandRegistry

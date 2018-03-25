@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Mapping;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingManager
  *
  */
-class MappingManagerTest extends \PHPUnit_Framework_TestCase
+class MappingManagerTest extends TestCase
 {
     /**
      * @covers ::buildMapping

@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Audit\Formatter;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Formatter\Date;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Audit\Formatter\Date;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\Formatter\Email
  *
  */
-class DateTest extends \PHPUnit_Framework_TestCase
+class DateTest extends TestCase
 {
     /**
      * @covers ::formatRows

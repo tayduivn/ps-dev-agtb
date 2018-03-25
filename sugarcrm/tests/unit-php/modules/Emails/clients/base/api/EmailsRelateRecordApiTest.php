@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\Emails\clients\base\api;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 require_once 'include/utils.php';
@@ -19,7 +20,7 @@ require_once 'include/utils.php';
 /**
  * @coversDefaultClass \EmailsRelateRecordApi
  */
-class EmailsRelateRecordApiTest extends \PHPUnit_Framework_TestCase
+class EmailsRelateRecordApiTest extends TestCase
 {
     public function linkProvider()
     {

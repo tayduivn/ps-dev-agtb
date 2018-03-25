@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\InputValidation\Sanitizer;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\Sanitizer;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\Sanitizer;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\Sanitizer
  *
  */
-class SanitizerTest extends \PHPUnit_Framework_TestCase
+class SanitizerTest extends TestCase
 {
     /**
      * @covers ::sanitize

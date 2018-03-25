@@ -12,10 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Dbal\Query;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder
  */
-class QueryBuilderTest extends \PHPUnit_Framework_TestCase
+class QueryBuilderTest extends TestCase
 {
     /**
      * @covers ::importSubQuery

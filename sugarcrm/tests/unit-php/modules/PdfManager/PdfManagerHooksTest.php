@@ -11,16 +11,17 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\PdfManager;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \PdfManagerHooks
  */
-class PdfManagerHooksTest extends \PHPUnit_Framework_TestCase
+class PdfManagerHooksTest extends TestCase
 {
-    public function setup()
+    protected function setUp()
     {
         \SugarAutoLoader::load('../../modules/PdfManager/PdfManagerHooks.php');
         \SugarAutoLoader::load('../../modules/PdfManager/PdfManager.php');
-        parent::setup();
     }
 
     /**

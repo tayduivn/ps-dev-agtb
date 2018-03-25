@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\modules\Emails;
 
 use Email;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
@@ -20,14 +21,12 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 /**
  * @coversDefaultClass \Email
  */
-class EmailTest extends \PHPUnit_Framework_TestCase
+class EmailTest extends TestCase
 {
     private $mockDb;
 
     protected function setUp()
     {
-        parent::setUp();
-
         $levels = \LoggerManager::getLoggerLevels();
         $levels = array_keys($levels);
         $GLOBALS['log'] = $this->createPartialMock(\stdClass::class, $levels);
@@ -61,7 +60,6 @@ class EmailTest extends \PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
         unset($GLOBALS['timedate']);
         unset($GLOBALS['log']);
-        parent::tearDown();
     }
 
     public function saveAndSetDateSentProvider()

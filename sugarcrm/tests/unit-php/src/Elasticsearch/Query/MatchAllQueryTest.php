@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Query;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\MatchAllQuery
  *
  */
-class MatchAllQueryTest extends \PHPUnit_Framework_TestCase
+class MatchAllQueryTest extends TestCase
 {
     /**
      * @covers ::build

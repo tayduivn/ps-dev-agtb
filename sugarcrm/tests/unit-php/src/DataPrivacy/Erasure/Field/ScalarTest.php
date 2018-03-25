@@ -12,13 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\DataPrivacy\Erasure\Field;
 
+use PHPUnit\Framework\TestCase;
 use SugarBean;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Scalar as Field;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Scalar
  */
-class ScalarTest extends \PHPUnit_Framework_TestCase
+class ScalarTest extends TestCase
 {
     /**
      * @test

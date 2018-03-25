@@ -11,12 +11,13 @@
  */
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Subject;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Subject\Installer;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Subject\Installer
  */
-class InstallerTest extends \PHPUnit_Framework_TestCase
+class InstallerTest extends TestCase
 {
     /**
      * @test

@@ -12,15 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Password\Backend;
 
-use Sugarcrm\Sugarcrm\Security\Password\Salt;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Password\Backend\Sha2;
+use Sugarcrm\Sugarcrm\Security\Password\Salt;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Password\Backend\Sha2
  *
  */
-class Sha2Test extends \PHPUnit_Framework_TestCase
+class Sha2Test extends TestCase
 {
     /**
      * Hash testing with predictable salt

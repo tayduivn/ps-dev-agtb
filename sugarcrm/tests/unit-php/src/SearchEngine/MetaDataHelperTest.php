@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine\MetaDataHelper;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
  *
  */
-class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
+class MetaDataHelperTest extends TestCase
 {
     /**
      * @covers ::getFtsFields

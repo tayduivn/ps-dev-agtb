@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\DataPrivacy\Erasure\Field;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Email as Field;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Email
  */
-class EmailTest extends \PHPUnit_Framework_TestCase
+class EmailTest extends TestCase
 {
     /**
      * @test

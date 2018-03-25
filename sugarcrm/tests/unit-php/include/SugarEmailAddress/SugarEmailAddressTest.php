@@ -12,10 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarEmailAddress;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \SugarEmailAddress
  */
-class SugarEmailAddressTest extends \PHPUnit_Framework_TestCase
+class SugarEmailAddressTest extends TestCase
 {
     /**
      * @covers       removeAddressById

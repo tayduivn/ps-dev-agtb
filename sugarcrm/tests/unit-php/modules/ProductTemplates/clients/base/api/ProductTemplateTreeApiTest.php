@@ -11,19 +11,18 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\ProductTemplates\clients\base\api;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \ProductTemplateTreeApi
  */
-class ProductTemplateTreeApiTest extends \PHPUnit_Framework_TestCase
+class ProductTemplateTreeApiTest extends TestCase
 {
-    public function setup()
+    protected function setUp()
     {
         \SugarAutoLoader::load('../../modules/ProductTemplates/clients/base/api/ProductTemplateApi.php');
         \SugarAutoLoader::load('../../include/SugarObjects/SugarConfig.php');
-
-        parent::setup();
     }
 
     /**

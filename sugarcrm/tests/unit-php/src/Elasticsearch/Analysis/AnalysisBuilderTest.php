@@ -12,16 +12,17 @@
 
 namespace Sugarcrm\Sugarcrm\TestsUnit\Elasticsearch\Analysis;
 
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder
  *
  */
-class AnalysisBuilderTest extends \PHPUnit_Framework_TestCase
+class AnalysisBuilderTest extends TestCase
 {
     /**
      * @covers ::addCustomAnalyzer

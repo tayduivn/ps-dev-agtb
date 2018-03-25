@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Audit\Change;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Change\Scalar;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Audit\Change\Scalar;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\FieldChangeList
  *
  */
-class ScalarTest extends \PHPUnit_Framework_TestCase
+class ScalarTest extends TestCase
 {
     /**
      * @covers ::fromChanges

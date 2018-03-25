@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\api;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  *
  * @coversDefaultClass \ServiceDictionaryRest
  *
  */
-class ServiceDictionaryTest extends \PHPUnit_Framework_TestCase
+class ServiceDictionaryTest extends TestCase
 {
     /**
      * @covers ::registerEndpoints

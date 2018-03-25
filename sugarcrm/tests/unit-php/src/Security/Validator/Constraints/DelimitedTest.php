@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Delimited;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Delimited;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\Delimited
  *
  */
-class DelimitedTest extends \PHPUnit_Framework_TestCase
+class DelimitedTest extends TestCase
 {
     /**
      * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException

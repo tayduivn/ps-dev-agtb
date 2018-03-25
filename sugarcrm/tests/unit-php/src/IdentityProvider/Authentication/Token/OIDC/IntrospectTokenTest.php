@@ -11,12 +11,13 @@
  */
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Token\OIDC;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken
  */
-class IntrospectTokenTest extends \PHPUnit_Framework_TestCase
+class IntrospectTokenTest extends TestCase
 {
     /**
      * @covers ::getCredentials

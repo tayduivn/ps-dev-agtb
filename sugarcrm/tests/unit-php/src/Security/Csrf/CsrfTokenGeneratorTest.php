@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Csrf;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenGenerator;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenGenerator;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenGenerator
  *
  */
-class CsrfTokenGeneratorTest extends \PHPUnit_Framework_TestCase
+class CsrfTokenGeneratorTest extends TestCase
 {
     /**
      * @covers ::generateToken

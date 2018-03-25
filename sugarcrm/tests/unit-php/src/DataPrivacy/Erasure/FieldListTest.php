@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\DataPrivacy\Erasure;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use SugarBean;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Email;
@@ -22,7 +23,7 @@ use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldChangeList
  */
-class FieldListTest extends \PHPUnit_Framework_TestCase
+class FieldListTest extends TestCase
 {
     /**
      * @test

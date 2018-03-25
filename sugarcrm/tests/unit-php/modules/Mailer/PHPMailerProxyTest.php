@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Mailer;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \PHPMailerProxy
  */
-class PHPMailerProxyTest extends \PHPUnit_Framework_TestCase
+class PHPMailerProxyTest extends TestCase
 {
     /**
      * @covers ::smtpConnect

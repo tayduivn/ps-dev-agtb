@@ -12,15 +12,15 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\InboundEmail;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \InboundEmail
  */
-class InboundEmailTest extends \PHPUnit_Framework_TestCase
+class InboundEmailTest extends TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
-
         $levels = \LoggerManager::getLoggerLevels();
         $levels = array_keys($levels);
         $GLOBALS['log'] = $this->createPartialMock(\stdClass::class, $levels);
@@ -32,7 +32,6 @@ class InboundEmailTest extends \PHPUnit_Framework_TestCase
     {
         unset($GLOBALS['log']);
         unset($GLOBALS['locale']);
-        parent::tearDown();
     }
 
     public function decodeHeaderProvider()

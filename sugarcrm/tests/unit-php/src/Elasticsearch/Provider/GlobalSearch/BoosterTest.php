@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster
  *
  */
-class BoosterTest extends \PHPUnit_Framework_TestCase
+class BoosterTest extends TestCase
 {
     /**
      * @covers ::setWeighted

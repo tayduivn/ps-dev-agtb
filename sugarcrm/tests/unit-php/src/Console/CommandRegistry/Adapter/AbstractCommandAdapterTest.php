@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Console\CommandRegistry\Adapter;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\SymfonyCommandA;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\SymfonyCommandA;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\CommandRegistry\Adapter\AbstractCommandAdapter
  *
  */
-class AbstractCommandAdapterTest extends \PHPUnit_Framework_TestCase
+class AbstractCommandAdapterTest extends TestCase
 {
     /**
      * @covers ::__construct

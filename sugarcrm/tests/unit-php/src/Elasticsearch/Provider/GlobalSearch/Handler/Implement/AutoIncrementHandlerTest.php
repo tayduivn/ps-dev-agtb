@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Implement;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\AutoIncrementHandler
  *
  */
-class AutoIncrementHandlerTest extends \PHPUnit_Framework_TestCase
+class AutoIncrementHandlerTest extends TestCase
 {
     /**
      * @coversNothing

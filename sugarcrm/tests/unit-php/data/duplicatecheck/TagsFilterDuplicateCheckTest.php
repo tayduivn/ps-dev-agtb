@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass TagsFilterDuplicateCheck
  */
-class TagsFilterDuplicateCheckTest extends \PHPUnit_Framework_TestCase
+class TagsFilterDuplicateCheckTest extends TestCase
 {
     /**
      * @covers ::getValueFromField

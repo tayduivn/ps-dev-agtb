@@ -13,13 +13,14 @@
 namespace Sugarcrm\Sugarcrm\Tests\Logger;
 
 use Monolog\Logger;
+use PHPUnit\Framework\TestCase;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\Logger\Config;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\Logger\Config
  */
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     protected function tearDown()
     {

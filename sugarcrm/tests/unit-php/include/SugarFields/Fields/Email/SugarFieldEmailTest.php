@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarFields\Fields\Email;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @coversDefaultClass \SugarFieldEmail
  */
-class SugarFieldEmailTest extends \PHPUnit_Framework_TestCase
+class SugarFieldEmailTest extends TestCase
 {
     /**
      * @covers ::formatEmails

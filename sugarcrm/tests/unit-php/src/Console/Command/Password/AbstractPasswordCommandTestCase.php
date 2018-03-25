@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Console\Command\Password;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  *
  * Password Command Test Case
  *
  */
-abstract class AbstractPasswordCommandTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractPasswordCommandTestCase extends TestCase
 {
     /**
      * @var string

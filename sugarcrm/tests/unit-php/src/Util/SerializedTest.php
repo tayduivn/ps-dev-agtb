@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Util;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Serialized
  *
  */
-class SerializedTest extends \PHPUnit_Framework_TestCase
+class SerializedTest extends TestCase
 {
     /**
      * @covers ::unserialize

@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Crypto;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
@@ -20,7 +21,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG
  *
  */
-class CSPRNGTest extends \PHPUnit_Framework_TestCase
+class CSPRNGTest extends TestCase
 {
     /**
      * @covers ::generate

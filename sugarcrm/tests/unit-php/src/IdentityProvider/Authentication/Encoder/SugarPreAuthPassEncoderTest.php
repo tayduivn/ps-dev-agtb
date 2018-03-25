@@ -11,12 +11,13 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Encoder;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Encoder\SugarPreAuthPassEncoder;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Encoder\SugarPreAuthPassEncoder
  */
-class SugarPreAuthPassEncoderTest extends \PHPUnit_Framework_TestCase
+class SugarPreAuthPassEncoderTest extends TestCase
 {
     /**
      * @var SugarPreAuthPassEncoder
@@ -29,7 +30,6 @@ class SugarPreAuthPassEncoderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->encoder = new SugarPreAuthPassEncoder();
-        parent::setUp();
     }
 
     /**

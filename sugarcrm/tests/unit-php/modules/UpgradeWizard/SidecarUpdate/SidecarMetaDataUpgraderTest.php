@@ -11,26 +11,27 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\UpgradeWizard\SidecarUpdate;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \SidecarMetaDataUpgrader
  */
-class SidecarMetaDataUpgraderTest extends \PHPUnit_Framework_TestCase
+class SidecarMetaDataUpgraderTest extends TestCase
 {
 
     protected $beanlist;
     protected $bwcModules;
 
-    public function setup()
+    protected function setUp()
     {
         global $bwcModules;
         \SugarAutoLoader::load('../../modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php');
         \SugarAutoLoader::load('../../include/utils.php');
         $this->beanlist = array_key_exists('beanlist', $GLOBALS)? $GLOBALS['beanlist'] : null;
         $this->bwcModules = $bwcModules;
-        parent::setup();
     }
 
-    public function teardown()
+    protected function tearDown()
     {
         global $bwcModules;
 
@@ -39,8 +40,6 @@ class SidecarMetaDataUpgraderTest extends \PHPUnit_Framework_TestCase
         }
 
         $bwcModules = $this->bwcModules;
-
-        parent::teardown();
     }
 
     /**

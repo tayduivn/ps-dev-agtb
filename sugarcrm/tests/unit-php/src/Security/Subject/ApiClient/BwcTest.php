@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Subject\ApiClient;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Bwc;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Bwc
  */
-class BwcTest extends \PHPUnit_Framework_TestCase
+class BwcTest extends TestCase
 {
     /**
      * @test

@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Query\Parser;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\TermParserHelper
  *
  */
-class TermParserHelperTest extends \PHPUnit_Framework_TestCase
+class TermParserHelperTest extends TestCase
 {
     /**
      * @covers ::isOperator

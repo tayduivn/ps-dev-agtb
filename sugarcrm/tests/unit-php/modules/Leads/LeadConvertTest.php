@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\LeadConvert;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \LeadConvert
  */
-class LeadConvertTest extends \PHPUnit_Framework_TestCase
+class LeadConvertTest extends TestCase
 {
     /**
      * @covers ::performDataPrivacyTransfer

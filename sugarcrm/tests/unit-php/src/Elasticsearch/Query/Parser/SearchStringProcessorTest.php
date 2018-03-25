@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Query\Parser;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SearchStringProcessor;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SearchStringProcessor;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\Parser\SearchStringProcessor
  *
  */
-class SearchStringProcessorTest extends \PHPUnit_Framework_TestCase
+class SearchStringProcessorTest extends TestCase
 {
     /**
      * @covers ::parse

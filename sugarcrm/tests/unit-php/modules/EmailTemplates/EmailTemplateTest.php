@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\EmailTemplates;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \EmailTemplates
  */
-class EmailTemplateTest extends \PHPUnit_Framework_TestCase
+class EmailTemplateTest extends TestCase
 {
     public function checkStringHasVariablesProvider()
     {

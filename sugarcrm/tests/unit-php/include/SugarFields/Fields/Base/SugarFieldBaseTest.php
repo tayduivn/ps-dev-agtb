@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarFields\Fields\Base;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 
 /**
  * @coversDefaultClass \SugarFieldBase
  */
-class SugarFieldBaseTest extends \PHPUnit_Framework_TestCase
+class SugarFieldBaseTest extends TestCase
 {
     /**
      * @covers ::getNormalizedDefs

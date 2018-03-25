@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Util;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Uuid
  *
  */
-class UuidTest extends \PHPUnit_Framework_TestCase
+class UuidTest extends TestCase
 {
     /**
      * @coversNothing

@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Audit;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Change;
 use Sugarcrm\Sugarcrm\Audit\Change\Email;
 use Sugarcrm\Sugarcrm\Audit\Change\Scalar;
@@ -22,7 +23,7 @@ use Sugarcrm\Sugarcrm\Audit\FieldChangeList;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\FieldChangeList
  *
  */
-class FieldListTest extends \PHPUnit_Framework_TestCase
+class FieldListTest extends TestCase
 {
     /**
      * @covers ::fromChanges

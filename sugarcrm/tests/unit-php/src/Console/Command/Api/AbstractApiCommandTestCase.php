@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Console\Command\Api;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -21,7 +22,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  * Api Command Test Case
  *
  */
-abstract class AbstractApiCommandTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractApiCommandTestCase extends TestCase
 {
     /**
      * @var string

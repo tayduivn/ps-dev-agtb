@@ -12,11 +12,11 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Subscriber;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -24,7 +24,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber
  */
-class SugarOnAuthLockoutSubscriberTest extends \PHPUnit_Framework_TestCase
+class SugarOnAuthLockoutSubscriberTest extends TestCase
 {
     /**
      * @var AuthenticationEvent|\PHPUnit_Framework_MockObject_MockObject
@@ -263,8 +263,6 @@ class SugarOnAuthLockoutSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->timeDate = $this->createMock(\TimeDate::class);
 
         $this->userProvider = $this->getMockBuilder(UserProviderInterface::class)

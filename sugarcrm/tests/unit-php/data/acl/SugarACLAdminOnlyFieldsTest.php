@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \SugarACLAdminOnlyFields
  */
-class SugarACLAdminOnlyFieldsTest extends \PHPUnit_Framework_TestCase
+class SugarACLAdminOnlyFieldsTest extends TestCase
 {
     /**
      * If action is not a write action, grant access.

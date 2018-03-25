@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\clients\base\api;
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
 /**
  * @coversDefaultClass \ModuleApi
  */
-class ModuleApiTest extends \PHPUnit_Framework_TestCase
+class ModuleApiTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject | \ServiceBase

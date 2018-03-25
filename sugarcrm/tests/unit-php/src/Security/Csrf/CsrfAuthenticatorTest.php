@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Csrf;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator
  *
  */
-class CsrfAuthenticatorTest extends \PHPUnit_Framework_TestCase
+class CsrfAuthenticatorTest extends TestCase
 {
     /**
      * @covers ::getFormToken

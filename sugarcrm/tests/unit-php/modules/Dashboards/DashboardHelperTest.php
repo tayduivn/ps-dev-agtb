@@ -10,11 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'modules/Dashboards/DashboardHelper.php';
 /**
  * @coversDefaultClass \DashboardHelper
  */
-class DashboardHelperTest extends \PHPUnit_Framework_TestCase
+class DashboardHelperTest extends TestCase
 {
     /**
      * @covers ::prepareDashboardModules

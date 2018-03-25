@@ -12,13 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Util\Arrays\TrackableArray;
 
-use Sugarcrm\Sugarcrm\Util\Arrays\TrackableArray\TrackableArray;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\Util\Arrays\TrackableArray\TrackableArray;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Arrays\TrackableArray\TrackableArray
  */
-class TrackableArrayTest extends \PHPUnit_Framework_TestCase
+class TrackableArrayTest extends TestCase
 {
     /**
      * Tests that a new OrderedHash respects the order given to constructor.

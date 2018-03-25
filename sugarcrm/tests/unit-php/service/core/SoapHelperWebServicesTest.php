@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 /**
  * @coversDefaultClass \SoapHelperWebServices
  */
-class SoapHelperWebServicesTest extends \PHPUnit_Framework_TestCase
+class SoapHelperWebServicesTest extends TestCase
 {
     private $helper;
     private $idmConfig;

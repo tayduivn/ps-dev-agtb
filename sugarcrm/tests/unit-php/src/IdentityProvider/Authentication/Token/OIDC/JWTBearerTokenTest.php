@@ -12,13 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Token\OIDC;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken
  */
-class JWTBearerTokenTest extends \PHPUnit_Framework_TestCase
+class JWTBearerTokenTest extends TestCase
 {
     protected $privateKey = [
         'kty' => 'RSA',

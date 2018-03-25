@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * @coversDefaultClass \SugarOAuth2Server
  */
-class SugarOAuth2ServerTest extends \PHPUnit_Framework_TestCase
+class SugarOAuth2ServerTest extends TestCase
 {
     /**
      * @var \SugarConfig

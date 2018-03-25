@@ -12,15 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\ResultParser;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\ResultParser;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\ResultParser
  *
  */
-class ResultParserTest extends \PHPUnit_Framework_TestCase
+class ResultParserTest extends TestCase
 {
     /**
      * @covers ::parseSource

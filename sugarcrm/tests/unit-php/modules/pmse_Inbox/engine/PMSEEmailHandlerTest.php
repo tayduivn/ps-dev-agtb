@@ -12,10 +12,12 @@
  */
 namespace Sugarcrm\SugarcrmTestsUnit\modules\pmse_Inbox\engine;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \PMSEEmailHandler
  */
-class PMSEEmailHandlerTest extends \PHPUnit_Framework_TestCase
+class PMSEEmailHandlerTest extends TestCase
 {
     /**
      * @covers ::isUserActiveForEmail

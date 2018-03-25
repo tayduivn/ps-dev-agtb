@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Subject;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Subject\Cli;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Subject\Cli
  */
-class CliTest extends \PHPUnit_Framework_TestCase
+class CliTest extends TestCase
 {
     /**
      * @test

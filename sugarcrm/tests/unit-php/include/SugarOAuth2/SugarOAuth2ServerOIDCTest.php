@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
@@ -24,7 +25,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 /**
  * @coversDefaultClass \SugarOAuth2ServerOIDC
  */
-class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
+class SugarOAuth2ServerOIDCTest extends TestCase
 {
     /**
      * @var \SugarOAuth2StorageOIDC | \PHPUnit_Framework_MockObject_MockObject
@@ -87,7 +88,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
     /**
      * @inheritdoc
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->storage = $this->createMock(\SugarOAuth2StorageOIDC::class);
         $this->oAuth2Server = $this->getMockBuilder(\SugarOAuth2ServerOIDC::class)
@@ -143,7 +144,7 @@ class SugarOAuth2ServerOIDCTest extends \PHPUnit_Framework_TestCase
     /**
      * @inheritdoc
      */
-    public function tearDown()
+    protected function tearDown()
     {
         $GLOBALS['beanList'] = $this->beanList;
         \BeanFactory::unregisterBean($this->mockedUser);

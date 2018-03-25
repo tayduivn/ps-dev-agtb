@@ -11,12 +11,13 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User
  */
-class IdMUserTest extends \PHPUnit_Framework_TestCase
+class IdMUserTest extends TestCase
 {
     /**
      * @var \TimeDate|\PHPUnit_Framework_MockObject_MockObject
@@ -231,8 +232,6 @@ class IdMUserTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->timeDate = $this->getMockBuilder(\TimeDate::class)
             ->disableOriginalConstructor()
             ->getMock();

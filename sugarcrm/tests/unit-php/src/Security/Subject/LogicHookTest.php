@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Subject;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Subject\LogicHook;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Subject\LogicHook
  */
-class LogicHookTest extends \PHPUnit_Framework_TestCase
+class LogicHookTest extends TestCase
 {
     /**
      * @test

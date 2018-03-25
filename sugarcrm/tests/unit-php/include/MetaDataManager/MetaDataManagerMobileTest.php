@@ -12,13 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\inc\MetaDataManagerMobile;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class MetaDataManagerMobileTest
  * @coversDefaultClass MetaDataManagerMobile
  */
-class MetaDataManagerMobileTest extends \PHPUnit_Framework_TestCase
+class MetaDataManagerMobileTest extends TestCase
 {
     /**
      * @covers ::getSupportingModules

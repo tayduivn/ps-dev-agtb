@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Console;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Console\Application;
 use Sugarcrm\Sugarcrm\Console\CommandRegistry\CommandRegistry;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\RebuildCommand;
@@ -24,7 +25,7 @@ use Symfony\Component\Console\Tester\ApplicationTester;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Console\Application
  *
  */
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
     /**
      * @covers ::create

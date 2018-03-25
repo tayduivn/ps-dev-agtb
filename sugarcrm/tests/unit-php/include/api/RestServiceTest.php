@@ -12,19 +12,19 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\api;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * Class RestServiceTest
  * @coversDefaultClass \RestService
  */
-class RestServiceTest extends \PHPUnit_Framework_TestCase
+class RestServiceTest extends TestCase
 {
     const SITE_URL = 'sugarcrm.com/';
 
     protected function setup()
     {
-        parent::setUp();
         // pre-setting
         $_REQUEST['__sugar_url'] = 'sugar.com';
     }

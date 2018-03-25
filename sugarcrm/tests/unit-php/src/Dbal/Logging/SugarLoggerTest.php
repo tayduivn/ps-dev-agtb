@@ -12,10 +12,12 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Dbal\Logging;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger
  */
-class SugarLoggerTest extends \PHPUnit_Framework_TestCase
+class SugarLoggerTest extends TestCase
 {
     public function startQueryDataProvider()
     {

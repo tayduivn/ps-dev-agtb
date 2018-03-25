@@ -12,13 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\ProductTemplates;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * Class ProductTemplatesTest
  * @coversDefaultClass ProductTemplate
  */
-class ProductTemplatesTest extends \PHPUnit_Framework_TestCase
+class ProductTemplatesTest extends TestCase
 {
 
     /**

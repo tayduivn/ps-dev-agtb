@@ -12,20 +12,20 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\InputValidation;
 
-use Sugarcrm\Sugarcrm\Security\Validator\Validator;
-use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Psr\Log\LoggerInterface;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\InputValidation\Request
  *
  */
-class RequestTest extends \PHPUnit_Framework_TestCase
+class RequestTest extends TestCase
 {
     /**
      * @var ValidatorInterface

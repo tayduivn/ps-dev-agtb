@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Audit\Formatter;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Audit\Formatter\Subject;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter as SubFormatter;
 
@@ -20,7 +21,7 @@ use Sugarcrm\Sugarcrm\Security\Subject\Formatter as SubFormatter;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Audit\Formatter\Email
  *
  */
-class SubjectTest extends \PHPUnit_Framework_TestCase
+class SubjectTest extends TestCase
 {
     /**
      * @covers ::formatRows

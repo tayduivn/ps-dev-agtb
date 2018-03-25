@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Session;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
 
 /**
@@ -19,7 +20,7 @@ use Sugarcrm\Sugarcrm\Session\SessionStorage;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Session\SessionStorage
  *
  */
-class SessionStorageTest extends \PHPUnit_Framework_TestCase
+class SessionStorageTest extends TestCase
 {
     public function sessionHasIdDataProvider()
     {

@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Administration;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @coversDefaultClass \AdministrationController
  */
-class AdministrationControllerTest extends \PHPUnit_Framework_TestCase
+class AdministrationControllerTest extends TestCase
 {
     /**
      * @var \AdministrationController|\PHPUnit_Framework_MockObject_MockObject
@@ -39,8 +40,6 @@ class AdministrationControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->controller = $this->getMockBuilder(\AdministrationController::class)
             ->disableOriginalConstructor()
             ->setMethods([

@@ -12,9 +12,9 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\UserProvider;
 
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLdapUserProvider;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
-
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLdapUserProvider;
 use Symfony\Component\Ldap\Adapter\QueryInterface;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\LdapInterface;
@@ -22,7 +22,7 @@ use Symfony\Component\Ldap\LdapInterface;
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLdapUserProvider
  */
-class SugarLdapUserProviderTest extends \PHPUnit_Framework_TestCase
+class SugarLdapUserProviderTest extends TestCase
 {
     /**
      * @covers ::loadUser

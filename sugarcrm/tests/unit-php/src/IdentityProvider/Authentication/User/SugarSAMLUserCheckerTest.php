@@ -12,17 +12,17 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\InactiveUserException;
-
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarSAMLUserChecker
  */
-class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
+class SugarSAMLUserCheckerTest extends TestCase
 {
     /**
      * @var SugarLocalUserProvider
@@ -49,7 +49,6 @@ class SugarSAMLUserCheckerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         $this->localUserProvider = $this->createMock(SugarLocalUserProvider::class);
         $this->user = $this->createMock(User::class);
         $this->sugarUser = $this->createMock(\User::class);

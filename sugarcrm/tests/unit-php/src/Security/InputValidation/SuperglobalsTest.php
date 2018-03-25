@@ -12,16 +12,17 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\InputValidation;
 
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-use Psr\Log\LoggerInterface;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals
  *
  */
-class SuperglobalsTest extends \PHPUnit_Framework_TestCase
+class SuperglobalsTest extends TestCase
 {
     /**
      * @var Superglobals

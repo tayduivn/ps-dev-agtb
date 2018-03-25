@@ -11,6 +11,7 @@
  */
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\DataPrivacy;
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
@@ -18,7 +19,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 /**
  * @coversDefaultClass \DataPrivacy
  */
-class DataPrivacyTest extends \PHPUnit_Framework_TestCase
+class DataPrivacyTest extends TestCase
 {
     /**
      * @covers ::isStatusChangeAllowed

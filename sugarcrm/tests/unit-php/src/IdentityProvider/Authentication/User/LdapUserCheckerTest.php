@@ -11,18 +11,18 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\User;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LdapUserChecker;
-
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LdapUserChecker
  */
-class LdapUserCheckerTest extends \PHPUnit_Framework_TestCase
+class LdapUserCheckerTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -58,8 +58,6 @@ class LdapUserCheckerTest extends \PHPUnit_Framework_TestCase
         $this->entry = new Entry('user_dn', ['sn' => ['user_sn']]);
         $this->user = new User('user1', 'pass', ['entry' => $this->entry]);
         $this->user->setSugarUser($this->sugarUser);
-
-        parent::setUp();
     }
 
     /**

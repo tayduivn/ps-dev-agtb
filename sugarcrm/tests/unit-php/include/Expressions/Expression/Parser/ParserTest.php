@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\Expression\Parser;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class ParserTest
  *
  * @coversDefaultClass Parser
  */
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends TestCase
 {
 
     /**

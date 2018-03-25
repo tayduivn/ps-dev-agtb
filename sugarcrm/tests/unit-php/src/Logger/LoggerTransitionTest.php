@@ -12,15 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Logger;
 
-use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Logger\LoggerTransition
  *
  */
-class LoggerTransitionTest extends \PHPUnit_Framework_TestCase
+class LoggerTransitionTest extends TestCase
 {
     /**
      * @covers ::<public>

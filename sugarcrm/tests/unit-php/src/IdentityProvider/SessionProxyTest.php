@@ -12,14 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy;
-
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\SessionProxy
  */
-class SessionProxyTest extends \PHPUnit_Framework_TestCase
+class SessionProxyTest extends TestCase
 {
     /**
      * @var null|array
@@ -248,7 +248,6 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         if (isset($_SESSION)) {
             $this->oldSession = $_SESSION;
         } else {
@@ -270,6 +269,5 @@ class SessionProxyTest extends \PHPUnit_Framework_TestCase
         } else {
             $_SESSION = $this->oldSession;
         }
-        parent::tearDown();
     }
 }

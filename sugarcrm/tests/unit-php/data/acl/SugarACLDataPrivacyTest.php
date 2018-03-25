@@ -10,10 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \SugarACLDataPrivacy
  */
-class SugarACLDataPrivacyTest extends \PHPUnit_Framework_TestCase
+class SugarACLDataPrivacyTest extends TestCase
 {
     /**
      *

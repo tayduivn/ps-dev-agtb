@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Query;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\MatchAllQuery;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
@@ -23,7 +24,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder
  *
  */
-class QueryBuilderTest extends \PHPUnit_Framework_TestCase
+class QueryBuilderTest extends TestCase
 {
     /**
      * @covers ::buildPostFilters

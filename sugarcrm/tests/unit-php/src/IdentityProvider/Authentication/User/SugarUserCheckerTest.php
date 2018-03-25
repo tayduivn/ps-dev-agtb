@@ -12,15 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker
  */
-class SugarUserCheckerTest extends \PHPUnit_Framework_TestCase
+class SugarUserCheckerTest extends TestCase
 {
 
     /**
@@ -64,8 +65,6 @@ class SugarUserCheckerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->lockout = $this->getMockBuilder(Lockout::class)
             ->disableOriginalConstructor()
             ->getMock();

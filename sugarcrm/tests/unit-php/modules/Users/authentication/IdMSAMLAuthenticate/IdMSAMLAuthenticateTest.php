@@ -11,12 +11,11 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSAMLAuthenticate;
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\IdentityProvider\Authentication\Token\SAML\ResultToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
-
-use Sugarcrm\IdentityProvider\Authentication\Token\SAML\ResultToken;
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 
 /**
@@ -24,7 +23,7 @@ use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager
  *
  * @coversDefaultClass \IdMSAMLAuthenticate
  */
-class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
+class IdMSAMLAuthenticateTest extends TestCase
 {
 
     /**
@@ -62,8 +61,6 @@ class IdMSAMLAuthenticateTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         if (!empty($GLOBALS['current_user'])) {
             $this->currentUserBackUp = $GLOBALS['current_user'];
         }

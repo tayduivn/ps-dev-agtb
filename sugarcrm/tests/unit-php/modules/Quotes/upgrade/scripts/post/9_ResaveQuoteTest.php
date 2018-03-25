@@ -11,15 +11,16 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\upgrade\scripts\post;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \SugarUpgradeResaveQuote
  */
-class ResaveQuoteTest extends \PHPUnit_Framework_TestCase
+class ResaveQuoteTest extends TestCase
 {
-    public function setup()
+    protected function setUp()
     {
         \SugarAutoLoader::load('../../modules/Quotes/upgrade/scripts/post/9_ResaveQuote.php');
-        parent::setup();
     }
 
     /**

@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\Notes;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @coversDefaultClass \Note
  */
-class NoteTest extends \PHPUnit_Framework_TestCase
+class NoteTest extends TestCase
 {
     /**
      * @covers ::send_assignment_notifications

@@ -12,17 +12,16 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Token;
 
+use PHPUnit\Framework\TestCase;
+use Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordTokenFactory;
-
-use Sugarcrm\IdentityProvider\Authentication\Token\MixedUsernamePasswordToken;
-
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordTokenFactory
  */
-class UsernamePasswordTokenFactoryTest extends \PHPUnit_Framework_TestCase
+class UsernamePasswordTokenFactoryTest extends TestCase
 {
     /**
      * @var UsernamePasswordTokenFactory
@@ -34,8 +33,6 @@ class UsernamePasswordTokenFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->tokenFactory = new UsernamePasswordTokenFactory(
             'username',
             'password',

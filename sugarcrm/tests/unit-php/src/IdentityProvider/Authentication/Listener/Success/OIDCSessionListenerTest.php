@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Success;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDCSessionListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
@@ -22,7 +23,7 @@ require_once 'include/utils/security_utils.php';
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDCSessionListener
  */
-class OIDCSessionListenerTest extends \PHPUnit_Framework_TestCase
+class OIDCSessionListenerTest extends TestCase
 {
 
     /**

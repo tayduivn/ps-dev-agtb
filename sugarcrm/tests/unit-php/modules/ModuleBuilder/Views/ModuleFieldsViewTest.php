@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\ModuleBuilder\Views;
 
+use PHPUnit\Framework\TestCase;
+
 require_once 'include/utils.php';
 
 /**
  * @coversDefaultClass \ViewModulefields
  */
-class ModuleFieldsViewTest extends \PHPUnit_Framework_TestCase
+class ModuleFieldsViewTest extends TestCase
 {
     /**
      * @var \ViewModulefields

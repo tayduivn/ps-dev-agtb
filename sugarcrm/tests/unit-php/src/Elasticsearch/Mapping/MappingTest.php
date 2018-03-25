@@ -12,18 +12,18 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Mapping;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping
  *
  */
-class MappingTest extends \PHPUnit_Framework_TestCase
+class MappingTest extends TestCase
 {
     /**
      * @covers ::excludeFromSource

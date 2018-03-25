@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Util\Arrays\OrderedHash;
 
+use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash
  */
-class OrderedHashTest extends \PHPUnit_Framework_TestCase
+class OrderedHashTest extends TestCase
 {
     /**
      * @return array

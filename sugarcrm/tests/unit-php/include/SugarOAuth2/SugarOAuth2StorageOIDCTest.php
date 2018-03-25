@@ -11,8 +11,9 @@
  */
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
-use SugarOAuth2StorageOIDC;
 use AuthenticationController;
+use PHPUnit\Framework\TestCase;
+use SugarOAuth2StorageOIDC;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 require_once 'include/utils.php';
@@ -21,7 +22,7 @@ require_once 'include/SugarCache/SugarCache.php';
 /**
  * @coversDefaultClass  \SugarOAuth2StorageOIDC
  */
-class SugarOAuth2StorageOIDCTest extends \PHPUnit_Framework_TestCase
+class SugarOAuth2StorageOIDCTest extends TestCase
 {
     /**
      * @var SugarOAuth2StorageOIDC

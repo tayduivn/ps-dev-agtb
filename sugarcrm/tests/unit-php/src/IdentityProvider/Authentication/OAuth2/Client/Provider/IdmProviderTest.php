@@ -12,19 +12,20 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\OAuth2\Client\Provider;
 
-use League\OAuth2\Client\Grant\ClientCredentials;
-use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
-use Psr\Http\Message\RequestInterface;
-use League\OAuth2\Client\Token\AccessToken;
-use League\OAuth2\Client\Tool\RequestFactory;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use League\OAuth2\Client\Grant\ClientCredentials;
+use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Tool\RequestFactory;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestInterface;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
+use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider
  */
-class IdmProviderTest extends \PHPUnit_Framework_TestCase
+class IdmProviderTest extends TestCase
 {
     /**
      * @var RequestFactory | \PHPUnit_Framework_MockObject_MockObject
