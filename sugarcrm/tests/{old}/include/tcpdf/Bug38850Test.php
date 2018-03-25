@@ -40,6 +40,9 @@ class Bug38850Test extends TestCase
             );
 
         SugarTestReflection::callProtectedMethod($pdf, 'openHTMLTagHandler', array(&$dom, 1));
-        $this->expectOutputNotRegex('/Can Interject Code/');
+
+        $this->setOutputCallback(function ($output) {
+            $this->assertNotContains('Can Interject Code', $output);
+        });
     }
 }

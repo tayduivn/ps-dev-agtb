@@ -92,8 +92,11 @@ class Bug36329Test extends TestCase
     	$popup = new ViewPopup();
     	$popup->module = 'Accounts';
         $popup->bean = new Account();
-    	// Negative regexp
-    	$this->expectOutputNotRegex('/Perform a search using the search form above/');
-    	$popup->display();
+
+        $this->setOutputCallback(function ($output) {
+            $this->assertNotContains('Perform a search using the search form above', $output);
+        });
+
+        $popup->display();
     }
 }

@@ -216,7 +216,11 @@ class Bug41058Test extends TestCase
         $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
 
         $string = $mod_strings['ERR_INVALID_LOCALE_NAME_FORMAT_UPGRADE'];
-        $this->expectOutputNotRegex('/' . preg_quote($string) . '/');
+
+        $this->setOutputCallback(function ($output) use ($string) {
+            $this->assertNotContains($string, $output);
+        });
+
         require 'modules/Administration/Locale.php';
 
     }

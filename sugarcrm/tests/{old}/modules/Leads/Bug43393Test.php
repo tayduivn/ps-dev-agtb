@@ -46,7 +46,10 @@ class Bug43393Test extends TestCase
         $vc->display();
 
         // we don't want leads or users to show up in the list
-        $this->expectOutputNotRegex('/.*(Leads|Users)'.preg_quote('<\/option>','/').'.*/');
+        $this->setOutputCallback(function ($output) {
+            $this->assertNotContains('/Leads<\/option>', $output);
+            $this->assertNotContains('/Users<\/option>', $output);
+        });
 
         // cleanup
         unset($_REQUEST['module']);
