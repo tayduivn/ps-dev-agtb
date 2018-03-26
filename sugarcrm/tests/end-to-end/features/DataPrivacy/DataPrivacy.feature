@@ -137,7 +137,7 @@ Feature: Data Privacy module verification
     # Select which fields to erase  for contact
     When I click on MarkToErase button for *Alex in #DP_1Record.SubpanelsLayout.subpanels.contacts
     When I select fields in #PersonalInfoDrawer view
-      | filedName            |
+      | fieldName            |
       | first_name           |
       | phone_mobile         |
       | title                |
@@ -147,7 +147,7 @@ Feature: Data Privacy module verification
     # Select which fields to erase for lead
     When I click on MarkToErase button for *John in #DP_1Record.SubpanelsLayout.subpanels.leads
     When I select fields in #PersonalInfoDrawer view
-      | filedName              |
+      | fieldName              |
       | phone_mobile           |
       | phone_other            |
       | primary_address_street |
@@ -156,7 +156,7 @@ Feature: Data Privacy module verification
     # Select which fields to erase for target
     When I click on MarkToErase button for *Travis in #DP_1Record.SubpanelsLayout.subpanels.prospects
     When I select fields in #PersonalInfoDrawer view
-      | filedName    |
+      | fieldName    |
       | title        |
       | phone_mobile |
       | last_name    |
@@ -165,7 +165,7 @@ Feature: Data Privacy module verification
     # Select which fields to erase for target
     When I click on MarkToErase button for *Drew in #DP_1Record.SubpanelsLayout.subpanels.accounts
     When I select fields in #PersonalInfoDrawer view
-      | filedName    |
+      | fieldName    |
       | email        |
     When I click MarkForErasure button on #AccountsSearchAndAdd header
 

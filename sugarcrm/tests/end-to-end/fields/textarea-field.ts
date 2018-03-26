@@ -35,15 +35,11 @@ export default class TextareaField extends BaseField {
     public async getText(selector: string): Promise<string> {
 
         let value: string | string[] = await this.driver.getValue(this.$('field.selector'));
-
         return value.toString().trim();
-
     }
 }
 
-
 export const Edit = TextareaField;
-
 
 export class Detail extends TextareaField {
 
@@ -55,15 +51,12 @@ export class Detail extends TextareaField {
                 selector: 'div'
             }
         });
-
     }
 
     public async getText(selector: string): Promise<string> {
 
         let value: string | string[] = await this.driver.getText(selector);
-
         return value.toString().trim();
-
     }
 }
 
@@ -77,15 +70,12 @@ export class DetailAddress extends TextareaField {
                 selector: 'span'
             }
         });
-
     }
 
     public async getText(selector: string): Promise<string> {
 
         let value: string | string[] = await this.driver.getText(selector);
-
         return value.toString().trim();
-
     }
 }
 
@@ -99,17 +89,13 @@ export class List extends TextareaField {
                 selector: 'div'
             }
         });
-
     }
 
     public async getText(selector: string): Promise<string> {
 
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
-
         return value.toString().trim();
-
     }
-
 }
 
 export const Preview = Detail;

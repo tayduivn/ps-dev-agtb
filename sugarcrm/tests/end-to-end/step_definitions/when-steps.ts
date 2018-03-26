@@ -316,7 +316,8 @@ When(/^I select fields in (#\S+) view$/,
             throw new Error('One line data table entry is expected');
         }
 
-        for(let i=0; i<data.rows().length; i++ ) {
+        const rows = data.rows();
+        for(let i=0; i<rows.length; i++ ) {
             await layout.clickRowByFiledName(data.rows()[i]);
         }
 
