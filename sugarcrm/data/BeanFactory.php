@@ -134,7 +134,7 @@ class BeanFactory {
         }
 
         if (empty($params['disable_row_level_security']) && $bean->disable_row_level_security) {
-            $definition = self::getDefinition($bean->module_name);
+            $definition = self::newBean($bean->module_name);
 
             if (!$definition->disable_row_level_security) {
                 return false;
