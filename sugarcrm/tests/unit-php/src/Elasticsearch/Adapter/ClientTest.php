@@ -47,8 +47,9 @@ class ClientTest extends TestCase
      * @covers ::getEsVersion
      * @covers ::getAllowedVersions
      *
+     * @dataProvider providerTestSettersAndGetters
      */
-    public function testSettersAndGetters()
+    public function testSettersAndGetters($version)
     {
         $client = $this->getTestClient();
         $client->setConfig($this->config);
@@ -57,13 +58,19 @@ class ClientTest extends TestCase
         $this->assertSame($this->config['host'], $client->getConfig('host'));
         $this->assertSame($this->config['port'], $client->getConfig('port'));
 
-        $version = '5.4';
         TestReflection::setProtectedValue($client, 'version', $version);
         $this->assertSame($version, $client->getVersion());
 
         $this->assertTrue(in_array($version, $client->getAllowedVersions()));
     }
 
+    public function providerTestSettersAndGetters()
+    {
+        return [
+            ['5.4'],
+            ['5.6'],
+        ];
+    }
     /**
      * @covers ::checkEsVersion
      * @covers ::isEsVersion5x
@@ -79,13 +86,14 @@ class ClientTest extends TestCase
     public function providerTestCheckVersion()
     {
         return array(
-            //5.4.x is supported
+            // version 5.4 to 5.6.x are supported
+            array('5.6.0', true),
+            array('5.6.9', true),
             array('5.4.0', true),
             array('5.4.9', true),
             array('5.4', true),
-            // 5.5.x is not supported
-            array('5.5.0', false),
-            array('5.5', false),
+            array('5.5.0', true),
+            array('5.5', true),
             // 1.x and 2.x are not supported
             array('1.7', false),
             array('2.3.1', false),
@@ -120,7 +128,43 @@ class ClientTest extends TestCase
     public function providerTestIsAvailable()
     {
         return array(
-            // no force update
+            // ES 5.6.x support
+            array(
+                false,
+                true,
+                '{
+                  "status" : 200,
+                  "name" : "Zom",
+                  "cluster_name" : "elasticsearch_brew",
+                  "version" : {
+                    "number" : "5.6.9",
+                    "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
+                    "build_timestamp" : "2015-04-27T09:21:06Z",
+                    "build_snapshot" : false,
+                    "lucene_version" : "4.10.4"
+                  },
+                  "tagline" : "You Know, for Search"
+                }',
+                true,
+            ),
+            array(
+                false,
+                true,
+                '{
+                  "status" : 200,
+                  "name" : "Zom",
+                  "cluster_name" : "elasticsearch_brew",
+                  "version" : {
+                    "number" : "5.6.0",
+                    "build_hash" : "62ff9868b4c8a0c45860bebb259e21980778ab1c",
+                    "build_timestamp" : "2015-04-27T09:21:06Z",
+                    "build_snapshot" : false,
+                    "lucene_version" : "4.10.4"
+                  },
+                  "tagline" : "You Know, for Search"
+                }',
+                true,
+            ),
             array(
                 false,
                 true,
