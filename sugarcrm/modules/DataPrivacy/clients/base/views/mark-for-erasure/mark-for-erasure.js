@@ -269,7 +269,7 @@
                 // Email addresses and other related fields will have an object containing
                 // the name and id of the record
                 var value = model.get('value');
-                if (_.isObject(value)) {
+                if (_.isObject(value) && !_.isArray(value)) {
                     if (!fieldName || !value.id) {
                         throw new Error('Unable to mark field ' + fieldName + ' to erase.');
                     }
