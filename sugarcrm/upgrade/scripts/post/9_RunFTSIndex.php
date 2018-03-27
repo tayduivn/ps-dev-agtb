@@ -11,6 +11,9 @@
  */
 
 use Elastica\Exception\ResponseException;
+use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingCollection;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\ErasedFieldsHandler;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Engine\Elastic;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
@@ -28,9 +31,8 @@ class SugarUpgradeRunFTSIndex extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.10', '<')) {
-            $this->dropExistingIndex();
-            $this->runFTSIndex();
+        if (version_compare($this->from_version, '8.0', '<')) {
+            $this->updateIndexMapping();
         }
     }
 
@@ -70,6 +72,25 @@ class SugarUpgradeRunFTSIndex extends UpgradeScript
                 } else {
                     $this->log("SugarUpgradeRunFTSIndex: deleting the existing index {$name} got exceptions!");
                 }
+            }
+        }
+    }
+
+    /**
+     * Update Mapping
+     */
+    protected function updateIndexMapping()
+    {
+        $engine = SearchEngine::getInstance()->getEngine();
+        if ($engine instanceof Elastic) {
+            try {
+                $handler = new ErasedFieldsHandler();
+                // update mapping
+                $engine->getContainer()->indexManager->updateIndexMappings([], $handler);
+
+                $this->log("SugarUpgradeRunFTSIndex: mappings on Elastic server have been updated.");
+            } catch (Exception $e) {
+                $this->log("SugarUpgradeRunFTSIndex: updating index mapping got exceptions!");
             }
         }
     }

@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Index;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
@@ -357,7 +358,7 @@ class IndexManager
      * @param MappingCollection $mappingCollection
      * @param boolean $dropExist Drop indices if already they already exist
      */
-    public function createIndices(
+    protected function createIndices(
         IndexCollection $indexCollection,
         AnalysisBuilder $analysisBuilder,
         MappingCollection $mappingCollection,
@@ -387,6 +388,51 @@ class IndexManager
 
                 // Send mapping
                 $this->sendMapping($mapping);
+            }
+        }
+    }
+
+    /**
+     * Update Mappings of list of indices, it doesn't require re-index
+     *
+     * @param array $moduels, module names
+     * @param MappingHandlerInterface[] $handlers
+     *
+     */
+    public function updateIndexMappings(array $modules, MappingHandlerInterface ...$handlers)
+    {
+        if (empty($modules)) {
+            // get all enabled modules
+            $modules = $this->getAllEnabledModules();
+        }
+
+        // Create mapping iterator for requested modules
+        $mappingCollection = new MappingCollection($modules);
+        foreach ($mappingCollection as $mapping) {
+            // build mapping
+            foreach ($handlers as $handler) {
+                foreach ($this->container->metaDataHelper->getFtsFields($mapping->getModule()) as $field => $defs) {
+                    $handler->buildMapping($mapping, $field, $defs);
+                };
+            }
+        }
+
+        $indexCollection = $this->getIndexCollection($mappingCollection);
+        foreach ($indexCollection as $index) {
+            // Set mapping for all available types on this index
+            $types = $index->getTypes();
+            foreach ($types as $module => $type) {
+                /* @var $fieldMappings Mapping */
+                $fieldMappings = $mappingCollection->$module;
+                $properties = $fieldMappings->compile();
+
+                // Prepare mapping object
+                $mapping = new \Elastica\Type\Mapping();
+                $mapping->setType($type);
+                $mapping->setProperties($properties);
+
+                // send out without any default properties
+                $mapping->send();
             }
         }
     }
@@ -463,7 +509,7 @@ class IndexManager
      * @param MappingCollection $mappingCollection
      * @return IndexCollection
      */
-    protected function getIndexCollection(MappingCollection $mappingCollection)
+    public function getIndexCollection(MappingCollection $mappingCollection)
     {
         return $this->container->indexPool->buildIndexCollection($mappingCollection);
     }
