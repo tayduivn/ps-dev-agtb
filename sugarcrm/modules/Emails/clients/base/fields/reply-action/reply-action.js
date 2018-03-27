@@ -222,10 +222,14 @@
             var data = {
                 email: app.data.createBean('EmailAddresses', recipient.get('email_addresses'))
             };
-            var parent = recipient.getParent();
+            var parent;
 
-            if (parent) {
-                data.bean = parent;
+            if (recipient.hasParent()) {
+                parent = recipient.getParent();
+
+                if (parent) {
+                    data.bean = parent;
+                }
             }
 
             return data;

@@ -15,6 +15,34 @@
  */
 ({
     /**
+     * @inheritdoc
+     *
+     * Patches the model with the parent's name if the name is empty, but it
+     * can be computed from other attributes.
+     */
+    set: function(key, val, options) {
+        var result = app.Bean.prototype.set.call(this, key, val, options);
+        var parent = this.getParent();
+        var name;
+
+        // If the name field is empty but other fields are present, then it may
+        // be possible to construct the name. We try to do that before assuming
+        // the name can't be found.
+        if (parent && !parent.get('name') && !app.utils.isNameErased(parent)) {
+            name = app.utils.getRecordName(parent);
+
+            // Replicate the name to all of the fields on the model that
+            // contain the name, so we don't have to construct it again.
+            if (name) {
+                this.get('parent').name = name;
+                this.set('parent_name', name);
+            }
+        }
+
+        return result;
+    },
+
+    /**
      * Returns a string representing the email participant in the format that
      * would be used for an address in an email address header. Note that the
      * name is not surrounded by quotes unless the `surroundNameWithQuotes`
@@ -71,28 +99,32 @@
     },
 
     /**
+     * Determines if there is really a parent record.
+     *
+     * The type and id fields are not unset after a parent record is deleted.
+     * So we test for name because the parent record is truly only there if
+     * type and id are non-empty and the parent record can be resolved and has
+     * not been deleted.
+     *
+     * @return {boolean}
+     */
+    hasParent: function() {
+        var parent = this.getParent();
+
+        return !!(parent && (parent.get('name') || app.utils.isNameErased(parent)));
+    },
+
+    /**
      * Returns a bean from the parent data or undefined if no parent exists.
      *
      * @return {undefined|Data.Bean}
      */
     getParent: function() {
-        var parent;
-
         if (this.get('parent') && this.get('parent').type && this.get('parent').id) {
             // We omit type because it is actually the module name and should
             // not be treated as an attribute.
-            parent = app.data.createBean(this.get('parent').type, _.omit(this.get('parent'), 'type'));
-
-            // The type and id fields are not unset after a parent record is
-            // deleted. So we test for name because the parent record is truly
-            // only there if type and id are non-empty and the parent record
-            // can be resolved and has not been deleted.
-            if (!parent.get('name') && !app.utils.isNameErased(parent)) {
-                parent = undefined;
-            }
+            return app.data.createBean(this.get('parent').type, _.omit(this.get('parent'), 'type'));
         }
-
-        return parent;
     },
 
     /**
@@ -101,10 +133,14 @@
      * @return {boolean}
      */
     isNameErased: function() {
-        var parent = this.getParent();
+        var parent;
 
-        if (parent) {
-            return app.utils.isNameErased(parent);
+        if (this.hasParent()) {
+            parent = this.getParent();
+
+            if (parent) {
+                return app.utils.isNameErased(parent);
+            }
         }
 
         return false;

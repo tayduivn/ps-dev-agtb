@@ -30,6 +30,125 @@ describe('Data.Base.EmailParticipantsBean', function() {
         SugarTest.testMetadata.dispose();
     });
 
+    describe('setting the name when there is not one', function() {
+        it('should set the name', function() {
+            var parentId = _.uniqueId();
+            var bean = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                id: _.uniqueId(),
+                parent: {
+                    _acl: {},
+                    _erased_fields: [],
+                    type: 'Contacts',
+                    id: parentId,
+                    salutation: '',
+                    first_name: 'Haley',
+                    last_name: 'Rhodes'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: ''
+            });
+            var parent = bean.getParent();
+
+            expect(bean.get('parent_name')).toBe('Haley Rhodes');
+            expect(bean.get('parent').name).toBe('Haley Rhodes');
+            expect(parent.get('name')).toBe('Haley Rhodes');
+        });
+
+        it('should not set the name', function() {
+            var parentId = _.uniqueId();
+            var bean = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                id: _.uniqueId(),
+                parent: {
+                    _acl: {},
+                    _erased_fields: [
+                        'first_name',
+                        'last_name'
+                    ],
+                    type: 'Contacts',
+                    id: parentId,
+                    name: ''
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: ''
+            });
+            var parent = bean.getParent();
+
+            expect(bean.get('parent_name')).toBe('');
+            expect(bean.get('parent').name).toBe('');
+            expect(parent.get('name')).toBe('');
+        });
+    });
+
+    describe('determining if there is a parent bean', function() {
+        it('should return true', function() {
+            var parentId = _.uniqueId();
+            var emailAddressId = _.uniqueId();
+            var bean = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                id: _.uniqueId(),
+                parent: {
+                    _acl: {},
+                    _erased_fields: [],
+                    type: 'Contacts',
+                    id: parentId,
+                    name: 'Haley Rhodes'
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: 'Haley Rhodes',
+                email_addresses: {
+                    _acl: {},
+                    _erased_fields: [],
+                    email_address: 'rhodes@example.com',
+                    id: emailAddressId
+                },
+                email_address_id: emailAddressId,
+                email_address: 'rhodes@example.com',
+                invalid_email: false,
+                opt_out: false
+            });
+
+            expect(bean.hasParent()).toBe(true);
+        });
+
+        it('should return false', function() {
+            var parentId = _.uniqueId();
+            var emailAddressId = _.uniqueId();
+            var bean = app.data.createBean('EmailParticipants', {
+                _link: 'to',
+                id: _.uniqueId(),
+                parent: {
+                    _acl: {},
+                    _erased_fields: [],
+                    type: 'Contacts',
+                    id: parentId,
+                    name: ''
+                },
+                parent_type: 'Contacts',
+                parent_id: parentId,
+                parent_name: '',
+                email_addresses: {
+                    _acl: {},
+                    _erased_fields: [],
+                    email_address: 'rhodes@example.com',
+                    id: emailAddressId
+                },
+                email_address_id: emailAddressId,
+                email_address: 'rhodes@example.com',
+                invalid_email: false,
+                opt_out: false
+            });
+
+            // No parent name and name is not erased. This could happen if the
+            // parent record is deleted.
+            expect(bean.hasParent()).toBe(false);
+        });
+    });
+
     describe('getting the parent bean', function() {
         it('should return the parent bean', function() {
             var parentId = _.uniqueId();
@@ -124,20 +243,6 @@ describe('Data.Base.EmailParticipantsBean', function() {
                     parent_type: 'Contacts',
                     parent_id: '',
                     parent_name: 'Haley Rhodes'
-                },
-                // No parent name and name is not erased. This could happen if
-                // the parent record is deleted.
-                {
-                    parent: {
-                        _acl: {},
-                        _erased_fields: [],
-                        type: 'Contacts',
-                        id: 'd5611428-2eb0-11e8-9e05-3c15c2d582c6',
-                        name: ''
-                    },
-                    parent_type: 'Contacts',
-                    parent_id: 'd5611428-2eb0-11e8-9e05-3c15c2d582c6',
-                    parent_name: ''
                 }
             ],
             function(data) {
@@ -149,12 +254,13 @@ describe('Data.Base.EmailParticipantsBean', function() {
                         email_addresses: {
                             email_address: 'rhodes@example.com',
                             id: emailAddressId,
+                            _acl: {},
                             _erased_fields: []
                         },
                         email_address_id: emailAddressId,
                         email_address: 'rhodes@example.com',
                         invalid_email: false,
-                        opt_out: false,
+                        opt_out: false
                     };
                     var bean = app.data.createBean('EmailParticipants', _.extend(attributes, data));
                     var parent = bean.getParent();
@@ -182,6 +288,7 @@ describe('Data.Base.EmailParticipantsBean', function() {
                     email_addresses: {
                         email_address: 'rhodes@example.com',
                         id: emailAddressId,
+                        _acl: {},
                         _erased_fields: []
                     }
                 });
@@ -238,6 +345,7 @@ describe('Data.Base.EmailParticipantsBean', function() {
                     email_addresses: {
                         email_address: 'hrhodes@example.com',
                         id: emailAddressId,
+                        _acl: {},
                         _erased_fields: []
                     }
                 });
@@ -428,6 +536,7 @@ describe('Data.Base.EmailParticipantsBean', function() {
                     email_addresses: {
                         email_address: 'rhodes@example.com',
                         id: emailAddressId,
+                        _acl: {},
                         _erased_fields: []
                     }
                 });
@@ -469,6 +578,7 @@ describe('Data.Base.EmailParticipantsBean', function() {
                     email_addresses: {
                         email_address: 'hrhodes@example.com',
                         id: emailAddressId,
+                        _acl: {},
                         _erased_fields: []
                     }
                 });

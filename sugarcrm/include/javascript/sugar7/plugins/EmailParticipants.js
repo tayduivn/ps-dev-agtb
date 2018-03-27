@@ -178,23 +178,15 @@
                  * models.
                  */
                 this.prepareModel = function(model) {
-                    var parent = model.getParent();
-                    var hasParent;
-                    var parentName;
+                    var hasParent = model.hasParent();
+                    var parent;
+
+                    if (hasParent) {
+                        parent = model.getParent();
+                    }
 
                     model.nameIsErased = model.isNameErased();
                     model.emailIsErased = model.isEmailErased();
-
-                    if (parent) {
-                        parentName = app.utils.getRecordName(parent);
-                    }
-
-                    // The type and id fields are not unset after a parent
-                    // record is deleted. So we test for name because the
-                    // parent record is truly only there if type and id are
-                    // non-empty and the parent record can be resolved and has
-                    // not been deleted.
-                    hasParent = !!(parent && (parentName || model.nameIsErased));
 
                     // Select2 needs the locked property directly on the object.
                     model.locked = !!this.def.readonly;
@@ -221,7 +213,7 @@
                         model.invalid = model.emailIsErased || !!model.get('invalid_email');
                     }
 
-                    if (hasParent && app.acl.hasAccessToModel('view', parent)) {
+                    if (hasParent && parent && app.acl.hasAccessToModel('view', parent)) {
                         model.href = '#' + app.router.buildRoute(parent.module, parent.get('id'));
                     }
 
