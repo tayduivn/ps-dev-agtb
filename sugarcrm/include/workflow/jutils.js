@@ -77,8 +77,13 @@ function updatedroplist(target_iframe, target_module, iframe_type, grab_field){
 	}	
 		var base_module = get_value('base_module');
 	
-	
-		document.getElementById(target_iframe).src = 'index.php?module=WorkFlow&action=IframeDropdown&to_pdf=true&target_module='+ target_module_value +'&iframe_type=' + iframe_type + '&base_module=' + base_module;
+    document.getElementById(target_iframe).src =
+        'index.php?module=WorkFlow&action=IframeDropdown&to_pdf=true&target_module_or_link=' +
+        target_module_value +
+        '&iframe_type=' +
+        iframe_type +
+        '&base_module=' +
+        base_module;
 }
 
 
