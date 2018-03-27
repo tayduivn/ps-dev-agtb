@@ -111,7 +111,6 @@ class Importer
 
     public function import()
     {
-        $aflag = Activity::isEnabled();
         Activity::disable();
 
         // do we have a currency_id field
@@ -145,9 +144,7 @@ class Importer
         }
 
         $this->importSource->writeStatus();
-        if($aflag) {
-            Activity::enable();
-        }
+        Activity::restoreToPreviousState();
         //All done, remove file.
     }
 

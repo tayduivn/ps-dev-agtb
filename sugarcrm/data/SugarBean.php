@@ -1573,7 +1573,6 @@ class SugarBean
         // Ensure that Activity Messages do not occur in the context of a Delete action (e.g. unlink)
         // and do so for all nested calls within the Top Level Delete Context
         $opflag = static::enterOperation('delete');
-        $aflag = Activity::isEnabled();
         Activity::disable();
         $linked_fields=$this->get_linked_fields();
         foreach ($linked_fields as $name => $value)
@@ -1587,10 +1586,8 @@ class SugarBean
                 $GLOBALS['log']->fatal("error loading relationship $name");
             }
         }
-        if(static::leaveOperation('delete', $opflag) && $aflag) {
-            Activity::enable();
-        }
-
+        static::leaveOperation('delete', $opflag);
+        Activity::restoreToPreviousState();
     }
 
     /**
@@ -5955,7 +5952,6 @@ class SugarBean
             // Ensure that Activity Messages do not occur in the context of a Delete action (e.g. unlink)
             // and do so for all nested calls within the Top Level Delete Context
             $opflag = static::enterOperation('delete');
-            $aflag = Activity::isEnabled();
             Activity::disable();
             // call the custom business logic
             $custom_logic_arguments['id'] = $id;
@@ -6019,9 +6015,8 @@ class SugarBean
 
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
-            if(static::leaveOperation('delete', $opflag) && $aflag) {
-                Activity::enable();
-            }
+            static::leaveOperation('delete', $opflag);
+            Activity::restoreToPreviousState();
         }
     }
 

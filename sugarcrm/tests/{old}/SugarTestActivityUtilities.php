@@ -30,8 +30,10 @@ class SugarTestActivityUtilities
 
     public static function createActivity($new_id = '')
     {
+        Activity::enable();
         $activity = self::createUnsavedActivity($new_id);
         $activity->save();
+        Activity::restoreToPreviousState();
         $GLOBALS['db']->commit();
         self::$_createdActivities[] = $activity;
         return $activity;

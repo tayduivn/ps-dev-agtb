@@ -438,6 +438,11 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'ERR_SAML_REQUEST_SIGNING_CERT_NO_PRIVATE_KEY' => 'PEM file should contain private key',
     'ERR_SAML_REQUEST_SIGNING_CERT_NO_X509_CERTIFICATE' => 'PEM file should contain x.509 certificate',
     'ERR_SAML_REQUEST_SIGNING_CERT_X509_DOESNT_MATCH' => 'Provided x.509 certificate doesn\'t match private key',
+
+    //Activity Stream Settings
+    'LBL_ACTIVITY_STREAMS_SETTINGS_TITLE' => 'Activity Streams',
+    'LBL_ACTIVITY_STREAMS_SETTINGS_EDIT' => 'Enable Activity Streams',
+    'LBL_ACTIVITY_STREAMS_SETTINGS_EDIT_HELP' => 'Turns on Activity Streams for the application',
 );
 
 

@@ -494,7 +494,7 @@ class SugarTestHelper
         }
 
         // Restore the activity stream.
-        Activity::enable();
+        Activity::restoreToPreviousState();
 
         // Restoring of theme
         SugarThemeRegistry::set(self::$systemVars['SugarThemeRegistry']->dirName);

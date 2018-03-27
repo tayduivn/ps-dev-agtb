@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,11 +8,22 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-{{#if this.isActivtyStreamsEnabled}}
-    <ul class="activitystream-list results"></ul>
-{{else}}
-    <div class="record">
-        {{str 'LBL_ACTIVITY_STREAM_DISABLED' module}}
-    </div>
-{{/if}}
+/**
+ * @class View.Layouts.Base.ActivitiesLayout
+ * @alias SUGAR.App.view.layouts.BaseActivitiesLayout
+ * @extends View.Layout
+ */
+({
+    /**
+     * @inheritdoc
+     */
+    _render: function() {
+        this._super('_render');
+
+        if (!app.config.activityStreamsEnabled) {
+            this.$('.search-filter').addClass('hide');
+        }
+
+        return this;
+    }
+})

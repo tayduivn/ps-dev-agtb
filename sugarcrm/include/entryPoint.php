@@ -193,6 +193,10 @@ $current_user = BeanFactory::newBean('Users');
 $current_entity = null;
 $system_config = Administration::getSettings();
 
+    if (!$GLOBALS['sugar_config']['activity_streams_enabled']) {
+        Activity::disable();
+    }
+
 LogicHook::initialize()->call_custom_logic('', 'after_entry_point');
 }
 

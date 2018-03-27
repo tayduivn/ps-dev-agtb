@@ -36,6 +36,8 @@ class SubscriptionsTest extends TestCase
         BeanFactory::setBeanClass('Accounts');
         SugarTestHelper::tearDown();
         parent::tearDown();
+
+        $GLOBALS['db']->query("DELETE FROM subscriptions WHERE parent_id = '{$this->record->id}'");
     }
 
     /**
@@ -108,11 +110,14 @@ class SubscriptionsTest extends TestCase
     {
         $GLOBALS['reload_vardefs'] = true;
         $bean = SugarTestAccountUtilities::createAccount();
+
+        Activity::enable();
         $activity = SugarTestActivityUtilities::createActivity();
         $activity->activity_type = 'create';
         $activity->parent_id = $bean->id;
         $activity->parent_type = 'Accounts';
         $activity->save();
+        Activity::restoreToPreviousState();
 
         $data = array(
             'act_id'        => $activity->id,

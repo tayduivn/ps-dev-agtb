@@ -415,9 +415,6 @@ class ActivityQueueManagerTest extends TestCase
         $bean->assigned_user_id = $assignedUser->id;
         $bean->created_by       = $createdByUser->id;
 
-        $save_enabled = Activity::$enabled;
-        Activity::enable();
-
         $args = array(
             'isUpdate'    => $isUpdate,
             'dataChanges' => array("assigned_user_id" => array())
@@ -439,9 +436,11 @@ class ActivityQueueManagerTest extends TestCase
         $actManager->expects($this->exactly($subscriptions))
             ->method('subscribeUserToRecord');
 
+        Activity::enable();
+
         SugarTestReflection::callProtectedMethod($actManager, 'createOrUpdate', array($bean, $args, $mockActivity));
 
-        Activity::$enabled = $save_enabled;
+        Activity::restoreToPreviousState();
     }
 
     public function dataProviderForActivityMessageCreation()
@@ -469,12 +468,11 @@ class ActivityQueueManagerTest extends TestCase
         $contact     = BeanFactory::newBean('Contacts');
         $contact->id = create_guid();
 
-        $save_enabled = Activity::$enabled;
-        Activity::enable();
 
-        if (!$activityEnabled) {
-            Activity::disable();
+        if ($activityEnabled) {
+            Activity::enable();
         }
+
         $actManager = self::createPartialMock(
             'ActivityQueueManager',
             array('isValidLink', 'createOrUpdate', 'link', 'unlink')
@@ -489,20 +487,25 @@ class ActivityQueueManagerTest extends TestCase
         }
         $actManager->eventDispatcher($contact, $event, array());
 
-        Activity::$enabled = $save_enabled;
+        if ($activityEnabled) {
+            Activity::restoreToPreviousState();
+        }
     }
 
     /**
      * @covers ActivityQueueManager::isEnabledForModule
-     * @dataProvider dataProviderModuleBlackListWhiteList
+     * @dataProvider dataProviderModuleBlackListWhiteListEnabled
      */
-    public function testIsEnabledForModule_WithModuleBlackListAndWhiteList($moduleName, $expected, $assertMessage)
+    public function testIsEnabledForModule_WithModuleBlackListAndWhiteList_ActivityStreamEnabled($moduleName, $expected, $assertMessage)
     {
         $aqm = new ActivityQueueManager();
-        $this->assertEquals($expected, $aqm->isEnabledForModule($moduleName), $assertMessage);
+        Activity::enable();
+        $isEnabledForModule = $aqm->isEnabledForModule($moduleName);
+        Activity::restoreToPreviousState();
+        $this->assertEquals($expected, $isEnabledForModule, $assertMessage);
     }
 
-    public static function dataProviderModuleBlackListWhiteList()
+    public static function dataProviderModuleBlackListWhiteListEnabled()
     {
         return array(
             array('Forecasts', false, 'expected blacklist module to be disabled'),
@@ -511,6 +514,24 @@ class ActivityQueueManagerTest extends TestCase
         );
     }
 
+    /**
+     * @covers ActivityQueueManager::isEnabledForModule
+     * @dataProvider dataProviderModuleBlackListWhiteListDisabled
+     */
+    public function testIsEnabledForModule_WithModuleBlackListAndWhiteList_ActivityStreamDisabled($moduleName, $expected, $assertMessage)
+    {
+        $aqm = new ActivityQueueManager();
+        $this->assertEquals($expected, $aqm->isEnabledForModule($moduleName), $assertMessage);
+    }
+
+    public static function dataProviderModuleBlackListWhiteListDisabled()
+    {
+        return array(
+            array('Forecasts', false, 'expected blacklist module to be disabled'),
+            array('Notes', false, 'expected whitelist module to be disabled'),
+            array('Foo', false, 'expected nonexistent module to be disabled'),
+        );
+    }
     /**
      * @covers ActivityQueueManager::isEnabledForModule
      * @dataProvider dataProviderDifferentActivityAndAuditFlags
@@ -526,7 +547,12 @@ class ActivityQueueManagerTest extends TestCase
         $dictionary[$moduleNameSingular]['audited'] = $auditFlag;
         $dictionary[$moduleNameSingular]['activity_enabled'] = $activityFlag;
         $aqm = new ActivityQueueManager();
-        $this->assertEquals($expected, $aqm->isEnabledForModule($moduleNamePlural), $assertMessage);
+
+        Activity::enable();
+        $isEnabledForModule = $aqm->isEnabledForModule($moduleNamePlural);
+        Activity::restoreToPreviousState();
+
+        $this->assertEquals($expected, $isEnabledForModule, $assertMessage);
 
         //cleanup
         $dictionary[$moduleNameSingular]['audited'] = $auditBefore;

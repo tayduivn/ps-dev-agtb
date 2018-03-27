@@ -545,7 +545,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 		}
 		echo "</td></tr></table>\n";
 	}
-	Activity::enable();
+    Activity::restoreToPreviousState();
 	echo "<BR><input type=button class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_RETURN']}\" onclick='document.location=\"index.php?module=Users&action=reassignUserRecords\"'>\n";
 
 /////////////////// END STEP 3 - Execute reassignment ///////////////////////

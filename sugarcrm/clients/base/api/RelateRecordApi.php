@@ -493,7 +493,7 @@ class RelateRecordApi extends SugarApi
 
         SugarRelationship::resaveRelatedBeans();
 
-        Activity::enable();
+        Activity::restoreToPreviousState();
         $result['record'] = $this->formatBean($api, $args, $primaryBean);
 
         return $result;

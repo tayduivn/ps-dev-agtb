@@ -14,6 +14,17 @@ use PHPUnit\Framework\TestCase;
 
 class ConfiguratorTest extends TestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+    }
+
+    protected function tearDown()
+    {
+        Activity::restoreToPreviousState();
+        parent::tearDown();
+    }
+
     public function testPopulateFromPostConvertsBoolValuesFromStrings()
     {
         $_POST = array(
@@ -21,15 +32,110 @@ class ConfiguratorTest extends TestCase
             'admin_export_only' => 'false',
             'upload_dir' => 'yummy'
             );
-        
+
     	$cfg = new Configurator();
-    	
+
         $cfg->populateFromPost();
-        
+        $_POST = array();
+
         $this->assertEquals($cfg->config['disable_export'], true);
         $this->assertEquals($cfg->config['admin_export_only'], false);
         $this->assertEquals($cfg->config['upload_dir'], 'yummy');
-        
-        $_POST = array();
+    }
+
+    public function clearCacheDataProvider()
+    {
+        return array(
+            'activity_streams_enabled config is set the first time' => array(
+                array(),
+                array('activity_streams_enabled' => true),
+                [
+                    MetaDataManager::MM_CONFIG,
+                    MetaDataManager::MM_SERVERINFO,
+                    MetaDataManager::MM_MODULES,
+                ],
+            ),
+            'activity_streams_enabled config is set the first time' => array(
+                array('activity_streams_enabled' => true),
+                array(),
+                [
+                    MetaDataManager::MM_CONFIG,
+                    MetaDataManager::MM_SERVERINFO,
+                    MetaDataManager::MM_MODULES,
+                ],
+            ),
+            'activity_streams_enabled config is set the first time' => array(
+                array('activity_streams_enabled' => false),
+                array(),
+                [
+                    MetaDataManager::MM_CONFIG,
+                    MetaDataManager::MM_SERVERINFO,
+                    MetaDataManager::MM_MODULES,
+                ],
+            ),
+            'activity_streams_enabled config changes' => array(
+                array('activity_streams_enabled' => false),
+                array('activity_streams_enabled' => true),
+                [
+                    MetaDataManager::MM_CONFIG,
+                    MetaDataManager::MM_SERVERINFO,
+                    MetaDataManager::MM_MODULES,
+                ],
+            ),
+            'activity_streams_enabled config remains enabled' => array(
+                array('activity_streams_enabled' => true),
+                array('activity_streams_enabled' => true),
+                [
+                    MetaDataManager::MM_CONFIG,
+                    MetaDataManager::MM_SERVERINFO,
+                ],
+            ),
+            'activity_streams_enabled config remains disabled' => array(
+                array('activity_streams_enabled' => false),
+                array('activity_streams_enabled' => false),
+                [
+                    MetaDataManager::MM_CONFIG,
+                    MetaDataManager::MM_SERVERINFO,
+                ],
+            ),
+            'activity_streams_enabled config is not set and is not changed' => array(
+                array(),
+                array('new_email_addresses_opted_out' => true),
+                [
+                    MetaDataManager::MM_CONFIG,
+                    MetaDataManager::MM_SERVERINFO,
+                ],
+            ),
+            'activity_streams_enabled config is set and is not changed' => array(
+                array('activity_streams_enabled' => true),
+                array('new_email_addresses_opted_out' => true),
+                [
+                    MetaDataManager::MM_CONFIG,
+                    MetaDataManager::MM_SERVERINFO,
+                    MetaDataManager::MM_MODULES,
+                ],
+            ),
+        );
+    }
+
+    /**
+     * @covers ::clearCache
+     * @dataProvider clearCacheDataProvider
+     * @param array $oldConfig
+     * @param array $newConfig
+     * @param array $expectedSections
+     */
+    public function testClearCache_UpdatesMetadataCache($oldConfig, $newConfig, $expectedSections)
+    {
+        $configurator = $this->createPartialMock('Configurator', array('updateMetadataCache', 'readOverride'));
+        $configurator->expects($this->once())
+            ->method('updateMetadataCache')
+            ->with($expectedSections);
+
+        $configurator->expects($this->once())
+            ->method('readOverride')
+            ->will($this->returnValue(array($oldConfig, $newConfig)));
+
+        $configurator->clearCache();
     }
 }

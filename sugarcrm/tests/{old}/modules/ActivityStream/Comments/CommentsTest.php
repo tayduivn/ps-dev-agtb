@@ -17,13 +17,10 @@ use PHPUnit\Framework\TestCase;
  */
 class CommentsTest extends TestCase
 {
-    private $activity;
-
     public function setUp()
     {
         parent::setUp();
         SugarTestHelper::setUp('current_user');
-        $this->activity = SugarTestActivityUtilities::createActivity();
     }
 
     public function tearDown()
@@ -40,7 +37,8 @@ class CommentsTest extends TestCase
      */
     public function testToString()
     {
-        $comment = SugarTestCommentUtilities::createComment($this->activity);
+        $activity = SugarTestActivityUtilities::createActivity();
+        $comment = SugarTestCommentUtilities::createComment($activity);
         $json = $comment->toJson();
         $this->assertInternalType('string', $json);
         $this->assertNotEquals(false, json_decode($json, true));
@@ -53,10 +51,11 @@ class CommentsTest extends TestCase
      */
     public function testDoubleSaveDoesntUpdateCommentCount()
     {
-        $comment = SugarTestCommentUtilities::createComment($this->activity);
-        $this->assertEquals(1, $this->activity->comment_count);
+        $activity = SugarTestActivityUtilities::createActivity();
+        $comment = SugarTestCommentUtilities::createComment($activity);
+        $this->assertEquals(1, $activity->comment_count);
         $comment->save();
-        $this->assertEquals(1, $this->activity->comment_count);
+        $this->assertEquals(1, $activity->comment_count);
     }
 
     /**
@@ -65,8 +64,10 @@ class CommentsTest extends TestCase
      */
     public function testSave_WithoutParentPost_ReturnsFalse()
     {
+        Activity::enable();
         $comment = BeanFactory::newBean('Comments');
         $id = $comment->save();
+        Activity::restoreToPreviousState();
         $this->assertFalse($id);
     }
 

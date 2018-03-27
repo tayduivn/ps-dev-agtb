@@ -9,21 +9,30 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe("Activity Stream Omnibar View", function() {
+    var app;
     var view;
+    var activityStreamsEnabledBefore;
 
     beforeEach(function() {
+        app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('activitystream-omnibar', 'view', 'base');
         SugarTest.testMetadata.set();
+
+        activityStreamsEnabledBefore = app.config.activityStreamsEnabled;
+        app.config.activityStreamsEnabled = true;
 
         view = SugarTest.createView('base', 'Cases', 'activitystream-omnibar');
         view.render();
     });
 
     afterEach(function() {
+        app.config.activityStreamsEnabled = activityStreamsEnabledBefore;
         sinon.collection.restore();
         view.dispose();
         SugarTest.testMetadata.dispose();
+        app.cache.cutAll();
+        app.view.reset();
     });
 
     describe("toggleSubmitButton()", function() {
@@ -111,5 +120,12 @@ describe("Activity Stream Omnibar View", function() {
                 });
             });
         });
+    });
+
+    it('should hide the view when activity streams is disabled', function() {
+        app.config.activityStreamsEnabled = false;
+        view.render();
+
+        expect(view.$el.hasClass('hide')).toBe(true);
     });
 });

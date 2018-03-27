@@ -9,7 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Activity Stream Bottom View', function() {
-    var app, view, superStub;
+    var app;
+    var view;
+    var activityStreamsEnabledBefore;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -17,14 +19,17 @@ describe('Activity Stream Bottom View', function() {
         SugarTest.loadHandlebarsTemplate('list-bottom', 'view', 'base');
         SugarTest.testMetadata.set();
 
+        activityStreamsEnabledBefore = app.config.activityStreamsEnabled;
+
         view = SugarTest.createView('base', 'Cases', 'activitystream-bottom');
-        superStub = sinon.stub(view, '_super');
     });
 
     afterEach(function() {
-        superStub.restore();
+        app.config.activityStreamsEnabled = activityStreamsEnabledBefore;
         view.dispose();
         SugarTest.testMetadata.dispose();
+        app.cache.cutAll();
+        app.view.reset();
     });
 
     it('Should hide when there is no more data to fetch and collection is not empty', function() {
@@ -34,9 +39,9 @@ describe('Activity Stream Bottom View', function() {
             off: $.noop
         };
 
+        app.config.activityStreamsEnabled = true;
         view.render();
 
-        expect(superStub.calledOnce).toBe(false);
         expect(view.$el.hasClass('hide')).toBe(true);
     });
 
@@ -47,9 +52,9 @@ describe('Activity Stream Bottom View', function() {
             off: $.noop
         };
 
+        app.config.activityStreamsEnabled = true;
         view.render();
 
-        expect(superStub.calledOnce).toBe(true);
         expect(view.$el.hasClass('hide')).toBe(false);
     });
 
@@ -59,10 +64,22 @@ describe('Activity Stream Bottom View', function() {
             length: 0,
             off: $.noop
         };
-
+        app.config.activityStreamsEnabled = true;
         view.render();
 
-        expect(superStub.calledOnce).toBe(true);
         expect(view.$el.hasClass('hide')).toBe(false);
+    });
+
+    it('Should not render layout when activity streams is disabled', function() {
+        view.collection = {
+            next_offset: 10,
+            length: 10,
+            off: $.noop
+        };
+
+        app.config.activityStreamsEnabled = false;
+        view.render();
+
+        expect(view.$el.hasClass('hide')).toBe(true);
     });
 });

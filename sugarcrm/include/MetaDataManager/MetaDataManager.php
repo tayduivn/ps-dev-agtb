@@ -300,6 +300,7 @@ class MetaDataManager implements LoggerAwareInterface
         'preview_edit' => true,
         'max_aggregate_email_attachments_bytes' => true,
         'new_email_addresses_opted_out' => true,
+        'activity_streams_enabled' => true,
     );
 
     /**
@@ -2110,7 +2111,6 @@ class MetaDataManager implements LoggerAwareInterface
         $administration->retrieveSettings();
 
         $idpConfig = new Authentication\Config(\SugarConfig::getInstance());
-
         $properties = $this->getConfigProperties();
         $properties = $this->parseConfigProperties($sugarConfig, $properties);
         $configs = $this->handleConfigPropertiesExceptions($properties);

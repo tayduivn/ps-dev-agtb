@@ -49,6 +49,9 @@ class RS77Test extends TestCase
         if($this->subscription) {
             $GLOBALS['db']->query("DELETE FROM subscriptions WHERE id = '{$this->subscription}'");
         }
+
+        Activity::restoreToPreviousState();
+
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
     }
@@ -60,27 +63,32 @@ class RS77Test extends TestCase
     {
         $account = SugarTestAccountUtilities::createAccount();
 
-        $result = $this->subscriptionsApi->subscribeToRecord($this->serviceMock, array(
+        Activity::enable();
+
+        $result1 = $this->subscriptionsApi->subscribeToRecord($this->serviceMock, array(
             'module' => 'Accounts',
             'record' => $account->id,
         ));
 
-        $this->assertNotEmpty($result);
+        $this->assertNotEmpty($result1);
 
         $subscription = BeanFactory::newBean('Subscriptions');
-        $subscription->retrieve($result);
+        $subscription->retrieve($result1);
 
-        $this->assertEquals($result, $subscription->id);
+        $this->assertEquals($result1, $subscription->id);
         $this->assertEquals('Accounts', $subscription->parent_type);
         $this->assertEquals($account->id, $subscription->parent_id);
 
         // check subscribe for already subscribed record
-        $result = $this->subscriptionsApi->subscribeToRecord($this->serviceMock, array(
+        $result2 = $this->subscriptionsApi->subscribeToRecord($this->serviceMock, array(
             'module' => 'Accounts',
             'record' => $account->id,
         ));
 
-        $this->assertFalse($result);
+        $this->assertFalse($result2);
+
+        $GLOBALS['db']->query("DELETE FROM subscriptions WHERE id = '{$result1}'");
+        $GLOBALS['db']->query("DELETE FROM subscriptions WHERE id = '{$result2}'");
     }
 
     /**
@@ -89,6 +97,8 @@ class RS77Test extends TestCase
     public function testUnsubscribeFromRecord()
     {
         $account = SugarTestAccountUtilities::createAccount();
+
+        Activity::enable();
 
         $result = $this->subscriptionsApi->unsubscribeFromRecord($this->serviceMock, array(
             'module' => 'Accounts',

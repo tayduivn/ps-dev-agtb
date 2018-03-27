@@ -204,7 +204,7 @@ class LeadConvert
                     $this->lead,
                     $this->contact
                 );
-                Activity::enable();
+                Activity::restoreToPreviousState();
             }
         }
     }

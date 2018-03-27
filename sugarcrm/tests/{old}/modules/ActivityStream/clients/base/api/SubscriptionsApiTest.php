@@ -34,6 +34,7 @@ class SubscriptionsApiTest extends TestCase
     {
         BeanFactory::setBeanClass('Leads');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        Activity::restoreToPreviousState();
         SugarTestHelper::tearDown();
         parent::tearDown();
     }
@@ -43,6 +44,8 @@ class SubscriptionsApiTest extends TestCase
      */
     public function testSubscribeToRecord_RecordNotFound_ThrowsException()
     {
+        Activity::enable();
+
         $this->subscriptionApi->subscribeToRecord(
             $this->api,
             array(
@@ -67,6 +70,7 @@ class SubscriptionsApiTest extends TestCase
         $mockLead->id = create_guid();
         BeanFactory::registerBean($mockLead);
 
+        Activity::enable();
         $this->subscriptionApi->subscribeToRecord(
             $this->api,
             array(
@@ -85,6 +89,8 @@ class SubscriptionsApiTest extends TestCase
     {
         $lead = SugarTestLeadUtilities::createLead();
         $lead->mark_deleted($lead->id);
+
+        Activity::enable();
 
         $this->subscriptionApi->unsubscribeFromRecord(
             $this->api,
@@ -110,6 +116,7 @@ class SubscriptionsApiTest extends TestCase
         $mockLead->id = create_guid();
         BeanFactory::registerBean($mockLead);
 
+        Activity::enable();
         $this->subscriptionApi->unsubscribeFromRecord(
             $this->api,
             array(

@@ -19,12 +19,9 @@ require_once 'modules/ACLActions/actiondefs.php';
  */
 class ActivitiesTest extends TestCase
 {
-    private $activity;
-
     public function setUp()
     {
         parent::setUp();
-        $this->activity = SugarTestActivityUtilities::createActivity();
     }
 
     public function tearDown()
@@ -41,16 +38,17 @@ class ActivitiesTest extends TestCase
      */
     public function testThatTouchingAnActivityDoesNotModifyLastComment()
     {
-        SugarTestCommentUtilities::createComment($this->activity);
+        $activity = SugarTestActivityUtilities::createActivity();
+        SugarTestCommentUtilities::createComment($activity);
 
-        $count = $this->activity->comment_count;
-        $last = $this->activity->last_comment;
-        $bean = $this->activity->last_comment_bean;
-        $this->activity->save();
+        $count = $activity->comment_count;
+        $last = $activity->last_comment;
+        $bean = $activity->last_comment_bean;
+        $activity->save();
 
-        $this->assertEquals($count, $this->activity->comment_count);
-        $this->assertEquals($last, $this->activity->last_comment);
-        $this->assertEquals($bean, $this->activity->last_comment_bean);
+        $this->assertEquals($count, $activity->comment_count);
+        $this->assertEquals($last, $activity->last_comment);
+        $this->assertEquals($bean, $activity->last_comment_bean);
     }
 
     /**
@@ -59,11 +57,13 @@ class ActivitiesTest extends TestCase
      */
     public function testAddComment()
     {
-        $comment = SugarTestCommentUtilities::createComment($this->activity);
+        $activity = SugarTestActivityUtilities::createActivity();
+        $comment = SugarTestCommentUtilities::createComment($activity);
+
         $this->assertInternalType('string', $comment->id);
-        $this->assertEquals($comment->id, $this->activity->last_comment_bean->id);
-        $this->assertEquals(1, $this->activity->comment_count);
-        $this->assertEquals($comment->toJson(), $this->activity->last_comment);
+        $this->assertEquals($comment->id, $activity->last_comment_bean->id);
+        $this->assertEquals(1, $activity->comment_count);
+        $this->assertEquals($comment->toJson(), $activity->last_comment);
     }
 
     /**
@@ -74,6 +74,7 @@ class ActivitiesTest extends TestCase
     {
         $record = SugarTestActivityUtilities::createUnsavedActivity();
         $comment = SugarTestCommentUtilities::createComment($record);
+
         $this->assertFalse($record->addComment($comment));
     }
 
@@ -87,6 +88,7 @@ class ActivitiesTest extends TestCase
         $record = SugarTestActivityUtilities::createActivity();
         $record2 = SugarTestActivityUtilities::createActivity();
         $comment = SugarTestCommentUtilities::createComment($record2);
+
         $this->assertFalse($record->addComment($comment));
     }
 
@@ -97,11 +99,14 @@ class ActivitiesTest extends TestCase
      */
     public function testDeleteComment()
     {
-        $comment = SugarTestCommentUtilities::createComment($this->activity);
-        $this->activity->deleteComment($comment->id);
+        $activity = SugarTestActivityUtilities::createActivity();
+        $comment = SugarTestCommentUtilities::createComment($activity);
+        Activity::enable();
+        $activity->deleteComment($comment->id);
+        Activity::restoreToPreviousState();
 
-        $this->assertNotEquals($comment->id, $this->activity->last_comment_bean->id);
-        $this->assertEquals(0, $this->activity->comment_count);
+        $this->assertNotEquals($comment->id, $activity->last_comment_bean->id);
+        $this->assertEquals(0, $activity->comment_count);
     }
 
     /**
@@ -111,11 +116,14 @@ class ActivitiesTest extends TestCase
      */
     public function testDeleteComment2()
     {
-        $orig_last_comment = $this->activity->last_comment_bean;
-        $this->activity->deleteComment('foo');
+        $activity = SugarTestActivityUtilities::createActivity();
+        $orig_last_comment = $activity->last_comment_bean;
+        Activity::enable();
+        $activity->deleteComment('foo');
+        Activity::restoreToPreviousState();
 
-        $this->assertEquals($orig_last_comment, $this->activity->last_comment_bean);
-        $this->assertEquals(0, $this->activity->comment_count);
+        $this->assertEquals($orig_last_comment, $activity->last_comment_bean);
+        $this->assertEquals(0, $activity->comment_count);
     }
 
     /**
@@ -126,7 +134,9 @@ class ActivitiesTest extends TestCase
     {
         $record = SugarTestActivityUtilities::createUnsavedActivity();
         $orig_last_comment = $record->last_comment_bean;
+        Activity::enable();
         $record->deleteComment('foo');
+        Activity::restoreToPreviousState();
 
         $this->assertEquals($orig_last_comment, $record->last_comment_bean);
         $this->assertEquals(0, $record->comment_count);
@@ -139,12 +149,15 @@ class ActivitiesTest extends TestCase
      */
     public function testDeleteComment4()
     {
-        $first_comment = SugarTestCommentUtilities::createComment($this->activity);
-        $second_comment = SugarTestCommentUtilities::createComment($this->activity);
-        $this->activity->deleteComment($second_comment->id);
+        $activity = SugarTestActivityUtilities::createActivity();
+        $first_comment = SugarTestCommentUtilities::createComment($activity);
+        $second_comment = SugarTestCommentUtilities::createComment($activity);
+        Activity::enable();
+        $activity->deleteComment($second_comment->id);
+        Activity::restoreToPreviousState();
 
-        $this->assertEquals($first_comment->id, $this->activity->last_comment_bean->id);
-        $this->assertEquals(1, $this->activity->comment_count);
+        $this->assertEquals($first_comment->id, $activity->last_comment_bean->id);
+        $this->assertEquals(1, $activity->comment_count);
     }
 
     /**
@@ -155,12 +168,15 @@ class ActivitiesTest extends TestCase
      */
     public function testDeleteComment5()
     {
-        $first_comment = SugarTestCommentUtilities::createComment($this->activity);
-        $second_comment = SugarTestCommentUtilities::createComment($this->activity);
-        $this->activity->deleteComment($first_comment->id);
+        $activity = SugarTestActivityUtilities::createActivity();
+        $first_comment = SugarTestCommentUtilities::createComment($activity);
+        $second_comment = SugarTestCommentUtilities::createComment($activity);
+        Activity::enable();
+        $activity->deleteComment($first_comment->id);
+        Activity::restoreToPreviousState();
 
-        $this->assertEquals($second_comment->id, $this->activity->last_comment_bean->id);
-        $this->assertEquals(1, $this->activity->comment_count);
+        $this->assertEquals($second_comment->id, $activity->last_comment_bean->id);
+        $this->assertEquals(1, $activity->comment_count);
     }
 
     /**
@@ -170,18 +186,20 @@ class ActivitiesTest extends TestCase
      */
     public function testValidJson()
     {
-        $this->assertInternalType('string', $this->activity->data);
-        $this->assertNotEquals(false, json_decode($this->activity->data, true));
+        $activity = SugarTestActivityUtilities::createActivity();
+        $this->assertInternalType('string', $activity->data);
+        $this->assertNotEquals(false, json_decode($activity->data, true));
 
-        $this->activity->retrieve($this->activity->id);
-        $this->assertInternalType('string', $this->activity->data);
-        $this->assertNotEquals(false, json_decode($this->activity->data, true));
-        $this->assertInternalType('string', $this->activity->last_comment);
-        $this->assertNotEquals(false, json_decode($this->activity->last_comment, true));
+        $activity->retrieve($activity->id);
+        $this->assertInternalType('string', $activity->data);
+        $this->assertNotEquals(false, json_decode($activity->data, true));
+        $this->assertInternalType('string', $activity->last_comment);
+        $this->assertNotEquals(false, json_decode($activity->last_comment, true));
 
-        $comment = SugarTestCommentUtilities::createComment($this->activity);
-        $this->assertInternalType('string', $this->activity->last_comment);
-        $this->assertNotEquals(false, json_decode($this->activity->last_comment, true));
+        $comment = SugarTestCommentUtilities::createComment($activity);
+
+        $this->assertInternalType('string', $activity->last_comment);
+        $this->assertNotEquals(false, json_decode($activity->last_comment, true));
     }
 
     /**
@@ -645,7 +663,7 @@ class ActivitiesTest extends TestCase
     {
         $contact = SugarTestContactUtilities::createContact();
         $user = SugarTestUserUtilities::createAnonymousUser();
-        Subscription::subscribeUserToRecord($user, $contact, array('disable_row_level_security' => true));
+        $subscriptionId = Subscription::subscribeUserToRecord($user, $contact, array('disable_row_level_security' => true));
         $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
         $activity = $this->createPartialMock('Activity', array('load_relationship', 'getParentBean', 'getChangedFieldsForUser'));
@@ -667,5 +685,38 @@ class ActivitiesTest extends TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarACL::$acls = array();
+
+        $GLOBALS['db']->query("DELETE FROM subscriptions WHERE id = '{$subscriptionId}'");
+    }
+
+    /**
+     * @covers Activity::restoreToPreviousState
+     */
+    public function testRestoreToPreviousState_StatesRestoredSuccessfully()
+    {
+        $intialState = Activity::isEnabled();
+
+        Activity::enable();
+        Activity::enable();
+        Activity::disable();
+        Activity::enable();
+        Activity::disable();
+
+        $this->assertEquals(false, Activity::isEnabled(), 'Current state should be disabled');
+
+        Activity::restoreToPreviousState();
+        $this->assertEquals(true, Activity::isEnabled(), 'Current state should be enabled');
+
+        Activity::restoreToPreviousState();
+        $this->assertEquals(false, Activity::isEnabled(), 'Current state should be disabled');
+
+        Activity::restoreToPreviousState();
+        $this->assertEquals(true, Activity::isEnabled(), 'Current state should be enabled');
+
+        Activity::restoreToPreviousState();
+        $this->assertEquals(true, Activity::isEnabled(), 'Current state should be enabled');
+
+        Activity::restoreToPreviousState();
+        $this->assertEquals($intialState, Activity::isEnabled(), "Current state should be {$intialState}");
     }
 }

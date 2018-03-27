@@ -35,7 +35,9 @@ class SugarTestCommentUtilities
     {
         $comment = self::createUnsavedComment($a, $new_id);
         if ($comment) {
+            Activity::enable();
             $comment->save();
+            Activity::restoreToPreviousState();
             $GLOBALS['db']->commit();
             self::$_createdComments[] = $comment;
         }

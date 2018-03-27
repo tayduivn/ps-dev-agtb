@@ -347,7 +347,6 @@ class CalendarUtils
         $leads = $bean->get_linked_beans('leads', 'Lead');
         $users = $bean->get_linked_beans('users', 'User');
 
-        $isActivityEnabled = Activity::isEnabled();
         Activity::disable();
 
         $calendarEvents = new CalendarEvents();
@@ -421,9 +420,7 @@ class CalendarUtils
             }
         }
 
-        if ($isActivityEnabled) {
-            Activity::enable();
-        }
+        Activity::restoreToPreviousState();
 
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 		return $arr;

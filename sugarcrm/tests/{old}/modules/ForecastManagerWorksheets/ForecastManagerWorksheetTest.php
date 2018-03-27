@@ -857,13 +857,10 @@ class ForecastManagerWorksheetTest extends TestCase
                 'save',
                 'commitQuota',
                 'recalcQuotas',
-                'toggleActivityStream',
                 'getActivityQueueManager',
             ))
             ->getMock();
 
-        $worksheet->expects($this->never())
-            ->method('toggleActivityStream');
         $worksheet->expects($this->never())
             ->method('getActivityQueueManager');
 
@@ -945,17 +942,9 @@ class ForecastManagerWorksheetTest extends TestCase
                 'getQuota',
                 'commitQuota',
                 'recalcQuotas',
-                'toggleActivityStream',
                 'getActivityQueueManager',
             ))
             ->getMock();
-
-        $worksheet->expects($this->exactly(2))
-            ->method('toggleActivityStream')
-            ->withConsecutive(
-                array(false),
-                array(true)
-            );
 
         $currentQuotaBean = $this->getMockBuilder('Quota')
             ->setMethods(array('save'))

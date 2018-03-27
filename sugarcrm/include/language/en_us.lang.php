@@ -5065,6 +5065,7 @@ Sincerely, SugarCRM',
     'LBL_ACTIVITYSTREAM_RELATIVETIME_ON' => ' on ',
     'LBL_ACTIVITY_STREAM_DASHLET_NAME' => 'My Activity Stream',
     'LBL_ACTIVITY_STREAM_DASHLET_DESCRIPTION' => 'View a list of activities performed on records and create and post comments.',
+    'EXCEPTION_ACTIVITY_STREAM_DISABLED' => 'Activity Streams is disabled',
 
     'LBL_DATA_VIEW' => 'Data View',
     'LBL_COMMENT' => 'Comment',

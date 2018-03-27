@@ -241,6 +241,12 @@ class Configurator {
     function clearCache()
     {
         global $sugar_config, $sugar_version;
+
+        $sections = [
+            MetaDataManager::MM_CONFIG,
+            MetaDataManager::MM_SERVERINFO,
+        ];
+
         list($oldConfig, $currentConfigArray) = $this->readOverride();
         foreach($currentConfigArray as $key => $val) {
             if (in_array($key, $this->allowUndefined) || isset ($sugar_config[$key])) {
@@ -252,9 +258,34 @@ class Configurator {
                 }
             }
         }
-        // Clear metadata config section only
-        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CONFIG));
-        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_SERVERINFO));
+
+        //Module metadata needs to be refreshed if Activity Stream system setting is changed
+        if ((isset($currentConfigArray['activity_streams_enabled'])
+                && (!isset($oldConfig['activity_streams_enabled']) ||
+                    $currentConfigArray['activity_streams_enabled'] != $oldConfig['activity_streams_enabled'])
+            ) ||
+            (isset($oldConfig['activity_streams_enabled']) && !isset($currentConfigArray['activity_streams_enabled']))
+        ) {
+            $sections[] = MetaDataManager::MM_MODULES;
+        }
+
+        if ($sugar_config['activity_streams_enabled']) {
+            Activity::enable();
+        } else {
+            Activity::disable();
+        }
+
+        $this->updateMetadataCache($sections);
+    }
+
+    /**
+     * Refreshes the metadata cache for the specified sections.
+     *
+     * @param array $sections The sections that need to be refreshed.
+     */
+    protected function updateMetadataCache($sections)
+    {
+        MetaDataManager::refreshSectionCache($sections);
     }
 
 	function saveConfig() {
@@ -354,7 +385,7 @@ class Configurator {
         sugar_cache_clear('company_logo_attributes');
         SugarThemeRegistry::clearAllCaches();
         SugarThemeRegistry::current()->clearImageCache('company_logo.png');
-        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_LOGOURL));
+        $this->updateMetadataCache(array(MetaDataManager::MM_LOGOURL));
 	}
 	/**
 	 * @params : none
