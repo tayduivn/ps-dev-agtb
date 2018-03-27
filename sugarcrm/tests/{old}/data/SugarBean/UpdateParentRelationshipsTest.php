@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class UpdateParentRelationshipsTest extends TestCase
@@ -132,7 +133,7 @@ class UpdateParentRelationshipsTest extends TestCase
         $this->assertEquals($parentId, $task->parent_id);
     }
 
-    private function collectInvocations(PHPUnit_Framework_MockObject_MockObject $mock, $method, &$result)
+    private function collectInvocations(MockObject $mock, $method, &$result)
     {
         $mock->expects($this->any())
             ->method($method)

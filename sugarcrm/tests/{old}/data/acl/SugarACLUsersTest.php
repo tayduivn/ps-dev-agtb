@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SugarACLUsersTest extends TestCase
@@ -94,7 +95,7 @@ class SugarACLUsersTest extends TestCase
             $sugar_config[$key] = $value;
         }
 
-        /** @var SugarACLUsers|PHPUnit_Framework_MockObject_MockObject $acl_class */
+        /** @var SugarACLUsers|MockObject $acl_class */
         $acl_class = $this->getMockBuilder('SugarACLUsers')->setMethods(null)->getMock();
         $result = $acl_class->checkAccess($module, $view, $context);
         $this->assertEquals($expected, $result);
@@ -134,7 +135,7 @@ class SugarACLUsersTest extends TestCase
     {
         SugarTestHelper::setup('current_user', array(true, $isAdmin));
 
-        /** @var SugarACLUsers|PHPUnit_Framework_MockObject_MockObject $acl_class */
+        /** @var SugarACLUsers|MockObject $acl_class */
         $acl_class = $this->createPartialMock('SugarACLUsers', array('myselfCheck'));
         $acl_class->expects($this->once())
             ->method('myselfCheck')
@@ -179,7 +180,7 @@ class SugarACLUsersTest extends TestCase
     {
         SugarTestHelper::setup('current_user', array(true, $isAdmin));
 
-        /** @var SugarACLUsers|PHPUnit_Framework_MockObject_MockObject $acl_class */
+        /** @var SugarACLUsers|MockObject $acl_class */
         $acl_class = $this->createPartialMock('SugarACLUsers', array('myselfCheck'));
         $acl_class->expects($this->once())
             ->method('myselfCheck')
@@ -199,7 +200,7 @@ class SugarACLUsersTest extends TestCase
 
         $acl = new SugarACLUsers();
 
-        /** @var User|PHPUnit_Framework_MockObject_MockObject $bean */
+        /** @var User|MockObject $bean */
         $bean = $this->createMock(User::class);
 
         // Expected result - false if bean id and current_user id are not equal
@@ -244,7 +245,7 @@ class SugarACLUsersTest extends TestCase
     {
         SugarTestHelper::setup('current_user', array(true, $isAdmin));
 
-        /** @var SugarACLUsers|PHPUnit_Framework_MockObject_MockObject $acl_class */
+        /** @var SugarACLUsers|MockObject $acl_class */
         $acl_class = $this->createPartialMock('SugarACLUsers', array('myselfCheck'));
         $acl_class->expects($this->once())
             ->method('myselfCheck')

@@ -22,7 +22,7 @@ class NumericExpressionTest extends TestCase
      */
     public function testIsCurrencyField($def, $expected)
     {
-        /* @var $bean Opportunity|PHPUnit_Framework_MockObject_MockObject */
+        /* @var $bean Opportunity|MockObject */
         $bean = $this->getMockBuilder('Opportunity')
             ->setMethods(array('save', 'getFieldDefinition'))
             ->disableOriginalConstructor()

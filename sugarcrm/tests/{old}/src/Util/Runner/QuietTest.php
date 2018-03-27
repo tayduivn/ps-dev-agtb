@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Util\Runner;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Sugarcrm\Sugarcrm\Util\Runner\Quiet as RunnerQuiet;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
@@ -26,10 +27,10 @@ class QuietTest extends TestCase
     /** @var \SugarBean[] */
     protected $listOfBeans = array();
 
-    /** @var RunnerQuiet|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RunnerQuiet|\MockObject */
     protected $quietRunner = null;
 
-    /** @var \Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var \Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface|MockObject */
     protected $runnable = null;
 
     /**

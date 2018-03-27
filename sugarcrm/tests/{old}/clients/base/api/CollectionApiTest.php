@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -165,7 +166,7 @@ class CollectionApiTest extends TestCase
 
     public function testGetData()
     {
-        /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
+        /** @var CollectionApi|MockObject $api */
         $api = $this->getMockBuilder('CollectionApi')
             ->disableOriginalConstructor()
             ->setMethods(array('getSourceArguments', 'getSourceData'))
@@ -239,7 +240,7 @@ class CollectionApiTest extends TestCase
             ),
         );
 
-        /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
+        /** @var CollectionApi|MockObject $api */
         $api = $this->getMockBuilder('CollectionApi')
             ->disableOriginalConstructor()
             ->setMethods(array('getSourceArguments'))
@@ -538,7 +539,7 @@ class CollectionApiTest extends TestCase
      */
     public function testNormalizeArguments(array $args, $orderBy, $expected)
     {
-        /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
+        /** @var CollectionApi|MockObject $api */
         $api = $this->getMockBuilder('CollectionApi')
             ->disableOriginalConstructor()
             ->setMethods(array('normalizeOffset', 'normalizeStoredFilter', 'getDefaultLimit', 'getDefaultOrderBy'))

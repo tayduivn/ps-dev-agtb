@@ -995,7 +995,7 @@ class SugarBeanTest extends TestCase
 
     private function getDbMock()
     {
-        /** @var DBManager|PHPUnit_Framework_MockObject_MockObject $db */
+        /** @var DBManager|MockObject $db */
         $db = $this->getMockBuilder('DBManager')
             ->setMethods(array('checkError'))
             ->getMockForAbstractClass();

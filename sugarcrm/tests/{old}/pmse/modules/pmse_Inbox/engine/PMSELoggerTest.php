@@ -12,6 +12,7 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error\Error;
 
 class PMSELoggerTest extends TestCase
 {
@@ -23,7 +24,7 @@ class PMSELoggerTest extends TestCase
 
     public function testClone()
     {
-        $this->expectException(PHPUnit_Framework_Error::class);
+        $this->expectException(Error::class);
         $instance = PMSELogger::getInstance();
         clone($instance);
     }
@@ -80,5 +81,5 @@ class PMSELoggerTest extends TestCase
         $loggerMock->setLogWriter($writerMock);
         
         $loggerMock->write(LogLevel::EMERGENCY, 'Some Message');
-    }        
+    }
 }

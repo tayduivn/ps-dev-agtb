@@ -46,11 +46,19 @@ class Bug51185Test extends TestCase
     public function testSchedulersJobHandleDateFormatWithNow()
     {
         global $current_user;
+
         $job = new SchedulersJob(false);
         $job->user = $current_user;
+
         $this->assertRegExp('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat('now'));
-        $this->assertRegExp('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat('now'), $current_user, false);
-        $this->assertRegExp('/^\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}\:\d{2}$/', $job->handleDateFormat('now', $current_user, true));
+        $this->assertRegExp(
+            '/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/',
+            $job->handleDateFormat('now', $current_user, false)
+        );
+        $this->assertRegExp(
+            '/^\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}\:\d{2}$/',
+            $job->handleDateFormat('now', $current_user, true)
+        );
     }
 
     /**

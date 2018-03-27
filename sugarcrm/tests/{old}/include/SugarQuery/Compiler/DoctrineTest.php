@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 require_once 'include/SugarQuery/Compiler/Doctrine.php';
@@ -156,7 +157,7 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
     {
         $subQuery = new SugarQuery();
 
-        /** @var SugarQuery_Compiler_Doctrine|PHPUnit_Framework_MockObject_MockObject $compiler */
+        /** @var SugarQuery_Compiler_Doctrine|MockObject $compiler */
         $compiler = $this->getMockBuilder('SugarQuery_Compiler_Doctrine')
             ->setMethods(array('compileSubQuery'))
             ->setConstructorArgs(array($this->account->db))
@@ -502,11 +503,11 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
      * Returns compiled with mocked case sensitivity of the underlying database collation
      *
      * @param boolean $value Whether the locale is case sensitive
-     * @return PHPUnit_Framework_MockObject_MockObject|SugarQuery_Compiler_Doctrine
+     * @return MockObject|SugarQuery\Compiler\Doctrine
      */
     private function getCompilerWithCollationCaseSensitivity($value)
     {
-        /** @var SugarQuery_Compiler_Doctrine|PHPUnit_Framework_MockObject_MockObject $compiler */
+        /** @var SugarQuery_Compiler_Doctrine|MockObject $compiler */
         $compiler = $this->getMockBuilder('SugarQuery_Compiler_Doctrine')
             ->setMethods(array('isCollationCaseSensitive'))
             ->setConstructorArgs(array($this->account->db))
@@ -592,7 +593,7 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
      */
     public function testJoinErasedFields($messsge, $isPiiFieldsSelected, $expected)
     {
-        /** @var SugarQuery_Compiler_Doctrine|PHPUnit_Framework_MockObject_MockObject $compiler */
+        /** @var SugarQuery_Compiler_Doctrine|MockObject $compiler */
         $compiler = $this->getMockBuilder(SugarQuery_Compiler_Doctrine::class)
             ->setMethods(['isPiiFieldsSelected'])
             ->setConstructorArgs(array($this->account->db))
@@ -649,7 +650,7 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
             ->method('getFieldDefinitions')
             ->willReturn($selectedPiiFields);
 
-        /** @var SugarQuery_Compiler_Doctrine|PHPUnit_Framework_MockObject_MockObject $compiler */
+        /** @var SugarQuery_Compiler_Doctrine|MockObject $compiler */
         $compiler = $this->getMockBuilder(SugarQuery_Compiler_Doctrine::class)
             ->setConstructorArgs([$this->account->db])
             ->setMethods(['getSelectFieldsByTable'])

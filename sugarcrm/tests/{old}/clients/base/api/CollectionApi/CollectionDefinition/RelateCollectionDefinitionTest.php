@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -65,11 +66,11 @@ class RelateCollectionDefinitionTest extends TestCase
     }
 
     /**
-     * @return SugarBean|PHPUnit_Framework_MockObject_MockObject
+     * @return SugarBean|MockObject
      */
     private function getCollectionDefinitionBeanMock($fieldName, $fieldDef)
     {
-        /** @var SugarBean|PHPUnit_Framework_MockObject_MockObject $bean */
+        /** @var SugarBean|MockObject $bean */
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
             ->setMethods(array('getFieldDefinition'))
@@ -83,7 +84,7 @@ class RelateCollectionDefinitionTest extends TestCase
     }
 
     /**
-     * @return SugarBean|PHPUnit_Framework_MockObject_MockObject
+     * @return SugarBean|MockObject
      */
     private function loadDefinition($fieldName, $fieldDef)
     {

@@ -81,7 +81,7 @@ class CalendarApiTest extends TestCase
             array($this->api, $args, $searchResults)
         );
 
-        $this->assertNotEmpty(1, $result['records'], 'Api Result Contains No Records');
+        $this->assertNotEmpty($result['records'], 'Api Result Contains No Records');
         $records = $result['records'];
         $this->assertCount(1, $records, 'Expecting 1 Contact Record to be returned as Invitee');
         $this->assertNotEmpty($records[0]['_erased_fields'], 'Erased Fields expected, not returned');

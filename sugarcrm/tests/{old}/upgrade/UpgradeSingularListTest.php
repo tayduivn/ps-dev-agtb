@@ -13,6 +13,8 @@
 require_once "tests/{old}/upgrade/UpgradeTestCase.php";
 require_once 'upgrade/scripts/post/7_FixSingularList.php';
 
+use PHPUnit\Framework\MockObject\MockObject;
+
 class UpgradeSingularListTest extends UpgradeTestCase
 {
     protected $testModule = 'test_singleTest';
@@ -99,7 +101,7 @@ class UpgradeSingularListTest extends UpgradeTestCase
     /**
      * Mock post upgrade script to return custom language file
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function getMockScript()
     {

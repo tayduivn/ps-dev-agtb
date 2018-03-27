@@ -347,7 +347,7 @@ class FilterDuplicateCheckTest extends TestCase
 
     public function testBuildDupeCheckFilterCallerRemovesFieldsUserDoesntHaveAccessTo()
     {
-        $bean = $this->createMock(Lead::class, array('ACLFieldAccess'));
+        $bean = $this->createMock(Lead::class);
         $bean->expects($this->exactly(2))
             ->method('ACLFieldAccess')
             ->will(

@@ -12,6 +12,7 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class AddTeamSecurityWhereClauseTest extends TestCase
 {
@@ -148,7 +149,7 @@ class AddTeamSecurityWhereClauseTest extends TestCase
 	{
         global $current_user;
 
-        /** @var User|PHPUnit_Framework_MockObject_MockObject $current_user */
+        /** @var User|MockObject $current_user */
         $current_user = $this->createPartialMock('User', array('isAdminForModule'));
         $current_user->expects($this->atLeastOnce())
             ->method('isAdminForModule')

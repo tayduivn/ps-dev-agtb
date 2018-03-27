@@ -97,10 +97,6 @@ class Bug43805Test extends TestCase
         self::attachProspectToProspectList($this->_prospectList, $this->_prospects[0]);
     }
 
-    /**
-     * Clear all created data
-     * @see PHPUnit_Framework_TestCase::tearDown()
-     */
     public function tearDown()
     {
         SugarTestProspectUtilities::removeAllCreatedProspects();

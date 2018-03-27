@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSESendMessageEventTest extends TestCase
 {
-
     /**
      *
      * @var type 
@@ -39,18 +38,6 @@ class PMSESendMessageEventTest extends TestCase
             ->getMock();
     }
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-
-    }
-
-    /**
-     *
-     */
     public function testRunResumingExecution()
     {
         $this->sendMessageEvent = $this->getMockBuilder('PMSESendMessageEvent')
@@ -69,10 +56,7 @@ class PMSESendMessageEventTest extends TestCase
 
         $this->sendMessageEvent->run($flowData, $bean, 'RESUME_EXECUTION');
     }
-    
-    /**
-     *
-     */
+
     public function testRunNormal()
     {
         $this->sendMessageEvent = $this->getMockBuilder('PMSESendMessageEvent')

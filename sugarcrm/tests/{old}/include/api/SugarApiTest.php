@@ -509,7 +509,7 @@ class SugarApiTest extends TestCase
      */
     public function testGetOrderByFromArgsFailure(array $args, $expectedException)
     {
-        /** @var SugarBean|PHPUnit_Framework_MockObject_MockObject $bean */
+        /** @var SugarBean|MockObject $bean */
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
             ->setMethods(array())

@@ -73,7 +73,7 @@ class RelateRecordApiTest extends TestCase
             ->with($service, $moduleApiArgs)
             ->willReturn($relatedBean);
 
-        /** @var RelateRecordApi|PHPUnit_Framework_MockObject_MockObject $api */
+        /** @var RelateRecordApi|MockObject $api */
         $api = $this->getMockBuilder('RelateRecordApi')
             ->setMethods(array(
                 'loadBean',
@@ -577,7 +577,7 @@ class SugarBeanBeforeSaveTestHook
         $case->module_name = 'Cases';
         $case->id = 'the-id';
 
-        /** @var RelateRecordApi|PHPUnit_Framework_MockObject_MockObject $api */
+        /** @var RelateRecordApi|MockObject $api */
         $api = $this->getMockBuilder('RelateRecordApi')
             ->setMethods(array('loadBean'))
             ->getMock();

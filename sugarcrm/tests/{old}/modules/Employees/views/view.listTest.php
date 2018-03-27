@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 require_once 'include/SearchForm/SearchForm2.php';
@@ -84,10 +85,10 @@ class EmployeesViewListTest extends TestCase
         $bean = BeanFactory::newBean('Employees');
         $searchForm = new SearchForm($bean, 'Employees');
 
-        /** @var ListViewSmarty|PHPUnit_Framework_MockObject_MockObject $lvMock */
+        /** @var ListViewSmarty|MockObject $lvMock */
         $lvMock = $this->getMockBuilder('ListViewSmarty')->setMethods(array('display'))->getMock();
 
-        /** @var EmployeesViewList|PHPUnit_Framework_MockObject_MockObject $employeesListViewMock */
+        /** @var EmployeesViewList|MockObject $employeesListViewMock */
         $employeesListViewMock = $this->createPartialMock('EmployeesViewList', array('processSearchForm'));
         $employeesListViewMock->searchForm = $searchForm;
         $employeesListViewMock->headers = true;
@@ -109,7 +110,7 @@ class EmployeesViewListTest extends TestCase
     /**
      * Check if export button exists in template
      *
-     * @param EmployeesViewList|PHPUnit_Framework_MockObject_MockObject $employeesListViewMock
+     * @param EmployeesViewList|MockObject $employeesListViewMock
      * @return bool
      */
     protected function hasButton($employeesListViewMock)

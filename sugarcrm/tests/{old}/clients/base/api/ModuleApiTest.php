@@ -10,14 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
-
-require_once ("tests/{old}/SugarTestRestUtilities.php");
 
 /**
  * @coversDefaultClass ModuleApi
@@ -694,7 +693,7 @@ class ModuleApiTest extends TestCase
 
     public function testLinkRelatedRecords()
     {
-        /** @var PHPUnit_Framework_MockObject_MockObject $relateRecordApi */
+        /** @var MockObject $relateRecordApi */
         $api = $this->getApiWithMockedRelateRecordApi('createRelatedLinks', $relateRecordApi);
         $bean = $this->getPrimaryBean('primary-module', 'primary-id');
 
@@ -743,7 +742,7 @@ class ModuleApiTest extends TestCase
      */
     public function testLinkRelatedRecordsWithAnEmptySetOfRecords()
     {
-        /** @var PHPUnit_Framework_MockObject_MockObject $relateRecordApi */
+        /** @var MockObject $relateRecordApi */
         $api = $this->getApiWithMockedRelateRecordApi('createRelatedLinks', $relateRecordApi);
         $bean = $this->getPrimaryBean('primary-module', 'primary-id');
 
@@ -761,7 +760,7 @@ class ModuleApiTest extends TestCase
 
     public function testUnlinkRelatedRecords()
     {
-        /** @var PHPUnit_Framework_MockObject_MockObject $relateRecordApi */
+        /** @var MockObject $relateRecordApi */
         $api = $this->getApiWithMockedRelateRecordApi('deleteRelatedLink', $relateRecordApi);
         $bean = $this->getPrimaryBean('primary-module', 'primary-id');
 
@@ -837,8 +836,8 @@ class ModuleApiTest extends TestCase
 
     /**
      * @param string $method
-     * @param PHPUnit_Framework_MockObject_MockObject $relateRecordApi
-     * @return ModuleApi|PHPUnit_Framework_MockObject_MockObject
+     * @param MockObject $relateRecordApi
+     * @return ModuleApi|MockObject
      */
     private function getApiWithMockedRelateRecordApi($method, &$relateRecordApi)
     {

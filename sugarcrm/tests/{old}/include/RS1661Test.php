@@ -24,7 +24,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 class RS1661Test extends TestCase
 {
     /**
-     * @var TeamBasedACLConfigurator|PHPUnit_Framework_MockObject_MockObject
+     * @var TeamBasedACLConfigurator|MockObject
      */
     private $tbaConfig = null;
 
@@ -79,7 +79,7 @@ class RS1661Test extends TestCase
 
         $excludeTables = $this->getExcludedTables();
 
-        /** @var TeamBasedACLConfigurator|PHPUnit_Framework_MockObject_MockObject $lvMock */
+        /** @var TeamBasedACLConfigurator|MockObject $lvMock */
         $this->tbaConfig = $this->getMockBuilder('TeamBasedACLConfigurator')
             ->setMethods(['removeAllTBAValuesFromTable'])
             ->getMock();

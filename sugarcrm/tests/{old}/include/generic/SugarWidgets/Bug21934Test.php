@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -58,7 +57,7 @@ class Bug21934Test extends TestCase
         $end = clone($now);
         $end->modify('last day of last month');
 
-        /** @var SugarWidgetFieldDate|PHPUnit_Framework_MockObject_MockObject $widget */
+        /** @var SugarWidgetFieldDate|MockObject $widget */
         $widget = $this->getMockBuilder('SugarWidgetFieldDate')
             ->setMethods(array('now', 'get_start_end_date_filter'))
             ->disableOriginalConstructor()

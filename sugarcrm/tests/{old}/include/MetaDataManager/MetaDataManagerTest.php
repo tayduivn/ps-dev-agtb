@@ -392,7 +392,7 @@ class MetaDataManagerTest extends TestCase
      */
     public function testGetModuleViewFields($module, $view, $viewData, $expectedFields, $expectedDisplayParams)
     {
-        /** @var MetaDataManager|PHPUnit_Framework_MockObject_MockObject $mm */
+        /** @var MetaDataManager|MockObject $mm */
         $mm = $this->getMockBuilder('MetaDataManager')
             ->disableOriginalConstructor()
             ->setMethods(array('getModuleView'))

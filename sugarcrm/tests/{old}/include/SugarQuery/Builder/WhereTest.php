@@ -26,13 +26,13 @@ class WhereTest extends TestCase
         $q->from($bean);
         $dateTime = new DateTime();
 
-        /** @var TimeDate|PHPUnit_Framework_MockObject_MockObject $timeDate */
+        /** @var TimeDate|MockObject $timeDate */
         $timeDate = $this->createPartialMock('TimeDate', array('parseDateRange', 'asDb', 'asDbType'));
         $timeDate->expects($this->once())->method('parseDateRange')->will($this->returnValue(array($dateTime, $dateTime)));
         $timeDate->expects($this->exactly(2))->method('asDb')->will($this->returnValue(3));
         $timeDate->expects($this->never())->method('asDbType');
 
-        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockForAbstractClass('SugarQuery_Builder_Where', array($q), '', false, true, true, array('timeDateInstance', 'queryAnd', 'lte', 'gte'), false);
         $where->expects($this->any())->method('timeDateInstance')->will($this->returnValue($timeDate));
         $where->expects($this->any())->method('queryAnd')->will($this->returnValue($where));
@@ -58,13 +58,13 @@ class WhereTest extends TestCase
         $q->from($bean);
         $dateTime = new DateTime();
 
-        /** @var TimeDate|PHPUnit_Framework_MockObject_MockObject $timeDate */
+        /** @var TimeDate|MockObject $timeDate */
         $timeDate = $this->createPartialMock('TimeDate', array('parseDateRange', 'asDb', 'asDbType'));
         $timeDate->expects($this->once())->method('parseDateRange')->will($this->returnValue(array($dateTime, $dateTime)));
         $timeDate->expects($this->exactly(2))->method('asDbType')->with($this->equalTo($dateTime), $this->equalTo($type), $this->equalTo(false))->will($this->returnValue(3));
         $timeDate->expects($this->never())->method('asDb');
 
-        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockForAbstractClass('SugarQuery_Builder_Where', array($q), '', false, true, true, array('timeDateInstance', 'queryAnd', 'lte', 'gte'), false);
         $where->expects($this->any())->method('timeDateInstance')->will($this->returnValue($timeDate));
         $where->expects($this->any())->method('queryAnd')->will($this->returnValue($where));

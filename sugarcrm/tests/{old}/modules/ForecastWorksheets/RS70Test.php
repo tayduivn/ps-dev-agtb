@@ -9,10 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+//FILE SUGARCRM flav=ent ONLY
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-//FILE SUGARCRM flav=ent ONLY
 /**
  * RS-70: Prepare ForecastWorksheets Module
  */
@@ -50,7 +51,7 @@ class RS70Test extends TestCase
      */
     public function testSaveWorksheetOpportunity()
     {
-        /** @var PHPUnit_Framework_MockObject_MockObject|Opportunity $parent */
+        /** @var MockObject|Opportunity $parent */
         $parent = $this->getMockBuilder('Opportunity')->setMethods(array('save'))->getMock();
         $parent->expects($this->once())->method('save');
         $parent->id = create_guid();
@@ -83,7 +84,7 @@ class RS70Test extends TestCase
      */
     public function testSaveWorksheetRevenueLineItem()
     {
-        /** @var PHPUnit_Framework_MockObject_MockObject|RevenueLineItem $parent */
+        /** @var MockObject|RevenueLineItem $parent */
         $parent = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
         $parent->expects($this->once())->method('save');
         $parent->id = create_guid();
@@ -139,7 +140,7 @@ class RS70Test extends TestCase
         $opportunity->id = create_guid();
         $opportunity->account_id = create_guid();
 
-        /** @var PHPUnit_Framework_MockObject_MockObject|ForecastWorksheet $bean */
+        /** @var MockObject|ForecastWorksheet $bean */
         $bean = $this->createPartialMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'save', 'removeMigratedRow'));
         $bean->expects($this->once())->method('retrieve_by_string_fields');
         $bean->expects($this->once())->method('getRelatedName')->with($this->equalTo('Accounts'), $this->equalTo($opportunity->account_id))->will($this->returnValue('Account ' . __CLASS__));
@@ -161,7 +162,7 @@ class RS70Test extends TestCase
         $parent = new RevenueLineItem();
         $parent->id = create_guid();
 
-        /** @var PHPUnit_Framework_MockObject_MockObject|ForecastWorksheet $bean */
+        /** @var MockObject|ForecastWorksheet $bean */
         $bean = $this->createPartialMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save'));
         $bean->expects($this->once())->method('retrieve_by_string_fields');
         $bean->expects($this->never())->method('getRelatedName');
@@ -192,7 +193,7 @@ class RS70Test extends TestCase
         $parent->id = create_guid();
         $parent->$propertyId = create_guid();
 
-        /** @var PHPUnit_Framework_MockObject_MockObject|ForecastWorksheet $bean */
+        /** @var MockObject|ForecastWorksheet $bean */
         $bean = $this->createPartialMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save'));
         $bean->expects($this->any())->method('retrieve_by_string_fields');
         $bean->expects($this->any())->method('copyValues');

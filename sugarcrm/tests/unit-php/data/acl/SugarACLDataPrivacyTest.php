@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -138,7 +139,8 @@ class SugarACLDataPrivacyTest extends TestCase
      * Returns a mock for the current user. The method isAdminForModule is
      * stubbed.
      * @param array $stubbedMethods The methods that are intended to be stubbed.
-     * @return PHPUnit_Framework_MockObject_MockBuilder
+     *
+     * @return MockBuilder
      */
     private function getCurrentUserMock($stubbedMethods)
     {

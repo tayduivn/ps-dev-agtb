@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -541,7 +542,7 @@ class FilterApiTest extends TestCase
         $q = new SugarQuery();
         $q->from($bean);
 
-        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')
             ->disableOriginalConstructor()
             ->setMethods(array('isEmpty'))
@@ -564,7 +565,7 @@ class FilterApiTest extends TestCase
         $q = new SugarQuery();
         $q->from($bean);
 
-        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')
             ->disableOriginalConstructor()
             ->setMethods(array('isNotEmpty'))
@@ -1115,7 +1116,7 @@ class FilterApiTest extends TestCase
             ),
         ));
 
-        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')
             ->disableOriginalConstructor()
             ->setMethods(array('gt'))
@@ -1153,7 +1154,7 @@ class FilterApiTest extends TestCase
         $bean = new Account();
         $q = new SugarQuery();
         $q->from($bean);
-        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')
             ->disableOriginalConstructor()
             ->setMethods(array('dateRange'))

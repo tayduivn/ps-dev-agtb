@@ -494,7 +494,7 @@ class UserTest extends TestCase
      */
     private function isAdminOrDeveloperForModule($testMethod, $getModules, $isWorkFlowModule, array $modules, $expected)
     {
-        /** @var User|PHPUnit_Framework_MockObject_MockObject $user */
+        /** @var User|MockObject $user */
         $user = $this->getMockBuilder('User')
             ->setMethods(array($getModules, 'isWorkFlowModule'))
             ->disableOriginalConstructor()

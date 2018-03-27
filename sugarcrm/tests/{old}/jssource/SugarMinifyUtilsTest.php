@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SugarMinifyUtilsTest extends TestCase
@@ -35,7 +36,7 @@ class SugarMinifyUtilsTest extends TestCase
         $sugar_config['minify_resources'] = true;
         $sugar_config['developerMode'] = false;
 
-        /** @var SugarMinifyUtils|PHPUnit_Framework_MockObject_MockObject $minifier */
+        /** @var SugarMinifyUtils|MockObject $minifier */
         $minifier = $this->getMockBuilder('SugarMinifyUtils')
             ->setMethods(array('getJSGroupings'))
             ->getMock();

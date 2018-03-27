@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 // FILE SUGARCRM flav=ent ONLY
 
-require_once 'data/visibility/SupportPortalVisibility.php';
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @coversDefaultClass \SupportPortalVisibility
@@ -147,7 +147,7 @@ class SupportPortalVisibilityTest extends TestCase
     /**
      * @param SugarBean $bean
      * @param array $accountIds
-     * @return SupportPortalVisibility|PHPUnit_Framework_MockObject_MockObject
+     * @return SupportPortalVisibility|MockObject
      */
     private function getVisibility(SugarBean $bean, array $accountIds)
     {

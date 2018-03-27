@@ -100,10 +100,6 @@ class Bug41569Test extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
     }
 
-    /**
-     * Clear all created data
-     * @see PHPUnit_Framework_TestCase::tearDown()
-     */
     public function tearDown()
     {
         SugarTestContactUtilities::removeAllCreatedContacts();

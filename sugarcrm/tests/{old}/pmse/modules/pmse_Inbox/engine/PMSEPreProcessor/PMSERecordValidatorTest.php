@@ -11,8 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\ProcessManager;
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSERecordValidatorTest extends TestCase
 {

@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -39,7 +40,7 @@ class ExpressionEngine_ControllerTest extends TestCase
         );
 
 
-        /** @var PHPUnit_Framework_MockObject_MockObject | ExpressionEngineController $controller */
+        /** @var ExpressionEngineController|MockObject $controller */
         $controller = $this->createPartialMock('ExpressionEngineController', array('display'));
 
         // assert that display method was invoked which means no PHP error was triggered

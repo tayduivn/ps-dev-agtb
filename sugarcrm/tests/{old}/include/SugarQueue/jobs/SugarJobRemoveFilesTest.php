@@ -31,7 +31,7 @@ class SugarJobRemoveFilesTest extends TestCase
         touch($freshFile);
         touch($staleFile, time() - 10);
 
-        /** @var SugarJobRemoveFiles|PHPUnit_Framework_MockObject_MockObject $job */
+        /** @var SugarJobRemoveFiles|MockObject $job */
         $job = $this->getMockForAbstractClass('SugarJobRemoveFiles');
         $job->expects($this->once())
             ->method('getDirectory')
@@ -40,7 +40,7 @@ class SugarJobRemoveFilesTest extends TestCase
             ->method('getMaxLifetime')
             ->willReturn(5);
 
-        /** @var SchedulersJob|PHPUnit_Framework_MockObject_MockObject $schedulerJob */
+        /** @var SchedulersJob|MockObject $schedulerJob */
         $schedulerJob = $this->createMock('SchedulersJob');
         $schedulerJob->expects($this->once())
             ->method('succeedJob');

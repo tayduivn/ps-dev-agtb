@@ -163,7 +163,7 @@ class ExtAPIGoToMeetingTest extends TestCase
      * @param array $headers - HTTP Response headers
      * @param array $body - PHP Array to be JSON encoded
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function getAPI($code, $body = array())
     {

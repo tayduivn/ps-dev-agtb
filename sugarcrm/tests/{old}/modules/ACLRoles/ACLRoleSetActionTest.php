@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use PHPUnit_Framework_MockObject_Matcher_Invocation as Matcher;
+use PHPUnit\Framework\MockObject\Matcher\Invocation as Matcher;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -52,7 +52,7 @@ class ACLRoleSetActionTest extends TestCase
     }
 
     /**
-     * @return ACLRole|PHPUnit_Framework_MockObject_MockObject
+     * @return ACLRole|MockObject
      */
     private function getRole()
     {

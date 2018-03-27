@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,7 +29,7 @@ class M2MRelationshipHooksTriggerTest extends TestCase
     /** @var array */
     protected $def;
 
-    /** @var PHPUnit_Framework_MockObject_MockObject */
+    /** @var MockObject */
     protected $relationship;
 
     /**

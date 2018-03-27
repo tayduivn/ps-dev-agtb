@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
+
 require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
 
 class UpgradeRenameModuleTest extends UpgradeTestCase
@@ -143,7 +145,7 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
      */
     public function testNonUsLangWithUntranslatedModuleNameShouldNotBeProcessed(array $appListStringLang, array $appListStringLangCore, array $appListStringDefault)
     {
-        /** @var PHPUnit_Framework_MockObject_MockObject|RenameModules $renameModules */
+        /** @var MockObject|RenameModules $renameModules */
         $renameModules = $this->createMock('RenameModules');
         $renameModules->expects($this->never())->method('getModuleSingularKey');
         $renameModules->expects($this->never())->method('changeModuleModStrings');
@@ -151,7 +153,7 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         $renameModules->expects($this->never())->method('changeStringsInRelatedModules');
         $renameModules->expects($this->never())->method('getRenamedModules');
 
-        /** @var PHPUnit_Framework_MockObject_MockObject|SugarUpgradeRenameModules $script */
+        /** @var MockObject|SugarUpgradeRenameModules $script */
         $script = $this->getMockBuilder('SugarUpgradeRenameModules')
             ->setMethods(array(
                 'getLanguages',

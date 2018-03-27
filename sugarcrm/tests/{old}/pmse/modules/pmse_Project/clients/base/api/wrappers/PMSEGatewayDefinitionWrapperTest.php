@@ -145,5 +145,4 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
         $this->assertInternalType('array', $result);
         $this->assertEquals($expectedResult, $result);
     }
-
 }

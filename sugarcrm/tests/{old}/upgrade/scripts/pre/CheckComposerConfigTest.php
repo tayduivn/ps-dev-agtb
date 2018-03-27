@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
+
 require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
 require_once 'upgrade/scripts/pre/CheckComposerConfig.php';
 
@@ -360,7 +362,7 @@ class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
      * Get mock for subject under test
      * @param null|array $method
      * @param array $context Additional context settings
-     * @return SugarUpgradeCheckComposerConfig|PHPUnit_Framework_MockObject_MockObject
+     * @return SugarUpgradeCheckComposerConfig|MockObject
      */
     protected function getMockSut($method = null, array $context = array())
     {

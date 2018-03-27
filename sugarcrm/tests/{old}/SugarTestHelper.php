@@ -10,8 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use PHPUnit\Framework\BaseTestListener;
+use PHPUnit\Framework\DataProviderTestSuite;
+use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestListenerDefaultImplementation;
+use PHPUnit\Framework\TestSuite;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 if(!defined('sugarEntry')) define('sugarEntry', true);
@@ -163,7 +168,6 @@ if (file_exists($customHelperIncludeFile)) {
 
 $GLOBALS['db']->commit();
 
-define('CHECK_FILE_MAPS', false);
 // define our testcase subclass
 if (function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false && !empty($sc['template'])) {
     // shadow is enabled
@@ -177,23 +181,25 @@ if (function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false
 // Disables sending email.
 define('DISABLE_EMAIL_SEND', true);
 
-class IntegrationListener extends BaseTestListener
+class IntegrationListener implements TestListener
 {
+    use TestListenerDefaultImplementation;
+
     /**
      * @var int
      */
     private $maxExecutionTime;
 
-    public function startTestSuite(PHPUnit_Framework_TestSuite $suite)
+    public function startTestSuite(TestSuite $suite) : void
     {
-        if ($suite instanceof PHPUnit_Framework_TestSuite_DataProvider) {
+        if ($suite instanceof DataProviderTestSuite) {
             return;
         }
 
         SugarTestHelper::init();
     }
 
-    public function startTest(PHPUnit_Framework_Test $test)
+    public function startTest(Test $test) : void
     {
         // Prevent the activity stream from creating messages.
         Activity::disable();
@@ -206,7 +212,7 @@ class IntegrationListener extends BaseTestListener
         $this->maxExecutionTime = ini_get('max_execution_time');
     }
 
-    public function endTest(PHPUnit_Framework_Test $test, $time)
+    public function endTest(Test $test, float $time) : void
     {
         $_GET = $_POST = $_REQUEST = [];
 
@@ -229,9 +235,9 @@ class IntegrationListener extends BaseTestListener
         }
     }
 
-    public function endTestSuite(PHPUnit_Framework_TestSuite $suite)
+    public function endTestSuite(TestSuite $suite) : void
     {
-        if ($suite instanceof PHPUnit_Framework_TestSuite_DataProvider) {
+        if ($suite instanceof DataProviderTestSuite) {
             return;
         }
 
@@ -256,41 +262,7 @@ class Sugar_PHPUnit_Framework_TestCase extends TestCase
     }
 }
 
-// define a mock logger interface; used for capturing logging messages emited
-// the test suite
-class SugarMockLogger
-{
-    private $_messages = array();
-
-    public function __call($method, $message)
-    {
-        $this->_messages[] = strtoupper($method) . ': ' . $message[0];
-    }
-
-    public function getMessages()
-    {
-        return $this->_messages;
-    }
-
-    public function getLastMessage()
-    {
-        return end($this->_messages);
-    }
-
-    public function getMessageCount()
-    {
-        return count($this->_messages);
-    }
-}
-
 require_once 'ModuleInstall/ModuleInstaller.php';
-
-/**
- * @deprecated
- */
-class SugarTestHelperException extends PHPUnit_Framework_Exception
-{
-}
 
 /**
  * Helper for initialization of global variables of SugarCRM
@@ -429,14 +401,13 @@ class SugarTestHelper
     /**
      * Checking is there helper for variable or not
      *
-     * @static
-     * @param  string                   $varName name of global variable of SugarCRM
-     * @throws SugarTestHelperException fired when there is no implementation of helper for a variable
+     * @param  string    $varName name of global variable of SugarCRM
+     * @throws Exception fired when there is no implementation of helper for a variable
      */
     protected static function checkHelper($varName)
     {
         if (method_exists(__CLASS__, 'setUp_' . $varName) == false) {
-            throw new PHPUnit_Framework_Exception('setUp for $' . $varName . ' is not implemented. ' . __CLASS__ . '::setUp_' . $varName);
+            throw new Exception('setUp for $' . $varName . ' is not implemented. ' . __CLASS__ . '::setUp_' . $varName);
         }
     }
 
@@ -785,14 +756,14 @@ class SugarTestHelper
      * @param array $vardefs
      *
      * @return TemplateField
-     * @throws PHPUnit_Framework_Exception
+     * @throws Exception
      */
     public static function setUpCustomField(string $module, array $vardefs) : TemplateField
     {
         self::$registeredVars['custom_field'] = true;
 
         if (!isset($vardefs['type'])) {
-            throw new PHPUnit_Framework_Exception('Field type is not specified');
+            throw new Exception('Field type is not specified');
         }
 
         $field = get_widget($vardefs['type']);
@@ -804,7 +775,7 @@ class SugarTestHelper
         $bean = BeanFactory::newBean($module);
 
         if (!$bean) {
-            throw new PHPUnit_Framework_Exception(sprintf(
+            throw new Exception(sprintf(
                 '%s is not a valid module name',
                 $module
             ));
@@ -841,7 +812,7 @@ class SugarTestHelper
     protected static function setUp_custom_field(array $params)
     {
         if (count($params) < 2) {
-            throw new PHPUnit_Framework_Exception(sprintf(
+            throw new Exception(sprintf(
                 '%s requires 2 parameters, %d given',
                 __METHOD__,
                 count($params)
@@ -1026,15 +997,15 @@ class SugarTestHelper
      * Cleaning caches and refreshing vardefs
      *
      * @static
-     * @param  string $lhs_module left module from relation
-     * @param  string $rhs_module right module from relation
-     * @return bool   are caches refreshed or not
+     * @param  array Relationship parameters
+     * @return bool
      */
     protected static function setUp_relation(array $params)
     {
         if (empty($params[0]) || empty($params[1])) {
-            throw new SugarTestHelperException('setUp("relation") requires two parameters');
+            throw new Exception('setUp("relation") requires two parameters');
         }
+
         list($lhs_module, $rhs_module) = $params;
         self::$registeredVars['relation'] = true;
         self::$cleanModules[] = $lhs_module;

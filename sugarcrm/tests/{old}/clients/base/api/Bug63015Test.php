@@ -19,7 +19,11 @@ require_once ("tests/{old}/SugarTestRestUtilities.php");
  */
 class Bug63015Test extends TestCase
 {
+    /**
+     * @var ModuleApi
+     */
     public $moduleApi;
+
     public $serviceMock;
     public $accountIds;
 

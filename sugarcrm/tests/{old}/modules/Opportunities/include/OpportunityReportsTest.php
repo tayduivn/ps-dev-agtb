@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class OpportunityReportsTest extends TestCase
@@ -139,7 +140,7 @@ class OpportunityReportsTest extends TestCase
     {
         $id = create_guid();
 
-        /** @var OpportunityReports|PHPUnit_Framework_MockObject_MockObject $converter */
+        /** @var OpportunityReports|MockObject $converter */
         $converter = $this->createPartialMock(OpportunityReports::class, array('getReports', 'saveReport'));
         $converter->expects($this->once())
             ->method('getReports')

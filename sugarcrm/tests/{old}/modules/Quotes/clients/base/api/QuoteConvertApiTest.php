@@ -600,7 +600,7 @@ class QuoteConvertApiTest extends TestCase
      *
      * @param string $forecast_by
      * @param array $mock_methods
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function getConvertApi($forecast_by, array $mock_methods = array())
     {

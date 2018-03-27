@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\Generator;
+
 require_once 'modules/HealthCheck/Scanner/Scanner.php';
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 
@@ -28,9 +30,9 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
     {
         $this->db = DBManagerFactory::getInstance();
         $this->bwcModulesHash = array_flip($this->bwcModules);
-        $mockGenerator = new PHPUnit_Framework_MockObject_Generator();
+
         /** @var UpgradeDriver $upgrade */
-        $upgrade = $mockGenerator->getMockForAbstractClass('UpgradeDriver');
+        $upgrade = (new Generator())->getMockForAbstractClass('UpgradeDriver');
         $this->setUpgrader($upgrade);
         return true;
     }

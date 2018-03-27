@@ -22,7 +22,6 @@ class SugarACLTest extends TestCase
     /**
      * @covers SugarACL::loadACLs
      */
-
     public function aclProvider()
     {
         return array(

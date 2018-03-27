@@ -40,7 +40,7 @@ class SugarFieldFullnameTest extends TestCase
             ->with('TheModule')
             ->willReturn(array('foo', 'bar'));
 
-        /** @var ViewIterator|PHPUnit_Framework_MockObject_MockObject $it */
+        /** @var ViewIterator|MockObject $it */
         $it = $this->getMockBuilder('ViewIterator')
             ->disableOriginalConstructor()
             ->setMethods(array('dummy'))

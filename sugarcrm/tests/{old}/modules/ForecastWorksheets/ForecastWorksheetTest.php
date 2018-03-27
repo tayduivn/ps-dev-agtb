@@ -10,17 +10,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+
+require_once 'tests/{old}/SugarTestDatabaseMock.php';
 
 /**
  * @covers ForecastWorksheet
  */
-
-require_once 'tests/{old}/SugarTestDatabaseMock.php';
-
 class ForecastWorksheetTest extends TestCase
 {
-
     /**
      * @var SugarTestDatabaseMock
      */
@@ -38,7 +37,7 @@ class ForecastWorksheetTest extends TestCase
 
     /**
      * @param array $methods
-     * @return PHPUnit_Framework_MockObject_MockObject|ForecastWorksheet
+     * @return MockObject|ForecastWorksheet
      */
     protected function getMockWorksheet(array $methods = array('save', 'getBean'))
     {
