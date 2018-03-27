@@ -25,10 +25,6 @@ class Bug57563Test extends TestCase
         }
     }
 
-    public function tearDown()
-    {
-    }
-
     public function test_union_query_for_limitQuery()
     {
         $query_object = new CustomQuery();

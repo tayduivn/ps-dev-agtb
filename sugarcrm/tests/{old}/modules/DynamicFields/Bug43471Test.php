@@ -26,10 +26,6 @@ class Bug43471Test extends TestCase
         $this->_tablename = 'test' . date("YmdHis");
     }
 
-    public function tearDown()
-    {
-    }
-
     public function testDynamicFieldsRepairCustomFields()
     {
         $bean = $this->accountMockBean;

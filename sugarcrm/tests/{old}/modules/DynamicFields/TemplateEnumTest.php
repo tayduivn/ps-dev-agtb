@@ -30,11 +30,6 @@ class TemplateEnumTest extends TestCase
         $this->field->ext4 = serialize(htmlentities('fred'));
     }
     
-    public function tearDown()
-    {
-        
-    }
-    
     public function testPopulateDependencyFromDependencyField()
     {
        $fieldDef = $this->field->get_field_def();

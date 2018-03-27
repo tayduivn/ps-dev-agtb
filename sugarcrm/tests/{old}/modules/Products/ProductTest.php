@@ -23,14 +23,10 @@ class ProductTest extends TestCase
         SugarTestHelper::setUp('beanList');
     }
 
-    public function tearDown()
-    {}
-
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
     }
-
 
     /**
      * @param String $amount

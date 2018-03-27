@@ -15,30 +15,11 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEConvergingExclusiveGatewayTest extends TestCase
 {
-
     /**
      * @var PMSEElement
      */
     protected $convergingExclusiveGateway;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
-    
     public function testRunWithNoPreviousFlows()
     {
         $this->convergingExclusiveGateway = $this->getMockBuilder('PMSEConvergingExclusiveGateway')

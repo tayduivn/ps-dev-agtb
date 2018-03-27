@@ -127,16 +127,7 @@ class Bug58560Test extends RestTestBase
         // Create an anonymous user for login purposes
         $this->_user = $GLOBALS['current_user'];
     }
-    
-    /**
-     * Since our teardown should be done after class we will simply override the
-     * rest base teardown method.
-     */
-    public function tearDown()
-    {
-        
-    }
-    
+
     /**
      * @group 58560
      */

@@ -28,11 +28,6 @@ class Bug45525 extends TestCase
         }
     }
 
-
-    public function tearDown()
-    {
-    }
-
     public function testOverwriteDropDown()
     {
       global $app_list_strings;

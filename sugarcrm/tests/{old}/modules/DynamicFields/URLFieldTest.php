@@ -47,10 +47,6 @@ class URLFieldTest extends TestCase
         $this->field->ext4 = NULL;
     }
     
-    public function tearDown()
-    {
-    }
-    
     public function testURLFieldsInVardef()
     {
         $this->field->ext4 = '_self';

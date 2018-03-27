@@ -32,16 +32,6 @@ class PMSEValidatorTest extends TestCase
                 ->getMock();
     }
 
-    /**
-     * Removes the initial test configurations for each test, for example:
-     *     close a network connection. 
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
-
     public function testValidateRequestInvalidRequest()
     {
         $validatorMock = $this->getMockBuilder('PMSEValidator')

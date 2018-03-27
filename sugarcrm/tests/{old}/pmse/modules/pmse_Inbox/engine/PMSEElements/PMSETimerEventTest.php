@@ -22,24 +22,6 @@ class PMSETimerEventTest extends TestCase
     protected $timerEvent;
 
     /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
-    
-    /**
      * In this test the method tries to wake up a timer event before 
      * their due date passed, the condition is set to not wake up the flow 
      * in this case

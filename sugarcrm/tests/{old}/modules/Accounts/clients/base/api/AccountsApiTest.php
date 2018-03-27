@@ -19,10 +19,6 @@ class AccountsApiTest extends TestCase
      */
     protected $api;
 
-    public static function setUpBeforeClass()
-    {
-    }
-
     public function setUp()
     {
         $this->api = new AccountsApi();

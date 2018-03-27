@@ -20,14 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class BugPAT713Test extends TestCase
 {
-    public function setUp()
-    {
-    }
-
-    public function tearDown()
-    {
-    }
-
     public function modules()
     {
         return array(

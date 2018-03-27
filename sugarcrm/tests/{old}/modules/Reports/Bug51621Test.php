@@ -18,15 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug51621Test extends TestCase
 {
-
-    public function setUp()
-    {
-    }
-
-    public function tearDown()
-    {
-    }
-
     /**
      * @dataProvider savedReportContentTestData
      * @param $dirtyContent test json string of dirty content going in

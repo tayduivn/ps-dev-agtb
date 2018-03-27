@@ -17,16 +17,6 @@ require_once "modules/ProductTemplates/Formulas.php";
 
 class Bug44515WithoutCustomTest extends TestCase
 {
-    public function setUp()
-    {
-        
-    }
-
-
-    public function tearDown()
-    {
-    }
-
     /**
      * @group 44515
      */

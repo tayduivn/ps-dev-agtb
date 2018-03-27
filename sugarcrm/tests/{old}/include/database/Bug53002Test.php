@@ -23,10 +23,6 @@ class Bug53002Test extends TestCase
         }
     }
 
-    public function tearDown()
-    {
-    }
-
     public function test_order_by_amount()
     {
         $query = "SELECT * FROM opportunities ORDER BY amount ASC";

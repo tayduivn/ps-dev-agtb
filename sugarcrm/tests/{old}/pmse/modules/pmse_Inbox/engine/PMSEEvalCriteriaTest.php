@@ -36,15 +36,6 @@ class PMSEEvalCriteriaTest extends TestCase
     }
 
     /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-
-    }
-
-    /**
      * Generated from @assert ('[{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expValue":"(","expType":"GROUP","expLabel":"("},{"expDirection":"after","expModule":"Leads","expField":"website","currentValue":"","expOperator":"equals","expValue":"","expType":"MODULE","expFieldType":"","expLabel":"Website == \"\""},{"expValue":"OR","expType":"LOGIC","expLabel":"OR"},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expModule":null,"expField":"38748400252160f8bedad05063298920","expFieldType":"","currentValue":"Approve","expOperator":"equals","expValue":"Approve","expType":"CONTROL","expLabel":"comer == Approve"},{"expValue":")","expType":"GROUP","expLabel":")"},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expDirection":"after","expModule":"Leads","expField":"account_name","currentValue":"TRUE","expOperator":"equals","expFieldType":"","expValue":"TRUE","expType":"MODULE","expLabel":"Account Name: == \"TRUE\""},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expDirection":"after","expModule":"Leads","expField":"assistant","currentValue":"FALSE","expOperator":"major_equals_than","expValue":"FALSE","expFieldType":"","expType":"MODULE","expLabel":"Assistant >= \"FALSE\""},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expValue":"(","expType":"GROUP","expLabel":"("},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expDirection":"after","expModule":"Leads","expField":"account_name","currentValue":"APROVED","expOperator":"equals","expValue":"APROVED","expType":"MODULE","expFieldType":"","expLabel":"Account Name: == \"APROVED\""},{"expValue":")","expType":"GROUP","expLabel":")"},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expModule":null,"expField":"15","currentValue":"","expOperator":"equals","expValue":"","expType":"BUSINESS_RULES","expFieldType":"","expLabel":"Action # 1 == \"\""}]') == 0.
      *
      * @covers PMSEEvalCriteria::expresions

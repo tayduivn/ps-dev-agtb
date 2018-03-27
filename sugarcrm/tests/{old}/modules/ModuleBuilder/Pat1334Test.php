@@ -23,10 +23,6 @@ class PAT1334Test extends TestCase
         VardefManager::loadVardef('Contacts', 'Contact');        
     }
 
-    public function tearDown()
-    {
-    }
-
     /**
      * Check email/email1 field for mobile client     
      */

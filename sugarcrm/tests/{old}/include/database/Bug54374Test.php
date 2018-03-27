@@ -31,11 +31,6 @@ class Bug54374Test extends TestCase
         }
     }
 
-    public function tearDown()
-    {
-
-    }
-
     /**
      * This is the provider function it returns an array of arrays.  The keys to the nested array correspond to a value,
      * a vardef entry and an expected value

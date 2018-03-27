@@ -23,10 +23,6 @@ class Bug45907Test extends TestCase
         }
     }
 
-    public function tearDown()
-    {
-    }
-
     /**
      * @ticket 45907
      */
