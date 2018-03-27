@@ -17,23 +17,24 @@ use GuzzleHttp\Psr7\Response;
 use League\OAuth2\Client\Grant\ClientCredentials;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\RequestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider
+ * @coversDefaultClass \Sugarcrm\IdentityProvider\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider
  */
 class IdmProviderTest extends TestCase
 {
     /**
-     * @var RequestFactory | \PHPUnit_Framework_MockObject_MockObject
+     * @var RequestFactory|MockObject
      */
     protected $requestFactory;
 
     /**
-     * @var RequestInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var RequestInterface|MockObject
      */
     protected $request;
 
@@ -707,7 +708,7 @@ class IdmProviderTest extends TestCase
             'status' => 0,
         ];
 
-        /** @var IdmProvider | \PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var IdmProvider|MockObject $provider */
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->setConstructorArgs([$this->idmModeConfig])
             ->setMethods(['getRequestFactory', 'getParsedResponse', 'getSugarCache'])

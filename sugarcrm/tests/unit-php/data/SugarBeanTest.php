@@ -17,7 +17,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- * @coversDefaultClass SugarBean
+ * @coversDefaultClass \SugarBean
  */
 class SugarBeanTest extends TestCase
 {

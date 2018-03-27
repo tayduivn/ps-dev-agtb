@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
@@ -19,12 +20,12 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUse
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker
  */
 class SugarOIDCUserCheckerTest extends TestCase
 {
     /**
-     * @var SugarLocalUserProvider | \PHPUnit_Framework_MockObject_MockObject
+     * @var SugarLocalUserProvider|MockObject
      */
     protected $localUserProvider;
 
@@ -34,22 +35,22 @@ class SugarOIDCUserCheckerTest extends TestCase
     protected $userChecker;
 
     /**
-     * @var User | \PHPUnit_Framework_MockObject_MockObject
+     * @var User|MockObject
      */
     protected $user;
 
     /**
-     * @var User | \PHPUnit_Framework_MockObject_MockObject
+     * @var User|MockObject
      */
     protected $foundUser;
 
     /**
-     * @var \User | \PHPUnit_Framework_MockObject_MockObject
+     * @var \User|MockObject
      */
     protected $sugarUser;
 
     /**
-     * @var \EmailAddress | \PHPUnit_Framework_MockObject_MockObject
+     * @var \EmailAddress|MockObject
      */
     protected $emailAddress;
 

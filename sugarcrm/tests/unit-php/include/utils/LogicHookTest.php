@@ -28,10 +28,6 @@ class LogicHookTest extends TestCase
      */
     protected $toDelete = array();
 
-    public static function setupBeforeClass()
-    {
-    }
-
     /**
      * {@inheritDoc}
      */

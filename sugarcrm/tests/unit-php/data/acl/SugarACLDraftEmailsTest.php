@@ -11,6 +11,7 @@
  */
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\acl;
+
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 

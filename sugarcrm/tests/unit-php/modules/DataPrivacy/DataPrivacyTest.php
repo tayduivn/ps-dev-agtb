@@ -11,10 +11,10 @@
  */
 
 namespace Sugarcrm\SugarcrmTestsUnit\modules\DataPrivacy;
+
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestMockHelper;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-
 
 /**
  * @coversDefaultClass \DataPrivacy

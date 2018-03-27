@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\User;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
@@ -23,20 +24,19 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\LocalUserChecker;
 class LocalUserCheckerTest extends TestCase
 {
     /**
-     * @var \User | \PHPUnit_Framework_MockObject_MockObject
+     * @var \User|MockObject
      */
     protected $sugarUser;
 
     /**
-     * @var User | \PHPUnit_Framework_MockObject_MockObject
+     * @var User|MockObject
      */
     protected $user;
 
     /**
-     * @var Lockout | \PHPUnit_Framework_MockObject_MockObject
+     * @var Lockout|MockObject
      */
     protected $lockout;
-
 
     protected function setUp()
     {

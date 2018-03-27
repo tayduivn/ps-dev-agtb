@@ -76,7 +76,8 @@ class FileLoaderTest extends TestCase
      */
     public function testInvalidFilePath($file, $msg)
     {
-        $this->setExpectedException('\Exception', $msg);
+        $this->expectExceptionMessage($msg);
+
         FileLoader::validateFilePath($file);
     }
 
@@ -114,7 +115,9 @@ class FileLoaderTest extends TestCase
     {
         $file = $this->getUploadDir() . '/bogus.php';
         $this->createFile($file, 'FileLoaderTestInvalidFilePathUpload');
-        $this->setExpectedException('\Exception', 'File name violation: file outside basedir');
+
+        $this->expectExceptionMessage('File name violation: file outside basedir');
+
         FileLoader::validateFilePath($file, false);
     }
 

@@ -13,12 +13,13 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Mapping\Property;
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
  *
- * @coversDefaultClass Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty
  *
  */
 class MultiFieldBasePropertyTest extends TestCase
@@ -102,10 +103,8 @@ class MultiFieldBasePropertyTest extends TestCase
      */
     public function testAddFieldFailureOnExistingField()
     {
-        $this->setExpectedException(
-            "Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException",
-            "Field 'foobar' already exists as multi field"
-        );
+        $this->expectException(MappingException::class);
+        $this->expectExceptionMessage("Field 'foobar' already exists as multi field");
 
         $field = new MultiFieldBaseProperty();
         $field->addField('foobar', new MultiFieldProperty());

@@ -16,7 +16,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class MetaDataManagerMobileTest
- * @coversDefaultClass MetaDataManagerMobile
+ *
+ * @coversDefaultClass \MetaDataManagerMobile
  */
 class MetaDataManagerMobileTest extends TestCase
 {

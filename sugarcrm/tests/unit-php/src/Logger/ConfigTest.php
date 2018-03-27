@@ -18,7 +18,7 @@ use SugarConfig;
 use Sugarcrm\Sugarcrm\Logger\Config;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\Logger\Config
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Logger\Config
  */
 class ConfigTest extends TestCase
 {

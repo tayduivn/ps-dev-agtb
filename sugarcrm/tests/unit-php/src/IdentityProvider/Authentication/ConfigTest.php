@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config
  */
 class ConfigTest extends TestCase
 {

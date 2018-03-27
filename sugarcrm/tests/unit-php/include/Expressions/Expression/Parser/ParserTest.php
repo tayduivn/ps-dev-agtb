@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Class ParserTest
  *
- * @coversDefaultClass Parser
+ * @coversDefaultClass \Parser
  */
 class ParserTest extends TestCase
 {

@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\inc\database;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,7 +28,7 @@ class OracleManagerTest extends TestCase
      */
     public function testMassageIndexDefs()
     {
-        /** @var \DBManager|\PHPUnit_Framework_MockObject_MockObject $db */
+        /** @var \DBManager|MockObject $db */
         $db = $this->getMockBuilder('OracleManager')
             ->disableOriginalConstructor()
             ->setMethods(array('query'))

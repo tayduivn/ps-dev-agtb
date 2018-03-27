@@ -12,9 +12,9 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Console\Command\Password;
 
-use Symfony\Component\Console\Tester\CommandTester;
-use Sugarcrm\Sugarcrm\Security\Password\Hash;
 use Sugarcrm\Sugarcrm\Security\Password\Backend\Native;
+use Sugarcrm\Sugarcrm\Security\Password\Hash;
+use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  *

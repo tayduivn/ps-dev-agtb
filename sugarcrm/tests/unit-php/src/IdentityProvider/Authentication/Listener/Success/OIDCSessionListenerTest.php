@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\Listener\Success;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDCSessionListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
@@ -21,13 +22,12 @@ use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 require_once 'include/utils/security_utils.php';
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDCSessionListener
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\OIDCSessionListener
  */
 class OIDCSessionListenerTest extends TestCase
 {
-
     /**
-     * @var \User | \PHPUnit_Framework_MockObject_MockObject
+     * @var \User|MockObject
      */
     protected $sugarUser;
 
@@ -42,17 +42,17 @@ class OIDCSessionListenerTest extends TestCase
     protected $event;
 
     /**
-     * @var User | \PHPUnit_Framework_MockObject_MockObject
+     * @var User|MockObject
      */
     protected $user;
 
     /**
-     * @var IntrospectToken | \PHPUnit_Framework_MockObject_MockObject
+     * @var IntrospectToken|MockObject
      */
     protected $token;
 
     /**
-     * @var \SugarConfig | \PHPUnit_Framework_MockObject_MockObject
+     * @var \SugarConfig|MockObject
      */
     protected $sugarConfig;
 

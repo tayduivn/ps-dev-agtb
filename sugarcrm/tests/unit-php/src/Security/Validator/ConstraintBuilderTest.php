@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints as Assert;
+use Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintBuilderException;
 use Symfony\Component\Validator\Constraints as AssertBasic;
 
 /**
@@ -166,7 +167,9 @@ class ConstraintBuilderTest extends TestCase
      */
     public function testInvalidBuild($constraints, $msg)
     {
-        $this->setExpectedException('\Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintBuilderException', $msg);
+        $this->expectException(ConstraintBuilderException::class);
+        $this->expectExceptionMessage($msg);
+
         $this->builder->build($constraints);
     }
 

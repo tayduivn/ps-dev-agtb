@@ -19,7 +19,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 require_once 'data/Relationships/SugarRelationship.php';
 
 /**
- * @coversDefaultClass M2MRelationship
+ * @coversDefaultClass \M2MRelationship
  */
 class Link2Test extends TestCase
 {

@@ -11,6 +11,7 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\upgrade\scripts\post;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,7 +31,7 @@ class ResaveQuoteTest extends TestCase
     {
         require_once 'modules/Quotes/upgrade/scripts/post/9_ResaveQuote.php';
 
-        /** @var \SugarUpgradeResaveQuote|\PHPUnit_Framework_MockObject_MockObject $mock */
+        /** @var \SugarUpgradeResaveQuote|MockObject $mock */
         $mock = $this->getMockBuilder('\SugarUpgradeResaveQuote')
             ->setMethods(['resaveQuotes'])
             ->disableOriginalConstructor()

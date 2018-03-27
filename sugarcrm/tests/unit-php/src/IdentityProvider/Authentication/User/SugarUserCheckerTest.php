@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\User;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
@@ -25,12 +26,12 @@ class SugarUserCheckerTest extends TestCase
 {
 
     /**
-     * @var Lockout|\PHPUnit_Framework_MockObject_MockObject
+     * @var Lockout|MockObject
      */
     protected $lockout;
 
     /**
-     * @var User|\PHPUnit_Framework_MockObject_MockObject
+     * @var User|MockObject
      */
     protected $user;
 

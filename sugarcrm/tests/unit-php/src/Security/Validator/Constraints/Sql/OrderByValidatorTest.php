@@ -12,9 +12,9 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\Sql;
 
-use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
-use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Sql\OrderByValidator;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Sql\OrderBy;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Sql\OrderByValidator;
+use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
  *

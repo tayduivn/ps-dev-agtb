@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Performance\Dbal;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger;
 
@@ -93,7 +94,7 @@ class DbalXhprofLoggerTest extends TestCase
     }
 
     /**
-     * @return \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|MockObject
      */
     protected function getSugarLoggerMock()
     {

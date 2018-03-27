@@ -11,6 +11,7 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSAMLAuthenticate;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\IdentityProvider\Authentication\Token\SAML\ResultToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
@@ -27,27 +28,27 @@ class IdMSAMLAuthenticateTest extends TestCase
 {
 
     /**
-     * @var Config | \PHPUnit_Framework_MockObject_MockObject
+     * @var Config|MockObject
      */
     protected $config = null;
 
     /**
-     * @var \IdMSAMLAuthenticate | \PHPUnit_Framework_MockObject_MockObject
+     * @var \IdMSAMLAuthenticate|MockObject
      */
     protected $auth = null;
 
     /**
-     * @var AuthProviderBasicManagerBuilder | \PHPUnit_Framework_MockObject_MockObject
+     * @var AuthProviderBasicManagerBuilder|MockObject
      */
     protected $authProviderBuilder;
 
     /**
-     * @var AuthenticationProviderManager | \PHPUnit_Framework_MockObject_MockObject
+     * @var AuthenticationProviderManager|MockObject
      */
     protected $authProviderManager = null;
 
     /**
-     * @var ResultToken | \PHPUnit_Framework_MockObject_MockObject
+     * @var ResultToken|MockObject
      */
     protected $token = null;
 

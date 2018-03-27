@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Dbal\Logging;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -50,7 +51,7 @@ class SugarLoggerTest extends TestCase
         $loggerMock->expects($this->any())
             ->method('wouldLog')
             ->will($this->returnValue(true));
-        /** @var \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|\PHPUnit_Framework_MockObject_MockObject $sugarLogger */
+        /** @var \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|MockObject $sugarLogger */
         $sugarLogger = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger')
             ->setConstructorArgs(array($loggerMock))
             ->setMethods(array('log'))
@@ -73,7 +74,7 @@ class SugarLoggerTest extends TestCase
         $loggerMock->expects($this->any())
             ->method('wouldLog')
             ->will($this->returnValue(false));
-        /** @var \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|\PHPUnit_Framework_MockObject_MockObject $sugarLogger */
+        /** @var \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|MockObject $sugarLogger */
         $sugarLogger = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger')
             ->setConstructorArgs(array($loggerMock))
             ->setMethods(array('log'))

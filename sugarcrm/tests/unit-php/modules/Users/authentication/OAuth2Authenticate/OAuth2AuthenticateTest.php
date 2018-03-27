@@ -12,14 +12,15 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\OAuth2Authenticate;
 
-use SugarConfig;
-use PHPUnit_Framework_TestCase as TestCase;
 use OAuth2Authenticate;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use SugarConfig;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
-use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
  * @coversDefaultClass \OAuth2Authenticate
@@ -32,7 +33,7 @@ class OAuth2AuthenticateTest extends TestCase
     protected $auth;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var MockObject
      */
     protected $authMock;
 
@@ -42,17 +43,17 @@ class OAuth2AuthenticateTest extends TestCase
     protected $savedConfig = [];
 
     /**
-     * @var AuthProviderBasicManagerBuilder | \PHPUnit_Framework_MockObject_MockObject
+     * @var AuthProviderBasicManagerBuilder|MockObject
      */
     protected $authProviderBasicBuilder;
 
     /**
-     * @var AuthenticationProviderManager | \PHPUnit_Framework_MockObject_MockObject
+     * @var AuthenticationProviderManager|MockObject
      */
     protected $authManager;
 
     /**
-     * @var \User | \PHPUnit_Framework_MockObject_MockObject
+     * @var \User|MockObject
      */
     protected $sugarUser;
 

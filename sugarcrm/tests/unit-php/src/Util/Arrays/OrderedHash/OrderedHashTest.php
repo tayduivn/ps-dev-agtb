@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash
  */
 class OrderedHashTest extends TestCase
 {

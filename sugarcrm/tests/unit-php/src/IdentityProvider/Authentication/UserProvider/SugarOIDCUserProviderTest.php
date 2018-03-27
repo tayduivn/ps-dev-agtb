@@ -12,13 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\UserProvider;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider
  */
 class SugarOIDCUserProviderTest extends TestCase
 {
@@ -28,7 +29,7 @@ class SugarOIDCUserProviderTest extends TestCase
     protected $userProvider = null;
 
     /**
-     * @var SugarLocalUserProvider | \PHPUnit_Framework_MockObject_MockObject
+     * @var SugarLocalUserProvider|MockObject
      */
     protected $localUserProvider = null;
 

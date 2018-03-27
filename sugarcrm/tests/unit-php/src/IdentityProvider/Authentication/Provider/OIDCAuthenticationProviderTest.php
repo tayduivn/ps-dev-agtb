@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Provider;
 
 use League\OAuth2\Client\Token\AccessToken;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
@@ -25,7 +26,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider
  */
 class OIDCAuthenticationProviderTest extends TestCase
 {
@@ -41,17 +42,17 @@ class OIDCAuthenticationProviderTest extends TestCase
     protected $provider = null;
 
     /**
-     * @var SugarOIDCUserProvider | \PHPUnit_Framework_MockObject_MockObject
+     * @var SugarOIDCUserProvider|MockObject
      */
     protected $userProvider = null;
 
     /**
-     * @var UserCheckerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var UserCheckerInterface|MockObject
      */
     protected $userChecker = null;
 
     /**
-     * @var IdmProvider | \PHPUnit_Framework_MockObject_MockObject
+     * @var IdmProvider|MockObject
      */
     protected $oAuthProvider = null;
 

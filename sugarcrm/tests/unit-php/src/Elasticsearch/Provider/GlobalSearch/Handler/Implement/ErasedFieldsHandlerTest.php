@@ -12,34 +12,30 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Implement;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\ErasedFieldsHandler;
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use PHPUnit\Framework\TestCase;
+use SugarBean;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\ErasedFieldsHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\ProcessDocumentHandlerInterface;
 
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\ErasedFieldsHandler
  *
  */
-class ErasedFieldsHandlerTest extends \PHPUnit_Framework_TestCase
+class ErasedFieldsHandlerTest extends TestCase
 {
     /**
      * @coversNothing
      */
     public function testRequiredInterfaces()
     {
-        $nsPrefix = 'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler';
-        $interfaces = [
-            $nsPrefix . '\MappingHandlerInterface',
-            $nsPrefix . '\ProcessDocumentHandlerInterface',
-        ];
-        $implements = class_implements($nsPrefix . '\Implement\ErasedFieldsHandler');
-        $this->assertEquals(
-            $interfaces,
-            array_values(array_intersect($implements, $interfaces)),
-            'missing required interface!'
-        );
+        $implements = class_implements(ErasedFieldsHandler::class);
+
+        $this->assertContains(MappingHandlerInterface::class, $implements);
+        $this->assertContains(ProcessDocumentHandlerInterface::class, $implements);
     }
 
     /**
@@ -131,26 +127,23 @@ class ErasedFieldsHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Get ErasedFieldsHandler Mock
+     *
      * @param array $methods
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\ErasedFieldsHandler
+     *
+     * @return ErasedFieldsHandler
      */
-    protected function getErasedFieldsHandlerMock(array $methods = null)
+    protected function getErasedFieldsHandlerMock(array $methods = [])
     {
-        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\ErasedFieldsHandler')
-            ->disableOriginalConstructor()
-            ->setMethods($methods)
-            ->getMock();
+        return $this->createPartialMock(ErasedFieldsHandler::class, $methods);
     }
 
     /**
      * Get SugarBean mock
-     * @return \SugarBean
+     *
+     * @return SugarBean
      */
     protected function getSugarBeanMock()
     {
-        return $this->getMockBuilder('SugarBean')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
+        return $this->createMock(SugarBean::class);
     }
 }

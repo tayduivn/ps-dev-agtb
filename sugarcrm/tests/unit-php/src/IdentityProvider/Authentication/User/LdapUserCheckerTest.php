@@ -11,6 +11,7 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\User;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
@@ -25,12 +26,12 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 class LdapUserCheckerTest extends TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var MockObject
      */
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var MockObject
      */
     protected $sugarUser;
 

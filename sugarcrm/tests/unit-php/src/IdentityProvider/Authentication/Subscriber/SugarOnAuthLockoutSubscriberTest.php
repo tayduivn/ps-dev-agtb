@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\IdentityProvider\Authentication\Subscriber;
 
+use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber;
@@ -22,37 +24,37 @@ use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber
  */
 class SugarOnAuthLockoutSubscriberTest extends TestCase
 {
     /**
-     * @var AuthenticationEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthenticationEvent|MockObject
      */
     protected $event = null;
 
     /**
-     * @var UsernamePasswordToken|\PHPUnit_Framework_MockObject_MockObject
+     * @var UsernamePasswordToken|MockObject
      */
     protected $token = null;
 
     /**
-     * @var Lockout|\PHPUnit_Framework_MockObject_MockObject
+     * @var Lockout|MockObject
      */
     protected $lockout = null;
 
     /**
-     * @var User|\PHPUnit_Framework_MockObject_MockObject
+     * @var User|MockObject
      */
     protected $user = null;
 
     /**
-     * @var UserProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserProviderInterface|MockObject
      */
     protected $userProvider = null;
 
     /**
-     * @var \TimeDate|\PHPUnit_Framework_MockObject_MockObject
+     * @var \TimeDate|MockObject
      */
     protected $timeDate;
 
@@ -106,7 +108,7 @@ class SugarOnAuthLockoutSubscriberTest extends TestCase
      * @param string $method
      * @param integer $userLoginFailed
      * @param integer $lockoutExpirationLogin
-     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $count
+     * @param InvokedCount $count
      */
     public function testHandlingFailure($username, $method, $userLoginFailed, $lockoutExpirationLogin, $count)
     {

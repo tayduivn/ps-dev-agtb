@@ -12,8 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Console\Command\Password;
 
-use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Tester\CommandTester;
 use User;
 
 /**
@@ -101,7 +101,7 @@ class PasswordResetCommandTestCase extends AbstractPasswordCommandTestCase
      */
     public function testExecuteFailure(array $input, $exception, User $user = null, $compliant = true, HelperSet $hs = null)
     {
-        $this->setExpectedException('Exception', $exception);
+        $this->expectExceptionMessage($exception);
 
         $cmd = $this->getMockBuilder('Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand')
             ->setMethods(array('loadUserBean', 'isPasswordCompliant'))

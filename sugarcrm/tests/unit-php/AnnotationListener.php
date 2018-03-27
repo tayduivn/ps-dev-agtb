@@ -12,19 +12,27 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit;
 
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestListenerDefaultImplementation;
+
 /**
  *
  * Annotation listener ensuring every test has @covers annotation.
  *
  */
-class AnnotationListener extends \PHPUnit_Framework_BaseTestListener
+final class AnnotationListener implements TestListener
 {
+    use TestListenerDefaultImplementation;
+
     /**
      * {@inheritdoc}
      */
-    public function endTest(\PHPUnit_Framework_Test $test, $time)
+    public function endTest(Test $test, float $time) : void
     {
-        if (!$test instanceof \PHPUnit_Framework_TestCase) {
+        if (!$test instanceof TestCase) {
             return;
         }
 
@@ -41,14 +49,14 @@ class AnnotationListener extends \PHPUnit_Framework_BaseTestListener
 
     /**
      * Raise failure on given test case
-     * @param \PHPUnit_Framework_TestCase $test
+     * @param TestCase $test
      * @param string $failure Failure message
      * @param double $time Elapsed time
      */
-    protected function raiseFailure(\PHPUnit_Framework_TestCase $test, $failure, $time)
+    private function raiseFailure(TestCase $test, string $failure, float $time) : void
     {
         if ($resultObject = $test->getTestResultObject()) {
-            $e = new \PHPUnit_Framework_AssertionFailedError($failure);
+            $e = new AssertionFailedError($failure);
             $resultObject->addFailure($test, $e, $time);
         }
     }
@@ -56,9 +64,9 @@ class AnnotationListener extends \PHPUnit_Framework_BaseTestListener
     /**
      * Check if annotations has @covers(Nothing)
      * @param array $annotations
-     * @return boolean
+     * @return bool
      */
-    protected function hasNoCoversAnnotation(array $annotations)
+    private function hasNoCoversAnnotation(array $annotations) : bool
     {
         return (
             empty($annotations['class']['covers']) &&
@@ -71,9 +79,9 @@ class AnnotationListener extends \PHPUnit_Framework_BaseTestListener
     /**
      * Check if annotations has @coversDefaultClass
      * @param array $annotations
-     * @return boolean
+     * @return bool
      */
-    protected function hasNoCoversDefaultClass(array $annotations)
+    private function hasNoCoversDefaultClass(array $annotations) : bool
     {
         return (
             empty($annotations['class']['coversDefaultClass'])

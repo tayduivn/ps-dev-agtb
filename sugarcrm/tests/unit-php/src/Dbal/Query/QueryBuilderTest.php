@@ -12,10 +12,11 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Dbal\Query;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder
  */
 class QueryBuilderTest extends TestCase
 {
@@ -24,7 +25,7 @@ class QueryBuilderTest extends TestCase
      */
     public function testImportSubQuery()
     {
-        /** @var \Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $q1 */
+        /** @var \Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder|MockObject $q1 */
         $q1 = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder')
             ->disableOriginalConstructor()
             ->setMethods(array('getSQL'))
@@ -34,7 +35,7 @@ class QueryBuilderTest extends TestCase
             ->willReturn('SELECT 1 FROM DUAL');
         $q1->createPositionalParameter('x', \PDO::PARAM_INT);
 
-        /** @var \Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $q2 */
+        /** @var \Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder|MockObject $q2 */
         $q2 = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder')
             ->disableOriginalConstructor()
             ->setMethods(null)

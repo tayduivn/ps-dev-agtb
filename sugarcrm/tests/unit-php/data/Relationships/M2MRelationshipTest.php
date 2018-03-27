@@ -12,10 +12,11 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\data\Relationships;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass M2MRelationship
+ * @coversDefaultClass \M2MRelationship
  */
 class M2MRelationshipTest extends TestCase
 {
@@ -154,7 +155,7 @@ class M2MRelationshipTest extends TestCase
      */
     public function testSetNewPrimaryFlagDoesNotSet()
     {
-        /** @var \M2MRelationship|\PHPUnit_Framework_MockObject_MockObject $relationship */
+        /** @var \M2MRelationship|MockObject $relationship */
         $relationship = $this->getMockBuilder(\M2MRelationship::class)
             ->setMethods(['getLinkedDefForModuleByRelationship', 'removeRow'])
             ->setConstructorArgs([$this->def])

@@ -13,11 +13,12 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Mapping\Property;
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 
 /**
  *
- * @coversDefaultClass Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty
  *
  */
 class MultiFieldPropertyTest extends TestCase
@@ -56,10 +57,8 @@ class MultiFieldPropertyTest extends TestCase
      */
     public function testSetTypeInvalid()
     {
-        $this->setExpectedException(
-            "Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException",
-            "Invalid type 'foobar' for MultiFieldProperty"
-        );
+        $this->expectException(MappingException::class);
+        $this->expectExceptionMessage("Invalid type 'foobar' for MultiFieldProperty");
 
         $field = new MultiFieldProperty();
         $field->setType('foobar');

@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
- * @coversDefaultClass \EmailTemplates
+ * @coversDefaultClass \EmailTemplate
  */
 class EmailTemplateTest extends TestCase
 {

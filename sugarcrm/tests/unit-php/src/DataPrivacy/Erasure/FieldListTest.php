@@ -21,7 +21,7 @@ use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Field\Scalar;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 
 /**
- * @coversDefaultClass \Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldChangeList
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList
  */
 class FieldListTest extends TestCase
 {

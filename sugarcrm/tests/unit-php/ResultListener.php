@@ -12,20 +12,29 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit;
 
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestListenerDefaultImplementation;
+use Throwable;
+
 /**
  *
  * Result listener ensuring that any risky or incomplete tests are marked a failures,
  * since they should not be merged into master
  *
  */
-class ResultListener extends \PHPUnit_Framework_BaseTestListener
+final class ResultListener implements TestListener
 {
+    use TestListenerDefaultImplementation;
+
     /**
      * {@inheritdoc}
      */
-    public function addRiskyTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
+    public function addRiskyTest(Test $test, Throwable $t, float $time) : void
     {
-        if (!$test instanceof \PHPUnit_Framework_TestCase) {
+        if (!$test instanceof TestCase) {
             return;
         }
 
@@ -35,9 +44,9 @@ class ResultListener extends \PHPUnit_Framework_BaseTestListener
     /**
      * {@inheritdoc}
      */
-    public function addIncompleteTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
+    public function addIncompleteTest(Test $test, Throwable $t, float $time) : void
     {
-        if (!$test instanceof \PHPUnit_Framework_TestCase) {
+        if (!$test instanceof TestCase) {
             return;
         }
 
@@ -46,14 +55,15 @@ class ResultListener extends \PHPUnit_Framework_BaseTestListener
 
     /**
      * Raise failure on given test case
-     * @param \PHPUnit_Framework_TestCase $test
+     *
+     * @param TestCase $test
      * @param string $failure Failure message
      * @param double $time Elapsed time
      */
-    protected function raiseFailure(\PHPUnit_Framework_TestCase $test, $failure, $time)
+    private function raiseFailure(TestCase $test, string $failure, float $time) : void
     {
         if ($resultObject = $test->getTestResultObject()) {
-            $e = new \PHPUnit_Framework_AssertionFailedError($failure);
+            $e = new AssertionFailedError($failure);
             $resultObject->addFailure($test, $e, $time);
         }
     }

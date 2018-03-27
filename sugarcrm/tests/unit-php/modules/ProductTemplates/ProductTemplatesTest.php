@@ -17,11 +17,10 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * Class ProductTemplatesTest
- * @coversDefaultClass ProductTemplate
+ * @coversDefaultClass \ProductTemplate
  */
 class ProductTemplatesTest extends TestCase
 {
-
     /**
      * @covers ::calculateDiscountPrice
      */

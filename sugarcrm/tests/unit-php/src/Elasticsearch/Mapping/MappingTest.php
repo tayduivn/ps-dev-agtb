@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Mapping;
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
@@ -68,10 +69,8 @@ class MappingTest extends TestCase
      */
     public function testGetPropertyNotExist()
     {
-        $this->setExpectedException(
-            "Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException",
-            "Trying to get non-existing property 'fieldx' for 'FooBar'"
-        );
+        $this->expectException(MappingException::class);
+        $this->expectExceptionMessage("Trying to get non-existing property 'fieldx' for 'FooBar'");
 
         $mapping = new Mapping('FooBar');
         $mapping->getProperty('fieldx');
@@ -95,10 +94,8 @@ class MappingTest extends TestCase
      */
     public function testAddRawPropertyExistingFailure()
     {
-        $this->setExpectedException(
-            "Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException",
-            "Cannot redeclare field 'fieldx' for module 'FooBar'"
-        );
+        $this->expectException(MappingException::class);
+        $this->expectExceptionMessage("Cannot redeclare field 'fieldx' for module 'FooBar'");
 
         $mapping = new Mapping('FooBar');
         $mapping->addRawProperty('fieldx', new RawProperty());
@@ -123,10 +120,8 @@ class MappingTest extends TestCase
      */
     public function testAddObjectPropertyExistingFailure()
     {
-        $this->setExpectedException(
-            "Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException",
-            "Cannot redeclare field 'fieldy' for module 'FooBar'"
-        );
+        $this->expectException(MappingException::class);
+        $this->expectExceptionMessage("Cannot redeclare field 'fieldy' for module 'FooBar'");
 
         $mapping = new Mapping('FooBar');
         $mapping->addRawProperty('fieldy', new ObjectProperty());
@@ -326,10 +321,8 @@ class MappingTest extends TestCase
      */
     public function testAddMultiFieldInvalidBase()
     {
-        $this->setExpectedException(
-            "Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException",
-            "Field 'field1' is not a multi field"
-        );
+        $this->expectException(MappingException::class);
+        $this->expectExceptionMessage("Field 'field1' is not a multi field");
 
         $mapping = new Mapping('FooBar');
         $mapping->addRawProperty('field1', new RawProperty());
@@ -343,10 +336,8 @@ class MappingTest extends TestCase
      */
     public function testAddMultiFieldDuplicateField()
     {
-        $this->setExpectedException(
-            "Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException",
-            "Field 'multi1' already exists as multi field"
-        );
+        $this->expectException(MappingException::class);
+        $this->expectExceptionMessage("Field 'multi1' already exists as multi field");
 
         $mapping = new Mapping('FooBar');
         $mapping->addMultiField('field1', 'multi1', new MultiFieldProperty());

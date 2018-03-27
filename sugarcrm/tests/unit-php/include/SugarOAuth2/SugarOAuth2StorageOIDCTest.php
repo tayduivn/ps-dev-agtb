@@ -20,7 +20,7 @@ require_once 'include/utils.php';
 require_once 'include/SugarCache/SugarCache.php';
 
 /**
- * @coversDefaultClass  \SugarOAuth2StorageOIDC
+ * @coversDefaultClass \SugarOAuth2StorageOIDC
  */
 class SugarOAuth2StorageOIDCTest extends TestCase
 {

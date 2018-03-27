@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Console\CommandRegistry;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Console\CommandRegistry\CommandRegistry;
+use Sugarcrm\Sugarcrm\Console\Exception\CommandRegistryException;
 use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\InstanceCommandA;
 use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\InstanceStandaloneCommandA;
 use Sugarcrm\SugarcrmTestsUnit\Console\Fixtures\StandaloneCommandA;
@@ -173,10 +174,8 @@ class CommandRegistryTest extends TestCase
      */
     public function testInValidModes()
     {
-        $this->setExpectedException(
-            'Sugarcrm\Sugarcrm\Console\Exception\CommandRegistryException',
-            "Invalid mode 'foobar' requested"
-        );
+        $this->expectException(CommandRegistryException::class);
+        $this->expectExceptionMessage("Invalid mode 'foobar' requested");
 
         $this->registry->validateMode('foobar');
     }
@@ -186,10 +185,8 @@ class CommandRegistryTest extends TestCase
      */
     public function testInvalidAdapter()
     {
-        $this->setExpectedException(
-            'Sugarcrm\Sugarcrm\Console\Exception\CommandRegistryException',
-            "No adapter available for 'foobar' mode"
-        );
+        $this->expectException(CommandRegistryException::class);
+        $this->expectExceptionMessage("No adapter available for 'foobar' mode");
 
         TestReflection::callProtectedMethod(
             $this->registry,

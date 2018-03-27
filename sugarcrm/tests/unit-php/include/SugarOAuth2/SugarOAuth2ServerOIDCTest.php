@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarOAuth2;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
@@ -28,37 +29,37 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 class SugarOAuth2ServerOIDCTest extends TestCase
 {
     /**
-     * @var \SugarOAuth2StorageOIDC | \PHPUnit_Framework_MockObject_MockObject
+     * @var \SugarOAuth2StorageOIDC|MockObject
      */
     protected $storage;
 
     /**
-     * @var \SugarOAuth2ServerOIDC | \PHPUnit_Framework_MockObject_MockObject
+     * @var \SugarOAuth2ServerOIDC|MockObject
      */
     protected $oAuth2Server;
 
     /**
-     * @var AuthProviderOIDCManagerBuilder | \PHPUnit_Framework_MockObject_MockObject
+     * @var AuthProviderOIDCManagerBuilder|MockObject
      */
     protected $authProviderBuilder;
 
     /**
-     * @var AuthProviderBasicManagerBuilder | \PHPUnit_Framework_MockObject_MockObject
+     * @var AuthProviderBasicManagerBuilder|MockObject
      */
     protected $authProviderBasicBuilder;
 
     /**
-     * @var AuthenticationProviderManager | \PHPUnit_Framework_MockObject_MockObject
+     * @var AuthenticationProviderManager|MockObject
      */
     protected $authManager;
 
     /**
-     * @var \User | \PHPUnit_Framework_MockObject_MockObject
+     * @var \User|MockObject
      */
     protected $sugarUser;
 
     /**
-     * @var User | \PHPUnit_Framework_MockObject_MockObject
+     * @var User|MockObject
      */
     protected $user;
 
@@ -67,7 +68,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      */
     protected $inputData = [];
 
-    /** @var  \User | \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \User|MockObject */
     protected $mockedUser;
 
     /** @var  array */

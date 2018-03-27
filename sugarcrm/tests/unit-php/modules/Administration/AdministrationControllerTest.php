@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Administration;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -21,17 +22,17 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class AdministrationControllerTest extends TestCase
 {
     /**
-     * @var \AdministrationController|\PHPUnit_Framework_MockObject_MockObject
+     * @var \AdministrationController|MockObject
      */
     protected $controller;
 
     /**
-     * @var \OneLogin_Saml2_Settings|\PHPUnit_Framework_MockObject_MockObject
+     * @var \OneLogin_Saml2_Settings|MockObject
      */
     protected $settings;
 
     /**
-     * @var UploadedFile|\PHPUnit_Framework_MockObject_MockObject
+     * @var UploadedFile|MockObject
      */
     protected $file;
 

@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdpConfig;
 
@@ -21,27 +22,27 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdpConfig;
 class UsersApiHelperTest extends TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject | \UsersApiHelper
+     * @var \UsersApiHelper|MockObject
      */
     protected $userApiHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject | \User
+     * @var \User|MockObject
      */
     protected $user;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject | \EmailAddress
+     * @var \EmailAddress|MockObject
      */
     protected $emailAddress;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject | \Link2
+     * @var \Link2|MockObject
      */
     protected $primaryEmailLink;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject | IdpConfig
+     * @var IdpConfig|MockObject
      */
     protected $IdpConfig;
 

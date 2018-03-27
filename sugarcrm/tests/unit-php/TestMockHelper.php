@@ -12,28 +12,29 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit;
 
+use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class TestMockHelper
  *
- * Helper class to create Mock Object, wrapper of original \PHPUnit_Framework_TestCase methods
- *
- * @package Sugarcrm\SugarcrmTestsUnit
+ * Helper class to create Mock Object, wrapper of original TestCase methods
  */
 class TestMockHelper
 {
     /**
      * Helper method, creates a mock object using a fluent interface.
      *
-     * @param \PHPUnit_Framework_TestCase $testCase
+     * @param TestCase $testCase
      * @param string $className
      * @param array|null $methods
      * @param bool $disableOriginalConstructor
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
-
     public static function getObjectMock(
-        \PHPUnit_Framework_TestCase $testCase,
+        TestCase $testCase,
         $className,
         array $methods = null,
         $disableOriginalConstructor = true
@@ -52,14 +53,14 @@ class TestMockHelper
      *
      * helper method, create mock for abstract class
      *
-     * @param \PHPUnit_Framework_TestCase $testCase
+     * @param TestCase $testCase
      * @param $className
      * @param array|null $methods
      * @param bool $disableOriginalConstructor
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     public static function getMockForAbstractClass(
-        \PHPUnit_Framework_TestCase $testCase,
+        TestCase $testCase,
         $className,
         array $methods = null,
         $disableOriginalConstructor = true
@@ -77,15 +78,14 @@ class TestMockHelper
     /**
      * Returns a test double for the specified class.
      *
-     * @param \PHPUnit_Framework_TestCase $testCase
+     * @param TestCase $testCase
      * @param string $originalClassName
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      *
-     * @throws PHPUnit_Framework_Exception
-     *
+     * @throws Exception
      */
-    public static function createMock(\PHPUnit_Framework_TestCase $testCase, $originalClassName)
+    public static function createMock(TestCase $testCase, $originalClassName)
     {
         return TestReflection::callProtectedMethod($testCase, 'createMock', array($originalClassName));
     }
@@ -93,16 +93,15 @@ class TestMockHelper
     /**
      * Returns a partial test double for the specified class.
      *
-     * @param \PHPUnit_Framework_TestCase $testCase
+     * @param TestCase $testCase
      * @param string $originalClassName
      * @param array  $methods
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      *
-     * @throws PHPUnit_Framework_Exception
+     * @throws Exception
      */
-
-    public static function createPartialMock(\PHPUnit_Framework_TestCase $testCase, $originalClassName, array $methods)
+    public static function createPartialMock(TestCase $testCase, $originalClassName, array $methods)
     {
         return TestReflection::callProtectedMethod($testCase, 'createPartialMock', array($originalClassName, $methods));
     }

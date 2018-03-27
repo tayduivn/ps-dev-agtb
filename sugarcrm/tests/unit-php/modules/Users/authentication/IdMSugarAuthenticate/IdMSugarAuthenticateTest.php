@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSugarAuthenticate;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
@@ -24,24 +25,23 @@ require_once 'include/utils.php';
  */
 class IdMSugarAuthenticateTest extends TestCase
 {
-
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var MockObject
      */
     protected $idmLocalAuth;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var MockObject
      */
     protected $authProviderBuilder;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var MockObject
      */
     protected $authProviderManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var MockObject
      */
     protected $token;
 

@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\PermanentLockedUserException;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Exception\TemporaryLockedUserException;
@@ -23,29 +24,28 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
  */
 class Lockout2Test extends TestCase
 {
-
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Lockout
+     * @var Lockout|MockObject
      */
     protected $lockout;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|User
+     * @var User|MockObject
      */
     protected $user;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\User
+     * @var \User|MockObject
      */
     protected $sugarUser;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\TimeDate
+     * @var \TimeDate|MockObject
      */
     protected $timeDate;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\sugarDateTime
+     * @var \SugarDateTime|MockObject
      */
     protected $sugarDateTime;
 

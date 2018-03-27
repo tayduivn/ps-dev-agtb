@@ -14,6 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Exception\HandlerCollectionException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection;
 use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\AnalysisHandler;
 use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\BaseHandler;
@@ -68,10 +69,9 @@ class HandlerCollectionTest extends TestCase
      */
     public function testRemoveHandlerException()
     {
-        $this->setExpectedException(
-            'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Exception\HandlerCollectionException',
-            'Cannot remove non-existing handler FooBar'
-        );
+        $this->expectException(HandlerCollectionException::class);
+        $this->expectExceptionMessage('Cannot remove non-existing handler FooBar');
+
         $collection = new HandlerCollection(new GlobalSearch());
         $collection->removeHandler('FooBar');
     }
@@ -81,10 +81,9 @@ class HandlerCollectionTest extends TestCase
      */
     public function testGetHandlerException()
     {
-        $this->setExpectedException(
-            'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Exception\HandlerCollectionException',
-            'Handler FooBar does not exist'
-        );
+        $this->expectException(HandlerCollectionException::class);
+        $this->expectExceptionMessage('Handler FooBar does not exist');
+
         $collection = new HandlerCollection(new GlobalSearch());
         $collection->getHandler('FooBar');
     }

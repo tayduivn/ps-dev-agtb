@@ -11,6 +11,7 @@
  */
 namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
@@ -20,22 +21,22 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 class IdMUserTest extends TestCase
 {
     /**
-     * @var \TimeDate|\PHPUnit_Framework_MockObject_MockObject
+     * @var \TimeDate|MockObject
      */
     protected $timeDate = null;
 
     /**
-     * @var User|\PHPUnit_Framework_MockObject_MockObject
+     * @var User|MockObject
      */
     protected $user = null;
 
     /**
-     * @var \User|\PHPUnit_Framework_MockObject_MockObject
+     * @var \User|MockObject
      */
     protected $sugarUser = null;
 
     /**
-     * @var \EmailAddress | \PHPUnit_Framework_MockObject_MockObject
+     * @var \EmailAddress|MockObject
      */
     protected $emailAddress;
 

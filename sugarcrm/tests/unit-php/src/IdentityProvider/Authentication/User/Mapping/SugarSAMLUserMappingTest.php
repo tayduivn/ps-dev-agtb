@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\Mapping\SugarSAMLUserMapping;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\UserMapping
  */
 class SugarSAMLUserMappingTest extends TestCase
 {

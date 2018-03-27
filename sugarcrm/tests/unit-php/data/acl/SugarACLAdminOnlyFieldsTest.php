@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -156,7 +157,7 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
      *
      * @param array $stubbedMethods The methods that are intended to be stubbed.
      *
-     * @return PHPUnit_Framework_MockObject_MockBuilder
+     * @return MockObject
      */
     private function getCurrentUserMock($stubbedMethods)
     {

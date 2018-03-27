@@ -17,7 +17,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder
  */
 class AuthProviderManagerBuilderTest extends TestCase
 {
