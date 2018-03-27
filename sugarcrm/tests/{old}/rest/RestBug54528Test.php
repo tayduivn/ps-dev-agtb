@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestTestPortalBase.php');
 
 class RestBug54528Test extends RestTestPortalBase {
     public function setUp()

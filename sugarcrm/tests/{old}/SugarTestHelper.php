@@ -96,69 +96,7 @@ $focus = new Administration();
 $focus->retrieveSettings();
 $focus->saveSetting('system','adminwizard',1);
 
-// include the other test tools
-require_once 'SugarTestObjectUtilities.php';
-require_once 'SugarTestProjectUtilities.php';
-require_once 'SugarTestProjectTaskUtilities.php';
-require_once 'SugarTestUserUtilities.php';
-require_once 'SugarTestEmailAddressUtilities.php';
-require_once 'SugarTestLangPackCreator.php';
-require_once 'SugarTestThemeUtilities.php';
-require_once 'SugarTestContactUtilities.php';
-require_once 'SugarTestEmailUtilities.php';
-require_once 'SugarTestCampaignUtilities.php';
-require_once 'SugarTestLeadUtilities.php';
-require_once 'SugarTestStudioUtilities.php';
-require_once 'SugarTestMeetingUtilities.php';
-require_once 'SugarTestCallUtilities.php';
-require_once 'SugarTestAccountUtilities.php';
-require_once 'SugarTestTrackerUtility.php';
-require_once 'SugarTestImportUtilities.php';
-require_once 'SugarTestMergeUtilities.php';
-require_once 'SugarTestTaskUtilities.php';
-require_once 'SugarTestCurrencyUtilities.php';
-require_once 'SugarTestOpportunityUtilities.php';
-require_once 'SugarTestJobQueueUtilities.php';
-require_once 'SugarTestFilterUtilities.php';
-require_once 'SugarTestRestUtilities.php';
-require_once 'SugarTestActivityUtilities.php';
-require_once 'SugarTestCommentUtilities.php';
-require_once 'SugarTestReflection.php';
-require_once 'SugarTestConfigUtilities.php';
-require_once 'SugarTestDashboardUtilities.php';
-require_once 'SugarTestNoteUtilities.php';
-
-require_once 'SugarTestForecastUtilities.php';
-require_once 'SugarTestProductUtilities.php';
-require_once 'SugarTestRevenueLineItemUtilities.php';
-require_once 'SugarTestProductCategoryUtilities.php';
-require_once 'SugarTestProductTypeUtilities.php';
-require_once 'SugarTestProductTemplatesUtilities.php';
-require_once 'SugarTestProductBundleUtilities.php';
-require_once 'SugarTestQuotaUtilities.php';
-require_once 'SugarTestQuoteUtilities.php';
-require_once 'SugarTestTeamUtilities.php';
-require_once 'SugarTestTimePeriodUtilities.php';
-require_once 'SugarTestWorksheetUtilities.php';
-require_once 'SugarTestManagerWorksheetUtilities.php';
-require_once 'SugarTestProspectUtilities.php';
-require_once 'SugarTestProspectListsUtilities.php';
-require_once 'SugarTestNotificationUtilities.php';
-require_once 'SugarTestWebLogicHookUtilities.php';
-require_once 'SugarTestRelationshipUtilities.php';
-require_once 'SugarTestSugarEmailAddressUtilities.php';
-require_once 'SugarTestCaseUtilities.php';
-require_once 'SugarTestTagUtilities.php';
-require_once 'SugarTestDatabaseMock.php';
-require_once 'SugarTestKBContentUtilities.php';
-require_once 'SugarTestSchedulersJobUtilities.php';
-require_once 'SugarTestCategoryUtilities.php';
-require_once 'SugarTestEmailTemplateUtilities.php';
 require_once 'modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
-
-//BEGIN SUGARCRM flav=ent ONLY
-require_once 'SugarTestProcessAuthorUtilities.php';
-//END SUGARCRM flav=ent ONLY
 
 // custom helper support
 $customHelperIncludeFile = 'custom/tests/SugarTestHelperInclude.php';

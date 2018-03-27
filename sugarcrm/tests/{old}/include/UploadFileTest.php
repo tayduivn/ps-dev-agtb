@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'include/upload_file.php';
-
 /**
  * @coversDefaultClass UploadFile
  */

@@ -9,8 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 require_once 'include/utils/zip_utils.php';
-require_once('tests/{old}/rest/RestTestBase.php');
 
 /**
  * Test some scenarios that were problematic with Shadow

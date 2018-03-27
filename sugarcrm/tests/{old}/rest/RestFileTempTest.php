@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestFileTestBase.php');
 
 class RestFileTempTest extends RestFileTestBase
 {
@@ -35,4 +34,3 @@ class RestFileTempTest extends RestFileTestBase
         $this->assertEquals('invalid_parameter', $fetch['reply']['error'], 'Expected error string not returned');
     }
 }
-

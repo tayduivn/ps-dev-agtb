@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
 require_once 'upgrade/scripts/post/2_RepairConnectorNames.php';
 
 /**

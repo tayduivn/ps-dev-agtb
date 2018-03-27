@@ -12,8 +12,6 @@
  */
 
 require_once('vendor/nusoap//nusoap.php');
-require_once 'tests/{old}/service/SOAPTestCase.php';
-require_once('tests/{old}/service/APIv3Helper.php');
 
 /***
  * SOAPAPI4_1Test.php

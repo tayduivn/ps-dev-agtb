@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestFileTestBase.php');
 
 class RestFileTest extends RestFileTestBase
 {
@@ -217,4 +216,3 @@ class RestFileTest extends RestFileTestBase
     }
 
 }
-

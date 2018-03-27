@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestTestBase.php');
 
 class RestClearCacheTest extends RestTestBase {
     protected $_customFile = 'custom/clients/base/api/PongApi.php';

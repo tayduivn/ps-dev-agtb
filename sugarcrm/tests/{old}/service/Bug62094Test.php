@@ -11,7 +11,6 @@
  */
 
 
-require_once 'tests/{old}/service/SOAPTestCase.php';
 
 class Bug62094Test extends SOAPTestCase
 {

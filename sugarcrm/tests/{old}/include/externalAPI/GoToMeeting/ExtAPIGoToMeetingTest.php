@@ -14,17 +14,9 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * ExtAPIGoToMeetingTest.php
+ * Class ExtAPIGoToMeetingTest
  *
  * This test is for the ExtAPIGoToMeeting.php class and the related functionality towards the GoToMeeting REST API
- *
- * @author avucinic@sugarcrm.com
- *
- */
-
-
-/**
- * Class ExtAPIGoToMeetingTest
  */
 class ExtAPIGoToMeetingTest extends TestCase
 {

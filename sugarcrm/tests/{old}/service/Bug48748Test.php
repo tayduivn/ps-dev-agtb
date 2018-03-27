@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/service/RestTestCase.php');
 
 class Bug48748Test extends RestTestCase
 {

@@ -12,8 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
-require_once 'tests/{old}/modules/Emails/clients/base/api/EmailsApiIntegrationTestCase.php';
-
 /**
  * @coversDefaultClass EmailsApi
  */

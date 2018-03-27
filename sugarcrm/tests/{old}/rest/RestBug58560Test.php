@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/rest/RestTestBase.php';
-
 /**
  * Bug 58560 - Custom address don't have group property in vardefs
  */

@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/modules/Trackers/TrackerTestUtility.php';
-
 class TrackerUpgradeDashletTest extends TestCase
 {
 	var $defaultTrackingDashlets = array('TrackerDashlet', 'MyModulesUsedChartDashlet', 'MyTeamModulesUsedChartDashlet');

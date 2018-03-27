@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/service/SOAPTestCase.php';
-
-
 /**
  * Bug #65782
  * SOAP API (v1) - get_entry_list retuning duplicates

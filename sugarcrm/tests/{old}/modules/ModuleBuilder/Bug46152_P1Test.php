@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
-
 class Bug46152_P1Test extends TestCase
 {
 

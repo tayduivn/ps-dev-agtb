@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
 require_once 'upgrade/scripts/post/7_Merge7Templates.php';
 
 class testComboFieldMerge extends UpgradeTestCase

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'tests/{old}/include/SubPanel/SubPanelTestBase.php';
-
 /**
  * Bug 58087 - Compose Email in activities sub panel
  * 

@@ -13,8 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/SugarTestRestUtilities.php';
-
 /**
  * @group ApiTests
  */

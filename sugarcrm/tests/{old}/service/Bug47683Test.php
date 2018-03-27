@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-require_once 'tests/{old}/service/SOAPTestCase.php';
 /**
  * This class tests that get_modified_entries returns xml with CDATA for <value> tags
  *

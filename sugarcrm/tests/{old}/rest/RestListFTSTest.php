@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestTestBase.php');
 
 class RestListFTSTest extends RestTestBase {
     public function setUp()
@@ -248,4 +247,3 @@ class RestListFTSTest extends RestTestBase {
 
 
 }
-

@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/SugarTestRestUtilities.php';
-require_once 'tests/{old}/SugarTestACLUtilities.php';
 /**
  * @group ApiTests
  */

@@ -10,23 +10,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'vendor/nusoap/nusoap.php';
 
 /**
- * NoBlankFieldUpdateOnFirstSyncTest.php
- *
  * This unit test was written to test an Outlook Plugin Hotfix.  It is attempting to mimic
  * what would happen if a new Contact record was created in Sugar.  Then a record with the same
  * first and last name and a matching email was created in Outlook.  With the Outlook settings
  * set so that the Sugar server wins on conflicts, what was happening was that the new (blank) values
  * from the Outlook plugin were overriding the SugarCRM record values. Under the new test what should
  * happen is that blank values from the Outlook side do NOT wipe out the SugarCRM values on first sync.
- * 
- * @author Collin Lee
  */
-
-require_once('vendor/nusoap//nusoap.php');
-require_once('tests/{old}/service/SOAPTestCase.php');
-
 class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
 {
 	public $_soapClient = null;
@@ -219,5 +212,3 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
     }
 
 }
-
-?>

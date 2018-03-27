@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('tests/{old}/modules/Users/AuthenticateTest.php');
-
 class Bug49069Test extends TestCase
 {
 

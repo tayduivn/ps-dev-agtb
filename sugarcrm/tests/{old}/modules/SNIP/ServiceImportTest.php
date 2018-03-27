@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('tests/{old}/service/APIv3Helper.php');
-
 class ServiceImportTest extends TestCase
 {
 	private $email_id = '';

@@ -13,7 +13,6 @@
 
 require_once 'include/connectors/utils/ConnectorUtils.php';
 require_once 'include/connectors/ConnectorsTestCase.php';
-require_once 'tests/{old}/include/connectors/ZoominfoHelper.php';
 
 class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
 {

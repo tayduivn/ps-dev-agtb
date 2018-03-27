@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
-require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
 require_once 'modules/Emails/upgrade/scripts/post/4_SynchronizeTasksRelationshipToEmailsBeansTable.php';
 
 /**

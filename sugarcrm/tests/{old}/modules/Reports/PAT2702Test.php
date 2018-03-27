@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'include/generic/LayoutManager.php';
-require_once 'modules/Reports/Report.php';
 /**
  * Reports on next/current/previous fiscal quarter do not work in split-year fiscal year
  *

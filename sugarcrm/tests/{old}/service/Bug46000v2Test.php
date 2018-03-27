@@ -12,7 +12,6 @@
  */
 
 require_once('vendor/nusoap//nusoap.php');
-require_once 'tests/{old}/service/SOAPTestCase.php';
 
 
 class Bug46000v2Test extends SOAPTestCase

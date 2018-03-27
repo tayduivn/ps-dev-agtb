@@ -13,7 +13,6 @@
  * @ticket 41296
  */
 require_once('vendor/nusoap//nusoap.php');
-require_once 'tests/{old}/service/SOAPTestCase.php';
 
 
 class Bug41296Test extends SOAPTestCase

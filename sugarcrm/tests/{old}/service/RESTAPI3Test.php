@@ -12,9 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('tests/{old}/service/APIv3Helper.php');
-
-
 class RESTAPI3Test extends TestCase
 {
     protected $_user;

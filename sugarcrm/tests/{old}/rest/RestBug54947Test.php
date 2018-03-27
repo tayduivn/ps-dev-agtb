@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestTestBase.php');
 
 class RestBug54947Test extends RestTestBase {
     public $createdFiles = array();
@@ -47,4 +46,3 @@ class RestBug54947Test extends RestTestBase {
     }
 
 }
-

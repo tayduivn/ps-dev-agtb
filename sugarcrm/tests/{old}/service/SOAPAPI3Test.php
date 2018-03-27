@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/service/APIv3Helper.php');
-require_once 'tests/{old}/service/SOAPTestCase.php';
 /**
  * This class is meant to test everything SOAP
  *

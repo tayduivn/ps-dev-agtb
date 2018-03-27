@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 /**
  * Bug49898Test.php
  *
@@ -19,13 +18,7 @@
  * only has the session id information.  Therefore, as an alternative, it was proposed to have a workaround where if a username is empty, then the password
  * is assumed to be the session id.  This test replicates that check by searching on two modules (Accounts and Contacts) based on an email address
  * derived from the Contact.
- *
- * @author Collin Lee
- *
  */
-
-require_once 'tests/{old}/service/SOAPTestCase.php';
-
 class Bug49898Test extends SOAPTestCase
 {
     var $contact;
@@ -67,4 +60,3 @@ class Bug49898Test extends SOAPTestCase
 
 
 }
-

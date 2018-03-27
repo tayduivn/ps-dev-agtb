@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'data/Relationships/One2MBeanRelationship.php';
-
 /**
  * @coversDefaultClass One2MBeanRelationship
  */

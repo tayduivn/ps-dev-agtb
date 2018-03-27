@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('vendor/nusoap//nusoap.php');
-require_once 'tests/{old}/service/SOAPTestCase.php';
 
 /**
  * @ticket 38100

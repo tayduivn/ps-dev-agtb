@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'tests/{old}/rest/RestTestBase.php';
 
 /**
  * Bug 59868 - clients dont agree on how to handle quoted int app string keys

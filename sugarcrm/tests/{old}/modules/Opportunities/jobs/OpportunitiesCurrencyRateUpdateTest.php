@@ -13,8 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/SugarTestDatabaseMock.php';
-
 class OpportunitiesCurrencyRateUpdateTest extends TestCase
 {
     /**

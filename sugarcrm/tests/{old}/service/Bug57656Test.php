@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/service/SOAPTestCase.php');
 /**
  * @ticket 57656
  */

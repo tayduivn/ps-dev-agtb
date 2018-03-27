@@ -11,7 +11,6 @@
  */
 
 
-require_once('tests/{old}/rest/RestTestBase.php');
 
 class RestExportTest extends RestTestBase
 {

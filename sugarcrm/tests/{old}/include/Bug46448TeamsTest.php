@@ -15,11 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug46448TeamsTest extends TestCase
 {
-
     public function testTeams()
     {
-        require_once('modules/Teams/TeamSetManager.php');
-
         $team = BeanFactory::newBean('Teams');
         $globalTeamId = $team->global_team;
         $this->assertEquals(

@@ -12,9 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/SugarTestDatabaseMock.php';
-require_once 'tests/{old}/SugarTestReflection.php';
-
 class SugarApiTest extends TestCase
 {
     protected $mock;

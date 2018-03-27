@@ -11,7 +11,6 @@
  */
 
 require_once 'modules/Calls/metadata/additionalDetails.php';
-require_once 'tests/{old}/include/utils/AppListStringsTest.php';
 
 /**
  * @ticket 22882

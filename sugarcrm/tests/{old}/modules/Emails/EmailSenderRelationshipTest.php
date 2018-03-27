@@ -13,8 +13,6 @@
 use Sugarcrm\Sugarcrm\Util\Uuid;
 use PHPUnit\Framework\TestCase;
 
-require_once 'modules/Emails/EmailSenderRelationship.php';
-
 /**
  * @coversDefaultClass EmailSenderRelationship
  */

@@ -13,7 +13,6 @@
 
 
 require_once('vendor/nusoap//nusoap.php');
-require_once 'tests/{old}/service/SOAPTestCase.php';
 
 /*
  * This test makes sure that field level acl's are honored in soap v4

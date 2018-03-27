@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/SugarTestReflection.php';
-
 class SidecarThemeTest extends TestCase
 {
     private $platformTest = 'platform_TEST_123456789E_1234';

@@ -10,12 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestTestBase.php');
-
-/***
- * Used to test Lead Convert in Leads Module endpoints from LeadConvertApi.php
- */
 /**
+ * Used to test Lead Convert in Leads Module endpoints from LeadConvertApi.php
+ *
  * @group api_lead_convert
  * @group rest
  */

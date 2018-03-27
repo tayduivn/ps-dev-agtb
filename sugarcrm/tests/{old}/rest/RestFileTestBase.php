@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestTestBase.php');
 
 class RestFileTestBase extends RestTestBase {
     protected $_note;
@@ -105,4 +104,3 @@ class RestFileTestBase extends RestTestBase {
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
     }
 }
-

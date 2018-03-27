@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestTestBase.php');
 
 class RestVersionTest extends RestTestBase {
     /**
@@ -36,5 +35,3 @@ class RestVersionTest extends RestTestBase {
     }
 
 }
-
-

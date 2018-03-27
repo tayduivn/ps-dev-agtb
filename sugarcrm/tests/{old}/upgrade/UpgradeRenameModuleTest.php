@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\MockObject\MockObject;
 
-require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
-
 class UpgradeRenameModuleTest extends UpgradeTestCase
 {
     protected $globalFilename = 'custom/include/language/en_us.lang.php';

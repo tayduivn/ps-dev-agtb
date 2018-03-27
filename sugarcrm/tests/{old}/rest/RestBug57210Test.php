@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestFileTestBase.php');
-
 /**
  * Bug 57210:
  * Need to be able to mark a related record 'deleted=1' when a file uploads fails.
@@ -102,4 +100,3 @@ class RestBug57210Test extends RestFileTestBase {
         $this->assertContains('ERROR: uploaded file was too big', $reply['reply']['error_message'], 'Expected error message not returned');
     }
 }
-

@@ -14,8 +14,6 @@
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-require_once 'include/SugarQuery/Compiler/Doctrine.php';
-
 /**
  * @coversDefaultClass SugarQuery_Compiler_Doctrine
  */

@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-// need to make sure SugarApi is included when extending DuplicateCheckStrategy to avoid a fatal error
-require_once("tests/{old}/SugarTestRestUtilities.php");
 /**
  * @group api
  * @group duplicatecheck

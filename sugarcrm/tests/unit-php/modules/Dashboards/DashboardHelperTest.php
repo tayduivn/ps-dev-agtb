@@ -12,7 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'modules/Dashboards/DashboardHelper.php';
 /**
  * @coversDefaultClass \DashboardHelper
  */

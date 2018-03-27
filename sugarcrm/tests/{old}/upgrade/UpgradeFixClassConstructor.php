@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
-require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
 
 class UpgradeFixClassConstructorTest extends UpgradeTestCase
 {

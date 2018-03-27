@@ -28,7 +28,6 @@ use PHPUnit\Framework\TestCase;
  * @author Collin Lee
  */
 
-require_once('tests/{old}/SugarTestProspectUtilities.php');
 
 class Bug50342Test extends TestCase
 {

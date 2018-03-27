@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/service/SOAPTestCase.php';
 require_once 'modules/Currencies/Currency.php';
 
 /**
@@ -154,4 +153,3 @@ class Bug55129Test extends SOAPTestCase
     }
 
 }
-

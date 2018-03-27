@@ -14,7 +14,6 @@
  * Test upgrade script which recalculates all ProductBundle and Quote values based on the Products
  * @see Bug66795
  */
-require_once "tests/{old}/upgrade/UpgradeTestCase.php";
 
 class QuotesRepairQuoteAndProductBundlesTest extends UpgradeTestCase
 {

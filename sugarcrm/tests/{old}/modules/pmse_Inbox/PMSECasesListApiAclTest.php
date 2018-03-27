@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/SugarTestACLUtilities.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 use PHPUnit\Framework\TestCase;

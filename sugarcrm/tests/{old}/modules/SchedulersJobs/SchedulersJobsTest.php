@@ -12,9 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/SugarTestUserUtilities.php';
-require_once 'tests/{old}/SugarTestAccountUtilities.php';
-
 class SchedulersJobsTest extends TestCase
 {
     public $jobs = array();

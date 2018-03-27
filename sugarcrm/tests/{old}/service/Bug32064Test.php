@@ -11,11 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/service/SOAPTestCase.php');
 
-require_once('tests/{old}/SugarTestProductBundleUtilities.php');
 require_once('tests/{old}/SugarTestQuoteUtilities.php');
-require_once('tests/{old}/SugarTestProductUtilities.php');
 
 /**
  * Bug #32064

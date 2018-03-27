@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/rest/RestTestBase.php';
-
 /**
  * Bug 59210 - Editing a modules field in Studio does not take affect immediately
  * in metadata API requests.

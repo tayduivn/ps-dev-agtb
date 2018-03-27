@@ -13,9 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('tests/{old}/modules/Trackers/TrackerTestUtility.php');
-require_once('tests/{old}/SugarTestLangPackCreator.php');
-
 class Bug25820_Test extends TestCase
 {
     private $_trackerReporter;

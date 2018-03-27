@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 /**
  * SugarTestJobQueueUtilities
  *
@@ -98,4 +97,3 @@ class SugarTestJobQueueUtilities
         }
     }
 }
-?>

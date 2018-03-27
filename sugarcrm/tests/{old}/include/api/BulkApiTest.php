@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/SugarTestReflection.php';
-
 class BulkApiTest extends TestCase
 {
     public static function setUpBeforeClass()

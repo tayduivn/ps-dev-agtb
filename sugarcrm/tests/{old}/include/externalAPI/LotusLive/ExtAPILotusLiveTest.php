@@ -21,12 +21,8 @@ use PHPUnit\Framework\TestCase;
  * @author Collin Lee
  *
  */
-
-require_once('tests/{old}/include/externalAPI/LotusLive/ExtAPILotusLiveMock.php');
-
 class ExtAPILotusLiveTest extends TestCase
 {
-
     public function setUp()
     {
         global $app_strings;

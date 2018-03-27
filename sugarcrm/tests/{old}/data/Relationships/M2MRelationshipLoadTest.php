@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'data/Relationships/M2MRelationship.php';
-
 /**
  * @coversDefaultClass M2MRelationship
  */

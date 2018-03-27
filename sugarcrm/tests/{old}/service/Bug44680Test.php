@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/service/SOAPTestCase.php';
-
 /**
  * @group bug44680
  */

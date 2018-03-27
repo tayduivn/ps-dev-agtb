@@ -12,10 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('tests/{old}/SugarTestViewConvertLeadUtilities.php');
-require_once 'tests/{old}/SugarTestViewConvertLeadUtilities.php';
-
-
 class ConvertLeadTest extends TestCase
 {
     /**

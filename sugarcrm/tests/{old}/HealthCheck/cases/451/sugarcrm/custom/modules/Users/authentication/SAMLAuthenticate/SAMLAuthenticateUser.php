@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticateUser.php';
-
 class SAMLAuthenticateUserCustomCase451 extends SAMLAuthenticateUser
 {
-
 }

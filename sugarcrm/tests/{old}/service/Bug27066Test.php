@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/service/SOAPTestCase.php';
-
 /**
  * Test attaching contact to acccount which is not visible to current user. Should create a new account instead.
  *
@@ -87,4 +85,3 @@ class Bug27066Test extends SOAPTestCase
 
 
 }
-

@@ -11,19 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 /**
  * Bug50677Test
  *
  * This test is to make sure that you can add a relationship between Product Bundles and Products via the standard
  * set_relationship method and include in the extra field.
- *
- * @author Jon Whitcraft
- *
  */
-
-require_once 'tests/{old}/service/SOAPTestCase.php';
-
 class Bug50677Test extends SOAPTestCase
 {
     /**

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/service/SOAPTestCase.php');
-
 /**
  * Bug #41392
  * Wildcard % searching does not return email addresses when searching with outlook plugin

@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('tests/{old}/SugarTestLangPackCreator.php');
-
 class ImportFieldSanitizeTest extends TestCase
 {
     protected function setUp()

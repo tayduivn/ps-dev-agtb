@@ -13,8 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/modules/UpgradeWizard/SidecarMetaDataFileBuilder.php';
-
 class SidecarMetaDataUpgraderTest extends TestCase
 {
     /**

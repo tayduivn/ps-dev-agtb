@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('tests/{old}/rest/RestTestBase.php');
 
 /**
  * Bug 57839 - REST non-GET API must set no-cache headers in response

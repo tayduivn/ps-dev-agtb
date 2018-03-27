@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "tests/{old}/upgrade/UpgradeTestCase.php";
 require_once 'upgrade/scripts/post/7_FixSingularList.php';
 
 use PHPUnit\Framework\MockObject\MockObject;

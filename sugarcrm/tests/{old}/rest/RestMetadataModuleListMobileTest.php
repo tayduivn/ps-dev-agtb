@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'tests/{old}/rest/RestTestBase.php';
 class RestMetadataModuleListMobileTest extends RestTestBase {
     public $unitTestFiles = array();
 

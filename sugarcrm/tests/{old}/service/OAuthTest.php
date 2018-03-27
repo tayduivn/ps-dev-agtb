@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('tests/{old}/service/APIv3Helper.php');
-
 class OAuthTest extends TestCase
 {
     protected static $_user;

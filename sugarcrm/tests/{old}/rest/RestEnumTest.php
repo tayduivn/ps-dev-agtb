@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('tests/{old}/rest/RestTestBase.php');
 
 class RestEnumTest extends RestTestBase {
     public function tearDown() {
@@ -82,4 +81,3 @@ class RestEnumTest extends RestTestBase {
         $this->assertEquals('field not found', $restReply['reply']['error_message'], "Incorrect message returned");
     }
 }
-

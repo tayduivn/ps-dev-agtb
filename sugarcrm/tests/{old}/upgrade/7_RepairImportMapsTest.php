@@ -12,7 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
 require_once 'upgrade/scripts/post/7_RepairImportMaps.php';
 
 class RepairImportMapsTest extends TestCase

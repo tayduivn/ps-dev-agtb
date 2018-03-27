@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('tests/{old}/modules/Users/AuthenticateTest.php');
-
 /**
  * Bug50936Test.php
  * This tests that we can correctly load a custom settings.php file for SAMLAuthentication when called from

@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Users/authentication/LDAPAuthenticate/LDAPAuthenticate.php';
-
 class LDAPAuthenticateCustomCase451 extends LDAPAuthenticate
 {
-
 }

@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/SugarTestDatabaseMock.php';
-
 class RevenueLineItemsCurrencyRateUpdateTest extends TestCase
 {
     /**

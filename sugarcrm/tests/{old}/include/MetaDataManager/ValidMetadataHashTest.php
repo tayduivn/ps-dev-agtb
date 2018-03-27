@@ -12,8 +12,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/SugarTestACLUtilities.php';
-
 /**
  * Testing valid caches to prevent error 412 loops.
  */

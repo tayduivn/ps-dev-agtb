@@ -14,7 +14,6 @@
  * Test upgrade script which fixes duplicate bundle indexes
  * @see Bug65573
  */
-require_once "tests/{old}/upgrade/UpgradeTestCase.php";
 
 class QuotesRepairProductBundleIndexesTest extends UpgradeTestCase
 {

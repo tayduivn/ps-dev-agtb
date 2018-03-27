@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,12 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
-$beanList = array();
-$beanFiles = array();
-require('include/modules.php');
-$GLOBALS['beanList'] = $beanList;
-$GLOBALS['beanFiles'] = $beanFiles;
 
 class SugarTestQuoteUtilities
 {
@@ -48,7 +41,7 @@ class SugarTestQuoteUtilities
         	self::$_createdQuotes[] = $quote;
     	} // foreach
     } // fn
-    
+
     public static function removeAllCreatedQuotes()
     {
         $quote_ids = self::getCreatedQuoteIds();
@@ -97,4 +90,3 @@ class SugarTestQuoteUtilities
         $db->query($query);
     }
 }
-?>

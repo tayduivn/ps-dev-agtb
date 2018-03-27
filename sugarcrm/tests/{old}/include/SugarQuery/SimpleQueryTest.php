@@ -13,8 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once 'tests/{old}/include/database/TestBean.php';
-
 class SimpleQueryTest extends TestCase
 {
     /**
