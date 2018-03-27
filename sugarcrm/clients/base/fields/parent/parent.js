@@ -202,15 +202,26 @@
                 // only set when we have an id on the model, as setting undefined
                 // is causing issues with the warnUnsavedChanges() method
                 if (!_.isUndefined(model.id)) {
-                    this.model.set('parent_id', model.id, {silent: silent});
                     // FIXME we shouldn't rely on model.value... and hack the full_name here until we fix it properly
                     // SC-4196 will fix this.
                     var value = model.value || model[this.def.rname || 'name'] || model['full_name'] ||
                         app.utils.formatNameLocale(model);
-                    this.model.set('parent_name', value, {silent: silent});
+                    var forceUpdate = _.isEmpty(this.model.get(this.def.name)) && _.isEmpty(value);
+                    this.model.set(
+                        {
+                            'parent_id': model.id,
+                            'parent_name': value,
+                            'parent': model
+                        },
+                        {silent: silent}
+                    );
+                    if (forceUpdate) {
+                        this._updateField();
+                    }
                 }
             }
         }, this));
+
 
         // TODO we should support the auto populate of other fields like we do on normal relate.js
     },
