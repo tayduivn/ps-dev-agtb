@@ -768,6 +768,22 @@ describe("Sugar7 utils", function() {
                     expect(model.get('parent_name')).toBe('Bob Tillman');
                 });
 
+                it('should compute the name and set the parent attributes', function() {
+                    var model;
+                    var contact = app.data.createBean('Contacts', {
+                        id: _.uniqueId(),
+                        first_name: 'Bob',
+                        last_name: 'Tillman'
+                    });
+
+                    app.utils.openEmailCreateDrawer('compose-email', {related: contact});
+                    model = app.drawer.open.firstCall.args[0].context.model;
+
+                    expect(model.get('parent_type')).toBe('Contacts');
+                    expect(model.get('parent_id')).toBe(contact.get('id'));
+                    expect(model.get('parent_name')).toBe('Bob Tillman');
+                });
+
                 it('should set the parent attributes after fetching the name of the related record', function() {
                     var model;
                     var contact = app.data.createBean('Contacts', {id: _.uniqueId()});

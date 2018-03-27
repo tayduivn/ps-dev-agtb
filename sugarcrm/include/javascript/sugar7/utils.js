@@ -30,6 +30,7 @@
         function setParentAttributes(model, parent) {
             var fields = app.metadata.getModule(model.module, 'fields');
             var modules;
+            var name;
 
             modules = _.chain(app.lang.getAppListStrings(fields.parent_type.options))
                 .keys()
@@ -43,19 +44,36 @@
             }
 
             function setAttributes(parent) {
+                model.set('parent', _.extend({type: parent.module}, parent.toJSON()));
                 model.set('parent_type', parent.module);
                 model.set('parent_id', parent.get('id'));
                 model.set('parent_name', parent.get('name'));
             }
 
-            if (!_.isEmpty(parent.get('id')) && !_.isEmpty(parent.get('name'))) {
+            if (_.isEmpty(parent.get('id'))) {
+                return;
+            }
+
+            if (_.isEmpty(parent.get('name')) && !app.utils.isNameErased(parent)) {
+                // If the name field is empty but other fields are present,
+                // then it may be possible to construct the name. We try to
+                // do that before making an unnecessary request.
+                name = app.utils.getRecordName(parent);
+
+                if (!_.isEmpty(name)) {
+                    // We were able to determine the name.
+                    parent.set('name', name);
+                    setAttributes(parent);
+                } else {
+                    // We need more data from this record.
+                    parent.fetch({
+                        showAlerts: false,
+                        success: setAttributes,
+                        fields: ['name']
+                    });
+                }
+            } else {
                 setAttributes(parent);
-            } else if (!_.isEmpty(parent.get('id'))) {
-                parent.fetch({
-                    showAlerts: false,
-                    success: setAttributes,
-                    fields: ['name']
-                });
             }
         }
 
