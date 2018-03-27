@@ -242,8 +242,9 @@
                 this.emailOptions = this.emailOptions || {};
                 options = options || {};
 
-                if (options.related) {
-                    options.related = this._cloneRelatedModel(options.related);
+                // Ignore the related bean if it doesn't have a module.
+                if (options.related && !options.related.module) {
+                    options.related = undefined;
                 }
 
                 this.emailOptions = _.extend({}, this.emailOptions, options);
@@ -261,17 +262,10 @@
             /**
              * Returns a copy of the related model for adding to email options
              *
-             * @param model
+             * @param {Data.Bean} model
              */
             _cloneRelatedModel: function(model) {
-                var relatedModel;
-
-                if (model && model.module) {
-                    relatedModel = app.data.createBean(model.module);
-                    relatedModel.set(app.utils.deepCopy(model));
-                }
-
-                return relatedModel;
+                return app.data.createBean(model.module, app.utils.deepCopy(model));
             },
 
             /**
@@ -366,8 +360,9 @@
              * @private
              */
             _retrieveEmailOptions: function($link) {
-                var optionsFromLink = $link.data() || {},
-                    optionsFromController = this.emailOptions || {};
+                var optionsFromLink = $link.data() || {};
+                var optionsFromController = this.emailOptions || {};
+                var options = {};
 
                 // allow the component implementing this plugin to override optionsFromLink
                 // allows us to pass more complex data like models, which are not easily
@@ -376,7 +371,13 @@
                     optionsFromLink = this._retrieveEmailOptionsFromLink($link);
                 }
 
-                return _.extend({}, optionsFromController, optionsFromLink);
+                options = _.extend(options, optionsFromController, optionsFromLink);
+
+                if (options.related) {
+                    options.related = this._cloneRelatedModel(options.related);
+                }
+
+                return options;
             },
 
             /**

@@ -604,7 +604,7 @@
                         email_address: $link.data('email-to'),
                         opt_out: $link.data('email-opt-out')
                     }),
-                    bean: this.emailOptions.related
+                    bean: this.model
                 }
             ]
         };
