@@ -47,7 +47,7 @@ export class Detail extends EmailField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'span.ellipsis_inline'
+                selector: '.normal.index'
             }
         });
 

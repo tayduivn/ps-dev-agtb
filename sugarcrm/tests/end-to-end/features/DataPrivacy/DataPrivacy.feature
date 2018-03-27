@@ -79,7 +79,7 @@ Feature: Data Privacy module verification
       | status      | Open                                              |
 
 
-  @DataPrivacy_EraseAndComplete @xxx
+  @DataPrivacy_EraseAndComplete
   Scenario: Data Privacy > Erase And Complete
     Given DataPrivacy records exist:
       | *name | type                         | priority | source     | date_due                  |
@@ -134,7 +134,7 @@ Feature: Data Privacy module verification
     When I click Add button on #AccountsSearchAndAdd header
     When I close alert
 
-    # Select which fields to erase  for contact
+    # Select which fields to erase for the contact
     When I click on MarkToErase button for *Alex in #DP_1Record.SubpanelsLayout.subpanels.contacts
     When I select fields in #PersonalInfoDrawer view
       | fieldName            |
@@ -144,7 +144,7 @@ Feature: Data Privacy module verification
       | primary_address_city |
     When I click MarkForErasure button on #ContactsSearchAndAdd header
 
-    # Select which fields to erase for lead
+    # Select which fields to erase for the lead
     When I click on MarkToErase button for *John in #DP_1Record.SubpanelsLayout.subpanels.leads
     When I select fields in #PersonalInfoDrawer view
       | fieldName              |
@@ -153,7 +153,7 @@ Feature: Data Privacy module verification
       | primary_address_street |
     When I click MarkForErasure button on #LeadsSearchAndAdd header
 
-    # Select which fields to erase for target
+    # Select which fields to erase for the target
     When I click on MarkToErase button for *Travis in #DP_1Record.SubpanelsLayout.subpanels.prospects
     When I select fields in #PersonalInfoDrawer view
       | fieldName    |
@@ -162,22 +162,24 @@ Feature: Data Privacy module verification
       | last_name    |
     When I click MarkForErasure button on #ProspectsSearchAndAdd header
 
-    # Select which fields to erase for target
+    # Select which fields to erase for the account
     When I click on MarkToErase button for *Drew in #DP_1Record.SubpanelsLayout.subpanels.accounts
     When I select fields in #PersonalInfoDrawer view
-      | fieldName    |
-      | email        |
+      | fieldName |
+      | email     |
     When I click MarkForErasure button on #AccountsSearchAndAdd header
 
+    # Erase and Complete
     When I click EraseAndComplete button on #DP_1Record header
     When I Confirm confirmation alert
     When I close alert
 
+    # Verify Data Privacy record status
     Then I verify fields on #DP_1Record.RecordView
       | fieldName | value     |
       | status    | Completed |
 
-    # Update resolution field
+    # Update Data Privacy record resolution field
     When I click Edit button on #DP_1Record header
     When I provide input for #DP_1Record.RecordView view
       | resolution                                       |
@@ -185,7 +187,7 @@ Feature: Data Privacy module verification
     When I click Save button on #DP_1Record header
     When I close alert
 
-    # Verify
+    # Verify that values for specified contact fields are erased
     When I choose Contacts in modules menu
     Then I should see *Alex in #ContactsList.ListView
     When I select *Alex in #ContactsList.ListView
@@ -200,6 +202,7 @@ Feature: Data Privacy module verification
       | primary_address_city | Value erased |
       | phone_mobile         | Value erased |
 
+    # Verify that values for specified lead fields are erased
     When I choose Leads in modules menu
     Then I should see *John in #LeadsList.ListView
     When I select *John in #LeadsList.ListView
@@ -210,6 +213,7 @@ Feature: Data Privacy module verification
       | phone_mobile           | Value erased |
       | primary_address_street | Value erased |
 
+    # Verify that values for specified target fields are erased
     When I choose Prospects in modules menu
     Then I should see *Travis in #ProspectsList.ListView
     When I select *Travis in #ProspectsList.ListView
@@ -223,14 +227,15 @@ Feature: Data Privacy module verification
       | title        | Value erased |
       | phone_mobile | Value erased |
 
+    # Verify that values for specified account fields are erased
     When I choose Accounts in modules menu
     Then I should see *Drew in #AccountsList.ListView
     When I select *Drew in #AccountsList.ListView
     Then I should see #DrewRecord view
     When I click show more button on #DrewRecord view
-#    Then I verify fields on #TravisRecord.RecordView
-#      | fieldName    | value        |
-#      | email        | Value erased |
+    Then I verify fields on #TravisRecord.RecordView
+      | fieldName | value |
+      | email     |       |
 
 
   @DataPrivacy_Reject
@@ -257,7 +262,7 @@ Feature: Data Privacy module verification
     # Select which fields to erase  for contact
     When I click on MarkToErase button for *Alex in #DP_1Record.SubpanelsLayout.subpanels.contacts
     When I select fields in #PersonalInfoDrawer view
-      | filedName             |
+      | fieledName             |
       | first_name            |
       | last_name             |
       | title                 |
