@@ -51,8 +51,7 @@ class CalendarUtilsTest extends TestCase
 	}
 
 	public function tearDown(){
-
-		unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
 		unset($GLOBALS['mod_strings']);
 
 		$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting->id}'");
@@ -199,5 +198,124 @@ class CalendarUtilsTest extends TestCase
             )));
 
         CalendarUtils::saveRecurring($meeting, $recurrencesTimeArray);
+    }
+
+    public function activityStartAndEndDateProvider()
+    {
+        return array(
+            [
+                '2018-03-28 16:00:00',
+                '2018-03-28 16:30:00',
+                'Y-m-d',
+                'H:i:s',
+                'America/New_York',
+                [
+                    'timestamp' => '1522238400',
+                    'time_start' => '12:00:00',
+                    'ts_start' => '1522195200',
+                    'offset' => 43200,
+                    'ts_end' => '1522281600',
+                    'days' => 1,
+                ],
+            ],
+            [
+                '2018-03-28 12:00',
+                '2018-03-28 12:30',
+                'Y-m-d',
+                'H:i',
+                'America/New_York',
+                [
+                    'timestamp' => '1522238400',
+                    'time_start' => '12:00',
+                    'ts_start' => '1522195200',
+                    'offset' => 43200,
+                    'ts_end' => '1522281600',
+                    'days' => 1,
+                ],
+            ],
+            [
+                '12-25-2018 11:00am',
+                '12-25-2018 03:00pm',
+                'm-d-Y',
+                'h:ia',
+                'America/Denver',
+                [
+                    'timestamp' => '1545735600',
+                    'time_start' => '11:00am',
+                    'ts_start' => '1545696000',
+                    'offset' => 39600,
+                    'ts_end' => '1545782400',
+                    'days' => 1,
+                ],
+            ],
+            [
+                '15-12-2018 06:00 PM',
+                '16-12-2018 02:00 PM',
+                'd-m-Y',
+                'h:i A',
+                'America/Chicago',
+                [
+                    'timestamp' => '1544896800',
+                    'time_start' => '06:00 PM',
+                    'ts_start' => '1544832000',
+                    'offset' => 64800,
+                    'ts_end' => '1545004800',
+                    'days' => 2,
+                ],
+            ],
+            [
+                '2018.12.21 16.45',
+                '2018.12.24 13.00',
+                'Y.m.d',
+                'H.i',
+                'Europe/Helsinki',
+                [
+                    'timestamp' => '1545410700',
+                    'time_start' => '16.45',
+                    'ts_start' => '1545350400',
+                    'offset' => 60300,
+                    'ts_end' => '1545696000',
+                    'days' => 4,
+                ],
+            ],
+            [
+                '15,12,2018 06?00 PM',
+                '16,12,2018 02?00 PM',
+                'd,m,Y',
+                'h?i A',
+                'America/Los_Angeles',
+                [
+                    'timestamp' => '1544896800',
+                    'time_start' => '06?00 PM',
+                    'ts_start' => '1544832000',
+                    'offset' => 64800,
+                    'ts_end' => '1545004800',
+                    'days' => 2,
+                ],
+            ],
+         );
+    }
+
+    /**
+     * @covers CalendarUtils::get_time_data
+     *
+     * @dataProvider activityStartAndEndDateProvider
+     */
+    public function testGetActivityTimeData($dateStart, $dateEnd, $datef, $timef, $tzone, $expected)
+    {
+        $GLOBALS['current_user']->setPreference('datef', $datef);
+        $GLOBALS['current_user']->setPreference('timef', $timef);
+        $GLOBALS['current_user']->setPreference('timezone', $tzone);
+
+        $bean = new Meeting();
+        $bean->date_start = $dateStart;
+        $bean->date_end = $dateEnd;
+        $result = CalendarUtils::get_time_data($bean);
+
+        $this->assertSame(
+            $expected,
+            $result,
+            "Activity start and end date in format {$datef} {$timef} with {$tzone} timezone has unexpected time data"
+        );
     }
 }

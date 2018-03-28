@@ -55,39 +55,74 @@ class CalendarUtils
 		);
 	}
 
-	/**
-	 * Get array of needed time data
-	 * @param SugarBean $bean
-	 * @return array
-	 */
-	static function get_time_data(SugarBean $bean){
-					$arr = array();
+    /**
+     * Get array of needed time data
+     * @param SugarBean $bean
+     * @return array
+     */
+    public static function get_time_data(SugarBean $bean)
+    {
+        $arr = array();
 
-					$start_field = "date_start";
-					$end_field = "date_end";
+        $start_field = "date_start";
+        $end_field = "date_end";
 
-					if($bean->object_name == 'Task')
-						$start_field = $end_field = "date_due";
-					if(empty($bean->$start_field))
-						return array();
-					if(empty($bean->$end_field))
-						$bean->$end_field = $bean->$start_field;
+        if ($bean->object_name == 'Task') {
+            $start_field = $end_field = "date_due";
+        }
+        if (empty($bean->$start_field)) {
+            return array();
+        }
+        if (empty($bean->$end_field)) {
+            $bean->$end_field = $bean->$start_field;
+        }
 
-					$timestamp = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$bean->$start_field,new DateTimeZone('UTC'))->format('U');
-					$arr['timestamp'] = $timestamp;
-					$arr['time_start'] = $GLOBALS['timedate']->fromTimestamp($arr['timestamp'])->format($GLOBALS['timedate']->get_time_format());
-					$date_start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$bean->$start_field,new DateTimeZone('UTC'));
-					$arr['ts_start'] = $date_start->get("-".$date_start->format("H")." hours -".$date_start->format("i")." minutes -".$date_start->format("s")." seconds")->format('U');
-					$arr['offset'] = $date_start->format('H') * 3600 + $date_start->format('i') * 60;
-					$date_end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$bean->$end_field,new DateTimeZone('UTC'));
-					if($bean->object_name != 'Task')
-						$date_end->modify("-1 minute");
-					$arr['ts_end'] = $date_end->get("+1 day")->get("-".$date_end->format("H")." hours -".$date_end->format("i")." minutes -".$date_end->format("s")." seconds")->format('U');
-					$arr['days'] = ($arr['ts_end'] - $arr['ts_start']) / (3600*24);
+        if ($GLOBALS['timedate']->check_matching_format($bean->$start_field, TimeDate::DB_DATETIME_FORMAT)) {
+            $userStartDate = $GLOBALS['timedate']->to_display_date_time($bean->$start_field);
+            $userEndDate = $GLOBALS['timedate']->to_display_date_time($bean->$end_field);
+        } else {
+            $userStartDate = $bean->$start_field;
+            $userEndDate = $bean->$end_field;
+        }
 
-					return $arr;
-	}
+        $dtmStart = SugarDateTime::createFromFormat(
+            $GLOBALS['timedate']->get_date_time_format(),
+            $userStartDate,
+            new DateTimeZone('UTC')
+        );
+        $dtmEnd = SugarDateTime::createFromFormat(
+            $GLOBALS['timedate']->get_date_time_format(),
+            $userEndDate,
+            new DateTimeZone('UTC')
+        );
 
+        $arr['timestamp'] = $dtmStart->format('U');
+        $arr['time_start'] = $GLOBALS['timedate']->fromTimestamp($arr['timestamp'])->format(
+            $GLOBALS['timedate']->get_time_format()
+        );
+
+        $arr['ts_start'] = $dtmStart->get(
+            '-' . $dtmStart->format('H') . ' hours -' . $dtmStart->format('i') . ' minutes -' . $dtmStart->format(
+                's'
+            ) . ' seconds'
+        )->format('U');
+
+        $arr['offset'] = $dtmStart->format('H') * 3600 + $dtmStart->format('i') * 60;
+
+        if ($bean->object_name != 'Task') {
+            $dtmEnd->modify('-1 minute');
+        }
+
+        $arr['ts_end'] = $dtmEnd->get('+1 day')->get(
+            '-' . $dtmEnd->format('H') . ' hours -' . $dtmEnd->format('i') . ' minutes -' . $dtmEnd->format(
+                's'
+            ) . ' seconds'
+        )->format('U');
+
+        $arr['days'] = ($arr['ts_end'] - $arr['ts_start']) / (3600 * 24);
+
+        return $arr;
+    }
 
 	/**
 	 * Get array that will be sent back to ajax frontend
