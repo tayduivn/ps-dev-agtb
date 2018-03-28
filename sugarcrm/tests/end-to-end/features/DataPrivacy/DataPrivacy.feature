@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @data_privacy
+@modules @data_privacy @stress-test
 Feature: Data Privacy module verification
 
   Background:
