@@ -27,7 +27,7 @@ SEEDBED_IMAGE_NAME='registry.sugarcrm.net/seedbed/seedbed'
 
 # Tag is set to "latest" if not defined in shell
 
-export SEEDBED_IMAGE_TAG='0_8'
+export SEEDBED_IMAGE_TAG='0_8_8'
 
 SEEDBED_IMAGE_TAG="${SEEDBED_IMAGE_TAG:?latest}" 
 
