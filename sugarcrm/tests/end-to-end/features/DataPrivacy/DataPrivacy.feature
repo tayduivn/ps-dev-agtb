@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @data_privacy @stress-test
+@modules @data_privacy
 Feature: Data Privacy module verification
 
   Background:
@@ -59,8 +59,8 @@ Feature: Data Privacy module verification
       | *name | type                         | priority | source     | date_due                  |
       | DP_1  | Request to Erase Information | Medium   | Phone Call | 2020-10-19T19:20:22+00:00 |
     Given Contacts records exist:
-      | *    | first_name | last_name | email            | primary_address_city | primary_address_street | primary_address_postalcode | primary_address_state | primary_address_country | title               |
-      | Alex | Alex       | Nisevich  | alex@example.org | City 1               | Street address here    | 220051                     | WA                    | USA                     | Automation Engineer |
+      | *    | first_name | last_name | email                                          | primary_address_city | primary_address_street | primary_address_postalcode | primary_address_state | primary_address_country | title               |
+      | Alex | Alex       | Nisevich  | alex1@example.org (primary), alex2@example.org | City 1               | Street address here    | 220051                     | WA                    | USA                     | Automation Engineer |
     Given Leads records exist:
       | *    | first_name | last_name | account_name  | title             | phone_mobile   | phone_work     | primary_address  | primary_address_city | primary_address_state | primary_address_postalcode | email            |
       | John | John       | Barlow    | John's Acount | Software Engineer | (746) 079-5067 | (408) 536-6312 | 10050 N Wolfe Rd | Cupertino            | California            | 95014                      | John@example.org |
@@ -116,6 +116,7 @@ Feature: Data Privacy module verification
       | phone_mobile         |
       | title                |
       | primary_address_city |
+      | email                |
     When I click MarkForErasure button on #ContactsSearchAndAdd header
 
     # Select which fields to erase for the lead
@@ -171,10 +172,11 @@ Feature: Data Privacy module verification
       | fieldName | value    |
       | full_name | Nisevich |
     Then I verify fields on #AlexRecord.RecordView
-      | fieldName            | value        |
-      | title                | Value erased |
-      | primary_address_city | Value erased |
-      | phone_mobile         | Value erased |
+      | fieldName            | value             |
+      | title                | Value erased      |
+      | primary_address_city | Value erased      |
+      | phone_mobile         | Value erased      |
+      | email                | alex2@example.org |
 
     # Verify that values for specified lead fields are erased
     When I choose Leads in modules menu
@@ -236,7 +238,7 @@ Feature: Data Privacy module verification
     # Select which fields to erase  for contact
     When I click on MarkToErase button for *Alex in #DP_1Record.SubpanelsLayout.subpanels.contacts
     When I select fields in #PersonalInfoDrawer view
-      | fieledName             |
+      | fieledName            |
       | first_name            |
       | last_name             |
       | title                 |
