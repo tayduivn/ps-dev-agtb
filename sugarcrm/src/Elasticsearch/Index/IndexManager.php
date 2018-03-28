@@ -358,7 +358,7 @@ class IndexManager
      * @param MappingCollection $mappingCollection
      * @param boolean $dropExist Drop indices if already they already exist
      */
-    protected function createIndices(
+    public function createIndices(
         IndexCollection $indexCollection,
         AnalysisBuilder $analysisBuilder,
         MappingCollection $mappingCollection,
@@ -509,7 +509,7 @@ class IndexManager
      * @param MappingCollection $mappingCollection
      * @return IndexCollection
      */
-    public function getIndexCollection(MappingCollection $mappingCollection)
+    protected function getIndexCollection(MappingCollection $mappingCollection)
     {
         return $this->container->indexPool->buildIndexCollection($mappingCollection);
     }
