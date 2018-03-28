@@ -14,34 +14,8 @@ Feature: Data Privacy module verification
     Given I use default account
     Given I launch App
 
-  @list
-  Scenario: Data Privacy > List View > Preview
-    Given DataPrivacy records exist:
-      | *name | type                         | priority | source     | date_due                  |
-      | DP_1  | Request to Erase Information | Medium   | Phone Call | 2020-10-19T19:20:22+00:00 |
-    Given I open about view and login
-    When I go to "DataPrivacy" url
-    Then I should see *DP_1 in #DataPrivacyList.ListView
-    Then I verify fields for *DP_1 in #DataPrivacyList.ListView
-      | fieldName | value                        |
-      | name      | DP_1                         |
-      | type      | Request to Erase Information |
-      | priority  | Medium                       |
-      | source    | Phone Call                   |
-      | date_due  | 10/19/2020                   |
-    When I click on preview button on *DP_1 in #DataPrivacyList.ListView
-    Then I should see #DP_1Preview view
-    Then I verify fields on #DP_1Preview.PreviewView
-      | fieldName | value                        |
-      | name      | DP_1                         |
-      | type      | Request to Erase Information |
-      | priority  | Medium                       |
-      | source    | Phone Call                   |
-      | date_due  | 10/19/2020                   |
-
-
-  @DataPrivacy_CreateCancel
-  Scenario: Data Privacy > Erase And Complete
+  @DataPrivacy_Create_CancelSave
+  Scenario: Data Privacy > Create > Cancel/Save
     Given I open about view and login
     When I go to "DataPrivacy" url
     When I click Create button on #DataPrivacyList header
