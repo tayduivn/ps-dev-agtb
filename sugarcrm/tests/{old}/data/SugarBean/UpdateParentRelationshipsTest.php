@@ -100,6 +100,38 @@ class UpdateParentRelationshipsTest extends TestCase
         ), $linked);
     }
 
+    public function testUpdateParentRelationshipsResetsParentFields()
+    {
+        $parentId = '1234';
+        $parent_type = 'Documents';
+
+        $task = self::getMockBuilder(Task::class)->setMethods(['load_relationship'])->getMock();
+        $task->method('load_relationship')->with('accounts')->willReturnCallback(function ($arg) {
+            return $arg == 'accounts';
+        });
+        $task->accounts =
+            self::getMockBuilder(Link2::class)->disableOriginalConstructor()->setMethods(['delete'])->getMock();
+        $task->accounts->expects($this->once())
+            ->method('delete')
+            ->withAnyParameters()
+            ->willReturnCallback(function () use ($task) {
+                $task->parent_id = null;
+            });
+
+        $task->parent_id = $parentId;
+        $task->parent_type = $parent_type;
+        //Fake that this task was previously associated with an Account
+        $task->fetched_row = [
+            'parent_id' => 'acct_123',
+            'parent_type' => 'Accounts',
+        ];
+
+        SugarTestReflection::callProtectedMethod($task, 'update_parent_relationships');
+
+        $this->assertEquals($parent_type, $task->parent_type);
+        $this->assertEquals($parentId, $task->parent_id);
+    }
+
     private function collectInvocations(PHPUnit_Framework_MockObject_MockObject $mock, $method, &$result)
     {
         $mock->expects($this->any())

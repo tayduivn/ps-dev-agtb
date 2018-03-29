@@ -168,7 +168,6 @@ class ErasedFieldsApiTest extends TestCase
     {
         $note = \BeanFactory::retrieveBean('Notes', self::$note->id, [
             'erased_fields' => true,
-            'encode' => false,
             'use_cache' => false,
         ]);
         $data = $this->format($note);

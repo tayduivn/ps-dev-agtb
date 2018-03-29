@@ -2884,6 +2884,7 @@ class SugarBean
 
                 // save the new id
                 $newIdValue = $this->$idField;
+                $newType = $this->$typeField;
                 if (in_array($idField, $exclude))
                     continue;
                 //Determine if the parent field has changed.
@@ -2933,13 +2934,19 @@ class SugarBean
                     }
 
                     // If both parent type and parent id are set, save it unless the bean is being deleted
-                    if (!empty($this->$typeField) && !empty($newIdValue) && !empty($parentLinks[$this->$typeField]['name']) && $this->deleted != 1)
-                    {
-                        //Now add the new parent
-                        $parentLink = $parentLinks[$this->$typeField]['name'];
-                        if ($this->load_relationship($parentLink))
-                        {
-                            $this->$parentLink->add($newIdValue);
+                    if (!empty($newType) && !empty($newIdValue) && $this->deleted != 1) {
+                        //Now add the parent
+                        if (!empty($parentLinks[$newType]['name'])) {
+                            //If there is a relationship to use, use it now.
+                            $parentLink = $parentLinks[$newType]['name'];
+                            if ($this->load_relationship($parentLink)) {
+                                $this->$parentLink->add($newIdValue);
+                            }
+                        } else {
+                            // Otherwise, just ensure the parent type/id fields are saved correctly.
+                            // Removing a relationship can modify these properties on a bean.
+                            $this->$typeField = $newType;
+                            $this->$idField = $newIdValue;
                         }
                     }
                 }

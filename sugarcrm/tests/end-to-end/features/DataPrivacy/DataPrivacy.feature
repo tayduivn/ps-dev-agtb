@@ -173,9 +173,9 @@ Feature: Data Privacy module verification
       | full_name | Nisevich |
     Then I verify fields on #AlexRecord.RecordView
       | fieldName            | value             |
-      | title                | Value erased      |
-      | primary_address_city | Value erased      |
-      | phone_mobile         | Value erased      |
+      | title                | Value Erased      |
+      | primary_address_city | Value Erased      |
+      | phone_mobile         | Value Erased      |
       | email                | alex2@example.org |
 
     # Verify that values for specified lead fields are erased
@@ -186,8 +186,8 @@ Feature: Data Privacy module verification
     When I click show more button on #JohnRecord view
     Then I verify fields on #JohnRecord.RecordView
       | fieldName              | value        |
-      | phone_mobile           | Value erased |
-      | primary_address_street | Value erased |
+      | phone_mobile           | Value Erased |
+      | primary_address_street | Value Erased |
 
     # Verify that values for specified target fields are erased
     When I choose Prospects in modules menu
@@ -200,8 +200,8 @@ Feature: Data Privacy module verification
       | full_name | Travis |
     Then I verify fields on #TravisRecord.RecordView
       | fieldName    | value        |
-      | title        | Value erased |
-      | phone_mobile | Value erased |
+      | title        | Value Erased |
+      | phone_mobile | Value Erased |
 
     # Verify that values for specified account fields are erased
     When I choose Accounts in modules menu
