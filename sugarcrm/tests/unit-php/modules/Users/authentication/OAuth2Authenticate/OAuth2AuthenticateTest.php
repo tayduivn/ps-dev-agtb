@@ -12,12 +12,15 @@
 
 namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\OAuth2Authenticate;
 
+use League\OAuth2\Client\Token\AccessToken;
 use OAuth2Authenticate;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SugarConfig;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\IdentityProvider\OAuth2StateRegistry;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -28,12 +31,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 class OAuth2AuthenticateTest extends TestCase
 {
     /**
-     * @var OAuth2Authenticate
-     */
-    protected $auth;
-
-    /**
-     * @var MockObject
+     * @var OAuth2Authenticate | MockObject
      */
     protected $authMock;
 
@@ -48,7 +46,7 @@ class OAuth2AuthenticateTest extends TestCase
     protected $authProviderBasicBuilder;
 
     /**
-     * @var AuthenticationProviderManager|MockObject
+     * @var AuthenticationProviderManager | MockObject
      */
     protected $authManager;
 
@@ -56,6 +54,16 @@ class OAuth2AuthenticateTest extends TestCase
      * @var \User|MockObject
      */
     protected $sugarUser;
+
+    /**
+     * @var OAuth2StateRegistry | MockObject
+     */
+    protected $stateRegistryMock;
+
+    /**
+     * @var IdmProvider | MockObject
+     */
+    protected $idmProviderMock;
 
     /**
      * set up
@@ -66,10 +74,19 @@ class OAuth2AuthenticateTest extends TestCase
         $this->savedConfig['idm_mode'] = SugarConfig::getInstance()->get('idm_mode');
         SugarConfig::getInstance()->_cached_values['site_url'] = 'http://test.sugarcrm.local';
 
-        $this->auth = new OAuth2Authenticate();
         $this->authMock = $this->getMockBuilder(OAuth2Authenticate::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAuthProviderBasicBuilder', 'getTenant'])->getMock();
+            ->setMethods([
+                'getAuthProviderBasicBuilder',
+                'getTenant',
+                'getIdmProvider',
+                'getStateRegistry',
+                'createState',
+            ])
+            ->getMock();
+
+        $this->stateRegistryMock = $this->createMock(OAuth2StateRegistry::class);
+        $this->idmProviderMock = $this->createMock(IdmProvider::class);
 
         $this->sugarUser = $this->createMock(\User::class);
         $this->sugarUser->id = 'userId';
@@ -79,6 +96,8 @@ class OAuth2AuthenticateTest extends TestCase
 
         $this->authMock->method('getAuthProviderBasicBuilder')->willReturn($this->authProviderBasicBuilder);
         $this->authMock->method('getTenant')->willReturn('srn:tenant');
+        $this->authMock->method('getIdmProvider')->willReturn($this->idmProviderMock);
+        $this->authMock->method('getStateRegistry')->willReturn($this->stateRegistryMock);
         $this->authProviderBasicBuilder->method('buildAuthProviders')->willReturn($this->authManager);
     }
 
@@ -94,17 +113,41 @@ class OAuth2AuthenticateTest extends TestCase
     /**
      * @covers ::getLoginUrl
      */
-    public function testGetLoginUrlWithValidConfig()
+    public function testGetLoginUrlWithValidConfig() : void
     {
         SugarConfig::getInstance()->_cached_values['idm_mode'] = [
             'clientId' => 'testLocal',
             'clientSecret' => 'testLocalSecret',
-            'redirectUri' => '',
             'stsUrl' => 'http://sts.sugarcrm.local',
             'idpUrl' => 'http://idp.url',
             'stsKeySetId' => 'keySetId',
+            'requestedOAuthScopes' => ['offline', 'profile'],
+            'tid' => 'srn:cloud:idp:eu:0000000001:tenant',
         ];
-        $this->assertEquals('http://sts.sugarcrm.local', $this->auth->getLoginUrl());
+        $expectedQueryData = [
+            'state' => 'generated',
+            'response_type' => 'code',
+            'approval_prompt' => 'auto',
+            'redirect_uri' => 'http://test.sugarcrm.local/?module=Users&action=OAuth2CodeExchange',
+            'client_id' => 'testLocal',
+            'scope' => 'offline profile',
+            'tenant_hint' => 'srn:cloud:idp:eu:0000000001:tenant',
+
+        ];
+        $expectedUrl = 'http://sts.sugarcrm.local/oauth2/auth?' . http_build_query($expectedQueryData);
+
+        $this->authMock->expects($this->once())->method('createState')->willReturn('generated');
+        $this->idmProviderMock->expects($this->once())
+            ->method('getAuthorizationUrl')
+            ->with([
+                'scope' => [
+                    'offline',
+                    'profile',
+                ],
+                'state' => 'generated',
+                'tenant_hint' => 'srn:cloud:idp:eu:0000000001:tenant',
+            ])->willReturn($expectedUrl);
+        $this->assertEquals($expectedUrl, $this->authMock->getLoginUrl());
     }
 
     /**
@@ -115,7 +158,7 @@ class OAuth2AuthenticateTest extends TestCase
     public function testGetLoginUrlWithEmptyConfig()
     {
         SugarConfig::getInstance()->_cached_values['idm_mode'] = null;
-        $this->auth->getLoginUrl();
+        $this->authMock->getLoginUrl();
     }
 
     /**
@@ -123,7 +166,7 @@ class OAuth2AuthenticateTest extends TestCase
      */
     public function testGetLogoutUrl()
     {
-        $this->assertFalse($this->auth->getLogoutUrl());
+        $this->assertFalse($this->authMock->getLogoutUrl());
     }
 
 

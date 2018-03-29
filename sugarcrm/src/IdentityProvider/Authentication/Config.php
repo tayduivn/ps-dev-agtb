@@ -85,7 +85,7 @@ class Config
             'clientSecret' => $config['clientSecret'],
             'stsUrl' => $stsUrl,
             'idpUrl' => $ipdUrl,
-            'redirectUri' => rtrim($this->get('site_url'), '/'),
+            'redirectUri' => rtrim($this->get('site_url'), '/') . '/?module=Users&action=OAuth2CodeExchange',
             'urlAuthorize' => $endpointService->getOAuth2Endpoint(EndpointInterface::AUTH_ENDPOINT),
             'urlAccessToken' => $endpointService->getOAuth2Endpoint(EndpointInterface::TOKEN_ENDPOINT),
             'urlResourceOwnerDetails' => $endpointService->getOAuth2Endpoint(EndpointInterface::INTROSPECT_ENDPOINT),

@@ -48,7 +48,8 @@
         login: 'login',
         needLogin: 'needs_login_error',
         offsetProblem: 'offset_problem',
-        unsupportedBrowser: 'unsupported_browser'
+        unsupportedBrowser: 'unsupported_browser',
+        loading: 'loading'
     },
 
     /**
@@ -144,15 +145,15 @@
             this.childLoginPopup = window.open(url, name, params);
         }, this));
 
-        if (config && 
+        if ((config &&
             app.config.externalLogin === true && 
-            app.config.externalLoginSameWindow === true
+            app.config.externalLoginSameWindow === true) || app.config.idmModeEnabled
         ) {
             this.externalLoginForm = true;
             this.externalLoginUrl = app.config.externalLoginUrl;
             app.api.setExternalLoginUICallback(_.bind(function(url) {
                 this.externalLoginUrl = app.config.externalLoginUrl = url;
-                if (this.isExternalLoginInProgress) {
+                if (this.isExternalLoginInProgress || app.config.idmModeEnabled) {
                     this.isExternalLoginInProgress = false;
                     app.api.setRefreshingToken(true);
                     window.location.replace(this.externalLoginUrl);
@@ -170,6 +171,14 @@
      * @inheritdoc
      */
     _render: function() {
+        if (app.config.idmModeEnabled) {
+            app.alert.show(this._alertKeys.loading, {
+                level: 'process',
+                title: app.lang.get('LBL_LOADING'),
+                autoClose: false
+            });
+            return;
+        }
         this.logoUrl = app.metadata.getLogoUrl();
         //It's possible for errors to prevent the postLogin from triggering so contentEl may be hidden.
         app.$contentEl.show();

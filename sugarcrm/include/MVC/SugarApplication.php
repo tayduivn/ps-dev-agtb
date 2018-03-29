@@ -388,7 +388,7 @@ EOF;
         if(!empty($this->controller->allowed_actions)) {
             $allowed_actions =  $this->controller->allowed_actions;
         } else {
-            $allowed_actions = ['Authenticate', 'Login', 'Logout', 'LoggedOut'];
+            $allowed_actions = ['Authenticate', 'Login', 'Logout', 'LoggedOut', 'OAuth2CodeExchange'];
         }
 
         if (($user_unique_key != $server_unique_key) && (!in_array($this->controller->action, $allowed_actions))
@@ -743,6 +743,7 @@ EOF;
         'wizard',
         'historyContactsEmails',
         'GoogleOauth2Redirect',
+        'OAuth2CodeExchange',
     );
 
     /**

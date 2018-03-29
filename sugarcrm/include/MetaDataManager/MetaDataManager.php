@@ -2127,13 +2127,11 @@ class MetaDataManager implements LoggerAwareInterface
             }
         }
 
-        if (!empty($sugarConfig['authenticationClass'])) {
-            $auth = new AuthenticationController($sugarConfig['authenticationClass']);
+        $auth = AuthenticationController::getInstance($sugarConfig['authenticationClass'] ?? null);
 
-            if($auth->isExternal()) {
-                $configs['externalLogin'] = true;
-                $configs['externalLoginSameWindow'] = SugarConfig::getInstance()->get('SAML_SAME_WINDOW');
-            }
+        if ($auth->isExternal()) {
+            $configs['externalLogin'] = true;
+            $configs['externalLoginSameWindow'] = SugarConfig::getInstance()->get('SAML_SAME_WINDOW');
         }
 
         if (isset($sugarConfig['analytics'])) {
@@ -2170,6 +2168,7 @@ class MetaDataManager implements LoggerAwareInterface
         // IDM mode
         $configs['idmModeEnabled'] = $idpConfig->isIDMModeEnabled();
         if ($configs['idmModeEnabled']) {
+            $configs['externalLoginSameWindow'] = true;
             $idmModeConfig = $idpConfig->getIDMModeConfig();
             $configs['cloudConsoleForgotPasswordUrl'] = $idpConfig->buildCloudConsoleUrl(
                 'forgotPassword',

@@ -19,8 +19,10 @@ use Sugarcrm\IdentityProvider\Authentication\UserMapping\MappingInterface;
 use Sugarcrm\IdentityProvider\STS\EndpointInterface;
 use Sugarcrm\IdentityProvider\Srn\Converter;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\RefreshToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarOIDCUserChecker;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
@@ -68,6 +70,8 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
     protected $handlers = [
         IntrospectToken::class => 'introspectToken',
         JWTBearerToken::class => 'jwtBearerGrantTypeAuth',
+        RefreshToken::class => 'refreshTokenGrantTypeAuth',
+        CodeToken::class => 'authCodeGrantTypeAuth',
     ];
 
     /**
@@ -110,7 +114,55 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         } catch (AuthenticationException $e) {
             throw $e;
         } catch (\Exception $e) {
-            throw new AuthenticationException($e->getMessage());
+            throw new AuthenticationException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Processes exchange oauth2 code to access token.
+     *
+     * @param TokenInterface $token
+     * @return TokenInterface
+     *
+     * @throws AuthenticationException
+     */
+    protected function authCodeGrantTypeAuth(TokenInterface $token): TokenInterface
+    {
+        try {
+            $accessToken = $this->oAuthProvider->getAccessToken(
+                'authorization_code',
+                ['code' => $token->getCredentials(), 'scope' => explode(' ', $token->getScope())]
+            );
+
+            $resultToken = new CodeToken($token->getCredentials(), $token->getScope());
+            $this->populateAuthenticatedTokenByAccessToken($accessToken, $resultToken);
+
+            return $resultToken;
+        } catch (\Exception $e) {
+            throw new AuthenticationException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * @param TokenInterface $token
+     * @return TokenInterface
+     *
+     * @throws AuthenticationException
+     */
+    protected function refreshTokenGrantTypeAuth(TokenInterface $token): TokenInterface
+    {
+        try {
+            $accessToken = $this->oAuthProvider->getAccessToken(
+                'refresh_token',
+                ['refresh_token' => $token->getCredentials()]
+            );
+
+            $resultToken = new RefreshToken($accessToken->getRefreshToken());
+            $this->populateAuthenticatedTokenByAccessToken($accessToken, $resultToken);
+
+            return $resultToken;
+        } catch (\Exception $e) {
+            throw new AuthenticationException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -197,19 +249,28 @@ class OIDCAuthenticationProvider implements AuthenticationProviderInterface
         $token->setAttribute('iat', time());
 
         $accessToken = $this->oAuthProvider->getJwtBearerAccessToken((string)$token);
-        $extraValues = $accessToken->getValues();
-
         $resultToken = clone $token;
-        $resultToken->setAttribute('token', $accessToken->getToken());
-        $resultToken->setAttribute('exp', $accessToken->getExpires());
-        $resultToken->setAttribute('expires_in', $accessToken->getExpires() - time());
-        $resultToken->setAttribute('scope', isset($extraValues['scope']) ? $extraValues['scope'] : null);
-        $resultToken->setAttribute(
-            'token_type',
-            isset($extraValues['token_type']) ? $extraValues['token_type'] : 'bearer'
-        );
-        $resultToken->setAuthenticated(true);
+        $this->populateAuthenticatedTokenByAccessToken($accessToken, $resultToken);
         return $resultToken;
+    }
+
+    /**
+     * Populates Authenticated Token by data stored in Access Token
+     * @param AccessToken $source
+     * @param TokenInterface $destination
+     */
+    protected function populateAuthenticatedTokenByAccessToken(AccessToken $source, TokenInterface $destination): void
+    {
+        $extraValues = $source->getValues();
+        $destination->setAttribute('token', $source->getToken());
+        $destination->setAttribute('exp', $source->getExpires());
+        $destination->setAttribute('expires_in', $source->getExpires() - time());
+        $destination->setAttribute('token_type', $extraValues['token_type'] ?? 'bearer');
+        $destination->setAttribute('scope', $extraValues['scope'] ?? null);
+        if ($source->getRefreshToken()) {
+            $destination->setAttribute('refresh_token', $source->getRefreshToken());
+        }
+        $destination->setAuthenticated(true);
     }
 
     /**

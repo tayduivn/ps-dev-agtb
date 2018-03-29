@@ -15,7 +15,10 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBui
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\RefreshToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Sugarcrm\IdentityProvider\Srn;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
@@ -51,6 +54,87 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server
     public function setPlatform($platform)
     {
         $this->platform = $platform;
+    }
+
+    /**
+     * @inheritdoc
+     * @throws OAuth2ServerException
+     * @throws \InvalidArgumentException
+     */
+    public function grantAccessToken(array $inputData = null, array $authHeaders = null) : array
+    {
+        $oidcGrantType = [self::GRANT_TYPE_REFRESH_TOKEN, self::GRANT_TYPE_AUTH_CODE];
+        $sourceToken = null;
+
+        if (empty($inputData['grant_type'])) {
+            throw new OAuth2ServerException(
+                self::HTTP_BAD_REQUEST,
+                self::ERROR_INVALID_REQUEST,
+                'Invalid grant_type parameter or parameter missing'
+            );
+        }
+
+        if (!in_array($inputData['grant_type'], $oidcGrantType, true)) {
+            return parent::grantAccessToken($inputData, $authHeaders);
+        }
+
+        switch ($inputData['grant_type']) {
+            case self::GRANT_TYPE_REFRESH_TOKEN:
+                if (!$this->storage instanceof IOAuth2RefreshTokens) {
+                    throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_UNSUPPORTED_GRANT_TYPE);
+                }
+
+                if (empty($inputData['refresh_token'])) {
+                    throw new OAuth2ServerException(
+                        self::HTTP_BAD_REQUEST,
+                        self::ERROR_INVALID_REQUEST,
+                        'No "refresh_token" parameter found'
+                    );
+                }
+
+                if (Uuid::isValid($inputData['refresh_token'])) {
+                    return parent::grantAccessToken($inputData, $authHeaders);
+                }
+                $sourceToken = new RefreshToken($inputData['refresh_token']);
+                break;
+            case self::GRANT_TYPE_AUTH_CODE:
+                if (empty($inputData['code']) || empty($inputData['scope'])) {
+                    throw new OAuth2ServerException(
+                        self::HTTP_BAD_REQUEST,
+                        self::ERROR_INVALID_REQUEST,
+                        'Missing parameters'
+                    );
+                }
+
+                if (Uuid::isValid($inputData['code'])) {
+                    return parent::grantAccessToken($inputData, $authHeaders);
+                }
+
+                $sourceToken = new CodeToken($inputData['code'], $inputData['scope']);
+                break;
+        }
+
+        if (!$sourceToken) {
+            throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_REQUEST);
+        }
+
+        try {
+            $idpConfig = new Config(\SugarConfig::getInstance());
+            $authManager = $this->getAuthProviderBasicBuilder($idpConfig)->buildAuthProviders();
+            /** @var TokenInterface  $resultToken */
+            $resultToken = $authManager->authenticate($sourceToken);
+            return [
+                'access_token' => $resultToken->getAttribute('token'),
+                'expires_in' => $resultToken->getAttribute('expires_in'),
+                'token_type' => $resultToken->getAttribute('token_type'),
+                'scope' => $resultToken->getAttribute('scope'),
+                'refresh_token' => $resultToken->getAttribute('refresh_token'),
+                'download_token' => $resultToken->getAttribute('token'),
+                'refresh_expires_in' => time() + $this->getVariable(self::CONFIG_REFRESH_LIFETIME),
+            ];
+        } catch (AuthenticationException $e) {
+            throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_REQUEST, $e->getMessage());
+        }
     }
 
     /**

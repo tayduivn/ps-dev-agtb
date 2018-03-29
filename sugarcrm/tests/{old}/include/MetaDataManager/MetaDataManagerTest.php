@@ -60,6 +60,7 @@ class MetaDataManagerTest extends TestCase
         $this->mdc->reset();
         MetaDataManager::resetManagers();
         SugarTestHelper::tearDown();
+        AuthenticationControllerMock::clearInstance();
     }
 
     public function testGetAllLanguages()
@@ -205,6 +206,8 @@ class MetaDataManagerTest extends TestCase
                     'cloudConsoleForgotPasswordUrl' => 'http://console.sugarcrm.local/forgot-password/' . urlencode('srn:cloud:iam:eu:0000000001:tenant'),
                     'stsUrl' => 'http://sts.sugarcrm.local',
                     'tenant' => 'srn:cloud:iam:eu:0000000001:tenant',
+                    'externalLoginSameWindow' => true,
+                    'externalLogin' => true,
                 ],
             ],
         ];
@@ -921,5 +924,13 @@ class MetadataManagerMock extends MetaDataManager
     public function getConfigs()
     {
         return parent::getConfigs();
+    }
+}
+
+class AuthenticationControllerMock extends AuthenticationController
+{
+    public static function clearInstance() : void
+    {
+        parent::$authcontrollerinstance = null;
     }
 }

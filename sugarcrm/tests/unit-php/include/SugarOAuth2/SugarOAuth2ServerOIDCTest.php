@@ -17,9 +17,12 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderOIDCManagerBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\RefreshToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
@@ -92,6 +95,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
     protected function setUp()
     {
         $this->storage = $this->createMock(\SugarOAuth2StorageOIDC::class);
+        $this->storage->refreshToken = $this->createMock(\OAuthToken::class);
         $this->oAuth2Server = $this->getMockBuilder(\SugarOAuth2ServerOIDC::class)
                                    ->setConstructorArgs([$this->storage, []])
                                    ->setMethods([
@@ -312,7 +316,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      */
     public function testGrantAccessTokenWithValidUsernameOrPasswordUser()
     {
-        $this->storage->refreshToken = $this->createMock(\OAuthToken::class);
         $this->storage->refreshToken->expects($this->once())->method('save');
 
         $this->storage->expects($this->once())
@@ -474,5 +477,230 @@ class SugarOAuth2ServerOIDCTest extends TestCase
             ->with($this->sugarAccessToken)
             ->willReturn($tokenData);
         $this->assertEquals($tokenData, $this->oAuth2Server->verifyAccessToken($this->sugarAccessToken));
+    }
+
+    /**
+     * Provides data for testGrantAccessTokenWillThrowException
+     *
+     * @return array
+     */
+    public function grantAccessTokenWillThrowExceptionProvider(): array
+    {
+        return [
+            [
+                'emptyGrantType' => ['grant_type' => null],
+                'refreshTokenGrantAndEmptyToken' => [
+                    'grant_type' => \OAuth2::GRANT_TYPE_REFRESH_TOKEN,
+                    'refresh_token' => null,
+                ],
+                'authCodeGrantAndEmptyCode' => [
+                    'grant_type' => \OAuth2::GRANT_TYPE_AUTH_CODE,
+                    'code' => null,
+                    'scope' => 'offline',
+                ],
+                'authCodeGrantAndEmptyScope' => [
+                    'grant_type' => \OAuth2::GRANT_TYPE_AUTH_CODE,
+                    'code' => 'code',
+                    'scope' => null,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Checks negative logic when parameters are invalid.
+     *
+     * @param array $inputData
+     *
+     * @covers ::grantAccessToken()
+     *
+     * @dataProvider grantAccessTokenWillThrowExceptionProvider
+     *
+     * @expectedException \OAuth2ServerException
+     * @expectedExceptionMessage invalid_request
+     */
+    public function testGrantAccessTokenWillThrowException(array $inputData): void
+    {
+        $this->oAuth2Server->grantAccessToken($inputData);
+    }
+
+    /**
+     * Checks logic handled by parent method on refresh flow.
+     *
+     * @covers ::grantAccessToken()
+     *
+     * @throws \OAuth2ServerException
+     */
+    public function testGrantAccessTokenHandledByParentRefreshFlow(): void
+    {
+        $inputData = [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => Uuid::uuid4(),
+            'client_id' => 'client_id',
+            'client_secret' => 'client_secret',
+        ];
+
+        /** @var \SugarOAuth2ServerOIDC | MockObject $oAuth2ServerMock */
+        $oAuth2ServerMock = $this->getMockBuilder(\SugarOAuth2ServerOIDC::class)
+            ->setConstructorArgs([$this->storage, []])
+            ->setMethods([
+                'getAuthProviderBuilder',
+                'getAuthProviderBasicBuilder',
+                'genAccessToken',
+                'createAccessToken',
+            ])
+            ->getMock();
+
+        $this->storage->expects($this->once())
+            ->method('checkClientCredentials')
+            ->with($inputData['client_id'], $inputData['client_secret'])
+            ->willReturn(true);
+
+        $this->storage->expects($this->once())
+            ->method('checkRestrictedGrantType')
+            ->with($inputData['client_id'], $inputData['grant_type'])
+            ->willReturn(true);
+
+        $this->storage->expects($this->once())
+            ->method('getRefreshToken')
+            ->with($inputData['refresh_token'])
+            ->willReturn([
+                'refresh_token' => 'refresh_token',
+                'client_id' => 'client_id',
+                'user_id' => 'user_id',
+                'expires' => time() + 3600,
+            ]);
+
+        $oAuth2ServerMock->expects($this->once())
+            ->method('createAccessToken')
+            ->with('client_id', 'user_id');
+
+        $oAuth2ServerMock->grantAccessToken($inputData);
+    }
+
+    /**
+     * Checks logic handled by parent method on auth code flow.
+     *
+     * @covers ::grantAccessToken()
+     *
+     * @expectedException \OAuth2ServerException
+     * @expectedExceptionMessage unsupported_grant_type
+     */
+    public function testGrantAccessTokenHandledByParentAuthCodeFlow(): void
+    {
+        $inputData = [
+            'grant_type' => 'authorization_code',
+            'code' => Uuid::uuid4(),
+            'client_id' => 'client_id',
+            'client_secret' => 'client_secret',
+            'scope' => 'offline',
+        ];
+
+        /** @var \SugarOAuth2ServerOIDC | MockObject $oAuth2ServerMock */
+        $oAuth2ServerMock = $this->getMockBuilder(\SugarOAuth2ServerOIDC::class)
+            ->setConstructorArgs([$this->storage, []])
+            ->setMethods([
+                'getAuthProviderBuilder',
+                'getAuthProviderBasicBuilder',
+                'genAccessToken',
+                'createAccessToken',
+            ])
+            ->getMock();
+
+        $this->storage->expects($this->once())
+            ->method('checkClientCredentials')
+            ->with($inputData['client_id'], $inputData['client_secret'])
+            ->willReturn(true);
+
+        $this->storage->expects($this->once())
+            ->method('checkRestrictedGrantType')
+            ->with($inputData['client_id'], $inputData['grant_type'])
+            ->willReturn(true);
+
+        $oAuth2ServerMock->grantAccessToken($inputData);
+    }
+
+    /**
+     * Checks auth code flow logic.
+     *
+     * @covers ::grantAccessToken()
+     */
+    public function testGrantAccessTokenAuthCodeFlow(): void
+    {
+        $inputData = [
+            'grant_type' => 'authorization_code',
+            'code' => 'authorization_code',
+            'client_id' => 'client_id',
+            'client_secret' => 'client_secret',
+            'scope' => 'offline',
+        ];
+
+        $this->oAuth2Server->expects($this->once())->method('getAuthProviderBasicBuilder')->willReturnCallback(
+            function ($config) {
+                $this->assertInstanceOf(Config::class, $config);
+                return $this->authProviderBasicBuilder;
+            }
+        );
+
+        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
+            function ($token) {
+                $this->assertInstanceOf(CodeToken::class, $token);
+                $this->assertEquals('authorization_code', $token->getCredentials());
+                $token->setAttribute('token', 'resultToken');
+                $token->setAttribute('refresh_token', 'refreshToken');
+                $token->setAttribute('expires_in', '1');
+                $token->setAttribute('token_type', 'bearer');
+                $token->setAttribute('scope', 'offline');
+                return $token;
+            }
+        );
+
+        $result = $this->oAuth2Server->grantAccessToken($inputData);
+
+        $this->assertEquals('resultToken', $result['access_token']);
+        $this->assertEquals('refreshToken', $result['refresh_token']);
+        $this->assertEquals('resultToken', $result['download_token']);
+    }
+
+    /**
+     * Checks refresh token flow logic.
+     *
+     * @covers ::grantAccessToken()
+     */
+    public function testGrantAccessTokenAuthRefreshFlow(): void
+    {
+        $inputData = [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => 'refresh_token',
+            'client_id' => 'client_id',
+            'client_secret' => 'client_secret',
+            'scope' => 'offline',
+        ];
+
+        $this->oAuth2Server->expects($this->once())->method('getAuthProviderBasicBuilder')->willReturnCallback(
+            function ($config) {
+                $this->assertInstanceOf(Config::class, $config);
+                return $this->authProviderBasicBuilder;
+            }
+        );
+
+        $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
+            function ($token) {
+                $this->assertInstanceOf(RefreshToken::class, $token);
+                $this->assertEquals('refresh_token', $token->getCredentials());
+                $token->setAttribute('token', 'resultToken');
+                $token->setAttribute('refresh_token', 'refreshToken');
+                $token->setAttribute('expires_in', '1');
+                $token->setAttribute('token_type', 'bearer');
+                $token->setAttribute('scope', 'offline');
+                return $token;
+            }
+        );
+
+        $result = $this->oAuth2Server->grantAccessToken($inputData);
+
+        $this->assertEquals('resultToken', $result['access_token']);
+        $this->assertEquals('refreshToken', $result['refresh_token']);
+        $this->assertEquals('resultToken', $result['download_token']);
     }
 }

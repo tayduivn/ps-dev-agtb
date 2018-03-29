@@ -28,6 +28,11 @@ class UsersController extends SugarController
 		}
 	}
 
+    protected function action_oauth2codeexchange()
+    {
+        $this->view = 'oauth2authenticate';
+    }
+
 	protected function action_authenticate()
 	{
 	    $this->view = 'authenticate';

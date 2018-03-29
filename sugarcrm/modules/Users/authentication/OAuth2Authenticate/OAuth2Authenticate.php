@@ -13,6 +13,9 @@
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\UsernamePasswordTokenFactory;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderBasicManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\OAuth2StateRegistry;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * Class OAuth2Authenticate
@@ -22,16 +25,34 @@ class OAuth2Authenticate extends BaseAuthenticate implements SugarAuthenticateEx
 {
     /**
      * {@inheritdoc}
+     * @throws \RuntimeException
      */
     public function getLoginUrl($returnQueryVars = [])
     {
         $config = new Config(\SugarConfig::getInstance());
         $idmModeConfig = $config->getIDMModeConfig();
-        if (isset($idmModeConfig['stsUrl'])) {
-            return $idmModeConfig['stsUrl'];
+        if (empty($idmModeConfig['stsUrl'])) {
+            throw new \RuntimeException('IDM-mode config and URL were not found.');
         }
 
-        throw new \RuntimeException('IDM-mode config and URL were not found.');
+        return $this->getIdmProvider($idmModeConfig)->getAuthorizationUrl(
+            [
+                'scope' => $idmModeConfig['requestedOAuthScopes'],
+                'state' => $this->createState(),
+                'tenant_hint' => $idmModeConfig['tid'],
+            ]
+        );
+    }
+
+    /**
+     * Create oauth2 state
+     * @return string
+     */
+    protected function createState() : string
+    {
+        $state = Uuid::uuid4();
+        $this->getStateRegistry()->registerState($state);
+        return $state;
     }
 
     /**
@@ -81,5 +102,23 @@ class OAuth2Authenticate extends BaseAuthenticate implements SugarAuthenticateEx
     protected function getAuthProviderBasicBuilder(Config $config)
     {
         return new AuthProviderBasicManagerBuilder($config);
+    }
+
+    /**
+     * Gets IdmProvider instance
+     * @param array $idmModeConfig
+     * @return IdmProvider
+     */
+    protected function getIdmProvider(array $idmModeConfig): IdmProvider
+    {
+        return new IdmProvider($idmModeConfig);
+    }
+
+    /**
+     * @return OAuth2StateRegistry
+     */
+    protected function getStateRegistry() : OAuth2StateRegistry
+    {
+        return new OAuth2StateRegistry();
     }
 }

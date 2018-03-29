@@ -17,8 +17,10 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Provider\OIDCAuthenticationProvider;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\CodeToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\IntrospectToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\JWTBearerToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Token\OIDC\RefreshToken;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarOIDCUserProvider;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -251,7 +253,6 @@ class OIDCAuthenticationProviderTest extends TestCase
             [
                 'access_token' => 'accessToken',
                 'expires_in' => 100,
-
             ]
         );
 
@@ -282,6 +283,7 @@ class OIDCAuthenticationProviderTest extends TestCase
         $this->assertEquals('accessToken', $result->getAttribute('token'));
         $this->assertNotEmpty($result->getAttribute('expires_in'));
         $this->assertNotEmpty($result->getAttribute('exp'));
+        $this->assertFalse($result->hasAttribute('refresh_token'));
     }
 
     public function introspectTokenThrowsProvider()
@@ -420,6 +422,106 @@ class OIDCAuthenticationProviderTest extends TestCase
             ->with('token')
             ->willReturn($response);
 
+        $this->provider->authenticate($token);
+    }
+
+    /**
+     * @covers ::authenticate()
+     */
+    public function testAuthCodeGrantTypeAuth(): void
+    {
+        $accessToken = new AccessToken(
+            [
+                'access_token' => 'accessToken',
+                'expires_in' => 100,
+                'refresh_token' => 'refreshToken',
+                'scope' => 'offline profile',
+                'token_type' => 'bearer',
+            ]
+        );
+        $token = new CodeToken('code', 'offline profile');
+        $this->oAuthProvider->expects($this->once())
+            ->method('getAccessToken')
+            ->with(
+                'authorization_code',
+                ['code' => 'code', 'scope' => ['offline', 'profile']]
+            )->willReturn($accessToken);
+        $result = $this->provider->authenticate($token);
+        $this->assertEquals('code', $result->getCredentials());
+        $this->assertEquals('accessToken', $result->getAttribute('token'));
+        $this->assertEquals('refreshToken', $result->getAttribute('refresh_token'));
+        $this->assertEquals('offline profile', $result->getAttribute('scope'));
+        $this->assertEquals('bearer', $result->getAttribute('token_type'));
+        $this->assertNotEmpty($result->getAttribute('expires_in'));
+        $this->assertNotEmpty($result->getAttribute('exp'));
+    }
+
+    /**
+     * @covers ::authenticate()
+     */
+    public function testRefreshTokenGrantTypeAuth(): void
+    {
+        $accessToken = new AccessToken(
+            [
+                'access_token' => 'accessToken',
+                'expires_in' => 100,
+                'refresh_token' => 'newRefreshToken',
+                'scope' => 'offline profile',
+                'token_type' => 'bearer',
+            ]
+        );
+        $token = new RefreshToken('refreshToken');
+        $this->oAuthProvider->expects($this->once())
+            ->method('getAccessToken')
+            ->with(
+                'refresh_token',
+                ['refresh_token' => 'refreshToken']
+            )->willReturn($accessToken);
+        $result = $this->provider->authenticate($token);
+        $this->assertEquals('newRefreshToken', $result->getCredentials());
+        $this->assertEquals('accessToken', $result->getAttribute('token'));
+        $this->assertEquals('newRefreshToken', $result->getAttribute('refresh_token'));
+        $this->assertEquals('offline profile', $result->getAttribute('scope'));
+        $this->assertEquals('bearer', $result->getAttribute('token_type'));
+        $this->assertNotEmpty($result->getAttribute('expires_in'));
+        $this->assertNotEmpty($result->getAttribute('exp'));
+    }
+
+    /**
+     * @covers ::authenticate()
+     *
+     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationException
+     * @expectedExceptionMessage testCode
+     * @expectedExceptionCode 500
+     */
+    public function testAuthCodeGrantTypeAuthWillThrowException(): void
+    {
+        $token = new CodeToken('code', 'offline profile');
+        $this->oAuthProvider->expects($this->once())
+            ->method('getAccessToken')
+            ->with(
+                'authorization_code',
+                ['code' => 'code', 'scope' => ['offline', 'profile']]
+            )->willThrowException(new \Exception('testCode', 500));
+        $this->provider->authenticate($token);
+    }
+
+    /**
+     * @covers ::authenticate()
+     *
+     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationException
+     * @expectedExceptionMessage testRefresh
+     * @expectedExceptionCode 500
+     */
+    public function testRefreshTokenGrantTypeAuthWillThrowException(): void
+    {
+        $token = new RefreshToken('refreshToken');
+        $this->oAuthProvider->expects($this->once())
+            ->method('getAccessToken')
+            ->with(
+                'refresh_token',
+                ['refresh_token' => 'refreshToken']
+            )->willThrowException(new \Exception('testRefresh', 500));
         $this->provider->authenticate($token);
     }
 }
