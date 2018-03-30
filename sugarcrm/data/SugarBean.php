@@ -5137,7 +5137,6 @@ class SugarBean
             $query->from($parent, [
                 'erased_fields' => $this->retrieve_erased_fields,
             ]);
-            $query->select('id', 'name');
 
             $ownerField = $parent->getOwnerField();
 
@@ -5147,7 +5146,7 @@ class SugarBean
 
             $query->where()->in('id', array_keys($parentsToChildren));
 
-            foreach ($parent->fetchFromQuery($query) as $parent) {
+            foreach ($parent->fetchFromQuery($query, ['id', 'name']) as $parent) {
                 $row = [
                     'parent_name' => $parent->name,
                 ];

@@ -23,30 +23,17 @@ use SugarTestUserUtilities as UserHelper;
  */
 class SugarBeanTest extends TestCase
 {
-
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
-    }
-
-    public function setUp()
-    {
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-    }
-
-    public function tearDown()
-    {
-        BeanFactory::setBeanClass('Accounts', null);
-        SugarTestHelper::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestHelper::tearDown();
     }
 
     public function testAuditLogForBeanCreate()
@@ -136,12 +123,7 @@ class SugarBeanTest extends TestCase
         $return = array_shift($relatedList);
 
         $this->assertEquals($account->id, $return->id);
-
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
-
-
-
 
     /**
      * Test to make sure that when a bean is cloned it removes all loaded relationships so they can be recreated on
@@ -163,8 +145,6 @@ class SugarBeanTest extends TestCase
 
         // lets make sure that the relationship is not on the cloned record
         $this->assertFalse(isset($clone_account->contacts));
-
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
     /**
@@ -178,18 +158,11 @@ class SugarBeanTest extends TestCase
      */
     public function testIsRelateField(array $field_defs, $field_name, $is_relate)
     {
-        $bean = new BeanIsRelateFieldMock();
+        $bean = new SugarBean();
         $bean->field_defs = $field_defs;
-        $actual = $bean->is_relate_field($field_name);
+        $actual = SugarTestReflection::callProtectedMethod($bean, 'is_relate_field', [$field_name]);
 
-        if ($is_relate)
-        {
-            $this->assertTrue($actual);
-        }
-        else
-        {
-            $this->assertFalse($actual);
-        }
+        $this->assertSame($is_relate, $actual);
     }
 
     public static function isRelateFieldProvider()
@@ -1055,6 +1028,24 @@ class SugarBeanTest extends TestCase
         $this->assertCount(1, $this->getFieldAuditRecords($contact, 'last_name'));
     }
 
+    /**
+     * @test
+     */
+    public function selfReferenceAsParent()
+    {
+        $task = SugarTestTaskUtilities::createTask();
+        $task->parent_type = $task->module_name;
+        $task->parent_id = $task->id;
+        $task->save();
+
+        /** @var Task $retrievedTask */
+        $retrievedTask = BeanFactory::retrieveBean($task->module_name, $task->id, [
+            'use_cache' => false,
+        ]);
+
+        $this->assertEquals($task->name, $retrievedTask->parent_name);
+    }
+
     private function getFieldAuditRecords(SugarBean $bean, $field)
     {
         /** @var Audit $audit */
@@ -1069,14 +1060,6 @@ class SugarBeanTest extends TestCase
 class BeanMockTestObjectName extends SugarBean
 {
     var $table_name = "my_table";
-}
-
-class BeanIsRelateFieldMock extends SugarBean
-{
-    public function is_relate_field($field_name_name)
-    {
-        return parent::is_relate_field($field_name_name);
-    }
 }
 
 class BeanFunctionFieldsMock extends SugarBean
