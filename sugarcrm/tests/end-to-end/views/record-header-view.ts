@@ -41,6 +41,9 @@ export default class RecordHeaderView extends BaseView {
                 'eraseandcomplete': 'a[name="erase_complete_button"]:not(.hide)',
                 'markforerasure': 'a[name="mark_for_erasure_button"]:not(.hide)',
                 'reject': 'a[name="reject_button"]:not(.hide)',
+                'closecall': 'a[name="record-close"]:not(.hide)',
+                'closemeeting': 'a[name="record-close"]:not(.hide)',
+                'closeandcreatenew':'a[name="record-close-new"]:not(.hide)',
             },
 
             title: {

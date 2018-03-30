@@ -82,7 +82,7 @@ When(/^I open actions menu in (#[a-zA-Z]\w+)$/,
  *
  * @example "I choose Delete from actions menu in #Account_ARecord"
  */
-When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote|Convert) from actions menu in (#[a-zA-Z]\w+)\s*$/,
+When(/^I choose (Copy|Delete|CreateOpportunity|GenerateQuote|Convert|CloseCall|CloseMeeting|CloseAndCreateNew) from actions menu in (#[a-zA-Z]\w+)\s*$/,
     async function(action, layout: any) {
         await layout.HeaderView.clickButton(action);
     }, {waitForApp: true});

@@ -226,6 +226,13 @@ export default (seedbed: Seedbed) => {
                         module: recordInfo.module
                     });
 
+                    if (recordInfo.module === 'ProductBundles') {
+                        seedbed.defineComponent(`${recordInfo.uid}GroupRecord`, GroupRecord, {
+                            id: responseRecord.id,
+                        });
+                        return;
+                    }
+
                     if (recordInfo.module === 'ProductBundleNotes') {
                         seedbed.defineComponent(`${recordInfo.uid}CommentRecord`, CommentRecord, {
                             id: responseRecord.id,

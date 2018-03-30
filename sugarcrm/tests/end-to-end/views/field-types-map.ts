@@ -29,8 +29,10 @@ import * as BoolField from '../fields/bool-field';
 import * as TeamsetField from '../fields/teamset-field';
 import * as ParentField from '../fields/parent-field';
 import * as BadgeField from '../fields/badge-field';
+import * as DatetimecomboField from '../fields/datetimecombo-field';
 import * as QuoteGroupTitleField from '../fields/quote-group-title-field';
 import * as EmailRecipientsField from '../fields/email-recipients';
+import * as BadgeSelectField from '../fields/badge-select-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -61,7 +63,9 @@ export const FIELD_TYPES__MAP = {
     teamset: TeamsetField,
     parent: ParentField,
     badge: BadgeField,
+    datetimecombo: DatetimecomboField,
     'quote-group-title': QuoteGroupTitleField,
+    'badge-select': BadgeSelectField,
     'email-recipients': EmailRecipientsField,
 };
 

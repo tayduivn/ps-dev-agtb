@@ -39,12 +39,10 @@ import * as _ from 'lodash';
         let type = expectedData.type;
 
         if (text !== message) {
-            throw new Error('Expected message: ' + message + '. Actual message: ' + text);
+            throw new Error('Expected message: ' + message + ' Actual message: ' + text);
         }
 
         if (messageType !== type) {
-            throw new Error('Expected type: ' + message + '. Actual type: ' + text);
+            throw new Error('Expected type: ' + type + ' Actual type: ' + messageType);
         }
-
-
     }, {waitForApp: true});

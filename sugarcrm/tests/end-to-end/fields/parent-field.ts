@@ -59,3 +59,23 @@ export class Edit extends BaseField {
     }
 
 }
+export class List extends BaseField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'a'
+            }
+        });
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await this.driver.getText(this.$('field'));
+        return value.toString().trim();
+    }
+}
+
+export const Preview = List;
