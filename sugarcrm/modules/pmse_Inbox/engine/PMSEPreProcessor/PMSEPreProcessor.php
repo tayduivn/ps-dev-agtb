@@ -195,22 +195,17 @@ class PMSEPreProcessor
             if (isset($this->flowProjectMap[$flowData['pro_id']])) {
                 $project = $this->flowProjectMap[$flowData['pro_id']];
             } else {
-                $sql = "SELECT p.id
-                        FROM pmse_project p
-                        INNER JOIN pmse_bpm_process_definition d ON d.prj_id = p.id
-                        WHERE d.id = :pro_id
-                        LIMIT 1";
+                $q = $this->retrieveSugarQuery();
+                $q->from(BeanFactory::newBean('pmse_Project'), array('alias' => 'p'));
+                $q->select(array(array('id', 'p')));
+                $q->joinTable('pmse_bpm_process_definition', array('alias' => 'd'))
+                    ->on()->equalsField('d.prj_id', 'p.id');
+                $q->where()->equals('d.id', $flowData['pro_id']);
+                $projectId = $q->getOne();
 
-                // Execute the query and get our results
-                $stmt = DBManagerFactory::getInstance()
-                        ->getConnection()
-                        ->executeQuery($sql, [':pro_id' => $flowData['pro_id']]);
-                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                // Get the id from the result
-                if (isset($data[0]['id'])) {
+                if (isset($projectId)) {
                     // Cache it and write it
-                    $project = $this->flowProjectMap[$flowData['pro_id']] = $data[0]['id'];
+                    $project = $this->flowProjectMap[$flowData['pro_id']] = $projectId;
                 } else {
                     // Just default to nothing... realistically, this should never
                     // happen
