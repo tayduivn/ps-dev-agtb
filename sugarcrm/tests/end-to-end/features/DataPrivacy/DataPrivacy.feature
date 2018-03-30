@@ -170,7 +170,7 @@ Feature: Data Privacy module verification
     When I click show more button on #AlexRecord view
     Then I verify fields on #AlexRecord.HeaderView
       | fieldName | value    |
-      | full_name | Nisevich |
+      | name      | Nisevich |
     Then I verify fields on #AlexRecord.RecordView
       | fieldName            | value             |
       | title                | Value Erased      |
@@ -197,7 +197,7 @@ Feature: Data Privacy module verification
     When I click show more button on #TravisRecord view
     Then I verify fields on #TravisRecord.HeaderView
       | fieldName | value  |
-      | full_name | Travis |
+      | name      | Travis |
     Then I verify fields on #TravisRecord.RecordView
       | fieldName    | value        |
       | title        | Value Erased |
@@ -261,7 +261,7 @@ Feature: Data Privacy module verification
     When I click show more button on #AlexRecord view
     Then I verify fields on #AlexRecord.HeaderView
       | fieldName | value         |
-      | full_name | Alex Nisevich |
+      | name      | Alex Nisevich |
     Then I verify fields on #AlexRecord.RecordView
       | fieldName             | value               |
       | title                 | Automation Engineer |
