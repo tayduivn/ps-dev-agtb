@@ -230,7 +230,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
      */
     public function parseVariable($criteriaToken, $params = array())
     {
-        $tokenArray = array($criteriaToken->expModule, $criteriaToken->expField, $criteriaToken->expOperator);
+        $tokenArray = array($criteriaToken->expModule, $criteriaToken->expValue, $criteriaToken->expOperator);
         $tokenValue = $this->parseTokenValue($tokenArray);
         if ($criteriaToken->expSubtype == 'Currency') {
             $value = json_decode($tokenValue);
