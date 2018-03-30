@@ -1025,6 +1025,25 @@ class SugarTestHelper
     }
 
     /**
+     * Sets up the GLOBAL log variable
+     * @param string $name The name of the log to instantiate
+     */
+    protected static function setUp_log($name = 'SugarCRM')
+    {
+        self::$registeredVars['log'] = true;
+        $GLOBALS['log'] = LoggerManager::getLogger($name);
+    }
+
+    /**
+     * Tears down the global log variable and replaces it with the OOTB one
+     * @return LoggerManager
+     */
+    protected static function tearDown_log()
+    {
+        $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
+    }
+
+    /**
      * Reinitialization of $modInvisList in global scope because we can't unset that variable
      *
      * @static

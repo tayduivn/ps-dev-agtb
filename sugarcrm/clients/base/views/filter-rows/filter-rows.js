@@ -676,6 +676,15 @@
     },
 
     /**
+     * Check if the selected filter operator is a collective type.
+     *
+     * @param {jQuery} $row The related filter row.
+     */
+    isCollectiveValue: function($row) {
+        return $row.data('operator') === '$in' || $row.data('operator') === '$not_in';
+    },
+
+    /**
      * Initializes the value field.
      *
      * @param {jQuery} $row The related filter row.
@@ -707,7 +716,7 @@
 
         switch (fieldType) {
             case 'enum':
-                fieldDef.isMultiSelect = true;
+                fieldDef.isMultiSelect = this.isCollectiveValue($row);
                 // Set minimumResultsForSearch to a negative value to hide the search field,
                 // See: https://github.com/ivaynberg/select2/issues/489#issuecomment-13535459
                 fieldDef.searchBarThreshold = -1;
@@ -729,7 +738,7 @@
                 break;
             case 'teamset':
                 fieldDef.type = 'relate';
-                fieldDef.isMultiSelect = true;
+                fieldDef.isMultiSelect = this.isCollectiveValue($row);
                 break;
             case 'datetimecombo':
             case 'date':
@@ -745,7 +754,7 @@
                 break;
             case 'relate':
                 fieldDef.auto_populate = true;
-                fieldDef.isMultiSelect = true;
+                fieldDef.isMultiSelect = this.isCollectiveValue($row);
                 break;
             case 'parent':
                 data.isFlexRelate = true;
@@ -867,9 +876,12 @@
             if ((fieldDef.type === 'relate' || fieldDef.type === 'nestedset') &&
                 !_.isEmpty($row.data('value'))
             ) {
-                var self = this,
-                    findRelatedName = app.data.createBeanCollection(fieldDef.module);
-                findRelatedName.fetch({fields: [fieldDef.rname], params: {filter: [{'id': {'$in': $row.data('value')}}]},
+                var self = this;
+                var findRelatedName = app.data.createBeanCollection(fieldDef.module);
+                var relateOperator = this.isCollectiveValue($row) ? '$in' : '$equals';
+                var relateFilter = [{id: {}}];
+                relateFilter[0].id[relateOperator] = $row.data('value');
+                findRelatedName.fetch({fields: [fieldDef.rname], params: {filter: relateFilter},
                     complete: function() {
                         if (!self.disposed) {
                             if (findRelatedName.length > 0) {
@@ -1088,8 +1100,6 @@
                     currencyFilter[currencyId] = dataField.model.get(currencyId);
 
                     filter['$and'] = [amountFilter, currencyFilter];
-                } else if (operator === '$equals') {
-                    filter[name] = value;
                 } else if (data.isDateRange) {
                     //Once here the value is actually a key of date_range_selector_dom and we need to build a real
                     //filter definition on it.

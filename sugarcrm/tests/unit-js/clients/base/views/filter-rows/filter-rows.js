@@ -768,6 +768,42 @@ describe('Base.View.FilterRows', function() {
         });
     });
 
+    describe('isCollectiveValue', function() {
+        var $row;
+        var $operatorField;
+
+        beforeEach(function() {
+            $row = $('<div data-filter="row">');
+            $operatorField = $('<div data-filter="operator">').val('$in').appendTo($row);
+        });
+
+        using('different operators', [
+            {
+                operator: '$in',
+                returnValue: true,
+            },
+            {
+                operator: '$not_in',
+                returnValue: true,
+            },
+            {
+                operator: '$equals',
+                returnValue: false,
+            },
+            {
+                operator: '$notEquals',
+                returnValue: false,
+            },
+            ],
+            function(params) {
+                it('should identify collective values', function() {
+                    $operatorField = $('<div data-filter="operator">').val(params.operator).appendTo($row);
+                    $row.data('operator', params.operator);
+                    expect(view.isCollectiveValue($row)).toEqual(params.returnValue);
+                });
+            });
+    });
+
     describe('initValueField', function() {
         var $row, $filterField, $operatorField, $valueField, createFieldSpy, field;
 
@@ -801,7 +837,11 @@ describe('Base.View.FilterRows', function() {
                 },
                 account_type: {
                     type: 'enum'
-                }
+                },
+                relate_field: {
+                    type: 'relate',
+                    rname: 'relate_rname',
+                },
             };
             view.moduleName = 'Cases';
             $row = $('<div data-filter="row">').appendTo(view.$el);
@@ -978,7 +1018,7 @@ describe('Base.View.FilterRows', function() {
                     id_name: 'team_id',
                     required: false,
                     readonly: false,
-                    isMultiSelect: true
+                    isMultiSelect: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(fetchStub).toHaveBeenCalled();
@@ -994,7 +1034,7 @@ describe('Base.View.FilterRows', function() {
                     id_name: 'team_id',
                     required: false,
                     readonly: false,
-                    isMultiSelect: true
+                    isMultiSelect: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(fetchStub).not.toHaveBeenCalled();
@@ -1024,6 +1064,17 @@ describe('Base.View.FilterRows', function() {
                 $row.data('value', {parent_type: 'My_Module', 'parent_id': ''});
                 view.initValueField($row);
                 expect(fetchStub).not.toHaveBeenCalled();
+            });
+
+            it('should fetch relate fields with $equals if necessary', function() {
+                sinon.collection.stub($.fn, 'select2').returns('relate_field');
+                $row.data('value', 'West');
+                view.initValueField($row);
+                var relateFilter = [{id: {$equals: 'West'}}];
+                expect(fetchStub).toHaveBeenCalledWith(jasmine.objectContaining({
+                    fields: ['relate_rname'],
+                    params: {filter: relateFilter},
+                }));
             });
         });
 
@@ -1422,7 +1473,7 @@ describe('Base.View.FilterRows', function() {
             view._updateFilterData($row);
             filter = view.buildRowFilterDef($row, true);
             expected = {
-                assigned_user_id: 'seed_sarah_id'
+                assigned_user_id: {$equals: 'seed_sarah_id'}
             };
             expect(filter).toEqual(expected);
         });
