@@ -281,20 +281,8 @@ class SugarQuery_Compiler_Doctrine
         string $tableAlias,
         string $columnAlias
     ) {
-        if (!$bean->hasPiiFields()) {
-            return;
-        }
-
-        $selectedFields = $query->select->getSelectedFieldsByTable($tableAlias);
-
-        if (!count($selectedFields)) {
-            return;
-        }
-
-        $piiFields = $bean->getFieldDefinitions('pii', [true]);
-
-        if (!array_intersect($selectedFields, array_keys($piiFields))) {
-            return;
+        if (!$this->isPiiFieldsSelected($bean, $query, $tableAlias)) {
+            return false;
         }
 
         $erasedAlias = $bean->db->getValidDBName($tableAlias . '_erased', true, 'alias');
@@ -311,6 +299,49 @@ class SugarQuery_Compiler_Doctrine
                 $tableAlias
             )
         )->addSelect(sprintf('%s.data %s', $erasedAlias, $columnAlias));
+    }
+
+    /**
+     * check if any Pii field is selected
+     * @param SugarBean $bean
+     * @param SugarQuery $query
+     * @param string $tableAlias
+     * @return bool
+     */
+    protected function isPiiFieldsSelected(SugarBean $bean, SugarQuery $query, string $tableAlias) : bool
+    {
+        if (!$bean->hasPiiFields()) {
+            return false;
+        }
+
+        $selectedFields = $this->getSelectFieldsByTable($bean, $query, $tableAlias);
+
+        if (!count($selectedFields)) {
+            return false;
+        }
+
+        $piiFields = $bean->getFieldDefinitions('pii', [true]);
+
+        if (!array_intersect($selectedFields, array_keys($piiFields))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * get selected fields
+     * @param SugarBean $bean
+     * @param SugarQuery $query
+     * @param string $tableAlias
+     * @return array
+     */
+    protected function getSelectFieldsByTable(SugarBean $bean, SugarQuery $query, string $tableAlias) : array
+    {
+        return array_merge(
+            $query->select->getSelectedFieldsByTable($tableAlias),
+            $query->select->getSelectedFieldsByTable($query->getCustomTableAlias($bean, $tableAlias))
+        );
     }
 
     /**

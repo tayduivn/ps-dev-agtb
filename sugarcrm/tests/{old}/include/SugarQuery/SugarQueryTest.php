@@ -150,4 +150,43 @@ class SugarQueryTest extends TestCase
             array('LHS', 'right_hand_side_id')
         );
     }
+
+    /**
+     * @param string $message
+     * @param null|string $customTableName
+     * @param null|string $alias
+     * @param string $expected
+     *
+     * @dataProvider providerTestGetCustomTableAlias
+     */
+    public function testGetCustomTableAlias(string $message, ?string $customTableName, ?string $alias, string $expected)
+    {
+        $bean = $this->getMockBuilder(SugarBean::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['get_custom_table_name'])
+            ->getMock();
+
+        $bean->expects($this->any())
+            ->method('get_custom_table_name')
+            ->willReturn($customTableName);
+
+        $sugarQuery = $this->getMockBuilder(SugarQuery::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $result = $sugarQuery->getCustomTableAlias($bean, $alias);
+        $this->assertSame($expected, $result, 'failed test case: ' . $message);
+    }
+
+    public function providerTestGetCustomTableAlias()
+    {
+        return [
+            ['bean has custom table without alias', 'account_cstm', '', 'account_cstm'],
+            ['bean has custom table with alias', 'account_cstm', 'acct', 'acct_cstm'],
+            ['bean has no custom table but has alias', '', 'acct', 'acct_cstm'],
+            ['bean has null custom table but has alias', null, 'acct', 'acct_cstm'],
+            ['bean has custom table with null alias', 'account_cstm', null, 'account_cstm'],
+        ];
+    }
 }

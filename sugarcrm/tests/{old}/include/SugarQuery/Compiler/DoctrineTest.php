@@ -585,4 +585,98 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
             2 => PDO::PARAM_STR,
         ), $builder->getParameterTypes());
     }
+
+    /**
+     * test joinErasedFields
+     * @dataProvider providerTestJoinErasedFields
+     */
+    public function testJoinErasedFields($messsge, $isPiiFieldsSelected, $expected)
+    {
+        /** @var SugarQuery_Compiler_Doctrine|PHPUnit_Framework_MockObject_MockObject $compiler */
+        $compiler = $this->getMockBuilder(SugarQuery_Compiler_Doctrine::class)
+            ->setMethods(['isPiiFieldsSelected'])
+            ->setConstructorArgs(array($this->account->db))
+            ->getMock();
+
+        $compiler->expects($this->any())
+            ->method('isPiiFieldsSelected')
+            ->willReturn($isPiiFieldsSelected);
+
+        $query = $this->getQuery();
+        $query->select('name');
+        $query->where()->equals('industry', 'Apparel');
+        $builder = $query->compile();
+
+        $bean = $this->getMockBuilder(SugarBean::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $bean->db = $this->account->db;
+
+        SugarTestReflection::callProtectedMethod($compiler, 'joinErasedFields', [$builder, $query, $bean, 'acct_alias', '']);
+
+        $this->assertSame($expected, $builder->getSQL(), 'test failed: ' . $messsge);
+    }
+
+    public function providerTestJoinErasedFields()
+    {
+        return [
+            ['no pii field is selected', false, 'SELECT accounts.name FROM accounts WHERE accounts.industry = ?'],
+            // @codingStandardsIgnoreStart
+            ['pii fields are selected', true, 'SELECT accounts.name, acct_alias_erased.data  FROM accounts LEFT JOIN erased_fields acct_alias_erased ON acct_alias_erased.bean_id = acct_alias.id AND acct_alias_erased.table_name = ? WHERE accounts.industry = ?'],
+            // @codingStandardsIgnoreEnd
+        ];
+    }
+
+    /**
+     * @dataProvider providerTestIsPiiFieldsSelected
+     */
+    public function testIsPiiFieldsSelected($message, $hasPiiFields, $selectedFields, $selectedPiiFields, $expected)
+    {
+        $bean = $this->getMockBuilder(SugarBean::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['hasPiiFields', 'getFieldDefinitions'])
+            ->getMock();
+
+        $bean->db = $this->account->db;
+
+        $bean->expects($this->any())
+            ->method('hasPiiFields')
+            ->willReturn($hasPiiFields);
+
+        $bean->expects($this->any())
+            ->method('getFieldDefinitions')
+            ->willReturn($selectedPiiFields);
+
+        /** @var SugarQuery_Compiler_Doctrine|PHPUnit_Framework_MockObject_MockObject $compiler */
+        $compiler = $this->getMockBuilder(SugarQuery_Compiler_Doctrine::class)
+            ->setConstructorArgs([$this->account->db])
+            ->setMethods(['getSelectFieldsByTable'])
+            ->getMock();
+
+        $compiler->expects($this->any())
+            ->method('getSelectFieldsByTable')
+            ->willReturn($selectedFields);
+
+        $query = $this->getMockBuilder(SugarQuery::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $result = SugarTestReflection::callProtectedMethod($compiler, 'isPiiFieldsSelected', [$bean, $query, 'acct']);
+
+        $this->assertSame($expected, $result, 'failed at test: ' . $message);
+    }
+
+    public function providerTestIsPiiFieldsSelected()
+    {
+        return [
+            ['has no pii field', false, ['name', 'title'], ['name' => 1], false],
+            ['has pii field and selected pii fields', true, ['name', 'title'], ['name' => 1], true],
+            ['has pii field and selected pii fields custom field', true, ['name_c', 'title'], ['name_c' => 1], true],
+            ['has pii field and no selected fields', true, [], ['name' => 1], false],
+            ['has pii field and no pii field is selected', true, ['name', 'title'], [], false],
+            ['has pii field and selected fields do not interect pii fields', true, ['name', 'title'], ['any_name' => 1], false],
+        ];
+    }
 }

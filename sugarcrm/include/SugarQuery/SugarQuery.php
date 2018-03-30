@@ -1137,13 +1137,12 @@ class SugarQuery
                 $options = array(
                     'joinType' => 'left',
                 );
+                $joinAlias = $this->getCustomTableAlias($bean, $alias);
                 if (!empty($alias)) {
                     $fromAlias = $alias;
-                    $joinAlias = $alias . '_c';
                     $options['alias'] = $joinAlias;
                 } else {
                     $fromAlias = $table;
-                    $joinAlias = $table_cstm;
                 }
                 $this->joinTable($table_cstm, $options)
                     ->on()->equalsField($joinAlias . '.id_c', $fromAlias . '.id');
@@ -1188,5 +1187,18 @@ class SugarQuery
         $this->columnAliasMap[$alias] = $validAlias;
 
         return $validAlias;
+    }
+
+    /**
+     * @param SugarBean $bean
+     * @param null|string $alias
+     * @return string
+     */
+    public function getCustomTableAlias(SugarBean $bean, ?string $alias) : string
+    {
+        if (!empty($alias)) {
+            return $alias . '_cstm';
+        }
+        return $bean->get_custom_table_name();
     }
 }
