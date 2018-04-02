@@ -24,7 +24,7 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\Idm
 use Sugarcrm\Sugarcrm\League\OAuth2\Client\Grant\JwtBearer;
 
 /**
- * @coversDefaultClass \Sugarcrm\IdentityProvider\League\OAuth2\Client\Provider\HttpBasicAuth\GenericProvider
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\OAuth2\Client\Provider\IdmProvider
  */
 class IdmProviderTest extends TestCase
 {

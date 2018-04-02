@@ -44,7 +44,6 @@ class ClientTest extends TestCase
      * @covers ::setConfig
      * @covers ::getConfig
      * @covers ::getVersion
-     * @covers ::getEsVersion
      * @covers ::getAllowedVersions
      *
      * @dataProvider providerTestSettersAndGetters

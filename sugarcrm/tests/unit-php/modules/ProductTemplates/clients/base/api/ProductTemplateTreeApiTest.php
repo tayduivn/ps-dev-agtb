@@ -218,7 +218,6 @@ class ProductTemplateTreeApiTest extends TestCase
     /**
      * @dataProvider getTemplateTreeProvider
      * @covers ::getTemplateTree
-     * @covers ::addLeaf
      */
     public function testGetTemplateTree($args, $filteredTreeCallCount, $rootedTreeCallCount, $index, $id, $data, $total)
     {

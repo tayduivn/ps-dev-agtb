@@ -91,7 +91,7 @@ class SugarOidcUserMappingTest extends TestCase
     }
 
     /**
-     * @covers getIdentityValue
+     * @covers ::getIdentityValue
      */
     public function testGetIdentityValue()
     {

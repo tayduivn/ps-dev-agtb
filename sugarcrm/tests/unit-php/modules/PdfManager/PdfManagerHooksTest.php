@@ -25,7 +25,7 @@ class PdfManagerHooksTest extends TestCase
     }
 
     /**
-     * @covers fixAmp
+     * @covers ::fixAmp
      *
      * @return void
      */

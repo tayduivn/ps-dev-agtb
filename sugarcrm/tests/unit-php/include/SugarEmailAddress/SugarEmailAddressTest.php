@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 class SugarEmailAddressTest extends TestCase
 {
     /**
-     * @covers       removeAddressById
+     * @covers       ::removeAddressById
      * @dataProvider removeAddressByIdProvider
      *
      * @param array $startingAddresses
@@ -29,7 +29,6 @@ class SugarEmailAddressTest extends TestCase
      */
     public function testRemoveEmailAddressById(array $startingAddresses, string $removalId, array $expectedAddresses)
     {
-
         $sea = $this->getMockBuilder(\SugarEmailAddress::class)->disableOriginalConstructor()->setMethods()->getMock();
         $sea->addresses = $startingAddresses;
         $sea->removeAddressById($removalId);
@@ -183,7 +182,7 @@ class SugarEmailAddressTest extends TestCase
     }
 
     /**
-     * @covers       removeAddressById
+     * @covers       ::removeAddressById
      * @dataProvider removeEmailAddressProvider
      *
      * @param array $startingAddresses
