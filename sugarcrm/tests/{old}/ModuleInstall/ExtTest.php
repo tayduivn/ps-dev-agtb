@@ -65,15 +65,19 @@ class ExtTest extends TestCase
     {
         $extensions = array();
         include 'ModuleInstall/extensions.php';
-        $params = array();
+
         foreach($extensions as $name => $ext) {
+            if (empty($ext['section'])) {
+                continue;
+            }
+
             switch ($name) {
                 case 'modules':
                 case 'sidecar':
                 case 'dropdown_filters':
                     break;
                 default:
-                    $params[] = array(
+                    yield array(
                         $name,
                         $ext['section'],
                         $ext['extdir'],
@@ -83,7 +87,6 @@ class ExtTest extends TestCase
                     break;
             }
         }
-        return $params;
     }
 
     /**
@@ -96,9 +99,6 @@ class ExtTest extends TestCase
      */
     public function testExtFramework($extname, $section, $extdir, $file, $module)
     {
-        if(empty($section)) {
-            return;
-        }
         $this->module_installer->installdefs[$section] = array(
             array("from" => '<basepath>/test.ext.php', 'to_module' => $module)
         );

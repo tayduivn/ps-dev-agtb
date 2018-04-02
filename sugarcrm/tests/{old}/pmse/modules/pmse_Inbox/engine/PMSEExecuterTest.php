@@ -19,7 +19,6 @@ class PMSEExecuterTest extends TestCase
 
     public function testRetrieveElementByType()
     {
-
         $pmseExecuterMock = $this->getMockBuilder('PMSEExecuter')
                 ->disableOriginalConstructor()
                 ->setMethods(array(
@@ -427,10 +426,5 @@ class PMSEExecuterTest extends TestCase
         $pmseExecuterMock->setCaseFlowHandler($caseFlowHandlerMock);
         $id = 1;
         $pmseExecuterMock->retrieveActivityElement($id);
-    }
-
-    public function testRunEngine()
-    {
-
     }
 }

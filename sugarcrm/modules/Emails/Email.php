@@ -198,7 +198,6 @@ class Email extends SugarBean {
 	var $module_dir = 'Emails';
     var $module_name = 'Emails';
 	var $object_name = 'Email';
-	var $db;
 
 	/* private attributes */
 	var $rolloverStyle		= "<style>div#rollover {position: relative;float: left;margin: none;text-decoration: none;}div#rollover a:hover {padding: 0;text-decoration: none;}div#rollover a span {display: none;}div#rollover a:hover span {text-decoration: none;display: block;width: 250px;margin-top: 5px;margin-left: 5px;position: absolute;padding: 10px;color: #333;	border: 1px solid #ccc;	background-color: #fff;	font-size: 12px;z-index: 1000;}</style>\n";

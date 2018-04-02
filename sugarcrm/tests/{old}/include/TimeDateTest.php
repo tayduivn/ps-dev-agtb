@@ -45,7 +45,7 @@ class TimeDateTest extends TestCase
         SugarTestHelper::tearDown();
 	}
 
-	public function dateTestSet()
+    public static function dateTestSet()
 	{
 	    return array(
     		array("db" => '2005-10-25 07:00:00', "df" => 'd-m-Y', 'tf' => '',		'tz' => 'America/Los_Angeles',		"display" => '25-10-2005', 			"dbdate" => "2005-10-25 00:00:00"),
@@ -75,6 +75,17 @@ class TimeDateTest extends TestCase
     		array("db" => '2005-10-25 19:00:00', "df" => 'd/m/Y', "tf" => "ha",		'tz' => 'America/Los_Angeles', 		"display" => '25/10/2005 12pm', 	"dbdate" => "2005-10-25 12:00:00"),
     		);
 	}
+
+    public static function dateTestSetNonEmptyTimeFormat()
+    {
+        foreach (self::dateTestSet() as $set) {
+            if (empty($set['tf'])) {
+                continue;
+            }
+
+            yield $set;
+        }
+    }
 
 	public function timetestSet()
 	{
@@ -264,7 +275,6 @@ class TimeDateTest extends TestCase
 	 */
 	public function testToDisplayTimeFormatsNoTZ($db, $tf, $display)
 	{
-		if(empty($tf)) return;
 		$this->_setPrefs('Y-m-d', $tf, '');
 		$this->assertEquals(
 			$this->_timeOnly($display),
@@ -272,13 +282,13 @@ class TimeDateTest extends TestCase
 			"Broken conversion for '$tf' with date '{$db}'");
 	}
 
-	/**
-	 * test conversion from DB time to local time with TZ conversion
-	 * @dataProvider dateTestSet
-	 */
-	public function testToDisplayTimeFormatsWithTZ($db, $df, $tf, $tz,  $display, $dbdate)
+    /**
+     * Test conversion from DB time to local time with TZ conversion
+     *
+     * @dataProvider dateTestSetNonEmptyTimeFormat
+     */
+    public function testToDisplayTimeFormatsWithTZ($db, $df, $tf, $tz, $display)
 	{
-		if(empty($tf)) return;
 		$this->_setPrefs($df, $tf, $tz);
 		$result = $this->time_date->to_display_time($db, true, true);
 		$result = $this->_timeOnly($result);
@@ -287,7 +297,6 @@ class TimeDateTest extends TestCase
 			$result,
 			"Broken conversion for '{$tf}' with date '{$db}' and TZ {$tz}");
 	}
-
 
 	/**
 	 * test conversion from DB date to local date without TZ handling

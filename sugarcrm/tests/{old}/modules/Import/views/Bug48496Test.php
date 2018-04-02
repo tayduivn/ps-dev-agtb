@@ -59,7 +59,7 @@ class Bug48496Test extends TestCase
 
         $lvfMock = $this->getMockBuilder('ListViewFacade')->setMethods(array('setup', 'display'))->setConstructorArgs(array($seed, 'Accounts'))->getMock();
 
-        $lvfMock->expects($this->any())
+        $lvfMock->expects($this->once())
             ->method('setup')
             ->with($this->anything(),
             '',
@@ -72,17 +72,10 @@ class Bug48496Test extends TestCase
             $this->anything(),
             $this->anything());
 
-        $viewLast = new ImportViewLastWrap();
+        $viewLast = new ImportViewLast();
         $viewLast->init($seed);
         $viewLast->lvf = $lvfMock;
 
-        $viewLast->publicGetListViewResults();
-    }
-
-}
-
-class ImportViewLastWrap extends ImportViewLast {
-    public function publicGetListViewResults() {
-        return $this->getListViewResults();
+        SugarTestReflection::callProtectedMethod($viewLast, 'getListViewResults');
     }
 }

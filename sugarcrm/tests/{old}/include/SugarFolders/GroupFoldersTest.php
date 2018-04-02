@@ -136,6 +136,8 @@ class GroupFoldersTest extends TestCase
     	global $current_user, $groupfolder_id, $teamObject, $email_id;
     	$email = new Email();
     	$email->delete($email_id);
+
+        $this->assertNull($email->retrieve($email_id));
     }
 	
     /**

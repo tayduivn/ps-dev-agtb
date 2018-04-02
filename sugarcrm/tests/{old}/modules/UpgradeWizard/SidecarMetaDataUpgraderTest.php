@@ -202,33 +202,41 @@ class SidecarMetaDataUpgraderTest extends TestCase
         $this->assertEquals('LBL_PANEL_ASSIGNMENT', $panels[4]['label']);
     }
     // END SUGARCRM flav=ent ONLY
-    public function _sidecarFilesInPlaceProvider()
+
+    public static function sidecarFilesInPlaceProvider()
     {
-        $builder = self::getBuilder();
-        return $builder->getFilesToMake('sidecar', true);
+        foreach (self::getBuilder()->getFilesToMake('sidecar') as $file) {
+            if (!$file) {
+                continue;
+            }
+
+            yield [$file];
+        }
     }
 
     /**
-     * @dataProvider _sidecarFilesInPlaceProvider
+     * @dataProvider sidecarFilesInPlaceProvider
      *
      * @param string $file
      */
     public function testSidecarFilesInPlace($file)
     {
-        if(empty($file)) {
-            return;
-        }
         $this->assertFileExists($file, "File $file was not upgraded");
     }
 
-    public function _sidecarMetadataFormatProvider()
+    public function sidecarMetadataFormatProvider()
     {
-        $builder = self::getBuilder();
-        return $builder->getFilesToMakeByView(array('list', 'edit', 'detail'));
+        foreach (self::getBuilder()->getFilesToMakeByView(array('list', 'edit', 'detail')) as $entry) {
+            if (!$entry['filepath']) {
+                continue;
+            }
+
+            yield $entry;
+        }
     }
 
     /**
-     * @dataProvider _sidecarMetadataFormatProvider
+     * @dataProvider sidecarMetadataFormatProvider
      *
      * @param string $module
      * @param string $view
@@ -237,9 +245,6 @@ class SidecarMetaDataUpgraderTest extends TestCase
      */
     public function testSidecarMetadataFormat($module, $view, $type, $filepath)
     {
-        if(empty($filepath)) {
-            return;
-        }
         $this->assertFileExists($filepath, "$filepath does not exist");
         require $filepath;
 

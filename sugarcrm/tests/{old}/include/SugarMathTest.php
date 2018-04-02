@@ -396,7 +396,7 @@ class SugarMathTest extends TestCase
     /**
      * test expression engine computations
      *
-     * @dataProvider testRoundProvider
+     * @dataProvider roundProvider
      * @param mixed  $result the expected result of the computation
      * @param string $value the value to round
      * @param int    $scale the math precision to use
@@ -413,9 +413,9 @@ class SugarMathTest extends TestCase
      * expression engine data provider
      *
      * @group math
-     * @access public
      */
-    public static function testRoundProvider() {
+    public static function roundProvider()
+    {
         return array(
             array('-500.000000', '-500.0000000',6),
             array('3.354999999','3.354999999',9),

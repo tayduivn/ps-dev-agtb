@@ -107,11 +107,9 @@ EOQ;
             }
         }
 
-        if (!empty($hover_sources)) {
-            $output = ConnectorUtils::getConnectorButtonScript($displayParams, $this->ss);
-            preg_match_all('/<div[^\>]*?>/', $output, $matches);
-            $this->assertTrue(isset($matches[0]));
-        }
+        $output = ConnectorUtils::getConnectorButtonScript($displayParams, $this->ss);
+        preg_match_all('/<div[^\>]*?>/', $output, $matches);
+        $this->assertTrue(isset($matches[0]));
     }
 
     public function testRemoveHoverLinksInViewDefs()

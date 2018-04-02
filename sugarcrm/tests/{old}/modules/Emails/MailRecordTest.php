@@ -416,19 +416,17 @@ class MailRecordTest extends TestCase
 
     public function testSend_Email2SendReturnsTrueAndOutputWasCaptured_ExceptionIsThrown_ReturnsArrayWithErrorData()
     {
-        $this->expectException(MailerException::class);
-
         $this->mockEmail->expects($this->once())
-            ->method("email2Send")
-            ->will($this->returnValue(true));
+            ->method('email2Send')
+            ->willReturnCallback(function () {
+                echo 'Unexpected output from MailerException::email2Send()';
+            });
 
-        $mailRecord                = $this->createPartialMock('MailRecord', array("endCapturingOutput"));
+        $mailRecord                = new MailRecord();
         $mailRecord->subject       = "MailRecord subject";
         $mailRecord->mockEmailBean = $this->mockEmail;
 
-        $mailRecord->expects($this->once())
-            ->method("endCapturingOutput")
-            ->will($this->returnValue("output to capture"));
+        $this->expectException(MailerException::class);
 
         $mailRecord->send();
     }

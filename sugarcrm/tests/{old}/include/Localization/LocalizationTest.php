@@ -299,7 +299,7 @@ class LocalizationTest extends TestCase
      * @param array|null       $data
      * @param string           $expected
      *
-     * @dataProvider testFormatNameProvider
+     * @dataProvider formatNameProvider
      */
     public function testFormatName($macro, $bean, $data, $expected)
     {
@@ -319,7 +319,7 @@ class LocalizationTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public static function testFormatNameProvider()
+    public static function formatNameProvider()
     {
         $user1 = new User();
         $user1->first_name = 'John';

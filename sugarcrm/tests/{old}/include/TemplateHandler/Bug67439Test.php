@@ -73,7 +73,7 @@ class Bug67439Test extends TestCase
         $sugarSmarty = $this->getMockBuilder('Sugar_Smarty')
             ->setMethods(array('assign', 'fetch'))
             ->getMock();
-        $sugarSmarty->expects($this->any())
+        $sugarSmarty->expects($this->once())
             ->method('fetch')
             ->will($this->returnValue('template content'));
 

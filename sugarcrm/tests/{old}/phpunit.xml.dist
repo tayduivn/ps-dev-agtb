@@ -19,6 +19,8 @@
          timeoutForSmallTests="100"
          timeoutForMediumTests="145"
          timeoutForLargeTests="165"
+         failOnRisky="true"
+         failOnWarning="true"
          bootstrap="SugarTestHelper.php"
 >
     <php>

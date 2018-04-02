@@ -334,9 +334,9 @@ class PMSEEmailHandlerTest extends TestCase
 
         $_REQUEST['emailAddress'] = 'admin@mail.com';
         $_REQUEST['Leads_email_widget_id'] = 1;
-        
 
-        $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $key = $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $this->assertEquals('Leads0emailAddress0', $key);
     }
     
     public function testGetPrimaryEmailKeyFromREQUESTValid()
@@ -354,7 +354,8 @@ class PMSEEmailHandlerTest extends TestCase
         $_REQUEST['Leads1emailAddress1']= '';
         $_REQUEST['Leads1emailAddressPrimaryFlag']= 'primary@mail.com';
 
-        $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $key = $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $this->assertEquals('Leads0emailAddress0', $key);
     }
     
     public function testGetPrimaryEmailKeyFromREQUESTValidPrimaryAddress()
@@ -373,7 +374,8 @@ class PMSEEmailHandlerTest extends TestCase
         $_REQUEST['Leads1emailAddressPrimaryFlag']= 'primary@mail.com';
         $_REQUEST['LeadsemailAddressPrimaryFlag']= 'primary@mail.com';
 
-        $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $key = $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $this->assertEquals('Leads1emailAddress1', $key);
     }
     
     public function testGetPrimaryEmailKeyFromREQUESTInvalidPrimaryAddress()
@@ -391,7 +393,8 @@ class PMSEEmailHandlerTest extends TestCase
         $_REQUEST['Leads1emailAddress1']= 'primary@mail.com';
         $_REQUEST['LeadsemailAddressPrimaryFlag']= 'primary@mail.com';
 
-        $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $key = $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $this->assertEquals('Leads1emailAddress1', $key);
     }
     
     public function testGetPrimaryEmailKeyFromREQUESTInvalidAllAddresses()
@@ -408,7 +411,8 @@ class PMSEEmailHandlerTest extends TestCase
         $_REQUEST['Leads1emailAddress0'] = '';
         $_REQUEST['Leads1emailAddress1']= 'primary@mail.com';
 
-        $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $key = $emailHandlerMock->getPrimaryEmailKeyFromREQUEST($bean);
+        $this->assertEquals('Leads0emailAddress0', $key);
     }
     
     public function testUpdateEmails()

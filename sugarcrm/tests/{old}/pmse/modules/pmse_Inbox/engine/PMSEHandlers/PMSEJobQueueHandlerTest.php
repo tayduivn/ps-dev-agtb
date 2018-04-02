@@ -83,6 +83,10 @@ class PMSEJobQueueHandlerTest extends TestCase
                 ->setMethods(array('setCreateThread', 'setExternalAction', 'setBean', 'setArguments'))
                 ->getMock();
 
+        $preProcessorMock->expects($this->once())
+            ->method('processRequest')
+            ->with($requestMock);
+
         $jobQueueHandler->setLogger($loggerMock);
         $jobQueueHandler->setPreProcessor($preProcessorMock);
         $jobQueueHandler->setRequest($requestMock);

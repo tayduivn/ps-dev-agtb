@@ -18,6 +18,11 @@ class PMSEHistoryDataTest extends TestCase
 {
     private $module= 'Leads';
 
+    /**
+     * @var PMSEHistoryData
+     */
+    private $object;
+
     protected function setUp() {
         $this->object = ProcessManager\Factory::getPMSEObject('PMSEHistoryData');
         $this->object->setModule($this->module);
@@ -43,11 +48,15 @@ class PMSEHistoryDataTest extends TestCase
     {
         $value['after_data'][1] = 'Ok';
         $this->object->verifyRepeated('Ok','Ok');
+
+        $this->assertTrue(SugarTestReflection::getProtectedValue($this->object, 'repeated'));
     }
-    
+
     public function testLock()
     {
         $value = 'conditons';
         $this->object->lock($value);
+
+        $this->assertSame($value, SugarTestReflection::getProtectedValue($this->object, 'lock'));
     }
 }
