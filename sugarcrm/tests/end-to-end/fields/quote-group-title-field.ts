@@ -8,28 +8,36 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-import BaseView from './base-view';
-import QliTableRecord from "./qli-table-record";
+import {seedbed} from '@sugarcrm/seedbed';
+import TextField, {Edit} from './text-field';
 
 /**
- * Represents Record view.
- *
- * @class GroupRecord
- * @extends BaseView
+ * @class TextField
+ * @extends BaseField
  */
-export default class GroupRecord extends QliTableRecord {
 
-    public id: string;
+export const QuoteGroupTitleFieldEdit = Edit;
+
+export default class QuoteGroupTitleField extends TextField {
 
     constructor(options) {
         super(options);
 
-        this.id = options.id;
-        this.module = 'ProductBundles';
-
         this.selectors = this.mergeSelectors({
-            $: this.id ? `[data-record-id="${this.id}"]` : '',
+            $: '[field-name={{name}}]',
+            field: {
+                selector: ''
+            }
         });
     }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+
+        return value.toString().trim();
+
+    }
 }
+
+

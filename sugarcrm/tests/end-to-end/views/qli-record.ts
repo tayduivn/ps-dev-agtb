@@ -8,8 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-import BaseView from './base-view';
+import QliTableRecord from './qli-table-record';
 
 /**
  * Represents Record view.
@@ -17,7 +16,7 @@ import BaseView from './base-view';
  * @class QliRecord
  * @extends BaseView
  */
-export default class QliRecord extends BaseView {
+export default class QliRecord extends QliTableRecord {
 
     public id: string;
 
@@ -29,29 +28,6 @@ export default class QliRecord extends BaseView {
 
         this.selectors = this.mergeSelectors({
             $: `[record-id="${this.id}"]`,
-            buttons: {
-                save: '.btn.inline-save',
-                cancel: '.btn.inline-cancel',
-                QliMenu: '.actionmenu.list.btn-group .btn.dropdown-toggle',
-                'in-line-save': '.btn.inline-save.btn-invisible.ellipsis_inline',
-                'in-line-cancel': '.btn.inline-cancel.btn-invisible.ellipsis_inline'
-            },
-            menu: {
-                editLineItem: '[name=edit_row_button]',
-                deleteLineItem: '[name=delete_row_button]',
-            }
         });
-    }
-
-    public async pressButton(buttonName) {
-        await this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
-    }
-
-    public async openLineItemMenu() {
-        await this.driver.click(this.$('buttons.QliMenu'));
-    }
-
-    public async clickMenuItem(itemName) {
-        await this.driver.click(this.$(`menu.${itemName}`));
     }
 }

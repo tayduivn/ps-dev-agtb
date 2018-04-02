@@ -15,11 +15,7 @@ import {TableDefinition} from 'cucumber';
 import RecordView from '../views/record-view';
 import RecordLayout from '../layouts/record-layout';
 import ListView from '../views/list-view';
-import QliRecord from '../views/qli-record';
-import CommentRecord from '../views/comment-record';
-import GroupRecord from '../views/group-record';
 import RliTableRecord from '../views/rli-table';
-import BaseView from '../views/base-view';
 import SubpanelLayout from "../layouts/subpanel-layout";
 import PersonalInfoDrawerLayout from "../layouts/personal-info-drawer-layout";
 
@@ -86,13 +82,16 @@ When(/^I toggleAll records in (#\S+)$/,
     }, {waitForApp: true});
 
 
-//When I select GenerateQuote action in #Opp_ARecord.SubpanelsLayout.subpanels.revenuelineitems
+/**
+ * Select Generate quote or Delete mass update action in the RLI table of Opportunity record view
+ *
+ * @example When I select GenerateQuote action in #Opp_ARecord.SubpanelsLayout.subpanels.revenuelineitems
+ */
 When(/^I select (GenerateQuote|Delete) action in (#\S+)$/,
     async function (itemName, view: SubpanelLayout) {
 
     await view.clickMenuItem(itemName);
     }, {waitForApp: true});
-
 
 /**
  * Open the preview for the record
@@ -116,13 +115,13 @@ When(/^I open ([\w,\/]+) view and login$/,
         await whenStepsHelper.setUrlHashAndLogin(module);
     }, {waitForApp: true});
 
-    When(/^I go to "([^"]*)" url$/,
-            async function(urlHash): Promise<void> {
-            await this.driver.setUrlHash(urlHash);
-            // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
-            await this.driver.pause(1500);
+When(/^I go to "([^"]*)" url$/,
+        async function(urlHash): Promise<void> {
+        await this.driver.setUrlHash(urlHash);
+        // TODO: it's a temporary solution, need to remove this 'pause' after SBD-349 is fixed
+        await this.driver.pause(1500);
 
-        }, {waitForApp: true});
+    }, {waitForApp: true});
 
 // The step requires the view to be opened, it reformats the provided data to format valid for dynamic edit layoutd
 When(/^I provide input for (#\S+) view$/,
@@ -182,6 +181,12 @@ When(/^I click show less button on (#\S+) view$/, async function(layout: RecordL
     await layout.showLess();
 }, {waitForApp: true});
 
+
+/**
+ * This step only applicable to Quotes record view which has 4 different sections: Business_Card, Billing_and_Shipping, Quote_Settings, Show_More
+ *
+ * @example When I toggle Billing_and_Shipping panel on #Quote_3Record.RecordView view
+ */
 When(/^I toggle (Business_Card|Billing_and_Shipping|Quote_Settings|Show_More) panel on (#\S+) view$/, async function (panelName: string, view: RecordView) {
 
     await view.togglePanel(panelName);
@@ -227,6 +232,7 @@ When(/^I set values for (\*[a-zA-Z](?:\w|\S)*) in (#\S+)$/,
 
     }, {waitForApp: true});
 
+
 When(/^I click (\S+) field on (#\S+) view$/,
     async function(fieldName, layout: any) {
         let view = layout.type ? layout.defaultView : layout;
@@ -242,60 +248,12 @@ When(/^I click (\S+) field on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+) view$/,
 
     }, {waitForApp: true});
 
-When(/^I choose (createLineItem|createComment|createGroup) on QLI section on (#\S+) view$/, async function (itemName, layout: RecordLayout) {
-    await layout.QliTable.openMenu();
-    await this.driver.waitForApp();
-    await layout.QliTable.clickMenuItem(itemName);
-}, {waitForApp: true});
-
-When(/^I create new group on QLI section on (#\S+) view$/, async function (layout: RecordLayout, data: any) {
-
-    if (data.hashes.length > 1) {
-        throw new Error('One line data table entry is expected');
-    }
-
-    let inputData = stepsHelper.getArrayOfHashmaps(data)[0];
-
-    // check for * marked column and cache the record and view if needed
-    let uidInfo = Utils.computeRecordUID(inputData);
-
-    seedbed.cucumber.scenario.recordsInfo[uidInfo.uid] = {
-        uid: uidInfo.uid,
-        originInput: JSON.parse(JSON.stringify(inputData)),
-        input: inputData,
-        module: 'ProductBundles',
-    };
-
-    await layout.QliTable.openMenu();
-    await this.driver.waitForApp();
-    await layout.QliTable.clickMenuItem('createGroup');
-
-    await this.driver.waitForApp();
-
-    await layout.QliTable.GroupRecord.setFieldsValue(inputData);
-
-}, {waitForApp: true});
-
-When(/^I choose (editLineItem|deleteLineItem|editGroup|deleteGroup) on (#[a-zA-Z](?:\w|\S)*)$/, async function (itemName, view:QliRecord) {
-
-    await view.openLineItemMenu();
-    await this.driver.waitForApp();
-    await view.clickMenuItem(itemName);
-}, {waitForApp: true});
-
-
-When(/^I click on (save|cancel) button on QLI (#\S+) record$/, async function (buttonName, record: QliRecord) {
-    await record.pressButton(buttonName);
-}, {waitForApp: true});
-
-When(/^I click on (save|cancel) button on Comment (#\S+) record$/, async function (buttonName, record: CommentRecord) {
-    await record.pressButton(buttonName);
-}, {waitForApp: true});
-
-When(/^I click on (save|cancel) button on Group (#\S+) record$/, async function (buttonName, record: GroupRecord) {
-    await record.pressButton(buttonName);
-}, {waitForApp: true});
-
+/**
+ * This step is needed when new opportunity is created through UI. Opportunity create drawer has RLI
+ * section when user can add/remove RLI lines to new opportunity
+ *
+ * @example "I choose addRLI on #OpportunityDrawer.RLITable view for 1 row"
+ */
 When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/, async function (buttonName, view: RliTableRecord, index)  {
 
     let rowView = view.getRowByIndex(index);
@@ -306,9 +264,24 @@ When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/
 
 
 When(/^I dismiss alert$/, async function () {
-    await this.driver.alertDismiss();
-}, {waitForApp: true});
 
+        await this.driver.alertDismiss();
+
+    }, {waitForApp: true});
+
+
+
+/**
+ * This step required in personal info drawer of GDPR workflow. This steps selects the fields for erasure in Personal INfo drawer
+ *
+ * @example     When I select fields in #PersonalInfoDrawer view
+ *               | fieledName            |
+ *               | first_name            |
+ *               | last_name             |
+ *               | title                 |
+ *               | primary_address_state |
+ *
+ */
 When(/^I select fields in (#\S+) view$/,
     async function (layout:PersonalInfoDrawerLayout , data: TableDefinition): Promise<void> {
 
@@ -320,6 +293,4 @@ When(/^I select fields in (#\S+) view$/,
         for(let i=0; i<rows.length; i++ ) {
             await layout.clickRowByFiledName(data.rows()[i]);
         }
-
-
     }, {waitForApp: true});

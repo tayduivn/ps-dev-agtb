@@ -16,6 +16,7 @@ import CommentRecord from './comment-record';
 import GroupRecord from './group-record';
 import {QLIHeader} from './qli-header';
 import {QLIFooter} from './qli-footer';
+import {TableDefinition} from 'cucumber';
 
 
 /**
@@ -43,11 +44,17 @@ export default class QliTable extends BaseView {
                 createLineItem: '[name=create_qli_button]',
                 createComment: '[name=create_comment_button]',
                 createGroup: '[name=create_group_button]'
-            }
+            },
+            selectAll: '.flex-list-row-header .btn.btn-invisible.checkall',
+            massUpdateMenuContent: {
+                massUpdateMenu: '.flex-list-row-header .btn.btn-invisible.dropdown-toggle',
+                GroupSelected: '[name=group_button]',
+                DeleteSelected: '[name=massdelete_button]'
+            },
         });
 
         this.Header = this.createComponent<QLIHeader>(QLIHeader);
-        this.Footer = this.createComponent<QLIHeader>(QLIFooter);;
+        this.Footer = this.createComponent<QLIHeader>(QLIFooter);
 
         this.QliRecord =  this.createComponent<QliRecord>(QliRecord);
         this.CommentRecord =  this.createComponent<CommentRecord>(CommentRecord);
@@ -67,5 +74,60 @@ export default class QliTable extends BaseView {
         await this.driver.click(this.$(`menu.${itemName}`));
     }
 
+    public async toggleAllItems() {
+        await this.driver.click(this.$(`selectAll`));
+    }
+
+    public async toggleMassUpdateMenu() {
+        await this.driver.click(this.$(`massUpdateMenuContent.massUpdateMenu`));
+    }
+
+    public async clickMassUpdateMenuItem(itemName) {
+        await this.driver.click(this.$(`massUpdateMenuContent.${itemName}`));
+    }
+
+    public async openQliActionsMenuAndCheck(needToCheck, data?: TableDefinition) {
+
+        //await this.toggleMassUpdateMenu();
+
+        if (needToCheck) {
+
+            let rows = data.rows();
+
+            for (let i = 0; i < rows.length; i++) {
+
+                let row = rows[i];
+                let buttonName = row[0];
+                let isButtonActive;
+
+                if (buttonName == 'massUpdateMenu') {
+                    isButtonActive = await this.checkIsButtonActive(buttonName);
+                } else {
+                    await this.toggleMassUpdateMenu();
+                    isButtonActive = await this.checkIsButtonActive(buttonName);
+                    await this.toggleMassUpdateMenu();
+                }
+
+
+                if (row[1] !== isButtonActive.toString()) {
+
+                    let errMessage = null;
+
+                    if (row[1] === 'true') {
+                        errMessage = `Menu item '${buttonName}' expected to be active, but is disabled`;
+                    } else {
+                        errMessage = `Menu item '${buttonName}' expected to be disabled, but is active`;
+                    }
+
+                    throw new Error(errMessage);
+                }
+            }
+        }
+    };
+
+    public async checkIsButtonActive(buttonName) {
+        let isDisabled = await this.driver.isExisting(this.$(`massUpdateMenuContent.${buttonName}`) + '.disabled');
+        return !isDisabled;
+    }
 }
 
