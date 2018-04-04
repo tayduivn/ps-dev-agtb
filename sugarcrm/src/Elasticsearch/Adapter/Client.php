@@ -63,10 +63,10 @@ class Client extends BaseClient
     );
 
     /**
-     * Return ES version checks ES 5.x
+     * supported ES versions
      * @var array
      */
-    protected static $supportedVersion = array(
+    protected static $supportedVersions = array(
         array('version' =>'5.4', 'operator' => '>='),
         array('version' => '7.0', 'operator' => '<'),
     );
@@ -109,9 +109,22 @@ class Client extends BaseClient
 
     /**
      * @return string elasticsearch version
+     * @throws \Exception
      */
-    public function getVersion()
+    public function getVersion() : string
     {
+        if (empty($this->version)) {
+            $result = $this->ping();
+            if ($result->isOk()) {
+                $data = $result->getData();
+                $this->version = $data['version']['number']?? null;
+            }
+        }
+
+        if (empty($this->version)) {
+            $this->_logger->critical("Elasticsearch: not able to get ES version");
+            throw new \Exception('Elasticsearch: not able to get ES version');
+        }
         return $this->version;
     }
 
@@ -148,7 +161,7 @@ class Client extends BaseClient
             $this->_logger->critical("Elasticsearch verify conn: No valid version string available");
         } else {
             $this->version = $data['version']['number'];
-            if ($this->checkEsVersion($data['version']['number'])) {
+            if ($this->checkEsVersion($this->version)) {
                 $status = self::CONN_SUCCESS;
             } else {
                 $status = self::CONN_VERSION_NOT_SUPPORTED;
@@ -232,7 +245,7 @@ class Client extends BaseClient
     {
         $result = true;
         // verify supported versions
-        foreach (self::$supportedVersion as $check) {
+        foreach (self::$supportedVersions as $check) {
             $result = $result && version_compare($version, $check['version'], $check['operator']);
         }
         return $result;

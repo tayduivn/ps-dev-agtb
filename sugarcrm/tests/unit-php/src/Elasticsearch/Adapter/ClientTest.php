@@ -71,6 +71,7 @@ class ClientTest extends TestCase
             ['6.x'],
         ];
     }
+
     /**
      * @covers ::checkEsVersion
      *
@@ -84,23 +85,107 @@ class ClientTest extends TestCase
 
     public function providerTestCheckVersion()
     {
-        return array(
+        return [
             //6.0.x is supported
-            array('6.0.0', true),
-            array('6.0.9', true),
-            array('6.9', true),
+            ['6.0.0', true],
+            ['6.0.9', true],
+            ['6.9', true],
             // version 5.4 to 5.6.x are supported
-            array('5.6.0', true),
-            array('5.6.9', true),
-            array('5.4.0', true),
-            array('5.4.9', true),
-            array('5.4', true),
-            array('5.5.0', true),
-            array('5.5', true),
+            ['5.6.0', true],
+            ['5.6.9', true],
+            ['5.4.0', true],
+            ['5.4.9', true],
+            ['5.4', true],
+            ['5.5.0', true],
+            ['5.5', true],
             // 1.x and 2.x are not supported
-            array('1.7', false),
-            array('2.3.1', false),
-        );
+            ['1.7', false],
+            ['2.3.1', false],
+        ];
+    }
+
+    /**
+     * @covers ::getVersion
+     * @dataProvider providerTestGetVersion
+     */
+    public function testGetVersion(string $responseString, string $expected)
+    {
+        $clientMock = $this->getClientMock(['ping']);
+        $clientMock->expects($this->any())
+            ->method('ping')
+            ->will($this->returnValue(new Response($responseString)));
+
+        $this->assertSame($expected, $clientMock->getVersion());
+    }
+
+    public function providerTestGetVersion() :array
+    {
+        return [
+            [
+                '{
+                  "status" : 200,
+                  "name" : "Zom",
+                  "cluster_name" : "elasticsearch_brew",
+                  "version" : {
+                    "number" : "6.0.0"
+                  }
+                }',
+                '6.0.0',
+            ],
+            [
+                '{
+                  "status" : 200,
+                  "name" : "Zom",
+                  "cluster_name" : "elasticsearch_brew",
+                  "version" : {
+                    "number" : "5.4"
+                  }
+                }',
+                '5.4',
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::getVersion
+     *
+     * @expectedException \Exception
+     * @dataProvider providerTestGetVersionException
+     */
+    public function testGetVersionException(?string $responseString)
+    {
+        $clientMock = $this->getClientMock(['ping']);
+        $clientMock->expects($this->any())
+            ->method('ping')
+            ->will($this->returnValue(new Response($responseString)));
+        $clientMock->getVersion();
+    }
+
+    public function providerTestGetVersionException() :array
+    {
+        return [
+            [
+                '{
+                  "status" : 401,
+                  "name" : "not_authorized",
+                  "version" : {
+                    "number" : "6.0.0"
+                  }
+                }',
+            ],
+            [
+                '{
+                  "status" : 200,
+                  "name" : "no_version",
+                  "cluster_name" : "elasticsearch_brew",
+                  "version" : {
+                    "number" : ""
+                  }
+                }',
+            ],
+            // no response
+            [null],
+        ];
     }
 
     /**
@@ -416,7 +501,7 @@ class ClientTest extends TestCase
     protected function getClientMock(array $methods = null)
     {
         $this->setLogger();
-        $mock = TestMockHelper::getObjectMock($this, 'Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client', $methods);
+        $mock = TestMockHelper::getObjectMock($this, Client::class, $methods);
         $mock->setLogger($this->logger);
         return $mock;
     }
