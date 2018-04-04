@@ -781,34 +781,28 @@ class SugarTestHelper
      * Create custom field
      *
      * @static
-     * @param array $params Array containing module name and field vardefs
+     * @param string $module
+     * @param array $vardefs
      *
      * @return TemplateField
      * @throws PHPUnit_Framework_Exception
      */
-    protected static function setUp_custom_field(array $params)
+    public static function setUpCustomField(string $module, array $vardefs) : TemplateField
     {
         self::$registeredVars['custom_field'] = true;
 
-        if (count($params) < 2) {
-            throw new PHPUnit_Framework_Exception(sprintf(
-                '%s requires 2 parameters, %d given',
-                __METHOD__,
-                count($params)
-            ));
-        }
-
-        list($module, $vardefs) = $params;
         if (!isset($vardefs['type'])) {
             throw new PHPUnit_Framework_Exception('Field type is not specified');
         }
 
         $field = get_widget($vardefs['type']);
+
         foreach ($vardefs as $param => $value) {
             $field->{$param} = $value;
         }
 
         $bean = BeanFactory::newBean($module);
+
         if (!$bean) {
             throw new PHPUnit_Framework_Exception(sprintf(
                 '%s is not a valid module name',
@@ -842,11 +836,25 @@ class SugarTestHelper
     }
 
     /**
-     * Removal of custom fields
-     *
-     * @static
+     * @deprecated Use setUpCustomField() instead
      */
-    protected static function tearDown_custom_field()
+    protected static function setUp_custom_field(array $params)
+    {
+        if (count($params) < 2) {
+            throw new PHPUnit_Framework_Exception(sprintf(
+                '%s requires 2 parameters, %d given',
+                __METHOD__,
+                count($params)
+            ));
+        }
+
+        return self::setUpCustomField(...$params);
+    }
+
+    /**
+     * Removal of custom fields
+     */
+    public static function tearDownCustomFields() : void
     {
         $mi = new ModuleInstaller();
         $mi->silent = true;
@@ -871,6 +879,14 @@ class SugarTestHelper
         }
 
         self::$customFields = array();
+    }
+
+    /**
+     * @deprecated Use tearDownCustomFields() instead
+     */
+    protected static function tearDown_custom_field()
+    {
+        self::tearDownCustomFields();
     }
 
     const NOFILE_DATA = '__NO_FILE__';
