@@ -150,7 +150,7 @@ class ModuleApi extends SugarApi {
         }
         $args['fields'] = $piiFields;
 
-        $data = $this->formatBean($api, $args, $bean, ['display_acl']);
+        $data = $this->formatBeanAfterSave($api, $args, $bean);
 
         $eventRepo = Container::getInstance()->get(EventRepository::class);
         $events = $this->formatSourceSubject(
@@ -170,7 +170,7 @@ class ModuleApi extends SugarApi {
         }
 
         if (in_array('email', $piiFields)) {
-            $fields = array_merge($fields, $this->mergeEmailFieldsWithEvents($bean, $events));
+            $fields = array_merge($fields, $this->mergeEmailFieldsWithEvents($data['email'] ?? null, $events));
         }
 
         $return = ['fields' => $fields, '_acl' => $data['_acl'],];
@@ -208,9 +208,9 @@ class ModuleApi extends SugarApi {
         return $item;
     }
 
-    private function mergeEmailFieldsWithEvents($bean, $events)
+    private function mergeEmailFieldsWithEvents($emails, $events)
     {
-        if (empty($bean->email)) {
+        if (empty($emails)) {
             return [[
                 'field_name' => 'email',
                 'value' => null,
@@ -220,7 +220,6 @@ class ModuleApi extends SugarApi {
             ]];
         }
 
-        $emails = array_combine(array_column($bean->email, 'email_address_id'), $bean->email);
         $emailEvents = array_filter($events, function ($v) {
             return $v['field_name'] === 'email';
         });

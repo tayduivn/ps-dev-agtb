@@ -16,7 +16,6 @@ use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
 use Sugarcrm\Sugarcrm\Security\Subject\User;
-use Sugarcrm\Sugarcrm\Util\Uuid;
 
 require_once ("tests/{old}/SugarTestRestUtilities.php");
 
@@ -81,22 +80,7 @@ class ModuleApiTest extends TestCase
         $subject = new User($GLOBALS['current_user'], new RestApiClient());
         $context->activateSubject($subject);
         $context->setAttribute('platform', 'base');
-        $contact = BeanFactory::newBean('Contacts');
-        $contact->id = Uuid::uuid1();
-        $contact->new_with_id = true;
-        $contact->last_name = 'Last-' . $contact->id;
-        $contact->phone_mobile = '(111) 111-1111';
-
-        $emailAddr1 = $contact->last_name . '-1'. '@example.com';
-        $email1 = SugarTestEmailAddressUtilities::createEmailAddress($emailAddr1);
-        SugarTestEmailAddressUtilities::addAddressToPerson(
-            $contact,
-            $email1
-        );
-
-        $contact->emailAddress->addAddress($emailAddr1, true, false, false, false, $email1->id);
-        $contact->emailAddress->dontLegacySave = true;
-        $contact->save();
+        $contact = SugarTestContactUtilities::createContact(null, ['phone_mobile' => '(111)222-2222']);
 
         $args['module'] = 'Contacts';
         $args['record'] = $contact->id;
@@ -126,7 +110,7 @@ class ModuleApiTest extends TestCase
             'Expected formatted subject not returned for email.'
         );
         $this->assertEquals(
-            $emailAddr1,
+            $contact->emailAddress->addresses[0]["email_address"],
             $fieldsByName['email']['value']['email_address'],
             'Expected email address not returned.'
         );
@@ -154,9 +138,29 @@ class ModuleApiTest extends TestCase
 
     public function testGetPiiFieldsEmailWithNoValue()
     {
-        $account = SugarTestAccountUtilities::createAccount();
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = "ModulaApiTest setUp Account";
+        $account->save();
         $args['module'] = 'Accounts';
         $args['record'] = $account->id;
+
+        $moduleApi = new ModuleApi();
+        $result = $moduleApi->getPiiFields($this->serviceMock, $args);
+
+        $this->assertNotEmpty($result, 'Did not fetch any Pii fields.');
+        $fieldsByName = array_combine(array_column($result['fields'], 'field_name'), $result['fields']);
+        $this->assertArrayHasKey('email', $fieldsByName, 'Expected email entry not returned.');
+        $this->assertNull($fieldsByName['email']['value'], 'Expected email entry with null value.');
+    }
+
+    public function testGetPiiFieldsEmailWithNoPermission()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+
+        $args['module'] = 'Contacts';
+        $args['record'] = $contact->id;
+
+        SugarACL::$acls['Contacts'][] = new TestSugarACLEmailAddress();
 
         $moduleApi = new ModuleApi();
         $result = $moduleApi->getPiiFields($this->serviceMock, $args);
@@ -875,3 +879,23 @@ class ModuleApiTestMock extends ModuleApi
         $this->processAfterCreateOperations($args, $bean);
     }
 }
+
+// @codingStandardsIgnoreStart
+class TestSugarACLEmailAddress extends SugarACLEmailAddress
+{
+    /**
+     * Return access to the email field as false.
+     */
+    public function checkAccess($module, $view, $context)
+    {
+        if ($view != 'field') {
+            return true;
+        }
+        if ($context['field'] != 'email') {
+            return true;
+        }
+
+        return false;
+    }
+}
+// @codingStandardsIgnoreEnd
