@@ -898,7 +898,7 @@
         var erasedFields = this.model.get('_erased_fields');
         for (var fieldKey in allFields) {
             if (app.acl.hasAccessToModel('edit', this.model, fieldKey) &&
-                (!_.contains(erasedFields, fieldKey) || this.model.get(fieldKey))) {
+                (!_.contains(erasedFields, fieldKey) || this.model.get(fieldKey) || allFields[fieldKey].id_name)) {
                 _.extend(fieldsToValidate, _.pick(allFields, fieldKey));
             }
         }

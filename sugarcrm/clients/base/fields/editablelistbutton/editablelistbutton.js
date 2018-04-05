@@ -121,9 +121,9 @@
 
         var fieldsToValidate = this.view.getFields(this.module, this.model);
         var erasedFields = this.model.get('_erased_fields');
-        fieldsToValidate = _.pick(fieldsToValidate, function(vardef, fieldName) {
+        fieldsToValidate = _.pick(fieldsToValidate, function(fieldInfo, fieldName) {
             return app.acl.hasAccessToModel('edit', this.model, fieldName) &&
-                (!_.contains(erasedFields, fieldName) || this.model.get(fieldName));
+                (!_.contains(erasedFields, fieldName) || this.model.get(fieldName) || fieldInfo.id_name);
         }, this);
         this.model.doValidate(fieldsToValidate, _.bind(this._validationComplete, this));
     },
