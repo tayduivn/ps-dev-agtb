@@ -263,7 +263,7 @@ class LogicHook{
             $context->activateSubject($subject);
 
             try {
-                if ($hookClass == $hookFunc) {
+                if (strcasecmp($hookClass, $hookFunc) === 0) {
                     $this->log("debug", "Creating new instance of hook class '$hookClass' with parameters");
                     if (!is_null($this->bean)) {
                         new $hookClass($this->bean, $event, $arguments);

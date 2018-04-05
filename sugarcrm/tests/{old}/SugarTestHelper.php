@@ -876,14 +876,23 @@ class SugarTestHelper
     const NOFILE_DATA = '__NO_FILE__';
     public static $oldFiles;
     public static $oldDirs;
+
     /**
-     * Setup file preserving hooks
+     * Setup tracking of the filesystem changes
      */
-    protected static function setUp_files()
+    public static function setUpFiles() : void
     {
         self::$oldFiles = array();
         self::$oldDirs = array();
         self::$registeredVars['files'] = true;
+    }
+
+    /**
+     * @deprecated Use setUpFiles() instead
+     */
+    protected static function setUp_files()
+    {
+        self::setUpFiles();
     }
 
     /**
@@ -928,9 +937,9 @@ class SugarTestHelper
     }
 
     /**
-     * Restore files to previous state
+     * Roll back tracked filesystem changes
      */
-    protected static function tearDown_files()
+    public static function tearDownFiles() : void
     {
         foreach (self::$oldFiles as $filename => $filecontents) {
             if (SHADOW_ENABLED) {
@@ -954,6 +963,14 @@ class SugarTestHelper
                 rmdir($dirname);
             }
         }
+    }
+
+    /**
+     * @deprecated Use tearDownFiles() instead
+     */
+    protected static function tearDown_files()
+    {
+        self::tearDownFiles();
     }
 
     /**
