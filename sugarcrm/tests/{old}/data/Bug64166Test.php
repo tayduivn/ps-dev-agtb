@@ -24,7 +24,6 @@ class Bug64166Test extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -35,7 +34,6 @@ class Bug64166Test extends TestCase
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testEmptyRelateFieldIsRegistered()

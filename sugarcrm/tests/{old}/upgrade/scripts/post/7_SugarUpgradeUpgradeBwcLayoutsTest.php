@@ -21,7 +21,6 @@ require_once 'upgrade/scripts/post/7_UpgradeBwcLayouts.php';
  */
 class SugarUpgradeUpgradeBwcLayoutsTest extends TestCase
 {
-
     private $upgradeDriver;
     private $script;
 

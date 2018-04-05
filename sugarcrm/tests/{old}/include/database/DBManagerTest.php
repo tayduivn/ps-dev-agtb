@@ -49,7 +49,6 @@ class DBManagerTest extends TestCase
             $this->dbEncode = $this->_db->getEncode();
         }
         $this->created = array();
-
     }
 
     public function tearDown()
@@ -2029,7 +2028,6 @@ SQL;
      */
     public function testDBGuidGeneration()
     {
-
 		$guids = array();
 		$sql = "SELECT {$this->_db->getGuidSQL()} {$this->_db->getFromDummyTable()}";
 		for($i = 0; $i < 1000; $i++)
@@ -2290,7 +2288,6 @@ SQL;
     // Inserts a 2D array of data into the specified table
     // First row of array must be the column headers, first column must be PK column name
     public function insertTableArray( $tableName, $tableDataArray ) {
-
         $sqlPrefix = "INSERT INTO $tableName ( {$tableDataArray[0][0]} ";  // has to be at least one column
         for ($col = 1; $col < count($tableDataArray[0]); $col++) {
             $sqlPrefix .= ", {$tableDataArray[0][$col]}";
@@ -2316,7 +2313,6 @@ SQL;
     // Deletes a 2D array of data from the specified table
     // First row of array must be column headers, first column must be PK column name
     public function deleteTableArray( $tableName, $tableDataArray ) {
-
         $sql = "DELETE FROM $tableName WHERE {$tableDataArray[0][0]} IN ( '{$tableDataArray[1][0]}'";  // has to be at least one column
         for ($row = 2; $row < count($tableDataArray); $row++) {
             $sql .= ",'{$tableDataArray[$row][0]}'";
@@ -2325,7 +2321,6 @@ SQL;
 
         // Delete the data
         $result = $this->_db->query($sql);
-
     }
 
 
@@ -2382,7 +2377,6 @@ SQL;
 
         // Loop through each test
         foreach ( $resultsDataArray as $resultsRow ) {
-
             // Get where clause
             $whereClause = "hierarchy_type='$resultsRow[2]'";
 
@@ -2408,7 +2402,6 @@ SQL;
 
         // remove data from table
         $result = $this->deleteTableArray( $tableName, $tableDataArray );
-
     }
 
     /**

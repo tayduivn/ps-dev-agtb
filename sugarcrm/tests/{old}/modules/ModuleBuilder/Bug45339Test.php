@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug45339Test extends TestCase
 {
-
     private $relationAccountContact = null;
     private $relationContactAccount = null;
     private $mbPackage = null;
@@ -356,12 +355,10 @@ class Bug45339Test extends TestCase
         
         $this->assertArrayHasKey('relationships', $installdefs);
     }
-
 }
 
 class Bug45339MBPackageMock extends MBPackage
 {
-
     public function getExtensionsManifestForPackageTest($path, &$installdefs)
     {
         return $this->getExtensionsManifestForPackage($path, $installdefs);
@@ -381,6 +378,4 @@ class Bug45339MBPackageMock extends MBPackage
     {
         return $this->getCustomRelationshipsByModuleName($moduleName, $lhs);
     }
-
-
 }

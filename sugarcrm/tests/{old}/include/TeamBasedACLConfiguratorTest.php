@@ -221,7 +221,6 @@ class TeamBasedACLConfiguratorTest extends TestCase
 
         $actualActions = $this->role->getRoleActions($this->role->id);
         $this->assertEquals($fallbackModuleAccess, $actualActions[$this->module]['module'][$action]['aclaccess']);
-
     }
 
     /**

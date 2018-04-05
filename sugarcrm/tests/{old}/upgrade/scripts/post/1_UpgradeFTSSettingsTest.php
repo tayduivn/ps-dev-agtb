@@ -371,5 +371,4 @@ class UpgradeFTSSettingsTest extends TestCase
             ->setMethods($methods)
             ->getMock();
     }
-
 }

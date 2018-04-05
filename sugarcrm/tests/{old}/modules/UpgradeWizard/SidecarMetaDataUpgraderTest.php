@@ -1008,8 +1008,6 @@ class SidecarMetaDataUpgraderTest extends TestCase
         $found = $this->_fieldExistsInDefs('unit_test_c', $defs);
         $this->assertFalse($found, "The `unit_test_c` field was found in file $filepath");
     }
-
-
 }
 
 class SidecarMetaDataUpgraderForTest extends SidecarMetaDataUpgrader

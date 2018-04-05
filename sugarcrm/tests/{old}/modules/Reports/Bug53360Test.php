@@ -23,7 +23,6 @@ require_once('modules/Reports/templates/templates_list_view.php');
  */
 class Bug53360Test extends TestCase
 {
-
     private $rowsAndColumnsData, $report;
 
     public function setUp()
@@ -97,5 +96,4 @@ class Bug53360Test extends TestCase
             array('cells' => array("sarah", "Needs Analysis", "$10,000.00", "$10,000.00", "1"), 'count' => 1, 'User Name' => 'sarah'),
         );
     }
-
 }

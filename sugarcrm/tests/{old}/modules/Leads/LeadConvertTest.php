@@ -27,7 +27,6 @@ class LeadConvertTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
@@ -92,8 +91,6 @@ class LeadConvertTest extends TestCase
 
         unset($this->lead);
         unset($this->modulesDef);
-
-        parent::tearDown();
     }
 
     public function testInitialize_Successful()

@@ -19,8 +19,6 @@ class RS97Test extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +29,6 @@ class RS97Test extends TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     public function testMerge()

@@ -81,7 +81,6 @@ class Bug49784Test extends TestCase
         $this->email->cc_addrs_names = $this->email->cleanEmails("cc@domain.eu");
         $this->email->name = 'RE: [CASE:'.$this->case->case_number.'] '.$this->case->name;
         $this->email->save();
-
     }
 
     public function tearDown()
@@ -120,5 +119,4 @@ class Bug49784Test extends TestCase
         //make sure the logic hook only ran once
         $this->assertEquals(1, $GLOBALS['hookRunCount'], 'Logic hook should only have run once during the inbound email processing.');
     }
-
 }

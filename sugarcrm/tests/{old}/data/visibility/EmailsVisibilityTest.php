@@ -22,7 +22,6 @@ class EmailsVisibilityTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
 
         static::$subject = 'subject: ' . Uuid::uuid1();
@@ -52,7 +51,6 @@ class EmailsVisibilityTest extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
-        parent::tearDownAfterClass();
     }
 
     /**

@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarForecasting_ReportingUsersTest extends TestCase
 {
-
     protected static $users = array();
 
     /**
@@ -25,7 +24,6 @@ class SugarForecasting_ReportingUsersTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestForecastUtilities::setUpForecastConfig();
@@ -67,7 +65,6 @@ class SugarForecasting_ReportingUsersTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
         $GLOBALS['current_user'] = null;
-        parent::tearDownAfterClass();
     }
     
     public function testReturnTreeShouldContain3Children()

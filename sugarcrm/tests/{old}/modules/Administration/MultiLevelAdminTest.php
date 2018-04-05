@@ -128,7 +128,6 @@ class MultiLevelAdminTest extends TestCase
 
         $this->assertFalse($user->isDeveloperForModule($module));
         $this->assertTrue($user->isAdminForModule($module));
-
     }
     
     public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreOnlyDev()

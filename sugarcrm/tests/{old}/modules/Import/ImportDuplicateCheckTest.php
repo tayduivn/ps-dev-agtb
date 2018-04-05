@@ -237,9 +237,5 @@ class ImportDuplicateCheckTest extends TestCase
 
         //we're done, lets delete the focus bean now
         $focus->mark_deleted($focus->id);
-
     }
-
-
-
 }

@@ -12,7 +12,6 @@
 
 
 class RestPublicMetadataViewTemplatesTest extends RestTestBase {
-
     /**
      * @group rest
      */

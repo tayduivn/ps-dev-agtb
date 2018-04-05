@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug42406 extends TestCase
 {
-
     public function getBrokenField()
     {
         return array(

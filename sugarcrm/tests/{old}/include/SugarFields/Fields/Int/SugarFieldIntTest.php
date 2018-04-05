@@ -37,7 +37,6 @@ class SugarFieldIntTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $current_user = $GLOBALS['current_user'];
         $current_user->setPreference('dec_sep', '.');
         $current_user->setPreference('num_grp_sep', ',');
@@ -56,7 +55,6 @@ class SugarFieldIntTest extends TestCase
         $current_user->save();
         //force static var reset
         get_number_seperators(true);
-        parent::tearDown();
     }
 
     /**

@@ -37,7 +37,6 @@ class Bug45053Test extends TestCase
     
     public function tearDown()
     {
-        
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE id='{$this->opportunity->id}'");
     }
@@ -70,6 +69,5 @@ class Bug45053Test extends TestCase
     	$this->searchForm->populateFromArray($this->requestArray,'advanced_search',false);
     	$test_sales_stage = $this->searchForm->fieldDefs['sales_stage_advanced']['value'];
     	$this->assertEquals($this->requestArray['sales_stage'], $test_sales_stage);
-
     }
 }

@@ -61,6 +61,5 @@ class Bug44858Test extends TestCase
     	$whereArray = $searchForm->generateSearchWhere(true, $account->module_dir);
     	//echo var_export($whereArray, true);
     	$this->assertEquals(0, count($whereArray));
-
     }
 }

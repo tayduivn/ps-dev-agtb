@@ -38,7 +38,6 @@ class ConvertLeadTest extends TestCase
             $this->license_expires_in = $_SESSION['LICENSE_EXPIRES_IN'];
         }
         $_SESSION['LICENSE_EXPIRES_IN'] = '5';
-
     }
 
     public function tearDown()
@@ -79,7 +78,6 @@ class ConvertLeadTest extends TestCase
 
         $_SESSION['LICENSE_EXPIRES_IN'] = $this->license_expires_in;
         SugarTestHelper::tearDown();
-
     }
 
     /**
@@ -158,7 +156,6 @@ class ConvertLeadTest extends TestCase
 
             $this->assertEquals($row['parent_id'], $account->id, 'parent id of meeting should be equal to passed in account id: '.$account->id);
         }
-
     }
 
 

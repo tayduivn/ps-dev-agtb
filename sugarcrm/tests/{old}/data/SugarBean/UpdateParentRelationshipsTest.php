@@ -29,7 +29,6 @@ class UpdateParentRelationshipsTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
 
         self::$account1 = SugarTestAccountUtilities::createAccount();
@@ -46,7 +45,6 @@ class UpdateParentRelationshipsTest extends TestCase
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     public function testUpdateParentRelationships()

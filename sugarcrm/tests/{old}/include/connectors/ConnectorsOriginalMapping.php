@@ -28,7 +28,6 @@ class ConnectorsOriginalMapping extends Sugar_Connectors_TestCase
     }
     public function testOriginalMapping()
     {
-
         $source = SourceFactory::getSource('ext_rest_twitter');
         $originalMapping = $source->getOriginalMapping();
 
@@ -38,5 +37,3 @@ class ConnectorsOriginalMapping extends Sugar_Connectors_TestCase
         $this->assertEquals($mapping, $originalMapping);
     }
 }
-
-?>

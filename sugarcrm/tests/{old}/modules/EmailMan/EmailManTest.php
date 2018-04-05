@@ -22,7 +22,6 @@ class EmailManTest extends TestCase
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestCampaignUtilities::removeAllCreatedCampaignLogs();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        parent::tearDown();
     }
 
     public function dataProviderForHasEmailBeenSent()

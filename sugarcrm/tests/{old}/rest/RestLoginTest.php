@@ -121,7 +121,6 @@ class RestLoginTest extends RestTestBase
         $this->authToken = 'LOGGING_IN';
         $replyPing2 = $this->_restCall('ping?oauth_token='.$reply['reply']['access_token']);
         $this->assertEquals('pong',$replyPing2['reply']);
-
     }
 
 
@@ -296,6 +295,4 @@ class RestLoginTest extends RestTestBase
         $this->assertNotEmpty($reply['reply']['error']);
         $this->assertEquals('need_login',$reply['reply']['error']);
     }
-
-
 }

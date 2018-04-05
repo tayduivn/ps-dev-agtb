@@ -89,7 +89,6 @@ public function testCheckQuery($errorObject, $query, $expected)
             bin2hex(SoapHelperWebServices::decrypt_tripledes($string, $key, $iv))
         );
     }
-
 }
 
 /**
@@ -100,6 +99,5 @@ public function testCheckQuery($errorObject, $query, $expected)
 class ServiceMockObject {
     public function error()
     {
-
     }
 }

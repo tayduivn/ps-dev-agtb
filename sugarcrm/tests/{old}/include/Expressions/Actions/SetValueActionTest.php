@@ -15,10 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class SetValueActionTest extends TestCase
 {
-
     public function setUp()
 	{
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference('datef', "Y-m-d");
         //Set the time format preference to include seconds since the test uses '2001-01-10 11:45:00' which contains seconds
@@ -72,6 +70,5 @@ class SetValueActionTest extends TestCase
         $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
         $action->fire($task);
         $this->assertEquals($task->$target, 4);
-
 	}
 }

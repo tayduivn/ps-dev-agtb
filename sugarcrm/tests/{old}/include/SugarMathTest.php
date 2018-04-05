@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarMathTest extends TestCase
 {
-
     /**
      * test instance type of new instantiation
      *
@@ -168,7 +167,6 @@ class SugarMathTest extends TestCase
         $this->markTestIncomplete('Needs to be fixed by FRM team.');
         $math = SugarMath::init($initVal)->$method($methodVal);
         $this->assertSame($result, $math->result());
-
     }
 
     /**
@@ -708,5 +706,4 @@ class SugarMathTest extends TestCase
             array('1+*2',null,null),
         );
     }
-
 }

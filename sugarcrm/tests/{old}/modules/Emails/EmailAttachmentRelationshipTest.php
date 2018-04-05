@@ -22,7 +22,6 @@ class EmailAttachmentRelationshipTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -32,12 +31,10 @@ class EmailAttachmentRelationshipTest extends TestCase
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestNoteUtilities::removeAllCreatedNotes();
-        parent::tearDownAfterClass();
     }
 
     protected function setUp()
     {
-        parent::setUp();
         $this->relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_attachments');
     }
 
@@ -45,7 +42,6 @@ class EmailAttachmentRelationshipTest extends TestCase
     {
         // Clean up any dangling beans that need to be resaved.
         SugarRelationship::resaveRelatedBeans(false);
-        parent::tearDown();
     }
 
     /**

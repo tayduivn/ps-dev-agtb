@@ -16,7 +16,6 @@ require_once __DIR__ . '/../../../../modules/HealthCheck/pack.php';
 
 class PackTest extends TestCase
 {
-
     public function healthCheckPackProvider()
     {
         return array(

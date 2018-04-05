@@ -108,7 +108,4 @@ class CalendarTest extends TestCase
 		$date2 = $this->time_date->asUser($this->time_date->getNow());
 		$this->assertEquals($date1, $date2, "HandleOffset should be equaivalent to nowDb");
 	}
-
-
-
 }

@@ -22,15 +22,11 @@ class RelateRecordApiUpdateTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user');
     }
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->user1 = SugarTestUserUtilities::createAnonymousUser();
         $this->user2 = SugarTestUserUtilities::createAnonymousUser();
     }

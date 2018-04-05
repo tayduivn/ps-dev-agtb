@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class ContactsBugFixesTest extends TestCase
 {
-
     public function setUp() {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
@@ -56,8 +55,6 @@ class ContactsBugFixesTest extends TestCase
         $this->contacts[] = $bean;
 
         $this->assertFalse($bean->sync_contact == true, "Sync Contact was not set to false");
-
-
     }
 
     public function testPopulateFromApiSyncContactTrue() {

@@ -133,7 +133,6 @@ class Bug40247Test extends TestCase
 	        foreach($viewdefs["{$mod}"]['DetailView']['panels'] as $panels) {
 	        	foreach($panels as $panel) {
 	        		foreach($panel as $row=>$col) {
-
                         if(empty($col))
                         {
                            continue;

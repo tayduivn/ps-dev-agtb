@@ -36,7 +36,6 @@ class SugarWidgetReportFieldTest extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user', array(true, false));
-        parent::setUp();
 
         $this->bean = BeanFactory::newBean('Contacts');
         $this->bean->id = create_guid();
@@ -57,7 +56,6 @@ class SugarWidgetReportFieldTest extends TestCase
     protected function tearDown()
     {
         $this->bean->mark_deleted($this->bean->id);
-        parent::tearDown();
     }
 
     /**

@@ -32,7 +32,6 @@ class RESTAPI4_1Test extends TestCase
         SugarTestHelper::setUp("current_user");
 
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
-        parent::setUp();
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $this->another_user = SugarTestUserUtilities::createAnonymousUser();
         $this->_login();
@@ -243,7 +242,5 @@ class RESTAPI4_1Test extends TestCase
         $this->assertNotEmpty($result['entry_list']);
         $this->assertEquals(1, $result['result_count']);
         $this->assertEquals(1, $result['next_offset']);
-
     }
-
 }

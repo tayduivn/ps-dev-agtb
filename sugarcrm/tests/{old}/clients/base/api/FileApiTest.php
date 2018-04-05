@@ -55,7 +55,6 @@ class FileApiTest extends TestCase
         }
 
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testSaveFilePost()

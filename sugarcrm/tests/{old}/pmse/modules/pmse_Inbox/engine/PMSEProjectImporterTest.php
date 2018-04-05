@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEProjectImporterTest extends TestCase
 {
-
     /**
      * @var PMSEProjectImporter
      */
@@ -756,5 +755,4 @@ class PMSEProjectImporterTest extends TestCase
         $projectImporterMock->setDefaultFlowList($defaultFlows);
         $projectImporterMock->processDefaultFlows();
     }
-
 }

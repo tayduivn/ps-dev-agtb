@@ -27,8 +27,6 @@ class ForecastsRestApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestForecastUtilities::setUpForecastConfig();
 
         self::$currentUser = SugarTestUserUtilities::createAnonymousUser();
@@ -60,7 +58,6 @@ class ForecastsRestApiTest extends TestCase
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        parent::tearDownAfterClass();
     }
 
     public function setUp()
@@ -106,7 +103,6 @@ class ForecastsRestApiTest extends TestCase
      */
     public function testReportees()
     {
-
         $api = new ForecastsApi();
         $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), array('user_id' => self::$currentUser->id, 'level' => '4'));
 
@@ -163,5 +159,4 @@ class ForecastsRestApiTest extends TestCase
         self::$employee2->save();
         $GLOBALS['db']->commit();
     }
-
 }

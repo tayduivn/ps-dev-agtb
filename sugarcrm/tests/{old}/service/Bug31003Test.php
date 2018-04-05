@@ -41,5 +41,4 @@ class Bug31003Test extends SOAPTestCase
         parent::tearDown();
         $GLOBALS['db']->query("DELETE FROM prospects WHERE id = '{$this->contact->id}'");
     }
-
 }

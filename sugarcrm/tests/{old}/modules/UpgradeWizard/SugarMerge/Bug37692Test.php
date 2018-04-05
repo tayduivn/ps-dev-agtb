@@ -81,8 +81,6 @@ function setUp() {
                 }
             }
         }
-
-        parent::tearDown();
     }
 
 function test_project_merge() {
@@ -95,6 +93,4 @@ function test_project_merge() {
    require('custom/modules/Project/metadata/editviewdefs.php');
    $this->assertTrue(isset($viewdefs['Project']['EditView']['panels']['default']), 'Assert that the original panel index is preserved');
 }
-
-
 }

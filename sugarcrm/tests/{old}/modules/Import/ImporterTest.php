@@ -90,7 +90,6 @@ class ImporterTest extends TestCase
         $row = $GLOBALS['db']->fetchByAssoc($result);
 
         $this->assertEquals($expected_datetime, $GLOBALS['db']->fromConvert($row['date_entered'], 'datetime'), 'Got incorrect date_entered.');
-
     }
 
     public function providerIdData()

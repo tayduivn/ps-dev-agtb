@@ -17,14 +17,12 @@ class CRYS528Test extends TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
-        parent::setUp();
     }
 
     public function tearDown()
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testLegacyEmailFieldUpdate()

@@ -19,7 +19,6 @@ class M2MRelationshipTestDuplicateRows extends TestCase
 
     public function setUp()
         {
-
             $this->origDB = $GLOBALS['db'];
             $this->db = new SugarTestDatabaseMock();
             $GLOBALS['db'] = $this->db;

@@ -59,5 +59,4 @@ class RestZeroSpotSearchTest extends RestTestBase {
         $this->assertEquals(count($restReply['reply']['records']), 1, "Should only return the 0 record");
         
     }
-
 }

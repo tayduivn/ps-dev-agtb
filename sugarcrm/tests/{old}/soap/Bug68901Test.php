@@ -18,7 +18,6 @@ class Bug68901Test extends TestCase
     protected static $call, $call2, $contact, $contact2, $meeting, $meeting2;
 
     public static function setUpBeforeClass() {
-
         global $current_user;
 
         // User

@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class FiltersTest extends TestCase
 {
-
     /**
      * Tests may create some files to test customizations. During `setUp` we
      * need to back up these files and delete them temporarily.
@@ -29,8 +28,6 @@ class FiltersTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('files');
 
         foreach (self::$generatedOperatorsFile as $file) {
@@ -45,7 +42,6 @@ class FiltersTest extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     public function tearDown() {
@@ -54,7 +50,6 @@ class FiltersTest extends TestCase
                 unlink($file);
             }
         }
-        parent::tearDown();
     }
 
     public function testGetOperators()

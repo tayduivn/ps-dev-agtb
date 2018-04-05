@@ -225,13 +225,11 @@ class Bug42378Test extends TestCase
             'Assert that search date in db_format 2008-09-01 was converted to user date preference 2008.09.01'
         );
     }
-
 }
 
 
 class Bug42377MockOpportunity extends Opportunity
 {
-
     var $field_defs = array(
         'id' =>
             array(

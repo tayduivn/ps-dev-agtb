@@ -53,8 +53,6 @@ class SugarEmailAddressTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
     }
@@ -68,8 +66,6 @@ class SugarEmailAddressTest extends TestCase
     {
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestHelper::tearDown();
-
-        parent::tearDownAfterClass();
     }
 
     public function isValidEmailProvider()

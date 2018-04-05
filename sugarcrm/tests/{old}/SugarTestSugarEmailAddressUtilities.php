@@ -154,5 +154,4 @@ class SugarTestSugarEmailAddressUtilities
     public static function getContact() {
         return self::createContact(mt_rand());
     }
-
 }

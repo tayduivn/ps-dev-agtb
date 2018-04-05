@@ -16,7 +16,6 @@ require_once __DIR__ . '/../../../../modules/UpgradeWizard/pack_web.php';
 
 class PackWebTest extends TestCase
 {
-
     public function setUp()
     {
         // if shadow is detected, we need to skip this test as it doesn't play nice with shadow

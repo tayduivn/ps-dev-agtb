@@ -25,7 +25,6 @@ class Bug42379Test extends TestCase
 	
 	public function setUp()
 	{
-
 		$this->teamIds[] = '8744c7d9-9e4b-2338-cb76-4ab0a3d0a65f';
 		$this->teamIds[] = '8749a110-1d85-4562-fa23-4ab0a3c65e16';
 		$this->teamIds[] = '874c1242-4645-898d-238a-4ab0a3f7e7c1';
@@ -38,7 +37,6 @@ class Bug42379Test extends TestCase
 		unset($this->teamSets);
         unset($this->teamIds);
         unset($this->teamSetsId);
-
 	}
 	
 	public function testGetStatisticsTeamIds()
@@ -51,11 +49,9 @@ class Bug42379Test extends TestCase
         $this->assertEquals($this->teamIds,
                             $stats['team_ids'],
                             "testing to make sure that team IDs are set");
-
 	}
 
     public function testGetStatisticsWithOneItem(){
-
         $this->teamSets = new TeamSetBug42379Test();
 
         // add just one item from TeamIDs
@@ -64,12 +60,9 @@ class Bug42379Test extends TestCase
        $this->assertEquals(md5($this->teamIds[0]),
                             $stats['team_md5'],
                             "testing to make sure that 1 team ID gets added properly");
-        
-
     }
 
     public function testGetStatisticsTeamCount() {
-
         $this->teamSets = new TeamSetBug42379Test();
         $this->teamSetsId = $this->teamSets->addTeams($this->teamIds);
 
@@ -88,9 +81,7 @@ class Bug42379Test extends TestCase
         $team_md5 = '';
 
         foreach ($this->teamIds as $team_id) {
-
             $team_md5 .= $team_id;
-
         }
             // run the md5 on the whole string of team_ids         
         $team_md5 = md5($team_md5);
@@ -108,14 +99,12 @@ class Bug42379Test extends TestCase
      * the primary team gets selected properly.
      */
     public function testGetStatisticsPrimaryTeamID() {
-
         $this->teamSets = new TeamSetBug42379Test();
         $this->teamSetsId = $this->teamSets->addTeams($this->teamIds);
         $count = count($this->teamIds);
         $this->assertEquals( $this->teamIds[$count-1],
                             $this->teamSets->getPrimaryTeamId(),
                             "make sure that primary team ID is correctly set when sending multiple team IDs");
-
     }
     
     /* This test doesn't actually test the getStatistics method at all
@@ -124,15 +113,12 @@ class Bug42379Test extends TestCase
      * If the proper team is not selected, then it could mess with getStatistics.
      */
     public function testGetStatisticsPrimaryTeamIDWithOneTeam() {
-
         $this->teamSets = new TeamSetBug42379Test();
         $this->teamSetsId = $this->teamSets->addTeams((array_slice($this->teamIds,0,1)));
         $this->assertEquals( $this->teamIds[0],
                             $this->teamSets->getPrimaryTeamId(),
                             "make sure that primary team ID is correctly set when sending only 1 team ID");
-
     }
-
 }
 
 /*
@@ -144,6 +130,4 @@ class TeamSetBug42379Test extends TeamSet
     {
         return $this->_getStatistics($team_ids);
     }
-
-
 }

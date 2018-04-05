@@ -137,8 +137,6 @@ EOQ;
         }
         return $contents;
     }
-
-
 }
 
 class SugarUpgradeUpgradeAccessTest extends SugarUpgradeUpgradeAccess {

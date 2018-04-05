@@ -34,7 +34,6 @@ class RS4Test extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -44,20 +43,17 @@ class RS4Test extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     protected function setUp()
     {
         global $current_user;
-        parent::setUp();
         $this->api = new ConfigModuleApi();
         $this->config = $this->api->config(
             SugarTestRestUtilities::getRestServiceMock(self::$admin),
             array('module' => 'Accounts')
         );
         $current_user = SugarTestUserUtilities::createAnonymousUser(true, false);
-
     }
 
     protected function tearDown()
@@ -66,7 +62,6 @@ class RS4Test extends TestCase
             SugarTestRestUtilities::getRestServiceMock(self::$admin),
             array_merge(array('module' => 'Accounts'), $this->config)
         );
-        parent::tearDown();
     }
 
     /**

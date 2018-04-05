@@ -16,7 +16,6 @@ require_once 'modules/DynamicFields/FieldCases.php';
 
 class Bug46152_P2Test extends TestCase
 {
-
     private $fields = array();
     private $dynamicField = null;
 
@@ -29,7 +28,6 @@ class Bug46152_P2Test extends TestCase
      */
     public function testDoubleLabel()
     {
-
         $idName1 = $GLOBALS['dictionary']['Note']['fields'][$this->fields[0]->name]['id_name'];
         $idName2 = $GLOBALS['dictionary']['Note']['fields'][$this->fields[1]->name]['id_name'];
         $vName1 = $GLOBALS['dictionary']['Note']['fields'][$idName1]['vname'];
@@ -43,7 +41,6 @@ class Bug46152_P2Test extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('Notes'));
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
@@ -60,7 +57,6 @@ class Bug46152_P2Test extends TestCase
         $this->addField('testfield2_b46152');
 
         SugarTestHelper::setUp('mod_strings', array('Notes'));
-
     }
 
     private function addField($name)
@@ -77,7 +73,6 @@ class Bug46152_P2Test extends TestCase
         $field->label_value = $name;
         $field->save($this->dynamicField);
         $this->fields[] = $field;
-
     }
 
     public function tearDown()
@@ -85,7 +80,6 @@ class Bug46152_P2Test extends TestCase
         $this->deleteFields();
 
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     private function deleteFields()
@@ -94,5 +88,4 @@ class Bug46152_P2Test extends TestCase
             $field->delete($this->dynamicField);
         }
     }
-
 }

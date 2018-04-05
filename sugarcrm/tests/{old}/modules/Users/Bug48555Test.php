@@ -38,7 +38,6 @@ class Bug48555Test extends TestCase
         
         $this->assertEquals('LAST-NAME FIRST-NAME',$test_array['NAME']);
         $this->assertEquals('LAST-NAME FIRST-NAME',$test_array['FULL_NAME']);
-
     }
     
 	public function testgetUsersNameAndEmail() 
@@ -67,7 +66,6 @@ class Bug48555Test extends TestCase
         $pattern = "/.*\"to_email_addrs\":\"LAST-NAME FIRST-NAME \\\\u003Ctest@test.test\\\\u003E\".*/";
         
         $this->assertRegExp($pattern,$test);
-
     }
     
     public function testgetEmailLink()

@@ -45,9 +45,6 @@ class CampaignTrackersTest extends TestCase
 		$ct->campaign_id = $this->campaign->id;
 		$ct->save();
 		$this->campaign_tracker = $ct;
-
-
-
 		
     }
     

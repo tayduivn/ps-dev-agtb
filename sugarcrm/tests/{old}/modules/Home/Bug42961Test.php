@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug42961Test extends TestCase
 {
-
     /**
      * @brief generation of new cache file and search for force_unifiedsearch fields in it
      * @group 42961

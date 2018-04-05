@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class TeamsRemovalTest extends TestCase
 {
-
 	var $_user = null;    
 	var $_contact = null;
 	var $_contact2 = null;

@@ -31,7 +31,5 @@ class RestVersionTest extends RestTestBase {
         $this->version = 50;
         $restReply = $this->_restCall('Accounts');
         $this->assertEquals($restReply['info']['http_code'], '301', "Incorrect HTTP Code, instead of 301 we receieved {$restReply['info']['http_code']}");
-
     }
-
 }

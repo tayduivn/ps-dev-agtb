@@ -19,7 +19,6 @@ class EmailTemplateTest extends TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -29,7 +28,6 @@ class EmailTemplateTest extends TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        parent::tearDown();
     }
 
     /**

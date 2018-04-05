@@ -25,7 +25,6 @@ class RelateTest extends TestCase
 
     public function setup()
     {
-        parent::setup();
         $this->eval = new Evaluator\Relate;
     }
 

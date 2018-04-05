@@ -57,7 +57,5 @@ class MetaDataHacksTest extends TestCase
             "the id field didn't change, it should have."
         );
         $this->assertEquals('id', $fieldDefsNew['myawesome_id']['type'], "Type field of ID is not correct.");
-
     }
-
 }

@@ -18,8 +18,6 @@ class ProjectTest extends TestCase
     {
         SugarTestProjectTaskUtilities::removeAllCreatedProjectTasks();
         SugarTestProjectUtilities::removeAllCreatedProjects();
-
-        parent::tearDownAfterClass();
     }
 
     public function testRemoval()

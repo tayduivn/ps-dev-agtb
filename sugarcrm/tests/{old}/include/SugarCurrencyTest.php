@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarCurrencyTest extends TestCase
 {
-
     /**
      * store $sugar_config for later revert
      * @var    array $sugar_config
@@ -42,8 +41,6 @@ class SugarCurrencyTest extends TestCase
      */
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-        
         // setup test user
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
@@ -71,7 +68,6 @@ class SugarCurrencyTest extends TestCase
         // remove test currencies
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     /**

@@ -45,7 +45,6 @@ class Bug44113Test extends TestCase
             'iframe' => 'iframe',
             'script' => 'script',
         );
-
     }
 
     public function tearDown()
@@ -65,7 +64,6 @@ class Bug44113Test extends TestCase
 
     public function testEmailManController()
     {
-
         global $sugar_config;
         $conn = new EmailManController();
 

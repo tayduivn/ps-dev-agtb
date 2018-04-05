@@ -79,6 +79,5 @@ class RestServiceTest extends TestCase
         }
 
         $this->assertTrue($hadException, "Did not throw an exception on invalid JSON #2");
-
     }
 }

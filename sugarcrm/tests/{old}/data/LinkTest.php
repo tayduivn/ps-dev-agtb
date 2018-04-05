@@ -90,7 +90,6 @@ class LinkTest extends TestCase
 
     public function testOnetoMany()
 	{
-
         //Test the accounts_leads relationship
         $account = BeanFactory::newBean("Accounts");
         $account->name = "Link 1->M Test Account";
@@ -145,7 +144,6 @@ class LinkTest extends TestCase
         $this->assertNotEmpty($related);
         $this->assertTrue(empty($related[$account->id]));
         $this->assertNotEmpty($related[$account2->id]);
-
     }
 
     public function testParentRelationships()
@@ -177,7 +175,6 @@ class LinkTest extends TestCase
     }
 
     public function testGetBeansWithParameters(){
-
         $module = "Accounts";
         require('include/modules.php');
 

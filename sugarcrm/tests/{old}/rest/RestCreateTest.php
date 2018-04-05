@@ -61,5 +61,4 @@ class RestCreateTest extends RestTestBase {
 
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
     }
-
 }

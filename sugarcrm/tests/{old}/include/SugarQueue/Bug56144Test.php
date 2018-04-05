@@ -52,5 +52,4 @@ class Bug56144 extends TestCase
     {
         $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='unittest'");
     }
-
 }

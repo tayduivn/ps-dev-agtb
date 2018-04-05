@@ -32,7 +32,6 @@ class MailApiTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user", [true, 1]);
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('dictionary');
@@ -50,7 +49,6 @@ class MailApiTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
-        parent::tearDown();
         if (file_exists($this->userCacheDir)) {
             rmdir_recursive($this->userCacheDir);
         }

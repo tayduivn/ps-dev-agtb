@@ -62,5 +62,4 @@ class ForecastManagerWorksheetsApiTest extends TestCase
 
         $this->assertSame(array('success' => true), $actual);
     }
-
 }

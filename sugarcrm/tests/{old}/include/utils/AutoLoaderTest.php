@@ -27,7 +27,6 @@ class AutoLoaderTests extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->namespaceMap = SugarAutoLoader::$namespaceMap;
         $this->namespaceMapPsr4 = SugarAutoLoader::$namespaceMapPsr4;
     }
@@ -49,7 +48,6 @@ class AutoLoaderTests extends TestCase
         SugarAutoLoader::$classMapDirty = true;
         SugarAutoLoader::$namespaceMap = $this->namespaceMap;
         SugarAutoLoader::$namespaceMapPsr4 = $this->namespaceMapPsr4;
-        parent::tearDown();
     }
 
     public static function tearDownAfterClass()

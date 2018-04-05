@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49627Test extends TestCase
 {
-
 var $normalUser;
 //BEGIN SUGARCRM flav=ent ONLY
 var $portalUser;
@@ -145,10 +144,8 @@ public function testSetupUserTypeDropdownPortalUser()
     $this->assertNotRegExp('/RegularUser/', $user_type_readonly);
     $this->assertNotRegExp('/GROUP/', $dropdown);
     $this->assertNotRegExp('/GROUP/', $user_type_readonly);
-
 }
 //END SUGARCRM flav=ent ONLY
-
 }
 
 //UserViewHelperMock

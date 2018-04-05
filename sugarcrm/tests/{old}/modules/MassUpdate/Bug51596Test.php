@@ -236,5 +236,4 @@ HERE;
         $rc = new RepairAndClear();
         $rc->repairAndClearAll(array('rebuildExtensions'), array($module), false, false);
     }
-
 }

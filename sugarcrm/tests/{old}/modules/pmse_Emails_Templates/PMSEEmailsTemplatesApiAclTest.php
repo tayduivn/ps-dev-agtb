@@ -90,5 +90,4 @@ class PMSEEmailsTemplatesApiAclTest extends TestCase
         );
         $this->assertTrue(is_array($ret), "ACL access test failed for findVariables");
     }
-
 }

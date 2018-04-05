@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50285Test extends TestCase
 {
-
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -51,6 +50,4 @@ class Bug50285Test extends TestCase
             $this->fail('Call to get_image function with all parameters causes exception:  '.$e->getMessage());
         }
     }
-
-
 }

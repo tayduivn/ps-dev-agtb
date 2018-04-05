@@ -30,6 +30,4 @@ class Bug49870Test extends TestCase
         $defs = $this->field->get_field_def();
         $this->assertSame('non-db', $defs['source']);
     }
-
-
 }

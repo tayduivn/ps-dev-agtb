@@ -26,12 +26,10 @@ class RepairCustomFieldsTest extends TestCase
 
     protected function repairDictionary()
     {
-
         $this->df->buildCache($this->modulename);
         VardefManager::clearVardef();
         VardefManager::refreshVardefs($this->modulename, $this->objectname);
         $this->seed->field_defs = $GLOBALS['dictionary'][$this->objectname]['fields'];
-
     }
     
     public function setUp()
@@ -68,7 +66,6 @@ class RepairCustomFieldsTest extends TestCase
         $this->db = $GLOBALS['db'];
 
         $this->repairDictionary();
-
     }
     
     public function tearDown()

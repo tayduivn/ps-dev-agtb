@@ -19,7 +19,6 @@ class CampaignLogApiHelperTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -38,7 +37,6 @@ class CampaignLogApiHelperTest extends TestCase
         unset($this->helper);
         unset($this->bean);
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testFormatForApi_WithRelatedCampaignTracker_ReturnsCampaignTrackerUrl()
@@ -85,7 +83,6 @@ class CampaignLogApiHelperTest extends TestCase
         unset($account);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
-
 }
 
 class CampaignLogServiceMockup extends ServiceBase

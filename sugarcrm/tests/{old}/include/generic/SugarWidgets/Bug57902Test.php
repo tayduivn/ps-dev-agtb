@@ -23,7 +23,6 @@ require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
  */
 class Bug57902Test extends TestCase
 {
-
     public static function dataProvider()
     {
         return array(
@@ -90,7 +89,6 @@ class Bug57902Test extends TestCase
                 'calls_sum_duration_hours ASC'
             )
         );
-
     }
 
     /**

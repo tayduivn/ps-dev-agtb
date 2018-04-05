@@ -20,7 +20,6 @@ include_once 'modules/Categories/Category.php';
  */
 class CategoriesTest extends TestCase
 {
-
     /**
      * All created bean ids.
      *
@@ -37,14 +36,12 @@ class CategoriesTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
     }
 
     public static function tearDownAfterClass()
     {
-        parent::tearDownAfterClass();
     }
 
     public function setUp()
@@ -339,5 +336,4 @@ class CategoriesTest extends TestCase
         $result = self::$root->mark_deleted(self::$root->id);
         $this->assertInternalType('null', $result);
     }
-
 }

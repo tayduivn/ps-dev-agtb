@@ -95,7 +95,6 @@ class DownloadArchiveApiTest extends TestCase
         $this->notes = array();
 
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

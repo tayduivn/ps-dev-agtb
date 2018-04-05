@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSETimerEventTest extends TestCase
 {
-
     /**
      * @var PMSEElement
      */

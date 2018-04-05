@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SamlLogoutTest extends TestCase
 {
-
     public function testLogoutURL()
     {
         // FIXME TY-1328: figure out why this test is failing

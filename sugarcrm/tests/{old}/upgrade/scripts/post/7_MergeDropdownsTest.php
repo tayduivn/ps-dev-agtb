@@ -308,7 +308,6 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
         $mockObject->run();
 
         $this->assertEquals($params['use_push'], $use_push);
-
     }
 
     public function usePushSettingsProvider()

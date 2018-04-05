@@ -19,7 +19,6 @@ class UserSignatureTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
     }
 
@@ -29,7 +28,6 @@ class UserSignatureTest extends TestCase
             $ids = implode("','", static::$createdSignatures);
             $GLOBALS['db']->query("DELETE FROM users_signatures WHERE id IN ('{$ids}')");
         }
-        parent::tearDownAfterClass();
     }
 
     public function testSave_UserIdIsEmpty_CurrentUserIdIsUsed()

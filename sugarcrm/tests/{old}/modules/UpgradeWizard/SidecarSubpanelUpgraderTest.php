@@ -25,7 +25,6 @@ class SidecarSubpanelUpgraderTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('files');
         $this->upgrader = new SidecarMetaDataUpgrader();
         $this->filesToRemove = array();
@@ -38,7 +37,6 @@ class SidecarSubpanelUpgraderTest extends TestCase
                 unlink($file);
             }
         }
-        parent::tearDown();
         SugarTestHelper::tearDown();
     }
 
@@ -399,7 +397,6 @@ class SidecarSubpanelUpgraderTest extends TestCase
                 'link' => 'calls',
             ),
         );
-
     }
 
     public function setUpViewDefs()

@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class RevenueLineItemHooksTest extends TestCase
 {
-
     /**
      * @var RevenueLineItem
      */
@@ -30,7 +29,6 @@ class RevenueLineItemHooksTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
 
@@ -42,7 +40,6 @@ class RevenueLineItemHooksTest extends TestCase
         $this->rli = null;
         SugarTestHelper::tearDown();
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
-        parent::tearDown();
     }
 
     public static function tearDownAfterClass()

@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEElementTest extends TestCase
 {
-
     /**
      * @var PMSEElement
      */

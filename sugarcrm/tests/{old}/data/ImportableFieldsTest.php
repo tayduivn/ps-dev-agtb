@@ -19,7 +19,6 @@ class ImportableFieldsTest extends TestCase
 
 	public function setUp()
 	{
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
 
         $this->myBean = new SugarBean();
@@ -41,13 +40,11 @@ class ImportableFieldsTest extends TestCase
             'link_field2' => array('name' => 'link_field1', 'type' => 'link', 'importable' => true, ),
             'link_field3' => array('name' => 'link_field1', 'type' => 'link', 'importable' => 'true', ),
         );
-
 	}
 
 	public function tearDown()
 	{
 		unset($this->time_date);
-        parent::tearDown();
 	}
 	
 	/**

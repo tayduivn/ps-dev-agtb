@@ -59,7 +59,6 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
 
     public function testEnableAll()
     {
-
         $_REQUEST['display_values'] = "ext_rest_twitter:Accounts,ext_rest_twitter:Leads";
         $_REQUEST['display_sources'] = 'ext_rest_twitter';
         $_REQUEST['action'] = 'SaveModifyDisplay';

@@ -25,7 +25,6 @@ class DatetimeTest extends TestCase
 
     public function setup()
     {
-        parent::setup();
         \SugarTestHelper::setUp('current_user');
         $this->eval = new Evaluator\Datetime;
     }

@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug46152_P4Test extends TestCase
 {
-
     private $module = 'Notes';
     private $object = 'Note';
     private $relatedModule = 'Opportunities';
@@ -41,7 +40,6 @@ class Bug46152_P4Test extends TestCase
         $this->assertArrayNotHasKey($field->name, $GLOBALS['dictionary'][$this->object]['fields']);
         $this->assertArrayNotHasKey($idName, $GLOBALS['dictionary'][$this->object]['fields']);
         $this->assertArrayNotHasKey($vName, $GLOBALS['mod_strings']);
-
     }
 
     private function addField($name)
@@ -59,13 +57,10 @@ class Bug46152_P4Test extends TestCase
         $field->save($this->dynamicField);
 
         return $field;
-
     }
 
     public function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array($this->module));
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
@@ -77,13 +72,10 @@ class Bug46152_P4Test extends TestCase
 
         $this->dynamicField = new DynamicField($this->module);
         $this->dynamicField->setup(BeanFactory::newBean($this->module));
-
     }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
-
 }

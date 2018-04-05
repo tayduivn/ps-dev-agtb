@@ -70,8 +70,6 @@ class CurrentUserPortalApiTest extends TestCase
 
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
-
-        parent::tearDown();
     }
 
     /**

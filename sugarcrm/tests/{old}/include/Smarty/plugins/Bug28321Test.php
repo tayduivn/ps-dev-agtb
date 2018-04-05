@@ -85,6 +85,5 @@ class Bug28321Test extends TestCase
 		$output = smarty_function_sugar_evalcolumn($params, $ss);
 
 		$this->assertGreaterThan(65, strlen($output),'Connectors should not be processed when customCode is set to customCodeRenderField');
-
 	}
 }

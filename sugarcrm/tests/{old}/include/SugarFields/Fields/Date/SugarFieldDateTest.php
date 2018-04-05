@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldDateTest extends TestCase
 {
-
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');

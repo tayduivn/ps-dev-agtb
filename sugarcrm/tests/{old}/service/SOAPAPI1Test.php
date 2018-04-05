@@ -126,5 +126,4 @@ class SOAPAPI1Test extends SOAPTestCase
         $this->_contact->save();
         $GLOBALS['db']->commit(); // Making sure these changes are committed to the database
     }
-
 }

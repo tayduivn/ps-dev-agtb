@@ -102,7 +102,6 @@ class ConnectorManagerTest extends ConnectorManager
 
 class ConnectorsValidTest extends TestCase
 {
-
     public function tearDown()
     {
         $cacheFile = sugar_cached('api/metadata/connectors.php');
@@ -205,7 +204,5 @@ class ConnectorsValidTest extends TestCase
         $this->assertTrue($connectorManager->isHashValid($currentUserHash));
 
         $this->assertFalse($connectorManager->isHashValid('invalidHash'));
-
-
     }
 }

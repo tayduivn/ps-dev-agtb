@@ -37,7 +37,6 @@ class Bug54507Test extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     public function testBugsPortalRecordAvailableFields()

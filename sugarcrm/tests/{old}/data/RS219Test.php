@@ -22,7 +22,6 @@ class RS219Test extends TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true));

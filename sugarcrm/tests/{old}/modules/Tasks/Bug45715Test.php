@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug45715Test extends TestCase
 {
-
     public function testFieldsVisibilityToStudioListView()
     {
         $task = new Task();
@@ -23,9 +22,7 @@ class Bug45715Test extends TestCase
         $this->assertTrue($parser->isValidField('contact_phone',$task->field_defs['contact_phone']) , 'Assert isValidField for contact_phone returns true');
         $this->assertFalse($parser->isValidField('date_due_flag',$task->field_defs['date_due_flag']), 'Assert isValidField for date_due_flag returns false');
         $this->assertTrue($parser->isValidField('date_start',$task->field_defs['date_start']) , 'Assert isValidField for date_start returns true');
-
     }
-
 }
 
 class ListLayoutMetaDataParserMock extends ListLayoutMetaDataParser

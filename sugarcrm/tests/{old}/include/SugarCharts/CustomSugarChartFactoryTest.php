@@ -28,7 +28,6 @@ public static function tearDownAfterClass()
 
 public function setUp()
 {
-
 mkdir_recursive('custom/include/SugarCharts/CustomSugarChartFactory');
 
 $the_string = <<<EOQ
@@ -36,7 +35,6 @@ $the_string = <<<EOQ
 
 
 class CustomSugarChartFactory extends JsChart {
-
 	function __construct() {
 		parent::__construct();
 	}
@@ -58,7 +56,6 @@ class CustomSugarChartFactory extends JsChart {
 
 
 	function display(\$name, \$xmlFile, \$width='320', \$height='480', \$resize=false) {
-
 		parent::display(\$name, \$xmlFile, \$width, \$height, \$resize);
 
 		return \$this->ss->fetch('include/SugarCharts/Jit/tpls/chart.tpl');
@@ -66,11 +63,9 @@ class CustomSugarChartFactory extends JsChart {
 
 
 	function getDashletScript(\$id,\$xmlFile="") {
-
 		parent::getDashletScript(\$id,\$xmlFile);
 		return \$this->ss->fetch('include/SugarCharts/Jit/tpls/DashletGenericChartScript.tpl');
 	}
-
 }
 
 ?>
@@ -94,5 +89,4 @@ public function testCustomFactory()
 	$name = get_class($sugarChart);
 	$this->assertEquals('CustomSugarChartFactory', $name, 'Assert engine is CustomSugarChartFactory');
 }
-
 }

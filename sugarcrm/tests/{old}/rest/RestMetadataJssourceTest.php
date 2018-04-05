@@ -13,7 +13,6 @@
 
 
 class RestMetadataJssourceTest extends RestTestBase {
-
     public function setUp()
     {
         parent::setUp();
@@ -44,5 +43,4 @@ class RestMetadataJssourceTest extends RestTestBase {
         // Hash should always be set
         $this->assertTrue(!isset($restReply['reply']['jssource']), "Jssource should not be here");
     }
-
 }

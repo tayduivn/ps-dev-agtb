@@ -35,7 +35,6 @@ class Bug42994Test extends TestCase
 
     public function testSetLanguageStringDependant() 
     {
-
         $this->_lang_manager->setModString('LBL_DEPENDENT','XXDependentXX','DynamicFields');
         $this->_lang_manager->save();
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'DynamicFields');

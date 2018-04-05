@@ -92,5 +92,4 @@ EOQ;
         $this->assertObjectNotHasAttribute('useXML', $settings);
         $this->assertEquals('testIssuer', $settings->spIssuer);
     }
-
 }

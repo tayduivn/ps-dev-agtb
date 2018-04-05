@@ -77,8 +77,6 @@ class Bug48484Test extends TestCase
         // ensure that field name is contained in SQL where clause
         $this->assertContains($this->customFieldName, $this->massUpdate->where_clauses);
     }
-
-
 }
 
 

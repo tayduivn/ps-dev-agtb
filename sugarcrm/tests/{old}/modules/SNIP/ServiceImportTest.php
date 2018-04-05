@@ -125,5 +125,4 @@ class ServiceImportTest extends TestCase
 		$this->assertEquals($email['message']['subject'], $e->name);
 		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
     }
-
 }

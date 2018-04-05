@@ -38,5 +38,4 @@ class Bug31013Test extends TestCase
         $row = $GLOBALS['db']->fetchByAssoc($result);
         $this->assertTrue(empty($row['TOTAL']), "Assert that the private team was not created for portal user");
     }
-
 }

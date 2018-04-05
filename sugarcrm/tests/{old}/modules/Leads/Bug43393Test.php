@@ -55,5 +55,4 @@ class Bug43393Test extends TestCase
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
     }
-
 }

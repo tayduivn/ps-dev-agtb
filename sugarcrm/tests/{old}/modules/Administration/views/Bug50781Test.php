@@ -41,6 +41,5 @@ class Bug50781Test extends TestCase
         $view->display();
 
         $this->expectOutputRegex('/.*class=\"shouldToggle\".*/', 'expecting shouldToggle');
-
     }
 }

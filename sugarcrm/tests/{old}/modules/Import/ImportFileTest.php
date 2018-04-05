@@ -240,7 +240,6 @@ class ImportFileTest extends TestCase
 
         $this->assertFalse(fgetcsv($fp),'Should be only 1 record in the csv file');
         fclose($fp);
-
     }
 
     public function testWriteStatusWithTwoUpdatedRecords()

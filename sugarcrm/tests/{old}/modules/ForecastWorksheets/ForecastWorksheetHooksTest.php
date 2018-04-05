@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class ForecastWorksheetHooksTest extends TestCase
 {
-
     /**
      * @var ForecastWorksheet
      */
@@ -22,7 +21,6 @@ class ForecastWorksheetHooksTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
 
@@ -33,7 +31,6 @@ class ForecastWorksheetHooksTest extends TestCase
     {
         $this->worksheet = null;
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**
@@ -274,7 +271,6 @@ class ForecastWorksheetHooksTest extends TestCase
         $hook->checkRelatedName($worksheet, 'before_save', array());
 
         $this->assertEquals($isEmpty, empty($worksheet->$fn));
-
     }
 
     public function dataProviderCheckRelatedName()

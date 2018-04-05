@@ -42,7 +42,6 @@ class FixUpFormattingTest extends TestCase
         $this->myBean->date_field = '2001-07-28';
         $this->myBean->time_field = '21:19:37';
         $this->myBean->datetime_field = '2001-07-28 21:19:37';
-
 	}
 
 	public function tearDown()

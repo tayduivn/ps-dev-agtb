@@ -25,7 +25,6 @@ class EmailsFilterApiTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
@@ -37,7 +36,6 @@ class EmailsFilterApiTest extends TestCase
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        parent::tearDown();
     }
 
     public function testRegisterApiRest()

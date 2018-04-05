@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEUserTaskTest extends TestCase
 {
-
     /**
      * @var PMSEElement
      */
@@ -312,7 +311,6 @@ class PMSEUserTaskTest extends TestCase
 
     public function testRunRouteWithArguments()
     {
-
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
             ->setMethods(array('lockFlowRoute', 'saveBeanData', 'prepareResponse', 'processAction'))
             ->disableOriginalConstructor()

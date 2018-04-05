@@ -78,7 +78,6 @@ class RelateApiTest extends TestCase
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestHelper::tearDown();
-        parent::tearDown();        
     }
 
     // test set favorite
@@ -182,7 +181,6 @@ class RelateApiTest extends TestCase
                     $role->setAction($role->id, $action['id'], $aclAllow);
                 }
             }
-
         }
         return $role;
     }

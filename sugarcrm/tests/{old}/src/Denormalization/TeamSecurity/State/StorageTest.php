@@ -24,8 +24,6 @@ abstract class StorageTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->storage = $this->createStorage();
     }
 

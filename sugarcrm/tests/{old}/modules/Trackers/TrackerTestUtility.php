@@ -12,7 +12,6 @@
  */
 
 class TrackerTestUtility {
-
 static $trackerSettings = array();
 
 static function setUp() {
@@ -36,6 +35,4 @@ static function tearDown() {
     	   $GLOBALS['db']->query("INSERT into config (category, name, value) values ('tracker', '{$name}', '{$value}')");
     	}
 }
-
 }
-?>

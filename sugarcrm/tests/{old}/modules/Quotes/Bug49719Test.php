@@ -27,7 +27,6 @@ class Bug49719Test extends TestCase
         $this->quote = SugarTestQuoteUtilities::createQuote();
         $this->contact1 = SugarTestContactUtilities::createContact();
         $this->contact2 = SugarTestContactUtilities::createContact();
-
     }
 
     public function tearDown()

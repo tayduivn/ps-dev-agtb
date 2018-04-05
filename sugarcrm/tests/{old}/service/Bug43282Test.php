@@ -34,7 +34,6 @@ class Bug43282Test extends SOAPTestCase
     {
         $GLOBALS['db']->query("DELETE FROM tasks WHERE id = '{$this->_tsk->id}'");
         parent::tearDown();
-
     }
 
     /**
@@ -62,7 +61,6 @@ class Bug43282Test extends SOAPTestCase
         $modifiedTask = new Task();
         $modifiedTask->retrieve($this->_tsk->id);
         $this->assertEquals($privateTeamID, $modifiedTask->team_id);
-
     }
 
     /**

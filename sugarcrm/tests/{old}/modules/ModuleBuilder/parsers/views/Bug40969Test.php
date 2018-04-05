@@ -126,7 +126,6 @@ class Bug40969Test extends TestCase
         $this->assertArrayHasKey('related_fields', $metaParser->_viewdefs['parent_name']);
         $this->assertEquals(array('parent_id', 'parent_type'), $metaParser->_viewdefs['parent_name']['related_fields']);
     }
-
 }
 
 /**
@@ -151,5 +150,4 @@ class Bug40969ListLayoutMetaDataParser extends ListLayoutMetaDataParser
     {
         return $this->_populateFromRequest();
     }
-
 }

@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldFloatTest extends TestCase
 {
-
     /**
      *
      * @access public
@@ -38,7 +37,6 @@ class SugarFieldFloatTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $current_user = $GLOBALS['current_user'];
         $current_user->setPreference('dec_sep', '.');
         $current_user->setPreference('num_grp_sep', ',');
@@ -57,7 +55,6 @@ class SugarFieldFloatTest extends TestCase
         $current_user->save();
         //force static var reset
         get_number_seperators(true);
-        parent::tearDown();
     }
 
     /**
@@ -237,5 +234,4 @@ class SugarFieldFloatTest extends TestCase
         // should always return true
         $this->assertTrue($ret);
     }
-
 }

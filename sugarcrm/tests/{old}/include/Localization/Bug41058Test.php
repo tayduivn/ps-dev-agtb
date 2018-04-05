@@ -222,7 +222,6 @@ class Bug41058Test extends TestCase
         });
 
         require 'modules/Administration/Locale.php';
-
     }
 
     /**
@@ -294,5 +293,4 @@ class Bug41058Test extends TestCase
 
         return $badFormatsArray;
     }
-
 }

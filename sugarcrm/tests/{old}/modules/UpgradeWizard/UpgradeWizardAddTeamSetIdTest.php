@@ -23,7 +23,6 @@ var $team_ids = array();
 function setUp() 
 
 {
-	
     if($this->skipTest) {
        $this->markTestSkipped("Skipping unless otherwise specified");
     }	
@@ -79,6 +78,4 @@ function test_add_teamsetid() {
     $FieldArray = $GLOBALS['db']->helper->get_columns($this->module);
     $this->assertTrue(isset($FieldArray['team_set_id']), "Assert that team_set_id column was created");
 }
-
-
 }

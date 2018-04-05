@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarSearchEngineMetadataHelperTest extends TestCase
 {
-
     private $_cacheRenamed;
     private $_cacheFile;
     private $_backupCacheFile;

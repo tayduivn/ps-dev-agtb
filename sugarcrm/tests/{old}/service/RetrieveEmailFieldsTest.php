@@ -49,5 +49,4 @@ class RetrieveEmailFieldsTest extends SOAPTestCase
         }
         $this->assertTrue($foundFromAddrsName, "Did not find from_addr_name");
     }
-
 }

@@ -24,7 +24,6 @@ class RS78Test extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user', array(true, false));

@@ -23,7 +23,6 @@ require_once 'modules/DynamicFields/FieldCases.php';
  */
 class Bug52610Test extends TestCase
 {
-
     /**
      * @return array of default values for test
      */

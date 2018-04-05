@@ -138,7 +138,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
 
     public function testGetEntryList()
     {
-
        $account_name = 'UNIT_TEST ' . uniqid();
        $account_id = uniqid();
        $a1 = new Account();
@@ -166,7 +165,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
 
        $actual = $result['entry_list'][0]['name_value_list'][0]['value'];
        $this->assertEquals($account_name, $actual);
-
    }
 
 
@@ -185,7 +183,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
     	if (empty($this->_soapClient->faultcode)) {
     		if (($result['entry_list'][0]['name_value_list'][2]['value'] == 1) &&
     			($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call")) {
-
     			$this->assertEquals($result['entry_list'][0]['name_value_list'][2]['value'],1,"testGetEntryForContact method - Get Entry For contact is not same as Set Entry");
     		} // else
     	} else {
@@ -221,7 +218,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
     	$setresult = $this->_setEntryForOpportunity();
         $result = $this->_setRelationshipForOpportunity($setresult['id']);
     	$this->assertTrue(($result['created'] > 0), 'testSetRelationshipForOpportunity method - Relationship for opportunity to Contact could not be created');
-
     } // fn
 
 

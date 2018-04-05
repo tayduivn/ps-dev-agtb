@@ -56,7 +56,6 @@ class CalendarEventsApiHelperTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->api = SugarTestRestUtilities::getRestServiceMock();
     }
 
@@ -64,7 +63,6 @@ class CalendarEventsApiHelperTest extends TestCase
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

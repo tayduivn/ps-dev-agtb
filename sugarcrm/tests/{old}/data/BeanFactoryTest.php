@@ -22,24 +22,18 @@ class BeanFactoryTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user');
     }
 
     public function tearDown()
     {
         BeanFactory::unsetBeanClass();
-
-        parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
-
-        parent::tearDownAfterClass();
     }
 
     /**

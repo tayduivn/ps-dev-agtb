@@ -63,7 +63,6 @@ class ForecastUserReassignmentTest extends TestCase
             $opp->save();
             $this->_users_opps[$user][] = $opp;
         }
-
     }
 
     /**
@@ -493,7 +492,6 @@ class ForecastUserReassignmentTest extends TestCase
         $api = new SugarForecasting_Individual( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['sally']->id) );
         $result = $api->process();
         $this->assertEquals(0, sizeof($result));
-
     }
 
     /**

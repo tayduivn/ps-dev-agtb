@@ -22,7 +22,6 @@ class SubscriptionsTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
         $this->user   = $GLOBALS['current_user'];
         $this->record = self::getUnsavedRecord();
@@ -35,7 +34,6 @@ class SubscriptionsTest extends TestCase
         BeanFactory::setBeanClass('Activities');
         BeanFactory::setBeanClass('Accounts');
         SugarTestHelper::tearDown();
-        parent::tearDown();
 
         $GLOBALS['db']->query("DELETE FROM subscriptions WHERE parent_id = '{$this->record->id}'");
     }

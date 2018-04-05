@@ -20,9 +20,6 @@ class VardefManagerTest extends TestCase
 
     public function setup()
     {
-        // Handle parent setup
-        parent::setup();
-
         // For testing table name getting
         $GLOBALS['dictionary']['Hillbilly']['table'] = 'hillbillies';
     }
@@ -33,7 +30,6 @@ class VardefManagerTest extends TestCase
         unset($GLOBALS['dictionary']['Hillbilly']);
 
         // Let the parent finish things up
-        parent::tearDown();
     }
 
     /**

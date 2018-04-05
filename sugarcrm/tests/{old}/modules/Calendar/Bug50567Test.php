@@ -57,6 +57,5 @@ class Bug50567Test extends TestCase
         $this->calendar->date_time = $timedate->fromString($testDate);
         $uri = $this->calendar->get_neighbor_date_str($direction);
         $this->assertContains($expectedString, $uri, "Failed to get {$direction} expected URL: {$expectedString} from date: {$testDate}");
-
     }
 }

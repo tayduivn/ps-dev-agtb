@@ -16,7 +16,6 @@ require_once 'service/v4/SugarWebServiceImplv4.php';
 
 class Bug48889Test extends TestCase
 {
-
     public function setUp()
     {
         SugarTestHelper::setUp("beanList");

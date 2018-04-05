@@ -53,5 +53,4 @@ class SilentUpgradeSessionVarsTest extends TestCase
     	$get = getSilentUpgradeVar('SDizzle');
     	$this->assertNotEquals('BSnizzle', $get, "Unexpected value when getting silent upgrade var after resetting");
     }
-
 }

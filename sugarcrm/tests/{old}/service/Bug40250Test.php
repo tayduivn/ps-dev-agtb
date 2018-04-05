@@ -30,7 +30,6 @@ class Bug40250Test extends TestCase
      */
 	public function setUp() 
     {
-    	
         $this->_setupTestUser();
 		$this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/soap.php',false,false,false,false,false,60,60);
     	$this->_login();

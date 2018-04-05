@@ -40,8 +40,6 @@ class Bug52173Test extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
@@ -57,8 +55,6 @@ class Bug52173Test extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
-
         $this->getSugarWidgetFieldRelate();
 
         $this->account = SugarTestAccountUtilities::createAccount();
@@ -70,8 +66,6 @@ class Bug52173Test extends TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
-
-        parent::tearDown();
     }
 
     /**

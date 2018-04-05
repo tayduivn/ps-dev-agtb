@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarForecasting_AbstractForecastTest extends TestCase
 {
-
     /**
      * @var MockSugarForecasting_Abstract
      */

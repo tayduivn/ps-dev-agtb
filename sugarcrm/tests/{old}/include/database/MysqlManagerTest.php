@@ -21,8 +21,6 @@ abstract class MysqlManagerTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
     }
@@ -32,8 +30,6 @@ abstract class MysqlManagerTest extends TestCase
         if ($GLOBALS['db']->dbType != 'mysql') {
             $this->markTestSkipped('The instance needs to be configured to use MySQL');
         }
-
-        parent::setUp();
     }
 
     public function testQuote()

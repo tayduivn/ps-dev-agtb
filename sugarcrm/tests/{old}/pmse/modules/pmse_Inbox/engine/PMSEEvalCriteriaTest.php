@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEEvalCriteriaTest extends TestCase
 {
-
     /**
      * @var PMSEEvalCriteria
      */
@@ -277,5 +276,4 @@ class PMSEEvalCriteriaTest extends TestCase
         $this->assertEquals('!', $this->object->logicSimbol('NOT'));
         $this->assertEquals('ES', $this->object->logicSimbol('OTHRES'));
     }
-
 }

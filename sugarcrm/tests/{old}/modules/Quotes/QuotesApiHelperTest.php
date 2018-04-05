@@ -29,8 +29,6 @@ class QuotesApiHelperTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
-
         $mock_service = new QuotesServiceMock();
         $mock_service->user = SugarTestHelper::setUp('current_user');
 
@@ -42,7 +40,6 @@ class QuotesApiHelperTest extends TestCase
         unset($this->helper);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testPopulateFromApiSettingBillingAddressCorrectly()

@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
 require_once('soap/SoapRelationshipHelper.php');
 class SoapRelationshipHelperTest extends TestCase
 {
-
     var $noSoapErrorArray = array('number'=>0, 'name'=>'No Error', 'description'=>'No Error');
     var $callsAndMeetingsSelectFields = array('id', 'date_modified', 'deleted', 'name', 'rt.deleted synced');
     var $tasksSelectFields = array('id', 'date_modified', 'deleted', 'name');

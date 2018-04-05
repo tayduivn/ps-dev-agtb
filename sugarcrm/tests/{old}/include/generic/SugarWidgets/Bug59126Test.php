@@ -90,5 +90,4 @@ class Bug59126Test extends TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
     }
-
 }

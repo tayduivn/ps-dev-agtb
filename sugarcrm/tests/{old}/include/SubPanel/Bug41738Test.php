@@ -70,8 +70,6 @@ class Bug41738Test extends TestCase
         $result = $this->bean->db->query($query["query"]);
         $this->assertTrue($result != false, "Bad query: {$query['query']}");
     }
-
-
 }
 
 

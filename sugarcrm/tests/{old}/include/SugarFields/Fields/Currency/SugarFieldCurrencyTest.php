@@ -42,7 +42,6 @@ class SugarFieldCurrencyTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $current_user = $GLOBALS['current_user'];
         $current_user->setPreference('dec_sep', '.');
         $current_user->setPreference('num_grp_sep', ',');
@@ -61,7 +60,6 @@ class SugarFieldCurrencyTest extends TestCase
         $current_user->save();
         //force static var reset
         get_number_seperators(true);
-        parent::tearDown();
     }
 
     /**
@@ -110,7 +108,6 @@ class SugarFieldCurrencyTest extends TestCase
         $parentFieldArray['BASE_RATE'] = '1.000000';
         $value = $field->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col);
         $this->assertEquals(self::$currency3->symbol . '4.44', $value);
-
     }
 
     public function importSanitizeProvider()
@@ -210,7 +207,6 @@ class SugarFieldCurrencyTest extends TestCase
         $obj->currency_id = '';
         $value = $field->exportSanitize($obj->amount, $vardef, $obj, array('currency_id'=>self::$currency->id));
         $this->assertEquals($expectedValue, $value);
-
     }
 
     /**
@@ -234,7 +230,6 @@ class SugarFieldCurrencyTest extends TestCase
         $expectedValue = SugarCurrency::formatAmountUserLocale($convertedValue, '-99');
         $value = $field->exportSanitize($obj->amount, $vardef, $obj);
         $this->assertEquals($expectedValue, $value);
-
     }
 
     /**
@@ -326,5 +321,4 @@ class SugarFieldCurrencyTest extends TestCase
             array('1,000.00', '1,000.00'),
         );
     }
-
 }

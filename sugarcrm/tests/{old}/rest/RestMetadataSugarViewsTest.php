@@ -117,6 +117,4 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=base');
         $this->assertEquals('CUSTOM BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't use the custom base code.");
     }
-
-
 }

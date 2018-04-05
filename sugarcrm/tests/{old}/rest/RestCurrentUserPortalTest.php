@@ -45,7 +45,6 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
                 $this->assertEquals($user_acls[$module][$action], $access, "{$module} - {$action} Did not have the correct access");
             }
         }
-
     }
 
     /**
@@ -92,5 +91,4 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
             'POST');
         $this->assertEquals($reply['reply']['valid'], false);
     }
-
 }

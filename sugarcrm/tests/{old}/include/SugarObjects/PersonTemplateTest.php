@@ -69,7 +69,6 @@ class PersonTemplateTest extends TestCase
         );
         VardefManager::addTemplate('Contacts', 'Contact', 'person', false);
         $this->assertArrayHasKey('customField', $GLOBALS['dictionary']['Contact']['fields']);
-
     }
 
     public function testPerson_GetFreeBusySchedule_ReturnsStartEndTimesArray()

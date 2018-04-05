@@ -23,13 +23,10 @@ class PMSEEventDefinitionWrapperTest extends TestCase
     
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-        
     }
 
     protected function setUp()
     {
-        parent::setUp();
         $this->mockElement = $this->getMockBuilder("pmse_BpmnEvent")
                 ->disableAutoload()
                 ->disableOriginalConstructor()

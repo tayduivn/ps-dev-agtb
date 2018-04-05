@@ -49,7 +49,6 @@ class Bug33522Test extends TestCase
 }
 
 class TestAbstractRelationships extends AbstractRelationships  {
-
     public function getSpecialCaseBaseNames()  {
         return $this->specialCaseBaseNames;
     }

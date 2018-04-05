@@ -19,7 +19,6 @@ class PMSEUserAssignmentHandlerTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->originals['current_user'] = $GLOBALS['current_user'];
         $this->originals['db'] = $GLOBALS['db'];
     }
@@ -29,7 +28,6 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         foreach ($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;
         }
-        parent::tearDown();
     }
     
     public function testTaskAssignmentUndefinedMethod()
@@ -1045,7 +1043,6 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     
     public function testIsOneWayTrue()
     {
-
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieveBean'))

@@ -16,7 +16,6 @@ class MaxRelatedDateExpressionTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');

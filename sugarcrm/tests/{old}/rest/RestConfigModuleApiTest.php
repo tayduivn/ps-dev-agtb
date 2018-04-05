@@ -51,7 +51,6 @@ class RestConfigModuleApiTest extends RestTestBase {
      */
     public function testRetrieveConfigSettingsByValidModuleNoSettings()
     {
-
         $restReply = $this->_restCall('Opportunities/config?platform=base');
         // now returns an empty array not an error
         $this->assertEmpty($restReply['reply']);
@@ -119,5 +118,4 @@ class RestConfigModuleApiTest extends RestTestBase {
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertEquals('My voice is my passport, verify me', $restReply['reply']['AdministrationSaveTest']);
     }
-
 }

@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug46448AutoFillTest extends TestCase
 {
-
     private $user;
     private $aclRolesIds = array();
     private $aclRoles2Users = array();
@@ -128,5 +127,4 @@ class Bug46448AutoFillTest extends TestCase
             // var_dump($qr);
         }
     }
-
 }

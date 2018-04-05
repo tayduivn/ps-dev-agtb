@@ -199,7 +199,6 @@ class RS278Test extends TestCase
         $this->beans['Dashboard'][] = $expected['id'];
         $this->assertEquals($expected['id'], $actual['id']);
         $this->assertEquals($expected['view'], $actual['view']);
-
     }
 
     /**

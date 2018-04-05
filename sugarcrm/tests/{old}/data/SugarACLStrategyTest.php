@@ -49,7 +49,6 @@ class SugarACLStrategyTest extends TestCase
         $this->assertEquals($user2, $this->object->getCurrentUser(array()));
 
         $this->assertEquals($user1, $this->object->getCurrentUser($context));
-
     }
 
     /**

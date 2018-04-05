@@ -54,15 +54,12 @@ class PasswordApiTest extends TestCase
         $this->passwordApi->usr->email1 = $this->args['email'];
 
         $this->passwordApi->usr->username = $this->args['username'];
-
-
     }
 
     public function tearDown()
     {
         unset($this->passwordApi);
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     // test that when read only is set for every field you can still retrieve

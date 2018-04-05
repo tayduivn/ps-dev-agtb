@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug46869Test extends TestCase
 {
-
     /**
      * @var string
      */
@@ -68,7 +67,6 @@ PHP;
 
         $this->assertArrayHasKey('required', $customDef, 'Custom definition of Case::resolution46869 does not have required property.');
     }
-
 }
 
 class StandardFieldBug46869Test extends StandardField

@@ -39,12 +39,10 @@ class Bug53053Test extends TestCase
         unset($_REQUEST['action']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testPortalPasswordSave()
     {
-
                 //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
@@ -117,7 +115,5 @@ class Bug53053Test extends TestCase
         $bean = $formBase->handleSave($this->prefix, false);
         $contact = BeanFactory::getBean('Contacts', $bean->id);
         $this->assertEmpty($contact->portal_password);
-
-
     }
 }

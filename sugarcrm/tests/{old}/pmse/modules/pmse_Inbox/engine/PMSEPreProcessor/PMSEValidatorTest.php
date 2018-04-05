@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEValidatorTest extends TestCase
 {
-
     protected $loggerMock;
 
     /**
@@ -124,5 +123,4 @@ class PMSEValidatorTest extends TestCase
         $result = $validatorMock->validateRequest($request);
         $this->assertEquals('INVALID', $result->getStatus());
     }
-
 }

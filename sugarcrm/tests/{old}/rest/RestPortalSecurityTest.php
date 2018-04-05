@@ -153,7 +153,6 @@ class RestPortalSecurityTest extends RestTestPortalBase {
                 $bug->load_relationship('cases');
                 $bug->cases->add(array($acase));
             }
-
         }
         // Add some Notes
         $caseCount = count($this->cases);
@@ -414,7 +413,6 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $this->assertNotEmpty($restReply['reply']['related_record']['id']);
         $createdNote = BeanFactory::getBean('Notes',$restReply['reply']['related_record']['id']);
         $this->notes[] = $createdNote;
-
     }
 
     /**
@@ -645,6 +643,5 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Negative test: Should not be able to create a new Case
         $restReply = $this->_restCall("Cases/",json_encode(array('name'=>'UnitTestNew','account_id'=>'','portal_viewable'=>1)),'POST');
         $this->assertEquals('not_authorized',$restReply['reply']['error']);
-
     }
 }

@@ -15,7 +15,6 @@
  */
 class UpgradeFixPdfTest extends UpgradeTestCase
 {
-
     public function testFixSugarPdf()
     {
         SugarTestHelper::saveFile("custom/include/Sugarpdf/sugarpdf_default.php");
@@ -50,5 +49,4 @@ class UpgradeFixPdfTest extends UpgradeTestCase
         $script->run();
         $this->assertFileNotExists("custom/include/Sugarpdf/sugarpdf_default.php");
     }
-
 }

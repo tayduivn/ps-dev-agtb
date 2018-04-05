@@ -214,5 +214,4 @@ class RestFileTest extends RestFileTestBase
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
     }
-
 }

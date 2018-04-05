@@ -15,8 +15,6 @@ use PHPUnit\Framework\TestCase;
 class Bug47069Test extends TestCase
 {
     public function setUp() {
-        parent::setUp();
-        
         $GLOBALS['action'] = 'async';
         $GLOBALS['module'] = 'Administration';
         $GLOBALS['app_strings'] = return_application_language('en_us');
@@ -39,7 +37,6 @@ class Bug47069Test extends TestCase
         {
             $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN ('".$this->note1->id."','".$this->note2->id."')");
         }
-        parent::tearDown();
     }
 
     public function testRepairXSSNotDuplicating()

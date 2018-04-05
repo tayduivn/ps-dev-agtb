@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ValidMetadataHashTest extends TestCase
 {
-
     protected $baseHash = "1234asdf";
     protected $portalHash = "zzz123";
 
@@ -62,12 +61,10 @@ class ValidMetadataHashTest extends TestCase
 
 class ValidMetadataHashMetadataManager extends MetaDataManager
 {
-
     function setHashCacheForTest($hashes)
     {
         foreach ($hashes as $key => $hash) {
             $this->addToHashCache($key, $hash);
         }
     }
-
 }

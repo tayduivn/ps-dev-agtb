@@ -17,7 +17,6 @@ require_once('include/workflow/action_utils.php');
 
 class Bug47403Test extends TestCase
 {
-
     protected $_focus;
     protected $_actionArray;
 

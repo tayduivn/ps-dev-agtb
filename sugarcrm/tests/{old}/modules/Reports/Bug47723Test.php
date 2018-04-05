@@ -76,7 +76,6 @@ class Bug47723Test extends TestCase
 
         if($char == '(' || ($char == "'" && $quote === false))
         {
-
             $expected = ($char == "'") ? "'" : ')';
             array_push($stack, $expected);
 
@@ -118,6 +117,5 @@ class Bug47723Test extends TestCase
 	preg_match_all('|\)|',$right_part,$right_part_matches);
 	$this->assertEquals(count($left_part_matches[0]),count($right_part_matches[0]),'Number or opening and closing brackets in the ORDER BY statement is not equal');
     */
-
     }
 }

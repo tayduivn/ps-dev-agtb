@@ -49,7 +49,6 @@ class iCalTest extends TestCase
         $projectTask = SugarTestProjectTaskUtilities::createProjectTask($projectTaskData);
         $projectTask->assigned_user_id = $GLOBALS['current_user']->id;
         $projectTask->save();
-
     }
 
     public function tearDown()

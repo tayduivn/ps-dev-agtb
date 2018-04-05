@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class HistoryTest extends TestCase
 {
-
     /**
      * @var string
      */
@@ -70,7 +69,6 @@ class HistoryTest extends TestCase
      */
     public function testPositioning()
     {
-
         // Pause for a second in between each append for different timestamps
         $el1 = $this->_history->append(tempnam($this->getHistoryDir(), 'history'));
         $el2 = $this->_history->append(tempnam($this->getHistoryDir(), 'history'));

@@ -207,7 +207,6 @@ class ImportEmailsTest extends TestCase
         $this->emails[] = $expected;
         $bean->retrieve($this->cleanId);
         $this->assertEquals($expected, $bean->email[0]['email_address']);
-
     }
 
     /**

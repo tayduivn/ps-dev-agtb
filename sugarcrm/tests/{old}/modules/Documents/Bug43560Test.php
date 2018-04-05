@@ -73,8 +73,5 @@ class Bug43560Test extends TestCase
         $ret = $GLOBALS['db']->query("SELECT document_revision_id FROM documents WHERE id = '{$this->doc->id}'");
         $row = $GLOBALS['db']->fetchByAssoc($ret);
         $this->assertEquals($row['document_revision_id'],$revisionId,'We didn\'t link the newly created document revision to the document');
-
-
 	}
-
 }

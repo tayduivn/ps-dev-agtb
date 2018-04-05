@@ -49,8 +49,6 @@ class ErasedFieldsApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user', [true, true]);
 
         self::$contact1 = SugarTestContactUtilities::createContact();
@@ -277,7 +275,5 @@ class ErasedFieldsApiTest extends TestCase
     {
         SugarTestNoteUtilities::removeAllCreatedNotes();
         SugarTestContactUtilities::removeAllCreatedContacts();
-
-        parent::tearDownAfterClass();
     }
 }

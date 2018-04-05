@@ -16,12 +16,10 @@ class ActivitiesApiHelperTest extends TestCase
 {
     public function setUp()
     {
-        parent::setUp();
     }
 
     public function tearDown()
     {
-        parent::tearDown();
     }
 
     public function dataProviderForGetDisplayModule()
@@ -71,10 +69,8 @@ class ActivitiesServiceMockup extends ServiceBase
 {
     public function execute()
     {
-
     }
     protected function handleException(Exception $exception)
     {
-
     }
 }

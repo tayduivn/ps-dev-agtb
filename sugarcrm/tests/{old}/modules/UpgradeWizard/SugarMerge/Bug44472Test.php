@@ -65,7 +65,6 @@ function test620TemplateMetaMergeOnCalls()
    $newData = $this->merge->getNewData();
    $this->assertTrue(!isset($newData['Calls']['EditView']['templateMeta']['form']), 'Assert that we do not take customized templateMeta section for Calls');
 }
-
 }
 
 class EditViewMergeMock extends EditViewMerge

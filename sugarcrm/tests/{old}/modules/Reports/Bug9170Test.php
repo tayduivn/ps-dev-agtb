@@ -117,5 +117,4 @@ class Bug9170Test extends TestCase
     {
         $GLOBALS['db']->truncateTableSQL($this->rs->table_name);
 	}
-
 }

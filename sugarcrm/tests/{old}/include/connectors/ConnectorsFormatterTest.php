@@ -87,7 +87,6 @@ EOQ;
             copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/rest/twitter_backup', 'custom/modules/Connectors/connectors/sources/ext/rest/twitter');
             ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/twitter_backup');
         }
-
     }
 
     public function testHoverLinkForAccounts()

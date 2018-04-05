@@ -75,7 +75,6 @@ class Bug54098Test extends TestCase
         $this->assertInternalType('array', $aResult['subscribed']);
         $this->assertArrayHasKey($oCampaign->name, $aResult['subscribed']);
         $this->assertArrayNotHasKey($oCampaign->name, $aResult['unsubscribed']);
-
     }
 
     private function createProspectlistToCampaignRelationRecord(Campaign $oCampaign, ProspectList $oProspectList)

@@ -22,7 +22,6 @@ class ParserLabelTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Administration');
-        parent::setUp();
         SugarTestHelper::setUp('files');
     }
 
@@ -32,7 +31,6 @@ class ParserLabelTest extends TestCase
 
         SugarTestHelper::tearDown();
         LanguageManager::clearLanguageCache(null, $current_language);
-        parent::tearDown();
     }
 
     /**

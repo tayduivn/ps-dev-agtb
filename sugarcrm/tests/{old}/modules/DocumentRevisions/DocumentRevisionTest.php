@@ -27,8 +27,6 @@ class DocumentRevisionTest extends TestCase
         foreach (static::$files as $file) {
             unlink($file);
         }
-
-        parent::tearDownAfterClass();
     }
 
     public function testSave_FileSizeIsSaved()

@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
 */
 class Bug65044Test extends TestCase
 {
-
     private $ie;
     private $account;
     private $contact;

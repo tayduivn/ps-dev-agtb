@@ -21,7 +21,6 @@ class ForecastWorksheetsApiHelperTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -31,7 +30,6 @@ class ForecastWorksheetsApiHelperTest extends TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function dataProviderFormatForApiSetsParentDeleted()

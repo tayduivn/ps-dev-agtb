@@ -239,5 +239,4 @@ class TeamMembershipTest extends TestCase
         $this->assertUserNotImplicitlyPartOfTeam($this->_users['B'], $team->name);
         $this->assertUserImplicitlyPartOfTeam($this->_users['C'], $team->name);
     }
-
 }

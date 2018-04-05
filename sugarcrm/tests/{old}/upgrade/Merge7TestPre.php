@@ -12,7 +12,6 @@
 
 class Merge7TestPre extends UpgradeTestCase
 {
-
     protected $new_dir;
 
     public function setUp()

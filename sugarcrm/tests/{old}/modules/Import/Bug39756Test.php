@@ -25,7 +25,6 @@ class Bug39756Test extends TestCase
         $this->_account = new Account();
         $this->_account->name = 'Account_'.create_guid();
         $this->_account->save();
-
     }
     
     public function tearDown() 

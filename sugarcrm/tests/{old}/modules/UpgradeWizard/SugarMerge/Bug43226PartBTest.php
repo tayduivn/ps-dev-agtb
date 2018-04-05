@@ -97,5 +97,4 @@ function test_uploadfile_convert_merge_600() {
        unlink('custom/modules/Documents/metadata/detailviewdefs-testback.php');
    }
 }
-
 }

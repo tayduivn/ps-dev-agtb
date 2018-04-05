@@ -57,5 +57,4 @@ class Bug53963Test extends TestCase
             $this->db->dropTableName($this->audit_table_name);
         }
     }
-
 }

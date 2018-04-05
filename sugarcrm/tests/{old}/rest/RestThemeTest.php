@@ -13,7 +13,6 @@
 
 class RestThemeTest extends RestTestBase
 {
-
     private $platformTest = 'platform_TEST_123456789';
     private $themeTest = 'theme_TEST_123456789';
 
@@ -154,7 +153,6 @@ class RestThemeTest extends RestTestBase
      */
     public function testResetDefaultTheme()
     {
-
         $args = array(
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
@@ -194,7 +192,6 @@ class RestThemeTest extends RestTestBase
     //Bug58031: baseUrl needs to be different for the Theme Editor preview.
     public function testBug58031BaseUrlVariable()
     {
-
         // TEST 1:  for preview, baseUrl is "../../styleguide/assets"
         $args = array(
             'platform' => $this->platformTest,

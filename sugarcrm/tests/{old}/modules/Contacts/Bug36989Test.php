@@ -35,13 +35,11 @@ class Bug36989Test extends TestCase
 
           SugarTestHelper::saveFile('modules/Contacts/metadata/SearchFields.php');
           file_put_contents('modules/Contacts/metadata/SearchFields.php', '<?php $searchFields[\'Contacts\'] = array(\'test\' => array());');
-          parent::setUp();
      }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
      function testOverrideSearchFields() {

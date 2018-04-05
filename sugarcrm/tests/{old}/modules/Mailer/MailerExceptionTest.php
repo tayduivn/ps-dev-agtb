@@ -43,5 +43,4 @@ class MailerExceptionTest extends TestCase
 
         $this->assertEquals($expected,  $result, 'Should map to the correct error message');
     }
-
 }

@@ -31,8 +31,6 @@ class SugarJobKBContentUpdateArticlesTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -58,7 +56,6 @@ class SugarJobKBContentUpdateArticlesTest extends TestCase
     {
         SugarTestKBContentUtilities::removeAllCreatedBeans();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

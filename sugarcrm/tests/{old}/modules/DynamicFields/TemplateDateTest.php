@@ -30,7 +30,6 @@ class TemplateDateTest extends TestCase
 
     public function tearDown()
     {
-
     	if(!$this->hasExistingCustomSearchFields)
 		{
             unlink('custom/modules/Opportunities/metadata/SearchFields.php');
@@ -40,7 +39,6 @@ class TemplateDateTest extends TestCase
 		   copy('custom/modules/Opportunities/metadata/SearchFields.php.bak', 'custom/modules/Opportunities/metadata/SearchFields.php');
 		   unlink('custom/modules/Opportunities/metadata/SearchFields.php.bak');
 		}
-
     }
 
     public function testEnableRangeSearchInt()

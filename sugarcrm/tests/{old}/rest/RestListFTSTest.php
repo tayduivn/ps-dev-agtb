@@ -70,7 +70,6 @@ class RestListFTSTest extends RestTestBase {
         }
 
         parent::tearDown();
-
     }
 
     /**
@@ -130,7 +129,6 @@ class RestListFTSTest extends RestTestBase {
         $restReply = $this->_restCall("Accounts?favorites=1&max_num=10");
 
         $this->assertEquals(6,count($restReply['reply']['records']));
-
     }
     
     /**
@@ -161,7 +159,6 @@ class RestListFTSTest extends RestTestBase {
                 $fav->save();
             }
             $this->search_engine->indexBean($account, false);
-
         }
 
         for ( $i = 0 ; $i < 30 ; $i++ ) {
@@ -244,6 +241,4 @@ class RestListFTSTest extends RestTestBase {
         }
         
     }
-
-
 }

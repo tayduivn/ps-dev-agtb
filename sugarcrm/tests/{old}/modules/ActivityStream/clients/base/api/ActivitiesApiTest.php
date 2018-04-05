@@ -22,7 +22,6 @@ class ActivitiesApiTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
         $this->api       = SugarTestRestUtilities::getRestServiceMock();
         $this->api->user = $GLOBALS['current_user'];
@@ -33,7 +32,6 @@ class ActivitiesApiTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

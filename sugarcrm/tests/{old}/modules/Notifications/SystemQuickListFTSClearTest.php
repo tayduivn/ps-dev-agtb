@@ -46,7 +46,6 @@ class SystemQuickListFTSClearTest extends TestCase
         $this->assertFalse($cfg->config['fts_disable_notification'], "FTS Disabled Notification is not false, it was: " . var_export($cfg->config['fts_disable_notification'], true));
         $settings = $admin->retrieveSettings();
         $this->assertEmpty($settings->settings['info_fts_index_done'], "FTS Index Done Flag not cleared, it was: " . var_export($settings->settings['info_fts_index_done'], true));
-
     }
 }
 

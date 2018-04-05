@@ -288,7 +288,6 @@ EOQ;
         $GLOBALS ['beanList'] [$this->module] = "Account";
         $GLOBALS['moduleList'][] = $this->module;
         $this->upgrader = new SidecarMetaDataUpgrader();
-
     }
 
     public function tearDown()
@@ -397,7 +396,6 @@ class MockSidecarMergeGridMetaDataUpgrader extends SidecarMergeGridMetaDataUpgra
 
     //Turn handle save into a no-op to prevent extra files from being generated.
     public function handleSave() {
-
     }
 
     //Don't log anything to the file system, this is only a test.
@@ -415,6 +413,4 @@ class MockSidecarMergeGridMetaDataUpgrader extends SidecarMergeGridMetaDataUpgra
         }
         return $parser->getFieldsFromPanels($this->sidecarViewdefs[$module][$client]['view'][$viewname]['panels']);
     }
-
-
 }

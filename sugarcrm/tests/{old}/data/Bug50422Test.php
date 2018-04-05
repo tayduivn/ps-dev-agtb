@@ -32,8 +32,6 @@ class Bug50422Test extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
@@ -76,7 +74,6 @@ class Bug50422Test extends TestCase
         }
 
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testRelateFullNameFormat()

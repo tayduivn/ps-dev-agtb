@@ -91,7 +91,6 @@ class Bug52063Test extends TestCase
         $mbc->action_SaveField();
         $_REQUEST = $this->currencyFieldDef2;
         $mbc->action_SaveField();
-
     }
 
     public function tearDown()

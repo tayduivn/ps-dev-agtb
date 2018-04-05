@@ -37,7 +37,6 @@ class KBUsefulnessRelationshipTest extends TestCase
      */
     public function testGetWhere($params)
     {
-
         $rel = new KBUsefulnessRelationship($this->def);
         $rel->primaryOnly = true;
         $res = SugarTestReflection::callProtectedMethod($rel, 'getRoleWhere', $params);

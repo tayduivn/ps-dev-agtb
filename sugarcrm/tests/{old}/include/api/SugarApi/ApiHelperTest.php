@@ -16,7 +16,6 @@ class ApiHelperTest extends TestCase
 {
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -26,7 +25,6 @@ class ApiHelperTest extends TestCase
 
     public function tearDown()
     {
-        parent::tearDown();
         SugarTestHelper::tearDown();
     }
 
@@ -63,6 +61,5 @@ class ApiHelperTest extends TestCase
         $this->assertContains("/", $bean->module_dir);
         $this->assertNotEquals($bean->module_name, $bean->module_dir);
         $this->assertEquals("{$moduleName}ApiHelper", get_class($helper));
-
     }
 }

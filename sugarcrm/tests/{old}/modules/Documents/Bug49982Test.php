@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49982Test extends TestCase
 {
-
 	var $doc = null;
     var $contract = null;
 
@@ -54,5 +53,4 @@ class Bug49982Test extends TestCase
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $this->assertTrue($sv->checkPostMaxSizeError(),'Sugar view list did not return an error, however conditions dictate that an upload with a file exceeding post_max_size has occurred.');
     }
-
 }

@@ -108,7 +108,6 @@ class Bug48135Test extends TestCase
 
 
     public function simulateStep2Session(){
-
         //simulate having only selected eapm for reassignment
         $_SESSION['reassignRecords']['assignedModuleListCache'] = array('EAPM' => 'EAPM');
         $_SESSION['reassignRecords']['assignedModuleListCacheDisp'] = array ('EAPM' => 'EAPM');

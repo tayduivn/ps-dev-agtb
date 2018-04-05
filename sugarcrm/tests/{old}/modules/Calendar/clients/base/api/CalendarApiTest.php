@@ -27,7 +27,6 @@ class CalendarApiTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         $this->api = SugarTestRestUtilities::getRestServiceMock();
         $this->api->user = $GLOBALS['current_user']->getSystemUser();
         $GLOBALS['current_user'] = $this->api->user;
@@ -38,7 +37,6 @@ class CalendarApiTest extends TestCase
 
     protected function tearDown()
     {
-        parent::tearDown();
         SugarTestContactUtilities::removeAllCreatedContacts();
 
         if (!empty($this->dp)) {

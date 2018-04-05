@@ -45,7 +45,6 @@ class Bug54419Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
 
-        parent::setUp();
 
         $this->accountShipping = SugarTestAccountUtilities::createAccount();
         $this->accountShipping->name = __CLASS__ . 'shipping';
@@ -66,7 +65,6 @@ class Bug54419Test extends TestCase
     public function tearDown()
     {
         // Restoring $GLOBALS
-        parent::tearDown();
         $_REQUEST = array();
         unset($_SERVER['REQUEST_METHOD']);
         unset($GLOBALS['currentModule']);

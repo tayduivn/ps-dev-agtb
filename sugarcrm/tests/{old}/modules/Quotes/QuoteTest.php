@@ -194,5 +194,4 @@ class QuoteTest extends TestCase
             array('Closed Dead', false)
         );
     }
-
 }

@@ -23,7 +23,6 @@ include_once('include/workflow/alert_utils.php');
  */
 class BugPAT591Test extends TestCase
 {
-
     public $opportunity;
     public $contact1;
     public $contact2;
@@ -55,7 +54,6 @@ class BugPAT591Test extends TestCase
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        parent::tearDown();
     }
 
     /**

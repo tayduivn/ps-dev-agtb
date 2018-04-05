@@ -17,14 +17,12 @@ class OAuth2ApiTest extends TestCase
     public function setUp()
     {
         $_SESSION = array();
-        parent::setUp();
     }
 
     public function tearDown()
     {
         $_SESSION = array();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testSudo()

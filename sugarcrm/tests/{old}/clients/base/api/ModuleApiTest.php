@@ -57,7 +57,6 @@ class ModuleApiTest extends TestCase
     protected function tearDown()
     {
         SugarACL::resetACLs();
-        parent::tearDown();
     }
 
     public static function tearDownAfterClass()

@@ -14,8 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SearchViewMetaDataParserTest extends TestCase
 {
-
-
     public function setUp()
     {
         //echo "Setup";
@@ -320,7 +318,6 @@ class SearchViewMetaDataParserTest extends TestCase
 
         //echo "Done";
     }
-
 }
 
 /**

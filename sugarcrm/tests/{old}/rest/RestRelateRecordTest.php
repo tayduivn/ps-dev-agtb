@@ -122,7 +122,6 @@ class RestRelateRecordTest extends RestTestBase {
             $contact->title = sprintf("%08d",($i+1));
             $contact->save();
             $this->contacts[] = $contact;
-
         }
         for ( $i = 0 ; $i < 1 ; $i++ ) {
             $opp = new Opportunity();
@@ -160,7 +159,6 @@ class RestRelateRecordTest extends RestTestBase {
         // Test fetch where the opp id is there, but the contact ID isn't
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/UNIT_TEST_THIS_IS_NOT_A_REAL_ID");
         $this->assertEquals('not_found',$restReply['reply']['error']);
-
     }
 
     /**
@@ -180,7 +178,6 @@ class RestRelateRecordTest extends RestTestBase {
             $contact->title = sprintf("%08d",($i+1));
             $contact->save();
             $this->contacts[] = $contact;
-
         }
         for ( $i = 0 ; $i < 1 ; $i++ ) {
             $opp = new Opportunity();
@@ -262,7 +259,6 @@ class RestRelateRecordTest extends RestTestBase {
             foreach ( $contactNums as $contactNum ) {
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->opportunity_role));
             }
-
         }
 
         $GLOBALS['db']->commit();
@@ -279,7 +275,6 @@ class RestRelateRecordTest extends RestTestBase {
 
         // test fetch vs update
         $this->assertEquals($fetch_fields, $update_fields, "Number of fields doesn't match");
-
     }
 
     /**
@@ -359,7 +354,6 @@ class RestRelateRecordTest extends RestTestBase {
             foreach ( $contactNums as $contactNum ) {
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->opportunity_role));
             }
-
         }
 
         $GLOBALS['db']->commit();
@@ -379,7 +373,6 @@ class RestRelateRecordTest extends RestTestBase {
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('Primary Decision Maker',$row['contact_role'],"Did not set the related contact's role");
         $this->assertEquals('Primary Decision Maker',$restReply['reply']['related_record']['opportunity_role'],"Did not set the related contact's role");
-
     }
 
     /**
@@ -452,7 +445,6 @@ class RestRelateRecordTest extends RestTestBase {
 
         $this->assertEquals($oppCount, $oppCountNew, "More Opps were created in this process");
         $this->assertEquals($contactCount, $contactCountNew, "More contacts where created in this process");
-
     }
 
     /**
@@ -526,7 +518,6 @@ class RestRelateRecordTest extends RestTestBase {
             foreach ( $contactNums as $contactNum ) {
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->opportunity_role));
             }
-
         }
 
         $GLOBALS['db']->commit();
@@ -561,8 +552,6 @@ class RestRelateRecordTest extends RestTestBase {
 
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('0',$row['link_count'],"The second link was never deleted");
-
-
     }
 
     public function testCreateWithModuleWithOutParentInfo() {
@@ -735,5 +724,4 @@ class RestRelateRecordTest extends RestTestBase {
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }
-
 }

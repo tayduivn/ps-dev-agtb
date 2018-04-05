@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarSpriteBuilderTest extends TestCase
 {
-
 var $useSprites;
 
 public function setUp()
@@ -58,5 +57,4 @@ public function testSugarSpriteBuilder()
     $files = glob('cache/sprites/default/*.png');
     $this->assertTrue(!empty($files), 'Assert that we have created .png sprite images');
 }
-
 }

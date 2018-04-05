@@ -17,7 +17,6 @@ require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
 class Bug44896Test extends TestCase
 {
-
     public function setUp()
     {
         if (is_dir(dirname(Bug44896PackageManger::$location))) {
@@ -51,7 +50,6 @@ class Bug44896Test extends TestCase
             $this->assertArrayHasKey('unFile', $module, 'Key "unFile" is missing in return array');
         }
     }
-
 }
 
 class Bug44896PackageManger

@@ -21,7 +21,6 @@ class M2MRelationshipTest extends TestCase
 
     public function setUp()
     {
-
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');

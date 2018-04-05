@@ -53,5 +53,4 @@ class Bug49281Test extends TestCase
         $acc->retrieve($id);
         $this->assertEquals('f094f59daa', $acc->sic_code);
     }
-
 }

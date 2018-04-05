@@ -34,7 +34,6 @@ class Bug40311Test extends TestCase
         if ( isset($GLOBALS['installing']) )
             $this->_old_installing = $GLOBALS['installing'];
         $GLOBALS['installing'] = true;
-
     }
 
     public function tearDown()
@@ -46,12 +45,10 @@ class Bug40311Test extends TestCase
             unset($GLOBALS['installing']);
         }
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testDynamicFieldsNullWorks()
     {
-
         $this->db->addQuerySpy(
             'dynamic_field',
             '/' . $this->_tablename . '_cstm\.\*/',

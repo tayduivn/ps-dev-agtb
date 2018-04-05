@@ -19,7 +19,6 @@ class UserSignaturesApiHelperTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
 
         $this->bean = BeanFactory::newBean('UserSignatures');
@@ -30,7 +29,6 @@ class UserSignaturesApiHelperTest extends TestCase
     {
         unset($this->bean);
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testFormatForApi_NoDefault_IsDefaultFalse()

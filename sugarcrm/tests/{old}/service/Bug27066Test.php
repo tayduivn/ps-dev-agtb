@@ -17,7 +17,6 @@
  */
 class Bug27066Test extends SOAPTestCase
 {
-
     public $team1;
     public $team2;
 
@@ -82,6 +81,4 @@ class Bug27066Test extends SOAPTestCase
         // Should create a new account!
         $this->assertNotEquals($this->account->id, $ids[0]);
     }
-
-
 }

@@ -541,7 +541,6 @@ class RESTAPI4Test extends TestCase
             )
         );
         $this->assertNull($result);
-
     }
     public static function _wirelessGridModuleLayoutProvider()
     {

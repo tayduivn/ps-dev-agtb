@@ -27,7 +27,6 @@ class CustomRecordViewHistorySummaryButtonTest extends UpgradeTestCase
 
     public function testAddHistorySummaryButtonWillNotAddWhenButtonExists()
     {
-
         $module = 'Accounts';
         $viewdefs[$module]['base']['view']['record']['buttons'] = array(
             array(
@@ -61,7 +60,6 @@ class CustomRecordViewHistorySummaryButtonTest extends UpgradeTestCase
 
     public function testAddHistorySummaryButtonWillAddWhenButtonDoesNotExists()
     {
-
         $module = 'Accounts';
         $viewdefs[$module]['base']['view']['record']['buttons'] = array(
             array(

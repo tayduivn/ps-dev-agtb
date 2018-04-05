@@ -84,7 +84,6 @@ class Bug50768Test extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
 
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
-
     }
 
     public function tearDown()
@@ -96,7 +95,6 @@ class Bug50768Test extends TestCase
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['app_list_strings']);
         unset($_REQUEST);*/
-
     }
 
     /**

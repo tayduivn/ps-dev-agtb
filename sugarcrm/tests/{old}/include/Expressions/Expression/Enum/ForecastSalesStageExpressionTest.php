@@ -16,7 +16,6 @@ class ForecastSalesStageExpressionTest extends TestCase
 {
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('app_list_strings');
     }
 

@@ -56,9 +56,7 @@ class Bug49175Test extends TestCase
 }
 
 class MockUserViewHelper extends UserViewHelper {
-
     //override the constructor, don't bother passing Smarty instance, etc.
     public function __construct() {
-
     }
 }

@@ -134,7 +134,6 @@ public function test_silent_upgrade_parameters() {
  *
  */
 public function test_silent_upgrade_parameters2() {
-
 	if(!file_exists('config.php'))
 	{
 		$this->markTestSkipped('Unable to locate config.php file.  Skipping test.');
@@ -167,6 +166,4 @@ public function test_silent_upgrade_parameters2() {
 	$this->assertEquals(true, $sugar_config['external_cache_disabled_memcache'], "Assert external_cache_disabled_memcache is set to true.");
 	$this->assertEquals(true, $sugar_config['external_cache_disabled'], "Assert external_cache_disabled is set to true.");
 }
-
-
 }

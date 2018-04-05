@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug57252Test extends TestCase
 {
-
     public $testUser;
 
     public function setUp()
@@ -49,7 +48,6 @@ class Bug57252Test extends TestCase
 
         $this->assertEquals($this->testUser->getPreference('datef'), $sugar_config['default_date_format']);
         $this->assertEquals($this->testUser->getPreference('timef'), $sugar_config['default_time_format']);
-
     }
 
     /**
@@ -58,14 +56,10 @@ class Bug57252Test extends TestCase
      */
     public function testDefaultDateTimeFormatFromUserPref()
     {
-
         $this->testUser->setPreference('datef','d/m/Y', 0, 'global');
         $this->testUser->setPreference('timef','h.iA',0,'global');
 
         $this->assertEquals($this->testUser->getPreference('datef'), 'd/m/Y');
         $this->assertEquals($this->testUser->getPreference('timef'), 'h.iA');
-
     }
-
-
 }

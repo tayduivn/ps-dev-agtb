@@ -132,7 +132,6 @@ class RelateRecordQuoteApiTest extends TestCase
      */
     public function testCreateRelatedQuoteToContact()
     {
-
         $result = $this->_apiClass->createRelatedRecord($this->_api, $this->_args);
         $this->assertRelatedItemExists($result);
 

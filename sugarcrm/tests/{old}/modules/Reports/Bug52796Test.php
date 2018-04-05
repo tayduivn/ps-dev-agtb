@@ -31,14 +31,12 @@ class Bug52796Test extends TestCase
     {
         // Change default currency to check conversion
         global $sugar_config;
-        parent::setUp();
         SugarTestHelper::setUp('beanList');
         $user = SugarTestHelper::setUp('current_user');
         $user->setPreference('currency_show_preferred', true);
         $currency = SugarTestCurrencyUtilities::createCurrency('CC', 'C', 'CCC', 0.732);
         $this->saved['currency'] = $sugar_config['currency'];
         $sugar_config['currency'] = $currency->id;
-
     }
 
     protected function tearDown()
@@ -52,7 +50,6 @@ class Bug52796Test extends TestCase
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();
-        parent::tearDown();
 	}
 
 	/**

@@ -23,12 +23,10 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
     protected $mocGatewayDefinition;
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
     }
 
     protected function setUp()
     {
-        parent::setUp();
         $this->mocGateway = $this->getMockBuilder("pmse_BpmnGateway")
                 ->disableAutoload()
                 ->disableOriginalConstructor()
@@ -58,7 +56,6 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
         $this->gatDefWrapper->setFlowBean($this->mocFlow);
 
         $this->arguments = array ( 'id' => '1', 'record' => 1, 'data' => array('flo_uid' => '1', 'flo_condition'=>'a>0'));
-
     }
     public function testGet()
     {
@@ -113,7 +110,6 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
     }
     public function testPut ()
     {
-
         $this->mocGateway->expects($this->exactly(1))
             ->method("retrieve_by_string_fields")
             ->with($this->isType('array'))

@@ -27,7 +27,6 @@ class ViewEditTest extends TestCase
         $view = new MockViewEditConstructor();
         $this->assertEquals('edit', $view->type);
     }
-
 }
 
 class MockViewEditDirect extends ViewEdit

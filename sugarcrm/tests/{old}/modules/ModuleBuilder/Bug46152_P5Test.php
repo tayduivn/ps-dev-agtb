@@ -16,7 +16,6 @@ require_once ('modules/DynamicFields/FieldCases.php');
 
 class Bug46152_P5Test extends TestCase
 {
-
     static private $moduleBuilder;
 
     static private $packageName = 'pnb46152';
@@ -78,7 +77,6 @@ class Bug46152_P5Test extends TestCase
         $this->assertNull($module->getField(self::$fieldName));
         $this->assertNull($module->getField($idFieldName));
         $this->assertArrayNotHasKey($fieldId->vname, $modStrings);
-
     }
 
     private function createField()
@@ -99,7 +97,6 @@ class Bug46152_P5Test extends TestCase
         $module->mbvardefs->save();
         $module->setLabel($GLOBALS['current_language'], $this->fieldLabelName, self::$fieldName);
         $module->save();
-
     }
 
     public static function setUpBeforeClass()
@@ -110,8 +107,6 @@ class Bug46152_P5Test extends TestCase
         SugarTestHelper::setUp('current_user');
         self::createPackage();
         self::createModule();
-
-        parent::setUpBeforeClass();
     }
 
     private static function createPackage()
@@ -145,7 +140,5 @@ class Bug46152_P5Test extends TestCase
 
         $_REQUEST = array();
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
-
 }

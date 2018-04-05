@@ -17,7 +17,6 @@ class WebLogicHookTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -29,7 +28,6 @@ class WebLogicHookTest extends TestCase
     {
         SugarTestWebLogicHookUtilities::removeAllCreatedWebLogicHook();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        parent::tearDownAfterClass();
     }
 
     /**

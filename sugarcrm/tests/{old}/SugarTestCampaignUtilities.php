@@ -154,6 +154,5 @@ class CampaignMock extends Campaign
         }
 
         return $this->createNotificationEmailTemplate($templateName);
-
     }
 }

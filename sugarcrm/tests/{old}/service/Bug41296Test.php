@@ -41,7 +41,6 @@ class Bug41296Test extends SOAPTestCase
         $contact->save();
         $GLOBALS['db']->commit();
 		$this->c = $contact;
-
     }
 
     public function tearDown()
@@ -65,5 +64,4 @@ class Bug41296Test extends SOAPTestCase
         $this->_resultId = $result['ids'][0];
         $this->assertNotEquals($this->c->id, $result['ids'][0], "Contacts should not match");
     }
-
 }

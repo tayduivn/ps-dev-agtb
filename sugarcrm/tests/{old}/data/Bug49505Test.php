@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49505Test extends TestCase
 {
-
     /**
      * @var array
      */
@@ -55,7 +54,6 @@ class Bug49505Test extends TestCase
         $this->_createdBeans[] = $focus;
 
         foreach ($linkedModules as $v) {
-
             $linkedBean = BeanFactory::newBean($v);
             $linkedBean->name = "bug49505";
             $linkedBean->save();
@@ -79,5 +77,4 @@ class Bug49505Test extends TestCase
             $this->assertEquals($linkedBean->id, $link2List['list'][0]->id);
         }
     }
-
 }

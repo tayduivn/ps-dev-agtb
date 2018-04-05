@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldCurrency_idTest extends TestCase
 {
-    
      /**
      * @ticket 61047
      */

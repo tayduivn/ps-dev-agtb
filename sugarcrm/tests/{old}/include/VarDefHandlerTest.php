@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  */
 class VarDefHandlerTest extends TestCase
 {
-
     /**
      * Test tries to assert related field in array which was filtered by template_filter
      */

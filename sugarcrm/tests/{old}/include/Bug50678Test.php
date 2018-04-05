@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50678Test extends TestCase
 {
-
     private $_backupConfig;
 
     public function setUp()
@@ -70,5 +69,4 @@ class Bug50678Test extends TestCase
         $this->assertSame($url."?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6&anchor=arg7",
             get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6', 'arg7'));
     }
-
 }

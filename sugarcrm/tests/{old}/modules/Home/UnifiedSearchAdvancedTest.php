@@ -51,7 +51,6 @@ class UnifiedSearchAdvancedTest extends TestCase
         	unlink('custom/modules/unified_search_modules_display.php');
         }
         */
-
     }
 
     public function tearDown()

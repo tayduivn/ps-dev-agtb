@@ -13,7 +13,6 @@
 
 class SugarTestKBContentUtilities
 {
-
     protected static $_createdKbContentIds = array();
     protected static $_createdKbDocumentIds = array();
     protected static $_createdKbArticleIds = array();

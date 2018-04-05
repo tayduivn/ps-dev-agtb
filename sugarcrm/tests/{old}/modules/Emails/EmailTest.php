@@ -25,7 +25,6 @@ class EmailTest extends TestCase
 	public function setUp()
 	{
 	    global $current_user;
-        parent::setUp();
 
         OutboundEmailConfigurationTestHelper::setUp();
 	    $current_user = BeanFactory::newBean("Users");
@@ -52,7 +51,6 @@ class EmailTest extends TestCase
 		// SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		unset($GLOBALS['current_user']);
         OutboundEmailConfigurationTestHelper::tearDown();
-        parent::tearDown();
 	}
 
 	public function testSafeAttachmentName ()
@@ -95,7 +93,6 @@ class EmailTest extends TestCase
 				$emailString[] = $emailDisplayName[$j].$emailAddress[$j];
 			else
 				$emailString[] = $emailDisplayName[$j].'<'.$emailAddress[$j].'>';
-
 		}
 		$emailAddressString = implode(', ', $emailString);
 		$result = $this->email->email2ParseAddresses($emailAddressString);
@@ -255,7 +252,6 @@ class EmailTest extends TestCase
         $GLOBALS['sugar_config']['email_address_separator'] = $config_param;
 
         $this->assertEquals($expected,$this->email->_arrayToDelimitedString($address_array), 'Array should be delimited with correct delimiter');
-
     }
 
     /**

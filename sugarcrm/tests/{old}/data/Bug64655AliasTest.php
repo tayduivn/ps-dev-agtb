@@ -36,8 +36,6 @@ class Bug64655AliasTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         // this test will fail in developer mode because VarDefManager will
         // rebuild User's vardefs
         unset($_SESSION['developerMode']);
@@ -64,8 +62,6 @@ class Bug64655AliasTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         // create regular user with custom field populated
         $user = $this->user = SugarTestUserUtilities::createAnonymousUser(false, 0);
         $user->{self::$fieldName . '_c'} = 'Custom Value';

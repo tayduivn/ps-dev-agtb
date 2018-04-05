@@ -13,7 +13,6 @@
 
 class UpgradeBWCTest extends UpgradeTestCase
 {
-
     protected $modules = array(
         'scantest', 'scantestMB', 'scantestExt', 'scantestHooks', 'scantestHTML'
     );

@@ -105,5 +105,4 @@ class Bug51723Test extends SOAPTestCase
             $this->fail('Can\'t get expected values:' . implode(',', $fields));
         }
     }
-
 }

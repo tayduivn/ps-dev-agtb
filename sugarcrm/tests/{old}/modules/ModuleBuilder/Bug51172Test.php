@@ -35,7 +35,6 @@ class Bug51172Test extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
     }
 
     public function tearDown()
@@ -60,7 +59,6 @@ class Bug51172Test extends TestCase
         }
 
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

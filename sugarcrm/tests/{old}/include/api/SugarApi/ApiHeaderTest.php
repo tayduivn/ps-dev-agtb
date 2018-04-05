@@ -26,7 +26,6 @@ class ApiHeaderTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
-
     }
 
     public function tearDown()
@@ -42,7 +41,6 @@ class ApiHeaderTest extends TestCase
         }
 
         $this->assertEquals($this->headers, $api->getResponseHeaders(), "The Headers Do Not Match");
-
     }
 
     public function testSendHeaders() {
@@ -57,11 +55,9 @@ class ApiHeaderTest extends TestCase
         $return = $api->sendHeaders();
 
         $this->assertEquals($expected_return, $return, "The Headers Sent were incorrect");
-
     }
 
     public function testRequestHeaders() {
-
         $api = new RestServiceMock();
 
         $headers = $api->getRequest()->getRequestHeaders();

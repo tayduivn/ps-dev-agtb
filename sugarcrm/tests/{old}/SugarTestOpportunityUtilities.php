@@ -12,14 +12,12 @@
 
 class SugarTestOpportunityUtilities
 {
-
     private static $_createdOpportunities = array();
 
     private static $_createdAccount = null;
 
     private function __construct()
     {
-
     }
 
     /*

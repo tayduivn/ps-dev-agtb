@@ -23,7 +23,6 @@ class CustomOneToManyTest extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-
     }
     public function tearDown()
     {
@@ -140,6 +139,5 @@ class CustomOneToManyTest extends TestCase
         // print_r($subPanel);
         $this->assertEquals($sortedDefs['link']['name'],$subPanel['Opportunities'][0]['get_subpanel_data'],"Subpanel is using the incorrect link");
         // print_r($relData);
-
     }
 }

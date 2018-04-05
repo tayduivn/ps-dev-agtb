@@ -29,7 +29,6 @@ class Bug42475Test extends TestCase
         $dataChanges = $testBean->db->getAuditDataChanges($testBean);
 
         $this->assertEquals(1,count($dataChanges), "Test bean should have 1 change since we added assigned new value to test_field");
-
     }
 }
 

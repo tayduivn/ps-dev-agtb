@@ -40,7 +40,6 @@ class Bug43805Test extends TestCase
      */
     public static function createProspect()
     {
-
 		$prospect = SugarTestProspectUtilities::createProspect();
 		
         $prospect->save();
@@ -115,7 +114,6 @@ class Bug43805Test extends TestCase
         $content = export("ProspectLists", $this->_prospectList->id, true);
 				
         $this->assertContains($this->_prospects[0]->title, $content, "Report should contain title of created Prospect");
-
     }
 
     private function _clearProspects()

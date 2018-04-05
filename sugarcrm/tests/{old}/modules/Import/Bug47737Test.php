@@ -53,13 +53,11 @@ class Bug47737Test extends TestCase
 
         $this->assertEquals($expected, $actual, "Error converting id during import process $actual , expected: $expected, before conversion: $dirty");
     }
-
 }
 
 
 class ImporterStub extends Importer
 {
-
     public function convertID($id)
     {
         return $this->_convertId($id);

@@ -30,8 +30,6 @@ class SimpleQueryTest extends TestCase
 
     public static function setupBeforeClass()
     {
-        parent::setupBeforeClass();
-
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -41,7 +39,6 @@ class SimpleQueryTest extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        parent::tearDownAfterClass();
     }
 
     public function setUp()
@@ -155,7 +152,6 @@ class SimpleQueryTest extends TestCase
             $result[0]['last_name'],
             'The Last Name Did Not Match, the deleted record did not return'
         );
-
     }
 
     public function testSelectWithAlias()
@@ -221,7 +217,6 @@ class SimpleQueryTest extends TestCase
             $result[0]['last_name'],
             'The Last Name Did Not Match, the deleted record did not return'
         );
-
     }
 
     public function testSelectWithJoin()

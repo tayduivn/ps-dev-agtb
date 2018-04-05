@@ -22,7 +22,6 @@ class OutboundEmailConfigurationPeerTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("app_list_strings");
         SugarTestHelper::setUp("app_strings");
@@ -41,7 +40,6 @@ class OutboundEmailConfigurationPeerTest extends TestCase
         OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        parent::tearDown();
     }
 
     public function testListMailConfigurations_NoSystemOrSystemOverrideConfigurationsExist_SystemConfigurationIsNotAllowed_SystemOverrideConfigurationIsCreatedAndReturned()

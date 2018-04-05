@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class OpportunityTest extends TestCase
 {
-
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('current_user');
@@ -405,7 +404,6 @@ class OpportunityTest extends TestCase
 
         $this->assertEquals('test_account_id1', $mockProduct->account_id);
         $this->assertEquals('test_account_id1', $mockRLI->account_id);
-
     }
 
     /**
@@ -450,7 +448,5 @@ class OpportunityTest extends TestCase
         );
 
         $opp->set_opportunity_contact_relationship('test_contact_id');
-
     }
-
 }

@@ -33,8 +33,6 @@ class RecorderTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->conn = DBManagerFactory::getConnection();
         $this->cleanUp();
     }
@@ -42,8 +40,6 @@ class RecorderTest extends TestCase
     protected function tearDown()
     {
         $this->cleanUp();
-
-        parent::tearDown();
     }
 
     /**

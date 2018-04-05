@@ -49,7 +49,6 @@ class Bug46941Test extends TestCase
         unset($_REQUEST['readme']);
         unset($_REQUEST['author']);
         unset($_REQUEST['description']);
-
     }
 
     public function tearDown()

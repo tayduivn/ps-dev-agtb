@@ -43,8 +43,6 @@ class PAT189Test extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->api = new AccountsRelateApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
 
@@ -65,8 +63,6 @@ class PAT189Test extends TestCase
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-
-        parent::tearDown();
     }
 
     public static function tearDownAfterClass()

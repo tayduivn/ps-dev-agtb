@@ -109,5 +109,4 @@ class ITR27836Test extends TestCase
             $this->assertFalse($subpanel_def->isDefaultHidden());
         }
     }
-
 }

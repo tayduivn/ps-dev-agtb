@@ -63,7 +63,6 @@ class KBContentsTest extends TestCase
             ]
         );
         $this->categoryRoot = SugarTestCategoryUtilities::createRootBean();
-
     }
 
     public function tearDown()
@@ -319,7 +318,6 @@ class KBContentsTest extends TestCase
      */
     public function testSaveUsefulness()
     {
-
         $beanDateModified = $this->bean->date_modified;
         $beanModifiedBy = $this->bean->modified_by;
 

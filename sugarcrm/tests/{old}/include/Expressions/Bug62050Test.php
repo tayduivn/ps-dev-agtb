@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug62050Test extends TestCase
 {
-
     private $files = array();
 
     public function setUp()
@@ -147,5 +146,4 @@ class Bug62050Test extends TestCase
             )
         );
     }
-
 }

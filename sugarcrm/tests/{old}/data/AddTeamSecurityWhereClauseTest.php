@@ -21,13 +21,11 @@ class AddTeamSecurityWhereClauseTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        parent::setUp();
 	}
 
 	public function tearDown()
 	{
         SugarTestHelper::tearDown();
-        parent::tearDown();
 	}
 
 	public function testAddTeamSecurityWhereClauseForRegularUser()

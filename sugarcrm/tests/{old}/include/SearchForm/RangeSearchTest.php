@@ -168,7 +168,6 @@ class RangeSearchTest extends TestCase
 
 		$where_clauses = $this->searchForm->generateSearchWhere();
 		$this->assertEquals("(opportunities.amount >= 9999.99 AND opportunities.amount <= 10000.01)", $where_clauses[0]);
-
     }
 
     /**
@@ -249,5 +248,4 @@ class RangeSearchTest extends TestCase
 		$output = $ss->fetch($this->smartyTestFile);
         $this->assertRegExp('/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-04\-2009\'/', $output);
     }
-
 }

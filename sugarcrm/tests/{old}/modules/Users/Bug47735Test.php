@@ -30,7 +30,6 @@ class Bug47735Test extends TestCase
 
     public function tearDown()
     {
-
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($this->user);
         unset($GLOBALS['current_user']);

@@ -80,6 +80,4 @@ class Bug38912 extends TestCase
 						$this->_nonWhiteListAction, $this->_whiteList),
 				"Assert that we dont need redirect for User on module in whitelist for all actions");
 	}
-
-
 }

@@ -16,8 +16,6 @@ class TemplateDateTimeTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -27,8 +25,6 @@ class TemplateDateTimeTest extends TestCase
     {
         global $timedate;
         $timedate->setNow(new SugarDateTime());
-
-        parent::tearDown();
     }
 
     /**

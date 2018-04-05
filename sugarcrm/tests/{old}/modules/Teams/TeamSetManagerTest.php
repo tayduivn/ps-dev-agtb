@@ -21,8 +21,6 @@ class TeamSetManagerTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -32,8 +30,6 @@ class TeamSetManagerTest extends TestCase
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
-
-        parent::tearDownAfterClass();
     }
 
     public function testGetTeamsForUser()

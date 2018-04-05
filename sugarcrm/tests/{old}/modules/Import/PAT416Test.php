@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class BugPAT416Test extends TestCase
 {
-
     private $dummy_defs;
 
     public function setUp()

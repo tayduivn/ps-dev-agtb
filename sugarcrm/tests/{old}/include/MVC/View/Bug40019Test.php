@@ -37,7 +37,6 @@ class Bug40019Test extends TestCase
 	
 	public function tearDown() 
 	{
-
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();

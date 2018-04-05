@@ -16,7 +16,6 @@ class SugarModuleTest extends TestCase
 {
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->is_admin = '1';
     }

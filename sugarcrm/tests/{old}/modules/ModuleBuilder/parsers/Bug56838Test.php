@@ -37,7 +37,6 @@ class Bug56838Test extends TestCase
     public static function tearDownAfterClass() 
     {
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     /**

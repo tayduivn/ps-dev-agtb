@@ -73,7 +73,6 @@ class TrackerManagerTest extends TestCase
     
 
     function testPausing3() {
-    	
     	$query = "select count(id) as total from tracker_queries";
     	$result = $GLOBALS['db']->query($query);
     	$count1 = 0;

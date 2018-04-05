@@ -38,7 +38,6 @@ class SugarTestRelationshipUtilities
      */
     public static function createRelationship(array $relationship_def)
     {
-
         if(!self::checkRequiredFields($relationship_def)) return false;
 
         $relationships = new DeployedRelationships ($relationship_def['lhs_module']);
@@ -79,7 +78,6 @@ class SugarTestRelationshipUtilities
     public static function removeAllCreatedRelationships()
     {
         foreach(self::$_relsAdded as $rel) {
-
             $relationships = new DeployedRelationships($rel['lhs_module']);
 
             $relationships->delete($rel['relationship_name']);
@@ -113,6 +111,4 @@ class SugarTestRelationshipUtilities
 
         return true;
     }
-
 }
-?>

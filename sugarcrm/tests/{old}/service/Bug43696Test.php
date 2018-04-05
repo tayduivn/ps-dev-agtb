@@ -65,7 +65,6 @@ class Bug43696Test extends SOAPTestCase
             )
         );
         $this->assertContains($this->_tsk->id, base64_decode($result['entry_list']), 'The Result does not contain the Task Id');
-
     }
 
     /**
@@ -105,6 +104,5 @@ class Bug43696Test extends SOAPTestCase
             )
         );
         $this->assertNotContains($this->_tsk->id, base64_decode($result['entry_list']), 'The Result should not contain the Task Id');
-
     }
 }

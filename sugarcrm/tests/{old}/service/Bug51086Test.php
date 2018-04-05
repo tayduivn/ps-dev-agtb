@@ -76,7 +76,6 @@ class Bug51086Test extends SOAPTestCase
 
     public function tearDown()
     {
-
         $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id = '".$this->_aclRole->id."' ");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '".$this->_contact->id."' ");
         $GLOBALS['db']->commit();
@@ -145,7 +144,6 @@ class Bug51086Test extends SOAPTestCase
             if($this->_blockedfield == $name_val_array['name']){
                 $foundDescription = true;
             }
-
         }
 
 
@@ -157,7 +155,6 @@ class Bug51086Test extends SOAPTestCase
     //Same as previous test, only without a passed in list of selected fields, meaning that all fields are returned
     public function testFieldLevelACLWithOutDefinedSelect()
     {
-
         //make the soap call that will return the contact record with all fields (no selected fields defined).
         $result = $this->_soapClient->call(
             'get_entry_list',
@@ -185,11 +182,8 @@ class Bug51086Test extends SOAPTestCase
             if($this->_blockedfield == $name_val_array['name']){
                 $foundDescription = true;
             }
-
         }
         //assert returned field is not description
         $this->assertFalse($foundDescription, 'the blocked field ('.$this->_blockedfield.') was returned when no select fields were specified despite being off limits through ACLs and user not being admin.');
     }
-
-
 }

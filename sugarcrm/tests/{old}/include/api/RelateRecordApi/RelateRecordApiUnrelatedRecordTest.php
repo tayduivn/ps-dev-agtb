@@ -26,8 +26,6 @@ class RelateRecordApiUnrelatedRecordTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user');
         self::$account1 = SugarTestAccountUtilities::createAccount();
         self::$account2 = SugarTestAccountUtilities::createAccount();
@@ -37,7 +35,6 @@ class RelateRecordApiUnrelatedRecordTest extends TestCase
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        parent::tearDownAfterClass();
     }
 
     public function testCreateUnrelatedRecord()

@@ -30,14 +30,11 @@ class SugarEmailAddressImportTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
     }
 
     protected function setUp()
     {
-        parent::setUp();
-
         if (isset($GLOBALS['sugar_config']['new_email_addresses_opted_out'])) {
             $this->configOptoutBackUp = $GLOBALS['sugar_config']['new_email_addresses_opted_out'];
         }
@@ -67,8 +64,6 @@ class SugarEmailAddressImportTest extends TestCase
         } else {
             unset($GLOBALS['sugar_config']['new_email_addresses_opted_out']);
         }
-
-        parent::tearDown();
     }
 
     public function optoutDataProvider()

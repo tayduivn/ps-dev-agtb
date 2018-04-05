@@ -21,7 +21,6 @@ require_once 'modules/Administration/updater_utils.php';
  */
 class Bug46317Test extends TestCase
 {
-
     function versionProvider()
     {
         return array(

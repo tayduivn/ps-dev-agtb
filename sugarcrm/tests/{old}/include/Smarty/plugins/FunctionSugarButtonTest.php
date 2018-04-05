@@ -20,7 +20,6 @@ class FunctionSugarButtonTest extends TestCase
     public function setUp()
     {
         $this->_smarty = new Sugar_Smarty;
-
     }
 
     public function providerCustomCode() {
@@ -555,11 +554,9 @@ class FunctionSugarButtonTest extends TestCase
 
         //Test for smarty_function_sugar_button for customCode
         $this->assertEquals($expected_customCode, smarty_function_sugar_button($params, $this->_smarty));
-
     }
 
     public function providerCustomCodeWithHidden() {
-
         $onclick = 'this.form.module.value=\'Contacts\';this.form.action.value=\'DetailView\';';
         $expected_onclick = 'var _form = document.getElementById(\'DetailView\');_form.module.value=\'Contacts\';_form.action.value=\'DetailView\';_form.submit();';
 
@@ -601,7 +598,6 @@ class FunctionSugarButtonTest extends TestCase
      * @dataProvider providerCustomCodeWithHidden
      */
     public function testCustomCodeWithHidden($customCode, $expected_customCode, $expected_hidden_array) {
-
         $params = array(
             'module' => 'Accounts',
             'view' => 'DetailView',
@@ -614,11 +610,9 @@ class FunctionSugarButtonTest extends TestCase
         $form = $this->_smarty->get_template_vars('form');
 
         $this->assertEquals($expected_hidden_array, $form['hidden']);
-
     }
 
     public function testBuildSugarHtml() {
-
         $sugar_html = array(
             'type' => 'submit',
             'value' => '{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}',
@@ -643,6 +637,5 @@ class FunctionSugarButtonTest extends TestCase
         );
         //Test for smarty_function_sugar_button for sugar_html
         $this->assertEquals($expected_html, smarty_function_sugar_button($params, $this->_smarty));
-
     }
 }

@@ -14,7 +14,6 @@
 
 class RestPortalCreateTest extends RestTestPortalBase
 {
-
     /**
      * We need to associate an Account with the Contact in order to create Cases
      */
@@ -118,7 +117,6 @@ class RestPortalCreateTest extends RestTestPortalBase
         $this->assertEquals(403,$caseReply['info']['http_code'],"HTTP Status");
         // Error message should mention the module name
         $this->assertContains('Cases',$caseReply['reply']['error_message'], "The error message should mention the module name.");
-
     }
 
 //BEGIN SUGARCRM flav=ent ONLY
@@ -158,7 +156,6 @@ class RestPortalCreateTest extends RestTestPortalBase
         $this->assertEquals($this->account->id, $bugNoteReply['reply']['related_record']['account_id'], "account id should have been set in Note");
         $this->assertEquals($this->contact->id, $bugNoteReply['reply']['related_record']['contact_id'], "contact id should have been set in Note");
         $this->assertEquals($this->bugId, $bugNoteReply['reply']['related_record']['parent_id'], "Note should have been attached to Bug");
-
     }
 //END SUGARCRM flav=ent ONLY
 }

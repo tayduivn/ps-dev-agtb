@@ -14,8 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug56373Test extends TestCase
 {
-
-
 	// Currently, getBreadCrumbList in BreadCrumbStack.php limits you to 10
 	// Also, the Constructor in BreadCrumbStack.php limits it to 10 too.
     /*
@@ -36,9 +34,7 @@ class Bug56373Test extends TestCase
            $this->assertNotRegExp('/[<>]/',$row['item_summary_short']);
            $this->assertContains($history[$key]['item_summary'], $row['image']);
         }
-
     }
-
 }
 
 class Bug56373TestSugarViewMock extends SugarView

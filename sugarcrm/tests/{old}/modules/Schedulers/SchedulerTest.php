@@ -342,7 +342,6 @@ class SchedulerTest extends TestCase
         }
         $this->assertNotEmpty($ourjob, "Could not find our job in the queue");
     }
-
 }
 
 class MockSchedulerQueue extends SugarJobQueue

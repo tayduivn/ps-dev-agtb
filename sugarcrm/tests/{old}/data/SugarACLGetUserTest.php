@@ -36,7 +36,6 @@ class SugarACLGetUserTest extends TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
         SugarACL::$acls = array();
         unset($GLOBALS['dictionary'][$this->bean->object_name]);
     }
@@ -93,7 +92,6 @@ class SugarACLGetUserTest extends TestCase
         $access = SugarACL::getUserAccess("test");
         $this->assertFalse($access['edit']);
     }
-
 }
 
 class TestACLReadOnly extends SugarACLStrategy

@@ -86,7 +86,6 @@ class EmptyCustomDateFieldTest extends TestCase
         $mbc->action_SaveField();
         $_REQUEST = $this->extraFieldDef;
         $mbc->action_SaveField();
-
     }
 
     public function tearDown()
@@ -158,7 +157,6 @@ class EmptyCustomDateFieldTest extends TestCase
 
     public function testSaveCustomDateField()
     {
-
         $this->testOpp = new Opportunity();
         $this->testOpp->test_custom_c = "This should save";
         $this->testOpp->save(false);

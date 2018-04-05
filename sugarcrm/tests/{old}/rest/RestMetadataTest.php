@@ -101,7 +101,6 @@ class RestMetadataTest extends RestTestBase {
         $this->assertEquals($en_us['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
 
         // TODO add test for user pref when that field gets added
-
     }
     //END SUGARCRM flav=ent ONLY
 }

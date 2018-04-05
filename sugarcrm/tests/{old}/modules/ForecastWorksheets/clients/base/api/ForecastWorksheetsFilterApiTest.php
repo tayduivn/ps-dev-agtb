@@ -53,8 +53,6 @@ class ForecastWorksheetsFilterApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-        
         SugarTestHelper::setUp("app_strings");
         SugarTestHelper::setUp("app_list_strings");
         SugarTestHelper::setUp("beanFiles");
@@ -128,7 +126,6 @@ class ForecastWorksheetsFilterApiTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->filterApi = new ForecastWorksheetsFilterApi();
         $this->putApi = new ForecastWorksheetsApi();
     }
@@ -137,14 +134,12 @@ class ForecastWorksheetsFilterApiTest extends TestCase
     {
         $this->filterApi = null;
         $GLOBALS["current_user"] = null;
-        parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestForecastUtilities::tearDownForecastConfig();
-        parent::tearDownAfterClass();
     }
 
     /**
@@ -203,7 +198,6 @@ class ForecastWorksheetsFilterApiTest extends TestCase
         $this->assertEquals(1, $response['draft']);
 
         return $response;
-
     }
 
     /**

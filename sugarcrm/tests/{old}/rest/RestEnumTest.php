@@ -53,7 +53,6 @@ class RestEnumTest extends RestTestBase {
         $restReply = $this->_restCall('Products/enum/commit_stage', '', '', array(), array('If-None-Match: ' . $restReply['headers']['ETag']));
         $this->assertNotEmpty($restReply['headers']['ETag']);
         $this->assertEquals($restReply['info']['http_code'], 304);
-
     }
     /**
      * @group rest

@@ -29,7 +29,6 @@ class SugarFieldBoolTest extends TestCase
         $this->meeting->email_reminder_time = 1;
 
         $this->sf = SugarFieldHandler::getSugarField('bool');
-
 	}
 
     public function tearDown()

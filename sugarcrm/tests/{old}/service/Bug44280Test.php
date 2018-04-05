@@ -141,9 +141,7 @@ class Bug44280Test extends SOAPTestCase
         $cont1_account_result = $GLOBALS['db']->query($query1,true,"");
         $row1 = $GLOBALS['db']->fetchByAssoc($cont1_account_result);
         if(isset($row1) ){
-
             $this->assertEquals($this->accnt1->id, $row1["account_id"], "check first account-contact relationship");
-
           }
 
 
@@ -152,12 +150,8 @@ class Bug44280Test extends SOAPTestCase
         $cont2_account_result = $GLOBALS['db']->query($query2,true,"");
         $row2 = $GLOBALS['db']->fetchByAssoc($cont2_account_result);
         if(isset($row2) ){
-
             $this->assertEquals($this->accnt2->id, $row2["account_id"], "check second account-contact relationship");
-
           }
-
-
     }
 
 
@@ -179,7 +173,4 @@ class Bug44280Test extends SOAPTestCase
          $this->_sessionId = $result['id'];
 		return $result;
     }
-
-
-
 }

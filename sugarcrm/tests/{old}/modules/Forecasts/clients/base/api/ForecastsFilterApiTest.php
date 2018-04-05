@@ -41,8 +41,6 @@ class ForecastsCommittedApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -57,7 +55,6 @@ class ForecastsCommittedApiTest extends TestCase
         self::$reportee = SugarTestUserUtilities::createAnonymousUser();
         self::$reportee->reports_to_id = self::$manager['user']->id;
         self::$reportee->save();
-
     }
 
     public static function tearDownAfterClass()
@@ -66,7 +63,6 @@ class ForecastsCommittedApiTest extends TestCase
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     public function setUp()
@@ -113,7 +109,6 @@ class ForecastsCommittedApiTest extends TestCase
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
             array('module' => 'Forecasts', 'user_id' => self::$manager['user']->id)
         );
-
     }
 
     /**
@@ -144,7 +139,6 @@ class ForecastsCommittedApiTest extends TestCase
             SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
             array('module' => 'Forecasts', 'user_id' => 'im_not_valid')
         );
-
     }
 
     /**
@@ -160,7 +154,6 @@ class ForecastsCommittedApiTest extends TestCase
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
             array('module' => 'Forecasts', 'timeperiod_id' => 'im_not_valid')
         );
-
     }
 
     /**
@@ -220,7 +213,6 @@ class ForecastsCommittedApiTest extends TestCase
             array('Rollup')
         );
     }
-
 }
 
 class ForecastFilterApiServiceMock extends RestService

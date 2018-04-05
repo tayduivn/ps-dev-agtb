@@ -34,6 +34,5 @@ class Bug41974Test extends TestCase
         $vals = array_flip($required_fields);
         $this->assertTrue(isset($vals['"name"']), 'Assert that the AbstractMetaDataParser->getRequiredFields function returns name as required');
         $this->assertFalse(isset($vals['"case_number"']), 'Assert that the AbstractMetaDataParser->getRequiredFields function does not return case_number as required');
-
     }
 }

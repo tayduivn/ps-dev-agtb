@@ -32,8 +32,6 @@ class Bug44696Test extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::init();
         SugarTestHelper::setUp('current_user');
         $this->currentUser = $GLOBALS['current_user'];
@@ -68,7 +66,6 @@ class Bug44696Test extends TestCase
     protected function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

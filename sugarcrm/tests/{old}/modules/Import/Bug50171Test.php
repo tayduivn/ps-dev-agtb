@@ -22,12 +22,10 @@ public function testGetJSMock() {
     $output = $mock->_getJSMock($required);
     $this->assertRegExp('/required\[\'0\'\] = \'It\&\#039\;s A Bug\!/', $output, 'Required string not encoded');
 }
-
 }
 
 
 class Bug50171ImportViewStep3Mock extends ImportViewStep3 {
-
 public function _getJSMock($required) {
     return $this->_getJS($required);
 }

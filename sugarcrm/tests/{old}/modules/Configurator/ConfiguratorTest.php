@@ -14,15 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 class ConfiguratorTest extends TestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-    }
-
     protected function tearDown()
     {
         Activity::restoreToPreviousState();
-        parent::tearDown();
     }
 
     public function testPopulateFromPostConvertsBoolValuesFromStrings()

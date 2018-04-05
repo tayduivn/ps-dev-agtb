@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug53218Test extends TestCase
 {
-
     /**
      * @var DeployedRelationships
      */
@@ -47,14 +46,12 @@ class Bug53218Test extends TestCase
             'Products',
             'Users'
         ));
-        parent::setUp();
     }
 
     public function tearDown()
     {
         $this->relationships->delete($this->relationship->getName());
         $this->relationships->save();
-        parent::tearDown();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestProductUtilities::removeAllCreatedProducts();
@@ -88,5 +85,4 @@ class Bug53218Test extends TestCase
         $temp_select_array = getDuplicateRelationListWithTitle($temp_select_array, $field_defs, $temp_module->vardef_handler->module_object->module_dir);
         $this->assertEquals('Users (products_users_1_name)', $temp_select_array['products_users_1_name']);
     }
-
 }

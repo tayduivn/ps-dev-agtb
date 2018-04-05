@@ -18,8 +18,6 @@ class Pat746Test extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -30,7 +28,6 @@ class Pat746Test extends TestCase
     protected function tearDown() {
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testPopulateFromRow()

@@ -58,6 +58,4 @@ class RestMetadataPartialTest extends RestTestBase {
         $this->assertTrue(isset($restReply3['reply']['modules']['Accounts']['fields']),'Account module fields were not returned when the hashes didn\'t match.');
         
     }
-
-
 }

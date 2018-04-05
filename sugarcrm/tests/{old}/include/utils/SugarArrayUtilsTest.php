@@ -16,7 +16,6 @@ require_once 'include/utils/array_utils.php';
 
 class SugarArrayUtilsTest extends TestCase
 {
-	
 	public function test_array_merge_values()
 	{	
 		$array1 = array("a","b","c");
@@ -258,7 +257,6 @@ class SugarArrayUtilsTest extends TestCase
         );
         return $returnArray;
     }
-
 }
 
 class SimpleObejct

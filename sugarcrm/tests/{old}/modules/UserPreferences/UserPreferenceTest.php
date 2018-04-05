@@ -21,7 +21,6 @@ class UserPreferenceTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +30,6 @@ class UserPreferenceTest extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     protected function setUp()

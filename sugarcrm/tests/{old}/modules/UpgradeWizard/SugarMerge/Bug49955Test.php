@@ -55,8 +55,6 @@ function setUp() {
         if (file_exists('modules/DocumentRevisions/DetailView.php')) {
             unlink('modules/DocumentRevisions/DetailView.php');
         }
-
-        parent::tearDown();
     }
 
 function test_filename_convert_merge() {
@@ -99,9 +97,7 @@ function test_filename_convert_merge() {
     $this->assertTrue(!file_exists('modules/DocumentRevisions/DetaillView.html'));
     $this->assertTrue(!file_exists('modules/DocumentRevisions/EditView.php'));
     $this->assertTrue(!file_exists('modules/DocumentRevisions/DetailView.html'));
-
 }
-
 }
 
 class UpgradeRemoval49955Mock extends UpgradeRemoval

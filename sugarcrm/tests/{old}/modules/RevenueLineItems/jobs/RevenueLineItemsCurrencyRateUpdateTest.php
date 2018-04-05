@@ -29,14 +29,12 @@ class RevenueLineItemsCurrencyRateUpdateTest extends TestCase
         $this->db = SugarTestHelper::setUp('mock_db');
         $this->setupMockClass();
         SugarTestHelper::setUp('app_strings');
-        parent::setUp();
     }
 
     public function tearDown()
     {
         $this->tearDownMockClass();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

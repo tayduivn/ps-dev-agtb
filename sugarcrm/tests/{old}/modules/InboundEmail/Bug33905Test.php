@@ -82,7 +82,6 @@ class Bug33905Test extends TestCase
     }
     
 	function testCreateSubscriptions(){
-	    
         global $current_user;
 
         $this->assertInstanceOf("InboundEmail", $this->_ie);
@@ -93,5 +92,4 @@ class Bug33905Test extends TestCase
         $this->assertEquals($this->_ie->id, $subs[0], "Unable to create subscriptions for IE Group Account (Import not enabled)");
         
     }
-
 }

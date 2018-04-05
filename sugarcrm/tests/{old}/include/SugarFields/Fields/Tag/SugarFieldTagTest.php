@@ -47,7 +47,6 @@ class SugarFieldTagTest extends TestCase
         SugarTestTagUtilities::removeAllCreatedTags();
 
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
 
@@ -60,7 +59,6 @@ class SugarFieldTagTest extends TestCase
      */
     public function testApiFormatFieldIntegration()
     {
-
         // Link tag1 and tag2 to contact
         $relName = 'tag_link';
         $this->contact->load_relationship($relName);
@@ -144,8 +142,6 @@ class SugarFieldTagTest extends TestCase
         $tags = new SugarFieldTag('Tag');
         list($addedTags, $removedTags) = $tags->getChangedValues($initial, $changed);
         $this->assertEquals($expected, array($addedTags, $removedTags));
-
-
     }
 
     public function getChangedValuesProvider()
@@ -166,7 +162,6 @@ class SugarFieldTagTest extends TestCase
 
     public function testGetOriginalTags()
     {
-
         $tags = new SugarFieldTag('Tag');
         $currRelBeans = array(
             $this->tag1->id => $this->tag1,

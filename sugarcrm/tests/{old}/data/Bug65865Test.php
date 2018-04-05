@@ -16,8 +16,6 @@ class Bug65865Test extends TestCase
 {
     public function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -28,7 +26,6 @@ class Bug65865Test extends TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testGetBeanDeleted()

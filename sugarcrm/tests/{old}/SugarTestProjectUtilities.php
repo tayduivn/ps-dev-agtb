@@ -18,7 +18,6 @@ class SugarTestProjectUtilities extends SugarTestObjectUtilities
 
 	private function __construct()
 	{
-
 	}
 
 	public static function createProject($id = '')

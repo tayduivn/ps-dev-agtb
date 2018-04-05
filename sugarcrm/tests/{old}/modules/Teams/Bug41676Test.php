@@ -74,5 +74,4 @@ class Bug41676Test extends TestCase
         $row = $GLOBALS['db']->fetchByAssoc($results);
         $this->assertTrue(is_null($row['total']) || $row['total'] == 0, 'Assert that team_memberships table has been correctly set');        
     }
-
 }

@@ -210,6 +210,5 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
         // We need to make sure this errored out here
         $this->assertEquals('too_many_concurrent_connections',$errorLabel);
-
     }
 }

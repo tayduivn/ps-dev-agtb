@@ -82,18 +82,15 @@ class SugarBeanApiHelperNoAccessTest extends TestCase
 
         $this->beanApiHelper->populateFromApi($this->bean, $data);
     }
-
 }
 
 class SugarBeanApiHelperNoAccessTest_ServiceMockup extends ServiceBase
 {
     public function execute() 
     {
-
     }
 
     protected function handleException(Exception $exception) 
     {
-
     }
 }

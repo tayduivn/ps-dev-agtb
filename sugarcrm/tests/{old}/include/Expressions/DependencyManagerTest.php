@@ -114,7 +114,6 @@ class DependencyManagerTest extends TestCase
         $this->assertEquals("SetValue", $aDef['action']);
         $this->assertEquals($this->cf_test_field['name'], $aDef['params']['target']);
         $this->assertEquals($this->cf_test_field['formula'], $aDef['params']['value']);
-
     }
 
     public function testCFEnforced() {
@@ -146,7 +145,6 @@ class DependencyManagerTest extends TestCase
         $this->assertEquals("SetVisibility", $aDef['action']);
         $this->assertEquals($this->dep_field['name'], $aDef['params']['target']);
         $this->assertEquals($this->dep_field['dependency'], $aDef['params']['value']);
-
     }
 
     public function testDropDownDeps() {

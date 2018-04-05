@@ -74,6 +74,5 @@ class SugarACLOpiTest extends TestCase
 
         unset($_SESSION['platform']);
         unset($bean);
-
     }
 }

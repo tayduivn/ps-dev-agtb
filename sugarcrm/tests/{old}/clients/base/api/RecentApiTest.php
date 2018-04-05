@@ -25,7 +25,6 @@ class RecentApiTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('timedate');
 
@@ -41,7 +40,6 @@ class RecentApiTest extends TestCase
         $db->query('DELETE FROM tracker WHERE user_id = ' . $db->quoted($current_user->id));
 
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testFilterModules()

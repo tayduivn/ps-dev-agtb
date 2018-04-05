@@ -21,7 +21,6 @@ class ExpressionEngine_ControllerTest extends TestCase
     protected function tearDown()
     {
         $_REQUEST = array();
-        parent::tearDown();
     }
 
     /**

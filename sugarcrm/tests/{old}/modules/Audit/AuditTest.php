@@ -42,7 +42,6 @@ class AuditTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
     }
 
     private function createContactBeanWithAuditLog()
@@ -72,7 +71,6 @@ class AuditTest extends TestCase
         foreach ($this->registeredBeans as $bean) {
             BeanFactory::unregisterBean($bean);
         }
-        parent::tearDown();
     }
 
     private function setupAuditableContactFields(array $flist)

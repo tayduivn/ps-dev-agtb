@@ -54,5 +54,4 @@ class Bug45907Test extends TestCase
         // remove temp file
         unlink($sample_file);
     }
-
 }

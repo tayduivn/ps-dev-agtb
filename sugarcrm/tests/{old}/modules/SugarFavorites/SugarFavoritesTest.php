@@ -87,7 +87,6 @@ class SugarFavoritesTest extends TestCase
         $assigned_user_ids = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord('TestNonExistantModule', '8675309');
 
         $this->assertEmpty($assigned_user_ids, "Should not have got back an assigned user ID");
-
     }
 
     public function testLotsaToggles() {

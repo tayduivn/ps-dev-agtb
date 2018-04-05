@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarTinyMCETest extends TestCase
 {
-
     static $customDir = 'custom/include';
     static $customConfigFile = 'custom/include/tinyButtonConfig.php';
     static $customDefaultConfigFile = 'custom/include/tinyMCEDefaultConfig.php';
@@ -32,7 +31,6 @@ class SugarTinyMCETest extends TestCase
      */
     public static function setUpBeforeClass()
     {
-
         SugarAutoLoader::ensureDir(self::$customDir);
 
         if (file_exists(self::$customConfigFile)) {
@@ -64,7 +62,6 @@ class SugarTinyMCETest extends TestCase
         );
         $tinySugar = new SugarTinyMCE();
         self::$MCE = $tinySugar->getInstance();
-
     }
 
     /*

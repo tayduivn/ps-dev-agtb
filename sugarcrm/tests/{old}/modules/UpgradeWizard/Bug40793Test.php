@@ -19,7 +19,6 @@ require_once('modules/UpgradeWizard/uw_utils.php');
  */
 class Bug40793Test extends TestCase
 {
-
     const WEBALIZER_DIR_NAME = 'bug40793';
     private $_notIncludeDir;
     private $_includeDir;

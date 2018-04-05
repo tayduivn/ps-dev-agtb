@@ -18,8 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug67170Test extends TestCase
 {
-
-
     public function setUp()
     {
         SugarTestHelper::setUp('beanList');
@@ -28,7 +26,6 @@ class Bug67170Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('Contacts'));
         SugarTestHelper::setUp('current_user', array(true, 1));
-
     }
 
 
@@ -49,6 +46,5 @@ class Bug67170Test extends TestCase
 
         $this->assertNotContains('calls_contacts',$query, ' calls_contacts was found in string, extra table joins have been introduced into export query');
         $this->assertNotContains('opportunities',$query, ' opportunities was found in string, extra table joins have been introduced into export query');
-    } 
-
+    }
 }

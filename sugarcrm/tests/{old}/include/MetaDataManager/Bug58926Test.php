@@ -35,7 +35,6 @@ class Bug58926Test extends TestCase
      */
     public function testAppStringsWithSpecialChars()
     {
-
         $result = array(
                 'app_list_strings' => array(
                         'moduleList' => array(

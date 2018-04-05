@@ -23,13 +23,11 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug43208Test extends TestCase
 {
-
 var $tableDictionaryExtFile1 = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';
 var $tableDictionaryExtFile2 = 'custom/application/Ext/TableDictionary/tabledictionary.ext.php';
 var $corruptExtModuleFile = 'custom/Extension/application/Ext/TableDictionary/Bug43208_module.php';
 
 function setUp() {
-
     if(file_exists($this->tableDictionaryExtFile1)) {
        copy($this->tableDictionaryExtFile1, $this->tableDictionaryExtFile1 . '.backup');
        unlink($this->tableDictionaryExtFile1);
@@ -88,7 +86,6 @@ EOQ;
        fputs( $fh, $string);
        fclose( $fh );
     }
-
 }
 
 function tearDown() {
@@ -111,7 +108,6 @@ function tearDown() {
     if(file_exists($this->corruptExtModuleFile)) {
        unlink($this->corruptExtModuleFile);
     }
-
 }
 
 
@@ -190,10 +186,7 @@ function testRepairTableDictionaryExtFile()
    }
 
    $this->assertEquals($matches, 0, 'Assert that there was one match for correct entries in file ' . $this->corruptExtModuleFile);
-
 }
-
-
 }
 
 /**
@@ -209,7 +202,6 @@ function repairTableDictionaryExtFile()
 
 	foreach($tableDictionaryExtDirs as $tableDictionaryExt)
 	{
-
 		if(is_dir($tableDictionaryExt) && is_writable($tableDictionaryExt)){
 			$dir = dir($tableDictionaryExt);
 			while(($entry = $dir->read()) !== false)
@@ -217,7 +209,6 @@ function repairTableDictionaryExtFile()
 				$entry = $tableDictionaryExt . '/' . $entry;
 				if(is_file($entry) && preg_match('/\.php$/i', $entry) && is_writeable($entry))
 				{
-
 						if(function_exists('sugar_fopen'))
 						{
 							$fp = @sugar_fopen($entry, 'r');

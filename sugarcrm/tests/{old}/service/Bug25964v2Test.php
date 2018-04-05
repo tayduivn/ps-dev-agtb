@@ -39,7 +39,6 @@ class Bug25964v2Test extends SOAPTestCase
         $contact->save();
         $this->c = $contact;
         $this->_login();
-
     }
 
     public function tearDown()
@@ -52,7 +51,6 @@ class Bug25964v2Test extends SOAPTestCase
 
     public function testFindSameContact()
     {
-
         $contacts_list=array( 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
 				   'name_value_lists' => array(
                                         array(array('name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id),array('name'=>'first_name' , 'value'=>'testfirst'),array('name'=>'last_name' , 'value'=>'testlast'),array('name'=>'email1' , 'value'=>'one_other@example.com'))
@@ -65,7 +63,6 @@ class Bug25964v2Test extends SOAPTestCase
 
     public function testDoNotFindSameContact()
     {
-
         $contacts_list=array( 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
 				   'name_value_lists' => array(
                                         array(array('name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id),array('name'=>'first_name' , 'value'=>'testfirst'),array('name'=>'last_name' , 'value'=>'testlast'),array('name'=>'email1' , 'value'=>'mytest1@example.com'))
@@ -75,5 +72,4 @@ class Bug25964v2Test extends SOAPTestCase
         $this->_resultId = $result['ids'][0];
         $this->assertNotEquals($this->c->id, $result['ids'][0], "did not match contacts");
     }
-
 }

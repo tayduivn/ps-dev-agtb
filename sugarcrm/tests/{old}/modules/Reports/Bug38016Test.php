@@ -22,7 +22,6 @@ class Bug38016Test extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         self::$fixturesPath = __DIR__ . '/Fixtures/';
     }
 

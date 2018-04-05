@@ -128,6 +128,5 @@ class Bug51617Test extends SOAPTestCase
                 }
             }
         } // if
-
     } // fn
 }

@@ -53,5 +53,4 @@ class RestBug54519Test extends RestTestBase {
             $restReply['reply']['name'],
                             "Did not return the account name.");
     }
-
 }

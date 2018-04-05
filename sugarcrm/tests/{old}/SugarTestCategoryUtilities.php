@@ -89,7 +89,6 @@ class SugarTestCategoryUtilities
 
 class CategoryMock extends Category
 {
-
     /**
      * Public wrapper method to access protected Category::getQuery method.
      * @return SugarQuery

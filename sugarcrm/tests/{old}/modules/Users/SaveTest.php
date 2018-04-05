@@ -25,7 +25,6 @@ class SaveTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->current_user = SugarTestHelper::setUp('current_user', array(true, 1));
         $this->tabs = new TabController();
         $this->savedTabs = $this->tabs->get_user_tabs($this->current_user);
@@ -36,7 +35,6 @@ class SaveTest extends TestCase
         $this->tabs->set_user_tabs($this->savedTabs, $this->current_user, "display");
         unset($this->bean);
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

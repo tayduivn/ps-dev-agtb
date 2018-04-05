@@ -25,7 +25,6 @@ class ClearVarDefsTest extends TestCase
     public function setUp()
     {
         global $beanList, $dictionary;
-        parent::setUp();
         SugarTestHelper::setUp('files');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('dictionary');

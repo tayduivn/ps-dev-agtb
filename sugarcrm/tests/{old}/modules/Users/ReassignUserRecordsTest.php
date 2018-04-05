@@ -84,5 +84,4 @@ class ReassignUserRecordsTest extends TestCase
         // this is to suppress output. Need to fix properly with a good unit test.
         $this->expectOutputRegex('//');
     }
-
 }

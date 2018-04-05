@@ -65,8 +65,6 @@ class EventRepositoryTest extends TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
-
-        parent::tearDownAfterClass();
     }
 
     private function createContact($fields)

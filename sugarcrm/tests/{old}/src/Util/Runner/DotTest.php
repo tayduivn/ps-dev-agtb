@@ -38,8 +38,6 @@ class DotTest extends TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->runnable = $this->createPartialMock(
             'Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface',
             array('getBeans', 'execute')

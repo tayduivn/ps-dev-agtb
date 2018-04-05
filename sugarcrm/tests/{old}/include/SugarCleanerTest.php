@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarCleanerTest extends TestCase
 {
-
     /**
      * @dataProvider cleanHtmlProvider
      */
@@ -26,7 +25,6 @@ class SugarCleanerTest extends TestCase
         $actual = SugarCleaner::cleanHtml($args[0], $args[1]);
 
         $this->assertEquals($expected, $actual, 'Html did not get cleaned as expected');
-
     }
 
     public static function cleanHtmlProvider()

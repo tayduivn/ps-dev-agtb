@@ -444,7 +444,6 @@ class QuoteConvertApiTest extends TestCase
      */
     public function testLinkQuoteContractsToOpportunity()
     {
-
         $this->opp->contracts = $this->opp_link2;
 
         $this->opp_link2->expects($this->exactly(2))
@@ -470,7 +469,6 @@ class QuoteConvertApiTest extends TestCase
      */
     public function testLinkQuoteContractsToOpportunityDoesNotCallAddWhenNoContracts()
     {
-
         $this->opp->contracts = $this->opp_link2;
 
         $this->opp_link2->expects($this->never())
@@ -496,7 +494,6 @@ class QuoteConvertApiTest extends TestCase
      */
     public function testLinkQuoteContactsToOpportunity()
     {
-
         $this->opp->contacts = $this->opp_link2;
 
         $this->opp->expects($this->once())
@@ -532,7 +529,6 @@ class QuoteConvertApiTest extends TestCase
      */
     public function testLinkQuoteContactsToOpportunityOnlyAddsOneWhenIdsAreTheSame()
     {
-
         $this->opp->contacts = $this->opp_link2;
 
         $this->opp->expects($this->once())
@@ -568,7 +564,6 @@ class QuoteConvertApiTest extends TestCase
      */
     public function testLinkQuoteContactsToOpportunityDoesNotAddWhenNoContacts()
     {
-
         $this->opp->contacts = $this->opp_link2;
 
         $this->opp_link2->expects($this->never())
@@ -604,7 +599,6 @@ class QuoteConvertApiTest extends TestCase
      */
     protected function getConvertApi($forecast_by, array $mock_methods = array())
     {
-
         if (!in_array('getForecastConfig', $mock_methods)) {
             $mock_methods[] = 'getForecastConfig';
         }

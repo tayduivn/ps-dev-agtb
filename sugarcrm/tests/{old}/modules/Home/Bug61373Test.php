@@ -207,7 +207,6 @@ class Bug61373Test extends TestCase
      */
     public function testQuickSearchACLFields($module, $field, $acl, $value, $expected, $factory)
     {
-
         // Create bean
         $this->bean = call_user_func($factory);
         // Set create by to some different than current user
@@ -262,7 +261,5 @@ class Bug61373Test extends TestCase
         $results = $json->decode($results);
 
         $this->assertEquals($expected, $results['fields'][0][$field], "$module->$field should be equal to $value. ACL level $acl");
-
     }
-
 }

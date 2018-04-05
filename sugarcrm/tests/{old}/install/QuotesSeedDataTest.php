@@ -103,7 +103,6 @@ class QuotesSeedDataTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         SugarTestHelper::tearDown();
-
     }
 	
 	public function testCreateSeedQuotes() 

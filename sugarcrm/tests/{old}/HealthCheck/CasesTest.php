@@ -25,7 +25,6 @@ class HealthCheckCasesTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->currentDirectory = getcwd();
         $this->currentPath = ini_get('include_path');
         do {
@@ -48,8 +47,6 @@ class HealthCheckCasesTest extends TestCase
         if ($this->scanner instanceof HealthCheckScannerCasesTestMock) {
             $this->scanner->tearDown();
         }
-
-        parent::tearDown();
     }
 
     /**

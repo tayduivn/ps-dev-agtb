@@ -44,7 +44,6 @@ class GroupFoldersTest extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
-        parent::tearDownAfterClass();
     }
 
     /**

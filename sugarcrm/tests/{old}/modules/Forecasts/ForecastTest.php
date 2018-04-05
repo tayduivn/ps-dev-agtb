@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ForecastTest extends TestCase
 {
-
     /**
      * @var Currency
      */
@@ -67,7 +66,6 @@ class ForecastTest extends TestCase
         $this->assertEquals($symbol, $forecast->currencysymbol);
         $this->assertEquals($baseRate, $forecast->base_rate);
         $GLOBALS['current_user'] = $user;
-
     }
 
     public function constructProvider()
@@ -350,6 +348,5 @@ class ForecastTest extends TestCase
         $result = $forecast->getSettings();
 
         $this->assertEquals($settings, $result);
-
     }
 }

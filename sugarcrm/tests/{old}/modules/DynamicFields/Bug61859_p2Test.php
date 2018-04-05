@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug61859_p2Test extends TestCase
 {
-
     static private $module = 'Leads';
     private $object = 'Lead';
     private $relatedModule = 'Contacts';
@@ -44,14 +43,12 @@ class Bug61859_p2Test extends TestCase
      */
     public function testUpdateField($idName)
     {
-
         self::$field->label_value = 'UpdatedLabel';
         self::$field->save(self::$dynamicField);
 
         SugarTestHelper::setUp('dictionary');
 
         $this->assertEquals($idName, self::$field->ext3);
-
     }
 
     private function addField($name)
@@ -73,8 +70,6 @@ class Bug61859_p2Test extends TestCase
 
     static public function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array(self::$module));
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
@@ -86,7 +81,6 @@ class Bug61859_p2Test extends TestCase
 
         self::$dynamicField = new DynamicField(self::$module);
         self::$dynamicField->setup(BeanFactory::newBean(self::$module));
-
     }
 
     static public function tearDownAfterClass()
@@ -96,7 +90,5 @@ class Bug61859_p2Test extends TestCase
         }
 
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
-
 }

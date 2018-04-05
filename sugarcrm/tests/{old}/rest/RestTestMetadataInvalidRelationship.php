@@ -47,6 +47,4 @@ class RestTestMetadataInvalidRelationship extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['views']),'ViewTemplates are missing.');
     }
-
-
 }

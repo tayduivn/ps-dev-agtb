@@ -127,7 +127,6 @@ class MetaDataManagerModulesInfoTest extends TestCase
     {
         // Don't allow future tests to be affected by the cache that these tests yield.
         sugar_cache_clear('wireless_module_registry_keys');
-        parent::tearDown();
     }
 
     /**
@@ -281,7 +280,6 @@ class MetaDataManagerModulesInfoTest extends TestCase
      */
     public function testMobileGetModulesInfo()
     {
-
         // Run the test
         $mm = new MetaDataManagerMobile();
         $fullModuleList = $mm->getFullModuleList();

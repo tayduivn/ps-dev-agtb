@@ -44,7 +44,6 @@ class Bug53357Test extends TestCase
         /* amount_usdollar gets smashed during save due to forecasting logic
          * we just want it to have a value, so update database directly */
         $opportunity->db->query("update opportunities set amount_usdollar=".$this->amount." where id='".$this->opportunity_id."'");
-
     }
 
     /**

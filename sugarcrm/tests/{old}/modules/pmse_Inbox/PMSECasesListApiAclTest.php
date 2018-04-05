@@ -111,6 +111,5 @@ class PMSECasesListApiActTest extends TestCase
         );
 
         $this->assertEquals($ret, "testPassed", "ACL access test failed for returnProcessUsersChart");
-
     }
 }

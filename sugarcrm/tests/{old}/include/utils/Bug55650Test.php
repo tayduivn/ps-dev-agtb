@@ -23,7 +23,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug55650Test extends TestCase
 {
-	
     /**
      * @dataProvider providerTestGetTrackerSubstring
      */

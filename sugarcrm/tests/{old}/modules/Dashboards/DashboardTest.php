@@ -25,8 +25,6 @@ class DashboardTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
         SugarTestHelper::tearDown();
-
-        parent::tearDown();
     }
 
     public function testGetDashboards()

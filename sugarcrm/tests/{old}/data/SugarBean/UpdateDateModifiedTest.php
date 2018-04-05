@@ -25,7 +25,6 @@ class UpdateDateModifiedTest extends TestCase
         global $disable_date_format;
         $disable_date_format = true;
 
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('timedate');
     }
@@ -36,7 +35,6 @@ class UpdateDateModifiedTest extends TestCase
 
         self::tearDownHook();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        parent::tearDownAfterClass();
     }
 
     private static function setUpHook()

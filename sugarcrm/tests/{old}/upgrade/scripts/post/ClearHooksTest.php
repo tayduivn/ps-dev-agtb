@@ -25,7 +25,6 @@ class ClearHooksTest extends TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('files');
     }
 
@@ -35,7 +34,6 @@ class ClearHooksTest extends TestCase
     protected function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

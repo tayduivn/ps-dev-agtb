@@ -31,7 +31,6 @@ class ClearSubpanelsTest extends TestCase
     protected function setUp()
     {
         global $beanList;
-        parent::setUp();
         SugarTestHelper::setUp('files');
         SugarTestHelper::setUp('beanList');
         $beanList = array(
@@ -45,7 +44,6 @@ class ClearSubpanelsTest extends TestCase
     protected function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

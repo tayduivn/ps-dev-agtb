@@ -37,8 +37,6 @@ class ACLRolesTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('timedate');
 
         $this->user = SugarTestUserUtilities::createAnonymousUser();
@@ -65,7 +63,6 @@ class ACLRolesTest extends TestCase
         if ($this->cache) {
             $this->cache->clear();
         }
-        parent::tearDown();
     }
 
     /**

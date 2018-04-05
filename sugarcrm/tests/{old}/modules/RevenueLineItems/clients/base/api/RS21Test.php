@@ -30,8 +30,6 @@ class RS21Test extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -44,7 +42,6 @@ class RS21Test extends TestCase
     protected function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testFilterList()

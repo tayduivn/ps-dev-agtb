@@ -93,5 +93,4 @@ class MockSugarStrategy extends SugarVisibility
     	$query .= " {$this->query}";
     	return $query;
     }
-
 }

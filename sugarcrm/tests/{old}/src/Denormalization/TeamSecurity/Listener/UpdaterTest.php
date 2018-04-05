@@ -54,8 +54,6 @@ class UpdaterTest extends TestCase
 
         $command = $container->get(StateAwareRebuild::class);
         $command();
-
-        parent::setUpBeforeClass();
     }
 
     protected function setUp()
@@ -71,8 +69,6 @@ class UpdaterTest extends TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
-
-        parent::tearDownAfterClass();
     }
 
     /**

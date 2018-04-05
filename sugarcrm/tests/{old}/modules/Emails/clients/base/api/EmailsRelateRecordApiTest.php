@@ -24,7 +24,6 @@ class EmailsRelateRecordApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -32,7 +31,6 @@ class EmailsRelateRecordApiTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
@@ -40,7 +38,6 @@ class EmailsRelateRecordApiTest extends TestCase
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
-        parent::tearDown();
     }
 
     public function readOnlyLinkProvider()

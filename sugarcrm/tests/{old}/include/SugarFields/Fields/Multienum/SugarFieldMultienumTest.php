@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldMultienumTest extends TestCase
 {
-
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
@@ -49,6 +48,5 @@ class SugarFieldMultienumTest extends TestCase
 
         $value = $field->exportSanitize('a', $vardef, $obj);
         $this->assertEquals('A', $value);
-
     }
 }

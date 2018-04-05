@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarForecasting_Progress_IndividualTest extends TestCase
 {
-
     /**
      * @var array args to be passed onto methods
      */
@@ -33,7 +32,6 @@ class SugarForecasting_Progress_IndividualTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -62,7 +60,6 @@ class SugarForecasting_Progress_IndividualTest extends TestCase
         $current_user = self::$users['reportee']['user'];
         $current_user->setPreference('currency', self::$currency->id);
         self::$args['user_id'] = self::$users['reportee']['user']->id;
-
     }
 
     /**
@@ -83,7 +80,6 @@ class SugarForecasting_Progress_IndividualTest extends TestCase
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        parent::tearDownAfterClass();
     }
 
     /**
@@ -124,6 +120,4 @@ class SugarForecasting_Progress_IndividualTest extends TestCase
         //test parts of the process return
         $this->assertEquals(0, $data['quota_amount'], "Quota not matching expected amount.  Expected: 0 Actual: ".$data['quota_amount']);
     }
-
-
 }

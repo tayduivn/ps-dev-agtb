@@ -37,7 +37,6 @@ class Bug56652Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        parent::setUp();
         $this->contact = SugarTestContactUtilities::createContact();
         $this->contact->load_relationship('opportunities');
         foreach ($this->account_names as $account_name)
@@ -60,7 +59,6 @@ class Bug56652Test extends TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        parent::tearDown();
 
         SugarTestHelper::tearDown();
     }

@@ -16,7 +16,6 @@ require_once __DIR__ . '/../../../../modules/HealthCheck/pack_sortinghat.php';
 
 class PackSortingHatTest extends TestCase
 {
-
     public function healthCheckPackProvider()
     {
         return array(

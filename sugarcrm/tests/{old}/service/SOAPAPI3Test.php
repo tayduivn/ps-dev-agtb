@@ -131,7 +131,6 @@ class SOAPAPI3Test extends SOAPTestCase
 
          $this->assertEquals($expected[0] ,$results[0]['id'] , 'Unable to get upcoming activities Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
          $this->assertEquals($expected[1] ,$results[1]['id'] , 'Unable to get upcoming activities Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
-
     }
 
     public function testSetEntriesForAccount()
@@ -271,5 +270,4 @@ class SOAPAPI3Test extends SOAPTestCase
 		SugarTestAccountUtilities::setCreatedAccount(array($soap_version_test_accountId));
 		return $result;
     } // fn
-
 }

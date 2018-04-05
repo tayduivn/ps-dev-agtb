@@ -66,7 +66,6 @@ EOQ;
 
     public function testLoadCustomAction()
     {
-
         $this->createCustomAction();
         ActionFactory::buildActionCache(true);
         $customAction = ActionFactory::getNewAction('testCustomAction', array());

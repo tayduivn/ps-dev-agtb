@@ -24,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug49698Test extends TestCase
 {
-
 public function testModuleRenameForReportsTree()
 {
     $mock = new ReportsViewBuildreportmoduletreeMock();
@@ -42,7 +41,6 @@ public function testModuleRenameForReportsTree()
     $node = $mock->_populateNodeItem('Opportunity', 'Accounts', $linked_field);
     $this->assertRegExp('/\\\'Prospects\\\'/', $node['href']);
 }
-
 }
 
 /**
@@ -54,7 +52,6 @@ class ReportsViewBuildreportmoduletreeMock extends ReportsViewBuildreportmodulet
 {
     public function __construct()
     {
-
     }
 
     public function _populateNodeItem($bean_name,$link_module,$linked_field)

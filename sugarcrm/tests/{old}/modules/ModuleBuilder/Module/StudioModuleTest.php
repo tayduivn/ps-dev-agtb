@@ -27,7 +27,6 @@ class StudioModuleTest extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-
     }
     
     public static function tearDownAfterClass()

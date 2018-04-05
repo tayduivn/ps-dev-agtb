@@ -16,7 +16,6 @@ require_once('include/SearchForm/SearchForm2.php');
 
 class Bug48623Test extends TestCase
 {
-
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -82,7 +81,6 @@ class Bug48623Test extends TestCase
             array($tzRegExp1, $tzRegExp2, 'next_30_days', 'datetime'),
         );
     }
-
 }
 
 

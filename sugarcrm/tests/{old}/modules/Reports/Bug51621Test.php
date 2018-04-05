@@ -43,5 +43,4 @@ class Bug51621Test extends TestCase
                 '{"display_columns":[{"name":"billing_address_city","label":"Billing City","table_key":"self"}],"module":"Accounts","group_defs":[],"summary_columns":[],"report_name":"badReport","do_round":1,"numerical_chart_column":"","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"tabular","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"Accounts"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"billing_address_city","table_key":"self","qualifier_name":"equals","input_name0":"alert(\'stuff\');","input_name1":"on"}}},"chart_type":"none"}'),
         );
     }
-
 }

@@ -27,7 +27,6 @@ class QuotesRepairQuoteAndProductBundlesTest extends UpgradeTestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         $this->db = DBManagerFactory::getInstance();
-
     }
 
     public function tearDown()

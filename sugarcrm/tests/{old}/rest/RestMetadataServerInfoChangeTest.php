@@ -51,6 +51,5 @@ class RestMetadataServerInfoChangeTest extends RestTestBase {
         ob_start();
         $ac->action_saveglobalsearchsettings();
         ob_end_clean();
-
     }
 }

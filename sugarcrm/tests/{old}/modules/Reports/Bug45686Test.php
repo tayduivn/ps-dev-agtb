@@ -19,10 +19,8 @@ require_once 'modules/Reports/SavedReport.php';
  */
 class Bug45686Test extends TestCase
 {
-
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
         $this->reportDefs = <<<DEFS
 {"display_columns":[{"name":"account_type","label":"<s>Type</s>","table_key":"self"}],"module":"Accounts",
@@ -46,7 +44,6 @@ DEFS;
      */
     public function testHtmlInReports()
     {
-
         $rep = new Report($this->reportDefs);
         $this->assertNotContains("<s>", $rep->report_def_str);
         $this->assertNotContains("</s>", $rep->report_def_str);

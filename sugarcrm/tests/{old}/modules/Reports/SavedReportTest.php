@@ -18,7 +18,6 @@ class SavedReportTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
@@ -35,7 +34,6 @@ class SavedReportTest extends TestCase
         unset($GLOBALS['report_modules']);
         SugarTestHelper::tearDown('mock_db');
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

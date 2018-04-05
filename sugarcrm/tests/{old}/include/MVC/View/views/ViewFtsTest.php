@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class ViewFtsTest extends TestCase
 {
-
     public function testTranslateModulesList()
     {
         $view = new ViewFtsStub();

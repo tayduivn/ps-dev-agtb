@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class EditViewMergeTest extends TestCase
 {
-
     /**
      * @dataProvider deepMergeProvider
      * @group unit
@@ -1129,8 +1128,6 @@ class EditViewMergeTest extends TestCase
 
 class MockEditViewMerge extends EditViewMerge
 {
-
-
     public function  __construct($module, $viewdefs, $old, $new, $custom)
     {
         $this->module = $module;
@@ -1138,7 +1135,6 @@ class MockEditViewMerge extends EditViewMerge
         $this->originalData = array($module => array($viewdefs => array($this->templateMetaName => $old)));
         $this->newData = array($module => array($viewdefs => array($this->templateMetaName => $new)));
         $this->customData = array($module => array($viewdefs => array($this->templateMetaName => $custom)));
-
     }
 
     function testMergeTemplateMeta()

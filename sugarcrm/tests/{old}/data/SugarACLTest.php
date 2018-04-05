@@ -48,7 +48,6 @@ class SugarACLTest extends TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
         $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = array();
         SugarACL::resetACLs();
     }
@@ -176,7 +175,6 @@ class SugarACLTest extends TestCase
      */
     public function testListFilter()
     {
-
         $list = array();
 
         $this->assertNull(SugarACL::listFilter('test', $list));
@@ -184,7 +182,6 @@ class SugarACLTest extends TestCase
         $list = array('test1', 'test2', 'test3', 'prefix_test4');
 
         $this->assertEmpty(SugarACL::listFilter('test', $list));
-
     }
 
     public function testSetACL()

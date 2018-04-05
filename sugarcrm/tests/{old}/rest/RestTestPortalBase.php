@@ -13,7 +13,6 @@
 
 
 class RestTestPortalBase extends RestTestBase {
-
     protected $currentPortalBean = null;
     protected $testConsumer = null;
     protected $originalSetting = array();
@@ -150,7 +149,6 @@ class RestTestPortalBase extends RestTestBase {
 
     protected function _restLogout()
     {
-
         if (!empty($this->authToken) && !empty($this->refreshToken)) {
             $args = array(
                 'token' => $this->authToken,
@@ -209,9 +207,7 @@ class RestTestPortalBase extends RestTestBase {
                     $role->setAction($role->id, $action['id'], $aclAllow);
                 }
             }
-
         }
         return $role;
     }
-
 }

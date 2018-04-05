@@ -23,8 +23,6 @@ class MeetingsApiTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
-
         $this->api = SugarTestRestUtilities::getRestServiceMock();
         $this->api->user = SugarTestUserUtilities::createAnonymousUser(false, false);
         $this->api->user->id = 'foo';
@@ -39,7 +37,6 @@ class MeetingsApiTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testGetExternalInfo_UserIsAdmin_CanHostAndJoin()

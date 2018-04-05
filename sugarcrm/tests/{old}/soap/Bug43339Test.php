@@ -20,7 +20,6 @@ require_once("service/v4_1/SugarWebServiceImplv4_1.php");
  */
 class Bug43339Test extends SOAPTestCase
 {
-
     private $_module = NULL;
     private $_moduleName = 'Contacts';
     private $_customFieldName = 'test_custom_c';

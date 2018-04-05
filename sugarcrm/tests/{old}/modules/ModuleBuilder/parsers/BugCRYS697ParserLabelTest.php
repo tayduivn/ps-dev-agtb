@@ -24,13 +24,11 @@ class BugCRYS697ParserLabelTest extends TestCase
         if (file_exists($this->getFileName())) {
             unlink($this->getFileName());
         }
-        parent::setUp();
     }
 
     protected function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     private function getFileName()

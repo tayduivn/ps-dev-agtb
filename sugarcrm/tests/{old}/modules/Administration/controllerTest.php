@@ -18,7 +18,6 @@ class AdministrationControllerTest extends TestCase
     protected $tabs;
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('app_list_strings');
         $this->tabs = new TabController();
@@ -29,7 +28,6 @@ class AdministrationControllerTest extends TestCase
     {
         $this->tabs->set_system_tabs($this->savedTabs);
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

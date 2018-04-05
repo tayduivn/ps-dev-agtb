@@ -24,8 +24,6 @@ abstract class SugarCacheAbstractTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         if (!$this->getInstance()->useBackend()) {
             $this->markTestSkipped('Backend unavailable');
         }

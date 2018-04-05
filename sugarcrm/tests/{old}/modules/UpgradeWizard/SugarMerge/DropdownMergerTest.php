@@ -24,8 +24,6 @@ class DropdownMergerTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
-
         $this->merger = new DropdownMerger();
     }
 

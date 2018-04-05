@@ -150,7 +150,6 @@ class DrPhilTest extends TestCase
      */
     public function testCanLoadModules( $moduleName )
     {
-
         $bean = BeanFactory::newBean($moduleName);
         $this->assertNotNull($bean,"Could not load bean: $moduleName");
     }
@@ -431,7 +430,6 @@ class DrPhilTest extends TestCase
 
         $relatedBean->load_relationship($relatedLinkName);
         $this->assertNotNull($relatedBean->$relatedLinkName,"Could not load related module link {$relatedBean->module_dir}/${relatedLinkName}");
-
     }
 
     /**

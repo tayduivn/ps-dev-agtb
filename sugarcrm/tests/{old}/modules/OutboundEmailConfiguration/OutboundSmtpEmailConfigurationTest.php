@@ -21,14 +21,12 @@ class OutboundSmtpEmailConfigurationTest extends TestCase
 {
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
     }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testSetSecurityProtocol_PassInAValidProtocol_SecurityProtocolIsSet()

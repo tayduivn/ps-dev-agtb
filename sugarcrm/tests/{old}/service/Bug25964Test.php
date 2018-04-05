@@ -38,7 +38,6 @@ class Bug25964Test extends SOAPTestCase
         $contact->save();
 		$this->c = $contact;
         $this->_login();
-
     }
 
     public function tearDown()
@@ -72,5 +71,4 @@ class Bug25964Test extends SOAPTestCase
         $this->_resultId = $result['ids'][0];
         $this->assertNotEquals($this->c->id, $result['ids'][0], "did not match contacts");
     }
-
 }

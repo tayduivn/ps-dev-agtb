@@ -17,8 +17,6 @@ class One2MBeanRelationshipTest extends TestCase
     protected function tearDown()
     {
         SugarTestKBContentUtilities::removeAllCreatedBeans();
-
-        parent::tearDown();
     }
 
     public function testProperRhsFieldIsSet()

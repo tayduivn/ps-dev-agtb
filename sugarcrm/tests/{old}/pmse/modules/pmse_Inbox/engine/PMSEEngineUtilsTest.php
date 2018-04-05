@@ -730,8 +730,7 @@ class PMSEEngineUtilsTest extends TestCase
         $result_test2 = $this->object->processExpectedTime($obj_time_test2, $case_time_test2);
         $this->assertEquals('2013-11-11 09:53:05', date("Y-m-d H:i:s", $result_test2));     
         $result_test3 = $this->object->processExpectedTime($obj_time_test3, $case_time_test3);
-        $this->assertEquals('2013-10-02 05:50:11', date("Y-m-d H:i:s", $result_test3));        
-
+        $this->assertEquals('2013-10-02 05:50:11', date("Y-m-d H:i:s", $result_test3));
     }
     
     public function testGetBPMInboxStatus()

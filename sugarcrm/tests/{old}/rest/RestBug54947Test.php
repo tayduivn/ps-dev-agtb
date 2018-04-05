@@ -44,5 +44,4 @@ class RestBug54947Test extends RestTestBase {
             }
         }
     }
-
 }

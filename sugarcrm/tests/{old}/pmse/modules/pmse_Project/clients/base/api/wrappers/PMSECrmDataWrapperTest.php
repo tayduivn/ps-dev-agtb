@@ -50,7 +50,6 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         $this->originals['current_user'] = $GLOBALS['current_user'];
         $this->originals['db'] = $GLOBALS['db'];
 
@@ -261,7 +260,6 @@ class PMSECrmDataWrapperTest extends TestCase
         foreach($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;
         }
-        parent::tearDown();
     }
 
     /**
@@ -288,7 +286,6 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $result = $this->object->retrieveEmails('');
         $this->assertEquals($expectedResult, $result);
-
     }
 
     /**
@@ -342,7 +339,6 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $result = $this->object->retrieveEmails($sampleModule);
         $this->assertEquals($expectedResult, $result);
-
     }
 
     /**
@@ -517,7 +513,6 @@ class PMSECrmDataWrapperTest extends TestCase
 
     public function testRetrieveActivitiesScriptFilter()
     {
-
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
                 ->disableOriginalConstructor()
                 ->setMethods(null)
@@ -724,7 +719,6 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     public function testRetrieveEmailTemplates()
     {
-
         $res= array(
             array("value" => "abcdeff", "text" => "Test Email Template"),
             array("value" => "abcdefg", "text" => "Test Email Template 01"),
@@ -757,7 +751,6 @@ class PMSECrmDataWrapperTest extends TestCase
 
     public function testRetrieveEmailTemplatesWithoutModule()
     {
-
         $emailBeanMock = $this->createPartialMock('pmse_Emails_Templates', array('get_full_list'));
         $testModule = null;
 
@@ -782,7 +775,6 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     public function testGetBeanModuleName()
     {
-
         $this->object->setBeanList($this->beanList);
         $result = $this->object->getBeanModuleName('Account');
 //        var_dump($result);

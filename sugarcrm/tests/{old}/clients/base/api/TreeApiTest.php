@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  */
 class TreeApiTest extends TestCase
 {
-
     /**
      * @var TreeApi
      */
@@ -60,8 +59,6 @@ class TreeApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -69,8 +66,6 @@ class TreeApiTest extends TestCase
 
     public static function tearDownAfterClass()
     {
-        parent::tearDownAfterClass();
-
         $GLOBALS['db']->query('DELETE FROM categories WHERE id IN (\'' . implode("', '", self::$beanIds) . '\')');
 
         self::$beanIds = array();

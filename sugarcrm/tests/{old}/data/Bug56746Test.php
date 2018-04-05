@@ -31,8 +31,6 @@ class Bug56746Test extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         //Unset global service_object variable so that the code in updateDependencyBean is run in SugarBean.php
         if(isset($GLOBALS['service_object'])) {
             $this->stored_service_object = $GLOBALS['service_object'];
@@ -69,7 +67,6 @@ class Bug56746Test extends TestCase
 	    unset($this->account->field_defs['checkbox_c']);
 
         unset($this->account->field_defs['text_c']);
-        parent::tearDown();
         SugarTestHelper::tearDown();
     }
 

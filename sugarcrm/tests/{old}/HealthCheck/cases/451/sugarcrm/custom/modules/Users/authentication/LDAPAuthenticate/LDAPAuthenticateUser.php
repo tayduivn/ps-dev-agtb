@@ -14,5 +14,4 @@ require_once 'modules/Users/authentication/LDAPAuthenticate/LDAPAuthenticateUser
 
 class LDAPAuthenticateUserCustomCase451 extends LDAPAuthenticateUser
 {
-
 }

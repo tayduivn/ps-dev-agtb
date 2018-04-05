@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50117Test extends TestCase
 {
-   		
 	private $_listViewSmartyOutput1;
 	private $_listViewSmartyOutput2;
 	

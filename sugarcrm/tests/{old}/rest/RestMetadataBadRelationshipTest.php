@@ -93,6 +93,5 @@ $dictionary[\'Account\'][\'fields\'][\'notes\'][\'relationship\'] = "accounts_no
         $this->assertTrue(isset($restReply['reply']['modules']['Accounts']),'Account module is missing. Reply looked like: '.var_export($restReply['replyRaw'],true));
 
         $this->assertEquals($restReply['reply']['modules']['Accounts']['fields']['notes']['relationship'], 'accounts_notes_awesome', 'Did not rewrite relationship to accounts_notes_awesome, it is: ' . $restReply['reply']['modules']['Accounts']['fields']['notes']['relationship'] );
-
     }
 }

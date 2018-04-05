@@ -98,7 +98,6 @@ class ServiceDictionaryRestTest extends TestCase
         // Make sure we find a platform specific route
         $route = $sd->lookupRoute(array('one','two','portal'),5.0,'GET','portal');
         $this->assertEquals('portaltest3',$route['method']);
-
     }
 }
 

@@ -21,7 +21,6 @@ class ACLRoleSetActionTest extends TestCase
     public static function tearDownAfterClass()
     {
         BeanFactory::clearCache();
-        parent::tearDownAfterClass();
     }
 
     public function testShouldSaveNonAdminPermissionsForUsers()

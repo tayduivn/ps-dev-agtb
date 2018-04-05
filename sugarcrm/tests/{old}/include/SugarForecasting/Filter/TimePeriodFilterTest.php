@@ -33,7 +33,6 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
     }
 
     public function setUp() {
-        parent::setUp();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -56,7 +55,6 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM timeperiods WHERE deleted = 0");
         $db->query("UPDATE timeperiods SET deleted = 0");
-        parent::tearDown();
     }
 
     public function timePeriodFilterWithTimePeriodsProvider() {
@@ -82,7 +80,6 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
      * @dataProvider timePeriodFilterWithTimePeriodsProvider
      */
     public function testTimePeriodFilterWithTimePeriods($parentType, $leafType, $startDate, $fiscalYear, $shownForward, $shownBackward, $expectedLeaves) {
-
         $forecastConfigSettings = array (
             'timeperiod_interval' => $parentType,
             'timeperiod_leaf_interval' => $leafType,
@@ -113,7 +110,6 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
             }
             $timePeriodToCheck = $timePeriodToCheck->getNextTimePeriod();
         }
-
     }
 
     private static function updateForecastSettings($settings)
@@ -123,5 +119,4 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
             $admin->saveSetting('Forecasts', $id, $value, 'base');
         }
     }
-
 }

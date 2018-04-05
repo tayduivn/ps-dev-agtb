@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug39749Test extends TestCase
 {
-
     public function editModules()
     {
         return array(

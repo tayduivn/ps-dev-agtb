@@ -25,7 +25,6 @@ class SupportPortalVisibilityTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         $_SESSION['type'] = 'support_portal';
         self::setUpAccounts();
     }
@@ -36,12 +35,10 @@ class SupportPortalVisibilityTest extends TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestNoteUtilities::removeAllCreatedNotes();
         SugarTestLeadUtilities::removeAllCreatedLeads();
-        parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
-        parent::tearDownAfterClass();
         unset($_SESSION['type']);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }

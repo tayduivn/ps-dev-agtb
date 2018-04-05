@@ -16,7 +16,6 @@ require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 class SugarEmailAddressAddChangeTest extends TestCase
 {
-
     protected $email;
     protected $old_email = 'test@sugar.example.com';
     protected $old_uuid;
@@ -68,7 +67,6 @@ class SugarEmailAddressAddChangeTest extends TestCase
         $this->assertNotNull($new_sea, 'New Email Address not saved in database!');
         $this->assertEquals($this->old_email, $old_sea->email_address, 'Old Email Address was improperly Changed');
         $this->assertEquals($new_address, $new_sea->email_address, 'New Email Address was improperly saved!');
-
     }
 
     public function testEmailAddressesNoChange()

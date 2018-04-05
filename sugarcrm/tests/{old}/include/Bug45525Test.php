@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug45525 extends TestCase
 {
-   
     /**
      * @group Bug45525
      */
@@ -73,5 +72,4 @@ class Bug45525 extends TestCase
 
       unset($GLOBALS['app_list_strings']);
     }
-
 }

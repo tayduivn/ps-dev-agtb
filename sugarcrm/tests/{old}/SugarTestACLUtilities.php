@@ -64,7 +64,6 @@ class SugarTestACLUtilities
                     $role->setAction($role->id, $action['id'], $aclAllow);
                 }
             }
-
         }
         self::$_createdRoles[] = $role;
 
@@ -108,7 +107,6 @@ class SugarTestACLUtilities
         foreach (self::$_modules AS $module) {
             ACLField::loadUserFields($module, $module, $GLOBALS['current_user']->id, true );
         }
-
     }
 
     /**

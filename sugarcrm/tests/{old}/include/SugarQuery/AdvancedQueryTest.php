@@ -27,8 +27,6 @@ class AdvancedQueryTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -111,7 +109,6 @@ class AdvancedQueryTest extends TestCase
 
     public function testSelectInWhere()
     {
-
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Awesome';
         $account->save();
@@ -147,7 +144,6 @@ class AdvancedQueryTest extends TestCase
 
     public function testSelectUnion()
     {
-
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Awesome';
         $account->save();
@@ -209,7 +205,6 @@ class AdvancedQueryTest extends TestCase
         $result = reset($results);
 
         $this->assertEquals('Test note', $result['n_name'], "The note name was: {$result['n_name']}");
-
     }
 
     public function testSelectFavorites() {
@@ -255,7 +250,6 @@ class AdvancedQueryTest extends TestCase
             $fav = SugarFavorites::isUserFavorite('Cases',$case['id'],$GLOBALS['current_user']->id);
             $this->assertEquals($fav, true, "The record: {$case['id']} was not set as a favorite it is marked:" . var_export($fav, true));
         }
-
     }
 
     public function testSelectCount()
@@ -273,7 +267,6 @@ class AdvancedQueryTest extends TestCase
         $this->assertContains('COUNT(0)', $sql);
         $this->assertContains('name', $sql);
         $this->assertContains('account_type', $sql);
-
     }
 
     public function testSelectCountGroupBy()
@@ -292,7 +285,6 @@ class AdvancedQueryTest extends TestCase
         $this->assertContains('name', $sql);
         $this->assertContains('account_type', $sql);
         $this->assertContains('GROUP BY', $sql);
-
     }
 
     public function testBadFields()
@@ -438,7 +430,6 @@ class AdvancedQueryTest extends TestCase
         $sql = $sq->compile()->getSQL();
         // the field should not be there now
         $this->assertContains("id IS NOT NULL", $sql);
-
     }
 
     /**
@@ -455,7 +446,6 @@ class AdvancedQueryTest extends TestCase
         $sql = $sq->compile()->getSQL();
         // the field should not be there now
         $this->assertNotContains("email_and_name1 = 'Awesome'", $sql);
-
     }
 
     public function testRelatedOrderBy()
@@ -656,7 +646,6 @@ class Contact_Mock_Bug62961 extends Contact
                 'reportable' => false,
                 'source' => 'non-db',
             );
-
     }
 
     public function hasCustomFields()

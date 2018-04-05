@@ -29,8 +29,6 @@ class RNameLinkFieldTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user');
 
         self::$user1 = SugarTestUserUtilities::createAnonymousUser();
@@ -77,7 +75,5 @@ class RNameLinkFieldTest extends TestCase
     {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-
-        parent::tearDownAfterClass();
     }
 }

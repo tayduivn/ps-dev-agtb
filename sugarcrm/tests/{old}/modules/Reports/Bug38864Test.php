@@ -32,7 +32,6 @@ class Bug38864Test extends TestCase
 \$additionalModules[] = 'ProspectLists';
 \$exemptModules[] = 'Accounts';"
             );
-
 	}
 
 	public function tearDown()

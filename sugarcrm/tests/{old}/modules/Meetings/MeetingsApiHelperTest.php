@@ -15,13 +15,11 @@ use PHPUnit\Framework\TestCase;
 
 class MeetingsApiHelperTest extends TestCase
 {
-
     protected $bean =null;
     protected $contact = null;
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -40,7 +38,6 @@ class MeetingsApiHelperTest extends TestCase
         // gotta unfortunately create a contact for this
         $this->contact = SugarTestContactUtilities::createContact();
         $this->bean->contact_id = $this->contact->id;
-
     }
 
     public function tearDown()
@@ -49,7 +46,6 @@ class MeetingsApiHelperTest extends TestCase
         unset($this->contact);
         SugarTestHelper::tearDown();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        parent::tearDown();
     }
 
     public function testFormatForApi() 

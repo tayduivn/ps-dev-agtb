@@ -22,7 +22,6 @@ class MailRecordTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
 
         $this->mailRecord          = new MailRecord();
@@ -36,7 +35,6 @@ class MailRecordTest extends TestCase
         $_REQUEST = array();
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testAddRecipients_ParameterIsNotAnArray_ReturnsABlankString()

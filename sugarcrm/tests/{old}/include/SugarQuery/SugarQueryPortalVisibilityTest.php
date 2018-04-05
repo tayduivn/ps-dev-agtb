@@ -26,7 +26,6 @@ class SugarQueryPortalVisibilityTest extends TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-
     }
 
     public static function tearDownAfterClass()

@@ -16,7 +16,6 @@ class IsForecastClosedExpressionTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -25,7 +24,6 @@ class IsForecastClosedExpressionTest extends TestCase
     public function tearDown()
     {
         Forecast::$settings = array();
-        parent::tearDown();
     }
 
 

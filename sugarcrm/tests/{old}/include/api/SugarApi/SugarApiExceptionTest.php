@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarApiExceptionTest extends TestCase
 {
-
     public function setUp(){
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }

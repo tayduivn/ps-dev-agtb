@@ -33,7 +33,6 @@ class SidecarThemeTest extends TestCase
         if (is_dir($baseDir)) {
             rmdir_recursive($baseDir);
         }
-        parent::tearDown();
     }
 
     /**

@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ForecastManagerWorksheetTest extends TestCase
 {
-
     /**
      * @var Forecast
      */
@@ -61,7 +60,6 @@ class ForecastManagerWorksheetTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -700,7 +698,6 @@ class ForecastManagerWorksheetTest extends TestCase
                 )
             )
         );
-
     }
 
     /**

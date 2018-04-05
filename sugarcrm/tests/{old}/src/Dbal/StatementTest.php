@@ -23,8 +23,6 @@ class StatementTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         $table = new Table('type_conversion');
         $table->addColumn('id', 'string', array(
             'length' => 36,
@@ -44,8 +42,6 @@ class StatementTest extends TestCase
         $conn = \DBManagerFactory::getConnection();
         $sm = $conn->getSchemaManager();
         $sm->dropTable('type_conversion');
-
-        parent::tearDownAfterClass();
     }
 
     public function testStringAsInteger()

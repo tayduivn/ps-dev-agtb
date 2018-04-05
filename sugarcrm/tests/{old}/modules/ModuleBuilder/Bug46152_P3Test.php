@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug46152_P3Test extends TestCase
 {
-
     private $dynamicField;
     private $module = 'Notes';
     private $relatedModule = 'Opportunities';
@@ -38,7 +37,6 @@ class Bug46152_P3Test extends TestCase
         SugarTestHelper::setUp('mod_strings', array($this->module));
 
         $this->assertArrayHasKey($this->idLabelName, $GLOBALS['mod_strings']);
-
     }
 
 
@@ -51,8 +49,6 @@ class Bug46152_P3Test extends TestCase
 
         $this->dynamicField = new DynamicField($this->module);
         $this->dynamicField->setup(BeanFactory::newBean($this->module));
-
-        parent::setUp();
     }
 
     public function tearDown()
@@ -65,10 +61,7 @@ class Bug46152_P3Test extends TestCase
         );
 
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
-
-
 }
 
 class TemplateRelatedTextFieldMockB46152_P3 extends TemplateRelatedTextField
@@ -77,5 +70,4 @@ class TemplateRelatedTextFieldMockB46152_P3 extends TemplateRelatedTextField
     {
         parent::saveIdLabel($idLabelName, $df);
     }
-
 }

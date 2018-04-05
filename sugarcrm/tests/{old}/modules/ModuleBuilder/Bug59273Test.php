@@ -48,7 +48,6 @@ class Bug59273Test extends TestCase
     }
 
     public function tearDown() {
-
         $_REQUEST['package'] = 'test';
         $_REQUEST['module'] = 'test';
         $_REQUEST['view_module'] = 'test';

@@ -65,7 +65,6 @@ class Bug45374Test extends TestCase
             {
                 $this->team_sets_ids[] = $this->teams[$name]->id;
             }
-
         }
 
         //Teams from teasm set list to team set
@@ -75,7 +74,6 @@ class Bug45374Test extends TestCase
         $GLOBALS['current_user']->team_id = $this->teams[$this->default_team_name]->id;
         $GLOBALS['current_user']->team_set_id = $this->team_set->id;
         $GLOBALS['current_user']->save();
-
     }
 
     public function testDefaultTeam()
@@ -152,5 +150,4 @@ class Bug45374Test extends TestCase
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         SugarTestHelper::tearDown();
     }
-
 }

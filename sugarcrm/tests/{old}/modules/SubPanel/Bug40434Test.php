@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug40434Test extends TestCase
 {
-
     public function setUp()
     {
         $user = SugarTestUserUtilities::createAnonymousUser();

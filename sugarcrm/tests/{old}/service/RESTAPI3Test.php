@@ -229,7 +229,6 @@ class RESTAPI3Test extends TestCase
         $this->assertEquals($account->id, $result['entry_list'][0]['id'],'Unable to retrieve account list during search.');
 
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account->id}'");
-
     }
 
     public function testLogin()
@@ -386,7 +385,6 @@ class RESTAPI3Test extends TestCase
         $a_expectedResults[$module][$type][$view] = $expectedResults;
 
         $this->assertEquals(md5(serialize($expectedResults)), $result[$module][$type][$view], "Unable to retrieve module layout md5: module {$module}, type $type, view $view");
-
     }
     
     public static function _wirelessGridModuleLayoutProvider()
@@ -511,7 +509,6 @@ class RESTAPI3Test extends TestCase
         $defaultResultExpected = $sh->get_visible_modules($fullResult['modules']);
         $defaultResultExpected = md5(serialize($defaultResultExpected));
         $this->assertEquals($defaultResultExpected, $defaultResult, "Unable to get all visible default modules");
-
     }
 
     public function testGetVardefsMD5()
@@ -840,7 +837,6 @@ class RESTAPI3Test extends TestCase
      */
      public function testGetLastViewed()
      {
-
          $testModule = 'Accounts';
          $testModuleID = create_guid();
 

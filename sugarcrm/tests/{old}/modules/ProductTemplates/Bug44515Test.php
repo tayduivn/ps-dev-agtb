@@ -21,7 +21,6 @@ class Bug44515Test extends TestCase
 
     public function setUp()
     {
-
         if (!is_dir($this->customDir))
           mkdir($this->customDir, 0700, TRUE); // Creating nested directories at a glance
 

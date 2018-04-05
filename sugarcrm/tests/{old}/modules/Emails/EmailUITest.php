@@ -62,7 +62,6 @@ class EmailUITest extends TestCase
         $sf = new SugarFolder();
         $sf->retrieve($newFolderID);
         $this->assertEquals($newFolderName, $sf->name);
-
     }
 
     /**
@@ -81,12 +80,9 @@ class EmailUITest extends TestCase
         $prefs = unserialize($GLOBALS['current_user']->getPreference('folderSortOrder', 'Emails'));
         $this->assertEquals($sortBy, $prefs[$tmpId][$folderName]['current']['sort']);
         $this->assertEquals($dir, $prefs[$tmpId][$folderName]['current']['direction']);
-
-
     }
     public function testGetRelatedEmail()
     {
-
     	$account = new Account();
     	$account->name = "emailTestAccount";
     	$account->save(false);

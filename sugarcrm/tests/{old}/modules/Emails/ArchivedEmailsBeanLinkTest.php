@@ -26,8 +26,6 @@ class ArchivedEmailsBeanLinkTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('current_user');
 
         // turn on admin setting "Enable/Disable emails from related (or linked) contacts to show in Email Subpanel."

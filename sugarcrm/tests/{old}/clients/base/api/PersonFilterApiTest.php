@@ -26,7 +26,6 @@ class PersonFilterApiTest extends TestCase
 
     public function tearDown() {
         SugarTestHelper::tearDown();
-        parent::tearDown();        
     }
 
     // @Bug 61073
@@ -42,7 +41,6 @@ class PersonFilterApiTest extends TestCase
         }
 
         $this->assertTrue(!in_array($GLOBALS['current_user']->id, $expected));
-
     }
 
     public function testNoShowOnEmployees() {
@@ -74,8 +72,6 @@ class PersonFilterApiTest extends TestCase
 
         $this->assertTrue(in_array($GLOBALS['current_user']->id, $expected));
     }
-
-
 }
 
 class PersonFilterApiMockUp extends RestService

@@ -15,14 +15,12 @@ use PHPUnit\Framework\TestCase;
 
 class ReportsApiHelperTest extends TestCase
 {
-
     protected $bean =null;
 
     protected $helper;
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -46,7 +44,6 @@ class ReportsApiHelperTest extends TestCase
     {
         unset($this->bean);
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testFormatForApi() 

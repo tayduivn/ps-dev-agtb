@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug43554Test extends TestCase
 {
-
 	static $ie = null;
     static $_user = null;
 

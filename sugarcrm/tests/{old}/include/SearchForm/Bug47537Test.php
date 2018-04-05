@@ -46,7 +46,6 @@ class Bug47537Test extends TestCase
             'start_quote_num_entered_advanced' => '',
             'end_quote_num_entered_advanced' => '',
         );
-        parent::setUp();
     }
 
     public function tearDown() {
@@ -54,7 +53,6 @@ class Bug47537Test extends TestCase
         unset($this->form);
         unset($this->seed);
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**
@@ -99,5 +97,4 @@ class Bug47537Test extends TestCase
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
         $this->assertSame($expected, $query);
     }
-
 }

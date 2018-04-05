@@ -45,7 +45,6 @@ class LocalizationTest extends TestCase
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user = $this->_user;
         $this->_currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
-
     }
 
     public function tearDown()

@@ -44,7 +44,6 @@ class Bug51980Test extends TestCase
         $this->opp->team_id = '1';
         $this->opp->currency_id = -99;
         $this->opp->save();
-
 	}
 
     public function tearDown()
@@ -87,6 +86,5 @@ class Bug51980Test extends TestCase
         $formatted_date = str_replace('/','\\/',$formatted_date);
         // lets make sure the date shows up properly formatted in the detail view output.
         $this->expectOutputRegex("/>$formatted_date</");
-
     }
 }

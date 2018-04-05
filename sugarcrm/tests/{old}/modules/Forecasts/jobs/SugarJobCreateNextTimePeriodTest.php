@@ -40,7 +40,6 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -80,7 +79,6 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
         $db->query("UPDATE timeperiods SET deleted = 0 WHERE id IN ('" . implode("', '", array_keys($this->preTestIds))  . "')");
 
         $db->query("DELETE FROM timeperiods WHERE deleted = 1");
-        parent::tearDown();
     }
 
     /**
@@ -218,6 +216,4 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
         $latestTimePeriod2 = TimePeriod::getLatest($timeperiodLeafInterval);
         $this->assertEquals($latestTimePeriod->id, $latestTimePeriod2->id);
     }
-
-
 }

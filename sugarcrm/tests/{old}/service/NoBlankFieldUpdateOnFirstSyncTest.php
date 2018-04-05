@@ -210,5 +210,4 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         $total = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM contacts WHERE first_name = '{$existingContact->first_name}' AND last_name = '{$existingContact->last_name}'");
         $this->assertEquals(1, $total, 'Assert we only have one Contact with the first and last name');
     }
-
 }

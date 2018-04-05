@@ -91,7 +91,6 @@ class RestRelateTest extends RestTestBase {
                 $accountNum = $i;
             }
             $contact->accounts->add(array($this->accounts[$accountNum]));
-
         }
         for ( $i = 0 ; $i < 30 ; $i++ ) {
             $opp = new Opportunity();
@@ -221,5 +220,4 @@ class RestRelateTest extends RestTestBase {
         $this->assertEquals($this->contacts[1]->id,$reply['reply']['records'][1]['id'],"Second record didn't match (2)");
         $this->assertEquals($this->contacts[2]->id,$reply['reply']['records'][2]['id'],"Third record didn't match (2)");
     }
-
 }

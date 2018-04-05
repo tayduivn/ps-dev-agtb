@@ -34,7 +34,6 @@ class Bug57454Test extends TestCase
             if(!function_exists('simplexml_load_string')) {
             $this->markTestSkipped("No SimpleXML - skipping");
         }
-        parent::setUp();
     }
 
     public function startUp()

@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarForecasting_Progress_ManagerTest extends TestCase
 {
-
     /**
      * @var array args to be passed onto methods
      */
@@ -33,7 +32,6 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -80,7 +78,6 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
             'quota' => array('amount' => 27000)
         );
         self::$users['reportee'] = SugarTestForecastUtilities::createForecastUser($config);
-
     }
 
     /**
@@ -103,7 +100,6 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         $timedate = TimeDate::getInstance();
         $timedate->allow_cache = true;
-        parent::tearDownAfterClass();
     }
 
     /**
@@ -111,7 +107,6 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
      */
     public function tearDown() {
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
-        parent::tearDown();
     }
 
     /**
@@ -474,7 +469,6 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
                 {
                     $expectedQuotaAmount += ($createRepWorksheet ? $repQuotaAmount : $quota->amount);
                 }
-
             }
         }
         //compare expected and actual

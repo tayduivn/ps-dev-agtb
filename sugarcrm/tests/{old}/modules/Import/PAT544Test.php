@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class BugPAT544Test extends TestCase
 {
-
     private $account1;
     private $account2;
     private $file;

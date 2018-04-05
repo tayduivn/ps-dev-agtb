@@ -42,11 +42,9 @@ class Bug50308Test extends TestCase
         $this->newPopupMeta['whereStatement'] = 'select money from yourWallet where deposit = "myPocket"';
         $this->newPopupMeta['templateMeta'] = array('one','two');
         $this->newPopupMeta['disappear'] = 'this element was not defined and should be processed';
-
     }
 
     public function tearDown() {
-
         //remove custom file
         unlink($this->customFilePath);
         //recreate custom file using old data if it was collected
@@ -64,7 +62,6 @@ class Bug50308Test extends TestCase
         unset($this->customFileDir);
         unset($this->originalPopupMeta);
         unset($this->newPopupMeta);
-
     }
 
     /*
@@ -72,7 +69,6 @@ class Bug50308Test extends TestCase
      * the tests assert that the custom elements are preserved by the parser
      */
     public function testUsingCustomPopUpElements() {
-
 	//declare the vars global and then include the modules file to make sure they are available during testing
         global $moduleList, $beanList, $beanFiles;
         include('include/modules.php');

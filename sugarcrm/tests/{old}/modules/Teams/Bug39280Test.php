@@ -20,5 +20,4 @@ class Bug39280Test extends TestCase
     	$this->assertContains('related_fields', $listViewDefs['Teams']['NAME'], "Related fields entry is missing");
     	$this->assertContains('name_2', $listViewDefs['Teams']['NAME']['related_fields'], "name_2 fields entry is missing");
 	}
-
 }

@@ -17,7 +17,6 @@ class Bug41841Test extends TestCase
 {
 	public function testManufacturerNameStudioProperty()
 	{
-		
     	$dictionary = array();
     	require('modules/ProductTemplates/vardefs.php');
     	$manufacturer_name = array();

@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEAddRelatedRecordTest extends TestCase
 {
-
     /**
      * @var PMSEElement
      */
@@ -154,7 +153,6 @@ class PMSEAddRelatedRecordTest extends TestCase
         $this->addRelatedRecord->setPARelatedModule($pmseRelatedModule);
 
         $this->addRelatedRecord->run($flowData, $beanMock);
-
     }
 
     /**
@@ -267,7 +265,5 @@ class PMSEAddRelatedRecordTest extends TestCase
         $this->addRelatedRecord->setPARelatedModule($pmseRelatedModule);
 
         $this->addRelatedRecord->run($flowData, $beanMock);
-
     }
-
 }

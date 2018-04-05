@@ -21,7 +21,6 @@ class Bug27344Test extends TestCase
 
     public function setUp()
     {
-
         $this->_has_initial_server_port = isset($_SERVER['SERVER_PORT']);
         if ($this->_has_initial_server_port) {
             $this->_initial_server_port = $_SERVER['SERVER_PORT'];
@@ -39,12 +38,10 @@ class Bug27344Test extends TestCase
 
     public function testLocalServerPortNotUsed()
     {
-
         $url = $GLOBALS['sugar_config']['site_url'] . '/maintenance.php';
 
         $_SERVER['SERVER_PORT'] = '9090';
         $sJob = new SchedulersJob(FALSE);
         $this->assertTrue($sJob->fireUrl($url));
     }
-
 }

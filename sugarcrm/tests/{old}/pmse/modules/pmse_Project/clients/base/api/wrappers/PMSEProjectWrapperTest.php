@@ -38,13 +38,11 @@ class PMSEProjectWrapperTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
 //        require_once 'modules/ProcessMaker/ADAMWrapperProject.php';
     }
 
     protected function setUp()
     {
-        
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()
             ->setMethods(array('getBean'))
@@ -1094,7 +1092,6 @@ class PMSEProjectWrapperTest extends TestCase
         foreach ($fixtureArray as $fixture) {
             $this->assertEquals($fixture['outputData'], $this->projectWrapper->getEntityData($fixture['inputData']['key']));
         }
-
     }
 
     public function testGetEntityUid()
@@ -1141,7 +1138,6 @@ class PMSEProjectWrapperTest extends TestCase
         foreach ($fixtureArray as $fixture) {
             $this->assertEquals($fixture['outputData'], $this->projectWrapper->getEntityUid($fixture['inputData']));
         }
-
     }
     
     public function testGetElementUid()
@@ -1942,7 +1938,6 @@ class PMSEProjectWrapperTest extends TestCase
         );
 
         $this->projectWrapper->updateProcessDefinition($args);
-
     }
     
     public function testAttachDetachNotify()

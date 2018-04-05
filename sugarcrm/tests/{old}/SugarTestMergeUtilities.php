@@ -20,7 +20,6 @@ class SugarTestMergeUtilities
 
     public static function setupFiles($modules, $files, $custom_directory)
     {
-
 		   self::$modules = $modules;
 		   self::$files = $files;
 		   self::$has_dir = array();
@@ -48,7 +47,6 @@ class SugarTestMergeUtilities
 				   }
 			   } //foreach
 		   } //foreach
-
     }
 
     public static function teardownFiles()
@@ -75,5 +73,4 @@ class SugarTestMergeUtilities
 			   }
 		   } //foreach
     }
-
 }

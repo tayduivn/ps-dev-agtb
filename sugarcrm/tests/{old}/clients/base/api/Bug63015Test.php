@@ -47,7 +47,6 @@ class Bug63015Test extends TestCase
     {
         // delete the bunch of accounts created
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id in('".implode("','", $this->accountIds)."')");
-        parent::tearDown();
     }
 
     public static function tearDownAfterClass()

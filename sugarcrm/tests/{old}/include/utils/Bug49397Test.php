@@ -43,5 +43,4 @@ class Bug49397Test extends TestCase
         $this->assertEquals(1, count($users2), 'get_user_array does not filter correctly on cache');
         $this->assertEquals(1, count($users3), 'get_user_array does not filter correctly on cache');
     }
-
 }

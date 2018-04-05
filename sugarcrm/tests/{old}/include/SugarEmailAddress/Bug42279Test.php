@@ -27,7 +27,6 @@ class Bug42279Test extends TestCase
     private $contact;	
 
     public function setUp() {
-    	
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->contact = SugarTestContactUtilities::createContact();
                

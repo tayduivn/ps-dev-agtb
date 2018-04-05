@@ -32,9 +32,6 @@ class Bug45966 extends TestCase
     protected $timezone = 'America/Denver';
 
     public function setUp() {
-
-        parent::setUp();
-
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
@@ -72,7 +69,6 @@ class Bug45966 extends TestCase
             $this->seed
         );
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testSearchDateEqualsAdjustsForTimeZone() {

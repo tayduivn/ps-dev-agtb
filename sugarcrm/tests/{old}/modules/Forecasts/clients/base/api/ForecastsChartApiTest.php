@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ForecastsChartApiTest extends TestCase
 {
-
     protected static $users = [
         ['id' => '6d01426a-99d1-11e6-9836-9801a7ade577', 'createReportUser' => false],
         ['id' => '6d014904-99d1-11e6-a9d3-9801a7ade577', 'createReportUser' => true],
@@ -160,5 +159,4 @@ FILE;
             ),
         );
     }
-
 }

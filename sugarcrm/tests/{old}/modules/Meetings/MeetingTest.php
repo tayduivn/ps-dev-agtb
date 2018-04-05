@@ -133,8 +133,6 @@ class MeetingTest extends TestCase
         $r = $db->query($q);
         $a = $db->fetchByAssoc($r);
         $this->assertEquals('accept', $a['accept_status'], "Meeting wasn't accepted by the User");
-
-
     }
 
     public function testLoadFromRow()

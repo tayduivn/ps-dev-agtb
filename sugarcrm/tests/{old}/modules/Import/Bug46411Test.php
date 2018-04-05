@@ -123,5 +123,4 @@ class bug46411_Importer_mock extends Importer
     {
         return parent::saveImportBean($focus, $newRecord);
     }
-
 }

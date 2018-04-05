@@ -1847,7 +1847,6 @@ class CollectionApiTest extends TestCase
         );
 
         $this->assertEquals($expected, $actual, 'Incorrect additional sort fields generated');
-
     }
 
     public static function getAdditionalSortFieldsProvider()

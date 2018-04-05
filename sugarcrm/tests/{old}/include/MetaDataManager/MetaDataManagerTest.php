@@ -64,7 +64,6 @@ class MetaDataManagerTest extends TestCase
 
     public function testGetAllLanguages()
     {
-
         $languages = $this->mm->getAllLanguages();
 
         $this->assertArrayHasKey('enabled', $languages, "Enabled languages is missing.");
@@ -93,7 +92,6 @@ class MetaDataManagerTest extends TestCase
      */
     public function testFinalMetadataJSSource()
     {
-
         // Scenario 1
         // Create empty module with correct metadata structure.
         sugar_mkdir("modules/TestModule/clients/base/datas/model", 0700, true);
@@ -838,7 +836,6 @@ PLATFORMS;
         $this->assertEquals(json_encode($expected), json_encode($actual));
 
         unset($app_list_strings['md_fix_filter_test']);
-
     }
 
     public static function getEditableDropdownFilterProvider()

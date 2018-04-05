@@ -25,7 +25,6 @@ class BaseTest extends TestCase
 
     public function setup()
     {
-        parent::setup();
         $this->eval = new Evaluator\Base;
     }
 

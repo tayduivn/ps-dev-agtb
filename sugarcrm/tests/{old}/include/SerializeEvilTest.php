@@ -19,7 +19,6 @@ require_once('vendor/Zend/Http/Response/Stream.php');
 
 class SerializeEvilTest extends TestCase
 {
-
     public function testSugarCacheFile()
     {
         if(file_exists(sugar_cached("testevil.php"))) @unlink(sugar_cached("testevil.php"));

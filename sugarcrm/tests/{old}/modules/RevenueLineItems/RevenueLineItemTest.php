@@ -137,7 +137,6 @@ class RevenueLineItemTest extends TestCase
      */
     public function testSaveProductWorksheetReturnsFalse()
     {
-
         Forecast::$settings = array(
             'is_setup' => 0
         );

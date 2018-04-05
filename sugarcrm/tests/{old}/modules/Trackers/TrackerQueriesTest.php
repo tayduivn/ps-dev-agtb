@@ -56,7 +56,6 @@ class TrackerQueriesTest extends TestCase
     }
 
     function test_track_slow_query() {
-		
     	$trackerManager = TrackerManager::getInstance();
     	$disabledMonitors = $trackerManager->getDisabledMonitors();
     	$trackerManager->setDisabledMonitors(array());

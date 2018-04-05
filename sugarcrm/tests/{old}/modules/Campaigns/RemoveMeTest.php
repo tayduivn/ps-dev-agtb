@@ -30,8 +30,6 @@ class RemoveMeTest extends TestCase
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestLeadUtilities::removeAllCreatedLeads();
-
-        parent::tearDown();
     }
 
     public function testRemoveContact()

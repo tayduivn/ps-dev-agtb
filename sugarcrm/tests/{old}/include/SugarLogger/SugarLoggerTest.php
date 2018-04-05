@@ -19,7 +19,6 @@ class SugarLoggerTest extends TestCase
      */
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         LoggerManagerSugarLoggerTestMock::backupLoggers();
     }
     
@@ -29,7 +28,6 @@ class SugarLoggerTest extends TestCase
     public static function tearDownAfterClass()
     {
         LoggerManagerSugarLoggerTestMock::restoreLoggers();
-        parent::tearDownAfterClass();
     }
 
     public function providerWriteLogEntries()
@@ -125,7 +123,6 @@ class SugarLoggerTest extends TestCase
      */
     public function testFileSizes($size, $value, $assert_equal)
     {
-
         $units = array(
             'b' => 1,
             'k' => 1024,
@@ -145,11 +142,9 @@ class SugarLoggerTest extends TestCase
             {
                 $this->assertNotEquals($value, $file_size, "[DEBUG] File size parsed invalid");
             }
-
         } else {
             $this->assertFalse($assert_equal, '[DEBUG]Unitformat is out of the expression boundary.');
         }
-
     }
 
    /**
@@ -157,7 +152,6 @@ class SugarLoggerTest extends TestCase
      * Fix the Logger to create dateformat suffix in the file name
      */
     public function testFileName() {
-
         $config = SugarConfig::getInstance();
         $file_name = $config->get('logger.file.name');
         $log_dir = $config->get('log_dir');

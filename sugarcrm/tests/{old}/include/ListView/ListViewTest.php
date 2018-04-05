@@ -58,5 +58,4 @@ class ListViewTest extends TestCase
         $actual = $this->_lv->calculateSortOrder($sortOrder);
         $this->assertEquals($expected, $actual, 'Sort order is wrong');
     }
-
 }

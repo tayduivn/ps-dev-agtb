@@ -52,5 +52,4 @@ class MaxRelatedExpressionTest extends TestCase
         $result = Parser::evaluate($expr, $opp)->evaluate();
         $this->assertSame('30', $result);
     }
-
 }

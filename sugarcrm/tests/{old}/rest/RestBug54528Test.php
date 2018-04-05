@@ -84,7 +84,6 @@ class RestBug54528Test extends RestTestPortalBase {
      * @group rest
      */
     public function testCreate() {
-
         // we need to be an admin to get at the relationship data
         $GLOBALS['current_user']->is_admin = 1;
         $args = array(
@@ -144,8 +143,6 @@ class RestBug54528Test extends RestTestPortalBase {
 //        $this->assertEquals($this->contact->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");
 
         $this->assertEquals($this->contact->assigned_user_id, $bug->assigned_user_id, "Assigned user id doesn't.");
-
         
     }
-
 }

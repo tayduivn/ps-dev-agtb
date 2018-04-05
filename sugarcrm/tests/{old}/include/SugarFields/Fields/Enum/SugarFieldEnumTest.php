@@ -78,9 +78,7 @@ class SugarFieldEnumTest extends TestCase
 
         //assert that right value was returned
         $this->assertEquals($second, 'two', 'wrong value was returned from getEnumTestDDVals function');
-
     }
-
 }
 
 

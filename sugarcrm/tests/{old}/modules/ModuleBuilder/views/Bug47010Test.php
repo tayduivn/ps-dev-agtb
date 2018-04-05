@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug47010Test extends TestCase
 {
-
     public function setUp() {
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -33,7 +32,6 @@ class Bug47010Test extends TestCase
     }
 
     public function testModuleNameMissingDoesNotThrowExceptionWhenGenereatingSmarty() {
-
         $view = new ViewDropdown();
         $smarty = $view->generateSmarty($_REQUEST);
         $this->assertEmpty($smarty->get_template_vars('module_name'));

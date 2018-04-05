@@ -41,7 +41,6 @@ class Bug56573Test extends TestCase
 
     protected function execJob($name, $data)
     {
-
         $job = new SchedulersJob();
         $job->name = "Bug56573Test Alert Job - '{$name}'";
         $job->target = "class::Bug56573TestJob";

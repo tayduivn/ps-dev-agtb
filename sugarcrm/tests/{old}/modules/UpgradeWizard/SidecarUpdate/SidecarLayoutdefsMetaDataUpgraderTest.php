@@ -31,8 +31,6 @@ class SidecarLayoutdefsMetaDataUpgraderTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
@@ -72,7 +70,6 @@ class SidecarLayoutdefsMetaDataUpgraderTest extends TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

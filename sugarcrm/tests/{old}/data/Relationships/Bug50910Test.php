@@ -47,6 +47,5 @@ class Bug50910Test extends TestCase
         $current_user->load_relationship('email_addresses');
         $current_user->email_addresses->add(array($this->emailAddress), array());
         $this->assertNotEmpty($current_user->email_addresses);
-
     }
 }

@@ -19,7 +19,6 @@ class GetTemplateNameForNotificationEmailTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -50,7 +49,6 @@ class GetTemplateNameForNotificationEmailTest extends TestCase
             unset($objectList['Accounts']);
         }
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testCustomModule()

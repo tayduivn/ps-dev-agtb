@@ -59,7 +59,5 @@ class Bug33745 extends TestCase
     	} else {
     	   $this->assertEquals(trim($first_name . ' ' . $last_name), trim($display_name), "Assert that first name first format is correct");
     	}
-
     }
-
 }

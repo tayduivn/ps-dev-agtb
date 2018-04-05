@@ -57,7 +57,6 @@ class Bug46000Test extends SOAPTestCase
                 );
         $result = $this->_soapClient->call('set_entry',array('session'=>$this->_sessionId,"module_name" => 'Users', 'name_value_list' => $nv));
         $this->assertEquals('40', $result['error']['number']);
-
     }
 
     public function testGetEntry()
@@ -66,5 +65,4 @@ class Bug46000Test extends SOAPTestCase
         $this->assertArrayHasKey('entry_list', $result);
         $this->assertEquals($result['entry_list'][0]['name_value_list'][0]['value'], self::$_user->first_name);
     }
-
 }

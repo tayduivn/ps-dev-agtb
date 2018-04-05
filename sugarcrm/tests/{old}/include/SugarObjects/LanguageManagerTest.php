@@ -46,7 +46,6 @@ class LanguageManagerTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('files');
     }
 

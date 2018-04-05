@@ -37,5 +37,4 @@ class Bug44836Test extends TestCase
 		 $subpanelQuickCreate = new SubpanelQuickCreate('Contracts', 'QuickCreate');
 		 $this->expectOutputRegex('/check_form\s*?\(\s*?\'form_SubpanelQuickCreate_Contracts\'\s*?\)/');
 	}
-
 }

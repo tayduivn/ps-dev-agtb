@@ -111,6 +111,5 @@ class ActivitiesRelationship56425 extends ActivitiesRelationship
         self::$labelsAdded = array(
             $module => true
         );
-
     }
 }

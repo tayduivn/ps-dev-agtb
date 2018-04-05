@@ -446,7 +446,6 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
         $output = $this->_parser->testConvertToCanonicalForm($panels, $fieldDef);
 
         $this->assertEquals($expected, $output);
-
     }
 
     /**

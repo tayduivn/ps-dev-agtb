@@ -22,7 +22,6 @@ class SugarQueryAclFieldTest extends TestCase
     {
         global $current_user;
         
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
         self::$otherUser = SugarTestUserUtilities::createAnonymousUser();
 
@@ -37,14 +36,12 @@ class SugarQueryAclFieldTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
     }
 
     public static function tearDownAfterClass()
     {
         ACLField::$acl_fields = array();
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     public function testAssignedToCurrentUserIsAccessible()

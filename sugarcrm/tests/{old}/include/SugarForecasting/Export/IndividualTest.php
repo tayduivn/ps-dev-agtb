@@ -50,7 +50,6 @@ class SugarForecasting_Export_IndividualTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -124,7 +123,6 @@ class SugarForecasting_Export_IndividualTest extends TestCase
 
     public static function tearDownAfterClass()
     {
-        parent::tearDownAfterClass();
     }
 
     /**

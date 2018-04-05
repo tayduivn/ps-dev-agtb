@@ -169,7 +169,6 @@ class RestRequestTest extends TestCase
     {
         $r = new RestRequest(array('REQUEST_METHOD' => 'GET'), array('__sugar_url' => $path));
         $this->assertEquals($r->getPathVars($route), $vars);
-
     }
 
     public function pathVarsProvider()

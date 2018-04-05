@@ -119,6 +119,4 @@ class Bug55923Test extends TestCase
         $meeting = SugarTestMeetingUtilities::createMeeting("workflow_meeting_test_id");
         $this->assertEquals('TRIGGERED', $meeting->description);
     }
-
-
 }

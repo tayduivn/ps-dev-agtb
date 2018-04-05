@@ -57,7 +57,6 @@ class UnifiedSearchApiTest extends TestCase
         // clean up all roles created
         SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     // test that when read only is set for every field you can still retrieve

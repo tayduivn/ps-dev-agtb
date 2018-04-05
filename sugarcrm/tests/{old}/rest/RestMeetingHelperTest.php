@@ -12,7 +12,6 @@
 
 
 class RestMeetingHelperTest extends RestTestBase {
-
     public function tearDown()
     {
         parent::tearDown();
@@ -20,7 +19,6 @@ class RestMeetingHelperTest extends RestTestBase {
     }
 
     public function testMeeting() {
-
         // create a meeting linked to yourself, a contact, and a lead, verify the meeting is linked to each and on your calendar
         $meeting = array(
             'name' => 'Test Meeting',
@@ -47,12 +45,9 @@ class RestMeetingHelperTest extends RestTestBase {
 
         $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
         $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
-
-
     }
 
     public function testMeetingHeld() {
-
         // create a meeting linked to yourself, a contact, and a lead, verify the meeting is linked to each and on your calendar
         $meeting = array(
             'name' => 'Test Meeting',
@@ -80,7 +75,5 @@ class RestMeetingHelperTest extends RestTestBase {
 
         $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
         $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
-
-
     }    
 }

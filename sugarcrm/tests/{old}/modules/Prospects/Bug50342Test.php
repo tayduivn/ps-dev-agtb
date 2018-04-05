@@ -138,5 +138,4 @@ class Bug50342Test extends TestCase
         $select = $mock->retrieveTargetList($sql, array('id', 'first_name', 'last_name'));
         $this->assertRegExp("/from\s+{$tableName}/i", $select, 'Incorrect from SQL clause: ' . $select);
     }
-
 }

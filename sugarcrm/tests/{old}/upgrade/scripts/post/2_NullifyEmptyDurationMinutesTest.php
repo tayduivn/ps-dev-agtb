@@ -292,7 +292,6 @@ class SugarUpgradeNullifyEmptyDurationMinutesTest extends UpgradeTestCase
                 'expect' => false,
             ),
         );
-
     }
 
     public function getUpgraderMock($methods = null)

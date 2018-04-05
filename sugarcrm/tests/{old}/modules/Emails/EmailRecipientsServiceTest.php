@@ -371,7 +371,6 @@ class EmailRecipientsServiceTest extends TestCase
         );
         $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Recipient to Resolve to Matching ID and Email");
-
     }
 
     public function testLookup_SetEmailAndIDOnly_EmailFoundButNotID_RecipientNotResolved()

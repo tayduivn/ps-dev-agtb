@@ -281,7 +281,6 @@ class RESTAPI3_1Test extends TestCase
                 'view' => array($view))
         );
         $this->assertEquals($expeced_acl, $results[$module][$view_type][$view][$field_name]['acl'] );
-
     }
 
     /**
@@ -322,7 +321,6 @@ class RESTAPI3_1Test extends TestCase
                 array('module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',),
                 array('module' => 'Accounts', 'view' => 'detail', 'metadatafile' => 'modules/Accounts/clients/mobile/views/detail/detail.php',),
             );
-
         }
 
         /**
@@ -336,7 +334,6 @@ class RESTAPI3_1Test extends TestCase
             return array(
                 array('module' => 'Cases'),
             );
-
         }
 
         /**
@@ -430,6 +427,5 @@ class RESTAPI3_1Test extends TestCase
 
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
-
     }        
 }

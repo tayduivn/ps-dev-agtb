@@ -20,7 +20,6 @@ class SugarApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         self::$monitorList = TrackerManager::getInstance()->getDisabledMonitors();
@@ -37,7 +36,6 @@ class SugarApiTest extends TestCase
         unset($_SERVER['CONTENT_LENGTH']);
 
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     public function setUp() {

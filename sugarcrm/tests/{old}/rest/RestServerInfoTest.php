@@ -35,5 +35,4 @@ class RestServerInfoTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['server_info']['version']), "No Version Set");
         $this->assertTrue(is_array($restReply['reply']['server_info']['fts']), "No FTS Info Set");
     }
-
 }

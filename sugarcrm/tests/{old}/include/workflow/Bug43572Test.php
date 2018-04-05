@@ -33,6 +33,5 @@ class Bug43572Test extends TestCase
         );
         $matched = preg_match("~$expectedConditionChunk~i", $actualCondition);
         $this->assertEquals(1, $matched);
-
     }
 }

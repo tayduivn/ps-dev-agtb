@@ -116,7 +116,6 @@ class SugarTestForecastUtilities
      */
     public static function createForecastUser(array $config = array())
     {
-
         $default_config = array(
             'timeperiod_id' => null,
             'user' => array(

@@ -52,7 +52,6 @@ class Bug51568Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        parent::setUp();
 
         $this->lm = new LayoutManager();
         $this->lm->setAttribute('reporter', new stdClass());

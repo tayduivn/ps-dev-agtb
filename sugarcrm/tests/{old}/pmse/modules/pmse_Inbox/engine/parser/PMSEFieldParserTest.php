@@ -19,12 +19,10 @@ class PMSEFieldParserTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
     }
 
     protected function setUp()
     {
-        parent::setUp();
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
             ->setMethods(null)

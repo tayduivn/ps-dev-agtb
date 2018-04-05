@@ -16,14 +16,12 @@ class DBManager_WriteClobTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        parent::tearDownAfterClass();
     }
 
     public function testInsert()

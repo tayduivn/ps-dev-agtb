@@ -36,12 +36,10 @@ class DocApiUploadTest extends TestCase
             $document->mark_deleted($document->id);
         }
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testDocUloadApi()
     {
-
         $api = new DocumentsFileApi();
         $rest = SugarTestRestUtilities::getRestServiceMock();
         $this->file = tempnam(sys_get_temp_dir(), __CLASS__);
@@ -106,5 +104,4 @@ class DocApiUploadTest extends TestCase
         $this->assertContains($rev1, $rels);
         $this->assertContains($rev2, $rels);
     }
-
 }

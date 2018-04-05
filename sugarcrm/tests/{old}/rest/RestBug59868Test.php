@@ -15,7 +15,6 @@
  */
 class RestBug59868Test extends RestTestBase
 {
-    
     public function setUp()
     {
         parent::setUp();

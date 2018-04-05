@@ -31,7 +31,6 @@ class RevenueLineItemsGlobeChartApiTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -45,7 +44,6 @@ class RevenueLineItemsGlobeChartApiTest extends TestCase
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testSalesByCountry()
@@ -85,5 +83,4 @@ class RevenueLineItemsGlobeChartApiTest extends TestCase
         $stateGroup = $countryGroup['TestStateName'];
         $this->assertArrayHasKey('_total', $stateGroup);
     }
-
 }

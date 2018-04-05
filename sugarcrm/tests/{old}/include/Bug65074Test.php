@@ -42,7 +42,6 @@ class Bug65074Test extends TestCase
 
     public function setUp()
     {
-
         // create a custom include file
         $customIncludeFileContent = <<<EOQ
 <?php

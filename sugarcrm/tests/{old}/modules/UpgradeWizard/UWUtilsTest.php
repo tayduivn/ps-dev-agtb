@@ -31,8 +31,6 @@ class UWUtilsTest extends TestCase
             ));
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 1");
-
-        parent::setUpBeforeClass();
     }
 
     public static function tearDownAfterClass()
@@ -41,8 +39,6 @@ class UWUtilsTest extends TestCase
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 0");
         SugarTestHelper::tearDown();
-
-        parent::tearDownAfterClass();
     }
 
     public function tearDown()
@@ -50,7 +46,6 @@ class UWUtilsTest extends TestCase
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestJobQueueUtilities::removeAllCreatedJobs();
-        parent::tearDown();
     }
 
 

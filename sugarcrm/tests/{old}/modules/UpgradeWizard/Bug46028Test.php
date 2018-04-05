@@ -24,7 +24,6 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 
 class Bug46028Test extends TestCase
 {
-
 var $customOpportunitiesSearchFields;
 var $opportunitiesSearchFields;
 

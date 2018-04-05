@@ -271,7 +271,6 @@ class SugarAutoLoaderTest extends TestCase
         $this->touch("modules/AutoLoaderTest/metadata/detailviewdefs.php");
         $this->assertEquals("modules/AutoLoaderTest/metadata/detailviewdefs.php",
         SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "detailviewdefs"));
-
     }
 
     // loadPopupMeta
@@ -299,7 +298,6 @@ class SugarAutoLoaderTest extends TestCase
 
         file_put_contents("custom/testdir/testdir2/testfile.php", "test");
         $this->asserTrue(file_exists("custom/testdir/testdir2/testfile.php"), "test file not in cache");
-
     }
 
     /**

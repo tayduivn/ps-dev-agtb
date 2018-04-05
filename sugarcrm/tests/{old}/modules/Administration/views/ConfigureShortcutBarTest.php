@@ -16,14 +16,12 @@ class ConfigureShortcutBarTest extends TestCase
 {
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('current_user');
     }
 
     public function tearDown()
     {
-        parent::tearDown();
         SugarTestHelper::tearDown();
     }
 

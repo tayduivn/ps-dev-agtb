@@ -836,8 +836,6 @@ class Bug45716Helper {
 class Bug45716Test extends TestCase
 {
     public function setUp() {
-        parent::setUp();
-        
         $GLOBALS['action'] = 'index';
         $GLOBALS['module'] = 'Reports';
         $GLOBALS['app_strings'] = return_application_language('en_us');
@@ -853,7 +851,6 @@ class Bug45716Test extends TestCase
         unset($GLOBALS['action']);
         unset($GLOBALS['mod_strings']);
         unset($GLOBALS['current_user']);
-        parent::tearDown();
     }
 
     public function testCustomRelatedLink()

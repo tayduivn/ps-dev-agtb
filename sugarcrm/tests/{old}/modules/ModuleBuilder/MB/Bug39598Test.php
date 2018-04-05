@@ -96,6 +96,5 @@ class Bug39598Test extends TestCase
             $relationships['test_newmod_test_newmod']['rhs_module'],
             'Module name replaced correctly in relationships metadata'
         );
-
     }
 }

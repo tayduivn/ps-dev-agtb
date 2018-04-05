@@ -36,8 +36,6 @@ class ForecastsProgressApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -51,7 +49,6 @@ class ForecastsProgressApiTest extends TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     public function setUp()

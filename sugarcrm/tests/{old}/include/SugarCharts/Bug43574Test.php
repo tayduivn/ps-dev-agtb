@@ -50,5 +50,4 @@ class Bug43574Test extends TestCase
           array('<xml_node>Multiple & < > \'</xml_node>',"\t<xml_node>Multiple &amp; &lt; &gt; '</xml_node>\n"),
         );
     }
-
 }

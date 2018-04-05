@@ -18,7 +18,6 @@ require_once 'upgrade/scripts/post/9_AddTagLabelToViews.php';
  */
 class SugarUpgradeAddTagLabelToViewsTest extends UpgradeTestCase
 {
-
     /**
      * Tests adding the taggable property to config
      * @param array $config The data to test

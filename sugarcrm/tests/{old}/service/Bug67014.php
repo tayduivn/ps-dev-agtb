@@ -20,7 +20,6 @@ class Bug67014Test extends TestCase
     protected function tearDown()
     {
         $_GET = array();
-        parent::tearDown();
     }
 
     public function testNoException()

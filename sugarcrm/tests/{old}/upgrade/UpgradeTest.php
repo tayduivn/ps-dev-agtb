@@ -13,7 +13,6 @@
 
 class UpgradeTest extends UpgradeTestCase
 {
-
     /**
      * Test for getScripts
      * @param string $scriptname

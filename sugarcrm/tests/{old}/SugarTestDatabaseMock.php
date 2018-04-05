@@ -155,7 +155,6 @@ class SugarTestDatabaseMock extends DBManager
             }
             return true;
         }
-
     }
 
     /**

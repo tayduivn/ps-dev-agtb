@@ -22,13 +22,11 @@ class EmailsApiHelperTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
     }
 
     protected function setUp()
     {
-        parent::setUp();
         $api = SugarTestRestUtilities::getRestServiceMock();
         $this->helper = new EmailsApiHelper($api);
     }

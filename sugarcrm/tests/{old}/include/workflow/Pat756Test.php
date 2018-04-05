@@ -28,7 +28,6 @@ class Pat756Test extends TestCase
 
     function tearDown()
     {
-
         SugarTestTaskUtilities::removeAllCreatedTasks();
         $GLOBALS['db']->query("DELETE FROM notes WHERE name = 'note756'", true);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();

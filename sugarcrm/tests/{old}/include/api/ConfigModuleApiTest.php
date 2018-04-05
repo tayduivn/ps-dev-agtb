@@ -26,7 +26,6 @@ class ConfigModuleApiTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         $GLOBALS['current_user']->is_admin = 1;
-        parent::setUp();
     }
 
     public function tearDown()
@@ -36,7 +35,6 @@ class ConfigModuleApiTest extends TestCase
         $db->commit();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

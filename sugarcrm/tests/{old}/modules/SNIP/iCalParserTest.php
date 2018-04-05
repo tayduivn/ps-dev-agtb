@@ -36,7 +36,6 @@ class iCalParserTest extends TestCase
         SugarTestEmailUtilities::removeAllCreatedEmails();
         // delete it in case it's created, outlook_id is from Bug53942Test.ics
         $GLOBALS['db']->query('delete from meetings where outlook_id='."'".'73fc8eef-bacc-4d7b-94eb-af2080437132'."'");
-        parent::tearDownAfterClass();
     }
 
     protected function getEmailCount() {

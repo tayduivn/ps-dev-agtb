@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class One2OneBeanRelationshipTest extends TestCase
 {
-
     public function testbuildJoinSugarQuery()
     {
         $relDef = array(

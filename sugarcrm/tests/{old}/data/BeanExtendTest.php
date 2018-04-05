@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class BeanExtendTest extends TestCase
 {
-
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanList');
@@ -121,7 +120,6 @@ class TestBean9 extends Basic
         parent::__construct();
         $this->ok = true;
     }
-
 }
 
 class TestBean10 extends TestBean9

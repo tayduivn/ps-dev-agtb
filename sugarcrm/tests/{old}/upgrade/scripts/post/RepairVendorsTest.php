@@ -228,7 +228,6 @@ EOC;
  */
 class SugarUpgradeRepairVendorsMock extends SugarUpgradeRepairVendors
 {
-
     public function getModulesList()
     {
         return array(

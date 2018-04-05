@@ -14,12 +14,10 @@ use PHPUnit\Framework\TestCase;
 
 class RepairDatabaseTest extends TestCase
 {
-
 var $db;	
 	
 public function setUp()
 {
-	
 	$this->markTestIncomplete('Skip for now');	
     $this->db = DBManagerFactory::getInstance();	
     if($this->db->dbType == 'mysql')

@@ -89,7 +89,6 @@ class SubpanelMetaDataParserMock extends SubpanelMetaDataParser
 	//Override constructor... don't do anything
 	function __construct ($subpanelName , $moduleName , $packageName = '')
 	{
-		
 	}
 		
 	public function makeRelateFieldsAsLink($defs)

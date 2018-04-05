@@ -101,8 +101,6 @@ class Bug61736Test extends TestCase
     
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         // Basic setup of the environment
         SugarTestHelper::setUp('current_user', array(true, true));
         SugarTestHelper::setUp('beanList');
@@ -153,8 +151,6 @@ class Bug61736Test extends TestCase
         $request = InputValidation::create($vars, array());
         $mbc = new ModuleBuilderController($request);
         $mbc->action_DeletePackage();
-
-        parent::tearDownAfterClass();
     }
     
     public function testCustomAddressFieldVardefFileCreated()

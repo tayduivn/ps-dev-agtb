@@ -93,7 +93,6 @@ public function setUp() {
        }
 	   write_array_to_file("sugar_config", $sugar_config, 'config.php');
 	}
-
 }
 
 public function tearDown() {
@@ -122,12 +121,10 @@ public function tearDown() {
 	else {
 	    unlink($this->current_working_dir . DIRECTORY_SEPARATOR . 'config_si.php');
 	}
-
 }
 
 
 public function test_silent_install() {
-
 	if(!file_exists('config.php'))
 	{
 		$this->markTestSkipped('Unable to locate config.php file.  Skipping test.');
@@ -154,6 +151,4 @@ public function test_silent_install() {
     $this->assertTrue(!isset($sugar_config['setup_site_admin_user_name']), "Assert setup_site_admin_user_name is not added to config.php.");
     $this->assertTrue(!isset($sugar_config['setup_site_admin_password']), "Assert setup_site_admin_password is not added to config.php.");
 }
-
-
 }

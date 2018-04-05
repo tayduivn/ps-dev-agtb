@@ -58,7 +58,6 @@ class SugarVisibilityTest extends TestCase
         $this->assertNull($this->object->getOption('nonexisting_option'));
         $this->object->setOptions(array('test' => 'yay'));
         $this->assertEquals('yay', $this->object->getOption('test'), 'returns option\'s value');
-
     }
 
     /**

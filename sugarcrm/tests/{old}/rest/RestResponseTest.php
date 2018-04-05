@@ -80,7 +80,6 @@ class RestResponseTest extends TestCase
             $this->assertEquals(strlen($response), $r->getHeader('Content-Length'));
         }
         $this->assertEquals("application/json", $r->getHeader('Content-Type'));
-
     }
 
     public function jsonProvider()
@@ -238,7 +237,6 @@ class RestResponseTest extends TestCase
         $r->send();
         $this->assertContains("HTTP/1.1 404 Not Found", $r->sent_headers[0]);
     }
-
 }
 
 class MockRestResponse extends RestResponse

@@ -81,8 +81,6 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list on the second pass');
         }
         $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list on the second pass');
-
-
     }
 
     public function testMetadataMobileUsers() {
@@ -90,5 +88,4 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         $restReply = $this->_restCall('metadata');
         $this->assertTrue(!empty($restReply['reply']['modules']['Users']), 'Users does not exist in the metadata list.');
     }
-
 }

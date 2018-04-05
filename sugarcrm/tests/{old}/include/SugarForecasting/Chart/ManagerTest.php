@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarForecasting_Chart_ManagerTest extends TestCase
 {
-
     /**
      * @var SugarForecasting_Chart_Manager
      */

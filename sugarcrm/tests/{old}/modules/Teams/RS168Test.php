@@ -19,7 +19,6 @@ class RS168Test extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -31,7 +30,6 @@ class RS168Test extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     public function testRetrieves()

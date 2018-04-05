@@ -13,7 +13,6 @@
 
 
 class RestMetadataBWCTest extends RestTestPortalBase {
-
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @group rest
@@ -30,5 +29,4 @@ class RestMetadataBWCTest extends RestTestPortalBase {
     }
 
     //END SUGARCRM flav=ent ONLY
-
 }

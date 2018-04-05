@@ -51,6 +51,5 @@ class RestBug55141Test extends RestTestBase {
         
         // verify the cache file for this platform and visibility no longer exists
         $this->assertFileNotExists('cache/api/metadata/metadata_base_private.php', "Didn't really clear the cache");
-
     }
 }

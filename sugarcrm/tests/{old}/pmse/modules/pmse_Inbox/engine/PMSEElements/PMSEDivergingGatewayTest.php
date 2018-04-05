@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEDivergingGatewayTest extends TestCase
 {
-
     /**
      *
      * @var type 
@@ -261,5 +260,4 @@ class PMSEDivergingGatewayTest extends TestCase
         $this->assertInternalType('array', $filters);
         $this->assertCount(2, $filters);
     }
-
 }

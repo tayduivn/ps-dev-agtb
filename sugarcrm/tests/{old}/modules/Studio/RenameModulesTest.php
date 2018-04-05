@@ -171,7 +171,6 @@ class RenameModulesTest extends TestCase
         if(isset($app_list_string['moduleList'][$module])) {
             $this->assertNotEquals($newPlural, $app_list_string['moduleList'][$module] );
         }
-
     }
 
 
@@ -194,7 +193,6 @@ class RenameModulesTest extends TestCase
                 @unlink($fileName);
             }
         }
-
     }
 
     /**

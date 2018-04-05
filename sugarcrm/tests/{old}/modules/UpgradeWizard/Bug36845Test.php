@@ -121,7 +121,6 @@ EOQ;
 
         $beanFiles['clabc_Bug36845Test'] = 'modules/clabc_Bug36845Test/clabc_Bug36845Test.php';
         $beanList['clabc_Bug36845Test'] = 'clabc_Bug36845Test';
-
     }
 
     public function tearDown()
@@ -188,7 +187,6 @@ EOQ;
         $this->assertTrue(file_exists(sugar_cached('modules/unified_search_modules.php')), 'Assert that we have a unified_search_modules.php file');
         include(sugar_cached('modules/unified_search_modules.php'));
         $this->assertTrue(empty($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was not added to unified_search_modules.php');
-
     }
 
 
@@ -205,6 +203,4 @@ EOQ;
         $usa->saveGlobalSearchSettings();
         $this->assertTrue(file_exists('custom/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');
     }
-
-
 }

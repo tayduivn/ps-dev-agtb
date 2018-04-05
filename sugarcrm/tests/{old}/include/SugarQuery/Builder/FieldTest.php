@@ -24,7 +24,6 @@ class FieldTest extends TestCase
         SugarBean::clearLoadedDef('Case');
         SugarBean::clearLoadedDef('Contact');
         SugarBean::clearLoadedDef('Account');
-        parent::tearDown();
     }
 
     public function testGetJoinRecursion()

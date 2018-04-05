@@ -229,7 +229,6 @@ class SidecarLeadConvertUpgraderTest extends TestCase
         );
         $this->convertUpgrader = new SidecarLeadConvertUpgraderMock($this->upgrader, $fileArray);
     }
-
 }
 
 class SidecarLeadConvertUpgraderMock extends SidecarLeadConvertMetaDataUpgrader

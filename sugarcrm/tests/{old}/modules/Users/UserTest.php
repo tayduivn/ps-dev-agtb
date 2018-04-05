@@ -519,7 +519,6 @@ class UserTest extends TestCase
      */
     public function testUpdateLastLogin()
     {
-
         $now = TimeDate::getInstance()->nowDb();
 
         $last_login = $this->_user->updateLastLogin();

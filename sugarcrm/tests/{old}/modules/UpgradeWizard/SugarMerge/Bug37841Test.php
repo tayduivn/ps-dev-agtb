@@ -16,7 +16,6 @@ require_once 'include/dir_inc.php';
 
 class Bug37841Test extends TestCase
 {
-
     var $merge;
     var $has_dir;
     var $modules;
@@ -95,7 +94,6 @@ class Bug37841Test extends TestCase
      */
     function testHistoryCreationForUpgradedMetadataFiles()
     {
-
         $accountsHistoryMetadataLocation = 'custom/history/modules/Accounts/metadata';
         $this->clearFilesInDirectory('custom/modules/Accounts/metadata');
         $this->clearFilesInDirectory($accountsHistoryMetadataLocation);

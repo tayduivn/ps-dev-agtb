@@ -31,7 +31,6 @@ class SAMLAuthenticateTest extends TestCase
     protected function tearDown()
     {
         AuthenticationController::setInstance(null);
-        parent::tearDown();
     }
 
     public function testLoginUrl()

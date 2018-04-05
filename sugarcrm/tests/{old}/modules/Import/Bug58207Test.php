@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug58207Test extends TestCase
 {
-
     private $_file;
     private $_sugarConfig;
 

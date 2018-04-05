@@ -43,7 +43,6 @@ class Bug49024Test extends TestCase
                     'lhs_module' => 'lhs_module',
                     'rhs_module' => 'rhs_module'
                 )));
-
     }
 
     public function tearDown()

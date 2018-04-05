@@ -155,7 +155,6 @@ class UsersLastImportTest extends TestCase
         $result = $GLOBALS['db']->query($query);
         
         $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
-
     }
     
     public function testGetBeansByImport()

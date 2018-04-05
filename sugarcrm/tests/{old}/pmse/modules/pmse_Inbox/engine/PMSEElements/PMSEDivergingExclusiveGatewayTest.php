@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEDivergingExclusiveGatewayTest extends TestCase
 {
-
     /**
      * @var PMSEElement
      */

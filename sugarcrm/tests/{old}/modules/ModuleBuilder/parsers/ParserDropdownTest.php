@@ -101,7 +101,6 @@ class ParserDropdownTest extends TestCase
         $customFileContents,
         $expected
     ) {
-
         $dirName = dirname($this->customFile);
         SugarAutoLoader::ensureDir($dirName);
         file_put_contents($this->customFile, $customFileContents);

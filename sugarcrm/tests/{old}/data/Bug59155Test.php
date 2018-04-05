@@ -37,7 +37,6 @@ class Bug59155Test extends TestCase
             self::markTestSkipped('Does not work on Shadow Enabled System');
         }
 
-        parent::setUpBeforeClass();
 
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
@@ -64,8 +63,6 @@ class Bug59155Test extends TestCase
 
         $_REQUEST = array();
         SugarCache::$isCacheReset = false;
-
-        parent::tearDownAfterClass();
     }
 
     public function testCaseCalcFieldIsConsidered()

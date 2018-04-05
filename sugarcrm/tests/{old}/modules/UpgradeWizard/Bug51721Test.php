@@ -20,7 +20,6 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 
 class Bug51721Test extends TestCase
 {
-
 private $new_upgrade;
 private $new_upgrade2;
 

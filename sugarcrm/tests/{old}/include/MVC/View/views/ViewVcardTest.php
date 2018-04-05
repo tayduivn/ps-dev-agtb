@@ -16,7 +16,6 @@ class ViewVcardTest extends TestCase
 {   
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user");
     }
     

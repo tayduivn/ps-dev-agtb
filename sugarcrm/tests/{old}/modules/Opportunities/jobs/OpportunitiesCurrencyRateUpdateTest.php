@@ -26,14 +26,12 @@ class OpportunitiesCurrencyRateUpdateTest extends TestCase
         SugarTestHelper::setUp('app_strings');
         $this->db = SugarTestHelper::setUp('mock_db');
         $this->setupMockClass();
-        parent::setUp();
     }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
         $this->tearDownMockClass();
-        parent::tearDown();
     }
 
     /**

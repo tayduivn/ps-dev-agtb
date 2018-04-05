@@ -22,16 +22,12 @@ class Bug40263Test extends TestCase
 
 	public function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('current_user');
 	}
 
 	public function tearDown()
     {
         SugarTestNoteUtilities::removeAllCreatedNotes();
-
-        parent::tearDown();
 	}
 
 	public function testGetListViewQueryCreatedBy()

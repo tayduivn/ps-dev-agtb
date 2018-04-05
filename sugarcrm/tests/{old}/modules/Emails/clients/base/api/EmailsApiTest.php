@@ -26,7 +26,6 @@ class EmailsApiTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         OutboundEmailConfigurationTestHelper::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -45,7 +44,6 @@ class EmailsApiTest extends TestCase
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         OutboundEmailConfigurationTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testCreateRecord_NoEmailIsCreatedOnFailureToSend()

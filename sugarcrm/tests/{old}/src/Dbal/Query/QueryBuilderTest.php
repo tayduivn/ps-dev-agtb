@@ -22,8 +22,6 @@ class QueryBuilderTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user');
     }
 

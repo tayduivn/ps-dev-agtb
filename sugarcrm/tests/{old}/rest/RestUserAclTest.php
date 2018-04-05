@@ -12,7 +12,6 @@
 
 
 class RestUserAclTest extends RestTestBase {
-
     public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->new_user_id}'");
@@ -105,5 +104,4 @@ class RestUserAclTest extends RestTestBase {
 
         $this->assertNotEmpty($restReply['replyRaw'], "No reply");
     }
-
 }

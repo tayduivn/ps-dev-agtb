@@ -69,7 +69,6 @@ class Bug11203Test extends TestCase
               'email_num_autoreplies_24_hours' =>'10',
 
           );
-
 	}
     public function tearDown()
     {   global $current_user;
@@ -78,17 +77,14 @@ class Bug11203Test extends TestCase
         $GLOBALS['db']->query("DELETE FROM inbound_email WHERE name='UnitTest_Mailbox11203'");
         unset($_REQUEST);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-
     }
 
     function test_CampaignEmailSetupFailure()
     {
-
         //include the save file like WizardEmailSetupSave.php does
          require_once('modules/InboundEmail/Save.php');
 
         //Test that the failure was returned.
         $this->assertTrue($_REQUEST['error'], 'Request did not have the error flag set to true after failed Inbound Email Save, this means that the campaign wizard will not display an error as it should have.');
     }
-
 }

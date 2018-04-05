@@ -16,13 +16,10 @@ class RestBug56791Test extends TestCase
 {
     public function setUp()
     {
-        parent::setUp();
-
     }
 
     public function tearDown()
     {
-        parent::tearDown(); // This handles cleanup of created kbdocs
     }
 
     public function testEmptyQueryReturn()

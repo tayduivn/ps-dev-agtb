@@ -54,7 +54,6 @@ class RS173Test extends TestCase
      */
     public function testGetDashboardsForModule()
     {
-
         $result = $this->dashboardListApi->getDashboards($this->serviceMock, array(
             'module' => 'Accounts',
             'max_num' => '3',

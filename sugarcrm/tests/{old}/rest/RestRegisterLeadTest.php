@@ -70,5 +70,4 @@ class RestRegisterLeadTest extends RestTestBase
             'POST');
         $this->assertEquals($restReply['info']['http_code'], 412);
     }
-
 }

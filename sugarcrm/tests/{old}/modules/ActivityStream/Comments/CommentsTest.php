@@ -19,7 +19,6 @@ class CommentsTest extends TestCase
 {
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
     }
 
@@ -28,7 +27,6 @@ class CommentsTest extends TestCase
         SugarTestActivityUtilities::removeAllCreatedActivities();
         SugarTestCommentUtilities::removeAllCreatedComments();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

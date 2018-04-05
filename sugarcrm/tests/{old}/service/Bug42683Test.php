@@ -61,6 +61,5 @@ class Bug42683Test extends SOAPTestCase
         );
 
         $this->assertEquals('primary_address', $result['relationship_list'][0][0]['records'][0][3]['name']);
-
     }
 }

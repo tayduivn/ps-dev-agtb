@@ -98,8 +98,6 @@ class TrackerUpgradeDashletTest extends TestCase
  *
  */
 private function upgradeUserPreferencesCopy() {
-	
-
 	if(file_exists($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
    	   require($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
    	} else if(file_exists('modules/Dashboard/dashlets.php')) {

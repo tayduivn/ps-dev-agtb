@@ -69,5 +69,4 @@ class Bug47683Test extends SOAPTestCase
         //$this->_contact->contacts_users_id = $this->_user->id;
         $this->_contact->save();
     }
-
 }

@@ -49,7 +49,6 @@ class Bug46276Test extends TestCase
 
 	public function tearDown()
 	{
-		 
 		$GLOBALS['db']->query('DELETE FROM opportunities WHERE id = \'' . $this->opportunities->id . '\' ');
 		unset($this->opportunities);
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -81,6 +80,4 @@ class Bug46276Test extends TestCase
 		$actual_date = $this->opportunities->date_closed;
 		$this->assertEquals($expected_date, $actual_date);
 	}
-	 
-
 }

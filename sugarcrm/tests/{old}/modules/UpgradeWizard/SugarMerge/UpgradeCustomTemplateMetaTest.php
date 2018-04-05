@@ -16,7 +16,6 @@ require_once 'include/dir_inc.php';
 
 class UpgradeCustomTemplateMetaTest extends TestCase
 {
-
     var $merge;
 
     function setUp()

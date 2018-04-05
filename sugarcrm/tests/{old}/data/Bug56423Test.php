@@ -143,6 +143,5 @@ class Bug56423Test extends TestCase
             false
         );
         $this->assertEquals(1, substr_count($query['select'], 'accounts_cstm.contact_id_c'));
-    } 
-
+    }
 }

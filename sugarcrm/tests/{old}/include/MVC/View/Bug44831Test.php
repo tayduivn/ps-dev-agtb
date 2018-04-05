@@ -66,8 +66,6 @@ EOQ;
             fputs( $fh, $string);
             fclose( $fh );
         }
-
-
     }
     
     public function tearDown()

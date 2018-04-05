@@ -22,7 +22,6 @@ var $has_dir;
 var $modules;
 
 function setUp() {
-
    $this->modules = array('Contacts');
    $this->has_dir = array();
 
@@ -83,8 +82,6 @@ function setUp() {
                 }
             }
         }
-
-        parent::tearDown();
     }
 
 function test_contacts_detailview_merge() {
@@ -142,7 +139,6 @@ function test_contacts_detailview_merge() {
 
    $this->assertTrue($found_test_c, 'Assert that test_c custom field is preserved');
    $this->assertTrue($found_test2_c, 'Assert that test2_c custom field is preserved');
-
 }
 
 
@@ -202,7 +198,6 @@ function test_contacts_editview_merge() {
 
    $this->assertTrue($found_test_c, 'Assert that test_c custom field is preserved');
    $this->assertTrue($found_test2_c, 'Assert that test2_c custom field is preserved');
-
 }
 
 
@@ -217,9 +212,5 @@ function test_contacts_listview_merge() {
    $this->assertTrue(isset($listViewDefs ['Contacts']['TEST2_C']), 'Assert that TEST2_C field is preserved');
    $this->assertTrue($listViewDefs ['Contacts']['TEST_C']['default'], 'Assert that TEST_C field is shown');
    $this->assertTrue($listViewDefs ['Contacts']['TEST2_C']['default'], 'Assert that TEST2_C field is shown');
-
 }
-
-
-
 }

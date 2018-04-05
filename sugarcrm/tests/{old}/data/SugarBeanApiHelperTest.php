@@ -129,7 +129,6 @@ class SugarBeanApiHelperTest extends TestCase
         $this->assertArrayNotHasKey('name',$data,"Did not strip name from a deleted record");
         $this->assertArrayNotHasKey('assigned_user_id',$data,"Did not strip the assigned_user_id from a deleted record when requested by a non-admin");
         $this->assertArrayHasKey('deleted',$data,"Did not add the deleted flag to a deleted record");
-
     }
 
     public function testJsonFieldSave()
@@ -194,7 +193,6 @@ class SugarBeanApiHelperTest extends TestCase
         $data = $this->beanApiHelper->formatForApi($account, array('id', 'name', 'website'), array('action' => 'view'));
 
         $this->assertNotEmpty($data['id'], "no id was passed back");
-
     }
 
     public function updateFieldOwnerReadOwnerWrite()
@@ -244,7 +242,6 @@ class SugarBeanApiHelperTest extends TestCase
                     $role->setAction($role->id, $action['id'], $aclAllow);
                 }
             }
-
         }
 
         return $role;

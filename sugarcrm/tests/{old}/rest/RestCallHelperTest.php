@@ -12,7 +12,6 @@
 
 
 class RestCallHelperTest extends RestTestBase {
-
     public function tearDown()
     {
         parent::tearDown();
@@ -20,7 +19,6 @@ class RestCallHelperTest extends RestTestBase {
     }
 
     public function testCall() {
-
         // create a call linked to yourself, a contact, and a lead, verify the call is linked to each and on your calendar
         $call = array(
             'name' => 'Test call',
@@ -47,12 +45,9 @@ class RestCallHelperTest extends RestTestBase {
 
         $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
         $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
-
-
     }
 
     public function testCallHeld() {
-
         // create a call linked to yourself, a contact, and a lead, verify the call is linked to each and on your calendar
         $call = array(
             'name' => 'Test call',
@@ -80,7 +75,5 @@ class RestCallHelperTest extends RestTestBase {
 
         $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
         $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
-
-
     }    
 }

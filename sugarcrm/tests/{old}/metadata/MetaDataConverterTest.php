@@ -110,7 +110,6 @@ class MetaDataConverterTest extends TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
@@ -122,7 +121,6 @@ class MetaDataConverterTest extends TestCase
     protected function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testConvertWirelessListToLegacy() {

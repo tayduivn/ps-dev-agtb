@@ -272,7 +272,6 @@ class MetaDataFilesTest extends TestCase
         $this->assertArrayNotHasKey('mobile',$fileContents['fo']['controller'],"Found the mobile controller when it shouldn't have");
         $this->assertArrayHasKey('base',$fileContents['fo']['controller'],"Didn't find the base controller");
         $this->assertEquals($controllerContentsBase,$fileContents['fo']['controller']['base'],"Didn't correctly place the fo (base) controller in the base section");
-
     }
 
     public function testLoadingViewEverything()
@@ -394,7 +393,6 @@ class MetaDataFilesTest extends TestCase
         $this->assertArrayHasKey("fo", $results, "Didn't load the fo meta.");
         $this->assertArrayHasKey("ext", $results['fo']['meta'], "Didn't load the fo meta extension correctly");
         $this->assertArrayHasKey("erma", $results['fo']['meta'], "The metadata extension was not merged with the base meta");
-
     }
 
 
@@ -434,7 +432,6 @@ class MetaDataFilesTest extends TestCase
      */
     public function testMergeModuleExtFiles2Base()
     {
-
         //Load the base file
         $baseFilePath = 'clients/base/layouts/fo/fo.php';
         $this->createdFiles[] = $baseFilePath;
@@ -471,7 +468,6 @@ class MetaDataFilesTest extends TestCase
      */
     public function testMergeModuleExtFiles2Template()
     {
-
         //Load the template file
         $templateFilePath = 'include/SugarObjects/templates/basic/clients/base/views/fo/fo.php';
         $this->createdFiles[] = $templateFilePath;
@@ -502,5 +498,4 @@ class MetaDataFilesTest extends TestCase
             "The Cases metadata extension was not merged with the base meta"
         );
     }
-
 }

@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
-
 	/**
      * @group bug39037
      */

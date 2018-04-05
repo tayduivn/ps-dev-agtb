@@ -26,7 +26,6 @@ class MeetingBug57478Test extends TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testSendInvites() {
@@ -60,7 +59,6 @@ class MeetingBug57478Test extends TestCase
         $meeting->save();
 
         $this->assertEquals($expected, $meeting->notified_users);
-
     }
 }
 

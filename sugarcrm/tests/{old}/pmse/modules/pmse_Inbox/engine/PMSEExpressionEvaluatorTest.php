@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEExpressionEvaluatorTest extends TestCase
 {
-
     /**
      * Sets up the test data, for example,
      *     opens a network connection.

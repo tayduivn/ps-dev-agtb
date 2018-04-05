@@ -80,16 +80,13 @@ class Bug56389Test extends TestCase
                 if (file_exists($filepath)) {
                     unlink($filepath);
                 }
-
             }
         }
-        parent::setUp();
     }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

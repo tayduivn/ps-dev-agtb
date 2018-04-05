@@ -30,7 +30,6 @@ class Bug37019Test extends TestCase
     }
 
     public function test_fix_report_relationships() {
-    	
     	require_once('modules/UpgradeWizard/uw_utils.php');
 
     	$sql = "SELECT id, content FROM saved_reports WHERE id ='{$this->report_id}'";

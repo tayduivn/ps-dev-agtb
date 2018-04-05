@@ -13,7 +13,6 @@
 
 class APIv3Helper
 {
-
     function populateSeedDataForSearchTest($user_id)
     {
         $results = array();

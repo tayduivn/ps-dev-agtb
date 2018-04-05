@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEEndSendMessageEventTest extends TestCase
 {
-
     /**
      * @var PMSEElement
      */

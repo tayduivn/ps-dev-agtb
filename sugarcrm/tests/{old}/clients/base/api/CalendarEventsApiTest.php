@@ -27,7 +27,6 @@ class CalendarEventsApiTest extends TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
-        parent::setUp();
         $this->meetingIds = array();
 
         $this->api = SugarTestRestUtilities::getRestServiceMock();
@@ -48,7 +47,6 @@ class CalendarEventsApiTest extends TestCase
             $GLOBALS['db']->query("DELETE FROM meetings WHERE id IN ('" . $ids . "')");
             $this->meetingIds = array();
         }
-        parent::tearDown();
     }
 
     public function testDeleteRecord_NotRecurringMeeting_CallsDeleteMethod()

@@ -15,11 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class PMSECaseFlowHandlerTest extends TestCase
 {
-
     protected $originals = array();
 
     public function setUp() {
-        parent::setUp();
         $this->originals['current_user'] = $GLOBALS['current_user'];
         $this->originals['db'] = $GLOBALS['db'];
     }
@@ -28,7 +26,6 @@ class PMSECaseFlowHandlerTest extends TestCase
         foreach($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;
         }
-        parent::tearDown();
     }
 
     /**
@@ -893,5 +890,4 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $caseFlowHandlerMock->saveFormAction($params);
     }
-
 }

@@ -243,5 +243,4 @@ class CronTest extends TestCase
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEmpty(session_id(), "Session not destroyed");
     }
-
 }

@@ -88,7 +88,6 @@ class Bug23140Test extends TestCase
             Blowfish::decode(Blowfish::getKey('OutBoundEmail'), $obRetrieved->mail_smtppass),
             "Could not update users password system-override accounts after system save."
         );
-
     }
 
 
@@ -175,7 +174,6 @@ class Bug23140Test extends TestCase
         $GLOBALS['db']->query("DELETE FROM config WHERE category='notify' AND name='allow_default_outbound' ");
         $emptyTest = $oe->isAllowUserAccessToSystemDefaultOutbound();
         $this->assertFalse($emptyTest, "User alloweed access to system outbound email account error");
-
     }
 
 
@@ -220,7 +218,5 @@ class Bug23140Test extends TestCase
         $this->userOverideAccont->save();
         $notRequired = $oe->doesUserOverrideAccountRequireCredentials($this->_user->id);
         $this->assertFalse($notRequired, "Test failed for determining if user auth required.");
-
     }
-
 }

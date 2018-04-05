@@ -69,5 +69,4 @@ class Bug60780Test extends TestCase
         $this->assertContains("INNER JOIN team_sets_teams tst ON tst.team_set_id = accounts.team_set_id", $query);
         $this->assertContains("accounts_cstm.selected_c", $query);
     }
-
 }

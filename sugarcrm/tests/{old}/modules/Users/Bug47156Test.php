@@ -23,7 +23,6 @@ class Bug47156Test extends TestCase
     protected function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        parent::tearDown();
     }
 
     /**

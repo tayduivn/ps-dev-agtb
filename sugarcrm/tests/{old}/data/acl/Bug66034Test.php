@@ -21,7 +21,6 @@ class Bug66034Test extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -36,7 +35,6 @@ class Bug66034Test extends TestCase
     {
         $this->aclAction->clearSessionCache();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function aclAccessData() 

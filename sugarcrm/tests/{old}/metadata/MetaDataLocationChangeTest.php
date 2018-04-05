@@ -34,7 +34,6 @@ class MetaDataLocationChangeTest extends TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
     
     /**

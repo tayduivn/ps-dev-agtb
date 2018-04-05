@@ -21,7 +21,6 @@ require_once 'include/workflow/expression_utils.php';
 
 class ExpressionUtilsTest extends TestCase
 {
-
 	public function testGetExpression()
 	{
 		$express_type = '+';
@@ -80,5 +79,4 @@ class ExpressionUtilsTest extends TestCase
 		$output = express_divide($first, $second);
 		$this->assertEquals(3, $output);
 	}
-
 }

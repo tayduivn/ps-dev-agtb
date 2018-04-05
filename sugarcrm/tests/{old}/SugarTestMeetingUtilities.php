@@ -121,7 +121,6 @@ class SugarTestMeetingUtilities
 
 class MeetingMock extends Meeting
 {
-
     public function set_notification_body($xtpl, &$meeting) {
         return $xtpl;
     }

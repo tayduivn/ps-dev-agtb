@@ -22,7 +22,6 @@ class EmailRecipientRelationshipTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         OutboundEmailConfigurationTestHelper::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -38,12 +37,10 @@ class EmailRecipientRelationshipTest extends TestCase
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestTaskUtilities::removeAllCreatedTasks();
         OutboundEmailConfigurationTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     protected function setUp()
     {
-        parent::setUp();
         $this->relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_to');
     }
 
@@ -51,7 +48,6 @@ class EmailRecipientRelationshipTest extends TestCase
     {
         // Clean up any dangling beans that need to be resaved.
         SugarRelationship::resaveRelatedBeans(false);
-        parent::tearDown();
     }
 
     /**

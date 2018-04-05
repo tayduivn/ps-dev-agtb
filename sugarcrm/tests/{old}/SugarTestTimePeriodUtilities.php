@@ -87,7 +87,6 @@ class SugarTestTimePeriodUtilities
      * magic tardis function
      */
     public static function createITimePeriod ($type, $is_fiscal=false){
-
         global $timedate;
         $timedate = TimeDate::getInstance();
         $time = mt_rand();

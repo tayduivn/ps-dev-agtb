@@ -30,7 +30,6 @@ class Bug42744Test extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        parent::setUp();
     }
 
     /**
@@ -52,5 +51,4 @@ class Bug42744Test extends TestCase
         $this->assertEquals($mteam->id, $mteam->global_team);
         $this->assertEquals($mteam->deleted, 0);
     }
-
 }

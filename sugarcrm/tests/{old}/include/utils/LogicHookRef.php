@@ -46,7 +46,6 @@ class LogicHookRefTest extends TestCase
         $this->assertInstanceOf("Account", BR1345TestHook::$args[0]);
         $this->assertEquals(array('test_event', 'bar', 'foo', 123), array_slice(BR1345TestHook::$args, 1));
     }
-
 }
 
 class BR1345TestHook
@@ -56,5 +55,4 @@ class BR1345TestHook
     {
         self::$args = func_get_args();
     }
-
 }

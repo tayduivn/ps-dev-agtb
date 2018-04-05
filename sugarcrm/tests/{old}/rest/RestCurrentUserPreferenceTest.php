@@ -12,7 +12,6 @@
 
 
 class RestCurrentUserPreferenceTest extends RestTestBase {
-
     protected static $testPreferences = array(
         'hello' => 'world',
         'test' => 'preference'

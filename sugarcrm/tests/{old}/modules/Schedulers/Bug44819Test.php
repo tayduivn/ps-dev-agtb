@@ -20,10 +20,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug44819Test extends TestCase
 {
-
 	public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp("current_user", array(true, 1));
     	// Create admin user
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
@@ -42,5 +40,4 @@ class Bug44819Test extends TestCase
 		$this->assertEquals(1, $user->is_admin, "User returned is not admin.");
 		$this->assertEquals("Active", $user->status, "User returned is not active.");
 	}
-
 }

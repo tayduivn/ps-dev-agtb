@@ -32,7 +32,6 @@ class ForecastsDefaultsTest extends TestCase
     public function setUp()
     {
         $this->markTestSkipped('Skipping by SFA');
-        parent::setUp();
 
         //Clear config table of Forecasts values before each test, so each test can setup it's own db
         //$db = DBManagerFactory::getInstance();
@@ -50,7 +49,6 @@ class ForecastsDefaultsTest extends TestCase
     public function tearDown()
     {
         //SugarTestForecastUtilities::tearDownForecastConfig();
-        //parent::tearDown();
     }
 
     public static function tearDownAfterClass()

@@ -28,7 +28,6 @@ class ViewDetailTest extends TestCase
         $view = new MockViewDetailConstructor();
         $this->assertEquals('detail', $view->type);
     }
-
 }
 
 class MockViewDetailDirect extends ViewDetail

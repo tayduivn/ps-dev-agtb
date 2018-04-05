@@ -30,7 +30,6 @@ class PMSEBeanHandlerTest extends TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         global $beanList, $db;
 
         $this->originals['beanList'] = $GLOBALS['beanList'];
@@ -55,7 +54,6 @@ class PMSEBeanHandlerTest extends TestCase
      */
     protected function tearDown()
     {
-        parent::tearDown();
         foreach($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;
         }
@@ -986,5 +984,4 @@ EOR1;
         $result = $beanHandlerMock->calculateDueDate($expressionMock, $beanMock);
         $this->assertEquals($expectedTime, $result[1]);
     }
-
 }

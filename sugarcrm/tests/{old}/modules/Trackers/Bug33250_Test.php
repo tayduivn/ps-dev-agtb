@@ -50,6 +50,5 @@ class Bug33250_Test extends TestCase
 		$sql = "SELECT id FROM contacts WHERE first_name = 'Bill' and last_name = 'O\'Reilly'";
         $generic_sql = TrackerUtility::getGenericSQL($sql);
         $this->assertEquals($generic_sql, "SELECT id FROM contacts WHERE first_name = '?' and last_name = '?'", 'Assert that matched quoted query is properly formatted');        
-    }    
-
+    }
 }

@@ -41,7 +41,6 @@ class Bug45683Test extends TestCase
     }
 
     public function testModuleNameDoesNotGetOverwrittenOnDisplay() {
-
         $view = new ViewDropdown();
         $smarty = $view->generateSmarty($_REQUEST);
         

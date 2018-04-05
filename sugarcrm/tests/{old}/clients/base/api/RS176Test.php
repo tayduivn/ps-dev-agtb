@@ -81,7 +81,6 @@ class RS176Test extends TestCase
      */
     public function testListModule($args, $moduleName, $count = null, $checkCreatedIds = false)
     {
-
         $result = $this->listApi->listModule($this->serviceMock, $args);
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('records', $result);

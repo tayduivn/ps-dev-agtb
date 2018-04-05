@@ -16,7 +16,6 @@ require_once 'soap/SoapPortalHelper.php';
 
 class SoapPortalHelperTest extends TestCase
 {
-
     /**
      * @covers validateOrderBy()
      * @dataProvider providerOrderByValid

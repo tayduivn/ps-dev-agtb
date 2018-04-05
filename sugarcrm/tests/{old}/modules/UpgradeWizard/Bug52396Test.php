@@ -26,7 +26,6 @@ require_once 'modules/UpgradeWizard/uw_utils.php';
  */
 class Bug52396Test extends TestCase
 {
-
     /**
      * @var OracleManager
      */
@@ -40,7 +39,6 @@ class Bug52396Test extends TestCase
             return false;
         }
 
-        parent::setUp();
 
         $this->original_db = $GLOBALS['db'];
         $GLOBALS['db'] = new Bug52396OracleManager();

@@ -710,7 +710,6 @@ class ForecastWorksheetTest extends TestCase
             ->method($method);
 
         $worksheet->processWorksheetDataChunk($type, $data);
-
     }
 
     /**
@@ -743,7 +742,6 @@ class ForecastWorksheetTest extends TestCase
         $this->assertEquals(json_encode($data), $sj->data);
         $this->assertEquals(0, $sj->retry_count);
         $this->assertEquals($user_id, $sj->assigned_user_id);
-
     }
 
     /**
@@ -952,7 +950,6 @@ class ForecastWorksheetTest extends TestCase
         $this->assertEquals(json_encode($data), $sj->data);
         $this->assertEquals(0, $sj->retry_count);
         $this->assertEquals($user_id, $sj->assigned_user_id);
-
     }
 
     /**

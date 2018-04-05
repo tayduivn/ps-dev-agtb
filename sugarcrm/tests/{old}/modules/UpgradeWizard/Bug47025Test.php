@@ -87,5 +87,4 @@ public function testUpgradeUserPreferencesNonFlavor()
     $this->assertEquals('Green', $theme, 'Assert that theme is not upgraded if not flavor conversion');
     $this->assertEquals(10, $tabs, 'Assert that number of tabs is not changed');
 }
-
 }

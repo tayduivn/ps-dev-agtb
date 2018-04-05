@@ -80,5 +80,4 @@ class TasksTest extends TestCase
          $task->retrieve($this->taskid);
          $this->assertEquals('Not Started', $task->status);
     }
-
 }

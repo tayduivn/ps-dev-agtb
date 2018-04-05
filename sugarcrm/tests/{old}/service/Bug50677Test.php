@@ -79,6 +79,5 @@ class Bug50677Test extends SOAPTestCase
 
         $this->assertTrue(is_guid($row['id']));
         $this->assertEquals(1, $row['product_index']);
-
     }
 }

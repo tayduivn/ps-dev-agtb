@@ -40,5 +40,4 @@ class Bug41893Test extends TestCase
         $this->assertFalse($task->field_defs['contact_email']['studio'], 'Assert contact_email is hidden in studio');
         $this->assertTrue($task->field_defs['contact_phone']['studio']['listview'], 'Assert contact_phone is visible in studio for listview');
     }
-
 }

@@ -62,5 +62,4 @@ class Bug53288Test extends TestCase
         $this->_oProspectList->name = "Bug53288Test_ProspectListName";
         $this->_oProspectList->save();
     }
-
 }

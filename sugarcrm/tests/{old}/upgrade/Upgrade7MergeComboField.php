@@ -19,7 +19,6 @@ class testComboFieldMerge extends UpgradeTestCase
         SugarTestHelper::saveFile('custom/modules/Notes/clients/base/views/record/record.php');
         mkdir_recursive('custom/modules/Notes/clients/base/views/record');
         copy('tests/{old}/upgrade/7_Merge7Templates/notes_example.php', 'custom/modules/Notes/clients/base/views/record/record.php');
-
     }
 
     public function tearDown() {

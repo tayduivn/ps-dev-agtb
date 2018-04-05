@@ -41,7 +41,6 @@ class ComposePackageTest extends TestCase
 		require('include/modules.php');
 		$GLOBALS['beanList'] = $beanList;
 		$GLOBALS['beanFiles'] = $beanFiles;
-
 	}
 
     public function tearDown()

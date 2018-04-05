@@ -134,7 +134,6 @@ class Bug50549Test extends TestCase
 
 
 class Bug50549MockReporter extends Report {
-
 	var $all_fields = array (
 		'self:multi_c' => array (
 	  		'dependency' => '',

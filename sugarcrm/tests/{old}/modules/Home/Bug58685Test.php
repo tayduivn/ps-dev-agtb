@@ -31,7 +31,6 @@ class Bug58685Test extends TestCase
             $this->oldCL = $_SERVER['CONTENT_LENGTH'];
         }
         SugarTestHelper::setUp('app_strings');
-
 	}
 
     public function tearDown()
@@ -60,5 +59,4 @@ class Bug58685Test extends TestCase
         $view->processMaxPostErrors();
         $this->assertContains('There was an error during your upload', join('\n', $view->errors));
     }
-
 }

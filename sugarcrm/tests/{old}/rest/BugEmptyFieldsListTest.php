@@ -47,5 +47,4 @@ class BugEmptyFieldsListTest extends RestTestBase {
         $restReply = $this->_restCall("Accounts?fields=");
         $this->assertNotEquals($restReply['replyRaw'],"ERROR: No access to view field:  in module: Accounts");
     }
-
 }

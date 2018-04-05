@@ -39,12 +39,10 @@ class SugarBeanIsOwner extends TestCase
 
         $bean->new_with_id = false;
         $this->assertFalse($bean->isOwner('DONT-CARE'),"SugarBean->isOwner() should return false if there is an id but new_with_id is false");
-
     }
 
     public function testIsOwnerAssignedUserId()
     {
-
         $bean = new SugarBean();
         $bean->id = 'TEST-BEAN-PLEASE-IGNORE';
         $bean->assigned_user_id = 'MY-ONE-AND-ONLY-USER';

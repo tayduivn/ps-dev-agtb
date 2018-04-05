@@ -23,7 +23,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug51185Test extends TestCase
 {
-
     public static function setUpBeforeClass()
     {        
         global $current_user;
@@ -86,5 +85,4 @@ class Bug51185Test extends TestCase
         $this->assertRegExp('/^\d{4}\-\d{2}\-\d{2}\s\d{1,2}\:\d{2}\:\d{2}$/', $job->handleDateFormat('+7 days', $current_user, false));
         $this->assertRegExp('/^\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}\:\d{2}$/', $job->handleDateFormat('+7 days', $current_user, true));
     }
-
 }

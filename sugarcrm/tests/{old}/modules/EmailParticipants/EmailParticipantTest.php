@@ -20,7 +20,6 @@ class EmailParticipantTest extends TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
     }
 
@@ -31,7 +30,6 @@ class EmailParticipantTest extends TestCase
 
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestEmailUtilities::removeAllCreatedEmails();
-        parent::tearDown();
     }
 
     public function saveEmailTextProvider()

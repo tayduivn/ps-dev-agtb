@@ -51,7 +51,6 @@ class FetchByQueryCallsProcessRecordTest extends TestCase
 
         //finally, lets make sure there is at least one account to fetch
         SugarTestAccountUtilities::createAccount();
-
     }
 
     public function tearDown()

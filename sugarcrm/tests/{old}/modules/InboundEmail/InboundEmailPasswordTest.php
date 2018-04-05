@@ -19,7 +19,6 @@ class InboundEmailPasswordTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         OutboundEmailConfigurationTestHelper::backupExistingConfigurations();
         SugarTestHelper::setUp('current_user');
     }
@@ -27,7 +26,6 @@ class InboundEmailPasswordTest extends TestCase
     public static function tearDownAfterClass()
     {
         OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
-        parent::tearDownAfterClass();
     }
 
     public function inboundEmailPasswordProvider()

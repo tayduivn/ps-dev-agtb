@@ -18,7 +18,6 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class PopulateOppSeedDataTest extends TestCase
 {
-
 private $createdOpportunities;
 
 function setUp()
@@ -132,8 +131,5 @@ function testPopulateSeedData()
 
     $this->createdOpportunities = OpportunitiesSeedData::populateSeedData($total, $app_list_strings, $accounts, $users);
     $this->assertEquals(200, count($this->createdOpportunities));
-
 }
-
-
 }

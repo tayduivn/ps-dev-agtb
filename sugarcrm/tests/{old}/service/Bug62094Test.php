@@ -43,7 +43,6 @@ class Bug62094Test extends SOAPTestCase
         );
 
         parent::setUp();
-
     }
 
     public function tearDown()
@@ -72,7 +71,6 @@ class Bug62094Test extends SOAPTestCase
 }
 
 class AbstractRelationship62094 extends AbstractRelationship {
-
     public function getLinkFieldDefinition(
         $sourceModule,
         $relationshipName,

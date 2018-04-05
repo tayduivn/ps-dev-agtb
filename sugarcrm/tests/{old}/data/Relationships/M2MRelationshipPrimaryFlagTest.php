@@ -19,7 +19,6 @@ class M2MRelationshipPrimaryFlagTest extends TestCase
 
     public function setUp()
     {
-
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -29,7 +28,6 @@ class M2MRelationshipPrimaryFlagTest extends TestCase
         }
         $this->contact = SugarTestContactUtilities::createContact();
         $GLOBALS['db']->commit();
-
     }
 
     public function tearDown()
@@ -120,7 +118,6 @@ class M2MRelationshipPrimaryFlagTest extends TestCase
         $rows = $q->execute();
 
         $this->assertEquals($this->accounts[0]->name,$rows[0]['account_name'],"Fetched the incorrect account related to this contact. #4");
-
     }
 
     public function testOldLoad()
@@ -153,7 +150,6 @@ class M2MRelationshipPrimaryFlagTest extends TestCase
 
         $this->assertEquals($this->accounts[0]->id,$rows[$this->accounts[0]->id]['id'],"Fetched the incorrect account related to this contact. #4");
         $this->assertEquals(1,count($rows),"Returned too many rows #4");
-
     }
 
     protected function getRelated($deleted = false)

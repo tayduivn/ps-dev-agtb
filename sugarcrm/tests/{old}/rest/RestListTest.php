@@ -229,7 +229,6 @@ class RestListTest extends RestTestBase {
                 $this->assertNotEquals($page2_record['id'], $page1_record['id'], "ID's match, pagination may be broke");
             }
         }
-
     }
 
     /**
@@ -345,7 +344,6 @@ class RestListTest extends RestTestBase {
             $test = array( ucwords($status), ucwords($name) );
             $this->assertContains('New', $test, "New does not start either name or status");
         }
-
     }
 
     /**
@@ -405,7 +403,6 @@ class RestListTest extends RestTestBase {
 
         $restReply = $this->_restCall('Users');
         $this->assertEquals($current_user_count, count($restReply['reply']['records']), "Number of users incorrect.  Should be {$current_user_count} but is " . count($restReply['reply']['records']));
-
     }
 
     /**
@@ -540,7 +537,5 @@ class RestListTest extends RestTestBase {
         // Get a list, no searching
         $restReply = $this->_restCall("search?max_num=10");
         $this->assertEquals(10,count($restReply['reply']['records']));
-
     }
-
 }

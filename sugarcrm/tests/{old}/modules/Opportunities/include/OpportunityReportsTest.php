@@ -23,14 +23,12 @@ class OpportunityReportsTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->db = SugarTestHelper::setup('mock_db');
     }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function dataProviderTestConvertToRli()

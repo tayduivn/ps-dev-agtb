@@ -232,5 +232,4 @@ class UpgradeDriverTest extends TestCase
         );
         return $returnArray;
     }
-
 }

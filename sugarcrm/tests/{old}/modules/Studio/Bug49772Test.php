@@ -21,8 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49772Test extends TestCase
 {
-
-
     private $_old_label = '';
     private $_test_label = 'LBL_ACCOUNT_NAME';
     private $_test_module = 'Contacts';
@@ -49,7 +47,6 @@ class Bug49772Test extends TestCase
 
         $this->assertEquals($new_label, $mod_strings[$this->_test_label]);
         $this->assertNotEquals($pref . ' ' . $this->_old_label, $mod_strings[$this->_test_label]);
-
     }
 
     public function tearDown()

@@ -58,7 +58,6 @@ class ForecastsTimePeriodTest extends TestCase
     public function setUp()
     {
         $this->markTestIncomplete("Skipping as it causes mass failures.  SFA team.");
-//        parent::setUp();
 //        SugarTestHelper::setUp('app_strings');
 //        SugarTestHelper::setUp('beanFiles');
 //        SugarTestHelper::setUp('beanList');
@@ -116,7 +115,6 @@ class ForecastsTimePeriodTest extends TestCase
 //        $timedate->setNow(self::$currentDate);
 //        $timedate->clearCache();
 //        $timedate->allow_cache = true;
-//        parent::tearDown();
 //    }
 
     /**
@@ -558,7 +556,6 @@ class ForecastsTimePeriodTest extends TestCase
             $expectedDate = $timedate->fromDbDate(substr($start_date, 0, 10));
             $this->assertEquals($expectedDate->asDbDate(false), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");
         }
-
     }
 
 
@@ -567,7 +564,6 @@ class ForecastsTimePeriodTest extends TestCase
      *
      */
     public function testCreateTimePeriodsForUpgradeProvider() {
-
         return array(
 
             //This data set simulates case where the start date specified is the same as current date
@@ -663,7 +659,6 @@ class ForecastsTimePeriodTest extends TestCase
                 )
             ),
         );
-
     }
 
     /**

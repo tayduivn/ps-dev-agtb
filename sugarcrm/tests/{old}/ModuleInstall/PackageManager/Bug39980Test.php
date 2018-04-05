@@ -16,7 +16,6 @@ require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
 class Bug39980Test extends TestCase
 {
-	
     public function tearDown()
     {
         if (is_file(Bug39980PackageManger::$manifest_location))
@@ -31,7 +30,6 @@ class Bug39980Test extends TestCase
     	//Its confusing, but "UNINSTALLABLE" in file_install means the package is NOT uninstallable
     	$this->assertEquals("UNINSTALLABLE", $packs[0]['file_install']);
     }
-
 }
 
 class Bug39980PackageManger extends PackageManager {

@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug44930Test extends TestCase
 {
-
     /**
      * Test tries to emulate changing of related field and assert correct result
      *

@@ -82,7 +82,6 @@ class SugarFoldersTest extends TestCase
         $sub_ids = $this->folder->getSubscriptions($GLOBALS['current_user']);
         $this->assertEquals(1, count($sub_ids), $error_message);
         $this->assertEquals($this->folder->id, $sub_ids[0], $error_message);
-
     }
 
     /**
@@ -173,7 +172,6 @@ class SugarFoldersTest extends TestCase
         $this->assertEquals($GLOBALS['mod_strings']['LNK_MY_INBOX'], $ret[0]['text'], $error_message);
         //Should contain 'My Drafts', 'My Sent Mail', 'My Archive'
         $this->assertEquals(3, count($ret[0]['children']), $error_message);
-
     }
 
     /**
@@ -205,8 +203,6 @@ class SugarFoldersTest extends TestCase
 
         $cnt = $this->folder->getCountItems($this->folder->id);
         $this->assertEquals(2, $cnt, "Unable to execute getCountItems function properly.");
-
-
     }
 
     /**
@@ -215,7 +211,6 @@ class SugarFoldersTest extends TestCase
      */
     function testFolderEmailMethods()
     {
-
         $emailParams = array('status' => 'read');
         $email = $this->_createEmailObject($emailParams);
         $this->emails[] = $email->id;
@@ -247,7 +242,6 @@ class SugarFoldersTest extends TestCase
         $this->folder->move($this->folder->id, $f3->id,$email->id);
         $emailExists = $f3->checkEmailExistForFolder($email->id);
         $this->assertTrue($emailExists, "Unable to move Emails bean to a different sugar folder");
-
     }
 
     /**
@@ -287,7 +281,6 @@ class SugarFoldersTest extends TestCase
         $emailList = $my_email->getListItemsForEmailXML($folderID);
 
         $this->assertEquals($email->id,$emailList['out'][0]['uid'],$error_message );
-
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
@@ -341,7 +334,6 @@ class SugarFoldersTest extends TestCase
         $this->folder->new_with_id = TRUE;
         $this->folder->name = "UNIT TEST";
         $this->folder->save();
-
     }
 
     private function _clearFolder($folder_id)

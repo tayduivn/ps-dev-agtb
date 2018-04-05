@@ -23,7 +23,6 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         $this->mobileAuthToken = $this->authToken;
         $this->_restLogin('','','base');
         $this->baseAuthToken = $this->authToken;
-
     }
 
     /**

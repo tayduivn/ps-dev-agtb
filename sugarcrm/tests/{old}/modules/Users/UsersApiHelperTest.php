@@ -19,7 +19,6 @@ class UsersApiHelperTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
 
         $this->bean = BeanFactory::newBean('Users');
@@ -35,7 +34,6 @@ class UsersApiHelperTest extends TestCase
     {
         unset($this->bean);
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testFormatForApi_HasAccessArgumentsPassed_ReturnsHasAccessResult()

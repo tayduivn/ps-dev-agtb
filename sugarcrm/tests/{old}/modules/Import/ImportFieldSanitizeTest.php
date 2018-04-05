@@ -141,7 +141,6 @@ class ImportFieldSanitizeTest extends TestCase
                 $date,
                 $vardef),
             $comparedate);
-
     }
 
     public function testValidDatetimeDifferentTimezones()
@@ -214,7 +213,6 @@ class ImportFieldSanitizeTest extends TestCase
             (bool) $this->_ifs->datetime(
                 $date,
                 $vardef));
-
     }
 
     public function testInvalidDatetime()
@@ -1070,7 +1068,6 @@ class ImportFieldSanitizeTest extends TestCase
                 $vardef,
                 $focus),
             $date);
-
     }
 
     public function testValidTimeDifferentFormat()
@@ -1098,7 +1095,6 @@ class ImportFieldSanitizeTest extends TestCase
             ),
             $comparedate
         );
-
     }
 
     public function testValidTimeDifferentTimezones()
@@ -1123,7 +1119,6 @@ class ImportFieldSanitizeTest extends TestCase
             ),
             $comparedate
         );
-
     }
 
     public function testInvalidTime()

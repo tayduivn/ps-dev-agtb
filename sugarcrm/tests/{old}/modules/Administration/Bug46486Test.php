@@ -15,14 +15,12 @@ use PHPUnit\Framework\TestCase;
 //FILE SUGARCRM flav=ent ONLY
 class Bug46486Test extends TestCase
 {
-
     private $sm;
     private $defaultPortalUsersCount;
     private $enforce;
 
     function setUp()
     {
-
         $admin = new Administration();
         $admin->retrieveSettings('license');
 

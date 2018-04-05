@@ -415,6 +415,4 @@ class ProductTest extends TestCase
             array(42,42),
         );
     }
-
-
 }

@@ -24,7 +24,6 @@ class HtmlEncodingTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
 
         self::$bean = BeanFactory::newBean('DataPrivacy');
@@ -44,7 +43,6 @@ class HtmlEncodingTest extends TestCase
         );
 
         SugarTestCommentUtilities::removeAllCreatedComments();
-        parent::tearDownAfterClass();
     }
 
     /**

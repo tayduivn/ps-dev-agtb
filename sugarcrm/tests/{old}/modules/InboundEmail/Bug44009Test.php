@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug44009Test extends TestCase
 {
-
 	protected $ie = null;
 
 	public function setUp()

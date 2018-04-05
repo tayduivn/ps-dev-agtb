@@ -115,7 +115,6 @@ class SugarControllerTest extends TestCase
         $controller->callLegacyCode();
 
         $this->assertEquals('classic',$controller->view);
-
     }
 
     public function testCallLegacyCodeIfNewDetailViewFound()

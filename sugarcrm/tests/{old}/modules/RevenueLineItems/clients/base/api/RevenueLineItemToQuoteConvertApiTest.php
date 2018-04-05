@@ -30,7 +30,6 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        parent::setUpBeforeClass();
         self::$opp = SugarTestOpportunityUtilities::createOpportunity();
 
         self::$revenueLineItem = new RevenueLineItem();
@@ -50,7 +49,6 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
         SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     /**

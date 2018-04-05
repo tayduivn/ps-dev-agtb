@@ -52,5 +52,4 @@ class minRelatedExpressionTest extends TestCase
         $result = Parser::evaluate($expr, $opp)->evaluate();
         $this->assertSame('10', $result);
     }
-
 }

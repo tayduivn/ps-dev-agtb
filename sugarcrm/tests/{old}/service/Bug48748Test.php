@@ -14,7 +14,6 @@
 
 class Bug48748Test extends RestTestCase
 {
-
     protected $package = 'Accounts';
     protected $packageExists = false;
     protected $aclRole;
@@ -84,7 +83,6 @@ EOQ;
 
     public function testWirelessModuleLayoutForCustomModule()
     {
-
         $this->assertTrue(file_exists('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php'));
         //$contents = file_get_contents('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php');
         include('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php');

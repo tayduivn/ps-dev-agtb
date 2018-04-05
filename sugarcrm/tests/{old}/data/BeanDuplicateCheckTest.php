@@ -181,5 +181,4 @@ class DuplicateCheckMock extends DuplicateCheckStrategy
     public function findDuplicates() {
         return true;
     }
-
 }

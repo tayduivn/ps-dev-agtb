@@ -97,6 +97,4 @@ EOQ;
         require('custom/modules/Users/authentication/SAMLAuthenticate/index.php');
         $this->expectOutputRegex('/www\.sugarcrm\.com/', 'Failed to override custom/modules/Users/authentication/SAMLAuthenticate/settings.php');
     }
-
-
 }

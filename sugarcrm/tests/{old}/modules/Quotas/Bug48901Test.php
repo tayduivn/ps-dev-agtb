@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug48901Test extends TestCase
 {
-
     private $_timeperiod;
     public function setUp()
     {
@@ -29,7 +28,6 @@ class Bug48901Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        parent::setUp();
 
         $this->_timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
     }
@@ -94,6 +92,5 @@ class Bug48901Test extends TestCase
     {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        parent::tearDown();
     }
 }

@@ -27,7 +27,6 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
             file_put_contents('modules/Accounts/metadata/studio.php', '<?php' . "\n\$time = time();");
             $this->createdStudioFile = true;
         }
-
     }
 
     public function tearDown()
@@ -131,7 +130,6 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         $restReply = $this->_restCall('me');
 
         $this->assertTrue(in_array('Accounts',$restReply['reply']['current_user']['module_list']),'The new Accounts module did not appear in the portal list');
-
     }
 
     /**

@@ -52,5 +52,4 @@ class GetSearchWhereValueTest extends TestCase
             array(-1, ''),
         );
     }
-
 }

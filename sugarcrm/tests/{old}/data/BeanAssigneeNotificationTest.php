@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class BeanAssigneeNotificationTest extends TestCase
 {
-
     private $siteUrl;
 
     public function setUp()

@@ -252,5 +252,4 @@ class RestDateTimeTest extends RestTestBase {
         $row = $GLOBALS['db']->fetchByAssoc($ret);
         $this->assertEquals('',$row['date_end']);
     }
-
 }

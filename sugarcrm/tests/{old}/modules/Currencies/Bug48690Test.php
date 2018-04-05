@@ -23,7 +23,6 @@ require_once('modules/Currencies/Currency.php');
  */
 class Bug48690Test extends TestCase
 {
-
     /**
      * Test checks what method retrieve returns
      * @group 48690

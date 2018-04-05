@@ -102,5 +102,4 @@ class LeadsApiTest extends RestTestBase
         $email->save();
         return $email->id;
     }
-
 }

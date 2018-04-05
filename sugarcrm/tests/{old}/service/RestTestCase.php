@@ -23,7 +23,6 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class RestTestCase extends TestCase
 {
-
 	protected $_soapClient = null;
     protected $_sessionId;
     protected $_lastRawResponse;
@@ -123,5 +122,4 @@ abstract class RestTestCase extends TestCase
                 )
             );
     }
-
 }

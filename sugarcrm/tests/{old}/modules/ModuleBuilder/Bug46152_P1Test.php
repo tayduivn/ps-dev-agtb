@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug46152_P1Test extends TestCase
 {
-
     public function getModuleAliasesData()
     {
         return array(
@@ -46,20 +45,16 @@ class Bug46152_P1Test extends TestCase
         foreach ($needAliases AS $needAlias) {
             $this->assertContains($needAlias, $aliases);
         }
-
     }
 
     public function setUp()
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('dictionary');
-        parent::setUp();
     }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
-
 }

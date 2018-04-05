@@ -58,7 +58,6 @@ class ModuleScannerTest extends TestCase
 
 	public function testFileTemplatePass()
     {
-
     	$fileModContents = <<<EOQ
 <?PHP
 
@@ -79,7 +78,6 @@ EOQ;
 
 	public function testFileFunctionFail()
     {
-
     	$fileModContents = <<<EOQ
 <?PHP
 
@@ -88,7 +86,6 @@ class testFile_sugar extends File {
 		parent::File();
 		\$this->file = new File();
 		\$file = file('test.php');
-
 	}
 }
 ?>
@@ -101,7 +98,6 @@ EOQ;
 
 	public function testCallUserFunctionFail()
     {
-
     	$fileModContents = <<<EOQ
 <?PHP
 	call_user_func("sugar_file_put_contents", "test2.php", "test");
@@ -203,7 +199,6 @@ EOQ;
 
 	public function testCallMethodObjectOperatorFail()
     {
-
     	$fileModContents = <<<EOQ
 <?PHP
     //doesnt matter what the class name is, what matters is use of the banned method, setlevel
@@ -218,7 +213,6 @@ EOQ;
 
 	public function testCallMethodDoubleColonFail()
     {
-
     	$fileModContents = <<<EOQ
 <?PHP
     //doesnt matter what the class name is, what matters is use of the banned method, setlevel
@@ -236,7 +230,6 @@ EOQ;
      */
     public function testCallMethodVariableWithCommentFail()
     {
-
         $fileModContents = <<<EOQ
 <?PHP
     \$dod = 'fwrite';
@@ -338,7 +331,6 @@ EOQ;
      */
 	public function testLockConfig()
     {
-
     	$fileModContents = <<<EOQ
 <?PHP
 	\$GLOBALS['sugar_config']['moduleInstaller']['test'] = true;
@@ -443,7 +435,6 @@ EOQ;
           ),
         );
     }
-
 }
 
 class MockModuleScanner extends  ModuleScanner

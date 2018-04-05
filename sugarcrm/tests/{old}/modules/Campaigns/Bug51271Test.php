@@ -180,7 +180,6 @@ class Bug51271Test extends TestCase
 			$sql = 'DELETE FROM campaigns WHERE id = \'' . $this->campaign->id . '\'';
 			$GLOBALS['db']->query($sql);
 		}
-
     }
 
     protected function create_campaign_log($campaign, $target, $marketing, $prospectlist, $activity_type, $target_tracker_key='')
@@ -225,5 +224,4 @@ class Bug51271Test extends TestCase
         $result = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM campaign_log WHERE deleted=0 AND campaign_id = '{$this->campaign->id}'");
         $this->assertEquals(0, $result);
     }
-
 }

@@ -32,8 +32,6 @@ class TimePeriodsCurrentApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -56,7 +54,6 @@ class TimePeriodsCurrentApiTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->api = new TimePeriodsCurrentApi();
     }
 
@@ -65,13 +62,11 @@ class TimePeriodsCurrentApiTest extends TestCase
         // delete all current timeperiods
         $db = DBManagerFactory::getInstance();
         $db->query('UPDATE timeperiods SET deleted = 0 where deleted = 1');
-        parent::tearDownAfterClass();
     }
 
     public function tearDown()
     {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        parent::tearDown();
     }
 
     /**

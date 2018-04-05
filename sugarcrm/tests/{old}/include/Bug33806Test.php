@@ -20,7 +20,6 @@ require_once('include/utils.php');
  */
 class Bug33806Test extends TestCase
 {
-
     function _moduleNameProvider()
     {
         return array(

@@ -81,5 +81,4 @@ class Bug49873Test extends TestCase
         //$deleted = $GLOBALS['db']->getOne($GLOBALS['db']->limitQuerySql("SELECT deleted FROM linked_documents WHERE document_id = '{$this->doc->id}'", 0, 1));
         $this->assertEquals('1', $deleted, 'linked_documents entries are not deleted');
     }
-
 }

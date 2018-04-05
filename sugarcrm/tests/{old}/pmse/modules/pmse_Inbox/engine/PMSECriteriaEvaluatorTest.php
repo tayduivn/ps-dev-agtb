@@ -62,7 +62,6 @@ class PMSECriteriaEvaluatorTest extends TestCase
         $result = $criteriaEvaluatorMock->isCriteriaToken(array_pop($expression));
         $expected = false;
         $this->assertEquals($expected, $result);
-
     }
     
     public function testEvaluateCriteriaTokenTRUE()

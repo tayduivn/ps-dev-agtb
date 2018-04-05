@@ -13,7 +13,6 @@
 require_once('include/connectors/ConnectorsTestCase.php');
 
 class ConnectorsWebexPropertiesTest extends Sugar_Connectors_TestCase {
-
 	function setUp() {
         SugarTestHelper::setUp('app_list_strings');
         parent::setUp();
@@ -35,7 +34,6 @@ class ConnectorsWebexPropertiesTest extends Sugar_Connectors_TestCase {
     }
 
     function testWebexProperty() {
-
     	$controller = new ConnectorsController();
     	$_REQUEST['action'] = 'SaveModifyProperties';
     	$_REQUEST['module'] = 'Connectors';
@@ -49,5 +47,4 @@ class ConnectorsWebexPropertiesTest extends Sugar_Connectors_TestCase {
     	$webex = SourceFactory::getSource('ext_eapm_webex', false);
     	$this->assertEquals($url, $webex->getProperty('url'));
     }
-
 }

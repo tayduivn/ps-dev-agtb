@@ -60,7 +60,6 @@ class Bug56391Test extends TestCase
         unset($acls['fields']);
 
         $this->assertEquals($expected_result, $acls);
-
     }
 
 
@@ -100,7 +99,6 @@ class Bug56391Test extends TestCase
         $acls = $acls['fields'];
 
         $this->assertEquals($expected_result, $acls);
-
     }
 
     /**
@@ -391,7 +389,6 @@ class Bug56391Test extends TestCase
         unset($acls['fields']);
 
         $this->assertEquals($expected_bean_result['no_access'], $acls, 'No Access Failed');
-
     }
 
     public function testModuleFieldOwnerAccess()
@@ -426,7 +423,6 @@ class Bug56391Test extends TestCase
         $fields = $acls['fields'];
         unset($acls['fields']);
         $this->assertEquals($expected_bean_result['field_access'], $fields, 'Field Access Failed');
-
     }
 
     public function testModuleFieldOwnerNoAccess()
@@ -464,6 +460,5 @@ class Bug56391Test extends TestCase
         unset($acls['fields']);
 
         $this->assertEquals($expected_bean_result['field_no_access'], $fields, 'No Field Access Failed');
-
     }
 }

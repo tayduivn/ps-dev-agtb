@@ -19,7 +19,6 @@ class DateExpressionTest extends TestCase
 
 	public static function setUpBeforeClass()
 	{
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
@@ -33,7 +32,6 @@ class DateExpressionTest extends TestCase
         {
             $bean->mark_deleted($bean->id);
         }
-        parent::tearDownAfterClass();
 	}
 
 	public function testAddDays()
@@ -84,7 +82,6 @@ class DateExpressionTest extends TestCase
 	    $result = Parser::evaluate($expr, $task)->evaluate();
 	    $this->assertInstanceOf("DateTime", $result);
 	    $this->assertEquals($timedate->asUserDate($timedate->fromUserDate('3/18/2011')), $timedate->asUserDate($result));
-
 	}
 
 	public function testNow()

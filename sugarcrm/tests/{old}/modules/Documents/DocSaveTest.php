@@ -55,8 +55,6 @@ class DocSaveTest extends TestCase
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
             // Assert doc type default is 'Sugar'
             $this->assertEquals($row['doc_type'], 'Sugar');
-
         }
     }
-
 }

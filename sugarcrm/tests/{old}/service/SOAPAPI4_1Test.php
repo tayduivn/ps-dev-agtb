@@ -230,5 +230,4 @@ class SOAPAPI4_1Test extends SOAPTestCase
         $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'GooberVille', 'related_module' => 'UberVille', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $leadsFields, 'relationship_name' => 'goober_uber', 'deletion_date' => ''));
         $this->assertEquals(20, $result['faultcode'], 'Failed to trigger a SOAP fault code for invalid relationship');
     }
-
 }

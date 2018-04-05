@@ -13,7 +13,6 @@
 
 class UpgradeFixTemplatesTest extends UpgradeTestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -28,7 +27,6 @@ class UpgradeFixTemplatesTest extends UpgradeTestCase
         file_put_contents('custom/modules/fixtest/language/application/testfile3.php', $this->bad_template);
 
         $this->script = $this->upgrader->getScript("post", "7_FixTemplates");
-
     }
 
     public function tearDown()

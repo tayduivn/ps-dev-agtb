@@ -201,7 +201,6 @@ class PMSEElementValidatorTest extends TestCase
                 ->method('identifyEventAction');
 
         $elementValidatorMock->processExternalAction($mockData);
-
     }
 
     public function testProcessExternalActionIfNotRunning()
@@ -311,7 +310,6 @@ class PMSEElementValidatorTest extends TestCase
 
         $result = $elementValidator->isCaseDuplicated($beanMock, $flowData);
         $this->assertEquals(TRUE, $result);
-
     }
 
     public function testIsCaseDuplicatedNot()
@@ -436,5 +434,4 @@ class PMSEElementValidatorTest extends TestCase
         $elementValidatorMock->validateStartEvent($beanMock, $flowDataMock, $request);
         $this->assertEquals(false, $request->isValid());
     }
-
 }

@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class ViewListViewTest extends TestCase
 {
-	
 	public function setUp() 
     {
 	    global $app_list_strings;

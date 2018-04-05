@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
 
 class UpgradeAccessTest extends TestCase
 {
-
     public function setUp()
     {
         if(!file_exists('.htaccess'))
@@ -45,7 +44,6 @@ class UpgradeAccessTest extends TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
 
@@ -64,5 +62,4 @@ class UpgradeAccessTest extends TestCase
         $this->assertEquals(1, count($matches), 'Duplicate blocks were created for the RewriteRule');
         $this->assertContains('<FilesMatch', $contents, 'Code outside of restrictions was not copied over');
     }
-
 }

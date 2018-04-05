@@ -20,7 +20,6 @@ class OutboundEmailTest extends TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('current_user');
         OutboundEmailConfigurationTestHelper::setUp();
     }
@@ -29,7 +28,6 @@ class OutboundEmailTest extends TestCase
     {
         OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function smtpEmailPasswordProvider()

@@ -30,14 +30,12 @@ class SugarViewTest extends TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('mod_strings', array('Users'));
         $this->_view = new SugarViewTestMock();
-        parent::setUp();
         $this->dir = getcwd();
     }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
         chdir($this->dir);
     }
 

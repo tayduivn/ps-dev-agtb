@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug54472Test extends TestCase
 {
-
     private $beforeArray;
     private $removeJSG_Dir = false;
 
@@ -46,7 +45,6 @@ class Bug54472Test extends TestCase
         //run repair so the extension files are created and updated
 				$rac = new RepairAndClear();
 				$rac->repairAndClearAll(array('rebuildExtensions'), array(), false, false);
-
     }
 
 
@@ -54,7 +52,6 @@ class Bug54472Test extends TestCase
      * This function creates supporting directory structure and files to carry out the test
      */
     private function createSupportingFiles(){
-
         //create the js group directory in the proper extension location if needed
         if(!file_exists("custom/Extension/application/Ext/JSGroupings/")){
             mkdir_recursive("custom/Extension/application/Ext/JSGroupings/", true);
@@ -81,13 +78,10 @@ $js_groupings [\'testEntryMod\'] = array("include/javascript/calendar.js" => "in
                         fputs( $fhAcc, $jsgrpACCStr);
                         fclose( $fhAcc );
         }
-
-
     }
 
     public function tearDown()
     {
-
         //remove the 2 grouping files and their directories
         if(file_exists('custom/Extension/application/Ext/JSGroupings/Jgroup0.php')){
             unlink('custom/Extension/application/Ext/JSGroupings/Jgroup0.php');
@@ -109,7 +103,6 @@ $js_groupings [\'testEntryMod\'] = array("include/javascript/calendar.js" => "in
     }
 
     public function testGetJSGroupingCustomEntries() {
-
         //include jsgroupings file again, this time it should pick up the 2 new groups from the extensions.
         include('jssource/JSGroupings.php');
 
@@ -119,7 +112,5 @@ $js_groupings [\'testEntryMod\'] = array("include/javascript/calendar.js" => "in
         //Check for the individual entries to confirm they are being concatenated and not overwritten
         $this->assertArrayHasKey('testEntrySite', $js_groupings,'JSGrouping array was not concatenated correctly, site entry is missing');
         $this->assertArrayHasKey('testEntryMod', $js_groupings,'JSGrouping array was not concatenated correctly, module entry is missing');
-
     }
-
 }

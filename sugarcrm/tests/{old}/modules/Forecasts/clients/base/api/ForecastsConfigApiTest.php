@@ -32,7 +32,6 @@ class ForecastsConfigApiTest extends TestCase
         );
 
         $GLOBALS['current_user']->is_admin = 1;
-        parent::setUp();
     }
 
     public function tearDown()
@@ -43,7 +42,6 @@ class ForecastsConfigApiTest extends TestCase
         $db->commit();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**
@@ -409,5 +407,4 @@ class ForecastsConfigApiTest extends TestCase
 
         $this->assertEquals($expectedResult, $result, "TimePeriod Setting check failed for given parameters. Prior Settings: " . print_r($priorSettings,1) . " Current Settings: " . print_r($currentSettings, 1) . " result: " . print_r($result,1));
     }
-
 }

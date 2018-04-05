@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug43548Test extends TestCase
 {
-
     public function setUp()
     {
     	if(file_exists('custom/modules/Accounts/metadata/SearchFields.php'))
@@ -25,8 +24,7 @@ class Bug43548Test extends TestCase
     	   {
     	      mkdir_recursive('custom/modules/Accounts/metadata');
     	   }
-    	}    	
-
+        }
     }
     
     public function tearDown()

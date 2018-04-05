@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug39635Test extends TestCase
 {
-
     /**
      * @group 39635
      */

@@ -152,7 +152,6 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals('TEST 4 Account',$reply['reply']['records'][0]['name'],'Favorites: The name is not set correctly');
         $this->assertEquals(-1,$reply['reply']['next_offset'],'Favorites: Next offset is not set correctly');
         $this->assertEquals(1,count($reply['reply']['records']),'Favorites: Returned too many results');
-
     }
 
     /**
@@ -176,7 +175,6 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals('TEST 3 Account',$reply['reply']['records'][0]['name'],'FavRelated: The name is not set correctly');
         $this->assertEquals(-1,$reply['reply']['next_offset'],'FavRelated: Next offset is not set correctly');
         $this->assertEquals(1,count($reply['reply']['records']),'FavRelated: Returned too many results');
-
     }
 
     /**
@@ -213,7 +211,6 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals('TEST 4 Account',$reply['reply']['records'][1]['name'],'FavMulRelated: The second name is not set correctly');
         $this->assertEquals(-1,$reply['reply']['next_offset'],'FavMulRelated: Next offset is not set correctly');
         $this->assertEquals(2,count($reply['reply']['records']),'FavMulRelated: Returned too many results');
-
     }
 
     /**
@@ -230,7 +227,6 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals('TEST 7 Account',$reply['reply']['records'][0]['name'],'Owner: The name is not set correctly');
         $this->assertEquals(-1,$reply['reply']['next_offset'],'Owner: Next offset is not set correctly');
         $this->assertEquals(1,count($reply['reply']['records']),'Owner: Returned too many results');
-
     }
 
     /**
@@ -247,7 +243,6 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals('TEST 3 Account',$reply['reply']['records'][0]['name'],'OwnerRelated: The name is not set correctly');
         $this->assertEquals(-1,$reply['reply']['next_offset'],'OwnerRelated: Next offset is not set correctly');
         $this->assertEquals(1,count($reply['reply']['records']),'OwnerRelated: Returned too many results');
-
     }
 
     /**
@@ -277,7 +272,6 @@ class RestFilterTest extends RestTestBase
 
         $reply = $this->_restCall('Filters/' . $id, array(), 'DELETE');
         $this->assertEquals($id, $reply['reply']['id']);
-
     }
 
     /**
@@ -306,7 +300,6 @@ class RestFilterTest extends RestTestBase
         } else {
             $this->assertEmpty($reply['reply'], 'Test Delete');
         }
-
     }
 
     /**
@@ -330,8 +323,5 @@ class RestFilterTest extends RestTestBase
         $reply = $this->_restCall('Accounts/filter?max_num=10');
         $this->assertNotEmpty($reply['reply'], "Empty filter returned no results.");
         $this->assertEquals(10,$reply['reply']['next_offset'], "Empty filter did not return at least 10 results.");
-
     }
-
-
 }

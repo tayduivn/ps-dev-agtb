@@ -37,7 +37,6 @@ class GetNamePlusEmailAddressesForComposeTest extends TestCase
 	        "{$account->name} <{$account->email1}>",
 	        $email->getNamePlusEmailAddressesForCompose('Accounts',array($account->id))
 	        );
-
     }
 
     public function testGetNamePlusEmailAddressesForComposeMultipleIds()
@@ -63,7 +62,6 @@ class GetNamePlusEmailAddressesForComposeTest extends TestCase
 	        $GLOBALS['locale']->formatName($contact) . " <{$contact->email1}>",
 	        $email->getNamePlusEmailAddressesForCompose('Contacts',array($contact->id))
 	        );
-
     }
 
     public function testGetNamePlusEmailAddressesForComposeUser()

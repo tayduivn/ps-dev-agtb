@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug61859Test extends TestCase
 {
-
     private $dynamicFields;
 
     /**
@@ -33,14 +32,10 @@ class Bug61859Test extends TestCase
         $leadBean = $bean = BeanFactory::newBean('Leads');
         $this->dynamicFields = new DynamicField('Leads');
         $this->dynamicFields->setup($leadBean);
-
-        parent::setUp();
     }
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
-
 }

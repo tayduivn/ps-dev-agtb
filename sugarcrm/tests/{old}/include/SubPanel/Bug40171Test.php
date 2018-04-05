@@ -139,8 +139,5 @@ class Bug40171Test extends TestCase
             $viewdefs['Contacts']['base']['layout']['subpanels']['components'][0]['override_subpanel_list_view'],
             $viewdefs['Contacts']['base']['layout']['subpanels']['components'][1]['override_subpanel_list_view']
         );
-
     }
-
-
 }

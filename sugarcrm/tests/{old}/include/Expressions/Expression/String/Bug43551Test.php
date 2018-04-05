@@ -59,5 +59,4 @@ class Bug43551Test extends TestCase
             $result = Parser::evaluate($expr, $contact)->evaluate();
             $this->assertEquals("Gr", $result);
 	}
-
 }

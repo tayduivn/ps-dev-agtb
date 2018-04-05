@@ -72,7 +72,6 @@ class Bug46713Test extends TestCase
         {
             unlink($this->smartyTestFile);
         }
-
     }
 
     public function testRangeNumberSearches()

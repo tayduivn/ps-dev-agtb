@@ -33,7 +33,6 @@ class Bug39855Test extends TestCase
      */
 	public function setUp() 
     {
-    	
         $this->markTestIncomplete('Skipping for now while investigating');    	
         //setup test portal user
     	$this->_setupTestUser();
@@ -97,7 +96,6 @@ class Bug39855Test extends TestCase
     	
     	$result =  $this->_soapClient->call('portal_get_entry_list',array('session'=>$this->_sessionId,'module_name'=>'Cases','where'=>$w ,'', 'select_field'=>array('case_number','status', 'name','description')));
 		$this->assertTrue($result['result_count'] > 1,'portal_get_entry_list was not able to retrieve both cases using the following where clause: '.$w);
-
     } 
     
 	/**********************************

@@ -25,7 +25,6 @@ class DecimalTest extends TestCase
 
     public function setup()
     {
-        parent::setup();
         $this->eval = new Evaluator\Decimal;
     }
 

@@ -95,8 +95,6 @@ class DuplicateCheckApiTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
@@ -138,7 +136,6 @@ class DuplicateCheckApiTest extends TestCase
         SugarTestLeadUtilities::removeAllCreatedLeads();
         $GLOBALS["dictionary"]["Lead"]["duplicate_check"] = $this->copyOfLeadsDuplicateCheckVarDef;
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

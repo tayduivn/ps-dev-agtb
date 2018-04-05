@@ -86,5 +86,4 @@ class Bug48846Test extends TestCase
             array("cases.case_number in (-1,12,-1,16,34,124,-1)", 'stuff,12,junk,16,34,124,morejunk'),
         );
     }
-
 }

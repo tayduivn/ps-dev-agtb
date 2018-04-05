@@ -277,15 +277,12 @@ class Bug42915Test extends TestCase
             $_REQUEST['end_range_amount_advanced'],
             'Assert that end_range_amount_advanced value remained as is (45900)'
         );
-
     }
-
 }
 
 
 class Bug42915MockOpportunity extends Opportunity
 {
-
     var $field_defs = array(
         'id' =>
             array(

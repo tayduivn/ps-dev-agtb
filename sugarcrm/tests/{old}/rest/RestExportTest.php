@@ -14,7 +14,6 @@
 
 class RestExportTest extends RestTestBase
 {
-
     // for now, export and MassExport use the same rest endpoints. This will change.
     private $singleRestPath = 'Accounts/export';
     private $massRestPath = 'Accounts/export';
@@ -51,7 +50,6 @@ class RestExportTest extends RestTestBase
                 $this->assertNotContains($account->name, $reply['replyRaw'], 'Reply contains non-chosen account '.$i.' '.$account->name);
             }
         }
-
     }
 
     public function testExportWithoutFilter()

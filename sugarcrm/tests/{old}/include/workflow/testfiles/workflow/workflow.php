@@ -26,8 +26,6 @@ if ( !class_exists('Accounts_workflow') ) {
 		include("custom/modules/Accounts/workflow/plugins_array.php");
 		
  if(true){ 
- 
-
 	 //Frame Secondary 
 
 	 $secondary_array = array(); 
@@ -52,8 +50,6 @@ if ( !class_exists('Accounts_workflow') ) {
 
  if( ( !($focus->fetched_row['name'] ==  'Sugar' )) && 
  (isset($focus->name) && $focus->name ==  'Sugar')){ 
- 
-
 	 //Frame Secondary 
 
 	 $secondary_array = array(); 
@@ -82,4 +78,3 @@ if ( !class_exists('Accounts_workflow') ) {
 	//end class
 	}
 }
-?>

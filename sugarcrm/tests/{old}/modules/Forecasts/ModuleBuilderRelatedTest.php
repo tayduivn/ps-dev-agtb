@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class ModuleBuilderRelatedTest extends TestCase
 {
-
     public static function setUpBeforeClass() {
         SugarTestHelper::setUp('app_list_strings');
     }
@@ -35,5 +34,4 @@ class ModuleBuilderRelatedTest extends TestCase
         $this->assertTrue(in_array('commit_stage_binary_dom', DropDownBrowser::$restrictedDropdowns));
         $this->assertTrue(in_array('commit_stage_custom_dom', DropDownBrowser::$restrictedDropdowns));
     }
-
 }

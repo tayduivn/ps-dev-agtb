@@ -37,5 +37,4 @@ class DocumentTest extends TestCase
         $this->doc->populateFromRow(array('document_name'=>'DocName'));
         $this->assertEquals('DocName',$this->doc->name);
     }
-
 }

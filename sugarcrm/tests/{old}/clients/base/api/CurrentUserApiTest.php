@@ -31,7 +31,6 @@ class CurrentUserApiTest extends TestCase
     {
         OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function testCurrentUserLanguage()

@@ -22,7 +22,6 @@ class Bug43466 extends TestCase
 	public static function setUpBeforeClass()
 	{
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-
 	}
 
 	public static function tearDownAfterClass()
@@ -510,7 +509,6 @@ class Bug43466 extends TestCase
 		$expectedResult
 		)
     {
-
 		if ( $expectedResult ) {
             $this->assertEquals(trim($this->_db->repairTableParams($tablename, $fielddefs, $indices, false)), "", "Expected empty result");
         }

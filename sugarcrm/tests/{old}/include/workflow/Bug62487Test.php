@@ -17,12 +17,10 @@ require_once('include/workflow/plugin_utils.php');
 
 class Bug62487Test extends TestCase
 {
-
     var $file = "workflow/plugins/Bug62487Test/component_list.php";
 
     function setUp()
     {
-
         $this->file = create_custom_directory($this->file);
 
         $component_list = array(
@@ -37,13 +35,11 @@ class Bug62487Test extends TestCase
         );
 
         write_array_to_file('component_list', $component_list, $this->file);
-        parent::setUp();
     }
 
     function tearDown()
     {
         rmdir_recursive(dirname($this->file));
-        parent::tearDown();
     }
 
     function testPluginListArrayKeys()

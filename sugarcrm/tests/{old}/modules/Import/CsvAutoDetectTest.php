@@ -26,8 +26,6 @@ class CsvAutoDetectTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('files');
     }
 
@@ -89,5 +87,4 @@ class CsvAutoDetectTest extends TestCase
         // remove temp file
         unlink($GLOBALS['sugar_config']['tmp_dir'].'test.csv');
     }
-
 }

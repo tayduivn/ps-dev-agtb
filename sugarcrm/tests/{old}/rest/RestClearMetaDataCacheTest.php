@@ -91,7 +91,6 @@ class RestClearMetadataCacheTest extends RestTestBase
     
     public function tearDown()
     {
-
         if (file_exists($this->_requestMock->ddlCustomFile . '.testbackup')) {
             rename($this->_requestMock->ddlCustomFile . '.testbackup', $this->_requestMock->ddlCustomFile);
         }

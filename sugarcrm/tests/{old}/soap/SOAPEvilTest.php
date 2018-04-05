@@ -68,8 +68,6 @@ class SOAPEvilTest extends TestCase
 
         $this->_adminAccountId = create_guid();
         $GLOBALS['db']->query("INSERT INTO accounts (id,name,team_set_id,team_id,date_modified,modified_user_id,date_entered,created_by) VALUES ('".$GLOBALS['db']->quote($this->_adminAccountId)."','UNIT TEST ADMIN','".$GLOBALS['db']->quote($this->_adminTeamId)."','".$GLOBALS['db']->quote($this->_adminTeamId)."',NOW(),'1',NOW(),'1')",true);
-
-
     }
 
     public function _checkTestAccounts() {
@@ -96,7 +94,6 @@ class SOAPEvilTest extends TestCase
         $ret = $db->query("SELECT name FROM accounts WHERE id = '".$db->quote($this->_adminAccountId)."'",true);
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('UNIT TEST ADMIN',$row['name']);
-
     }
 
     public function testResetTestAccounts() {
@@ -106,7 +103,6 @@ class SOAPEvilTest extends TestCase
         // of what version this is running against, so we know that the framework around the tests is correct
         $this->_resetTestAccounts();
         $this->_checkTestAccounts();
-
     }
 
     public function testget_entry_id() {

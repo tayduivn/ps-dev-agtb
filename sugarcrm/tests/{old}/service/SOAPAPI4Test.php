@@ -105,7 +105,6 @@ class SOAPAPI4Test extends SOAPTestCase
 
     public function testSearchByModule()
     {
-
         $seedData = self::$helperObject->populateSeedDataForSearchTest($GLOBALS['current_user']->id);
         $this->cleanup = true;
         $returnFields = array('name','id','deleted');
@@ -135,7 +134,6 @@ class SOAPAPI4Test extends SOAPTestCase
 
     public function testSearchByModuleWithFavorites()
     {
-
         $seedData = self::$helperObject->populateSeedDataForSearchTest($GLOBALS['current_user']->id);
         $this->cleanup = true;
         $sf = new SugarFavorites();
@@ -243,5 +241,4 @@ class SOAPAPI4Test extends SOAPTestCase
             $this->assertEquals( $mod->isFavoritesEnabled(), $tmpModEntry['favorite_enabled']);
         }
     }
-
 }

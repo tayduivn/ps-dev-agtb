@@ -34,8 +34,6 @@ class RelatedValueApiTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -53,7 +51,6 @@ class RelatedValueApiTest extends TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

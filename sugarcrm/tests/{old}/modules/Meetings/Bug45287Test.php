@@ -90,7 +90,6 @@ class Bug45287Test extends TestCase
 
     public function tearDown()
     {
-
         foreach ($this->meetingsArr as $m)
         {
             $GLOBALS['db']->query('DELETE FROM meetings WHERE id = \'' . $m->id . '\' ');
@@ -177,6 +176,4 @@ class Bug45287Test extends TestCase
         	" AND meetings.date_start <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDatesEnd['end']), 'datetime');
         $this->assertContains($expectedWhere, $w[0]);
    }
-
-
 }

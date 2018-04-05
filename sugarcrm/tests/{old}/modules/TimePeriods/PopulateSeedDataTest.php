@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PopulateTimePeriodsSeedDataTest extends TestCase
 {
-
 private $createdTimePeriods;
 
 function setUp()
@@ -38,6 +37,4 @@ function testPopulateSeedData()
     $total = $GLOBALS['db']->getOne("SELECT count(id) as total FROM timeperiods WHERE deleted = 0");
     $this->assertEquals(25, $total);
 }
-
-
 }

@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug60152Test extends TestCase
 {
-
     /**
      * Test asserts that body_html has variables after cleanBean call
      *

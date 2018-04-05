@@ -36,7 +36,5 @@ class RestLabelsTest extends RestTestBase
 
         $this->assertNotEmpty($en_us['app_list_strings']['checkbox_dom'],"Could not find the label for the checkbox dropdown, these don't look like app_list_strings to me (/metadata)");
         $this->assertNotEmpty($en_us['app_list_strings']['available_language_dom'],"Could not find the list of available languages in appListStrings. (/metadata)");
-
     }
-
 }

@@ -75,7 +75,6 @@ class Bug50768_02Test extends TestCase
 
     public function setUp()
     {
-
         $this->markTestIncomplete("This test breaks others tests on 644 on CI.  Disabling for sanity check");
 
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -93,7 +92,6 @@ class Bug50768_02Test extends TestCase
         $mbc->action_SaveField();
         $_REQUEST = $this->currencyFieldDef2;
         $mbc->action_SaveField();
-
     }
 
     public function tearDown()
@@ -113,7 +111,6 @@ class Bug50768_02Test extends TestCase
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['app_list_strings']);
         unset($_REQUEST);*/
-
     }
 
     /**

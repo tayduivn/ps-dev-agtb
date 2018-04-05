@@ -25,8 +25,6 @@ class SugarMinifyUtilsTest extends TestCase
     /** {@inheritDoc} */
     protected function setUp()
     {
-        parent::setUp();
-
         SugarTestHelper::saveFile(sugar_cached($this->builtFile));
     }
 

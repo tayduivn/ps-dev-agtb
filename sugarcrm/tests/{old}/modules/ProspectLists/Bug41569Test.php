@@ -109,7 +109,6 @@ class Bug41569Test extends TestCase
         unset($GLOBALS['current_user']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
-
     }
 
     /**

@@ -31,15 +31,11 @@ class BeanFormatterTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         SugarTestHelper::setUp('current_user');
     }
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formatter = new BeanFormatter(
             Localization::getObject()
         );
@@ -49,8 +45,6 @@ class BeanFormatterTest extends TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-
-        parent::tearDownAfterClass();
     }
 
     /**

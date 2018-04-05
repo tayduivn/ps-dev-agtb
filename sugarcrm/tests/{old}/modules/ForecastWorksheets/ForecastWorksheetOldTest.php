@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class ForecastWorksheetOldTest extends TestCase
 {
-
     protected static $settings = array();
 
     /**
@@ -31,7 +30,6 @@ class ForecastWorksheetOldTest extends TestCase
     public function setUp()
     {
         $this->markTestIncomplete("SFA, please resolve the issue, where in strict mode the test fails because forecast_worksheet does not have a date closed set");
-        parent::setUp();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -62,8 +60,6 @@ class ForecastWorksheetOldTest extends TestCase
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestJobQueueUtilities::removeAllCreatedJobs();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-
-        parent::tearDown();
     }
 
     /**
@@ -350,6 +346,5 @@ class ForecastWorksheetOldTest extends TestCase
 
     public function testGetAccountNameReturnsEmpty()
     {
-
     }
 }

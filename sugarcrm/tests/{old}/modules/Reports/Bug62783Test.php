@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug62783Test extends TestCase
 {
-
     private static $reportDef = array(
         'display_columns' => array(),
         'module' => 'Opportunities',

@@ -26,7 +26,6 @@ class DownloadFileTest extends TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
     }
@@ -37,7 +36,6 @@ class DownloadFileTest extends TestCase
     protected function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     /**

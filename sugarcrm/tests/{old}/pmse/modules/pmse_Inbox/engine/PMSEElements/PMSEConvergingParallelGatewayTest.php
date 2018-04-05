@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEConvergingParallelGatewayTest extends TestCase
 {
-
     /**
      * @var PMSEElement
      */
@@ -92,5 +91,4 @@ class PMSEConvergingParallelGatewayTest extends TestCase
         
         $this->convergingParallelGateway->run($flowData, $bean);
     }
-
 }

@@ -26,8 +26,6 @@ class SugarThemeTest extends TestCase
 
     public function setup()
     {
-        parent::setUp();
-
         $themedef = array();
         include('themes/'.SugarTestThemeUtilities::createAnonymousTheme().'/themedef.php');
 
@@ -54,8 +52,6 @@ class SugarThemeTest extends TestCase
     public function tearDown()
     {
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
-
-        parent::tearDown();
     }
 
     public function testCaching()

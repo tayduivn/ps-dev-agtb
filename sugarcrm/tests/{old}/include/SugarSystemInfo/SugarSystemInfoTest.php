@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarSystemInfoTest extends TestCase
 {
-
     /**
      * @var SugarSystemInfo
      */

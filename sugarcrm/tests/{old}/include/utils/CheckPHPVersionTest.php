@@ -36,5 +36,4 @@ class CheckPHPVersionTest extends TestCase
     ) {
         $this->assertEquals($expected_retval, check_php_version($ver), $message);
     }
-
 }

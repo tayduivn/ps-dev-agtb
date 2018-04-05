@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug50697Test extends TestCase
 {
-
 public function setUp()
 {
     global $current_user;

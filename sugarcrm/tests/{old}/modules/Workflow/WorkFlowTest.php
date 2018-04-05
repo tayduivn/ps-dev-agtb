@@ -80,7 +80,6 @@ class WorkFlowTest extends TestCase
         if(self::$has_workflow_directory)
         {
            foreach(self::$wf_files as $file) {
-
            	   $target_file = 'custom/modules/Accounts/workflow/' . $file;
           	   if(file_exists($target_file . '.bak'))
           	   {

@@ -21,7 +21,6 @@ class Bug61885 extends TestCase
     private $created;
 
     /*
-     * @see parent::setUp()
      */
     public function setUp()
     {
@@ -29,7 +28,6 @@ class Bug61885 extends TestCase
     }
 
     /*
-     * @see parent::tearDown()
      */
     public function tearDown()
     {

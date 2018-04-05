@@ -72,7 +72,6 @@ class SOAPAPI2Test extends SOAPTestCase
     	if (empty($this->_soapClient->faultcode)) {
     		if (($result['entry_list'][0]['name_value_list'][2]['value'] == 1) &&
     			($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call")) {
-
     			$this->assertEquals($result['entry_list'][0]['name_value_list'][2]['value'],1,"testGetEntryForContact method - Get Entry For contact is not same as Set Entry");
     		} // else
     	} else {
@@ -86,7 +85,6 @@ class SOAPAPI2Test extends SOAPTestCase
     public function testGetEntryForContactNoSelectFields(){
         $result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,'module_name'=>'Contacts','id'=>self::$_contactId,'select_fields'=>array(), 'link_name_to_fields_array' => array()));
 		$this->assertTrue(!empty($result['entry_list'][0]['name_value_list']), "testGetEntryForContactNoSelectFields returned no field data");
-
     }
 
     public function testSetEntriesForAccount() {
@@ -105,7 +103,6 @@ class SOAPAPI2Test extends SOAPTestCase
     	$setresult = $this->_setEntryForOpportunity();
         $result = $this->_setRelationshipForOpportunity($setresult['id']);
     	$this->assertTrue(($result['created'] > 0), 'testSetRelationshipForOpportunity method - Relationship for opportunity to Contact could not be created');
-
     } // fn
 
 

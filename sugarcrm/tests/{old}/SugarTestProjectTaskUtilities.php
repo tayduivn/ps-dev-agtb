@@ -18,7 +18,6 @@ class SugarTestProjectTaskUtilities extends SugarTestObjectUtilities
 
 	private function __construct()
 	{
-
 	}
 
     public static function createProjectTask(array $properties)

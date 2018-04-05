@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEEventTest extends TestCase
 {
-
     /**
      *
      * @var type 
@@ -208,7 +207,6 @@ class PMSEEventTest extends TestCase
 //    
     public function testCheckIfExistEventBased()
     {
-
         $this->event = $this->getMockBuilder('PMSEEvent')
             ->setMethods(NULL)
             ->disableOriginalConstructor()

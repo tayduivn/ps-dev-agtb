@@ -21,7 +21,6 @@ class OutboundEmailVisibilityTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
 
         // Create a system account.
@@ -42,13 +41,11 @@ class OutboundEmailVisibilityTest extends TestCase
     public static function tearDownAfterClass()
     {
         OutboundEmailConfigurationTestHelper::tearDown();
-        parent::tearDownAfterClass();
     }
 
     protected function tearDown()
     {
         OutboundEmailConfigurationTestHelper::restoreAllowDefaultOutbound();
-        parent::tearDown();
     }
 
     public function addVisibilityProvider()

@@ -56,8 +56,6 @@ class TrackerReportsUsageTest extends TestCase
         $monitor->setValue('user_id', $GLOBALS['current_user']->id);            
         $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
         $trackerManager->save();
-
-        parent::setUp();
     }
     
     public function tearDown()

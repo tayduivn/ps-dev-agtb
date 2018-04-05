@@ -83,8 +83,5 @@ class PMSEBusinessRulesApiAclTest extends TestCase
         );
 
         $this->assertEquals($ret, "testPassed", "ACL access test failed for businessRuleDownload");
-
-
     }
-
 }

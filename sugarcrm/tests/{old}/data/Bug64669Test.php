@@ -21,7 +21,6 @@ require_once('include/export_utils.php');
  */
 class Bug64669Test extends TestCase
 {
-
     private $createdBeans;
     public $export_query;
     private $campaign_name = 'sugar test campaign 64669 ';
@@ -48,7 +47,6 @@ class Bug64669Test extends TestCase
 
         //simulate call from export_utils to retrieve export query with a filter on related field 'campaign_name'
         $this->export_query = $bean->create_export_query('', "campaign_name like 'sugar%'");
-
     }
 
 
@@ -58,8 +56,6 @@ class Bug64669Test extends TestCase
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
-
-        parent::tearDown();
     }
 
     /**
@@ -68,8 +64,6 @@ class Bug64669Test extends TestCase
      */
     public function testListQuery()
     {
-
-
         //query with filter on related field has been created,
         //make sure there is a Left Join with Campaigns in the returned query
         $this->assertRegExp(
@@ -77,7 +71,6 @@ class Bug64669Test extends TestCase
 			$this->export_query,
             ' Left Join with Campaigns table was not found, where statement is not being processed correctly'
 		);
-
     }
 
     /**
@@ -100,7 +93,6 @@ class Bug64669Test extends TestCase
         foreach ($removeMe as $removed) {
             $this->assertArrayNotHasKey($removed, $mstr_fields_exclude_array, "field $removed was not excluded from fields list: ".var_export($mstr_fields_exclude_array,true));
         }
-
     }
 
 
@@ -110,7 +102,6 @@ class Bug64669Test extends TestCase
      */
     public function testExportExcludesRelatedField()
     {
-
         //set up variables and request array for export function
         $type = 'Contacts';
         $reArr = array(

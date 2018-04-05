@@ -34,7 +34,6 @@ class ConvertLayoutMetadataParserTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->parser = new TestConvertLayoutMetadataParser('Contacts');
         $this->parser->setConvertDefs(array(
                 'modules' => array(
@@ -46,7 +45,6 @@ class ConvertLayoutMetadataParserTest extends TestCase
 
     public function tearDown()
     {
-        parent::tearDown();
     }
 
     /**

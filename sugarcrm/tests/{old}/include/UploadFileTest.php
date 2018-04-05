@@ -21,14 +21,12 @@ class UploadFileTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         $this->db = SugarTestHelper::setUp('mock_db');
     }
 
     protected function tearDown()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
     public function unlinkFileDataProvider()

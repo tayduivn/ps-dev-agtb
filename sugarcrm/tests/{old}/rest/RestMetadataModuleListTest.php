@@ -19,7 +19,6 @@
  * will be called in the tearDown method as well.
  */
 class RestMetadataModuleListTest extends RestTestBase {
-
     //BEGIN SUGARCRM flav=ent ONLY
     public $oppTestPath ='modules/Opportunities/clients/portal/views/list/list.php';
     //END SUGARCRM flav=ent ONLY
@@ -146,7 +145,6 @@ class RestMetadataModuleListTest extends RestTestBase {
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal&test=3');
 
         $this->assertTrue(in_array('Opportunities',$restReply['reply']['module_list']),'The new Opportunities module did not appear in the portal list');
-
     }
     //END SUGARCRM flav=ent ONLY
 
@@ -191,8 +189,6 @@ class RestMetadataModuleListTest extends RestTestBase {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list on the second pass');
         }
         $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list on the second pass');
-
-
     }
 
 
@@ -315,7 +311,6 @@ class RestMetadataModuleListTest extends RestTestBase {
      * @group Bug57644
      */
     public function testMetadataModulesWithoutIndex() {
-
         $obj = BeanFactory::getObjectName("Bugs");
 
         VardefManager::loadVardef("Bugs", $obj);
@@ -331,7 +326,6 @@ class RestMetadataModuleListTest extends RestTestBase {
         foreach($reply['modules']['Bugs']['fields'] as $fieldName => $fieldDef){
             $this->assertTrue(isset($fieldDef['sortable']), 'Bugs field ' . $fieldName . ' does not have sortable set');
         }
-
     }
 
 

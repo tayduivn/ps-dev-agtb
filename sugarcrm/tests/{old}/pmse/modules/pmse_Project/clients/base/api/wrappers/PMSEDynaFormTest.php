@@ -16,12 +16,10 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEDynaFormTest extends TestCase
 {
-
     protected $adamDynaform;
 
     protected function setUp()
     {
-        parent::setUp();
         $this->adamDynaform = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');
     }
 
@@ -125,5 +123,4 @@ class PMSEDynaFormTest extends TestCase
         $this->assertEquals($generatedObject->prj_id,  $keys['prj_id']);
         $this->assertInstanceOf('pmse_BpmnDynaform', $generatedObject);
     }
-
 }

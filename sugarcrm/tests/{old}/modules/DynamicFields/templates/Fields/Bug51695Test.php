@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug51695Test extends TestCase
 {
-
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -33,5 +32,4 @@ class Bug51695Test extends TestCase
 
         $this->assertArrayHasKey('precision', $template->get_field_def());
     }
-
 }

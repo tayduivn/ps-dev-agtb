@@ -151,5 +151,4 @@ class Bug55129Test extends SOAPTestCase
             $this->assertEquals($amount, $converted, 'Converted amount is not valid for opportunity created in EUR.');
         }
     }
-
 }

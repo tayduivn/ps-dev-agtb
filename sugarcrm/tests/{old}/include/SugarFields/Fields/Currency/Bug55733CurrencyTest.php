@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 
 class Bug55733CurrencyTest extends TestCase
 {
-
     private $value1 = '20000.0000';
     private $value2 = '20000';
     private $expectedValue = '20,000.00';
@@ -34,7 +33,6 @@ class Bug55733CurrencyTest extends TestCase
         $current_user->setPreference('num_grp_sep', ',');
         $current_user->setPreference('default_currency_significant_digits', 2);
         get_number_seperators(true);
-        parent::setUp();
         //if locale is not defined, create new global locale object.
         if(empty($locale))
         {
@@ -43,7 +41,6 @@ class Bug55733CurrencyTest extends TestCase
 
         //create a new SugarFieldCurrency object
         $this->sfr = new SugarFieldCurrency('currency');
-
     }
 
     public function testFormatPrecision()

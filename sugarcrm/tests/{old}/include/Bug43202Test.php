@@ -26,7 +26,6 @@ class Bug43202Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
-        parent::setUp();
     }
 
     /**

@@ -21,7 +21,6 @@ class TimePeriodTest extends TestCase
 
     public function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -43,7 +42,6 @@ class TimePeriodTest extends TestCase
 
         SugarTestHelper::tearDown();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        parent::tearDown();
     }
 
     /**
@@ -63,7 +61,6 @@ class TimePeriodTest extends TestCase
 
         $result = TimePeriod::retrieveFromDate('2009-03-31');
         $this->assertEquals($expected->id, $result->id);
-
     }
 
     /**

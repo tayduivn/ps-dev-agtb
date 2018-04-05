@@ -80,7 +80,6 @@ class TrackerReportsAccessTest extends TestCase
      */
     /*
     public function test_NonAdmin_Tracker_Session_Report_access () {
-
     	$GLOBALS['current_user'] = $this->non_admin_user;
     	$queryTrackerRole = "SELECT id FROM acl_roles where name='Tracker'";
 		$result = $GLOBALS['db']->query($queryTrackerRole);
@@ -109,5 +108,4 @@ class TrackerReportsAccessTest extends TestCase
 		}
     }
     */
-
 }

@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SidecarMetaDataUpgraderBugCrys697Test extends TestCase
 {
-
     public function getStates()
     {
         return array(

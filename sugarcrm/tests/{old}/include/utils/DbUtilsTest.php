@@ -16,7 +16,6 @@ require_once 'include/utils/db_utils.php';
 
 class DbUtilsTest extends TestCase
 {
-
     public function testReturnsSameValueOnNoneStrings()
     {
         $random = rand(100, 200);

@@ -25,8 +25,6 @@ class SugarBeanApiHelper_FormatRelateTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-
         /** @var User $user */
         $user = SugarTestHelper::setUp('current_user');
 
@@ -53,7 +51,6 @@ class SugarBeanApiHelper_FormatRelateTest extends TestCase
         SugarTestTaskUtilities::removeAllCreatedTasks();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        parent::tearDownAfterClass();
     }
 
     public function testRetrieval()

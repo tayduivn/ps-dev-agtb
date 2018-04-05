@@ -80,7 +80,6 @@ class Bug50431Test extends TestCase
         $result = $view->getMappingClassName($this->source);
         $this->assertEquals('ImportMapOther', $result, 'Failed to load ' . $this->customMappingFile3);
     }
-
 }
 
 

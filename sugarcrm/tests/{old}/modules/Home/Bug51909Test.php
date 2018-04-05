@@ -26,7 +26,6 @@ class Bug51909Test extends TestCase
 	var $oldLanguage;
 	
     public function setUp() {
-
         $this->markTestIncomplete("Disabling broken test on CI and working with Andrija to fix");
 
     	global $current_language;

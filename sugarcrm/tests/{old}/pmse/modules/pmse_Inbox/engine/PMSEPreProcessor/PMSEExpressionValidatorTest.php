@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEExpressionValidatorTest extends TestCase
 {
-
     /**
      *
      * @var PMSELogger
@@ -56,7 +55,6 @@ class PMSEExpressionValidatorTest extends TestCase
             ->will($this->returnValue(array()));
 
         $expressionValidatorMock->validateRequest($request);
-
     }
 
     public function testValidateExpressionEmpty()
@@ -85,7 +83,6 @@ class PMSEExpressionValidatorTest extends TestCase
 
         $expressionValidatorMock->validateExpression($beanMock, $flowDataMock, $request);
         $this->assertEquals(true, $request->isValid());
-
     }
 
     public function testValidateExpressionWithConditionTrue()

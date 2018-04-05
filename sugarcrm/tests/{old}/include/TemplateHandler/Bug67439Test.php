@@ -24,7 +24,6 @@ class Bug67439Test extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('mod_strings', array('Teams'));
 
@@ -47,7 +46,6 @@ class Bug67439Test extends TestCase
                 unlink($file);
             }
         }
-        parent::tearDown();
     }
 
     /**

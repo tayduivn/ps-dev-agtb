@@ -26,7 +26,6 @@ class OutboundEmailApiTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('current_user');
     }
 
@@ -34,13 +33,10 @@ class OutboundEmailApiTest extends TestCase
     {
         $sql = "DELETE FROM outbound_email WHERE id IN ('" . implode("','", static::$createdIds) . "')";
         DBManagerFactory::getInstance()->query($sql);
-
-        parent::tearDownAfterClass();
     }
 
     protected function setUp()
     {
-        parent::setUp();
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->api = new OutboundEmailApi();
     }

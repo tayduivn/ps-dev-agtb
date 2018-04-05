@@ -103,8 +103,6 @@ class CampaignLogTest extends TestCase
 		}
 		//keep last created campaign log bean to be used to call functions
 		$this->campaign_log = $cl;
-
-
     }
 
     public function tearDown()
@@ -179,9 +177,7 @@ class CampaignLogTest extends TestCase
 				$formatted_name = $locale->formatName($this->$type_obj);
 				$this->assertSame($related_name, $formatted_name, 'name retrieved from campaign log does not match the expected formatted name of '.$formatted_name.' for the related '.$type.' object');
 			}
-
 		}
-
 	}
 
 	public function testRetrieveEmailAddress(){
@@ -197,8 +193,5 @@ class CampaignLogTest extends TestCase
 			$eastring = $this->campaign_log->retrieve_email_address($this->$type_obj->id);
 			$this->assertSame($eastring, $type.'UnitTest@example.com', 'email retrieved from campaign log object type '.$type.'does not match the expected email of '.$type.'UnitTest@example.com');
 		}
-
 	}
-
-
 }

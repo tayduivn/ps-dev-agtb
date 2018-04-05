@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class QuerySanitizeTest extends TestCase
 {
-
     public function getQueries()
     {
         return array(

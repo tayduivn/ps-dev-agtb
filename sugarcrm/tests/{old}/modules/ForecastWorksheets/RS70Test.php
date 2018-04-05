@@ -21,7 +21,6 @@ class RS70Test extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -42,7 +41,6 @@ class RS70Test extends TestCase
     public static function tearDownAfterClass()
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
-        parent::tearDownAfterClass();
         SugarTestHelper::tearDown();
     }
 

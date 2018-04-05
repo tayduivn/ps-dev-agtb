@@ -123,7 +123,6 @@ class SugarUpgradeAddDurationMeetingsCustomRecordViewTest extends UpgradeTestCas
             $actDurationFieldDef,
             'Duration field was not added as last item in business card'
         );
-
     }
 
     public function providerDurationNotAddedCustomRecordTabLayout()

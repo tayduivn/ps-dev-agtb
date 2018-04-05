@@ -66,7 +66,6 @@ class TargetModuleDeveloperVisibilityTest extends TestCase
         } else {
             $this->assertContains($queryFrag, $sq->compile()->getSQL());
         }
-
     }
 
     public function targetVisiblityProvider() {
@@ -90,9 +89,5 @@ class TargetModuleDeveloperVisibilityTest extends TestCase
                 "NULL"
             ),
         );
-
-
-
     }
-
 }

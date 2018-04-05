@@ -50,9 +50,10 @@ class CalendarUtilsTest extends TestCase
 		$this->lead = $lead;
 	}
 
-	public function tearDown(){
+    public function tearDown()
+    {
         SugarTestHelper::tearDown();
-		unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['mod_strings']);
 
 		$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting->id}'");
 		unset($this->meeting);

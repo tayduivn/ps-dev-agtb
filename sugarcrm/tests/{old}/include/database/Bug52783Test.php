@@ -27,7 +27,6 @@ class Bug52783Test extends TestCase
 
 	public function setUp()
 	{
-        parent::setUp();
         $this->_db = new SqlsrvManager();
 	}
 

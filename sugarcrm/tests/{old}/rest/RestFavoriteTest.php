@@ -75,9 +75,5 @@ class RestFavoriteTest extends RestTestBase {
         $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->_user->id);
         
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
-
-
-
     }
-
 }

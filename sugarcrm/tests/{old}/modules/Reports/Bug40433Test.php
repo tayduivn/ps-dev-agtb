@@ -95,5 +95,4 @@ class Bug40433Test extends TestCase
 		preg_match('/total_contract_value/', $select, $matches);
 		$this->assertEquals('total_contract_value', $matches[0], "Assert that the total_contract_value select statement is preserved");
 	}
-
 }
