@@ -52,9 +52,13 @@
 		tabIndex: -1,
 		
 		prefillEmailAddresses: function(tableId, o){
-            var primaryAddressRow = o.find(function(row) {
-                return 1 == row.primary_address;
-            });
+            var primaryAddressRow = null;
+            for (var i = 0; i < o.length; i++) {
+                if (o[i].primary_address == 1) {
+                    primaryAddressRow = o[i];
+                    break;
+                }
+            }
             if (!primaryAddressRow) {
                 o[0].primary_address = 1;
             }
