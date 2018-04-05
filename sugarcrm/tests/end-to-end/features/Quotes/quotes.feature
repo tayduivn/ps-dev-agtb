@@ -901,7 +901,7 @@ Feature: Quotes module E2E testing
     # 19. Deselect both selected items
     # 20. Verify that Group Selected and Delete Selected actions are disabled (no item selected)
 
-  @quote @Group_Selected @Delete_Selected @xxx
+  @quote @Group_Selected @Delete_Selected @stress-test
   Scenario: Quotes > Record View > Select All > Group/Delete Selected
     # 1. Generate quote record linked to the account
     Given Quotes records exist:
