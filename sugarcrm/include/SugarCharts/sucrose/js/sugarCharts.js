@@ -527,6 +527,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 // but only in Reports module
                 //TODO: fix usage of global report_def
                 var enums = this.getEnums(report_def);
+                var groupDefs = this.getGrouping(report_def);
 
                 drawerContext = {
                     chartData: chartData,
@@ -538,6 +539,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     filterOptions: {
                         auto_apply: false
                     },
+                    groupDefs: groupDefs,
                     layout: 'drillthrough-drawer',
                     module: 'Reports',
                     reportData: report_def,
@@ -556,7 +558,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 }
                 chart.dispatch.call('tooltipHide', this);
 
-                app.alert.show('listfromreport_loading', {
+                this.sugarApp.alert.show('listfromreport_loading', {
                     level: 'process',
                     title: this.translateString('LBL_LOADING')
                 });
