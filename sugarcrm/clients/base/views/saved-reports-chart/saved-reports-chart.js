@@ -566,7 +566,8 @@
                 module: 'Reports',
                 reportData: reportData,
                 reportId: reportId,
-                skipFetch: true
+                skipFetch: true,
+                useSavedFilters: true
             };
 
             chart.clearActive();

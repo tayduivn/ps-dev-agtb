@@ -535,7 +535,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     dashConfig: params,
                     dashModel: null,
                     enumsToFetch: enums,
-                    useSavedFilters: true,
                     filterOptions: {
                         auto_apply: false
                     },
@@ -543,7 +542,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     module: 'Reports',
                     reportData: report_def,
                     reportId: chartId,
-                    skipFetch: true
+                    skipFetch: true,
+                    useSavedFilters: true
                 };
 
                 chart.clearActive();
