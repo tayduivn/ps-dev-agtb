@@ -526,7 +526,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 // report_def is defined as a global in _reportCriteriaWithResult
                 // but only in Reports module
                 //TODO: fix usage of global report_def
-                var enums = this._getEnums(report_def);
+                var enums = this.getEnums(report_def);
 
                 drawerContext = {
                     chartData: chartData,
@@ -926,9 +926,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          *
          * @param reportDef
          * @return {Array} array of enums group defs
-         * @private
          */
-        _getEnums: function(reportDef) {
+        getEnums: function(reportDef) {
             var enumTypes = ['enum', 'radioenum'];
             var groups = this.getGrouping(reportDef);
             var enums = [];

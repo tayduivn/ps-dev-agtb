@@ -266,7 +266,7 @@ describe('SugarCharts', function() {
         getFieldDefStub.restore();
     });
 
-    it('should return and array of enum groupings when _getEnums is called', function() {
+    it('should return and array of enum groupings when getEnums is called', function() {
         var groupings = [{name: 'mock'}];
         var enumType;
         var getGroupingStub = sandbox.stub(SUGAR.charts, 'getGrouping', function() {
@@ -278,15 +278,15 @@ describe('SugarCharts', function() {
         var enums;
 
         enumType = {type: 'enum'};
-        enums = SUGAR.charts._getEnums({});
+        enums = SUGAR.charts.getEnums({});
         expect(enums).toEqual(groupings);
 
         enumType = {type: 'radioenum'};
-        enums = SUGAR.charts._getEnums({});
+        enums = SUGAR.charts.getEnums({});
         expect(enums).toEqual(groupings);
 
         enumType = {type: 'anythingelse'};
-        enums = SUGAR.charts._getEnums({});
+        enums = SUGAR.charts.getEnums({});
         expect(enums).toEqual([]);
 
         getGroupingStub.restore();

@@ -542,13 +542,14 @@
         var module = params.baseModule;
         var reportId = this.settings.get('saved_report_id');
 
-        var enums = SUGAR.charts._getEnums(reportData);
+        var enums;
         var groupDefs;
         var drawerContext;
 
         app.alert.show('listfromreport_loading', {level: 'process', title: app.lang.get('LBL_LOADING')});
 
         if (this.$el.parents('.drawer.active').length === 0) {
+            enums = SUGAR.charts.getEnums(reportData);
             groupDefs = SUGAR.charts.getGrouping(reportData);
             drawerContext = {
                 chartData: chartData,
