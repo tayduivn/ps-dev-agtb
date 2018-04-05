@@ -79,7 +79,7 @@
         var id = this.cid;
         var reportData = this.model.get('rawReportData');
         var chartData = this.model.get('rawChartData');
-        var params = this.getChartParams(chartData);
+        var params = this.getChartParams(chartData); //NOTE: This is where groupType comes from
         var config = this.getChartConfig(chartData, params);
 
         var sugarChart = new loadSugarChart(id, chartData, [], config, params, _.bind(function(chart) {
@@ -158,6 +158,7 @@
         var params = chartParams || this.model.get('rawChartParams');
         var chartConfig;
         var chartGroupType;
+        var configDataType;
 
         // chartData artifact
         if (!_.isEmpty(chartData) && !_.isUndefined(chartData.properties)) {
@@ -247,8 +248,13 @@
         chartConfig.direction = app.lang.direction;
 
         // chartParams artifact
-        chartGroupType = chartConfig.barType || chartConfig.lineType || chartConfig.pieType || chartConfig.funnelType;
-        chartParams.groupType = chartGroupType === 'grouped' || chartGroupType === 'stacked' ? 'grouped' : 'basic';
+        chartGroupType = chartConfig.barType ||
+            chartConfig.lineType ||
+            chartConfig.pieType ||
+            chartConfig.funnelType ||
+            'basic';
+        configDataType = chartGroupType === 'stacked' ? 'grouped' : chartGroupType;
+        chartParams.dataType = configDataType;
 
         this.chartType = chartConfig.chartType;
 

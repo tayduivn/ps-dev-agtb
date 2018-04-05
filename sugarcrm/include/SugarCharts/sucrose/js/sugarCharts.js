@@ -18,13 +18,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         return;
     }
 
-    // set barType to 'grouped'
-    var chartType = chartConfig.barType ||
-                chartConfig.lineType ||
-                chartConfig.pieType ||
-                chartConfig.funnelType ||
-                'basic';
-    var configBarType = chartType === 'stacked' ? 'grouped' : chartType;
+    var chartGroupType = chartConfig.barType ||
+            chartConfig.lineType ||
+            chartConfig.pieType ||
+            chartConfig.funnelType ||
+            'basic';
+    var configDataType = chartGroupType === 'stacked' ? 'grouped' : chartGroupType;
 
     // fix report view
     if (_.isUndefined(chartParams.chart_type) && !_.isUndefined(chartParams.type)) {
@@ -36,11 +35,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
     var params = _.extendOwn({
         allowScroll: false,
         baseModule: 'Reports',
-        barType: configBarType,
         chart_type: 'bar chart',
         colorData: 'class',
+        dataType: configDataType,
         direction: 'ltr',
-        groupType: configBarType,
         hideEmptyGroups: true,
         label: SUGAR.charts.translateString('LBL_DASHLET_SAVED_REPORTS_CHART'),
         margin: {top: 10, right: 10, bottom: 10, left: 10},
@@ -840,7 +838,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             var series = this.getGrouping(reportDef, 1);
             var groupType = this.getFieldDef(groups, reportDef).type;
             var seriesType = this.getFieldDef(series, reportDef).type;
-            var isGroupType = params.groupType === 'grouped';
+            var isGroupType = params.dataType === 'grouped';
             var groupLabel = params.groupLabel;
             var seriesLabel = params.seriesLabel;
 
@@ -1191,9 +1189,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                     case 'barChart':
                         if ((config.ReportModule && isDiscreteData) || config.barType === 'stacked') {
-                            params.barType = config.barType = 'grouped';
+                            params.dataType = config.barType = 'grouped';
                         }
-                        isGroupedBarType = params.barType === 'grouped';
+                        isGroupedBarType = params.dataType === 'grouped';
 
                         data = isGroupedBarType && !isDiscreteData ?
                             // is grouped bar type on grouped data

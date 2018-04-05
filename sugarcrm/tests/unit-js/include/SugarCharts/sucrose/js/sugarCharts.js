@@ -245,7 +245,7 @@ describe('SugarCharts', function() {
             ]
         };
         var params = {
-            groupType: 'grouped',
+            dataType: 'grouped',
             groupLabel: 'Foo',
             seriesLabel: 'Bar'
         };
