@@ -45,7 +45,7 @@ export class Detail extends FullnameField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'span.ellipsis_inline'
+                selector: 'span'
             }
         });
 

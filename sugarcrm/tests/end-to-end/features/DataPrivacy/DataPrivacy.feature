@@ -113,6 +113,7 @@ Feature: Data Privacy module verification
     When I select fields in #PersonalInfoDrawer view
       | fieldName            |
       | first_name           |
+      | last_name            |
       | phone_mobile         |
       | title                |
       | primary_address_city |
@@ -162,22 +163,6 @@ Feature: Data Privacy module verification
     When I click Save button on #DP_1Record header
     When I close alert
 
-    # Verify that values for specified contact fields are erased
-    When I choose Contacts in modules menu
-    Then I should see *Alex in #ContactsList.ListView
-    When I select *Alex in #ContactsList.ListView
-    Then I should see #AlexRecord view
-    When I click show more button on #AlexRecord view
-    Then I verify fields on #AlexRecord.HeaderView
-      | fieldName | value    |
-      | name      | Nisevich |
-    Then I verify fields on #AlexRecord.RecordView
-      | fieldName            | value             |
-      | title                | Value Erased      |
-      | primary_address_city | Value Erased      |
-      | phone_mobile         | Value Erased      |
-      | email                | alex2@example.org |
-
     # Verify that values for specified lead fields are erased
     When I choose Leads in modules menu
     Then I should see *John in #LeadsList.ListView
@@ -212,6 +197,45 @@ Feature: Data Privacy module verification
     Then I verify fields on #TravisRecord.RecordView
       | fieldName | value |
       | email     |       |
+
+    # Verify that values for specified contact fields are erased
+    When I choose Contacts in modules menu
+    Then I should see *Alex in #ContactsList.ListView
+    When I select *Alex in #ContactsList.ListView
+    Then I should see #AlexRecord view
+    When I click show more button on #AlexRecord view
+    Then I verify fields on #AlexRecord.HeaderView
+      | fieldName | value        |
+      | name      | Value Erased |
+    Then I verify fields on #AlexRecord.RecordView
+      | fieldName            | value             |
+      | title                | Value Erased      |
+      | primary_address_city | Value Erased      |
+      | phone_mobile         | Value Erased      |
+      | email                | alex2@example.org |
+
+    # Create Quote record from Quotes_BillTo subpanel of contact record view
+    When I open the billing_quotes subpanel on #AlexRecord view
+    # Create record from the subpanel
+    When I create_new record from billing_quotes subpanel on #AlexRecord view
+    When I toggle Billing_and_Shipping panel on #QuotesRecord.RecordView view
+    When I provide input for #QuotesRecord.HeaderView view
+      | *      | name         |
+      | Quote1 | My New Quote |
+    When I provide input for #QuotesRecord.RecordView view
+      | *      | date_quote_expected_closed | billing_account_name |
+      | Quote1 | 12/12/2020                 | Drew                 |
+    When I Confirm confirmation alert
+    When I click Save button on #QuotesRecord header
+    When I close alert
+    When I toggle Billing_and_Shipping panel on #Quote1Record.RecordView view
+    Then I should see #Quote1Record view
+    Then I verify fields on #Quote1Record.HeaderView
+      | fieldName | value        |
+      | name      | My New Quote |
+#    Then I verify fields on #Quote1Record.RecordView
+#      | fieldName            | value        |
+#      | billing_contact_name | Value Erased |
 
 
   @DataPrivacy_Reject
