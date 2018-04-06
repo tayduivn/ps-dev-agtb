@@ -294,24 +294,13 @@ Feature: Quotes module E2E testing
 
 
 
-    # TITLE:  Verify that calculations are updated properly after user edits and deletes existing QLI/Comment record
+    # TITLE:  Verify that calculations are updated properly after user edits and deletes existing QLI/Comment/Group record
     #
     # STEPS:
     # 1. Generate quote record linked to the account
     # 2. Navigate to quote record view
-    # 3. Add new QLI records
-    # 4. Verify all fields in QLI Grand Total bar are calculated properly
-    # 5. Edit existing QLI and cancel
-    # 6. Verify that no values are changed after QLI editing is canceled
-    # 7. Edit existing QLI and save
-    # 8. Verify that new values are saved and QLI Total is updated
-    # 9. Verify all fields in QLI Grand Total bar are recalculated
-    # 10. Delete existing QLI and cancel
-    # 11. Verify that Grand Total value did not change
-    # 12. Delete existing QLi and confirm
-    # 13. Verify that Grant Total value is updated after QLI is deleted
 
-  @quote @edit_delete_existing_QLI_record @edit_delete_existing_Comment_record @ci-excluded
+  @quote @edit_delete_existing_QLI_record @edit_delete_existing_Comment_record @edit_delete_existing_Group_record @ci-excluded
   Scenario: Quotes > Verify that user can edit/delete existing QLI and Comment record
     # 1. Generate quote record
     Given Quotes records exist:
@@ -325,14 +314,30 @@ Feature: Quotes module E2E testing
     When I choose Quotes in modules menu
     When I select *Quote_3 in #QuotesList.ListView
     Then I should see #Quote_3Record view
-    # 3. Add new QLI records
+
+    # Part 1:  Verify that existing comment record can be edited and deleted
+
+    # Steps:
+    # 1. Add new QLI records
+    # 2. Verify all fields in QLI Grand Total bar are calculated properly
+    # 3. Edit existing QLI and cancel
+    # 4. Verify that no values are changed after QLI editing is canceled
+    # 5. Edit existing QLI and save
+    # 6. Verify that new values are saved and QLI Total is updated
+    # 7. Verify all fields in QLI Grand Total bar are recalculated
+    # 8. Delete existing QLI and cancel
+    # 9. Verify that Grand Total value did not change
+    # 10. Delete existing QLi and confirm
+    # 11. Verify that Grant Total value is updated after QLI is deleted
+
+    # 1. Add new QLI records
     When I choose createLineItem on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.QliRecord view
       | *     | quantity | product_template_name | discount_price | discount_amount |
       | Test1 | 2.00     | New QLI               | 100            | 2.00            |
     When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
     When I close alert
-    # 4. Verify all fields in QLI Grand Total bar are calculated properly
+    # 2. Verify all fields in QLI Grand Total bar are calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value   |
       | deal_tot  | 2.00%   |
@@ -340,13 +345,13 @@ Feature: Quotes module E2E testing
       | tax       | $0.00   |
       | shipping  | $0.00   |
       | total     | $196.00 |
-    # 5. Edit existing QLI and cancel
+    # 3. Edit existing QLI and cancel
     When I choose editLineItem on #Test1QLIRecord
     When I provide input for #Test1QLIRecord view
       | quantity | discount_price | discount_amount | product_template_name |
       | 4        | 150.00         | 4.00            | New Name              |
     When I click on cancel button on QLI #Test1QLIRecord record
-    # 6. Verify that no values are changed after QLI editing is canceled
+    # 4. Verify that no values are changed after QLI editing is canceled
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value   |
       | deal_tot  | 2.00%   |
@@ -354,20 +359,20 @@ Feature: Quotes module E2E testing
       | tax       | $0.00   |
       | shipping  | $0.00   |
       | total     | $196.00 |
-    # 7. Edit existing QLI and save
+    # 5. Edit existing QLI and save
     When I choose editLineItem on #Test1QLIRecord
     When I provide input for #Test1QLIRecord view
       | quantity | discount_price | discount_amount | product_template_name |
       | 4        | 150.00         | 4.00            | New QLI EDited        |
     When I click on save button on QLI #Test1QLIRecord record
-    # 8. Verify that new values are saved and QLI Total is updated
+    # 6. Verify that new values are saved and QLI Total is updated
     Then I verify fields on #Test1QLIRecord
       | fieldName             | value          |
       | product_template_name | New QLI EDited |
       | quantity              | 4.00           |
       | discount_price        | $150.00        |
       | discount_amount       | 4.00%          |
-    # 9. Verify all fields in QLI Grand Total bar are recalculated
+    # 7. Verify all fields in QLI Grand Total bar are recalculated
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value   |
       | deal_tot  | 4.00%   |
@@ -375,18 +380,18 @@ Feature: Quotes module E2E testing
       | tax       | $0.00   |
       | shipping  | $0.00   |
       | total     | $576.00 |
-    # 10. Delete existing QLI and cancel
+    # 8. Delete existing QLI and cancel
     When I choose deleteLineItem on #Test1QLIRecord
     When I Cancel confirmation alert
-    # 11. Verify that Grand Total value did not change
+    # 9. Verify that Grand Total value did not change
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value   |
       | total     | $576.00 |
-    # 12. Delete existing QLi and confirm
+    # 10. Delete existing QLi and confirm
     When I choose deleteLineItem on #Test1QLIRecord
     When I Confirm confirmation alert
     When I close alert
-    # 13. Verify that Grant Total value is updated after QLI is deleted
+    # 11. Verify that Grant Total value is updated after QLI is deleted
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value |
       | total     | $0.00 |
@@ -440,6 +445,64 @@ Feature: Quotes module E2E testing
     When I choose deleteLineItem on #Comment1CommentRecord
     When I Confirm confirmation alert
     When I close alert
+
+    # Part 3:  Verify that user can edit/delete existing group
+    #
+    # STEPS:
+    # 1. Add first group and verify that group is added successfully
+    # 2. Add second group and verify that group is added successfully
+    # 3. Edit second group and cancel. Verify.
+    # 4. Edit second group and save. Verify
+    # 5. Delete first group and cancel. Verify
+    # 6. Delete first group and confirm. Verify
+
+    # 1. Add first group and verify that group is added successfully
+    When I choose createGroup on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name          |
+      | MyGroup1 | Alex Nisevich |
+    When I click on save button on Group #MyGroup1GroupRecord record
+    When I close alert
+    Then I verify fields on #MyGroup1GroupRecord
+      | fieldName | value         |
+      | name      | Alex Nisevich |
+    # 2. Add second group and verify that group is added successfully
+    When I choose createGroup on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name            |
+      | MyGroup2 | Ruslan Golovach |
+    When I click on save button on Group #MyGroup2GroupRecord record
+    When I close alert
+    Then I verify fields on #MyGroup2GroupRecord
+      | fieldName | value           |
+      | name      | Ruslan Golovach |
+    # 3. Edit second group and cancel. Verify.
+    When I choose editGroup on #MyGroup2GroupRecord
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name      |
+      | MyGroup2 | New Group |
+    When I click on cancel button on Group #MyGroup2GroupRecord record
+    Then I verify fields on #MyGroup2GroupRecord
+      | fieldName | value           |
+      | name      | Ruslan Golovach |
+    # 4. Edit second group and save. Verify
+    When I choose editGroup on #MyGroup2GroupRecord
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name      |
+      | MyGroup2 | New Group |
+    When I click on save button on Group #MyGroup2GroupRecord record
+    Then I verify fields on #MyGroup2GroupRecord
+      | fieldName | value     |
+      | name      | New Group |
+    # 5. Delete first group and cancel. Verify
+    When I choose deleteGroup on #MyGroup1GroupRecord
+    When I Cancel confirmation alert
+    Then I verify fields on #MyGroup2GroupRecord
+      | fieldName | value     |
+      | name      | New Group |
+    # 6. Delete first group and confirm. Verify
+    When I choose deleteGroup on #MyGroup1GroupRecord
+    When I Confirm confirmation alert
 
     # TITLE:  Verify that user can edit/delete existing group
     #
@@ -856,6 +919,201 @@ Feature: Quotes module E2E testing
       | shipping  | $1,222.00 |
 
 
+
+    # TITLE:  Verify that Group Selected and Delete Selected actions function properly
+    #
+    # STEPS:
+    # 1. Generate quote record linked to the account
+    # 2. Navigate to Quotes record view
+    # 3. Verify that Group Selected and Delete Selected actions are disabled
+    # 4. Verify numbers in Grand Total bar
+    # 5. Select all items in QLi table
+    # 6. Verify that Group Selected and Delete Selected actions are enabled
+    # 7. Group Selected items and give a name to a new group
+    # 8. Verify new group's name and group total
+    # 9. Verify that numbers in Ground Total bar haven't changed
+    # 10. Select all items in QLI table > Delete Selected > Cancel
+    # 11. Select all items in QLI table > Delete Selected > Confirm
+    # 12. Verify that vertical ellipsis button to expand mas-update menu is disabled
+    # 13. Verify numbers in Ground Total bar are all zeros
+    # 14. Add new QLI records
+    # 15. Verify that Group Selected and Delete Selected actions are disabled (no item selected)
+    # 16. Toggle created QLI record
+    # 17. Verify that Group Selected and Delete Selected actions are enabled (at least one item selected)
+    # 18. Create and Toggle comment record
+    # 19. Deselect both selected items
+    # 20. Verify that Group Selected and Delete Selected actions are disabled (no item selected)
+
+  @quote @Group_Selected @Delete_Selected
+  Scenario: Quotes > Record View > Select All > Group/Delete Selected
+    # 1. Generate quote record linked to the account
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+      # Create a product bundle
+    Given ProductBundles records exist related via product_bundles link to *Quote_3:
+      | *name   |
+      | Group_1 |
+      # Add QLI
+    Given Products records exist related via products link:
+      | *name | discount_price | discount_amount | quantity |
+      | QLI_1 | 100            | 2               | 2        |
+      | QLI_2 | 200            | 2               | 3        |
+    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+    Given I open about view and login
+    # 2. Navigate to Quotes record view
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+
+    # 3. Verify that Group Selected and Delete Selected actions are disabled
+    When I open QLI actions menu in #Quote_3Record.QliTable and check:
+      | menu_item      | active |
+      | GroupSelected  | false  |
+      | DeleteSelected | false  |
+
+    # 4. Verify numbers in Grand Total bar
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value   |
+      | deal_tot  | 2.00%   |
+      | new_sub   | $784.00 |
+      | tax       | $0.00   |
+      | shipping  | $0.00   |
+      | total     | $784.00 |
+
+    # 5. Select all items in QLi table
+    When I toggle all items in #Quote_3Record.QliTable
+
+    # 6. Verify that Group Selected and Delete Selected actions are enabled
+    When I open QLI actions menu in #Quote_3Record.QliTable and check:
+      | menu_item      | active |
+      | GroupSelected  | true   |
+      | DeleteSelected | true   |
+
+    # 7. Group Selected items and give a name to a new group
+    When I choose GroupSelected from #Quote_3Record.QliTable
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name          |
+      | MyGroup1 | Alex Nisevich |
+    When I click on save button on Group #MyGroup1GroupRecord record
+    When I close alert
+
+    # 8. Verify new group's name and group total
+    Then I verify fields on #MyGroup1GroupRecord
+      | fieldName | value         |
+      | new_sub   | $784.00       |
+      | name      | Alex Nisevich |
+
+    # 9. Verify that numbers in Ground Total bar haven't changed
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value   |
+      | deal_tot  | 2.00%   |
+      | new_sub   | $784.00 |
+      | tax       | $0.00   |
+      | shipping  | $0.00   |
+      | total     | $784.00 |
+
+    # 10. Select all items in QLI table > Delete Selected > Cancel
+    When I toggle all items in #Quote_3Record.QliTable
+    When I choose DeleteSelected from #Quote_3Record.QliTable
+    When I Cancel confirmation alert
+
+    # 11. Select all items > Delete > Confirm
+    When I choose DeleteSelected from #Quote_3Record.QliTable
+    When I Confirm confirmation alert
+    When I close alert
+
+    # 12. Verify that vertical ellipsis button to expand mas-update menu is disabled after all items are deleted  from QLi table
+    When I open QLI actions menu in #Quote_3Record.QliTable and check:
+      | menu_item      | active |
+      | massUpdateMenu | false  |
+
+    # 13. Verify numbers in Ground Total bar are all zeros after all items are deleted from QLI table
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value |
+      | deal_tot  | 0.00% |
+      | new_sub   | $0.00 |
+      | tax       | $0.00 |
+      | shipping  | $0.00 |
+      | total     | $0.00 |
+
+    # 14. Add brand new QLI records
+    When I choose createLineItem on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.QliRecord view
+      | *     | quantity | product_template_name | discount_price | discount_amount |
+      | Test1 | 2.00     | New QLI               | 100            | 2.00            |
+    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I close alert
+
+    # 15. Verify that Group Selected and Delete Selected actions are disabled (no item selected)
+    When I open QLI actions menu in #Quote_3Record.QliTable and check:
+      | menu_item      | active |
+      | massUpdateMenu | true   |
+      | GroupSelected  | false  |
+      | DeleteSelected | false  |
+
+    # 16. Toggle created QLI record
+    When I toggle #Test1QLIRecord
+
+    # 17. Verify that Group Selected and Delete Selected actions are enabled (at least one item selected)
+    When I open QLI actions menu in #Quote_3Record.QliTable and check:
+      | menu_item      | active |
+      | massUpdateMenu | true   |
+      | GroupSelected  | true   |
+      | DeleteSelected | true   |
+
+    # 18. Create and Toggle comment record
+    When I choose createComment on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.CommentRecord view
+      | *     | description              |
+      | Test2 | Comment added by seedbed |
+    When I click on save button on QLI #Quote_3Record.QliTable.CommentRecord record
+    When I close alert
+    When I toggle #Test2CommentRecord
+
+    # 19. Deselect both selected items
+    When I toggle #Test1QLIRecord
+    When I toggle #Test2CommentRecord
+
+    # 20. Verify that Group Selected and Delete Selected actions are disabled (no item selected)
+    When I open QLI actions menu in #Quote_3Record.QliTable and check:
+      | menu_item      | active |
+      | GroupSelected  | false  |
+      | DeleteSelected | false  |
+
+  Scenario: Quotes > TEST TEST TEST
+    # 1. Generate quote record with one group and 2 QLIs linked to the account
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+#    # Create a product bundle
+#    Given ProductBundles records exist related via product_bundles link to *Quote_3:
+#      | *name   |
+#      | Group_1 |
+#    # Add QLIs
+#    Given Products records exist related via products link:
+#      | *name | discount_price | discount_amount | quantity |
+#      | QLI_1 | 100            | 2               | 2        |
+#      | QLI_2 | 200            | 2               | 3        |
+    Given I open about view and login
+    # 3. Navigate to quote record view
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
+
+    When I choose createGroup on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name          |
+      | MyGroup1 | Alex Nisevich |
+    When I click on save button on Group #MyGroup1GroupRecord record
+    When I close alert
+
+    When I choose addComment to *Group_1 group
 
     # TITLE:  Verify that Group Selected and Delete Selected actions function properly
     #

@@ -95,6 +95,11 @@ export default (seedbed: Seedbed) => {
 
         let createdRecords = clientInfo.create;
 
+        // We shouldn't process 'ProductBundles' records with default_group prop. (it's a record created by default with Comment record).
+        // It's a quick fix for scenario ... We should remove this logic in the future.
+        createdRecords = _.filter(createdRecords, (_record: any) =>
+            _record._module === 'ProductBundles' ? !_record.default_group : !!_record);
+
         let recordsInfo = _.filter(seedbed.cucumber.scenario.recordsInfo, (_recordInfo: any) => !_recordInfo.recordId);
 
         let recordInfo: any = null;
