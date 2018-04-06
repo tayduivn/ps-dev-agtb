@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,15 +10,26 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Cache\Backend\Memcached;
+namespace Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant;
+
+use Rhumsaa\Uuid\Uuid;
 
 /**
- * @deprecated Use Sugarcrm\Sugarcrm\Cache\Backend\Memcached instead
+ * Multi-tenant cache key storage
  */
-class SugarCacheMemcached extends SugarCacheForwardCompatible
+interface KeyStorage
 {
-    public function __construct()
-    {
-        parent::__construct(Memcached::class, 900, 'external_cache_disabled_memcached');
-    }
+    /**
+     * Returns the currently effective key
+     *
+     * @return Uuid
+     */
+    public function getKey() : ?Uuid;
+
+    /**
+     * Updates the key
+     *
+     * @param Uuid $key
+     */
+    public function updateKey(Uuid $key) : void;
 }

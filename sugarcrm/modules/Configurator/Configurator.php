@@ -13,9 +13,13 @@
 /**
  * Configurator class around `$sugar_config`
  */
-class Configurator {
+class Configurator
+{
+    /**
+     * @var array
+     */
+    public $config;
 
-	var $config = '';
 	var $override = '';
 	var $errors = array ('main' => '');
 	var $logger = NULL;
@@ -204,7 +208,6 @@ class Configurator {
 
 		$overideString = "<?php\n/***CONFIGURATOR***/\n";
 
-		sugar_cache_put('sugar_config', $this->config);
 		$GLOBALS['sugar_config'] = $this->config;
 
 		//print_r($overrideArray);

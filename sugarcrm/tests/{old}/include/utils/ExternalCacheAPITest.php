@@ -42,11 +42,6 @@ class ExternalCacheAPITest extends TestCase
        SugarCache::$isCacheReset = false;
     }
 
-    public function testSugarCacheValidate()
-    {
-        $this->assertTrue(sugar_cache_validate());
-    }
-    
     public function testStoreAndRetrieve()
     {
         sugar_cache_put($this->_cacheKey1,$this->_cacheValue1);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,15 +10,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTests\Cache\Backend;
+
+use Sugarcrm\Sugarcrm\Cache;
 use Sugarcrm\Sugarcrm\Cache\Backend\Memcached;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\SugarcrmTests\CacheTest;
 
 /**
- * @deprecated Use Sugarcrm\Sugarcrm\Cache\Backend\Memcached instead
+ * @covers \Sugarcrm\Sugarcrm\Cache\Backend\Memcached
  */
-class SugarCacheMemcached extends SugarCacheForwardCompatible
+final class MemcachedTest extends CacheTest
 {
-    public function __construct()
+    protected function newInstance() : Cache
     {
-        parent::__construct(Memcached::class, 900, 'external_cache_disabled_memcached');
+        return Container::getInstance()->get(Memcached::class);
     }
 }

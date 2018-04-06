@@ -306,13 +306,11 @@ class SugarCurrencyTest extends TestCase
         $sugar_config['default_currency_iso4217'] = 'BTC';
         $sugar_config['default_currency_name'] = 'Bitcoin';
         $sugar_config['default_currency_symbol'] = '฿';
-        sugar_cache_put('sugar_config', $sugar_config);
 
         $this->assertEquals($result, SugarCurrency::convertAmount($amount, $currencyId1, $currencyId2));
 
         // reset config values
         $sugar_config = $orig_config;
-        sugar_cache_put('sugar_config', $sugar_config);
     }
 
     /**

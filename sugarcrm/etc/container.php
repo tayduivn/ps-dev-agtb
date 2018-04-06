@@ -18,6 +18,17 @@ use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
 use Sugarcrm\Sugarcrm\Audit\Formatter as AuditFormatter;
 use Sugarcrm\Sugarcrm\Audit\Formatter\CompositeFormatter;
+use Sugarcrm\Sugarcrm\Cache;
+use Sugarcrm\Sugarcrm\Cache\Backend\APCu as APCuCache;
+use Sugarcrm\Sugarcrm\Cache\Backend\BackwardCompatible as BackwardCompatibleCache;
+use Sugarcrm\Sugarcrm\Cache\Backend\InMemory as InMemoryCache;
+use Sugarcrm\Sugarcrm\Cache\Backend\Memcached as MemcachedCache;
+use Sugarcrm\Sugarcrm\Cache\Backend\Redis as RedisCache;
+use Sugarcrm\Sugarcrm\Cache\Backend\WinCache;
+use Sugarcrm\Sugarcrm\Cache\Middleware\DefaultTTL;
+use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant as MultiTenantCache;
+use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage\Configuration as ConfigurationKeyStorage;
+use Sugarcrm\Sugarcrm\Cache\Middleware\Replicate;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository;
 use Sugarcrm\Sugarcrm\Dbal\Logging\DebugLogger;
 use Sugarcrm\Sugarcrm\Dbal\Logging\Formatter as DbalFormatter;
@@ -66,6 +77,9 @@ return new Container([
         DbalFormatter::wrapLogger($channel);
 
         return $logger;
+    },
+    LoggerInterface::class => function () {
+        return LoggerFactory::getLogger('default');
     },
     LoggerInterface::class . '-denorm' => function () {
         return LoggerFactory::getLogger('denorm');
@@ -156,5 +170,50 @@ return new Container([
             new \Sugarcrm\Sugarcrm\Audit\Formatter\Email(),
             new \Sugarcrm\Sugarcrm\Audit\Formatter\Subject($container->get(SubjectFormatter::class))
         );
+    },
+    Administration::class => function () : Administration {
+        return BeanFactory::newBean('Administration');
+    },
+    Cache::class => function (ContainerInterface $container) : Cache {
+        $config = $container->get(SugarConfig::class);
+
+        $backend = $container->get(
+            $config->get('cache.backend') ?? BackwardCompatibleCache::class
+        );
+
+        $backend = new DefaultTTL($backend, $config->get('cache_expire_timeout') ?: 300);
+
+        if ($config->get('cache.multi_tenant')) {
+            $backend = new MultiTenantCache(
+                $config->get('unique_key'),
+                new ConfigurationKeyStorage($config),
+                $backend,
+                $container->get(LoggerInterface::class)
+            );
+        }
+
+        return new Replicate(
+            $backend,
+            new InMemoryCache()
+        );
+    },
+    BackwardCompatibleCache::class => function () : BackwardCompatibleCache {
+        return new BackwardCompatibleCache(SugarCache::electBackend());
+    },
+    APCuCache::class => function () : APCuCache {
+        return new APCuCache();
+    },
+    RedisCache::class => function (ContainerInterface $container) : RedisCache {
+        $config = $container->get(SugarConfig::class)->get('external_cache.redis');
+
+        return new RedisCache($config['host'] ?? null, $config['port'] ?? null);
+    },
+    MemcachedCache::class => function (ContainerInterface $container) : MemcachedCache {
+        $config = $container->get(SugarConfig::class)->get('external_cache.memcache');
+
+        return new MemcachedCache($config['host'] ?? null, $config['port'] ?? null);
+    },
+    WinCache::class => function () : WinCache {
+        return new WinCache();
     },
 ]);

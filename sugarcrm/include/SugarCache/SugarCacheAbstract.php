@@ -13,6 +13,7 @@
 /**
  * Abstract cache class
  * @api
+ * @deprecated Use Sugarcrm\Sugarcrm\Cache instead
  */
 abstract class SugarCacheAbstract
 {
