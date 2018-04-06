@@ -272,7 +272,7 @@ When(/^I dismiss alert$/, async function () {
 
 
 /**
- * This step required in personal info drawer of GDPR workflow. This steps selects the fields for erasure in Personal INfo drawer
+ * This step required in personal info drawer of GDPR workflow. This steps selects the fields for erasure in Personal Info drawer
  *
  * @example     When I select fields in #PersonalInfoDrawer view
  *               | fieledName            |
