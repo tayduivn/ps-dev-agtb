@@ -422,6 +422,8 @@ class PMSEPreProcessor
         // Default the return
         $return = [];
 
+        $db = DBManagerFactory::getInstance();
+
         // Get our related link names/module names
         $sql = "
             SELECT
@@ -432,14 +434,13 @@ class PMSEPreProcessor
                 pmse_bpm_flow flow ON rd.rel_element_id = flow.bpmn_id AND
                 (flow.cas_flow_status IS NULL OR flow.cas_flow_status='WAITING')
             WHERE
-                rd.deleted = 0 AND rd.pro_status != 'INACTIVE' AND
-                rd.rel_element_relationship <> '' AND rd.rel_element_relationship IS NOT NULL AND
+                rd.deleted = 0 AND rd.pro_status != 'INACTIVE' AND " .
+                $db->getNotEmptyFieldSQL('rd.rel_element_relationship') . " AND
                 (rd.pro_module = :module OR rd.rel_element_module = :module)
         ";
 
         // Execute
-        $stmt = DBManagerFactory::getInstance()
-                ->getConnection()
+        $stmt = $db->getConnection()
                 ->executeQuery($sql, [':module' => $module]);
 
         // Loop and compare
