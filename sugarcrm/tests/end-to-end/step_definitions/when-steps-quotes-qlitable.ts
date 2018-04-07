@@ -91,6 +91,11 @@ When(/^I create new group on QLI section on (#\S+) view$/, async function (layou
 
 }, {waitForApp: true});
 
+/**
+ * Edit/delete group record or LineItem record (QLI/Comment) in QLI table
+ *
+ * @example "When I choose editLineItem on #Test1QLIRecord"
+ */
 When(/^I choose (editLineItem|deleteLineItem|editGroup|deleteGroup) on (#[a-zA-Z](?:\w|\S)*)$/, async function (itemName, view:QliRecord) {
 
     await view.openInlineMenu(itemName);
@@ -98,10 +103,25 @@ When(/^I choose (editLineItem|deleteLineItem|editGroup|deleteGroup) on (#[a-zA-Z
     await view.clickMenuItem(itemName);
 }, {waitForApp: true});
 
+
+/**
+ * Add QLI or Comment to the specific group in QLI table
+ *
+ * @example "When I choose to addComment to #MyGroup1GroupRecord"
+ */
+When(/^I choose to (addLineItem|addComment) to (#[a-zA-Z](?:\w|\S)*)$/, async function (itemName,view: QliRecord) {
+    await view.openInlineMenu(itemName);
+    await this.driver.waitForApp();
+    await view.clickMenuItem(itemName);
+}, {waitForApp: true});
+
+/**
+ * Toggle record in QLI table based on the record's identifier
+ *
+ * @example "When I choose to addComment to #MyGroup1GroupRecord"
+ */
 When(/^I toggle (#[a-zA-Z](?:\w|\S)*)$/, async function (view:QliTableRecord) {
-
     await view.toggleRecord();
-
 }, {waitForApp: true});
 
 When(/^I click on (save|cancel) button on QLI (#\S+) record$/, async function (buttonName, record: QliRecord) {

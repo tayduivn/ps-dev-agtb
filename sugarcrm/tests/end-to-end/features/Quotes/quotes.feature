@@ -1084,42 +1084,137 @@ Feature: Quotes module E2E testing
       | DeleteSelected | false  |
 
 
-  @xxx
-  Scenario: Quotes > TEST TEST TEST
+  @add_items_to_specifi_dgroup  @xxx
+  Scenario: Quotes > Add QLI/Comment to Specific Group > Group Selected
       # 1. Generate quote record with one group and 2 QLIs linked to the account
-      Given Quotes records exist:
-        | *name   | date_quote_expected_closed | quote_stage |
-        | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
-      Given Accounts records exist related via billing_accounts link to *Quote_3:
-        | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
-        | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
-  #    # Create a product bundle
-  #    Given ProductBundles records exist related via product_bundles link to *Quote_3:
-  #      | *name   |
-  #      | Group_1 |
-  #    # Add QLIs
-  #    Given Products records exist related via products link:
-  #      | *name | discount_price | discount_amount | quantity |
-  #      | QLI_1 | 100            | 2               | 2        |
-  #      | QLI_2 | 200            | 2               | 3        |
-      Given I open about view and login
+    Given Quotes records exist:
+      | *name   | date_quote_expected_closed | quote_stage |
+      | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
+    Given Accounts records exist related via billing_accounts link to *Quote_3:
+      | name  | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+      # Create a product bundle
+    Given ProductBundles records exist related via product_bundles link to *Quote_3:
+      | *name    |
+      | MyGroup0 |
+      # Add QLIs
+    Given Products records exist related via products link:
+      | *name | discount_price | discount_amount | quantity |
+      | QLI_3 | 100            | 2               | 2        |
+      | QLI_4 | 200            | 2               | 3        |
+    Given TaxRates records exist:
+      | *name | list_order | status | value |
+      | Tax_1 | 4          | Active | 10.00 |
+    Given I open about view and login
       # 3. Navigate to quote record view
-      When I choose Quotes in modules menu
-      When I select *Quote_3 in #QuotesList.ListView
-      Then I should see #Quote_3Record view
+    When I choose Quotes in modules menu
+    When I select *Quote_3 in #QuotesList.ListView
+    Then I should see #Quote_3Record view
 
-      When I choose createGroup on QLI section on #Quote_3Record view
-      When I provide input for #Quote_3Record.QliTable.GroupRecord view
-        | *        | name          |
-        | MyGroup1 | Alex Nisevich |
-      When I click on save button on Group #MyGroup1GroupRecord record
-      When I close alert
+    When I choose createGroup on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name    |
+      | MyGroup1 | Group 1 |
+    When I click on save button on Group #MyGroup1GroupRecord record
+    When I close alert
 
-      When I choose to addComment to #MyGroup1
-      When I wait for 3 seconds
-      When I provide input for #Quote_3Record.QliTable.CommentRecord view
-        | *        | description |
-        | Comment1 | Comment 1   |
-      When I click on save button on Comment #Quote_3Record.QliTable.CommentRecord record
-      When I close alert
+    When I choose createGroup on QLI section on #Quote_3Record view
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name    |
+      | MyGroup2 | Group 2 |
+    When I click on save button on Group #MyGroup2GroupRecord record
+    When I close alert
+
+    When I choose to addComment to #MyGroup1GroupRecord
+    When I wait for 3 seconds
+    When I provide input for #Quote_3Record.QliTable.CommentRecord view
+      | *        | description |
+      | Comment1 | Comment 1   |
+    When I click on save button on Comment #Quote_3Record.QliTable.CommentRecord record
+    When I close alert
+
+    When I choose to addComment to #MyGroup2GroupRecord
+    When I wait for 3 seconds
+    When I provide input for #Quote_3Record.QliTable.CommentRecord view
+      | *        | description |
+      | Comment2 | Comment 2   |
+    When I click on save button on Comment #Quote_3Record.QliTable.CommentRecord record
+    When I close alert
+
+    When I choose to addLineItem to #MyGroup1GroupRecord
+    When I provide input for #Quote_3Record.QliTable.QliRecord view
+      | *     | quantity | product_template_name | discount_price | discount_amount |
+      | QLI_1 | 3.5      | Prod_1                | 175            | 4.75            |
+    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I close alert
+    Then I verify fields on #MyGroup1GroupRecord
+      | fieldName | value   |
+      | new_sub   | $583.41 |
+
+    When I choose to addLineItem to #MyGroup2GroupRecord
+    When I provide input for #Quote_3Record.QliTable.QliRecord view
+      | *     | quantity | product_template_name | discount_price | discount_amount |
+      | QLI_2 | 2.00     | Prod_2                | 100            | 2.00            |
+    When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
+    When I close alert
+    Then I verify fields on #MyGroup2GroupRecord
+      | fieldName | value   |
+      | new_sub   | $196.00 |
+
+    When I toggle #QLI_1QLIRecord
+    When I toggle #QLI_3QLIRecord
+
+    When I choose GroupSelected from #Quote_3Record.QliTable
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name    |
+      | MyGroup3 | Group 3 |
+    When I click on save button on Group #MyGroup3GroupRecord record
+    When I close alert
+
+    Then I verify fields on #MyGroup1GroupRecord
+      | fieldName | value |
+      | new_sub   | $0.00 |
+
+    Then I verify fields on #MyGroup3GroupRecord
+      | fieldName | value   |
+      | new_sub   | $779.41 |
+
+    When I toggle #QLI_2QLIRecord
+    When I toggle #QLI_4QLIRecord
+
+    When I choose GroupSelected from #Quote_3Record.QliTable
+    When I provide input for #Quote_3Record.QliTable.GroupRecord view
+      | *        | name    |
+      | MyGroup4 | Group 4 |
+    When I click on save button on Group #MyGroup4GroupRecord record
+    When I close alert
+
+    Then I verify fields on #MyGroup2GroupRecord
+      | fieldName | value |
+      | new_sub   | $0.00 |
+
+    Then I verify fields on #MyGroup4GroupRecord
+      | fieldName | value   |
+      | new_sub   | $784.00 |
+
+    When I click Edit button on #Quote_3Record header
+    When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
+    When I provide input for #Quote_3Record.RecordView view
+      | taxrate_name |
+      | Tax_1        |
+
+    When I provide input for #Quote_3Record.QliTable view
+      | shipping |
+      | 280.25     |
+
+    When I click Save button on #QuotesRecord header
+    When I close alert
+      # 5. Verify that tax amount in QLI Grand Total bar is calculated properly
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value     |
+      | deal_tot  | 3.04%     |
+      | new_sub   | $1,563.41 |
+      | tax       | $156.34   |
+      | shipping  | $280.25   |
+      | total     | $2,000.00 |
 

@@ -27,17 +27,31 @@ export default class QliTableRecord extends BaseView {
             menu: {
                 editLineItem: '[name=edit_row_button]',
                 deleteLineItem: '[name=delete_row_button]',
+
+                // Edit/Delete Group
                 editGroup: '[name=edit_bundle_button]',
                 deleteGroup: '[name=delete_bundle_button]',
+
+                // Add new Items to the group
+                addLineItem: '[name=create_qli_button]',
+                addComment: '[name=create_comment_button]',
             },
             buttons: {
                 save: '.btn.inline-save',
                 cancel: '.btn.inline-cancel',
-                editLineItem: '.actionmenu.list.btn-group .btn.dropdown-toggle',
+                  editLineItem: '.actionmenu.list.btn-group .btn.dropdown-toggle',
                 deleteLineItem: '.actionmenu.list.btn-group .btn.dropdown-toggle',
-                editGroup: '.btn.btn-invisible.dropdown-toggle.edit-dropdown-toggle',
+
+                //Open floating menu to add QLI/Comment to specific group
+                addLineItem: '.btn.btn-invisible.dropdown-toggle.create-dropdown-toggle',
+                 addComment: '.btn.btn-invisible.dropdown-toggle.create-dropdown-toggle',
+
+                //Open floating menu to edit/delete group
+                  editGroup: '.btn.btn-invisible.dropdown-toggle.edit-dropdown-toggle',
                 deleteGroup: '.btn.btn-invisible.dropdown-toggle.edit-dropdown-toggle',
-                'in-line-save': '.btn.inline-save.btn-invisible.ellipsis_inline',
+
+                // Inline save and cancel of QLI table line item
+                  'in-line-save': '.btn.inline-save.btn-inv isible.ellipsis_inline',
                 'in-line-cancel': '.btn.inline-cancel.btn-invisible.ellipsis_inline'
             },
         });
