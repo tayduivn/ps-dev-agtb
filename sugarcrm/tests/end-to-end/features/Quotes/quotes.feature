@@ -1084,9 +1084,39 @@ Feature: Quotes module E2E testing
       | DeleteSelected | false  |
 
 
-  @add_items_to_specifi_dgroup  @xxx
+    # TITLE:  Verify that Group Totals are updated properly after 'Group Selected' mass update action is triggered
+    #
+    # STEPS:
+    # 1. Generate quote record with one group and 2 QLIs linked to the account
+    # 2. Navigate to Quotes record view
+    # 3. Add a new group 'Group 1'
+    # 4. Add a new group 'Group 2'
+    # 5. Add a new comment to group 'Group 1'
+    # 6. Add a new comment to group 'Group 2'
+    # 7. Add a new QLI to group 'Group 1'
+    # 8. Add a new QLI to group 'Group 2'
+    # 9. Toggle two QLI items: one from 'Group 0' and one from 'Group 1'
+    # 10. Group Selected items to generate a new group and give a name 'Group 3' to a new group
+    # 11. Verify old group "Group 1" sub-total
+    # 12. Verify newly generated group 'Group 3' sub-total
+    # 13. Toggle two QLI items: one from 'Group 0' and one from 'Group 2'
+    # 14. Group Selected items to generate a new group and give a name 'Group 4'to a new group
+    # 15. Verify old group "Group 2" sub-total
+    # 16. Verify newly generated group 'Group 4' sub-total
+    # 17. Add Taxes and Shipping to the quote record and Save
+    # 18. Verify that all amounts in QLI Grand Total bar are calculated properly
+    # 19. Delete group 'Group 3' and confirm
+    # 20. Delete group 'Group 4' and confirm
+    # 21. Verify that all amounts in QLI Grand Total bar are the same after groups 'Group 3' and 'Group 4' are deleted
+    #     (Note: Items are moved to groupless section of QLI table when a group is deleted but Grand Totals stay the same)
+    # 22. Toggle all items in QLI table
+    # 23. Choose 'Delete Selected' mass update action in QLI table
+    # 24. Verify that vertical ellipsis button to expand mas-update menu is disabled after all items are deleted from QLI table
+    # 25. Verify numbers in Ground Total bar are updated after all items are deleted from QLI table
+
+  @add_items_to_specified_dgroup  @grpoup_selected_items @pr @stress-test
   Scenario: Quotes > Add QLI/Comment to Specific Group > Group Selected
-      # 1. Generate quote record with one group and 2 QLIs linked to the account
+    # 1. Generate quote record with one group and 2 QLIs linked to the account
     Given Quotes records exist:
       | *name   | date_quote_expected_closed | quote_stage |
       | Quote_3 | 2018-10-19T19:20:22+00:00  | Negotiation |
@@ -1095,8 +1125,8 @@ Feature: Quotes module E2E testing
       | Acc_1 | City 1               | Street address here    | 220051                     | WA                    | USA                     |
       # Create a product bundle
     Given ProductBundles records exist related via product_bundles link to *Quote_3:
-      | *name    |
-      | MyGroup0 |
+      | *name   |
+      | Group 0 |
       # Add QLIs
     Given Products records exist related via products link:
       | *name | discount_price | discount_amount | quantity |
@@ -1106,11 +1136,12 @@ Feature: Quotes module E2E testing
       | *name | list_order | status | value |
       | Tax_1 | 4          | Active | 10.00 |
     Given I open about view and login
-      # 3. Navigate to quote record view
+    # 2. Navigate to quote record view
     When I choose Quotes in modules menu
     When I select *Quote_3 in #QuotesList.ListView
     Then I should see #Quote_3Record view
 
+    # 3. Add a new group 'Group 1'
     When I choose createGroup on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.GroupRecord view
       | *        | name    |
@@ -1118,6 +1149,7 @@ Feature: Quotes module E2E testing
     When I click on save button on Group #MyGroup1GroupRecord record
     When I close alert
 
+    # 4. Add a new group 'Group 2'
     When I choose createGroup on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.GroupRecord view
       | *        | name    |
@@ -1125,6 +1157,7 @@ Feature: Quotes module E2E testing
     When I click on save button on Group #MyGroup2GroupRecord record
     When I close alert
 
+    # 5. Add a new comment to group 'Group 1'
     When I choose to addComment to #MyGroup1GroupRecord
     When I wait for 3 seconds
     When I provide input for #Quote_3Record.QliTable.CommentRecord view
@@ -1133,6 +1166,7 @@ Feature: Quotes module E2E testing
     When I click on save button on Comment #Quote_3Record.QliTable.CommentRecord record
     When I close alert
 
+    # 6. Add a new comment to group 'Group 2'
     When I choose to addComment to #MyGroup2GroupRecord
     When I wait for 3 seconds
     When I provide input for #Quote_3Record.QliTable.CommentRecord view
@@ -1141,6 +1175,7 @@ Feature: Quotes module E2E testing
     When I click on save button on Comment #Quote_3Record.QliTable.CommentRecord record
     When I close alert
 
+    # 7. Add a new QLI to group 'Group 1'
     When I choose to addLineItem to #MyGroup1GroupRecord
     When I provide input for #Quote_3Record.QliTable.QliRecord view
       | *     | quantity | product_template_name | discount_price | discount_amount |
@@ -1151,6 +1186,7 @@ Feature: Quotes module E2E testing
       | fieldName | value   |
       | new_sub   | $583.41 |
 
+    # 8. Add a new QLI to group 'Group 2'
     When I choose to addLineItem to #MyGroup2GroupRecord
     When I provide input for #Quote_3Record.QliTable.QliRecord view
       | *     | quantity | product_template_name | discount_price | discount_amount |
@@ -1161,9 +1197,11 @@ Feature: Quotes module E2E testing
       | fieldName | value   |
       | new_sub   | $196.00 |
 
+    # 9. Toggle two QLI items: one groupless and one from 'Group 1'
     When I toggle #QLI_1QLIRecord
     When I toggle #QLI_3QLIRecord
 
+    # 10. Group Selected items to generate a new group and give a name to a new group
     When I choose GroupSelected from #Quote_3Record.QliTable
     When I provide input for #Quote_3Record.QliTable.GroupRecord view
       | *        | name    |
@@ -1171,17 +1209,21 @@ Feature: Quotes module E2E testing
     When I click on save button on Group #MyGroup3GroupRecord record
     When I close alert
 
+    # 11. Verify old group "Group 1" sub-total
     Then I verify fields on #MyGroup1GroupRecord
       | fieldName | value |
       | new_sub   | $0.00 |
 
+    # 12. Verify newly generated 'Group 3' sub-total
     Then I verify fields on #MyGroup3GroupRecord
       | fieldName | value   |
       | new_sub   | $779.41 |
 
+    # 13. Toggle two QLI items: one from 'Group 0' and one from 'Group 2'
     When I toggle #QLI_2QLIRecord
     When I toggle #QLI_4QLIRecord
 
+    # 14. Group Selected items to generate a new group and give a name to a new group
     When I choose GroupSelected from #Quote_3Record.QliTable
     When I provide input for #Quote_3Record.QliTable.GroupRecord view
       | *        | name    |
@@ -1189,27 +1231,29 @@ Feature: Quotes module E2E testing
     When I click on save button on Group #MyGroup4GroupRecord record
     When I close alert
 
+    # 15. Verify old group "Group 2" sub-total
     Then I verify fields on #MyGroup2GroupRecord
       | fieldName | value |
       | new_sub   | $0.00 |
 
+    # 16. Verify newly generated group 'Group 4' sub-total
     Then I verify fields on #MyGroup4GroupRecord
       | fieldName | value   |
       | new_sub   | $784.00 |
 
+    # 17. Add Taxes and Shipping to the quote record and Save
     When I click Edit button on #Quote_3Record header
     When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
     When I provide input for #Quote_3Record.RecordView view
       | taxrate_name |
       | Tax_1        |
-
     When I provide input for #Quote_3Record.QliTable view
       | shipping |
-      | 280.25     |
-
+      | 280.25   |
     When I click Save button on #QuotesRecord header
     When I close alert
-      # 5. Verify that tax amount in QLI Grand Total bar is calculated properly
+
+    # 18. Verify that all amounts in QLI Grand Total bar are calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value     |
       | deal_tot  | 3.04%     |
@@ -1218,3 +1262,42 @@ Feature: Quotes module E2E testing
       | shipping  | $280.25   |
       | total     | $2,000.00 |
 
+    # 19. Delete group 'Group 3' and confirm
+    When I choose deleteGroup on #MyGroup3GroupRecord
+    When I Confirm confirmation alert
+
+    # 20. Delete group 'Group 4' and confirm
+    When I choose deleteGroup on #MyGroup4GroupRecord
+    When I Confirm confirmation alert
+
+    # 21. Verify that all amounts in QLI Grand Total bar are the same after groups are deleted
+    #  (Note: Items are moved to groupless section of QLI table when a group is deleted but Grand Totals stay the same)
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value     |
+      | deal_tot  | 3.04%     |
+      | new_sub   | $1,563.41 |
+      | tax       | $156.34   |
+      | shipping  | $280.25   |
+      | total     | $2,000.00 |
+
+    # 22. Toggle all items in QLI table
+    When I toggle all items in #Quote_3Record.QliTable
+
+    # 23. Choose 'Delete Selected' mass update action in QLI table
+    When I choose DeleteSelected from #Quote_3Record.QliTable
+    When I Confirm confirmation alert
+    When I close alert
+
+    # 24. Verify that vertical ellipsis button to expand mas-update menu is disabled after all items are deleted from QLI table
+    When I open QLI actions menu in #Quote_3Record.QliTable and check:
+      | menu_item      | active |
+      | massUpdateMenu | false  |
+
+    # 25. Verify numbers in Ground Total bar are updated after all items are deleted from QLI table
+    Then I verify fields on QLI total header on #Quote_3Record view
+      | fieldName | value   |
+      | deal_tot  | 0.00%   |
+      | new_sub   | $0.00   |
+      | tax       | $0.00   |
+      | shipping  | $280.25 |
+      | total     | $280.25 |
