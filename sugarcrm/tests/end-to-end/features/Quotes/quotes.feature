@@ -1159,7 +1159,6 @@ Feature: Quotes module E2E testing
 
     # 5. Add a new comment to group 'Group 1'
     When I choose to addComment to #MyGroup1GroupRecord
-    When I wait for 3 seconds
     When I provide input for #Quote_3Record.QliTable.CommentRecord view
       | *        | description |
       | Comment1 | Comment 1   |
@@ -1168,7 +1167,6 @@ Feature: Quotes module E2E testing
 
     # 6. Add a new comment to group 'Group 2'
     When I choose to addComment to #MyGroup2GroupRecord
-    When I wait for 3 seconds
     When I provide input for #Quote_3Record.QliTable.CommentRecord view
       | *        | description |
       | Comment2 | Comment 2   |
