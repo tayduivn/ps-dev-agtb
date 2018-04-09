@@ -1114,7 +1114,7 @@ Feature: Quotes module E2E testing
     # 24. Verify that vertical ellipsis button to expand mas-update menu is disabled after all items are deleted from QLI table
     # 25. Verify numbers in Ground Total bar are updated after all items are deleted from QLI table
 
-  @add_items_to_specified_dgroup  @grpoup_selected_items @pr @stress-test
+  @add_items_to_specified_dgroup  @grpoup_selected_items @pr
   Scenario: Quotes > Add QLI/Comment to Specific Group > Group Selected
     # 1. Generate quote record with one group and 2 QLIs linked to the account
     Given Quotes records exist:
