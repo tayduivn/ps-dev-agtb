@@ -526,12 +526,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 // report_def is defined as a global in _reportCriteriaWithResult
                 // but only in Reports module
                 //TODO: fix usage of global report_def
-                var enums = this.getEnums(report_def);
-                var groupDefs = this.getGrouping(report_def);
+                var enums = this.getEnums(report_def); // jscs:ignore
+                var groupDefs = this.getGrouping(report_def); // jscs:ignore
 
                 drawerContext = {
                     chartData: chartData,
-                    chartModule: report_def.module,
+                    chartModule: report_def.module, // jscs:ignore
                     chartState: chartState,
                     dashConfig: params,
                     dashModel: null,
@@ -542,7 +542,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     groupDefs: groupDefs,
                     layout: 'drillthrough-drawer',
                     module: 'Reports',
-                    reportData: report_def,
+                    reportData: report_def, // jscs:ignore
                     reportId: chartId,
                     skipFetch: true,
                     useSavedFilters: true
