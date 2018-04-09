@@ -73,7 +73,7 @@
                 var callbacks = app.data.getSyncCallbacks(method, model, options);
                 var defaultSuccessCallback = app.data.getSyncSuccessCallback(method, model, options);
                 callbacks.success = function(data, request) {
-                    self.applyModelDataOnRecords(auditedModel, data.records);
+                    self._applyModelDataOnRecords(auditedModel, data.records);
                     return defaultSuccessCallback(data, request);
                 };
                 app.api.call(method, url, options.attributes, callbacks);
@@ -84,8 +84,10 @@
 
     /**
      * Apply erased field information from the model to records.
+     *
+     * @private
      */
-    applyModelDataOnRecords: function(model, records) {
+    _applyModelDataOnRecords: function(model, records) {
         var erasedFields = model.get('_erased_fields');
         _.each(erasedFields, function(erasedField) {
             // Apply erased fields only for records that are marked

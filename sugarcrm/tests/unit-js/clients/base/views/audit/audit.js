@@ -79,7 +79,7 @@ describe('View.Views.Base.AuditView', function() {
         sinon.collection.restore();
     });
 
-    describe('applyModelDataOnRecords', function() {
+    describe('_applyModelDataOnRecords', function() {
         var records;
 
         beforeEach(function() {
@@ -108,7 +108,7 @@ describe('View.Views.Base.AuditView', function() {
         it('should apply the erased field list to records', function() {
             var model = app.data.createBean('Contacts');
             model.set('_erased_fields', ['field2', {field_name: 'email', id: 'erased-id'}]);
-            view.applyModelDataOnRecords(model, records);
+            view._applyModelDataOnRecords(model, records);
             expect(records[0]._erased_fields).toBeUndefined();
             expect(records[1]._erased_fields).toEqual(['before', 'after']);
             expect(records[2]._erased_fields).toEqual(['after']);
@@ -156,7 +156,7 @@ describe('View.Views.Base.AuditView', function() {
                 // FIXME PX-46: change view.collection to app.api
                 sinon.collection.stub(view.collection, 'buildURL').returns(url);
                 sinon.collection.stub(app.data, 'getSyncCallbacks').returns(dummySyncCallbacks);
-                var applyModelDataOnRecordsStub = sinon.collection.stub(view, 'applyModelDataOnRecords');
+                var applyModelDataOnRecordsStub = sinon.collection.stub(view, '_applyModelDataOnRecords');
                 var defaultSuccessCallbackStub = sinon.collection.stub();
                 sinon.collection.stub(app.data, 'getSyncSuccessCallback').returns(defaultSuccessCallbackStub);
 
