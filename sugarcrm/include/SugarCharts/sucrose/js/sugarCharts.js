@@ -45,6 +45,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         module: 'Reports',
         overflowHandler: false,
         reduceXTicks: false,
+        reportView: false,
         rotateTicks: true,
         saved_report_id: chartId,
         show_controls: false,
@@ -69,7 +70,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
     // controls if chart image is auto-saved
     var imageExportType = chartConfig.imageExportType;
     // determines if basic bar chart is displayed as discrete
-    var isReportView = chartConfig.ReportModule || false;
+    var isReportView = chartConfig.reportView || false;
 
     // locale config object based on user/system preferences
     var myLocale = SUGAR.charts.getLocale();
@@ -1188,7 +1189,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 switch (config.chartType) {
 
                     case 'barChart':
-                        if ((config.ReportModule && isDiscreteData) || config.barType === 'stacked') {
+                        if ((params.reportView && isDiscreteData) || config.barType === 'stacked') {
                             params.dataType = config.barType = 'grouped';
                         }
                         isGroupedBarType = params.dataType === 'grouped';
