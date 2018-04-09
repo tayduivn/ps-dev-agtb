@@ -37,7 +37,7 @@ class SugarOAuth2StorageOIDC extends SugarOAuth2Storage
             throw new SugarApiExceptionNeedLogin($e->getMessage());
         }
 
-        throw new SugarApiExceptionNeedLogin(translate('ERR_INVALID_PASSWORD', 'Users'));
+        throw new SugarApiExceptionNeedLogin($this->getTranslatedMessage('ERR_INVALID_PASSWORD', 'Users'));
     }
 
     /**
@@ -46,5 +46,18 @@ class SugarOAuth2StorageOIDC extends SugarOAuth2Storage
     protected function getAuthController()
     {
         return AuthenticationController::getInstance();
+    }
+
+    /**
+     * Translate message by its label for a specified module.
+     * Wrapper for Sugar's translate function.
+     *
+     * @param string $label
+     * @param string $module
+     * @return string
+     */
+    protected function getTranslatedMessage($label, $module)
+    {
+        return translate($label, $module);
     }
 }

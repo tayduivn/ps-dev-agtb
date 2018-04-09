@@ -40,7 +40,7 @@ class SugarOAuth2StorageOIDCTest extends TestCase
 
         $this->storageMock = $this->getMockBuilder(SugarOAuth2StorageOIDC::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAuthController'])
+            ->setMethods(['getAuthController', 'getTranslatedMessage'])
             ->getMock();
 
         $this->storageMock->method('getAuthController')->willReturn($this->authController);
@@ -73,8 +73,6 @@ class SugarOAuth2StorageOIDCTest extends TestCase
      */
     public function testCheckUserCredentialsFailedLogin($loginResult)
     {
-        $this->markTestSkipped('checkUserCredentials() -> translate() requires installed instance');
-
         $this->authController->method('login')
             ->with(
                 'user',
