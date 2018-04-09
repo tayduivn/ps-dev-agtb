@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @ci-excluded
+@crud_modules_manufacturers
 Feature: Manufacturers module verification
 
   Background:
@@ -33,7 +33,7 @@ Feature: Manufacturers module verification
       | status     | Active |
       | list_order | 4      |
 
-  @list-search @T_34385 @ci-excluded
+  @list-search @T_34385
   Scenario: Manufacturers > List View > Filter > Search main input
     Given Manufacturers records exist:
       | *name           | status   | list_order |
@@ -86,7 +86,7 @@ Feature: Manufacturers module verification
       | name       | Alex1 edited |
       | list_order | 5            |
 
-  @list-delete @T_34387 @ci-excluded
+  @list-delete @T_34387
   Scenario: Manufacturers > List View > Delete
     Given Manufacturers records exist:
       | *name | list_order | status |

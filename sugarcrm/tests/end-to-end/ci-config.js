@@ -22,16 +22,24 @@ const CUKES_STDERR_PATH = path.join(CI_RESULTS_FOLDER, 'cukes.stderr');
 
 let tasks = [];
 
+const isDaily = process.argv.find(param => param === '-daily');
+
+let attrs = [
+    '--sp', utils.getArgument('-u', '--url'),
+    '--cfg', `${CUKES_PATH}/config-ci.js`,
+];
+
+if (!isDaily) {
+    attrs = [...attrs, '-t', '@pr'];
+}
+
 tasks.push({
     name: 'runSugarScenarios',
     type: 'tests',
     features: CUKES_PATH + '/features',
     proceedNextTaskOnFailure: true,
     app: 'Sugar',
-    args: _.concat(process.argv, [
-        '--sp', utils.getArgument('-u', '--url'),
-        '--cfg', `${CUKES_PATH}/config-ci.js`,
-    ]),
+    args: _.concat(process.argv, attrs),
     extendsArgv: true
 });
 

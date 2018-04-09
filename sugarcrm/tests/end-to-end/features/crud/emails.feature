@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @emails-group 
+@crud_modules_email
 Feature: Emails module verification
 
   Background:

@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@quotes @ci-excluded
+@crud_modules_quotes
 Feature: Quotes module verification
 
   Background:
@@ -162,7 +162,7 @@ Feature: Quotes module verification
       | billing_account_name       | Acc_2      |
 
 
-  @create_cancel_save @T_34379 @ci-excluded
+  @create_cancel_save @T_34379
   Scenario: Quotes > Create > Cancel/Save
     Given Accounts records exist:
       | *name     | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
@@ -202,13 +202,6 @@ Feature: Quotes module verification
       | billing_address_postalcode  | 220051              |
       | billing_address_state       | WA                  |
       | billing_address_country     | USA                 |
-      | shipping_account_name       | myAccount           |
-      | shipping_address_city       | City 1              |
-      | shipping_address_street     | Street address here |
-      | shipping_address_postalcode | 220051              |
-      | shipping_address_state      | WA                  |
-      | shipping_address_country    | USA                 |
-
 
   @copy
   Scenario: Quotes > Record View > Edit > Save

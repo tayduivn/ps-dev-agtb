@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @ci-excluded
+@crud_modules_shippingProviders
 Feature: ShippingProviders module verification
 
   Background:
@@ -35,7 +35,7 @@ Feature: ShippingProviders module verification
       | status     | Active |
       | list_order | 4      |
 
-  @list-search @T_34388 @ci-excluded
+  @list-search @T_34388
   Scenario: Shippers > List View > Filter > Search main input
     Given Shippers records exist:
       | *name      | status   | list_order |

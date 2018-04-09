@@ -41,7 +41,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     # 22. Verify that all 4 RLIs have link to generated quote in the list view
 
 
-  @generate_quote_from_multiple_RLIs
+  @generate_quote_from_multiple_RLIs @pr
   Scenario: Opportunity Record View > RLI Subpanel > Generate Quote From Multiple RLI Records
     # 1. Generate opportunity record linked to the account and all required records
     Given Opportunities records exist:

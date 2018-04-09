@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @ci-excluded
+@crud_modules_productTemplates
 Feature: ProductTemplates module verification
 
   Background:

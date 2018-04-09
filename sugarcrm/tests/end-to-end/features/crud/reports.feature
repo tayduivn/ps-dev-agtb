@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @reports-group @ci-excluded
+@crud_modules_reports
 Feature: Reports module verification
 
   Background:
     Given I use default account
     Given I launch App with config: "skipTutorial"
 
-  @list-method @ci-excluded
+  @list-method
   Scenario: Reports > List View
     Given Reports records exist:
       | *name     | module    |
@@ -25,8 +25,8 @@ Feature: Reports module verification
     Then I verify fields for *Report_A in #ReportsList.ListView
       | fieldName    | value    |
       | name         | Report_A |
-    When I click Create button on #ReportsList header
-    Then I should be redirected to "bwc/index.php?module=Reports&report_module=&action=index&page=report&Create_Custom_Report=Create+Custom+Report&bwcRedirect=1" route
+#    When I click Create button on #ReportsList header
+#    Then I should be redirected to "bwc/index.php?module=Reports&report_module=&action=index&page=report&Create_Custom_Report=Create+Custom+Report&bwcRedirect=1" route
 
   @list-preview @list-preview-description
   Scenario: Reports > List View > Preview > Check fields

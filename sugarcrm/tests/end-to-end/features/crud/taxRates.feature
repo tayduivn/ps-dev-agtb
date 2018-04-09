@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @ci-excluded
+@crud_modules_taxRates
 Feature: TaxRates module verification
 
   Background:
@@ -38,7 +38,7 @@ Feature: TaxRates module verification
       | value      | 10.51  |
 
 
-  @list-search @T_34391 @ci-excluded
+  @list-search @T_34391
   Scenario: Tax Rates > List View > Filter > Search main input
     Given TaxRates records exist:
       | *name      | status   | list_order | value |

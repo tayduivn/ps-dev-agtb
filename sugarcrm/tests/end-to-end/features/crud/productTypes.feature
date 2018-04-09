@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @ci-excluded
+@crud_modules_productTypes
 Feature: productTypes module verification
 
   Background:
@@ -155,7 +155,7 @@ Feature: productTypes module verification
       | description | Great Type |
       | list_order  | 5          |
 
-  @create @T_34403 @ci-excluded
+  @create @T_34403
   Scenario: Product Type > Create record
     Given I open about view and login
     When I go to "ProductTypes" url

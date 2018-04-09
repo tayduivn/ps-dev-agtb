@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@copy_quotes
+@copy_quotes @pr
 Feature: Copy Quote E2E testing
 
   Background:
@@ -327,5 +327,3 @@ Feature: Copy Quote E2E testing
       | tax       | $98.00    |
       | shipping  | $200.00   |
       | total     | $1,474.00 |
-
-

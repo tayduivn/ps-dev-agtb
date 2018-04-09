@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @ci-excluded
+@crud_modules_contractTypes
 Feature: Contract Types module verification
 
   Background:
@@ -32,7 +32,7 @@ Feature: Contract Types module verification
       | name       | Alex1 |
       | list_order | 4     |
 
-  @list-search @T_34394 @ci-excluded
+  @list-search @T_34394
   Scenario: Contract Types > List View > Filter > Search main input
     Given ContractTypes records exist:
       | *name           |  list_order |

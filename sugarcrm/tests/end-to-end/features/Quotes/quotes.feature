@@ -25,7 +25,7 @@ Feature: Quotes module E2E testing
     # 6. Select second Tax Rate
     # 7. Verify that tax amount in QLI Grand Total bar is calculated properly
 
-  @quote_calculate_taxRate @ci-excluded
+  @quote_calculate_taxRate
   Scenario: Quotes > Verify that Tax amount is calculated correctly when Tax is applied to a Quote record
       # 1. Generate quote record with one group and 2 QLIs linked to the account
     Given Quotes records exist:
@@ -102,7 +102,7 @@ Feature: Quotes module E2E testing
     # 9. Apply Tax
     # 10. Verify that tax amount in QLI Grand Total bar is calculated properly
 
-  @quote @add_new_QLI_from_Not_Taxable_Product @ci-excluded
+  @quote @add_new_QLI_from_Not_Taxable_Product
   Scenario: Quotes > Verify that Tax amount is calculated correctly if one of the QLIs is non-Taxable
     # 1. Generate quote record with no Groups and no QLIs
     Given Quotes records exist:
@@ -191,7 +191,7 @@ Feature: Quotes module E2E testing
     # 11. Verify that added QLI info is correct
     # 12. Verify that numbers in QLI Grand Total bar are updated properly
 
-  @quote @change_quote_currency @ci-excluded
+  @quote @change_quote_currency
   Scenario: Quotes > Verify that total amounts are recalculated correctly when currency of the quote is changed
     # 1. Generate quote record with one group and 2 QLIs linked to the account
     Given Quotes records exist:
@@ -300,7 +300,7 @@ Feature: Quotes module E2E testing
     # 1. Generate quote record linked to the account
     # 2. Navigate to quote record view
 
-  @quote @edit_delete_existing_QLI_record @edit_delete_existing_Comment_record @ci-excludedg @xxx
+  @quote @edit_delete_existing_QLI_record @edit_delete_existing_Comment_record
   Scenario: Quotes > Verify that user can edit/delete existing QLI and Comment record
     # 1. Generate quote record
     Given Quotes records exist:
@@ -458,7 +458,7 @@ Feature: Quotes module E2E testing
     # 7. Delete first group and cancel. Verify
     # 8. Delete first group and confirm. Verify
 
-  @quote @edit_delete_existing_group @ci-excluded
+  @quote @edit_delete_existing_group
   Scenario: Quotes > Record View > QLI Table > Add/Edit/Delete Group > Cancel/Save
     # 1. Generate quote record linked to the account
     Given Quotes records exist:
@@ -532,7 +532,7 @@ Feature: Quotes module E2E testing
     # 5. Return back to quotes record view and verify the QLI record is updated
     # 6. Verify all calculated fields in QLI Grand Total bar are recalculated properly
 
-  @quote @click_on_QLI_link @ci-excluded
+  @quote @click_on_QLI_link
   Scenario: Quotes > Verify that user can edit existing QLI in QLI record view
     # 1. Generate quote record with one group and 2 QLIs linked to the account
     Given Quotes records exist:
@@ -606,7 +606,7 @@ Feature: Quotes module E2E testing
     # 7. Edit Cost field in the list view and save
     # 8. Verify that Cost field is updated in the list view
 
-  @quote @SFA-5165 @ZT-22-partial @ci-excluded
+  @quote @SFA-5165 @ZT-22-partial
   Scenario: Quotes > Verify that the "Cost" and "List Price" fields editable in QLI record view/list view
     # 1. Generate quote record with one QLI
     Given Quotes records exist:
@@ -670,7 +670,7 @@ Feature: Quotes module E2E testing
     # 6. Commit changes to the first comment record
     # 7. Verify that comment is updated and changes are not lost
 
-  @quote @SFA-5222 @ZT-241 @ci-excluded
+  @quote @SFA-5222 @ZT-241
   Scenario: Quotes > Verify that comment changes are NOT lost when adding new comment during editing
     # 1. Generate quote record
     Given Quotes records exist:
@@ -726,7 +726,7 @@ Feature: Quotes module E2E testing
     # 8. Verify that amounts and currency symbols in Summation bar are updated to EUR
     # 9. Verify that amounts and currency symbols in QLI Table footer are updated to EUR
 
-  @SFA-5245 @ZT-284 @T_33439 @ci-excluded
+  @SFA-5245 @ZT-284 @T_33439
   Scenario: Quotes record view -> Change record curency > Cancel/Save
     # 1. Generate quote record with one group and 2 QLIs linked to the account
     Given Quotes records exist:
@@ -818,7 +818,7 @@ Feature: Quotes module E2E testing
     # 5. Edit shipping field and save
     # 6. Verify that shipping field is updated
 
-  @quote @edit_shippping @ci-excluded
+  @quote @edit_shippping
   Scenario: Quotes > Record View > Change shipping field > Cancel/Save
     # 1. Generate quote record linked to the account
     Given Quotes records exist:

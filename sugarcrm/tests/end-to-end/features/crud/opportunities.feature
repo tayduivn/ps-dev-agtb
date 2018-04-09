@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @Opportunities
+@crud_modules_accounts
 Feature: Opportunities
 
   Background:
@@ -42,7 +42,7 @@ Feature: Opportunities
       | sales_status | New   |
 
 
-  @create_opportunity
+  @create_opportunity @pr
   Scenario: Opportunities >  Create opportunity with RLIs
     Given Accounts records exist:
       | name  |

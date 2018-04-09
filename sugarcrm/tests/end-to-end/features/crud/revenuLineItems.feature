@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @rli @ci-excluded
+@crud_modules_revenueLineItems
 Feature: Revenue Line Items module verification
 
   Background:
@@ -72,8 +72,8 @@ Feature: Revenue Line Items module verification
   @list-edit @T_34547
   Scenario: Revenue Line Items > List View > Inline Edit
     Given RevenueLineItems records exist:
-      | *name | date_closed               | likely_case | best_case | sales_stage | quantity   |
-      | RLI_1 | 2020-10-19T19:20:22+00:00 | <likely>    | 300       | Prospecting | <quantity> |
+      | *name | date_closed               | likely_case | best_case | sales_stage | quantity |
+      | RLI_1 | 2020-10-19T19:20:22+00:00 | 300         | 300       | Prospecting | 1.5      |
     Given Opportunities records exist related via opportunities link:
       | name  |
       | Opp_1 |

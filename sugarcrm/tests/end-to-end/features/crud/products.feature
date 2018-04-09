@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @ci-excluded
+@crud_modules_products
 Feature: Products module verification
 
   Background:
@@ -274,7 +274,7 @@ Feature: Products module verification
       | cost_price     | €500.00$1,000.00 |
       | list_price     | €500.00$1,000.00 |
 
-  @create @ci-excluded
+  @create @discount_type_field
   Scenario: Products > Change discount type
     Given  Contacts records exist:
       | first_name | last_name |
@@ -286,10 +286,9 @@ Feature: Products module verification
       | *        | name    |
       | RecordID | Alex123 |
     When I click show more button on #ProductsDrawer view
-    # Click discount_select field causes error in Sugar. See SFA-4790
     When I provide input for #ProductsDrawer.RecordView view
-      | *        | cost_price | discount_select |
-      | RecordID | 5          | $ US Dollar     |
+      | *        | cost_price | discount_price | discount_amount | discount_select |
+      | RecordID | 5          | 200            | 10.00           | $ US Dollar     |
     When I click show less button on #ProductsDrawer view
     When I click Save button on #ProductsDrawer header
     When I close alert
@@ -298,6 +297,24 @@ Feature: Products module verification
     Then I should see #RecordIDPreview view
     When I click show more button on #RecordIDPreview view
     Then I verify fields on #RecordIDPreview.PreviewView
-      | fieldName | value   |
-      | name      | Alex123 |
+      | fieldName       | value   |
+      | name            | Alex123 |
+      | discount_price  | $200.00 |
+      | discount_amount | $10.00  |
+    When I select *RecordID in #ProductsList.ListView
+    Then I should see #RecordIDRecord view
+    When I click Edit button on #RecordIDRecord header
+    When I provide input for #RecordIDRecord.RecordView view
+      | discount_select |
+      | % Percent       |
+    When I click Save button on #RecordIDRecord header
+    When I close alert
+    Then I verify fields on #RecordIDRecord.RecordView
+      | fieldName       | value  |
+      | discount_amount | 10.00% |
+
+
+
+
+
 

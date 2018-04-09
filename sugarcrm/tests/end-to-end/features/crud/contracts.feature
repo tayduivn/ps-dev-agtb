@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud @modules @ci-excluded
+@crud_modules_contracts
 Feature: Contracts module verification
 
   Background:
@@ -35,7 +35,7 @@ Feature: Contracts module verification
       | name      | Contracts_1 |
       | status    | In Progress |
 
-  @list-search @T_34369 @ci-excluded
+  @list-search @T_34369
   Scenario: Contracts > List View > Filter > Search main input
     Given Contracts records exist:
       | *name       | status     | start_date                | end_date                  |
@@ -204,8 +204,8 @@ Feature: Contracts module verification
   @edit_cancel @T_34334
   Scenario: Contracts > Record View > Edit > Cancel
     Given Contracts records exist:
-      | *name      | status     | start_date                | end_date                  |
-      | Contract_3 | inprogress | 2017-09-19T19:20:22+00:00 | 2017-10-19T19:20:22+00:00 |
+      | *name      | status     | start_date                | end_date                  | reference_code |
+      | Contract_3 | inprogress | 2017-09-19T19:20:22+00:00 | 2017-10-19T19:20:22+00:00 | #123_Test      |
     Given Accounts records exist related via accounts link:
       | name  |
       | Acc_1 |
@@ -227,9 +227,9 @@ Feature: Contracts module verification
       | fieldName | value      |
       | name      | Contract_3 |
     Then I verify fields on #Contract_3Record.RecordView
-      | fieldName      | value |
-      | description    |       |
-      | reference_code |       |
+      | fieldName      | value     |
+      | description    |           |
+      | reference_code | #123_Test |
 
   @edit_save @T_34334
   Scenario: Contracts > Record View > Edit > Save
@@ -330,14 +330,14 @@ Feature: Contracts module verification
     Then I should see #MyContractRecord view
     When I click show more button on #MyContractRecord view
     When I provide input for #MyContractRecord.RecordView view
-      | tag |
-      | Test Tag,Tag2,Test Tag3       |
+      | tag                     |
+      | Test Tag,Tag2,Test Tag3 |
     When I click Save button on #MyContractRecord header
     Then I verify fields on #MyContractRecord.RecordView
-          | tag            | Test Tag,Tag2,Test Tag3    |
+      | tag | Test Tag,Tag2,Test Tag3 |
     When I click show less button on #MyContractRecord view
     When I go to "Contracts" url
     When I click on preview button on *MyContract in #ContractsList.ListView
     Then I should see #MyContractPreview view
     Then I verify fields on #MyContractPreview.PreviewView
-      | tag            | Test Tag,Tag2,Test Tag3                 |
+      | tag | Test Tag,Tag2,Test Tag3 |

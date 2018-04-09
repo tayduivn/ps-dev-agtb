@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @data_privacy
+@data_privacy
 Feature: Data Privacy module verification
 
   Background:
@@ -53,7 +53,7 @@ Feature: Data Privacy module verification
       | status      | Open                                              |
 
 
-  @DataPrivacy_EraseAndComplete
+  @DataPrivacy_EraseAndComplete @pr
   Scenario: Data Privacy > Erase And Complete
     Given DataPrivacy records exist:
       | *name | type                         | priority | source     | date_due                  |

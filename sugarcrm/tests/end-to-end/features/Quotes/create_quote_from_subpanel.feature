@@ -142,7 +142,7 @@ Feature: Subpanel Support
       | date_quote_expected_closed | 12/31/2021 |
 
 
-  @create_quote_record_from_OpportunityRecordView_Quotes_Subpanel
+  @create_quote_record_from_OpportunityRecordView_Quotes_Subpanel @pr
   Scenario: Opportunity Record View > Quotes Subpanel > Create/Edit record
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -206,6 +206,3 @@ Feature: Subpanel Support
       | name                       | Alex3      |
       | total_usdollar             | $291.00    |
       | date_quote_expected_closed | 12/31/2021 |
-
-
-    #When I link_existing record from notes subpanel on #Account_ARecord view

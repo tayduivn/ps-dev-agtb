@@ -14,7 +14,7 @@ Feature: RLI module verification
     Given I use default account
     Given I launch App
 
-  @T_17776 @T_18187
+  @T_17776 @T_18187 @pr
   Scenario: RLI > Verify that corresponding fields are auto populated when select product in the RLI edit mode
     # Create Product
     Given ProductTemplates records exist:
@@ -309,6 +309,5 @@ Feature: RLI module verification
 
     Examples:
       | myQuoantity | myUnitPrice | myDiscount | totalAmountFormatted | expectedValue | expectedValueFormatted |
-      | 5           | 5           | 3.50       | $21.50               | 25.00         | $25.00                 |
       | 10          | 25          | 200        | $50.00               | 250.00        | $250.00                |
       | 1.5         | 5.50        | 3.25       | $5.00                | 8.25          | $8.25                  |

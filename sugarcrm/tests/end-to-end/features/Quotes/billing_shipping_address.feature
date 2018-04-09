@@ -55,7 +55,7 @@ Feature: Billing/Shipping Account verification
       | shipping_account_name      | myAccount           |
 
 
-  @create @T_34381 @ci-excluded
+  @create @T_34381
   Scenario: Quotes > Create -> Verify billing and shipping addresses are correct
     Given Accounts records exist:
       | *name           | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
@@ -66,15 +66,15 @@ Feature: Billing/Shipping Account verification
     Given I open about view and login
     When I choose Quotes in modules menu
     When I click Create button on #QuotesList header
-    When I toggle Billing_and_Shipping panel on #QuotesDrawer.RecordView view
-    When I provide input for #QuotesDrawer.HeaderView view
+    When I toggle Billing_and_Shipping panel on #QuotesRecord.RecordView view
+    When I provide input for #QuotesRecord.HeaderView view
       | *        | name  |
       | RecordID | Alex2 |
-    When I provide input for #QuotesDrawer.RecordView view
-      | *        | copy  | date_quote_expected_closed | billing_account_name |
-      | RecordID | false | 12/12/2017                 | Billing Account      |
+    When I provide input for #QuotesRecord.RecordView view
+      | *        | date_quote_expected_closed | billing_account_name |
+      | RecordID | 12/12/2017                 | Billing Account      |
     When I Confirm confirmation alert
-    When I provide input for #QuotesDrawer.RecordView view
+    When I provide input for #QuotesRecord.RecordView view
       | *        | shipping_account_name |
       | RecordID | Shipping Account      |
     When I Confirm confirmation alert
@@ -92,7 +92,7 @@ Feature: Billing/Shipping Account verification
       | shipping_address_postalcode | 95014               |
       | shipping_address_state      | CA                  |
       | shipping_address_country    | USA                 |
-    When I click Save button on #QuotesDrawer header
+    When I click Save button on #QuotesRecord header
     When I toggle Billing_and_Shipping panel on #RecordIDRecord.RecordView view
     Then I verify fields on #RecordIDRecord.RecordView
       | fieldName                   | value               |
