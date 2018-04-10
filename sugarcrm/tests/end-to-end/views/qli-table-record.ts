@@ -27,8 +27,6 @@ export default class QliTableRecord extends BaseView {
             menu: {
                 editLineItem: '[name=edit_row_button]',
                 deleteLineItem: '[name=delete_row_button]',
-
-                // Edit/Delete Group
                 editGroup: '[name=edit_bundle_button]',
                 deleteGroup: '[name=delete_bundle_button]',
 

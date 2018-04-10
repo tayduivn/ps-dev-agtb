@@ -32,7 +32,7 @@ export class Edit extends BaseField {
             }
         });
 
-        this.itemSelector = '';
+        this.itemSelector = '.rowaction=';
 
     }
 

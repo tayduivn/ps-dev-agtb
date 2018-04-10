@@ -294,13 +294,13 @@ Feature: Quotes module E2E testing
 
 
 
-    # TITLE:  Verify that calculations are updated properly after user edits and deletes existing QLI/Comment/Group record
+    # TITLE:  Verify that calculations are updated properly after user edits and deletes existing QLI/Comment record
     #
     # STEPS:
     # 1. Generate quote record linked to the account
     # 2. Navigate to quote record view
 
-  @quote @edit_delete_existing_QLI_record @edit_delete_existing_Comment_record @edit_delete_existing_Group_record @ci-excluded
+  @quote @edit_delete_existing_QLI_record @edit_delete_existing_Comment_record @ci-excludedg
   Scenario: Quotes > Verify that user can edit/delete existing QLI and Comment record
     # 1. Generate quote record
     Given Quotes records exist:
@@ -315,7 +315,7 @@ Feature: Quotes module E2E testing
     When I select *Quote_3 in #QuotesList.ListView
     Then I should see #Quote_3Record view
 
-    # Part 1:  Verify that existing comment record can be edited and deleted
+    # Part 1:  Verify that existing QLI record can be edited and deleted
 
     # Steps:
     # 1. Add new QLI records
@@ -333,37 +333,37 @@ Feature: Quotes module E2E testing
     # 1. Add new QLI records
     When I choose createLineItem on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.QliRecord view
-      | *     | quantity | product_template_name | discount_price | discount_amount |
-      | Test1 | 2.00     | New QLI               | 100            | 2.00            |
+      | *     | quantity | product_template_name | discount_price | discount_amount | discount_select |
+      | Test1 | 2.00     | New QLI               | 100            | 2.00            |  $ US Dollar    |
     When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
     When I close alert
     # 2. Verify all fields in QLI Grand Total bar are calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $196.00 |
+      | deal_tot  | 1.00%   |
+      | new_sub   | $198.00 |
       | tax       | $0.00   |
       | shipping  | $0.00   |
-      | total     | $196.00 |
+      | total     | $198.00 |
     # 3. Edit existing QLI and cancel
     When I choose editLineItem on #Test1QLIRecord
     When I provide input for #Test1QLIRecord view
-      | quantity | discount_price | discount_amount | product_template_name |
-      | 4        | 150.00         | 4.00            | New Name              |
+      | quantity | discount_price | discount_amount | discount_select | product_template_name |
+      | 4        | 150.00         | 4.00            | $ US Dollar     | New Name              |
     When I click on cancel button on QLI #Test1QLIRecord record
     # 4. Verify that no values are changed after QLI editing is canceled
     Then I verify fields on QLI total header on #Quote_3Record view
       | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $196.00 |
+      | deal_tot  | 1.00%   |
+      | new_sub   | $198.00 |
       | tax       | $0.00   |
       | shipping  | $0.00   |
-      | total     | $196.00 |
+      | total     | $198.00 |
     # 5. Edit existing QLI and save
     When I choose editLineItem on #Test1QLIRecord
     When I provide input for #Test1QLIRecord view
-      | quantity | discount_price | discount_amount | product_template_name |
-      | 4        | 150.00         | 4.00            | New QLI EDited        |
+      | quantity | discount_price | discount_amount | product_template_name | discount_select |
+      | 4        | 150.00         | 4.00            | New QLI EDited        | % Percent       |
     When I click on save button on QLI #Test1QLIRecord record
     # 6. Verify that new values are saved and QLI Total is updated
     Then I verify fields on #Test1QLIRecord
@@ -445,64 +445,6 @@ Feature: Quotes module E2E testing
     When I choose deleteLineItem on #Comment1CommentRecord
     When I Confirm confirmation alert
     When I close alert
-
-    # Part 3:  Verify that user can edit/delete existing group
-    #
-    # STEPS:
-    # 1. Add first group and verify that group is added successfully
-    # 2. Add second group and verify that group is added successfully
-    # 3. Edit second group and cancel. Verify.
-    # 4. Edit second group and save. Verify
-    # 5. Delete first group and cancel. Verify
-    # 6. Delete first group and confirm. Verify
-
-    # 1. Add first group and verify that group is added successfully
-    When I choose createGroup on QLI section on #Quote_3Record view
-    When I provide input for #Quote_3Record.QliTable.GroupRecord view
-      | *        | name          |
-      | MyGroup1 | Alex Nisevich |
-    When I click on save button on Group #MyGroup1GroupRecord record
-    When I close alert
-    Then I verify fields on #MyGroup1GroupRecord
-      | fieldName | value         |
-      | name      | Alex Nisevich |
-    # 2. Add second group and verify that group is added successfully
-    When I choose createGroup on QLI section on #Quote_3Record view
-    When I provide input for #Quote_3Record.QliTable.GroupRecord view
-      | *        | name            |
-      | MyGroup2 | Ruslan Golovach |
-    When I click on save button on Group #MyGroup2GroupRecord record
-    When I close alert
-    Then I verify fields on #MyGroup2GroupRecord
-      | fieldName | value           |
-      | name      | Ruslan Golovach |
-    # 3. Edit second group and cancel. Verify.
-    When I choose editGroup on #MyGroup2GroupRecord
-    When I provide input for #Quote_3Record.QliTable.GroupRecord view
-      | *        | name      |
-      | MyGroup2 | New Group |
-    When I click on cancel button on Group #MyGroup2GroupRecord record
-    Then I verify fields on #MyGroup2GroupRecord
-      | fieldName | value           |
-      | name      | Ruslan Golovach |
-    # 4. Edit second group and save. Verify
-    When I choose editGroup on #MyGroup2GroupRecord
-    When I provide input for #Quote_3Record.QliTable.GroupRecord view
-      | *        | name      |
-      | MyGroup2 | New Group |
-    When I click on save button on Group #MyGroup2GroupRecord record
-    Then I verify fields on #MyGroup2GroupRecord
-      | fieldName | value     |
-      | name      | New Group |
-    # 5. Delete first group and cancel. Verify
-    When I choose deleteGroup on #MyGroup1GroupRecord
-    When I Cancel confirmation alert
-    Then I verify fields on #MyGroup2GroupRecord
-      | fieldName | value     |
-      | name      | New Group |
-    # 6. Delete first group and confirm. Verify
-    When I choose deleteGroup on #MyGroup1GroupRecord
-    When I Confirm confirmation alert
 
     # TITLE:  Verify that user can edit/delete existing group
     #
