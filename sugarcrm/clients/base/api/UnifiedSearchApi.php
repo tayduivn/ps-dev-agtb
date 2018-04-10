@@ -340,6 +340,7 @@ class UnifiedSearchApi extends SugarListApi {
             }
 
             $moduleArgs['fields'] = implode(',', $moduleFields);
+            $moduleArgs['erased_fields'] = $args['erased_fields']?? null;
             $formattedRecord = $this->formatBean($api, $moduleArgs, $bean);
 
             // add additional parameters expected to be returned
@@ -465,7 +466,7 @@ class UnifiedSearchApi extends SugarListApi {
             $searchOptions['custom_where'] = $options['custom_where'];
         }
 
-
+        $searchOptions['erased_fields'] = $args['erased_fields']?? null;
         $results = $searchEngine->search($options['query'],$offset, $limit, $searchOptions);
 
         $returnedRecords = array();
@@ -486,6 +487,7 @@ class UnifiedSearchApi extends SugarListApi {
                 $moduleFields = array();
             }
             $moduleArgs['fields'] = implode(',',$moduleFields);
+            $moduleArgs['erased_fields'] = $args['erased_fields']?? null;
             foreach ( $moduleResults['data'] as $record ) {
                 $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
                 $formattedRecord['_module'] = $module;

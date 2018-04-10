@@ -54,6 +54,10 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
     {
         if (empty($this->bean)) {
             $this->bean = BeanFactory::getBean($this->getModule(), $this->getId());
+            $source = $this->elasticaResult->getSource();
+            if (isset($source['erased_fields'])) {
+                $this->bean->erased_fields = json_decode($source['erased_fields'], true);
+            }
             if (empty($this->bean)) {
                 $msg = sprintf(
                     "Unable to load bean '%s' for module '%s' for FTS result set",
