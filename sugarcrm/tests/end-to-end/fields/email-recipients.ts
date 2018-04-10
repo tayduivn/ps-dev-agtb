@@ -10,61 +10,54 @@
  */
 
 import BaseField from './text-field';
-import {seedbed} from '@sugarcrm/seedbed';
+import * as _ from 'lodash';
 
 /**
- * @class RelateField
+ * @class EmailRecipientsField
  * @extends BaseField
  */
-
-export default BaseField;
-
-export class Detail extends BaseField {
-
+export default class EmailRecipientsField extends BaseField {
     constructor(options) {
         super(options);
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div'
+                selector: 'div',
+                item: {
+                    $: '.select2-search-choice div span'
+                }
             }
         });
     }
 
-    public async getText(selector: string): Promise<string> {
-
-        let value: string | string[] = await this.driver.getText(selector);
-
-        return value.toString().trim();
-
-    }
-}
-
-export class List extends BaseField {
-
-    constructor(options) {
-        super(options);
-
-        this.selectors = this.mergeSelectors({
-            field: {
-                selector: 'div'
-            }
-        });
-
+    public async setValue(val: any): Promise<void> {
+        await this.driver.click(this.$('field'));
+        await this.driver.setValue(this.$('field.input'), val);
+        await this.driver.waitForApp();
     }
 
     public async getText(selector: string): Promise<string> {
+        // First check if any recipients exist by looking for pills.
+        const recipientsSelector = this.$('field.item');
+        const hasRecipients = await this.driver.isExisting(recipientsSelector);
 
-        let value: string | string[] = await this.driver.getText(selector);
+        let value: string | string[] = [];
 
-        return value.toString().trim();
+        // Only get the names of the recipients if there are any.
+        if (hasRecipients) {
+            value = await this.driver.getText(recipientsSelector);
+        }
 
+        // The return value could be a string, so let's protect against it.
+        if (!_.isArray(value)) {
+            value = [value];
+        }
+
+        return value.join(',');
     }
-
 }
 
-export class Edit extends BaseField {
-
+export class Edit extends EmailRecipientsField {
     private itemSelector: string;
     private inputSelector: string;
 
@@ -80,15 +73,6 @@ export class Edit extends BaseField {
 
         this.itemSelector = '.select2-result-label=';
         this.inputSelector = '.select2-input.select2-focused';
-
-    }
-
-    public async getText(selector: string): Promise<string> {
-
-        let value: string | string[] = await this.driver.getText(selector);
-
-        return value.toString().trim();
-
     }
 
     public async setValue(val: any): Promise<void> {
@@ -101,7 +85,8 @@ export class Edit extends BaseField {
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${val}`);
     }
-
 }
 
-export const Preview = Detail;
+export const Detail = EmailRecipientsField;
+export const List = EmailRecipientsField;
+export const Preview = EmailRecipientsField;

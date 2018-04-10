@@ -30,6 +30,7 @@ import * as TeamsetField from '../fields/teamset-field';
 import * as ParentField from '../fields/parent-field';
 import * as BadgeField from '../fields/badge-field';
 import * as QuoteGroupTitleField from '../fields/quote-group-title-field';
+import * as EmailRecipientsField from '../fields/email-recipients';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -60,6 +61,7 @@ export const FIELD_TYPES__MAP = {
     teamset: TeamsetField,
     parent: ParentField,
     badge: BadgeField,
-    'quote-group-title': QuoteGroupTitleField
+    'quote-group-title': QuoteGroupTitleField,
+    'email-recipients': EmailRecipientsField,
 };
 

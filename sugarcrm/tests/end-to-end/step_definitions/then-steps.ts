@@ -10,7 +10,7 @@
  */
 
 import BaseView from '../views/base-view';
-import {Then} from '@sugarcrm/seedbed';
+import {Then, seedbed} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
 
@@ -37,11 +37,53 @@ Then(/^I should (not )?see (#\S+) view$/,
  */
 Then(/^I verify fields on (#[a-zA-Z](?:\w|\S)*)$/,
     async function (view: BaseView, data: TableDefinition) {
+        const attrRefRegex = RegExp(/\{\*([a-zA-Z](?:\w|\S)*)\.((?:\w|\s)*)}/g);
 
-        let fildsData: any = data.hashes();
+        /**
+         * Replaces references to dynamic values with their value from the
+         * cached API response for the specified record.
+         *
+         * @example "{*Case_1.case_number}" is replaced with "237".
+         * | fieldName | value                                |
+         * | name      | [CASE:{*Case_1.case_number}] My Case |
+         *
+         * @param {string} value
+         * @return {{}}
+         */
+        function getReplacementsForAttributeReferences(value: string) {
+            let replacements = {};
+            let match;
+            let recordIdOfReference;
+            let apiResponseForRecord;
 
-        let errors = await view.checkFields(fildsData);
+            // Find the substitutions for every match captured.
+            while ((match = attrRefRegex.exec(value)) !== null) {
+                recordIdOfReference = seedbed.cachedRecords.get(match[1]).id;
+                apiResponseForRecord = seedbed.api.created.find((rec) => {
+                    return recordIdOfReference === rec.id;
+                });
 
+                if (apiResponseForRecord) {
+                    replacements[match[0]] = apiResponseForRecord[match[2]];
+                }
+            }
+
+            return replacements;
+        }
+
+        // Substitute the references in the values for all fields where one or
+        // more references are found.
+        const fieldsData: any = _.map(data.hashes() || [], (field) => {
+            const replacements = getReplacementsForAttributeReferences(field.value);
+
+            _.each(replacements, (value: string, key: string) => {
+                field.value = field.value.replace(RegExp(_.escapeRegExp(key), 'g'), value);
+            });
+
+            return field;
+        });
+
+        let errors = await view.checkFields(fieldsData);
         let message = '';
         _.each(errors, (item) => {
             message += item;

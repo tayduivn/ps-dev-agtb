@@ -121,7 +121,28 @@ Feature: Emails module verification
     Then I verify fields on #EmailsRecord.RecordView
       | fieldName     | value    |
       | name          | Re: Test |
-      | to_collection | ,        |
+      | to_collection |          |
+
+  @email-cases-compose
+  Scenario: Cases > List View > Open Record View > Create Email from Emails Subpanel
+    Given Cases records exist:
+      | *      | name    |
+      | Case_1 | My Case |
+    Given Contacts records exist related via contacts link:
+      | *         | first_name | last_name |
+      | Contact_1 | Adam       | Taylor    |
+      | Contact_2 | Richie     | Gomes     |
+    Given I open about view and login
+    When I choose Cases in modules menu
+    Then I should see *Case_1 in #CasesList.ListView
+    When I select *Case_1 in #CasesList.ListView
+    Then I should see #Case_1Record.RecordView view
+    When I open the archived_emails subpanel on #Case_1Record view
+    When I create_new record from archived_emails subpanel on #Case_1Record view
+    Then I verify fields on #EmailsRecord.RecordView
+      | fieldName     | value                                |
+      | name          | [CASE:{*Case_1.case_number}] My Case |
+      | to_collection | Richie Gomes,Adam Taylor             |
 
   @email-signatures
   Scenario Outline: Emails > Create Email Signature

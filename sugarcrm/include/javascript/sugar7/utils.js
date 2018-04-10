@@ -128,7 +128,7 @@
 
                         email.get('to_collection').add(records);
                     },
-                    fields: ['id', 'full_name', 'email']
+                    fields: ['id', 'name', 'email']
                 });
             }
         }
