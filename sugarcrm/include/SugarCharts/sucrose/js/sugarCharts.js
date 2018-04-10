@@ -23,7 +23,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             chartConfig.pieType ||
             chartConfig.funnelType ||
             'basic';
-    var configDataType = chartGroupType === 'stacked' ? 'grouped' : chartGroupType;
 
     // fix report view
     if (_.isUndefined(chartParams.chart_type) && !_.isUndefined(chartParams.type)) {
@@ -37,7 +36,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         baseModule: 'Reports',
         chart_type: 'bar chart',
         colorData: 'class',
-        dataType: configDataType,
+        dataType: chartGroupType === 'stacked' ? 'grouped' : chartGroupType,
         direction: 'ltr',
         hideEmptyGroups: true,
         label: SUGAR.charts.translateString('LBL_DASHLET_SAVED_REPORTS_CHART'),
@@ -69,7 +68,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
     // controls if chart image is auto-saved
     var imageExportType = chartConfig.imageExportType;
-    // determines if basic bar chart is displayed as discrete
+    // determines Report viewer settings in BWC module view
+    // and if basic bar chart is displayed as discrete by default
     var isReportView = chartConfig.reportView || false;
 
     // locale config object based on user/system preferences
@@ -526,12 +526,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 // report_def is defined as a global in _reportCriteriaWithResult
                 // but only in Reports module
                 //TODO: fix usage of global report_def
-                var enums = this.getEnums(report_def); // jscs:ignore
-                var groupDefs = this.getGrouping(report_def); // jscs:ignore
+                var enums = this.getEnums(report_def);
+                var groupDefs = this.getGrouping(report_def);
 
                 drawerContext = {
                     chartData: chartData,
-                    chartModule: report_def.module, // jscs:ignore
+                    chartModule: report_def.module,
                     chartState: chartState,
                     dashConfig: params,
                     dashModel: null,
@@ -542,7 +542,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     groupDefs: groupDefs,
                     layout: 'drillthrough-drawer',
                     module: 'Reports',
-                    reportData: report_def, // jscs:ignore
+                    reportData: report_def,
                     reportId: chartId,
                     skipFetch: true,
                     useSavedFilters: true

@@ -158,7 +158,6 @@
         var params = chartParams || this.model.get('rawChartParams');
         var chartConfig;
         var chartGroupType;
-        var configDataType;
 
         // chartData artifact
         if (!_.isEmpty(chartData) && !_.isUndefined(chartData.properties)) {
@@ -253,8 +252,7 @@
             chartConfig.pieType ||
             chartConfig.funnelType ||
             'basic';
-        configDataType = chartGroupType === 'stacked' ? 'grouped' : chartGroupType;
-        chartParams.dataType = configDataType;
+        chartParams.dataType = chartGroupType === 'stacked' ? 'grouped' : chartGroupType;
 
         this.chartType = chartConfig.chartType;
 
