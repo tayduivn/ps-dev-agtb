@@ -1281,7 +1281,7 @@ class MetaDataManager implements LoggerAwareInterface
 
         // TODO - Re-Filter the list by known platforms to prevent builds of dead or invalid platforms
         // once unknown platforms are no longer allowed across the board
-        return $platforms;
+        return array_unique($platforms);
     }
 
     /**
@@ -1875,15 +1875,17 @@ class MetaDataManager implements LoggerAwareInterface
                     $mm = MetaDataManager::getManager($platform, $public, true);
                     if (method_exists($mm, $method)) {
                         $sections = ($part == 'section') ? (is_array($items) ? $items : [$items]) : [$part]  ;
-                        $baseOnly = empty(array_intersect($sections, $mm->getContextAwareSections()));
+                        $contextSections = array_intersect($sections, $mm->getContextAwareSections());
+                        $baseOnly = empty($contextSections);
 
                         if ($baseOnly) {
                             $contexts = array($mm->getDefaultContext());
-                            if (!$public) {
-                                $contexts[] = new MetaDataContextPartial();
-                            }
                         } else {
                             $contexts = static::getMetadataContexts($public, $params);
+                        }
+                        //Always build the base partial if we are rebuilding any non-context aware section
+                        if (!$public && sizeof($sections) !== sizeof($contextSections)) {
+                            $contexts[] = new MetaDataContextPartial();
                         }
 
                         // When a change occurs in the base metadata which is filtered/modified by contexts,
