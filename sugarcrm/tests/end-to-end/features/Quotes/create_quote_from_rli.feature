@@ -96,12 +96,12 @@ Feature: Create Quote From RLI
       | billing_address_country    | USA                 |
     # Verify that Amounts on Grand Total bar are calculated correctly
     Then I verify fields on QLI total header on #RecordIDRecord view
-      | fieldName | value     |
-      | deal_tot  | 2.00%     |
-      | new_sub   | $2,940.00 |
-      | tax       | $0.00     |
-      | shipping  | $200.00   |
-      | total     | $3,140.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $60.00 |
+      | new_sub   | $2,940.00    |
+      | tax       | $0.00        |
+      | shipping  | $200.00      |
+      | total     | $3,140.00    |
     # Verify that "Create Opportunity" menu item is now disabled
     When I open actions menu in #RecordIDRecord and check:
       | menu_item         | active |
@@ -114,7 +114,7 @@ Feature: Create Quote From RLI
       | menu_item     | active |
       | GenerateQuote | false  |
     Then I verify fields on #RLI_1Record.RecordView
-      | fieldName  | value            |
+      | fieldName  | value |
       | quote_name | RLI_1 |
     When I click quote_name field on #RLI_1Record.RecordView view
     Then I should see #RecordIDRecord view

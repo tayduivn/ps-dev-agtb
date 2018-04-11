@@ -63,12 +63,12 @@ Feature: Quotes module E2E testing
     When I close alert
       # 5. Verify that tax amount in QLI Grand Total bar is calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $784.00 |
-      | tax       | $78.40  |
-      | shipping  | $0.00   |
-      | total     | $862.40 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | tax       | $78.40       |
+      | shipping  | $0.00        |
+      | total     | $862.40      |
       # 6. Select second tax rate
     When I click Edit button on #Quote_3Record header
     When I provide input for #Quote_3Record.RecordView view
@@ -78,12 +78,12 @@ Feature: Quotes module E2E testing
     When I close alert
       # 7. Verify that tax amount in QLI Grand Total bar is calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $784.00 |
-      | tax       | $39.20  |
-      | shipping  | $0.00   |
-      | total     | $823.20 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | tax       | $39.20       |
+      | shipping  | $0.00        |
+      | total     | $823.20      |
     When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
 
 
@@ -150,12 +150,12 @@ Feature: Quotes module E2E testing
       | total_amount   | $196.00 |
     # 8. Verify numbers in Grand Totals bar are calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $392.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $392.00 |
+      | fieldName | value       |
+      | deal_tot  | 2.00% $8.00 |
+      | new_sub   | $392.00     |
+      | tax       | $0.00       |
+      | shipping  | $0.00       |
+      | total     | $392.00     |
     # 9. Apply Tax
     When I click Edit button on #Quote_3Record header
     When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
@@ -166,12 +166,12 @@ Feature: Quotes module E2E testing
     When I close alert
     # 10. Verify that tax amount in QLI Grand Total bar is calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $392.00 |
-      | tax       | $19.60  |
-      | shipping  | $0.00   |
-      | total     | $411.60 |
+      | fieldName | value       |
+      | deal_tot  | 2.00% $8.00 |
+      | new_sub   | $392.00     |
+      | tax       | $19.60      |
+      | shipping  | $0.00       |
+      | total     | $411.60     |
 
 
 
@@ -235,12 +235,12 @@ Feature: Quotes module E2E testing
     When I close alert
     # 5. Verify that numbers in QLI Grand Total bar are converted properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | T392.00 |
-      | tax       | T0.00   |
-      | shipping  | T0.00   |
-      | total     | T392.00 |
+      | fieldName | value       |
+      | deal_tot  | 2.00% T8.00 |
+      | new_sub   | T392.00     |
+      | tax       | T0.00       |
+      | shipping  | T0.00       |
+      | total     | T392.00     |
     When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
     # 6. Add new QLI record
     When I choose createLineItem on QLI section on #Quote_3Record view
@@ -256,12 +256,12 @@ Feature: Quotes module E2E testing
       | total_amount   | T196.00        |
     # 8. Verify that numbers in QLI Grand Total bar are updated properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | T588.00 |
-      | tax       | T0.00   |
-      | shipping  | T0.00   |
-      | total     | T588.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% T12.00 |
+      | new_sub   | T588.00      |
+      | tax       | T0.00        |
+      | shipping  | T0.00        |
+      | total     | T588.00      |
     When I click Edit button on #Quote_3Record header
     # 9. Change the currency of the quote back to USD
     When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
@@ -284,12 +284,12 @@ Feature: Quotes module E2E testing
       | total_amount   | $196.00 |
     # 12. Verify that numbers in QLI Grand Total bar are updated properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value     |
-      | deal_tot  | 2.00%     |
-      | new_sub   | $1,372.00 |
-      | tax       | $0.00     |
-      | shipping  | $0.00     |
-      | total     | $1,372.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $28.00 |
+      | new_sub   | $1,372.00    |
+      | tax       | $0.00        |
+      | shipping  | $0.00        |
+      | total     | $1,372.00    |
     When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
 
 
@@ -300,7 +300,7 @@ Feature: Quotes module E2E testing
     # 1. Generate quote record linked to the account
     # 2. Navigate to quote record view
 
-  @quote @edit_delete_existing_QLI_record @edit_delete_existing_Comment_record @ci-excludedg
+  @quote @edit_delete_existing_QLI_record @edit_delete_existing_Comment_record @ci-excludedg @xxx
   Scenario: Quotes > Verify that user can edit/delete existing QLI and Comment record
     # 1. Generate quote record
     Given Quotes records exist:
@@ -339,12 +339,12 @@ Feature: Quotes module E2E testing
     When I close alert
     # 2. Verify all fields in QLI Grand Total bar are calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 1.00%   |
-      | new_sub   | $198.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $198.00 |
+      | fieldName | value       |
+      | deal_tot  | 1.00% $2.00 |
+      | new_sub   | $198.00     |
+      | tax       | $0.00       |
+      | shipping  | $0.00       |
+      | total     | $198.00     |
     # 3. Edit existing QLI and cancel
     When I choose editLineItem on #Test1QLIRecord
     When I provide input for #Test1QLIRecord view
@@ -353,12 +353,12 @@ Feature: Quotes module E2E testing
     When I click on cancel button on QLI #Test1QLIRecord record
     # 4. Verify that no values are changed after QLI editing is canceled
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 1.00%   |
-      | new_sub   | $198.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $198.00 |
+      | fieldName | value       |
+      | deal_tot  | 1.00% $2.00 |
+      | new_sub   | $198.00     |
+      | tax       | $0.00       |
+      | shipping  | $0.00       |
+      | total     | $198.00     |
     # 5. Edit existing QLI and save
     When I choose editLineItem on #Test1QLIRecord
     When I provide input for #Test1QLIRecord view
@@ -374,12 +374,12 @@ Feature: Quotes module E2E testing
       | discount_amount       | 4.00%          |
     # 7. Verify all fields in QLI Grand Total bar are recalculated
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 4.00%   |
-      | new_sub   | $576.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $576.00 |
+      | fieldName | value        |
+      | deal_tot  | 4.00% $24.00 |
+      | new_sub   | $576.00      |
+      | tax       | $0.00        |
+      | shipping  | $0.00        |
+      | total     | $576.00      |
     # 8. Delete existing QLI and cancel
     When I choose deleteLineItem on #Test1QLIRecord
     When I Cancel confirmation alert
@@ -585,12 +585,12 @@ Feature: Quotes module E2E testing
       | total_amount          | $3,800.00    |
     # 6. Verify all calculated fields in QLI Grand Total bar are recalculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value     |
-      | deal_tot  | 5.00%     |
-      | new_sub   | $3,800.00 |
-      | tax       | $0.00     |
-      | shipping  | $0.00     |
-      | total     | $3,800.00 |
+      | fieldName | value         |
+      | deal_tot  | 5.00% $200.00 |
+      | new_sub   | $3,800.00     |
+      | tax       | $0.00         |
+      | shipping  | $0.00         |
+      | total     | $3,800.00     |
 
 
 
@@ -766,12 +766,12 @@ Feature: Quotes module E2E testing
     When I click Cancel button on #QuotesRecord header
     # 5. Verify that numbers in QLI Grand Total bar are not updated
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $784.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $784.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | tax       | $0.00        |
+      | shipping  | $0.00        |
+      | total     | $784.00      |
     # 6. Verify that numbers in QLI table footer are not updated
     Then I verify fields on QLI total footer on #Quote_3Record view
       | fieldName | value   |
@@ -791,12 +791,12 @@ Feature: Quotes module E2E testing
     When I toggle Quote_Settings panel on #Quote_3Record.RecordView view
     # 8. Verify that numbers in QLI Grand Total bar are updated
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | €392.00 |
-      | tax       | €0.00   |
-      | shipping  | €0.00   |
-      | total     | €392.00 |
+      | fieldName | value       |
+      | deal_tot  | 2.00% €8.00 |
+      | new_sub   | €392.00     |
+      | tax       | €0.00       |
+      | shipping  | €0.00       |
+      | total     | €392.00     |
     # 9. Verify that numbers in QLI table footer are updated
     Then I verify fields on QLI total footer on #Quote_3Record view
       | fieldName | value   |
@@ -918,12 +918,12 @@ Feature: Quotes module E2E testing
 
     # 4. Verify numbers in Grand Total bar
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $784.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $784.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | tax       | $0.00        |
+      | shipping  | $0.00        |
+      | total     | $784.00      |
 
     # 5. Select all items in QLi table
     When I toggle all items in #Quote_3Record.QliTable
@@ -950,12 +950,12 @@ Feature: Quotes module E2E testing
 
     # 9. Verify that numbers in Ground Total bar haven't changed
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $784.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $784.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | tax       | $0.00        |
+      | shipping  | $0.00        |
+      | total     | $784.00      |
 
     # 10. Select all items in QLI table > Delete Selected > Cancel
     When I toggle all items in #Quote_3Record.QliTable
@@ -974,12 +974,12 @@ Feature: Quotes module E2E testing
 
     # 13. Verify numbers in Ground Total bar are all zeros after all items are deleted from QLI table
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value |
-      | deal_tot  | 0.00% |
-      | new_sub   | $0.00 |
-      | tax       | $0.00 |
-      | shipping  | $0.00 |
-      | total     | $0.00 |
+      | fieldName | value       |
+      | deal_tot  | 0.00% $0.00 |
+      | new_sub   | $0.00       |
+      | tax       | $0.00       |
+      | shipping  | $0.00       |
+      | total     | $0.00       |
 
     # 14. Add brand new QLI records
     When I choose createLineItem on QLI section on #Quote_3Record view
@@ -1056,7 +1056,7 @@ Feature: Quotes module E2E testing
     # 24. Verify that vertical ellipsis button to expand mas-update menu is disabled after all items are deleted from QLI table
     # 25. Verify numbers in Ground Total bar are updated after all items are deleted from QLI table
 
-  @add_items_to_specified_dgroup  @grpoup_selected_items @pr
+  @add_items_to_specified_dgroup @grpoup_selected_items @pr
   Scenario: Quotes > Add QLI/Comment to Specific Group > Group Selected
     # 1. Generate quote record with one group and 2 QLIs linked to the account
     Given Quotes records exist:
@@ -1195,12 +1195,12 @@ Feature: Quotes module E2E testing
 
     # 18. Verify that all amounts in QLI Grand Total bar are calculated properly
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value     |
-      | deal_tot  | 3.04%     |
-      | new_sub   | $1,563.41 |
-      | tax       | $156.34   |
-      | shipping  | $280.25   |
-      | total     | $2,000.00 |
+      | fieldName | value        |
+      | deal_tot  | 3.04% $49.09 |
+      | new_sub   | $1,563.41    |
+      | tax       | $156.34      |
+      | shipping  | $280.25      |
+      | total     | $2,000.00    |
 
     # 19. Delete group 'Group 3' and confirm
     When I choose deleteGroup on #MyGroup3GroupRecord
@@ -1213,12 +1213,12 @@ Feature: Quotes module E2E testing
     # 21. Verify that all amounts in QLI Grand Total bar are the same after groups are deleted
     #  (Note: Items are moved to groupless section of QLI table when a group is deleted but Grand Totals stay the same)
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value     |
-      | deal_tot  | 3.04%     |
-      | new_sub   | $1,563.41 |
-      | tax       | $156.34   |
-      | shipping  | $280.25   |
-      | total     | $2,000.00 |
+      | fieldName | value        |
+      | deal_tot  | 3.04% $49.09 |
+      | new_sub   | $1,563.41    |
+      | tax       | $156.34      |
+      | shipping  | $280.25      |
+      | total     | $2,000.00    |
 
     # 22. Toggle all items in QLI table
     When I toggle all items in #Quote_3Record.QliTable
@@ -1235,9 +1235,9 @@ Feature: Quotes module E2E testing
 
     # 25. Verify numbers in Ground Total bar are updated after all items are deleted from QLI table
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 0.00%   |
-      | new_sub   | $0.00   |
-      | tax       | $0.00   |
-      | shipping  | $280.25 |
-      | total     | $280.25 |
+      | fieldName | value       |
+      | deal_tot  | 0.00% $0.00 |
+      | new_sub   | $0.00       |
+      | tax       | $0.00       |
+      | shipping  | $280.25     |
+      | total     | $280.25     |

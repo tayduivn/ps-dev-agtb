@@ -248,12 +248,12 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
 
     # 20. Verify that numbers in Grand Total header are correct
     Then I verify fields on QLI total header on #QuotesRecord view
-      | fieldName | value     |
-      | deal_tot  | 4.01%     |
-      | new_sub   | $4,957.90 |
-      | tax       | $0.00     |
-      | shipping  | $0.00     |
-      | total     | $4,957.90 |
+      | fieldName | value         |
+      | deal_tot  | 4.01% $207.34 |
+      | new_sub   | $4,957.90     |
+      | tax       | $0.00         |
+      | shipping  | $0.00         |
+      | total     | $4,957.90     |
 
     # 21. Verify data in Quotes subpanel of Opportunity record view
     When I choose Opportunities in modules menu

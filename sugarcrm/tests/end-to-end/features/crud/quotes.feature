@@ -238,12 +238,12 @@ Feature: Quotes module verification
       | RecordID | Quote_3.1 |
     When I click Save button on #QuotesRecord header
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $784.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $784.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | tax       | $0.00        |
+      | shipping  | $0.00        |
+      | total     | $784.00      |
 
 
   @quote @add_new_QLI
@@ -278,12 +278,12 @@ Feature: Quotes module verification
     # Cancel and Verify
     When I click on cancel button on QLI #Quote_3Record.QliTable.QliRecord record
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $784.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $784.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $16.00 |
+      | new_sub   | $784.00      |
+      | tax       | $0.00        |
+      | shipping  | $0.00        |
+      | total     | $784.00      |
     # Add New Line Item
     When I choose createLineItem on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.QliRecord view
@@ -296,12 +296,12 @@ Feature: Quotes module verification
       | discount_price | $100.00 |
       | total_amount   | $196.00 |
     Then I verify fields on QLI total header on #Quote_3Record view
-      | fieldName | value   |
-      | deal_tot  | 2.00%   |
-      | new_sub   | $980.00 |
-      | tax       | $0.00   |
-      | shipping  | $0.00   |
-      | total     | $980.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $20.00 |
+      | new_sub   | $980.00      |
+      | tax       | $0.00        |
+      | shipping  | $0.00        |
+      | total     | $980.00      |
 
 
   @quote @add_new_comment

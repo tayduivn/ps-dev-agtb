@@ -55,7 +55,7 @@ export class DetailQLIPercent extends CurrencyField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: 'div.quote-totals-row-value .percent-discount'
+                selector: '.quote-totals-row-value'
             }
         });
 
@@ -65,8 +65,18 @@ export class DetailQLIPercent extends CurrencyField {
 
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
 
-        return value.toString().trim();
+        // trim all new line characters
+        let newValue = value.toString().trim().replace(/\r?\n?/g, '');
 
+        //find position of "%" symbol
+        let index  = newValue.indexOf("%");
+        if( index === -1 ) {
+            return newValue;
+        }
+        else {
+            // insert space between percentage and dollar amount
+            return newValue.substr(0, index+1) + " " + newValue.substr(index+1);
+        }
     }
 }
 

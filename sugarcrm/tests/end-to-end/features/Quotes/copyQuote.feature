@@ -175,12 +175,12 @@ Feature: Copy Quote E2E testing
       | 4        | 150.00         | 4.00            | New Name              |
       # Make sure Grand Totals are updated based on the provided info
     Then I verify fields on QLI total header on #QuotesRecord view
-      | fieldName | value     |
-      | deal_tot  | 2.86%     |
-      | new_sub   | $1,360.00 |
-      | tax       | $136.00   |
-      | shipping  | $200.00   |
-      | total     | $1,696.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.86% $40.00 |
+      | new_sub   | $1,360.00    |
+      | tax       | $136.00      |
+      | shipping  | $200.00      |
+      | total     | $1,696.00    |
       # Try to Copy quote > Copy is not allowed
     When I open actions menu in #Quote_3Record
     When I choose Copy from actions menu in #Quote_3Record
@@ -205,12 +205,12 @@ Feature: Copy Quote E2E testing
     When I click on cancel button on QLI #Test1QLIRecord record
       # Make sure grant total numbers are reverted back since QLI editing is canceled
     Then I verify fields on QLI total header on #QuotesRecord view
-      | fieldName | value     |
-      | deal_tot  | 2.00%     |
-      | new_sub   | $980.00   |
-      | tax       | $98.00    |
-      | shipping  | $200.00   |
-      | total     | $1,278.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $20.00 |
+      | new_sub   | $980.00      |
+      | tax       | $98.00       |
+      | shipping  | $200.00      |
+      | total     | $1,278.00    |
 
     # 11. Create a copy of the quote record and Cancel (ZT-8 ZT-9)
     When I open actions menu in #Quote_3Record
@@ -313,12 +313,12 @@ Feature: Copy Quote E2E testing
 
     # 16. Verify that data in QLI table Grant Total bar is successfully copied over
     Then I verify fields on QLI total header on #QuotesRecord view
-      | fieldName | value     |
-      | deal_tot  | 2.00%     |
-      | new_sub   | $1,176.00 |
-      | tax       | $98.00    |
-      | shipping  | $200.00   |
-      | total     | $1,474.00 |
+      | fieldName | value        |
+      | deal_tot  | 2.00% $24.00 |
+      | new_sub   | $1,176.00    |
+      | tax       | $98.00       |
+      | shipping  | $200.00      |
+      | total     | $1,474.00    |
 
     # 17. Verify that data in QLI table footer is successfully copied over
     Then I verify fields on QLI total footer on #QuotesRecord view
