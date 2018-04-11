@@ -101,14 +101,14 @@ function compare_bool_values(& $target_object, $lhs_field, $operator, $rhs_value
 		
 	if($rhs_value == "bool_true"){
 			if(
-			$target_object->$lhs_field == "on" || 
+            $target_object->$lhs_field === 'on' ||
 			$target_object->$lhs_field==1 ||
 			$target_object->$lhs_field==true
 			 ) return true;
 		} 
 		if($rhs_value == "bool_false"){
 			if(
-			$target_object->$lhs_field == "off" || 
+            $target_object->$lhs_field === 'off' ||
 			$target_object->$lhs_field==0 ||
 			$target_object->$lhs_field==false
 			 ) return true;
