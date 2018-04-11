@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<span class="label">
-    {{partial 'hyperlink-label' this href=href labelName="LBL_NO_FIELD_ACCESS" moduleName=this.module}}
-</span>
+{{#if href}}
+    <a href="{{href}}"><i class="fa fa-link"></i> {{str labelName moduleName}}</a>
+{{else}}
+    {{str labelName moduleName}}
+{{/if}}

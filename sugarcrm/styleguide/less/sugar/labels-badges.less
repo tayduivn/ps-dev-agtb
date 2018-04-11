@@ -101,9 +101,16 @@ a {
 }
 // undo link styling
 a.label,
-a > .label,
-.label a {
+a > .label {
   font-weight: 500;
+  text-shadow: none;
+  color: @white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.label a {
+  font-weight: inherit;
   text-shadow: none;
   color: @white;
   text-decoration: none;
