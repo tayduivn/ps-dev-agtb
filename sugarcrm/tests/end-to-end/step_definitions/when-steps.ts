@@ -293,3 +293,29 @@ When(/^I select fields in (#\S+) view$/,
             await layout.clickRowByFiledName(data.rows()[i]);
         }
     }, {waitForApp: true});
+
+let timer = 0;
+
+When(/^I start timer$/, async function () {
+
+    timer = new Date().getTime();
+
+}, {waitForApp: false});
+
+When(/^I stop timer and verify$/, async function (data: TableDefinition) {
+
+    if (data.hashes.length > 1) {
+        throw new Error('One line data table entry is expected');
+    }
+
+    let specified_threshold = parseInt( data.rows()[0][0] );
+
+    let actual_time = (new Date().getTime() - timer);
+
+    if ( actual_time > specified_threshold  ) {
+        throw new Error('It took longer than expected to complete this operation. Max Expected: ' + specified_threshold + '. Actual: ' + actual_time );
+    }  else {
+        seedbed.logger.info('It took ' + actual_time + ' to complete this operation. It is within the specified max time of ' + specified_threshold);
+    }
+
+}, {waitForApp: false});
