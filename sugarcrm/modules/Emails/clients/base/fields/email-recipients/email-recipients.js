@@ -288,7 +288,9 @@
         $optedOutRecipients.each(function() {
             var $choice = $(this).closest('.select2-search-choice');
             $choice.addClass('select2-choice-optout');
-            $(this).attr('data-title', app.lang.get('LBL_EMAIL_ADDRESS_OPTED_OUT', self.module));
+            $(this).attr('data-title', app.lang.get('LBL_EMAIL_ADDRESS_OPTED_OUT', self.module, {
+                email_address: $choice.data('select2Data').get('email_address')
+            }));
         });
     },
 
