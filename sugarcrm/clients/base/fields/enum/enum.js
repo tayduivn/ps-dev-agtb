@@ -762,6 +762,23 @@
     },
 
     /**
+     * Need to check not only if there is no value, but if there is a value and
+     * it is an empty array.
+     *
+     * @override
+     */
+    _isErasedField: function() {
+        if (!this.model) {
+            return false;
+        }
+
+        var value = this.model.get(this.name);
+
+        return (!value || _.isArray(value) && _.isEmpty(value)) &&
+            _.contains(this.model.get('_erased_fields'), this.name);
+    },
+
+    /**
      * @inheritdoc
      */
     _dispose: function() {
