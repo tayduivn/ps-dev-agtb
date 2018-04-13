@@ -61,7 +61,12 @@ final class Email implements Field
             foreach ($relatedBeans as $relBean) {
                 if (!empty($relBean->emailAddress)) {
                     $relBean->emailAddress->removeAddressById($this->id);
+                    $relBean->emailAddress->removeLegacyAddressForBean($relBean, $emailBean->email_address);
                     $relBean->emailAddress->save($relBean->id, $relBean->module_dir);
+                    // this $bean will be saved late
+                    if ($relBean->id != $bean->id) {
+                        $relBean->save();
+                    }
                 }
             }
         }

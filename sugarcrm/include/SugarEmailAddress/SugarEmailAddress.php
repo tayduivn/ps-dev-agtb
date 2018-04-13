@@ -18,6 +18,9 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config as IdmConfig;
 
 class SugarEmailAddress extends SugarBean
 {
+    // max number of legacy emails
+    const MAX_LEGACY_EMAILS = 10;
+
     var $table_name = 'email_addresses';
     var $module_name = "EmailAddresses";
     var $module_dir = 'EmailAddresses';
@@ -146,7 +149,7 @@ class SugarEmailAddress extends SugarBean
                 $this->addresses = array();
                 $isPrimary = true;
                 // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness.
-                for ($i = 1; $i <= 10; $i++) {
+                for ($i = 1; $i <= self::MAX_LEGACY_EMAILS; $i++) {
                     $email = 'email' . $i;
                     $handleField = true;
                     // When sending a request to modify email1, if there are more
@@ -751,6 +754,25 @@ class SugarEmailAddress extends SugarBean
         }
 
         return false;
+    }
+
+    /**
+     * Removes legacy email address entry for bean
+     * @param SugarBean $bean
+     * @param string $addr
+     * @return bool
+     */
+    public function removeLegacyAddressForBean(SugarBean $bean, ?string $addr)
+    {
+        $found = false;
+        for ($i = 1; $i <= self::MAX_LEGACY_EMAILS; $i++) {
+            $email = 'email' . $i;
+            if (!empty($bean->$email) && $bean->$email === $addr) {
+                unset($bean->$email);
+                $found = true;
+            }
+        }
+        return $found;
     }
 
     /**

@@ -246,4 +246,31 @@ class SugarEmailAddressTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @covers ::removeLegacyAddressForBean
+     *
+     * @dataProvider providerTestRemoveLegacyAddressForBean
+     */
+    public function testRemoveLegacyAddressForBean(?string $legacyEmail, $addressToRemove, $expected)
+    {
+        $bean = $this->createMock(\SugarBean::class);
+        $bean->email1 = $legacyEmail;
+
+        $sea = $this->getMockBuilder(\SugarEmailAddress::class)->disableOriginalConstructor()->setMethods()->getMock();
+
+        $sea->removeLegacyAddressForBean($bean, $addressToRemove);
+
+        $this->assertEquals($expected, empty($bean->email1));
+    }
+
+    public function providerTestRemoveLegacyAddressForBean()
+    {
+        return [
+            ['same@t.com', 'same@t.com', true],
+            ['not_same@t.com', 'same@t.com', false],
+            [null, 'same@t.com', true],
+        ];
+    }
+
 }
