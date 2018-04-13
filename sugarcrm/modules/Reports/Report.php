@@ -1439,6 +1439,7 @@ class Report
         $this->layout_manager->setAttribute('context', 'Select');
         $got_count = 0;
         $got_join = array();
+        $tp_count = 1;
         foreach ($this->report_def[$key] as $index => $display_column) {
             if ($display_column['name'] == 'count') {
                 if ('self' != $display_column['table_key'])
@@ -1511,6 +1512,9 @@ class Report
                     if (strpos($field_def['name'], '_usdoll') === false) {
                         $display_column['currency_alias'] = $display_column['table_alias'] . '_currencies';
                     }
+                }
+                if (!empty($display_column['qualifier']) && $display_column['qualifier'] == 'fiscalQuarter') {
+                    $display_column['timeperiods_count'] = $tp_count++;
                 }
                 $select_piece = $this->layout_manager->widgetQuery($display_column);
             }
@@ -1627,10 +1631,16 @@ class Report
         if (!empty($this->report_def['group_defs']) && is_array($this->report_def['group_defs'])) {
             $this->group_by_arr = array();
             $this->group_order_by_arr = array();
+            $tp_count = 1;
             foreach ($this->report_def['group_defs'] as $group_column)
             {
                 $this->layout_manager->setAttribute('context', 'GroupBy');
                 $this->register_field_for_query($group_column);
+
+                if (!empty($group_column['qualifier']) && $group_column['qualifier'] == 'fiscalQuarter') {
+                    $group_column['timeperiods_count'] = $tp_count++;
+                }
+
                 $group_by = $this->layout_manager->widgetQuery($group_column);
                 $this->layout_manager->setAttribute('context', 'OrderBy');
                 $order_by = $this->layout_manager->widgetQuery($group_column);
@@ -1834,6 +1844,20 @@ class Report
                     . ' AND ' . $currency_alias . '.deleted=0';
             }
             $this->from .= implode(' ', $join);
+        }
+
+        if (!empty($this->report_def['group_defs']) && !empty($this->group_by_arr)) {
+            $tp_count = 1;
+            foreach ($this->report_def['group_defs'] as $id => $group_field) {
+                if (!empty($group_field['qualifier']) && $group_field['qualifier'] == 'fiscalQuarter') {
+                    $table_alias = $this->getTableFromField($group_field);
+                    $field_name = $table_alias . "." . $group_field['name'];
+                    $this->from .= "INNER JOIN timeperiods tp" . $tp_count . " ON (" . $field_name .
+                        " >= tp" . $tp_count . ".start_date AND " . $field_name . " <= tp" . $tp_count . ".end_date" .
+                        " AND tp" . $tp_count . ".type = 'Quarter')\n";
+                    $tp_count++;
+                }
+            }
         }
     }
 
