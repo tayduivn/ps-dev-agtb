@@ -118,6 +118,7 @@ Feature: Emails module verification
     When I click Save button on #R1Record header
     Then I close alert
     When I click Reply button on #R1Record header
+    When I click recipients field on #EmailsRecord.RecordView view
     Then I verify fields on #EmailsRecord.RecordView
       | fieldName     | value    |
       | name          | Re: Test |
@@ -139,6 +140,7 @@ Feature: Emails module verification
     Then I should see #Case_1Record.RecordView view
     When I open the archived_emails subpanel on #Case_1Record view
     When I create_new record from archived_emails subpanel on #Case_1Record view
+    When I click recipients field on #EmailsRecord.RecordView view
     Then I verify fields on #EmailsRecord.RecordView
       | fieldName     | value                                |
       | name          | [CASE:{*Case_1.case_number}] My Case |
