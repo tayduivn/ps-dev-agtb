@@ -285,6 +285,10 @@
         var self = this;
         var $optedOutRecipients = this.$('.select2-search-choice [data-optout="true"]:not([data-invalid="true"])');
 
+        if (this.def.decorate_opt_out === false) {
+            return;
+        }
+
         $optedOutRecipients.each(function() {
             var $choice = $(this).closest('.select2-search-choice');
             $choice.addClass('select2-choice-optout');

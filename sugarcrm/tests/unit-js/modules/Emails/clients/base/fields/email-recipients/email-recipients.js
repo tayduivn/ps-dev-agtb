@@ -432,6 +432,36 @@ describe('Emails.BaseEmailRecipientsField', function() {
             expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(1);
         });
 
+        it('should not decorate opted out recipients', function() {
+            var optOutSelector = '.select2-search-choice [data-optout="true"]';
+
+            field = SugarTest.createField({
+                name: 'to_collection',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: model.module,
+                model: model,
+                context: context,
+                loadFromModule: true,
+                fieldDef: {
+                    decorate_opt_out: false
+                }
+            });
+
+            field.model.set('to_collection', to);
+            field.model.trigger('sync');
+
+            expect(field.$(optOutSelector).length).toBe(1);
+            expect(field.$('.select2-choice-optout').length).toBe(0);
+            expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(0);
+
+            // Make sure it is still not decorated after a full render.
+            field.render();
+            expect(field.$(optOutSelector).length).toBe(1);
+            expect(field.$('.select2-choice-optout').length).toBe(0);
+            expect(field.$('[data-title=LBL_EMAIL_ADDRESS_OPTED_OUT]').length).toBe(0);
+        });
+
         it('should decorate recipients that are invalid and opted out as just invalid', function() {
             var parentId = _.uniqueId();
             var invalid = app.data.createBean('EmailParticipants', {
