@@ -336,16 +336,8 @@ class EventRepositoryTest extends TestCase
      */
     public function registerUpdate()
     {
-        $contactData = ['phone_mobile' => '(666) 111-1111'];
-        $contact = $this->createContact($contactData);
-
-        $list = FieldChangeList::fromChanges(
-            [['field_name' => 'phone_mobile',
-                'data_type' => 'varchar',
-                'before' => '(666) 111 1111',
-                'after' => '(666) 222 2222',]]
-        );
-        $auditEventId = $this->eventRepo->registerUpdate($contact, $list);
+        $contact = $this->createContact([]);
+        $auditEventId = $this->eventRepo->registerUpdate($contact);
 
         $this->assertTrue($this->eventExists($auditEventId), 'Audit event not created.');
     }
@@ -356,10 +348,8 @@ class EventRepositoryTest extends TestCase
      */
     public function registerErasure()
     {
-        $contactData = ['phone_mobile' => '(777) 111-1111'];
-        $contact = $this->createContact($contactData);
-        $list = FieldList::fromArray(array('phone_mobile'));
-        $auditEventId = $this->eventRepo->registerErasure($contact, $list);
+        $contact = $this->createContact([]);
+        $auditEventId = $this->eventRepo->registerErasure($contact);
 
         $this->assertTrue($this->eventExists($auditEventId), 'Audit event not created.');
     }

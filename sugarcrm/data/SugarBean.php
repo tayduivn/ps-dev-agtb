@@ -1863,7 +1863,7 @@ class SugarBean
         );
 
         if ($this->is_AuditEnabled()) {
-            $auditEventId = $this->getEventRepository()->registerErasure($this, $fields);
+            $auditEventId = $this->getEventRepository()->registerErasure($this);
             // erase fields from Audit log
             $this->eraseAuditRecords($fields, $auditEventId);
         }
@@ -2021,12 +2021,12 @@ class SugarBean
         );
     }
 
-    private function getEventRepository()
+    private function getEventRepository() : EventRepository
     {
         return Container::getInstance()->get(EventRepository::class);
     }
 
-    private function getErasedFieldsRepository()
+    private function getErasedFieldsRepository() : Repository
     {
         return Container::getInstance()->get(Repository::class);
     }
@@ -8441,13 +8441,14 @@ class SugarBean
         }
 
         $eventRepository = $this->getEventRepository();
-        $changeList = FieldChangeList::fromChanges($changes);
 
         if ($overrideSubject) {
-            $auditEventId = $eventRepository->registerUpdateAttributedToSubject($this, $overrideSubject, $changeList);
+            $auditEventId = $eventRepository->registerUpdateAttributedToSubject($this, $overrideSubject);
         } else {
-            $auditEventId = $eventRepository->registerUpdate($this, $changeList);
+            $auditEventId = $eventRepository->registerUpdate($this);
         }
+
+        $changeList = FieldChangeList::fromChanges($changes);
 
         foreach ($changeList->getChangesList() as $change) {
             $this->saveAuditRecords($this, $change, $auditEventId);
