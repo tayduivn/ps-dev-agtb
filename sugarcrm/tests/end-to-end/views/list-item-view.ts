@@ -70,7 +70,7 @@ export default class ListItemView extends BaseView {
 
     public async clickItem(itemName) {
 
-        let selector = this.$('listItem.buttons.'+ itemName, {id: this.id});
+        let selector = this.$('listItem.buttons.' + itemName, {id: this.id});
         let rowSelector = this.$();
 
         return this.driver

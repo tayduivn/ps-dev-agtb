@@ -15,8 +15,8 @@ import RecordLayout from '../layouts/record-layout';
 import QliRecord from '../views/qli-record';
 import CommentRecord from '../views/comment-record';
 import GroupRecord from '../views/group-record';
-import QliTable from "../views/qli-table";
-import QliTableRecord from "../views/qli-table-record";
+import QliTable from '../views/qli-table';
+import QliTableRecord from '../views/qli-table-record';
 
 /**
  * Select All Records in the QLI table of Quote record view
@@ -120,7 +120,7 @@ When(/^I choose to (addLineItem|addComment) to (#[a-zA-Z](?:\w|\S)*)$/, async fu
  *
  * @example "When I choose to addComment to #MyGroup1GroupRecord"
  */
-When(/^I toggle (#[a-zA-Z](?:\w|\S)*)$/, async function (view:QliTableRecord) {
+When(/^I toggle (#[a-zA-Z](?:\w|\S)*)$/, async function (view: QliTableRecord) {
     await view.toggleRecord();
 }, {waitForApp: true});
 

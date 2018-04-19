@@ -28,7 +28,7 @@ export default class RliListItemView extends BaseView {
             $: `tr:nth-child(${index})`,
             buttons: {
                 addRLI: '.rowaction.btn.addBtn',
-                removeRLI:'.rowaction.btn.deleteBtn'
+                removeRLI: '.rowaction.btn.deleteBtn'
             }
         });
     }
@@ -36,5 +36,4 @@ export default class RliListItemView extends BaseView {
     public async pressButton(itemName) {
         await this.driver.click(this.$(`buttons.${itemName}`));
     }
-
 }

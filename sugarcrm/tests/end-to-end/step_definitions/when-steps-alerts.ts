@@ -33,17 +33,17 @@ import * as _ from 'lodash';
         let text = await alert.getText();
         let messageType = await alert.getType();
 
-        let expectedData:any = data.hashes()[0];
+        let expectedData: any = data.hashes()[0];
 
         let message = expectedData.message;
         let type = expectedData.type;
 
         if (text !== message) {
-            throw new Error("Expected message: " + message + ". Actual message: " + text);
+            throw new Error('Expected message: ' + message + '. Actual message: ' + text);
         }
 
         if (messageType !== type) {
-            throw new Error("Expected type: " + message + ". Actual type: " + text);
+            throw new Error('Expected type: ' + message + '. Actual type: ' + text);
         }
 
 

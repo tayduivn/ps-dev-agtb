@@ -16,8 +16,8 @@ import RecordView from '../views/record-view';
 import RecordLayout from '../layouts/record-layout';
 import ListView from '../views/list-view';
 import RliTableRecord from '../views/rli-table';
-import SubpanelLayout from "../layouts/subpanel-layout";
-import PersonalInfoDrawerLayout from "../layouts/personal-info-drawer-layout";
+import SubpanelLayout from '../layouts/subpanel-layout';
+import PersonalInfoDrawerLayout from '../layouts/personal-info-drawer-layout';
 
 /**
  * Select module in modules menu
@@ -260,7 +260,7 @@ When(/^I choose (addRLI|removeRLI) on (#[a-zA-Z](?:\w|\S)*) view for (\d+) row$/
 
     await rowView.pressButton(buttonName);
 
-},{waitForApp: true});
+}, {waitForApp: true});
 
 
 When(/^I dismiss alert$/, async function () {
@@ -268,7 +268,6 @@ When(/^I dismiss alert$/, async function () {
         await this.driver.alertDismiss();
 
     }, {waitForApp: true});
-
 
 
 /**
@@ -283,14 +282,14 @@ When(/^I dismiss alert$/, async function () {
  *
  */
 When(/^I select fields in (#\S+) view$/,
-    async function (layout:PersonalInfoDrawerLayout , data: TableDefinition): Promise<void> {
+    async function (layout: PersonalInfoDrawerLayout , data: TableDefinition): Promise<void> {
 
         if (data.hashes.length > 1) {
             throw new Error('One line data table entry is expected');
         }
 
         const rows = data.rows();
-        for(let i=0; i<rows.length; i++ ) {
+        for (let i = 0; i < rows.length; i++) {
             await layout.clickRowByFiledName(data.rows()[i]);
         }
     }, {waitForApp: true});

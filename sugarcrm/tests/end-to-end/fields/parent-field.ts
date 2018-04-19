@@ -43,8 +43,8 @@ export class Edit extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
-        var type = val.split(',')[0];
-        var id = val.split(',')[1];
+        let type = val.split(',')[0];
+        let id = val.split(',')[1];
         await this.driver.click(this.$('field.selector_type'));
         await this.driver.setValue(this.inputSelector, type);
 

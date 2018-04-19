@@ -29,5 +29,4 @@ export default class DrawerLayoutOpp extends DrawerLayout {
             default: true
         });
     }
-
 }

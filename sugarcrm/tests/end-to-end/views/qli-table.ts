@@ -88,7 +88,7 @@ export default class QliTable extends BaseView {
 
     public async openQliActionsMenuAndCheck(needToCheck, data?: TableDefinition) {
 
-        //await this.toggleMassUpdateMenu();
+        // await this.toggleMassUpdateMenu();
 
         if (needToCheck) {
 
@@ -100,7 +100,7 @@ export default class QliTable extends BaseView {
                 let buttonName = row[0];
                 let isButtonActive;
 
-                if (buttonName == 'massUpdateMenu') {
+                if (buttonName === 'massUpdateMenu') {
                     isButtonActive = await this.checkIsButtonActive(buttonName);
                 } else {
                     await this.toggleMassUpdateMenu();
@@ -123,7 +123,7 @@ export default class QliTable extends BaseView {
                 }
             }
         }
-    };
+    }
 
     public async checkIsButtonActive(buttonName) {
         let isDisabled = await this.driver.isExisting(this.$(`massUpdateMenuContent.${buttonName}`) + '.disabled');

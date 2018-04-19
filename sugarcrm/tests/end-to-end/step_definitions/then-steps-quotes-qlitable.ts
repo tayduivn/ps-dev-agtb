@@ -13,7 +13,7 @@ import {Then} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
 import RecordLayout from '../layouts/record-layout';
-import QliTable from '../views/qli-table'
+import QliTable from '../views/qli-table';
 
 Then(/^I verify fields on QLI total (header|footer) on (#[a-zA-Z](?:\w|\S)*) view$/, async function (componentName, view: RecordLayout, data: TableDefinition) {
 
@@ -58,4 +58,3 @@ Then(/^I verify fields for (\d+) row for (#\S+)$/, async function (recordIndex, 
         throw new Error(message);
     }
 });
-

@@ -11,7 +11,7 @@
 
 import {BaseView, seedbed} from '@sugarcrm/seedbed';
 import HeaderView from '../views/record-header-view';
-import ListLayout from "./list-layout";
+import ListLayout from './list-layout';
 
 
 /**
@@ -51,5 +51,4 @@ export default class SearchAndAddLayout extends ListLayout {
             await this.driver.click(this.$('showLessBtn'));
         }
     }
-
 }

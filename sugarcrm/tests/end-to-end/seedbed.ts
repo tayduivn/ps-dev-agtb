@@ -19,9 +19,9 @@ import DrawerLayout from './layouts/drawer-layout';
 import QliRecord from './views/qli-record';
 import CommentRecord from './views/comment-record';
 import GroupRecord from './views/group-record';
-import DrawerLayoutOpp from "./layouts/drawer-layout-opp";
-import SearchAndAddLayout from "./layouts/searchAndAdd-layout";
-import PersonalInfoDrawerLayout from "./layouts/personal-info-drawer-layout";
+import DrawerLayoutOpp from './layouts/drawer-layout-opp';
+import SearchAndAddLayout from './layouts/searchAndAdd-layout';
+import PersonalInfoDrawerLayout from './layouts/personal-info-drawer-layout';
 
 
 export default (seedbed: Seedbed) => {

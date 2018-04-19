@@ -32,10 +32,11 @@ When(/^I (create_new|link_existing) record from (\S+) subpanel on (#\S+) view$/,
         subpanelName: string,
         recordLayout: RecordLayout,
     ): Promise<void> {
-        if(actionName === 'create_new')
+        if (actionName === 'create_new') {
             await recordLayout.SubpanelsLayout.createRecord(subpanelName);
-        else if (actionName === 'link_existing')
+        } else if (actionName === 'link_existing') {
             await recordLayout.SubpanelsLayout.linkRecord(subpanelName);
+        }
     }, {waitForApp: true});
 
 

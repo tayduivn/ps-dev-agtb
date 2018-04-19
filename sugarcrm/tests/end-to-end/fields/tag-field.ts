@@ -67,7 +67,5 @@ export class TagEdit extends BaseField {
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
 
         return value.toString().trim();
-
     }
-
 }

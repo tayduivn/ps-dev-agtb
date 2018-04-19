@@ -23,7 +23,7 @@ export default class AlertCmp extends BaseView {
     public alertType: boolean;
     public method: string;
 
-    constructor(options:any = {}) {
+    constructor(options: any = {}) {
         super(options);
 
         this.selectors = {

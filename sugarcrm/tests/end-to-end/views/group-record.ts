@@ -10,7 +10,7 @@
  */
 
 import BaseView from './base-view';
-import QliTableRecord from "./qli-table-record";
+import QliTableRecord from './qli-table-record';
 
 /**
  * Represents Record view.

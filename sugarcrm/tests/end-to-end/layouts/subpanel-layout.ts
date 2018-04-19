@@ -10,7 +10,7 @@
  */
 
 import {BaseView} from '@sugarcrm/seedbed';
-import ListView from "../views/list-view";
+import ListView from '../views/list-view';
 
 /**
  * Represents subpanel layout.
@@ -40,11 +40,11 @@ export default class SubpanelLayout extends ListView {
                     plusButton: '.subpanel-controls .fa.fa-plus',
                     toggleMenuButton: '.subpanel-controls .fa.fa-caret-down',
                 },
-                linkRecordMenuItem:'.dropdown-menu .panel-top a',
+                linkRecordMenuItem: '.dropdown-menu .panel-top a',
             },
             massupdate: {
                 toggleMassUpdate: '.fieldset.actions.actionmenu.list.btn-group .btn.dropdown-toggle',
-                GenerateQuote:'.dropdown-menu a[name="quote_button"]',
+                GenerateQuote: '.dropdown-menu a[name="quote_button"]',
                 Delete: '.dropdown-menu a[name="massdelete_button"]',
             },
             footer: {
@@ -99,11 +99,9 @@ export default class SubpanelLayout extends ListView {
     public async clickMenuItem(menuItemName): Promise<any> {
 
         await this.toggleSubpanelMassUpdate();
-        let selector = this.$('massupdate.'+ menuItemName);
+        let selector = this.$('massupdate.' + menuItemName);
 
         await this.driver
             .click(selector);
     }
-
-
 }
