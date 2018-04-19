@@ -40,11 +40,11 @@ export default class QliTableRecord extends BaseView {
                   editLineItem: '.actionmenu.list.btn-group .btn.dropdown-toggle',
                 deleteLineItem: '.actionmenu.list.btn-group .btn.dropdown-toggle',
 
-                //Open floating menu to add QLI/Comment to specific group
+                // Open floating menu to add QLI/Comment to specific group
                 addLineItem: '.btn.btn-invisible.dropdown-toggle.create-dropdown-toggle',
                  addComment: '.btn.btn-invisible.dropdown-toggle.create-dropdown-toggle',
 
-                //Open floating menu to edit/delete group
+                // Open floating menu to edit/delete group
                   editGroup: '.btn.btn-invisible.dropdown-toggle.edit-dropdown-toggle',
                 deleteGroup: '.btn.btn-invisible.dropdown-toggle.edit-dropdown-toggle',
 

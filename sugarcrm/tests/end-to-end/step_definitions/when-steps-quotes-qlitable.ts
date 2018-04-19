@@ -96,8 +96,7 @@ When(/^I create new group on QLI section on (#\S+) view$/, async function (layou
  *
  * @example "When I choose editLineItem on #Test1QLIRecord"
  */
-When(/^I choose (editLineItem|deleteLineItem|editGroup|deleteGroup) on (#[a-zA-Z](?:\w|\S)*)$/, async function (itemName, view:QliRecord) {
-
+When(/^I choose (editLineItem|deleteLineItem|editGroup|deleteGroup) on (#[a-zA-Z](?:\w|\S)*)$/, async function (itemName, view: QliRecord) {
     await view.openInlineMenu(itemName);
     await this.driver.waitForApp();
     await view.clickMenuItem(itemName);
@@ -109,7 +108,7 @@ When(/^I choose (editLineItem|deleteLineItem|editGroup|deleteGroup) on (#[a-zA-Z
  *
  * @example "When I choose to addComment to #MyGroup1GroupRecord"
  */
-When(/^I choose to (addLineItem|addComment) to (#[a-zA-Z](?:\w|\S)*)$/, async function (itemName,view: QliRecord) {
+When(/^I choose to (addLineItem|addComment) to (#[a-zA-Z](?:\w|\S)*)$/, async function (itemName, view: QliRecord) {
     await view.openInlineMenu(itemName);
     await this.driver.waitForApp();
     await view.clickMenuItem(itemName);

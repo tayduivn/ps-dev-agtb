@@ -68,14 +68,13 @@ export class DetailQLIPercent extends CurrencyField {
         // trim all new line characters
         let newValue = value.toString().trim().replace(/\r?\n?/g, '');
 
-        //find position of "%" symbol
-        let index  = newValue.indexOf("%");
-        if( index === -1 ) {
+        // find position of "%" symbol
+        let index = newValue.indexOf('%');
+        if (index === -1) {
             return newValue;
-        }
-        else {
+        } else {
             // insert space between percentage and dollar amount
-            return newValue.substr(0, index+1) + " " + newValue.substr(index+1);
+            return newValue.substr(0, index + 1) + ' ' + newValue.substr(index + 1);
         }
     }
 }
