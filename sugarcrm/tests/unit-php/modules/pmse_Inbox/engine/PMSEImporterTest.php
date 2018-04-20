@@ -75,7 +75,8 @@ class PMSEImporterTest extends TestCase
         $dependencies = array(
             'business_rule' => array(array('id' => 'oldId1', 'name' => 'br1')),
         );
-        $importerMock->importDependencies($dependencies);
+        $selectedIds = ['oldId1'];
+        $importerMock->importDependencies($dependencies, $selectedIds);
         $dependencyKeys = $importerMock->getDependencyKeys();
         $this->assertArrayHasKey('oldId1', $dependencyKeys);
     }

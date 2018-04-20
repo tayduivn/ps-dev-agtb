@@ -46,10 +46,14 @@ $mod_strings = array (
     'LBL_PMSE_PROCESS_DEFINITIONS_EDIT' => 'There are active processes running against this Process Definition. Updating it could impact these processes. Do you still want to edit this Process Definition?',
     'LBL_PMSE_DISABLE_CONFIRMATION_PD' => 'There are active processes running against this Process Definition. Updating it could impact these processes. Do you still want to disable this Process Definition?',
 
-    'LBL_PMSE_PROCESS_DEFINITION_IMPORT_TEXT' => 'Automatically create a new Process Definitions record by importing a *.bpm file from your file system.',
+    'LBL_PMSE_PROCESS_DEFINITION_IMPORT_TEXT' => 'Upload a .bpm file to import a Process Definition.',
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_SUCCESS' => 'Process Definitions was successfully imported into the system.',
     'LBL_PMSE_PROCESS_DEFINITION_EMPTY_WARNING' => 'Please select a valid *.bpm file.',
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_BR' => 'The Process Definition has been imported but contains one or more Business Rule actions for which business rules have not been selected.',
+    'LBL_BPM_IMPORT_SELECT' => 'This Process Definition contains the following Business Rules and Email Templates. '
+        . 'Please select the ones you want to import.',
+    'LBL_BUSINESS_RULES' => 'Business Rules',
+    'LBL_EMAIL_TEMPLATES' => 'Email Templates',
 
 
 //    /*PMSE*/

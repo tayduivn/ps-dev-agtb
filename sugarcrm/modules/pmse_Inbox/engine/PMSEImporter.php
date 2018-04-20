@@ -140,12 +140,13 @@ class PMSEImporter
     /**
      * Method to upload a file and read content for import in database
      * @param $file
+     * @param $options
      * @return bool
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionRequestMethodFailure
      * @codeCoverageIgnore
      */
-    public function importProject($file)
+    public function importProject($file, $options = [])
     {
         $_data = $this->getDataFile($file);
         if ($this->isPAOldVersionFile($_data)) {
@@ -158,8 +159,8 @@ class PMSEImporter
         }
         $project = json_decode($_data, true);
 
-        if (!empty($project['dependencies'])) {
-            $this->importDependencies($project['dependencies']);
+        if (!empty($project['dependencies']) && !empty($options['selectedIds'])) {
+            $this->importDependencies($project['dependencies'], $options['selectedIds']);
         }
 
         if (!empty($project) && isset($project['project'])) {
@@ -181,13 +182,20 @@ class PMSEImporter
     /**
      * Import any dependencies like BRs and ETs
      * @param $dependencies
+     * @param $selectedIds array of ids that represent elements the user wants imported
      */
-    public function importDependencies($dependencies)
+    public function importDependencies($dependencies, $selectedIds = [])
     {
+        if (empty($selectedIds)) {
+            return;
+        }
         foreach ($dependencies as $type => $definitions) {
             foreach ($definitions as $def) {
-                $importer = PMSEImporterFactory::getImporter($type);
                 $oldId = $def['id'];
+                if (!in_array($oldId, $selectedIds)) {
+                    continue;
+                }
+                $importer = PMSEImporterFactory::getImporter($type);
                 $result = $this->processImport($importer, $def);
                 $newId = $result['id'];
 
