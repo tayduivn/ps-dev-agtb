@@ -549,12 +549,11 @@ WHERE TABLE_SCHEMA = ?
 		if (!empty($keys))
 			$keys = ",$keys";
 
-		// cn: bug 9873 - module tables do not get created in utf8 with assoc collation
-		$collation = $this->getOption('collation');
-		if(empty($collation)) {
-		    $collation = 'utf8_general_ci';
-		}
-		$sql = "CREATE TABLE $tablename ($columns $keys) CHARACTER SET utf8 COLLATE $collation";
+        $collation = $this->getOption('collation');
+        if (empty($collation)) {
+            $collation = 'utf8mb4_general_ci';
+        }
+        $sql = "CREATE TABLE $tablename ($columns $keys) CHARACTER SET utf8mb4 COLLATE $collation";
 
 		if (!empty($engine))
 			$sql.= " ENGINE=$engine";
@@ -967,7 +966,7 @@ FROM information_schema.statistics';
 	 */
 	public function getDefaultCollation()
 	{
-		return "utf8_general_ci";
+        return 'utf8mb4_general_ci';
 	}
 
 	/**
@@ -976,7 +975,7 @@ FROM information_schema.statistics';
 	 */
 	public function getCollationList()
 	{
-		$q = "SHOW COLLATION LIKE 'utf8%'";
+        $q = "SHOW COLLATION LIKE 'utf8mb4_%'";
 		$r = $this->query($q);
 		$res = array();
 		while($a = $this->fetchByAssoc($r)) {
@@ -1257,7 +1256,7 @@ FROM information_schema.statistics';
 	 */
 	public function createDatabase($dbname)
 	{
-		$this->query("CREATE DATABASE `$dbname` CHARACTER SET utf8 COLLATE utf8_general_ci", true);
+        $this->query("CREATE DATABASE `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", true);
 	}
 
 	/**

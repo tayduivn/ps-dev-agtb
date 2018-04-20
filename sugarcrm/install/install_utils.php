@@ -617,8 +617,8 @@ function handleDbCharsetCollation() {
 
     if($_SESSION['setup_db_type'] == 'mysql') {
          $db = getDbConnection();
-         $db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8", true);
-         $db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8_general_ci", true);
+         $db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8mb4", true);
+         $db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8mb4_general_ci", true);
     }
 }
 

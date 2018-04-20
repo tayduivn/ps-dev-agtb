@@ -414,8 +414,8 @@ class MysqliManager extends MysqlManager
     protected function setCharset()
     {
         // cn: using direct calls to prevent this from spamming the Logs
-        mysqli_query($this->getDatabase(),"SET CHARACTER SET utf8");
-        $names = "SET NAMES 'utf8'";
+        mysqli_query($this->getDatabase(), 'SET CHARACTER SET utf8mb4');
+        $names = "SET NAMES 'utf8mb4'";
         $collation = $this->getOption('collation');
         if (!empty($collation)) {
             $names .= " COLLATE " . $this->quoted($collation);
