@@ -53,13 +53,35 @@ class PMSECriteriaEvaluator
         if (!isset($expSubtype)) {
             $criteriaToken->expSubtype = '';
         }
-        $resultToken->expValue = $this->expressionEvaluator->routeFunctionOperator(
-            $operationGroup,
-            $criteriaToken->currentValue,
-            $criteriaToken->expOperator,
-            $criteriaToken->expValue,
-            $criteriaToken->expSubtype
-        );
+        if (isset($criteriaToken->expRel)) {
+            $resultToken->expValue = false;
+            foreach ($criteriaToken->currentValue as $currentValue) {
+                $resultToken->expValue = $this->expressionEvaluator->routeFunctionOperator(
+                    $operationGroup,
+                    $currentValue,
+                    $criteriaToken->expOperator,
+                    $criteriaToken->expValue,
+                    $criteriaToken->expSubtype
+                );
+                if ($criteriaToken->expRel == 'All') {
+                    if (!$resultToken->expValue) {
+                        break;
+                    }
+                } else {
+                    if ($resultToken->expValue) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            $resultToken->expValue = $this->expressionEvaluator->routeFunctionOperator(
+                $operationGroup,
+                $criteriaToken->currentValue[0],
+                $criteriaToken->expOperator,
+                $criteriaToken->expValue,
+                $criteriaToken->expSubtype
+            );
+        }
         $this->expressionEvaluator->processTokenAttributes($resultToken);
         return $resultToken;
     }

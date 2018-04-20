@@ -95,7 +95,7 @@ class PMSEBusinessRuleParserTest extends TestCase
         $args['cas_id'] = 15;
         $expectedToken = new stdClass();
         $expectedToken->expToken = '{::_form_::fjhsd892ddsdsjxd9891221::}';
-        $expectedToken->currentValue = 2000;
+        $expectedToken->currentValue = array(2000);
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($businessRule[0], $args);
         $this->assertEquals($expectedToken->currentValue, $resultCriteriaToken->currentValue);
     }
@@ -129,9 +129,9 @@ class PMSEBusinessRuleParserTest extends TestCase
         $args['cas_id'] = 15;
         $expectedToken = new stdClass();
         $expectedToken->expToken = '{::_form_::fjhsd892ddsdsjxd9891221::}';
-        $expectedToken->currentValue = 2000;
+        $expectedToken->currentValue = array(2000);
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($businessRule[0], $args);
-        $this->assertEquals('', $resultCriteriaToken->currentValue);
+        $this->assertEquals(array(''), $resultCriteriaToken->currentValue);
     }
     
     public function testProcessValueExpression()

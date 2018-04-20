@@ -121,7 +121,7 @@ class PMSEBusinessRuleParser implements PMSEDataParserInterface
         $assembledTokenString = implode($tokenDelimiter, $newTokenArray);
         $criteriaToken->expToken = $assembledTokenString;
         $criteriaToken = $this->processValueExpression($criteriaToken);
-        $criteriaToken->currentValue = $tokenValue;
+        $criteriaToken->currentValue = array($tokenValue);
         return $criteriaToken;
     }
 

@@ -73,7 +73,7 @@ class PMSEFormResponseParserTest extends TestCase
         $expectedToken = new stdClass();
         $expectedToken->expLabel = '{::_form_::hjhsd892dj9821j8988912j::} == "ROUTE"';
         $expectedToken->expToken = '{::_form_::hjhsd892dj9821j8988912j::}';
-        $expectedToken->currentValue = 'ROUTE';
+        $expectedToken->currentValue = array('ROUTE');
 
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($criteriaToken, $args);
         $this->assertEquals($expectedToken->currentValue, $resultCriteriaToken->currentValue);
@@ -107,7 +107,7 @@ class PMSEFormResponseParserTest extends TestCase
         $expectedToken = new stdClass();
         $expectedToken->expLabel = '{::_form_::fjhsd892ddsdsjxd9891221::} == "APPROVE"';
         $expectedToken->expToken = '{::_form_::fjhsd892ddsdsjxd9891221::}';
-        $expectedToken->currentValue = 'APPROVE';
+        $expectedToken->currentValue = array('APPROVE');
 
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($criteriaToken, $args);
         $this->assertEquals($expectedToken->currentValue, $resultCriteriaToken->currentValue);
@@ -144,7 +144,7 @@ class PMSEFormResponseParserTest extends TestCase
         $expectedToken = new stdClass();
         $expectedToken->expLabel = '{::_form_::as7yed2839jh9828988912a::} == "REJECT"';
         $expectedToken->expToken = '{::_form_::as7yed2839jh9828988912a::}';
-        $expectedToken->currentValue = 'REJECT';
+        $expectedToken->currentValue = array('REJECT');
 
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($criteriaToken, $args);
         $this->assertEquals($expectedToken->currentValue, $resultCriteriaToken->currentValue);
@@ -181,9 +181,9 @@ class PMSEFormResponseParserTest extends TestCase
         $expectedToken = new stdClass();
         $expectedToken->expLabel = '{::_form_::as7yed2839jh9828988912a::} == "REJECT"';
         $expectedToken->expToken = '{::_form_::as7yed2839jh9828988912a::}';
-        $expectedToken->currentValue = 'REJECT';
+        $expectedToken->currentValue = array('REJECT');
         
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($criteriaToken, $args);
-        $this->assertEquals('', $resultCriteriaToken->currentValue);
+        $this->assertEquals(array(''), $resultCriteriaToken->currentValue);
     }
 }

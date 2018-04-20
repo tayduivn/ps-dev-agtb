@@ -101,6 +101,28 @@ class PMSERelatedModule
         return null;
     }
 
+    /**
+     * Gets all related records from the list of related beans.
+     *
+     * @param SugarBean $moduleBean The left hand side bean
+     * @param string $linkField The link name to get related records from
+     * @return array SugarBeans
+     */
+    public function getRelatedModuleBeans($moduleBean, $linkField)
+    {
+        if (empty($moduleBean->field_defs[$linkField])) {
+            $this->logger->warning("Unable to find field {$linkField}");
+            return array();
+        }
+
+        if (!$moduleBean->load_relationship($linkField)) {
+            $this->logger->warning("Unable to load relationship $linkField");
+            return array();
+        }
+
+        return $moduleBean->$linkField->getBeans(array('orderby' => 'date_entered DESC'));
+    }
+
     public function getRelatedModuleName($moduleBeanName, $linkField)
     {
         $moduleBean = $this->newBean($moduleBeanName);
@@ -158,6 +180,7 @@ class PMSERelatedModule
                     'module_label' => $moduleLabel, // Added so that module can be deprecated
                     'module_name' => $relatedModule, // Added so that we have access to the module name
                     'relationship' => $def['relationship'],
+                    'type' => $relType,
                 );
                 if ($relType == 'one') {
                     $output_11[] = $ret;

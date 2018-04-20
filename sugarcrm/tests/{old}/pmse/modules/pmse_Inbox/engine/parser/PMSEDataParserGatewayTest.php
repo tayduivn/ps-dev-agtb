@@ -243,8 +243,7 @@ class PMSEDataParserGatewayTest extends TestCase
                 'expValue' => 'ONE',
                 'expType' => 'MODULE',
                 'expLabel' => 'Account Name: == "ONE"',
-                'expToken' => '{::future::Leads::date::}',
-                'currentValue' => '10/10/2013',
+                'currentValue' => array('10/10/2013'),
                 'expSubtype' => 'date'
             ));
         $this->assertEquals($postCondition[0], $processedCondition[0]);

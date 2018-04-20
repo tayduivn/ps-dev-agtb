@@ -159,7 +159,7 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
         $newTokenArray = array('{', 'future', 'Users', 'id', '}');
         $assembledTokenString = implode($tokenDelimiter, $newTokenArray);
         $criteriaToken->expToken = $assembledTokenString;
-        $criteriaToken->currentValue = $tokenValue;
+        $criteriaToken->currentValue = array($tokenValue);
         return $criteriaToken;
     }
 

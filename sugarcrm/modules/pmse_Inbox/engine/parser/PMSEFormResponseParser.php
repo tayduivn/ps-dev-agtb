@@ -124,7 +124,7 @@ class PMSEFormResponseParser implements PMSEDataParserInterface
         $newTokenArray = array('{', '_form_', $tokenUid, '}');
         $assembledTokenString = implode($tokenDelimiter, $newTokenArray);
         $criteriaToken->expToken = $assembledTokenString;
-        $criteriaToken->currentValue = $tokenValue;
+        $criteriaToken->currentValue = array($tokenValue);
         return $criteriaToken;
     }
 }

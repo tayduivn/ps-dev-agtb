@@ -1170,6 +1170,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     label = subpanel.getItem('module').getSelectedData().module_label + ': ' +
                         subpanel.getItem('field').getSelectedText() + ' ' +
                         op + ' ';
+                    if (data.rel) {
+                        label = data.rel + ' ' + label;
+                    }
 
                     if (op != 'changes') {
                         switch (aux[1]) {
@@ -1201,6 +1204,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                         expModule: data.module,
                         expField: aux[0]
                     };
+                    if (data.rel) {
+                        itemData.expRel = data.rel;
+                    }
                     if (aux[1] === 'Currency') {
                         itemData.expCurrency = valueField.getCurrency();
                     }
@@ -1545,7 +1551,32 @@ ExpressionControl.prototype._createModulePanel = function () {
                     label: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_MODULE"),
                     width: "100%",
                     required: true,
-                    dependantFields: ['field']
+                    dependantFields: ['rel', 'field']
+                },
+                {
+                    type: "radiobutton",
+                    name: "rel",
+                    label: 'HIDE_THIS',
+                    width: "100%",
+                    disabled: true,
+                    options: [
+                        {
+                            label: translate('LBL_PMSE_EXPCONTROL_ALL_RELATED_RECORDS'),
+                            value: "All"
+                        },
+                        {
+                            label: translate('LBL_PMSE_EXPCONTROL_ANY_RELATED_RECORDS'),
+                            value: "Any"
+                        }
+                        ],
+                    dependencyHandler: function (dependantField, field, value) {
+                        var module = field.getSelectedData();
+                        if (module && module.type && module.type == 'many') {
+                            dependantField.setDisabled(false);
+                        } else {
+                            dependantField.setDisabled(true);
+                        }
+                    }
                 },
                 {
                     type: "dropdown",

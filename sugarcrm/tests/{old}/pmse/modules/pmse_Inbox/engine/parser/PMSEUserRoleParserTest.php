@@ -68,7 +68,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_ADMIN",
             "expLabel": "Current user is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "is_admin"
+            "currentValue": ["is_admin"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -112,7 +112,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_ADMIN",
             "expLabel": "Record owner is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "is_admin"
+            "currentValue": ["is_admin"]
         }');
 
         $this->dataParser->setUserBean($userBeanMock);
@@ -166,7 +166,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_ADMIN",
             "expLabel": "Supervisor is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "is_admin"
+            "currentValue": ["is_admin"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -214,7 +214,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals('', $resultCriteriaObject->currentValue);
+        $this->assertEquals(array(''), $resultCriteriaObject->currentValue);
     }
     
     public function testParseCriteriaTokenCurrentUserHasRoleAdmin()
@@ -268,7 +268,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_ROLE",
             "expLabel": "Supervisor is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "is_admin"
+            "currentValue": ["is_admin"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -337,7 +337,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_ROLE",
             "expLabel": "Supervisor is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "1"
+            "currentValue": ["1"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -400,7 +400,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_ROLE",
             "expLabel": "Supervisor is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "1"
+            "currentValue": ["1"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -454,7 +454,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals('is_admin', $resultCriteriaObject->currentValue);
+        $this->assertEquals(array('is_admin'), $resultCriteriaObject->currentValue);
     }
     
     public function testParseCriteriaTokenOwnerHasRoleAdmin()
@@ -509,7 +509,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_ROLE",
             "expLabel": "Supervisor is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "is_admin"
+            "currentValue": ["is_admin"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -575,7 +575,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_ROLE",
             "expLabel": "Supervisor is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "1"
+            "currentValue": ["1"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -623,7 +623,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals('is_admin', $resultCriteriaObject->currentValue);
+        $this->assertEquals(array('is_admin'), $resultCriteriaObject->currentValue);
     }
     
     public function testParseCriteriaTokenCurrentUserHasIdentity()
@@ -672,7 +672,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_IDENTITY",
             "expLabel": "Supervisor is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "1"
+            "currentValue": ["1"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -728,7 +728,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_IDENTITY",
             "expLabel": "Supervisor is admin",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "1"
+            "currentValue": ["1"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -784,7 +784,7 @@ class PMSEUserRoleParserTest extends TestCase
             "expType": "USER_IDENTITY",
             "expLabel": "Supervisor = \"1\"",
             "expToken": "{::future::Users::id::}",
-            "currentValue": "1"
+            "currentValue": ["1"]
         }');
 
         $this->dataParser->setCurrentUser($currentUserMock);
@@ -835,7 +835,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals('false', $resultCriteriaObject->currentValue);
+        $this->assertEquals(array('false'), $resultCriteriaObject->currentValue);
     }
     
     public function testParseCriteriaTokenSupervisorHasIdentityNull()
@@ -879,7 +879,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals('false', $resultCriteriaObject->currentValue);
+        $this->assertEquals(array('false'), $resultCriteriaObject->currentValue);
     }
     
     public function testDecomposeToken()

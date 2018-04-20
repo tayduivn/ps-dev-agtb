@@ -334,6 +334,9 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT' => 'is not',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE' => 'not equal to',
 
+    'LBL_PMSE_EXPCONTROL_ALL_RELATED_RECORDS' => 'All Related Records',
+    'LBL_PMSE_EXPCONTROL_ANY_RELATED_RECORDS' => 'Any Related Records',
+
     'LBL_PMSE_RUNTIME_BUTTON' => 'Run Time',
 
     'LBL_PMSE_FORMPANEL_SUBMIT' => 'Add',

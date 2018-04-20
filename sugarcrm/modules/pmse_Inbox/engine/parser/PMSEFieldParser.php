@@ -58,6 +58,18 @@ class PMSEFieldParser implements PMSEDataParserInterface
     );
 
     /**
+     * Getting the PMSERelatedModule object
+     * @return object
+     */
+    private function getRelatedModuleObject()
+    {
+        if (!isset($this->pmseRelatedModule)) {
+            $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
+        }
+        return $this->pmseRelatedModule;
+    }
+
+    /**
      * gets the bean list
      * @return array
      * @codeCoverageIgnore
@@ -158,13 +170,18 @@ class PMSEFieldParser implements PMSEDataParserInterface
     {
         $tokenArray = array($criteriaToken->expModule, $criteriaToken->expField, $criteriaToken->expOperator);
         $criteriaToken->currentValue = $this->parseTokenValue($tokenArray);
+        /*
         if (isset($criteriaToken->valType) && $criteriaToken->valType == 'MODULE') {
             $tokenArray = array($criteriaToken->valModule, $criteriaToken->valField, $criteriaToken->expOperator);
             $criteriaToken->expValue = $this->parseTokenValue($tokenArray);
         } else {
+        */
             $criteriaToken->expValue = $this->setExpValueFromCriteria($criteriaToken);
+        /*
         }
+        */
 
+        /*
         // We need to check to see if the evaluated bean (sometimes the target
         // and sometimes the related bean) is the right bean to work on
         $eBean = $this->evaluatedBean;
@@ -205,6 +222,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
                 return $criteriaToken;
             }
         }
+        */
 
         // Use the working bean now to get what we are after
         if (isset($criteriaToken->expField)) {
@@ -232,6 +250,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
     {
         $tokenArray = array($criteriaToken->expModule, $criteriaToken->expValue, $criteriaToken->expOperator);
         $tokenValue = $this->parseTokenValue($tokenArray);
+        $tokenValue = $tokenValue[0];
         if ($criteriaToken->expSubtype == 'Currency') {
             $value = json_decode($tokenValue);
             // in some use cases, value can be numeric instead of array
@@ -267,17 +286,15 @@ class PMSEFieldParser implements PMSEDataParserInterface
     /**
      * Gets the related bean to the evaluated bean, if one is set
      * @param string $link The link name to get the related bean from
-     * @return SugarBean
+     * @return array SugarBeans
      */
     public function getRelatedBean($link)
     {
-        // If we have a related bean, send it back now
-        if (!empty($this->relatedBeans[$link])) {
-            return $this->relatedBeans[$link];
+        if (empty($this->relatedBeans[$link])) {
+            // Get and set the related bean since we don't have it yet
+            $this->relatedBeans[$link] = $this->getRelatedModuleObject()->getRelatedModuleBeans($this->evaluatedBean, $link);
         }
 
-        // Get and set the related bean since we don't have it yet
-        $this->relatedBeans[$link] = $this->pmseRelatedModule->getRelatedModule($this->evaluatedBean, $link);
         return $this->relatedBeans[$link];
     }
 
@@ -285,47 +302,50 @@ class PMSEFieldParser implements PMSEDataParserInterface
     /**
      * parser a token for a field element, is this: bool or custom fields
      * @param string $token field contains a parser
-     * @return string field value, in the case of a currency type it returns a serialized array with the amount and
+     * @return array of field values, in the case of a currency type it returns a serialized array with the amount and
      * the currency id.
      */
     public function parseTokenValue($token)
     {
-        $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
+        $values = array();
 
-        $bean = $this->evaluatedBean;
-        $value = '';
         if (!empty($token)) {
             // This logic is a fairly bad assumption, but works in most cases. The
             // assumption is that a link name won't be in the bean list so try to load
             // a related bean instead.
             if (!isset($this->beanList[$token[0]])) {
                 // Get the related bean instead
-                $bean = $this->getRelatedBean($token[0]);
+                $beans = $this->getRelatedBean($token[0]);
+            } else {
+                $beans = array($this->evaluatedBean);
             }
 
-            $field = $token[1];
-            if (!empty($bean) && is_object($bean)) {
-                if (isset($token[2]) &&
-                    ($token[2] == 'changes' ||
-                        $token[2] == 'changes_from' ||
-                        $token[2] == 'changes_to')) {
-                    if (isset($bean->dataChanges) && isset($bean->dataChanges[$field])) {
-                        if ($token[2] == 'changes_from') {
-                            $value = $bean->dataChanges[$field]['before'];
+            if (is_array($beans)) {
+                $field = $token[1];
+                foreach ($beans as $bean) {
+                    if (isset($token[2]) &&
+                        ($token[2] == 'changes' ||
+                            $token[2] == 'changes_from' ||
+                            $token[2] == 'changes_to')) {
+                        if (isset($bean->dataChanges) && isset($bean->dataChanges[$field])) {
+                            if ($token[2] == 'changes_from') {
+                                $value = $bean->dataChanges[$field]['before'];
+                            } else {
+                                $value = $bean->dataChanges[$field]['after'];
+                            }
                         } else {
-                            $value = $bean->dataChanges[$field]['after'];
+                            // used as a flag that means no changes
+                            $value = null;
                         }
                     } else {
-                        // used as a flag that means no changes
-                        $value = null;
+                        $value = $this->getRelatedModuleObject()->getFieldValue($bean, $field);
                     }
-                } else {
-                    $value = $this->pmseRelatedModule->getFieldValue($bean, $field);
+                    $values[] = $value;
                 }
             }
         }
 
-        return $value;
+        return $values;
     }
 
     /**

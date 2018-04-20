@@ -73,7 +73,7 @@ class PMSECriteriaEvaluatorTest extends TestCase
                             "expLabel": "Task # 4 >= Approved",
                             "expOperator": "major_equals_than",
                             "expValue": "Approved",
-                            "currentValue" : "Approved",
+                            "currentValue" : ["Approved"],
                             "expField": "17842861053ee3573bcb7a4046264057"
                         }
                     ]';
@@ -146,7 +146,7 @@ class PMSECriteriaEvaluatorTest extends TestCase
                             "expSubtype": "TextField",
                             "expLabel": "Account Name == 3",
                             "expValue": 3,
-                            "currentValue": 3,
+                            "currentValue": [3],
                             "expOperator": "equals",
                             "expModule": "lead_direct_reports",
                             "expField": "account_name"

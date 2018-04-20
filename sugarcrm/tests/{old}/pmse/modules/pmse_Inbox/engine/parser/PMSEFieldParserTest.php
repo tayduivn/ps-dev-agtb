@@ -24,7 +24,6 @@ class PMSEFieldParserTest extends TestCase
     protected function setUp()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
-            ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
     }
@@ -1112,7 +1111,7 @@ class PMSEFieldParserTest extends TestCase
         );
 
         $token = array('Leads', 'email_addresses_primary');
-        $expectedToken = "rock.star@gmail.com";
+        $expectedToken = array("rock.star@gmail.com");
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);
@@ -1160,7 +1159,7 @@ class PMSEFieldParserTest extends TestCase
         );
 
         $token = array('Leads', 'do_not_call');
-        $expectedToken = true;
+        $expectedToken = array(true);
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);
@@ -1208,7 +1207,7 @@ class PMSEFieldParserTest extends TestCase
         );
 
         $token = array('Leads', 'do_not_call');
-        $expectedToken = true;
+        $expectedToken = array(true);
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);

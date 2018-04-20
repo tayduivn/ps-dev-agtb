@@ -29,7 +29,6 @@ class PMSECriteriaEvaluatorTest extends TestCase
         $criteriaEvaluatorMock = $this->getMockBuilder('\PMSECriteriaEvaluator')
             // The original constructor instantiates the PMSEExpressionEvaluator class by using
             // ProcessManager\Factory::getPMSEObject. Easiest way to avoid that is not running it.
-            ->disableOriginalConstructor()
             // We don't need to mock any methods out as other methods of the class aren't called.
             ->setMethods(null)
             ->getMock();
@@ -62,7 +61,7 @@ class PMSECriteriaEvaluatorTest extends TestCase
         $expressionEvaluatorMock->expects($this->once())
             ->method('routeFunctionOperator')
             // Note that the getSubtype function is mocked out below this.
-            ->with($operator, $expression->currentValue, $expression->expOperator, $expression->expValue, $expression->expSubtype)
+            ->with($operator, $expression->currentValue[0], $expression->expOperator, $expression->expValue, $expression->expSubtype)
             // I just return this because the rest of the function doesn't need it and it's easy to deal with.
             ->willReturn('Goatman');
 
@@ -95,7 +94,7 @@ class PMSECriteriaEvaluatorTest extends TestCase
             'expLabel' => 'Task # 4 >= Approved',
             'expOperator' => 'major_equals_than',
             'expValue' => 'Approved',
-            'currentValue'  => '$expValue',
+            'currentValue'  => ['$expValue'],
             'expField' => '17842861053ee3573bcb7a4046264057',
         ];
 
@@ -105,7 +104,7 @@ class PMSECriteriaEvaluatorTest extends TestCase
             'expLabel' => 'Task # 4 >= Approved',
             'expOperator' => 'major_equals_than',
             'expValue' => 'Approved',
-            'currentValue'  => '$expValue',
+            'currentValue'  => ['$expValue'],
             'expField' => '17842861053ee3573bcb7a4046264057',
         ];
         return [
