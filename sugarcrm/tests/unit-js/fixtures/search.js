@@ -70,7 +70,7 @@ fixtures.search = {
     getModule2_return: {
         nameFormat: {'f': 'first_name', 'l': 'last_name'},
         fields: {
-            full_name: {vname: 'full_name'},
+            name: {vname: 'name'},
             first_name: {vname: 'first'},
             last_name: {vname: 'last'}
         }
@@ -80,7 +80,7 @@ fixtures.search = {
             {
                 name: 'primary',
                 fields: [
-                    {name: 'full_name'}
+                    {name: 'name'}
                 ]
             },
             {

@@ -51,9 +51,11 @@
                                     _.extend({}, personAttrs, highlights)
                                 );
 
-                                // Add the full_name to the highlights, and
-                                // format it like it came from the server.
-                                highlights.full_name = [fullname];
+                                // Add the fullname as `name` property to the highlights,
+                                // and format it like it came from the server.
+                                if (fullname.length) {
+                                    highlights.name = [fullname];
+                                }
 
                                 // Remove the other person attributes since
                                 // they're all encapsulated in full_name.
