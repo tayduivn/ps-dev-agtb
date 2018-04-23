@@ -86,15 +86,6 @@ class SavedReportTest extends TestCase
     }
 
     /**
-     * Checks if last run date is on the bean
-     */
-    public function testNextRun()
-    {
-        $bean = BeanFactory::newBean('Reports');
-        $this->assertArrayHasKey('next_run', $bean->field_defs);
-    }
-
-    /**
      * to test and ensure the report object is an instance of basic
      */
     public function testReportBeanType()

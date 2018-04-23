@@ -518,6 +518,10 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Reports/clients/base/layouts/records';
         }
 
+        if (version_compare($this->from_version, '8.1.0', '<')) {
+            $files[] = 'modules/Reports/clients/base/fields/next-run';
+        }
+
         $this->upgrader->fileToDelete($files, $this);
     }
 
