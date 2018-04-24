@@ -58,7 +58,7 @@ class Logger extends BaseLogger
                 "Elasticsearch response failure: code %s [%s] %s",
                 $response->getStatus(),
                 $request->getMethod(),
-                $info['url']
+                $info['url'] ?? $request->getPath()
             );
             $this->log(LogLevel::CRITICAL, $msg);
         }
@@ -69,7 +69,7 @@ class Logger extends BaseLogger
             $msg = sprintf(
                 "Elasticsearch request debug: [%s] %s %s",
                 $request->getMethod(),
-                $info['url'],
+                $info['url'] ?? $request->getPath(),
                 $this->encodeData($request->getData())
             );
             $this->log(LogLevel::DEBUG, $msg);
@@ -85,7 +85,7 @@ class Logger extends BaseLogger
         if (null !== $this->xhProf) {
             $this->xhProf->trackElasticQuery(array(
                 $request->getMethod(),
-                $info['url'],
+                $info['url'] ?? $request->getPath() ,
             ), $request->getData(), $response->getQueryTime());
         }
     }

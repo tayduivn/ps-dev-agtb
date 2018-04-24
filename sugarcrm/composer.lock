@@ -4,8 +4,99 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4494572f7e8753ad5c2e30da96c49487",
+    "content-hash": "786ce2c7ac249549a45b7395fa3893a5",
     "packages": [
+        {
+            "name": "aws/aws-sdk-php",
+            "version": "3.55.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aws/aws-sdk-php.git",
+                "reference": "97815dd33b2ac0fe8c2385378feb254e36dffa2f"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/aws/aws-sdk-php/aws-aws-sdk-php-3.55.3-430c2c.tar",
+                "reference": "97815dd33b2ac0fe8c2385378feb254e36dffa2f",
+                "shasum": "173455278ccbe085e6032b938a4eac24290fc7ac"
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-pcre": "*",
+                "ext-simplexml": "*",
+                "ext-spl": "*",
+                "guzzlehttp/guzzle": "^5.3.1|^6.2.1",
+                "guzzlehttp/promises": "~1.0",
+                "guzzlehttp/psr7": "^1.4.1",
+                "mtdowling/jmespath.php": "~2.2",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "andrewsville/php-token-reflection": "^1.4",
+                "aws/aws-php-sns-message-validator": "~1.0",
+                "behat/behat": "~3.0",
+                "doctrine/cache": "~1.4",
+                "ext-dom": "*",
+                "ext-openssl": "*",
+                "nette/neon": "^2.3",
+                "phpunit/phpunit": "^4.8.35|^5.4.3",
+                "psr/cache": "^1.0"
+            },
+            "suggest": {
+                "aws/aws-php-sns-message-validator": "To validate incoming SNS notifications",
+                "doctrine/cache": "To use the DoctrineCacheAdapter",
+                "ext-curl": "To send requests using cURL",
+                "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Aws\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Aws\\Test\\": "tests/"
+                },
+                "classmap": [
+                    "build/"
+                ]
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Amazon Web Services",
+                    "homepage": "http://aws.amazon.com"
+                }
+            ],
+            "description": "AWS SDK for PHP - Use Amazon Web Services in your PHP project",
+            "homepage": "http://aws.amazon.com/sdkforphp",
+            "keywords": [
+                "amazon",
+                "aws",
+                "cloud",
+                "dynamodb",
+                "ec2",
+                "glacier",
+                "s3",
+                "sdk"
+            ],
+            "support": {
+                "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
+                "issues": "https://github.com/aws/aws-sdk-php/issues"
+            },
+            "time": "2018-04-26T21:09:13+00:00"
+        },
         {
             "name": "beberlei/assert",
             "version": "v2.9.2",
@@ -1436,6 +1527,60 @@
             "time": "2013-01-19T17:42:34+00:00"
         },
         {
+            "name": "mtdowling/jmespath.php",
+            "version": "2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jmespath/jmespath.php.git",
+                "reference": "b8d48b0e09339dc0d27693ef4d8abe33f728793e"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/mtdowling/jmespath-php/mtdowling-jmespath-php-2.4.0-c11b9f.tar",
+                "reference": "b8d48b0e09339dc0d27693ef4d8abe33f728793e",
+                "shasum": "5c13600399c8f369bf7496bea5572b7b7262fd52"
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "bin": [
+                "bin/jp.php"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "JmesPath\\": "src/"
+                },
+                "files": [
+                    "src/JmesPath.php"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Declaratively specify how to extract elements from a JSON document",
+            "keywords": [
+                "json",
+                "jsonpath"
+            ],
+            "time": "2016-12-03T22:08:25+00:00"
+        },
+        {
             "name": "onelogin/php-saml",
             "version": "2.11.0",
             "source": {
@@ -2454,15 +2599,10 @@
         {
             "name": "sugarcrm/identity-provider",
             "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:sugarcrm/IdentityProvider.git",
-                "reference": "67e66ed565d556073904ca7c7d39df82ddff71cd"
-            },
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "feedf0a48e1f298349ff3f155d4e37c13e3de96a",
+                "reference": "67e66ed565d556073904ca7c7d39df82ddff71cd",
                 "shasum": null
             },
             "require": {
