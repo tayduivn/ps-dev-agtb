@@ -10,20 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Cache\Backend;
+namespace Sugarcrm\Sugarcrm\Cache;
 
-use Psr\SimpleCache\CacheInterface;
-use Sugarcrm\Sugarcrm\Cache\Backend\Redis;
-use Sugarcrm\Sugarcrm\DependencyInjection\Container;
-use Sugarcrm\SugarcrmTests\CacheTest;
+use Psr\SimpleCache\CacheException;
 
 /**
- * @covers \Sugarcrm\Sugarcrm\Cache\Backend\Redis
+ * Cache exception
  */
-final class RedisTest extends CacheTest
+class Exception extends \Exception implements CacheException
 {
-    protected function newInstance() : CacheInterface
-    {
-        return Container::getInstance()->get(Redis::class);
-    }
 }

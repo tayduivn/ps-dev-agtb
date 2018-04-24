@@ -13,7 +13,7 @@
 namespace Sugarcrm\SugarcrmTests;
 
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * @coversNothing
@@ -21,7 +21,7 @@ use Sugarcrm\Sugarcrm\Cache;
 abstract class CacheTest extends TestCase
 {
     /**
-     * @var Cache
+     * @var CacheInterface
      */
     protected $backend;
 
@@ -29,27 +29,48 @@ abstract class CacheTest extends TestCase
     {
         try {
             $this->backend = $this->newInstance();
-        } catch (\RuntimeException $e) {
+        } catch (\Exception $e) {
             $this->markTestSkipped($e->getMessage());
         }
+
+        $this->backend->clear();
     }
 
-    abstract protected function newInstance() : Cache;
+    abstract protected function newInstance() : CacheInterface;
 
     /**
      * @test
-     * @dataProvider storeAndFetchProvider
+     * @dataProvider setGetAndHasProvider
      */
-    public function storeAndFetch(string $key, $value)
+    public function setGetAndHas(string $key, $value)
     {
         $this->assertValueNotCached($this->backend, $key);
-
-        $this->backend->store($key, $value);
-
+        $this->assertSet($this->backend, $key, $value);
         $this->assertValueCached($value, $this->backend, $key);
     }
 
-    public static function storeAndFetchProvider()
+    /**
+     * @test
+     * @dataProvider setGetAndHasProvider
+     */
+    public function setGetAndHasViaMultiple(string $key, $value)
+    {
+        $this->assertValueNotCached($this->backend, $key);
+        $this->assertSetMultiple($this->backend, [$key => $value]);
+        $this->assertValuesCached([$key => $value], $this->backend);
+    }
+
+    /**
+     * @test
+     */
+    public function default()
+    {
+        $this->assertValueNotCached($this->backend, 'non-existing-key');
+
+        $this->assertSame('phpunit', $this->backend->get('non-existing-key', 'phpunit'));
+    }
+
+    public static function setGetAndHasProvider()
     {
         return [
             'string' => [
@@ -84,10 +105,10 @@ abstract class CacheTest extends TestCase
      */
     public function delete()
     {
-        $this->backend->store('key1', 'X');
-        $this->backend->store('key2', 'Y');
+        $this->assertSet($this->backend, 'key1', 'X');
+        $this->assertSet($this->backend, 'key2', 'Y');
 
-        $this->backend->delete('key1');
+        $this->assertDelete($this->backend, 'key1');
 
         $this->assertValueNotCached($this->backend, 'key1');
         $this->assertValueCached('Y', $this->backend, 'key2');
@@ -98,8 +119,8 @@ abstract class CacheTest extends TestCase
      */
     public function clear()
     {
-        $this->backend->store('key', 'value');
-        $this->backend->clear();
+        $this->assertSet($this->backend, 'key', 'value');
+        $this->assertClear($this->backend);
 
         $this->assertValueNotCached($this->backend, 'key');
     }
@@ -109,21 +130,84 @@ abstract class CacheTest extends TestCase
      */
     public function expiration()
     {
-        $this->backend->store('key', 'value', 1);
+        $this->assertSet($this->backend, 'key', 'value', 1);
         usleep(1200000);
 
         $this->assertValueNotCached($this->backend, 'key');
     }
 
-    private function assertValueCached($value, Cache $cache, string $key) : void
+    /**
+     * @test
+     */
+    public function setGetAndDeleteMultiple()
     {
-        $this->assertEquals($value, $cache->fetch($key, $success));
-        $this->assertTrue($success);
+        $this->assertValueNotCached($this->backend, 'a');
+        $this->assertValueNotCached($this->backend, 'b');
+        $this->assertValueNotCached($this->backend, 'c');
+
+        $this->assertSetMultiple($this->backend, [
+            'a' => 'foo',
+            'b' => 'bar',
+        ]);
+
+        $this->assertValuesCached([
+            'a' => 'foo',
+            'c' => null,
+        ], $this->backend);
+
+        $this->assertDeleteMultiple($this->backend, ['a', 'd']);
+
+        $this->assertValuesCached([
+            'a' => 'phpunit',
+            'b' => 'bar',
+            'c' => 'phpunit',
+        ], $this->backend, 'phpunit');
     }
 
-    private function assertValueNotCached(Cache $cache, string $key) : void
+    private function assertSet(CacheInterface $cache, string $key, $value, ?int $ttl = null) : void
     {
-        $this->assertNull($cache->fetch($key, $success));
-        $this->assertFalse($success);
+        $this->assertTrue($cache->set($key, $value, $ttl));
+    }
+
+    private function assertSetMultiple(CacheInterface $cache, iterable $values) : void
+    {
+        $this->assertTrue($cache->setMultiple($values));
+    }
+
+    private function assertDelete(CacheInterface $cache, string $key) : void
+    {
+        $this->assertTrue($cache->delete($key));
+    }
+
+    private function assertDeleteMultiple(CacheInterface $cache, iterable $keys) : void
+    {
+        $this->assertTrue($cache->deleteMultiple($keys));
+    }
+
+    private function assertClear(CacheInterface $cache) : void
+    {
+        $this->assertTrue($cache->clear());
+    }
+
+    private function assertValueCached($expected, CacheInterface $cache, string $key) : void
+    {
+        $this->assertEquals($expected, $cache->get($key));
+    }
+
+    private function assertValuesCached(array $expected, CacheInterface $cache, $default = null) : void
+    {
+        $values = $cache->getMultiple(array_keys($expected), $default);
+
+        if ($values instanceof \Traversable) {
+            $values = iterator_to_array($values);
+        }
+
+        $this->assertArraySubset($expected, $values);
+    }
+
+    private function assertValueNotCached(CacheInterface $cache, string $key) : void
+    {
+        $this->assertFalse($cache->has($key));
+        $this->assertNull($cache->get($key));
     }
 }

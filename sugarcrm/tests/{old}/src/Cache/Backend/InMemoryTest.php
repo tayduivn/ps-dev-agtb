@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Cache\Backend;
 
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
 use Sugarcrm\Sugarcrm\Cache\Backend\InMemory;
 use Sugarcrm\SugarcrmTests\CacheTest;
 
@@ -21,7 +21,7 @@ use Sugarcrm\SugarcrmTests\CacheTest;
  */
 final class InMemoryTest extends CacheTest
 {
-    protected function newInstance() : Cache
+    protected function newInstance() : CacheInterface
     {
         return new InMemory();
     }

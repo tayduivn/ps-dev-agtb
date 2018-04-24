@@ -15,7 +15,7 @@ use Sugarcrm\Sugarcrm\Cache\Backend\WinCache;
 /**
  * @deprecated Use Sugarcrm\Sugarcrm\Cache\Backend\WinCache instead
  */
-class SugarCacheWincache extends SugarCacheForwardCompatible
+class SugarCacheWincache extends SugarCachePsr
 {
     public function __construct()
     {

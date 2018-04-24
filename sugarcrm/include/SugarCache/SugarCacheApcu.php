@@ -17,7 +17,7 @@ use Sugarcrm\Sugarcrm\Cache\Backend\APCu;
  *
  * @deprecated Use Sugarcrm\Sugarcrm\Cache\Backend\APCu instead
  */
-class SugarCacheApcu extends SugarCacheForwardCompatible
+class SugarCacheApcu extends SugarCachePsr
 {
     public function __construct()
     {

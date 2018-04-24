@@ -13,7 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Cache\Middleware;
 
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
 use Sugarcrm\Sugarcrm\Cache\Middleware\DefaultTTL;
 
 /**
@@ -29,7 +29,7 @@ final class DefaultTTLTest extends TestCase
         $backend = $this->createBackend(300);
         $middleware = $this->createMiddleware($backend);
 
-        $middleware->store('key', 'value');
+        $middleware->set('key', 'value');
     }
 
     /**
@@ -40,20 +40,20 @@ final class DefaultTTLTest extends TestCase
         $backend = $this->createBackend(5);
         $middleware = $this->createMiddleware($backend);
 
-        $middleware->store('key', 'value', 5);
+        $middleware->set('key', 'value', 5);
     }
 
-    private function createBackend(int $expectedTTL) : Cache
+    private function createBackend(int $expectedTTL) : CacheInterface
     {
-        $backend = $this->createMock(Cache::class);
+        $backend = $this->createMock(CacheInterface::class);
         $backend->expects($this->once())
-            ->method('store')
+            ->method('set')
             ->with('key', 'value', $expectedTTL);
 
         return $backend;
     }
 
-    private function createMiddleware(Cache $backend) : Cache
+    private function createMiddleware(CacheInterface $backend) : CacheInterface
     {
         return new DefaultTTL($backend, 300);
     }

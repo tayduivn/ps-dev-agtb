@@ -10,15 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Cache\Backend\Memcached;
+namespace Sugarcrm\Sugarcrm\DependencyInjection\Exception;
+
+use Psr\Container\ContainerExceptionInterface;
 
 /**
- * @deprecated Use Sugarcrm\Sugarcrm\Cache\Backend\Memcached instead
+ * Designates unavailability of a service, e.g. due to unmet runtime dependencies
  */
-class SugarCacheMemcached extends SugarCachePsr
+class ServiceUnavailable extends \RuntimeException implements ContainerExceptionInterface
 {
-    public function __construct()
-    {
-        parent::__construct(Memcached::class, 900, 'external_cache_disabled_memcached');
-    }
 }

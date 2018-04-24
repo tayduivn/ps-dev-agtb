@@ -12,30 +12,45 @@
 
 namespace Sugarcrm\SugarcrmTests\Cache\Middleware;
 
-use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\Cache;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\SimpleCache\CacheInterface;
+use Sugarcrm\Sugarcrm\Cache\Backend\InMemory;
 use Sugarcrm\Sugarcrm\Cache\Middleware\Replicate;
+use Sugarcrm\SugarcrmTests\CacheTest;
 
 /**
  * @covers \Sugarcrm\Sugarcrm\Cache\Middleware\Replicate
  */
-final class ReplicateTest extends TestCase
+final class ReplicateTest extends CacheTest
 {
+    protected function newInstance() : CacheInterface
+    {
+        return $this->createMiddleware(new InMemory(), new InMemory());
+    }
+
+    /**
+     * @test
+     */
+    public function expiration()
+    {
+        $this->markTestSkipped('Cannot test expiration since the underlying in-memory backend does not support it');
+    }
+
     /**
      * @test
      */
     public function fetchSuccessFromReplicaDoesNotHitSource()
     {
         $replica = $this->createBackend();
-        $this->store($replica, 'value');
+        $this->set($replica, 'value');
 
         $source = $this->createBackend();
         $source->expects($this->never())
-            ->method('fetch');
+            ->method('get');
 
         $middleware = $this->createMiddleware($source, $replica);
 
-        $this->assertSame('value', $middleware->fetch('key'));
+        $this->assertSame('value', $middleware->get('key'));
     }
 
     /**
@@ -44,15 +59,20 @@ final class ReplicateTest extends TestCase
     public function fetchSuccessFromSourceIsReplicated()
     {
         $source = $this->createBackend();
-        $this->store($source, 'value');
+        $this->set($source, 'value');
 
         $replica = $this->createBackend();
+        $replica->expects($this->any())
+            ->method('get')
+            ->willReturnCallback(function ($_, $default) {
+                return $default;
+            });
         $replica->expects($this->once())
-            ->method('store');
+            ->method('set');
 
         $middleware = $this->createMiddleware($source, $replica);
 
-        $this->assertSame('value', $middleware->fetch('key'));
+        $this->assertSame('value', $middleware->get('key'));
     }
 
     /**
@@ -61,33 +81,42 @@ final class ReplicateTest extends TestCase
     public function fetchFailure()
     {
         $source = $this->createBackend();
+        $source->expects($this->any())
+            ->method('get')
+            ->willReturnCallback(function ($_, $default) {
+                return $default;
+            });
         $source->expects($this->once())
-            ->method('fetch');
+            ->method('get');
 
         $replica = $this->createBackend();
+        $replica->expects($this->any())
+            ->method('get')
+            ->willReturnCallback(function ($_, $default) {
+                return $default;
+            });
         $replica->expects($this->once())
-            ->method('fetch');
+            ->method('get');
 
         $middleware = $this->createMiddleware($source, $replica);
 
-        $this->assertNull($middleware->fetch('key', $success));
-        $this->assertEmpty($success);
+        $this->assertSame('xyz', $middleware->get('key', 'xyz'));
     }
 
     /**
      * @test
      */
-    public function storeIsReplicated()
+    public function setIsReplicated()
     {
         $source = $this->createBackend();
-        $this->expectStore($source, 'key', 'value', 120);
+        $this->expectSet($source, 'key', 'value', 120);
 
         $replica = $this->createBackend();
-        $this->expectStore($replica, 'key', 'value', 120);
+        $this->expectSet($replica, 'key', 'value', 120);
 
         $middleware = $this->createMiddleware($source, $replica);
 
-        $middleware->store('key', 'value', 120);
+        $middleware->set('key', 'value', 120);
     }
 
     /**
@@ -122,47 +151,46 @@ final class ReplicateTest extends TestCase
         $middleware->clear();
     }
 
-    private function createMiddleware(Cache $source, Cache $replica) : Replicate
+    private function createMiddleware(CacheInterface $source, CacheInterface $replica) : Replicate
     {
         return new Replicate($source, $replica);
     }
 
     /**
-     * @return Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @return CacheInterface|MockObject
      */
-    private function createBackend() : Cache
+    private function createBackend() : CacheInterface
     {
-        return $this->createMock(Cache::class);
+        return $this->createMock(CacheInterface::class);
     }
 
-    private function store(Cache $backend, $value) : void
-    {
-        $backend->expects($this->once())
-            ->method('fetch')
-            ->willReturnCallback(function ($key, &$success) use ($value) {
-                $success = true;
-
-                return $value;
-            });
-    }
-
-    private function expectStore(Cache $backend, string $key, $value, int $ttl) : void
+    private function set(CacheInterface $backend, $value) : void
     {
         $backend->expects($this->once())
-            ->method('store')
-            ->with($key, $value, $ttl);
+            ->method('get')
+            ->willReturn($value);
     }
 
-    private function expectDelete(Cache $backend, string $key) : void
+    private function expectSet(CacheInterface $backend, string $key, $value, int $ttl) : void
+    {
+        $backend->expects($this->once())
+            ->method('set')
+            ->with($key, $value, $ttl)
+            ->willReturn(true);
+    }
+
+    private function expectDelete(CacheInterface $backend, string $key) : void
     {
         $backend->expects($this->once())
             ->method('delete')
-            ->with($key);
+            ->with($key)
+            ->willReturn(true);
     }
 
-    private function expectClear(Cache $backend) : void
+    private function expectClear(CacheInterface $backend) : void
     {
         $backend->expects($this->once())
-            ->method('clear');
+            ->method('clear')
+            ->willReturn(true);
     }
 }

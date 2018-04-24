@@ -13,16 +13,16 @@
 namespace Sugarcrm\Sugarcrm\Cache\Middleware;
 
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 use Rhumsaa\Uuid\Uuid;
 use RuntimeException;
-use Sugarcrm\Sugarcrm\Cache;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage;
 use Sugarcrm\Sugarcrm\Security\Crypto\AES256GCM;
 
 /**
  * Multi-tenant cache middleware
  */
-final class MultiTenant implements Cache
+final class MultiTenant implements CacheInterface
 {
     /**
      * Application instance key
@@ -60,9 +60,9 @@ final class MultiTenant implements Cache
     private $crypto;
 
     /**
-     * Undelying cache backend
+     * Underlying cache backend
      *
-     * @var Cache
+     * @var CacheInterface
      */
     private $backend;
 
@@ -74,10 +74,10 @@ final class MultiTenant implements Cache
     /**
      * @param string $instanceKey
      * @param KeyStorage $keyStorage
-     * @param Cache $backend
+     * @param CacheInterface $backend
      * @param LoggerInterface $logger
      */
-    public function __construct(string $instanceKey, KeyStorage $keyStorage, Cache $backend, LoggerInterface $logger)
+    public function __construct(string $instanceKey, KeyStorage $keyStorage, CacheInterface $backend, LoggerInterface $logger)
     {
         $this->instanceKey = $instanceKey;
         $this->keyStorage = $keyStorage;
@@ -91,48 +91,91 @@ final class MultiTenant implements Cache
     /**
      * {@inheritDoc}
      */
-    public function fetch(string $key, ?bool &$success = null)
+    public function get($key, $default = null)
     {
-        $value = $this->backend->fetch($this->hash($key), $success);
-
-        if (!$success) {
-            return $value;
-        }
-
-        try {
-            return $this->decrypt($value);
-        } catch (RuntimeException $e) {
-            $success = false;
-
-            $this->logger->warning(sprintf('Failed to decrypt key "%s": %s', $key, $e->getMessage()));
-
-            return null;
-        }
+        return $this->decrypt($key, $this->backend->get(
+            $this->hash($key)
+        ), $default);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function store(string $key, $value, ?int $ttl = null) : void
+    public function set($key, $value, $ttl = null)
     {
-        $this->backend->store($this->hash($key), $this->encrypt($value), $ttl);
+        return $this->backend->set($this->hash($key), $this->encrypt($value), $ttl);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function delete(string $key) : void
+    public function delete($key)
     {
-        $this->backend->delete($this->hash($key));
+        return $this->backend->delete($this->hash($key));
     }
 
     /**
      * {@inheritDoc}
      */
-    public function clear() : void
+    public function clear()
     {
         $this->key = $this->generateKey();
         $this->initializeKey();
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMultiple($keys, $default = null)
+    {
+        $hashToKey = $result = [];
+
+        foreach ($keys as $key) {
+            $hashToKey[$this->hash($key)] = $key;
+        }
+
+        $values = $this->backend->getMultiple(array_keys($hashToKey));
+
+        foreach ($values as $hashedKey => $encryptedValue) {
+            $key = $hashToKey[$hashedKey];
+            $result[$key] = $this->decrypt($key, $encryptedValue, $default);
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMultiple($values, $ttl = null)
+    {
+        $encryptedAndHashedValues = [];
+
+        foreach ($values as $key => $value) {
+            $encryptedAndHashedValues[$this->hash($key)] = $this->encrypt($value);
+        }
+
+        return $this->backend->setMultiple($encryptedAndHashedValues, $ttl);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteMultiple($keys)
+    {
+        return $this->backend->deleteMultiple(array_map(function ($key) {
+            return $this->hash($key);
+        }, $keys));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function has($key)
+    {
+        return $this->backend->has($key);
     }
 
     /**
@@ -182,13 +225,25 @@ final class MultiTenant implements Cache
     /**
      * Decrypts the cached value
      *
-     * @param string $value
+     * @param string $key
+     * @param mixed $value
+     * @param mixed $default
      * @return mixed
      */
-    private function decrypt(string $value)
+    private function decrypt($key, $value, $default)
     {
-        return unserialize($this->crypto->decrypt($value), [
-            'allowed_classes' => false,
-        ]);
+        if ($value === null) {
+            return $default;
+        }
+
+        try {
+            return unserialize($this->crypto->decrypt($value), [
+                'allowed_classes' => false,
+            ]);
+        } catch (RuntimeException $e) {
+            $this->logger->warning(sprintf('Failed to decrypt key "%s": %s', $key, $e->getMessage()));
+
+            return $default;
+        }
     }
 }

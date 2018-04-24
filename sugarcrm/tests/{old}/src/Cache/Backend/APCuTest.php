@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Cache\Backend;
 
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
 use Sugarcrm\Sugarcrm\Cache\Backend\APCu;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\SugarcrmTests\CacheTest;
@@ -22,7 +22,7 @@ use Sugarcrm\SugarcrmTests\CacheTest;
  */
 final class APCuTest extends CacheTest
 {
-    protected function newInstance() : Cache
+    protected function newInstance() : CacheInterface
     {
         return Container::getInstance()->get(APCu::class);
     }

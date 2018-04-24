@@ -14,25 +14,27 @@ namespace Sugarcrm\Sugarcrm\Cache\Backend;
 
 use Redis as Client;
 use RedisException;
-use RuntimeException;
-use Sugarcrm\Sugarcrm\Cache;
+use Sugarcrm\Sugarcrm\Cache\Exception;
+use Symfony\Component\Cache\Simple\RedisCache;
 
 /**
  * Redis implementation of the cache backend
  *
  * @link http://pecl.php.net/package/redis
  */
-final class Redis implements Cache
+final class Redis extends RedisCache
 {
-    private $client;
-
     /**
+     * @param string|null $host
+     * @param int|null $port
+     *
+     * @throws Exception
      * @codeCoverageIgnore
      */
     public function __construct(?string $host, ?int $port = null)
     {
         if (!extension_loaded('redis')) {
-            throw new RuntimeException('Redis extension is not loaded');
+            throw new Exception('Redis extension is not loaded');
         }
 
         $client = new Client();
@@ -40,55 +42,9 @@ final class Redis implements Cache
         try {
             $client->connect($host ?? '127.0.0.1', $port ?? 6379);
         } catch (RedisException $e) {
-            throw new RuntimeException('Unable to connect to redis server', 0, $e);
+            throw new Exception($e->getMessage(), 0, $e);
         }
 
-        $this->client = $client;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function fetch(string $key, ?bool &$success = null)
-    {
-        $value = $this->client->get($key);
-
-        if ($value === false) {
-            $success = false;
-
-            return null;
-        }
-
-        $success = true;
-
-        return unserialize($value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function store(string $key, $value, ?int $ttl = null) : void
-    {
-        $this->client->set($key, serialize($value));
-
-        if ($ttl !== null) {
-            $this->client->expire($key, $ttl);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function delete(string $key) : void
-    {
-        $this->client->delete($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function clear() : void
-    {
-        $this->client->flushAll();
+        parent::__construct($client);
     }
 }

@@ -12,53 +12,64 @@
 
 namespace Sugarcrm\Sugarcrm\Cache\Middleware;
 
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
+use stdClass;
 
 /**
  * Replicates data between two backends
  */
-final class Replicate implements Cache
+final class Replicate implements CacheInterface
 {
     /**
      * Source backend
      *
-     * @var Cache
+     * @var CacheInterface
      */
     private $source;
 
     /**
      * Replica backend
      *
-     * @var Cache
+     * @var CacheInterface
      */
     private $replica;
 
     /**
-     * @param Cache $source
-     * @param Cache $replica
+     * @var object
      */
-    public function __construct(Cache $source, Cache $replica)
+    private $miss;
+
+    /**
+     * @param CacheInterface $source
+     * @param CacheInterface $replica
+     */
+    public function __construct(CacheInterface $source, CacheInterface $replica)
     {
         $this->source = $source;
         $this->replica = $replica;
+        $this->miss = new stdClass();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function fetch(string $key, ?bool &$success = null)
+    public function get($key, $default = null)
     {
-        $value = $this->replica->fetch($key, $success);
+        $miss = is_object($default) ? $default : $this->miss;
 
-        if ($success) {
+        $value = $this->replica->get($key, $miss);
+
+        if ($value !== $miss) {
             return $value;
         }
 
-        $value = $this->source->fetch($key, $success);
+        $value = $this->source->get($key, $miss);
 
-        if ($success) {
-            $this->replica->store($key, $value/*, $ttl is currently irrelevant*/);
+        if ($value === $miss) {
+            return $default;
         }
+
+        $this->replica->set($key, $value/*, $ttl is currently irrelevant*/);
 
         return $value;
     }
@@ -66,27 +77,85 @@ final class Replicate implements Cache
     /**
      * {@inheritDoc}
      */
-    public function store(string $key, $value, ?int $ttl = null) : void
+    public function set($key, $value, $ttl = null)
     {
-        $this->source->store($key, $value, $ttl);
-        $this->replica->store($key, $value, $ttl);
+        return $this->source->set($key, $value, $ttl)
+            && $this->replica->set($key, $value, $ttl);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function delete(string $key) : void
+    public function delete($key)
     {
-        $this->source->delete($key);
-        $this->replica->delete($key);
+        return $this->source->delete($key)
+            && $this->replica->delete($key);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function clear() : void
+    public function clear()
     {
-        $this->source->clear();
-        $this->replica->clear();
+        return $this->source->clear()
+            && $this->replica->clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMultiple($keys, $default = null)
+    {
+        $miss = is_object($default) ? $default : $this->miss;
+        $missingKeys = array_flip($keys);
+
+        foreach ($this->replica->getMultiple($keys, $miss) as $key => $value) {
+            if ($value !== $miss) {
+                unset($missingKeys[$key]);
+            }
+
+            yield $key => $value;
+        }
+
+        $todo = [];
+
+        foreach ($this->replica->getMultiple(array_keys($missingKeys), $miss) as $key => $value) {
+            if ($value !== $miss) {
+                $todo[$key] = $value;
+            } else {
+                $value = $default;
+            }
+
+            yield $key => $value;
+        }
+
+        $this->replica->setMultiple($todo/*, $ttl is currently irrelevant*/);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMultiple($values, $ttl = null)
+    {
+        return $this->source->setMultiple($values, $ttl)
+            && $this->replica->setMultiple($values, $ttl);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteMultiple($keys)
+    {
+        return $this->source->deleteMultiple($keys)
+            && $this->replica->deleteMultiple($keys);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function has($key)
+    {
+        return $this->replica->has($key)
+            || $this->source->has($key);
     }
 }

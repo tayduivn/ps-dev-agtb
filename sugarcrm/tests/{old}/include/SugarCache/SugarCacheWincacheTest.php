@@ -23,6 +23,6 @@ class SugarCacheWincacheTest extends SugarCacheAbstractTest
 
     public function testExpiration()
     {
-        $this->markTestIncomplete('We need to figure out why it fails');
+        $this->markTestSkipped('Cannot test WinCache expiration in CLI mode.');
     }
 }

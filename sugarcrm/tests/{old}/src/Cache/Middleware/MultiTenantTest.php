@@ -13,8 +13,8 @@
 namespace Sugarcrm\SugarcrmTests\Cache\Middleware;
 
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 use Rhumsaa\Uuid\Uuid;
-use Sugarcrm\Sugarcrm\Cache;
 use Sugarcrm\Sugarcrm\Cache\Backend\InMemory as InMemoryBackend;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage;
@@ -28,7 +28,7 @@ use Sugarcrm\SugarcrmTests\CacheTest;
  */
 final class MultiTenantTest extends CacheTest
 {
-    protected function newInstance() : Cache
+    protected function newInstance() : CacheInterface
     {
         return new MultiTenant(
             Uuid::uuid4()->toString(),
@@ -43,7 +43,7 @@ final class MultiTenantTest extends CacheTest
      */
     public function expiration()
     {
-        $this->markTestSkipped('Cannot test expiration since the undelying in-memory backend doesn\'t support it');
+        $this->markTestSkipped('Cannot test expiration since the underlying in-memory backend does not support it');
     }
 
     /**
@@ -51,14 +51,10 @@ final class MultiTenantTest extends CacheTest
      */
     public function decryptionFailure()
     {
-        $backend = $this->createMock(Cache::class);
+        $backend = $this->createMock(CacheInterface::class);
         $backend->expects($this->once())
-            ->method('fetch')
-            ->willReturnCallback(function ($key, &$success) {
-                $success = true;
-
-                return 'garbage';
-            });
+            ->method('get')
+            ->willReturn('garbage');
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())
@@ -72,8 +68,6 @@ final class MultiTenantTest extends CacheTest
             $logger
         );
 
-        $middleware->fetch('garbage-key', $success);
-
-        $this->assertFalse($success);
+        $middleware->get('garbage-key');
     }
 }

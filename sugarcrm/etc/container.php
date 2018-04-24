@@ -15,10 +15,11 @@ use Doctrine\DBAL\Logging\LoggerChain;
 use Doctrine\DBAL\Logging\SQLLogger;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheException;
+use Psr\SimpleCache\CacheInterface;
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
 use Sugarcrm\Sugarcrm\Audit\Formatter as AuditFormatter;
 use Sugarcrm\Sugarcrm\Audit\Formatter\CompositeFormatter;
-use Sugarcrm\Sugarcrm\Cache;
 use Sugarcrm\Sugarcrm\Cache\Backend\APCu as APCuCache;
 use Sugarcrm\Sugarcrm\Cache\Backend\BackwardCompatible as BackwardCompatibleCache;
 use Sugarcrm\Sugarcrm\Cache\Backend\InMemory as InMemoryCache;
@@ -44,6 +45,7 @@ use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Logger;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\StateAwareListener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\State\Storage\AdminSettingsStorage;
+use Sugarcrm\Sugarcrm\DependencyInjection\Exception\ServiceUnavailable;
 use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter as SubjectFormatter;
@@ -174,7 +176,7 @@ return new Container([
     Administration::class => function () : Administration {
         return BeanFactory::newBean('Administration');
     },
-    Cache::class => function (ContainerInterface $container) : Cache {
+    CacheInterface::class => function (ContainerInterface $container) : CacheInterface {
         $config = $container->get(SugarConfig::class);
 
         $backend = $container->get(
@@ -200,20 +202,36 @@ return new Container([
     BackwardCompatibleCache::class => function () : BackwardCompatibleCache {
         return new BackwardCompatibleCache(SugarCache::electBackend());
     },
-    APCuCache::class => function () : APCuCache {
-        return new APCuCache();
+    ApcuCache::class => function () : ApcuCache {
+        try {
+            return new ApcuCache();
+        } catch (CacheException $e) {
+            throw new ServiceUnavailable($e->getMessage(), 0, $e);
+        }
     },
     RedisCache::class => function (ContainerInterface $container) : RedisCache {
         $config = $container->get(SugarConfig::class)->get('external_cache.redis');
 
-        return new RedisCache($config['host'] ?? null, $config['port'] ?? null);
+        try {
+            return new RedisCache($config['host'] ?? null, $config['port'] ?? null);
+        } catch (CacheException $e) {
+            throw new ServiceUnavailable($e->getMessage(), 0, $e);
+        }
     },
     MemcachedCache::class => function (ContainerInterface $container) : MemcachedCache {
         $config = $container->get(SugarConfig::class)->get('external_cache.memcache');
 
-        return new MemcachedCache($config['host'] ?? null, $config['port'] ?? null);
+        try {
+            return new MemcachedCache($config['host'] ?? null, $config['port'] ?? null);
+        } catch (CacheException $e) {
+            throw new ServiceUnavailable($e->getMessage(), 0, $e);
+        }
     },
     WinCache::class => function () : WinCache {
-        return new WinCache();
+        try {
+            return new WinCache();
+        } catch (CacheException $e) {
+            throw new ServiceUnavailable($e->getMessage(), 0, $e);
+        }
     },
 ]);

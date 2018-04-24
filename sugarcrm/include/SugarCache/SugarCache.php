@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Sugar Cache manager
@@ -35,7 +35,7 @@ class SugarCache
      */
     protected static function _init()
     {
-        self::$_cacheInstance = new SugarCacheForwardCompatible(Cache::class, 1000, null);
+        self::$_cacheInstance = new SugarCachePsr(CacheInterface::class, 1000, null);
     }
 
     /**
@@ -54,7 +54,7 @@ class SugarCache
         foreach ($locations as $location) {
             $class = basename($location, '.php');
 
-            if ($class === 'SugarCache' || $class === 'SugarCacheForwardCompatible') {
+            if ($class === 'SugarCache' || $class === 'SugarCachePsr') {
                 continue;
             }
 
@@ -89,7 +89,7 @@ class SugarCache
      *
      * @return SugarCacheAbstract
      *
-     * @deprecated Use Sugarcrm\Sugarcrm\Cache instead
+     * @deprecated use Psr\SimpleCache\CacheInterface instead
      */
     public static function instance()
     {

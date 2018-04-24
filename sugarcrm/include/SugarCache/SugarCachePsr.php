@@ -10,20 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\SimpleCache\CacheInterface;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 /**
- * Adapter which allows using new cache API as the old API backend
+ * Adapter which allows using a PSR-6 cache implementation as an old API backend
  *
- * @internal Used only for forward compatibility with the new cache API
+ * @internal Used only for forward compatibility with PSR-6
  *
  * @codingStandardsIgnoreFile due to the inherited method names
  */
-class SugarCacheForwardCompatible extends SugarCacheAbstract
+class SugarCachePsr extends SugarCacheAbstract
 {
     /**
-     * @var Cache
+     * @var CacheInterface
      */
     private $backend;
 
@@ -38,7 +39,8 @@ class SugarCacheForwardCompatible extends SugarCacheAbstract
 
         try {
             $this->backend = Container::getInstance()->get($backendService);
-        } catch (RuntimeException $e) {
+        } catch (ContainerExceptionInterface $e) {
+            // The absence of the backend will prevent the object from being used
         }
 
         $this->_priority = $priority;
@@ -70,7 +72,7 @@ class SugarCacheForwardCompatible extends SugarCacheAbstract
      */
     protected function _setExternal($key, $value)
     {
-        $this->backend->store($key, $value, $this->_expireTimeout);
+        $this->backend->set($key, $value, $this->_expireTimeout);
     }
 
     /**
@@ -78,13 +80,7 @@ class SugarCacheForwardCompatible extends SugarCacheAbstract
      */
     protected function _getExternal($key)
     {
-        $value = $this->backend->fetch($key, $success);
-
-        if (!$success) {
-            return null;
-        }
-
-        return $value;
+        return $this->backend->get($key);
     }
 
     /**

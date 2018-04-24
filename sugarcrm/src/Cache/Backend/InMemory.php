@@ -12,12 +12,12 @@
 
 namespace Sugarcrm\Sugarcrm\Cache\Backend;
 
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * In-memory cache middleware
  */
-final class InMemory implements Cache
+final class InMemory implements CacheInterface
 {
     /**
      * Cached data
@@ -29,40 +29,82 @@ final class InMemory implements Cache
     /**
      * {@inheritDoc}
      */
-    public function fetch(string $key, ?bool &$success = null)
+    public function get($key, $default = null)
     {
         if (array_key_exists($key, $this->data)) {
-            $success = true;
-
             return $this->data[$key];
         }
 
-        $success = false;
-
-        return null;
+        return $default;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function store(string $key, $value, ?int $ttl = null) : void
+    public function set($key, $value, $ttl = null)
     {
         $this->data[$key] = $value;
+
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function delete(string $key) : void
+    public function delete($key)
     {
         unset($this->data[$key]);
+
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function clear() : void
+    public function clear()
     {
         $this->data = [];
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMultiple($keys, $default = null)
+    {
+        foreach ($keys as $key) {
+            yield $key => array_key_exists($key, $this->data) ? $this->data[$key] : $default;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMultiple($values, $ttl = null)
+    {
+        $this->data = array_merge($this->data, $values);
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteMultiple($keys)
+    {
+        foreach ($keys as $key) {
+            unset($this->data[$key]);
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function has($key)
+    {
+        return array_key_exists($key, $this->data);
     }
 }

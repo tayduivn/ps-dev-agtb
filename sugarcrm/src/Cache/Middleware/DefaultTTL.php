@@ -12,15 +12,15 @@
 
 namespace Sugarcrm\Sugarcrm\Cache\Middleware;
 
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Provides default TTL for cache entries
  */
-final class DefaultTTL implements Cache
+final class DefaultTTL implements CacheInterface
 {
     /**
-     * @var Cache
+     * @var CacheInterface
      */
     private $backend;
 
@@ -31,7 +31,7 @@ final class DefaultTTL implements Cache
      */
     private $ttl;
 
-    public function __construct(Cache $backend, int $ttl)
+    public function __construct(CacheInterface $backend, int $ttl)
     {
         $this->backend = $backend;
         $this->ttl = $ttl;
@@ -42,27 +42,17 @@ final class DefaultTTL implements Cache
      *
      * @codeCoverageIgnore
      */
-    public function fetch(string $key, ?bool &$success = null)
+    public function get($key, $default = null)
     {
-        return $this->backend->fetch($key, $success);
+        return $this->backend->get($key, $default);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function store(string $key, $value, ?int $ttl = null) : void
+    public function set($key, $value, $ttl = null)
     {
-        $this->backend->store($key, $value, $ttl ?? $this->ttl);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @codeCoverageIgnore
-     */
-    public function delete(string $key) : void
-    {
-        $this->backend->delete($key);
+        return $this->backend->set($key, $value, $ttl ?? $this->ttl);
     }
 
     /**
@@ -70,8 +60,56 @@ final class DefaultTTL implements Cache
      *
      * @codeCoverageIgnore
      */
-    public function clear() : void
+    public function delete($key)
     {
-        $this->backend->clear();
+        return $this->backend->delete($key);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @codeCoverageIgnore
+     */
+    public function clear()
+    {
+        return $this->backend->clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @codeCoverageIgnore
+     */
+    public function getMultiple($keys, $default = null)
+    {
+        return $this->backend->getMultiple($keys, $default);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMultiple($values, $ttl = null)
+    {
+        return $this->backend->setMultiple($values, $ttl ?? $this->ttl);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @codeCoverageIgnore
+     */
+    public function deleteMultiple($keys)
+    {
+        return $this->backend->deleteMultiple($keys);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @codeCoverageIgnore
+     */
+    public function has($key)
+    {
+        return $this->backend->has($key);
     }
 }

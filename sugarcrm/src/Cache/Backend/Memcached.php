@@ -13,75 +13,38 @@
 namespace Sugarcrm\Sugarcrm\Cache\Backend;
 
 use Memcached as Client;
-use RuntimeException;
-use Sugarcrm\Sugarcrm\Cache;
+use Sugarcrm\Sugarcrm\Cache\Exception;
+use Symfony\Component\Cache\Simple\MemcachedCache;
 
 /**
  * Memcached implementation of the cache backend
  *
  * @link http://pecl.php.net/package/memcached
  */
-final class Memcached implements Cache
+final class Memcached extends MemcachedCache
 {
-    private $client;
-
     /**
+     * @param string|null $host
+     * @param int|null $port
+     *
+     * @throws Exception
      * @codeCoverageIgnore
      */
     public function __construct(?string $host, ?int $port = null)
     {
         if (!extension_loaded('memcached')) {
-            throw new RuntimeException('memcached extension is not loaded');
+            throw new Exception('The memcached extension is not loaded');
         }
 
-        $this->client = new Client();
-        $this->client->addServer($host ?? '127.0.0.1', $port ?? 11211);
+        $client = new Client();
+        $client->addServer($host ?? '127.0.0.1', $port ?? 11211);
 
         // force connection to detect availability before the backend is declared available
-        if ($this->client->getVersion() === false) {
-            throw new RuntimeException('Unable to connect to memcached server');
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function fetch(string $key, ?bool &$success = null)
-    {
-        $value = $this->client->get($key);
-
-        if ($this->client->getResultCode() !== Client::RES_SUCCESS) {
-            $success = false;
-
-            return null;
+        // it is only needed until backend election is the old cache API is supported
+        if ($client->getVersion() === false) {
+            throw new Exception('Unable to connect to memcached server');
         }
 
-        $success = true;
-
-        return $value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function store(string $key, $value, ?int $ttl = null) : void
-    {
-        $this->client->set($key, $value, $ttl ?? 0);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function delete(string $key) : void
-    {
-        $this->client->delete($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function clear() : void
-    {
-        $this->client->flush();
+        parent::__construct($client);
     }
 }

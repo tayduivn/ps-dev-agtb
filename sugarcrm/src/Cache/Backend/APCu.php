@@ -12,69 +12,26 @@
 
 namespace Sugarcrm\Sugarcrm\Cache\Backend;
 
-use RuntimeException;
-use Sugarcrm\Sugarcrm\Cache;
+use Sugarcrm\Sugarcrm\Cache\Exception;
+use Symfony\Component\Cache\Simple\ApcuCache;
 
 /**
  * APCu implementation of the cache backend
  *
  * @link http://pecl.php.net/package/APCu
  */
-final class APCu implements Cache
+final class APCu extends ApcuCache
 {
     /**
+     * @throws Exception
      * @codeCoverageIgnore
      */
     public function __construct()
     {
-        if (!extension_loaded('apcu')) {
-            throw new RuntimeException('APCu extension is not loaded');
+        parent::__construct();
+
+        if (PHP_SAPI === 'cli' && !ini_get('apc.enable_cli')) {
+            throw new Exception('The APCu extension is disabled for CLI');
         }
-
-        if (!ini_get('apc.enabled')) {
-            throw new RuntimeException('APCu extension is disabled');
-        }
-
-        if (php_sapi_name() === 'cli' && !ini_get('apc.enable_cli')) {
-            throw new RuntimeException('APCu extension is disabled for CLI');
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function fetch(string $key, ?bool &$success = null)
-    {
-        $value = apcu_fetch($key, $success);
-
-        if (!$success) {
-            return null;
-        }
-
-        return $value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function store(string $key, $value, ?int $ttl = null) : void
-    {
-        apcu_store($key, $value, $ttl ?? 0);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function delete(string $key) : void
-    {
-        apcu_delete($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function clear() : void
-    {
-        apcu_clear_cache();
     }
 }

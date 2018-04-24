@@ -12,69 +12,105 @@
 
 namespace Sugarcrm\Sugarcrm\Cache\Backend;
 
-use RuntimeException;
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
+use Sugarcrm\Sugarcrm\Cache\Exception;
 
 /**
  * WinCache implementation of the cache backend
  *
  * @link http://pecl.php.net/package/WinCache
  */
-final class WinCache implements Cache
+final class WinCache implements CacheInterface
 {
     /**
      * @codeCoverageIgnore
+     *
+     * @throws Exception
      */
     public function __construct()
     {
         if (!extension_loaded('wincache')) {
-            throw new RuntimeException('WinCache extension is not loaded');
+            throw new Exception('WinCache extension is not loaded');
         }
 
         if (!ini_get('wincache.ucenabled')) {
-            throw new RuntimeException('WinCache extension is disabled');
+            throw new Exception('WinCache extension is disabled');
         }
 
         if (php_sapi_name() === 'cli' && !ini_get('wincache.enablecli')) {
-            throw new RuntimeException('WinCache extension is disabled for CLI');
+            throw new Exception('WinCache extension is disabled for CLI');
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public function fetch(string $key, ?bool &$success = null)
+    public function get($key, $default = null)
     {
         $value = wincache_ucache_get($key, $success);
 
-        if ($success) {
-            return $value;
+        if (!$success) {
+            return $default;
         }
 
-        return null;
+        return $value;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function store(string $key, $value, ?int $ttl = null) : void
+    public function set($key, $value, $ttl = null)
     {
-        wincache_ucache_set($key, $value, $ttl ?? 0);
+        return wincache_ucache_set($key, $value, $ttl ?? 0);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function delete(string $key) : void
+    public function delete($key)
     {
-        wincache_ucache_delete($key);
+        return wincache_ucache_delete($key);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function clear() : void
+    public function clear()
     {
-        wincache_ucache_clear();
+        return wincache_ucache_clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMultiple($keys, $default = null)
+    {
+        return array_merge(array_fill_keys($keys, $default), wincache_ucache_get($keys));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMultiple($values, $ttl = null)
+    {
+        return wincache_ucache_set($values, null, $ttl ?? 0) === [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteMultiple($keys)
+    {
+        wincache_ucache_delete($keys);
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function has($key)
+    {
+        return wincache_ucache_exists($key);
     }
 }

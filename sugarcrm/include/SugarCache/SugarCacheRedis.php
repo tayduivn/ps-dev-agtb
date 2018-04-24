@@ -17,7 +17,7 @@ use Sugarcrm\Sugarcrm\Cache\Backend\Redis;
  *
  * @deprecated Use Sugarcrm\Sugarcrm\Cache\Backend\Redis instead
  */
-class SugarCacheRedis extends SugarCacheForwardCompatible
+class SugarCacheRedis extends SugarCachePsr
 {
     public function __construct()
     {

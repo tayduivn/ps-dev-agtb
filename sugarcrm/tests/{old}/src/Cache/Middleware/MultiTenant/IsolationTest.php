@@ -14,8 +14,8 @@ namespace Sugarcrm\SugarcrmTests\Cache\Middleware\MultiTenant;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 use Rhumsaa\Uuid\Uuid;
-use Sugarcrm\Sugarcrm\Cache;
 use Sugarcrm\Sugarcrm\Cache\Backend\InMemory as InMemoryBackend;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage\InMemory as InMemoryKeyStorage;
@@ -28,7 +28,7 @@ use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage\InMemory as InMemo
 final class IsolationTest extends TestCase
 {
     /**#@+
-     * @var Cache
+     * @var CacheInterface
      */
     private $tenant1;
     private $tenant2;
@@ -50,10 +50,10 @@ final class IsolationTest extends TestCase
     /**
      * @test
      */
-    public function fetchStore()
+    public function fetchSet()
     {
-        $this->tenant1->store('key', 'value1');
-        $this->tenant2->store('key', 'value2');
+        $this->tenant1->set('key', 'value1');
+        $this->tenant2->set('key', 'value2');
 
         $this->assertValueCached('value1', $this->tenant1, 'key');
         $this->assertValueCached('value2', $this->tenant2, 'key');
@@ -64,8 +64,8 @@ final class IsolationTest extends TestCase
      */
     public function delete()
     {
-        $this->tenant1->store('key', 'value1');
-        $this->tenant2->store('key', 'value2');
+        $this->tenant1->set('key', 'value1');
+        $this->tenant2->set('key', 'value2');
 
         $this->tenant1->delete('key');
 
@@ -78,8 +78,8 @@ final class IsolationTest extends TestCase
      */
     public function clear()
     {
-        $this->tenant1->store('key', 'value1');
-        $this->tenant2->store('key', 'value2');
+        $this->tenant1->set('key', 'value1');
+        $this->tenant2->set('key', 'value2');
 
         $this->tenant1->clear();
 
@@ -87,15 +87,13 @@ final class IsolationTest extends TestCase
         $this->assertValueCached('value2', $this->tenant2, 'key');
     }
 
-    private function assertValueCached($value, Cache $cache, string $key) : void
+    private function assertValueCached($value, CacheInterface $cache, string $key) : void
     {
-        $this->assertEquals($value, $cache->fetch($key, $success));
-        $this->assertTrue($success);
+        $this->assertEquals($value, $cache->get($key));
     }
 
-    private function assertValueNotCached(Cache $cache, string $key) : void
+    private function assertValueNotCached(CacheInterface $cache, string $key) : void
     {
-        $this->assertNull($cache->fetch($key, $success));
-        $this->assertFalse($success);
+        $this->assertNull($cache->get($key));
     }
 }

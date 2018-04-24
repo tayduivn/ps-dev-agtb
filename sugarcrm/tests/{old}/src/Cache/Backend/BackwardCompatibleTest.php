@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Cache\Backend;
 
-use Sugarcrm\Sugarcrm\Cache;
+use Psr\SimpleCache\CacheInterface;
 use Sugarcrm\Sugarcrm\Cache\Backend\BackwardCompatible;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\SugarcrmTests\CacheTest;
@@ -22,7 +22,7 @@ use Sugarcrm\SugarcrmTests\CacheTest;
  */
 final class BackwardCompatibleTest extends CacheTest
 {
-    protected function newInstance() : Cache
+    protected function newInstance() : CacheInterface
     {
         return Container::getInstance()->get(BackwardCompatible::class);
     }
