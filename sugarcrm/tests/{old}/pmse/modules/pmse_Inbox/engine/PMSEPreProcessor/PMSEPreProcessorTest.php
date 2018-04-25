@@ -152,7 +152,7 @@ class PMSEPreProcessorTest extends TestCase
 
         $preProcessorMock->expects($this->once())
             ->method('buildLinkedObjectIdList')
-            ->will($this->returnValue("'T1234'"));
+            ->will($this->returnValue(['T1234']));
 
         $preProcessorMock->getAllEvents($beanMock);
     }

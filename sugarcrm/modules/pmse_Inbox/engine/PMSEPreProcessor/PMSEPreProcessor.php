@@ -495,6 +495,17 @@ class PMSEPreProcessor
         return $list;
     }
 
+
+    /**
+     * Checks if a bean is new or already existed
+     * @param SugarBean $bean
+     * @return boolean
+     */
+    private function isNewBean(SugarBean $bean)
+    {
+        return $bean->isUpdate() === false || empty($bean->fetched_row);
+    }
+
     /**
      * Optimized version of get all events method.
      * @param SugarBean $bean
@@ -514,8 +525,15 @@ class PMSEPreProcessor
         $links = $this->getValidLinks($moduleName);
 
         // Build a list of object ids that will work for our flows
-        $objectIds = $this->buildLinkedObjectIdList($bean, $links);
+        $objectIds = $this->buildLinkedObjectIdList($bean, $links, false);
 
+        // Use equality only for new records, otherwise use inequality
+        // Note: this will end up caching two different prepared queries potentially, but that should not be a huge
+        // performance hit in the long run
+        $newOp = $this->isNewBean($bean) ? '=' : '!=';
+
+        // This is a DB specific handler for the event params columns. This will not cause variants of this query to be
+        // created
         $evnParamsChar = $bean->db->convert('rd.evn_params', 'text2char');
         $sql = "
         SELECT
@@ -538,25 +556,27 @@ class PMSEPreProcessor
         FROM
             pmse_bpm_related_dependency rd
         LEFT JOIN
-            pmse_bpm_flow flow ON rd.rel_element_id = flow.bpmn_id AND
-            (flow.cas_flow_status IS NULL OR flow.cas_flow_status='WAITING')
+            pmse_bpm_flow flow
+            ON
+                rd.rel_element_id = flow.bpmn_id AND
+                flow.cas_flow_status='WAITING' AND
+                flow.cas_sugar_object_id IN (?) AND
+                flow.deleted = 0 
         WHERE
             rd.deleted = 0 AND rd.pro_status != 'INACTIVE' AND (
                 (
-                    (rd.evn_type = 'START' AND rd.evn_module = :module) OR
+                    (rd.evn_type = 'START' AND rd.evn_module = ? AND $evnParamsChar $newOp 'new') OR
                     (
                         rd.evn_type = 'GLOBAL_TERMINATE' AND
                         (flow.cas_flow_status IS NULL OR flow.cas_flow_status != 'WAITING') AND
-                        rd.rel_element_module = :module AND
-                        (flow.cas_sugar_object_id IS NULL OR flow.cas_sugar_object_id IN ($objectIds))
+                        rd.rel_element_module = ?
                     ) OR
                     (
                         rd.evn_type = 'INTERMEDIATE' AND
                         rd.evn_marker = 'MESSAGE' AND
                         rd.evn_behavior = 'CATCH' AND
                         flow.cas_flow_status = 'WAITING' AND
-                        rd.rel_element_module = :module AND
-                        (flow.cas_sugar_object_id IS NULL OR flow.cas_sugar_object_id IN ($objectIds))
+                        rd.rel_element_module = ?
                     )
                 )
             )
@@ -572,7 +592,11 @@ class PMSEPreProcessor
         // Execute the query and get our results
         $stmt = DBManagerFactory::getInstance()
                 ->getConnection()
-                ->executeQuery($sql, [':module' => $moduleName]);
+                ->executeQuery(
+                    $sql,
+                    [$objectIds, $moduleName, $moduleName, $moduleName],
+                    [\Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
+                );
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
