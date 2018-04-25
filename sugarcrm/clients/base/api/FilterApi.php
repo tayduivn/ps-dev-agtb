@@ -14,6 +14,8 @@
 
 class FilterApi extends SugarApi
 {
+    const OPTIMIZER = 'OPTIMIZER';
+
     public function registerApiRest()
     {
         return array(
@@ -150,6 +152,26 @@ class FilterApi extends SugarApi
         'locked_fields',
         //END SUGARCRM flav=ent ONLY
     );
+
+    /**
+     * List of fields that are mandatory for minimal query
+     * @var array
+     */
+    protected static $mandatory_fields_optimised = array(
+        // id and date_modified should always be in the response
+        'id',
+        'date_modified',
+        // user fields are needed for ACLs since they check owners
+        'assigned_user_id',
+    );
+
+    protected static $skipOptimisationForModules= array(
+        'Filters',
+        'Dashboard',
+        'PdfManager',
+    );
+
+    protected $optimisedSubQuery = null;
 
     public function __construct()
     {
@@ -356,6 +378,7 @@ class FilterApi extends SugarApi
             $args['filter'] = $predefinedFilter;
         }
 
+        $this->setupOptimizationSubQuery($seed, $options, $args, $q);
         static::addFilters($args['filter'], $q->where(), $q);
 
         if (!empty($args['my_items'])) {
@@ -641,6 +664,9 @@ class FilterApi extends SugarApi
             'returnRawRows' => true,
             'compensateDistinct' => true,
         );
+
+        $this->applyQueryOptimization($q, $seed, $queryOptions);
+
         $fetched = $seed->fetchFromQuery($q, $fields, $queryOptions);
 
         list($beans, $rows, $distinctCompensation) = $this->parseQueryResults($fetched);
@@ -1247,5 +1273,111 @@ class FilterApi extends SugarApi
     protected static function newSugarQuery(DBManager $db)
     {
         return new SugarQuery($db);
+    }
+
+    /**
+     * @param SugarQuery $q
+     * @param SugarBean $seed
+     * @param $queryOptions
+     */
+    protected function applyQueryOptimization(SugarQuery $q, SugarBean $seed, $queryOptions)
+    {
+        if (isset($this->optimisedSubQuery)
+            && !in_array(get_class($this->optimisedSubQuery->from), self::$skipOptimisationForModules)
+        ) {
+            $fetchedOptimised = $seed->fetchFromQuery($this->optimisedSubQuery, self::$mandatory_fields_optimised, $queryOptions);
+            $ids = array_keys($fetchedOptimised['_rows']);
+            $subQuery = $this->getOptimizationSubQuery($ids, $seed->db);
+            $this->injectSubQueryJoinIntoOriginal($q, $subQuery);
+        }
+    }
+
+    /**
+     * @param $seed
+     * @param $options
+     * @param $args
+     * @param $q
+     */
+    protected function setupOptimizationSubQuery($seed, $options, $args, $q)
+    {
+        if (!in_array(get_class($seed), self::$skipOptimisationForModules)
+            && count($q->join) > 0
+        ) {
+            $options['select'] = self::$mandatory_fields_optimised;
+            $this->optimisedSubQuery = self::getQueryObject($seed, $options);
+            static::addFilters($args['filter'], $this->optimisedSubQuery->where(), $this->optimisedSubQuery);
+            if (!empty($args['my_items'])) {
+                static::addOwnerFilter($this->optimisedSubQuery, $this->optimisedSubQuery->where(), '_this');
+            }
+            if (!empty($args['favorites'])) {
+                static::addFavoriteFilter($this->optimisedSubQuery, $this->optimisedSubQuery->where(), '_this', 'INNER');
+            }
+            if (!sizeof($q->order_by)) {
+                self::addOrderBy($this->optimisedSubQuery, $this->defaultOrderBy);
+            }
+        }
+    }
+
+    /**
+     * @param array $ids
+     * @param OracleManager|MysqliManager|IBMDB2Manager $db
+     * @return string
+     */
+    protected function getOptimizationSubQuery($ids, $db)
+    {
+        $quoted = array();
+        foreach ($ids as $id) {
+            $quoted[$id] = $db->quoted($id);
+        }
+        $ids = $quoted;
+        if (empty($ids)) {
+            $result = ' (SELECT NULL as id ' . $db->getFromDummyTable() . ') ';
+        } else {
+            $start = ' SELECT ';
+            $end = ' as id ' . $db->getFromDummyTable();
+
+            $glue = $end . ' UNION ALL ' . $start;
+            $result = ' (' . $start . implode($glue, $ids) . $end . ') ';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Adding an INNER JOIN with the list of IDs
+     *
+     * @param $original
+     * @param $joinSubquery
+     */
+    protected function injectSubQueryJoinIntoOriginal($original, $joinSubquery)
+    {
+        /** @var SugarQuery $original */
+        $original->joinTable(
+            $joinSubquery,
+            array(
+                'alias' => self::OPTIMIZER,
+                'joinType' => 'INNER',
+            )
+        )->on()->equalsField(self::OPTIMIZER . '.id', $original->getFromBean()->table_name . '.id'); //Injecting the INNER join with the list of pre-fetched IDs
+        $this->moveOptimizationJoinToTheFirstPlace($original);
+    }
+
+    /**
+     * @param $original
+     */
+    protected function moveOptimizationJoinToTheFirstPlace($original)
+    {
+        $original->join = array_merge(
+            array_splice(
+                $original->join,
+                array_search(
+                    self::OPTIMIZER,
+                    array_keys($original->join)
+                ),
+                1
+            ),
+            $original->join
+        );
+        $original->offset = 0;
     }
 }
