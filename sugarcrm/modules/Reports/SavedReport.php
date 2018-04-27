@@ -123,16 +123,30 @@ class SavedReport extends Basic
 		return $result;
 	}
 
-	function mark_deleted($id){
-	    $report_schedule = new ReportSchedule();
-	    $scheduled_reports = $report_schedule->get_report_schedule($id);
-	    foreach($scheduled_reports as $rs_row){
-	        $report_schedule->mark_deleted($rs_row['id']);
-	    }
+    /**
+     * @inheritDoc
+     */
+    public function mark_deleted($id)
+    {
+        $this->deleteSchedules();
 	    parent::mark_deleted($id);
 	}
 
-		function mark_published($flag)
+    /**
+     * Delete the Report Schedules for the Report
+     */
+    protected function deleteSchedules()
+    {
+        if ($this->load_relationship('reportschedules')) {
+            $schedules = $this->reportschedules->getBeans();
+            foreach ($schedules as $schedule) {
+                $schedule->mark_deleted($schedule->id);
+            }
+        }
+    }
+
+
+    public function mark_published($flag)
 		{
 			global $current_user;
 
