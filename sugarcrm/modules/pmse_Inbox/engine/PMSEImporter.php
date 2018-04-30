@@ -60,6 +60,11 @@ class PMSEImporter
     protected $module;
 
     /**
+     * @var array $dependencyKeys
+     */
+    protected $dependencyKeys = [];
+
+    /**
      * Get class Bean.
      * @codeCoverageIgnore
      * @return object
@@ -123,6 +128,16 @@ class PMSEImporter
     }
 
     /**
+     * Get dependencyKeys
+     *
+     * @return array
+     */
+    public function getDependencyKeys()
+    {
+        return $this->dependencyKeys;
+    }
+
+    /**
      * Method to upload a file and read content for import in database
      * @param $file
      * @return bool
@@ -142,6 +157,11 @@ class PMSEImporter
             throw $sugarApiExceptionRequestMethodFailure;
         }
         $project = json_decode($_data, true);
+
+        if (!empty($project['dependencies'])) {
+            $this->importDependencies($project['dependencies']);
+        }
+
         if (!empty($project) && isset($project['project'])) {
             if (in_array($project['project'][$this->module], PMSEEngineUtils::getSupportedModules())) {
                 $result = $this->saveProjectData($this->validateLockedFieldGroups($project['project']));
@@ -156,6 +176,39 @@ class PMSEImporter
             throw $sugarApiExceptionRequestMethodFailure;
         }
         return $result;
+    }
+
+    /**
+     * Import any dependencies like BRs and ETs
+     * @param $dependencies
+     */
+    public function importDependencies($dependencies)
+    {
+        foreach ($dependencies as $type => $definitions) {
+            foreach ($definitions as $def) {
+                $importer = PMSEImporterFactory::getImporter($type);
+                $oldId = $def['id'];
+                $result = $this->processImport($importer, $def);
+                $newId = $result['id'];
+
+                // Save the old and new ids so that we can link the dependent elements later
+                if (isset($oldId) && isset($newId)) {
+                    $this->dependencyKeys[$oldId] = $newId;
+                }
+            }
+        }
+    }
+
+    /**
+     * Pass in an importer and def to import it
+     *
+     * @param PMSEImporter $importer
+     * @param $def
+     * @return array
+     */
+    public function processImport(PMSEImporter $importer, $def)
+    {
+        return $importer->saveProjectData($def);
     }
 
     /**
@@ -243,7 +296,7 @@ class PMSEImporter
     /**
      * Method to save record in database
      * @param $projectData
-     * @return bool
+     * @return array Contains ID and if import was successful
      */
     public function saveProjectData($projectData)
     {

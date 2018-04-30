@@ -366,9 +366,11 @@ class PMSEProjectImporter extends PMSEImporter
             $definition['pro_id'] = $keysArray['pro_id'];
             if ($element['act_task_type'] == 'SCRIPTTASK' &&
                 $element['act_script_type'] == 'BUSINESS_RULE') {
-                //TODO implement automatic import for business rules
-                $definition['act_fields'] = '';
-                $this->warningBR = true;
+                $definition = $this->addDependencyIdToDefinition($definition, 'act_fields');
+
+                if ($definition['act_fields'] == '') {
+                    $this->warningBR = true;
+                }
             }
             foreach ($definition as $key => $value) {
                 if (isset($definitionBean->field_defs[$key])){
@@ -430,12 +432,14 @@ class PMSEProjectImporter extends PMSEImporter
             $boundBean->save();
 
             $definition['pro_id'] = $keysArray['pro_id'];
-            if ($element['evn_type'] == 'INTERMEDIATE' &&
+            if (($element['evn_type'] == 'INTERMEDIATE' || $element['evn_type'] == 'END') &&
                 $element['evn_marker'] == 'MESSAGE' &&
                 $element['evn_behavior'] == 'THROW' ) {
-                //TODO implement automatic import for emails templates
-                $definition['evn_criteria'] = '';
-                $this->warningET = true;
+                $definition = $this->addDependencyIdToDefinition($definition, 'evn_criteria');
+
+                if ($definition['evn_criteria'] == '') {
+                    $this->warningET = true;
+                }
             }
             foreach ($definition as $key => $value) {
                 if (isset($definitionBean->field_defs[$key])){
@@ -734,6 +738,21 @@ class PMSEProjectImporter extends PMSEImporter
                 $boundBean->save();
             }
         }
+    }
+
+
+    /**
+     * Save the ID from the dependencyKeys array if it exists
+     * @param array $definition
+     * @param string $field
+     * @return array Updated $defintion with ID set
+     */
+    public function addDependencyIdToDefinition(array $definition, string $field)
+    {
+        $oldId = $definition[$field];
+        $dependencyKeys = $this->getDependencyKeys();
+        $definition[$field] = $dependencyKeys[$oldId] ?? '';
+        return $definition;
     }
 
     /**

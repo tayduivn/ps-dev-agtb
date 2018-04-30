@@ -93,7 +93,7 @@ class PMSEProjectImportExportApi extends vCardApi
                 && isset($_FILES[$first_key]['size'])
                 && isset($_FILES[$first_key]['size']) > 0
             ) {
-                $importerObject = ProcessManager\Factory::getPMSEObject('PMSEProjectImporter');
+                $importerObject = PMSEImporterFactory::getImporter('project');
                 $name = $_FILES[$first_key]['name'];
                 $extension = pathinfo($name,  PATHINFO_EXTENSION);
                 if ($extension == $importerObject->getExtension()) {

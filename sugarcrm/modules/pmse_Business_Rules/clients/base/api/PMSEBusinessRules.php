@@ -70,7 +70,7 @@ class PMSEBusinessRules extends vCardApi
                 && $this->isUploadedFile($_FILES[$first_key]['tmp_name'])
                 && !empty($_FILES[$first_key]['size'])
             ) {
-                $importerObject = ProcessManager\Factory::getPMSEObject('PMSEBusinessRuleImporter');
+                $importerObject = PMSEImporterFactory::getImporter('business_rule');
                 $name = $_FILES[$first_key]['name'];
                 $extension = pathinfo($name,  PATHINFO_EXTENSION);
                 if ($extension == $importerObject->getExtension()) {
