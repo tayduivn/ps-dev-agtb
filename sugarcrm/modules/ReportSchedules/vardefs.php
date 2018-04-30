@@ -21,6 +21,7 @@ $dictionary['ReportSchedule'] = array(
             'name' => 'report_id',
             'type' => 'id',
             'required' => true,
+            'massupdate' => false,
         ),
         'report_name' => array(
             'name' => 'report_name',
@@ -36,6 +37,7 @@ $dictionary['ReportSchedule'] = array(
             'len' => '255',
             'source'=>'non-db',
             'required' => true,
+            'massupdate' => false,
         ),
         'report'=> array (
             'name' => 'report',
@@ -43,6 +45,7 @@ $dictionary['ReportSchedule'] = array(
             'relationship' => 'report_reportschedules',
             'source' => 'non-db',
             'vname'=> 'LBL_REPORTS',
+            'massupdate' => false,
         ),
         'date_start' => array(
             'name' => 'date_start',
@@ -64,6 +67,7 @@ $dictionary['ReportSchedule'] = array(
             'name' => 'next_run',
             'type' => 'datetime',
             'vname' => 'LBL_NEXT_RUN',
+            'massupdate' => false,
         ),
         'active' => array(
             'name' => 'active',
@@ -98,6 +102,9 @@ $dictionary['ReportSchedule'] = array(
             'rhs_key' => 'report_id',
             'relationship_type' => 'one-to-many',
         ),
+    ),
+    'ignore_templates' => array(
+        'taggable',
     ),
 );
 

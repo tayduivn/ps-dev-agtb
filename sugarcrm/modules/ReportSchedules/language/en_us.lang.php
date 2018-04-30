@@ -19,6 +19,5 @@ $mod_strings = array(
     'LBL_ACTIVE' => 'Active',
     'LBL_NEXT_RUN' => 'Next Email Scheduled For',
     'LBL_USERS_SUBPANEL_TITLE' => 'Users',
-    'LBL_REPORT_SCHEDULES_FOR' => 'Schedules for Report',
     'LBL_FILTER_BY_REPORT' => 'By Report',
 );

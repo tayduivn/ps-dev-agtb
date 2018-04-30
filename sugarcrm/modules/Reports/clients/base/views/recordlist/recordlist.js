@@ -67,7 +67,7 @@
      */
     viewSchedules: function(model, field) {
         var filterOptions = new app.utils.FilterOptions().config({
-            initial_filter_label: app.lang.get('LBL_REPORT_SCHEDULES_FOR', 'ReportSchedules') + ': ' + model.get('name'),
+            initial_filter_label: model.get('name'),
             initial_filter: 'by_report',
             filter_populate: {
                 'report_id': [model.get('id')]

@@ -10,11 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['ReportSchedules']['base']['view']['recordlist'] = array(
-    'favorite' => false,
+    'favorite' => true,
     'sticky_resizable_columns' => true,
     'selection' => array(
         'type' => 'multi',
         'actions' => array(
+            array(
+                'name' => 'edit_button',
+                'type' => 'button',
+                'label' => 'LBL_MASS_UPDATE',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'list:massupdate:fire',
+                ),
+                'acl_action' => 'massupdate',
+            ),
             array(
                 'name' => 'massdelete_button',
                 'type' => 'button',
