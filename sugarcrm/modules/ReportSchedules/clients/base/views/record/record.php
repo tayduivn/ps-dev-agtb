@@ -84,7 +84,11 @@ $viewdefs['ReportSchedules']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'report_name',
-                'date_start',
+                array(
+                    'name' => 'date_start',
+                    'display_default' => 'now',
+                    'readonly' => false,
+                ),
                 'time_interval',
                 'active',
                 array(

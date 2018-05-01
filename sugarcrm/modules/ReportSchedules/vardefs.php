@@ -35,6 +35,7 @@ $dictionary['ReportSchedule'] = array(
             'link' => 'report',
             'len' => '255',
             'source'=>'non-db',
+            'required' => true,
         ),
         'report'=> array (
             'name' => 'report',
@@ -68,8 +69,7 @@ $dictionary['ReportSchedule'] = array(
             'vname' => 'LBL_ACTIVE',
             'type' => 'bool',
             'len' => '1',
-            'default' => '0',
-            'required' => true,
+            'default' => '1',
         ),
         'schedule_type' => array(
             'name' => 'schedule_type',
