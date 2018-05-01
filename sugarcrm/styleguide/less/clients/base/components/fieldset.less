@@ -68,11 +68,33 @@
       }
     }
 
-    &:not(.edit) .fieldset-field {
-      .address_city,
-      .address_state {
-        float: left;
-        margin-right: 6px;
+    &.address:not(.edit) {
+      display: flex;
+      flex-flow: row wrap;
+
+      .fieldset-field {
+        display: inline-flex;
+        flex: 0 0 100%;
+        max-width: 100%;
+
+        &[data-name$="address_city"],
+        &[data-name$="address_state"],
+        &[data-name$="address_postalcode"] {
+          flex: 0 0 auto;
+
+          .detail {
+            max-width: inherit;
+            overflow: hidden;/* fixes IE11 bug */
+
+            div {
+              padding-right: 4px;
+            }
+          }
+        }
+
+        &[data-name$="address_city"] .address_city .ellipsis_inline {
+          width: calc(~"100% + 1px");/* Firefox hack */
+        }
       }
     }
   }
