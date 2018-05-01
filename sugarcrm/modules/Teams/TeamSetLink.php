@@ -11,6 +11,8 @@
  */
 
 
+use Doctrine\DBAL\DBALException;
+
 require_once('modules/Teams/TeamSetManager.php');
 
 /**
@@ -105,11 +107,13 @@ class TeamSetLink extends Link2 {
 	/**
 	 * Commit any unsaved changes to the database
 	 *
+     * @throws DBALException
 	 */
     public function save($checkForUpdate = true, $usedDefaultTeam = false)
     {
         if ($this->_saved == false) {
             $previousTeamSetId = $this->focus->team_set_id;
+            $previousACLTeamSetId = $this->focus->acl_team_set_id;
             //disable_team_sanity_check can be set to allow for us to just take the values provided on the bean blindly rather than
             //doing a check to confirm whether the data is correct.
             if (empty($GLOBALS['sugar_config']['disable_team_sanity_check'])) {
@@ -230,13 +234,17 @@ class TeamSetLink extends Link2 {
 
             //keep track of what we put into the database so we can clean things up later
             TeamSetManager::saveTeamSetModule($this->focus->team_set_id, $this->focus->table_name);
+            TeamSetManager::saveTeamSetModule($this->focus->acl_team_set_id, $this->focus->table_name);
 
             if ($previousTeamSetId != $this->focus->team_set_id) {
                 TeamSetManager::removeTeamSetModule($this->focus, $previousTeamSetId);
             }
-            
-            $this->_saved = true;
 
+            if ($previousACLTeamSetId != $this->focus->acl_team_set_id) {
+                TeamSetManager::removeTeamSetModule($this->focus, $previousACLTeamSetId);
+            }
+
+            $this->_saved = true;
         }
 	}
 
@@ -355,9 +363,12 @@ class TeamSetLink extends Link2 {
 
     /**
      * Removes TeamSet module if no records exist
+     *
+     * @throws DBALException
      */
     public function removeTeamSetModule()
     {
         TeamSetManager::removeTeamSetModule($this->focus, $this->focus->team_set_id);
+        TeamSetManager::removeTeamSetModule($this->focus, $this->focus->acl_team_set_id);
     }
 }

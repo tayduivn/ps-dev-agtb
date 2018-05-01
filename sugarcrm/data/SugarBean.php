@@ -206,6 +206,11 @@ class SugarBean
     var $team_set_id;
 
     /**
+     * @var string
+     */
+    public $acl_team_set_id;
+
+    /**
      * The database table where records of this Bean are stored.
      *
      * @var String

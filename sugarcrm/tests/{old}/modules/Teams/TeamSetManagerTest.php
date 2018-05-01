@@ -104,18 +104,67 @@ class TeamSetManagerTest extends TestCase
         $this->assertSame($contact4->team_id, $fetchedContact3->team_id);
         $this->assertSame($contact4->team_set_id, $fetchedContact3->team_set_id);
 
-        $this->assertTeamSetIsRemoved($contact2->team_set_id);
-        $this->assertTeamSetIsRemoved($contact3->team_set_id);
-        $this->assertTeamSetIsUnique($contact4);
+        $this->assertTeamSetToModuleRelationshipIsRemoved($contact2->team_set_id);
+        $this->assertTeamSetToModuleRelationshipIsRemoved($contact3->team_set_id);
+        $this->assertTeamSetToModuleRelationshipExistsAndIsUnique($contact4);
     }
 
-    private function assignRecordToTeams(SugarBean $bean, Team $pprimaryTeam, Team ...$otherTeams)
+    /**
+     * @test
+     */
+    public function removalOfRecordsUsingTeamSet()
+    {
+        $contact1 = SugarTestContactUtilities::createContact();
+        $contact2 = SugarTestContactUtilities::createContact();
+
+        $team1 = SugarTestTeamUtilities::createAnonymousTeam();
+        $team2 = SugarTestTeamUtilities::createAnonymousTeam();
+
+        $this->assignRecordToTeams($contact1, $team1, $team2);
+        $this->assignRecordToTeams($contact2, $team1, $team2);
+
+        $contact1->mark_deleted($contact1->id);
+
+        $this->assertTeamSetExists($contact2->team_set_id);
+
+        $contact2->mark_deleted($contact2->id);
+
+        $this->assertTeamSetNotExists($contact2->team_set_id);
+    }
+
+    /**
+     * @test
+     */
+    public function removalOfRecordsUsingACLTeamSet()
+    {
+        $contact1 = SugarTestContactUtilities::createContact();
+        $contact2 = SugarTestContactUtilities::createContact();
+
+        $team1 = SugarTestTeamUtilities::createAnonymousTeam();
+        $team2 = SugarTestTeamUtilities::createAnonymousTeam();
+
+        $this->assignRecordToTeams($contact1, $team1, $team2);
+        $teamSetId = $contact1->team_set_id;
+
+        $contact2->acl_team_set_id = $teamSetId;
+        $contact2->save();
+
+        $contact1->mark_deleted($contact1->id);
+
+        $this->assertTeamSetExists($teamSetId);
+
+        $contact2->mark_deleted($contact2->id);
+
+        $this->assertTeamSetNotExists($teamSetId);
+    }
+
+    private function assignRecordToTeams(SugarBean $bean, Team $primaryTeam, Team ...$otherTeams)
     {
         // unset the link to see the changes immediately reflected on the bean
         unset($bean->teams);
 
         $bean->load_relationship('teams');
-        $bean->team_id = $pprimaryTeam->id;
+        $bean->team_id = $primaryTeam->id;
         $bean->save();
 
         $bean->teams->replace($otherTeams);
@@ -129,7 +178,7 @@ class TeamSetManagerTest extends TestCase
         ]);
     }
 
-    private function assertTeamSetIsUnique(SugarBean $bean)
+    private function assertTeamSetToModuleRelationshipExistsAndIsUnique(SugarBean $bean)
     {
         $query = 'SELECT COUNT(*) FROM team_sets_modules WHERE team_set_id = ? AND module_table_name = ?';
         $conn = DBManagerFactory::getConnection();
@@ -138,12 +187,36 @@ class TeamSetManagerTest extends TestCase
         $this->assertEquals(1, $stmt->fetchColumn());
     }
 
-    private function assertTeamSetIsRemoved($id)
+    private function assertTeamSetToModuleRelationshipIsRemoved($id)
     {
         $query = 'SELECT COUNT(*) FROM team_sets_modules WHERE team_set_id = ?';
         $conn = DBManagerFactory::getConnection();
         $stmt = $conn->executeQuery($query, [$id]);
 
         $this->assertEquals(0, $stmt->fetchColumn());
+    }
+
+    private function assertTeamSetExists(string $id) : void
+    {
+        $query = 'SELECT NULL FROM team_sets WHERE id = ?';
+        $conn = DBManagerFactory::getConnection();
+        $stmt = $conn->executeQuery($query, [$id]);
+
+        $this->assertNotFalse($stmt->fetchColumn());
+    }
+
+    private function assertTeamSetNotExists(string $id) : void
+    {
+        $conn = DBManagerFactory::getConnection();
+
+        foreach ([
+            'team_sets' => 'id',
+            'team_sets_teams' => 'team_set_id',
+            'team_sets_modules' => 'team_set_id',
+        ] as $table => $field) {
+            $query = sprintf('SELECT NULL FROM %s WHERE %s = ?', $table, $field);
+            $stmt = $conn->executeQuery($query, [$id]);
+            $this->assertFalse($stmt->fetchColumn());
+        }
     }
 }
