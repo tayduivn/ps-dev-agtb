@@ -24,23 +24,16 @@ export default class DrawerLayout extends RecordLayout {
 
         this.selectors = this.mergeSelectors({
             $: '.drawer.active',
-            showMoreBtn: '.show-hide-toggle .btn.more',
-            showLessBtn: '.show-hide-toggle .btn.less',
+            'show more': '.show-hide-toggle .btn.more',
+            'show less': '.show-hide-toggle .btn.less',
 
         });
 
         this.type = 'drawer';
     }
-    public async showMore() {
-        if (await this.driver.isVisible(this.$('showMoreBtn'))) {
-            await this.driver.click(this.$('showMoreBtn'));
+    public async showMore(btnName) {
+        if (await this.driver.isVisible(this.$(btnName))) {
+            await this.driver.click(this.$(btnName));
         }
     }
-    public async showLess() {
-        if (await this.driver.isVisible(this.$('showLessBtn'))) {
-            await this.driver.click(this.$('showLessBtn'));
-        }
-    }
-
-
 }

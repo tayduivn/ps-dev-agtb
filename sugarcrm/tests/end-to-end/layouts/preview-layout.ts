@@ -31,22 +31,19 @@ export default class PreviewLayout extends BaseView {
 
         this.selectors = this.mergeSelectors({
             $: '#sugarcrm .preview-pane.active',
-            showMoreBtn: '.btn.more',
-            showLessBtn: '.btn.less',
+            'show more': '.btn.more',
+            'show less': '.btn.less',
+            'more guests': '.detail .btn.btn-link.btn-invisible.more'
         });
 
         this.defaultView = this.PreviewView = this.createComponent(PreviewView);
         this.PreviewHeaderView = this.createComponent(PreviewHeaderView);
 
     }
-    public async showMore() {
-        if (await this.driver.isVisible(this.$('showMoreBtn'))) {
-            await this.driver.click(this.$('showMoreBtn'));
-        }
-    }
-    public async showLess() {
-        if (await this.driver.isVisible(this.$('showLessBtn'))) {
-            await this.driver.click(this.$('showLessBtn'));
+    public async showMore(btnName) {
+        if (await this.driver.isVisible(this.$(btnName))) {
+            await this.driver.scroll(this.$(btnName));
+            await this.driver.click(this.$(btnName));
         }
     }
 }

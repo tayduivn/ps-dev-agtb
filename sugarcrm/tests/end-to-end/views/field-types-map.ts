@@ -33,6 +33,7 @@ import * as DatetimecomboField from '../fields/datetimecombo-field';
 import * as QuoteGroupTitleField from '../fields/quote-group-title-field';
 import * as EmailRecipientsField from '../fields/email-recipients';
 import * as BadgeSelectField from '../fields/badge-select-field';
+import * as ParticipantsField from '../fields/participants-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -67,5 +68,6 @@ export const FIELD_TYPES__MAP = {
     'quote-group-title': QuoteGroupTitleField,
     'badge-select': BadgeSelectField,
     'email-recipients': EmailRecipientsField,
+    'participants': ParticipantsField,
 };
 

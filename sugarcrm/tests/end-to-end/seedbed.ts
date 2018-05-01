@@ -226,6 +226,11 @@ export default (seedbed: Seedbed) => {
                         module: recordInfo.module
                     });
 
+                    if (recordInfo.module === 'Users') {
+                        // hot fix for clean up logic: seedbed doesn't delete created users
+                        seedbed.api.created.push(responseData);
+                    }
+
                     if (recordInfo.module === 'ProductBundles') {
                         seedbed.defineComponent(`${recordInfo.uid}GroupRecord`, GroupRecord, {
                             id: responseRecord.id,

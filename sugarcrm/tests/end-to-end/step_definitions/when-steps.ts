@@ -173,12 +173,14 @@ When(/^I provide input for (#\S+) view for (\d+) row$/,
 
     }, {waitForApp: true});
 
-When(/^I click show more button on (#\S+) view$/, async function(layout: RecordLayout) {
-    await layout.showMore();
-}, {waitForApp: true});
 
-When(/^I click show less button on (#\S+) view$/, async function(layout: RecordLayout) {
-    await layout.showLess();
+/**
+ * Click 'Show More', 'Show Less', or 'More Guests' (Meetings and Calls only in case there is more than 5 guests total) button in any layout
+ *
+ * @example When I click more guests button on #C_1Preview view
+ */
+When(/^I click (show more|show less|more guests) button on (#\S+) view$/, async function(buttonName: string, layout: RecordLayout) {
+    await layout.showMore(buttonName);
 }, {waitForApp: true});
 
 

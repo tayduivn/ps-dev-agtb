@@ -251,3 +251,67 @@ Feature: Meetings module verification
     Then I verify fields on #M_1Preview.PreviewView
       | fieldName | value       |
       | name      | New Meeting |
+
+  @meeting_add_remove_invitees
+  Scenario: Meetings > Add and Remove Invitees
+    # Add New User
+    Given Users records exist:
+      | *      | status | user_name | user_hash | last_name | first_name | email              |
+      | user_1 | Active | user_1    | LOGIN     | uLast_1   | uFirst_1   | user_1@example.org |
+
+    # Add Contact record(s)
+    Given 3 Contacts records exist:
+      | *                 | first_name       | last_name       | email                                   |
+      | Contact_{{index}} | cFirst_{{index}} | cLast_{{index}} | contact_{{index}}@example.org (primary) |
+
+    # Add Lead record(s)
+    Given 3 Leads records exist:
+      | *              | first_name       | last_name       | email                                |
+      | Lead_{{index}} | lFirst_{{index}} | lLast_{{index}} | lead_{{index}}@example.org (primary) |
+
+    Given I open about view and login
+    When I choose Meetings in modules menu
+    # Create New Meeting
+    When I click Create button on #MeetingsList header
+    When I provide input for #MeetingsDrawer.HeaderView view
+      | *   | name        |
+      | M_1 | New Meeting |
+    # Add Invitees
+    When I provide input for #MeetingsDrawer.RecordView view
+      | *   | date_start         | date_end                  | invitees                                                           |
+      | M_1 | 12/01/2020-02:00pm | 12/01/2020-03:00pm (1 hr) | add: *Contact_1, *Lead_1, *Contact_2, *Lead_2, *Contact_3, *Lead_3 |
+    # Save Meeting
+    When I click Save button on #MeetingsDrawer header
+    When I close alert
+    Then I should see #MeetingsList.ListView view
+    When I click on preview button on *M_1 in #MeetingsList.ListView
+    # Verify invitees in preview
+    Then I should see #M_1Preview view
+    When I click more guests button on #M_1Preview view
+    Then I verify fields on #M_1Preview.PreviewView
+      | fieldName | value                                                                                                               |
+      | name      | New Meeting                                                                                                         |
+      | invitees  | Administrator,cFirst_1 cLast_1,cFirst_2 cLast_2,cFirst_3 cLast_3,lFirst_1 lLast_1,lFirst_2 lLast_2,lFirst_3 lLast_3 |
+    When I select *M_1 in #MeetingsList.ListView
+    Then I should see #M_1Record view
+    # Verify invitees in record view
+    When I click more guests button on #M_1Record view
+    Then I verify fields on #M_1Record.RecordView
+      | fieldName | value                                                                                                               |
+      | invitees  | Administrator,cFirst_1 cLast_1,cFirst_2 cLast_2,cFirst_3 cLast_3,lFirst_1 lLast_1,lFirst_2 lLast_2,lFirst_3 lLast_3 |
+    # Edit Meeting to remove some invitees
+    When I click Edit button on #M_1Record header
+    When I provide input for #M_1Record.RecordView view
+      | description     | invitees                                         |
+      | remove invitees | remove: *Contact_1, *Lead_1, *Contact_3, *Lead_3 |
+    # Add another invitee
+    When I provide input for #M_1Record.RecordView view
+      | invitees     |
+      | add: *user_1 |
+    # Save
+    When I click Save button on #M_1Record header
+    When I close alert
+    # Verify invitees
+    Then I verify fields on #M_1Record.RecordView
+      | fieldName | value                                                            |
+      | invitees  | Administrator,cFirst_2 cLast_2,lFirst_2 lLast_2,uFirst_1 uLast_1 |

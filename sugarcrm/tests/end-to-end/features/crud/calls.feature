@@ -260,3 +260,67 @@ Feature: Calls module verification
       | fieldName   | value    |
       | name        | New Call |
       | parent_name | Acc_1    |
+
+  @calls_add_remove_invitees
+  Scenario: Calls > Add and Remove Invitees
+    # Add New User
+    Given Users records exist:
+      | *      | status | user_name | user_hash | last_name | first_name | email              |
+      | user_1 | Active | user_1    | LOGIN     | uLast_1   | uFirst_1   | user_1@example.org |
+
+    # Add Contact record(s)
+    Given 3 Contacts records exist:
+      | *                 | first_name       | last_name       | email                                   |
+      | Contact_{{index}} | cFirst_{{index}} | cLast_{{index}} | contact_{{index}}@example.org (primary) |
+
+    # Add Lead record(s)
+    Given 3 Leads records exist:
+      | *              | first_name       | last_name       | email                                |
+      | Lead_{{index}} | lFirst_{{index}} | lLast_{{index}} | lead_{{index}}@example.org (primary) |
+
+    Given I open about view and login
+    When I choose Calls in modules menu
+    # Create New Call
+    When I click Create button on #CallsList header
+    When I provide input for #CallsDrawer.HeaderView view
+      | *   | name     |
+      | C_1 | New Call |
+    # Add Invitees
+    When I provide input for #CallsDrawer.RecordView view
+      | *   | date_start         | date_end                  | invitees                                                           |
+      | C_1 | 12/01/2020-02:00pm | 12/01/2020-03:00pm (1 hr) | add: *Contact_1, *Lead_1, *Contact_2, *Lead_2, *Contact_3, *Lead_3 |
+    # Save call
+    When I click Save button on #CallsDrawer header
+    When I close alert
+    Then I should see #CallsList.ListView view
+    When I click on preview button on *C_1 in #CallsList.ListView
+    # Verify invitees in preview
+    Then I should see #C_1Preview view
+    When I click more guests button on #C_1Preview view
+    Then I verify fields on #C_1Preview.PreviewView
+      | fieldName | value                                                                                                               |
+      | name      | New Call                                                                                                            |
+      | invitees  | Administrator,cFirst_1 cLast_1,cFirst_2 cLast_2,cFirst_3 cLast_3,lFirst_1 lLast_1,lFirst_2 lLast_2,lFirst_3 lLast_3 |
+    When I select *C_1 in #CallsList.ListView
+    Then I should see #C_1Record view
+    # Verify invitees in record view
+    When I click more guests button on #C_1Record view
+    Then I verify fields on #C_1Record.RecordView
+      | fieldName | value                                                                                                               |
+      | invitees  | Administrator,cFirst_1 cLast_1,cFirst_2 cLast_2,cFirst_3 cLast_3,lFirst_1 lLast_1,lFirst_2 lLast_2,lFirst_3 lLast_3 |
+    # Edit Call to remove some invitees
+    When I click Edit button on #C_1Record header
+    When I provide input for #C_1Record.RecordView view
+      | description     | invitees                                         |
+      | remove invitees | remove: *Contact_1, *Lead_1, *Contact_3, *Lead_3 |
+    # Add another invitee
+    When I provide input for #C_1Record.RecordView view
+      | invitees     |
+      | add: *user_1 |
+    # Save
+    When I click Save button on #C_1Record header
+    When I close alert
+    # Verify invitees
+    Then I verify fields on #C_1Record.RecordView
+      | fieldName | value                                                            |
+      | invitees  | Administrator,cFirst_2 cLast_2,lFirst_2 lLast_2,uFirst_1 uLast_1 |
