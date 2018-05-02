@@ -331,6 +331,7 @@
                     'include/javascript/fuse/fuse.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/tinymce4/jquery.tinymce.min.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/mousetrap/mousetrap.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/clipboardjs/clipboard.min.js' => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
 
@@ -357,6 +358,7 @@
                 'include/javascript/sugar7/accessibility/accessibility.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/accessibility/click.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/accessibility/label.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/clipboard.js' => 'include/javascript/sugar_grp7.min.js',
             ),
 
             //BEGIN SUGARCRM flav=ent ONLY
@@ -381,6 +383,7 @@
                 'include/javascript/sugar7/accessibility/label.js' => 'portal2/sugar_portal.min.js',
                 'custom/include/javascript/voodoo.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/shortcuts.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/clipboard.js' => 'portal2/sugar_portal.min.js',
             ),
 
             $pmse_designer = array(

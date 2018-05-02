@@ -7,6 +7,7 @@
     "excludeFiles": [
         "**/node_modules/**",
         "**/*.min.js",
+        "include/javascript/clipboardjs/**",
         "include/javascript/fuse/**",
         "include/javascript/jquery/**",
         "include/javascript/mousetrap/**",

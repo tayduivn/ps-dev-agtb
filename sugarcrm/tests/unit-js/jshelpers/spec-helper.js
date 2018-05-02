@@ -96,7 +96,15 @@ var SugarTest = {};
 
     test._appInitialized = false;
     test.seedApp = function() {
-        if (this._appInitialized) return;
+        if (this._appInitialized) {
+            // Force the clipboard to be reinitialized since it is disposed
+            // after each test suite is executed.
+            if (this.app.clipboard) {
+                this.app.clipboard.init();
+            }
+
+            return;
+        }
         this.app = SUGAR.App.init({el: "body"});
         this._appInitialized = true;
     };
@@ -119,6 +127,13 @@ var SugarTest = {};
             c.dispose();
         });
         this.components = [];
+
+        // Dispose of the clipboard after each test suite is executed to
+        // guarantee that all DOM nodes and event listeners are removed
+        // correctly.
+        if (this.app && this.app.clipboard) {
+            this.app.clipboard.dispose();
+        }
     };
 
     test.createComponent = function(type, params) {

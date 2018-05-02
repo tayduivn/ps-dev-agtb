@@ -5391,6 +5391,9 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_DATAPRIVACY_PII' => 'Personal Info',
     'LBL_DATAPRIVACY_MARK_FOR_ERASURE' => 'Mark to Erase',
     'TPL_DATAPRIVACY_PII_TITLE' => 'Personal Info for {{{name}}}',
+
+    'LBL_TEXT_COPIED_TO_CLIPBOARD_SUCCESS' => 'Copied to your clipboard!',
+    'LBL_TEXT_COPIED_TO_CLIPBOARD_ERROR' => 'Could not copy to your clipboard',
 );
 
 $app_list_strings['activity_user_options'] = array (
