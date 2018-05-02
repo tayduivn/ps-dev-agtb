@@ -12,6 +12,7 @@
 
 $dictionary['ReportSchedule'] = array(
     'table' => 'report_schedules',
+    'audited' => true,
     'fields' => array(
         'user_id' => array(
             'name' => 'user_id',
@@ -52,6 +53,7 @@ $dictionary['ReportSchedule'] = array(
             'vname' => 'LBL_DATE_START',
             'type' => 'datetime',
             'required' => true,
+            'audited' => true,
         ),
         'time_interval' => array(
             'name' => 'time_interval',
@@ -62,6 +64,7 @@ $dictionary['ReportSchedule'] = array(
             'options' => 'reportschedule_time_interval_dom',
             'required' => true,
             'default' => '604800',
+            'audited' => true,
         ),
         'next_run' => array(
             'name' => 'next_run',
@@ -75,6 +78,7 @@ $dictionary['ReportSchedule'] = array(
             'type' => 'bool',
             'len' => '1',
             'default' => '1',
+            'audited' => true,
         ),
         'schedule_type' => array(
             'name' => 'schedule_type',
@@ -117,3 +121,9 @@ VardefManager::createVardef(
         'team_security',
     )
 );
+
+$dictionary['ReportSchedule']['fields']['name']['audited'] = true;
+$dictionary['ReportSchedule']['fields']['modified_user_id']['audited'] = true;
+$dictionary['ReportSchedule']['fields']['date_entered']['audited'] = true;
+$dictionary['ReportSchedule']['fields']['date_modified']['audited'] = true;
+$dictionary['ReportSchedule']['fields']['created_by']['audited'] = true;
