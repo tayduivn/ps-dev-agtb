@@ -63,6 +63,12 @@ $dictionary['EmailAddress'] = array(
             'type' => 'datetime',
             'vname' => 'LBL_DATE_MODIFIED',
         ),
+        'confirmation_requested_on' => array(
+            'name' => 'confirmation_requested_on',
+            'type' => 'datetime',
+            'vname' => 'LBL_CONFIRMATION_REQUESTED_ON',
+            'audited' => true,
+        ),
         'deleted' => array(
             'name' => 'deleted',
             'type' => 'bool',

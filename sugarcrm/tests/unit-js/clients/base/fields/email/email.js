@@ -12,6 +12,7 @@ describe('Base.Email', function() {
 
     var app, field, model, mock_addr;
     var module = 'Accounts';
+    var sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -23,10 +24,12 @@ describe('Base.Email', function() {
 
         mock_addr =  [
             {
+                email_address_id: '4e571e68-4e28-11e8-9911-3c15c2d582c6',
                 email_address: "test1@test.com",
                 primary_address: true
             },
             {
+                email_address_id: '4e2b1c14-4e28-11e8-8a41-3c15c2d582c6',
                 email_address: "test2@test.com",
                 primary_address: false,
                 opt_out: true
@@ -42,10 +45,13 @@ describe('Base.Email', function() {
         field = SugarTest.createField("base","email", "email", "edit", undefined, undefined, model);
 
         field.render();
+
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
-        sinon.collection.restore();
+        sandbox.restore();
+        field.dispose();
         app.cache.cutAll();
         app.view.reset();
         SugarTest.testMetadata.dispose();
@@ -441,7 +447,8 @@ describe('Base.Email', function() {
                 primary_address: true,
                 hasAnchor: true,
                 soleEmail: true,
-                flagLabel: 'LBL_EMAIL_PRIMARY'
+                flagLabel: 'LBL_EMAIL_PRIMARY',
+                confirmation_url: ''
             };
 
             var actual = field.format(expected.email_address);
@@ -520,7 +527,7 @@ describe('Base.Email', function() {
         });
 
         it('should add the placeholder when all addresses are removed', function() {
-            sinon.collection.stub(field, 'decorateRequired');
+            sandbox.stub(field, 'decorateRequired');
 
             // Remove the two email addresses.
             field.$('.removeEmail').first().click();
@@ -551,5 +558,63 @@ describe('Base.Email', function() {
         });
 
 
+    });
+
+    describe('copying the confirmation link', function() {
+        var field2;
+
+        beforeEach(function() {
+            field.$el.appendTo('body');
+
+            field2 = SugarTest.createField('base', 'email', 'email', 'detail', null, module, model);
+            field2.render();
+            field2.$el.appendTo('body');
+        });
+
+        afterEach(function() {
+            field.$el.remove();
+            field2.$el.remove();
+            field2.dispose();
+        });
+
+        it('should not have a copy confirmation link button if the mode is not detail', function() {
+            var buttons = field.$('button[data-clipboard="enabled"]');
+
+            expect(buttons.length).toBe(0);
+        });
+
+        it('should only have a copy confirmation link button if the email address is opted out', function() {
+            var buttons = field2.$('button[data-clipboard="enabled"]');
+            var clipboardText = buttons.data('clipboard-text');
+
+            expect(buttons.length).toBe(1);
+            expect(clipboardText).toMatch(
+                /^.*\?entryPoint=ConfirmEmailAddress&email_address_id=4e2b1c14-4e28-11e8-8a41-3c15c2d582c6$/
+            );
+        });
+
+        it('should update the email address when the copy confirmation link button is clicked', function() {
+            var call;
+            var bean = app.data.createBean('EmailAddresses', {id: '4e2b1c14-4e28-11e8-8a41-3c15c2d582c6'});
+
+            sandbox.stub(app.alert, 'show');
+            sandbox.stub(bean, 'save');
+            sandbox.stub(app.data, 'createBean')
+                .withArgs('EmailAddresses', {id: '4e2b1c14-4e28-11e8-8a41-3c15c2d582c6'})
+                .returns(bean);
+
+            // Stub the copy command.
+            sandbox.stub(document, 'execCommand').returns(true);
+
+            field2.$('button[data-clipboard="enabled"]').click();
+
+            expect(bean.get('confirmation_requested_on')).not.toBeEmpty();
+            expect(bean.save).toHaveBeenCalledOnce();
+
+            call = app.alert.show.getCall(0);
+            expect(app.alert.show).toHaveBeenCalledOnce();
+            expect(call.args[0]).toBe('clipboard');
+            expect(call.args[1].level).toBe('success');
+        });
     });
 });
