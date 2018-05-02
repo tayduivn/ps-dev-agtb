@@ -44,7 +44,11 @@
      * @param callback
      */
     linkUserWaterfall: function(callback) {
-        this.linkCurrentUser();
+        if (this.context.get('copiedFromModelId')) {
+            this.copyExistingUsers();
+        } else {
+            this.linkCurrentUser();
+        }
         callback(false);
     },
 
@@ -54,5 +58,28 @@
     linkCurrentUser: function() {
         var user = app.data.createRelatedBean(this.model, app.user.get('id'), 'users');
         user.save(null, {relate: true});
+    },
+
+    /**
+     * Copy existing users
+     */
+    copyExistingUsers: function() {
+        var bulkRequest;
+        var bulkUrl;
+        var bulkCalls = [];
+        var bean = this.context.parent.get('model');
+        var collection = bean.getRelatedCollection('users');
+        _.each(collection.models, function(model) {
+            bulkUrl = app.api.buildURL('ReportSchedules/' + this.model.get('id') + '/link/users/' + model.get('id'));
+            bulkRequest = {
+                url: bulkUrl.substr(4),
+                method: 'POST',
+                data: {}
+            };
+            bulkCalls.push(bulkRequest);
+        }, this);
+        if (bulkCalls.length) {
+            app.api.call('create', app.api.buildURL(null, 'bulk'), {requests: bulkCalls}, {});
+        }
     }
 })

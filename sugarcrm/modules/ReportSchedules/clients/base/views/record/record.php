@@ -49,6 +49,16 @@ $viewdefs['ReportSchedules']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
+                    'event' => 'button:duplicate_button:click',
+                    'name' => 'duplicate_button',
+                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'acl_action' => 'create',
+                ),
+                array(
+                    'type' => 'divider',
+                ),
+                array(
+                    'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',

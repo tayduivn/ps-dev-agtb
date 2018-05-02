@@ -384,7 +384,7 @@ $mod_strings = array (
     'LBL_MODULE_TITLE' => 'Reports: Home',
     'LBL_MODULE_VIEWER_TITLE' => 'Report Viewer: Home',
     'LBL_REPORT_MODULE_VIEWER_TITLE' => 'Report Viewer',
-    'LBL_REPORT_SCHEDULE_TITLE' => 'Schedule',
+    'LBL_REPORT_SCHEDULE_TITLE' => 'Create Schedule',
     'LBL_VIEW_SCHEDULES_TITLE' => 'View Schedules',
     'LBL_FAVORITES_TITLE' => 'My Favorite Reports',
     'LBL_TABLE_CHANGED' => 'Module list has been modified, please double check the criteria entered in the Group tab.',
@@ -540,7 +540,7 @@ $mod_strings = array (
     'LBL_ALT_INFORMATION' => 'Information',
     'LBL_REPORT_GRAND_TOTAL' => "Grand Total",
     'LBL_EDIT_REPORT_BUTTON' => 'Edit Report',
-    'LBL_SCHEDULE_REPORT_BUTTON' => 'Schedule',
+    'LBL_SCHEDULE_REPORT_BUTTON' => 'Create Schedule',
     'LBL_VIEW_SCHEDULES_BUTTON' => 'View Schedules',
 
     'LBL_REPORTS_TO' => 'Reports To',
