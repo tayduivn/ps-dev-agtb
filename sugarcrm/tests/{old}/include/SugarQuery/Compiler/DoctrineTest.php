@@ -29,6 +29,11 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
         $this->account = BeanFactory::newBean('Accounts');
     }
 
+    protected function tearDown() : void
+    {
+        SugarTestHelper::tearDownCustomFields();
+    }
+
     public function testSelectFieldsByDefault()
     {
         $query = $this->getQuery();
@@ -249,6 +254,71 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
         $builder = $query->compile();
 
         $this->assertEquals('COUNT(id) > 3', $builder->getQueryPart('having'));
+    }
+
+    /**
+     * @param string $orderBy ORDER BY columns from query
+     * @param array $expected Expected ORDER BY part
+     * @dataProvider compileOrderByWithJoinProvider
+     */
+    public function testCompileOrderByWithJoin(string $orderBy, array $expected)
+    {
+        $query = new SugarQuery();
+        $query->from($this->account);
+        $query->joinTable('opportunities', array(
+            'joinType' => 'left',
+        ))->on()->equalsField('opportunities.account_id', 'accounts.id');
+
+        $query->orderBy($orderBy, 'DESC');
+
+        $builder = $query->compile();
+        $actual = $builder->getQueryPart('orderBy');
+        $this->assertEquals($expected, $actual, 'Expected order by not found for join.');
+    }
+
+    /**
+     * @return array
+     */
+    public function compileOrderByWithJoinProvider()
+    {
+        return array(
+            'sort using column from first table in join' => array(
+                'accounts.name',
+                array(
+                    'accounts.name DESC',
+                    'accounts.id DESC',
+                ),
+            ),
+            'sort using column from second table in join' => array(
+                'opportunities.name',
+                array(
+                    'opportunities.name DESC',
+                    'opportunities.id DESC',
+                ),
+            ),
+        );
+    }
+
+    public function testCompileOrderByCustomField()
+    {
+        SugarTestHelper::setUpCustomField('Accounts', [
+            'name' => 'test',
+            'type' => 'text',
+        ]);
+        $query = new SugarQuery();
+        $query->from(BeanFactory::newBean('Accounts'));
+        $query->joinTable('account_cstm', array(
+            'joinType' => 'left',
+        ))->on()->equalsField('account_cstm.id_c', 'accounts.id');
+        $query->orderBy('test_c', 'DESC');
+
+        $builder = $query->compile();
+        $actual = $builder->getQueryPart('orderBy');
+        $this->assertEquals(
+            ['accounts_cstm.test_c DESC', 'accounts_cstm.id_c DESC'],
+            $actual,
+            'Expected order by not found for custom field.'
+        );
     }
 
     /**

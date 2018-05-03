@@ -449,10 +449,20 @@ class SugarQuery_Compiler_Doctrine
             if ($column->column->field == 'id') {
                 return $orderBy;
             }
+            $firstColumn = $firstColumn ?? $column->column;
         }
 
         $uniqueCol = new SugarQuery_Builder_Orderby($query, end($orderBy)->direction);
-        $uniqueCol->addField('id');
+
+        if ($firstColumn instanceof SugarQuery_Builder_Field_Raw) {
+            return $orderBy;
+        }
+
+        if (empty($firstColumn->custom)) {
+            $uniqueCol->addField($firstColumn->table . '.id');
+        } else {
+            $uniqueCol->addRaw($firstColumn->table . '.id_c');
+        }
         $orderBy[] = $uniqueCol;
 
         return $orderBy;
