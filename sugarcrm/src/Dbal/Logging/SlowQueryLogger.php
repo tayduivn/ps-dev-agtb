@@ -15,13 +15,14 @@ namespace Sugarcrm\Sugarcrm\Dbal\Logging;
 /**
  * Logs queries into sugarcrm log
  */
-class SugarLogger implements \Doctrine\DBAL\Logging\SQLLogger
+class SlowQueryLogger implements \Doctrine\DBAL\Logging\SQLLogger
 {
     /**
      * Logging level
      * @var string
      */
-    const LEVEL = 'info';
+    const LEVEL = 'warn';
+
     /**
      * Maximum length of the parameter value to dump
      * @var int
@@ -36,23 +37,65 @@ class SugarLogger implements \Doctrine\DBAL\Logging\SQLLogger
     protected $logger;
 
     /**
-     * @param \LoggerManager $logger Sugar log, usually $GLOBALS['log']
+     * @var float|null
      */
-    public function __construct(\LoggerManager $logger)
+    protected $start = null;
+
+    /**
+     * If Slow Query Logging is enabled or not.
+     *
+     * @var boolean
+     */
+    public $enabled = true;
+
+    /**
+     * Query execution time threshold
+     *
+     * @var int
+     */
+    public $threshold = 2000;
+
+    /**
+     * @var array
+     */
+    public $currentQuery = array();
+
+    /**
+     * @param \LoggerManager $logger Sugar log, usually $GLOBALS['log']
+     * @param boolean $enabled
+     * @param integer $threshold
+     */
+    public function __construct(\LoggerManager $logger, $enabled, $threshold)
     {
         $this->logger = $logger;
+        $this->enabled = $enabled;
+        $this->threshold = $threshold;
     }
 
     public function startQuery($sql, array $params = null, array $types = null)
     {
-        if ($this->logger->wouldLog(self::LEVEL)) {
-            $message = $this->getQueryLogMessage($sql, $params, $types);
-            $this->log($message);
+        if ($this->enabled && $this->logger->wouldLog(self::LEVEL)) {
+            $this->start = microtime(true);
+            $this->currentQuery = array('sql' => $sql, 'params' => $params, 'types' => $types, 'executionMS' => 0);
         }
     }
 
     public function stopQuery()
     {
+        if ($this->enabled && $this->logger->wouldLog(self::LEVEL)) {
+            $this->currentQuery['executionTime'] = microtime(true) - $this->start;
+            if (($this->currentQuery['executionTime'] * 1000) >= $this->threshold) {
+                $message = $this->getQueryLogMessage(
+                    $this->currentQuery['sql'],
+                    $this->currentQuery['params'],
+                    $this->currentQuery['types'],
+                    $this->currentQuery['executionTime']
+                );
+                $this->start = 0;
+                $this->currentQuery = null;
+                $this->log($message);
+            }
+        }
     }
 
     /**
@@ -87,11 +130,14 @@ class SugarLogger implements \Doctrine\DBAL\Logging\SQLLogger
      * @param $sql
      * @param array $params
      * @param array $types
+     * @param int $executionTime
      * @return string
      */
-    protected function getQueryLogMessage($sql, array $params = null, array $types = null)
+    protected function getQueryLogMessage($sql, array $params = null, array $types = null, float $executionTime)
     {
-        $message = 'Query: ' . $sql;
+        $message = 'Slow Query (time:'
+            . $executionTime
+            . ' seconds)' . PHP_EOL . $sql;
         if (count($params)) {
             $message .= PHP_EOL . 'Params: ' . $this->stringify($params);
         }
