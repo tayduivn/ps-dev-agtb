@@ -734,14 +734,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $multiMatch->setTerms($this->term);
         $multiMatch->setOperator($this->getDefaultOperator());
         $multiMatch->setVisibilityProvider($this->container->getProvider('Visibility'));
-
-        $modules = $this->modules;
-        //when searching on a specific module, include tags if necessary
-        if ($this->getTags && !in_array($this->tagModule, $modules)) {
-            $modules[] = $this->tagModule;
-        }
-
-        $multiMatch->setSearchFields($this->buildSearchFields($modules));
+        $multiMatch->setSearchFields($this->buildSearchFields($this->modules));
         $multiMatch->setUser($this->user);
         return $multiMatch;
     }

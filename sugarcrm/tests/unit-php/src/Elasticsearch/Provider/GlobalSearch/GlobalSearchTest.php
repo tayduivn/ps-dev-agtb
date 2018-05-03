@@ -13,8 +13,13 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchField;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\MultiFieldHandler;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
@@ -155,11 +160,78 @@ class GlobalSearchTest extends TestCase
     }
 
     /**
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
+     * @covers ::createMultiMatchQuery
+     *
+     * @dataProvider providerTestCreateMultiMatchQuery
+     */
+    public function testCreateMultiMatchQuery(array $modules, array $moduleFields, array $expected)
+    {
+        $sfs = new SearchFields();
+        foreach ($moduleFields as $module => $fields) {
+            foreach ($fields as $field) {
+                $sfs->addSearchField(new SearchField($module, $field, []));
+            }
+        }
+
+        $gsMock = $this->getGlobalSearchMock(['buildSearchFields']);
+        $gsMock->expects($this->any())
+            ->method('buildSearchFields')
+            ->with($this->logicalNot($this->contains('Tags')))
+            ->willReturn($sfs);
+
+        $containerMock = $this->getMockBuilder(Container::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getProvider'])
+            ->getMock();
+
+        $containerMock->expects($this->any())
+            ->method('getProvider')
+            ->willReturn($this->createMock(Visibility::class));
+
+        TestReflection::setProtectedValue($gsMock, 'container', $containerMock);
+        TestReflection::setProtectedValue($gsMock, 'term', 'abcd');
+        TestReflection::setProtectedValue($gsMock, 'user', $this->createMock(\User::class));
+        TestReflection::setProtectedValue($gsMock, 'modules', $modules);
+        TestReflection::setProtectedValue($gsMock, 'getTags', true);
+
+        $mmQuery = TestReflection::callProtectedMethod($gsMock, 'createMultiMatchQuery');
+
+        // no extra module is added
+        $this->assertSame($modules, TestReflection::getProtectedValue($gsMock, 'modules'));
+
+        // check fields
+        $searchFields =  TestReflection::getProtectedValue($mmQuery, 'searchFields');
+        foreach ($searchFields as $field) {
+            $searchField[] = $field->compile();
+        }
+
+        $this->assertSame($expected, $searchField);
+    }
+
+    public function providerTestCreateMultiMatchQuery()
+    {
+        return [
+            [
+                ['Multi_Modules_1', 'Multi_Modules_2'],
+                ['Multi_Modules_1' => ['field1', 'field2'], 'Multi_Modules_2' => ['field1']],
+                ['Multi_Modules_1__field1', 'Multi_Modules_1__field2', 'Multi_Modules_2__field1'],
+            ],
+            [
+                ['Single_Module'],
+                ['Single_Module' => ['field1', 'field2']],
+                ['Single_Module__field1', 'Single_Module__field2'],
+            ],
+        ];
+    }
+
+    /**
+     * get Mock object of GlobalSearch
+     * @param array|null $methods
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getGlobalSearchMock(array $methods = null)
     {
-        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch')
+        return $this->getMockBuilder(GlobalSearch::class)
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();
