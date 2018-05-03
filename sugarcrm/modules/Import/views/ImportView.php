@@ -237,7 +237,7 @@ class ImportView extends SugarView
         foreach ($savedSourceOptions as $importOption) {
             $savedSourceOptionsFlattened[] = "custom:" . $importOption['IMPORT_ID'];
         }
-        return array_merge($savedSourceOptionsFlattened, array('csv', 'external', ''));
+        return array_merge($savedSourceOptionsFlattened, array('salesforce', 'outlook', ''));
     }
 
     /**
