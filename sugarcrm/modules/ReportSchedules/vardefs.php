@@ -58,6 +58,7 @@ $dictionary['ReportSchedule'] = array(
             'vname' => 'LBL_TIME_INTERVAL',
             'options' => 'reportschedule_time_interval_dom',
             'required' => true,
+            'default' => '604800',
         ),
         'next_run' => array(
             'name' => 'next_run',
