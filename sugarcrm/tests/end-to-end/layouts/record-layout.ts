@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 import HeaderView from '../views/record-header-view';
-import {BaseView, seedbed} from '@sugarcrm/seedbed';
+import BaseView from '../views/base-view';
 import RecordView from '../views/record-view';
 import SubpanelsLayout from '../layouts/subpanels-layout';
 import QliTable from '../views/qli-table';
@@ -29,6 +29,8 @@ export default class RecordLayout extends BaseView {
     public RecordView: RecordView;
     public defaultView: RecordView;
 
+    public id: string;
+
     constructor(options) {
 
         super(options);
@@ -38,9 +40,13 @@ export default class RecordLayout extends BaseView {
             'show more': '.show-hide-toggle .btn.more',
             'show less': '.show-hide-toggle .btn.less',
             'more guests': '.detail .btn.btn-link.btn-invisible.more',
+
+            'click': '.table tr[name={{module}}_{{id}}] div a',
+            'preview': '.table tr[name={{module}}_{{id}}] .preview-list-cell .fa.fa-eye',
         });
 
         this.type = 'record';
+        this.id = options.id;
 
         this.defaultView = this.RecordView = this.createComponent<RecordView>(RecordView, {
             module: options.module,
@@ -66,4 +72,10 @@ export default class RecordLayout extends BaseView {
             await this.driver.click(this.$(btnName));
         }
     }
+    public async performAction(action, id, module) {
+
+        await this.driver.scroll(this.$(action, {module, id}));
+        await this.driver.click(this.$(action, {module, id}));
+    }
+
 }

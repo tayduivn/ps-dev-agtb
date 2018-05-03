@@ -28,14 +28,13 @@ export default class EmailField extends BaseField {
                  input: '.newEmail',
             }
         });
-
     }
 
     public async setValue(val: any): Promise<void> {
+
         await this.driver.click(this.$('field'));
         await this.driver.setValue(this.$('field.input'), val);
         await this.driver.waitForApp();
-
     }
 
 }
@@ -58,7 +57,25 @@ export class Detail extends EmailField {
         let value: string | string[] = await this.driver.getText(this.$('field.selector'));
 
         return value.toString().trim();
-
     }
 }
 
+export class Preview extends EmailField {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            field: {
+                selector: 'a'
+            }
+        });
+    }
+
+    public async getText(selector: string): Promise<string> {
+
+        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
+
+        return value.toString().trim();
+    }
+}

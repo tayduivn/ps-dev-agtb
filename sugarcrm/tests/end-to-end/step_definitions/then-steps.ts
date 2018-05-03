@@ -13,6 +13,7 @@ import BaseView from '../views/base-view';
 import {Then, seedbed} from '@sugarcrm/seedbed';
 import * as _ from 'lodash';
 import {TableDefinition} from 'cucumber';
+import ListView from "../views/list-view";
 
 /**
  * Check whether the cached view is visible
@@ -29,6 +30,21 @@ Then(/^I should (not )?see (#\S+) view$/,
         }
 
     });
+
+/**
+ * Verify number of records in the list view
+ *
+ * @example "I verify number of records in #Opp1Record.SubpanelsLayout.subpanels.meetings is 0"
+ */
+Then(/^I verify number of records in (#\S+) is (\d+)$/,
+    async function (view: ListView, count) {
+
+        let actualCount  = await view.getNumberOfRecords();
+        if (actualCount != count) {
+            throw new Error('Expected rows ' + count + ' Actual rows: ' + actualCount );
+        }
+    });
+
 
 /**
  * Verifies fields visible on a cached view for the cached record.

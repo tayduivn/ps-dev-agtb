@@ -22,6 +22,7 @@ import GroupRecord from './views/group-record';
 import DrawerLayoutOpp from './layouts/drawer-layout-opp';
 import SearchAndAddLayout from './layouts/searchAndAdd-layout';
 import PersonalInfoDrawerLayout from './layouts/personal-info-drawer-layout';
+import LeadConversionLayout from "./layouts/lead-conversion-layout";
 
 
 export default (seedbed: Seedbed) => {
@@ -61,6 +62,7 @@ export default (seedbed: Seedbed) => {
             }
         });
 
+        seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
     });
 
     /**
@@ -82,6 +84,13 @@ export default (seedbed: Seedbed) => {
                     module: record.module,
                     id: record.id
                 });
+
+                if (record.module === 'Leads') {
+                    seedbed.defineComponent(`${recordAlias}LeadConversionDrawer`, LeadConversionLayout, {
+                        module: record.module,
+                        id: record.id
+                    });
+                }
 
                 seedbed.components[`${record.module}List`].ListView.createListItem(record);
             }
@@ -161,19 +170,26 @@ export default (seedbed: Seedbed) => {
                 id: item.id
             });
 
+            seedbed.defineComponent(`${recordInfo.uid}Preview`, PreviewLayout, {
+                module: recordInfo.module,
+                id: item.id
+            });
+
             seedbed.defineComponent(`${recordInfo.uid}Drawer`, DrawerLayout, {
                 module: recordInfo.module,
                 id: item.id
             });
 
-            seedbed.defineComponent(`${recordInfo.uid}Preview`, PreviewLayout, {
-                module: recordInfo.module,
-                id: recordInfo.id,
-            });
-
+            if (recordInfo.module === 'Leads') {
+                seedbed.defineComponent(`${recordInfo.uid}LeadConversionDrawer`, LeadConversionLayout, {
+                    module: recordInfo.module,
+                    id: recordInfo.id
+                });
+            }
         }
 
     });
+
     seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
 
         if (req.method === 'POST' && /(\/opportunity)/.test(req.url)) {
@@ -192,6 +208,44 @@ export default (seedbed: Seedbed) => {
                 seedbed.api.created.push(responseRecord);
             }
 
+        }
+
+    });
+
+    seedbed.addAsyncHandler(seedbed.events.RESPONSE, (data, req, res) => {
+
+        let url = req.url;
+
+        if (url.indexOf('/convert') !== -1 && req.method === 'POST') {
+
+            let responseData = JSON.parse(data.buffer.toString());
+
+            if (!responseData.modules) {
+                return;
+            }
+
+            responseData.modules.forEach(record => {
+
+                seedbed.api.created.push(record);
+
+                let recordInfo = _.find(seedbed.cucumber.scenario.recordsInfo, _recordInfo => !_recordInfo.recordId
+                    && _recordInfo.module === record._module);
+
+                if (recordInfo) {
+
+                    recordInfo.recordId = record.id;
+                    seedbed.cachedRecords.push(recordInfo.uid, record);
+
+                    seedbed.defineComponent(`${recordInfo.uid}Record`, RecordLayout, {
+                        module: record._module,
+                        id: record.id,
+                    });
+                    seedbed.defineComponent(`${recordInfo.uid}Preview`, PreviewLayout, {
+                        module: record._module,
+                        id: record.id,
+                    });
+                }
+            });
         }
 
     });
@@ -260,6 +314,13 @@ export default (seedbed: Seedbed) => {
                         module: record.module,
                         id: record.id,
                     });
+
+                    if (recordInfo.module === 'Leads') {
+                        seedbed.defineComponent(`${recordInfo.uid}LeadConversionDrawer`, LeadConversionLayout, {
+                            module: recordInfo.module,
+                            id: recordInfo.id
+                        });
+                    }
 
                     seedbed.defineComponent(`${recordInfo.uid}Preview`, PreviewLayout, {
                         module: record.module,

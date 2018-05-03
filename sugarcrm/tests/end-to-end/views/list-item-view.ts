@@ -41,6 +41,7 @@ export default class ListItemView extends BaseView {
                     marktoerase: '[name="dataprivacy-erase"]',
                     checkbox: '.actions.actionmenu.list input[type=checkbox]',
                     favorite: '.fa.fa-favorite',
+                    convert: '[name="lead_convert_button"]',
                 }
             },
             buttons: {

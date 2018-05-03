@@ -31,15 +31,20 @@ export default class ListView extends BaseListView {
                 showMoreTop: '.show-more-top-btn',
                 toggleAll: '.fieldset.actions.actionmenu.list  .toggle-all',
                 list : {
-                allRows : 'tr[name*="{{module}}"]',
-                    row : 'tr[name*="{{module}}"]:nth-child({{index}})'
-            }
-        });
-
+                    allRows : 'tr[name*="{{module}}"]',
+                    row : 'tr[name*="{{module}}"]:nth-child({{index}})',
+                    },
+                tableRow:'.table.table-striped.dataTable tbody tr',
+            });
     }
 
     public async toggleAll() {
         await this.driver.click(this.$('toggleAll'));
+    }
+
+    public async getNumberOfRecords() {
+        let rows = await this.driver.elements(this.$('tableRow'));
+        return rows.value.length;
     }
 
 }
