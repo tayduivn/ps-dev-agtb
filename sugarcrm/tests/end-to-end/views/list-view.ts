@@ -43,7 +43,8 @@ export default class ListView extends BaseListView {
     }
 
     public async getNumberOfRecords() {
-        let rows = await this.driver.elements(this.$('tableRow'));
+        let driver:any = this.driver;
+        let rows = await driver.elements(this.$('tableRow'));
         return rows.value.length;
     }
 

@@ -137,7 +137,7 @@ var config = {
                 chrome: {
                     // check for more recent versions of chrome driver here:
                     // http://chromedriver.storage.googleapis.com/index.html
-                    version: '2.37',
+                    version: '2.38',
                     arch: process.arch,
                     baseURL: 'http://chromedriver.storage.googleapis.com'
                 }
@@ -170,7 +170,8 @@ var config = {
         responses: true,
     },
 
-    apiUrl: '/rest/v10',
+    apiUrl: '/rest/',
+    apiVersion: 'v10',
 };
 
 module.exports = {config};

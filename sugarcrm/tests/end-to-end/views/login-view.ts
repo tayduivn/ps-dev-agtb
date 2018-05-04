@@ -37,9 +37,8 @@ export default class LoginView extends BaseView {
 
     public async login(username, password) {
 
-        await this.driver
-            .setValue(this.$('username'), username)
-            .setValue(this.$('password'), password);
+        await this.driver.setValue(this.$('username'), username);
+        await this.driver.setValue(this.$('password'), password);
 
         return this.driver.click(this.$('buttons.login'));
     }

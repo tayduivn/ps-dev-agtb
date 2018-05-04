@@ -49,7 +49,7 @@ export default class extends BaseView {
                 }
             }
 
-            let fieldTypeAttr = await this.driver.getAttribute<string>(
+            let fieldTypeAttr = await this.driver.getAttribute(
                 selector,
                 'field-type'
             );
@@ -110,7 +110,7 @@ export default class extends BaseView {
     }
 
     public async getAttribute(sel: string, attr: string): Promise<string> {
-        let templateName: string | string[] = await this.driver.getAttribute<string>(sel, attr);
+        let templateName: string | string[] = await this.driver.getAttribute(sel, attr);
         if (_.isArray(templateName)) {
             throw new Error(`Please verify selector: ${sel}. It matched ${templateName.length} elements`);
         }

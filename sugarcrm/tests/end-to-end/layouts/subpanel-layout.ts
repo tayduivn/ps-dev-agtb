@@ -84,9 +84,8 @@ export default class SubpanelLayout extends ListView {
 
     public async selectMenuItem(): Promise<any> {
         let selector = this.$('header.linkRecordMenuItem');
-        await this.driver
-            .scroll(selector)
-            .click(selector);
+        await this.driver.scroll(selector);
+        await this.driver.click(selector);
     }
 
     public async toggleSubpanelMassUpdate(): Promise<any> {

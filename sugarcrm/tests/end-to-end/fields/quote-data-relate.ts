@@ -78,8 +78,9 @@ export class List extends RelateList {
     public async click(): Promise<void> {
         let selector = this.$('field.selector', {name: this.name});
 
-        await this.driver.scroll(selector)
-            .click(selector);
+        await this.driver.scroll(selector);
+
+        await this.driver.click(selector);
     }
 
 }

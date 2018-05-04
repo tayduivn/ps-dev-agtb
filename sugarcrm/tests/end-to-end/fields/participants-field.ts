@@ -68,7 +68,12 @@ export class Edit extends BaseField {
                 await this.driver.waitForApp();
 
                 await this.driver.setValue(this.inputSelector, name);
+
+                // need to handle setTimeout 400ms in search box
+                await this.driver.pause(500);
+
                 await this.driver.waitForApp();
+
                 await this.driver.click(`${this.itemSelector}${name}`);
 
             } else if (action === 'remove') {

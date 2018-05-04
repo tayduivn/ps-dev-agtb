@@ -37,7 +37,7 @@ Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
             throw new Error(message);
         }
 
-    });
+    },{waitForApp: true});
 
 /**
  * Verify record exists on #View
@@ -45,7 +45,7 @@ Then(/^I verify fields for (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
  * @example "I should see *Account_A in #AccountsList"
  */
 Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
-    async function(not, record: { id: string }, view: ListView) {
+    async function (not, record: { id: string }, view: ListView) {
 
         let listItem = view.getListItem({id: record.id});
 
@@ -55,7 +55,7 @@ Then(/^I should (not )?see (\*[a-zA-Z](?:\w|\S)*) in (#[a-zA-Z](?:\w|\S)*)$/,
             throw new Error('Expected ' + (not || '') + ' to see list item (' + listItem.$() + ')');
         }
 
-    });
+    }, {waitForApp: true});
 
 Then(/^I should be redirected to \"(.*)\" route/,
     async function(expectedRoute: string): Promise<void> {

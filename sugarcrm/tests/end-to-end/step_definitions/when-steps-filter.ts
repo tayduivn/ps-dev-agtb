@@ -11,6 +11,7 @@
 
 import {When} from '@sugarcrm/seedbed';
 import FilterView from '../views/filter-view';
+import seedbed from "../seedbed";
 
 /**
  * Search for "value" in list view search filter
@@ -19,7 +20,12 @@ import FilterView from '../views/filter-view';
  */
 When(/^I search for "([^"]*)" in (#\S+) view$/,
     async function(value, view: FilterView) {
+
         await view.setSearchField(value);
+
+        // need to handle setTimeout 400ms in search box
+        await this.driver.pause(500);
+
     }, {waitForApp: true});
 
 When(/^I choose for (\w+) in (#\S+) view$/,
