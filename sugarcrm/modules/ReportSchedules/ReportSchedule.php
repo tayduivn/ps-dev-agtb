@@ -37,6 +37,19 @@ class ReportSchedule extends Basic
 
     /**
      * {@inheritDoc}
+     * @see SugarBean::bean_implements()
+     */
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see SugarBean::save($check_notify)
      */
     public function save($check_notify = false)
