@@ -39,46 +39,49 @@ class IBMDB2Manager  extends DBManager
 		'alias' => 128
 	);
 
-	/**+
-	 * Mapping recommendation derived from MySQL to DB2 guidelines
-	 * http://www.ibm.com/developerworks/data/library/techarticle/dm-0807patel/index.html
-	 * @var array
-	 */
-	protected $type_map = array(
-			'int'      => 'integer',
-			'double'   => 'double',
-			'float'    => 'double',
-			'uint'     => 'bigint',
-			'ulong'    => 'decimal(20,0)',
-			'long'     => 'bigint',
-			'short'    => 'smallint',
-			'varchar'  => 'varchar',
-			'text'     => 'clob(65535)',
-			'longtext' => 'clob(2000000000)',
-			'date'     => 'date',
-			'enum'     => 'varchar',
-			'relate'   => 'varchar',
-			'multienum'=> 'clob(65535)',
-			'html'     => 'clob(65535)',
-			'longhtml' => 'clob(2000000000)',
-			'datetime' => 'timestamp',
-			'datetimecombo' => 'timestamp',
-			'time'     => 'time',
-			'bool'     => 'smallint', // Per recommendation here: http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.apdv.java.doc/doc/rjvjdata.htm
-			'tinyint'  => 'smallint',
-			'char'     => 'char',
-			'blob'     => 'blob(65535)',
-			'longblob' => 'blob(2000000000)',
-			'currency' => 'decimal(26,6)',
-			'decimal'  => 'decimal(20,2)', // Using Oracle numeric precision and scale as DB2 does not support decimal without it
-			'decimal2' => 'decimal(30,6)', // Using Oracle numeric precision and scale as DB2 does not support decimal without it
-			'id'       => 'char(36)',
-			'url'      => 'varchar',
-			'encrypt'  => 'varchar',
-			'file'     => 'varchar',
-			'decimal_tpl' => 'decimal(%d, %d)',
+    /**
+     * {@inheritDoc}
+     *
+     * Mapping recommendation derived from MySQL to DB2 guidelines
+     * @link http://www.ibm.com/developerworks/data/library/techarticle/dm-0807patel/index.html
+     */
+    protected $type_map = array(
+        'blob'          => 'blob(65535)',
+        'bool'          => 'smallint',
+        'char'          => 'char',
+        'currency'      => 'decimal(26,6)',
+        'date'          => 'date',
+        'datetimecombo' => 'timestamp(0)',
+        'datetime'      => 'timestamp(0)',
 
-	);
+        // Using Oracle numeric precision and scale as DB2 does not support decimal without it
+        'decimal'       => 'decimal(20,2)',
+        'decimal2'      => 'decimal(30,6)',
+
+        'decimal_tpl'   => 'decimal(%d, %d)',
+        'double'        => 'double',
+        'encrypt'       => 'varchar',
+        'enum'          => 'varchar',
+        'file'          => 'varchar',
+        'float'         => 'double',
+        'html'          => 'clob(65535)',
+        'id'            => 'char(36)',
+        'int'           => 'integer',
+        'long'          => 'bigint',
+        'longblob'      => 'blob(2000000000)',
+        'longhtml'      => 'clob(2000000000)',
+        'longtext'      => 'clob(2000000000)',
+        'multienum'     => 'clob(65535)',
+        'relate'        => 'varchar',
+        'short'         => 'smallint',
+        'text'          => 'clob(65535)',
+        'time'          => 'time',
+        'tinyint'       => 'smallint',
+        'uint'          => 'bigint',
+        'ulong'         => 'decimal(20,0)',
+        'url'           => 'varchar',
+        'varchar'       => 'varchar',
+    );
 
     /**
      * Integer fields' min and max values
@@ -782,31 +785,28 @@ public function convert($string, $type, array $additional_parameters = array())
 	return $string;
 }
 
-
-	/**+
-	 * @see DBManager::fromConvert()
-	 */
-	public function fromConvert($string, $type)
-	{
-		// YYYY-MM-DD HH:MM:SS
-		switch($type) {
+    /**
+     * {@inheritDoc}
+     */
+    public function fromConvert($string, $type)
+    {
+        switch ($type) {
             case 'id':
-            case 'char': return rtrim($string, ' ');
-			case 'date': return substr($string, 0, 10);
+            case 'char':
+                return rtrim($string, ' ');
+
             case 'time':
                 if (strlen($string) >= 19) {
                     return substr($string, 11, 8);
-                } elseif (strlen($string) > 8) {
-                    return substr($string, 0, 8);
-                } else {
-                    return $string;
                 }
-			case 'timestamp':
-			case 'datetimecombo':
-		    case 'datetime': return substr($string, 0,19);
-		}
-		return $string;
-	}
+
+                if (strlen($string) > 8) {
+                    return substr($string, 0, 8);
+                }
+        }
+
+        return $string;
+    }
 
 	/**+
 	 * @see DBManager::createTableSQLParams()
@@ -1515,20 +1515,19 @@ FROM SYSIBMTS.TSINDEXES';
 		// http://www.devx.com/dbzone/Article/28713
 		// http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.sql.ref.doc/doc/r0008474.html
 
-		$ctype = $this->getColumnType($type);
-        if ($ctype == "datetime" || $ctype == "timestamp") {
+        if ($type == 'datetime' || $type == 'datetimecombo') {
             return $forPrepared
                 ? "0001-01-01 00:00:00"
                 : $this->convert($this->quoted("0001-01-01 00:00:00"), "datetime");
         }
 
-        if ($ctype == "date") {
+        if ($type == 'date') {
             return $forPrepared
                 ? "0001-01-01"
                 : $this->convert($this->quoted("0001-01-01"), "date");
         }
 
-        if ($ctype == "time") {
+        if ($type == 'time') {
             return $forPrepared
                 ? "00:00:00"
                 : $this->convert($this->quoted("00:00:00"), "time");

@@ -159,10 +159,6 @@ abstract class MssqlManagerTest extends TestCase
                  'foo'
                  ),
                  array(
-                     array('2009-01-01 12:00:00','date'),
-                     '2009-01-01'
-                     ),
-                 array(
                      array('2009-01-01 12:00:00','time'),
                      '12:00:00'
                      )

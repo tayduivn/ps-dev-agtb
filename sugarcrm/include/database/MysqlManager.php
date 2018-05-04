@@ -81,41 +81,43 @@ abstract class MysqlManager extends DBManager
 		'alias' => 256
 	);
 
-	protected $type_map = array(
-			'int'      => 'int',
-			'double'   => 'double',
-			'float'    => 'float',
-			'uint'     => 'int unsigned',
-			'ulong'    => 'bigint unsigned',
-			'long'     => 'bigint',
-			'short'    => 'smallint',
-			'varchar'  => 'varchar',
-			'text'     => 'text',
-			'longtext' => 'longtext',
-			'date'     => 'date',
-			'enum'     => 'varchar',
-			'relate'   => 'varchar',
-			'multienum'=> 'text',
-			'html'     => 'text',
-			'longhtml' => 'longtext',
-			'datetime' => 'datetime',
-			'datetimecombo' => 'datetime',
-			'time'     => 'time',
-			'bool'     => 'bool',
-			'tinyint'  => 'tinyint',
-			'char'     => 'char',
-			'blob'     => 'blob',
-			'longblob' => 'longblob',
-			'currency' => 'decimal(26,6)',
-			'decimal'  => 'decimal',
-			'decimal2' => 'decimal',
-			'id'       => 'char(36)',
-			'url'      => 'varchar',
-			'encrypt'  => 'varchar',
-			'file'     => 'varchar',
-			'decimal_tpl' => 'decimal(%d, %d)',
-
-	);
+    /**
+     * {@inheritDoc}
+     */
+    protected $type_map = array(
+        'blob'          => 'blob',
+        'bool'          => 'bool',
+        'char'          => 'char',
+        'currency'      => 'decimal(26,6)',
+        'date'          => 'date',
+        'datetimecombo' => 'datetime',
+        'datetime'      => 'datetime',
+        'decimal'       => 'decimal',
+        'decimal2'      => 'decimal',
+        'decimal_tpl'   => 'decimal(%d, %d)',
+        'double'        => 'double',
+        'encrypt'       => 'varchar',
+        'enum'          => 'varchar',
+        'file'          => 'varchar',
+        'float'         => 'float',
+        'html'          => 'text',
+        'id'            => 'char(36)',
+        'int'           => 'int',
+        'long'          => 'bigint',
+        'longblob'      => 'longblob',
+        'longhtml'      => 'longtext',
+        'longtext'      => 'longtext',
+        'multienum'     => 'text',
+        'relate'        => 'varchar',
+        'short'         => 'smallint',
+        'text'          => 'text',
+        'time'          => 'time',
+        'tinyint'       => 'tinyint',
+        'uint'          => 'int unsigned',
+        'ulong'         => 'bigint unsigned',
+        'url'           => 'varchar',
+        'varchar'       => 'varchar',
+    );
 
     /**
      * Integer fields' min and max values
@@ -466,14 +468,13 @@ WHERE TABLE_SCHEMA = ?
 		return $string;
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 * @see DBManager::fromConvert()
-	 */
-	public function fromConvert($string, $type)
-	{
-		return $string;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function fromConvert($string, $type)
+    {
+        return $string;
+    }
 
 	/**
 	 * Returns the name of the engine to use or null if we are to use the default

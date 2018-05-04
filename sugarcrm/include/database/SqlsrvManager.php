@@ -58,8 +58,6 @@
 * default	This field sets the default value for the field definition.
 */
 
-use Doctrine\DBAL\Query\QueryBuilder;
-
 /**
  * SQL Server (sqlsrv) manager
  */
@@ -78,39 +76,42 @@ class SqlsrvManager extends MssqlManager
         "recursive_query" => true,
     );
 
+    /**
+     * {@inheritDoc}
+     */
     protected $type_map = array(
-            'int'      => 'int',
-            'double'   => 'float',
-            'float'    => 'float',
-            'uint'     => 'int',
-            'ulong'    => 'int',
-            'long'     => 'bigint',
-            'short'    => 'smallint',
-            'varchar'  => 'nvarchar',
-            'text'     => 'nvarchar(max)',
-            'longtext' => 'nvarchar(max)',
-            'date'     => 'datetime',
-            'enum'     => 'nvarchar',
-            'relate'   => 'nvarchar',
-            'multienum'=> 'nvarchar(max)',
-            'html'     => 'nvarchar(max)',
-            'longhtml' => 'nvarchar(max)',
-            'datetime' => 'datetime',
-            'datetimecombo' => 'datetime',
-            'time'     => 'datetime',
-            'bool'     => 'bit',
-            'tinyint'  => 'tinyint',
-            'char'     => 'char',
-            'blob'     => 'nvarchar(max)',
-            'longblob' => 'nvarchar(max)',
-            'currency' => 'decimal(26,6)',
-            'decimal'  => 'decimal',
-            'decimal2' => 'decimal',
-            'id'       => 'varchar(36)',
-            'url'      => 'nvarchar',
-            'encrypt'  => 'nvarchar',
-            'file'     => 'nvarchar',
-	        'decimal_tpl' => 'decimal(%d, %d)',
+        'blob'          => 'nvarchar(max)',
+        'bool'          => 'bit',
+        'char'          => 'char',
+        'currency'      => 'decimal(26,6)',
+        'date'          => 'date',
+        'datetimecombo' => 'datetime2(0)',
+        'datetime'      => 'datetime2(0)',
+        'decimal'       => 'decimal',
+        'decimal2'      => 'decimal',
+        'decimal_tpl'   => 'decimal(%d, %d)',
+        'double'        => 'float',
+        'encrypt'       => 'nvarchar',
+        'enum'          => 'nvarchar',
+        'file'          => 'nvarchar',
+        'float'         => 'float',
+        'html'          => 'nvarchar(max)',
+        'id'            => 'varchar(36)',
+        'int'           => 'int',
+        'long'          => 'bigint',
+        'longblob'      => 'nvarchar(max)',
+        'longhtml'      => 'nvarchar(max)',
+        'longtext'      => 'nvarchar(max)',
+        'multienum'     => 'nvarchar(max)',
+        'relate'        => 'nvarchar',
+        'short'         => 'smallint',
+        'text'          => 'nvarchar(max)',
+        'time'          => 'datetime2(0)',
+        'tinyint'       => 'tinyint',
+        'uint'          => 'int',
+        'ulong'         => 'int',
+        'url'           => 'nvarchar',
+        'varchar'       => 'nvarchar',
     );
 
     /**

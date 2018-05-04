@@ -64,41 +64,44 @@ class OracleManager extends DBManager
         'alias' => 30
     );
 
+    /**
+     * {@inheritDoc}
+     */
     protected $type_map = array(
-        'int'      => 'number',
-        'double'   => 'number(38,10)',
-        'float'    => 'number(30,6)',
-        'uint'     => 'number(15)',
-        'ulong'    => 'number(38)',
-        'long'     => 'number(38)',
-        'short'    => 'number(3)',
-        'varchar'  => 'varchar2',
-        'text'     => 'clob',
-        'longtext' => 'clob',
-        'date'     => 'date',
-        'enum'     => 'varchar2(255)',
-        'relate'   => 'varchar2',
-        'multienum'=> 'clob',
-        'html'     => 'clob',
-        'longhtml' => 'clob',
-        'datetime' => 'date',
+        'blob'          => 'blob',
+        'bool'          => 'number(1)',
+        'char'          => 'char',
+        'currency'      => 'number(26,6)',
+        'date'          => 'date',
         'datetimecombo' => 'date',
-        'time'     => 'date',
-        'bool'     => 'number(1)',
-        'tinyint'  => 'number(3)',
-        'char'     => 'char',
-        'id'       => 'varchar2(36)',
-        'blob'     => 'blob',
-        'longblob' => 'blob',
-        'currency' => 'number(26,6)',
-        'decimal'  => 'number(20,2)',
-        'decimal2' => 'number(30,6)',
-        'url'      => 'varchar2',
-        'encrypt'  => 'varchar2(255)',
-        'file'     => 'varchar2(255)',
-        'decimal_tpl' => 'number(%d, %d)',
-        'smallint' => 'number(5)',
-            );
+        'datetime'      => 'date',
+        'decimal'       => 'number(20,2)',
+        'decimal2'      => 'number(30,6)',
+        'decimal_tpl'   => 'number(%d, %d)',
+        'double'        => 'number(38,10)',
+        'encrypt'       => 'varchar2(255)',
+        'enum'          => 'varchar2(255)',
+        'file'          => 'varchar2(255)',
+        'float'         => 'number(30,6)',
+        'html'          => 'clob',
+        'id'            => 'varchar2(36)',
+        'int'           => 'number',
+        'longblob'      => 'blob',
+        'longhtml'      => 'clob',
+        'long'          => 'number(38)',
+        'longtext'      => 'clob',
+        'multienum'     => 'clob',
+        'relate'        => 'varchar2',
+        'short'         => 'number(3)',
+        'smallint'      => 'number(5)',
+        'text'          => 'clob',
+        'time'          => 'date',
+        'tinyint'       => 'number(3)',
+        'uint'          => 'number(15)',
+        'ulong'         => 'number(38)',
+        'url'           => 'varchar2',
+        'varchar'       => 'varchar2',
+    );
 
     /**
      * Integer fields' min and max values
@@ -812,17 +815,22 @@ WHERE OWNER = ?
     }
 
     /**
-     * @see DBManager::fromConvert()
+     * {@inheritDoc}
      */
     public function fromConvert($string, $type)
     {
-        // YYYY-MM-DD HH:MM:SS
-        switch($type) {
-            case 'char': return rtrim($string, ' ');
-            case 'date': return substr($string, 0, 10);
-            case 'time': return substr($string, 11);
-		}
-		return $string;
+        switch ($type) {
+            case 'char':
+                return rtrim($string, ' ');
+
+            case 'date':
+                return substr($string, 0, 10);
+
+            case 'time':
+                return substr($string, 11);
+        }
+
+        return $string;
     }
 
     protected function isNullable($vardef)

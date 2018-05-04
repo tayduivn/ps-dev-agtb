@@ -96,41 +96,6 @@ abstract class MssqlManager extends DBManager
         'alias' => 128
     );
 
-    protected $type_map = array(
-            'int'      => 'int',
-            'double'   => 'float',
-            'float'    => 'float',
-            'uint'     => 'int',
-            'ulong'    => 'int',
-            'long'     => 'bigint',
-            'short'    => 'smallint',
-            'varchar'  => 'varchar',
-            'text'     => 'text',
-            'longtext' => 'text',
-            'date'     => 'datetime',
-            'enum'     => 'varchar',
-            'relate'   => 'varchar',
-            'multienum'=> 'text',
-            'html'     => 'text',
-			'longhtml' => 'text',
-    		'datetime' => 'datetime',
-            'datetimecombo' => 'datetime',
-            'time'     => 'datetime',
-            'bool'     => 'bit',
-            'tinyint'  => 'tinyint',
-            'char'     => 'char',
-            'blob'     => 'image',
-            'longblob' => 'image',
-            'currency' => 'decimal(26,6)',
-            'decimal'  => 'decimal',
-            'decimal2' => 'decimal',
-            'id'       => 'varchar(36)',
-            'url'      => 'varchar',
-            'encrypt'  => 'varchar',
-            'file'     => 'varchar',
-	        'decimal_tpl' => 'decimal(%d, %d)',
-            );
-
     protected $connectOptions = null;
 
 	/**
@@ -1074,18 +1039,19 @@ WHERE TABLE_NAME = ?
     }
 
     /**
-     * @see DBManager::fromConvert()
+     * {@inheritDoc}
      */
     public function fromConvert($string, $type)
     {
-        switch($type) {
-            case 'char': return rtrim($string, ' ');
-            case 'datetimecombo':
-            case 'datetime': return substr($string, 0,19);
-            case 'date': return substr($string, 0, 10);
-            case 'time': return substr($string, 11, 8);
-		}
-		return $string;
+        switch ($type) {
+            case 'char':
+                return rtrim($string, ' ');
+
+            case 'time':
+                return substr($string, 11, 8);
+        }
+
+        return $string;
     }
 
     /**
