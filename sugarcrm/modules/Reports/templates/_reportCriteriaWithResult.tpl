@@ -261,7 +261,7 @@ function viewSchedulesPOPUP(){
     var name = document.getElementById('report_name').value;
     var sugarApp = SUGAR.App || SUGAR.app || app;
     var filterOptions = new sugarApp.utils.FilterOptions().config({
-        initial_filter_label: sugarApp.lang.get('LBL_REPORT_SCHEDULES_FOR', 'ReportSchedules') + ': ' + name,
+        initial_filter_label: name,
         initial_filter: 'by_report',
         filter_populate: {
             'report_id': [id]

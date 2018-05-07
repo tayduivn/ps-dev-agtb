@@ -20,4 +20,5 @@ $mod_strings = array(
     'LBL_NEXT_RUN' => 'Next Email Scheduled For',
     'LBL_USERS_SUBPANEL_TITLE' => 'Users',
     'LBL_FILTER_BY_REPORT' => 'By Report',
+    'LBL_RECENTLY_MODIFIED' => 'Recently Modified',
 );
