@@ -17,7 +17,12 @@ if (!empty($config['flav'])) {
     $rome->setSkipFlavs($config['skipFlavs']);
 }
 if (!empty($config['ver'])) {
-    $rome->setVersion($config['ver']);
+    $rome->setVersions($config['ver']);
+} else {
+    if (empty($config['mobile'])) {
+        echo "Build Stopped. Unless you are building mobile, you must enter a valid Sugar version.\n";
+        exit(1);
+    }
 }
 
 if (!empty($config['build_number'])) {
@@ -49,9 +54,6 @@ if (!empty($config['clean'])) {
     }
 }
 
-if (!empty($config['ver'])) {
-    $rome->setVersion($config['ver']);
-}
 if (!empty($config['cleanCache'])) {
     foreach ($config['builds'] as $build) {
         $path = $rome->getBuildDir();
@@ -249,10 +251,10 @@ Build options:
     in the application to a “version number" will indicate whatever
     version is specified.
 
-    php build.php --ver=6.1.0
+    php build.php --ver=8.1.0
 
     The above example will replace all references to a version in
-    the application with 6.1.0
+    the application with 8.1.0
 
 -—flav
     specifies the flavor to build. It will only build and update files
@@ -260,7 +262,7 @@ Build options:
     the config/builds directory. It reduces build time and is useful when
     doing development.
 
-    php build.php --ver=6.1.0 --flav=ent
+    php build.php --ver=8.1.0 --flav=ent
 
     Will only build the Enterprise version of the application.
     —-flav=pro builds the Professional edition.
@@ -269,7 +271,7 @@ Build options:
     Will tell the build system to either delete files before building or not.
     —-clean will delete files before building
 
-    php build.php --ver=6.1.0 --clean
+    php build.php --ver=8.1.0 --clean
 
     -—clean=0 will tell the system not to delete files before building.
     This is useful when you want to preserve your config.php file
@@ -278,7 +280,7 @@ Build options:
     Clears the cache before doing the build. This will only delete certain
     cache files before doing a build.
 
-    php build.php --ver=6.1.0 --cleanCache
+    php build.php --ver=8.1.0 --cleanCache
 
     Will clean the cache directory.
 
@@ -286,14 +288,14 @@ Build options:
     Build a specific directory or file rather than building the entire
     application.
 
-    php build.php --ver=6.1.0 --dir=sugarcrm/modules/Accounts
+    php build.php --ver=8.1.0 --dir=sugarcrm/modules/Accounts
 
     Will build only the Accounts directory
 
 --exclude_dirs
     Exclude list of directories rather than building them.
 
-    php build.php --ver=6.1.0 --exclude_dirs=node_modules[,vendor,...]
+    php build.php --ver=8.1.0 --exclude_dirs=node_modules[,vendor,...]
 
     Will exclude node_modules from the build process
 
@@ -301,7 +303,7 @@ Build options:
     If you would like to change where the files are built to, specify
     —-build_dir with that you would like
 
-    php build.php --ver=6.1.0 --build_dir=/tmp
+    php build.php --ver=8.1.0 --build_dir=/tmp
 
     Will specify for all flavors to be built to the tmp directory
 
@@ -309,8 +311,8 @@ Build options:
     If you want to call on build.php from outside of the rome directory,
     you must specify your project location using —-base_dir
 
-    php build.php --ver=6.1.0 --base_dir=/Users/mitani/code/Mango
-    
+    php build.php --ver=8.1.0 --base_dir=/Users/joeshmoe/code/Mango
+
 --build_number
     Specify a build number for this build, defaults to 999.
 
@@ -325,7 +327,8 @@ Build options:
     Do not execute source control management commands to update
     translations, assume that translations have already been updated.
 
-    php build.php --ver=6.1.0 --flav=ent --latin=1
+    php build.php --ver=8.1.0 --flav=ent --latin=1
+
 --mobile
     Build mobile version under {BUILD_PATH}/sugarcrm/mobile
 

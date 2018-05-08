@@ -3,6 +3,11 @@ ini_set("max_execution_time", "0");
 ini_set("memory_limit", "600M");
 define('sugarEntry', true);
 
+/**
+ * Gets the new Marketing Version Handler object
+ */
+require_once 'MarketingVersionHandler.php';
+
 class Rome
 {
     protected $config = array();
@@ -186,6 +191,16 @@ class Rome
     }
 
     /**
+     * Sets version values into the config. This handles both the Sugar version
+     * and the Marketing version.
+     * @param string $ver
+     */
+    public function setVersions($ver)
+    {
+        $this->setVersion($ver);
+        $this->setMarketingVersion($ver);
+    }
+    /**
      *  dynamic generate sugarcrm version
      *
      */
@@ -193,6 +208,16 @@ class Rome
     {
         $this->config['sugarVariables']['@_SUGAR_VERSION'] = $ver;
 
+    }
+
+    /**
+     * Sets the marketing version from the Sugar version passed into the builder
+     * @param string $ver The raw CLI compatible marketing version string
+     */
+    public function setMarketingVersion($ver)
+    {
+        $h = new MarketingVersionHandler;
+        $this->config['sugarVariables']['@_SUGAR_MAR_VERSION'] = $h->getMarketingVersion($ver);
     }
 
     /**
@@ -592,9 +617,17 @@ class Rome
             $this->makeDirs(dirname($path), $f);
             //replace some sugar variables
             $this->config['sugarVariables']['@_SUGAR_FLAV'] = strtoupper($f);
+
+            // The expectation is that PHP files will be using single quoted
+            // strings, so variables that have apostrophes in them need escaping
+            // but only for PHP files, as JSON and other files should be using
+            // double quoted strings
+            $isPhp = substr($path, -4) === '.php';
             foreach ($this->config['sugarVariables'] as $var => $data) {
                 if ($data != '') {
-                    $o = str_replace("$var", "$data", $o);
+                    // Escape substitutions for PHP files
+                    $data = $isPhp ? addslashes($data) : $data;
+                    $o = str_replace($var, $data, $o);
                 }
             }
 

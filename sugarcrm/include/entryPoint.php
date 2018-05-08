@@ -173,6 +173,8 @@ if (class_exists('SessionHandler')) {
 $GLOBALS['sugar_version'] = $sugar_version;
 $GLOBALS['sugar_flavor'] = $sugar_flavor;
 $GLOBALS['js_version_key'] = get_js_version_key();
+    // Because this line is *supposed* to be indented...
+    $GLOBALS['sugar_mar_version'] = $sugar_mar_version;
 
 SugarApplication::preLoadLanguages();
 
