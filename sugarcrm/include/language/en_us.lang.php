@@ -2947,6 +2947,7 @@ $app_strings = array (
     'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
     'LBL_FILTER_CREATE_NEW' => 'Create',
     'LBL_FILTER_CREATE_FILTER' => 'Create new filter',
+    'LBL_FILTER_CLOSE_FILTER' => 'Close filter',
     'LBL_FILTER_EDIT_FILTER' => 'Edit filter',
     'LBL_FILTER_ALL_RECORDS' => 'All Records',
     'TPL_FILTER_SAVE' => 'You successfully created the filter {{name}}.',

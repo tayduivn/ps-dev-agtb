@@ -191,12 +191,12 @@ describe('Base.View.FilterFilterDropdown', function() {
         describe('formatSelection', function() {
             var jQueryStubs, toggleFilterCursorStub;
             beforeEach(function() {
-                jQueryStubs = {
-                    attr: sinon.stub().returns(jQueryStubs),
-                    html: sinon.stub().returns(jQueryStubs),
-                    show: sinon.stub().returns(jQueryStubs),
-                    hide: sinon.stub().returns(jQueryStubs)
-                };
+                jQueryStubs = {};
+                jQueryStubs.attr = sinon.stub().returns(jQueryStubs);
+                jQueryStubs.html = sinon.stub().returns(jQueryStubs);
+                jQueryStubs.toggle = sinon.stub().returns(jQueryStubs);
+                jQueryStubs.toggleClass = sinon.stub().returns(jQueryStubs);
+
                 toggleFilterCursorStub = sinonSandbox.stub(view, 'toggleFilterCursor');
                 sinonSandbox.stub(view, '$', function() {
                     return jQueryStubs;
@@ -227,13 +227,11 @@ describe('Base.View.FilterFilterDropdown', function() {
                 });
                 it('should hide the close button if the selected filter is "all_records"', function() {
                     view.formatSelection({id: 'all_records', text: 'TEST'});
-                    expect(jQueryStubs.show).not.toHaveBeenCalled();
-                    expect(jQueryStubs.hide).toHaveBeenCalled();
+                    expect(jQueryStubs.toggle).toHaveBeenCalledWith(false);
                 });
                 it('should show the close button otherwise', function() {
                     view.formatSelection({id: 'my_filter_id', text: 'TEST'});
-                    expect(jQueryStubs.show).toHaveBeenCalled();
-                    expect(jQueryStubs.hide).not.toHaveBeenCalled();
+                    expect(jQueryStubs.toggle).toHaveBeenCalledWith(true);
                 });
             });
             describe('make the selected filter editable or not', function() {
@@ -344,42 +342,107 @@ describe('Base.View.FilterFilterDropdown', function() {
 
     describe('handleEditFilter', function() {
         var filterId;
+        var triggerStub;
         beforeEach(function() {
             view.filterNode = $('');
             sinonSandbox.stub(view.filterNode, 'val', function() { return filterId; });
             view.layout.filters.collection.add({id: 'test_id'});
+            triggerStub = sinonSandbox.stub(layout, 'trigger');
         });
         it('should trigger "filter:create:open" if action is edit filter', function() {
             filterId = 'test_id';
-            var triggerStub = sinonSandbox.stub(layout, 'trigger');
             view.handleEditFilter();
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:create:open');
         });
         it('should trigger "filter:change:filter" if action is create new filter', function() {
             filterId = 'all_records';
-            var triggerStub = sinonSandbox.stub(layout, 'trigger');
             view.handleEditFilter();
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:select:filter', 'create');
         });
+        it('shouldn\'t do anything if any key other than space or enter is pressed', function() {
+            var evt = {
+                type: 'keydown',
+                keyCode: $.ui.keyCode.TAB,
+                which: $.ui.keyCode.TAB,
+                stopPropagation: sinon.spy(),
+                preventDefault: sinon.spy(),
+            };
+            view.handleEditFilter(evt);
+            expect(evt.stopPropagation).not.toHaveBeenCalled();
+            expect(evt.preventDefault).not.toHaveBeenCalled();
+            expect(triggerStub).not.toHaveBeenCalled();
+        });
+        using('space or enter', [
+                $.ui.keyCode.ENTER,
+                $.ui.keyCode.SPACE
+            ], function(key) {
+                it('should prevent default behavior, stop propagation and trigger a change on key press', function() {
+                    var evt = {
+                        type: 'keydown',
+                        keyCode: key,
+                        which: key,
+                        stopPropagation: sinon.spy(),
+                        preventDefault: sinon.spy(),
+                    };
+                    view.handleEditFilter(evt);
+                    expect(evt.stopPropagation).toHaveBeenCalled();
+                    expect(evt.preventDefault).toHaveBeenCalled();
+                    expect(triggerStub).toHaveBeenCalled();
+                });
+            });
     });
 
     describe('handleClearFilter', function() {
-
+        var triggerStub;
+        var clearLastFilterStub;
+        beforeEach(function() {
+            triggerStub = sinonSandbox.stub(layout, 'trigger');
+            clearLastFilterStub = sinonSandbox.stub(layout, 'clearLastFilter');
+        });
         it('should stop propagation, clear last filter and trigger "filter:reinitialize"', function() {
             view.layout.filters.collection.defaultFilterFromMeta = 'test_default_filter';
             view.filterNode = $('');
             var evt = {
                 'stopPropagation': sinon.spy()
             };
-            var clearLastFilterStub = sinonSandbox.stub(layout, 'clearLastFilter');
-            var triggerStub = sinonSandbox.stub(layout, 'trigger');
             view.handleClearFilter(evt);
             expect(evt.stopPropagation).toHaveBeenCalled();
             expect(clearLastFilterStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:select:filter', 'test_default_filter');
+        });
+        using('space or enter', [
+            $.ui.keyCode.ENTER,
+            $.ui.keyCode.SPACE
+        ], function(key) {
+            it('should stop propagation, clear last filter and trigger "filter:reinitialize"', function() {
+                view.layout.filters.collection.defaultFilterFromMeta = 'test_default_filter';
+                view.filterNode = $('');
+                var evt = {
+                    type: 'keydown',
+                    keyCode: key,
+                    which: key,
+                    stopPropagation: sinon.spy()
+                };
+                view.handleClearFilter(evt);
+                expect(evt.stopPropagation).toHaveBeenCalled();
+                expect(clearLastFilterStub).toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:select:filter', 'test_default_filter');
+            });
+        });
+        it('shouldn\'t do anything if any key other than space or enter is pressed', function() {
+            var evt = {
+                type: 'keydown',
+                keyCode: $.ui.keyCode.DOWN,
+                which: $.ui.keyCode.DOWN,
+                stopPropagation: sinon.spy()
+            };
+            view.handleClearFilter(evt);
+            expect(evt.stopPropagation).not.toHaveBeenCalled();
+            expect(clearLastFilterStub).not.toHaveBeenCalled();
+            expect(triggerStub).not.toHaveBeenCalled();
         });
     });
 });

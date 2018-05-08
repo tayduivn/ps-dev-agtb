@@ -61,10 +61,6 @@
       .tab-focus();
     }
 
-    .choice-filter-label {
-      vertical-align: top;
-    }
-
     .choice-filter-close {
       font-size: 14px;
       height: 12px;
@@ -633,12 +629,31 @@
     /* additive */
     position: relative;
     top: -1px;
+    vertical-align: top;
+    cursor: pointer;
 
     /* override */
     border-radius: 4px;
+    padding: 0;
 
     /* override */
     background: @PrimaryButton;
+
+    .choice-filter-label {
+      padding: 5px 4px;
+      display: inline-block;
+
+      &:focus {
+        .tab-focus()
+      }
+    }
+
+    .choice-filter-close {
+      /* override */
+      vertical-align: middle;
+      height: 16px;
+      margin: 0;
+    }
   }
 
   // select2 filter pills
