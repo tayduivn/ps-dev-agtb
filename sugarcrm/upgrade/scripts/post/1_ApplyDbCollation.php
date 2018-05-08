@@ -12,7 +12,8 @@
  */
 
 /**
- * Applies collation defined in DB configuration to all DB objects for consistency
+ * Applies default character set and collation upgrade in MySQL (only)
+ * from: utf8:utf8_general_ci  to: utf8mb4:utf8mb4_general_ci
  */
 class SugarUpgradeApplyDbCollation extends UpgradeScript
 {
@@ -21,20 +22,18 @@ class SugarUpgradeApplyDbCollation extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '7.6.2', '>=')) {
+        if (version_compare($this->from_version, '8.1.0', '>=')) {
             return;
         }
 
+        // This upgrade applies to MySQL Only
         $db = DBManagerFactory::getInstance();
-        if (!$db->supports('collation')) {
+        if ($db->dbType !== 'mysql') {
             return;
         }
 
-        $collation = $db->getOption('collation');
-        if (!$collation) {
-            return;
-        }
-
+        // Upgrade is applied to the Database and all existing tables
+        $collation = 'utf8mb4_general_ci';
         $db->setCollation($collation);
     }
 }
