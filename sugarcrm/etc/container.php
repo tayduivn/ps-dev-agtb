@@ -11,13 +11,17 @@
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Logging\LoggerChain;
+use Doctrine\DBAL\Logging\SQLLogger;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
 use Sugarcrm\Sugarcrm\Audit\Formatter as AuditFormatter;
 use Sugarcrm\Sugarcrm\Audit\Formatter\CompositeFormatter;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository;
+use Sugarcrm\Sugarcrm\Dbal\Logging\DebugLogger;
+use Sugarcrm\Sugarcrm\Dbal\Logging\Formatter as DbalFormatter;
+use Sugarcrm\Sugarcrm\Dbal\Logging\SlowQueryLogger;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\Rebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
@@ -41,6 +45,27 @@ return new Container([
     },
     Connection::class => function () {
         return DBManagerFactory::getConnection();
+    },
+    SQLLogger::class => function (ContainerInterface $container) : SQLLogger {
+        $config = $container->get(SugarConfig::class);
+
+        $channel = LoggerFactory::getLogger('db');
+
+        $logger = new LoggerChain();
+        $logger->addLogger(new DebugLogger($channel));
+
+        if ($config->get('dump_slow_queries')) {
+            $logger->addLogger(
+                new SlowQueryLogger(
+                    $channel,
+                    $config->get('slow_query_time_msec', 5000)
+                )
+            );
+        }
+
+        DbalFormatter::wrapLogger($channel);
+
+        return $logger;
     },
     LoggerInterface::class . '-denorm' => function () {
         return LoggerFactory::getLogger('denorm');

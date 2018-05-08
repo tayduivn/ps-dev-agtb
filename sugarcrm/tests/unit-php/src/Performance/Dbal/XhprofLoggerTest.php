@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Performance\Dbal;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger;
 
@@ -51,9 +50,7 @@ class DbalXhprofLoggerTest extends TestCase
      */
     public function testStartQuery($sql, array $params = null, array $types = null)
     {
-        $loggerMock = $this->getSugarLoggerMock();
-
-        $dbalXhprofLogger = new XhprofLogger(\SugarXHprof::getInstance(), $loggerMock);
+        $dbalXhprofLogger = new XhprofLogger(\SugarXHprof::getInstance());
 
         $dbalXhprofLogger->startQuery($sql, $params, $types);
 
@@ -73,8 +70,6 @@ class DbalXhprofLoggerTest extends TestCase
      */
     public function testStopQuery()
     {
-        $loggerMock = $this->getSugarLoggerMock();
-
         $sugarXhprof = $this->getMockBuilder('SugarXhprof')
             ->setMethods(array('trackSQL'))
             ->getMock();
@@ -87,22 +82,9 @@ class DbalXhprofLoggerTest extends TestCase
             )
             ->willReturn(true);
 
-        $dbalXhprofLogger = new XhprofLogger($sugarXhprof, $loggerMock);
+        $dbalXhprofLogger = new XhprofLogger($sugarXhprof);
 
         $dbalXhprofLogger->currentQuery = array('sql' => 'sample-sql', 'params' => null, 'types' => null);
         $dbalXhprofLogger->stopQuery();
-    }
-
-    /**
-     * @return \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|MockObject
-     */
-    protected function getSugarLoggerMock()
-    {
-        $logger = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger')
-            ->disableOriginalConstructor()
-            ->setMethods(array('startQuery', 'stopQuery'))
-            ->getMock();
-
-        return $logger;
     }
 }

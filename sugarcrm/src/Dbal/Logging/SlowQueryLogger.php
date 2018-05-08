@@ -12,138 +12,66 @@
 
 namespace Sugarcrm\Sugarcrm\Dbal\Logging;
 
+use Doctrine\DBAL\Logging\SQLLogger;
+use Psr\Log\LoggerInterface;
+
 /**
  * Logs queries into sugarcrm log
  */
-class SlowQueryLogger implements \Doctrine\DBAL\Logging\SQLLogger
+final class SlowQueryLogger implements SQLLogger
 {
     /**
-     * Logging level
-     * @var string
+     * @var LoggerInterface
      */
-    const LEVEL = 'warn';
+    private $logger;
 
     /**
-     * Maximum length of the parameter value to dump
-     * @var int
-     */
-    const MAX_PARAM_LENGTH = 100;
-
-    /**
-     * Sugar log
-     *
-     * @var \LoggerManager
-     */
-    protected $logger;
-
-    /**
-     * @var float|null
-     */
-    protected $start = null;
-
-    /**
-     * If Slow Query Logging is enabled or not.
-     *
-     * @var boolean
-     */
-    public $enabled = true;
-
-    /**
-     * Query execution time threshold
+     * Query execution time threshold in milliseconds
      *
      * @var int
      */
-    public $threshold = 2000;
+    private $threshold;
+
+    /**
+     * @var float
+     */
+    private $start;
 
     /**
      * @var array
      */
-    public $currentQuery = array();
+    private $query = array();
 
-    /**
-     * @param \LoggerManager $logger Sugar log, usually $GLOBALS['log']
-     * @param boolean $enabled
-     * @param integer $threshold
-     */
-    public function __construct(\LoggerManager $logger, $enabled, $threshold)
+    public function __construct(LoggerInterface $logger, int $threshold)
     {
         $this->logger = $logger;
-        $this->enabled = $enabled;
         $this->threshold = $threshold;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function startQuery($sql, array $params = null, array $types = null)
     {
-        if ($this->enabled && $this->logger->wouldLog(self::LEVEL)) {
-            $this->start = microtime(true);
-            $this->currentQuery = array('sql' => $sql, 'params' => $params, 'types' => $types, 'executionMS' => 0);
-        }
+        $this->start = microtime(true);
+        $this->query = [$sql, ['params' => $params, 'types' => $types]];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function stopQuery()
     {
-        if ($this->enabled && $this->logger->wouldLog(self::LEVEL)) {
-            $this->currentQuery['executionTime'] = microtime(true) - $this->start;
-            if (($this->currentQuery['executionTime'] * 1000) >= $this->threshold) {
-                $message = $this->getQueryLogMessage(
-                    $this->currentQuery['sql'],
-                    $this->currentQuery['params'],
-                    $this->currentQuery['types'],
-                    $this->currentQuery['executionTime']
-                );
-                $this->start = 0;
-                $this->currentQuery = null;
-                $this->log($message);
-            }
-        }
-    }
+        $executionTime = microtime(true) - $this->start;
 
-    /**
-     * @param array $message Array to log
-     *
-     * @return string
-     */
-    protected function stringify(array $message)
-    {
-        return json_encode(
-            array_map(
-                function ($str) {
-                    if (is_string($str) && (strlen($str) > self::MAX_PARAM_LENGTH)) {
-                        $str = substr($str, 0, self::MAX_PARAM_LENGTH) . '...';
-                    }
-                    return $str;
-                },
-                $message
-            )
-        );
-    }
+        if ($executionTime * 1000 >= $this->threshold) {
+            [$sql, $params] = $this->query;
 
-    /**
-     * @param string $message
-     */
-    protected function log($message)
-    {
-        call_user_func(array($this->logger, self::LEVEL), $message);
-    }
-
-    /**
-     * @param $sql
-     * @param array $params
-     * @param array $types
-     * @param int $executionTime
-     * @return string
-     */
-    protected function getQueryLogMessage($sql, array $params = null, array $types = null, float $executionTime)
-    {
-        $message = 'Slow Query (time:'
-            . $executionTime
-            . ' seconds)' . PHP_EOL . $sql;
-        if (count($params)) {
-            $message .= PHP_EOL . 'Params: ' . $this->stringify($params);
+            $this->logger->warning(sprintf(
+                'Slow Query (time: %.3f s): %s',
+                $executionTime,
+                $sql
+            ), $params);
         }
-        if (count($types)) {
-            $message .= PHP_EOL . 'Types: ' . $this->stringify($types);
-        }
-        return $message;
     }
 }

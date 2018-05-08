@@ -12,11 +12,9 @@
  */
 
 use Doctrine\DBAL\DriverManager as DoctrineDriverManager;
-use Sugarcrm\Sugarcrm\Dbal\Connection;
-use Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger;
-use Sugarcrm\Sugarcrm\Dbal\Logging\SlowQueryLogger;
 use Doctrine\DBAL\Logging\SQLLogger;
-use Doctrine\DBAL\Logging\LoggerChain;
+use Sugarcrm\Sugarcrm\Dbal\Connection;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 /**
  * Database driver factory
@@ -202,20 +200,12 @@ class DBManagerFactory
     /**
      * Get DbalLogger instance
      *
-     * @return LoggerChain
+     * @return SQLLogger
      */
     public static function getDbalLogger()
     {
         if (!self::$dbalLogger) {
-            self::$dbalLogger = new LoggerChain();
-            self::$dbalLogger->addLogger(new SugarLogger($GLOBALS['log']));
-            self::$dbalLogger->addLogger(
-                new SlowQueryLogger(
-                    $GLOBALS['log'],
-                    \SugarConfig::getInstance()->get('dump_slow_queries', false),
-                    \SugarConfig::getInstance()->get('slow_query_time_msec', 2000)
-                )
-            );
+            self::$dbalLogger = Container::getInstance()->get(SQLLogger::class);
         }
 
         return self::$dbalLogger;
