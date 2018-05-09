@@ -93,9 +93,9 @@ class SugarOnAuthLockoutSubscriber implements EventSubscriberInterface, LoggerAw
         $user = $this->userProvider->loadUserByUsername($username);
         if ($user) {
             $user->incrementLoginFailed();
-            $this->logger->fatal('FAILED LOGIN:attempts[' . $user->getLoginFailed() .'] - '. $username);
+            $this->logger->critical('FAILED LOGIN:attempts[' . $user->getLoginFailed() .'] - '. $username);
         } else {
-            $this->logger->fatal('FAILED LOGIN: ' . $username);
+            $this->logger->critical('FAILED LOGIN: ' . $username);
         }
 
         if (!$this->lockout->isEnabled()) {
