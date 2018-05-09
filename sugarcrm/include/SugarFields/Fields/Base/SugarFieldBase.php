@@ -967,4 +967,20 @@ class SugarFieldBase {
             $iterator->apply($fieldSet, $callback);
         }
     }
+
+    /**
+     * Returns true if the field has been erased from the bean.
+     *
+     * @param SugarBean $bean
+     * @param string $fieldName
+     * @return bool
+     */
+    public function isErased(SugarBean $bean, $fieldName)
+    {
+        if (empty($bean->erased_fields)) {
+            return false;
+        }
+
+        return in_array($fieldName, $bean->erased_fields);
+    }
 }

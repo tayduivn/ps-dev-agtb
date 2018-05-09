@@ -16,6 +16,10 @@ use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\FieldList;
 use SugarTestAccountUtilities as AccountHelper;
 use SugarTestUserUtilities as UserHelper;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Security\Context;
+use Sugarcrm\Sugarcrm\Security\Subject\User;
+use Sugarcrm\Sugarcrm\Security\Subject\ApiClient\Rest as RestApiClient;
 
 /**
  * Class SugarBeanTest
@@ -34,6 +38,7 @@ class SugarBeanTest extends TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestCaseUtilities::removeAllCreatedCases();
     }
 
     public function testAuditLogForBeanCreate()
@@ -1044,6 +1049,89 @@ class SugarBeanTest extends TestCase
         ]);
 
         $this->assertEquals($task->name, $retrievedTask->parent_name);
+    }
+
+    /**
+     * @covers ::getErasedFields
+     */
+    public function testGetErasedFields()
+    {
+        // The current user must be an admin to close a Data Privacy record.
+        $isAdmin = $GLOBALS['current_user']->isAdmin();
+        $GLOBALS['current_user']->setAdmin(true);
+
+        $bean = SugarTestContactUtilities::createContact();
+
+        $dp = BeanFactory::newBean('DataPrivacy');
+        $dp->name = 'Erasure Test';
+        $dp->type = 'Request to Erase Information';
+        $dp->status = 'Open';
+        $dp->priority = 'Low';
+        $dp->assigned_user_id = $GLOBALS['current_user']->id;
+        $dp->date_opened = $GLOBALS['timedate']->getDatePart($GLOBALS['timedate']->nowDb());
+        $dp->date_due = $GLOBALS['timedate']->getDatePart($GLOBALS['timedate']->nowDb());
+        $dp->save();
+
+        // Link the contact to the Data Privacy record.
+        $dp->load_relationship('contacts');
+        $dp->contacts->add($bean);
+
+        // Must re-retrieve the Data Privacy record so that it's fetched_row array contains its current status before we
+        // can change its status.
+        $dp->retrieve();
+
+        // Set the context and subject for Data Privacy.
+        $context = Container::getInstance()->get(Context::class);
+        $subject = new User($GLOBALS['current_user'], new RestApiClient());
+        $context->activateSubject($subject);
+        $context->setAttribute('platform', 'base');
+
+        // Erase the fields.
+        $dp->status = 'Closed';
+        $dp->fields_to_erase = '{"contacts":{"' . $bean->id . '":["first_name","phone_mobile"]}}';
+        $dp->save();
+        $GLOBALS['db']->commit();
+
+        $actual = $bean->getErasedFields();
+
+        $this->assertEquals(['first_name', 'phone_mobile'], $actual);
+
+        // Tear down.
+        $dp->mark_deleted($dp->id);
+        $GLOBALS['current_user']->setAdmin($isAdmin);
+    }
+
+    public function noErasedFieldsProvider()
+    {
+        return [
+            'Cases has no PII fields' => [
+                'SugarTestCaseUtilities::createCase',
+                null,
+                null,
+            ],
+            'erased_fields is not set for the contact but the contact has no erased fields' => [
+                'SugarTestContactUtilities::createContact',
+                null,
+                [],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider noErasedFieldsProvider
+     * @covers ::getErasedFields
+     * @param string $testUtilCreateFunction
+     * @param null|array $erasedFields
+     * @param null|array $expected
+     */
+    public function testGetErasedFields_NoErasedFields($testUtilCreateFunction, $erasedFields, $expected)
+    {
+        $bean = call_user_func($testUtilCreateFunction);
+        $bean->erased_fields = $erasedFields;
+
+        $actual = $bean->getErasedFields();
+
+        $this->assertSame($expected, $actual);
     }
 
     private function getFieldAuditRecords(SugarBean $bean, $field)

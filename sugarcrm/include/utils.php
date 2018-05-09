@@ -453,6 +453,15 @@ function get_sugar_config_defaults()
         'max_aggregate_email_attachments_bytes' => 10000000,
         'new_email_addresses_opted_out' => false,
         'activity_streams_enabled' => true,
+        'activity_streams' => [
+            // No more than the following number of Data Privacy records will be processed by a single cron job
+            // execution.
+            'erasure_job_limit' => 5,
+            // Force a delay if a new job is being created behind one that is either running or queued. This is intended
+            // to minimize the likelihood of multiple jobs running concurrently while providing a reasonable time (in
+            // minutes) for multiple Data Privacy records to be grouped in a single job before going into execution.
+            'erasure_job_delay' => 0,
+        ],
     );
 
     if (empty($locale)) {

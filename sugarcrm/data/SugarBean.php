@@ -8480,4 +8480,51 @@ class SugarBean
 
         return $state;
     }
+
+    /**
+     * Returns the bean's erased fields.
+     *
+     * The erased fields are always loaded from the database because we can't be certain that the bean's `erased_fields`
+     * array is up to date.
+     *
+     * Always try to use {@link SugarBean::retrieve_erased_fields} and {@link SugarBean::retrieve()} instead of this
+     * method. This method only exists for a certain use case where re-retrieving the bean would break things.
+     *
+     * @return array|null Null may be returned if the module does not have PII fields.
+     */
+    public function getErasedFields()
+    {
+        if (!$this->hasPiiFields()) {
+            return $this->erased_fields;
+        }
+
+        $erasedFields = [];
+
+        try {
+            $q = new SugarQuery();
+            $q->from($this, ['erased_fields' => true]);
+            $q->where()->equals("{$this->table_name}.id", $this->id);
+            $q->limit(1);
+
+            // Must request at least one pii field to join on erased_fields.
+            $piiFields = $this->getFieldDefinitions('pii', [true]);
+            $q->select(array_keys($piiFields)[0]);
+
+            $results = $q->execute();
+            $row = $results[0] ?? [];
+
+            if (array_key_exists('erased_fields', $row)) {
+                if (is_array($row['erased_fields'])) {
+                    $erasedFields = $row['erased_fields'];
+                } else {
+                    $erasedFields = json_decode($row['erased_fields'], true) ?: [];
+                }
+            }
+        } catch (SugarQueryException $e) {
+            // Swallow the exception.
+            LoggerManager::getLogger()->error(__METHOD__ . ': ' . $e->getMessage());
+        }
+
+        return $erasedFields;
+    }
 }

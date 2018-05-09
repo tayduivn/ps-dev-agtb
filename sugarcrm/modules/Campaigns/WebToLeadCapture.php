@@ -262,13 +262,38 @@ if (!empty($redirect)) {
 echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
 
 /**
- * Set the Email properties on the supplied lead.
+ * Get Email Address record from Database or return empty array if not found
+ * @param string $emailAddress
+ * @return array
+ * @throws SugarQueryException
+ */
+function _fetchEmailAddress($emailAddress = '')
+{
+    $sea = BeanFactory::newBean('EmailAddresses');
+    $q = new SugarQuery();
+    $q->select(array('*'));
+    $q->from($sea);
+    $q->where()->queryAnd()
+        ->equals('email_address_caps', strtoupper($emailAddress))
+        ->equals('deleted', 0);
+    $q->limit(1);
+    $rows = $q->execute();
+    if (is_array($rows) && count($rows) > 0) {
+        return $rows[0];
+    }
+    return array();
+}
+
+/**
+ * Set the Email properties on the supplied lead. If email address already exists, use existing Email address
+ * 'invalid_email' and 'primary' properties.
  * @param SugarBean $lead
  * @param string $emailField
  * @param bool $optOut
  */
 function _setDefaultEmailProperties(SugarBean $lead, $emailField, $optOut = false)
 {
+    $ea = _fetchEmailAddress($lead->$emailField);
     $invalidEmail = empty($ea) ? false : $ea['invalid_email'];
     $primary = empty($ea) ? true : $ea['primary_address'];
 

@@ -13,6 +13,7 @@ describe("Activity Stream View", function() {
         view,
         viewName = 'activitystream',
         preferenceStub;
+    var context;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -36,7 +37,7 @@ describe("Activity Stream View", function() {
 
         SugarTest.testMetadata.set();
 
-        var context = SugarTest.app.context.getContext();
+        context = SugarTest.app.context.getContext();
         context.set({
             module: 'Cases'
         });
@@ -64,6 +65,76 @@ describe("Activity Stream View", function() {
         sinon.collection.restore();
         view.dispose();
         SugarTest.testMetadata.dispose();
+    });
+
+    describe('dealing with erased names', function() {
+        it('should replace the object name with "Value erased"', function() {
+            var model = context.get('model');
+            var data;
+
+            model.set('parent_type', 'Contacts');
+            model.set('activity_type', 'update');
+            model.set('data', {
+                object: {
+                    name: 'LBL_VALUE_ERASED',
+                    type: 'Contact',
+                    module: 'Contacts',
+                    id: '976d354a-5a0f-11e8-837d-3c15c2d582c6'
+                },
+                changes: {
+                    first_name: {
+                        field_name: 'first_name',
+                        data_type: 'varchar',
+                        before: 'LBL_VALUE_ERASED',
+                        after: 'LBL_VALUE_ERASED'
+                    },
+                    last_name: {
+                        field_name: 'last_name',
+                        data_type: 'varchar',
+                        before: 'LBL_VALUE_ERASED',
+                        after: 'LBL_VALUE_ERASED'
+                    }
+                }
+            });
+
+            // Re-initialize the view with different data on the model.
+            view.dispose();
+            view = SugarTest.createView('base', 'Cases', viewName, null, context);
+            data = view.model.get('data');
+
+            expect(data.object.name).toBe('Value erased');
+        });
+
+        it('should replace the subject name with "Value erased"', function() {
+            var model = context.get('model');
+            var data;
+
+            model.set('parent_type', 'Contacts');
+            model.set('activity_type', 'link');
+            model.set('data', {
+                object: {
+                    name: 'Do something',
+                    type: 'Task',
+                    module: 'Tasks',
+                    id: '321a2db4-5a1f-11e8-816b-3c15c2d582c6'
+                },
+                subject: {
+                    name: 'LBL_VALUE_ERASED',
+                    type: 'Contact',
+                    module: 'Contacts',
+                    id: '976d354a-5a0f-11e8-837d-3c15c2d582c6'
+                },
+                link: 'contacts',
+                relationship: 'contact_tasks'
+            });
+
+            // Re-initialize the view with different data on the model.
+            view.dispose();
+            view = SugarTest.createView('base', 'Cases', viewName, null, context);
+            data = view.model.get('data');
+
+            expect(data.subject.name).toBe('Value erased');
+        });
     });
 
     describe("processEmbed()", function() {
@@ -393,6 +464,28 @@ describe("Activity Stream View", function() {
 
             expect(results).toContain("200.0000:100.0000");
             expect(results).toContain("Calm Sailing Inc:Calm Flying");
+        });
+
+        it('should replace the before and after values with "Value erased"', function() {
+            var changes = {
+                first_name: {
+                    field_name: 'name',
+                    data_type: 'varchar',
+                    before: 'LBL_VALUE_ERASED',
+                    after: 'LBL_VALUE_ERASED'
+                }
+            };
+            var langStub = sinon.collection.stub(app.lang, 'get');
+            var actual;
+
+            langStub.withArgs('TPL_ACTIVITY_UPDATE_FIELD', 'Activities').returns('{{before}}:{{after}}');
+            langStub.withArgs('LBL_VALUE_ERASED', 'Cases').returns('Value erased');
+
+            view.model.set('parent_type', 'Cases');
+
+            actual = view.processUpdateActivityTypeMessage(changes);
+
+            expect(actual).toBe('Value erased:Value erased');
         });
     });
 

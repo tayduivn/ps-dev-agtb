@@ -13,6 +13,9 @@ describe("Taggable Plugin", function() {
     var app;
 
     beforeEach(function() {
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
+
         app = SugarTest.app;
         SugarTest.loadPlugin('Taggable');
         plugin = app.plugins.plugins.view.Taggable;
@@ -20,6 +23,12 @@ describe("Taggable Plugin", function() {
         SugarTest.app.data.declareModels();
         SugarTest.declareData('base', 'Filters');
         filtersBeanPrototype = SugarTest.app.data.getBeanClass('Filters').prototype;
+    });
+
+    afterEach(function() {
+        app.cache.cutAll();
+        app.view.reset();
+        SugarTest.testMetadata.dispose();
     });
 
     describe("unformatTags", function() {
@@ -128,6 +137,19 @@ describe("Taggable Plugin", function() {
             var result = plugin.formatTags('foo @[Accounts:1234:Jim O&#x27;Connor] bar');
             expect(result).toContain('Jim O&#x27;Connor');
             expect(result).toNotContain('&amp;');
+        });
+
+        it('should replace erased names with "Value erased"', function() {
+            var str = 'foo @[Accounts:1234:LBL_VALUE_ERASED] bar @[Leads:890:biz] baz @[Contacts:321:LBL_VALUE_ERASED]';
+            var expected = 'foo ' +
+                '<span class="label label-Accounts sugar_tag"><a href="#Accounts/1234">Value erased</a></span> ' +
+                'bar ' +
+                '<span class="label label-Leads sugar_tag"><a href="#Leads/890">biz</a></span> ' +
+                'baz ' +
+                '<span class="label label-Contacts sugar_tag"><a href="#Contacts/321">Value erased</a></span>';
+            var actual = plugin.formatTags(str);
+
+            expect($('<div></div>').append(actual).html()).toBe(expected);
         });
     });
 

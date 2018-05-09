@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
  * @group activities
  * @group ActivityStream
  * @group activities_queue
+ * @coversDefaultClass ActivityQueueManager
  */
 class ActivityQueueManagerTest extends TestCase
 {
@@ -24,13 +25,20 @@ class ActivityQueueManagerTest extends TestCase
     const USER_TWO    = '2';
     const PORTAL_USER = '3';
 
-    public function tearDown()
+    protected function setUp()
+    {
+        parent::setup();
+        SugarTestHelper::setUp('current_user');
+    }
+
+    protected function tearDown()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
 
     /**
@@ -679,5 +687,105 @@ class ActivityQueueManagerTest extends TestCase
             array($link2, $link3, false),
             array($link4, $link5, false),
         );
+    }
+
+    public function getBeanAttributesDataProvider()
+    {
+        return array(
+            'Non-Person Bean Has Name' => array(
+                'SugarTestAccountUtilities::createAccount',
+                [],
+                [
+                    'name' => 'John Doe',
+                ],
+                'John Doe',
+            ),
+            'Non-Person Bean Name Empty' => array(
+                'SugarTestAccountUtilities::createAccount',
+                [],
+                [
+                    'name' => '',
+                ],
+                '',
+            ),
+            'Person Bean Has Name' => array(
+                'SugarTestLeadUtilities::createLead',
+                [],
+                [
+                    'first_name' => 'John',
+                    'last_name' => 'Doe',
+                ],
+                'John Doe',
+            ),
+            'Person Bean Name Empty, First Name Erased' => array(
+                'SugarTestContactUtilities::createContact',
+                [
+                    'first_name',
+                ],
+                [
+                    'first_name' => '',
+                    'last_name' => 'Doe',
+                ],
+                'Doe',
+            ),
+            'Person Bean Name Empty, Last Name Erased' => array(
+                'SugarTestContactUtilities::createContact',
+                [
+                    'last_name',
+                ],
+                [
+                    'first_name' => 'John',
+                    'last_name' => '',
+                ],
+                'John',
+            ),
+            'Person Bean Name Empty, First Name and Last Name Erased' => array(
+                'SugarTestContactUtilities::createContact',
+                [
+                    'first_name',
+                    'last_name',
+                ],
+                [
+                    'first_name' => '',
+                    'last_name' => '',
+                ],
+                'LBL_VALUE_ERASED',
+            ),
+            'Person Bean Name Empty, Not Erased' => array(
+                'SugarTestContactUtilities::createContact',
+                [],
+                [
+                    'first_name' => '',
+                    'last_name' => '',
+                ],
+                '',
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider getBeanAttributesDataProvider
+     * @covers ::getBeanAttributes
+     * @covers ::getDisplayName
+     */
+    public function testGetBeanAttributes($testUtilCreateFunction, array $erasedFields, array $data, $expectedName)
+    {
+        $bean = call_user_func_array($testUtilCreateFunction, ['', $data]);
+
+        // Seed the erased fields.
+        if (!empty($erasedFields)) {
+            DBManagerFactory::getConnection()->executeQuery(
+                'INSERT INTO erased_fields (bean_id, table_name, data) VALUES (?,?,?)',
+                [
+                    $bean->id,
+                    $bean->getTableName(),
+                    json_encode($erasedFields),
+                ]
+            );
+        }
+
+        $result = ActivityQueueManager::getBeanAttributes($bean);
+
+        $this->assertSame($expectedName, $result['name']);
     }
 }
