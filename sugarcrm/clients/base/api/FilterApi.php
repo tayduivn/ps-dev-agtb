@@ -12,12 +12,9 @@
  */
 
 use Doctrine\DBAL\FetchMode;
-use Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder;
 
 class FilterApi extends SugarApi
 {
-    const OPTIMIZER = 'OPTIMIZER';
-
     public function registerApiRest()
     {
         return array(
@@ -671,7 +668,10 @@ class FilterApi extends SugarApi
                 ];
             }
 
-            $this->applyQueryOptimization($q, $ids);
+            $q->where()
+                ->in('id', $ids);
+            $q->offset(null);
+            $q->limit(null);
         }
 
         $fetched = $seed->fetchFromQuery($q, $fields, $queryOptions);
@@ -1280,50 +1280,5 @@ class FilterApi extends SugarApi
     protected static function newSugarQuery(DBManager $db)
     {
         return new SugarQuery($db);
-    }
-
-    protected function applyQueryOptimization(SugarQuery $query, array $ids)
-    {
-        $optimizationSubQuery = $this->getOptimizationSubQuery($query->getDBManager(), $ids);
-
-        $query->joinTable(
-            $optimizationSubQuery,
-            array(
-                'alias' => self::OPTIMIZER,
-            )
-        )->on()->equalsField(self::OPTIMIZER . '.id', $query->getFromBean()->table_name . '.id'); //Injecting the INNER join with the list of pre-fetched IDs
-
-        $join = $query->join[self::OPTIMIZER];
-        unset($query->join[self::OPTIMIZER]);
-
-        $query->join = array_merge([
-            self::OPTIMIZER => $join,
-        ], $query->join);
-
-        $query->offset(null);
-        $query->limit(null);
-    }
-
-    protected function getOptimizationSubQuery(DBManager $db, array $ids)
-    {
-        $fromDummyTable = $db->getFromDummyTable();
-
-        $builder = $db->getConnection()
-            ->createQueryBuilder();
-
-        $query = implode(' UNION ALL ', array_map(function ($id) use ($builder, $fromDummyTable) {
-            return 'SELECT ' . $builder->createPositionalParameter($id) . ' AS id' . $fromDummyTable;
-        }, $ids));
-
-        // TODO: remove this is we can get away with WHERE id IN() instead of sub-query
-        $re = new ReflectionProperty(get_parent_class($builder), 'sql');
-        $re->setAccessible(true);
-        $re->setValue($builder, $query);
-
-        $re = new ReflectionProperty(get_parent_class($builder), 'state');
-        $re->setAccessible(true);
-        $re->setValue($builder, QueryBuilder::STATE_CLEAN);
-
-        return $builder;
     }
 }
