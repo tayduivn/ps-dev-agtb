@@ -121,7 +121,7 @@ abstract class MssqlManager extends DBManager
         if ($start < 0)
             $start=0;
 
-        $GLOBALS['log']->debug(print_r(func_get_args(),true));
+        $this->logger->debug(print_r(func_get_args(), true));
 
         $this->lastsql = $sql;
 
@@ -245,7 +245,7 @@ abstract class MssqlManager extends DBManager
         else {
             if ($start < 0)
                 $start = 0;
-            $GLOBALS['log']->debug(print_r(func_get_args(),true));
+            $this->logger->debug(print_r(func_get_args(), true));
             $this->lastsql = $sql;
             $matches = array();
             preg_match('/^(.*?SELECT\s+?)(.*?FROM.*WHERE)(.*?)$/si', $sql, $matches);
@@ -433,7 +433,7 @@ abstract class MssqlManager extends DBManager
             }
         }
 
-        $GLOBALS['log']->debug('Limit Query: ' . $newSQL);
+        $this->logger->debug('Limit Query: ' . $newSQL);
         if($execute) {
             $result =  $this->query($newSQL, $dieOnError, $msg);
             $this->dump_slow_queries($newSQL);
@@ -672,13 +672,13 @@ abstract class MssqlManager extends DBManager
                 return $col_name;
             }
             //break out of here, log this
-            $GLOBALS['log']->debug("No match was found for order by, pass string back untouched as: $orig_order_match");
+            $this->logger->debug("No match was found for order by, pass string back untouched as: $orig_order_match");
             return $orig_order_match;
         }
         else {
             //if found, then parse and return
             //grab string up to the aliased column
-            $GLOBALS['log']->debug("order by found, process sql string");
+            $this->logger->debug("order by found, process sql string");
 
             $psql = (trim($this->getAliasFromSQL($sql, $orderMatch )));
             if (empty($psql))
@@ -708,7 +708,7 @@ abstract class MssqlManager extends DBManager
             $col_name = $col_name. " ". $asc_desc;
 
             //pass in new order by
-            $GLOBALS['log']->debug("order by being returned is " . $col_name);
+            $this->logger->debug("order by being returned is " . $col_name);
             return $col_name;
         }
     }
@@ -722,7 +722,7 @@ abstract class MssqlManager extends DBManager
      */
     private function getTableNameFromModuleName($module_str, $sql)
     {
-        $GLOBALS['log']->debug("Module being processed is " . $module_str);
+        $this->logger->debug("Module being processed is " . $module_str);
         //get the right module files
         //the module string exists in bean list, then process bean for correct table name
         //note that we exempt the reports module from this, as queries from reporting module should be parsed for
@@ -735,14 +735,14 @@ abstract class MssqlManager extends DBManager
             $tbl_name = trim($tbl_name);
 
             if(empty($tbl_name)){
-                $GLOBALS['log']->debug("Could not find table name for module $module_str. ");
+                $this->logger->debug("Could not find table name for module $module_str. ");
                 $tbl_name = $module_str;
             }
         }
         else {
             //since the module does NOT exist in beanlist, then we have to parse the string
             //and grab the table name from the passed in sql
-            $GLOBALS['log']->debug("Could not find table name from module in request, retrieve from passed in sql");
+            $this->logger->debug("Could not find table name from module in request, retrieve from passed in sql");
             $tbl_name = $module_str;
             $sql = strtolower($sql);
 
@@ -765,7 +765,7 @@ abstract class MssqlManager extends DBManager
                 if ($next_space > 0) {
                     $tbl_name= substr($tableEnd,0, $next_space);
                     if(empty($tbl_name)){
-                        $GLOBALS['log']->debug("Could not find table name sql either, return $module_str. ");
+                        $this->logger->debug("Could not find table name sql either, return $module_str. ");
                         $tbl_name = $module_str;
                     }
                 }
@@ -803,7 +803,7 @@ abstract class MssqlManager extends DBManager
             }
         }
         //return table name
-        $GLOBALS['log']->debug("Table name for module $module_str is: ".$tbl_name);
+        $this->logger->debug("Table name for module $module_str is: ".$tbl_name);
         return $tbl_name;
     }
 
@@ -836,7 +836,7 @@ abstract class MssqlManager extends DBManager
      */
     public function tableExists($tableName)
     {
-        $GLOBALS['log']->info("tableExists: $tableName");
+        $this->logger->info("tableExists: $tableName");
 
         if ($this->getDatabase() && !empty($this->connectOptions['db_name'])) {
             $query = 'SELECT TABLE_NAME
@@ -881,7 +881,7 @@ WHERE TABLE_NAME = ?
      */
     public function getTablesArray()
     {
-        $GLOBALS['log']->debug('MSSQL fetching table list');
+        $this->logger->debug('MSSQL fetching table list');
 
         if($this->getDatabase()) {
             $tables = array();
@@ -905,7 +905,7 @@ WHERE TABLE_NAME = ?
      */
     public function full_text_indexing_setup()
     {
-        $GLOBALS['log']->debug('MSSQL about to wakeup FTS');
+        $this->logger->debug('MSSQL about to wakeup FTS');
 
         if($this->getDatabase()) {
                 //create wakeup catalog
@@ -1467,7 +1467,7 @@ INNER JOIN sys.columns c
     {
         // Sanity check for getting columns
         if (empty($tablename)) {
-            $this->log->error(__METHOD__ . ' called with an empty tablename argument');
+            $this->logger->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
         }        
 
@@ -1640,7 +1640,7 @@ INNER JOIN sys.columns c
     {
 		if ($this->full_text_indexing_enabled()) {
 		    $catalog = $this->ftsCatalogName();
-            $GLOBALS['log']->debug("Creating the default catalog for full-text indexing, $catalog");
+            $this->logger->debug("Creating the default catalog for full-text indexing, $catalog");
 
             //drop catalog if exists.
 			$ret = $this->query("
@@ -1652,7 +1652,7 @@ INNER JOIN sys.columns c
                 CREATE FULLTEXT CATALOG $catalog");
 
 			if (empty($ret)) {
-				$GLOBALS['log']->error("Error creating default full-text catalog, $catalog");
+                $this->logger->error("Error creating default full-text catalog, $catalog");
 			}
 		}
 	}
@@ -1860,7 +1860,7 @@ EOQ;
 
         // Flag if there are odd number of single quotes, just continue without trying to append N
         if ((substr_count($sql, "'") & 1)) {
-            $GLOBALS['log']->error("SQL statement[" . $sql . "] has odd number of single quotes.");
+            $this->logger->error("SQL statement[" . $sql . "] has odd number of single quotes.");
             return $sql;
         }
 

@@ -166,7 +166,7 @@ abstract class MysqlManager extends DBManager
         $count = (int)$count;
 	    if ($start < 0)
 			$start = 0;
-		$GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
+        $this->logger->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
 	    $sql = "$sql LIMIT $start,$count";
 		$this->lastsql = $sql;
@@ -213,11 +213,11 @@ abstract class MysqlManager extends DBManager
 			if(!empty($data)){
 				$warning = ' Table:' . $table . ' Data:' . $data;
 				if(!empty($GLOBALS['sugar_config']['check_query_log'])){
-					$GLOBALS['log']->fatal($sql);
-					$GLOBALS['log']->fatal('CHECK QUERY:' .$warning);
+                    $this->logger->alert($sql);
+                    $this->logger->alert('CHECK QUERY:' .$warning);
 				}
 				else{
-					$GLOBALS['log']->warn('CHECK QUERY:' .$warning);
+                    $this->logger->warning('CHECK QUERY:' .$warning);
 				}
 			}
 		}
@@ -232,7 +232,7 @@ abstract class MysqlManager extends DBManager
 	{
         // Sanity check for getting columns
         if (empty($tablename)) {
-            $this->log->error(__METHOD__ . ' called with an empty tablename argument');
+            $this->logger->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
         }        
 
@@ -263,7 +263,7 @@ abstract class MysqlManager extends DBManager
 	 */
 	public function getTablesArray()
 	{
-		$this->log->debug('Fetching table list');
+        $this->logger->debug('Fetching table list');
 
 		if ($this->getDatabase()) {
 			$tables = array();
@@ -293,7 +293,7 @@ abstract class MysqlManager extends DBManager
 	 */
 	public function tableExists($tableName)
 	{
-		$this->log->info("tableExists: $tableName");
+        $this->logger->info("tableExists: $tableName");
 
         if ($this->getDatabase() && !empty($this->connectOptions['db_name'])) {
             $query = 'SELECT TABLE_NAME
@@ -690,8 +690,6 @@ WHERE TABLE_SCHEMA = ?
 		case 'fulltext':
 			if ($this->full_text_indexing_installed())
 				$columns[] = " FULLTEXT ($fields)";
-			else
-				$GLOBALS['log']->debug('MYISAM engine is not available/enabled, full-text indexes will be skipped. Skipping:',$name);
 			break;
 		}
 	}
@@ -1071,7 +1069,7 @@ FROM information_schema.statistics';
 
 	protected function makeTempTableCopy($table)
 	{
-		$this->log->debug("creating temp table for [$table]...");
+        $this->logger->debug("creating temp table for [$table]...");
 		$result = $this->query("SHOW CREATE TABLE {$table}");
 		if(empty($result)) {
 			return false;
@@ -1089,7 +1087,7 @@ FROM information_schema.statistics';
 		}
 
 		// get sample data into the temp table to test for data/constraint conflicts
-		$this->log->debug('inserting temp dataset...');
+        $this->logger->debug('inserting temp dataset...');
 		$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
 		$this->query($q3, false, "Preflight Failed for: {$q3}");
 		return true;
@@ -1103,11 +1101,11 @@ FROM information_schema.statistics';
 	 */
 	protected function verifyAlterTable($table, $query)
 	{
-		$this->log->debug("verifying ALTER TABLE");
+        $this->logger->debug("verifying ALTER TABLE");
 		// Skipping ALTER TABLE [table] DROP PRIMARY KEY because primary keys are not being copied
 		// over to the temp tables
 		if(strpos(strtoupper($query), 'DROP PRIMARY KEY') !== false) {
-			$this->log->debug("Skipping DROP PRIMARY KEY");
+            $this->logger->debug("Skipping DROP PRIMARY KEY");
 			return '';
 		}
 		if(!$this->makeTempTableCopy($table)) {
@@ -1115,19 +1113,19 @@ FROM information_schema.statistics';
 		}
 
 		// test the query on the test table
-		$this->log->debug('testing query: ['.$query.']');
+        $this->logger->debug('testing query: ['.$query.']');
 		$tempTableTestQuery = str_replace("ALTER TABLE `{$table}`", "ALTER TABLE `{$table}__uw_temp`", $query);
 		if (strpos($tempTableTestQuery, 'idx') === false) {
 			if(strpos($tempTableTestQuery, '__uw_temp') === false) {
 				return 'Could not use a temp table to test query!';
 			}
 
-			$this->log->debug('testing query on temp table: ['.$tempTableTestQuery.']');
+            $this->logger->debug('testing query on temp table: ['.$tempTableTestQuery.']');
 			$this->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
 		} else {
 			// test insertion of an index on a table
 			$tempTableTestQuery_idx = str_replace("ADD INDEX `idx_", "ADD INDEX `temp_idx_", $tempTableTestQuery);
-			$this->log->debug('testing query on temp table: ['.$tempTableTestQuery_idx.']');
+            $this->logger->debug('testing query on temp table: ['.$tempTableTestQuery_idx.']');
 			$this->query($tempTableTestQuery_idx, false, "Preflight Failed for: {$query}");
 		}
 		$mysqlError = $this->getL();
@@ -1141,13 +1139,13 @@ FROM information_schema.statistics';
 
 	protected function verifyGenericReplaceQuery($querytype, $table, $query)
 	{
-		$this->log->debug("verifying $querytype statement");
+        $this->logger->debug("verifying $querytype statement");
 
 		if(!$this->makeTempTableCopy($table)) {
 			return 'Could not create temp table copy';
 		}
 		// test the query on the test table
-		$this->log->debug('testing query: ['.$query.']');
+        $this->logger->debug('testing query: ['.$query.']');
 		$tempTableTestQuery = str_replace("$querytype `{$table}`", "$querytype `{$table}__uw_temp`", $query);
 		if(strpos($tempTableTestQuery, '__uw_temp') === false) {
 			return 'Could not use a temp table to test query!';

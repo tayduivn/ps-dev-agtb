@@ -161,7 +161,10 @@ class SqlsrvManager extends MssqlManager
         }
         $this->database = sqlsrv_connect($connect_param, $options);
         if(empty($this->database)) {
-            $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name']." as ".$configOptions['db_user_name'].".");
+            $this->logger->alert(
+                'Could not connect to server ' . $configOptions['db_host_name']
+                . ' as ' . $configOptions['db_user_name'] . '.'
+            );
             if($dieOnError) {
                     if(isset($GLOBALS['app_strings']['ERR_NO_DB'])) {
                         sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
@@ -173,14 +176,15 @@ class SqlsrvManager extends MssqlManager
             }
         }
 
-        if($this->checkError('Could Not Connect:', $dieOnError))
-            $GLOBALS['log']->info("connected to db");
+        if ($this->checkError('Could Not Connect:', $dieOnError)) {
+            $this->logger->info('connected to db');
+        }
 
         sqlsrv_query($this->database, 'SET DATEFORMAT mdy');
 
         $this->connectOptions = $configOptions;
 
-        $GLOBALS['log']->info("Connect:".$this->database);
+        $this->logger->info('Connect:' . $this->database);
 
         return true;
     }
@@ -196,14 +200,14 @@ class SqlsrvManager extends MssqlManager
         $sql = $this->_appendN($sql);
 
         $this->countQuery($sql);
-        $GLOBALS['log']->info('Query:' . $sql);
+        $this->logger->info('Query:' . $sql);
         $this->checkConnection();
         $this->query_time = microtime(true);
 
         $result = $suppress?@sqlsrv_query($this->database, $sql):sqlsrv_query($this->database, $sql);
 
         $this->query_time = microtime(true) - $this->query_time;
-        $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
+        $this->logger->info('Query Execution Time:' . $this->query_time);
 
         $this->dump_slow_queries($sql);
 
@@ -291,7 +295,7 @@ class SqlsrvManager extends MssqlManager
      */
     public function disconnect()
     {
-    	$GLOBALS['log']->debug('Calling Mssql::disconnect()');
+        $this->logger->debug('Calling Mssql::disconnect()');
         if(!empty($this->database)){
             $this->freeResult();
             sqlsrv_close($this->database);
@@ -347,7 +351,7 @@ class SqlsrvManager extends MssqlManager
     {
         // Sanity check for getting columns
         if (empty($tablename)) {
-            $this->log->error(__METHOD__ . ' called with an empty tablename argument');
+            $this->logger->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
         }
 
@@ -524,7 +528,7 @@ EOSQL;
      */
     protected function verifyGenericQueryRollback($type, $table, $query)
     {
-        $this->log->debug("verifying $type statement");
+        $this->logger->debug("verifying $type statement");
         if(!sqlsrv_begin_transaction($this->database)) {
             return "Failed to create transaction";
         }

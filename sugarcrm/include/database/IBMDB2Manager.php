@@ -143,7 +143,7 @@ class IBMDB2Manager  extends DBManager
 			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
 		}
 		parent::countQuery($sql);
-		$this->log->info('Query: ' . $sql);
+        $this->logger->info('Query: ' . $sql);
 		$this->checkConnection();
 		$db = $this->getDatabase();
 		$result = false;
@@ -156,22 +156,22 @@ class IBMDB2Manager  extends DBManager
 				$this->query_time = microtime(true);
 				$rc = $suppress?@db2_execute($stmt):db2_execute($stmt);
 				$this->query_time = microtime(true) - $this->query_time;
-				$this->log->info('Query Execution Time: '.$this->query_time);
+                $this->logger->info('Query Execution Time: '.$this->query_time);
 
 				if(!$rc) {
-					$this->log->error("Query Failed: $sql");
+                    $this->logger->error("Query Failed: $sql");
 					$stmt = false; // Making sure we don't use the statement resource for error reporting
 				} else {
 					$result = $stmt;
 					if(isset($sp_msg) && $sp_msg != '')
 					{
-						$this->log->info("Return message from stored procedure call '$sql': $sp_msg");
+                        $this->logger->info("Return message from stored procedure call '$sql': $sp_msg");
 					}
 
 					$this->dump_slow_queries($sql);
 				}
 			} else {
-				$this->log->error("Failed to bind parameter for query : $sql");
+                $this->logger->error("Failed to bind parameter for query : $sql");
 			}
 		}
 
@@ -216,7 +216,10 @@ class IBMDB2Manager  extends DBManager
 						db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
 				return $proceed;
 			} catch(Exception $e) {
-				$this->log->error("IBMDB2Manager.query caught exception when running db2_bind_param for: $sql -> " . $e->getMessage());
+                $this->logger->error(
+                    "IBMDB2Manager.query caught exception when running db2_bind_param for: $sql -> "
+                    . $e->getMessage()
+                );
 				throw $e;
 			}
 		}
@@ -237,7 +240,7 @@ class IBMDB2Manager  extends DBManager
 		$err = db2_stmt_error($obj);
 		if ($err != false
             && $err != '01003'){ // NULL result in aggregate bug 47612
-			$this->log->fatal("DB2 Statement error: ".var_export($err, true));
+            $this->logger->alert('DB2 Statement error: ' . var_export($err, true));
 			return true;
 		}
 		return false;
@@ -251,7 +254,7 @@ class IBMDB2Manager  extends DBManager
 	 */
 	public function disconnect()
 	{
-		$this->log->debug('Calling IBMDB2::disconnect()');
+        $this->logger->debug('Calling IBMDB2::disconnect()');
 		if(!empty($this->database)){
 			$this->commit();    // Commit any pending changes as most of our code assumes auto commits
 			$this->freeResult();
@@ -284,7 +287,7 @@ class IBMDB2Manager  extends DBManager
         $start = (int)$start;
         $count = (int)$count;
 
-		$this->log->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
+        $this->logger->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
         if ($start <= 0)
         {
@@ -317,7 +320,7 @@ class IBMDB2Manager  extends DBManager
 	{
         // Sanity check for getting columns
         if (empty($tablename)) {
-            $this->log->error(__METHOD__ . ' called with an empty tablename argument');
+            $this->logger->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
         }        
 
@@ -450,7 +453,7 @@ WHERE TABSCHEMA = ?
 	 */
 	public function getTablesArray()
 	{
-		$this->log->debug('Fetching table list');
+        $this->logger->debug('Fetching table list');
 		return $this->getTablesArrayByName('%');
 	}
 
@@ -559,7 +562,7 @@ WHERE TABSCHEMA = ?
 	 */
 	public function tableExists($tableName)
 	{
-		$this->log->debug("tableExists: $tableName");
+        $this->logger->debug("tableExists: $tableName");
 		return (bool)$this->getTablesArrayByName($tableName);
 	}
 
@@ -583,7 +586,7 @@ WHERE TABSCHEMA = ?
 	 */
 	public function tablesLike($like)
 	{
-		$this->log->debug("tablesLike: $like");
+        $this->logger->debug("tablesLike: $like");
 		return $this->getTablesArrayByName($like);
 	}
 
@@ -640,7 +643,8 @@ WHERE TABSCHEMA = ?
 		if ($persistConnection) {
 			$this->database = db2_pconnect($dsn, '', '', $configOptions['db_options']);
 			if (!$this->database) {
-				$this->log->fatal(__CLASS__ . ": Persistent connection specified, but failed. Error: " . db2_conn_error() . ": " . db2_conn_errormsg());
+                $this->logger->alert(__CLASS__ . ": Persistent connection specified, but failed. Error: "
+                    . db2_conn_error() . ": " . db2_conn_errormsg());
 			}
 		}
 
@@ -652,7 +656,10 @@ WHERE TABSCHEMA = ?
 					. "in your config.php file</b>";
 			}
 			if (!$this->database) {
-				$this->log->fatal(__CLASS__ . ": Could not connect to Database with non-persistent connection. Error " . db2_conn_error() . ": " . db2_conn_errormsg());
+                $this->logger->alert(
+                    __CLASS__ . ": Could not connect to Database with non-persistent connection. Error "
+                    . db2_conn_error() . ": " . db2_conn_errormsg()
+                );
 			}
 		}
 
@@ -662,16 +669,17 @@ WHERE TABSCHEMA = ?
 		$this->ignoreErrors = true;
 		if(!$this->checkError('Could Not Connect:', $dieOnError) && $this->database != false)
 		{
-			$this->log->info("connected to db");
+            $this->logger->info("connected to db");
 
-			if(db2_autocommit($this->database, DB2_AUTOCOMMIT_OFF))
-				$this->log->info("turned autocommit off");
-			else
-				$this->log->error("failed to turn autocommit off!");
+            if (db2_autocommit($this->database, DB2_AUTOCOMMIT_OFF)) {
+                $this->logger->info("turned autocommit off");
+            } else {
+                $this->logger->error("failed to turn autocommit off!");
+            }
 
 		}
 		$this->ignoreErrors = false;
-		$this->log->info("Connect:".$this->database);
+        $this->logger->info("Connect:".$this->database);
 
 		return !empty($this->database);
 	}
@@ -818,7 +826,7 @@ public function convert($string, $type, array $additional_parameters = array())
 			return false;
 
 		$sql = "CREATE TABLE $tablename ($columns)";
-		$this->log->info("IBMDB2Manager.createTableSQLParams: ".$sql);
+        $this->logger->info("IBMDB2Manager.createTableSQLParams: ".$sql);
 		return $sql;
 	}
 
@@ -937,7 +945,9 @@ public function convert($string, $type, array $additional_parameters = array())
 			//       there is a new one without making an extra call to the database.
 			$olddef = isset($cols[$req['name']]['default'])? trim($cols[$req['name']]['default']) : '';
 			if($olddef != ''){
-				$this->log->info("IBMDB2Manager.alterOneColumnSQL: dropping old default $olddef as new one is empty");
+                $this->logger->info(
+                    "IBMDB2Manager.alterOneColumnSQL: dropping old default $olddef as new one is empty"
+                );
 				$sql[]= "$alter DROP DEFAULT";
 			}
 		}
@@ -977,7 +987,8 @@ public function convert($string, $type, array $additional_parameters = array())
 				break;
 			default:
 				$sql = null;
-				$this->log->fatal("IBMDB2Manager.changeOneColumnSQL unknown change action '$action' for table '$tablename'");
+                $this->logger->alert("IBMDB2Manager.changeOneColumnSQL unknown change action '$action'"
+                    . " for table '$tablename'");
 				break;
 		}
 		return $sql;
@@ -1341,7 +1352,7 @@ FROM SYSIBMTS.TSINDEXES';
 			break;
 		}
 
-		$this->log->info("IBMDB2Manager.add_drop_constraint: ".$sql);
+        $this->logger->info("IBMDB2Manager.add_drop_constraint: ".$sql);
 		return $sql;
 	}
 
@@ -1628,13 +1639,13 @@ FROM SYSIBMTS.TSINDEXES';
         $this->checkConnection();
 
 		$valid = (@db2_prepare($this->getDatabase(), $query, array('deferred_prepare' => DB2_DEFERRED_PREPARE_OFF)) != false); // Force boolean result
-        $this->log->debug('IBMDB2Manager.validateQuery  -> ' . $query . ' result: ' . $valid);
+        $this->logger->debug('IBMDB2Manager.validateQuery  -> ' . $query . ' result: ' . $valid);
         return $valid;
 	}
 
 	protected function makeTempTableCopy($table)
 	{
-		$this->log->debug("creating temp table for [$table]...");
+        $this->logger->debug("creating temp table for [$table]...");
 		$create = $this->getOne("SHOW CREATE TABLE {$table}");
 		if(empty($create)) {
 			return false;
@@ -1647,7 +1658,7 @@ FROM SYSIBMTS.TSINDEXES';
 		}
 
 		// get sample data into the temp table to test for data/constraint conflicts
-		$this->log->debug('inserting temp dataset...');
+        $this->logger->debug('inserting temp dataset...');
 		$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
 		$this->query($q3, false, "Preflight Failed for: {$q3}");
 		return true;
@@ -1661,11 +1672,11 @@ FROM SYSIBMTS.TSINDEXES';
 	 */
 	protected function verifyAlterTable($table, $query)
 	{
-		$this->log->debug("verifying ALTER TABLE");
+        $this->logger->debug("verifying ALTER TABLE");
 		// Skipping ALTER TABLE [table] DROP PRIMARY KEY because primary keys are not being copied
 		// over to the temp tables
 		if(strpos(strtoupper($query), 'DROP PRIMARY KEY') !== false) {
-			$this->log->debug("Skipping DROP PRIMARY KEY");
+            $this->logger->debug("Skipping DROP PRIMARY KEY");
 			return '';
 		}
 		if(!$this->makeTempTableCopy($table)) {
@@ -1673,19 +1684,19 @@ FROM SYSIBMTS.TSINDEXES';
 		}
 
 		// test the query on the test table
-		$this->log->debug('testing query: ['.$query.']');
+        $this->logger->debug('testing query: ['.$query.']');
 		$tempTableTestQuery = str_replace("ALTER TABLE `{$table}`", "ALTER TABLE `{$table}__uw_temp`", $query);
 		if (strpos($tempTableTestQuery, 'idx') === false) {
 			if(strpos($tempTableTestQuery, '__uw_temp') === false) {
 				return 'Could not use a temp table to test query!';
 			}
 
-			$this->log->debug('testing query on temp table: ['.$tempTableTestQuery.']');
+            $this->logger->debug('testing query on temp table: ['.$tempTableTestQuery.']');
 			$this->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
 		} else {
 			// test insertion of an index on a table
 			$tempTableTestQuery_idx = str_replace("ADD INDEX `idx_", "ADD INDEX `temp_idx_", $tempTableTestQuery);
-			$this->log->debug('testing query on temp table: ['.$tempTableTestQuery_idx.']');
+            $this->logger->debug('testing query on temp table: ['.$tempTableTestQuery_idx.']');
 			$this->query($tempTableTestQuery_idx, false, "Preflight Failed for: {$query}");
 		}
 		$mysqlError = $this->lastError();
@@ -1699,13 +1710,13 @@ FROM SYSIBMTS.TSINDEXES';
 
 	protected function verifyGenericReplaceQuery($querytype, $table, $query)
 	{
-		$this->log->debug("verifying $querytype statement");
+        $this->logger->debug("verifying $querytype statement");
 
 		if(!$this->makeTempTableCopy($table)) {
 			return 'Could not create temp table copy';
 		}
 		// test the query on the test table
-		$this->log->debug('testing query: ['.$query.']');
+        $this->logger->debug('testing query: ['.$query.']');
 		$tempTableTestQuery = str_replace("$querytype `{$table}`", "$querytype `{$table}__uw_temp`", $query);
 		if(strpos($tempTableTestQuery, '__uw_temp') === false) {
 			return 'Could not use a temp table to test query!';
@@ -1738,7 +1749,7 @@ FROM SYSIBMTS.TSINDEXES';
 	protected function verifyGenericQueryRollback($type, $table, $query)
 	{
 		$db = $this->database;
-		$this->log->debug("verifying $type statement");
+        $this->logger->debug("verifying $type statement");
 		$stmt = db2_prepare($db, $query);
 		if(!$stmt) {
 			return 'Cannot prepare statement';
@@ -1870,7 +1881,7 @@ FROM SYSIBMTS.TSINDEXES';
 	{
 		if ($this->database) {
 			$success = db2_commit($this->database);
-			$this->log->info("IBMDB2Manager.commit(): $success");
+            $this->logger->info("IBMDB2Manager.commit(): $success");
 			$this->executeReorgs();
 			return $success;
 		}
@@ -1886,7 +1897,7 @@ FROM SYSIBMTS.TSINDEXES';
 	{
 		if ($this->database) {
 			$success = db2_rollback($this->database);
-			$this->log->info("IBMDB2Manager.rollback(): $success");
+            $this->logger->info("IBMDB2Manager.rollback(): $success");
 			return $success;
 		}
 		return false;
@@ -1938,7 +1949,7 @@ FROM SYSIBMTS.TSINDEXES';
 		}
 		if(count($tables) > 0)
 		{
-			$this->log->info("Table REORG completed on: ". implode(', ', $tables) );
+            $this->logger->info("Table REORG completed on: " . implode(', ', $tables));
 			$this->reorgQueues['table'] = array(); // Clearing out queue
 		}
 	}

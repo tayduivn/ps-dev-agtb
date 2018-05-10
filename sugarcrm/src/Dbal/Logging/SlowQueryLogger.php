@@ -67,7 +67,7 @@ final class SlowQueryLogger implements SQLLogger
         if ($executionTime * 1000 >= $this->threshold) {
             [$sql, $params] = $this->query;
 
-            $this->logger->warning(sprintf(
+            $this->logger->alert(sprintf(
                 'Slow Query (time: %.3f s): %s',
                 $executionTime,
                 $sql

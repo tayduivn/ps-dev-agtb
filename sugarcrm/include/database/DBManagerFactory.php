@@ -13,8 +13,10 @@
 
 use Doctrine\DBAL\DriverManager as DoctrineDriverManager;
 use Doctrine\DBAL\Logging\SQLLogger;
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\Dbal\Connection;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 
 /**
  * Database driver factory
@@ -40,13 +42,12 @@ class DBManagerFactory
      */
     public static function getTypeInstance($type, $config = array())
     {
-        global $sugar_config;
-
         if(empty($config['db_manager'])) {
             $my_db_manager = self::getManagerByType($type, false);
-            if (empty($my_db_manager)) {
+
+            if (!$my_db_manager) {
                 display_stack_trace();
-                $GLOBALS['log']->fatal("unable to load DB manager for: $type");
+                static::getLogger()->alert("unable to load DB manager for: $type");
                 sugar_die("Cannot load DB manager");
             }
         } else {
@@ -63,7 +64,7 @@ class DBManagerFactory
         }
 
         if(class_exists($my_db_manager)) {
-            return new $my_db_manager();
+            return static::createInstance($my_db_manager);
         } else {
             return null;
         }
@@ -197,6 +198,11 @@ class DBManagerFactory
         return $conn;
     }
 
+    private static function getLogger() : LoggerInterface
+    {
+        return LoggerFactory::getLogger('db');
+    }
+
     /**
      * Get DbalLogger instance
      *
@@ -277,7 +283,7 @@ class DBManagerFactory
             if ($re->isAbstract()) {
                 continue;
             }
-            $driver = new $classname;
+            $driver = static::createInstance($classname);
             if(!$validate || $driver->valid()) {
                 if(empty($drivers[$driver->dbType])) {
                     $drivers[$driver->dbType]  = array();
@@ -320,5 +326,23 @@ class DBManagerFactory
             $result[$type] = $tdrivers[0];
         }
         return $result;
+    }
+
+    /**
+     * Creates instance of database manager of the given class
+     *
+     * @param string $class
+     * @return DBManager
+     */
+    private static function createInstance(string $class) : DBManager
+    {
+        /** @var DBManager $instance */
+        $instance = new $class();
+
+        $instance->setLogger(
+            self::getLogger()
+        );
+
+        return $instance;
     }
 }

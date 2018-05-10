@@ -279,7 +279,7 @@ class OracleManager extends DBManager
             return $this->queryArray($sql, $dieOnError, $msg, $suppress);
         }
         parent::countQuery($sql);
-        $GLOBALS['log']->info('Query: ' . $sql);
+        $this->logger->info('Query: ' . $sql);
         $this->checkConnection();
         $this->query_time = microtime(true);
         $db = $this->getDatabase();
@@ -296,7 +296,7 @@ class OracleManager extends DBManager
 
 			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
-	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
+            $this->logger->info('Query Execution Time: '.$this->query_time);
 		    $this->dump_slow_queries($sql);
 			if($exec_result) {
 			    $result = $stmt;
@@ -358,10 +358,10 @@ class OracleManager extends DBManager
                 if(!empty($data)){
                     $warning = ' Table:' . $table . ' Data:' . $data;
                     if(!empty($GLOBALS['sugar_config']['check_query_log'])){
-                        $GLOBALS['log']->fatal($sql);
-                        $GLOBALS['log']->fatal('CHECK QUERY:' .$warning);
+                        $this->logger->alert($sql);
+                        $this->logger->alert('CHECK QUERY:' .$warning);
                     }else{
-                        $GLOBALS['log']->warn('CHECK QUERY:' .$warning);
+                        $this->logger->warning('CHECK QUERY:' .$warning);
                     }
                 }
             }
@@ -389,7 +389,7 @@ class OracleManager extends DBManager
         $start = (int)$start;
         $count = (int)$count;
         preg_match('/^(.*SELECT)(.*?FROM.*WHERE)(.*)$/is',$sql, $matches);
-        $GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
+        $this->logger->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
         if ($start ==0 && !empty($matches[3])) {
             $sql = 'SELECT /*+ FIRST_ROWS('. $count . ') */ * FROM (' . $matches[1]. $matches[2]. $matches[3] . ') MSI WHERE ROWNUM <= '.$count;
             if(!empty($GLOBALS['sugar_config']['check_query'])){
@@ -507,7 +507,7 @@ class OracleManager extends DBManager
      */
     public function getTablesArray()
     {
-        $GLOBALS['log']->debug('ORACLE fetching table list');
+        $this->logger->debug('ORACLE fetching table list');
 
         if($this->getDatabase()) {
             $tables = array();
@@ -530,7 +530,7 @@ class OracleManager extends DBManager
      */
     public function tableExists($tableName)
     {
-        $GLOBALS['log']->info("tableExists: $tableName");
+        $this->logger->info("tableExists: $tableName");
 
         if ($this->getDatabase()){
             $query = 'SELECT TABLE_NAME
@@ -615,7 +615,7 @@ WHERE OWNER = ?
             $this->database = oci_pconnect($configOptions['db_user_name'], $configOptions['db_password'],$configOptions['db_name'], $charset);
             $err = oci_error();
             if ($err != false) {
-	            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
+                $this->logger->debug("oci_error:".var_export($err, true));
             }
 		}
 
@@ -624,9 +624,10 @@ WHERE OWNER = ?
                 if (!$this->database) {
                 	$err = oci_error();
                 	if ($err != false) {
-			            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
+                        $this->logger->debug("oci_error:".var_export($err, true));
                 	}
-                	$GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_name']." as ".$configOptions['db_user_name'].".");
+                    $this->logger->alert("Could not connect to server " . $configOptions['db_name']
+                        . " as " . $configOptions['db_user_name'] . ".");
                 	if($dieOnError) {
                         if(isset($GLOBALS['app_strings']['ERR_NO_DB'])) {
                             sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
@@ -669,11 +670,11 @@ WHERE OWNER = ?
             }
             $this->query($session_query);
 
-		if(!$this->checkError('Could Not Connect', $dieOnError))
-			$GLOBALS['log']->info("connected to db");
+        if (!$this->checkError('Could Not Connect', $dieOnError)) {
+            $this->logger->info('connected to db');
+        }
 
-        $GLOBALS['log']->info("Connect:".$this->database);
-
+        $this->logger->info("Connect:".$this->database);
         return true;
 	}
 
@@ -684,7 +685,7 @@ WHERE OWNER = ?
      */
     public function disconnect()
     {
-    	$GLOBALS['log']->debug('Calling Oracle::disconnect()');
+        $this->logger->debug('Calling Oracle::disconnect()');
         if(!empty($this->database)){
             $this->freeResult();
             oci_close($this->database);
@@ -1435,7 +1436,7 @@ LEFT JOIN all_constraints c
     {
         // Sanity check for getting columns
         if (empty($tablename)) {
-            $this->log->error(__METHOD__ . ' called with an empty tablename argument');
+            $this->logger->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
         }        
 
@@ -1802,7 +1803,7 @@ LEFT JOIN all_constraints c
      */
     protected function verifyGenericQueryRollback($type, $table, $query)
     {
-        $this->log->debug("verifying $type statement");
+        $this->logger->debug("verifying $type statement");
         $stmt = oci_parse($this->database, $query);
         if(!$stmt) {
             return 'Cannot parse statement';
