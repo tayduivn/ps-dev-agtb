@@ -11,6 +11,7 @@
  */
 
 use Elastica\Exception\ResponseException;
+use Elastica\Request;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Engine\Elastic;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
@@ -28,10 +29,19 @@ class SugarUpgradeRunFTSIndex extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.10', '<')) {
+        $esVersion = $this->getEsVersion();
+        if (empty($esVersion)) {
+            return;
+        }
+
+        if (version_compare($this->from_version, '7.10', '<')
+            || (version_compare($this->from_version, '8.0.0', '<=') && version_compare($esVersion, '6.0', '>='))
+        ) {
+            // do fts index if
+            // old sugar version < 7.10 or old sugar version <=8.0 and Elastic version is 6.x
             $this->dropExistingIndex();
             $this->runFTSIndex();
-        } elseif (version_compare($this->from_version, '8.0', '<')) {
+        } elseif (version_compare($this->from_version, '8.0.0', '<')) {
             $this->updateIndexMapping();
         }
     }
@@ -93,5 +103,27 @@ class SugarUpgradeRunFTSIndex extends UpgradeScript
                 $this->log("SugarUpgradeRunFTSIndex: updating index mapping got exceptions!");
             }
         }
+    }
+
+    /**
+     * @return string elasticsearch version
+     * @throws \Exception
+     */
+    protected function getEsVersion() : string
+    {
+        $esVersion = null;
+        $engine = SearchEngine::getInstance()->getEngine();
+        if ($engine instanceof Elastic) {
+            try {
+                $result = $engine->getContainer()->client->request('', Request::GET);
+                if ($result->isOk()) {
+                    $data = $result->getData();
+                    $esVersion = $data['version']['number']?? null;
+                }
+            } catch (Exception $e) {
+                $this->log("getEsVersion: get ES version got exceptions: " . $e->getMessage());
+            }
+        }
+        return $esVersion;
     }
 }
