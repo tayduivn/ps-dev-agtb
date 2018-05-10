@@ -573,6 +573,7 @@ class Rome
 
     protected function writeFiles($path, $skipBuilds = array())
     {
+        $mtime = filemtime($path);
         $path = $this->cleanPath($path);
         $blackListPath = $this->getBlacklistPath($path);
 
@@ -596,13 +597,14 @@ class Rome
                     $o = str_replace("$var", "$data", $o);
                 }
             }
-            //str_replace is equiv to dos2unix command
-            file_put_contents(
-                $this->buildPath . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR . $path,
-                str_replace("\r\n", "\n", $o)
-            );
-        }
 
+            $targetPath = $this->buildPath . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR . $path;
+
+            //str_replace is equiv to dos2unix command
+            file_put_contents($targetPath, str_replace("\r\n", "\n", $o));
+
+            touch($targetPath, $mtime);
+        }
     }
 
     protected function makeDirs($path, $build)
@@ -631,6 +633,7 @@ class Rome
             $this->makeDirs(dirname($path), $f);
             $b_path = $this->buildPath . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR . $path;
             copy($orig_path, $b_path);
+            touch($b_path, filemtime($orig_path));
         }
     }
 
