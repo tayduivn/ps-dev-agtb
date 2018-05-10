@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\FetchMode;
+use Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder;
 
 class FilterApi extends SugarApi
 {
@@ -152,26 +154,6 @@ class FilterApi extends SugarApi
         'locked_fields',
         //END SUGARCRM flav=ent ONLY
     );
-
-    /**
-     * List of fields that are mandatory for minimal query
-     * @var array
-     */
-    protected static $mandatory_fields_optimised = array(
-        // id and date_modified should always be in the response
-        'id',
-        'date_modified',
-        // user fields are needed for ACLs since they check owners
-        'assigned_user_id',
-    );
-
-    protected static $skipOptimisationForModules= array(
-        'Filters',
-        'Dashboard',
-        'PdfManager',
-    );
-
-    protected $optimisedSubQuery = null;
 
     public function __construct()
     {
@@ -342,8 +324,6 @@ class FilterApi extends SugarApi
             $args['fields'] = $options['select'];
         }
 
-        $q = self::getQueryObject($seed, $options);
-
         // Relate collections should not be in the select clause of the query
         // since we have trouble doing group bys on certain databases. We should
         // be getting the relate collection values later anyways.
@@ -378,22 +358,36 @@ class FilterApi extends SugarApi
             $args['filter'] = $predefinedFilter;
         }
 
-        $this->setupOptimizationSubQuery($seed, $options, $args, $q);
-        static::addFilters($args['filter'], $q->where(), $q);
+        $q = $this->createQuery($seed, $args, $options);
+
+        if (count($q->join) > 0) {
+            $options['id_query'] = $this->createQuery($seed, $args, array_merge($options, [
+                'select' => ['id'],
+            ]));
+        }
+
+        return array($args, $q, $options, $seed);
+    }
+
+    private function createQuery(SugarBean $seed, array $args, array $options) : SugarQuery
+    {
+        $query = self::getQueryObject($seed, $options);
+
+        static::addFilters($args['filter'], $query->where(), $query);
 
         if (!empty($args['my_items'])) {
-            static::addOwnerFilter($q, $q->where(), '_this');
+            static::addOwnerFilter($query, $query->where(), '_this');
         }
 
         if (!empty($args['favorites'])) {
-            self::$isFavorite = true;
-            static::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
+            static::addFavoriteFilter($query, $query->where(), '_this', 'INNER');
         }
 
-        if (!sizeof($q->order_by)) {
-            self::addOrderBy($q, $this->defaultOrderBy);
+        if (count($query->order_by) < 1) {
+            self::addOrderBy($query, $this->defaultOrderBy);
         }
-        return array($args, $q, $options, $seed);
+
+        return $query;
     }
 
     /**
@@ -421,9 +415,8 @@ class FilterApi extends SugarApi
         }
 
         $api->action = 'list';
-        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args, $acl);
 
-        return $this->runQuery($api, $args, $q, $options, $seed);
+        return $this->runQuery($api, ...$this->filterListSetup($api, $args, $acl));
     }
 
     /**
@@ -665,7 +658,21 @@ class FilterApi extends SugarApi
             'compensateDistinct' => true,
         );
 
-        $this->applyQueryOptimization($q, $seed, $queryOptions);
+        if (isset($options['id_query'])) {
+            $ids = $options['id_query']
+                ->compile()
+                ->execute()
+                ->fetchAll(FetchMode::COLUMN);
+
+            if (count($ids) < 1) {
+                return [
+                    'records' => [],
+                    'next_offset' => -1,
+                ];
+            }
+
+            $this->applyQueryOptimization($q, $ids);
+        }
 
         $fetched = $seed->fetchFromQuery($q, $fields, $queryOptions);
 
@@ -1275,109 +1282,48 @@ class FilterApi extends SugarApi
         return new SugarQuery($db);
     }
 
-    /**
-     * @param SugarQuery $q
-     * @param SugarBean $seed
-     * @param $queryOptions
-     */
-    protected function applyQueryOptimization(SugarQuery $q, SugarBean $seed, $queryOptions)
+    protected function applyQueryOptimization(SugarQuery $query, array $ids)
     {
-        if (isset($this->optimisedSubQuery)
-            && !in_array(get_class($this->optimisedSubQuery->from), self::$skipOptimisationForModules)
-        ) {
-            $fetchedOptimised = $seed->fetchFromQuery($this->optimisedSubQuery, self::$mandatory_fields_optimised, $queryOptions);
-            $ids = array_keys($fetchedOptimised['_rows']);
-            $subQuery = $this->getOptimizationSubQuery($ids, $seed->db);
-            $this->injectSubQueryJoinIntoOriginal($q, $subQuery);
-        }
-    }
+        $optimizationSubQuery = $this->getOptimizationSubQuery($query->getDBManager(), $ids);
 
-    /**
-     * @param $seed
-     * @param $options
-     * @param $args
-     * @param $q
-     */
-    protected function setupOptimizationSubQuery($seed, $options, $args, $q)
-    {
-        if (!in_array(get_class($seed), self::$skipOptimisationForModules)
-            && count($q->join) > 0
-        ) {
-            $options['select'] = self::$mandatory_fields_optimised;
-            $this->optimisedSubQuery = self::getQueryObject($seed, $options);
-            static::addFilters($args['filter'], $this->optimisedSubQuery->where(), $this->optimisedSubQuery);
-            if (!empty($args['my_items'])) {
-                static::addOwnerFilter($this->optimisedSubQuery, $this->optimisedSubQuery->where(), '_this');
-            }
-            if (!empty($args['favorites'])) {
-                static::addFavoriteFilter($this->optimisedSubQuery, $this->optimisedSubQuery->where(), '_this', 'INNER');
-            }
-            if (!sizeof($q->order_by)) {
-                self::addOrderBy($this->optimisedSubQuery, $this->defaultOrderBy);
-            }
-        }
-    }
-
-    /**
-     * @param array $ids
-     * @param OracleManager|MysqliManager|IBMDB2Manager $db
-     * @return string
-     */
-    protected function getOptimizationSubQuery($ids, $db)
-    {
-        $quoted = array();
-        foreach ($ids as $id) {
-            $quoted[$id] = $db->quoted($id);
-        }
-        $ids = $quoted;
-        if (empty($ids)) {
-            $result = ' (SELECT NULL as id ' . $db->getFromDummyTable() . ') ';
-        } else {
-            $start = ' SELECT ';
-            $end = ' as id ' . $db->getFromDummyTable();
-
-            $glue = $end . ' UNION ALL ' . $start;
-            $result = ' (' . $start . implode($glue, $ids) . $end . ') ';
-        }
-
-        return $result;
-    }
-
-    /**
-     * Adding an INNER JOIN with the list of IDs
-     *
-     * @param $original
-     * @param $joinSubquery
-     */
-    protected function injectSubQueryJoinIntoOriginal($original, $joinSubquery)
-    {
-        /** @var SugarQuery $original */
-        $original->joinTable(
-            $joinSubquery,
+        $query->joinTable(
+            $optimizationSubQuery,
             array(
                 'alias' => self::OPTIMIZER,
-                'joinType' => 'INNER',
             )
-        )->on()->equalsField(self::OPTIMIZER . '.id', $original->getFromBean()->table_name . '.id'); //Injecting the INNER join with the list of pre-fetched IDs
-        $this->moveOptimizationJoinToTheFirstPlace($original);
+        )->on()->equalsField(self::OPTIMIZER . '.id', $query->getFromBean()->table_name . '.id'); //Injecting the INNER join with the list of pre-fetched IDs
+
+        $join = $query->join[self::OPTIMIZER];
+        unset($query->join[self::OPTIMIZER]);
+
+        $query->join = array_merge([
+            self::OPTIMIZER => $join,
+        ], $query->join);
+
+        $query->offset(null);
+        $query->limit(null);
     }
 
-    /**
-     * @param $original
-     */
-    protected function moveOptimizationJoinToTheFirstPlace($original)
+    protected function getOptimizationSubQuery(DBManager $db, array $ids)
     {
-        $original->join = array_merge(
-            array_splice(
-                $original->join,
-                array_search(
-                    self::OPTIMIZER,
-                    array_keys($original->join)
-                ),
-                1
-            ),
-            $original->join
-        );
-        $original->offset = 0;
+        $fromDummyTable = $db->getFromDummyTable();
+
+        $builder = $db->getConnection()
+            ->createQueryBuilder();
+
+        $query = implode(' UNION ALL ', array_map(function ($id) use ($builder, $fromDummyTable) {
+            return 'SELECT ' . $builder->createPositionalParameter($id) . ' AS id' . $fromDummyTable;
+        }, $ids));
+
+        // TODO: remove this is we can get away with WHERE id IN() instead of sub-query
+        $re = new ReflectionProperty(get_parent_class($builder), 'sql');
+        $re->setAccessible(true);
+        $re->setValue($builder, $query);
+
+        $re = new ReflectionProperty(get_parent_class($builder), 'state');
+        $re->setAccessible(true);
+        $re->setValue($builder, QueryBuilder::STATE_CLEAN);
+
+        return $builder;
     }
 }
