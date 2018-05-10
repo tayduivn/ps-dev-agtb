@@ -114,6 +114,9 @@ class Report
     // an empty bean
     protected $moduleBean;
 
+    // whether this is used to run a scheduled report
+    public $isScheduledReport = false;
+
     /**
      *
      * Default visibility options

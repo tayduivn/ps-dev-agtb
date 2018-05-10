@@ -333,6 +333,57 @@ QUERY;
     }
 
     /**
+     * @param string $userId
+     * @param string $scheduleType
+     * @return string
+     */
+    protected function getQuery($userId = '', $scheduleType = 'pro')
+    {
+        $timedate = TimeDate::getInstance();
+        $where = '';
+        if (!empty($userId)) {
+            if ($scheduleType == 'pro') {
+                $where = "AND reportschedules_users.user_id = '$userId'";
+            } else {
+                $where = "AND user_id = '$userId'";
+            }
+        }
+        $time = $timedate->nowDb();
+        if ($scheduleType == 'pro') {
+            $query = "SELECT $this->table_name.id AS id, $this->table_name.report_id AS report_id, " .
+                "$this->table_name.date_start AS date_start, $this->table_name.date_modified AS date_modified, " .
+                "$this->table_name.next_run AS next_run, reportschedules_users.user_id AS user_id " .
+                "FROM $this->table_name " .
+                "JOIN reportschedules_users on reportschedules_users.reportschedule_id = $this->table_name.id " .
+                "JOIN saved_reports on saved_reports.id=$this->table_name.report_id " .
+                "JOIN users on users.id = reportschedules_users.user_id " .
+                "WHERE saved_reports.deleted = 0 AND " .
+                "$this->table_name.next_run < '$time' $where AND " .
+                "$this->table_name.deleted = 0 AND " .
+                "$this->table_name.active = 1 AND " .
+                "$this->table_name.schedule_type = '" . $scheduleType . "' AND " .
+                "users.status = 'Active' AND users.deleted = 0 " .
+                "AND reportschedules_users.deleted = 0 " .
+                "ORDER BY $this->table_name.next_run ASC";
+        } else {
+            $query = "SELECT report_schedules.id AS id, report_schedules.report_id AS report_id, " .
+                "report_schedules.date_start AS date_start,  report_schedules.date_modified AS date_modified, " .
+                "report_schedules.next_run AS next_run, report_schedules.user_id AS user_id " .
+                "FROM $this->table_name \n".
+                "join saved_reports on saved_reports.id=$this->table_name.report_id \n".
+                "join users on users.id = report_schedules.user_id".
+                " WHERE saved_reports.deleted=0 AND \n" .
+                "$this->table_name.next_run < '$time' $where AND \n".
+                "$this->table_name.deleted=0 AND \n".
+                "$this->table_name.active=1 AND " .
+                "$this->table_name.schedule_type='".$scheduleType."' AND\n".
+                "users.status='Active' AND users.deleted='0'".
+                "ORDER BY $this->table_name.next_run ASC";
+        }
+        return $query;
+    }
+
+    /**
      * Gets a list of report schedules that need to send emails
      *
      * @param string $user_id
@@ -341,22 +392,7 @@ QUERY;
      */
     public function get_reports_to_email($user_id = '', $schedule_type = "pro")
     {
-        global $timedate;
-        $where = '';
-        if (!empty($user_id)) {
-            $where = "AND user_id='$user_id'";
-        }
-        $time = $timedate->nowDb();
-        $query = "SELECT report_schedules.* FROM $this->table_name \n".
-            "join saved_reports on saved_reports.id=$this->table_name.report_id \n".
-            "join users on users.id = report_schedules.user_id".
-            " WHERE saved_reports.deleted=0 AND \n" .
-            "$this->table_name.next_run < '$time' $where AND \n".
-            "$this->table_name.deleted=0 AND \n".
-            "$this->table_name.active=1 AND " .
-            "$this->table_name.schedule_type='".$schedule_type."' AND\n".
-            "users.status='Active' AND users.deleted='0'".
-            "ORDER BY $this->table_name.next_run ASC";
+        $query = $this->getQuery($user_id, $schedule_type);
 
         $results = $this->db->query($query);
         $return_array = array();

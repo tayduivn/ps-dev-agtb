@@ -351,6 +351,7 @@ $mod_strings = array (
   'LBL_FUNNEL'=>'Funnel',
   'LBL_GROUP_BY_REQUIRED'=>'At least one Group By and one Summary column are required to render a chart.<br>',
 	'MSG_NO_PERMISSIONS' => 'You do not have permission to edit this report',
+    'LBL_NO_VIEW_PERMISSIONS' => 'You do not have permission to view this report.',
 	'LBL_NONE' => '-- none --',
 	'LBL_NONE_STRING' => 'None',
   	'LBL_DATE_BASED_FILTERS' => '<i>Date filters are relative to the time zone of the report\'s <b>Assigned To</b> user</i>',

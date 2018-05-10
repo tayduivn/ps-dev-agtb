@@ -50,11 +50,17 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
         $GLOBALS["log"]->debug("-----> in Reports foreach() loop");
 
         $savedReport = BeanFactory::getBean('Reports', $scheduleInfo['report_id']);
+        if (!$savedReport || !$savedReport->ACLAccess('view')) {
+            $GLOBALS["log"]->error('ScheduleReport: User ' . $current_user->id . ' can not access report id ' . $scheduleInfo['report_id']);
+            $this->job->failJob('User ' . $current_user->id . ' can not access report id ' . $scheduleInfo['report_id']);
+            return false;
+        }
 
         $GLOBALS["log"]->debug("-----> Generating Reporter");
         $reporter = new Report(from_html($savedReport->content));
 
         $reporter->is_saved_report = true;
+        $reporter->isScheduledReport = true;
         $reporter->saved_report = $savedReport;
         $reporter->saved_report_id = $savedReport->id;
 
@@ -112,12 +118,12 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
                 $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
                 // attach the report, using the subject as the name of the attachment
-                $charsToRemove  = array("\r", "\n");
+                $charsToRemove = array("\r", "\n");
                 // remove these characters from the attachment name
                 $attachmentName = str_replace($charsToRemove, "", $subject);
                 // replace spaces with the underscores
                 $attachmentName = str_replace(" ", "_", "{$attachmentName}.pdf");
-                $attachment     = new Attachment($reportFilename, $attachmentName, Encoding::Base64, "application/pdf");
+                $attachment = new Attachment($reportFilename, $attachmentName, Encoding::Base64, "application/pdf");
                 $mailer->addAttachment($attachment);
 
                 // set the body of the email
