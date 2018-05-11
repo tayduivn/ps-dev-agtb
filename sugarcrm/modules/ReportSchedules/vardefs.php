@@ -124,7 +124,3 @@ VardefManager::createVardef(
 );
 
 $dictionary['ReportSchedule']['fields']['name']['audited'] = true;
-$dictionary['ReportSchedule']['fields']['modified_user_id']['audited'] = true;
-$dictionary['ReportSchedule']['fields']['date_entered']['audited'] = true;
-$dictionary['ReportSchedule']['fields']['date_modified']['audited'] = true;
-$dictionary['ReportSchedule']['fields']['created_by']['audited'] = true;
