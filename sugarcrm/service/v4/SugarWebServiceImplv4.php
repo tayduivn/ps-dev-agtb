@@ -298,7 +298,18 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
         }else
         {
-            $response = self::$helperObject->get_data_list($seed,$order_by, $query, $offset,-1,-1,$deleted,$favorites);
+            $response = self::$helperObject->get_data_list(
+                $seed,
+                $order_by,
+                $query,
+                $offset,
+                -1,
+                -1,
+                $deleted,
+                $favorites,
+                false,
+                $select_fields
+            );
         } // else
         $list = $response['list'];
 
