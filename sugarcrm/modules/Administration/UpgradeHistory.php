@@ -133,6 +133,15 @@ class UpgradeHistory extends SugarBean
         $query = "SELECT id FROM " . $this->table_name . " where md5sum = '$var_md5'";
         return( parent::build_related_list( $query, $this ) );
     }
+    public function findInstalledVersion($idName)
+    {
+        $uhTable = $this->table_name;
+        $query = "SELECT * FROM {$uhTable} where id_name = ? AND status = 'installed'";
+        $stmt = $this->db->getConnection()->executeQuery($query, [$idName]);
+        $return = $stmt->fetch();
+
+        return $return;
+    }
 
     function UninstallAvailable($patch_list, $patch_to_check)
     {

@@ -213,6 +213,12 @@ class ModuleInstaller{
             $this->rebuild_all(true);
             $rac = new RepairAndClear();
             $rac->repairAndClearAll($selectedActions, $this->installed_modules,true, false);
+            $rac->repairAndClearAll(
+                ['rebuildExtensions', 'clearAdditionalCaches'],
+                [translate('LBL_ALL_MODULES')],
+                true,
+                false
+            );
             $this->updateSystemTabs('Add',$this->tab_modules);
             //Clear out all the langauge cache files.
             clearAllJsAndJsLangFilesWithoutOutput();
@@ -1798,6 +1804,13 @@ class ModuleInstaller{
             //we need to save the setting to set it back after rebuildAll() completes.
             $silentBak = $this->silent;
             $this->rebuild_all(true);
+            $rac = new RepairAndClear();
+            $rac->repairAndClearAll(
+                ['rebuildExtensions', 'clearAdditionalCaches'],
+                [translate('LBL_ALL_MODULES')],
+                true,
+                false
+            );
             $this->silent = $silentBak;
 
             //TY-188, clearing session
@@ -1894,6 +1907,7 @@ class ModuleInstaller{
         global $beanFiles, $beanList, $current_user;
         include('include/modules.php');
         include("modules/ACL/remove_actions.php");
+        removeACLActions($current_user, $beanList, $beanFiles, $this->silent);
     }
 
     /**
