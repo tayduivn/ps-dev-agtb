@@ -76,7 +76,8 @@ class SavedReport extends Basic
         $is_published = 0,
         $team_id,
         $chart_type = 'none',
-        $teamSetSelectedId = null
+        $teamSetSelectedId = null,
+        $description = ''
     ) {
 		global $json;
 		global $current_user;
@@ -118,6 +119,7 @@ class SavedReport extends Basic
         //BEGIN SUGARCRM flav=ent ONLY
         $this->acl_team_set_id = $teamSetSelectedId;
         //END SUGARCRM flav=ent ONLY
+        $this->description = $description;
 
 		$this->save();
 		return $result;

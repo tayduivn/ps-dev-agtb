@@ -5199,6 +5199,11 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_SUBJECT' => 'Missing SMTP Server settings',
     'TPL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_DESCRIPTION' => 'To send record assignment notifications, an SMTP server must be configured in {{emailSettingsUrl}}.',
     'LBL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_LINK_TEXT' => 'Email Settings',
+    'LBL_NEW_OOB_REPORTS_NOTIFICATION_SUBJECT' => 'New Stock Reports Available',
+    'LBL_NEW_OOB_REPORTS_NOTIFICATION_DESC_1' => 'New Stock reports are available in your ',
+    'LBL_NEW_OOB_REPORTS_NOTIFICATION_DESC_2' => 'Reports module',
+    'LBL_NEW_OOB_REPORTS_NOTIFICATION_DESC_3' => 'They are tagged as "Stock Report" and can be filtered. Reports are also tagged as "Sales and Marketing", "Customer Service", "Data Privacy" or "Administrative" based on the content. For more information, refer to the ',
+    'LBL_NEW_OOB_REPORTS_NOTIFICATION_DESC_4' => 'documentation',
 
     // shortcut keys help
     'LBL_SHORTCUT_KEYS_HELP_ABOUT' => 'SugarCRM enables power users to quickly perform certain tasks with keyboard shortcuts to increase productivity. The tables on the right describe available shortcuts along with the keys and the actions they perform.',
