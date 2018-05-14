@@ -22,6 +22,8 @@ import GroupRecord from './views/group-record';
 import DrawerLayoutOpp from './layouts/drawer-layout-opp';
 import SearchAndAddLayout from './layouts/searchAndAdd-layout';
 import PersonalInfoDrawerLayout from './layouts/personal-info-drawer-layout';
+import AddSugarDashletDrawerLayout from './layouts/add-sugar-dashlet-drawer-layout';
+import DashboardLayout from './layouts/dashboard-layout';
 import LeadConversionLayout from "./layouts/lead-conversion-layout";
 
 
@@ -63,6 +65,8 @@ export default (seedbed: Seedbed) => {
         });
 
         seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
+        seedbed.defineComponent(`Dashboard`, DashboardLayout, {module: 'Dashboards'});
+        seedbed.defineComponent(`AddSugarDashletDrawer`, AddSugarDashletDrawerLayout, {module: 'Dashboards'});
     });
 
     /**
@@ -99,7 +103,7 @@ export default (seedbed: Seedbed) => {
 
     });
 
-// is called after waitForApp, each time
+    // is called after waitForApp, each time
     seedbed.addAsyncHandler(seedbed.events.SYNC, clientInfo => {
 
         let createdRecords = clientInfo.create;
@@ -182,6 +186,13 @@ export default (seedbed: Seedbed) => {
 
             if (recordInfo.module === 'Leads') {
                 seedbed.defineComponent(`${recordInfo.uid}LeadConversionDrawer`, LeadConversionLayout, {
+                    module: recordInfo.module,
+                    id: recordInfo.id
+                });
+            }
+
+            if (recordInfo.module === 'Dashboards') {
+                seedbed.defineComponent(`${recordInfo.uid}Dashboard`, DashboardLayout, {
                     module: recordInfo.module,
                     id: recordInfo.id
                 });

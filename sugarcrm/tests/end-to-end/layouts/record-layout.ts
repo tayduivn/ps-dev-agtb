@@ -72,10 +72,9 @@ export default class RecordLayout extends BaseView {
             await this.driver.click(this.$(btnName));
         }
     }
-    public async performAction(action, id, module) {
 
+    public async performAction(action, id, module) {
         await this.driver.scroll(this.$(action, {module, id}));
         await this.driver.click(this.$(action, {module, id}));
     }
-
 }

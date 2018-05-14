@@ -179,7 +179,7 @@ When(/^I provide input for (#\S+) view for (\d+) row$/,
  *
  * @example When I click more guests button on #C_1Preview view
  */
-When(/^I click (show more|show less|more guests) button on (#\S+) view$/, async function(buttonName: string, layout: RecordLayout) {
+When(/^I click (show more|show less|more guests) button on (#\S+) view$/, async function(buttonName: string, layout: any) {
     await layout.showMore(buttonName);
 }, {waitForApp: true});
 

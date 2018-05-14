@@ -34,6 +34,7 @@ import * as QuoteGroupTitleField from '../fields/quote-group-title-field';
 import * as EmailRecipientsField from '../fields/email-recipients';
 import * as BadgeSelectField from '../fields/badge-select-field';
 import * as ParticipantsField from '../fields/participants-field';
+import * as DashboardtitleField from '../fields/dashboardtitle-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -69,5 +70,6 @@ export const FIELD_TYPES__MAP = {
     'badge-select': BadgeSelectField,
     'email-recipients': EmailRecipientsField,
     'participants': ParticipantsField,
+    'dashboardtitle': DashboardtitleField,
 };
 

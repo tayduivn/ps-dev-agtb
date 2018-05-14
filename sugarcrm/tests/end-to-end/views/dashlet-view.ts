@@ -8,33 +8,28 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-import RecordLayout from './record-layout';
+
+import BaseView from './base-view';
 
 /**
- * Represents a Detail/Record page layout.
+ * Represents Dashboard view.
  *
- * @class RecordLayout
+ * @class DashletView
  * @extends BaseView
  */
-export default class DrawerLayout extends RecordLayout {
+export default class DashletView extends BaseView {
 
     constructor(options) {
-
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.drawer.active',
-            'show more': '.show-hide-toggle .btn.more',
-            'show less': '.show-hide-toggle .btn.less',
+            $: '.dashlet-cell',
+                header: '.dashlet-header',
+                buttons: {
+                    cog: '.fa.fa-cog',
+                },
 
+            content: 'dashlet-content'
         });
-
-        this.type = 'drawer';
-    }
-    public async showMore(btnName) {
-        if (await this.driver.isVisible(this.$(btnName))) {
-            await this.driver.click(this.$(btnName));
-        }
     }
 }
-

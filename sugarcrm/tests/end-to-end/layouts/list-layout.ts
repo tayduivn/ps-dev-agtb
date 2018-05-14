@@ -32,12 +32,12 @@ export default class ListLayout extends BaseView {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.main-pane:not([style*="display: none"])'
+            $: '.main-pane:not([style*="display: none"])',
+            'show more': '.btn.btn-link.btn-invisible.more',
         });
 
         this.FilterView = this.createComponent<FilterView>(FilterView, { module: options.module });
         this.HeaderView = this.createComponent<HeaderView>(HeaderView);
         this.defaultView = this.ListView = this.createComponent<ListView>(ListView, { module: options.module, default: true });
-
     }
 }

@@ -109,7 +109,6 @@ export default class extends BaseView {
         throw new Error(`Failed to create '${name}' field of '${type}' type`);
     }
 
-
     public async getAttribute(sel: string, attr: string): Promise<string> {
         let templateName: string | string[] = await this.driver.getAttribute<string>(sel, attr);
         if (_.isArray(templateName)) {
@@ -128,4 +127,7 @@ export default class extends BaseView {
         await field.click();
     }
 
+    public async clickButton(buttonName) {
+        return this.driver.click(this.$(`buttons.${buttonName.toLowerCase()}`));
+    }
 }

@@ -38,8 +38,8 @@ export default class PreviewLayout extends BaseView {
 
         this.defaultView = this.PreviewView = this.createComponent(PreviewView);
         this.PreviewHeaderView = this.createComponent(PreviewHeaderView);
-
     }
+
     public async showMore(btnName) {
         if (await this.driver.isVisible(this.$(btnName))) {
             await this.driver.scroll(this.$(btnName));
