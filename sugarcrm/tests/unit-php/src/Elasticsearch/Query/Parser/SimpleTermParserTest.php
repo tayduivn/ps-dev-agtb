@@ -42,7 +42,7 @@ class SimpleTermParserTest extends TestCase
             $this->assertSame(TermParserHelper::getOperator($defaultOperator), $parser->getDefaultOperator());
         }
 
-        $this->assertSame($parser->parse($terms), $expectecd);
+        $this->assertSame($expectecd, $parser->parse($terms));
     }
 
     public function providerParseTest()
@@ -112,6 +112,17 @@ class SimpleTermParserTest extends TestCase
                 'OR',
                 array('OR' => array(array('AND' => array('b', array('OR' => array('c d')))), 'a')),
             ),
+            // Not terms as a group
+            array(
+                'a -(b c)',
+                'OR',
+                array(
+                    'AND' => array(
+                        array('AND' => array('a')),
+                        array('NOT' => array(array('OR' => array('b c')))),
+                    ),
+                ),
+            ),
             // unbalanced braces, make a best guess
             array(
                 'a OR (b AND (c OR d)',
@@ -159,6 +170,64 @@ class SimpleTermParserTest extends TestCase
             array('a   b   AND    and', '&', array('AND' => array('a', 'b', 'and'))),
             array('        ', '&', array('OR' => array(' '))),
             array('   AND     ', '&', array('OR' => array(' '))),
+            // large terms, 'AND'
+            array(
+                '111111111111111222222222222222333333333 AND 4444444444444445555555555555551',
+                'AND',
+                array(
+                    'AND' => array(
+                        array(
+                            'AND' => array(
+                                '111111111111111',
+                                '222222222222222',
+                                '333333333',
+                            ),
+                        ),
+                        array(
+                            'AND' => array(
+                                '444444444444444',
+                                '555555555555555',
+                                '1',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            // large terms, 'OR'
+            array(
+                '111111111111111222222222222222333333333 444',
+                'OR',
+                array(
+                    'OR' => array(
+                        array(
+                            'AND' => array(
+                                '111111111111111',
+                                '222222222222222',
+                                '333333333',
+                            ),
+                        ),
+                        '444',
+                    ),
+                ),
+            ),
+            array(
+                '111111111111111222222222222222333333333 NOT 444',
+                'NOT',
+                array(
+                    'AND' => array(
+                        array(
+                            'AND' => array(
+                                '111111111111111',
+                                '222222222222222',
+                                '333333333',
+                            ),
+                        ),
+                        array(
+                            'NOT' => array('444'),
+                        ),
+                    ),
+                ),
+            ),
         );
     }
 }

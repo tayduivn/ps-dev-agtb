@@ -42,7 +42,7 @@ class BasicTermsTest extends TestCase
         $this->assertSame($terms, $term->getTerms());
 
         $term->addTerm($additionalTerm);
-        $this->assertEquals($term->toArray(), $expectecd);
+        $this->assertEquals($expectecd, $term->toArray());
     }
 
     public function providerBasicTermsTest()
@@ -110,6 +110,13 @@ class BasicTermsTest extends TestCase
                 array('James', 'Bond'),
                 new BasicTerms('AND', array('M6', '007')),
                 array('OR' => array(array('AND' => array('M6', '007')), 'James Bond')),
+            ),
+            // NOT operator
+            array(
+                'NOT',
+                array('James', 'Bond'),
+                new BasicTerms('AND', array('M6', '007')),
+                array('NOT' => array('James', 'Bond', array('AND' => array('M6', '007')))),
             ),
         );
     }
