@@ -28,4 +28,6 @@ $mod_strings = array (
     'LBL_DELETED' => 'Delete',
     'LBL_MODULE_NAME' => 'Email Addresses',
     'LBL_MODULE_NAME_SINGULAR' => 'Email Address',
+    'LBL_CONFIRMATION_TITLE' => 'Thank You',
+    'LBL_CONFIRMATION_MESSAGE' => 'Your subscription has been confirmed. You have been added to our list and will hear from us soon.',
 );

@@ -50,4 +50,5 @@ $entry_point_registry = array(
     'SAML'=>  array('file' => 'modules/Users/authentication/SAMLAuthenticate/index.php', 'auth' => false),
     'tinymce_spellchecker_rpc' => array('file' => 'include/javascript/tiny_mce/plugins/spellchecker/rpc.php', 'auth' => true),
     'jslang'=>  array('file' => 'include/language/getJSLanguage.php', 'auth' => true),
+    'ConfirmEmailAddress' => array('file' => 'modules/EmailAddresses/Confirm.php', 'auth' => false),
 );
