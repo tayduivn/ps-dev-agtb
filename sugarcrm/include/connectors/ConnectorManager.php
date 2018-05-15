@@ -124,7 +124,6 @@ class ConnectorManager
      */
     public function putConnectorCache($data)
     {
-        // store to sugar_cache
         sugar_cache_put('connector_metadata', $data);
 
         if (!empty($data['_hash'])) {

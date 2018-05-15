@@ -878,7 +878,7 @@ class MetaDataFiles
         }
     }
 
-    public static function getModuleClientCacheKey(
+    private static function getModuleClientCacheKey(
         $module,
         $platform,
         $type,

@@ -287,7 +287,7 @@ class FontManager{
                 if(file_exists($this->fontPath.$this->getFilenameShort().".z") && is_writable($this->fontPath.$this->getFilenameShort().".z")){
                     unlink($this->fontPath.$this->getFilenameShort().".z");
                 }
-                $this->clearCachedFontList();
+                $this->clearCachedFile();
                 return true;
             }else{
                 array_push($this->errors, $this->fontPath.$this->filename . " " . translate("ERR_FONT_NOT_WRITABLE","Configurator"));
@@ -376,14 +376,14 @@ class FontManager{
             }
 
         }
-        $this->clearCachedFontList();
+        $this->clearCachedFile();
         return $error;
     }
     /**
      * This method  delete the cached file cachedFontList.php
      * @return boolean
      */
-    public function clearCachedFontList()
+    public function clearCachedFile()
     {
         global $current_user;
         if(!$current_user->isDeveloperForAnyModule()){

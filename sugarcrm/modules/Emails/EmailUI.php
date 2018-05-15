@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 use Sugarcrm\Sugarcrm\Util\Serialized;
 
 require_once("vendor/ytree/Tree.php");
@@ -3095,27 +3094,15 @@ eoq;
 
 
     /**
-     * Returns a filename for a cache file based on a hashed mbox and uid
+     * Returns key for based on a hashed mbox and uid
      *
      * @param string $mbox Mailbox folder label
      * @param string $uid Unique ID of message
      * @return string Filename
      */
-    private function getMboxCacheFilename($mbox, $uid)
+    private function getMboxCacheKey($mbox, $uid)
     {
-        return hash('sha256', $mbox . $uid) . '.php';
-    }
-
-    /**
-     * Generates a filepath for a cache file
-     * @param string $ieId InboundEmail id
-     * @param string $type Type of cache (messages|folders)
-     * @param string $filename Filename
-     * @return string Cache filepath
-     */
-    private function getCacheFilePath($ieId, $type, $filename)
-    {
-        return sugar_cached("modules/Emails/{$ieId}/{$type}/{$filename}");
+        return hash('sha256', $mbox . $uid);
     }
 
 	/**
@@ -3146,8 +3133,8 @@ eoq;
      */
     public function getMboxCacheValue($ieId, $mbox, $uid)
     {
-        $filename = $this->getMboxCacheFilename($mbox, $uid);
-        return $this->getCacheValue($ieId, 'messages', $filename, 'out');
+        $mboxCacheKey = $this->getMboxCacheKey($mbox, $uid);
+        return $this->getCacheValue($ieId, 'messages', $mboxCacheKey, 'out');
     }
 
 	/**
@@ -3225,8 +3212,8 @@ eoq;
      */
     public function writeMboxCacheValue($ieId, $mbox, $uid, $var)
     {
-        $filename = $this->getMboxCacheFilename($mbox, $uid);
-        return $this->writeCacheEntry('out', $var, $ieId, 'messages', $filename);
+        $mboxCacheKey = $this->getMboxCacheKey($mbox, $uid);
+        return $this->writeCacheEntry('out', $var, $ieId, 'messages', $mboxCacheKey);
     }
 
     /**
@@ -3238,12 +3225,12 @@ eoq;
      */
     public function deleteMboxCache($ieId, $mbox, $uid)
     {
-        $filename = $this->getMboxCacheFilename($mbox, $uid);
-        $emailCacheKey = $this->getEmailCacheKey($ieId, 'messages', $filename);
+        $mboxCacheKey = $this->getMboxCacheKey($mbox, $uid);
+        $emailCacheKey = $this->getEmailCacheKey($ieId, 'messages', $mboxCacheKey);
         sugar_cache_clear($emailCacheKey);
 
         $emailCacheKeyMap = sugar_cache_retrieve('email_cache_key_map');
-        unset($emailCacheKeyMap[$ieId]['messages'][$filename]);
+        unset($emailCacheKeyMap[$ieId]['messages'][$mboxCacheKey]);
 
         sugar_cache_put('email_cache_key_map', $emailCacheKeyMap);
     }

@@ -21,7 +21,7 @@ class ServiceDictionary {
      */
     public function clearCache() {
 
-        $dictionaryKeyList = sugar_cache_retrieve('service_dictionary_key_list');
+        $dictionaryKeyList = sugar_cache_retrieve('service_dictionary_keys');
         if (!empty($dictionaryKeyList)) {
             foreach ($dictionaryKeyList as $key => $value) {
                 sugar_cache_clear($key);
@@ -29,7 +29,7 @@ class ServiceDictionary {
             }
 
             if (empty($dictionaryKeyList)) {
-                sugar_cache_clear('service_dictionary_key_list');
+                sugar_cache_clear('service_dictionary_keys');
             }
         }
     }
@@ -62,12 +62,12 @@ class ServiceDictionary {
         $dictionaryKey = 'service_dictionary_' . $apiType;
         sugar_cache_put($dictionaryKey, $storageData);
 
-        $dictionaryKeyList = sugar_cache_retrieve('service_dictionary_key_list');
+        $dictionaryKeyList = sugar_cache_retrieve('service_dictionary_keys');
         if (empty($dictionaryKeyList)) {
             $dictionaryKeyList = array();
         }
         $dictionaryKeyList[$dictionaryKey] = true;
-        sugar_cache_put('service_dictionary_key_list', $dictionaryKeyList);
+        sugar_cache_put('service_dictionary_keys', $dictionaryKeyList);
     }
 
     /**

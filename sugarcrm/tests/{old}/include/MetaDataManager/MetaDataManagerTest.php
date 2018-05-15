@@ -332,7 +332,7 @@ class MetaDataManagerTest extends TestCase
     public function testGetLanguage($params)
     {
         $manager = $this->getMockBuilder('MetaDataManager')
-            ->disableOriginalConstructor()->setMethods(array('getAppListStrings', 'getLangUrl'))->getMock();
+           ->disableOriginalConstructor()->setMethods(array('getAppListStrings', 'getLangOrderKey'))->getMock();
         //Skipping the constructor requires we set up the db ourselves
         $manager->db = DBManagerFactory::getInstance();
 
@@ -341,7 +341,7 @@ class MetaDataManagerTest extends TestCase
 
         $fileName = md5(microtime());
 
-        $manager->expects($this->exactly(3))->method('getLangUrl')
+        $manager->expects($this->exactly(3))->method('getLangOrderKey')
             ->with($params['lang'], $params['ordered'])->will($this->returnValue($fileName));
 
         $manager->getLanguage($params);
@@ -695,21 +695,6 @@ PLATFORMS;
         return $this->getMockBuilder('DBManager')
             ->setMethods(array($method))
             ->getMockForAbstractClass();
-    }
-
-    /**
-     * @dataProvider getPlatformsWithCachesInFilesystemProvider
-     */
-    public function testGetPlatformsWithCachesInFilesystem($fileName, $platformName)
-    {
-        $dir = 'cache/api/metadata';
-        SugarTestHelper::saveFile($dir . '/' . $fileName);
-
-        SugarAutoLoader::ensureDir($dir);
-        file_put_contents($dir . '/' . $fileName, '');
-
-        $platforms = SugarTestReflection::callProtectedMethod('MetaDataManager', 'getPlatformsWithCachesInFilesystem');
-        $this->assertContains($platformName, $platforms);
     }
 
     public static function getPlatformsWithCachesInFilesystemProvider()
