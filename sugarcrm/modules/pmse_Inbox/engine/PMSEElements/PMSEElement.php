@@ -70,6 +70,13 @@ class PMSEElement implements PMSERunnable
     protected $logger;
 
     /**
+     * Flag to create a new pmse_bpm_flow
+     *
+     * @var boolean
+     */
+    protected $createFlow;
+
+    /**
      * Class constructor
      * @codeCoverageIgnore
      */
@@ -83,6 +90,7 @@ class PMSEElement implements PMSERunnable
         $this->emailHandler = ProcessManager\Factory::getPMSEObject('PMSEEmailHandler');
         $this->dbHandler = $db;
         $this->logger = PMSELogger::getInstance();
+        $this->createFlow = false;
     }
 
     /**
@@ -296,7 +304,7 @@ class PMSEElement implements PMSERunnable
     {
         $response = array();
         $response['route_action'] = $routeAction;
-        $response['flow_action'] = $flowAction;
+        $response['flow_action'] = $this->createFlow ? 'CREATE' : 'UPDATE';
         $response['flow_data'] = $data;
         $response['flow_filters'] = $filters;
         $response['flow_id'] = isset($data['id']) ? $data['id'] : '';

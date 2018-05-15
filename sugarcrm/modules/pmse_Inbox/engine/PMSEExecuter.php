@@ -357,6 +357,15 @@ class PMSEExecuter
         $arguments = array()
     ) {
 
+        $caseBean = BeanFactory::getBean('pmse_Inbox');
+        $caseBean->retrieve_by_string_fields(array('cas_id' => $flowData['cas_id']));
+        if ($caseBean->cas_status != 'IN PROGRESS') {
+            $fd = BeanFactory::getBean('pmse_BpmFlow', $flowData['id']);
+            $fd->cas_flow_status = $caseBean->cas_status;
+            $fd->save();
+            return true;
+        }
+
         // Load the bean if the request comes from a RESUME_EXECUTION related origin
         // like for example: a timer event execution.
         if (is_null($bean)) {
@@ -383,7 +392,12 @@ class PMSEExecuter
             }
         }
 
-        $preparedData = $this->caseFlowHandler->prepareFlowData($flowData, $createThread);
+        if ($externalAction != '') {
+            $preparedData = $this->caseFlowHandler->prepareFlowData($flowData, $externalAction === 'NEW');
+        } else {
+            $preparedData = $flowData;
+        }
+        $executionData = null;
         $this->logger->debug("Begin process Element {$flowData['bpmn_type']}");
 
         try {
@@ -427,9 +441,21 @@ class PMSEExecuter
         // If there are flow elements after this one that need processing, handle
         // them here
         if (!empty($routeData['next_elements'])) {
+
             // If there are more than one following flow - like from a parallel
             // gateway - then mark that as needing a thread
-            $createThread = sizeof($routeData['next_elements']) > 1;
+            $numNextElements = sizeof($routeData['next_elements']);
+            $createThread = $numNextElements > 1 ||
+                ($numNextElements == 1 && !empty($routeData['next_elements'][0]['create_thread']));
+
+            foreach ($routeData['next_elements'] as &$elementData) {
+                $elementData = $this->caseFlowHandler->prepareFlowData($elementData);
+                $elementData['processed_flow'] = $this->caseFlowHandler->saveFlowData($elementData, $createThread);
+                $elementData['id'] = $elementData['processed_flow']['id'];
+                $elementData['cas_thread'] = $elementData['processed_flow']['cas_thread'];
+                $elementData['previous_closed_flow'] = $this->caseFlowHandler->closePreviousFlow($executionData['flow_data']);
+            }
+            unset($elementData);
 
             // And if we need a thread, adjust the execution time accordingly
             if ($createThread) {

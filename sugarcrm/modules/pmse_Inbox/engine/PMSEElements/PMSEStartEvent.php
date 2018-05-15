@@ -63,6 +63,8 @@ class PMSEStartEvent extends PMSEEvent
             $registry->set($regKey, $triggered, true);
         }
 
+        $this->createFlow = true;
+
         return parent::run($flowData, $bean, $externalAction, $arguments);
     }
 

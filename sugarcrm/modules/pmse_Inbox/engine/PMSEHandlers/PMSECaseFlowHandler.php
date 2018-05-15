@@ -459,10 +459,17 @@ class PMSECaseFlowHandler
         return $bpmElement;
     }
 
-    public function prepareFlowData($flowData)
+    /**
+     * Prepares flow data for a return to the engine
+     *
+     * @param array $flowData The current execution flow data
+     * @param boolean $increment Whether to increment the max_index
+     * @return array
+     */
+    public function prepareFlowData($flowData, $increment = true)
     {
         $flowData['cas_current_index'] = $flowData['cas_index'];
-        $flowData['max_index'] = $this->retrieveMaxIndex($flowData);
+        $flowData['max_index'] = $increment ? $this->retrieveMaxIndex($flowData) : $flowData['cas_index'] - 1;
         $preparedData = $this->processFlowData($flowData);
         return $preparedData;
     }
@@ -1067,8 +1074,6 @@ class PMSECaseFlowHandler
         while ($row = $bean->db->fetchByAssoc($result)) {
 
             $this->closeThreadByThreadIndex($flowData['cas_id'], $row['cas_thread_index']);
-            $this->setCloseStatusForThisThread($flowData['cas_id'], $row['cas_thread_index']);
-            //$this->bpmLog('DEBUG', "[$cas_id][$cas_index] thread {$row['cas_thread_index']} closed by Terminate End Event");
         }
         // Change status in flow when Activity status is FORM
         $this->terminateCaseFlow($flowData['cas_id']);
