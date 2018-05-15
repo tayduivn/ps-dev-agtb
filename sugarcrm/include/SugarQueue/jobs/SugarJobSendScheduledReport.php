@@ -109,18 +109,22 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
             try {
                 $GLOBALS["log"]->debug("-----> Generating Mailer");
                 $mailer = MailerFactory::getSystemDefaultMailer();
-
+                $timedate = TimeDate::getInstance();
+                $reportTime = $timedate->getNow();
+                $reportTime = $timedate->asUser($reportTime) . ' ' . $reportTime->format('T');
+                $reportName = empty($savedReport->name) ? "Report" : $savedReport->name;
                 // set the subject of the email
-                $subject = empty($savedReport->name) ? "Report" : $savedReport->name;
+                $subject = $mod_strings["LBL_SUBJECT_SCHEDULED_REPORT"] . $reportName .
+                    $mod_strings["LBL_SUBJECT_AS_OF"] . $reportTime;
                 $mailer->setSubject($subject);
 
                 // add the recipient
                 $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
-                // attach the report, using the subject as the name of the attachment
+                // attach the report
                 $charsToRemove = array("\r", "\n");
                 // remove these characters from the attachment name
-                $attachmentName = str_replace($charsToRemove, "", $subject);
+                $attachmentName = str_replace($charsToRemove, "", $reportName . ' ' . $reportTime);
                 // replace spaces with the underscores
                 $attachmentName = str_replace(" ", "_", "{$attachmentName}.pdf");
                 $attachment = new Attachment($reportFilename, $attachmentName, Encoding::Base64, "application/pdf");
@@ -135,10 +139,11 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
 
                 $body .= ",\n\n" .
                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
-                    $savedReport->date_entered .
+                    "\n\n" .
                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"] .
-                    $savedReport->name .
-                    $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
+                    $reportName . "\n\n" .
+                    $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"] .
+                    $reportTime;
 
                 $textOnly = EmailFormatter::isTextOnly($body);
                 if ($textOnly) {
