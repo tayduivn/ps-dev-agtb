@@ -45,6 +45,10 @@
                 module: 'ReportSchedules',
                 model: newModel
             }
+        }, function(context, model) {
+            if (model && model.module === app.controller.context.get('module')) {
+                app.controller.context.reloadData();
+            }
         });
     }
 })
