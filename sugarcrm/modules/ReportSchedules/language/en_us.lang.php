@@ -21,4 +21,7 @@ $mod_strings = array(
     'LBL_USERS_SUBPANEL_TITLE' => 'Users',
     'LBL_FILTER_BY_REPORT' => 'By Report',
     'LBL_RECENTLY_MODIFIED' => 'Recently Modified',
+//BEGIN SUGARCRM flav=ent ONLY
+    'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a>. Open the schedule to add users via the Users subpanel.',
+//END SUGARCRM flav=ent ONLY
 );
