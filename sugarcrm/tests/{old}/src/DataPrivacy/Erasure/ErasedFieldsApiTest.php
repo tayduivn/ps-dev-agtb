@@ -131,19 +131,11 @@ class ErasedFieldsApiTest extends TestCase
 
     /**
      * @test
+     * @dataProvider loaderProvider()
      */
-    public function relateAndParentFields()
+    public function relateAndParentFields(callable $load)
     {
-        $query = new SugarQuery();
-        $query->from(self::$note, [
-            'erased_fields' => true,
-        ]);
-        $query->where()->equals('id', self::$note->id);
-
-        $notes = self::$note->fetchFromQuery($query);
-        $this->assertCount(1, $notes);
-
-        $data = $this->format(array_shift($notes));
+        $note = $load(self::$note, ['contact_name', 'parent_name']);
 
         $this->assertArraySubset([
             'contact' => [
@@ -156,73 +148,16 @@ class ErasedFieldsApiTest extends TestCase
                     'last_name',
                 ],
             ],
-        ], $data);
+        ], $this->format($note));
     }
 
     /**
      * @test
+     * @dataProvider loaderProvider()
      */
-    public function retrieveWithParentErasedFields()
+    public function ownAndRelateFields(callable $load)
     {
-        $note = \BeanFactory::retrieveBean('Notes', self::$note->id, [
-            'erased_fields' => true,
-            'use_cache' => false,
-        ]);
-        $data = $this->format($note);
-
-        $this->assertArraySubset([
-            'contact' => [
-                '_erased_fields' => [
-                    'first_name',
-                ],
-            ],
-            'parent' => [
-                '_erased_fields' => [
-                    'last_name',
-                ],
-            ],
-        ], $data);
-    }
-
-    /**
-     * @test
-     */
-    public function ownAndRelateFields()
-    {
-        $query = new SugarQuery();
-        $query->from(self::$contact2, [
-            'erased_fields' => true,
-        ]);
-        $query->select('report_to_name');
-        $query->where()->equals('id', self::$contact2->id);
-
-        $contacts = self::$contact2->fetchFromQuery($query);
-        $this->assertCount(1, $contacts);
-
-        $data = $this->format(array_shift($contacts));
-
-        $this->assertArraySubset([
-            '_erased_fields' => [
-                'last_name',
-            ],
-            'reports_to_link' => [
-                '_erased_fields' => [
-                    'first_name',
-                ],
-            ],
-        ], $data);
-    }
-
-    /**
-     * @test
-     */
-    public function ownAndRelateFieldsViaRetrieve()
-    {
-        BeanFactory::clearCache();
-
-        $contact = BeanFactory::retrieveBean(self::$contact2->module_name, self::$contact2->id, [
-            'erased_fields' => true,
-        ]);
+        $contact = $load(self::$contact2, ['report_to_name']);
 
         $this->assertArraySubset([
             '_erased_fields' => [
@@ -238,26 +173,43 @@ class ErasedFieldsApiTest extends TestCase
 
     /**
      * @test
+     * @dataProvider loaderProvider()
      */
-    public function relateFieldWithoutLink()
+    public function relateFieldWithoutLink(callable $load)
     {
-        $query = new SugarQuery();
-        $query->from(self::$lead, [
-            'erased_fields' => true,
-        ]);
-        $query->select('report_to_name');
-        $query->where()->equals('id', self::$lead->id);
-
-        $leads = self::$lead->fetchFromQuery($query);
-        $this->assertCount(1, $leads);
-
-        $data = $this->format(array_shift($leads));
+        $lead = $load(self::$lead, ['report_to_name']);
 
         $this->assertArraySubset([
             '_erased_fields' => [
                 'report_to_name',
             ],
-        ], $data);
+        ], $this->format($lead));
+    }
+
+    public static function loaderProvider() : iterable
+    {
+        yield 'Via SugarQuery' => [
+            function (SugarBean $bean, array $fields) : SugarBean {
+                $query = new SugarQuery();
+                $query->from($bean, [
+                    'erased_fields' => true,
+                ])->select($fields);
+                $query->where()->equals('id', $bean->id);
+
+                $beans = $bean->fetchFromQuery($query);
+
+                return array_shift($beans);
+            },
+        ];
+
+        yield 'Via SugarBean::retrieve()' => [
+            function (SugarBean $bean) : SugarBean {
+                return BeanFactory::retrieveBean($bean->module_name, $bean->id, [
+                    'erased_fields' => true,
+                    'use_cache' => false,
+                ]);
+            },
+        ];
     }
 
     private function format(SugarBean $bean)

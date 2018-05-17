@@ -3343,10 +3343,7 @@ class SugarBean
             'action' => 'view',
         ]);
 
-        // the * doesn't include relate fields
-        $query->select('*', ...array_keys(
-            $this->get_related_fields()
-        ));
+        $query->select('*');
 
         $query->where()->equals("$this->table_name.id", $id);
 
@@ -3479,7 +3476,7 @@ class SugarBean
      *                         returnRawRows - Returns raw rows in the _row key, indexed by bean id
      *                         beanList - An array of beans to merge the results into
      *                         skipSecondaryQuery - Don't perform the secondary queries
-     * @return array SugarBean - An array of SugarBeans populated with the requested fields
+     * @return SugarBean[]     An array of SugarBeans populated with the requested fields
      */
     function fetchFromQuery(SugarQuery $query, array $fields = array(), array $options = array())
     {
@@ -5927,7 +5924,13 @@ class SugarBean
         {
             $name = $field['name'];
 
-            if (empty($this->$name) && !empty($field['rname_link']) && !empty($field['link'])) {
+            if (!empty($this->$name)) {
+                continue;
+            }
+
+            if (in_array($field['type'], static::$relateFieldTypes)) {
+                $this->fillInRelateField($field);
+            } elseif (!empty($field['rname_link']) && !empty($field['link'])) {
                 $link = $field['link'];
 
                 if (isset($this->field_defs[$link]['link_type']) && $this->field_defs[$link]['link_type'] == 'one') {
@@ -5947,6 +5950,90 @@ class SugarBean
         }
 
         $fill_in_rel_depth--;
+    }
+
+    private function fillInRelateField(array $definition) : void
+    {
+        if (empty($definition['module']) || empty($definition['id_name'])) {
+            return;
+        }
+
+        $module = $definition['module'];
+        $id_name = $definition['id_name'];
+
+        if (empty($this->$id_name) && isset($this->field_defs[$id_name]['type'])
+            && ($this->field_defs[$id_name]['type'] == 'relate' ||
+                ($this->field_defs[$id_name]['type'] == 'id'
+                    && isset($this->field_defs[$id_name]['source'])
+                    && $this->field_defs[$id_name]['source'] == 'non-db'))) {
+            $this->fill_in_link_field($id_name, $definition);
+        }
+
+        if (empty($this->$id_name) || ($module == $this->module_name && $this->$id_name == $this->id)) {
+            return;
+        }
+
+        $relatedBean = BeanFactory::newBean($module);
+        $rName = $definition['rname'] ?? 'name';
+
+        $query = new SugarQuery();
+        $query->from($relatedBean, [
+            'erased_fields' => $this->retrieve_erased_fields,
+
+            // disable visibility filtering same as in SugarQuery_Builder_Field
+            'team_security' => false,
+        ])->select($rName);
+
+        $ownerField = $relatedBean->getOwnerField();
+
+        if ($ownerField) {
+            $query->select($ownerField);
+        }
+
+        $query->where()->equals('id', $this->$id_name);
+
+        $relatedBeans = $relatedBean->fetchFromQuery($query, [$rName]);
+
+        /** @var SugarBean $relatedBean */
+        $relatedBean = array_shift($relatedBeans);
+
+        if (!$relatedBean) {
+            return;
+        }
+
+        $name = $definition['name'];
+
+        $this->$name = $relatedBean->$rName;
+
+        if ($ownerField) {
+            $this->{$name . '_owner'} = $relatedBean->$ownerField;
+        }
+
+        if ($this->retrieve_erased_fields) {
+            if (isset($definition['link'])) {
+                $this->{$definition['link'] . '_erased_fields'} = $relatedBean->erased_fields;
+            } else {
+                if (strcmp($this->$name, '') != 0) {
+                    return;
+                }
+
+                $rNameDefinition = $relatedBean->getFieldDefinition($rName);
+
+                if ($rNameDefinition['type'] === 'fullname') {
+                    global $locale;
+
+                    $sourceFields = $locale->getNameFormatFields($relatedBean);
+                } else {
+                    $sourceFields = [$rName];
+                }
+
+                if (count(
+                    array_intersect($relatedBean->erased_fields, $sourceFields)
+                ) > 0) {
+                    $this->erased_fields[] = $name;
+                }
+            }
+        }
     }
 
     /**
