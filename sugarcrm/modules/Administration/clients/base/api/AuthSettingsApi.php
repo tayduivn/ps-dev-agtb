@@ -41,6 +41,32 @@ class AuthSettingsApi extends SugarApi
                 'exceptions' => [
                     'SugarApiExceptionNotAuthorized',
                 ],
+                'minVersion' => '11.2',
+            ],
+            'switchOnIdmMode' => [
+                'reqType' => ['POST'],
+                'path' => ['Administration', 'settings', 'idmMode'],
+                'pathVars' => [''],
+                'method' => 'switchOnIdmMode',
+                'shortHelp' => 'Turns IDM mode on',
+                'longHelp' => 'include/api/help/administration_settings_post_idm_mode_help.html',
+                'exceptions' => [
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionMissingParameter',
+                ],
+                'minVersion' => '11.2',
+            ],
+            'switchOffIdmMode' => [
+                'reqType' => ['DELETE'],
+                'path' => ['Administration', 'settings', 'idmMode'],
+                'pathVars' => [''],
+                'method' => 'switchOffIdmMode',
+                'shortHelp' => 'Turns IDM mode off',
+                'longHelp' => 'include/api/help/administration_settings_delete_idm_mode_help.html',
+                'exceptions' => [
+                    'SugarApiExceptionNotAuthorized',
+                ],
+                'minVersion' => '11.2',
             ],
         ];
     }
@@ -55,6 +81,7 @@ class AuthSettingsApi extends SugarApi
      */
     public function authSettings(ServiceBase $api, array $args) :array
     {
+        $this->ensureMigrationEnabled();
         $this->ensureAdminUser();
         $settings = [
             'enabledProviders' => ['local'],
@@ -72,6 +99,40 @@ class AuthSettingsApi extends SugarApi
         }
 
         return $settings;
+    }
+
+    /**
+     * Turns IDM-mode on
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     * @throws SugarApiExceptionMissingParameter
+     */
+    public function switchOnIdmMode(ServiceBase $api, array $args) : array
+    {
+        $this->ensureMigrationEnabled();
+        $this->ensureAdminUser();
+        if (empty($args['idmMode']) || empty($args['idmMode']['enabled'])) {
+            throw new SugarApiExceptionMissingParameter('IDM mode config is not provided');
+        }
+        $this->getAuthConfig()->setIDMMode($args['idmMode']);
+        return $this->getAuthConfig()->getIDMModeConfig();
+    }
+
+    /**
+     * Turns IDM-mode off
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     */
+    public function switchOffIdmMode(ServiceBase $api, array $args) : array
+    {
+        $this->ensureMigrationEnabled();
+        $this->ensureAdminUser();
+        $this->getAuthConfig()->setIDMMode(false);
+        return $this->getAuthConfig()->getIDMModeConfig();
     }
 
     /**
@@ -162,6 +223,16 @@ class AuthSettingsApi extends SugarApi
             throw new SugarApiExceptionNotAuthorized(
                 $GLOBALS['app_strings']['EXCEPTION_NOT_AUTHORIZED']
             );
+        }
+    }
+
+    /**
+     * @throws SugarApiExceptionNotFound
+     */
+    private function ensureMigrationEnabled(): void
+    {
+        if (empty($GLOBALS['sugar_config']['idmMigration'])) {
+            throw new SugarApiExceptionNotFound();
         }
     }
 

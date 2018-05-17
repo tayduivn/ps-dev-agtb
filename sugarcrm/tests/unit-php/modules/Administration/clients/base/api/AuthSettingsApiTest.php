@@ -41,6 +41,11 @@ class AuthSettingsApiTest extends TestCase
     private $config;
 
     /**
+     * @var array
+     */
+    private $sugar_config_bak;
+
+    /**
      * @see testResultAuthSettings
      * @return array
      */
@@ -224,7 +229,7 @@ class AuthSettingsApiTest extends TestCase
      */
     public function testResultAuthSettings(array $in, array $expected) :void
     {
-
+        $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(true);
 
         $this->config->method('getLdapConfig')->willReturn($in['ldapConfig']);
@@ -247,6 +252,7 @@ class AuthSettingsApiTest extends TestCase
      */
     public function testNoAdminRequest() :void
     {
+        $GLOBALS['sugar_config']['idmMigration'] = true;
         $this->currentUser->method('isAdmin')->willReturn(false);
 
         $this->config->expects($this->never())->method('getLdapConfig');
@@ -262,6 +268,7 @@ class AuthSettingsApiTest extends TestCase
      */
     public function testAuthorizedRequest() :void
     {
+        $GLOBALS['sugar_config']['idmMigration'] = true;
         unset($GLOBALS['current_user']);
 
         $this->config->expects($this->never())->method('getLdapConfig');
@@ -272,11 +279,156 @@ class AuthSettingsApiTest extends TestCase
     }
 
     /**
+     * @covers ::authSettings
+     * @expectedException \SugarApiExceptionNotFound
+     */
+    public function testAuthSettingsMigrationDisabled() :void
+    {
+        $GLOBALS['sugar_config']['idmMigration'] = false;
+        $this->currentUser->method('isAdmin')->willReturn(true);
+
+        $this->config->expects($this->never())->method('getLdapConfig');
+        $this->config->expects($this->never())->method('getSAMLConfig');
+        $this->config->expects($this->never())->method('get');
+        
+        $this->api->authSettings($this->service, []);
+    }
+
+    /**
+     * @return array
+     */
+    public function switchOnIdmModeExceptionDataProvider() : array
+    {
+        return [
+            [[]],
+            [['idmMode' => false]],
+            'empty config' => [['idmMode' => []]],
+            'config without enabled parameter' => [['idmMode' => ['some_idm_config']]],
+        ];
+    }
+
+    /**
+     * @covers ::switchOnIdmMode
+     */
+    public function testSwitchOnIdmMode() : void
+    {
+        $GLOBALS['sugar_config']['idmMigration'] = true;
+        $this->currentUser->method('isAdmin')->willReturn(true);
+
+        $this->config->expects($this->once())
+            ->method('setIDMMode')
+            ->with($this->equalTo(['enabled' => true]));
+        $this->config->expects($this->once())
+            ->method('getIDMModeConfig')
+            ->willReturn([]);
+        $this->api->switchOnIdmMode($this->service, ['idmMode' => ['enabled' => true]]);
+    }
+
+    /**
+     * @covers ::switchOnIdmMode
+     * @expectedException SugarApiExceptionMissingParameter
+     * @dataProvider switchOnIdmModeExceptionDataProvider
+     */
+    public function testSwitchOnIdmModeException($args) : void
+    {
+        $GLOBALS['sugar_config']['idmMigration'] = true;
+        $this->currentUser->method('isAdmin')->willReturn(true);
+
+        $this->config->expects($this->never())
+            ->method('setIDMMode');
+        $this->config->expects($this->never())
+            ->method('getIDMModeConfig');
+        $this->api->switchOnIdmMode($this->service, $args);
+    }
+
+    /**
+     * @covers ::switchOnIdmMode
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testSwitchOnIdmModeUnauthorized() : void
+    {
+        $GLOBALS['sugar_config']['idmMigration'] = true;
+        $this->currentUser->method('isAdmin')->willReturn(false);
+
+        $this->config->expects($this->never())
+            ->method('setIDMMode');
+        $this->config->expects($this->never())
+            ->method('getIDMModeConfig');
+        $this->api->switchOnIdmMode($this->service, ['idmMode' => ['enabled' => true]]);
+    }
+
+    /**
+     * @covers ::switchOnIdmMode
+     * @expectedException SugarApiExceptionNotFound
+     */
+    public function testSwitchOnIdmModeMigrationDisabled() : void
+    {
+        $GLOBALS['sugar_config']['idmMigration'] = false;
+        $this->currentUser->method('isAdmin')->willReturn(true);
+
+        $this->config->expects($this->never())
+            ->method('setIDMMode');
+        $this->config->expects($this->never())
+            ->method('getIDMModeConfig');
+        $this->api->switchOnIdmMode($this->service, ['idmMode' => ['enabled' => true]]);
+    }
+
+    /**
+     * @covers ::switchOffIdmMode
+     */
+    public function testSwitchOffIdmMode() : void
+    {
+        $GLOBALS['sugar_config']['idmMigration'] = true;
+        $this->currentUser->method('isAdmin')->willReturn(true);
+
+        $this->config->expects($this->once())
+            ->method('setIDMMode')
+            ->with($this->equalTo(false));
+        $this->config->expects($this->once())
+            ->method('getIDMModeConfig')
+            ->willReturn([]);
+        $this->api->switchOffIdmMode($this->service, []);
+    }
+
+    /**
+     * @covers ::switchOffIdmMode
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testSwitchOffIdmModeUnauthorized() : void
+    {
+        $GLOBALS['sugar_config']['idmMigration'] = true;
+        $this->currentUser->method('isAdmin')->willReturn(false);
+
+        $this->config->expects($this->never())
+            ->method('setIDMMode');
+        $this->config->expects($this->never())
+            ->method('getIDMModeConfig');
+        $this->api->switchOffIdmMode($this->service, []);
+    }
+
+    /**
+     * @covers ::switchOffIdmMode
+     * @expectedException SugarApiExceptionNotFound
+     */
+    public function testSwitchOffIdmModeMigrationDisabled() : void
+    {
+        $GLOBALS['sugar_config']['idmMigration'] = false;
+        $this->currentUser->method('isAdmin')->willReturn(true);
+
+        $this->config->expects($this->never())
+            ->method('setIDMMode');
+        $this->config->expects($this->never())
+            ->method('getIDMModeConfig');
+        $this->api->switchOffIdmMode($this->service, []);
+    }
+
+    /**
      * @inheritDoc
      */
     protected function setUp()
     {
         parent::setUp();
+        $this->sugar_config_bak = $GLOBALS['sugar_config'];
         $this->service = $this->createMock(\RestService::class);
         $this->currentUser = $this->createMock(\User::class);
         $this->config = $this->createMock(Authentication\Config::class);
@@ -293,6 +445,7 @@ class AuthSettingsApiTest extends TestCase
     {
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_strings']);
+        $GLOBALS['sugar_config'] = $this->sugar_config_bak;
         parent::tearDown();
     }
 }

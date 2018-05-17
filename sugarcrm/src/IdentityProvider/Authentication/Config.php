@@ -31,6 +31,11 @@ class Config
     protected $ldapSettings;
 
     /**
+     * @var \Configurator
+     */
+    protected $configurator;
+
+    /**
      * @param \SugarConfig $sugarConfig
      */
     public function __construct(\SugarConfig $sugarConfig)
@@ -143,6 +148,35 @@ class Config
     }
 
     /**
+     * Enable or disable IDM mode
+     *
+     * @param false|array $config
+     */
+    public function setIDMMode($config) : void
+    {
+        $configurator = $this->getConfigurator();
+        if ($config) {
+            $configurator->config['idm_mode'] = $config;
+        } else {
+            $configurator->config['idm_mode']['enabled'] = false;
+        }
+        $configurator->handleOverride();
+        $configurator->clearCache();
+        $this->sugarConfig->clearCache('idm_mode');
+        $this->sugarConfig->clearCache('idm_mode.enabled');
+        $this->refreshMetadata();
+    }
+
+    /**
+     * Refresh config metadata
+     */
+    protected function refreshMetadata() : void
+    {
+        \MetaDataManager::refreshSectionCache(\MetaDataManager::MM_CONFIG);
+    }
+
+
+    /**
      * return disabled modules in IDM mode
      * @return array
      */
@@ -160,6 +194,17 @@ class Config
         return array_filter($this->getUserVardef(), function ($def) {
             return !empty($def['idm_mode_disabled']);
         });
+    }
+
+    /**
+     * @return \Configurator
+     */
+    protected function getConfigurator() : \Configurator
+    {
+        if (is_null($this->configurator)) {
+            $this->configurator = new \Configurator();
+        }
+        return $this->configurator;
     }
 
     /**

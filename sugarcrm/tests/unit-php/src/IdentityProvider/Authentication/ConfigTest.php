@@ -1059,4 +1059,39 @@ class ConfigTest extends TestCase
 
         $this->assertEquals($expectedList, $config->getIDMModeDisabledFields());
     }
+
+    /**
+     * @return array
+     */
+    public function setIDMModeDataProvider() : array
+    {
+        return [
+            [false],
+            [['clientId' => 'mangoOIDCClientId']],
+        ];
+    }
+
+    /**
+     * @covers ::setIDMMode
+     * @dataProvider setIDMModeDataProvider
+     */
+    public function testSetIDMMode($setIDMModeConfig) : void
+    {
+        $config = $this->getMockBuilder(Config::class)
+            ->setMethods(['getConfigurator', 'refreshMetadata'])
+            ->setConstructorArgs([$this->createMock('\SugarConfig')])
+            ->getMock();
+        $configurator = $this->getMockBuilder('\Configurator')
+            ->setMethods(['handleOverride', 'clearCache'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $configurator->expects($this->once())
+            ->method('handleOverride');
+        $configurator->config = [];
+        $config->method('getConfigurator')
+            ->willReturn($configurator);
+        $config->expects($this->once())
+            ->method('refreshMetadata');
+        $config->setIDMMode($setIDMModeConfig);
+    }
 }
