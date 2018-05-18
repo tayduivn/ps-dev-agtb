@@ -195,7 +195,12 @@ class PMSEUserTaskTest extends TestCase
     public function testRunRoundTrip()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
-            ->setMethods(array('prepareResponse', 'processAction'))
+            ->setMethods(array(
+                'prepareResponse',
+                'processAction',
+                'checkIfUsesAnEventBasedGateway',
+                'checkIfExistEventBased',
+            ))
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -207,6 +212,7 @@ class PMSEUserTaskTest extends TestCase
         $bean = new stdClass();
         $externalAction = 'ROUND_TRIP';
         $flowData = array(
+            'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 2,
             'id' => 5
@@ -220,8 +226,9 @@ class PMSEUserTaskTest extends TestCase
         );
 
         $expectedFlowData = array(
+            'cas_id' => 1,
             'cas_user_id' => 1,
-            'cas_index' => 1,
+            'cas_index' => 2,
             'id' => 5,
             'cas_flow_status' => 'FORM',
             'assigned_user_id' => 1
@@ -238,7 +245,6 @@ class PMSEUserTaskTest extends TestCase
             ->will($this->returnValue('ROUND_TRIP'));
 
         $rtFlowData = $flowData;
-        $rtFlowData['cas_index']--;
         $userAssignment->expects($this->exactly(1))
             ->method('roundTripReassign')
             ->with($rtFlowData)
@@ -253,7 +259,12 @@ class PMSEUserTaskTest extends TestCase
     public function testRunOneWay()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
-            ->setMethods(array('prepareResponse', 'processAction'))
+            ->setMethods(array(
+                'prepareResponse',
+                'processAction',
+                'checkIfUsesAnEventBasedGateway',
+                'checkIfExistEventBased',
+            ))
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -266,6 +277,7 @@ class PMSEUserTaskTest extends TestCase
         $bean = new stdClass();
         $externalAction = 'ONE_WAY';
         $flowData = array(
+            'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 1,
             'id' => 5
@@ -279,8 +291,9 @@ class PMSEUserTaskTest extends TestCase
         );
 
         $expectedFlowData = array(
+            'cas_id' => 1,
             'cas_user_id' => 1,
-            'cas_index' => 0,
+            'cas_index' => 1,
             'id' => 5,
             'cas_flow_status' => 'FORM',
             'assigned_user_id' => 1
@@ -297,7 +310,6 @@ class PMSEUserTaskTest extends TestCase
             ->will($this->returnValue('ONE_WAY'));
 
         $owFlowData = $flowData;
-        $owFlowData['cas_index']--;
         $userAssignment->expects($this->exactly(1))
             ->method('oneWayReassign')
             ->with($owFlowData)
@@ -312,13 +324,21 @@ class PMSEUserTaskTest extends TestCase
     public function testRunRouteWithArguments()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
-            ->setMethods(array('lockFlowRoute', 'saveBeanData', 'prepareResponse', 'processAction'))
+            ->setMethods(array(
+                'lockFlowRoute',
+                'saveBeanData',
+                'prepareResponse',
+                'processAction',
+                'checkIfUsesAnEventBasedGateway',
+                'checkIfExistEventBased',
+            ))
             ->disableOriginalConstructor()
             ->getMock();
 
         $bean = new stdClass();
         $externalAction = 'SOME_ACTION';
         $flowData = array(
+            'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 2,
             'id' => 5
@@ -339,6 +359,7 @@ class PMSEUserTaskTest extends TestCase
         );
 
         $expectedFlowData = array(
+            'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 2,
             'id' => 5,
@@ -388,7 +409,7 @@ class PMSEUserTaskTest extends TestCase
 
         $paramFlowData = array(
             'cas_user_id' => 1,
-            'cas_index' => 0,
+            'cas_index' => 1,
             'id' => 5
         );
 
@@ -425,7 +446,7 @@ class PMSEUserTaskTest extends TestCase
 
         $paramFlowData = array(
             'cas_user_id' => 1,
-            'cas_index' => 0,
+            'cas_index' => 1,
             'id' => 5
         );
 
@@ -472,7 +493,7 @@ class PMSEUserTaskTest extends TestCase
 
         $paramFlowData = array(
             'cas_user_id' => 1,
-            'cas_index' => 0,
+            'cas_index' => 1,
             'id' => 5
         );
 
