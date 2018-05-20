@@ -14,9 +14,81 @@
           "join_table": "emails_beans",
           "join_key_lhs": "email_id",
           "join_key_rhs": "bean_id"
-        }
+        },
+      "contacts_cases": {
+        "lhs_module": "Contacts",
+        "lhs_table": "contacts",
+        "lhs_key": "id",
+        "rhs_module": "Cases",
+        "rhs_table": "cases",
+        "rhs_key": "id",
+        "relationship_type": "many-to-many",
+        "join_table": "contacts_cases",
+        "join_key_lhs": "contact_id",
+        "join_key_rhs": "case_id"
+      }
     },
     "modules": {
+        "Cases": {
+          "_hash": "cases_metadata",
+          "fields": {
+            "id": {
+              "name": "id",
+              "type": "id"
+            },
+            "name": {
+              "name": "name",
+              "type": "varchar"
+            },
+            "parent_id": {
+              "group": "parent_name",
+              "name": "parent_id",
+              "type": "id"
+            },
+            "parent_name": {
+              "id_name": "parent_id",
+              "name": "parent_name",
+              "type": "parent",
+              "type_name": "parent_type"
+            },
+            "parent_type": {
+              "name": "parent_type",
+              "type": "parent_type"
+            },
+            "modified_by_name": {
+              "name": "modified_by_name",
+              "type": "varchar"
+            },
+            "contacts": {
+              "name": "contacts",
+              "type": "link",
+              "relationship": "contacts_cases",
+              "source": "non-db",
+              "vname": "LBL_CONTACTS"
+            },
+            "emails": {
+              "name": "emails",
+              "type": "link",
+              "relationship": "emails_cases_rel",
+              "source": "non-db",
+              "vname": "LBL_EMAILS"
+            },
+            "archived_emails": {
+              "name": "archived_emails",
+              "type": "link",
+              "link_file": "modules/Cases/CaseEmailsLink.php",
+              "link_class": "CaseEmailsLink",
+              "link": "Contacts",
+              "source": "non-db",
+              "vname": "LBL_EMAILS",
+              "module": "Emails",
+              "link_type": "many",
+              "relationship": "",
+              "hideacl": true,
+              "readonly": true
+            }
+          }
+        },
         "Contacts": {
             "_hash": "contacts_metadata",
             "nameFormat": {
@@ -47,6 +119,10 @@
                     "name": "phone_home",
                     "type": "varchar",
                     "vname": "LBL_PHONE_HOME"
+                },
+                "email": {
+                  "name": "email",
+                  "type": "email"
                 },
                 "email1": {
                     "name": "email1",

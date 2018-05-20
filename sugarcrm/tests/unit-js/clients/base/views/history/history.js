@@ -15,8 +15,6 @@ describe('Base.View.History', function() {
 
     beforeEach(function() {
         var metadata = SugarTest.loadFixture('emails-metadata');
-        var module = 'Contacts';
-        var context;
 
         SugarTest.testMetadata.init();
 
@@ -30,11 +28,6 @@ describe('Base.View.History', function() {
         app.data.declareModels();
         app.routing.start();
 
-        context = app.context.getContext();
-        context.set({module: module});
-        context.prepare();
-        view = SugarTest.createView('base', module, 'history', null, context);
-
         sandbox = sinon.sandbox.create();
     });
 
@@ -46,6 +39,12 @@ describe('Base.View.History', function() {
     });
 
     it('should open the archive email drawer', function() {
+        var context = app.context.getContext();
+
+        context.set({module: 'Contacts'});
+        context.prepare();
+        view = SugarTest.createView('base', 'Contacts', 'history', null, context);
+
         view.model.set('_acl', {});
         view.model.set('id', _.uniqueId());
         view.model.set('name', 'Randall Brothers');
@@ -69,21 +68,50 @@ describe('Base.View.History', function() {
         expect(app.utils.openEmailCreateDrawer.firstCall.args[1].to.get('parent_name')).toBe(view.model.get('name'));
     });
 
-    it('should trigger panel-top:refresh events on the parent context', function() {
-        var parentContext = app.context.getContext({module: 'Contacts'});
-        var model = app.data.createBean('Emails');
+    it('should not add a recipient', function() {
+        var context = app.context.getContext();
 
-        parentContext.prepare(true);
-        sandbox.spy(parentContext, 'trigger');
-        view.context.parent = parentContext;
-        view.layout = {
-            reloadDashlet: sandbox.stub(),
-            off: sandbox.stub()
-        };
-        sandbox.stub(app.utils, 'openEmailCreateDrawer').callsArgWith(2, model);
+        context.set({module: 'Cases'});
+        context.prepare();
+        view = SugarTest.createView('base', 'Cases', 'history', null, context);
+
+        view.model.set('_acl', {});
+        view.model.set('id', _.uniqueId());
+        view.model.set('name', 'Need help!');
+
+        sandbox.stub(app.utils, 'openEmailCreateDrawer');
 
         view.archiveEmail();
 
-        expect(view.context.parent.trigger.callCount).toBe(3);
+        expect(app.utils.openEmailCreateDrawer).toHaveBeenCalledWith('create');
+        expect(app.utils.openEmailCreateDrawer.firstCall.args[1].related).toBe(view.model);
+        expect(app.utils.openEmailCreateDrawer.firstCall.args[1].to).toBeUndefined();
+    });
+
+    using('modules', ['Contacts', 'Cases'], function(module) {
+        it('should trigger panel-top:refresh events on the parent context', function() {
+            var context = app.context.getContext();
+            var model = app.data.createBean('Emails');
+            var links = app.utils.getLinksBetweenModules(module, 'Emails');
+            var parentContext;
+
+            context.set({module: module});
+            context.prepare();
+            view = SugarTest.createView('base', module, 'history', null, context);
+
+            parentContext = app.context.getContext({module: module});
+            parentContext.prepare(true);
+            sandbox.spy(parentContext, 'trigger');
+            view.context.parent = parentContext;
+            view.layout = {
+                reloadDashlet: sandbox.stub(),
+                off: sandbox.stub()
+            };
+            sandbox.stub(app.utils, 'openEmailCreateDrawer').callsArgWith(2, model);
+
+            view.archiveEmail();
+
+            expect(view.context.parent.trigger.callCount).toBe(links.length);
+        });
     });
 });

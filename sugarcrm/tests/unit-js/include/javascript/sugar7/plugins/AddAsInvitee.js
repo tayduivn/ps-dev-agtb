@@ -183,6 +183,7 @@ describe('Plugins.AddAsInvitee', function() {
             var person;
 
             person = app.data.createBean('Contacts', {id: '123'});
+            person.fields = {};
             sandbox.spy(person, 'fetch');
 
             view.addAsInvitee(person);
