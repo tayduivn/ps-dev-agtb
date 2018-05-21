@@ -324,7 +324,6 @@ class AdvancedQueryTest extends TestCase
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name", "bigname_c", "report_to_bigname"));
         $sq->from($contact);
-        $sq->limit(0,1);
 
         $sql = $sq->compile()->getSQL();
         // ensure the query looks good

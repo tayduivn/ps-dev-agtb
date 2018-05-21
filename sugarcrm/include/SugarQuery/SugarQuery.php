@@ -111,9 +111,11 @@ class SugarQuery
     public $fields = array();
 
     /**
-     * @var bool True when the custom table for the current bean has already been added to the query
+     * Set of joined custom tables indexed by their primary table alias
+     *
+     * @var array
      */
-    public $customJoined = false;
+    private $joinedCustomTables = [];
 
     /**
      * Whether the query should skip deleted records
@@ -1001,14 +1003,6 @@ class SugarQuery
             $options['as_condition'] = true;
             $joined->addVisibilityQuery($this, $options);
         }
-
-        if ($joined->hasCustomFields()) {
-            $table_cstm = $joined->get_custom_table_name();
-            $alias_cstm = $this->db->getValidDBName($alias . '_cstm', false, 'alias');
-            $this->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT", "linkingTable" => true))
-                ->on()->equalsField("$alias_cstm.id_c", "{$alias}.id");
-        }
-
     }
 
     /**
@@ -1125,29 +1119,36 @@ class SugarQuery
     }
 
     /**
-     * Joins the custom table to the current query (if possible)
+     * Joins the custom table to the current query if possible and not already joined
+     *
      * @param SugarBean $bean
-     * @param string $alias
+     * @param string $primaryTableAlias
+     *
+     * @throws SugarQueryException
      */
-    public function joinCustomTable($bean, $alias = "") {
-        if ($bean->hasCustomFields() && !$this->customJoined) {
-            $table = $bean->getTableName();
-            $table_cstm = $bean->get_custom_table_name();
-            if (!empty($table_cstm)) {
-                $options = array(
-                    'joinType' => 'left',
-                );
-                $joinAlias = $this->getCustomTableAlias($bean, $alias);
-                if (!empty($alias)) {
-                    $fromAlias = $alias;
-                    $options['alias'] = $joinAlias;
-                } else {
-                    $fromAlias = $table;
-                }
-                $this->joinTable($table_cstm, $options)
-                    ->on()->equalsField($joinAlias . '.id_c', $fromAlias . '.id');
-            }
+    public function joinCustomTable($bean, $primaryTableAlias = null)
+    {
+        if (!$bean->hasCustomFields()) {
+            return;
         }
+
+        if (!$primaryTableAlias) {
+            $primaryTableAlias = $this->getFromAlias();
+        }
+
+        if (isset($this->joinedCustomTables[$primaryTableAlias])) {
+            return;
+        }
+
+        $this->joinedCustomTables[$primaryTableAlias] = true;
+
+        $joinAlias = $this->getCustomTableAlias($bean, $primaryTableAlias);
+
+        $this->joinTable($bean->get_custom_table_name(), array(
+            'joinType' => 'left',
+            'alias' => $joinAlias,
+        ))
+            ->on()->equalsField($joinAlias . '.id_c', $primaryTableAlias . '.id');
     }
 
     /**
