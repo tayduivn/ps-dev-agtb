@@ -156,6 +156,17 @@
             <input type='hidden' name='lock_subpanels' value='false'>
             <input type='checkbox' name='lock_subpanels' value='true' {$lock_subpanels_checked}>
         </td>
+    <tr>
+        <td scope="row">{$MOD.LBL_ADDITIONAL_MARKETING_CONTENT}: </td>
+        <td>
+            {if !empty($config.marketing_extras_enabled)}
+                {assign var='marketing_extras_enabled_checked' value='CHECKED'}
+            {else}
+                {assign var='marketing_extras_enabled_checked' value=''}
+            {/if}
+            <input type="hidden" name="marketing_extras_enabled" value="false">
+            <input type="checkbox" name="marketing_extras_enabled" value="true" {$marketing_extras_enabled_checked}>
+        </td>
     </tr>
 </table>
 

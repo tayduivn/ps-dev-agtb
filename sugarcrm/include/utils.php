@@ -465,6 +465,7 @@ function get_sugar_config_defaults()
         'idm_mode' => [
             'enabled' => false,
         ],
+        'marketing_extras_enabled' => true,
     );
 
     if (empty($locale)) {

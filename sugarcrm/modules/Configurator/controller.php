@@ -51,6 +51,8 @@ class ConfiguratorController extends SugarController
         'logger_file_ext',
 
         'activity_streams_enabled',
+
+        'marketing_extras_enabled',
     );
 
     /**
