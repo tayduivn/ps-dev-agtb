@@ -12,6 +12,27 @@
     app.events.on('app:init', function() {
         app.plugins.register('Pii', ['view'], {
             /**
+             * Gets the buttons array from the action dropdown metadata, adding
+             * type casting in the case of the buttons array coming across as an
+             * object, like when array keys are changed to nonsequential numbers.
+             * @param {Object} meta Metadata array
+             * @return {Array} The buttons array
+             * @private
+             */
+            _getButtonsFromMeta: function(meta) {
+                // If the buttons array is not an actual array then
+                // it was not correctly formed and needs to be cleansed
+                if (!_.isArray(meta.buttons)) {
+                    // In order for this to propagate downstream the
+                    // original reference to the buttons array needs
+                    // updated
+                    meta.buttons = _.toArray(meta.buttons);
+                }
+
+                return meta.buttons;
+            },
+
+            /**
              * Add "View PII" button to the module metadata if there are any PII fields
              * @param {Object[]} fields List of fielddefs for the attached view.
              * @private
@@ -23,7 +44,7 @@
                     var actionDropDown = _.findWhere(this.meta.buttons, {type: 'actiondropdown'});
 
                     if (actionDropDown) {
-                        var buttons = actionDropDown.buttons;
+                        var buttons = this._getButtonsFromMeta(actionDropDown);
                         var auditButtonMeta = _.findWhere(buttons, {name: 'audit_button'});
                         var auditButtonIndex = _.indexOf(buttons, auditButtonMeta);
                         var viewPiiButtonMeta = {
