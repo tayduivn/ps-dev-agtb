@@ -71,6 +71,30 @@ $viewdefs['Quotes']['base']['view']['preview'] = array(
                         ),
                     ),
                 ),
+                array(
+                    'name' => 'deal_tot',
+                    'label' => 'LBL_LIST_DEAL_TOT',
+                    'css_class' => 'quote-totals-row-item',
+                    'related_fields' => array('deal_tot_discount_percentage'),
+                ),
+                array(
+                    'name' => 'new_sub',
+                    'css_class' => 'quote-totals-row-item',
+                ),
+                array(
+                    'name' => 'tax',
+                    'label' => 'LBL_TAX_TOTAL',
+                    'css_class' => 'quote-totals-row-item',
+                ),
+                array(
+                    'name' => 'shipping',
+                    'css_class' => 'quote-totals-row-item',
+                ),
+                array(
+                    'name' => 'total',
+                    'label' => 'LBL_LIST_GRAND_TOTAL',
+                    'css_class' => 'quote-totals-row-item',
+                ),
                 'shipping_account_name',
                 'shipping_contact_name',
                 array(
