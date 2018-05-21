@@ -95,7 +95,7 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface
                 $start_year->modify('+1 year');
             }
 
-            if ($startMonthDt < $tpStMonthDt) {
+            if (($startMonthDt < $tpStMonthDt) && ($this->currentSettings['timeperiod_interval'] !== 'Annual')) {
                 $start_year->modify('-1 year');
             }
         }
