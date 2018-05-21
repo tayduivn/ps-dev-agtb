@@ -272,7 +272,20 @@ QUERY;
             $this->deactivate($schedule['id']);
 
             $owner = BeanFactory::retrieveBean('Users', $schedule['owner_id']);
-            $subscriber = BeanFactory::retrieveBean('Users', $schedule['subscriber_id']);
+            $scheduleId = $this->db->quoted($schedule['id']);
+            $query = <<<QUERY
+SELECT
+    user_id
+FROM
+    reportschedules_users
+WHERE
+    reportschedule_id = $scheduleId AND deleted = 0
+QUERY;
+            $subscriber = array();
+            $result = $this->db->query($query);
+            while ($row = $this->db->fetchByAssoc($result)) {
+                $subscriber[] = BeanFactory::retrieveBean('Users', $row['user_id']);
+            }
 
             $utils = new ReportsUtilities();
             $utils->sendNotificationOfDisabledReport($schedule['report_id'], $owner, $subscriber);
@@ -293,11 +306,10 @@ SELECT
     rs.id,
     rs.report_id,
     r.assigned_user_id owner_id,
-    rs.user_id subscriber_id
 FROM
     $this->table_name rs
     INNER JOIN (
-        SELECT jq.job_group report_id, jq.execute_time
+        SELECT DISTINCT jq.job_group report_id, jq.execute_time
         FROM job_queue jq
         INNER JOIN (
             SELECT
@@ -313,14 +325,10 @@ FROM
     ON j.report_id = rs.report_id AND j.execute_time > rs.date_modified
         INNER JOIN saved_reports r
         ON r.id = rs.report_id
-            INNER JOIN users u
-            ON u.id = rs.user_id
 WHERE
     r.deleted = 0
         AND rs.deleted = 0
         AND rs.active = 1
-        AND u.status = 'Active'
-        AND u.deleted = 0
 QUERY;
 
         $reports = array();

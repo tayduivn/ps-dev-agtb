@@ -52,8 +52,8 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
         $savedReport = BeanFactory::getBean('Reports', $scheduleInfo['report_id']);
         if (!$savedReport || !$savedReport->ACLAccess('view')) {
             $GLOBALS["log"]->error('ScheduleReport: User ' . $current_user->id . ' can not access report id ' . $scheduleInfo['report_id']);
-            $this->job->failJob('User ' . $current_user->id . ' can not access report id ' . $scheduleInfo['report_id']);
-            return false;
+            $this->job->succeedJob();
+            return true;
         }
 
         $GLOBALS["log"]->debug("-----> Generating Reporter");

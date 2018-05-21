@@ -46,9 +46,12 @@ class ReportsUtilities
      *
      * @throws MailerException Allows exceptions to bubble up for the caller to report if desired.
      */
-    public function sendNotificationOfDisabledReport($report_id, User $owner = null, User $subscriber = null)
+    public function sendNotificationOfDisabledReport($report_id, User $owner = null, array $subscriber = null)
     {
-        $recipients = array($owner, $subscriber);
+        $recipients = array($owner);
+        foreach ($subscriber as $s) {
+            $recipients[] = $s;
+        }
         $recipients = array_filter($recipients);
 
         // return early in case there are no recipients specified
@@ -68,7 +71,9 @@ class ReportsUtilities
         }
 
         foreach ($unique as $recipient) {
-            $this->sendNotificationOfReport($recipient, $subject, $body);
+            if ($recipient->deleted == 0 && $recipient->status = 'Active') {
+                $this->sendNotificationOfReport($recipient, $subject, $body);
+            }
         }
     }
 
