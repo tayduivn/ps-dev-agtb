@@ -15,13 +15,24 @@ Feature: Quotes module verification
     Given I launch App
 
   @list-preview @T_32765
-  Scenario Outline: Quotes > List View > Preview
+  Scenario: Quotes > List View > Preview
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed |
-      | Quote_1 | City 1               | Street address here    | 220051                     | <state>               | USA                     | 2020-10-19T19:20:22+00:00  |
+      | Quote_1 | City 1               | Street address here    | 220051                     | CA                    | USA                     | 2020-10-19T19:20:22+00:00  |
     Given Accounts records exist related via billing_accounts link:
       | name  |
       | Acc_1 |
+    # Create a product bundle (aka. group)
+    Given ProductBundles records exist related via product_bundles link to *Quote_1:
+      | *name   |
+      | Group_1 |
+
+    # Add Quoted Line Items records to the product bundle (aka. group)
+    Given Products records exist related via products link to *Group_1:
+      | *name | discount_price | discount_amount | quantity |
+      | QLI_1 | 100            | 2               | 2        |
+      | QLI_2 | 200            | 2               | 3        |
+
     Given I open about view and login
     When I choose Quotes in modules menu
     Then I should see *Quote_1 in #QuotesList.ListView
@@ -35,13 +46,14 @@ Feature: Quotes module verification
       | name                       | Quote_1             |
       | billing_address_street     | Street address here |
       | billing_address_postalcode | 220051              |
-      | billing_address_state      | <state>             |
+      | billing_address_state      | CA                  |
       | billing_address_country    | USA                 |
       | date_quote_expected_closed | 10/19/2020          |
-    Examples:
-      | state |
-      | CA    |
-      | WA    |
+      | deal_tot                   | $16.00              |
+      | new_sub                    | $784.00             |
+      | tax                        | $0.00               |
+      | shipping                   | $0.00               |
+      | total                      | $784.00             |
 
   @list-search @T_34376
   Scenario: Quotes > List View > Filter > Search main input
@@ -194,14 +206,15 @@ Feature: Quotes module verification
     When I click Save button on #QuotesRecord header
     When I toggle Billing_and_Shipping panel on #RecordIDRecord.RecordView view
     Then I verify fields on #RecordIDRecord.RecordView
-      | fieldName                   | value               |
-      | date_quote_expected_closed  | 12/12/2017          |
-      | billing_account_name        | myAccount           |
-      | billing_address_city        | City 1              |
-      | billing_address_street      | Street address here |
-      | billing_address_postalcode  | 220051              |
-      | billing_address_state       | WA                  |
-      | billing_address_country     | USA                 |
+      | fieldName                  | value               |
+      | date_quote_expected_closed | 12/12/2017          |
+      | billing_account_name       | myAccount           |
+      | billing_address_city       | City 1              |
+      | billing_address_street     | Street address here |
+      | billing_address_postalcode | 220051              |
+      | billing_address_state      | WA                  |
+      | billing_address_country    | USA                 |
+
 
   @copy
   Scenario: Quotes > Record View > Edit > Save
