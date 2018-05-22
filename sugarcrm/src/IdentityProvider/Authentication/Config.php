@@ -66,10 +66,11 @@ class Config
      */
     public function getIDMModeConfig()
     {
-        $config = $this->get('idm_mode');
-        if (empty($config)) {
+        if (!$this->isIDMModeEnabled()) {
             return [];
         }
+
+        $config = $this->get('idm_mode');
 
         $stsUrl = rtrim($config['stsUrl'], '/ ');
         $ipdUrl = rtrim($config['idpUrl'], '/ ');
@@ -92,7 +93,7 @@ class Config
             'http_client' => !empty($config['http_client']) ? $config['http_client'] : [],
             'cloudConsoleUrl' => !empty($config['cloudConsoleUrl']) ? $config['cloudConsoleUrl'] : '',
             'cloudConsoleRoutes' => !empty($config['cloudConsoleRoutes']) ? $config['cloudConsoleRoutes'] : [],
-            'caching' => $config['caching'] ?? [],
+            'caching' => array_replace_recursive($this->getIDMModeDefaultCachingConfig(), $config['caching'] ?? []),
             'crmOAuthScope' => $config['crmOAuthScope'] ?? '',
             'requestedOAuthScopes' => $config['requestedOAuthScopes'] ?? [],
         ];
@@ -133,12 +134,12 @@ class Config
     }
 
     /**
-     * Checks IDM mode config is present
+     * Checks IDM mode is enabled
      * @return bool
      */
-    public function isIDMModeEnabled()
+    public function isIDMModeEnabled() : bool
     {
-        return !empty($this->getIDMModeConfig());
+        return (bool)$this->get('idm_mode.enabled', false);
     }
 
     /**
@@ -349,6 +350,22 @@ class Config
                     'postalCode' => 'address_postalcode',
                     'c' => 'address_country',
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * Get default IdM mode caching settings
+     *
+     * @return array
+     */
+    protected function getIDMModeDefaultCachingConfig() : array
+    {
+        return [
+            'ttl' => [
+                'introspectToken' => 10, // 10 seconds for introspecting user token
+                'userInfo' => 10, // 10 seconds for requesting user info
+                'keySet' => 7 * 24 * 60 * 60, // 7 days for requesting keySet for Mango client
             ],
         ];
     }

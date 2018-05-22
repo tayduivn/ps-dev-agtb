@@ -29,7 +29,11 @@ class ModuleFieldsViewTest extends TestCase
     /**
      * @var \SugarConfig
      */
-    protected $sugarConfig = null;
+    protected $config;
+
+    /** @var array */
+    protected $sugarConfig;
+
 
     /**
      * @inheritdoc
@@ -37,8 +41,16 @@ class ModuleFieldsViewTest extends TestCase
     protected function setUp()
     {
         $this->view = new \ViewModulefields();
-        $this->sugarConfig = \SugarConfig::getInstance();
-        $this->sugarConfig->clearCache();
+
+        $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
+        $GLOBALS['sugar_config'] = [
+            'idm_mode' => [
+                'enabled' => true,
+            ],
+        ];
+
+        $this->config = \SugarConfig::getInstance();
+        $this->config->clearCache();
     }
 
     /**
@@ -46,7 +58,8 @@ class ModuleFieldsViewTest extends TestCase
      */
     protected function tearDown()
     {
-        $this->sugarConfig->clearCache();
+        $GLOBALS['sugar_config'] = $this->sugarConfig;
+        $this->config->clearCache();
     }
 
     /**
@@ -154,6 +167,7 @@ class ModuleFieldsViewTest extends TestCase
             ],
             'idmModeEnabledInSugarAndFieldIsIdmModeDisabled' => [
                 'idmModeConfig' => [
+                    'enabled' => true,
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://sts.sugarcrm.local',
@@ -191,6 +205,7 @@ class ModuleFieldsViewTest extends TestCase
             ],
             'idmModeEnabledInSugarAndFieldIsIdmModeAndStudioTrue' => [
                 'idmModeConfig' => [
+                    'enabled' => true,
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://sts.sugarcrm.local',
@@ -226,7 +241,8 @@ class ModuleFieldsViewTest extends TestCase
      */
     public function testIsValidStudioField($idmModeConfig, $fieldDef, $expectedResult)
     {
-        $this->sugarConfig->_cached_values['idm_mode'] = $idmModeConfig;
+        $GLOBALS['sugar_config']['idm_mode'] = $idmModeConfig;
+
         $this->assertEquals($expectedResult, $this->view->isValidStudioField($fieldDef));
     }
 }

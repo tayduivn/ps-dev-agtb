@@ -181,6 +181,7 @@ class MetaDataManagerTest extends TestCase
                         'enabled' => true,
                     ],
                     'idm_mode' => [
+                        'enabled' => true,
                         'clientId' => 'testLocal',
                         'clientSecret' => 'testLocalSecret',
                         'stsUrl' => 'http://sts.sugarcrm.local',
@@ -217,6 +218,7 @@ class MetaDataManagerTest extends TestCase
      * @param $sugarConfig
      * @param $expectedConfigs
      *
+     * @throws ReflectionException
      * @dataProvider getConfigsProvider
      */
     public function testGetConfigs($sugarConfig, $expectedConfigs)

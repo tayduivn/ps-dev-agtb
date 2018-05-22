@@ -21,15 +21,47 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 class ConfigTest extends TestCase
 {
     /**
+     * @var \SugarConfig
+     */
+    protected $config;
+
+    /** @var array */
+    protected $sugarConfig;
+
+
+    /**
+     * @inheritdoc
+     */
+    protected function setUp()
+    {
+        $this->sugarConfig = isset($GLOBALS['sugar_config']) ? $GLOBALS['sugar_config'] : null;
+        $GLOBALS['sugar_config'] = [
+            'idm_mode' => [
+                'enabled' => true,
+            ],
+        ];
+
+        $this->config = \SugarConfig::getInstance();
+        $this->config->clearCache();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function tearDown()
+    {
+        $GLOBALS['sugar_config'] = $this->sugarConfig;
+        $this->config->clearCache();
+    }
+
+    /**
      * @covers ::get
      */
     public function testGet()
     {
-        $sugarConfig = $this->createMock(\SugarConfig::class);
-        $sugarConfig->expects($this->any())
-            ->method('get')
-            ->willReturn('sugar_config_value');
-        $config = new Config($sugarConfig);
+        $GLOBALS['sugar_config']['some_key'] = 'sugar_config_value';
+        $config = new Config(\SugarConfig::getInstance());
+
         $this->assertEquals('sugar_config_value', $config->get('some_key'), 'Proxying to sugar config');
     }
 
@@ -479,21 +511,34 @@ class ConfigTest extends TestCase
     {
         return [
             'sugarConfigEmpty' => [
-                'configSugar' => null,
-                'siteUrl' => 'http://site.url/',
-                'expectedConfig' => [],
+                'sugarConfig' => [
+                    'site_url' => 'http://site.url/',
+                ],
+                'expected' => [],
+            ],
+            'IdMModeDisabled' => [
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => false,
+                    ],
+                    'site_url' => 'http://site.url/',
+                ],
+                'expected' => [],
             ],
             'httpClientEmpty' => [
-                'configSugar' => [
-                    'clientId' => 'testLocal',
-                    'clientSecret' => 'testLocalSecret',
-                    'stsUrl' => 'http://sts.sugarcrm.local',
-                    'idpUrl' => 'http://login.sugarcrm.local',
-                    'stsKeySetId' => 'keySetId',
-                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => true,
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'stsKeySetId' => 'keySetId',
+                        'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    ],
+                    'site_url' => 'http://site.url/',
                 ],
-                'siteUrl' => 'http://site.url/',
-                'expectedConfig' => [
+                'expected' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://sts.sugarcrm.local',
@@ -509,27 +554,36 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
-                    'caching' => [],
+                    'caching' => [
+                        'ttl' => [
+                            'introspectToken' => 10,
+                            'userInfo' => 10,
+                            'keySet' => 7 * 24 * 60 * 60,
+                        ],
+                    ],
                     'crmOAuthScope' => '',
                     'requestedOAuthScopes' => [],
                 ],
             ],
             'httpClientNotEmpty' => [
-                'configSugar' => [
-                    'clientId' => 'testLocal',
-                    'clientSecret' => 'testLocalSecret',
-                    'stsUrl' => 'http://sts.sugarcrm.local',
-                    'idpUrl' => 'http://login.sugarcrm.local',
-                    'stsKeySetId' => 'keySetId',
-                    'http_client' => [
-                        'retry_count' => 5,
-                        'delay_strategy' => 'exponential',
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => true,
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'stsKeySetId' => 'keySetId',
+                        'http_client' => [
+                            'retry_count' => 5,
+                            'delay_strategy' => 'exponential',
+                        ],
+                        'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                        'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     ],
-                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-                    'cloudConsoleUrl' => 'http://console.sugarcrm.local',
+                    'site_url' => 'http://site.url/',
                 ],
-                'siteUrl' => 'http://site.url/',
-                'expectedConfig' => [
+                'expected' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://sts.sugarcrm.local',
@@ -548,31 +602,40 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     'cloudConsoleRoutes' => [],
-                    'caching' => [],
+                    'caching' => [
+                        'ttl' => [
+                            'introspectToken' => 10,
+                            'userInfo' => 10,
+                            'keySet' => 7 * 24 * 60 * 60,
+                        ],
+                    ],
                     'crmOAuthScope' => '',
                     'requestedOAuthScopes' => [],
                 ],
             ],
             'cloudConsoleRoutesAreNotEmpty' => [
-                'configSugar' => [
-                    'clientId' => 'testLocal',
-                    'clientSecret' => 'testLocalSecret',
-                    'stsUrl' => 'http://sts.sugarcrm.local',
-                    'idpUrl' => 'http://login.sugarcrm.local',
-                    'stsKeySetId' => 'keySetId',
-                    'http_client' => [
-                        'retry_count' => 5,
-                        'delay_strategy' => 'exponential',
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => true,
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'stsKeySetId' => 'keySetId',
+                        'http_client' => [
+                            'retry_count' => 5,
+                            'delay_strategy' => 'exponential',
+                        ],
+                        'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                        'cloudConsoleUrl' => 'http://console.sugarcrm.local',
+                        'cloudConsoleRoutes' => [
+                            'userManagement' => 'management/users',
+                            'passwordManagement' => 'management/password',
+                        ],
                     ],
-                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-                    'cloudConsoleUrl' => 'http://console.sugarcrm.local',
-                    'cloudConsoleRoutes' => [
-                        'userManagement' => 'management/users',
-                        'passwordManagement' => 'management/password',
-                    ],
+                    'site_url' => 'http://site.url/',
                 ],
-                'siteUrl' => 'http://site.url/',
-                'expectedConfig' => [
+                'expected' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://sts.sugarcrm.local',
@@ -594,28 +657,32 @@ class ConfigTest extends TestCase
                         'userManagement' => 'management/users',
                         'passwordManagement' => 'management/password',
                     ],
-                    'caching' => [],
-                    'crmOAuthScope' => '',
-                    'requestedOAuthScopes' => [],
-                ],
-            ],
-            'cachingNotEmpty' => [
-                'configSugar' => [
-                    'clientId' => 'testLocal',
-                    'clientSecret' => 'testLocalSecret',
-                    'stsUrl' => 'http://sts.sugarcrm.local',
-                    'idpUrl' => 'http://login.sugarcrm.local',
-                    'stsKeySetId' => 'keySetId',
-                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'caching' => [
                         'ttl' => [
                             'introspectToken' => 10,
                             'userInfo' => 10,
+                            'keySet' => 7 * 24 * 60 * 60,
                         ],
                     ],
+                    'crmOAuthScope' => '',
+                    'requestedOAuthScopes' => [],
                 ],
-                'siteUrl' => 'http://site.url/',
-                'expectedConfig' => [
+            ],
+            'cachingEmpty' => [
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => true,
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'stsKeySetId' => 'keySetId',
+                        'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                        'caching' => [],
+                    ],
+                    'site_url' => 'http://site.url/',
+                ],
+                'expected' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://sts.sugarcrm.local',
@@ -635,6 +702,52 @@ class ConfigTest extends TestCase
                         'ttl' => [
                             'introspectToken' => 10,
                             'userInfo' => 10,
+                            'keySet' => 7 * 24 * 60 * 60,
+                        ],
+                    ],
+                    'crmOAuthScope' => '',
+                    'requestedOAuthScopes' => [],
+                ],
+            ],
+            'cachingNotEmpty' => [
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => true,
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'stsKeySetId' => 'keySetId',
+                        'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                        'caching' => [
+                            'ttl' => [
+                                'introspectToken' => 20,
+                            ],
+                        ],
+                    ],
+                    'site_url' => 'http://site.url/',
+                ],
+                'expected' => [
+                    'clientId' => 'testLocal',
+                    'clientSecret' => 'testLocalSecret',
+                    'stsUrl' => 'http://sts.sugarcrm.local',
+                    'redirectUri' => 'http://site.url/?module=Users&action=OAuth2CodeExchange',
+                    'urlAuthorize' => 'http://sts.sugarcrm.local/oauth2/auth',
+                    'urlAccessToken' => 'http://sts.sugarcrm.local/oauth2/token',
+                    'urlResourceOwnerDetails' => 'http://sts.sugarcrm.local/oauth2/introspect',
+                    'urlUserInfo' => 'http://sts.sugarcrm.local/userinfo',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/keySetId',
+                    'keySetId' => 'keySetId',
+                    'http_client' => [],
+                    'idpUrl' => 'http://login.sugarcrm.local',
+                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                    'cloudConsoleUrl' => '',
+                    'cloudConsoleRoutes' => [],
+                    'caching' => [
+                        'ttl' => [
+                            'introspectToken' => 20,
+                            'userInfo' => 10,
+                            'keySet' => 7 * 24 * 60 * 60,
                         ],
                     ],
                     'crmOAuthScope' => '',
@@ -642,17 +755,20 @@ class ConfigTest extends TestCase
                 ],
             ],
             'crmOAuthScopeNotEmpty' => [
-                'configSugar' => [
-                    'clientId' => 'testLocal',
-                    'clientSecret' => 'testLocalSecret',
-                    'stsUrl' => 'http://sts.sugarcrm.local',
-                    'idpUrl' => 'http://login.sugarcrm.local',
-                    'stsKeySetId' => 'keySetId',
-                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-                    'crmOAuthScope' => 'https://apis.sugarcrm.com/auth/crm',
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => true,
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'stsKeySetId' => 'keySetId',
+                        'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                        'crmOAuthScope' => 'https://apis.sugarcrm.com/auth/crm',
+                    ],
+                    'site_url' => 'http://site.url/',
                 ],
-                'siteUrl' => 'http://site.url/',
-                'expectedConfig' => [
+                'expected' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://sts.sugarcrm.local',
@@ -668,31 +784,40 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
-                    'caching' => [],
+                    'caching' => [
+                        'ttl' => [
+                            'introspectToken' => 10,
+                            'userInfo' => 10,
+                            'keySet' => 7 * 24 * 60 * 60,
+                        ],
+                    ],
                     'crmOAuthScope' => 'https://apis.sugarcrm.com/auth/crm',
                     'requestedOAuthScopes' => [],
                 ],
             ],
             'mangoScopesNotEmpty' => [
-                'configSugar' => [
-                    'clientId' => 'testLocal',
-                    'clientSecret' => 'testLocalSecret',
-                    'stsUrl' => 'http://sts.sugarcrm.local',
-                    'idpUrl' => 'http://login.sugarcrm.local',
-                    'stsKeySetId' => 'keySetId',
-                    'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-                    'crmOAuthScope' => '',
-                    'requestedOAuthScopes' => [
-                        'offline',
-                        'https://apis.sugarcrm.com/auth/crm',
-                        'profile',
-                        'email',
-                        'address',
-                        'phone',
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => true,
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'stsKeySetId' => 'keySetId',
+                        'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                        'crmOAuthScope' => '',
+                        'requestedOAuthScopes' => [
+                            'offline',
+                            'https://apis.sugarcrm.com/auth/crm',
+                            'profile',
+                            'email',
+                            'address',
+                            'phone',
+                        ],
                     ],
+                    'site_url' => 'http://site.url/',
                 ],
-                'siteUrl' => 'http://site.url/',
-                'expectedConfig' => [
+                'expected' => [
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://sts.sugarcrm.local',
@@ -708,7 +833,13 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
-                    'caching' => [],
+                    'caching' => [
+                        'ttl' => [
+                            'introspectToken' => 10,
+                            'userInfo' => 10,
+                            'keySet' => 7 * 24 * 60 * 60,
+                        ],
+                    ],
                     'crmOAuthScope' => '',
                     'requestedOAuthScopes' => [
                         'offline',
@@ -724,26 +855,19 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @param $configSugar
-     * @param $siteUrl
-     * @param $expectedConfig
+     * @param $sugarConfig
+     * @param $expected
      *
      * @dataProvider getIDMModeConfigProvider
      *
      * @covers ::getIDMModeConfig
      */
-    public function testGetIDMModeConfig($configSugar, $siteUrl, $expectedConfig)
+    public function testGetIDMModeConfig($sugarConfig, $expected)
     {
-        $sugarConfig = $this->createMock(\SugarConfig::class);
-        $config = new Config($sugarConfig);
-        $sugarConfig->method('get')->willReturnMap(
-            [
-                ['idm_mode', null, $configSugar],
-                ['site_url', null, $siteUrl],
-            ]
-        );
+        $GLOBALS['sugar_config'] = $sugarConfig;
+        $config = new Config(\SugarConfig::getInstance());
 
-        $this->assertEquals($expectedConfig, $config->getIDMModeConfig());
+        $this->assertEquals($expected, $config->getIDMModeConfig());
     }
 
     /**
@@ -755,44 +879,49 @@ class ConfigTest extends TestCase
     {
         return [
             'sugarConfigEmpty' => [
-                'configSugar' => null,
-                'siteUrl' => 'http://site.url/',
-                'expectedResult' => false,
+                'sugarConfig' => [
+                    'site_url' => 'http://site.url/',
+                ],
+                'expected' => false,
+            ],
+            'enabledTrue' => [
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'enabled' => true,
+                    ],
+                    'site_url' => 'http://site.url/',
+                ],
+                'expected' => true,
             ],
             'sugarConfigNotEmpty' => [
-                'configSugar' => [
-                    'clientId' => 'testLocal',
-                    'clientSecret' => 'testLocalSecret',
-                    'stsUrl' => 'http://sts.sugarcrm.local',
-                    'idpUrl' => 'http://login.sugarcrm.local',
-                    'stsKeySetId' => 'keySetId',
+                'sugarConfig' => [
+                    'idm_mode' => [
+                        'clientId' => 'testLocal',
+                        'clientSecret' => 'testLocalSecret',
+                        'stsUrl' => 'http://sts.sugarcrm.local',
+                        'idpUrl' => 'http://login.sugarcrm.local',
+                        'stsKeySetId' => 'keySetId',
+                    ],
+                    'site_url' => 'http://site.url/',
                 ],
-                'siteUrl' => 'http://site.url/',
-                'expectedResult' => true,
+                'expected' => false,
             ],
         ];
     }
 
     /**
-     * @param $configSugar
-     * @param $siteUrl
-     * @param $expectedResult
+     * @param $sugarConfig
+     * @param $expected
      *
      * @dataProvider isIDMModeEnabledProvider
      * @covers ::isIDMModeEnabled
      */
-    public function testIsIDMModeEnabled($configSugar, $siteUrl, $expectedResult)
+    public function testIsIDMModeEnabled($sugarConfig, $expected)
     {
-        $sugarConfig = $this->createMock(\SugarConfig::class);
-        $config = new Config($sugarConfig);
-        $sugarConfig->method('get')->willReturnMap(
-            [
-                ['idm_mode', null, $configSugar],
-                ['site_url', null, $siteUrl],
-            ]
-        );
+        $GLOBALS['sugar_config'] = $sugarConfig;
+        $config = new Config(\SugarConfig::getInstance());
 
-        $this->assertEquals($expectedResult, $config->isIDMModeEnabled());
+        $this->assertEquals($expected, $config->isIDMModeEnabled());
     }
 
     /**
@@ -802,6 +931,7 @@ class ConfigTest extends TestCase
     {
         $sugarConfig = $this->createMock(\SugarConfig::class);
         $config = new Config($sugarConfig);
+
         $this->assertEquals(['Users', 'Employees'], $config->getIDMModeDisabledModules());
     }
 

@@ -23,6 +23,9 @@ class SugarOAuth2ServerTest extends TestCase
     /**
      * @var \SugarConfig
      */
+    protected $config;
+
+    /** @var array */
     protected $sugarConfig;
 
     /**
@@ -30,12 +33,21 @@ class SugarOAuth2ServerTest extends TestCase
      */
     protected $currentUser = null;
 
+
     /**
      * @inheritdoc
      */
     protected function setUp()
     {
-        $this->sugarConfig = \SugarConfig::getInstance();
+        $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
+        $GLOBALS['sugar_config'] = [
+            'idm_mode' => [
+                'enabled' => true,
+            ],
+        ];
+
+        $this->config = \SugarConfig::getInstance();
+        $this->config->clearCache();
 
         if (!empty($GLOBALS['current_user'])) {
             $this->currentUser = $GLOBALS['current_user'];
@@ -46,7 +58,9 @@ class SugarOAuth2ServerTest extends TestCase
 
     protected function tearDown()
     {
-        $this->sugarConfig->_cached_values = [];
+        $GLOBALS['sugar_config'] = $this->sugarConfig;
+        $this->config->clearCache();
+
         $GLOBALS['current_user'] = $this->currentUser;
     }
     /**
@@ -64,6 +78,7 @@ class SugarOAuth2ServerTest extends TestCase
             ],
             'oidcOAuthServer' => [
                 'idmMode' => [
+                    'enabled' => true,
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://localhost:4444',
@@ -76,6 +91,7 @@ class SugarOAuth2ServerTest extends TestCase
             ],
             'portalPlatform' => [
                 'idmMode' => [
+                    'enabled' => true,
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://localhost:4444',
@@ -100,7 +116,8 @@ class SugarOAuth2ServerTest extends TestCase
      */
     public function testGetOAuth2Server(array $idmMode, string $platform, $expectedServerClass, $expectedStorageClass)
     {
-        $this->sugarConfig->_cached_values['idm_mode'] = $idmMode;
+        $GLOBALS['sugar_config']['idm_mode'] = $idmMode;
+
         $oAuthServer = SugarOAuth2ServerMock::getOAuth2Server($platform);
         $this->assertInstanceOf($expectedServerClass, $oAuthServer);
         $this->assertInstanceOf(

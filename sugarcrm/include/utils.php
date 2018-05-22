@@ -462,6 +462,9 @@ function get_sugar_config_defaults()
             // minutes) for multiple Data Privacy records to be grouped in a single job before going into execution.
             'erasure_job_delay' => 0,
         ],
+        'idm_mode' => [
+            'enabled' => false,
+        ],
     );
 
     if (empty($locale)) {

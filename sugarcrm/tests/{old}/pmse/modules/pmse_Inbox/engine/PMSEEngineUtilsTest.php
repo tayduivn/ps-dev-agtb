@@ -499,6 +499,7 @@ class PMSEEngineUtilsTest extends TestCase
             ],
             'idmModeEnabledInSugarAndFieldIsIdmMode' => [
                 'idmModeConfig' => [
+                    'enabled' => true,
                     'clientId' => 'testLocal',
                     'clientSecret' => 'testLocalSecret',
                     'stsUrl' => 'http://sts.sugarcrm.local',

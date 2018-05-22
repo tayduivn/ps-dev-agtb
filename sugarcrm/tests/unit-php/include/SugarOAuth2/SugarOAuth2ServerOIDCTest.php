@@ -74,20 +74,24 @@ class SugarOAuth2ServerOIDCTest extends TestCase
     /** @var \User|MockObject */
     protected $mockedUser;
 
-    /** @var  array */
+    /** @var array */
     protected $beanList;
 
+    /** @var array */
     protected $sugarConfig;
+
+    /** @var \SugarConfig */
+    protected $config;
 
     /**
      * @var string
      */
     protected $stsAccessToken = '4swYymAtLvC9-pGAo3YKJYkLa-7UWFN-jfp5jxP4GfE.wS2Lih_FhXsbyaeZLgpM_1pOIvhCxr-ZgEQXWcKtNko';
-
     /**
      * @var string
      */
     protected $sugarAccessToken = '956fc0c6-eb25-491c-aa19-411bde06e238';
+
 
     /**
      * @inheritdoc
@@ -134,16 +138,22 @@ class SugarOAuth2ServerOIDCTest extends TestCase
         $this->mockedUser->module_name = 'Users';
         \BeanFactory::registerBean($this->mockedUser);
 
-        $this->sugarConfig = \SugarConfig::getInstance();
-        $this->sugarConfig->_cached_values['idm_mode'] = [
-            'clientId' => 'testLocal',
-            'clientSecret' => 'testLocalSecret',
-            'stsUrl' => 'http://sts.sugarcrm.local',
-            'idpUrl' => 'http://sugar.dolbik.local/idm289idp/web/',
-            'stsKeySetId' => 'KeySetName',
-            'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
-            'idpServiceName' => 'idm',
+        $this->sugarConfig = $GLOBALS['sugar_config'] ?? null;
+        $GLOBALS['sugar_config'] = [
+            'idm_mode' => [
+                'enabled' => true,
+                'clientId' => 'testLocal',
+                'clientSecret' => 'testLocalSecret',
+                'stsUrl' => 'http://sts.sugarcrm.local',
+                'idpUrl' => 'http://sugar.dolbik.local/idm289idp/web/',
+                'stsKeySetId' => 'KeySetName',
+                'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
+                'idpServiceName' => 'idm',
+            ],
         ];
+
+        $this->config = \SugarConfig::getInstance();
+        $this->config->clearCache();
     }
 
     /**
@@ -151,9 +161,12 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      */
     protected function tearDown()
     {
-        $GLOBALS['beanList'] = $this->beanList;
         \BeanFactory::unregisterBean($this->mockedUser);
-        $this->sugarConfig->_cached_values['idm_mode'] = [];
+
+        $GLOBALS['beanList'] = $this->beanList;
+
+        $GLOBALS['sugar_config'] = $this->sugarConfig;
+        $this->config->clearCache();
     }
 
     /**
