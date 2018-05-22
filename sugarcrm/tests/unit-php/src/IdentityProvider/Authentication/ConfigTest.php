@@ -42,7 +42,6 @@ class ConfigTest extends TestCase
                 ],
                 ['default' => 'config'],
                 [],
-                [],
             ],
             'saml config provided' => [
                 [
@@ -64,7 +63,6 @@ class ConfigTest extends TestCase
                         ],
                     ],
                 ],
-                [],
             ],
             'saml config and sugar custom settings provided' => [
                 [
@@ -82,10 +80,6 @@ class ConfigTest extends TestCase
                     'default' => 'overridden config',
                     'sp' => [
                         'foo' => 'bar',
-                    ],
-                ],
-                [
-                    'sp' => [
                         'sugarCustom' => [
                             'useXML' => true,
                             'id' => 'first_name',
@@ -100,7 +94,6 @@ class ConfigTest extends TestCase
      * @param array $expectedConfig
      * @param array $defaultConfig
      * @param array $configValues
-     * @param array $customSettings
      *
      * @covers ::getSAMLConfig
      * @dataProvider getSAMLConfigDataProvider
@@ -108,14 +101,12 @@ class ConfigTest extends TestCase
     public function testGetSAMLConfig(
         array $expectedConfig,
         array $defaultConfig,
-        array $configValues,
-        array $customSettings
+        array $configValues
     ) {
         $config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
-            ->setMethods(['get', 'getSAMLDefaultConfig', 'getSugarCustomSAMLSettings'])
+            ->setMethods(['get', 'getSAMLDefaultConfig'])
             ->getMock();
-        $config->method('getSugarCustomSAMLSettings')->willReturn($customSettings);
         $config->expects($this->any())
             ->method('get')
             ->withConsecutive(
@@ -180,9 +171,8 @@ class ConfigTest extends TestCase
         ];
         $config = $this->getMockBuilder(Config::class)
                        ->disableOriginalConstructor()
-                       ->setMethods(['get', 'getSugarCustomSAMLSettings'])
+                       ->setMethods(['get'])
                        ->getMock();
-        $config->method('getSugarCustomSAMLSettings')->willReturn([]);
         $config->method('get')
                ->willReturnMap(
                    [
@@ -233,7 +223,7 @@ class ConfigTest extends TestCase
     {
         $config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
-            ->setMethods(['get', 'getSugarCustomSAMLSettings'])
+            ->setMethods(['get'])
             ->getMock();
 
         $config->expects($this->any())->method('get')
@@ -246,8 +236,6 @@ class ConfigTest extends TestCase
                     ['SAML', [], []],
                 ]
             ));
-
-        $config->expects($this->any())->method('getSugarCustomSAMLSettings')->willReturn([]);
 
         $samlConfig = $config->getSAMLConfig();
 

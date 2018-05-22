@@ -402,7 +402,7 @@ class HealthCheckScannerMeta
         ),
         451 => array(
             'report' => 'deprecatedAuthN',
-            'bucket' => self::CUSTOM,
+            'bucket' => self::MANUAL,
         ),
         // 7.8 sidecar and backbone deprecations, E bucket
         550 => array(

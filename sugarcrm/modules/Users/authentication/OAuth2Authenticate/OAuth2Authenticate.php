@@ -21,7 +21,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
  * Class OAuth2Authenticate
  */
 
-class OAuth2Authenticate extends BaseAuthenticate implements SugarAuthenticateExternal
+class OAuth2Authenticate extends BaseAuthenticate implements ExternalLoginInterface
 {
     /**
      * {@inheritdoc}
@@ -66,7 +66,7 @@ class OAuth2Authenticate extends BaseAuthenticate implements SugarAuthenticateEx
     /**
      * @inheritdoc
      */
-    public function loginAuthenticate($username, $password, $fallback = false, $params = [])
+    public function loginAuthenticate($username, $password, $fallback = false, array $params = [])
     {
         $config = new Config(\SugarConfig::getInstance());
         $token = (new UsernamePasswordTokenFactory($username, $password, ['tenant' => $this->getTenant($config)]))

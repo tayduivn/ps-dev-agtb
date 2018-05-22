@@ -40,36 +40,29 @@ class AuthenticationController implements LoggerAwareInterface
 	protected static $authcontrollerinstance = null;
 
     /**
-     * @var SugarAuthenticate
+     * @var IdMSugarAuthenticate
      */
     public $authController;
 
 	/**
 	 * Creates an instance of the authentication controller and loads it
 	 *
-	 * @param STRING $type - the authentication Controller - default to SugarAuthenticate
+     * @param STRING $type - the authentication Controller - default to IdMSugarAuthenticate
 	 * @return AuthenticationController -
 	 */
-	public function __construct($type = 'SugarAuthenticate')
+    public function __construct($type = 'IdMSugarAuthenticate')
 	{
-	    if ($type == 'SugarAuthenticate' && !empty($GLOBALS['system_config']->settings['system_ldap_enabled']) && empty($_SESSION['sugar_user'])){
-			$type = 'LDAPAuthenticate';
+        if ($type == 'IdMSugarAuthenticate'
+            && !empty($GLOBALS['system_config']->settings['system_ldap_enabled'])
+            && empty($_SESSION['sugar_user'])
+        ) {
+            $type = 'IdMLDAPAuthenticate';
         }
 
         // check in custom dir first, in case someone want's to override an auth controller
         $customFile = SugarAutoLoader::requireWithCustom('modules/Users/authentication/' . $type . '/' . $type . '.php');
         if (!$customFile) {
-            $type = 'SugarAuthenticate';
-        }
-
-        $authUserPath = sprintf('custom/modules/Users/authentication/%1$s/%1$sUser.php', $type);
-        if (!preg_match('|^custom/|', $customFile) && !file_exists($authUserPath)) {
-            // if there's no customization we can safely use IdM glue
-            $idmGlueClass = 'IdM' . $type;
-            $idmGluePath = 'modules/Users/authentication/' . $idmGlueClass . '/' . $idmGlueClass . '.php';
-            if (file_exists($idmGluePath)) {
-                $type = $idmGlueClass;
-            }
+            $type = 'IdMSugarAuthenticate';
         }
 
         $this->setLogger(LoggerFactory::getLogger('authentication'));
@@ -81,7 +74,7 @@ class AuthenticationController implements LoggerAwareInterface
     /**
      * Returns an instance of the authentication controller
      *
-     * @param string $type this is the type of authentication you want to use default is SugarAuthenticate
+     * @param string $type this is the type of authentication you want to use default is IdMSugarAuthenticate
      * @return AuthenticationController An instance of the authentication controller
      */
     public static function getInstance($type = null)
@@ -91,7 +84,7 @@ class AuthenticationController implements LoggerAwareInterface
             if ($idpConfig->isIDMModeEnabled()) {
                 $type = 'OAuth2Authenticate';
             } else {
-                $type = $idpConfig->get('authenticationClass', 'SugarAuthenticate');
+                $type = $idpConfig->get('authenticationClass', 'IdMSugarAuthenticate');
             }
         }
         if (empty(static::$authcontrollerinstance)) {
@@ -302,8 +295,7 @@ class AuthenticationController implements LoggerAwareInterface
 	 */
 	public function isExternal()
 	{
-        return $this->authController instanceof SugarAuthenticateExternal
-            || $this->authController instanceof ExternalLoginInterface;
+        return $this->authController instanceof ExternalLoginInterface;
 	}
 
 	/**

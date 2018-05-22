@@ -117,7 +117,7 @@ if (!empty($_POST['saveConfig'])) {
 		    $_POST['passwordsetting_lockoutexpiration'] = 2;
 
         // Check SAML settings
-        if (!empty($_POST['authenticationClass']) && $_POST['authenticationClass'] == 'SAMLAuthenticate') {
+        if (!empty($_POST['authenticationClass']) && $_POST['authenticationClass'] == 'IdMSAMLAuthenticate') {
             if (empty($_POST['SAML_loginurl'])) {
                 $configurator->addError($config_strings['ERR_EMPTY_SAML_LOGIN']);
                 break;

@@ -450,7 +450,7 @@ class UserViewHelper {
                 $this->ss->assign('EXTERNAL_AUTH_CLASS_1', translate('LBL_LDAP','Users'));
                 $this->ss
                         ->assign('EXTERNAL_AUTH_CLASS', translate('LBL_LDAP_AUTHENTICATION','Users'));
-                $authclass = 'LDAPAuthenticate';
+                $authclass = 'IdMLDAPAuthenticate';
             }
         }
         if(!empty($this->bean->external_auth_only)) {

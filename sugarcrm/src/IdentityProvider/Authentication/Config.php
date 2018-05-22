@@ -57,7 +57,6 @@ class Config
     public function getSAMLConfig()
     {
         $defaultConfig = $this->getSAMLDefaultConfig();
-        $defaultConfig = array_merge_recursive($defaultConfig, $this->getSugarCustomSAMLSettings());
         return array_replace_recursive($defaultConfig, $this->get('SAML', [])); //update with values from config
     }
 
@@ -331,7 +330,6 @@ class Config
 
     /**
      * return default config for ldap
-     * @see modules/Users/authentication/LDAPAuthenticate/LDAPConfigs/default.php
      * @return array
      */
     protected function getLdapDefaultConfig()
@@ -351,36 +349,6 @@ class Config
                     'postalCode' => 'address_postalcode',
                     'c' => 'address_country',
                 ],
-            ],
-        ];
-    }
-
-    /**
-     * Obtain settings that are placed
-     * in 'modules/Users/authentication/SAMLAuthenticate/settings.php' file (custom one as well).
-     * Used for only a specific range of settings:
-     * saml2_settings, id, useXML, customCreateFunction
-     *
-     * @return array
-     */
-    protected function getSugarCustomSAMLSettings()
-    {
-        $result = [];
-        $sugarCustomConfig = \SAMLAuthenticate::loadSettings();
-        $sugarCustomConfigParams = [
-            'saml2_settings',
-            'id',
-            'useXML',
-            'customCreateFunction',
-        ];
-        foreach ($sugarCustomConfigParams as $key) {
-            if (isset($sugarCustomConfig->$key)) {
-                $result[$key] = $sugarCustomConfig->$key;
-            }
-        }
-        return [
-            'sp' => [
-                'sugarCustom' => $result,
             ],
         ];
     }
