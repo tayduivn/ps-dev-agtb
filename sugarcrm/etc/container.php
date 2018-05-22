@@ -50,6 +50,7 @@ use Sugarcrm\Sugarcrm\Logger\Factory as LoggerFactory;
 use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter as SubjectFormatter;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter\BeanFormatter;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use UltraLite\Container\Container;
 
 return new Container([
@@ -233,5 +234,8 @@ return new Container([
         } catch (CacheException $e) {
             throw new ServiceUnavailable($e->getMessage(), 0, $e);
         }
+    },
+    Validator::class => function () {
+        return Validator::getService();
     },
 ]);

@@ -466,6 +466,7 @@ function get_sugar_config_defaults()
             'enabled' => false,
         ],
         'marketing_extras_enabled' => true,
+        'marketing_extras_url' => 'https://marketing.sugarcrm.com/content',
     );
 
     if (empty($locale)) {
