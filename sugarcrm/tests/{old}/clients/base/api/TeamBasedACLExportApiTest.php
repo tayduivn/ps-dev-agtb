@@ -88,15 +88,17 @@ class TeamBasedACLExportApiTest extends TestCase
         $this->teamSetUserNot = BeanFactory::newBean('TeamSets');
         $this->teamSetUserNot->addTeams(array($teamUserNot->id));
 
-        $this->beanTBA = SugarTestAccountUtilities::createAccount();
-        $this->beanTBA->acl_team_set_id = $this->teamSetUserIn->id;
-        $this->beanTBA->save();
+        $this->beanTBA = SugarTestAccountUtilities::createAccount(null, [
+            'assigned_user_id' => null,
+            'acl_team_set_id' => $this->teamSetUserIn->id,
+        ]);
 
         $this->records[] = $this->beanTBA->id;
 
-        $this->beanNotTBA = SugarTestAccountUtilities::createAccount();
-        $this->beanNotTBA->acl_team_set_id = $this->teamSetUserNot->id;
-        $this->beanNotTBA->save();
+        $this->beanNotTBA = SugarTestAccountUtilities::createAccount(null, [
+            'assigned_user_id' => null,
+            'acl_team_set_id' => $this->teamSetUserNot->id,
+        ]);
 
         $this->records[] = $this->beanNotTBA->id;
 
@@ -119,6 +121,7 @@ class TeamBasedACLExportApiTest extends TestCase
                 ),
             ),
         );
+
         ACLAction::setACLData($GLOBALS['current_user']->id, $this->module, $aclData);
     }
 

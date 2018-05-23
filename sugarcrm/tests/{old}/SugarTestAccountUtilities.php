@@ -22,12 +22,15 @@ class SugarTestAccountUtilities
      */
     public static function createAccount($id = '', $accountValues = array())
     {
+        global $current_user;
+
         $time = mt_rand();
         $account = BeanFactory::newBean('Accounts');
 
         $accountValues = array_merge(array(
             'name' => 'SugarAccount' . $time,
             'email' => 'account@'. $time. 'sugar.com',
+            'assigned_user_id' => $current_user->id,
         ), $accountValues);
 
         // for backward compatibility with existing tests

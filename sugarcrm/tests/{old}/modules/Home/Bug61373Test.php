@@ -62,7 +62,14 @@ class Bug61373Test extends TestCase
     /**
      * Data provider for testQuickSearchACLFields()
      */
-    public function dataProvider() {
+    public static function dataProvider()
+    {
+        $createAccount = function () {
+            return SugarTestAccountUtilities::createAccount(null, [
+                'assigned_user_id' => null,
+            ]);
+        };
+
         return array(
             'contacts-email-owner' => array(
                 'Contacts',
@@ -81,10 +88,7 @@ class Bug61373Test extends TestCase
                 ACL_OWNER_READ_WRITE,
                 'test1@test.com',
                 '',
-                array(
-                    'SugarTestAccountUtilities',
-                    'createAccount'
-                )
+                $createAccount,
             ),
             'leads-email-owner' => array(
                 'Leads',
@@ -114,10 +118,7 @@ class Bug61373Test extends TestCase
                 ACL_FIELD_DEFAULT,
                 'test1@test.com',
                 'test1@test.com',
-                array(
-                    'SugarTestAccountUtilities',
-                    'createAccount'
-                )
+                $createAccount,
             ),
             'leads-email-default' => array(
                 'Leads',
@@ -147,10 +148,7 @@ class Bug61373Test extends TestCase
                 ACL_OWNER_READ_WRITE,
                 'Test Desc',
                 '',
-                array(
-                    'SugarTestAccountUtilities',
-                    'createAccount'
-                )
+                $createAccount,
             ),
             'leads-description-owner' => array(
                 'Leads',
@@ -180,10 +178,7 @@ class Bug61373Test extends TestCase
                 ACL_FIELD_DEFAULT,
                 'Test Desc',
                 'Test Desc',
-                array(
-                    'SugarTestAccountUtilities',
-                    'createAccount'
-                )
+                $createAccount,
             ),
             'leads-description-default' => array(
                 'Leads',
@@ -205,10 +200,10 @@ class Bug61373Test extends TestCase
      * @dataProvider dataProvider
      * @group 61373
      */
-    public function testQuickSearchACLFields($module, $field, $acl, $value, $expected, $factory)
+    public function testQuickSearchACLFields($module, $field, $acl, $value, $expected, callable $factory)
     {
-        // Create bean
-        $this->bean = call_user_func($factory);
+        $this->bean = $factory();
+
         // Set create by to some different than current user
         $this->bean->created_by = SugarTestUserUtilities::createAnonymousUser()->id;
         // Set the field we are checking to some value

@@ -369,50 +369,6 @@ class AdvancedQueryTest extends TestCase
         $sq->from($contact);
         $sq->where()->equals('account_name','Awesome');
         $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
-
-        // self-link
-        $acc = BeanFactory::newBean('Accounts');
-        $sq = new SugarQuery();
-        $sq->select(array("id", "name"));
-        $sq->from($acc);
-        $sq->where()->equals('parent_name','Awesome');
-        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
-
-        // custom field
-        BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
-        $contact = BeanFactory::newBean("Contacts");
-        $GLOBALS['dictionary']['Contact']['fields'] = $contact->field_defs;
-        $this->assertArrayHasKey("report_to_bigname", $contact->field_defs);
-        $this->assertTrue($contact->hasCustomFields());
-
-        // direct custom field
-        $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
-        $sq->from($contact);
-        $sq->where()->equals('bigname_c','Chuck Norris');
-        $this->assertRegExp('/WHERE.*contacts_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/s', $sq->compile()->getSQL());
-
-        // related custom field
-        $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
-        $sq->from($contact);
-        $sq->where()->equals('report_to_bigname','Chuck Norris');
-        $this->assertRegExp('/WHERE.*jt\w+_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/s', $sq->compile()->getSQL());
-
-        // compare fields
-        $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
-        $sq->from($contact);
-        $sq->where()->equalsField('bigname_c','report_to_bigname');
-        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*=\s*jt\w+_cstm.bigname_c/s', $sq->compile()->getSQL());
-
-        $sq = new SugarQuery();
-        $sq->select(array("id", "last_name", 'report_to_bigname'));
-        $sq->from($contact);
-        $sq->where()->notEqualsField('bigname_c','report_to_bigname');
-        $sql = $sq->compile()->getSQL();
-        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*!=\s*jt\w+_cstm.bigname_c/s', $sql);
-        $this->assertContains("SELECT  contacts.id id, contacts.last_name last_name, jt0_reports_to_link_cstm.bigname_c report_to_bigname", $sql);
     }
 
     /**
