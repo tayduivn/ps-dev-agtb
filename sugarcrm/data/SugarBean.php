@@ -204,11 +204,13 @@ class SugarBean
     var $set_created_by = true;
 
     var $team_set_id;
+// BEGIN SUGARCRM flav=ent ONLY
 
     /**
      * @var string
      */
     public $acl_team_set_id;
+// END SUGARCRM flav=ent ONLY
 
     /**
      * The database table where records of this Bean are stored.

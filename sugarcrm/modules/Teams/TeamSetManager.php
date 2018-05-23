@@ -149,7 +149,9 @@ class TeamSetManager {
     {
         $columns = array_intersect_key([
             'team_set_id' => $teamSetId,
+// BEGIN SUGARCRM flav=ent ONLY
             'acl_team_set_id' => $teamSetId,
+// END SUGARCRM flav=ent ONLY
         ], DBManagerFactory::getInstance()->get_columns($table));
 
         if (count($columns) < 1) {

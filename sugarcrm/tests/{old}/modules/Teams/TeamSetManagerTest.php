@@ -131,6 +131,7 @@ class TeamSetManagerTest extends TestCase
 
         $this->assertTeamSetNotExists($contact2->team_set_id);
     }
+// BEGIN SUGARCRM flav=ent ONLY
 
     /**
      * @test
@@ -157,6 +158,7 @@ class TeamSetManagerTest extends TestCase
 
         $this->assertTeamSetNotExists($teamSetId);
     }
+// END SUGARCRM flav=ent ONLY
 
     private function assignRecordToTeams(SugarBean $bean, Team $primaryTeam, Team ...$otherTeams)
     {
