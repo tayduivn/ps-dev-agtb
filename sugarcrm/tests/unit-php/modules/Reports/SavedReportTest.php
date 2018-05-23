@@ -26,8 +26,14 @@ class SavedReportTest extends TestCase
      */
     public function testDeleteSchedules()
     {
-        $savedReport = $this->createMock('\SavedReport');
-        $reportSchedule = $this->createPartialMock('\ReportSchedules', [
+        $savedReport = $this->createPartialMock('\SavedReport', [
+            'load_relationship',
+        ]);
+        $savedReport->expects($this->once())
+            ->method('load_relationship')
+            ->will($this->returnValue(true));
+
+        $reportSchedule = $this->createPartialMock('\ReportSchedule', [
             'mark_deleted',
         ]);
         $reportSchedule->expects($this->once())
