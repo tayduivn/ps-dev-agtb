@@ -115,6 +115,7 @@ describe('Archived Emails', function() {
         expect(email.state).to.equal('Archived');
         expect(email.name).to.equal(content);
         expect(email.description_html).to.equal(content);
+        //FIXME: Should be "some text and <ab@cd.com> and <i>text</i>" after MAR-5050.
         expect(email.description).to.equal('some text and &lt;ab@cd.com&gt; and &lt;i&gt;text&lt;/i&gt;');
         expect(email.parent.type).to.equal('Contacts');
         expect(email.parent.id).to.equal(contact.id);

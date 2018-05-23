@@ -910,7 +910,8 @@ class Email extends SugarBean {
             // plain-text only
             $textBody = str_replace("&nbsp;", " ", $textBody);
             $textBody = str_replace("</p>", "</p><br />", $textBody);
-            $textBody = strip_tags(br2nl($textBody));
+            $textBody = $this->getPlainTextFromHtml($textBody);
+            //FIXME: Remove the following line after MAR-5050.
             $textBody = html_entity_decode($textBody, ENT_QUOTES, 'UTF-8');
 
             $this->description_html = ""; // make sure it's blank to avoid any mishaps
@@ -1442,15 +1443,14 @@ class Email extends SugarBean {
             $this->in_save = true;
 
             if ($this->state === static::STATE_ARCHIVED) {
-                // Copy plain-text email body to HTML field column
-                if (empty($this->description_html) && !empty($this->description)) {
-                    $this->description_html = str_replace(array("\r\n", "\n", "\r"), '<br />', $this->description);
+                // Generate the HTML body from the plain-text body and save to description_html.
+                if (empty($this->description_html)) {
+                    $this->description_html = $this->getHtmlFromPlainText($this->description);
                 }
 
-                // Strip HTML tags from the description_html and save to description
-                if (!empty($this->description_html) && empty($this->description)) {
-                    // Replace HTML line breaks with non HTML line breaks and strip all remaining HTML tags
-                    $this->description = strip_tags(br2nl($this->description_html));
+                // Generate the plain-text body from the HTML body and save to description.
+                if (empty($this->description)) {
+                    $this->description = $this->getPlainTextFromHtml($this->description_html);
                 }
             }
 
@@ -4465,15 +4465,25 @@ eoq;
         $this->description_html = $this->decodeDuringSend(from_html($this->description_html));
 
         // A plain-text part must be sent with the HTML part.
-        if (!empty($this->description_html) && empty($this->description)) {
-            $this->description = strip_tags(br2nl($this->description_html));
+        $text = $this->description;
+
+        if (empty($this->description)) {
+            // FIXME: After MAR-5050, decoding will be done in Email::getPlainTextFromHtml().
+            $this->description = $this->getPlainTextFromHtml($this->description_html);
+            $text = $this->description;
+
+            // Decode HTML characters so that the text/plain part has no HTML entities.
+            do {
+                $beforeDecoding = $text;
+                $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+            } while ($text !== $beforeDecoding);
         }
 
         try {
             $mailer = MailerFactory::getMailer($config);
             $mailer->setSubject($this->name);
             $mailer->setHtmlBody($this->description_html);
-            $mailer->setTextBody($this->description);
+            $mailer->setTextBody($text);
 
             // Set up the Reply-To header.
             $replyTo = $config->getReplyTo();
@@ -4722,5 +4732,47 @@ eoq;
             'OutboundEmail',
             'UserSignatures',
         ];
+    }
+
+    /**
+     * Generate the text/plain body from the text/html body.
+     *
+     * Replaces HTML line breaks with newline characters, strips all HTML tags, and decodes HTML characters.
+     *
+     * @param string $html
+     * @return string
+     */
+    private function getPlainTextFromHtml($html = '')
+    {
+        if (empty($html)) {
+            return '';
+        }
+
+        $text = br2nl($html);
+        $text = strip_tags($text);
+
+        // TODO: Uncomment after MAR-5050.
+        // Decode HTML characters.
+//        do {
+//            $beforeDecoding = $text;
+//            $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+//        } while ($text !== $beforeDecoding);
+
+        return $text;
+    }
+
+    /**
+     * Replaces newline characters with HTML line breaks.
+     *
+     * @param string $text
+     * @return string
+     */
+    private function getHtmlFromPlainText($text = '')
+    {
+        if (empty($text)) {
+            return '';
+        }
+
+        return str_replace(["\r\n", "\n", "\r"], '<br />', $text);
     }
 } // end class def
