@@ -147,17 +147,16 @@ class TeamSetManager {
      */
     public static function doesRecordWithTeamSetExist($table, $teamSetId, $excludeId = null)
     {
-        $connection = DBManagerFactory::getConnection();
-
         $columns = array_intersect_key([
             'team_set_id' => $teamSetId,
             'acl_team_set_id' => $teamSetId,
-        ], $connection->getSchemaManager()->listTableColumns($table));
+        ], DBManagerFactory::getInstance()->get_columns($table));
 
         if (count($columns) < 1) {
             return false;
         }
 
+        $connection = DBManagerFactory::getConnection();
         $builder = $connection->createQueryBuilder();
         $builder->select('NULL')
             ->from($table);
