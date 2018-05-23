@@ -573,13 +573,30 @@ class SugarBean
             {
                 $this->setupCustomFields($this->module_dir);
             }
-            //load up field_arrays from CacheHandler;
-            if(empty($this->list_fields))
-                $this->list_fields = $this->_loadCachedArray($this->module_dir, $this->object_name, 'list_fields');
-            if(empty($this->column_fields))
-                $this->column_fields = $this->_loadCachedArray($this->module_dir, $this->object_name, 'column_fields');
-            if(empty($this->required_fields))
-                $this->required_fields = $this->_loadCachedArray($this->module_dir, $this->object_name, 'required_fields');
+
+            if (empty($this->list_fields)) {
+                $this->list_fields = $this->_loadCachedArray(
+                    $this->module_name,
+                    $this->object_name,
+                    'list_fields'
+                );
+            }
+
+            if (empty($this->column_fields)) {
+                $this->column_fields = $this->_loadCachedArray(
+                    $this->module_name,
+                    $this->object_name,
+                    'column_fields'
+                );
+            }
+
+            if (empty($this->required_fields)) {
+                $this->required_fields = $this->_loadCachedArray(
+                    $this->module_name,
+                    $this->object_name,
+                    'required_fields'
+                );
+            }
 
             if(isset($GLOBALS['dictionary'][$this->object_name]) && !$this->disable_vardefs)
             {
@@ -7506,13 +7523,13 @@ class SugarBean
      * bean files and have since been moved to separate files. Was previously in include/CacheHandler.php
      *
      * @deprecated
-     * @param $module_dir string the module directory
-     * @param $module string the name of the module
+     * @param $module_name string the module directory
+     * @param $object_name string the object name
      * @param $key string the type of field array we are referencing, i.e. list_fields, column_fields, required_fields
      **/
     private function _loadCachedArray(
-        $module_dir,
-        $module,
+        $module_name,
+        $object_name,
         $key
         )
     {
@@ -7520,7 +7537,7 @@ class SugarBean
 
         $fileName = 'field_arrays.php';
 
-        $cache_key = "load_cached_array.$module_dir.$module.$key";
+        $cache_key = "load_cached_array.$module_name.$object_name.$key";
         $result = sugar_cache_retrieve($cache_key);
         if(!empty($result))
         {
@@ -7533,24 +7550,23 @@ class SugarBean
             return $result;
         }
 
-        if (file_exists('modules/'.$module_dir.'/'.$fileName)) {
+        if (file_exists('modules/'.$module_name.'/'.$fileName)) {
             // If the data was not loaded, try loading again....
-            if(!isset($moduleDefs[$module]))
-            {
-                include('modules/'.$module_dir.'/'.$fileName);
-                $moduleDefs[$module] = $fields_array;
+            if (!isset($moduleDefs[$object_name])) {
+                include 'modules/' . $module_name . '/' . $fileName;
+                $moduleDefs[$object_name] = $fields_array;
             }
+
             // Now that we have tried loading, make sure it was loaded
-            if(empty($moduleDefs[$module]) || empty($moduleDefs[$module][$module][$key]))
-            {
+            if (empty($moduleDefs[$object_name][$object_name][$key])) {
                 // It was not loaded....  Fail.  Cache null to prevent future repeats of this calculation
 				sugar_cache_put($cache_key, SugarCache::EXTERNAL_CACHE_NULL_VALUE);
                 return  null;
             }
 
             // It has been loaded, cache the result.
-            sugar_cache_put($cache_key, $moduleDefs[$module][$module][$key]);
-            return $moduleDefs[$module][$module][$key];
+            sugar_cache_put($cache_key, $moduleDefs[$object_name][$object_name][$key]);
+            return $moduleDefs[$object_name][$object_name][$key];
         }
 
         // It was not loaded....  Fail.  Cache null to prevent future repeats of this calculation

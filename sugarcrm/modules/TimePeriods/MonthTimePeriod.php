@@ -118,7 +118,7 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         $timedate = TimeDate::getInstance();
         $ts = $timedate->fromDbDate($dateClosed)->getTimestamp();
 
-        $key = $this->id . ':keys';
+        $key = $this->id . '-keys';
         $keys = sugar_cache_retrieve($key);
 
         if(!empty($keys)) {

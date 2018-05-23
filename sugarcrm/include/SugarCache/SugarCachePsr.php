@@ -72,7 +72,7 @@ class SugarCachePsr extends SugarCacheAbstract
      */
     protected function _setExternal($key, $value)
     {
-        $this->backend->set($key, $value, $this->_expireTimeout);
+        $this->backend->set($this->filterKey($key), $value, $this->_expireTimeout);
     }
 
     /**
@@ -80,7 +80,7 @@ class SugarCachePsr extends SugarCacheAbstract
      */
     protected function _getExternal($key)
     {
-        return $this->backend->get($key);
+        return $this->backend->get($this->filterKey($key));
     }
 
     /**
@@ -88,7 +88,7 @@ class SugarCachePsr extends SugarCacheAbstract
      */
     protected function _clearExternal($key)
     {
-        $this->backend->delete($key);
+        $this->backend->delete($this->filterKey($key));
     }
 
     /**
@@ -97,5 +97,23 @@ class SugarCachePsr extends SugarCacheAbstract
     protected function _resetExternal()
     {
         $this->backend->clear();
+    }
+
+    /**
+     * @param string $key
+     *
+     * @link https://www.php-fig.org/psr/psr-16/
+     * @return string
+     */
+    private function filterKey(string $key) : string
+    {
+        if (strpbrk($key, '{}()/\@:') !== false) {
+            $GLOBALS['log']->warn(
+                sprintf('The cache key "%s" contains characters reserved by the PSR-16 standard', $key)
+            );
+            $key = str_replace(['{', '}', '(', ')', '/', '\\', '@', ':'], '-', $key);
+        }
+
+        return $key;
     }
 }

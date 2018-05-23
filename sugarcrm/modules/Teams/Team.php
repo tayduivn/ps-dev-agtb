@@ -898,7 +898,7 @@ AND team_id = ?';
         $user = null
         )
     {
-        $team_array = sugar_cache_retrieve('team_array:'. $add_blank.'ADDBLANK'.$user->id);
+        $team_array = sugar_cache_retrieve('team_array-'. $add_blank.'ADDBLANK'.$user->id);
         if(!empty($team_array))
             return $team_array;
 
@@ -936,7 +936,7 @@ ORDER BY t.private, t.name';
                 $team_array[$row['id']] = trim($row['name'] . ' ' . $row['name_2']);
         }
 
-        sugar_cache_put('team_array:'.$add_blank.'ADDBLANK'.$current_user->id, $team_array);
+        sugar_cache_put('team_array-'.$add_blank.'ADDBLANK'.$current_user->id, $team_array);
 
         return $team_array;
     }

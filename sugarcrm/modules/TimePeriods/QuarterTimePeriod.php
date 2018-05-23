@@ -158,7 +158,7 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface
      */
     public function getChartLabelsKey($dateClosed)
     {
-        $key = $this->id . ':keys';
+        $key = $this->id . '-keys';
         $keys = sugar_cache_retrieve($key);
         $timedate = TimeDate::getInstance();
         $ts = $timedate->fromDbDate($dateClosed)->getTimestamp();

@@ -2374,17 +2374,17 @@ function cleanup_slashes($value)
 
 function set_register_value($category, $name, $value)
 {
-    return sugar_cache_put("{$category}:{$name}", $value);
+    return sugar_cache_put("{$category}-{$name}", $value);
 }
 
 function get_register_value($category,$name)
 {
-    return sugar_cache_retrieve("{$category}:{$name}");
+    return sugar_cache_retrieve("{$category}-{$name}");
 }
 
 function clear_register_value($category,$name)
 {
-    return sugar_cache_clear("{$category}:{$name}");
+    return sugar_cache_clear("{$category}-{$name}");
 }
 // this function cleans id's when being imported
 function convert_id($string)
